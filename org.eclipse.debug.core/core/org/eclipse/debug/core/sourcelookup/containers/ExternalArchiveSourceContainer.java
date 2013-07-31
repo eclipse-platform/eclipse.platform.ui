@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.debug.core.sourcelookup.containers;
 
 import java.io.File;
 import java.io.IOException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -30,31 +29,33 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * An archive in the local file system. Returns instances
  * of <code>ZipEntryStorage</code> as source elements.
  * <p>
- * Clients may instantiate this class. 
+ * Clients may instantiate this class.
  * </p>
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
-	
+
 	private boolean fDetectRoots = false;
-	private Set fPotentialRoots = null;
-	private List fRoots = new ArrayList();
+	private Set<String> fPotentialRoots = null;
+	private List<String> fRoots = new ArrayList<String>();
 	private String fArchivePath = null;
 	/**
 	 * Unique identifier for the external archive source container type
 	 * (value <code>org.eclipse.debug.core.containerType.externalArchive</code>).
 	 */
 	public static final String TYPE_ID = DebugPlugin.getUniqueIdentifier() + ".containerType.externalArchive";	 //$NON-NLS-1$
-	
+
 	/**
-	 * Creates an archive source container on the archive at the 
-	 * specified location in the local file system. 
-	 * 
+	 * Creates an archive source container on the archive at the
+	 * specified location in the local file system.
+	 *
 	 * @param archivePath path to the archive in the local file system
 	 * @param detectRootPaths whether root container paths should be detected. When
 	 *   <code>true</code>, searching is performed relative to a root path
@@ -66,24 +67,25 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	 *   When searching for an unqualified file name, root containers are not
 	 *   considered.
 	 *   When <code>false</code>, searching is performed by
-	 *   matching file names as suffixes to the entries in the archive. 
+	 *   matching file names as suffixes to the entries in the archive.
 	 */
 	public ExternalArchiveSourceContainer(String archivePath, boolean detectRootPaths) {
 		fArchivePath = archivePath;
 		fDetectRoots = detectRootPaths;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
+	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
-		name = name.replace('\\', '/');
+		String newname = name.replace('\\', '/');
 		ZipFile file = getArchive();
 		// NOTE: archive can be closed between get (above) and synchronized block (below)
 		synchronized (file) {
-			boolean isQualfied = name.indexOf('/') > 0;
+			boolean isQualfied = newname.indexOf('/') > 0;
 			if (fDetectRoots && isQualfied) {
-				ZipEntry entry = searchRoots(file, name);
+				ZipEntry entry = searchRoots(file, newname);
 				if (entry != null) {
 					return new Object[]{new ZipEntryStorage(file, entry)};
 				}
@@ -91,10 +93,10 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 				// try exact match
 				ZipEntry entry = null;
 				try {
-					entry = file.getEntry(name);
+					entry = file.getEntry(newname);
 				} catch (IllegalStateException e) {
 					// archive was closed between retrieving and locking
-					throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
+					throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
 							e.getMessage(), e));
 				}
 				if (entry != null) {
@@ -102,16 +104,16 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 					return new Object[]{new ZipEntryStorage(file, entry)};
 				}
 				// search
-				Enumeration entries = file.entries();
-				List matches = null;
+				Enumeration<? extends ZipEntry> entries = file.entries();
+				List<ZipEntryStorage> matches = null;
 				while (entries.hasMoreElements()) {
-					entry = (ZipEntry)entries.nextElement();
+					entry = entries.nextElement();
 					String entryName = entry.getName();
-					if (entryName.endsWith(name)) {
-						if (isQualfied || entryName.length() == name.length() || entryName.charAt(entryName.length() - name.length() - 1) == '/') {
+					if (entryName.endsWith(newname)) {
+						if (isQualfied || entryName.length() == newname.length() || entryName.charAt(entryName.length() - newname.length() - 1) == '/') {
 							if (isFindDuplicates()) {
 								if (matches == null) {
-									matches = new ArrayList();
+									matches = new ArrayList<ZipEntryStorage>();
 								}
 								matches.add(new ZipEntryStorage(file, entry));
 							} else {
@@ -127,12 +129,12 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 		}
 		return EMPTY;
 	}
-	
+
 	/**
 	 * Returns the root path in this archive for the given file name, based
 	 * on its type, or <code>null</code> if none. Detects a root if a root has
 	 * not yet been detected for the given file type.
-	 * 
+	 *
 	 * @param file zip file to search in
 	 * @param name file name
 	 * @return the {@link ZipEntry} with the given name or <code>null</code>
@@ -140,13 +142,13 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	 */
 	private ZipEntry searchRoots(ZipFile file, String name) throws CoreException {
 		if (fPotentialRoots == null) {
-			fPotentialRoots = new HashSet();
+			fPotentialRoots = new HashSet<String>();
 			fPotentialRoots.add(""); //$NON-NLS-1$
 			// all potential roots are the directories
 			try {
-				Enumeration entries = file.entries();
+				Enumeration<? extends ZipEntry> entries = file.entries();
 				while (entries.hasMoreElements()) {
-					ZipEntry entry = (ZipEntry) entries.nextElement();
+					ZipEntry entry = entries.nextElement();
 					if (entry.isDirectory()) {
 						fPotentialRoots.add(entry.getName());
 					} else {
@@ -164,13 +166,13 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 				}
 			} catch (IllegalStateException e) {
 				// archive was closed between retrieving and locking
-				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
 					e.getMessage(), e));
 			}
 		}
 		int i = 0;
 		while (i < fRoots.size()) {
-			String root = (String) fRoots.get(i);
+			String root = fRoots.get(i);
 			ZipEntry entry = file.getEntry(root+name);
 			if (entry != null) {
 				return entry;
@@ -178,30 +180,25 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 			i++;
 		}
 		if (!fPotentialRoots.isEmpty()) {
-			Iterator roots = fPotentialRoots.iterator();
-			String root = null;
-			ZipEntry entry = null;
-			while (roots.hasNext()) {
-				root = (String) roots.next();
-				entry = file.getEntry(root+name);
+			for (String root : fPotentialRoots) {
+				ZipEntry entry = file.getEntry(root + name);
 				if (entry != null) {
-					break;
-				}
-			}
-			if (entry != null) {
-				if (root != null) {
-					fRoots.add(root);
-					fPotentialRoots.remove(root);
-					// remove any roots that begin with the new root, as roots cannot be nested
-					Iterator rs = fPotentialRoots.iterator();
-					while (rs.hasNext()) {
-						String r = (String) rs.next();
-						if (r.startsWith(root)) {
-							rs.remove();
+					if (root != null) {
+						fRoots.add(root);
+						fPotentialRoots.remove(root);
+						// remove any roots that begin with the new root, as
+						// roots
+						// cannot be nested
+						Iterator<String> rs = fPotentialRoots.iterator();
+						while (rs.hasNext()) {
+							String r = rs.next();
+							if (r.startsWith(root)) {
+								rs.remove();
+							}
 						}
 					}
-				}				
-				return entry;
+					return entry;
+				}
 			}
 		}
 		return null;
@@ -210,7 +207,7 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	/**
 	 * Returns the archive to search in.
 	 * @return the {@link ZipFile} to search in
-	 * 
+	 *
 	 * @throws CoreException if unable to access the archive
 	 */
 	private ZipFile getArchive() throws CoreException {
@@ -219,9 +216,9 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 		} catch (IOException e) {
 			File file = new File(fArchivePath);
 			if (file.exists()) {
-				abort(MessageFormat.format(SourceLookupMessages.ExternalArchiveSourceContainer_2, new String[]{fArchivePath}), e);
+				abort(MessageFormat.format(SourceLookupMessages.ExternalArchiveSourceContainer_2, new Object[] { fArchivePath }), e);
 			} else {
-				warn(MessageFormat.format(SourceLookupMessages.ExternalArchiveSourceContainer_1, new String[]{fArchivePath}), e);
+				warn(MessageFormat.format(SourceLookupMessages.ExternalArchiveSourceContainer_1, new Object[] { fArchivePath }), e);
 			}
 		}
 		return null;
@@ -230,20 +227,22 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
+	@Override
 	public String getName() {
 		return fArchivePath;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
+	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
-	
+
 	/**
 	 * Returns whether root paths are automatically detected in this
 	 * archive source container.
-	 *  
+	 *
 	 * @return whether root paths are automatically detected in this
 	 * archive source container
 	 */
@@ -253,6 +252,7 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof ExternalArchiveSourceContainer &&
 			((ExternalArchiveSourceContainer)obj).getName().equals(getName());
@@ -260,19 +260,21 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getName().hashCode();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (fPotentialRoots != null) {
 			fPotentialRoots.clear();
 		}
 		fRoots.clear();
-	}	
+	}
 }

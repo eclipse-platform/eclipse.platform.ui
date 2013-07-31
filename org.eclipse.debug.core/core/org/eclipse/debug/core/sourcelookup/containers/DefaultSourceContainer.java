@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,13 +24,13 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
  * for a launch configuration on each launch using a launch configuration's
  * associated source path computer.
  * <p>
- * Clients may instantiate this class. 
+ * Clients may instantiate this class.
  * </p>
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class DefaultSourceContainer extends CompositeSourceContainer {  
-	
+public class DefaultSourceContainer extends CompositeSourceContainer {
+
 	/**
 	 * Unique identifier for the default source container type
 	 * (value <code>org.eclipse.debug.core.containerType.default</code>).
@@ -38,29 +38,31 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 	public static final String TYPE_ID = DebugPlugin.getUniqueIdentifier() + ".containerType.default"; //$NON-NLS-1$
 
 	/**
-	 * Constructs a default source container. 
+	 * Constructs a default source container.
 	 */
 	public DefaultSourceContainer() {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof DefaultSourceContainer;
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getClass().hashCode();
-	}	
-	
+	}
+
 	/**
 	 * Returns the launch configuration for which a default source lookup
 	 * path will be computed, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the launch configuration for which a default source lookup
 	 * path will be computed, or <code>null</code>
 	 */
@@ -71,18 +73,19 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
+	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
-	
+
 	/**
 	 * Returns the source path computer to use, or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @return the source path computer to use, or <code>null</code>
 	 * if none
 	 */
@@ -97,13 +100,15 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
+	@Override
 	public String getName() {
-		return SourceLookupMessages.DefaultSourceContainer_0; 
+		return SourceLookupMessages.DefaultSourceContainer_0;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
+	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		ISourcePathComputer sourcePathComputer = getSourcePathComputer();
 		if (sourcePathComputer != null) {
@@ -112,7 +117,7 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 				return sourcePathComputer.computeSourceContainers(config, null);
 			}
 		}
-		
+
 		return new ISourceContainer[0];
 	}
 }

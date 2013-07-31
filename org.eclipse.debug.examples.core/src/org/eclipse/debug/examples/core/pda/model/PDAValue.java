@@ -35,6 +35,7 @@ public class PDAValue extends PDADebugElement implements IValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		try {
 			Integer.parseInt(fValue);
@@ -46,18 +47,21 @@ public class PDAValue extends PDADebugElement implements IValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
+	@Override
 	public String getValueString() throws DebugException {
 		return fValue;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#isAllocated()
 	 */
+	@Override
 	public boolean isAllocated() throws DebugException {
 		return true;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
+	@Override
 	public IVariable[] getVariables() throws DebugException {
 	    PDAStackFrame frame = fVariable.getStackFrame();
 	    PDAListResult result =  (PDAListResult) sendCommand(
@@ -72,6 +76,7 @@ public class PDAValue extends PDADebugElement implements IValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
 	 */
+	@Override
 	public boolean hasVariables() throws DebugException {
 	    if (getVariables().length != 0) {
 	        return true;
@@ -85,14 +90,16 @@ public class PDAValue extends PDADebugElement implements IValue {
 	 *  (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         return obj instanceof PDAValue && ((PDAValue)obj).fValue.equals(fValue);
     }
     /*
      *  (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return fValue.hashCode();
     }
     

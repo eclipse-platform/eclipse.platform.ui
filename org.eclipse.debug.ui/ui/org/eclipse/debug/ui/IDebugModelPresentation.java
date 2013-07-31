@@ -111,6 +111,7 @@ public interface IDebugModelPresentation extends ILabelProvider, ISourcePresenta
 	 *    image should be used
 	 * @see ILabelProvider
 	 */
+	@Override
 	public Image getImage(Object element);
 	/**
 	 * Returns a label for the element, or <code>null</code> if a default
@@ -121,6 +122,7 @@ public interface IDebugModelPresentation extends ILabelProvider, ISourcePresenta
 	 *    label should be used
 	 * @see ILabelProvider
 	 */
+	@Override
 	public String getText(Object element);
 	
 	/**

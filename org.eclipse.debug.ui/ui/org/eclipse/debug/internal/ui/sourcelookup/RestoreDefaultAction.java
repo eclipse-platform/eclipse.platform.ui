@@ -30,6 +30,7 @@ public class RestoreDefaultAction extends SourceContainerAction {
 	/**
 	 * @see IAction#run()
 	 */
+	@Override
 	public void run() {		
 		ISourceContainer[] containers = new ISourceContainer[1];
 		containers[0] = new DefaultSourceContainer();
@@ -45,6 +46,7 @@ public class RestoreDefaultAction extends SourceContainerAction {
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		//disable if selection is empty, default already present, or non-root node selected
 		ISourceContainer[] containers = getViewer().getEntries();

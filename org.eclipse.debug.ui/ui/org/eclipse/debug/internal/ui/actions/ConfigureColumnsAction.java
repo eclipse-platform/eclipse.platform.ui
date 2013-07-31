@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.actions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +44,7 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((IColumnPresentation)inputElement).getAvailableColumns();
 		}
@@ -52,12 +52,14 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {			
 		}
 		
@@ -65,12 +67,13 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
 	
 	class ColumnLabelProvider extends LabelProvider {
 		
-		private Map fImages = new HashMap();
+		private Map<ImageDescriptor, Image> fImages = new HashMap<ImageDescriptor, Image>();
 
+		@Override
 		public Image getImage(Object element) {
 			ImageDescriptor imageDescriptor = fViewer.getColumnPresentation().getImageDescriptor((String)element);
 			if (imageDescriptor != null) {
-				Image image = (Image) fImages.get(imageDescriptor);
+				Image image = fImages.get(imageDescriptor);
 				if (image == null) {
 					image = imageDescriptor.createImage();
 					fImages.put(imageDescriptor, image);
@@ -80,15 +83,15 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
 			return null;
 		}
 
+		@Override
 		public String getText(Object element) {
 			return fViewer.getColumnPresentation().getHeader((String)element);
 		}
 
+		@Override
 		public void dispose() {
 			super.dispose();
-			Iterator iterator = fImages.values().iterator();
-			while (iterator.hasNext()) {
-				Image image = (Image) iterator.next();
+			for (Image image : fImages.values()) {
 				image.dispose();
 			}
 			fImages.clear();
@@ -108,6 +111,7 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
+	@Override
 	public void update() {
 		setEnabled(fViewer.isShowColumns());
 	}
@@ -115,6 +119,7 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		ListSelectionDialog dialog = new ListSelectionDialog(
 				fViewer.getControl().getShell(),
@@ -124,7 +129,7 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
 				ActionMessages.ConfigureColumnsAction_1);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.CONFIGURE_COLUMNS_DIALOG);
 		String[] visibleColumns = fViewer.getVisibleColumns();
-		List initialSelection = new ArrayList(visibleColumns.length);
+		List<String> initialSelection = new ArrayList<String>(visibleColumns.length);
 		for (int i = 0; i < visibleColumns.length; i++) {
 			initialSelection.add(visibleColumns[i]);
 		}

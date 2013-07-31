@@ -84,6 +84,7 @@ abstract public class AbstractTextRendering extends AbstractTableRendering {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.AbstractTableRendering#getString(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[])
 	 */
+	@Override
 	public String getString(String dataType, BigInteger address,  MemoryByte[] data) {
 		try {
 			String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
@@ -127,6 +128,7 @@ abstract public class AbstractTextRendering extends AbstractTableRendering {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.AbstractTableRendering#getBytes(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[], java.lang.String)
 	 */
+	@Override
 	public byte[] getBytes(String dataType, BigInteger address, MemoryByte[] currentValues, String data) {
 		try {
 			

@@ -85,6 +85,7 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.Launch#canTerminate()
 	 */
+	@Override
 	public boolean canTerminate() {
 		return getSequencer().isOpen();
 	}
@@ -92,6 +93,7 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.Launch#isTerminated()
 	 */
+	@Override
 	public boolean isTerminated() {
 		if (fSequencer != null) {
 			return !fSequencer.isOpen();
@@ -102,6 +104,7 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.Launch#terminate()
 	 */
+	@Override
 	public void terminate() throws DebugException {
 		getSequencer().stop();
 		getSequencer().close();
@@ -112,6 +115,7 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
 	 */
+	@Override
 	public boolean canResume() {
 		return isSuspended();
 	}
@@ -119,6 +123,7 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
 	 */
+	@Override
 	public boolean canSuspend() {
 		if (fSequencer != null) {
 			return fSequencer.isRunning();
@@ -129,6 +134,7 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
 	 */
+	@Override
 	public boolean isSuspended() {
 		if (fSequencer != null) {
 			return fSequencer.isOpen() & !fSequencer.isRunning();
@@ -139,6 +145,7 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
+	@Override
 	public void resume() throws DebugException {
 		getSequencer().start();
 		fireChanged();
@@ -148,6 +155,7 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
+	@Override
 	public void suspend() throws DebugException {
 		getSequencer().stop();
 		fireChanged();

@@ -37,11 +37,13 @@ public class DefaultVariableViewModelProxy extends EventHandlerModelProxy {
 		fFrame = frame;
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 		fFrame = null;
 	}
 
+	@Override
 	protected DebugEventHandler[] createEventHandlers() {
 		return new DebugEventHandler[] { new VariablesViewEventHandler(this, fFrame) };
 	}
@@ -49,6 +51,7 @@ public class DefaultVariableViewModelProxy extends EventHandlerModelProxy {
    /* (non-Javadoc)
     * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#containsEvent(org.eclipse.debug.core.DebugEvent)
     */
+	@Override
 	protected synchronized boolean containsEvent(DebugEvent event) {
 		if (!isDisposed()) {
 	        Object source = event.getSource();

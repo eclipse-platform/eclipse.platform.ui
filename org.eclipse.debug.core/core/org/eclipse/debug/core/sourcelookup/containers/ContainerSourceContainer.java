@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,14 +44,14 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 
 	private IContainer fContainer = null;
 	private boolean fSubfolders = false;
-	
+
 	private URI fRootURI = null;
 	private IFileStore fRootFile = null;
 	private IWorkspaceRoot fRoot = null;
 
 	/**
-	 * Constructs a source container on the given workspace container. 
-	 * 
+	 * Constructs a source container on the given workspace container.
+	 *
 	 * @param container the container to search for source in
 	 * @param subfolders whether nested folders should be searched
 	 *  for source elements
@@ -68,29 +68,30 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 			fRoot = ResourcesPlugin.getWorkspace().getRoot();
 		}
 	}
-	
+
 	/**
 	 * Returns the workspace container this source container is
 	 * rooted at.
-	 *  
+	 *
 	 * @return the workspace container this source container is
 	 * rooted at
 	 */
 	public IContainer getContainer() {
 		return fContainer;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
+	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
-		ArrayList sources = new ArrayList();
+		ArrayList<Object> sources = new ArrayList<Object>();
 
-		// An IllegalArgumentException is thrown from the "getFile" method 
-		// if the path created by appending the file name to the container 
+		// An IllegalArgumentException is thrown from the "getFile" method
+		// if the path created by appending the file name to the container
 		// path doesn't conform with Eclipse resource restrictions.
-		// To prevent the interruption of the search procedure we check 
-		// if the path is valid before passing it to "getFile".		
+		// To prevent the interruption of the search procedure we check
+		// if the path is valid before passing it to "getFile".
 		if ( validateFile(name) ) {
 			IFile file = fContainer.getFile(new Path(name));
 			if (file.exists()) {
@@ -114,13 +115,13 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
     						}
     					} else if (files.length > 0) {
     						sources.add(files[0]);
-    					}					
+    					}
     				}
 				}
 			}
 		}
 
-		//check sub-folders		
+		//check sub-folders
 		if ((isFindDuplicates() && fSubfolders) || (sources.isEmpty() && fSubfolders)) {
 			ISourceContainer[] containers = getSourceContainers();
 			for (int i=0; i < containers.length; i++) {
@@ -129,41 +130,46 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 					continue;
 				}
 				if (isFindDuplicates()) {
-					for(int j=0; j < objects.length; j++)
+					for(int j=0; j < objects.length; j++) {
 						sources.add(objects[j]);
+					}
 				} else {
 					sources.add(objects[0]);
 					break;
 				}
 			}
-		}			
-		
-		if(sources.isEmpty())
+		}
+
+		if(sources.isEmpty()) {
 			return EMPTY;
+		}
 		return sources.toArray();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
 	 */
-	public String getName() {		
-		return getContainer().getName(); 
+	@Override
+	public String getName() {
+		return getContainer().getName();
 	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj != null && obj instanceof ContainerSourceContainer) {
 			ContainerSourceContainer loc = (ContainerSourceContainer) obj;
 			return loc.getContainer().equals(getContainer());
-		}	
+		}
 		return false;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getContainer().hashCode();
 	}
@@ -171,36 +177,38 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#isComposite()
 	 */
-	public boolean isComposite() {	
+	@Override
+	public boolean isComposite() {
 		return fSubfolders;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
+	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		if(fSubfolders) {
 			IResource[] resources = getContainer().members();
-			List list = new ArrayList(resources.length);
+			List<ISourceContainer> list = new ArrayList<ISourceContainer>(resources.length);
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
 				if (resource.getType() == IResource.FOLDER) {
 					list.add(new FolderSourceContainer((IFolder)resource, fSubfolders));
 				}
 			}
-			ISourceContainer[] containers = (ISourceContainer[]) list.toArray(new ISourceContainer[list.size()]);
+			ISourceContainer[] containers = list.toArray(new ISourceContainer[list.size()]);
 			for (int i = 0; i < containers.length; i++) {
 				ISourceContainer container = containers[i];
 				container.init(getDirector());
-			}			
+			}
 			return containers;
 		}
 		return new ISourceContainer[0];
 	}
 
 	/**
-	 * Validates the given string as a path for a file in this container. 
-	 * 
+	 * Validates the given string as a path for a file in this container.
+	 *
 	 * @param name path name
 	 * @return <code>true</code> if the path is valid <code>false</code> otherwise
 	 */

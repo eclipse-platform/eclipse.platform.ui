@@ -51,6 +51,7 @@ public class ShowTypesAction extends Action {
 	/**
 	 * @see Action#run()
 	 */
+	@Override
 	public void run() {
 		valueChanged(isChecked());
 	}
@@ -70,6 +71,7 @@ public class ShowTypesAction extends Action {
 				treeViewer.getPresentationContext().setProperty(IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES, typesStatus);
 			}
 			BusyIndicator.showWhile(viewer.getControl().getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 					viewer.refresh();					
 				}
@@ -88,6 +90,7 @@ public class ShowTypesAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#setEnabled(boolean)
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 		if (enabled) {

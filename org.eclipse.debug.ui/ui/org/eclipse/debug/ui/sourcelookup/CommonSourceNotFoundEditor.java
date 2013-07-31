@@ -75,18 +75,21 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
 	 */
+	@Override
 	public void doSaveAs() {
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setSite(site);
 		setInput(input);
@@ -96,6 +99,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		return false;
 	}
@@ -103,6 +107,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
 	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
@@ -110,6 +115,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		GridLayout topLayout = new GridLayout();
 		GridData data = new GridData();	
@@ -150,6 +156,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		button.setLayoutData(data);
 		button.setText(SourceLookupUIMessages.addSourceLocation_addButton2); 
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				editSourceLookupPath();
 			}
@@ -199,6 +206,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		if (fText != null) {
 			fText.setFocus();
@@ -208,6 +216,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#setInput(org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	public void setInput(IEditorInput input) {
 		super.setInput(input);
 		setPartName(input.getName());
@@ -234,6 +243,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	{
 		final IEditorPart editor = this;
 		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				IWorkbenchWindow activeWorkbenchWindow = DebugUIPlugin.getActiveWorkbenchWindow();
 				if (activeWorkbenchWindow != null) {
@@ -252,6 +262,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fLaunchesListener != null)
 			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fLaunchesListener);
@@ -282,6 +293,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	protected void initialize()
 	{
 		fLaunchesListener = new ILaunchesListener2() {
+			@Override
 			public void launchesTerminated(ILaunch[] launches) {
 				Object artifact = getArtifact();
 				if (artifact instanceof IDebugElement) {
@@ -296,13 +308,16 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 				}
 			}
 
+			@Override
 			public void launchesRemoved(ILaunch[] launches) {
 				launchesTerminated(launches);
 			}
 
+			@Override
 			public void launchesAdded(ILaunch[] launches) {
 			}
 
+			@Override
 			public void launchesChanged(ILaunch[] launches) {
 			}}; 
 			

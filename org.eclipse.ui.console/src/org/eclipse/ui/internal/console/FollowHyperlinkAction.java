@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.ui.console.TextConsoleViewer;
 
 /**
  * Follows a hyperlink in the console
- * 
+ *
  * @since 3.1
  */
 public class FollowHyperlinkAction extends Action {
@@ -28,8 +28,8 @@ public class FollowHyperlinkAction extends Action {
 	 * Constructs a follow link action
 	 */
 	public FollowHyperlinkAction(TextConsoleViewer consoleViewer) {
-	    super(ConsoleMessages.FollowHyperlinkAction_0); 
-		setToolTipText(ConsoleMessages.FollowHyperlinkAction_1); 
+	    super(ConsoleMessages.FollowHyperlinkAction_0);
+		setToolTipText(ConsoleMessages.FollowHyperlinkAction_1);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IConsoleHelpContextIds.CONSOLE_OPEN_LINK_ACTION);
 		this.viewer = consoleViewer;
 	}
@@ -37,14 +37,16 @@ public class FollowHyperlinkAction extends Action {
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.IAction#isEnabled()
      */
-    public boolean isEnabled() {
+	@Override
+	public boolean isEnabled() {
         return viewer.getHyperlink() != null;
     }
-	
+
     /*
      *  (non-Javadoc)
      * @see org.eclipse.jface.action.IAction#run()
      */
+	@Override
 	public void run() {
 		IHyperlink link = viewer.getHyperlink();
 		if (link != null) {

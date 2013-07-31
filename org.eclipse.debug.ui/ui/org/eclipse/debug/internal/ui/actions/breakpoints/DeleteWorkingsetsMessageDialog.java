@@ -62,6 +62,7 @@ public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.MessageDialog#createCustomArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createCustomArea(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout());
@@ -70,7 +71,9 @@ public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 		fDeleteWS.setText(ActionMessages.DeleteWorkingsetsMessageDialog_0);
 		fDeleteWS.setFont(font);
 		fDeleteWS.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				getButton(0).setEnabled(fDeleteWS.getSelection() || fDeleteBPS.getSelection());
 			}
@@ -80,7 +83,9 @@ public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 		fDeleteBPS.setText(ActionMessages.DeleteWorkingsetsMessageDialog_1);
 		fDeleteBPS.setFont(font);
 		fDeleteBPS.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				getButton(0).setEnabled(fDeleteWS.getSelection() || fDeleteBPS.getSelection());
 			}
@@ -94,6 +99,7 @@ public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.MessageDialog#buttonPressed(int)
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if(buttonId == OK) {
 			fDeleteBreakpoints = fDeleteBPS.getSelection();

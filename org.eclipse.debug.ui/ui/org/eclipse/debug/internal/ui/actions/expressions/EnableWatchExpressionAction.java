@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public class EnableWatchExpressionAction implements IViewActionDelegate, IAction
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
@@ -45,9 +46,10 @@ public class EnableWatchExpressionAction implements IViewActionDelegate, IAction
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		if (fSelection instanceof IStructuredSelection) {
-			Iterator iter= ((IStructuredSelection) fSelection).iterator();
+			Iterator<?> iter = ((IStructuredSelection) fSelection).iterator();
 			IWatchExpression expression;
 			while (iter.hasNext()) {
 				expression= getWatchExpression(iter.next());
@@ -74,11 +76,12 @@ public class EnableWatchExpressionAction implements IViewActionDelegate, IAction
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fSelection= selection;
 		if (fSelection instanceof IStructuredSelection) {
 			boolean enabled= false;
-			Iterator iter= ((IStructuredSelection) selection).iterator();
+			Iterator<?> iter = ((IStructuredSelection) selection).iterator();
 			while (iter.hasNext()) {
 				IWatchExpression expression = getWatchExpression(iter.next());
 				if (expression != null && expression.isEnabled() != fEnable) {
@@ -106,6 +109,7 @@ public class EnableWatchExpressionAction implements IViewActionDelegate, IAction
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
@@ -113,6 +117,7 @@ public class EnableWatchExpressionAction implements IViewActionDelegate, IAction
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 		fAction = action;
 	}
@@ -120,6 +125,7 @@ public class EnableWatchExpressionAction implements IViewActionDelegate, IAction
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
@@ -127,6 +133,7 @@ public class EnableWatchExpressionAction implements IViewActionDelegate, IAction
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];

@@ -41,6 +41,7 @@ public class PDAThreadEventHandler extends DebugEventHandler {
 		super(proxy);
 	}
 
+	@Override
 	protected void handleSuspend(DebugEvent event) {
         IThread thread = (IThread) event.getSource();
         int extras = IModelDelta.STATE;
@@ -60,28 +61,34 @@ public class PDAThreadEventHandler extends DebugEventHandler {
 		return o1.equals(o2);
 	}
 
+	@Override
 	protected void handleResume(DebugEvent event) {
 		IThread thread = (IThread) event.getSource();
 		fireDeltaAndClearTopFrame(thread, IModelDelta.STATE | IModelDelta.CONTENT);
 	}
 
+	@Override
 	protected void handleCreate(DebugEvent event) {
 		fireDeltaAndClearTopFrame((IThread) event.getSource(), IModelDelta.ADDED);
 	}
 
+	@Override
 	protected void handleTerminate(DebugEvent event) {
 		fireDeltaAndClearTopFrame((IThread) event.getSource(), IModelDelta.REMOVED);
 	}
 
+	@Override
 	protected void handleChange(DebugEvent event) {
 		fireDeltaUpdatingTopFrame((IThread) event.getSource(), IModelDelta.STATE);
 	}
 
+	@Override
 	protected void handleLateSuspend(DebugEvent suspend, DebugEvent resume) {
 		IThread thread = (IThread) suspend.getSource();
 		fireDeltaUpdatingTopFrame(thread, IModelDelta.CONTENT | IModelDelta.EXPAND);
 	}
 
+	@Override
 	protected void handleSuspendTimeout(DebugEvent event) {
 		IThread thread = (IThread) event.getSource();
 		fireDeltaAndClearTopFrame(thread, IModelDelta.CONTENT);
@@ -144,6 +151,7 @@ public class PDAThreadEventHandler extends DebugEventHandler {
     	fireDelta(delta);
 	}	
 	
+	@Override
 	protected boolean handlesEvent(DebugEvent event) {
 		return event.getSource() instanceof PDAThread;
 	}

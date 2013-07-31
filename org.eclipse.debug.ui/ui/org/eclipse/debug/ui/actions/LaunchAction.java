@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.debug.ui.actions;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -21,6 +20,8 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.Action;
@@ -31,8 +32,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.debug.internal.ui.actions.ActionMessages;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -76,6 +75,7 @@ public class LaunchAction extends Action {
 	/**
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		DebugUITools.launch(fConfiguration, fMode);
 	}
@@ -86,6 +86,7 @@ public class LaunchAction extends Action {
 	 * 
 	 * @see org.eclipse.jface.action.IAction#runWithEvent(org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(Event event) {
 		if ((event.stateMask & SWT.MOD1) > 0 && (event.stateMask & SWT.MOD2) > 0){
 			ILaunchGroup[] groups = getAllGroupsForConfiguration(fConfiguration);
@@ -95,7 +96,7 @@ public class LaunchAction extends Action {
 				if(store.getBoolean(IInternalDebugUIConstants.PREF_REMOVE_FROM_LAUNCH_HISTORY)) {
 					MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(DebugUIPlugin.getShell(), 
 							ActionMessages.LaunchAction_0, 
-							MessageFormat.format(ActionMessages.LaunchAction_1, new String[] {fConfiguration.getName()}), 
+ MessageFormat.format(ActionMessages.LaunchAction_1, new Object[] { fConfiguration.getName() }),
 							ActionMessages.LaunchAction_2, 
 							false, 
 							null, 
@@ -140,7 +141,7 @@ public class LaunchAction extends Action {
 			if(history != null) {
 				history.removeFromHistory(fConfiguration);
 			} else {
-				DebugUIPlugin.logErrorMessage(MessageFormat.format("Unable to remove configuration [{0}] from launch history. The launch history for mode [{1}] does not exist.", new String[] {config.getName(), groups[i].getMode()})); //$NON-NLS-1$
+				DebugUIPlugin.logErrorMessage(MessageFormat.format("Unable to remove configuration [{0}] from launch history. The launch history for mode [{1}] does not exist.", new Object[] { config.getName(), groups[i].getMode() })); //$NON-NLS-1$
 			}
 		}
 	}
@@ -153,15 +154,13 @@ public class LaunchAction extends Action {
 	 * @since 3.4 
 	 */
 	private ILaunchGroup[] getAllGroupsForConfiguration(ILaunchConfiguration config) {
-		ArrayList list = new ArrayList();
+		ArrayList<ILaunchGroup> list = new ArrayList<ILaunchGroup>();
 		try {
 			ILaunchConfigurationType type = config.getType();
-			Set modes = type.getSupportedModeCombinations();
+			Set<Set<String>> modes = type.getSupportedModeCombinations();
 			String mode = null;
 			ILaunchGroup group = null;
-			Set modesets = null;
-			for(Iterator iter = modes.iterator(); iter.hasNext();) {
-				modesets = (Set) iter.next();
+			for (Set<String> modesets : modes) {
 				if(modesets.size() == 1) {
 					mode = (String) modesets.toArray()[0];
 					group = DebugUITools.getLaunchGroup(config, mode);
@@ -172,7 +171,6 @@ public class LaunchAction extends Action {
 			}
 		}
 		catch(CoreException ce) {}
-		return (ILaunchGroup[]) list.toArray(new ILaunchGroup[list.size()]);
+		return list.toArray(new ILaunchGroup[list.size()]);
 	}
-
 }

@@ -31,6 +31,7 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
+	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore prefs = DebugUIPlugin.getDefault().getPreferenceStore();
 //		Debug PreferencePage

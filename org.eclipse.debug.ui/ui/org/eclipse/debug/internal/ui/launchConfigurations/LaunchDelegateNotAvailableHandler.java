@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -30,6 +31,7 @@ public class LaunchDelegateNotAvailableHandler implements IStatusHandler {
 	/**
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
+	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		if(source instanceof Object[]) {
 			Object[] infos = (Object[]) source;
@@ -38,8 +40,12 @@ public class LaunchDelegateNotAvailableHandler implements IStatusHandler {
 				final String mode = (String) infos[1];
 				final Shell shell = DebugUIPlugin.getShell();
 				Runnable runnable = new Runnable() {
+					@Override
 					public void run() {
-						DebugUITools.openLaunchConfigurationDialog(shell, config, DebugUITools.getLaunchGroup(config, mode).getIdentifier(), null);
+						ILaunchGroup group = DebugUITools.getLaunchGroup(config, mode);
+						if (group != null) {
+							DebugUITools.openLaunchConfigurationDialog(shell, config, group.getIdentifier(), null);
+						}
 					}
 				};
 				DebugUIPlugin.getStandardDisplay().asyncExec(runnable);

@@ -76,6 +76,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 			fMsg = DebugUIMessages.FormatTableRenderingAction_1;
 		}
 		
+		@Override
 		protected Control createDialogArea(Composite parent) {
 			getShell().setText(DebugUIMessages.FormatTableRenderingAction_0);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".FormatTableRenderingDialog_context"); //$NON-NLS-1$
@@ -111,6 +112,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 			
 			fRowControl.addSelectionListener(new SelectionListener() {
 
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (fCurrentRowIdx != fRowControl.getSelectionIndex())
 					{
@@ -120,6 +122,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 					}
 				}
 
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}});
 			
@@ -141,6 +144,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 			
 			fColumnControl.addSelectionListener(new SelectionListener() {
 
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (fCurrentColIdx != fColumnControl.getSelectionIndex())
 					{
@@ -150,6 +154,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 					}
 				}
 
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}});
 			
@@ -174,10 +179,12 @@ public class FormatTableRenderingDialog extends TrayDialog
 			
 			fDefaultButton.addSelectionListener(new SelectionListener() {
 
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					saveDefaults();
 				}
 
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 					
 				}});
@@ -243,9 +250,11 @@ public class FormatTableRenderingDialog extends TrayDialog
 			Button restoreButton = new Button(composite, SWT.NONE);
 			restoreButton.setText(DebugUIMessages.FormatTableRenderingAction_6);
 			restoreButton.addSelectionListener(new SelectionListener() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					restoreDefaults();
 				}
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}});
 			data = new GridData();
@@ -258,6 +267,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 			return composite;
 		}
 
+		@Override
 		protected void okPressed() {
 			int idx = fColumnControl.getSelectionIndex();
 			fColumnSize = fColumnSizes[idx];
@@ -521,6 +531,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 			fCurrentRowIdx = populateControl(row, fRowSizes, fRowControl);
 		}
 
+		@Override
 		protected Control createButtonBar(Composite parent) {
 			Control ret =  super.createButtonBar(parent);
 			if (fDisableCancel)

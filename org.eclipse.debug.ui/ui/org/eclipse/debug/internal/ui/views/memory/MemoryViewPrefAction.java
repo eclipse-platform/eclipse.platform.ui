@@ -24,37 +24,41 @@ import org.eclipse.ui.IViewPart;
 
 public class MemoryViewPrefAction implements IViewActionDelegate {
 
+	@Override
 	public void init(IViewPart view) {
 
 	}
 
+	@Override
 	public void run(IAction action) {
-		
+
 		PreferenceManager prefManager = new PreferenceManager();
-		
+
 		ResetMemoryBlockPreferencePage page = new ResetMemoryBlockPreferencePage();
-		IPreferenceNode node = new PreferenceNode("org.eclipse.debug.ui.memory.resetMemoryBlock", page);  //$NON-NLS-1$
+		IPreferenceNode node = new PreferenceNode("org.eclipse.debug.ui.memory.resetMemoryBlock", page); //$NON-NLS-1$
 		prefManager.addToRoot(node);
-		
+
 		SetPaddedStringPreferencePage page2 = new SetPaddedStringPreferencePage();
-		IPreferenceNode node2 = new PreferenceNode("org.eclipse.debug.ui.memory.setPaddedString", page2);  //$NON-NLS-1$
+		IPreferenceNode node2 = new PreferenceNode("org.eclipse.debug.ui.memory.setPaddedString", page2); //$NON-NLS-1$
 		prefManager.addToRoot(node2);
 
 		CodePagesPreferencePage page3 = new CodePagesPreferencePage();
-		IPreferenceNode node3 = new PreferenceNode("org.eclipse.debug.ui.memory.codePages", page3);  //$NON-NLS-1$
+		IPreferenceNode node3 = new PreferenceNode("org.eclipse.debug.ui.memory.codePages", page3); //$NON-NLS-1$
 		prefManager.addToRoot(node3);
-		
+
 		final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), prefManager);
 
 		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				dialog.create();
 				dialog.open();
 			}
-		});		
+		});
 
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 
 	}

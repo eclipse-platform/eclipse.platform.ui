@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,9 +106,11 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	 * @since 3.3
 	 */
 	private ILaunchLabelChangedListener fLabelListener = new ILaunchLabelChangedListener() {
+		@Override
 		public ILaunchGroup getLaunchGroup() {
 			return fLaunchGroup;
 		}
+		@Override
 		public void labelChanged() {
 			updateTooltip();
 		}
@@ -215,7 +217,8 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 		} else {
 			label= ActionMessages.AbstractLaunchHistoryAction_4; 
 		}
-		return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_0, new String[] {label, launchName}); 
+		return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_0, new Object[] {
+				label, launchName });
 	}
 	
 	/**
@@ -225,7 +228,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	 * @return the string for the tool tip
 	 */
 	private String getToolTip() {
-		String launchName = getLaunchingResourceManager().getLaunchLabel(fLaunchGroup);
+		String launchName = DebugUIPlugin.getDefault().getLaunchingResourceManager().getLaunchLabel(fLaunchGroup);
 		if(launchName == null) {
 			return DebugUIPlugin.removeAccelerators(internalGetHistory().getLaunchGroup().getLabel());
 		}
@@ -241,16 +244,18 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 			label = ActionMessages.AbstractLaunchHistoryAction_4; 
 		}
 		if(IInternalDebugCoreConstants.EMPTY_STRING.equals(launchName)) {
-			return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_5, new String[] {label});
+			return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_5, new Object[] { label });
 		}
 		else {
-			return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_0, new String[] {label, launchName});
+			return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_0, new Object[] {
+					label, launchName });
 		}
 	}
 
 	/**
 	 * @see ILaunchHistoryChangedListener#launchHistoryChanged()
 	 */
+	@Override
 	public void launchHistoryChanged() {
 		fRecreateMenu = true;
 	}
@@ -258,10 +263,11 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {
 		setMenu(null);
 		getLaunchConfigurationManager().removeLaunchHistoryListener(this);
-		getLaunchingResourceManager().removeLaunchLabelChangedListener(fLabelListener);
+		DebugUIPlugin.getDefault().getLaunchingResourceManager().removeLaunchLabelChangedListener(fLabelListener);
 	}
 	
 	/**
@@ -277,6 +283,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate#getMenu(org.eclipse.swt.widgets.Control)
 	 */
+	@Override
 	public Menu getMenu(Control parent) {
 		setMenu(new Menu(parent));
 		fillMenu(fMenu);
@@ -287,6 +294,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate2#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
+	@Override
 	public Menu getMenu(Menu parent) {
 		setMenu(new Menu(parent));
 		fillMenu(fMenu);
@@ -301,6 +309,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 		// Add listener to re-populate the menu each time
 		// it is shown because of dynamic history list
 		fMenu.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuShown(MenuEvent e) {
 				if (fRecreateMenu) {
 					Menu m = (Menu)e.widget;
@@ -378,6 +387,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		// do nothing - this is just a menu
 	}
@@ -386,6 +396,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 * @since 3.6
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		if(((event.stateMask & SWT.MOD1) > 0) && (event.type != SWT.KeyDown)) {
 			ILaunchConfiguration configuration = null;
@@ -395,7 +406,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 			} else {
 				configuration = getLaunchConfigurationManager().getFilteredLastLaunch(groupid);
 			}
-			ArrayList configs = new ArrayList(1);
+			ArrayList<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>(1);
 			if (configuration != null){
 				configs.add(configuration);
 			}
@@ -418,21 +429,16 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	private ILaunchConfiguration resolveContextConfiguration() {
 		SelectedResourceManager srm = SelectedResourceManager.getDefault();
 		IStructuredSelection selection = srm.getCurrentSelection();
-		List shortcuts = null;
+		List<LaunchShortcutExtension> shortcuts = null;
 		IResource resource = srm.getSelectedResource();
-		shortcuts = getLaunchingResourceManager().getShortcutsForSelection(
-				selection, 
-				getMode());
+		LaunchingResourceManager lrm = DebugUIPlugin.getDefault().getLaunchingResourceManager();
+		shortcuts = lrm.getShortcutsForSelection(selection, getMode());
 		if(resource == null) {
-			resource = getLaunchingResourceManager().getLaunchableResource(shortcuts, selection);
+			resource = lrm.getLaunchableResource(shortcuts, selection);
 		}
-		List configs = getLaunchingResourceManager().getParticipatingLaunchConfigurations(
-				selection, 
-				resource, 
-				shortcuts, 
-				getMode());
+		List<ILaunchConfiguration> configs = lrm.getParticipatingLaunchConfigurations(selection, resource, shortcuts, getMode());
 		if(configs.size() == 1) {
-			return (ILaunchConfiguration) configs.get(0);
+			return configs.get(0);
 		} else if(configs.size() > 1) {
 			// launch most recently launched config
 			ILaunchConfiguration config = getLaunchConfigurationManager().getMRUConfiguration(configs, fLaunchGroup, resource);
@@ -455,7 +461,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 			}
 			return null;
 		} else if(shortcuts.size() == 1) {
-			LaunchShortcutExtension ext = (LaunchShortcutExtension) shortcuts.get(0);
+			LaunchShortcutExtension ext = shortcuts.get(0);
 			return createConfigurationFromTypes(ext.getAssociatedConfigurationTypes());
 		}
 		return getLaunchConfigurationManager().getFilteredLastLaunch(getLaunchGroupIdentifier());
@@ -467,7 +473,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	 * @return a new {@link ILaunchConfiguration}
 	 * @since 3.6
 	 */
-	private ILaunchConfiguration createConfigurationFromTypes(Set types) {
+	private ILaunchConfiguration createConfigurationFromTypes(Set<String> types) {
 		//context launching always takes the first type, so we do that here as well
 		if(types != null && types.size() > 0) {
 			try {
@@ -486,6 +492,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 * @since 3.6
 	 */
+	@Override
 	public void init(IAction action) {
 		// do nothing by default
 	}	
@@ -493,6 +500,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection){
 		if (fAction == null) {
 			initialize(action);
@@ -502,9 +510,10 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		if (this instanceof AbstractLaunchToolbarAction) {
-			getLaunchingResourceManager().addLaunchLabelUpdateListener(fLabelListener);
+			DebugUIPlugin.getDefault().getLaunchingResourceManager().addLaunchLabelUpdateListener(fLabelListener);
 		}
 	}
 	
@@ -516,6 +525,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	 *  for clients of the debug platform. Instead, use <code>getHistory()</code>,
 	 *  <code>getFavorites()</code>, and <code>getLastLaunch()</code>.
 	 */
+	@Deprecated
 	protected LaunchHistory getLaunchHistory() {
 		return getLaunchConfigurationManager().getLaunchHistory(getLaunchGroupIdentifier());
 	} 
@@ -574,15 +584,6 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	 */
 	private LaunchConfigurationManager getLaunchConfigurationManager() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
-	}
-	
-	/**
-	 * Returns the <code>ContextualLaunchingResourceManager</code>
-	 * 
-	 * @return <code>ContextualLaunchingResourceManager</code>
-	 */
-	private LaunchingResourceManager getLaunchingResourceManager() {
-		return DebugUIPlugin.getDefault().getLaunchingResourceManager();
 	}
 	
 	/**

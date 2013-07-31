@@ -12,7 +12,6 @@
 package org.eclipse.debug.internal.ui.sourcelookup;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -51,7 +50,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	//the duplicates checkbox
 	protected Button fDuplicatesButton;
 	//the source actions - up, down, add, remove, restore
-	protected List fActions = new ArrayList(6);
+	protected List<SourceContainerAction> fActions = new ArrayList<SourceContainerAction>(6);
 	//the director that will be used by the tab to manage/store the containers
 	protected ISourceLookupDirector fLocator;
 	
@@ -64,6 +63,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	 * 
 	 * @param parent the parent widget of this control
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
@@ -79,6 +79,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 		
 		fDuplicatesButton = SWTFactory.createCheckButton(comp, SourceLookupUIMessages.sourceTab_searchDuplicateLabel, null, false, 2);
 		fDuplicatesButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				setDirty(true);
 				updateLaunchConfigurationDialog();
@@ -136,9 +137,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	 * Re-targets actions to the given viewer
 	 */
 	protected void retargetActions(SourceContainerViewer viewer) {
-		Iterator actions = fActions.iterator();
-		while (actions.hasNext()) {
-			SourceContainerAction action = (SourceContainerAction) actions.next();
+		for (SourceContainerAction action : fActions) {
 			action.setViewer(viewer);
 		}
 	}
@@ -147,6 +146,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	 * Initializes this control based on the settings in the given
 	 * launch configuration.
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		if (fLocator != null) {
 			fLocator.dispose();
@@ -233,6 +233,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	 * @param workingCopy the working copy of the configuration that these values should be stored in, may be null.
 	 * 	If null, will be written into a working copy of the configuration referenced by the director.
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {		
 		if (isDirty()) {
 			if (fLocator == null) {
@@ -300,6 +301,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#setDirty(boolean)
 	 */
+	@Override
 	public void setDirty(boolean dirty) {
 		super.setDirty(dirty);
 		
@@ -308,6 +310,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return SourceLookupUIMessages.sourceTab_tabTitle; 
 	}
@@ -315,11 +318,13 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */
+	@Override
 	protected void updateLaunchConfigurationDialog() {
 		if (getLaunchConfigurationDialog() != null) {
 			super.updateLaunchConfigurationDialog();
@@ -333,7 +338,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	 * @param affectedWorkingSet - the working set being removed
 	 */
 	private void validateWorkingSetSourceContainers(IWorkingSet affectedWorkingSet) {
-		List sourceContainers = (List) fPathViewer.getInput();
+		List<?> sourceContainers = (List<?>) fPathViewer.getInput();
 		if (sourceContainers != null) {
 			for (int i = 0; i < sourceContainers.size(); i++) {
 				if (sourceContainers.get(i) instanceof WorkingSetSourceContainer) {
@@ -350,20 +355,23 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	 * Listen to working set changes
 	 * @param event
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		//if the PropertyChangeEvent has changeId CHANGE_WORKING_SET_REMOVE, 
 		//validate the list to make sure all working sets are valid 
 		//if the PropertyChangeEvent has changeId CHANGE_WORKING_SET_NAME_CHANGE,
 		//do nothing because the event only has newValue, since oldValue is not provided
 		//there is no way to identify which working set does the newValue corresponds to		
-		if (event.getProperty().equals(IWorkingSetManager.CHANGE_WORKING_SET_REMOVE))
-			validateWorkingSetSourceContainers((IWorkingSet) event.getOldValue());							
+		if (event.getProperty().equals(IWorkingSetManager.CHANGE_WORKING_SET_REMOVE)) {
+			validateWorkingSetSourceContainers((IWorkingSet) event.getOldValue());
+		}							
 	}
 	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		initializeFrom(workingCopy);
 	}
@@ -382,6 +390,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		//listen to changes user made to the working sets, if a working set is being removed

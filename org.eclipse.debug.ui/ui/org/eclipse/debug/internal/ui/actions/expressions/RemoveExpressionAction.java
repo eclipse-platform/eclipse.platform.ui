@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,12 +33,12 @@ public class RemoveExpressionAction extends AbstractSelectionActionDelegate {
 	protected IExpression[] getExpressions() {
 		TreeSelection selection = (TreeSelection) getSelection();
 		TreePath[] paths = selection.getPaths();
-		List expressions = new ArrayList();
+		List<IExpression> expressions = new ArrayList<IExpression>();
 		for (int i = paths.length-1; i >=0; i--) {
 			TreePath path = paths[i];
 			Object segment = path.getFirstSegment();
 			if (segment instanceof IExpression) {
-				expressions.add(segment);
+				expressions.add((IExpression) segment);
 			} else if (segment instanceof IAdaptable) {
 			    IExpression expression = (IExpression)((IAdaptable)segment).getAdapter(IExpression.class);
 			    if (expression != null) {
@@ -46,14 +46,16 @@ public class RemoveExpressionAction extends AbstractSelectionActionDelegate {
 			    }
 			}
 		}
-		return (IExpression[]) expressions.toArray(new IExpression[expressions.size()]);
+		return expressions.toArray(new IExpression[expressions.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		WorkbenchJob job = new WorkbenchJob("remove expression") { //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				IExpressionManager expManager = DebugPlugin.getDefault().getExpressionManager();
 				IExpression[] exp = getExpressions();

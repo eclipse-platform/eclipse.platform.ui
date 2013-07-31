@@ -19,7 +19,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -216,7 +215,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
      * 
      * @since 3.3
      */
-    private Set fSaveParticipants = new HashSet();
+	private Set<ISaveParticipant> fSaveParticipants = new HashSet<ISaveParticipant>();
     
 	/**
 	 * Theme listener.
@@ -240,11 +239,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 
         // Allow the user to terminate the dummy launch as a means to
         // cancel the launch while waiting for a build to finish.
-        public boolean canTerminate() {
+        @Override
+		public boolean canTerminate() {
             return true;
         }
 
-        public void terminate() throws DebugException {
+        @Override
+		public void terminate() throws DebugException {
             fJob.cancel();
         }
     }
@@ -398,6 +399,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		final Object [] ret = new Object[1];
 		final CoreException [] exc = new CoreException[1];
 		BusyIndicator.showWhile(null, new Runnable() {
+			@Override
 			public void run() {
 				try {
 					ret[0] = element.createExecutableExtension(classAttribute);
@@ -415,6 +417,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	/**
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#createImageRegistry()
 	 */
+	@Override
 	protected ImageRegistry createImageRegistry() {
 		return DebugPluginImages.initializeImageRegistry();
 	}
@@ -422,6 +425,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
             if (fProcessConsoleManager != null) {
@@ -463,8 +467,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 			ResourcesPlugin.getWorkspace().removeSaveParticipant(getUniqueIdentifier());
 			
 			if (fThemeListener != null) {
-				if (PlatformUI.isWorkbenchRunning())
+				if (PlatformUI.isWorkbenchRunning()) {
 					PlatformUI.getWorkbench().getThemeManager().removePropertyChangeListener(fThemeListener);
+				}
 				fThemeListener= null;
 			}
 			
@@ -499,13 +504,15 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		Hashtable props = new Hashtable(2);
+		Hashtable<String, String> props = new Hashtable<String, String>(2);
 		props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, getUniqueIdentifier());
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
 		ResourcesPlugin.getWorkspace().addSaveParticipant(getUniqueIdentifier(),
 				new ISaveParticipant() {
+					@Override
 					public void saving(ISaveContext saveContext) throws CoreException {
 						IEclipsePreferences node = InstanceScope.INSTANCE.getNode(getUniqueIdentifier());
 						if(node != null) {
@@ -515,23 +522,26 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 								log(e);
 							}
 						}
-						for(Iterator iter = fSaveParticipants.iterator(); iter.hasNext();) {
-							((ISaveParticipant)iter.next()).saving(saveContext);
+				for (ISaveParticipant sp : fSaveParticipants) {
+					sp.saving(saveContext);
 						}
 					}
+					@Override
 					public void rollback(ISaveContext saveContext) {
-						for(Iterator iter = fSaveParticipants.iterator(); iter.hasNext();) {
-							((ISaveParticipant)iter.next()).rollback(saveContext);
+				for (ISaveParticipant sp : fSaveParticipants) {
+					sp.rollback(saveContext);
 						}
 					}
+					@Override
 					public void prepareToSave(ISaveContext saveContext) throws CoreException {
-						for(Iterator iter = fSaveParticipants.iterator(); iter.hasNext();) {
-							((ISaveParticipant)iter.next()).prepareToSave(saveContext);
+				for (ISaveParticipant sp : fSaveParticipants) {
+					sp.prepareToSave(saveContext);
 						}
 					}
+					@Override
 					public void doneSaving(ISaveContext saveContext) {
-						for(Iterator iter = fSaveParticipants.iterator(); iter.hasNext();) {
-							((ISaveParticipant)iter.next()).doneSaving(saveContext);
+				for (ISaveParticipant sp : fSaveParticipants) {
+					sp.doneSaving(saveContext);
 						}
 					}
 				});
@@ -562,9 +572,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		if (PlatformUI.isWorkbenchRunning()) {
 			fThemeListener= new IPropertyChangeListener() {
 
+				@Override
 				public void propertyChange(PropertyChangeEvent event) {
-					if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty()))
+					if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty())) {
 						DebugUIPreferenceInitializer.setThemeBasedPreferences(getPreferenceStore(), true);
+					}
 				}
 			};
 			PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(fThemeListener);
@@ -573,6 +585,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		// do the asynchronous exec last - see bug 209920
 		getStandardDisplay().asyncExec(
 				new Runnable() {
+					@Override
 					public void run() {
 						//initialize the selected resource `
 						SelectedResourceManager.getDefault();
@@ -585,6 +598,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)
 	 */
+	@Override
 	public void optionsChanged(DebugOptions options) {
 		fgDebugTrace = options.newDebugTrace(getUniqueIdentifier());
 		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
@@ -740,7 +754,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
      * @since 3.3
      * 
      */
-    public static int openLaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, Set reservednames, IStatus status, boolean setDefaults) {
+	public static int openLaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, Set<String> reservednames, IStatus status, boolean setDefaults) {
     	LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier);
     	if (group != null) {
     		LaunchConfigurationPropertiesDialog dialog = new LaunchConfigurationPropertiesDialog(shell, configuration, group, reservednames);
@@ -783,6 +797,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	 * @deprecated Saving has been moved to the launch delegate <code>LaunchConfigurationDelegate</code> to allow for scoped saving
 	 * of resources that are only involved in the current launch, no longer the entire workspace
 	 */
+	@Deprecated
 	protected static boolean saveAllEditors(boolean confirm) {
 		if (getActiveWorkbenchWindow() == null) {
 			return false;
@@ -798,6 +813,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	 * @deprecated this method is no longer to be used. It is an artifact from 2.0, and all saving is now done with the
 	 * launch delegate <code>LaunchConfigurationDelegate</code>
 	 */
+	@Deprecated
 	public static boolean saveAndBuild() {
 		boolean status = true;
 		String saveDirty = getDefault().getPreferenceStore().getString(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
@@ -821,6 +837,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	private static boolean doBuild() {
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
 						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
@@ -897,6 +914,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	 * 
 	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchAdded(ILaunch launch) {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		initializeLaunchListeners();
@@ -929,11 +947,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchChanged(ILaunch launch) {}
 
 	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchRemoved(ILaunch launch) {}
 
 	/**
@@ -990,6 +1010,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	 * @deprecated Saving has been moved to the launch delegate <code>LaunchConfigurationDelegate</code> to allow for scoped saving
 	 * of resources that are only involved in the current launch, no longer the entire workspace
 	 */
+	@Deprecated
 	public static boolean preLaunchSave() {
 		String saveDirty = getDefault().getPreferenceStore().getString(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
 		if (saveDirty.equals(MessageDialogWithToggle.NEVER)) {
@@ -1056,6 +1077,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 					case IDialogConstants.NO_ID:
 						wait = true;
 						break;
+					default:
+						break;
 				}
 			} else if (waitForBuild.equals(MessageDialogWithToggle.ALWAYS)) {
 				wait = true;
@@ -1066,6 +1089,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 			IWorkbench workbench = DebugUIPlugin.getDefault().getWorkbench();
 			IProgressService progressService = workbench.getProgressService();
 			final IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					/* Setup progress monitor
 					 * - Waiting for jobs to finish (2)
@@ -1096,6 +1120,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 			}
 		} else {
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					/* Setup progress monitor
 					 * - Build & launch (1) */
@@ -1172,6 +1197,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 					case IDialogConstants.NO_ID:
 						wait = false;
 						break;
+					default:
+						break;
 				}
 			}
 			else {
@@ -1180,6 +1207,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 		final boolean waitInJob = wait;
 		Job job = new Job(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {configuration.getName()})) {
+			@Override
 			public IStatus run(final IProgressMonitor monitor) {
 				/* Setup progress monitor
 				 * - Waiting for jobs to finish (2)
@@ -1194,12 +1222,18 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 						final ILaunch pendingLaunch = new PendingLaunch(workingCopy, mode, this);
 						DebugPlugin.getDefault().getLaunchManager().addLaunch(pendingLaunch);
                         IJobChangeListener listener= new IJobChangeListener() {
-                            public void sleeping(IJobChangeEvent event) {}
-                            public void scheduled(IJobChangeEvent event) {}
-                            public void running(IJobChangeEvent event) {}
-                            public void awake(IJobChangeEvent event) {}
-                            public void aboutToRun(IJobChangeEvent event) {}
-                            public void done(IJobChangeEvent event) {
+                            @Override
+							public void sleeping(IJobChangeEvent event) {}
+                            @Override
+							public void scheduled(IJobChangeEvent event) {}
+                            @Override
+							public void running(IJobChangeEvent event) {}
+                            @Override
+							public void awake(IJobChangeEvent event) {}
+                            @Override
+							public void aboutToRun(IJobChangeEvent event) {}
+                            @Override
+							public void done(IJobChangeEvent event) {
                                 DebugPlugin dp = DebugPlugin.getDefault();
                                 if (dp != null) {
                                 	dp.getLaunchManager().removeLaunch(pendingLaunch);
@@ -1232,6 +1266,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 						return status;
 					}
 					Runnable r = new Runnable() {
+						@Override
 						public void run() {
 							DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), status);
 						}

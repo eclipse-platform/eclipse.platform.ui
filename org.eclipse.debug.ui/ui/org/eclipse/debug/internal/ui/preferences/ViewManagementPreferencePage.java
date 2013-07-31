@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -61,7 +61,8 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	private PerspectiveLabelProvider fLabelProvider= null;
     private SelectionListener fSelectionListener= new SelectionAdapter() {
     
-        public void widgetSelected(SelectionEvent e) {
+        @Override
+		public void widgetSelected(SelectionEvent e) {
             Object source = e.getSource();
             if (source == fResetViewsButton) {
                 handleResetPressed();
@@ -82,7 +83,8 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.VIEW_MANAGEMENT_PREFERENCE_PAGE);
 	}
@@ -90,6 +92,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
@@ -160,7 +163,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		fPerspectiveViewer.setComparator(new PerspectiveComparator());
 		fPerspectiveViewer.setInput(this);
 		
-		Set perspectives;
+		Set<String> perspectives;
 		String preference = DebugUIPlugin.getDefault().getPreferenceStore().getString(
             IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES);
         if (IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT.equals(preference)) {
@@ -171,12 +174,11 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		checkPerspectives(perspectives);
 	}
 	
-	private void checkPerspectives(Set perspectives) {
+	private void checkPerspectives(Set<String> perspectives) {
 		fPerspectiveViewer.setAllChecked(false);
 		IPerspectiveRegistry registry= PlatformUI.getWorkbench().getPerspectiveRegistry();
-		Iterator perspectiveIds= perspectives.iterator();
-		while (perspectiveIds.hasNext()) {
-			IPerspectiveDescriptor descriptor = registry.findPerspectiveWithId((String) perspectiveIds.next());
+		for (String id : perspectives) {
+			IPerspectiveDescriptor descriptor = registry.findPerspectiveWithId(id);
             if (descriptor != null) {
                 fPerspectiveViewer.setChecked(descriptor, true);
             }
@@ -186,9 +188,10 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		Object[] descriptors = fPerspectiveViewer.getCheckedElements();
-		Set perspectives = new HashSet();
+		Set<String> perspectives = new HashSet<String>();
 		for (int i = 0; i < descriptors.length; i++) {
 		    perspectives.add( ((IPerspectiveDescriptor)descriptors[i]).getId() );
 		}
@@ -197,7 +200,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		                                  IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT);
 		} else {
 		    StringBuffer buffer= new StringBuffer();
-    		for (Iterator itr = perspectives.iterator(); itr.hasNext();) {
+			for (Iterator<String> itr = perspectives.iterator(); itr.hasNext();) {
                 buffer.append(itr.next()).append(',');		    
     		} 
     		getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, buffer.toString());
@@ -215,6 +218,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
         checkPerspectives( ViewContextService.getDefaultEnabledPerspectives() );
 		fTrackViewsButton.setSelection(getPreferenceStore().getDefaultBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS));
@@ -226,6 +230,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 	
@@ -246,6 +251,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return PlatformUI.getWorkbench().getPerspectiveRegistry().getPerspectives();
 		}
@@ -253,20 +259,23 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 		
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.IContentProvider#dispose()
          */
-        public void dispose() {
+        @Override
+		public void dispose() {
         }
 		
 	}
 	
 	private static class PerspectiveComparator extends ViewerComparator {
 
-	    public int compare(Viewer viewer, Object e1, Object e2) {
+	    @Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
 	    	if (e1 instanceof IPerspectiveDescriptor && e2 instanceof IPerspectiveDescriptor) {
 	    		return ((IPerspectiveDescriptor) e1).getLabel().compareToIgnoreCase(((IPerspectiveDescriptor) e2).getLabel());
 	    	}
@@ -277,6 +286,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (fLabelProvider != null) {

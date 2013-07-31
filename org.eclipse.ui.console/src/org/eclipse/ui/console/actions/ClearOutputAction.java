@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,23 +39,23 @@ public class ClearOutputAction extends Action {
 
 	/**
 	 * Constructs a clear output action.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private ClearOutputAction() {
-		super(ConsoleMessages.ClearOutputAction_title); 
-		setToolTipText(ConsoleMessages.ClearOutputAction_toolTipText); 
-		setHoverImageDescriptor(ConsolePluginImages.getImageDescriptor(IConsoleConstants.IMG_LCL_CLEAR));		
+		super(ConsoleMessages.ClearOutputAction_title);
+		setToolTipText(ConsoleMessages.ClearOutputAction_toolTipText);
+		setHoverImageDescriptor(ConsolePluginImages.getImageDescriptor(IConsoleConstants.IMG_LCL_CLEAR));
 		setDisabledImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_DLCL_CLEAR));
 		setImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_CLEAR));
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IConsoleHelpContextIds.CLEAR_CONSOLE_ACTION);	    
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IConsoleHelpContextIds.CLEAR_CONSOLE_ACTION);
 	}
-	
+
 	/**
 	 * Constructs a clear output action for an I/O console. Clearing an I/O console
 	 * is performed via API on the <code>IOConsole</code>, rather than clearing
 	 * its document directly.
-	 * 
+	 *
 	 * @param ioConsole I/O console the action is associated with
 	 * @since 3.1
 	 */
@@ -63,11 +63,11 @@ public class ClearOutputAction extends Action {
 		this();
 		fIOConsole = ioConsole;
 	}
-	
+
 	/**
 	 * Constructs an action to clear the document associated with a text viewer.
-	 * 
-	 * @param viewer viewer whose document this action is associated with 
+	 *
+	 * @param viewer viewer whose document this action is associated with
 	 */
 	public ClearOutputAction(ITextViewer viewer) {
 	    this();
@@ -77,8 +77,10 @@ public class ClearOutputAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		BusyIndicator.showWhile(ConsolePlugin.getStandardDisplay(), new Runnable() {
+			@Override
 			public void run() {
 			    if (fIOConsole == null) {
 					IDocument document = fViewer.getDocument();

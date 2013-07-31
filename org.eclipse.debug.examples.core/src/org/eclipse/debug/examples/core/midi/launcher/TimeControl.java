@@ -33,6 +33,7 @@ public abstract class TimeControl extends SequencerControl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#getValue()
 	 */
+	@Override
 	public String getValue() {
 		long position = getTimeValue();
 		int milli = (int) (position & 0x3F);
@@ -67,6 +68,7 @@ public abstract class TimeControl extends SequencerControl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#isEditable()
 	 */
+	@Override
 	public boolean isEditable() {
 		return false;
 	}
@@ -74,6 +76,7 @@ public abstract class TimeControl extends SequencerControl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#setValue(java.lang.String)
 	 */
+	@Override
 	public IStatus setValue(String newValue) {
 		return null;
 	}
@@ -81,6 +84,7 @@ public abstract class TimeControl extends SequencerControl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#validateValue(java.lang.String)
 	 */
+	@Override
 	public IStatus validateValue(String value) {
 		return null;
 	}

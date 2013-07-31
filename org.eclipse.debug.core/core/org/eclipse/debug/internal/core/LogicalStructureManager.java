@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,10 @@ package org.eclipse.debug.internal.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -28,14 +27,14 @@ import org.eclipse.debug.core.model.IValue;
 
 /**
  * Manages logical structure extensions
- * 
+ *
  * @since 3.0
  */
 public class LogicalStructureManager {
 
 	private static LogicalStructureManager fgDefault;
-	private List fTypes = null;
-	private List fTypeProviders;
+	private List<LogicalStructureType> fTypes = null;
+	private List<LogicalStructureProvider> fTypeProviders;
 
     /**
      * Map containing the user's selection for each combination of logical
@@ -45,15 +44,15 @@ public class LogicalStructureManager {
      * value: Integer - One of the ints from the combo key (the one chosen by the user) or -1 if
      *                  the user has chosen not to display any structures for this combination
      */
-    private Map fStructureTypeSelections= null;
+	private Map<String, Integer> fStructureTypeSelections = null;
     /**
      * List of known type identifiers. An identifier's index in this list is used as
      * its ID number. This list is maintained as a space-saving measure so that the various
      * combinations of structure types can be persisted using indeces instead of storing the
      * full index strings.
      */
-    private List fStructureTypeIds= null;
-    
+	private List<String> fStructureTypeIds = null;
+
     /**
      * Preference key used for storing the user's selected structure for each combination
      * or structures. The preference value is stored in the form:
@@ -68,14 +67,14 @@ public class LogicalStructureManager {
      * Where string is an identifier of a logical structure.
      */
     public static final String PREF_STRUCTURE_IDS= "allStructures"; //$NON-NLS-1$
-	
+
 	public static LogicalStructureManager getDefault() {
 		if (fgDefault == null) {
 			fgDefault = new LogicalStructureManager();
 		}
 		return fgDefault;
 	}
-	
+
     /**
      * Returns the logical structure types that are applicable to the given value.
      * @param value the value
@@ -84,29 +83,27 @@ public class LogicalStructureManager {
 	public ILogicalStructureType[] getLogicalStructureTypes(IValue value) {
 		initialize();
 		// looks in the logical structure types
-		Iterator iterator = fTypes.iterator();
-		List select = new ArrayList();
-		while (iterator.hasNext()) {
-			ILogicalStructureType type = (ILogicalStructureType)iterator.next();
+		List<ILogicalStructureType> select = new ArrayList<ILogicalStructureType>();
+		for (ILogicalStructureType type : fTypes) {
 			if (type.providesLogicalStructure(value)) {
 				select.add(type);
 			}
 		}
 		// asks the logical structure providers
-		for (Iterator iter= fTypeProviders.iterator(); iter.hasNext();) {
-			ILogicalStructureType[] logicalStructures= ((LogicalStructureProvider) iter.next()).getLogicalStructures(value);
-			for (int i= 0; i < logicalStructures.length; i++) {
-				select.add(logicalStructures[i]);
+		for (LogicalStructureProvider provider : fTypeProviders) {
+			ILogicalStructureType[] types = provider.getLogicalStructures(value);
+			for (int i = 0; i < types.length; i++) {
+				select.add(types[i]);
 			}
 		}
-		return (ILogicalStructureType[]) select.toArray(new ILogicalStructureType[select.size()]);
+		return select.toArray(new ILogicalStructureType[select.size()]);
 	}
-    
+
     /**
      * Loads the map of structure selections from the preference store.
      */
     private void loadStructureTypeSelections() {
-        fStructureTypeSelections= new HashMap();
+		fStructureTypeSelections = new HashMap<String, Integer>();
         String selections= Platform.getPreferencesService().getString(DebugPlugin.getUniqueIdentifier(), PREF_STRUCTURE_SELECTIONS, IInternalDebugCoreConstants.EMPTY_STRING, null);
     	// selections are stored in the form:
     	// selection|selection|...selection|
@@ -123,27 +120,25 @@ public class LogicalStructureManager {
             }
         }
     }
-    
+
     /**
      * Stores the map of structure selections to the preference store
      */
     private void storeStructureTypeSelections() {
         StringBuffer buffer= new StringBuffer();
-        Iterator iter = fStructureTypeSelections.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Entry) iter.next();
-            buffer.append(entry.getKey());
+		for (Entry<String, Integer> entry : fStructureTypeSelections.entrySet()) {
+			buffer.append(entry.getKey());
             buffer.append(entry.getValue());
             buffer.append('|');
         }
         Preferences.setString(DebugPlugin.getUniqueIdentifier(), PREF_STRUCTURE_SELECTIONS, buffer.toString(), null);
     }
-    
+
     /**
      * Loads the collection of known structures identifiers from the preference store
      */
     private void loadStructureTypeIds() {
-        fStructureTypeIds= new ArrayList();
+		fStructureTypeIds = new ArrayList<String>();
     	// Types are stored as a comma-separated, ordered list.
         String types= Platform.getPreferencesService().getString(DebugPlugin.getUniqueIdentifier(), PREF_STRUCTURE_IDS, IInternalDebugCoreConstants.EMPTY_STRING, null);
         StringTokenizer tokenizer= new StringTokenizer(types, ","); //$NON-NLS-1$
@@ -154,19 +149,18 @@ public class LogicalStructureManager {
             }
         }
     }
-    
+
     /**
      * Stores the collection of known structure identifiers to the preference store
      */
     private void storeStructureTypeIds() {
         StringBuffer buffer= new StringBuffer();
-        Iterator iter = fStructureTypeIds.iterator();
-        while (iter.hasNext()) {
-            buffer.append(iter.next()).append(',');
+		for (String id : fStructureTypeIds) {
+			buffer.append(id).append(',');
         }
         Preferences.setString(DebugPlugin.getUniqueIdentifier(), PREF_STRUCTURE_IDS, buffer.toString(), null);
     }
-    
+
     /**
      * Returns the structure that the user has chosen from among the given
      * collection of structures or <code>null</code> if the user has chosen
@@ -181,7 +175,7 @@ public class LogicalStructureManager {
         }
         String combo= getComboString(structureTypes);
         // Lookup the combo
-        Integer index = (Integer) fStructureTypeSelections.get(combo);
+        Integer index = fStructureTypeSelections.get(combo);
         if (index == null) {
             // If the user hasn't explicitly chosen anything for this
             // combo yet, just return the first type.
@@ -191,7 +185,7 @@ public class LogicalStructureManager {
             return null;
         }
         // If an index is stored for this combo, retrieve the id at the index
-        String id= (String) fStructureTypeIds.get(index.intValue());
+        String id= fStructureTypeIds.get(index.intValue());
         for (int i = 0; i < structureTypes.length; i++) {
             // Return the type with the retrieved id
             ILogicalStructureType type = structureTypes[i];
@@ -201,9 +195,9 @@ public class LogicalStructureManager {
         }
         return structureTypes[0];
     }
-    
+
     /**
-     * 
+     *
      * @param types the array of types
      * @param selected the type that is selected for the given combo or <code>null</code>
      *  if the user has de-selected any structure for the given combo
@@ -219,7 +213,7 @@ public class LogicalStructureManager {
         storeStructureTypeSelections();
         storeStructureTypeIds();
     }
-    
+
     /**
      * Returns the string representing the given combination of logical
      * structure types. This string will be a series of comma-separated
@@ -243,13 +237,13 @@ public class LogicalStructureManager {
         }
         return comboKey.toString();
     }
-	
+
 	private synchronized void initialize() {
 		if (fTypes == null) {
 			//get the logical structure types from the extension points
 			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LOGICAL_STRUCTURE_TYPES);
 			IConfigurationElement[] extensions = point.getConfigurationElements();
-			fTypes = new ArrayList(extensions.length);
+			fTypes = new ArrayList<LogicalStructureType>(extensions.length);
 			for (int i = 0; i < extensions.length; i++) {
 				IConfigurationElement extension = extensions[i];
 				LogicalStructureType type;
@@ -263,7 +257,7 @@ public class LogicalStructureManager {
 			// get the logical structure providers from the extension point
 			point= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LOGICAL_STRUCTURE_PROVIDERS);
 			extensions= point.getConfigurationElements();
-			fTypeProviders= new ArrayList(extensions.length);
+			fTypeProviders = new ArrayList<LogicalStructureProvider>(extensions.length);
 			for (int i= 0; i < extensions.length; i++) {
 				try {
 					fTypeProviders.add(new LogicalStructureProvider(extensions[i]));

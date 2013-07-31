@@ -20,6 +20,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 public class MemoryRetrievalContentAdapter extends AsynchronousContentAdapter{
 
+	@Override
 	protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
 		String id = context.getId();
 		if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))
@@ -32,6 +33,7 @@ public class MemoryRetrievalContentAdapter extends AsynchronousContentAdapter{
 		return EMPTY;
 	}
 
+	@Override
 	protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
 		String id = context.getId();
 		if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))
@@ -45,6 +47,7 @@ public class MemoryRetrievalContentAdapter extends AsynchronousContentAdapter{
         return false;
 	}
 
+	@Override
 	protected boolean supportsPartId(String id) {
 		return id.equals(IDebugUIConstants.ID_MEMORY_VIEW);
 	}

@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.views.variables.details;
 
 
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -32,7 +31,7 @@ import org.eclipse.ui.PlatformUI;
 public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 	
 	private Menu fMenu;
-	private Set fAvailableIDs;
+	private Set<String> fAvailableIDs;
 	private IDetailPaneContainer fDetailPaneContainer;
 	
 	/**
@@ -46,14 +45,15 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 	private class SetDetailPaneAction extends Action {
 		
 		private String fPaneID;
-		private Set fPossiblePaneIDs;
+		private Set<String> fPossiblePaneIDs;
 		
-		public SetDetailPaneAction(String name, String paneID, Set possiblePaneIDs){
+		public SetDetailPaneAction(String name, String paneID, Set<String> possiblePaneIDs) {
 			super(name,AS_RADIO_BUTTON);
 			fPaneID = paneID;
 			fPossiblePaneIDs = possiblePaneIDs;
 		}
 		
+		@Override
 		public void run() {
 			// Don't change panes unless the user is selecting a different pane than the one currently displayed
 			if (isChecked() && !fDetailPaneContainer.getCurrentPaneID().equals(fPaneID)){
@@ -77,12 +77,14 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fMenu != null) {
 			fMenu.dispose();
@@ -93,6 +95,7 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
 	 */
+	@Override
 	public Menu getMenu(Control parent) {
 		return null;
 	}
@@ -105,18 +108,14 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
+	@Override
 	public Menu getMenu(Menu parent) {
 		if (fMenu != null) {
 			fMenu.dispose();
 		}
-		
 		fMenu= new Menu(parent);
-		
-		Iterator iter = fAvailableIDs.iterator();
 		int i = 0;
-		while (iter.hasNext()) {
-			String currentID = (String) iter.next();
-			
+		for (String currentID : fAvailableIDs) {
 			StringBuffer name = new StringBuffer();
 			//add the numerical accelerator
             i++;

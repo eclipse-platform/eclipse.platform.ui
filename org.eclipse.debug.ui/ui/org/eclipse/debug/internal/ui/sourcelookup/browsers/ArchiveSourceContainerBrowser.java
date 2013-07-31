@@ -42,6 +42,7 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
 public class ArchiveSourceContainerBrowser extends AbstractSourceContainerBrowser {
 
 	private ISelectionStatusValidator validator= new ISelectionStatusValidator() {
+		@Override
 		public IStatus validate(Object[] selection) {
 			if (selection.length == 0) {
 				return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
@@ -62,9 +63,9 @@ public class ArchiveSourceContainerBrowser extends AbstractSourceContainerBrowse
 	 * @param director source lookup director jars are being added to
 	 * @return the list of any found {@link ArchiveSourceContainer}s
 	 */
-	protected List getSelectedJars(ISourceLookupDirector director) {
+	protected List<ISourceContainer> getSelectedJars(ISourceLookupDirector director) {
 		ISourceContainer[] containers = director.getSourceContainers();
-		List jars = new ArrayList();
+		List<ISourceContainer> jars = new ArrayList<ISourceContainer>();
 		for (int i = 0; i < containers.length; i++) {
 			ISourceContainer container = containers[i];
 			if (container.getType().getId().equals(ArchiveSourceContainer.TYPE_ID)) {
@@ -77,6 +78,7 @@ public class ArchiveSourceContainerBrowser extends AbstractSourceContainerBrowse
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector)
 	 */
+	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		ViewerFilter filter= new ArchiveFilter(getSelectedJars(director));
 		

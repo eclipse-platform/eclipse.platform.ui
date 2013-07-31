@@ -51,6 +51,7 @@ public class ProcessPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite ancestor) {
 		noDefaultAndApplyButton();
 		Composite parent = SWTFactory.createComposite(ancestor, ancestor.getFont(), 1, 1, GridData.FILL_BOTH);
@@ -103,6 +104,7 @@ public class ProcessPropertyPage extends PropertyPage {
 				commandLineText = DebugPlugin.renderArguments(arguments, segments);
 				
 				styledText.addBidiSegmentListener(new BidiSegmentListener() {
+					@Override
 					public void lineGetSegments(BidiSegmentEvent event) {
 						int offset = event.lineOffset;
 						int end = offset + event.lineText.length();
@@ -279,6 +281,7 @@ public class ProcessPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),	IDebugHelpContextIds.PROCESS_PROPERTY_PAGE);

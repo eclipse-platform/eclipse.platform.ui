@@ -48,6 +48,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		/**
 		 * @see org.eclipse.jface.preference.FieldEditor#refreshValidState()
 		 */
+		@Override
 		protected void refreshValidState() {
 			super.refreshValidState();
 		}
@@ -56,6 +57,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		 * Clears the error message from the message line if the error
 		 * message is the error message from this field editor.
 		 */
+		@Override
 		protected void clearErrorMessage() {
 			if (canClearErrorMessage()) {
 				super.clearErrorMessage();
@@ -83,6 +85,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(
@@ -93,6 +96,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	/**
 	 * Create all field editors for this page
 	 */
+	@Override
 	public void createFieldEditors() {
 		
 		fWrapEditor = new BooleanFieldEditor2(IDebugPreferenceConstants.CONSOLE_WRAP, DebugPreferencesMessages.ConsolePreferencePage_Wrap_text_1, SWT.NONE, getFieldEditorParent()); 
@@ -105,6 +109,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		
 		fWrapEditor.getChangeControl(getFieldEditorParent()).addSelectionListener(
 			new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					updateWidthEditor();
 				}
@@ -121,6 +126,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		
 		fUseBufferSize.getChangeControl(getFieldEditorParent()).addSelectionListener(
 			new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					updateBufferSizeEditor();
 				}
@@ -149,12 +155,14 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	/**
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 		
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		boolean ok= super.performOk();
 		// update high water mark to be (about) 100 lines (100 * 80 chars) greater than low water mark
@@ -168,6 +176,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	/**
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#initialize()
 	 */
+	@Override
 	protected void initialize() {
 		super.initialize();
 		updateWidthEditor();
@@ -196,6 +205,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		super.performDefaults();
 		updateWidthEditor();
@@ -212,6 +222,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	/**
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 
 		if (event.getProperty().equals(FieldEditor.IS_VALID)) {

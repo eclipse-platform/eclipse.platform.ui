@@ -49,7 +49,7 @@ public class StringVariablePresentationManager {
 	 * Table of configuration elements for variable presentations,
 	 * keyed by variable name.
 	 */
-	private Map fConfigurations;
+	private Map<String, IConfigurationElement> fConfigurations;
 	
 	/**
 	 * Returns the singleton string variable presentation manager.
@@ -71,7 +71,7 @@ public class StringVariablePresentationManager {
 	 * @return argument selector or <code>null</code>
 	 */
 	public IArgumentSelector getArgumentSelector(IStringVariable variable) {
-		IConfigurationElement element = (IConfigurationElement) fConfigurations.get(variable.getName());
+		IConfigurationElement element = fConfigurations.get(variable.getName());
 		if (element != null) {
 			try {
 				return (IArgumentSelector)element.createExecutableExtension(ATTR_ARGUMENT_SELECTOR);
@@ -93,14 +93,14 @@ public class StringVariablePresentationManager {
 	 * Load extensions 
 	 */
 	private void initialize() {
-		fConfigurations = new HashMap();
+		fConfigurations = new HashMap<String, IConfigurationElement>();
 		IExtensionPoint point= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), EXTENSION_POINT_STRING_VARIABLE_PRESENTATIONS);
 		IConfigurationElement elements[]= point.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			String name= element.getAttribute(ATTR_NAME);
 			if (name == null) {
-				DebugUIPlugin.logErrorMessage(MessageFormat.format("String variable presentation extension missing required 'variableName' attribute: {0}", new String[] {element.getDeclaringExtension().getLabel()})); //$NON-NLS-1$
+				DebugUIPlugin.logErrorMessage(MessageFormat.format("String variable presentation extension missing required 'variableName' attribute: {0}", new Object[] { element.getDeclaringExtension().getLabel() })); //$NON-NLS-1$
 				continue;
 			}
 			fConfigurations.put(name, element);

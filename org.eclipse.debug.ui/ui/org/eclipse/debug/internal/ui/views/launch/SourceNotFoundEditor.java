@@ -36,18 +36,21 @@ public class SourceNotFoundEditor extends EditorPart implements IReusableEditor 
 	/**
 	 * @see org.eclipse.ui.IEditorPart#doSave(IProgressMonitor)
 	 */
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 	}
 
 	/**
 	 * @see org.eclipse.ui.IEditorPart#doSaveAs()
 	 */
+	@Override
 	public void doSaveAs() {
 	}
 
 	/**
 	 * @see org.eclipse.ui.IEditorPart#init(IEditorSite, IEditorInput)
 	 */
+	@Override
 	public void init(IEditorSite site, IEditorInput input) {
 			setSite(site);
 			setInput(input);
@@ -56,6 +59,7 @@ public class SourceNotFoundEditor extends EditorPart implements IReusableEditor 
 	/**
 	 * @see org.eclipse.ui.IEditorPart#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		return false;
 	}
@@ -63,6 +67,7 @@ public class SourceNotFoundEditor extends EditorPart implements IReusableEditor 
 	/**
 	 * @see org.eclipse.ui.IEditorPart#isSaveAsAllowed()
 	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
@@ -70,6 +75,7 @@ public class SourceNotFoundEditor extends EditorPart implements IReusableEditor 
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		fText = new Text(parent,SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
 		fText.setForeground(JFaceColors.getErrorText(fText.getDisplay()));
@@ -82,6 +88,7 @@ public class SourceNotFoundEditor extends EditorPart implements IReusableEditor 
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		if (fText != null) {
 			fText.setFocus();
@@ -91,6 +98,7 @@ public class SourceNotFoundEditor extends EditorPart implements IReusableEditor 
 	/**
 	 * @see IReusableEditor#setInput(org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	public void setInput(IEditorInput input) {
 		super.setInput(input);
 		setPartName(input.getName());

@@ -109,6 +109,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 	 * 
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#performUpdate()
 	 */
+	@Override
 	protected void performUpdate() {
 		performUpdate(false);
 	}
@@ -116,6 +117,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#setChild(java.lang.Object, int)
 	 */
+	@Override
 	public void setChild(Object child, int index) {
 		if (fElements == null) {
 			fElements = new Object[fLength];
@@ -129,6 +131,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 	 * 
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#coalesce(org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor)
 	 */
+	@Override
 	public synchronized boolean coalesce(ViewerUpdateMonitor request) {
 		if (request instanceof ChildrenUpdate) {
 			ChildrenUpdate cu = (ChildrenUpdate) request;
@@ -151,6 +154,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 		return false;
 	}
 	
+	@Override
 	boolean containsUpdate(TreePath path) {
         return getElementPath().equals(path);
     }
@@ -160,6 +164,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#getLength()
 	 */
+	@Override
 	public int getLength() {
 		return fLength;
 	}
@@ -167,6 +172,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#getOffset()
 	 */
+	@Override
 	public int getOffset() {
 		return fIndex;
 	}
@@ -174,10 +180,12 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#startRequest()
 	 */
+	@Override
 	void startRequest() {
 		getElementContentProvider().update(new IChildrenUpdate[]{this});
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append("IChildrenUpdate: "); //$NON-NLS-1$
@@ -193,6 +201,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#getPriority()
 	 */
+	@Override
 	int getPriority() {
 		return 3;
 	}	
@@ -200,6 +209,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#getSchedulingPath()
 	 */
+	@Override
 	TreePath getSchedulingPath() {
 		return getElementPath();
 	}		
@@ -218,7 +228,8 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 	    return fElements;
 	}
 	
-    protected boolean doEquals(ViewerUpdateMonitor update) {
+    @Override
+	protected boolean doEquals(ViewerUpdateMonitor update) {
         return 
             update instanceof ChildrenUpdate &&
             ((ChildrenUpdate)update).getOffset() == getOffset() &&
@@ -227,7 +238,8 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
             getElementPath().equals(update.getElementPath());
     }
 
-    protected int doHashCode() {
+    @Override
+	protected int doHashCode() {
         return (int)Math.pow(
             (getClass().hashCode() + getViewerInput().hashCode() + getElementPath().hashCode()) * (getOffset() + 2),
             getLength() + 2);

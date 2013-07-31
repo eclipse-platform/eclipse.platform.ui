@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -34,51 +34,68 @@ import org.eclipse.ui.services.IEvaluationService;
 public class DebugContextManager implements IDebugContextManager {
 	
 	private static DebugContextManager fgDefault;
-	private Map fServices = new HashMap();
+	private Map<IWorkbenchWindow, DebugWindowContextService> fServices = new HashMap<IWorkbenchWindow, DebugWindowContextService>();
 	private ListenerList fGlobalListeners = new ListenerList();
 	
 	/**
 	 * A debug context service that does nothing (used for windows that have been closed)
 	 */
 	private static IDebugContextService NULL_SERVICE = new IDebugContextService() {
+		@Override
 		public void removePostDebugContextListener(IDebugContextListener listener, String partId) {
 		}
+		@Override
 		public void removePostDebugContextListener(IDebugContextListener listener) {
 		}
+		@Override
 		public void removeDebugContextProvider(IDebugContextProvider provider) {
 		}
+		@Override
 		public void removeDebugContextListener(IDebugContextListener listener, String partId) {
 		}
+		@Override
 		public void removeDebugContextListener(IDebugContextListener listener) {
 		}
+		@Override
 		public ISelection getActiveContext(String partId) {
 			return null;
 		}
+		@Override
 		public ISelection getActiveContext() {
 			return null;
 		}
+		@Override
 		public void addPostDebugContextListener(IDebugContextListener listener, String partId) {
 		}
+		@Override
 		public void addPostDebugContextListener(IDebugContextListener listener) {
 		}
+		@Override
 		public void addDebugContextProvider(IDebugContextProvider provider) {
 		}
+		@Override
 		public void addDebugContextListener(IDebugContextListener listener, String partId) {
 		}
+		@Override
 		public void addDebugContextListener(IDebugContextListener listener) {
 		}
+		@Override
 		public void addDebugContextListener(IDebugContextListener listener, String partId, String partSecondaryId) {
 			
 		}
+		@Override
 		public void removeDebugContextListener(IDebugContextListener listener, String partId, String partSecondaryId) {
 		}
 		
+		@Override
 		public ISelection getActiveContext(String partId, String partSecondaryId) {
 			return null;
 		}
+		@Override
 		public void addPostDebugContextListener(IDebugContextListener listener, String partId, String partSecondaryId) {
 		}
 
+		@Override
 		public void removePostDebugContextListener(IDebugContextListener listener, String partId, String partSecondaryId) {
 		}
 	};
@@ -88,20 +105,23 @@ public class DebugContextManager implements IDebugContextManager {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
 		 */
+		@Override
 		public void windowActivated(IWorkbenchWindow window) {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
 		 */
+		@Override
 		public void windowDeactivated(IWorkbenchWindow window) {			
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
 		 */
+		@Override
 		public void windowClosed(final IWorkbenchWindow window) {
-            DebugWindowContextService service = (DebugWindowContextService) fServices.get(window);
+            DebugWindowContextService service = fServices.get(window);
             if (service != null) {
             	fServices.remove(window);
                 service.dispose();
@@ -111,6 +131,7 @@ public class DebugContextManager implements IDebugContextManager {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
 		 */
+		@Override
 		public void windowOpened(IWorkbenchWindow window) {
 		}
 		
@@ -132,7 +153,7 @@ public class DebugContextManager implements IDebugContextManager {
 	}
 	
 	protected IDebugContextService createService(IWorkbenchWindow window) {
-		DebugWindowContextService service = (DebugWindowContextService) fServices.get(window);
+		DebugWindowContextService service = fServices.get(window);
 		if (service == null) {
 			IEvaluationService evaluationService = (IEvaluationService)window.getService(IEvaluationService.class);
 			if (window.getShell() == null || evaluationService == null) {
@@ -153,12 +174,13 @@ public class DebugContextManager implements IDebugContextManager {
 	}
 	
 	protected IDebugContextService getService(IWorkbenchWindow window) {
-		return (DebugWindowContextService) fServices.get(window);
+		return fServices.get(window);
 	}	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.contexts.IDebugContextManager#addDebugContextListener(org.eclipse.debug.internal.ui.contexts.IDebugContextListener)
 	 */
+	@Override
 	public void addDebugContextListener(IDebugContextListener listener) {
 		fGlobalListeners.add(listener);
 		DebugWindowContextService[] services = getServices();
@@ -171,6 +193,7 @@ public class DebugContextManager implements IDebugContextManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.contexts.IDebugContextManager#removeDebugContextListener(org.eclipse.debug.internal.ui.contexts.IDebugContextListener)
 	 */
+	@Override
 	public void removeDebugContextListener(IDebugContextListener listener) {
 		fGlobalListeners.remove(listener);
 		DebugWindowContextService[] services = getServices();
@@ -186,13 +209,14 @@ public class DebugContextManager implements IDebugContextManager {
 	 * @return existing context services
 	 */
 	private DebugWindowContextService[] getServices() {
-		Collection sevices = fServices.values();
-		return (DebugWindowContextService[]) sevices.toArray(new DebugWindowContextService[sevices.size()]);
+		Collection<DebugWindowContextService> sevices = fServices.values();
+		return sevices.toArray(new DebugWindowContextService[sevices.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextManager#getContextService(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public IDebugContextService getContextService(IWorkbenchWindow window) {
 		return createService(window);
 	}

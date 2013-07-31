@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -141,6 +140,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * Modify listener that simply updates the owning launch configuration dialog.
 	 */
 	private ModifyListener fBasicModifyListener = new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent evt) {
 			scheduleUpdateJob();
 		}
@@ -157,6 +157,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {		
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
@@ -202,6 +203,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		fFavoritesTable.setContentProvider(new FavoritesContentProvider());
 		fFavoritesTable.setLabelProvider(new FavoritesLabelProvider());
 		fFavoritesTable.addCheckStateListener(new ICheckStateListener() {
+				@Override
 				public void checkStateChanged(CheckStateChangedEvent event) {
 					updateLaunchConfigurationDialog();
 				}
@@ -222,12 +224,14 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		fLocalRadioButton.setLayoutData(gd);
 		fSharedRadioButton = createRadioButton(comp, LaunchConfigurationsMessages.CommonTab_S_hared_4);
 		fSharedRadioButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedRadioButtonSelected();
 			}
 		});
 		fSharedLocationText = SWTFactory.createSingleText(comp, 1);
 		fSharedLocationText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				e.result =  LaunchConfigurationsMessages.CommonTab_S_hared_4;
 			}
@@ -235,6 +239,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		fSharedLocationText.addModifyListener(fBasicModifyListener);
 		fSharedLocationButton = createPushButton(comp, LaunchConfigurationsMessages.CommonTab__Browse_6, null);	 
 		fSharedLocationButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedLocationButtonSelected();
 			}
@@ -259,7 +264,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         gd.horizontalSpan = 5;
         fConsoleOutput.setLayoutData(gd);
         fConsoleOutput.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 updateLaunchConfigurationDialog();
             }
         });
@@ -267,14 +273,16 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         fFileOutput = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_6); 
         fFileOutput.setLayoutData(new GridData(SWT.BEGINNING, SWT.NORMAL, false, false));
         fFileOutput.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 enableOuputCaptureWidgets(fFileOutput.getSelection());
                 updateLaunchConfigurationDialog();
             }
         });
         fFileText = SWTFactory.createSingleText(comp, 4);
         fFileText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-        	public void getName(AccessibleEvent e) {
+        	@Override
+			public void getName(AccessibleEvent e) {
         		e.result = LaunchConfigurationsMessages.CommonTab_6;
         	}
         });
@@ -286,7 +294,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         ld.marginWidth = 0;
         fWorkspaceBrowse = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_12, null); 
         fWorkspaceBrowse.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
                 dialog.setTitle(LaunchConfigurationsMessages.CommonTab_13); 
                 dialog.setMessage(LaunchConfigurationsMessages.CommonTab_14); 
@@ -305,7 +314,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         });
         fFileBrowse = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_7, null);
         fFileBrowse.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 String filePath = fFileText.getText();
                 FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
                 filePath = dialog.open();
@@ -316,7 +326,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         });
         fVariables = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_9, null); 
         fVariables.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
 				dialog.open();
 				String variable = dialog.getVariableExpression();
@@ -324,14 +335,16 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 					fFileText.insert(variable);
 				}
             }
-            public void widgetDefaultSelected(SelectionEvent e) {}
+            @Override
+			public void widgetDefaultSelected(SelectionEvent e) {}
         });
         fAppend = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_11); 
         gd = new GridData(SWT.LEFT, SWT.TOP, true, false);
         gd.horizontalSpan = 4;
         fAppend.setLayoutData(gd);
 		fAppend.addSelectionListener(new SelectionAdapter() {
-		    public void widgetSelected(SelectionEvent e) {
+		    @Override
+			public void widgetSelected(SelectionEvent e) {
 		        updateLaunchConfigurationDialog();
 		    }
 		});   
@@ -394,19 +407,21 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	    fEncodingCombo = new Combo(group, SWT.NONE);
 	    fEncodingCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    fEncodingCombo.setFont(parent.getFont());
-	    List allEncodings = IDEEncoding.getIDEEncodings();
-        String[] encodingArray = (String[]) allEncodings.toArray(new String[0]);
+	    List<String> allEncodings = IDEEncoding.getIDEEncodings();
+        String[] encodingArray = allEncodings.toArray(new String[0]);
 	    fEncodingCombo.setItems(encodingArray);
         if (encodingArray.length > 0) {
             fEncodingCombo.select(0); 
         }
         fEncodingCombo.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-        	public void getName(AccessibleEvent e) {
+        	@Override
+			public void getName(AccessibleEvent e) {
         		e.result = LaunchConfigurationsMessages.CommonTab_3;
         	}
         });
 	    SelectionListener listener = new SelectionAdapter() {
-	        public void widgetSelected(SelectionEvent e) {
+	        @Override
+			public void widgetSelected(SelectionEvent e) {
 	        	if(e.getSource() instanceof Button) {
 	        		Button button = (Button)e.getSource();
 	        		if(button.getSelection()) {
@@ -428,6 +443,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			 * 
 			 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
 			 */
+			@Override
 			public void keyReleased(KeyEvent e) {
 				scheduleUpdateJob();
 			}
@@ -464,6 +480,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		fLaunchInBackgroundButton.setLayoutData(data);
 		fLaunchInBackgroundButton.setFont(parent.getFont());
 		fLaunchInBackgroundButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -547,6 +564,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		boolean isShared = !configuration.isLocal();
 		fSharedRadioButton.setSelection(isShared);
@@ -615,7 +633,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         } catch (CoreException e) {
         }
 	    String defaultEncoding = getDefaultEncoding(configuration);
-	    fDefaultEncodingButton.setText(MessageFormat.format(LaunchConfigurationsMessages.CommonTab_2, new String[]{defaultEncoding}));
+		fDefaultEncodingButton.setText(MessageFormat.format(LaunchConfigurationsMessages.CommonTab_2, new Object[] { defaultEncoding }));
 	    fDefaultEncodingButton.pack();
         if (encoding != null) {
             fAltEncodingButton.setSelection(true);
@@ -649,11 +667,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * Updates the favorites selections from the local configuration
 	 * @param config the local configuration
 	 */
+	@SuppressWarnings("deprecation")
 	private void updateFavoritesFromConfig(ILaunchConfiguration config) {
 		fFavoritesTable.setInput(config);
 		fFavoritesTable.setCheckedElements(new Object[]{});
 		try {
-			List groups = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, new ArrayList());
+			List<String> groups = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, new ArrayList<String>());
 			if (groups.isEmpty()) {
 				// check old attributes for backwards compatible
 				if (config.getAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, false)) {
@@ -664,10 +683,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 				}
 			}
 			if (!groups.isEmpty()) {
-				List list = new ArrayList();
-				Iterator iterator = groups.iterator();
-				while (iterator.hasNext()) {
-					String id = (String)iterator.next();
+				List<LaunchGroupExtension> list = new ArrayList<LaunchGroupExtension>();
+				for (String id : groups) {
 					LaunchGroupExtension extension = getLaunchConfigurationManager().getLaunchGroup(id);
 					if (extension != null) {
 						list.add(extension);
@@ -716,6 +733,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * 	and will be missing for older configurations.
 	 * @param config the configuration to update
 	 */
+	@SuppressWarnings("deprecation")
 	private void updateConfigFromFavorites(ILaunchConfigurationWorkingCopy config) {
 		try {
 			Object[] checked = fFavoritesTable.getCheckedElements();
@@ -723,7 +741,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			boolean run = config.getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false);
 			if (debug || run) {
 				// old attributes
-				List groups = new ArrayList();
+				List<LaunchGroupExtension> groups = new ArrayList<LaunchGroupExtension>();
 				int num = 0;
 				if (debug) {
 					groups.add(getLaunchConfigurationManager().getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP));
@@ -749,11 +767,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			} 
 			config.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String)null);
 			config.setAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, (String)null);
-			List groups = null;
+			List<String> groups = null;
 			for (int i = 0; i < checked.length; i++) {
 				LaunchGroupExtension group = (LaunchGroupExtension)checked[i];
 				if (groups == null) {
-					groups = new ArrayList();
+					groups = new ArrayList<String>();
 				}
 				groups.add(group.getIdentifier());
 			}
@@ -774,6 +792,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		setMessage(null);
 		setErrorMessage(null);
@@ -834,6 +853,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setContainer(null);
 		setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, config, true, true);
@@ -842,6 +862,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		updateConfigFromLocalShared(configuration);
 		updateConfigFromFavorites(configuration);
@@ -881,6 +902,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return LaunchConfigurationsMessages.CommonTab__Common_15; 
 	}
@@ -890,6 +912,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * 
 	 * @since 3.3
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.debug.ui.commonTab"; //$NON-NLS-1$
 	}
@@ -897,6 +920,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
 	 */
+	@Override
 	public boolean canSave() {
 		return validateLocalShared();
 	}
@@ -904,6 +928,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_OBJS_COMMON_TAB);
 	}
@@ -911,11 +936,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {}
 
 	/**
@@ -923,9 +950,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 */
 	class FavoritesContentProvider implements IStructuredContentProvider {
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			ILaunchGroup[] groups = DebugUITools.getLaunchGroups();
-			List possibleGroups = new ArrayList();
+			List<ILaunchGroup> possibleGroups = new ArrayList<ILaunchGroup>();
 			ILaunchConfiguration configuration = (ILaunchConfiguration)inputElement;
 			for (int i = 0; i < groups.length; i++) {
 				ILaunchGroup extension = groups[i];
@@ -937,8 +965,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			return possibleGroups.toArray();
 		}
 
+		@Override
 		public void dispose() {}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 
 	}
@@ -949,10 +979,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 */
 	class FavoritesLabelProvider implements ITableLabelProvider {
 		
-		private Map fImages = new HashMap();
+		private Map<Object, Image> fImages = new HashMap<Object, Image>();
 
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
-			Image image = (Image)fImages.get(element);
+			Image image = fImages.get(element);
 			if (image == null) {
 				ImageDescriptor descriptor = ((LaunchGroupExtension)element).getImageDescriptor();
 				if (descriptor != null) {
@@ -963,23 +994,26 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			return image;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			String label = ((LaunchGroupExtension)element).getLabel();
 			return DebugUIPlugin.removeAccelerators(label);
 		}
 
+		@Override
 		public void addListener(ILabelProviderListener listener) {}
 
+		@Override
 		public void dispose() {
-			Iterator images = fImages.values().iterator();
-			while (images.hasNext()) {
-				Image image = (Image)images.next();
+			for (Image image : fImages.values()) {
 				image.dispose();
 			}
 		}
 
+		@Override
 		public boolean isLabelProperty(Object element, String property) {return false;}
 
+		@Override
 		public void removeListener(ILabelProviderListener listener) {}		
 	}
 

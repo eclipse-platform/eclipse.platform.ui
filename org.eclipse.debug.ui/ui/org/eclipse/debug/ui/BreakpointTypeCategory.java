@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ public class BreakpointTypeCategory extends PlatformObject implements IBreakpoin
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (object instanceof BreakpointTypeCategory) {
 			BreakpointTypeCategory type = (BreakpointTypeCategory) object;
@@ -75,6 +76,7 @@ public class BreakpointTypeCategory extends PlatformObject implements IBreakpoin
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getName().hashCode();
 	}
@@ -82,6 +84,7 @@ public class BreakpointTypeCategory extends PlatformObject implements IBreakpoin
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(Object o) {
 		return null;
 	}
@@ -89,6 +92,7 @@ public class BreakpointTypeCategory extends PlatformObject implements IBreakpoin
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		return fImageDescriptor;
 	}
@@ -96,6 +100,7 @@ public class BreakpointTypeCategory extends PlatformObject implements IBreakpoin
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 	 */
+	@Override
 	public String getLabel(Object o) {
 		return getName();
 	}
@@ -103,10 +108,12 @@ public class BreakpointTypeCategory extends PlatformObject implements IBreakpoin
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
 	 */
+	@Override
 	public Object getParent(Object o) {
 		return null;
 	}
 	
+	@Override
 	public String toString() {
 	    return fName;
 	}

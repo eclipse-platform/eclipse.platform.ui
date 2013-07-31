@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.ui;
-
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -30,6 +28,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.keys.IBindingService;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A <code>PopupDialog</code> that is automatically positioned relative
@@ -85,7 +85,8 @@ public abstract class DebugPopup extends PopupDialog {
 	        
 	        String infoText = null;
 	        if (formattedBinding != null) {
-	             infoText = MessageFormat.format(DebugUIViewsMessages.InspectPopupDialog_1, new String[] { formattedBinding, getActionText()});
+				infoText = MessageFormat.format(DebugUIViewsMessages.InspectPopupDialog_1, new Object[] {
+						formattedBinding, getActionText() });
 	        }
 	        return infoText;
     	}
@@ -138,7 +139,8 @@ public abstract class DebugPopup extends PopupDialog {
      * (non-Javadoc)
      * @see org.eclipse.jface.dialogs.PopupDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected abstract Control createDialogArea(Composite parent);
+    @Override
+	protected abstract Control createDialogArea(Composite parent);
 
 
     /**
@@ -152,7 +154,8 @@ public abstract class DebugPopup extends PopupDialog {
      *            <code>getInitialSize</code>.
      * @return the initial location of the shell
      */
-    protected Point getInitialLocation(Point initialSize) {
+    @Override
+	protected Point getInitialLocation(Point initialSize) {
     	if (fAnchor == null) {
     		return super.getInitialLocation(initialSize);
     	}
@@ -171,7 +174,8 @@ public abstract class DebugPopup extends PopupDialog {
      * (non-Javadoc)
      * @see org.eclipse.jface.dialogs.PopupDialog#getDialogSettings()
      */
-    protected IDialogSettings getDialogSettings() {
+    @Override
+	protected IDialogSettings getDialogSettings() {
         IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
         return settings;
     }
@@ -180,12 +184,14 @@ public abstract class DebugPopup extends PopupDialog {
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.PopupDialog#open()
      */
-    public int open() {
+    @Override
+	public int open() {
         IWorkbench workbench = PlatformUI.getWorkbench();
         String commandId = getCommandId();
         if (commandId != null) {
             IHandler fCloseHandler = new AbstractHandler() {
-                public Object execute(ExecutionEvent event) throws ExecutionException {
+                @Override
+				public Object execute(ExecutionEvent event) throws ExecutionException {
                     persist();
                     close();
                     return null;
@@ -197,8 +203,9 @@ public abstract class DebugPopup extends PopupDialog {
         }
 
         String infoText = getInfoText();
-        if (infoText != null)
-            setInfoText(infoText);
+        if (infoText != null) {
+			setInfoText(infoText);
+		}
         
         return super.open();
     }
@@ -206,9 +213,11 @@ public abstract class DebugPopup extends PopupDialog {
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.PopupDialog#close()
      */
-    public boolean close() {
-        if (fActivation != null)
-            fHandlerService.deactivateHandler(fActivation);
+    @Override
+	public boolean close() {
+        if (fActivation != null) {
+			fHandlerService.deactivateHandler(fActivation);
+		}
 
         return super.close();
     }

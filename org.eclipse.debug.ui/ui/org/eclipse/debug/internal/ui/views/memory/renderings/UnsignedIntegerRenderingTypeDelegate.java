@@ -24,6 +24,7 @@ public class UnsignedIntegerRenderingTypeDelegate implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingTypeDelegate#createRendering(java.lang.String)
 	 */
+	@Override
 	public IMemoryRendering createRendering(String id) throws CoreException {
 		return new UnsignedIntegerRendering(id);
 	}

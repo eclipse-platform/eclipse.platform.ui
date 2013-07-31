@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,23 +29,25 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
  * @since 3.0
  */
 public abstract class CompositeSourceContainer extends AbstractSourceContainer {
-	
+
 	private ISourceContainer[] fContainers;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#isComposite()
 	 */
+	@Override
 	public boolean isComposite() {
 		return true;
 	}
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
+	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
 		return findSourceElements(name, getSourceContainers());
 	}
-	
+
 	/**
 	 * Returns a collection of source elements in the given containers corresponding to
 	 * the given name. Returns an empty collection if no source elements are found.
@@ -65,13 +67,13 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 	 * @param containers the containers to search
 	 * @return a collection of source elements corresponding to the given name
 	 * @exception CoreException if an exception occurs while searching for source elements
-	 */	
+	 */
 	protected Object[] findSourceElements(String name, ISourceContainer[] containers) throws CoreException {
-		List results = null;
+		List<Object> results = null;
 		CoreException single = null;
 		MultiStatus multiStatus = null;
 		if (isFindDuplicates()) {
-			results = new ArrayList();
+			results = new ArrayList<Object>();
 		}
 		for (int i = 0; i < containers.length; i++) {
 			ISourceContainer container = containers[i];
@@ -95,7 +97,7 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 				if (single == null) {
 					single = e;
 				} else if (multiStatus == null) {
-					multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, new IStatus[]{single.getStatus()}, SourceLookupMessages.Source_Lookup_Error, null); 
+					multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, new IStatus[]{single.getStatus()}, SourceLookupMessages.Source_Lookup_Error, null);
 					multiStatus.add(e.getStatus());
 				} else {
 					multiStatus.add(e.getStatus());
@@ -111,27 +113,28 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 			return EMPTY;
 		}
 		return results.toArray();
-	}	
-	
+	}
+
 	/**
 	 * Creates the source containers in this composite container.
 	 * Subclasses should override this methods.
 	 * @return the array of {@link ISourceContainer}s
-	 * 
+	 *
 	 * @throws CoreException if unable to create the containers
 	 */
 	protected abstract ISourceContainer[] createSourceContainers() throws CoreException;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getSourceContainers()
 	 */
+	@Override
 	public synchronized ISourceContainer[] getSourceContainers() throws CoreException {
 		if (fContainers == null) {
 			fContainers = createSourceContainers();
 			for (int i = 0; i < fContainers.length; i++) {
 				ISourceContainer container = fContainers[i];
 				container.init(getDirector());
-			}			
+			}
 		}
 		return fContainers;
 	}
@@ -139,6 +142,7 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (fContainers != null) {

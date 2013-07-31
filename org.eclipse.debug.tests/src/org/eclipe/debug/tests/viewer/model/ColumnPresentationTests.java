@@ -52,6 +52,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 	/**
 	 * @throws java.lang.Exception
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		createViewer();
 	}
@@ -59,6 +60,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 	/**
 	 * @throws java.lang.Exception
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		destroyViewer();
 	}
@@ -70,11 +72,13 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		fShell.setLayout(new FillLayout());
 		fViewer = new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer")); //$NON-NLS-1$
         fViewer.getTree().addControlListener(new ControlListener() {
-            public void controlResized(ControlEvent e) {
+            @Override
+			public void controlResized(ControlEvent e) {
                 fResized = true;
             }
             
-            public void controlMoved(ControlEvent e) {
+            @Override
+			public void controlMoved(ControlEvent e) {
             }
         });
 		fListener = new TestModelUpdatesListener(fViewer, false, false);
@@ -118,14 +122,17 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 			this.columnIds = columnIds;
 		}
 
+		@Override
 		public void init(IPresentationContext context) {
 			fContext = context;
 		}
 
+		@Override
 		public void dispose() {
 			fContext = null;
 		}
 
+		@Override
 		public ImageDescriptor getImageDescriptor(String id) {
 			return null;
 		}
@@ -134,14 +141,17 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 			return fContext;
 		}
 
+		@Override
 		public String[] getAvailableColumns() {
 			return columnIds;
 		}
 
+		@Override
 		public String[] getInitialColumns() {
 			return columnIds;
 		}
 
+		@Override
 		public String getHeader(String id) {
 		    if (Arrays.asList(columnIds).indexOf(id) != -1) {
 		        return id;
@@ -149,10 +159,12 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		    return null;
 		}
 
+		@Override
 		public String getId() {
 			return "MyColumnPresentationID"; //$NON-NLS-1$
 		}
 
+		@Override
 		public boolean isOptional() {
 			return true;
 		}
@@ -171,6 +183,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 			Arrays.fill(repliedWidths, -2);
 		}
 
+		@Override
 		public int getInitialColumnWidth(String id, int treeWidgetWidth,
 				String[] visibleColumnIds) {
 			for (int i = 0; i < columnIds.length; i++) {
@@ -194,6 +207,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 			return -1;
 		}
 
+		@Override
 		public String getId() {
 			return "MyColumnPresentation2ID"; //$NON-NLS-1$
 		}
@@ -206,6 +220,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 			colPresenation = cp1;
 		}
 
+		@Override
 		public IColumnPresentation createColumnPresentation(
 				IPresentationContext context, Object element) {
 			if (colPresenation != null) {
@@ -214,6 +229,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 			return null;
 		}
 
+		@Override
 		public String getColumnPresentationId(IPresentationContext context,
 				Object element) {
 			if (colPresenation != null) {

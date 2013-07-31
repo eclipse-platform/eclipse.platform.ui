@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	 * @deprecated the launch dialog no longer supports launching without
 	 * 	opening - this constant will never be returned by the dialog
 	 */
+	@Deprecated
 	public static final int LAUNCHED_BEFORE_OPENING = 2;
 			
 	/**

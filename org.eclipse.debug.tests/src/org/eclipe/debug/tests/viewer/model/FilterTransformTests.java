@@ -45,6 +45,7 @@ public class FilterTransformTests extends TestCase {
 	 * and elements 0, 2, 3, 6, 7 are filtered. Elements
 	 * 1, 4, 5 are visible.
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		transform = new FilterTransform();

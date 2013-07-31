@@ -37,6 +37,7 @@ public class BooleanFieldEditor2 extends BooleanFieldEditor {
 	/**
 	 * @see org.eclipse.jface.preference.BooleanFieldEditor#getChangeControl(Composite)
 	 */
+	@Override
 	public Button getChangeControl(Composite parent) {
 		if (fChangeControl == null) {
 			fChangeControl = super.getChangeControl(parent);

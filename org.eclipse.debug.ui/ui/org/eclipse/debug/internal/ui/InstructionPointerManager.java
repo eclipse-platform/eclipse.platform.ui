@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,12 +50,12 @@ public class InstructionPointerManager{
 	/**
 	 * Set containing all instruction pointer contexts this class manages
 	 */
-	private Set fIPCSet = new HashSet();
+	private Set<InstructionPointerContext> fIPCSet = new HashSet<InstructionPointerContext>();
 	
 	/**
 	 * Maps ITextEditors to the set of instruction pointer contexts that are displayed in the editor
 	 */
-	private Map fEditorMap = new HashMap();
+	private Map<ITextEditor, Set<InstructionPointerContext>> fEditorMap = new HashMap<ITextEditor, Set<InstructionPointerContext>>();
 	
 	/**
 	 * Part listener added to editors that contain annotations.  Allows instruction pointer contexts to
@@ -142,9 +142,9 @@ public class InstructionPointerManager{
 			InstructionPointerContext ipc = new InstructionPointerContext(frame.getDebugTarget(), frame.getThread(), textEditor, annotation);
 			
 			// Add the IPC to the set and map
-			Set editorIPCs = (Set)fEditorMap.get(textEditor);
+			Set<InstructionPointerContext> editorIPCs = fEditorMap.get(textEditor);
 			if (editorIPCs == null){
-				editorIPCs = new HashSet();
+				editorIPCs = new HashSet<InstructionPointerContext>();
 				fEditorMap.put(textEditor, editorIPCs);
 			} else {
 				editorIPCs.remove(ipc);
@@ -165,9 +165,9 @@ public class InstructionPointerManager{
 	 */
 	public void removeAnnotations(IDebugTarget debugTarget) {
 		synchronized (fIPCSet) {
-			Iterator ipcIter = fIPCSet.iterator();
+			Iterator<InstructionPointerContext> ipcIter = fIPCSet.iterator();
 			while (ipcIter.hasNext()) {
-				InstructionPointerContext currentIPC = (InstructionPointerContext) ipcIter.next();
+				InstructionPointerContext currentIPC = ipcIter.next();
 				if (currentIPC.getDebugTarget().equals(debugTarget)){
 					removeAnnotationFromModel(currentIPC);
 					ipcIter.remove();
@@ -183,9 +183,9 @@ public class InstructionPointerManager{
 	 */
 	public void removeAnnotations(IThread thread) {
 		synchronized (fIPCSet) {
-			Iterator ipcIter = fIPCSet.iterator();
+			Iterator<InstructionPointerContext> ipcIter = fIPCSet.iterator();
 			while (ipcIter.hasNext()) {
-				InstructionPointerContext currentIPC = (InstructionPointerContext) ipcIter.next();
+				InstructionPointerContext currentIPC = ipcIter.next();
 				if (currentIPC.getThread().equals(thread)){
 					removeAnnotationFromModel(currentIPC);
 					ipcIter.remove();
@@ -201,11 +201,11 @@ public class InstructionPointerManager{
 	 */
 	public void removeAnnotations(ITextEditor editor) {
 		synchronized (fIPCSet) {
-			Set editorIPCs = (Set)fEditorMap.get(editor);
+			Set<InstructionPointerContext> editorIPCs = fEditorMap.get(editor);
 			if (editorIPCs != null){
-				Iterator ipcIter = editorIPCs.iterator();
+				Iterator<InstructionPointerContext> ipcIter = editorIPCs.iterator();
 				while (ipcIter.hasNext()) {
-					InstructionPointerContext currentIPC = (InstructionPointerContext) ipcIter.next();
+					InstructionPointerContext currentIPC = ipcIter.next();
 					removeAnnotationFromModel(currentIPC);
 					fIPCSet.remove(currentIPC);
 				}
@@ -218,7 +218,7 @@ public class InstructionPointerManager{
 	 * Remove the given ipc from the mapping of editors.
 	 */
 	private void removeAnnotationFromEditorMapping(InstructionPointerContext ipc) {
-		Set editorIPCs = (Set)fEditorMap.get(ipc.getEditor());
+		Set<InstructionPointerContext> editorIPCs = fEditorMap.get(ipc.getEditor());
 		if (editorIPCs != null){
 			editorIPCs.remove(ipc);
 			if (editorIPCs.isEmpty()){
@@ -288,16 +288,23 @@ public class InstructionPointerManager{
 	 * the input containing instruction pointer annotations.
 	 */
 	class PartListener implements IPartListener2{
+		@Override
 		public void partActivated(IWorkbenchPartReference partRef) {}
+		@Override
 		public void partDeactivated(IWorkbenchPartReference partRef) {}
+		@Override
 		public void partHidden(IWorkbenchPartReference partRef) {}
+		@Override
 		public void partOpened(IWorkbenchPartReference partRef) {}
+		@Override
 		public void partVisible(IWorkbenchPartReference partRef) {}
+		@Override
 		public void partBroughtToTop(IWorkbenchPartReference partRef) {}
 	
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partClosed(IWorkbenchPartReference partRef) {
 			IWorkbenchPart part = partRef.getPart(false);
 			if (part instanceof ITextEditor){
@@ -309,6 +316,7 @@ public class InstructionPointerManager{
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partInputChanged(IWorkbenchPartReference partRef) {
 			IWorkbenchPart part = partRef.getPart(false);
 			if (part instanceof ITextEditor){
@@ -322,12 +330,15 @@ public class InstructionPointerManager{
 	 */
 	class PageListener implements IPageListener{
 
+		@Override
 		public void pageActivated(IWorkbenchPage page) {}
+		@Override
 		public void pageOpened(IWorkbenchPage page) {}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IPageListener#pageClosed(org.eclipse.ui.IWorkbenchPage)
 		 */
+		@Override
 		public void pageClosed(IWorkbenchPage page) {
 			page.removePartListener(getPartListener());
 			page.getWorkbenchWindow().removePageListener(getPageListener());

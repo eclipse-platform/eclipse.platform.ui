@@ -32,7 +32,8 @@ public class PDANoSuchLabelEvent extends PDAEvent {
         return message.startsWith("no such label"); //$NON-NLS-1$
     }
     
-    protected String getName(String message) {
+    @Override
+	protected String getName(String message) {
         if (isEventMessage(message)) {
             return "no such label"; //$NON-NLS-1$
         }

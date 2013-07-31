@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
-import com.ibm.icu.text.MessageFormat;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -18,18 +17,20 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchMode;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Proxy to a launch mode extension.
- * 
+ *
  * @see IConfigurationElementConstants
  */
 public class LaunchMode implements ILaunchMode {
 
 	private IConfigurationElement fConfigurationElement;
-	
+
 	/**
 	 * Constructs a new launch mode.
-	 * 
+	 *
 	 * @param element configuration element
 	 * @exception CoreException if required attributes are missing
 	 */
@@ -40,18 +41,18 @@ public class LaunchMode implements ILaunchMode {
 
 	/**
 	 * Verifies required attributes.
-	 * 
+	 *
 	 * @exception CoreException if required attributes are missing
 	 */
 	private void verifyAttributes() throws CoreException {
 		verifyAttributeExists(IConfigurationElementConstants.MODE);
 		verifyAttributeExists(IConfigurationElementConstants.LABEL);
 	}
-	
+
 	/**
 	 * Verifies the given attribute exists
 	 * @param name the attribute name to check
-	 * 
+	 *
 	 * @exception CoreException if attribute does not exist
 	 */
 	private void verifyAttributeExists(String name) throws CoreException {
@@ -62,23 +63,25 @@ public class LaunchMode implements ILaunchMode {
 
 	/**
 	 * This method is used to create a new internal error describing that the specified attribute
-	 * is missing 
+	 * is missing
 	 * @param attrName the name of the attribute that is missing
 	 * @throws CoreException if a problem is encountered
 	 */
 	private void missingAttribute(String attrName) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, MessageFormat.format(DebugCoreMessages.LaunchMode_1,new String[]{attrName}), null));
+		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, MessageFormat.format(DebugCoreMessages.LaunchMode_1, new Object[] { attrName }), null));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchMode#getIdentifier()
 	 */
+	@Override
 	public String getIdentifier() {
 		return fConfigurationElement.getAttribute(IConfigurationElementConstants.MODE);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchMode#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return fConfigurationElement.getAttribute(IConfigurationElementConstants.LABEL);
 	}
@@ -86,10 +89,11 @@ public class LaunchMode implements ILaunchMode {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchMode#getLaunchAsLabel()
 	 */
+	@Override
 	public String getLaunchAsLabel() {
 		String label = fConfigurationElement.getAttribute(IConfigurationElementConstants.LAUNCH_AS_LABEL);
 		if (label == null) {
-			return MessageFormat.format(DebugCoreMessages.LaunchMode_0, new String[]{getLabel()});
+			return MessageFormat.format(DebugCoreMessages.LaunchMode_0, new Object[] { getLabel() });
 		}
 		return label;
 	}

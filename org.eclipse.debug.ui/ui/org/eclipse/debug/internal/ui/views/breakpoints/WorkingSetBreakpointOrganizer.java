@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,9 +44,10 @@ public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDe
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories(org.eclipse.debug.core.model.IBreakpoint)
      */
-    public IAdaptable[] getCategories(IBreakpoint breakpoint) {
-    	List result = new ArrayList();
-        List parents = new ArrayList();
+    @Override
+	public IAdaptable[] getCategories(IBreakpoint breakpoint) {
+		List<IAdaptable> result = new ArrayList<IAdaptable>();
+		List<IResource> parents = new ArrayList<IResource>();
         IResource res = breakpoint.getMarker().getResource();
         parents.add(res);
         while (res != null) {
@@ -70,13 +71,14 @@ public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDe
 		        }
             }
         }
-        return (IAdaptable[]) result.toArray(new IAdaptable[result.size()]);
+        return result.toArray(new IAdaptable[result.size()]);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         fWorkingSetManager.removePropertyChangeListener(this);
         fWorkingSetManager = null;
         super.dispose();
@@ -85,7 +87,8 @@ public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDe
     /* (non-Javadoc)
      * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
      */
-    public void propertyChange(PropertyChangeEvent event) {
+    @Override
+	public void propertyChange(PropertyChangeEvent event) {
         IWorkingSet set = null;
         if (event.getNewValue() instanceof IWorkingSet) {
             set = (IWorkingSet) event.getNewValue();

@@ -37,6 +37,7 @@ public class ASCIIRendering extends AbstractAsyncTextRendering{
 		setCodePage(codepage);
 	}
 	
+	@Override
 	public void dispose() {
 		super.dispose();
 	}
@@ -44,6 +45,7 @@ public class ASCIIRendering extends AbstractAsyncTextRendering{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.AbstractMemoryRendering#getNumCharsPerByte()
 	 */
+	@Override
 	public int getNumCharsPerByte() {
 		return numCharsPerByte;
 	}
@@ -52,6 +54,7 @@ public class ASCIIRendering extends AbstractAsyncTextRendering{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.AbstractTableRendering#getBytes(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[], java.lang.String)
 	 */
+	@Override
 	public byte[] getBytes(
 		String renderingId,
 		BigInteger address,
@@ -76,6 +79,7 @@ public class ASCIIRendering extends AbstractAsyncTextRendering{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.AbstractTableRendering#getString(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[])
 	 */
+	@Override
 	public String getString(
 		String renderingId,
 		BigInteger address,
@@ -105,6 +109,7 @@ public class ASCIIRendering extends AbstractAsyncTextRendering{
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		
 		// handle code page changed event

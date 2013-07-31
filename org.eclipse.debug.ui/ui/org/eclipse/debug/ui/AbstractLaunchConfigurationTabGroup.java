@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 	/**
 	 * @see ILaunchConfigurationTabGroup#getTabs()
 	 */
+	@Override
 	public ILaunchConfigurationTab[] getTabs() {
 		return fTabs;
 	}
@@ -54,6 +55,7 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 	 * 
 	 * @see ILaunchConfigurationTabGroup#dispose()
 	 */
+	@Override
 	public void dispose() {
 		ILaunchConfigurationTab[] tabs = getTabs();
 		if (tabs != null) {
@@ -68,6 +70,7 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 	 * 
 	 * @see ILaunchConfigurationTabGroup#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		ILaunchConfigurationTab[] tabs = getTabs();
 		for (int i = 0; i < tabs.length; i++) {
@@ -80,6 +83,7 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 	 * 
 	 * @see ILaunchConfigurationTabGroup#initializeFrom(ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		ILaunchConfigurationTab[] tabs = getTabs();
 		for (int i = 0; i < tabs.length; i++) {
@@ -92,6 +96,7 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 	 * 
 	 * @see ILaunchConfigurationTabGroup#performApply(ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		ILaunchConfigurationTab[] tabs = getTabs();
 		for (int i = 0; i < tabs.length; i++) {
@@ -108,6 +113,8 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 	 *  than the launch dialog, this method cannot be relied upon for launching
 	 *  functionality.
 	 */
+	@Deprecated
+	@Override
 	public void launched(ILaunch launch) {
 		ILaunchConfigurationTab[] tabs = getTabs();
 		for (int i = 0; i < tabs.length; i++) {

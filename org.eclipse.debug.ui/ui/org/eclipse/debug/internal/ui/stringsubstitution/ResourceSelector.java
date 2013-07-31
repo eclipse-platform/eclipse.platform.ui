@@ -26,6 +26,7 @@ public class ResourceSelector implements IArgumentSelector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.stringsubstitution.IArgumentSelector#selectArgument(org.eclipse.debug.internal.core.stringsubstitution.IStringVariable)
 	 */
+	@Override
 	public String selectArgument(IStringVariable variable, Shell shell) {
 		ResourceListSelectionDialog dialog = new ResourceListSelectionDialog(shell, ResourcesPlugin.getWorkspace().getRoot(), IResource.FILE | IResource.FOLDER | IResource.PROJECT);
 		dialog.setTitle(StringSubstitutionMessages.ResourceSelector_0); 

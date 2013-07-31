@@ -27,7 +27,8 @@ public class JFaceViewerPopupTests extends PopupTests {
         super(name);
     }
 
-    protected ITreeModelViewer createViewer(Display display, Shell shell, int style) {
+    @Override
+	protected ITreeModelViewer createViewer(Display display, Shell shell, int style) {
 		return new TreeModelViewer(fShell, SWT.VIRTUAL | style, new PresentationContext("TestViewer")); //$NON-NLS-1$
     }
 }

@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.io.UnsupportedEncodingException;
@@ -38,52 +37,53 @@ public class CodePagesPreferencePage extends FieldEditorPreferencePage {
 		setTitle(DebugUIMessages.CodePagesPrefDialog_1);
 	}
 
+	@Override
 	protected void createFieldEditors() {
 		fAsciiCodePage = new StringFieldEditor(IDebugUIConstants.PREF_DEFAULT_ASCII_CODE_PAGE, DebugUIMessages.CodePagesPrefDialog_2, getFieldEditorParent());
 		fAsciiCodePage.setEmptyStringAllowed(false);
 		addField(fAsciiCodePage);
-		
+
 		fEbcdicCodePage = new StringFieldEditor(IDebugUIConstants.PREF_DEFAULT_EBCDIC_CODE_PAGE, DebugUIMessages.CodePagesPrefDialog_4, getFieldEditorParent());
 		fEbcdicCodePage.setEmptyStringAllowed(false);
 		addField(fEbcdicCodePage);
 	}
 
+	@Override
 	public boolean performOk() {
-		
+
 		if (fAsciiCodePage == null || fEbcdicCodePage == null)
 			return super.performOk();
-		
+
 		// check that the codepages are supported
 		String asciiCodePage = fAsciiCodePage.getStringValue();
 		asciiCodePage = asciiCodePage.trim();
 		try {
-			new String(new byte[]{1}, asciiCodePage);
+			new String(new byte[] { 1 }, asciiCodePage);
 		} catch (UnsupportedEncodingException e) {
 			Shell shell = DebugUIPlugin.getShell();
-			if (shell != null)
-			{
-				IStatus status = DebugUIPlugin.newErrorStatus(DebugUIMessages.CodePagesPrefDialog_0, e); 
-				ErrorDialog.openError(shell, DebugUIMessages.CodePagesPrefDialog_6,  DebugUIMessages.CodePagesPrefDialog_7, status);		 // 
+			if (shell != null) {
+				IStatus status = DebugUIPlugin.newErrorStatus(DebugUIMessages.CodePagesPrefDialog_0, e);
+				ErrorDialog.openError(shell, DebugUIMessages.CodePagesPrefDialog_6, DebugUIMessages.CodePagesPrefDialog_7, status); //
 			}
 			return false;
 		}
-		
+
 		String ebcdicCodePage = fEbcdicCodePage.getStringValue();
 		ebcdicCodePage = ebcdicCodePage.trim();
 		try {
-			new String(new byte[]{1}, ebcdicCodePage);
+			new String(new byte[] { 1 }, ebcdicCodePage);
 		} catch (UnsupportedEncodingException e) {
 			Shell shell = DebugUIPlugin.getShell();
-			if (shell != null)
-			{
-				IStatus status = DebugUIPlugin.newErrorStatus(DebugUIMessages.CodePagesPrefDialog_0, e); 
-				ErrorDialog.openError(shell, DebugUIMessages.CodePagesPrefDialog_8,  DebugUIMessages.CodePagesPrefDialog_9, status);		 // 
+			if (shell != null) {
+				IStatus status = DebugUIPlugin.newErrorStatus(DebugUIMessages.CodePagesPrefDialog_0, e);
+				ErrorDialog.openError(shell, DebugUIMessages.CodePagesPrefDialog_8, DebugUIMessages.CodePagesPrefDialog_9, status); //
 			}
 			return false;
 		}
 		return super.performOk();
 	}
 
+	@Override
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, DebugUIPlugin.getUniqueIdentifier() + ".CodePagesPrefDialog_context"); //$NON-NLS-1$
 		return super.createContents(parent);

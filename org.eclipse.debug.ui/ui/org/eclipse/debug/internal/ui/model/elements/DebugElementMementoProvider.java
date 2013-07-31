@@ -23,6 +23,7 @@ public abstract class DebugElementMementoProvider extends ElementMementoProvider
 	
 	protected static final String ELEMENT_NAME = "ELEMENT_NAME"; //$NON-NLS-1$
 
+	@Override
 	protected boolean encodeElement(Object element, IMemento memento, IPresentationContext context) throws CoreException {
 		if (supportsContext(context)) {
 			String name = getElementName(element, context);
@@ -32,6 +33,7 @@ public abstract class DebugElementMementoProvider extends ElementMementoProvider
 		return false;
 	}
 
+	@Override
 	protected boolean isEqual(Object element, IMemento memento, IPresentationContext context) throws CoreException {
 		String mementoName = memento.getString(ELEMENT_NAME);
 		if (mementoName != null) {

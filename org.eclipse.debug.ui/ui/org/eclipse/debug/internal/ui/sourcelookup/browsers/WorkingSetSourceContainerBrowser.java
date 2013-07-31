@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,27 +28,28 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
  * @since 3.0
  */
 public class WorkingSetSourceContainerBrowser extends AbstractSourceContainerBrowser {
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#
+	 * createSourceContainers(org.eclipse.swt.widgets.Shell,
+	 * org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
-		ArrayList containers = new ArrayList();		
-		IWorkingSetSelectionDialog dialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(shell,true);
-		
-		if(dialog.open() == Window.OK)
-		{
+		ArrayList<ISourceContainer> containers = new ArrayList<ISourceContainer>();
+		IWorkingSetSelectionDialog dialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(shell, true);
+
+		if (dialog.open() == Window.OK) {
 			IWorkingSet[] selections = dialog.getSelection();
-			if(selections != null)
-			{				
-				for(int i=0; i<selections.length; i++)
-				{
-					containers.add(new WorkingSetSourceContainer(selections[i]));					
-				}	
-			}		
+			if (selections != null) {
+				for (int i = 0; i < selections.length; i++) {
+					containers.add(new WorkingSetSourceContainer(selections[i]));
+				}
+			}
 		}
-		
-		return (ISourceContainer[])containers.toArray(new ISourceContainer[containers.size()]);
+
+		return containers.toArray(new ISourceContainer[containers.size()]);
 	}
-	
+
 }

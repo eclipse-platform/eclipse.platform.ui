@@ -70,7 +70,8 @@ public class ConsoleRemoveLaunchAction extends Action implements IViewActionDele
     	}
     }
 
-    public synchronized void run() {
+    @Override
+	public synchronized void run() {
     	ILaunch launch = getLaunch();
     	if (launch != null) {
 	        ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
@@ -78,30 +79,36 @@ public class ConsoleRemoveLaunchAction extends Action implements IViewActionDele
     	}
     }
 
-    public void init(IViewPart view) {
+    @Override
+	public void init(IViewPart view) {
     	if (view instanceof IConsoleView) {
 			fConsoleView = (IConsoleView) view;			
 		}
     	update();
     }
 
-    public void run(IAction action) {
+    @Override
+	public void run(IAction action) {
         run();
     }
 
-    public void selectionChanged(IAction action, ISelection selection) {
+    @Override
+	public void selectionChanged(IAction action, ISelection selection) {
     }
 
-    public void consolesAdded(IConsole[] consoles) {
+    @Override
+	public void consolesAdded(IConsole[] consoles) {
     }
 
-    public void consolesRemoved(IConsole[] consoles) {
+    @Override
+	public void consolesRemoved(IConsole[] consoles) {
         update();
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesTerminated(ILaunch[] launches) {
 		update();
 	}
@@ -109,18 +116,21 @@ public class ConsoleRemoveLaunchAction extends Action implements IViewActionDele
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesAdded(ILaunch[] launches) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesChanged(ILaunch[] launches) {
 	}
 	

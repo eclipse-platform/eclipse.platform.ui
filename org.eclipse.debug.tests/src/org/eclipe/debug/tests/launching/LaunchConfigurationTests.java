@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -61,23 +61,24 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Tests for launch configurations
  */
+@SuppressWarnings("deprecation")
 public class LaunchConfigurationTests extends AbstractLaunchTest implements ILaunchConfigurationListener {
-	
+
 	/**
 	 * Identifier of test launch configuration type extension
 	 */
 	public static final String ID_TEST_LAUNCH_TYPE = "org.eclipse.debug.tests.launch.type"; //$NON-NLS-1$
-	
+
 	/**
 	 * The from/to handles during rename operations
 	 */
 	protected ILaunchConfiguration fFrom;
 	protected ILaunchConfiguration fTo;
-	
+
 	protected Object fLock = new Object();
 	protected ILaunchConfiguration fAdded;
 	protected ILaunchConfiguration fRemoved;
-	
+
 	/**
 	 * Class to hold resource description infos
 	 * @since 3.9.0
@@ -90,16 +91,17 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		String path;
 		Integer type;
 	}
-	
+
 	class Listener implements ILaunchConfigurationListener {
-		
-		private final List addedList = new ArrayList();
-		private final List removedList = new ArrayList();
-		private final List changedList = new ArrayList();
+
+		private final List<ILaunchConfiguration> addedList = new ArrayList<ILaunchConfiguration>();
+		private final List<ILaunchConfiguration> removedList = new ArrayList<ILaunchConfiguration>();
+		private final List<ILaunchConfiguration> changedList = new ArrayList<ILaunchConfiguration>();
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
 		 */
+		@Override
 		public void launchConfigurationAdded(ILaunchConfiguration configuration) {
 			addedList.add(configuration);
 		}
@@ -107,6 +109,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 		 */
+		@Override
 		public void launchConfigurationChanged(ILaunchConfiguration configuration) {
 			changedList.add(configuration);
 		}
@@ -114,27 +117,30 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 		 */
+		@Override
 		public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
 			removedList.add(configuration);
 		}
-		
-		public List getAdded() {
+
+		public List<ILaunchConfiguration> getAdded() {
 			return addedList;
 		}
-		public List getChanged() {
+
+		public List<ILaunchConfiguration> getChanged() {
 			return changedList;
 		}
-		public List getRemoved() {
+
+		public List<ILaunchConfiguration> getRemoved() {
 			return removedList;
 		}
-		
+
 	}
-	
+
 	/**
 	 * Returns the given input stream's contents as a character array.
 	 * If a length is specified (i.e. if length != -1), this represents the number of bytes in the stream.
 	 * Note the specified stream is not closed in this method
-	 * @param stream the stream to get convert to the char array 
+	 * @param stream the stream to get convert to the char array
 	 * @return the given input stream's contents as a character array.
 	 * @throws IOException if a problem occurred reading the stream.
 	 */
@@ -157,7 +163,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		byteBuffer.flip();
 		return charsetDecoder.decode(byteBuffer).array();
 	}
-	
+
 	/**
 	 * Returns the given input stream as a byte array
 	 * @param stream the stream to get as a byte array
@@ -206,8 +212,8 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 			}
 		}
 		return contents;
-	}		
-	
+	}
+
 	/**
 	 * Constructor
 	 * @param name
@@ -215,17 +221,17 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	public LaunchConfigurationTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Returns a scratch project for launch configurations
-	 *  
+	 *
 	 * @return
 	 */
 	protected IProject getProject() throws CoreException {
 		return TestsPlugin.createProject("LaunchConfigurationTests"); //$NON-NLS-1$
 	}
-	
-	/** 
+
+	/**
 	 * Creates and returns a new launch config the given name, local
 	 * or shared, with 4 attributes:
 	 *  - String1 = "String1"
@@ -245,8 +251,8 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 assertTrue("Should need saving", wc.isDirty()); //$NON-NLS-1$
 		 return wc;
 	}
-		
-	/** 
+
+	/**
 	 * Creates and returns a new launch configuration with the given name, local
 	 * or shared, with no attributes
 	 */
@@ -255,8 +261,8 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 ILaunchConfigurationWorkingCopy wc = type.newInstance(container, name);
 		assertEquals("Should have no attributes", 0, wc.getAttributes().size()); //$NON-NLS-1$
 		 return wc;
-	}	
-		
+	}
+
 	/**
 	 * Returns whether the given handle is contained in the specified
 	 * array of handles.
@@ -269,11 +275,11 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Creates a local working copy configuration, sets some attributes,
 	 * and saves the working copy, and retrieves the attributes.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testCreateLocalConfiguration() throws CoreException {
@@ -282,40 +288,40 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 ILaunchConfiguration handle = wc.doSave();
 		 File file = location.toFile();
 		 assertTrue("Configuration file should exist", file.exists()); //$NON-NLS-1$
-		 
+
 		 // retrieve attributes
 		 assertEquals("String1 should be String1", handle.getAttribute("String1", "Missing"), "String1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertEquals("Int1 should be 1", handle.getAttribute("Int1", 0), 1); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false));  //$NON-NLS-1$//$NON-NLS-2$
 		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true));  //$NON-NLS-1$//$NON-NLS-2$
-		 
+
 		 // ensure new handle is the index
 		 ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
 		 assertTrue("Configuration should exist in project index", existsIn(configs, handle)); //$NON-NLS-1$
-		 
+
 		 // cleanup
 		 handle.delete();
 		 assertTrue("Config should not exist after deletion", !handle.exists()); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Creates a local working copy configuration and tests its name.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testLocalName() throws CoreException {
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "localName"); //$NON-NLS-1$
 		 ILaunchConfiguration handle = wc.doSave();
 		 assertTrue("Configuration should exist", handle.exists()); //$NON-NLS-1$
-		 
+
 		 // retrieve attributes
-		 assertEquals("Wrong name", handle.getName(), "localName"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		 assertEquals("Wrong name", handle.getName(), "localName"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		 // cleanup
 		 handle.delete();
 		 assertTrue("Config should not exist after deletion", !handle.exists()); //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Creates a shared working copy configuration and tests is name.
 	 */
@@ -323,15 +329,15 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(getProject(), "sharedName"); //$NON-NLS-1$
 		 ILaunchConfiguration handle = wc.doSave();
 		 assertTrue("Configuration should exist", handle.exists()); //$NON-NLS-1$
-		 
+
 		 // retrieve attributes
-		 assertEquals("Wrong name", handle.getName(), "sharedName"); //$NON-NLS-1$ //$NON-NLS-2$ 
-		 
+		 assertEquals("Wrong name", handle.getName(), "sharedName"); //$NON-NLS-1$ //$NON-NLS-2$
+
  		 // cleanup
 		 handle.delete();
 		 assertTrue("Config should not exist after deletion", !handle.exists()); //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Ensures that a launch configuration returns a complete attribute map
 	 * @throws CoreException
@@ -343,7 +349,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 File file = location.toFile();
 		 assertTrue("Configuration file should exist", file.exists()); //$NON-NLS-1$
 
-		 Map attributes = handle.getAttributes();
+		Map<?, ?> attributes = handle.getAttributes();
 		 // retrieve attributes
 		 assertEquals("String1 should be String1", "String1", attributes.get("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		 assertEquals("Int1 should be 1", new Integer(1), attributes.get("Int1")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -353,15 +359,15 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 // cleanup
 		 handle.delete();
 		 assertTrue("Config should not exist after deletion", !handle.exists()); //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Ensures that set attributes works
 	 * @throws CoreException
 	 */
 	public void testSetAttributes() throws CoreException {
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "config1"); //$NON-NLS-1$
-		 Map map = new HashMap();
+		Map<String, Object> map = new HashMap<String, Object>();
 		 map.put("ATTR1", "ONE"); //$NON-NLS-1$ //$NON-NLS-2$
 		 map.put("ATTR2", "TWO"); //$NON-NLS-1$ //$NON-NLS-2$
 		 wc.setAttributes(map);
@@ -370,7 +376,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 File file = location.toFile();
 		 assertTrue("Configuration file should exist", file.exists()); //$NON-NLS-1$
 
-		 Map attributes = handle.getAttributes();
+		Map<?, ?> attributes = handle.getAttributes();
 		 assertEquals("should have two attributes", 2, attributes.size()); //$NON-NLS-1$
 		 // retrieve attributes
 		 assertEquals("ATTR1 should be ONE", "ONE", attributes.get("ATTR1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -379,8 +385,8 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 // cleanup
 		 handle.delete();
 		 assertTrue("Config should not exist after deletion", !handle.exists()); //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Ensures that set attributes to <code>null</code> works
 	 * @throws CoreException
@@ -393,13 +399,13 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 File file = location.toFile();
 		 assertTrue("Configuration file should exist", file.exists()); //$NON-NLS-1$
 
-		 Map attributes = handle.getAttributes();
+		Map<?, ?> attributes = handle.getAttributes();
 		 assertEquals("should have no attributes", 0, attributes.size()); //$NON-NLS-1$
 		 // cleanup
 		 handle.delete();
 		 assertTrue("Config should not exist after deletion", !handle.exists()); //$NON-NLS-1$
 	}
-		
+
 	/**
 	 * Creates a local working copy configuration, sets some attributes,
 	 * and saves the working copy, and retrieves the attributes.
@@ -412,17 +418,17 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 ILaunchConfiguration handle = wc.doSave();
 		 File file = location.toFile();
 		 assertTrue("Configuration file should exist", file.exists()); //$NON-NLS-1$
-		 
+
 		 // retrieve attributes
 		 assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$
-		 
+
 		 // ensure new handle is the index
 		 ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
 		 assertTrue("Configuration should exist in project index", existsIn(configs, handle)); //$NON-NLS-1$
-		 
+
 		 ILaunchConfigurationWorkingCopy softCopy = handle.copy("CopyOf" + handle.getName()); //$NON-NLS-1$
 		 assertNull("Original in copy should be null", softCopy.getOriginal()); //$NON-NLS-1$
 		 ILaunchConfiguration hardCopy = softCopy.doSave();
@@ -432,16 +438,16 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 assertTrue("Int1 should be 1", hardCopy.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean1 should be true", hardCopy.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean2 should be false", !hardCopy.getAttribute("Boolean2", true));		  //$NON-NLS-1$ //$NON-NLS-2$
-		 
+
 		 assertTrue("Original should still exist", handle.exists()); //$NON-NLS-1$
-		 
+
 		 // cleanup
 		 handle.delete();
 		 assertTrue("Config should not exist after deletion", !handle.exists()); //$NON-NLS-1$
 		 hardCopy.delete();
 		 assertTrue("Config should not exist after deletion", !hardCopy.exists());		 		  //$NON-NLS-1$
 	}
-		
+
 	/**
 	 * Create a config and save it twice, ensuring it only
 	 * ends up in the index once.
@@ -453,32 +459,32 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 ILaunchConfiguration handle = wc.doSave();
 		 File file = location.toFile();
 		 assertTrue("Configuration file should exist", file.exists()); //$NON-NLS-1$
-		 
+
 		 // retrieve attributes
 		 assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$
-		 
+
 		 // ensure new handle is the index
 		 ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
 		 assertTrue("Configuration should exist in project index", existsIn(configs, handle)); //$NON-NLS-1$
-		 
+
 		String name = wc.getName();
 		wc.rename("newName"); //$NON-NLS-1$
 		wc.rename(name);
 		assertTrue("Should be dirty", wc.isDirty()); //$NON-NLS-1$
 		wc.doSave();
-		
+
 		ILaunchConfiguration[] newConfigs = getLaunchManager().getLaunchConfigurations();
 		assertTrue("Should be the same number of configs", newConfigs.length == configs.length); //$NON-NLS-1$
-		
+
 		 // cleanup
 		 handle.delete();
 		 assertTrue("Config should not exist after deletion", !handle.exists()); //$NON-NLS-1$
-		
+
 	}
-		
+
 	/**
 	 * Creates a local working copy configuration, sets some attributes,
 	 * and saves the working copy, and retrieves the attributes. Deletes
@@ -490,22 +496,22 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 ILaunchConfiguration handle = wc.doSave();
 		 File file = wc.getLocation().toFile();
 		 assertTrue("Configuration file should exist", file.exists()); //$NON-NLS-1$
-		 
+
 		 // retrieve attributes
 		 assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$
-		 
-		 // delete 
-		 handle.delete();		 
+
+		 // delete
+		 handle.delete();
 		 assertTrue("Config should no longer exist", !handle.exists()); //$NON-NLS-1$
-		 
+
 		 // ensure handle is not in the index
 		 ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
 		 assertTrue("Configuration should not exist in project index", !existsIn(configs, handle));		  //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Creates a local working copy configuration, sets some attributes,
 	 * and saves the working copy, and retrieves the attributes. Renames
@@ -519,13 +525,13 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 ILaunchConfiguration handle = wc.doSave();
 		 File file = location.toFile();
 		 assertTrue("Configuration file should exist", file.exists()); //$NON-NLS-1$
-		 
+
 		 // retrieve attributes
 		 assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$
-		 
+
 		 // rename
 		 wc = handle.getWorkingCopy();
 		 wc.rename("config-2-rename"); //$NON-NLS-1$
@@ -535,7 +541,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 assertTrue("Config should no longer exist", !handle.exists()); //$NON-NLS-1$
 		 assertEquals("From should be original", handle, fFrom); //$NON-NLS-1$
 		 assertEquals("To should be new handle", newHandle, fTo); //$NON-NLS-1$
-		 
+
 		 // retrieve new attributes
 		 assertTrue("String1 should be String1", newHandle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertTrue("Int1 should be 1", newHandle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
@@ -546,12 +552,12 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
 		 assertTrue("Renamed configuration should exist in project index", existsIn(configs, newHandle));		  //$NON-NLS-1$
 		 assertTrue("Original configuration should NOT exist in project index", !existsIn(configs, handle));	 //$NON-NLS-1$
-		 
+
 		 // cleanup
 		 newHandle.delete();
 		 assertTrue("Config should not exist after deletion", !newHandle.exists());		 	  //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Moves a local configuration to a shared location
 	 * @throws CoreException
@@ -593,8 +599,8 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 // cleanup
 		 newHandle.delete();
 		 assertTrue("Config should not exist after deletion", !newHandle.exists()); //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Moves a local configuration to a shared location
 	 * @throws CoreException
@@ -636,8 +642,8 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 // cleanup
 		 newHandle.delete();
 		 assertTrue("Config should not exist after deletion", !newHandle.exists()); //$NON-NLS-1$
-	}		
-	
+	}
+
 	/**
 	 * Creates a shared working copy configuration, sets some attributes,
 	 * and saves the working copy, and retrieves the attributes.
@@ -647,22 +653,22 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(getProject(), "config2"); //$NON-NLS-1$
 		 ILaunchConfiguration handle = wc.doSave();
 		 assertTrue("Configuration should exist", handle.exists()); //$NON-NLS-1$
-		 
+
 		 // retrieve attributes
 		 assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$
-		 
+
  		 // ensure new handle is in the index
 		 ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
 		 assertTrue("Configuration should exist in project index", existsIn(configs, handle));  //$NON-NLS-1$
-		 
+
  		 // cleanup
 		 handle.delete();
 		 assertTrue("Config should not exist after deletion", !handle.exists()); //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Creates a shared working copy configuration, sets some attributes,
 	 * and saves the working copy, and retrieves the attributes.
@@ -673,36 +679,36 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(getProject(), "config2Copy"); //$NON-NLS-1$
 		 ILaunchConfiguration handle = wc.doSave();
 		 assertTrue("Configuration should exist", handle.exists()); //$NON-NLS-1$
-		 
+
 		 // retrieve attributes
 		 assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$
-		 
+
  		 // ensure new handle is in the index
 		 ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
 		 assertTrue("Configuration should exist in project index", existsIn(configs, handle));  //$NON-NLS-1$
-		 
-		 // copy 
+
+		 // copy
 		 ILaunchConfigurationWorkingCopy softCopy = handle.copy("CopyOf" + handle.getName()); //$NON-NLS-1$
 		 ILaunchConfiguration hardCopy = softCopy.doSave();
-		 
+
 		 // retrieve attributes
 		 assertTrue("String1 should be String1", hardCopy.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertTrue("Int1 should be 1", hardCopy.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean1 should be true", hardCopy.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean2 should be false", !hardCopy.getAttribute("Boolean2", true));		  //$NON-NLS-1$ //$NON-NLS-2$
-		 
+
 		 assertTrue("Original should still exist", handle.exists()); //$NON-NLS-1$
-		 
+
 		 // cleanup
 		 handle.delete();
 		 assertTrue("Config should not exist after deletion", !handle.exists()); //$NON-NLS-1$
 		 hardCopy.delete();
 		 assertTrue("Config should not exist after deletion", !hardCopy.exists());		 		 		  //$NON-NLS-1$
-	}		
-	
+	}
+
 
 	/**
 	 * Creates a shared working copy configuration, sets some attributes,
@@ -714,22 +720,22 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
  		 ILaunchConfigurationWorkingCopy wc = newConfiguration(getProject(), "shared2delete"); //$NON-NLS-1$
 		 ILaunchConfiguration handle = wc.doSave();
 		 assertTrue("Configuration should exist", handle.exists()); //$NON-NLS-1$
-		 
+
 		 // retrieve attributes
 		 assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$
-		 
-		 // delete 
-		 handle.delete();		 
+
+		 // delete
+		 handle.delete();
 		 assertTrue("Config should no longer exist", !handle.exists()); //$NON-NLS-1$
-		 
+
 		 // ensure handle is not in the index
 		 ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
 		 assertTrue("Configuration should not exist in project index", !existsIn(configs, handle));		  //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Creates a shared working copy configuration, sets some attributes,
 	 * and saves the working copy, and retrieves the attributes. Renames
@@ -741,13 +747,13 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(getProject(), "shared2rename"); //$NON-NLS-1$
 		 ILaunchConfiguration handle = wc.doSave();
 		 assertTrue("Configuration should exist", handle.exists()); //$NON-NLS-1$
-		 
+
 		 // retrieve attributes
 		 assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$
-		 
+
 		 // rename
 		 wc = handle.getWorkingCopy();
 		 wc.rename("shared-2-rename"); //$NON-NLS-1$
@@ -757,7 +763,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 assertTrue("Config should no longer exist", !handle.exists()); //$NON-NLS-1$
 		 assertEquals("From should be original", handle, fFrom); //$NON-NLS-1$
 		 assertEquals("To should be new handle", newHandle, fTo);		  //$NON-NLS-1$
-		 
+
 		 // retrieve new attributes
 		 assertTrue("String1 should be String1", newHandle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertTrue("Int1 should be 1", newHandle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
@@ -768,12 +774,12 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
 		 assertTrue("Renamed configuration should exist in project index", existsIn(configs, newHandle));		  //$NON-NLS-1$
 		 assertTrue("Original configuration should NOT exist in project index", !existsIn(configs, handle));		  //$NON-NLS-1$
-		 
+
 		 // cleanup
 		 newHandle.delete();
 		 assertTrue("Config should not exist after deletion", !newHandle.exists());		  //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Closes all editors in the active workbench page.
 	 */
@@ -781,8 +787,8 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		activeWorkbenchWindow.getActivePage().closeAllEditors(false);
 	}
-	
-	/** 
+
+	/**
 	 * Creates a few configs, closes the project and re-opens the
 	 * project to ensure the config index is persisted properly
 	 * @throws CoreException
@@ -790,24 +796,24 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	public void testPersistIndex() throws CoreException {
 		// close all editors before closing project: @see bug 204023
 		closeAllEditors();
-		
+
 		ILaunchConfigurationWorkingCopy wc1 = newConfiguration(null, "persist1local"); //$NON-NLS-1$
 		ILaunchConfigurationWorkingCopy wc2 = newConfiguration(getProject(), "persist2shared"); //$NON-NLS-1$
 		ILaunchConfiguration lc1 = wc1.doSave();
 		ILaunchConfiguration lc2 = wc2.doSave();
-		
+
 		IProject project = getProject();
 		ILaunchConfiguration[] before = getLaunchManager().getLaunchConfigurations();
 		assertTrue("config should be in index", existsIn(before, lc1)); //$NON-NLS-1$
 		assertTrue("config should be in index", existsIn(before, lc2)); //$NON-NLS-1$
-		
+
 		project.close(null);
 		ILaunchConfiguration[] during = getLaunchManager().getLaunchConfigurations();
 		boolean local = true;
 		for (int i = 0; i < during.length; i++) {
 			// must be local, or not from the closed project
 			local = local && (during[i].isLocal() || !during[i].getFile().getProject().equals(project));
-		}		
+		}
 		project.open(null);
 		assertTrue("Should only be local configs when closed", local); //$NON-NLS-1$
 		ILaunchConfiguration[] after = getLaunchManager().getLaunchConfigurations();
@@ -821,14 +827,15 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 assertTrue("Config should not exist after deletion", !lc1.exists()); //$NON-NLS-1$
 		 lc2.delete();
 		 assertTrue("Config should not exist after deletion", !lc2.exists());		  //$NON-NLS-1$
-		 
-		
-	}	
-		
-		
+
+
+	}
+
+
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
 		fFrom = getLaunchManager().getMovedFrom(configuration);
 		synchronized (fLock) {
@@ -840,12 +847,14 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
 		fTo = getLaunchManager().getMovedTo(configuration);
 		synchronized (fLock) {
@@ -857,15 +866,15 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	protected void addConfigListener() {
 		getLaunchManager().addLaunchConfigurationListener(this);
 	}
-	
+
 	protected void removeConfigListener() {
 		getLaunchManager().removeLaunchConfigurationListener(this);
 	}
-	
+
 	/**
 	 * Ensures that a removal notification is sent for a shared config in a project
 	 * that is deleted.
-	 *  
+	 *
 	 * @throws Exception
 	 */
 	public void testDeleteProjectWithSharedConfig() throws Exception {
@@ -877,11 +886,11 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		   project.open(null);
 		   assertTrue("project should be open", project.isOpen()); //$NON-NLS-1$
 		   ILaunchConfigurationWorkingCopy wc = newConfiguration(project, "ToBeDeleted"); //$NON-NLS-1$
-		   
+
 		   addConfigListener();
 		   ILaunchConfiguration configuration = wc.doSave();
 		   assertEquals(configuration, fAdded);
-		   
+
 		   synchronized (fLock) {
 		       fRemoved = null;
 		       project.delete(true, false, null);
@@ -897,10 +906,10 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	       removeConfigListener();
 	   }
 	}
-	
+
 	/**
 	 * Tests a nested working copy.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testNestedWorkingCopyLocalConfiguration() throws CoreException {
@@ -909,33 +918,33 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 ILaunchConfiguration handle = wc.doSave();
 		 File file = location.toFile();
 		 assertTrue("Configuration file should exist", file.exists()); //$NON-NLS-1$
-		 
+
 		 // retrieve attributes
 		 assertEquals("String1 should be String1", handle.getAttribute("String1", "Missing"), "String1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertEquals("Int1 should be 1", handle.getAttribute("Int1", 0), 1); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$
-		 
+
 		 // ensure new handle is the index
 		 ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
 		 assertTrue("Configuration should exist in project index", existsIn(configs, handle)); //$NON-NLS-1$
-		 
+
 		 // get a working copy
 		 wc = handle.getWorkingCopy();
 		 ILaunchConfigurationWorkingCopy nested = wc.getWorkingCopy();
-		 
+
 		 // verify nested is same as original
 		 assertEquals("String1 should be String1", nested.getAttribute("String1", "Missing"), "String1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertEquals("Int1 should be 1", nested.getAttribute("Int1", 0), 1); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean1 should be true", nested.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean2 should be false", !nested.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$
-		 
+
 		 // change an attribute in the nested working copy
 		 nested.setAttribute("String1", "StringOne"); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertEquals("Wrong attribute value", nested.getAttribute("String1", "Missing"), "StringOne"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertEquals("Wrong attribute value", wc.getAttribute("String1", "Missing"), "String1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertEquals("Wrong attribute value", handle.getAttribute("String1", "Missing"), "String1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		 
+
 		 // save back to parent
 		 ILaunchConfigurationWorkingCopy parent = nested.getParent();
 		 assertEquals("Wrong parent", wc, parent); //$NON-NLS-1$
@@ -943,84 +952,84 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 nested.doSave();
 		 assertEquals("Wrong attribute value", wc.getAttribute("String1", "Missing"), "StringOne");  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
 		 assertEquals("Wrong attribute value", handle.getAttribute("String1", "Missing"), "String1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		 
+
 		 // check originals
 		 assertEquals("Wrong original config" , handle, wc.getOriginal()); //$NON-NLS-1$
 		 assertEquals("Wrong original config" , handle, nested.getOriginal()); //$NON-NLS-1$
-		 
+
 		 // cleanup
 		 handle.delete();
 		 assertTrue("Config should not exist after deletion", !handle.exists()); //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Creates a configuration in an EFS linked folder. Deletes configuration directly.
-	 * 
+	 *
 	 * @throws CoreException
 	 * @throws URISyntaxException
-	 */	
+	 */
 	public void testCreateDeleteEFS() throws CoreException, URISyntaxException {
 		IFileSystem fileSystem = EFS.getFileSystem("debug"); //$NON-NLS-1$
 		assertNotNull("Missing debug EFS", fileSystem); //$NON-NLS-1$
-		
+
 		// create folder in EFS
 		IFolder folder = getProject().getFolder("efs"); //$NON-NLS-1$
 		folder.createLink(new URI("debug", Path.ROOT.toString(), null), 0, null); //$NON-NLS-1$
-		
+
 		// create configuration
 		ILaunchConfigurationWorkingCopy wc = newConfiguration(folder, "efsConfig"); //$NON-NLS-1$
 		ILaunchConfiguration handle = wc.doSave();
 		assertTrue("Configuration should exist", handle.exists()); //$NON-NLS-1$
-		
+
 		 // retrieve attributes
 		 assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
-		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$		
-		
+		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$
+
 		// delete configuration
 		handle.delete();
 		assertTrue("Configuration should not exist", !handle.exists()); //$NON-NLS-1$
-		
+
 		// cleanup
 		folder.delete(IResource.NONE, null);
 	}
-	
+
 	/**
 	 * Creates a configuration in an EFS linked folder. Deletes the folder to ensure the
 	 * configuration is also deleted.
-	 * 
+	 *
 	 * @throws CoreException
 	 * @throws URISyntaxException
 	 */
 	public void testCreateDeleteEFSLink() throws CoreException, URISyntaxException {
 		IFileSystem fileSystem = EFS.getFileSystem("debug"); //$NON-NLS-1$
 		assertNotNull("Missing debug EFS", fileSystem); //$NON-NLS-1$
-		
+
 		// create folder in EFS
 		IFolder folder = getProject().getFolder("efs2"); //$NON-NLS-1$
 		folder.createLink(new URI("debug", Path.ROOT.toString(), null), 0, null); //$NON-NLS-1$
-		
+
 		// create configuration
 		ILaunchConfigurationWorkingCopy wc = newConfiguration(folder, "efsConfig"); //$NON-NLS-1$
 		ILaunchConfiguration handle = wc.doSave();
 		assertTrue("Configuration should exist", handle.exists()); //$NON-NLS-1$
-		
+
 		 // retrieve attributes
 		 assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		 assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
-		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$		
-				
+		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$
+
 		// cleanup
 		folder.delete(IResource.NONE, null);
 		assertTrue("Configuration should not exist", !handle.exists()); //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Test that renaming a project with a linked EFS folder containing a shared
 	 * launch configuration is properly updated.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testEFSProjectRename() throws Exception {
@@ -1031,33 +1040,33 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
         }
         // create project
 		IProject project = TestsPlugin.createProject("RenameEFS"); //$NON-NLS-1$
-        
+
 		IFileSystem fileSystem = EFS.getFileSystem("debug"); //$NON-NLS-1$
 		assertNotNull("Missing debug EFS", fileSystem); //$NON-NLS-1$
-		
+
 		// create folder in EFS
 		IFolder folder = project.getFolder("efs2"); //$NON-NLS-1$
 		folder.createLink(new URI("debug", Path.ROOT.toString(), null), 0, null); //$NON-NLS-1$
-		
+
 		// create configuration
 		ILaunchConfigurationWorkingCopy wc = newConfiguration(folder, "efsConfig"); //$NON-NLS-1$
 		ILaunchConfiguration handle = wc.doSave();
 		assertTrue("Configuration should exist", handle.exists()); //$NON-NLS-1$
-		
+
 		// retrieve attributes
 		assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$		
-		
+		assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$
+
 		// rename project
 		IProjectDescription description = project.getDescription();
 		description.setName("SFEemaneR"); // reverse name //$NON-NLS-1$
 		project.move(description, IResource.SHALLOW, null);
-		
+
 		// original configuration should no longer exist - handle out of date
 		assertTrue("Configuration should not exist", !handle.exists()); //$NON-NLS-1$
-		
+
 		// get the new handle
 		project = ResourcesPlugin.getWorkspace().getRoot().getProject("SFEemaneR"); //$NON-NLS-1$
 		assertTrue("Project should exist", project.exists()); //$NON-NLS-1$
@@ -1065,25 +1074,25 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		assertTrue("launch config file should exist", file.exists()); //$NON-NLS-1$
 		handle = getLaunchManager().getLaunchConfiguration(file);
 		assertTrue("launch config should exist", handle.exists()); //$NON-NLS-1$
-		
+
 		// retrieve attributes
 		assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$		
-		
+		assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$
+
 		// validate shared location
 		assertEquals("Shared location should be updated", file, handle.getFile()); //$NON-NLS-1$
-		
+
 		// cleanup
 		project.delete(IResource.NONE, null);
 		assertTrue("Configuration should not exist", !handle.exists()); //$NON-NLS-1$
-        
+
 	}
-	
+
 	/**
 	 * Tests launch configuration import.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testImport() throws Exception {
@@ -1091,7 +1100,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(getProject(), "Import4"); //$NON-NLS-1$
 		 ILaunchConfiguration handle = wc.doSave();
 		 assertTrue("Configuration should exist", handle.exists()); //$NON-NLS-1$
-		 
+
 		File dir = TestsPlugin.getDefault().getFileInPlugin(new Path("test-import")); //$NON-NLS-1$
 		assertTrue("Import directory does not exist", dir.exists()); //$NON-NLS-1$
 		 LaunchManager manager = (LaunchManager) getLaunchManager();
@@ -1102,6 +1111,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 			 // import
 			 manager.importConfigurations(dir.listFiles(
 				new FileFilter() {
+					@Override
 					public boolean accept(File file) {
 						return file.isFile() &&
 							file.getName().endsWith(
@@ -1109,17 +1119,17 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 					}
 				}),
 				null);
-		 
+
 			 // should be one removed
-			 List removed = listener.getRemoved();
+			List<ILaunchConfiguration> removed = listener.getRemoved();
 			assertEquals("Should be one removed config", 1, removed.size()); //$NON-NLS-1$
 			assertTrue("Import4 should be removed", removed.contains(handle)); //$NON-NLS-1$
-			 
+
 			 // should be 5 added
-			 List added = listener.getAdded();
+			List<?> added = listener.getAdded();
 			assertEquals("Should be 5 added configs", 5, added.size()); //$NON-NLS-1$
-			 Set names = new HashSet();
-			 Iterator iterator = added.iterator();
+			Set<String> names = new HashSet<String>();
+			Iterator<?> iterator = added.iterator();
 			 while (iterator.hasNext()) {
 				ILaunchConfiguration lc = (ILaunchConfiguration) iterator.next();
 				names.add(lc.getName());
@@ -1129,20 +1139,20 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 			assertTrue("Missing Name", names.contains("Import3")); //$NON-NLS-1$ //$NON-NLS-2$
 			assertTrue("Missing Name", names.contains("Import4")); //$NON-NLS-1$ //$NON-NLS-2$
 			assertTrue("Missing Name", names.contains("Import5")); //$NON-NLS-1$ //$NON-NLS-2$
-			
+
 			// should be one changed
-			List changed = listener.getChanged();
+			List<ILaunchConfiguration> changed = listener.getChanged();
 			assertEquals("Should be 1 changed config", 1, changed.size()); //$NON-NLS-1$
-			assertEquals("Wrong changed config", "Import4", ((ILaunchConfiguration) changed.get(0)).getName()); //$NON-NLS-1$ //$NON-NLS-2$
+			assertEquals("Wrong changed config", "Import4", changed.get(0).getName()); //$NON-NLS-1$ //$NON-NLS-2$
 		 } finally {
 			 manager.removeLaunchConfigurationListener(listener);
 		 }
-		 
+
 	}
-	
+
 	/**
 	 * Tests the location of a local working copy.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testWorkingCopyGetLocation() throws CoreException {
@@ -1150,7 +1160,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		IPath location = workingCopy.getLocation();
 		assertEquals("Wrong path for local working copy", LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.append("test-get-location.launch"), location); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	 * Tests that the framework adds time stamps to launch objects.
 	 */
@@ -1167,15 +1177,15 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 			}
 		}
 	}
-	
+
 	/**
 	 * Tests that attributes in a nested map are persisted in alphabetical order.
-	 *   
+	 *
 	 * @throws CoreException
 	 */
 	public void testMapAttributePersistence() throws CoreException, IOException {
 		ILaunchConfigurationWorkingCopy c1 = newEmptyConfiguration(getProject(), "testMapAttributes1"); //$NON-NLS-1$
-		HashMap map = new HashMap();
+		HashMap<String, String> map = new HashMap<String, String>();
 		map.put("Z", "z-value"); //$NON-NLS-1$ //$NON-NLS-2$
 		map.put("Y", "y-value"); //$NON-NLS-1$ //$NON-NLS-2$
 		map.put("X", "x-value"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1204,9 +1214,9 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		map.put("A", "a-value"); //$NON-NLS-1$ //$NON-NLS-2$
 		c1.setAttribute("Map-Attribute", map); //$NON-NLS-1$
 		c1.doSave();
-		
+
 		ILaunchConfigurationWorkingCopy c2 = newEmptyConfiguration(getProject(), "testMapAttributes2"); //$NON-NLS-1$
-		map = new HashMap();
+		map = new HashMap<String, String>();
 		map.put("A", "a-value"); //$NON-NLS-1$ //$NON-NLS-2$
 		map.put("Z", "z-value"); //$NON-NLS-1$ //$NON-NLS-2$
 		map.put("B", "b-value"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1235,7 +1245,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		map.put("N", "n-value"); //$NON-NLS-1$ //$NON-NLS-2$
 		c2.setAttribute("Map-Attribute", map); //$NON-NLS-1$
 		c2.doSave();
-		
+
 		// file contents should be the same
 		char[] chars1 = getInputStreamAsCharArray(c1.getFile().getContents());
 		char[] chars2 = getInputStreamAsCharArray(c2.getFile().getContents());
@@ -1243,17 +1253,17 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		for (int i = 0; i < chars2.length; i++) {
 			assertEquals("Should be the same character", chars1[i], chars2[i]); //$NON-NLS-1$
 		}
-		
+
 	}
 
 	/**
 	 * Tests that attributes in a nested set are persisted in alphabetical order.
-	 *   
+	 *
 	 * @throws CoreException
 	 */
 	public void testSetAttributePersistence() throws CoreException, IOException {
 		ILaunchConfigurationWorkingCopy c1 = newEmptyConfiguration(getProject(), "testSetAttributes1"); //$NON-NLS-1$
-		Set set = new HashSet();
+		Set<String> set = new HashSet<String>();
 		set.add("z-value"); //$NON-NLS-1$
 		set.add("y-value"); //$NON-NLS-1$
 		set.add("x-value"); //$NON-NLS-1$
@@ -1282,9 +1292,9 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		set.add("a-value"); //$NON-NLS-1$
 		c1.setAttribute("Set-Attribute", set); //$NON-NLS-1$
 		c1.doSave();
-		
+
 		ILaunchConfigurationWorkingCopy c2 = newEmptyConfiguration(getProject(), "testSetAttributes2"); //$NON-NLS-1$
-		set = new HashSet();
+		set = new HashSet<String>();
 		set.add("a-value"); //$NON-NLS-1$
 		set.add("z-value"); //$NON-NLS-1$
 		set.add("b-value"); //$NON-NLS-1$
@@ -1313,7 +1323,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		set.add("n-value"); //$NON-NLS-1$
 		c2.setAttribute("Set-Attribute", set); //$NON-NLS-1$
 		c2.doSave();
-		
+
 		// file contents should be the same
 		char[] chars1 = getInputStreamAsCharArray(c1.getFile().getContents());
 		char[] chars2 = getInputStreamAsCharArray(c2.getFile().getContents());
@@ -1321,13 +1331,13 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		for (int i = 0; i < chars2.length; i++) {
 			assertEquals("Should be the same character", chars1[i], chars2[i]); //$NON-NLS-1$
 		}
-		
+
 	}
-	
+
 	/**
 	 * Ensures that client does not attempt to nest configurations in a sub directory when
 	 * using local metadata location. See bug 275741.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testIllegalFileSepCharName() {
@@ -1339,12 +1349,12 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		}
 		assertTrue("Should be an illegal argument - cannot nest local configurations", false); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Ensures that client can nest configurations in a sub directory when
 	 * using a workspace location. See bug 275741. For behavior compatibility
 	 * a client should be able to use a slash in the configuration name.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testLegalFileSepCharName() {
@@ -1353,11 +1363,11 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		} catch (CoreException e) {
 			assertTrue("Should *not* be an illegal argument - can nest shared cofigurations", false); //$NON-NLS-1$
 		}
-	}	
-	
+	}
+
 	/**
 	 * Test that an illegal name with '<' causes an exception
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testIllegalCharName() {
@@ -1368,11 +1378,11 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 			return;
 		}
 		assertTrue("Should be an illegal argument - illegal character used in name", false); //$NON-NLS-1$
-	}		
-	
+	}
+
 	/**
 	 * Test that moving and renaming a shared configuration at the same time works.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testRenameAndMoveShared() throws CoreException {
@@ -1384,19 +1394,19 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		ILaunchConfigurationWorkingCopy wc = newConfiguration(f1, "start-here"); //$NON-NLS-1$
 		ILaunchConfiguration orig = wc.doSave();
 		wc = orig.getWorkingCopy();
-		
+
 		wc.setContainer(f2);
 		wc.rename("end-here"); //$NON-NLS-1$
 		ILaunchConfiguration next = wc.doSave();
-		
+
 		assertFalse("Original should not exist", orig.exists()); //$NON-NLS-1$
 		assertTrue("Renamed and moved config should exist", next.exists()); //$NON-NLS-1$
-		
+
 	}
-	
+
 	/**
 	 * Test support for a URL in the 'icon' part of the launchConfigurationTypeImages extension point
-	 * 
+	 *
 	 * Bug 381175 - [patch] launchConfigurationTypeImage to support platform: style icons
 	 * @throws Exception
 	 */
@@ -1405,7 +1415,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		assertNotNull("The image descriptior type.image.1 must exist", descriptor); //$NON-NLS-1$
 		assertNotSame("The image descriptor is not type.image.1", ImageDescriptor.getMissingImageDescriptor(), descriptor); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Test support for a declared launch configuration type image
 	 * @throws Exception
@@ -1415,10 +1425,10 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		assertNotNull("The image descriptior type.image.2 must exist", descriptor); //$NON-NLS-1$
 		assertNotSame("The image descriptor is not type.image.2", ImageDescriptor.getMissingImageDescriptor(), descriptor); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests that we can get a project handle from a project name
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=395441
 	 * @throws Exception
 	 * @since 3.9.0
@@ -1437,10 +1447,10 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 			lc.delete();
 		}
 	}
-	
+
 	/**
 	 * Tests that we cannot get a project handle from a bogus project name
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=395441
 	 * @throws Exception
 	 * @since 3.9.0
@@ -1458,10 +1468,10 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 			lc.delete();
 		}
 	}
-	
+
 	/**
 	 * Tests that we cannot get a project handle from a bogus project name
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=395441
 	 * @throws Exception
 	 * @since 3.9.0
@@ -1487,7 +1497,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 
 	/**
 	 * Tests that we can get a project handle from an absolute project name
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=395441
 	 * @throws Exception
 	 * @since 3.9.0
@@ -1505,19 +1515,19 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 			lc.delete();
 		}
 	}
-	
+
 	/**
 	 * Proxy to set resource paths, allowing invalid resource paths to be set
 	 * @param resources
 	 * @since 3.9.0
 	 */
 	protected void setResourceMappings(ILaunchConfigurationWorkingCopy config, ResourceItem[] resources) {
-		List/*<String>*/ paths = null;
-		List/*<String>*/ types = null;
+		List/* <String> */<String> paths = null;
+		List/* <String> */<String> types = null;
 		int size = resources.length;
 		if(resources != null && size > 0) {
-			paths = new ArrayList(size);
-			types = new ArrayList(size);
+			paths = new ArrayList<String>(size);
+			types = new ArrayList<String>(size);
 			for(int i = 0; i < size; i++) {
 				paths.add(resources[i].path);
 				types.add(resources[i].type.toString());

@@ -27,6 +27,7 @@ public class LaunchablePropertyTester extends PropertyTester {
 	/**
 	 * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
 	 */
+	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if ("launchable".equals(property)) { //$NON-NLS-1$
 				if (DebugUIPlugin.getDefault().getLaunchConfigurationManager().launchModeAvailable((String)expectedValue)) {

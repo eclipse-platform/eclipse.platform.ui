@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,8 @@ public class ExecuteActionRequest extends DebugCommandRequest {
 		super(elements);
 	}
 
-    public void done() {
+    @Override
+	public void done() {
     	if (fParticipant != null) {
 			fParticipant.requestDone(this);
 			fParticipant = null;
@@ -40,25 +41,30 @@ public class ExecuteActionRequest extends DebugCommandRequest {
             switch (status.getSeverity()) {
             case IStatus.ERROR:
                 DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         MessageDialog.openError(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, status.getMessage());
                     }
                 });
                 break;
             case IStatus.WARNING:
                 DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         MessageDialog.openWarning(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, status.getMessage());
                     }
                 });
                 break;
             case IStatus.INFO:
                 DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         MessageDialog.openInformation(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, status.getMessage());
                     }
                 });
                 break;
+				default:
+					break;
             }
         }
     }

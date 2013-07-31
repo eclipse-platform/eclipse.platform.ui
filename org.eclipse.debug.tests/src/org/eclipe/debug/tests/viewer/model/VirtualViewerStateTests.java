@@ -26,7 +26,8 @@ public class VirtualViewerStateTests extends StateTests {
         super(name);
     }
 
-    protected ITreeModelViewer createViewer(Display display, Shell shell) {
+    @Override
+	protected ITreeModelViewer createViewer(Display display, Shell shell) {
 		return new VirtualTreeModelViewer(fDisplay, 0, new PresentationContext("TestViewer")); //$NON-NLS-1$
     }
 }

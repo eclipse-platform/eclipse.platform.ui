@@ -40,6 +40,7 @@ public class ModulesView extends VariablesView {
 	/**
 	 * @see org.eclipse.debug.ui.AbstractDebugView#getHelpContextId()
 	 */
+	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.MODULES_VIEW;
 	}
@@ -47,6 +48,7 @@ public class ModulesView extends VariablesView {
 	/**
 	 * @see org.eclipse.debug.ui.AbstractDebugView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
 	 */
+	@Override
 	protected void configureToolBar(IToolBarManager tbm) {
         tbm.add(new Separator(this.getClass().getName()));
         tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
@@ -57,7 +59,8 @@ public class ModulesView extends VariablesView {
 	   /* (non-Javadoc)
      * @see org.eclipse.debug.ui.AbstractDebugView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
      */
-    protected void fillContextMenu( IMenuManager menu ) {
+    @Override
+	protected void fillContextMenu( IMenuManager menu ) {
         menu.add( new Separator( IDebugUIConstants.EMPTY_MODULES_GROUP ) );
         menu.add( new Separator( IDebugUIConstants.MODULES_GROUP ) );
         menu.add(getAction(FIND_ACTION));
@@ -74,6 +77,7 @@ public class ModulesView extends VariablesView {
 	/**
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getDetailPanePreferenceKey()
 	 */
+	@Override
 	protected String getDetailPanePreferenceKey() {
 		return IDebugPreferenceConstants.MODULES_DETAIL_PANE_ORIENTATION;
 	}
@@ -81,6 +85,7 @@ public class ModulesView extends VariablesView {
 	/**
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getToggleActionLabel()
 	 */
+	@Override
 	protected String getToggleActionLabel() {
 		
 		if (getViewer() != null)
@@ -103,10 +108,12 @@ public class ModulesView extends VariablesView {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getPresentationContextId()
 	 */
+	@Override
 	protected String getPresentationContextId() {
 		return IDebugUIConstants.ID_MODULE_VIEW;
 	}
 	
+	@Override
 	protected void setViewerInput(Object context) {
 		super.setViewerInput(context);
 		

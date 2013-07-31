@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 	/**
 	 * Console listeners
 	 */
-	private List fListeners = new ArrayList(2);
+	private List<IConsoleLineTracker> fListeners = new ArrayList<IConsoleLineTracker>(2);
 
 	/**
 	 * The console this notifier is tracking 
@@ -46,6 +46,7 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.TextConsole)
 	 */
+	@Override
 	public void connect(TextConsole console) {
 	    if (console instanceof ProcessConsole) {
 	        fConsole = (ProcessConsole)console;
@@ -63,6 +64,7 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IPatternMatchListener#disconnect()
 	 */
+	@Override
 	public synchronized void disconnect() {
         try {
             IDocument document = fConsole.getDocument();
@@ -83,7 +85,7 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
     public synchronized void consoleClosed() {
         int size = fListeners.size();
         for (int i = 0; i < size; i++) {
-            IConsoleLineTracker tracker = (IConsoleLineTracker) fListeners.get(i);
+            IConsoleLineTracker tracker = fListeners.get(i);
             if (tracker instanceof IConsoleLineTrackerExtension) {
                 ((IConsoleLineTrackerExtension) tracker).consoleClosed();
             }
@@ -101,14 +103,16 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
      * @param listener the listener to add 
      */
 	public void addConsoleListener(IConsoleLineTracker listener) {
-        if (!fListeners.contains(listener))
-            fListeners.add(listener);
+        if (!fListeners.contains(listener)) {
+			fListeners.add(listener);
+		}
 	}
 	
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListener#matchFound(org.eclipse.ui.console.PatternMatchEvent)
      */
-    public void matchFound(PatternMatchEvent event) {
+    @Override
+	public void matchFound(PatternMatchEvent event) {
         try  {
             IDocument document = fConsole.getDocument();
             int lineOfOffset = document.getLineOfOffset(event.getOffset());
@@ -122,7 +126,7 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
     public void lineAppended(IRegion region) {
         int size = fListeners.size();
         for (int i=0; i<size; i++) {
-            IConsoleLineTracker tracker = (IConsoleLineTracker) fListeners.get(i);
+            IConsoleLineTracker tracker = fListeners.get(i);
             tracker.lineAppended(region);
         }
     }
@@ -130,7 +134,8 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
     /* (non-Javadoc)
      * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
      */
-    public void propertyChange(PropertyChangeEvent event) {
+    @Override
+	public void propertyChange(PropertyChangeEvent event) {
         if(event.getProperty().equals(IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE)) {
             fConsole.removePropertyChangeListener(this);
             consoleClosed();
@@ -140,21 +145,24 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListener#getPattern()
      */
-    public String getPattern() {
+    @Override
+	public String getPattern() {
         return ".*\\r(\\n?)|.*\\n"; //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListener#getCompilerFlags()
      */
-    public int getCompilerFlags() {
+    @Override
+	public int getCompilerFlags() {
         return 0;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListener#getLineQualifier()
      */
-    public String getLineQualifier() {
+    @Override
+	public String getLineQualifier() {
         return "\\n|\\r"; //$NON-NLS-1$
     }
 

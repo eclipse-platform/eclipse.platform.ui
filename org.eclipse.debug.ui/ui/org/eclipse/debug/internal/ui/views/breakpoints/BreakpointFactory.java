@@ -27,7 +27,8 @@ public class BreakpointFactory implements IElementFactory {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IElementFactory#createElement(org.eclipse.ui.IMemento)
      */
-    public IAdaptable createElement(IMemento memento) {
+    @Override
+	public IAdaptable createElement(IMemento memento) {
         String longString = memento.getString(BreakpointPersistableElementAdapter.TAG_MARKER_ID);
         String factoryId = memento.getString(BreakpointPersistableElementAdapter.TAG_RESOURCE_FACTORY_ID);
         if (factoryId != null && longString != null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Wind River Systems and others.
+ * Copyright (c) 2009, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation = bug fixing
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.launch;
 
@@ -36,7 +37,8 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class LaunchViewCopyToClipboardActionDelegate extends VirtualCopyToClipboardActionDelegate {
 
-    protected TreeItem[] getSelectedItems(TreeModelViewer clientViewer) {
+    @Override
+	protected TreeItem[] getSelectedItems(TreeModelViewer clientViewer) {
         LaunchView view = (LaunchView)getView();
         if (view.isBreadcrumbVisible()) {
             ISelection selection = getSelection();
@@ -51,9 +53,9 @@ public class LaunchViewCopyToClipboardActionDelegate extends VirtualCopyToClipbo
         } else {
         	// Return tree selection plus children.
     	    TreeItem[] selection = clientViewer.getTree().getSelection();
-    	    Set set = new HashSet();
+			Set<Widget> set = new HashSet<Widget>();
     	    collectChildItems(set, selection);
-            return (TreeItem[])set.toArray(new TreeItem[set.size()]);
+            return set.toArray(new TreeItem[set.size()]);
         }
     }
 
@@ -66,7 +68,7 @@ public class LaunchViewCopyToClipboardActionDelegate extends VirtualCopyToClipbo
      */
     private TreeItem[] getSelectedItemsInTreeViewer(TreeModelViewer viewer, TreePath path) {
         Widget item = viewer.findItem(path);
-        Set set = new HashSet();
+		Set<Widget> set = new HashSet<Widget>();
         if (item instanceof TreeItem) {
         	set.add(item);
         	if (((TreeItem) item).getExpanded()) {
@@ -75,10 +77,10 @@ public class LaunchViewCopyToClipboardActionDelegate extends VirtualCopyToClipbo
         } else if (item instanceof Tree) {
         	collectChildItems(set, ((Tree)item).getItems());
         } 
-        return (TreeItem[])set.toArray(new TreeItem[set.size()]);
+        return set.toArray(new TreeItem[set.size()]);
     }
     
-    private void collectChildItems(Set set, TreeItem[] items) {
+	private void collectChildItems(Set<Widget> set, TreeItem[] items) {
     	if (items == null) {
     		return;
     	}

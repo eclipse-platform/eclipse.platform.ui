@@ -30,7 +30,8 @@ public class PDADataCommand extends PDACommand {
         super("data " + threadId); //$NON-NLS-1$
     }
     
-    public PDACommandResult createResult(String resultText) {
+    @Override
+	public PDACommandResult createResult(String resultText) {
         return new PDAListResult(resultText);
     }
 }

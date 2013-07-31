@@ -21,21 +21,24 @@ public class ModificationWatchpointToggleAction extends ModifyWatchpointAction {
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.actions.ModifyWatchpointAction#isEnabled(org.eclipse.debug.core.model.IWatchpoint)
      */
-    protected boolean isEnabled(IWatchpoint watchpoint) {
+    @Override
+	protected boolean isEnabled(IWatchpoint watchpoint) {
         return watchpoint.supportsModification();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.actions.ModifyWatchpointAction#toggleWatchpoint(org.eclipse.debug.core.model.IWatchpoint, boolean)
      */
-    protected void toggleWatchpoint(IWatchpoint watchpoint, boolean b) throws CoreException {
+    @Override
+	protected void toggleWatchpoint(IWatchpoint watchpoint, boolean b) throws CoreException {
         watchpoint.setModification(b);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.actions.ModifyWatchpointAction#isChecked(org.eclipse.debug.core.model.IWatchpoint)
      */
-    protected boolean isChecked(IWatchpoint watchpoint) {
+    @Override
+	protected boolean isChecked(IWatchpoint watchpoint) {
         try {
             return watchpoint.isModification();
         } catch (CoreException e) {

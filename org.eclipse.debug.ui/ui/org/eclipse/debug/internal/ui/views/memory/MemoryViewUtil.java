@@ -39,68 +39,35 @@ import org.eclipse.ui.progress.UIJob;
  * @since 3.0
  */
 public class MemoryViewUtil {
-	
-	public static final int[] ignoreKeyEvents =
-	{
-		SWT.ARROW_UP,
-		SWT.ARROW_DOWN,
-		SWT.ARROW_LEFT,
-		SWT.ARROW_RIGHT,
-		SWT.PAGE_UP,
-		SWT.PAGE_DOWN,
-		SWT.HOME,
-		SWT.END,
-		SWT.INSERT,
-		SWT.F1,
-		SWT.F2,
-		SWT.F3,
-		SWT.F4,
-		SWT.F5,
-		SWT.F6,
-		SWT.F7,
-		SWT.F8,
-		SWT.F9,
-		SWT.F10,
-		SWT.F11,
-		SWT.F12,
-		SWT.F13,
-		SWT.F14,
-		SWT.F15,
-		SWT.HELP,
-		SWT.CAPS_LOCK,
-		SWT.NUM_LOCK,
-		SWT.SCROLL_LOCK,
-		SWT.PAUSE,
-		SWT.BREAK,
-		SWT.PRINT_SCREEN,
-		SWT.ESC,
-		SWT.CTRL,
-		SWT.ALT,
-		SWT.SHIFT
-	};	
-	
-	public static ArrayList MEMORY_BLOCKS_HISTORY = new ArrayList();
-	
+
+	public static final int[] ignoreKeyEvents = {
+			SWT.ARROW_UP, SWT.ARROW_DOWN, SWT.ARROW_LEFT, SWT.ARROW_RIGHT,
+			SWT.PAGE_UP, SWT.PAGE_DOWN, SWT.HOME, SWT.END, SWT.INSERT, SWT.F1,
+			SWT.F2, SWT.F3, SWT.F4, SWT.F5, SWT.F6, SWT.F7, SWT.F8, SWT.F9,
+			SWT.F10, SWT.F11, SWT.F12, SWT.F13, SWT.F14, SWT.F15, SWT.HELP,
+			SWT.CAPS_LOCK, SWT.NUM_LOCK, SWT.SCROLL_LOCK, SWT.PAUSE, SWT.BREAK,
+			SWT.PRINT_SCREEN, SWT.ESC, SWT.CTRL, SWT.ALT, SWT.SHIFT };
+
+	public static ArrayList<String> MEMORY_BLOCKS_HISTORY = new ArrayList<String>();
+
 	/**
 	 * @param selection
 	 * @return true if the given selection is valid for creating a memory block
 	 */
 	static public boolean isValidSelection(ISelection selection) {
-	
+
 		if (!(selection instanceof IStructuredSelection))
 			return false;
-	
-		//only single selection is allowed for this action
-		if (selection.isEmpty() || ((IStructuredSelection)selection).size() > 1)
-		{
+
+		// only single selection is allowed for this action
+		if (selection.isEmpty() || ((IStructuredSelection) selection).size() > 1) {
 			return false;
 		}
-	
-		Object elem = ((IStructuredSelection)selection).getFirstElement();
-	
+
+		Object elem = ((IStructuredSelection) selection).getFirstElement();
+
 		return isValidContext(elem);
 	}
-
 
 	/**
 	 * @param elem
@@ -110,78 +77,75 @@ public class MemoryViewUtil {
 		// if not debug element
 		if (!(elem instanceof IAdaptable))
 			return false;
-	
-		IMemoryBlockRetrieval memRetrieval =(IMemoryBlockRetrieval) ((IAdaptable)elem).getAdapter(IMemoryBlockRetrieval.class);
+
+		IMemoryBlockRetrieval memRetrieval = (IMemoryBlockRetrieval) ((IAdaptable) elem).getAdapter(IMemoryBlockRetrieval.class);
 
 		IDebugTarget debugTarget = null;
 		if (elem instanceof IDebugElement) {
-		    debugTarget = ((IDebugElement)elem).getDebugTarget();
+			debugTarget = ((IDebugElement) elem).getDebugTarget();
 		} else {
-		    debugTarget = (IDebugTarget)((IAdaptable)elem).getAdapter(IDebugTarget.class);
+			debugTarget = (IDebugTarget) ((IAdaptable) elem).getAdapter(IDebugTarget.class);
 		}
-		
-		if (memRetrieval == null)
-		{
-			// if debug element returns null from getAdapter, assume its debug target is going to retrieve memory blocks
+
+		if (memRetrieval == null) {
+			// if debug element returns null from getAdapter, assume its debug
+			// target is going to retrieve memory blocks
 			memRetrieval = debugTarget;
 		}
-		
+
 		// not valid if the debug target is already terminated
 		if (debugTarget != null && (debugTarget.isTerminated() || debugTarget.isDisconnected()))
 			return false;
-		
+
 		if (memRetrieval != null && memRetrieval.supportsStorageRetrieval()) {
 			return true;
 		}
-		
-		return false;
-	}	
 
-	
+		return false;
+	}
+
 	/**
 	 * Helper function to open an error dialog.
+	 * 
 	 * @param title
 	 * @param message
 	 * @param e
 	 */
-	static public void openError (final String title, final String message, final Exception e)
-	{
-		UIJob uiJob = new UIJob("open error"){ //$NON-NLS-1$
+	static public void openError(final String title, final String message, final Exception e) {
+		UIJob uiJob = new UIJob("open error") { //$NON-NLS-1$
 
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-//				 open error for the exception
+				// open error for the exception
 				String detail = IInternalDebugCoreConstants.EMPTY_STRING;
 				if (e != null)
 					detail = e.getMessage();
-				
+
 				Shell shell = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
-				
-				MessageDialog.openError(
-					shell,
-					title,
-					message + "\n" + detail); //$NON-NLS-1$
+
+				MessageDialog.openError(shell, title, message + "\n" + detail); //$NON-NLS-1$
 				return Status.OK_STATUS;
-			}};
+			}
+		};
 		uiJob.setSystem(true);
 		uiJob.schedule();
 	}
-	
-	static IMemoryBlockManager getMemoryBlockManager()
-	{
+
+	static IMemoryBlockManager getMemoryBlockManager() {
 		return DebugPlugin.getDefault().getMemoryBlockManager();
 	}
-	
-	static public boolean isLinuxGTK()
-	{	
+
+	static public boolean isLinuxGTK() {
 		String ws = Platform.getWS();
 		return ws.equals(Platform.WS_GTK);
 	}
-	
+
 	/**
-	 * Checks to see if the event is valid for activating
-	 * cell editing in a view tab
+	 * Checks to see if the event is valid for activating cell editing in a view
+	 * tab
+	 * 
 	 * @param event
-	 * @return true if the edit event is valid  for activating the cell editor
+	 * @return true if the edit event is valid for activating the cell editor
 	 */
 	public static boolean isValidEditEvent(int event) {
 		for (int i = 0; i < MemoryViewUtil.ignoreKeyEvents.length; i++) {
@@ -190,76 +154,71 @@ public class MemoryViewUtil {
 		}
 		return true;
 	}
-	
-	public static BigInteger alignToBoundary(BigInteger integer, int numberOfUnitsPerLine)
-	{
+
+	public static BigInteger alignToBoundary(BigInteger integer, int numberOfUnitsPerLine) {
 		BigInteger[] result = integer.divideAndRemainder(BigInteger.valueOf(numberOfUnitsPerLine));
 		integer = integer.subtract(result[1]);
 		return integer;
 	}
-	
-	public static void addHistory(String expression)
-	{		
+
+	public static void addHistory(String expression) {
 		if (!MEMORY_BLOCKS_HISTORY.contains(expression))
 			MEMORY_BLOCKS_HISTORY.add(0, expression);
-		
+
 		if (MEMORY_BLOCKS_HISTORY.size() > 5)
-			MEMORY_BLOCKS_HISTORY.remove(MEMORY_BLOCKS_HISTORY.size()-1);
+			MEMORY_BLOCKS_HISTORY.remove(MEMORY_BLOCKS_HISTORY.size() - 1);
 	}
-	
-	public static String[] getHistory() 
-	{
-		return (String[])MEMORY_BLOCKS_HISTORY.toArray(new String[MEMORY_BLOCKS_HISTORY.size()]);
+
+	public static String[] getHistory() {
+		return MEMORY_BLOCKS_HISTORY.toArray(new String[MEMORY_BLOCKS_HISTORY.size()]);
 	}
-	
+
 	/**
 	 * Return the memory block retrieval of the given object
+	 * 
 	 * @param object
-	 * @return the memory block retrieval of the given object or <code>null</code>
-	 *  if no memory block retrieval can be found
-	 *  
-	 *  Returning null for the memory block retrieval will result in errors in operations
-	 *  that follow.
-	 *    
-	 *  Non-standard debug models must provide a memory block retrieval via 
-	 *  <code>getAdapter(IMemoryBlockRetrieval.class</code>
+	 * @return the memory block retrieval of the given object or
+	 *         <code>null</code> if no memory block retrieval can be found
+	 * 
+	 *         Returning null for the memory block retrieval will result in
+	 *         errors in operations that follow.
+	 * 
+	 *         Non-standard debug models must provide a memory block retrieval
+	 *         via <code>getAdapter(IMemoryBlockRetrieval.class</code>
 	 */
-	public static IMemoryBlockRetrieval getMemoryBlockRetrieval(Object object)
-	{
+	public static IMemoryBlockRetrieval getMemoryBlockRetrieval(Object object) {
 		IMemoryBlockRetrieval retrieval = null;
-		
-		// if memory block extension, retrieval must be queired throught its interface
+
+		// if memory block extension, retrieval must be queired throught its
+		// interface
 		if (object instanceof IMemoryBlockExtension)
-			return ((IMemoryBlockExtension)object).getMemoryBlockRetrieval();
+			return ((IMemoryBlockExtension) object).getMemoryBlockRetrieval();
 
 		// check if the object can adapt to a memory block retrieval
-		if (object instanceof IAdaptable)
-		{
-			IAdaptable adaptable = (IAdaptable)object;
-			retrieval = (IMemoryBlockRetrieval)adaptable.getAdapter(IMemoryBlockRetrieval.class);
+		if (object instanceof IAdaptable) {
+			IAdaptable adaptable = (IAdaptable) object;
+			retrieval = (IMemoryBlockRetrieval) adaptable.getAdapter(IMemoryBlockRetrieval.class);
 		}
-		
-		// if cannot adapt and the object itself is already an IMemoryBlockRetrieval, return that.
-		if (retrieval == null && object instanceof IMemoryBlockRetrieval)
-		{
-			retrieval =  (IMemoryBlockRetrieval)object;
+
+		// if cannot adapt and the object itself is already an
+		// IMemoryBlockRetrieval, return that.
+		if (retrieval == null && object instanceof IMemoryBlockRetrieval) {
+			retrieval = (IMemoryBlockRetrieval) object;
 		}
-		
+
 		// otherewise, default back to the debug target
-		if (retrieval == null && object instanceof IDebugElement)
-		{
-			IDebugElement de = (IDebugElement)object;
+		if (retrieval == null && object instanceof IDebugElement) {
+			IDebugElement de = (IDebugElement) object;
 			retrieval = de.getDebugTarget();
 		}
-		
+
 		return retrieval;
 	}
-	
+
 	/**
 	 * Returns the hash code for this object, as an Integer.
 	 * */
-	public static Integer getHashCode(Object o)
-	{
+	public static Integer getHashCode(Object o) {
 		return new Integer(o.hashCode());
 	}
 }

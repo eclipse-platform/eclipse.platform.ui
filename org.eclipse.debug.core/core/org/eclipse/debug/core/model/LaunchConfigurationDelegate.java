@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.debug.core.model;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,6 +25,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -41,12 +41,14 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Default implementation of a launch configuration delegate. Provides
  * convenience methods for computing the build order of projects,
  * building projects, and searching for errors in the workspace. The
  * default pre-launch check prompts the user to launch in debug mode
- * if breakpoints are present in the workspace. 
+ * if breakpoints are present in the workspace.
  * <p>
  * Clients implementing launch configuration delegates should subclass
  * this class.
@@ -54,66 +56,68 @@ import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
  * @since 3.0
  */
 public abstract class LaunchConfigurationDelegate implements ILaunchConfigurationDelegate2 {
-	
+
 	/**
 	 * Constant to define debug.core for the status codes
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private static final String DEBUG_CORE = "org.eclipse.debug.core"; //$NON-NLS-1$
-	
+
 	/**
 	 * Constant to define debug.ui for the status codes
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private static final String DEBUG_UI = "org.eclipse.debug.ui"; //$NON-NLS-1$
-	
+
 	/**
 	 * Status code for which a UI prompter is registered.
 	 */
 	protected static final IStatus promptStatus = new Status(IStatus.INFO, DEBUG_UI, 200, IInternalDebugCoreConstants.EMPTY_STRING, null);
-	
+
 	/**
 	 * Status code for which a prompter is registered to ask the user if they
 	 * want to launch in debug mode when breakpoints are present.
 	 */
 	protected static final IStatus switchToDebugPromptStatus = new Status(IStatus.INFO, DEBUG_CORE, 201, IInternalDebugCoreConstants.EMPTY_STRING, null);
-	
+
 	/**
 	 * Status code for which a prompter is registered to ask the user if the
 	 * want to continue launch despite existing compile errors
 	 */
 	protected static final IStatus complileErrorPromptStatus = new Status(IStatus.INFO, DEBUG_CORE, 202, IInternalDebugCoreConstants.EMPTY_STRING, null);
-	
+
 	/**
 	 * Status code for which a prompter will ask the user to save any/all of the dirty editors which have only to do
 	 * with this launch (scoping them to the current launch/build)
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	protected static final IStatus saveScopedDirtyEditors = new Status(IStatus.INFO, DEBUG_CORE, 222, IInternalDebugCoreConstants.EMPTY_STRING, null);
-	
+
 	/**
 	 * Status code for which a prompter is registered to ask the user if the
 	 * want to continue launch despite existing compile errors in specific
 	 * projects. This enhances the 'compileErrorPromptStatus' by specifying
 	 * which projects the errors exist in.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	protected static final IStatus complileErrorProjectPromptStatus = new Status(IStatus.INFO, DEBUG_CORE, 203, IInternalDebugCoreConstants.EMPTY_STRING, null);
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#getLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
+	@Override
 	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#buildForLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		if (monitor != null) {
 			monitor.beginTask("", 1); //$NON-NLS-1$
@@ -122,7 +126,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 			IProject[] projects = getBuildOrder(configuration, mode);
 			if (projects == null) {
 				return true;
-			} 
+			}
 			buildProjects(projects, new SubProgressMonitor(monitor, 1));
 			return false;
 		} finally {
@@ -131,12 +135,12 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the projects to build before launching the given launch configuration
 	 * or <code>null</code> if the entire workspace should be built incrementally.
 	 * Subclasses should override as required.
-	 * 
+	 *
 	 * @param configuration the configuration being launched
 	 * @param mode launch mode
 	 * @return projects to build, in build order, or <code>null</code>
@@ -145,11 +149,11 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
 		return null;
 	}
-	
+
 	/**
-	 * Returns the set of projects to use when searching for errors or <code>null</code> 
-	 * if no search is to be done.  
-	 * 
+	 * Returns the set of projects to use when searching for errors or <code>null</code>
+	 * if no search is to be done.
+	 *
 	 * @param configuration the configuration being launched
 	 * @param mode launch mode
 	 * @return a list of projects or <code>null</code>
@@ -158,10 +162,11 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	protected IProject[] getProjectsForProblemSearch(ILaunchConfiguration configuration, String mode) throws CoreException {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#finalLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("", 1); //$NON-NLS-1$
 		try {
@@ -170,15 +175,15 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 				return true; //continue launch
 			}
 			boolean continueLaunch = true;
-				
-			monitor.subTask(DebugCoreMessages.LaunchConfigurationDelegate_6); 
-			List errors = new ArrayList();
+
+			monitor.subTask(DebugCoreMessages.LaunchConfigurationDelegate_6);
+			List<IAdaptable> errors = new ArrayList<IAdaptable>();
 			for (int i = 0; i < projects.length; i++) {
-				monitor.subTask(MessageFormat.format(DebugCoreMessages.LaunchConfigurationDelegate_7, new String[]{projects[i].getName()})); 
+				monitor.subTask(MessageFormat.format(DebugCoreMessages.LaunchConfigurationDelegate_7, new Object[] { projects[i].getName() }));
 				if (existsProblems(projects[i])) {
 					errors.add(projects[i]);
-				}	
-			}	
+				}
+			}
 			if (!errors.isEmpty()) {
 				errors.add(0, configuration);
 				IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
@@ -186,24 +191,25 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 					continueLaunch = ((Boolean) prompter.handleStatus(complileErrorProjectPromptStatus, errors)).booleanValue();
 				}
 			}
-				
+
 			return continueLaunch;
 		} finally {
 			monitor.done();
 		}
 	}
-	
+
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * If launching in run mode, and the configuration supports debug mode, check
 	 * if there are any breakpoints in the workspace, and ask the user if they'd
 	 * rather launch in debug mode.
 	 * <p>
 	 * Since 3.2, this check also performs saving of resources before launching.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		if (!saveBeforeLaunch(configuration, mode, monitor)) {
 			return false;
@@ -218,19 +224,19 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 					IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
 					if (prompter != null) {
 						boolean launchInDebugModeInstead = ((Boolean)prompter.handleStatus(switchToDebugPromptStatus, configuration)).booleanValue();
-						if (launchInDebugModeInstead) { 
+						if (launchInDebugModeInstead) {
 							return false; //kill this launch
-						} 
+						}
 					}
 					// if no user prompt, or user says to continue (no need to check other breakpoints)
 					return true;
 				}
 			}
-		}	
+		}
 		// no enabled breakpoints... continue launch
 		return true;
 	}
-	
+
 	/**
 	 * Performs the scoped saving of resources before launching and returns whether
 	 * the launch should continue. By default, only resources contained within the projects
@@ -238,7 +244,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * <p>
 	 * Subclasses may override this method if required.
 	 * </p>
-	 * 
+	 *
 	 * @param configuration the configuration being launched
 	 * @param mode the launch mode
 	 * @param monitor progress monitor
@@ -256,7 +262,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 				if(!((Boolean)prompter.handleStatus(saveScopedDirtyEditors, new Object[]{configuration, buildOrder})).booleanValue()) {
 					return false;
 				}
-			}	
+			}
 			return true;
 		} finally {
 			monitor.done();
@@ -266,11 +272,11 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
     /**
      * Returns the breakpoint collection that is relevant for this launch delegate.
      * By default this is all the breakpoints registered with the Debug breakpoint manager.
-     * 
+     *
      * @param configuration the configuration to get associated breakpoints for
      * @since 3.1
      * @return the breakpoints that are relevant for this launch delegate
-     */ 
+     */
     protected IBreakpoint[] getBreakpoints(ILaunchConfiguration configuration) {
         IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
         if (!breakpointManager.isEnabled()) {
@@ -279,12 +285,12 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
         }
         return breakpointManager.getBreakpoints();
     }
-	
+
 	/**
 	 * Returns an array of projects in their suggested build order
 	 * containing all of the projects specified by <code>baseProjects</code>
 	 * and all of their referenced projects.
-	 *  
+	 *
 	 * @param baseProjects a collection of projects
 	 * @return an array of projects in their suggested build order
 	 * containing all of the projects specified by <code>baseProjects</code>
@@ -292,26 +298,26 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 *  projects
 	 */
 	protected IProject[] computeReferencedBuildOrder(IProject[] baseProjects) throws CoreException {
-		HashSet unorderedProjects = new HashSet();
+		HashSet<IProject> unorderedProjects = new HashSet<IProject>();
 		for(int i = 0; i< baseProjects.length; i++) {
 			unorderedProjects.add(baseProjects[i]);
 			addReferencedProjects(baseProjects[i], unorderedProjects);
 		}
-		IProject[] projectSet = (IProject[]) unorderedProjects.toArray(new IProject[unorderedProjects.size()]);
+		IProject[] projectSet = unorderedProjects.toArray(new IProject[unorderedProjects.size()]);
 		return computeBuildOrder(projectSet);
 	}
-	
-	
+
+
 	/**
 	 * Adds all projects referenced by <code>project</code> to the given
 	 * set.
-	 * 
+	 *
 	 * @param project project
 	 * @param references set to which referenced projects are added
 	 * @throws CoreException if an error occurs while computing referenced
 	 *  projects
 	 */
-	protected void addReferencedProjects(IProject project, Set references) throws CoreException{
+	protected void addReferencedProjects(IProject project, Set<IProject> references) throws CoreException {
 		if (project.isOpen()) {
 			IProject[] projects = project.getReferencedProjects();
 			for (int i = 0; i < projects.length; i++) {
@@ -320,32 +326,32 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 					references.add(refProject);
 					addReferencedProjects(refProject, references);
 				}
-			}		
+			}
 		}
 	}
-	
-	/**  
+
+	/**
 	 * Returns a list of projects in their suggested build order from the
 	 * given unordered list of projects.
-	 * 
+	 *
 	 * @param projects the list of projects to sort into build order
 	 * @return a new array containing all projects from <code>projects</code> sorted
 	 *   according to their build order.
 	 */
-	protected IProject[] computeBuildOrder(IProject[] projects) { 
+	protected IProject[] computeBuildOrder(IProject[] projects) {
 		String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
 		if (orderedNames != null) {
-			List orderedProjects = new ArrayList(projects.length);
+			List<IProject> orderedProjects = new ArrayList<IProject>(projects.length);
 			//Projects may not be in the build order but should be built if selected
-			List unorderedProjects = new ArrayList(projects.length);
+			List<IProject> unorderedProjects = new ArrayList<IProject>(projects.length);
 			for(int i = 0; i < projects.length; ++i) {
 				unorderedProjects.add(projects[i]);
 			}
-			
+
 			for (int i = 0; i < orderedNames.length; i++) {
 				String projectName = orderedNames[i];
-				for (Iterator iterator = unorderedProjects.iterator(); iterator.hasNext(); ) {
-					IProject project = (IProject)iterator.next();
+				for (Iterator<IProject> iterator = unorderedProjects.iterator(); iterator.hasNext();) {
+					IProject project = iterator.next();
 					if (project.getName().equals(projectName)) {
 						orderedProjects.add(project);
 						iterator.remove();
@@ -355,18 +361,18 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 			}
 			//Add anything not specified before we return
 			orderedProjects.addAll(unorderedProjects);
-			return (IProject[]) orderedProjects.toArray(new IProject[orderedProjects.size()]);
+			return orderedProjects.toArray(new IProject[orderedProjects.size()]);
 		}
-		
+
 		// Computing build order returned null, try the project prerequisite order
 		IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(projects);
 		return po.projects;
-	}	
-	
+	}
+
 	/**
 	 * Returns whether the given project contains any problem markers of the
 	 * specified severity.
-	 * 
+	 *
 	 * @param proj the project to search
 	 * @return whether the given project contains any problems that should
 	 *  stop it from launching
@@ -384,13 +390,13 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns whether the given problem should potentially abort the launch.
 	 * By default if the problem has an error severity, the problem is considered
 	 * a potential launch problem. Subclasses may override to specialize error
 	 * detection.
-	 * 
+	 *
 	 * @param problemMarker candidate problem
 	 * @return whether the given problem should potentially abort the launch
 	 * @throws CoreException if any exceptions occur while accessing marker attributes
@@ -399,20 +405,21 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		Integer severity = (Integer)problemMarker.getAttribute(IMarker.SEVERITY);
 		if (severity != null) {
 			return severity.intValue() >= IMarker.SEVERITY_ERROR;
-		} 
-		
+		}
+
 		return false;
 	}
-	
+
 	/**
 	 * Performs an incremental build on each of the given projects.
-	 * 
+	 *
 	 * @param projects projects to build
 	 * @param monitor progress monitor
 	 * @throws CoreException if an exception occurs while building
 	 */
 	protected void buildProjects(final IProject[] projects, IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRunnable build = new IWorkspaceRunnable(){
+			@Override
 			public void run(IProgressMonitor pm) throws CoreException {
 				SubMonitor localmonitor = SubMonitor.convert(pm, DebugCoreMessages.LaunchConfigurationDelegate_scoped_incremental_build, projects.length);
 				try {

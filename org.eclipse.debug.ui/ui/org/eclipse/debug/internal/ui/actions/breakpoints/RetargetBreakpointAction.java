@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -36,11 +36,13 @@ public abstract class RetargetBreakpointAction extends RetargetAction implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getAdapterClass()
 	 */
-	protected Class getAdapterClass() {
+	@Override
+	protected Class<?> getAdapterClass() {
 		return IToggleBreakpointsTarget.class;
 	}
 	
-    protected Object getAdapter(IAdaptable adaptable) {
+    @Override
+	protected Object getAdapter(IAdaptable adaptable) {
         IToggleBreakpointsTargetManager manager = DebugUITools.getToggleBreakpointsTargetManager();
 		IWorkbenchPart activePart = getActivePart();
         if (activePart != null) {
@@ -49,27 +51,32 @@ public abstract class RetargetBreakpointAction extends RetargetAction implements
         return null;
     }
 
-    public void init(IWorkbenchWindow window) {
+    @Override
+	public void init(IWorkbenchWindow window) {
         super.init(window);
         DebugUITools.getToggleBreakpointsTargetManager().addChangedListener(this);
     }
     
-    public void init(IAction action) {
+    @Override
+	public void init(IAction action) {
         super.init(action);
         DebugUITools.getToggleBreakpointsTargetManager().addChangedListener(this);
     }
     
-    public void dispose() {
+    @Override
+	public void dispose() {
         DebugUITools.getToggleBreakpointsTargetManager().removeChangedListener(this);
         super.dispose();
     }
     
-    public void selectionChanged(IAction action, ISelection selection) {
+    @Override
+	public void selectionChanged(IAction action, ISelection selection) {
         fAction = action;
         super.selectionChanged(action, selection);
     }
     
-    public void preferredTargetsChanged() {
+    @Override
+	public void preferredTargetsChanged() {
         if (fAction != null) {
             IWorkbenchPart activePart = getActivePart();
             if (activePart != null) {

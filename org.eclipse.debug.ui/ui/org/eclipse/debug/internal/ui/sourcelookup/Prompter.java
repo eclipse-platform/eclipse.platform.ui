@@ -39,6 +39,7 @@ public class Prompter implements IStatusHandler {
 	 * @return result of resolving the given status
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
+	@Override
 	public Object handleStatus(final IStatus status, final Object source) throws CoreException {
 		DebugPlugin dp = DebugPlugin.getDefault();
 		// on shutdown the debug plug-in can be null
@@ -65,6 +66,7 @@ public class Prompter implements IStatusHandler {
 		final CoreException[] exception = new CoreException[1];
 		final Object lock = this;		
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				try {
 					result[0] = handler.handleStatus(status, source);

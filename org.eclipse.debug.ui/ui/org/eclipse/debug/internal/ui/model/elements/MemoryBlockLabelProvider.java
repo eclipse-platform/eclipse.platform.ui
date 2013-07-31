@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.TreePath;
 
 public class MemoryBlockLabelProvider extends DebugElementLabelProvider {
 	
+	@Override
 	protected String getLabel(TreePath elementPath,
 			IPresentationContext presentationContext, String columnId)
 			throws CoreException {
@@ -32,6 +33,7 @@ public class MemoryBlockLabelProvider extends DebugElementLabelProvider {
 		return super.getLabel(elementPath, presentationContext, columnId);
 	}
 	
+	@Override
 	protected ImageDescriptor getImageDescriptor(TreePath elementPath,
 			IPresentationContext presentationContext, String columnId)
 			throws CoreException {

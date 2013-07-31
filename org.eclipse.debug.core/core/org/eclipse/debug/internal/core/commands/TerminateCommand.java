@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,19 +17,22 @@ import org.eclipse.debug.core.model.ITerminate;
 
 /**
  * Default terminate command for the standard debug model.
- * 
+ *
  * @since 3.3
  */
 public class TerminateCommand extends ForEachCommand implements ITerminateHandler {
 
+	@Override
 	protected Object getTarget(Object element) {
 		return getAdapter(element, ITerminate.class);
 	}
 
+	@Override
 	protected void execute(Object target) throws CoreException {
 		((ITerminate)target).terminate();
 	}
 
+	@Override
 	protected boolean isExecutable(Object target) {
 		return ((ITerminate)target).canTerminate();
 	}
@@ -37,6 +40,7 @@ public class TerminateCommand extends ForEachCommand implements ITerminateHandle
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.commands.AbstractDebugCommand#getEnabledStateJobFamily(org.eclipse.debug.core.commands.IDebugCommandRequest)
 	 */
+	@Override
 	protected Object getEnabledStateJobFamily(IDebugCommandRequest request) {
 		return ITerminateHandler.class;
 	}

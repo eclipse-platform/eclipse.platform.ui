@@ -37,6 +37,7 @@ public class PDAArrayEntry extends PDADebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
+	@Override
 	public IValue getValue() throws DebugException {
 		return fValue;
 	}
@@ -44,6 +45,7 @@ public class PDAArrayEntry extends PDADebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getName()
 	 */
+	@Override
 	public String getName() throws DebugException {
 		return "[" + fIndex + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -51,6 +53,7 @@ public class PDAArrayEntry extends PDADebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		return "String"; //$NON-NLS-1$
 	}
@@ -58,6 +61,7 @@ public class PDAArrayEntry extends PDADebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
 	 */
+	@Override
 	public boolean hasValueChanged() throws DebugException {
 		return false;
 	}
@@ -65,18 +69,21 @@ public class PDAArrayEntry extends PDADebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
 	 */
+	@Override
 	public void setValue(String expression) throws DebugException {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	public void setValue(IValue value) throws DebugException {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#supportsValueModification()
 	 */
+	@Override
 	public boolean supportsValueModification() {
 		return false;
 	}
@@ -84,6 +91,7 @@ public class PDAArrayEntry extends PDADebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang.String)
 	 */
+	@Override
 	public boolean verifyValue(String expression) throws DebugException {
 		return false;
 	}
@@ -91,6 +99,7 @@ public class PDAArrayEntry extends PDADebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	public boolean verifyValue(IValue value) throws DebugException {
 		return false;
 	}

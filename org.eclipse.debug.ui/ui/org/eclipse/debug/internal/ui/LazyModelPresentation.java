@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,8 @@ package org.eclipse.debug.internal.ui;
 
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -31,9 +31,11 @@ import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentationExtension;
 import org.eclipse.debug.ui.IInstructionPointerPresentation;
+import org.eclipse.debug.ui.ISourcePresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -55,7 +57,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	 * A temporary mapping of attribute ids to their values
 	 * @see IDebugModelPresentation#setAttribute
 	 */
-	protected HashMap fAttributes= new HashMap(3);
+	protected HashMap<String, Object> fAttributes = new HashMap<String, Object>(3);
 
 	/**
 	 * The config element that defines the extension
@@ -82,6 +84,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#removeAnntations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IThread)
 	 */
+	@Override
 	public void removeAnnotations(IEditorPart editorPart, IThread thread) {
 		IDebugModelPresentation presentation = getPresentation();
 		if (presentation instanceof IDebugEditorPresentation) {
@@ -92,6 +95,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#addAnnotations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
 	 */
+	@Override
 	public boolean addAnnotations(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getPresentation();
 		if (presentation instanceof IDebugEditorPresentation) {
@@ -122,6 +126,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	/**
 	 * @see IDebugModelPresentation#getImage(Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		initImageRegistry();
 		Image image = getPresentation().getImage(element);
@@ -179,6 +184,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
     /**
 	 * @see IDebugModelPresentation#getText(Object)
 	 */
+	@Override
 	public String getText(Object element) {
         if (!(element instanceof IndexedVariablePartition)) {
             // Attempt to delegate        
@@ -218,14 +224,15 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
      * This allows this option to be set per view, for example.
      */
     protected boolean showVariableTypeNames() {
-        Boolean show= (Boolean) fAttributes.get(DISPLAY_VARIABLE_TYPE_NAMES);
-        show= show == null ? Boolean.FALSE : show;
+		Boolean show = (Boolean) fAttributes.get(DISPLAY_VARIABLE_TYPE_NAMES);
+		show = show == null ? Boolean.FALSE : show;
         return show.booleanValue();
     }
     
 	/**
 	 * @see IDebugModelPresentation#computeDetail(IValue, IValueDetailListener)
 	 */
+	@Override
 	public void computeDetail(IValue value, IValueDetailListener listener) {
 		getPresentation().computeDetail(value, listener);
 	}	
@@ -233,6 +240,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	/**
 	 * @see ISourcePresentation#getEditorInput(Object)
 	 */
+	@Override
 	public IEditorInput getEditorInput(Object element) {
 		return getPresentation().getEditorInput(element);
 	}
@@ -240,6 +248,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	/**
 	 * @see ISourcePresentation#getEditorId(IEditorInput, Object)
 	 */
+	@Override
 	public String getEditorId(IEditorInput input, Object inputObject) {
 		return getPresentation().getEditorId(input, inputObject);
 	}
@@ -247,6 +256,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	/**
 	 * @see IBaseLabelProvider#addListener(ILabelProviderListener)
 	 */
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 		if (fPresentation != null) {
 			getPresentation().addListener(listener);
@@ -257,6 +267,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	/**
 	 * @see IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fPresentation != null) {
 			getPresentation().dispose();
@@ -267,6 +278,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	/**
 	 * @see IBaseLabelProvider#isLabelProperty(Object, String)
 	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		if (fPresentation != null) {
 			return getPresentation().isLabelProperty(element, property);
@@ -277,6 +289,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	/**
 	 * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
 	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		if (fPresentation != null) {
 			getPresentation().removeListener(listener);
@@ -307,10 +320,8 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 						    tempPresentation.addListener((ILabelProviderListener)list[i]);
 						}
 					}
-					Iterator keys= fAttributes.keySet().iterator();
-					while (keys.hasNext()) {
-						String key= (String)keys.next();
-						tempPresentation.setAttribute(key, fAttributes.get(key));
+					for (Entry<String, Object> entry : fAttributes.entrySet()) {
+						tempPresentation.setAttribute(entry.getKey(), entry.getValue());
 					}
 					// Only assign to the instance variable after it's been configured. Otherwise,
 					// the synchronization is defeated (a thread could return the presentation before
@@ -327,6 +338,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	/**
 	 * @see IDebugModelPresentation#setAttribute(String, Object)
 	 */
+	@Override
 	public void setAttribute(String id, Object value) {
 		if (value == null) {
 			return;
@@ -373,22 +385,24 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	 * @return a copy of the attributes in this model presentation
 	 * @since 3.0
 	 */
-	public Map getAttributeMap() {
-		return (Map) fAttributes.clone();
+	public Map<String, Object> getAttributeMap() {
+		return new HashMap<String, Object>(fAttributes);
 	}
 	
 	/**
 	 * Returns the raw attribute map
+	 * 
 	 * @return the raw attribute map
 	 */
-	public Map getAttributes() {
+	public Map<String, Object> getAttributes() {
 		return fAttributes;
 	}
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
      */
-    public Color getForeground(Object element) {
+    @Override
+	public Color getForeground(Object element) {
         IDebugModelPresentation presentation = getPresentation();
         if (presentation instanceof IColorProvider) {
             IColorProvider colorProvider = (IColorProvider) presentation;
@@ -400,7 +414,8 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
      */
-    public Color getBackground(Object element) {
+    @Override
+	public Color getBackground(Object element) {
         IDebugModelPresentation presentation = getPresentation();
         if (presentation instanceof IColorProvider) {
             IColorProvider colorProvider = (IColorProvider) presentation;
@@ -412,7 +427,8 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
      */
-    public Font getFont(Object element) {
+    @Override
+	public Font getFont(Object element) {
         IDebugModelPresentation presentation = getPresentation();
         if (presentation instanceof IFontProvider) {
             IFontProvider fontProvider = (IFontProvider) presentation;
@@ -424,6 +440,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerAnnotation(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
 	 */
+	@Override
 	public Annotation getInstructionPointerAnnotation(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getPresentation();
 		if (presentation instanceof IInstructionPointerPresentation) {
@@ -436,6 +453,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getMarkerAnnotationSpecificationId(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
 	 */
+	@Override
 	public String getInstructionPointerAnnotationType(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getPresentation();
 		if (presentation instanceof IInstructionPointerPresentation) {
@@ -448,6 +466,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerImage(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
 	 */
+	@Override
 	public Image getInstructionPointerImage(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getPresentation();
 		if (presentation instanceof IInstructionPointerPresentation) {
@@ -460,6 +479,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerText(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
 	 */
+	@Override
 	public String getInstructionPointerText(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getPresentation();
 		if (presentation instanceof IInstructionPointerPresentation) {
@@ -472,6 +492,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugModelPresentationExtension#requiresUIThread(java.lang.Object)
 	 */
+	@Override
 	public boolean requiresUIThread(Object element) {
 		if (!DebugPluginImages.isInitialized()) {
 			// need UI thread for breakpoint adornment and default images

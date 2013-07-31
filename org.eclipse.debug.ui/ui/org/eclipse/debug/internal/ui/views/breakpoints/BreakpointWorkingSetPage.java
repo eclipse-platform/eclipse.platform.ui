@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,6 +72,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 	/*
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		Composite composite= new Composite(parent, SWT.NONE);
@@ -86,6 +87,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 		fWorkingSetName.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		fWorkingSetName.addModifyListener(
 			new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					validateInput();
 				}
@@ -111,6 +113,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 		Button selectAllButton = SWTFactory.createPushButton(buttonComposite, DebugUIViewsMessages.BreakpointWorkingSetPage_selectAll_label, null);
 		selectAllButton.setToolTipText(DebugUIViewsMessages.BreakpointWorkingSetPage_selectAll_toolTip);
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				BreakpointsViewer viewer = fTViewer.getViewer();
 				viewer.getTree().selectAll();
@@ -123,14 +126,16 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 		Button deselectAllButton = SWTFactory.createPushButton(buttonComposite, DebugUIViewsMessages.BreakpointWorkingSetPage_deselectAll_label, null);
 		deselectAllButton.setToolTipText(DebugUIViewsMessages.BreakpointWorkingSetPage_deselectAll_toolTip);
 		deselectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				BreakpointsViewer viewer = fTViewer.getViewer();
 				viewer.setCheckedElements(new Object[] {});
 				validateInput();
 			}
 		});
-		if (fWorkingSet != null)
+		if (fWorkingSet != null) {
 			fWorkingSetName.setText(fWorkingSet.getName());
+		}
 		validateInput();
 		Dialog.applyDialogFont(composite);
 	}
@@ -138,6 +143,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 	/*
 	 * Implements method from IWorkingSetPage
 	 */
+	@Override
 	public IWorkingSet getSelection() {
 		return fWorkingSet;
 	}
@@ -145,6 +151,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 	/*
 	 * Implements method from IWorkingSetPage
 	 */
+	@Override
 	public void setSelection(IWorkingSet workingSet) {
 		Assert.isNotNull(workingSet, "Working set must not be null"); //$NON-NLS-1$
 		fWorkingSet= workingSet;
@@ -158,10 +165,11 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 	/*
 	 * Implements method from IWorkingSetPage
 	 */
+	@Override
 	public void finish() {
 		String workingSetName = fWorkingSetName.getText();
 		Object[] adaptable = fTViewer.getCheckedElements().toArray();
-		ArrayList elements = new ArrayList();
+		ArrayList<IBreakpoint> elements = new ArrayList<IBreakpoint>();
 		//weed out non-breakpoint elements since 3.2
 		for(int i = 0; i < adaptable.length; i++) {
             IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(adaptable[i], IBreakpoint.class);
@@ -171,10 +179,10 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 		}//end for
 		if (fWorkingSet == null) {
 			IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
-			fWorkingSet = workingSetManager.createWorkingSet(workingSetName, (IAdaptable[])elements.toArray(new IAdaptable[elements.size()]));
+			fWorkingSet = workingSetManager.createWorkingSet(workingSetName, elements.toArray(new IAdaptable[elements.size()]));
 		} else {
 			fWorkingSet.setName(workingSetName);
-			fWorkingSet.setElements((IAdaptable[])elements.toArray(new IAdaptable[elements.size()]));
+			fWorkingSet.setElements(elements.toArray(new IAdaptable[elements.size()]));
 		}
 	}
 
@@ -185,8 +193,9 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 		String errorMessage= null; 
 		String newText= fWorkingSetName.getText();
 
-		if (newText.equals(newText.trim()) == false)
-			errorMessage = DebugUIViewsMessages.BreakpointWorkingSetPage_4; 
+		if (newText.equals(newText.trim()) == false) {
+			errorMessage = DebugUIViewsMessages.BreakpointWorkingSetPage_4;
+		} 
 		if (newText.equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
 			if (fFirstCheck) {
 				setPageComplete(false);

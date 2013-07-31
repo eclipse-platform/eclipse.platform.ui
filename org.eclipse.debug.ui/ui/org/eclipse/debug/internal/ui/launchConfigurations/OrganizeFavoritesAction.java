@@ -32,6 +32,7 @@ public class OrganizeFavoritesAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		LaunchHistory history = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchHistory(fGroupId);
 		FavoritesDialog dialog = new FavoritesDialog(DebugUIPlugin.getShell(), history);

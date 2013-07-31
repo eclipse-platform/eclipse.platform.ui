@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,12 +33,12 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public class OtherBreakpointCategory extends PlatformObject implements IWorkbenchAdapter {
     
-    private static Map fOthers = new HashMap();
+	private static Map<IBreakpointOrganizer, IAdaptable[]> fOthers = new HashMap<IBreakpointOrganizer, IAdaptable[]>();
     private IBreakpointOrganizer fOrganizer;
     
     
     public static IAdaptable[] getCategories(IBreakpointOrganizer organizer) {
-        IAdaptable[] others = (IAdaptable[]) fOthers.get(organizer);
+        IAdaptable[] others = fOthers.get(organizer);
         if (others == null) {
             others = new IAdaptable[]{new OtherBreakpointCategory(organizer)};
             fOthers.put(organizer, others);
@@ -58,35 +58,40 @@ public class OtherBreakpointCategory extends PlatformObject implements IWorkbenc
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
      */
-    public Object[] getChildren(Object o) {
+    @Override
+	public Object[] getChildren(Object o) {
         return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
      */
-    public ImageDescriptor getImageDescriptor(Object object) {
+    @Override
+	public ImageDescriptor getImageDescriptor(Object object) {
         return DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_VIEW_BREAKPOINTS);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
      */
-    public String getLabel(Object o) {
+    @Override
+	public String getLabel(Object o) {
         return fOrganizer.getOthersLabel();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
      */
-    public Object getParent(Object o) {
+    @Override
+	public Object getParent(Object o) {
         return null;
     }
     
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if (obj instanceof OtherBreakpointCategory) {
             OtherBreakpointCategory category = (OtherBreakpointCategory) obj;
             return fOrganizer.equals(category.fOrganizer);
@@ -97,7 +102,8 @@ public class OtherBreakpointCategory extends PlatformObject implements IWorkbenc
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return fOrganizer.hashCode();
     }    
 }

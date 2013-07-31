@@ -22,6 +22,7 @@ public class FilePrompt extends PromptingResolver {
 	 * Prompts the user to choose a file
 	 * @see PromptExpanderBase#prompt()
 	 */
+	@Override
 	public void prompt() {
 		FileDialog dialog = new FileDialog(getShell());
 		dialog.setText(dialogMessage);

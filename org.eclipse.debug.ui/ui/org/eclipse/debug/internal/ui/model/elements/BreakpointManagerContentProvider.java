@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.resources.IMarkerDelta;
@@ -86,7 +87,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
         /**
          * Model proxy of the input
          */
-        final private List/*<AbstractModelProxy>*/ fProxies = new ArrayList(1);
+		final private List<BreakpointManagerProxy> fProxies = new ArrayList<BreakpointManagerProxy>(1);
         
         /**
          * Element comparator, use to compare the ordering of elements for the model
@@ -109,20 +110,23 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
         private IStructuredSelection fDebugContext = StructuredSelection.EMPTY; 
         
         private IPropertyChangeListener fOrganizersListener = new IPropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent event) {
+            @Override
+			public void propertyChange(PropertyChangeEvent event) {
                 // For any property changes in breakpoint organizers, refresh the containers.
                 updateContainers();
             }
         };
 
         private IPropertyChangeListener fPresentationContextListener = new IPropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent event) {
+            @Override
+			public void propertyChange(PropertyChangeEvent event) {
                 presentationPropertyChanged(event);
             }
         };
         
         private IDebugContextListener fDebugContextListener = new IDebugContextListener() {
-            public void debugContextChanged(DebugContextEvent event) {
+            @Override
+			public void debugContextChanged(DebugContextEvent event) {
                 InputData.this.debugContextChanged(event);
             }
         };
@@ -209,7 +213,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
         }
 
         synchronized BreakpointManagerProxy[] getProxies() {
-            return (BreakpointManagerProxy[])fProxies.toArray(new BreakpointManagerProxy[fProxies.size()]);
+            return fProxies.toArray(new BreakpointManagerProxy[fProxies.size()]);
         }
         
         /**
@@ -342,7 +346,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
             }
             
             synchronized(this) {
-                Set existingBreakpoints = new HashSet(Arrays.asList(fContainer.getBreakpoints()));
+				Set<IBreakpoint> existingBreakpoints = new HashSet<IBreakpoint>(Arrays.asList(fContainer.getBreakpoints()));
 
                 // Bug 310879
                 // Process breakpoints in two passes: first remove breakpoints, then add new ones.
@@ -375,7 +379,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                 return;
             }
 
-            Iterator iter = selection.iterator();
+			Iterator<?> iter = selection.iterator();
             Object firstElement = iter.next();
             if (firstElement == null || iter.hasNext()) {
                 return;
@@ -390,7 +394,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
             }
 
             IBreakpoint[] breakpoints = thread.getBreakpoints();
-            Set bpsSet = new HashSet(breakpoints.length * 4/3);
+			Set<IBreakpoint> bpsSet = new HashSet<IBreakpoint>(breakpoints.length * 4 / 3);
             for (int i = 0; i< breakpoints.length; i++) {
                 bpsSet.add(breakpoints[i]);
             }
@@ -419,7 +423,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
          * @param breakpoints Breakpoint set to be selected.
          * @return whether we found a breakpoint to select
          */
-        private boolean buildTrackSelectionDelta(ModelDelta delta, BreakpointContainer container, Set breakpoints) {
+		private boolean buildTrackSelectionDelta(ModelDelta delta, BreakpointContainer container, Set<IBreakpoint> breakpoints) {
             Object[] children = container.getChildren();
             delta.setChildCount(children.length);
             for (int i = 0; i < children.length; i++) {
@@ -516,9 +520,9 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                 ModelDelta delta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
 
                 // If the change caused a breakpoint to be added (installed) or remove (un-installed) update accordingly.
-                List removed = new ArrayList();
-                List added = new ArrayList();
-                List filteredAsList = Arrays.asList(filteredBreakpoints);
+				List<IBreakpoint> removed = new ArrayList<IBreakpoint>();
+				List<IBreakpoint> added = new ArrayList<IBreakpoint>();
+				List<IBreakpoint> filteredAsList = Arrays.asList(filteredBreakpoints);
                 for (int i = 0; i < breakpoints.length; i++) {
                     IBreakpoint bp = breakpoints[i];
                     boolean oldContainedBp = fContainer.contains(bp);
@@ -530,13 +534,15 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                     }                   
                 }
                 if (!added.isEmpty()) {
-                    breakpointsAdded((IBreakpoint[]) added.toArray(new IBreakpoint[added.size()]));
+                    breakpointsAdded(added.toArray(new IBreakpoint[added.size()]));
                 }
                 if (!removed.isEmpty()) {
-                    breakpointsRemoved((IBreakpoint[]) removed.toArray(new IBreakpoint[removed.size()]));
+                    breakpointsRemoved(removed.toArray(new IBreakpoint[removed.size()]));
                 }                       
                 for (int i = 0; i < filteredBreakpoints.length; ++i)
-                    appendModelDelta(fContainer, delta, IModelDelta.STATE | IModelDelta.CONTENT, filteredBreakpoints[i]); // content flag triggers detail refresh
+				 {
+					appendModelDelta(fContainer, delta, IModelDelta.STATE | IModelDelta.CONTENT, filteredBreakpoints[i]); // content flag triggers detail refresh
+				}
 
                 if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
                     DebugUIPlugin.trace("POST BREAKPOINT DELTA (breakpointsChanged)\n"); //$NON-NLS-1$
@@ -594,8 +600,9 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                         BreakpointContainer.addChildContainer(container, (BreakpointContainer) refChildren[i], containerDelta);
                     } else if(refChildren[i] instanceof IBreakpoint) {
                         BreakpointContainer.addBreakpoint(container, (IBreakpoint) refChildren[i], containerDelta);
-                        if (newBreakpoint == null)
-                            newBreakpoint = (IBreakpoint) refChildren[i];
+                        if (newBreakpoint == null) {
+							newBreakpoint = (IBreakpoint) refChildren[i];
+						}
                     }
                     
                 // if a child exist in container, than recursively search into container. And also update the organizer of
@@ -650,14 +657,17 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
          * @see #deleteRemovedElements
          */
         private Object getElement(Object[] collection, Object element) {
-            for (int i = 0; i < collection.length; ++i)
-                if (collection[i] instanceof BreakpointContainer && element instanceof BreakpointContainer) {               
-                    if (collection[i].equals(element))
-                        return collection[i];
+            for (int i = 0; i < collection.length; ++i) {
+				if (collection[i] instanceof BreakpointContainer && element instanceof BreakpointContainer) {               
+                    if (collection[i].equals(element)) {
+						return collection[i];
+					}
                 } else {
-                    if (collection[i].equals(element))
-                        return collection[i];
+                    if (collection[i].equals(element)) {
+						return collection[i];
+					}
                 }
+			}
             return null;
         }
         
@@ -693,21 +703,22 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
          */
         synchronized private void postModelChanged(final IModelDelta delta, boolean select) {
             for (int i = 0; fProxies != null && i < fProxies.size(); i++) {
-                ((BreakpointManagerProxy)fProxies.get(i)).postModelChanged(delta, select);
+                fProxies.get(i).postModelChanged(delta, select);
             }       
         }
 
 
     }
     
-    private class InputDataMap extends LinkedHashMap {
+	private class InputDataMap<K, V> extends LinkedHashMap<K, V> {
         private static final long serialVersionUID = 1L;
 
         public InputDataMap() {
             super(1, (float)0.75, true);
         }
         
-        protected boolean removeEldestEntry(java.util.Map.Entry arg0) {
+        @Override
+		protected boolean removeEldestEntry(java.util.Map.Entry<K, V> arg0) {
             InputData data = (InputData)arg0.getValue();
             if (size() > getMaxInputsCache() && data.fProxies.isEmpty()) {
                 data.dispose();
@@ -723,11 +734,13 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
      */
     private ISchedulingRule fBreakpointsListenerSchedulingRule = new ISchedulingRule() {
         
-        public boolean isConflicting(ISchedulingRule rule) {
+        @Override
+		public boolean isConflicting(ISchedulingRule rule) {
             return rule == this;
         }
         
-        public boolean contains(ISchedulingRule rule) {
+        @Override
+		public boolean contains(ISchedulingRule rule) {
             return rule == this;
         }
     };
@@ -735,7 +748,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
     /**
      * A map of input to info data cache
      */
-    final private Map fInputToData = Collections.synchronizedMap(new InputDataMap());
+	final private Map<DefaultBreakpointsViewInput, InputData> fInputToData = Collections.synchronizedMap(new InputDataMap<DefaultBreakpointsViewInput, InputData>());
     
     /**
      * Flag indicating whether the content provider is currently a breakpoints listener.
@@ -757,15 +770,16 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
      */
     protected IBreakpoint[] filterBreakpoints(DefaultBreakpointsViewInput input, IStructuredSelection selectionFilter, IBreakpoint[] breakpoints) {      
         if (selectionFilter != null && !selectionFilter.isEmpty()) {
-            List targets = getDebugTargets(selectionFilter);
-            ArrayList retVal = new ArrayList();
+			List<IDebugTarget> targets = getDebugTargets(selectionFilter);
+			ArrayList<IBreakpoint> retVal = new ArrayList<IBreakpoint>();
             if (targets != null) {
                 for (int i = 0; i < breakpoints.length; ++i) {
-                    if (supportsBreakpoint(targets, breakpoints[i]))
-                        retVal.add(breakpoints[i]);
+                    if (supportsBreakpoint(targets, breakpoints[i])) {
+						retVal.add(breakpoints[i]);
+					}
                 }
             }
-            return (IBreakpoint[]) retVal.toArray(new IBreakpoint[retVal.size()]);
+            return retVal.toArray(new IBreakpoint[retVal.size()]);
         } else {
             return breakpoints;
         }
@@ -789,10 +803,10 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
      * @param breakpoint the breakpoint.
      * @return true if breakpoint contains in the list of targets.
      */
-    protected boolean supportsBreakpoint(List targets, IBreakpoint breakpoint) {
+	protected boolean supportsBreakpoint(List<IDebugTarget> targets, IBreakpoint breakpoint) {
         boolean exist = targets.size() == 0 ? true : false;
         for (int i = 0; !exist && i < targets.size(); ++i) {
-            IDebugTarget target = (IDebugTarget) targets.get(i);
+            IDebugTarget target = targets.get(i);
             exist |= target.supportsBreakpoint(breakpoint);
         }
         return exist;
@@ -804,10 +818,10 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
      * @param ss the selection.
      * @return list of IDebugTarget object.
      */
-    protected List getDebugTargets(IStructuredSelection ss) {
-        List debugTargets = new ArrayList(2);
+	protected List<IDebugTarget> getDebugTargets(IStructuredSelection ss) {
+		List<IDebugTarget> debugTargets = new ArrayList<IDebugTarget>(2);
         if (ss != null) {
-            Iterator i = ss.iterator();
+			Iterator<?> i = ss.iterator();
             while (i.hasNext()) {
                 Object next = i.next();
                 if (next instanceof IDebugElement) {
@@ -855,11 +869,11 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
      * @param context Presentation context that was disposed.
      */
     protected void contextDisposed(IPresentationContext context) {
-        List removed = new ArrayList(1);
+		List<InputData> removed = new ArrayList<InputData>(1);
         synchronized (fInputToData) {
-            for (Iterator itr = fInputToData.entrySet().iterator(); itr.hasNext();) {
-                Map.Entry entry = (Map.Entry)itr.next();
-                IPresentationContext entryContext = ((DefaultBreakpointsViewInput)entry.getKey()).getContext();
+			for (Iterator<Entry<DefaultBreakpointsViewInput, InputData>> itr = fInputToData.entrySet().iterator(); itr.hasNext();) {
+				Map.Entry<DefaultBreakpointsViewInput, InputData> entry = itr.next();
+                IPresentationContext entryContext = entry.getKey().getContext();
                 if (context.equals(entryContext)) {
                     removed.add(entry.getValue());
                     itr.remove();
@@ -869,7 +883,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 
         // Dispose the removed input data
         for (int i = 0; i < removed.size(); i++) {
-            ((InputData)removed.get(i)).dispose();
+            removed.get(i).dispose();
         }
     }
     
@@ -899,7 +913,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
      * @param proxy the manager proxy
      */
     public void unregisterModelProxy(DefaultBreakpointsViewInput input, BreakpointManagerProxy proxy) {
-        InputData inputData = (InputData)fInputToData.get(input);
+        InputData inputData = fInputToData.get(input);
         if (inputData != null) {
             inputData.proxyDisposed(proxy);
             
@@ -921,7 +935,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
         
         InputData data = null;
         synchronized (fInputToData) {
-            data = (InputData)fInputToData.get(input); 
+            data = fInputToData.get(input); 
             if (data == null) {
                 data = new InputData(input);
                 fInputToData.put(input, data);
@@ -950,14 +964,16 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#supportsContextId(java.lang.String)
      */
-    protected boolean supportsContextId(String id) {
+    @Override
+	protected boolean supportsContextId(String id) {
         return id.equals(IDebugUIConstants.ID_BREAKPOINT_VIEW);
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
      */
-    protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
+    @Override
+	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
         Object input = monitor.getViewerInput();
         if (input instanceof DefaultBreakpointsViewInput) {
             DefaultBreakpointsViewInput bpManagerInput = (DefaultBreakpointsViewInput)input;
@@ -972,7 +988,8 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
      */
-    protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
+    @Override
+	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
         Object input = monitor.getViewerInput();
         if (input instanceof DefaultBreakpointsViewInput) {
             DefaultBreakpointsViewInput bpManagerInput = (DefaultBreakpointsViewInput)input;
@@ -990,15 +1007,17 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
      * (non-Javadoc)
      * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
      */
-    public void breakpointsAdded(final IBreakpoint[] breakpoints) {
+    @Override
+	public void breakpointsAdded(final IBreakpoint[] breakpoints) {
         new Job("Breakpoints View Update Job") { //$NON-NLS-1$
             {
                 setSystem(true);
                 setRule(fBreakpointsListenerSchedulingRule);
             }
             
-            protected IStatus run(IProgressMonitor monitor) {
-                InputData[] datas = (InputData[])fInputToData.values().toArray(new InputData[0]);
+            @Override
+			protected IStatus run(IProgressMonitor monitor) {
+                InputData[] datas = fInputToData.values().toArray(new InputData[0]);
                 for (int i = 0; i < datas.length; i++) {
                     datas[i].breakpointsAdded(breakpoints);
                 }
@@ -1011,15 +1030,17 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
      * (non-Javadoc)
      * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsRemoved(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
      */
-    public void breakpointsRemoved(final IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
+    @Override
+	public void breakpointsRemoved(final IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
         new Job("Breakpoints View Update Job") { //$NON-NLS-1$
             {
                 setSystem(true);
                 setRule(fBreakpointsListenerSchedulingRule);
             }
             
-            protected IStatus run(IProgressMonitor monitor) {
-                InputData[] datas = (InputData[])fInputToData.values().toArray(new InputData[0]);
+            @Override
+			protected IStatus run(IProgressMonitor monitor) {
+                InputData[] datas = fInputToData.values().toArray(new InputData[0]);
                 for (int i = 0; i < datas.length; i++) {
                     datas[i].breakpointsRemoved(breakpoints);
                 }               
@@ -1032,15 +1053,17 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
      * (non-Javadoc)
      * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsChanged(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
      */
-    public void breakpointsChanged(final IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
+    @Override
+	public void breakpointsChanged(final IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
         new Job("Breakpoints View Update Job") { //$NON-NLS-1$
             {
                 setSystem(true);
                 setRule(fBreakpointsListenerSchedulingRule);
             }
             
-            protected IStatus run(IProgressMonitor monitor) {
-                InputData[] datas = (InputData[])fInputToData.values().toArray(new InputData[0]);
+            @Override
+			protected IStatus run(IProgressMonitor monitor) {
+                InputData[] datas = fInputToData.values().toArray(new InputData[0]);
                 for (int i = 0; i < datas.length; i++) {
                     datas[i].breakpointsChanged(breakpoints);
                 }               

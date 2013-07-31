@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,8 @@ public class FilterTransform {
 	class Node {
 		private int[] filteredIndexes = null;
 		private Object[] filteredElements = null;
-		private Map children = null; // only set for parent nodes, indexed by child
+		private Map<Object, Node> children = null; // only set for parent nodes,
+													// indexed by child
 		
 		Node() {
 		}
@@ -81,10 +82,10 @@ public class FilterTransform {
 			}
 			
 			if (children == null) {
-				children = new HashMap();
+				children = new HashMap<Object, Node>();
 			}
 			Object element = path.getSegment(pathIndex);
-			Node node = (Node) children.get(element);
+			Node node = children.get(element);
 			if (node == null) {
 				node = new Node();
 				children.put(element, node);
@@ -100,7 +101,7 @@ public class FilterTransform {
 				return false;
 			}
 			Object child = path.getSegment(pathIndex);
-			Node node = (Node) children.get(child);
+			Node node = children.get(child);
 			if (node != null) {
 				if (node.clear(path, pathIndex + 1)) {
 					children.remove(child);
@@ -146,7 +147,7 @@ public class FilterTransform {
 				return false;
 			}
 			Object element = path.getSegment(pathIndex);
-			Node node = (Node) children.get(element);
+			Node node = children.get(element);
 			if (node == null) {
 				return false;
 			}
@@ -160,13 +161,14 @@ public class FilterTransform {
 		}	
 		
 		Node find(TreePath path, int pathIndex) {
-			if (pathIndex == path.getSegmentCount()) 
+			if (pathIndex == path.getSegmentCount()) {
 				return this;
+			}
 			if (children == null) {
 				return null;
 			}
 			Object child = path.getSegment(pathIndex);
-			Node node = (Node) children.get(child);
+			Node node = children.get(child);
 			if (node != null) {
 				return node.find(path, pathIndex + 1);
 			}

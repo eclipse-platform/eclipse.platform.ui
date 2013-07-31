@@ -37,21 +37,24 @@ public class DynamicRenderingBindings extends AbstractMemoryRenderingBindingsPro
     /**
      * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
      */
-    public IMemoryRenderingType[] getRenderingTypes(IMemoryBlock block) {
+    @Override
+	public IMemoryRenderingType[] getRenderingTypes(IMemoryBlock block) {
         return new IMemoryRenderingType[]{getPrimaryRenderingType(block)};
     }
 
     /**
      * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getDefaultRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
      */
-    public IMemoryRenderingType[] getDefaultRenderingTypes(IMemoryBlock block) {
+    @Override
+	public IMemoryRenderingType[] getDefaultRenderingTypes(IMemoryBlock block) {
         return new IMemoryRenderingType[]{getPrimaryRenderingType(block)};
     }
 
     /**
      * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getPrimaryRenderingType(org.eclipse.debug.core.model.IMemoryBlock)
      */
-    public IMemoryRenderingType getPrimaryRenderingType(IMemoryBlock block) {
+    @Override
+	public IMemoryRenderingType getPrimaryRenderingType(IMemoryBlock block) {
         return DebugUITools.getMemoryRenderingManager().getRenderingType(fId);
     }
 	

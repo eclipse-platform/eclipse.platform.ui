@@ -22,7 +22,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
  */
 public class TableUpdatePolicy extends org.eclipse.debug.internal.ui.viewers.AbstractUpdatePolicy implements IModelChangedListener {
 
-    public void modelChanged(IModelDelta delta, IModelProxy proxy) {
+    @Override
+	public void modelChanged(IModelDelta delta, IModelProxy proxy) {
         updateNodes(new IModelDelta[] {delta});
     }
 

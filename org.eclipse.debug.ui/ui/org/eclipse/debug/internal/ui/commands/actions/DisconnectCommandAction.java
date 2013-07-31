@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,35 +28,43 @@ public class DisconnectCommandAction extends DebugCommandAction{
         setActionDefinitionId("org.eclipse.debug.ui.commands.Disconnect"); //$NON-NLS-1$
     }
     
-    public String getText() {
+    @Override
+	public String getText() {
         return ActionMessages.DisconnectAction_0;
     }
 
-    public String getHelpContextId() {
+    @Override
+	public String getHelpContextId() {
         return "org.eclipse.debug.ui.disconnect_action_context"; //$NON-NLS-1$
     }
 
-    public String getId() {
+    @Override
+	public String getId() {
         return "org.eclipse.debug.ui.debugview.toolbar.disconnect"; //$NON-NLS-1$
     }
 
-    public String getToolTipText() {
+    @Override
+	public String getToolTipText() {
         return ActionMessages.DisconnectAction_3;
     }
 
-    public ImageDescriptor getDisabledImageDescriptor() {
+    @Override
+	public ImageDescriptor getDisabledImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DISCONNECT);
     }
 
-    public ImageDescriptor getHoverImageDescriptor() {
+    @Override
+	public ImageDescriptor getHoverImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DISCONNECT);
     }
 
-    public ImageDescriptor getImageDescriptor() {
+    @Override
+	public ImageDescriptor getImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DISCONNECT);
     }
 
-	protected Class getCommandType() {
+	@Override
+	protected Class<IDisconnectHandler> getCommandType() {
 		return IDisconnectHandler.class;
 	}
 }

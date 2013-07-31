@@ -27,7 +27,8 @@ public class JFaceViewerSelectionTests extends SelectionTests {
         super(name);
     }
 
-    protected ITreeModelViewer createViewer(Display display, Shell shell) {
+    @Override
+	protected ITreeModelViewer createViewer(Display display, Shell shell) {
 		return new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer")); //$NON-NLS-1$
     }
 }

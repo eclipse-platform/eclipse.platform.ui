@@ -58,7 +58,8 @@ public class PDARunControlEvent extends PDAEvent {
         return message.substring(idx, endIdx);
     }
     
-    protected String getName(String message) {
+    @Override
+	protected String getName(String message) {
         int nameEnd = message.indexOf(' ');
         nameEnd = nameEnd == -1 ? message.length() : nameEnd;
         return message.substring(0, nameEnd);

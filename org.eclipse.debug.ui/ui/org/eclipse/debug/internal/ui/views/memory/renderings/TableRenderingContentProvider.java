@@ -45,12 +45,12 @@ import org.eclipse.jface.viewers.Viewer;
 public class TableRenderingContentProvider extends BasicDebugViewContentProvider {
 	
 	// lines currently being displayed by the table rendering
-	protected Vector lineCache;
+	protected Vector<TableRenderingLine> lineCache;
 	
 	// Cache to allow the content provider to comppute change information
 	// Cache is taken by copying the lineCache after a suspend event
 	// or change event from the the memory block.
-	protected Hashtable contentCache;
+	protected Hashtable<String, TableRenderingLine> contentCache;
 	
 	// cache in the form of MemoryByte
 	// needed for reorganizing cache when the row size changes
@@ -70,8 +70,8 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	 */
 	public TableRenderingContentProvider()
 	{
-		lineCache = new Vector();
-		contentCache = new Hashtable();
+		lineCache = new Vector<TableRenderingLine>();
+		contentCache = new Hashtable<String, TableRenderingLine>();
 		initializeDynamicLoad();
 			
 		DebugPlugin.getDefault().addDebugEventListener(this);
@@ -88,6 +88,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		try {
 			if (newInput instanceof TableRenderingContentInput)
@@ -106,6 +107,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		}
 	}
 
+	@Override
 	public void dispose() {
 		DebugPlugin.getDefault().removeDebugEventListener(this);		
 		super.dispose();
@@ -114,6 +116,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
+	@Override
 	public Object[] getElements(Object parent) {
 
 		// if cache is empty, get memory
@@ -132,7 +135,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			return lineCache.toArray();
 		
 		// check to see if the row size has changed
-		TableRenderingLine line = (TableRenderingLine)lineCache.get(0);
+		TableRenderingLine line = lineCache.get(0);
 		int currentRowSize = line.getByteArray().length;
 		int renderingRowSize = getTableRendering(fInput).getBytesPerLine();
 		
@@ -435,7 +438,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		// if debug adapter did not return enough memory, create dummy memory
 		if (memoryBuffer.length < reqNumBytes)
 		{
-			ArrayList newBuffer = new ArrayList();
+			ArrayList<MemoryByte> newBuffer = new ArrayList<MemoryByte>();
 			
 			for (int i=0; i<memoryBuffer.length; i++)
 			{
@@ -451,7 +454,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 				newBuffer.add(mb);
 			}
 			
-			memoryBuffer = (MemoryByte[])newBuffer.toArray(new MemoryByte[newBuffer.size()]);
+			memoryBuffer = newBuffer.toArray(new MemoryByte[newBuffer.size()]);
 			
 		}
 		
@@ -537,7 +540,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			
 			TableRenderingLine newLine = new TableRenderingLine(tmpAddress, memory, lineCache.size(), paddedString);
 			
-			TableRenderingLine oldLine = (TableRenderingLine)contentCache.get(newLine.getAddress());
+			TableRenderingLine oldLine = contentCache.get(newLine.getAddress());
 			
 			if (manageDelta)
 			{
@@ -620,6 +623,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.internal.views.BasicDebugViewContentProvider#doHandleDebugEvent(org.eclipse.debug.core.DebugEvent)
 	 */
+	@Override
 	protected void doHandleDebugEvent(DebugEvent event) {
 		
 		if (getTableRendering(fInput).isVisible())
@@ -695,7 +699,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	public void takeContentSnapshot()
 	{	
 		// cache content before getting new ones
-		TableRenderingLine[] lines =(TableRenderingLine[]) lineCache.toArray(new TableRenderingLine[lineCache.size()]);
+		TableRenderingLine[] lines =lineCache.toArray(new TableRenderingLine[lineCache.size()]);
 		fContentCacheInBytes = convertLinesToBytes(lines);
 		fContentCacheStartAddress = lines[0].getAddress();
 		
@@ -784,11 +788,11 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	 */
 	public void resetDeltas()
 	{
-		Enumeration enumeration = contentCache.elements();
+		Enumeration<TableRenderingLine> enumeration = contentCache.elements();
 		
 		while (enumeration.hasMoreElements())
 		{
-			TableRenderingLine line = (TableRenderingLine)enumeration.nextElement();
+			TableRenderingLine line = enumeration.nextElement();
 			line.unmarkDeltas();
 		}
 	}
@@ -802,8 +806,8 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	{
 		if (lineCache != null && !lineCache.isEmpty())
 		{
-			TableRenderingLine first = (TableRenderingLine)lineCache.firstElement();
-			TableRenderingLine last = (TableRenderingLine) lineCache.lastElement();
+			TableRenderingLine first = lineCache.firstElement();
+			TableRenderingLine last = lineCache.lastElement();
 			
 			if (first == null ||last == null)
 				return true;
@@ -869,7 +873,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		fDynamicLoad = dynamicLoad;
 	}
 	
-	private void reorganizeLines(Vector lines, int numBytesPerLine) throws DebugException
+	private void reorganizeLines(Vector<TableRenderingLine> lines, int numBytesPerLine) throws DebugException
 	{
 		if (lines == null || lines.isEmpty())
 			return;
@@ -878,7 +882,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		
 		if (objs.length > 0)
 		{
-			TableRenderingLine[] renderingLines = (TableRenderingLine[])lines.toArray(new TableRenderingLine[lines.size()]);
+			TableRenderingLine[] renderingLines = lines.toArray(new TableRenderingLine[lines.size()]);
 			MemoryByte[] buffer = convertLinesToBytes(renderingLines);
 			BigInteger lineAddress = new BigInteger(renderingLines[0].getAddress(), 16);
 			int numberOfLines = buffer.length / numBytesPerLine;
@@ -948,7 +952,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			DebugUIPlugin.log(e);
 			addressLength = 4 * IInternalDebugUIConstants.CHAR_PER_BYTE;
 		}
-		ArrayList lines = new ArrayList();
+		ArrayList<TableRenderingLine> lines = new ArrayList<TableRenderingLine>();
 		String paddedString = DebugUITools.getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
 		
 		for (int i=0; i<numOfLines; i++)
@@ -975,7 +979,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			address = bigInt.add(BigInteger.valueOf(addressableUnit)).toString(16);
 		}
 		
-		return (TableRenderingLine[])lines.toArray(new TableRenderingLine[lines.size()]);
+		return lines.toArray(new TableRenderingLine[lines.size()]);
 	}
 	
 	private AbstractTableRendering getTableRendering(TableRenderingContentInput input)

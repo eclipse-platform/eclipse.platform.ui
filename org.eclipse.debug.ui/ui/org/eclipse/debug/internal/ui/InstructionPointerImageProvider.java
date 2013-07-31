@@ -21,6 +21,7 @@ public class InstructionPointerImageProvider implements IAnnotationImageProvider
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IAnnotationImageProvider#getManagedImage(org.eclipse.jface.text.source.Annotation)
 	 */
+	@Override
 	public Image getManagedImage(Annotation annotation) {
 		return ((InstructionPointerAnnotation)annotation).getImage();
 	}
@@ -28,6 +29,7 @@ public class InstructionPointerImageProvider implements IAnnotationImageProvider
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IAnnotationImageProvider#getImageDescriptorId(org.eclipse.jface.text.source.Annotation)
 	 */
+	@Override
 	public String getImageDescriptorId(Annotation annotation) {
 		return null;
 	}
@@ -35,6 +37,7 @@ public class InstructionPointerImageProvider implements IAnnotationImageProvider
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IAnnotationImageProvider#getImageDescriptor(java.lang.String)
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(String imageDescritporId) {
 		return null;
 	}

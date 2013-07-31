@@ -30,6 +30,7 @@ public class AdapterFactory implements IAdapterFactory {
 	private static IModelProxyFactory fgFactory = new ModelProxyFactory();
 	private static IViewActionProvider fgViewActionProvider = new PDAViewActionProvider();
 
+	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (IElementContentProvider.class.equals(adapterType)) {
 			if (adaptableObject instanceof PDADebugTarget) {
@@ -49,6 +50,7 @@ public class AdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
+	@Override
 	public Class[] getAdapterList() {
 		return new Class[]{IElementContentProvider.class, IModelProxyFactory.class, IViewActionProvider.class};
 	}

@@ -42,7 +42,8 @@ public class VirtualViewerLazyModeTests extends TestCase {
     /**
      * @throws java.lang.Exception
      */
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         fDisplay = PlatformUI.getWorkbench().getDisplay();
         fShell = new Shell(fDisplay/*, SWT.ON_TOP | SWT.SHELL_TRIM*/);
         fShell.setMaximized(true);
@@ -67,7 +68,8 @@ public class VirtualViewerLazyModeTests extends TestCase {
     /**
      * @throws java.lang.Exception
      */
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         fListener.dispose();
         fViewer.getPresentationContext().dispose();
         

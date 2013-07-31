@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -75,7 +75,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
      * Contains a map of the editor to use for each workbench
      * page, when the 'reuse editor' preference is on. 
      */
-    private Map fEditorsByPage;
+	private Map<IWorkbenchPage, IEditorPart> fEditorsByPage;
     
     /**
      * Used to generate annotations for stack frames
@@ -111,7 +111,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
      * Constructs a source lookup facility.
      */
     private SourceLookupFacility() {
-        fEditorsByPage = new HashMap();
+		fEditorsByPage = new HashMap<IWorkbenchPage, IEditorPart>();
         DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
     }
     
@@ -330,8 +330,9 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		}
 		try {
 			IDocument document= provider.getDocument(input);
-			if (document != null)
+			if (document != null) {
 				return document.getLineInformation(lineNumber);
+			}
 		} catch (BadLocationException e) {
 		} finally {
 			provider.disconnect(input);
@@ -346,6 +347,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 	private IEditorPart openEditor(final IWorkbenchPage page, final IEditorInput input, final String id) {
 		final IEditorPart[] editor = new IEditorPart[] {null};
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				if (!page.getWorkbenchWindow().getWorkbench().isClosing()) {
 					try {
@@ -366,13 +368,15 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPageListener#pageActivated(org.eclipse.ui.IWorkbenchPage)
      */
-    public void pageActivated(IWorkbenchPage page) {
+    @Override
+	public void pageActivated(IWorkbenchPage page) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPageListener#pageClosed(org.eclipse.ui.IWorkbenchPage)
      */
-    public void pageClosed(IWorkbenchPage page) {
+    @Override
+	public void pageClosed(IWorkbenchPage page) {
         fEditorsByPage.remove(page);
         page.removePartListener(this);
     }
@@ -380,26 +384,30 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPageListener#pageOpened(org.eclipse.ui.IWorkbenchPage)
      */
-    public void pageOpened(IWorkbenchPage page) {
+    @Override
+	public void pageOpened(IWorkbenchPage page) {
     	page.addPartListener(this);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
      */
-    public void partActivated(IWorkbenchPartReference partRef) {
+    @Override
+	public void partActivated(IWorkbenchPartReference partRef) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
      */
-    public void partBroughtToTop(IWorkbenchPartReference partRef) {
+    @Override
+	public void partBroughtToTop(IWorkbenchPartReference partRef) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
      */
-    public void partClosed(IWorkbenchPartReference partRef) {
+    @Override
+	public void partClosed(IWorkbenchPartReference partRef) {
         // clear the cached editor for the page if it has been closed
         IWorkbenchPage page = partRef.getPage();
         IEditorPart editor = getEditor(page);
@@ -412,37 +420,43 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
      */
-    public void partDeactivated(IWorkbenchPartReference partRef) {
+    @Override
+	public void partDeactivated(IWorkbenchPartReference partRef) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
      */
-    public void partOpened(IWorkbenchPartReference partRef) {
+    @Override
+	public void partOpened(IWorkbenchPartReference partRef) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
      */
-    public void partHidden(IWorkbenchPartReference partRef) {
+    @Override
+	public void partHidden(IWorkbenchPartReference partRef) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
      */
-    public void partVisible(IWorkbenchPartReference partRef) {
+    @Override
+	public void partVisible(IWorkbenchPartReference partRef) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
      */
-    public void partInputChanged(IWorkbenchPartReference partRef) {
+    @Override
+	public void partInputChanged(IWorkbenchPartReference partRef) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
      */
-    public void propertyChange(PropertyChangeEvent event) {
+    @Override
+	public void propertyChange(PropertyChangeEvent event) {
         String property = event.getProperty();
 		if (property.equals(IDebugUIConstants.PREF_REUSE_EDITOR)) {
 			fReuseEditor = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_REUSE_EDITOR);
@@ -458,7 +472,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
      * <code>null</code> if a new editor should be opened
      */
     protected IEditorPart getEditor(IWorkbenchPage page) {
-        return (IEditorPart) fEditorsByPage.get(page);
+        return fEditorsByPage.get(page);
     }
     
     /**

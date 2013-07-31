@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - adapted action to use for breakpoint types 
-******************************************************************************/
+ ******************************************************************************/
 package org.eclipse.debug.ui.actions;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.debug.internal.ui.actions.ToggleBreakpointsTargetManager;
@@ -75,6 +74,7 @@ import org.eclipse.ui.texteditor.ITextEditorExtension;
  *  
  * @deprecated Should use BreakpointTypesContribution instead.
  */
+@Deprecated
 public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate, IMenuListener, IMenuCreator {
     private ITextEditor fEditor = null;
     private IAction fCallerAction = null;
@@ -87,15 +87,17 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
     private Menu fMenu;
     
     private class SelectTargetAction extends Action {
-        private final Set fPossibleIDs;
+		private final Set<String> fPossibleIDs;
         private final String fID;
-        SelectTargetAction(String name, Set possibleIDs, String ID) {
+
+		SelectTargetAction(String name, Set<String> possibleIDs, String ID) {
             super(name, AS_RADIO_BUTTON);
             fID = ID;
             fPossibleIDs = possibleIDs;
         }
 
-        public void run() {
+        @Override
+		public void run() {
             if (isChecked()) {
                 ToggleBreakpointsTargetManager.getDefault().setPreferredTarget(fPossibleIDs, fID);
             }
@@ -103,18 +105,21 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
     }
 
     
-    public void selectionChanged(IAction action, ISelection selection) {
+    @Override
+	public void selectionChanged(IAction action, ISelection selection) {
         // In the editor we're not using the selection.
     }
     
-    public void run(IAction action) {
+    @Override
+	public void run(IAction action) {
         // Do nothing, this is a pull-down menu.
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
      */
-    public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
+    @Override
+	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
         // Clean up old editor data. 
         if (fCallerAction != null) {
             fCallerAction.setMenuCreator(null);
@@ -140,7 +145,8 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
 
     }
 
-    public void dispose() {
+    @Override
+	public void dispose() {
         if (fCallerAction != null) {
             fCallerAction.setMenuCreator(null);
         }
@@ -150,7 +156,8 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
         fRulerInfo = null;
     }
 
-    public void menuAboutToShow(IMenuManager manager) {
+    @Override
+	public void menuAboutToShow(IMenuManager manager) {
         fSelection = StructuredSelection.EMPTY;
         if (fEditor != null && fRulerInfo != null) {
             
@@ -166,7 +173,7 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
                 }
             }
             ToggleBreakpointsTargetManager toggleTargetManager = ToggleBreakpointsTargetManager.getDefault(); 
-            Set enabledIDs = toggleTargetManager.getEnabledToggleBreakpointsTargetIDs(fEditor, fSelection);
+			Set<String> enabledIDs = toggleTargetManager.getEnabledToggleBreakpointsTargetIDs(fEditor, fSelection);
             fCallerAction.setEnabled(enabledIDs.size() > 0);
         } else {
             fCallerAction.setEnabled(false);
@@ -186,14 +193,16 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
         fMenu = menu;
     }
 
-    public Menu getMenu(Menu parent) {
+    @Override
+	public Menu getMenu(Menu parent) {
         setMenu(new Menu(parent));
         fillMenu(fMenu);
         initMenu();
         return fMenu;
     }
 
-    public Menu getMenu(Control parent) {
+    @Override
+	public Menu getMenu(Control parent) {
         setMenu(new Menu(parent));
         fillMenu(fMenu);
         initMenu();
@@ -207,17 +216,13 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
      */
     private void fillMenu(Menu menu) {
         ToggleBreakpointsTargetManager manager = ToggleBreakpointsTargetManager.getDefault(); 
-        Set enabledIDs = manager.getEnabledToggleBreakpointsTargetIDs(fEditor, fSelection);
+		Set<String> enabledIDs = manager.getEnabledToggleBreakpointsTargetIDs(fEditor, fSelection);
         String preferredId = manager.getPreferredToggleBreakpointsTargetID(fEditor, fSelection);
-        
-        for (Iterator itr = enabledIDs.iterator(); itr.hasNext();) {
-            String id = (String)itr.next();
+		for (String id : enabledIDs) {
             SelectTargetAction action= new SelectTargetAction(manager.getToggleBreakpointsTargetName(id), enabledIDs, id);
-            
             if (id.equals(preferredId)){
                 action.setChecked(true);
             }
-
             ActionContributionItem item= new ActionContributionItem(action);
             item.fill(menu, -1);
         } 
@@ -230,7 +235,8 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
         // Add listener to re-populate the menu each time
         // it is shown because of dynamic history list
         fMenu.addMenuListener(new MenuAdapter() {
-            public void menuShown(MenuEvent e) {
+            @Override
+			public void menuShown(MenuEvent e) {
                 Menu m = (Menu)e.widget;
                 MenuItem[] items = m.getItems();
                 for (int i=0; i < items.length; i++) {

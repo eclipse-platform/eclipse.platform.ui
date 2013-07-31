@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,6 +72,7 @@ public class SelectedResourceManager  {
 		else {
 			final IStructuredSelection[] selection = new IStructuredSelection[1];
 			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					selection[0] = getCurrentSelection0();
 				}
@@ -126,6 +127,7 @@ public class SelectedResourceManager  {
 		else {
 			final IResource[] resource = new IResource[1];
 			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					resource[0] = getSelectedResource0();
 				}
@@ -160,7 +162,7 @@ public class SelectedResourceManager  {
 							if(selection instanceof IStructuredSelection) {
 								IStructuredSelection ss = (IStructuredSelection) selection;
 								if(!ss.isEmpty()) {
-									Iterator iterator = ss.iterator();
+									Iterator<?> iterator = ss.iterator();
 									while (iterator.hasNext() && resource == null) {
 										Object next = iterator.next();
 										resource = (IResource) Platform.getAdapterManager().getAdapter(next, IResource.class);
@@ -188,6 +190,7 @@ public class SelectedResourceManager  {
 		else {
 			final String[] text = new String[1];
 			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					text[0] = getSelectedText0();
 				}
@@ -239,6 +242,7 @@ public class SelectedResourceManager  {
 		else {
 			final IWorkbenchWindow[] window = new IWorkbenchWindow[1];
 			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					window[0] = DebugUIPlugin.getActiveWorkbenchWindow();
 				}

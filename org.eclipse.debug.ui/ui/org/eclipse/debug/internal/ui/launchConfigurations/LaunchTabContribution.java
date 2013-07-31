@@ -30,6 +30,7 @@ public class LaunchTabContribution implements IPluginContribution {
 	/**
 	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
 	 */
+	@Override
 	public String getLocalId() {
 		return fTab.getIdentifier();
 	}
@@ -37,6 +38,7 @@ public class LaunchTabContribution implements IPluginContribution {
 	/**
 	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 	 */
+	@Override
 	public String getPluginId() {
 		return fTab.getPluginIdentifier();
 	}

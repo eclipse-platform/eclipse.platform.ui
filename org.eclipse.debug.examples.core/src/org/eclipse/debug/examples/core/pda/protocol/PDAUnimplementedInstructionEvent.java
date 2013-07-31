@@ -33,7 +33,8 @@ public class PDAUnimplementedInstructionEvent extends PDAEvent {
         return message.startsWith("unimplemented instruction"); //$NON-NLS-1$
     }
     
-    protected String getName(String message) {
+    @Override
+	protected String getName(String message) {
         if (isEventMessage(message)) {
             return "unimplemented instruction"; //$NON-NLS-1$
         }

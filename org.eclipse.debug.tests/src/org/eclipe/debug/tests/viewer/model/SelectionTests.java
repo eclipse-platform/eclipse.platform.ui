@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
-/** 
+/**
  * Tests to verify that the viewer properly handles selection changes.
  */
 abstract public class SelectionTests extends TestCase implements ITestModelUpdatesListenerConstants {
@@ -39,7 +39,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
     Shell fShell;
     ITreeModelViewer fViewer;
     TestModelUpdatesListener fListener;
-    
+
     public SelectionTests(String name) {
         super(name);
     }
@@ -47,28 +47,30 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
     /**
      * @throws java.lang.Exception
      */
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         fDisplay = PlatformUI.getWorkbench().getDisplay();
         fShell = new Shell(fDisplay);
         fShell.setMaximized(true);
         fShell.setLayout(new FillLayout());
 
         fViewer = createViewer(fDisplay, fShell);
-        
+
         fListener = new TestModelUpdatesListener(fViewer, false, false);
 
         fShell.open ();
     }
 
     abstract protected ITreeModelViewer createViewer(Display display, Shell shell);
-    
+
     /**
      * @throws java.lang.Exception
      */
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         fListener.dispose();
         fViewer.getPresentationContext().dispose();
-        
+
         // Close the shell and exit.
         fShell.close();
         while (!fShell.isDisposed()) {
@@ -79,9 +81,10 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
     }
 
     private static class SelectionListener implements ISelectionChangedListener {
-        private final List fEvents = new ArrayList(1);
-        
-        public void selectionChanged(SelectionChangedEvent event) {
+		private final List<SelectionChangedEvent> fEvents = new ArrayList<SelectionChangedEvent>(1);
+
+        @Override
+		public void selectionChanged(SelectionChangedEvent event) {
             fEvents.add(event);
         }
     }
@@ -89,7 +92,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
     private TestModel makeMultiLevelModel() throws InterruptedException {
         TestModel model = TestModel.simpleMultiLevel();
         fViewer.setAutoExpandLevel(-1);
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
         fViewer.setInput(model.getRootElement());
         while (!fListener.isFinished()) {
 			if (!fDisplay.readAndDispatch ()) {
@@ -99,17 +102,17 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         model.validateData(fViewer, TreePath.EMPTY);
         return model;
     }
-    
+
     /**
      * In this test:
      * - set selection to an element deep in the model
      * - verify that selection chagned listener is called
-     * - verify that the selection is in the viewer is correct 
+     * - verify that the selection is in the viewer is correct
      */
     public void testSimpleSetSelection() throws InterruptedException {
         // Create the model and populate the view.
         TestModel model = makeMultiLevelModel();
-        
+
         // Create a selection object to the deepest part of the tree.
         SelectionListener listener = new SelectionListener();
         fViewer.addSelectionChangedListener(listener);
@@ -120,7 +123,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         assertTrue(listener.fEvents.size() == 1);
 
         // Check that the new selection is what was requested.
-        ISelection viewerSelection = fViewer.getSelection();        
+        ISelection viewerSelection = fViewer.getSelection();
         assertEquals(selection, viewerSelection);
     }
 
@@ -132,27 +135,31 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
     public void testSelectionPolicy() throws InterruptedException {
         // Create the model and populate the view.
         final TestModel model = makeMultiLevelModel();
-        
+
         // Set the selection and verify it.
 		TreeSelection selection_3_3_3 = new TreeSelection(model.findElement("3.3.3")); //$NON-NLS-1$
         fViewer.setSelection(selection_3_3_3, true, false);
         assertEquals(selection_3_3_3, fViewer.getSelection());
 
         model.setSelectionPolicy(new IModelSelectionPolicy() {
-            
-            public ISelection replaceInvalidSelection(ISelection invalidSelection, ISelection newSelection) {
+
+            @Override
+			public ISelection replaceInvalidSelection(ISelection invalidSelection, ISelection newSelection) {
                 return null;
             }
-            
-            public boolean overrides(ISelection existing, ISelection candidate, IPresentationContext context) {
+
+            @Override
+			public boolean overrides(ISelection existing, ISelection candidate, IPresentationContext context) {
                 return false;
             }
-            
-            public boolean isSticky(ISelection selection, IPresentationContext context) {
+
+            @Override
+			public boolean isSticky(ISelection selection, IPresentationContext context) {
                 return true;
             }
-            
-            public boolean contains(ISelection selection, IPresentationContext context) {
+
+            @Override
+			public boolean contains(ISelection selection, IPresentationContext context) {
                 return true;
             }
         });
@@ -165,8 +172,8 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         // Now attempt to *force* selection and verify that new selection was set.
         fViewer.setSelection(selection_3_3_1, true, true);
         assertEquals(selection_3_3_1, fViewer.getSelection());
-        
-        // Create the an update delta to attempt to change selection back to 
+
+        // Create the an update delta to attempt to change selection back to
         // 3.3.3 and verify that selection did not get overriden.
 		TreePath path_3_3_3 = model.findElement("3.3.3"); //$NON-NLS-1$
         ModelDelta baseDelta = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
@@ -192,11 +199,11 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         assertEquals(selection_3_3_3, fViewer.getSelection());
     }
 
-    
+
     /**
      * In this test:
-     * - set a seleciton to an element 
-     * - then remove that element 
+     * - set a seleciton to an element
+     * - then remove that element
      * - update the view with remove delta
      * -> The selection should be re-set to empty.
      */
@@ -205,7 +212,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
 
         // Create the model and populate the view.
         TestModel model = makeMultiLevelModel();
-        
+
         // Create a selection object to the deepest part of the tree.
 		TreePath elementPath = model.findElement("3.3.3"); //$NON-NLS-1$
         TreeSelection selection = new TreeSelection(elementPath);
@@ -225,7 +232,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
 
         // Reset the listener and update the viewer.  With a remove
         // delta only wait for the delta to be processed.
-        fListener.reset(); 
+        fListener.reset();
         model.postDelta(delta);
         while (!fListener.isFinished(ITestModelUpdatesListenerConstants.MODEL_CHANGED_COMPLETE)) {
 			if (!fDisplay.readAndDispatch ()) {
@@ -237,15 +244,15 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         //assertTrue(listener.fEvents.size() == 1);
 
         // Check that the new selection is empty
-        ISelection viewerSelection = fViewer.getSelection();        
+        ISelection viewerSelection = fViewer.getSelection();
         assertTrue(viewerSelection.isEmpty());
     }
 
-    
+
     /**
      * In this test:
-     * - set a selection to an element 
-     * - then remove that element 
+     * - set a selection to an element
+     * - then remove that element
      * - then refresh the view.
      * -> The selection should be re-set to empty.
      */
@@ -254,7 +261,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
 
         // Create the model and populate the view.
         TestModel model = makeMultiLevelModel();
-        
+
         // Create a selection object to the deepest part of the tree.
 		TreePath elementPath = model.findElement("3.3.3"); //$NON-NLS-1$
         TreeSelection selection = new TreeSelection(elementPath);
@@ -273,8 +280,8 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         fViewer.addSelectionChangedListener(listener);
 
         // Reset the listener to ignore redundant updates.  When elements are removed
-        // the viewer may still request updates for those elements. 
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+        // the viewer may still request updates for those elements.
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false);
 
         // Refresh the viewer
         model.postDelta( new ModelDelta(model.getRootElement(), IModelDelta.CONTENT) );
@@ -289,7 +296,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         //assertTrue(listener.fEvents.size() == 1);
 
         // Check that the new selection is empty
-        ISelection viewerSelection = fViewer.getSelection();        
+        ISelection viewerSelection = fViewer.getSelection();
         assertTrue(viewerSelection.isEmpty());
     }
 }

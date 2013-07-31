@@ -32,6 +32,7 @@ public abstract class ToggleFilterAction extends Action {
 	 */
 	private ViewerFilter fViewerFilter;
 
+	@Override
 	public void run() {
 		valueChanged(isChecked());
 	}
@@ -44,6 +45,7 @@ public abstract class ToggleFilterAction extends Action {
 			return;
 		}
 		BusyIndicator.showWhile(getViewer().getControl().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				if (on) {
 					ViewerFilter filter= getViewerFilter();

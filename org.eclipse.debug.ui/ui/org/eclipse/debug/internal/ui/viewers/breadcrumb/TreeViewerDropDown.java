@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Wind River Systems and others.
+ * Copyright (c) 2009, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,7 +84,8 @@ public abstract class TreeViewerDropDown {
         fDropDownViewer= createTreeViewer(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL, path); 
 
         fDropDownViewer.addOpenListener(new IOpenListener() {
-            public void open(OpenEvent event) {
+            @Override
+			public void open(OpenEvent event) {
                 if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN) {
                 	DebugUIPlugin.trace("BreadcrumbItemDropDown.showMenu()$treeViewer>open"); //$NON-NLS-1$
                 }
@@ -95,24 +96,30 @@ public abstract class TreeViewerDropDown {
         final Tree tree = fDropDownViewer.getTree();
         
         tree.addMouseListener(new MouseListener() {
-            public void mouseUp(MouseEvent e) {
+            @Override
+			public void mouseUp(MouseEvent e) {
                 if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN) {
                 	DebugUIPlugin.trace("BreadcrumbItemDropDown.showMenu()$treeViewer>mouseUp"); //$NON-NLS-1$
                 }
-                if (e.button != 1)
-                    return;
+                if (e.button != 1) {
+					return;
+				}
 
-                if ((OpenStrategy.getOpenMethod() & OpenStrategy.SINGLE_CLICK) != 0)
-                    return;
+                if ((OpenStrategy.getOpenMethod() & OpenStrategy.SINGLE_CLICK) != 0) {
+					return;
+				}
 
                 TreeItem item= tree.getItem(new Point(e.x, e.y));
-                if (item == null)
-                    return;
+                if (item == null) {
+					return;
+				}
 
-                List pathElements = new LinkedList();
+				List<Object> pathElements = new LinkedList<Object>();
                 while(item != null) {
                     Object data = item.getData();
-                    if (data == null) return;
+                    if (data == null) {
+						return;
+					}
                     pathElements.add(0, data);
                     item = item.getParentItem();
                 }
@@ -120,10 +127,12 @@ public abstract class TreeViewerDropDown {
                 openElement(new TreeSelection(new TreePath(pathElements.toArray())));
             }
 
-            public void mouseDown(MouseEvent e) {
+            @Override
+			public void mouseDown(MouseEvent e) {
             }
 
-            public void mouseDoubleClick(MouseEvent e) {
+            @Override
+			public void mouseDoubleClick(MouseEvent e) {
             }
         });
 
@@ -131,7 +140,8 @@ public abstract class TreeViewerDropDown {
             TreeItem fLastItem= null;
             long fLastScrollTime = 0;
 
-            public void mouseMove(MouseEvent e) {
+            @Override
+			public void mouseMove(MouseEvent e) {
                 if (tree.equals(e.getSource())) {
                     Object o= tree.getItem(new Point(e.x, e.y));
 					if (fLastItem == null ^ o == null) {
@@ -149,8 +159,9 @@ public abstract class TreeViewerDropDown {
                                 // Scroll up
                                 if (currentItem.getParentItem() == null) {
                                     int index= tree.indexOf((TreeItem) o);
-                                    if (index < 1)
-                                        return;
+                                    if (index < 1) {
+										return;
+									}
     
                                     fLastItem= tree.getItem(index - 1);
                                     tree.setSelection(new TreeItem[] { fLastItem });
@@ -167,8 +178,9 @@ public abstract class TreeViewerDropDown {
                                 // Scroll down
                                 if (currentItem.getParentItem() == null) {
                                     int index= tree.indexOf((TreeItem) o);
-                                    if (index >= tree.getItemCount() - 1)
-                                        return;
+                                    if (index >= tree.getItemCount() - 1) {
+										return;
+									}
     
                                     fLastItem= tree.getItem(index + 1);
                                     tree.setSelection(new TreeItem[] { fLastItem });
@@ -191,7 +203,8 @@ public abstract class TreeViewerDropDown {
         });
 
         tree.addKeyListener(new KeyListener() {
-            public void keyPressed(KeyEvent e) {
+            @Override
+			public void keyPressed(KeyEvent e) {
                 if (e.keyCode == SWT.ARROW_UP) {
                     // No elements in the tree (bug 262961).
                     if (tree.getItemCount() == 0) {
@@ -200,30 +213,36 @@ public abstract class TreeViewerDropDown {
                     }
                     
                     TreeItem[] selection= tree.getSelection();
-                    if (selection.length != 1)
-                        return;
+                    if (selection.length != 1) {
+						return;
+					}
 
                     int selectionIndex= tree.indexOf(selection[0]);
-                    if (selectionIndex != 0)
-                        return;
+                    if (selectionIndex != 0) {
+						return;
+					}
 
                     fDropDownSite.close();
                 }
             }
 
-            public void keyReleased(KeyEvent e) {
+            @Override
+			public void keyReleased(KeyEvent e) {
             }
         });
 
         fDropDownViewer.addTreeListener(new ITreeViewerListener() {
-            public void treeCollapsed(TreeExpansionEvent event) {
+            @Override
+			public void treeCollapsed(TreeExpansionEvent event) {
             }
 
-            public void treeExpanded(TreeExpansionEvent event) {
+            @Override
+			public void treeExpanded(TreeExpansionEvent event) {
                 tree.setRedraw(false);
                 new UIJob(tree.getDisplay(), IInternalDebugCoreConstants.EMPTY_STRING) {
                     { setSystem(true); }
-                    public IStatus runInUIThread(IProgressMonitor monitor) {
+                    @Override
+					public IStatus runInUIThread(IProgressMonitor monitor) {
                         if (!tree.isDisposed()) {
                             try {
                                 fDropDownSite.updateSize();
@@ -260,8 +279,9 @@ public abstract class TreeViewerDropDown {
      * @param selection The selection to open.
      */
     protected void openElement(ISelection selection) {
-        if (selection == null || !(selection instanceof ITreeSelection) || selection.isEmpty())
-            return;
+        if (selection == null || !(selection instanceof ITreeSelection) || selection.isEmpty()) {
+			return;
+		}
 
         // This might or might not open an editor
         fDropDownSite.notifySelection(selection);
@@ -276,8 +296,9 @@ public abstract class TreeViewerDropDown {
         	DebugUIPlugin.trace("    tree hasFocus: " + treeHasFocus); //$NON-NLS-1$
         }
 
-        if (tree.isDisposed())
-            return;
+        if (tree.isDisposed()) {
+			return;
+		}
 
         if (!treeHasFocus) {
             fDropDownSite.close();
@@ -289,9 +310,9 @@ public abstract class TreeViewerDropDown {
 
     private void toggleExpansionState(TreePath path) {
         Tree tree= fDropDownViewer.getTree();
-        if (fDropDownViewer.getExpandedState(path))
-            fDropDownViewer.collapseToLevel(path, 1);
-        else {
+        if (fDropDownViewer.getExpandedState(path)) {
+			fDropDownViewer.collapseToLevel(path, 1);
+		} else {
             tree.setRedraw(false);
             try {
                 fDropDownViewer.expandToLevel(path, 1);

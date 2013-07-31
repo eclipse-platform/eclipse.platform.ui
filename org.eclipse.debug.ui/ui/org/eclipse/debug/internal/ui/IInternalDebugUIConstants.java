@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,8 @@ public interface IInternalDebugUIConstants {
     /**
      * @deprecated Use IDebugUIConstants#IMG_LCL_ADD
      */
-    public static final String IMG_LCL_MONITOR_EXPRESSION= IDebugUIConstants.IMG_LCL_ADD;
+    @Deprecated
+	public static final String IMG_LCL_MONITOR_EXPRESSION= IDebugUIConstants.IMG_LCL_ADD;
     public static final String IMG_LCL_REMOVE_MEMORY= "IMG_LCL_REMOVE_MEMORY"; //$NON-NLS-1$
     public static final String IMG_LCL_RESET_MEMORY= "IMG_LCL_RESET_MEMORY";//$NON-NLS-1$
     public static final String IMG_LCL_COPY_VIEW_TO_CLIPBOARD = "IMG_LCL_COPY_VIEW_TO_CLIPBOARD"; //$NON-NLS-1$
@@ -361,7 +362,8 @@ public interface IInternalDebugUIConstants {
      * @deprecated There is an API equivalent constant that should be used, see
      * {@link IDebugUIConstants#BREAKPOINT_WORKINGSET_ID}
      */
-    public static final String ID_BREAKPOINT_WORKINGSET = "org.eclipse.debug.ui.breakpointWorkingSet"; //$NON-NLS-1$
+	@Deprecated
+	public static final String ID_BREAKPOINT_WORKINGSET = "org.eclipse.debug.ui.breakpointWorkingSet"; //$NON-NLS-1$
     
     
     /**

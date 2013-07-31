@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,43 +59,43 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Singleton string variable manager. 
+ * Singleton string variable manager.
  */
 public class StringVariableManager implements IStringVariableManager, IPreferenceChangeListener {
-	
+
 	/**
 	 * Dynamic variables - maps variable names to variables.
 	 */
-	private Map fDynamicVariables;
-	
+	private Map<String, IDynamicVariable> fDynamicVariables;
+
 	/**
 	 * Value variables - maps variable names to variables.
 	 */
-	private Map fValueVariables;
-	
+	private Map<String, IStringVariable> fValueVariables;
+
 	/**
 	 * Variable listeners
 	 */
 	private ListenerList fListeners;
-	
+
 	// notifications
 	private static final int ADDED = 0;
 	private static final int CHANGED = 1;
 	private static final int REMOVED = 2;
-	
+
 	/**
 	 * Singleton variable manager.
 	 */
-	private static StringVariableManager fgManager; 
-	
+	private static StringVariableManager fgManager;
+
 	// true during internal updates indicates that change notification
 	// should be suppressed/ignored.
 	private boolean fInternalChange = false;
-	
+
 	// Variable extension point constants
 	private static final String ATTR_NAME= "name"; //$NON-NLS-1$
 	private static final String ATTR_DESCRIPTION="description"; //$NON-NLS-1$
-	private static final String ATTR_READ_ONLY="readOnly"; //$NON-NLS-1$	
+	private static final String ATTR_READ_ONLY="readOnly"; //$NON-NLS-1$
 	// Persisted variable XML constants
 	private static final String VALUE_VARIABLES_TAG= "valueVariables"; //$NON-NLS-1$
 	private static final String VALUE_VARIABLE_TAG= "valueVariable"; //$NON-NLS-1$
@@ -107,21 +107,22 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	private static final String TRUE_VALUE= "true"; //$NON-NLS-1$
 	private static final String FALSE_VALUE= "false"; //$NON-NLS-1$
 	// preference store key for value variables
-	private static final String PREF_VALUE_VARIABLES= VariablesPlugin.getUniqueIdentifier() + ".valueVariables"; //$NON-NLS-1$	
-		
+	private static final String PREF_VALUE_VARIABLES= VariablesPlugin.getUniqueIdentifier() + ".valueVariables"; //$NON-NLS-1$
+
 	/**
 	 * Notifies a string variable listener in a safe runnable to handle
 	 * exceptions.
 	 */
 	class StringVariableNotifier implements ISafeRunnable {
-		
+
 		private IValueVariableListener fListener;
 		private int fType;
 		private IValueVariable[] fVariables;
-		
+
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
+		@Override
 		public void handleException(Throwable exception) {
 			IStatus status = new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, "An exception occurred during string variable change notification", exception); //$NON-NLS-1$
 			VariablesPlugin.log(status);
@@ -130,6 +131,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
+		@Override
 		public void run() throws Exception {
 			switch (fType) {
 				case ADDED:
@@ -141,12 +143,14 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 				case CHANGED:
 					fListener.variablesChanged(fVariables);
 					break;
-			}			
+				default:
+					break;
+			}
 		}
 
 		/**
 		 * Notifies the given listener of the add/change/remove
-		 * 
+		 *
 		 * @param variables the {@link IValueVariable}s to notify about
 		 * @param update the type of change
 		 */
@@ -157,26 +161,26 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 			for (int i= 0; i < copiedListeners.length; i++) {
 				fListener = (IValueVariableListener)copiedListeners[i];
 				SafeRunner.run(this);
-			}	
+			}
 			fVariables = null;
 			fListener = null;
-			// persist variables whenever there is an add/change/remove	
-			storeValueVariables();	
+			// persist variables whenever there is an add/change/remove
+			storeValueVariables();
 		}
-	}	
-	
+	}
+
 	/**
 	 * Returns a new notifier.
-	 * 
+	 *
 	 * @return a new notifier
 	 */
 	private StringVariableNotifier getNotifier() {
 		return new StringVariableNotifier();
 	}
-	
+
 	/**
 	 * Returns the default string variable manager
-	 * 
+	 *
 	 * @return string variable manager
 	 */
 	public static StringVariableManager getDefault() {
@@ -185,13 +189,13 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		}
 		return fgManager;
 	}
-	
+
 	/**
-	 * Constructs a new string variable manager. 
+	 * Constructs a new string variable manager.
 	 */
 	private StringVariableManager() {
 		fListeners = new ListenerList();
-	}	
+	}
 
 	/**
 	 * Load contributed variables and persisted variables
@@ -199,8 +203,8 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	private synchronized void initialize() {
 		if (fDynamicVariables == null) {
 			fInternalChange = true;
-			fDynamicVariables = new HashMap(5);
-			fValueVariables = new HashMap(5);
+			fDynamicVariables = new HashMap<String, IDynamicVariable>(5);
+			fValueVariables = new HashMap<String, IStringVariable>(5);
 			loadContributedValueVariables();
 			loadPersistedValueVariables();
 			loadDynamicVariables();
@@ -208,7 +212,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 			fInternalChange = false;
 		}
 	}
-	
+
 	/**
 	 * Loads contributed dynamic variables
 	 */
@@ -249,7 +253,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 			}
 			String description= element.getAttribute(ATTR_DESCRIPTION);
 			boolean isReadOnly = TRUE_VALUE.equals(element.getAttribute(ATTR_READ_ONLY));
-			
+
 			IValueVariable variable = new ContributedValueVariable(name, description, isReadOnly, element);
 			Object old = fValueVariables.put(name, variable);
 			if (old != null) {
@@ -258,12 +262,12 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 						new String[] {element.getDeclaringExtension().getContributor().getName(),oldVariable.getName(),
 						oldVariable.getConfigurationElement().getDeclaringExtension().getContributor().getName()}), null);
 			}
-		}		
+		}
 	}
 
 	/**
 	 * Loads persisted value variables from the preference store.  This is done after
-	 * loading value variables from the extension point.  If a persisted variable has the 
+	 * loading value variables from the extension point.  If a persisted variable has the
 	 * same name as a extension contributed variable the variable's value will be set to
 	 * the persisted value unless either a) The persisted value is <code>null</code>, or
 	 * b) the variable is read-only.
@@ -301,7 +305,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 					String value= element.getAttribute(VALUE_TAG);
 					String description= element.getAttribute(DESCRIPTION_TAG);
 					boolean readOnly= TRUE_VALUE.equals(element.getAttribute(READ_ONLY_TAG));
-				
+
 					IValueVariable existing = getValueVariable(name);
 					if (existing == null){
 						ValueVariable variable = new ValueVariable(name, description, readOnly, value);
@@ -313,39 +317,43 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 					VariablesPlugin.logMessage("Invalid variable entry encountered while loading value variables. Variable name is null.", null); //$NON-NLS-1$
 				}
 			}
-		}		
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getVariables()
 	 */
+	@Override
 	public synchronized IStringVariable[] getVariables() {
 		initialize();
-		List list = new ArrayList(fDynamicVariables.size() + fValueVariables.size());
+		List<IStringVariable> list = new ArrayList<IStringVariable>(fDynamicVariables.size() + fValueVariables.size());
 		list.addAll(fDynamicVariables.values());
 		list.addAll(fValueVariables.values());
-		return (IStringVariable[]) list.toArray(new IStringVariable[list.size()]);
+		return list.toArray(new IStringVariable[list.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getValueVariables()
 	 */
+	@Override
 	public synchronized IValueVariable[] getValueVariables() {
 		initialize();
-		return (IValueVariable[]) fValueVariables.values().toArray(new IValueVariable[fValueVariables.size()]);
+		return fValueVariables.values().toArray(new IValueVariable[fValueVariables.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getDynamicVariables()
 	 */
+	@Override
 	public synchronized IDynamicVariable[] getDynamicVariables() {
 		initialize();
-		return (IDynamicVariable[]) fDynamicVariables.values().toArray(new IDynamicVariable[fDynamicVariables.size()]);
+		return fDynamicVariables.values().toArray(new IDynamicVariable[fDynamicVariables.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#performStringSubstitution(java.lang.String)
 	 */
+	@Override
 	public String performStringSubstitution(String expression) throws CoreException {
 		return performStringSubstitution(expression, true);
 	}
@@ -353,28 +361,31 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#newValueVariable(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public IValueVariable newValueVariable(String name, String description) {
 		return newValueVariable(name, description, false, null);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.variables.IStringVariableManager#newValueVariable(java.lang.String, java.lang.String, boolean, java.lang.String)
 	 */
+	@Override
 	public IValueVariable newValueVariable(String name, String description, boolean readOnly, String value) {
 		return new ValueVariable(name, description, readOnly, value);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#addVariables(org.eclipse.debug.internal.core.stringsubstitution.IValueVariable[])
 	 */
+	@Override
 	public synchronized void addVariables(IValueVariable[] variables) throws CoreException {
 		initialize();
-		MultiStatus status = new MultiStatus(VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, VariablesMessages.StringVariableManager_26, null); 
+		MultiStatus status = new MultiStatus(VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, VariablesMessages.StringVariableManager_26, null);
 		for (int i = 0; i < variables.length; i++) {
 			IValueVariable variable = variables[i];
 			if (getValueVariable(variable.getName()) != null) {
-				status.add(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, NLS.bind(VariablesMessages.StringVariableManager_27, new String[]{variable.getName()}), null)); 
-			}			
+				status.add(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, NLS.bind(VariablesMessages.StringVariableManager_27, new String[]{variable.getName()}), null));
+			}
 		}
 		if (status.isOK()) {
 			for (int i = 0; i < variables.length; i++) {
@@ -392,9 +403,10 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#removeVariables(org.eclipse.debug.internal.core.stringsubstitution.IValueVariable[])
 	 */
+	@Override
 	public synchronized void removeVariables(IValueVariable[] variables) {
 		initialize();
-		List removed = new ArrayList(variables.length);
+		List<IValueVariable> removed = new ArrayList<IValueVariable>(variables.length);
 		for (int i = 0; i < variables.length; i++) {
 			IValueVariable variable = variables[i];
 			if (fValueVariables.remove(variable.getName()) != null) {
@@ -402,21 +414,23 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 			}
 		}
 		if (removed.size() > 0) {
-			getNotifier().notify((IValueVariable[])removed.toArray(new IValueVariable[removed.size()]), REMOVED);
+			getNotifier().notify(removed.toArray(new IValueVariable[removed.size()]), REMOVED);
 		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getDynamicVariable(java.lang.String)
 	 */
+	@Override
 	public synchronized IDynamicVariable getDynamicVariable(String name) {
 		initialize();
-		return (IDynamicVariable) fDynamicVariables.get(name);
+		return fDynamicVariables.get(name);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getValueVariable(java.lang.String)
 	 */
+	@Override
 	public synchronized IValueVariable getValueVariable(String name) {
 		initialize();
 		return (IValueVariable) fValueVariables.get(name);
@@ -426,6 +440,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#addValueVariableListener(org.eclipse.debug.internal.core.stringsubstitution.IValueVariableListener)
 	 */
+	@Override
 	public void addValueVariableListener(IValueVariableListener listener) {
 		fListeners.add(listener);
 	}
@@ -433,13 +448,14 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#removeValueVariableListener(org.eclipse.debug.internal.core.stringsubstitution.IValueVariableListener)
 	 */
+	@Override
 	public void removeValueVariableListener(IValueVariableListener listener) {
 		fListeners.remove(listener);
 	}
-	
+
 	/**
 	 * Returns a memento representing the value variables currently registered.
-	 * 
+	 *
 	 * @return memento representing the value variables currently registered
 	 * @throws IOException if an I/O exception occurs while creating the XML.
 	 * @throws ParserConfigurationException if an I/O exception occurs while creating the XML.
@@ -454,7 +470,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		for (int i = 0; i < variables.length; i++) {
 			IValueVariable variable = variables[i];
 			if (!variable.isReadOnly()){
-				// don't persist read-only variables or un-initialized contributed variables 
+				// don't persist read-only variables or un-initialized contributed variables
 				if (!variable.isContributed() || ((ContributedValueVariable)variable).isInitialized()) {
 					Element element= document.createElement(VALUE_VARIABLE_TAG);
 					element.setAttribute(NAME_TAG, variable.getName());
@@ -473,18 +489,18 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		}
 		return serializeDocument(document);
 	}
-	
+
 	private Document getDocument() throws ParserConfigurationException {
 		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
 		Document doc =docBuilder.newDocument();
 		return doc;
 	}
-	
+
 	/**
 	 * Serializes a XML document into a string - encoded in UTF8 format,
 	 * with platform line separators.
-	 * 
+	 *
 	 * @param doc document to serialize
 	 * @return the document as a string
 	 * @throws TransformerException if an unrecoverable error occurs during the serialization
@@ -492,22 +508,22 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	 */
 	private String serializeDocument(Document doc) throws TransformerException, UnsupportedEncodingException {
 		ByteArrayOutputStream s= new ByteArrayOutputStream();
-		
+
 		TransformerFactory factory= TransformerFactory.newInstance();
 		Transformer transformer= factory.newTransformer();
 		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
-		
+
 		DOMSource source= new DOMSource(doc);
 		StreamResult outputTarget= new StreamResult(s);
 		transformer.transform(source, outputTarget);
-		
-		return s.toString("UTF8"); //$NON-NLS-1$			
+
+		return s.toString("UTF8"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Saves the value variables currently registered in the
-	 * preference store. 
+	 * preference store.
 	 */
 	private synchronized void storeValueVariables() {
 		String variableString= ""; //$NON-NLS-1$
@@ -539,7 +555,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 
 	/**
 	 * Fire a change notification for the given variable.
-	 * 
+	 *
 	 * @param variable the variable that has changed
 	 */
 	protected void notifyChanged(IValueVariable variable) {
@@ -550,11 +566,12 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 				getNotifier().notify(new IValueVariable[]{variable}, CHANGED);
 			}
 		}
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#generateVariableExpression(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public String generateVariableExpression(String varName, String arg) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("${"); //$NON-NLS-1$
@@ -566,10 +583,11 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		buffer.append("}"); //$NON-NLS-1$
 		return buffer.toString();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#performStringSubstitution(java.lang.String, boolean)
 	 */
+	@Override
 	public String performStringSubstitution(String expression,	boolean reportUndefinedVariables) throws CoreException {
 		return new StringSubstitutionEngine().performStringSubstitution(expression, reportUndefinedVariables, true, this);
 	}
@@ -577,6 +595,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.variables.IStringVariableManager#validateStringVariables(java.lang.String)
 	 */
+	@Override
 	public void validateStringVariables(String expression) throws CoreException {
 		new StringSubstitutionEngine().validateStringVariables(expression, this);
 	}
@@ -584,7 +603,8 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
     /* (non-Javadoc)
      * @see org.eclipse.core.variables.IStringVariableManager#getContributingPluginId(org.eclipse.core.variables.IStringVariable)
      */
-    public String getContributingPluginId(IStringVariable variable) {
+    @Override
+	public String getContributingPluginId(IStringVariable variable) {
         if (variable instanceof StringVariable) {
             return ((StringVariable) variable).getConfigurationElement().getContributor().getName();
         }
@@ -594,6 +614,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 	 */
+	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (PREF_VALUE_VARIABLES.equals(event.getKey())) {
 			synchronized (this) {

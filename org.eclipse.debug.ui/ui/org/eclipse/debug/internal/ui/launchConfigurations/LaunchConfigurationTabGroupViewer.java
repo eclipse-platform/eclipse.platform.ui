@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -240,7 +240,8 @@ public class LaunchConfigurationTabGroupViewer {
 		fNameWidget = new Text(fGroupComposite, SWT.SINGLE | SWT.BORDER);
         fNameWidget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         fNameWidget.addModifyListener(new ModifyListener() {
-    				public void modifyText(ModifyEvent e) {
+    				@Override
+					public void modifyText(ModifyEvent e) {
     					if(!fInitializingTabs) {
     						handleNameModified();
     					}
@@ -264,6 +265,7 @@ public class LaunchConfigurationTabGroupViewer {
 		gd.grabExcessHorizontalSpace = true;
 		fOptionsLink.setLayoutData(gd);
 		fOptionsLink.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				//collect the options available
 				try {
@@ -274,7 +276,8 @@ public class LaunchConfigurationTabGroupViewer {
 							//set the options to the config
 							Object[] res = sld.getResult();
 							if(res != null) {
-								Set modes = (Set) res[0];
+								@SuppressWarnings("unchecked")
+								Set<String> modes = (Set<String>) res[0];
 								modes.remove(getLaunchConfigurationDialog().getMode());
 								ILaunchConfigurationWorkingCopy wc = getWorkingCopy();
 								wc.setModes(modes);
@@ -300,6 +303,7 @@ public class LaunchConfigurationTabGroupViewer {
 		Composite buttonComp = SWTFactory.createComposite(blComp, 2, 1, GridData.HORIZONTAL_ALIGN_END);
 		fApplyButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.LaunchConfigurationDialog__Apply_17, null,GridData.HORIZONTAL_ALIGN_END);
 		fApplyButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleApplyPressed();
 			}
@@ -307,6 +311,7 @@ public class LaunchConfigurationTabGroupViewer {
 
 		fRevertButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.LaunchConfigurationDialog_Revert_2, null, GridData.HORIZONTAL_ALIGN_END);
 		fRevertButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleRevertPressed();
 			}
@@ -338,6 +343,7 @@ public class LaunchConfigurationTabGroupViewer {
 		gd.widthHint = width;
 		link.setLayoutData(gd);
 		link.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				SWTFactory.showPreferencePage("org.eclipse.debug.ui.PerspectivePreferencePage"); //$NON-NLS-1$
 			}
@@ -363,6 +369,7 @@ public class LaunchConfigurationTabGroupViewer {
 			fTabFolder.setLayoutData(gd);
 			fTabFolder.setFont(parent.getFont());
 			fTabFolder.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent event) {
 					if (!fInitializingTabs) {
 						handleTabSelected();
@@ -493,7 +500,7 @@ public class LaunchConfigurationTabGroupViewer {
 					text = LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_15;
 				}
 				else {
-					text = MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_16, new String[] {name});
+					text = MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_16, new Object[] { name });
 				}
 			}
 			else {
@@ -523,7 +530,7 @@ public class LaunchConfigurationTabGroupViewer {
 		ILaunchConfigurationWorkingCopy config = getWorkingCopy();
 		if(config != null) {
 			try {
-				Set modes = getCurrentModeSet();
+				Set<String> modes = getCurrentModeSet();
 				preferred = config.getPreferredDelegate(modes);
 				if(preferred == null) {
 					preferred = config.getType().getPreferredDelegate(modes);
@@ -539,8 +546,8 @@ public class LaunchConfigurationTabGroupViewer {
 	 * @return the listing of modes for the current config
 	 * @since 3.3
 	 */
-	private Set getCurrentModeSet() {
-		Set set = new HashSet();
+	private Set<String> getCurrentModeSet() {
+		Set<String> set = new HashSet<String>();
 		ILaunchConfigurationWorkingCopy config = getWorkingCopy();
 		if(config != null) {
 			try {
@@ -582,6 +589,7 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		else {
 			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					setInput0(input);
 				}
@@ -615,6 +623,7 @@ public class LaunchConfigurationTabGroupViewer {
 	protected void inputChanged(Object input) {
 		final Object finput = input;
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				try {
 					fViewform.setRedraw(false);
@@ -675,7 +684,7 @@ public class LaunchConfigurationTabGroupViewer {
 				return false;
 			}
 			if (config1.getType().equals(config2.getType())) {
-				Set modes = getCurrentModeSet();
+				Set<String> modes = getCurrentModeSet();
 				ILaunchDelegate d1 = config1.getPreferredDelegate(modes);
 				if(d1 == null) {
 					d1 = config1.getType().getPreferredDelegate(modes);
@@ -744,7 +753,7 @@ public class LaunchConfigurationTabGroupViewer {
 		// Retrieve the current tab group.  If there is none, clean up and leave
 		ILaunchConfigurationTabGroup tabGroup = getTabGroup();
 		if (tabGroup == null) {
-			IStatus status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_No_tabs_defined_for_launch_configuration_type__0__1, new String[]{type.getName()}), null); 
+			IStatus status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_No_tabs_defined_for_launch_configuration_type__0__1, new Object[] { type.getName() }), null);
 			CoreException e = new CoreException(status);
 			errorDialog(e);
 			fInitializingTabs = false;
@@ -774,7 +783,7 @@ public class LaunchConfigurationTabGroupViewer {
 	 */
 	private void showInstanceTabsFor(ILaunchConfigurationType configType) {
 		// try to keep on same tab
-		Class tabKind = null;
+		Class<? extends ILaunchConfigurationTab> tabKind = null;
 		if (getActiveTab() != null) {
 			tabKind = getActiveTab().getClass();
 		}
@@ -858,6 +867,7 @@ public class LaunchConfigurationTabGroupViewer {
 		// results from the Runnable
 		final Object[] finalArray = new Object[2];
 		Runnable runnable = new Runnable() {
+			@Override
 			public void run() {
 				ILaunchConfigurationTabGroup tabGroup = null;
 				try {
@@ -982,12 +992,14 @@ public class LaunchConfigurationTabGroupViewer {
 	 */
 	protected Job createUpdateJob() {
 		return  new WorkbenchJob(getControl().getDisplay(), "Update LCD") { //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (!getControl().isDisposed()) {
 					refreshStatus();
 				}
 				return Status.OK_STATUS;
 			}
+			@Override
 			public boolean shouldRun() {
 				return !getControl().isDisposed();
 			}
@@ -1149,7 +1161,7 @@ public class LaunchConfigurationTabGroupViewer {
 		ILaunchConfiguration config = getWorkingCopy();
 		if(config != null) {
 			try {
-				Set modes = getCurrentModeSet();
+				Set<String> modes = getCurrentModeSet();
 				ILaunchDelegate[] delegates = LaunchConfigurationManager.filterLaunchDelegates(config.getType(), modes);
 				return delegates.length > 1;
 			}
@@ -1207,9 +1219,9 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 		}
 		if(!canLaunchWithModes()) {
-			Set modes = getCurrentModeSet();
-			List names = LaunchConfigurationPresentationManager.getDefault().getLaunchModeNames(modes);
-			return MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_14, new String[]{names.toString()});
+			Set<String> modes = getCurrentModeSet();
+			List<String> names = LaunchConfigurationPresentationManager.getDefault().getLaunchModeNames(modes);
+			return MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_14, new Object[] { names.toString() });
 		}
 		return null;
 	}	
@@ -1293,7 +1305,7 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 			// Otherwise, if there's already a config with the same name, complain
 			if (fOriginal != null && !fOriginal.getName().equals(currentName)) {
-				Set reservednames = ((LaunchConfigurationsDialog)getLaunchConfigurationDialog()).getReservedNameSet();
+				Set<String> reservednames = ((LaunchConfigurationsDialog) getLaunchConfigurationDialog()).getReservedNameSet();
 				if (mgr.isExistingLaunchConfigurationName(currentName) || (reservednames != null ? reservednames.contains(currentName) : false)) {
 					ILaunchConfiguration config = ((LaunchManager)mgr).findLaunchConfiguration(currentName);
 					//config cannot be null at this location since the manager knows the name conflicts
@@ -1390,6 +1402,7 @@ public class LaunchConfigurationTabGroupViewer {
 			if (isDirty()) {
 				if(!fWorkingCopy.isLocal()) {
 					IRunnableWithProgress runnable = new IRunnableWithProgress() {
+						@Override
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							try {
 								saved[0] = ((LaunchConfigurationWorkingCopy)fWorkingCopy).doSave(monitor);

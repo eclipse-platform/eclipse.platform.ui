@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public abstract class WatchExpressionAction implements IViewActionDelegate {
 
 	private static IWatchExpression[] EMPTY_EXPRESSION_ARRAY = new IWatchExpression[0]; 
 	
+	@Override
 	public void init(IViewPart view) {
 	    fPart = view;
 	}
@@ -61,13 +62,13 @@ public abstract class WatchExpressionAction implements IViewActionDelegate {
     }
 
 	protected IWatchExpression[] getSelectedExpressions() {
-	    List list = new LinkedList(); 
+	    List<Object> list = new LinkedList<Object>(); 
 	    IStructuredSelection currentSelection = getCurrentSelection();
 	    if (currentSelection == null) {
 	        return EMPTY_EXPRESSION_ARRAY;
 	    }
 	    
-        for (Iterator iter= currentSelection.iterator(); iter.hasNext();) {
+        for (Iterator<?> iter= currentSelection.iterator(); iter.hasNext();) {
             Object element = iter.next();
             if (element instanceof IWatchExpression) {
                 list.add(element);
@@ -83,12 +84,13 @@ public abstract class WatchExpressionAction implements IViewActionDelegate {
             }
         }
         
-        return (IWatchExpression[])list.toArray(new IWatchExpression[list.size()]);
+		return list.toArray(new IWatchExpression[list.size()]);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
 	}
 

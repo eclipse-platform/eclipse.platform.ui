@@ -20,35 +20,38 @@ import org.eclipse.ui.IViewPart;
 /**
  * Action to link/unlink rendering view panes
  */
-public class LinkRenderingPanesAction implements IViewActionDelegate{
+public class LinkRenderingPanesAction implements IViewActionDelegate {
 
 	IMemoryRenderingSite fRenderingSite;
 	private MemoryViewSynchronizationService fMemSyncService;
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
-	public void init(IViewPart view) {	
-		
-		if (view instanceof IMemoryRenderingSite)
-		{
-			fRenderingSite = (IMemoryRenderingSite)view;
-			
+	@Override
+	public void init(IViewPart view) {
+
+		if (view instanceof IMemoryRenderingSite) {
+			fRenderingSite = (IMemoryRenderingSite) view;
+
 			IMemoryRenderingSynchronizationService syncService = fRenderingSite.getSynchronizationService();
-			
+
 			if (syncService instanceof MemoryViewSynchronizationService)
-				fMemSyncService = (MemoryViewSynchronizationService)syncService;
+				fMemSyncService = (MemoryViewSynchronizationService) syncService;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
-		
+
 		if (fMemSyncService == null)
 			return;
-		
+
 		fMemSyncService.setEnabled(!fMemSyncService.isEnabled());
 		updateActionState(action);
 	}
@@ -57,20 +60,24 @@ public class LinkRenderingPanesAction implements IViewActionDelegate{
 	 * @param action
 	 */
 	private void updateActionState(IAction action) {
-		
+
 		if (fMemSyncService == null)
 			return;
-		
+
 		if (fMemSyncService.isEnabled())
 			action.setChecked(true);
 		else
 			action.setChecked(false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
+	 * .IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		updateActionState(action);		
+		updateActionState(action);
 	}
 }

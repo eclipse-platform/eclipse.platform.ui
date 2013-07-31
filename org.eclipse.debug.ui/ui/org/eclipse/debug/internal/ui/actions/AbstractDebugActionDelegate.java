@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose(){
         fSelection= null;
 	}
@@ -75,6 +76,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action){
 	    if (action.isEnabled()) {
 			IStructuredSelection selection = getSelection();
@@ -93,16 +95,18 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	    final MultiStatus status= 
 			new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, getStatusMessage(), null); 	    
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+			@Override
 			public void run() {
-			    Iterator selectionIter = selection.iterator();
+				Iterator<?> selectionIter = selection.iterator();
 				while (selectionIter.hasNext()) {
 					Object element= selectionIter.next();
 					try {
 						// Action's enablement could have been changed since
 						// it was last enabled.  Check that the action is still
 						// enabled before running the action.
-						if (isEnabledFor(element))
+						if (isEnabledFor(element)) {
 							doAction(element);
+						}
 					} catch (DebugException e) {
 						status.merge(e.getStatus());
 					}
@@ -130,6 +134,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection s) {
 		boolean wasInitialized= initialize(action, s);		
 		if (!wasInitialized) {
@@ -202,6 +207,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		fViewPart = view;
 	}
@@ -295,7 +301,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 		if (selection.size() == 0) {
 			return false;
 		}
-		Iterator itr= selection.iterator();
+		Iterator<?> itr = selection.iterator();
 		while (itr.hasNext()) {
 			Object element= itr.next();
 			if (!isEnabledFor(element)) {
@@ -317,6 +323,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
@@ -324,6 +331,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 		fAction = action;
 	}

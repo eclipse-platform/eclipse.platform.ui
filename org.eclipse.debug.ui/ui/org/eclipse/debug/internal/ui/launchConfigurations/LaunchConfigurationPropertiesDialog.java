@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	 *  when configuration names are generated
 	 * @param group launch group
 	 */
-	public LaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration launchConfiguration, LaunchGroupExtension group, Set reservednames) {
+	public LaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration launchConfiguration, LaunchGroupExtension group, Set<String> reservednames) {
 		super(shell, group);
 		fLaunchConfiguration = launchConfiguration;
 		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(this);
@@ -85,6 +85,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#initializeBounds()
 	 */
+	@Override
 	protected void initializeBounds() {
 		super.initializeBounds();
 		resize();
@@ -93,6 +94,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#initializeContent()
 	 */
+	@Override
 	protected void initializeContent() {
 		ILaunchConfiguration launchConfiguration = getLaunchConfiguration();
 		if (shouldSetDefaultsOnOpen() && launchConfiguration instanceof ILaunchConfigurationWorkingCopy) {
@@ -109,6 +111,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#close()
 	 */
+	@Override
 	public boolean close() {
 	    if (!isSafeToClose()) {
 	        return false;
@@ -120,6 +123,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#addContent(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void addContent(Composite dialogComp) {
 		GridData gd;
 		Composite topComp = new Composite(dialogComp, SWT.NONE);
@@ -158,6 +162,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Cancel buttons by default
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
@@ -167,6 +172,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#getShellTitle()
 	 */
+	@Override
 	protected String getShellTitle() {
 		return LaunchConfigurationsMessages.LaunchConfigurationPropertiesDialog_Properties_for__0__2;
 	}
@@ -174,6 +180,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#getHelpContextId()
 	 */
+	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.LAUNCH_CONFIGURATION_PROPERTIES_DIALOG;
 	}
@@ -181,6 +188,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#updateButtons()
 	 */
+	@Override
 	public void updateButtons() {
 		getTabViewer().refresh();
 		getButton(IDialogConstants.OK_ID).setEnabled(getTabViewer().canSave());
@@ -190,6 +198,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		getTabViewer().handleApplyPressed();
 		super.okPressed();
@@ -198,6 +207,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#open()
 	 */
+	@Override
 	public int open() {
 		setOpenMode(-1);
 		return super.open();
@@ -206,6 +216,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#getDialogSettingsSectionName()
 	 */
+	@Override
 	protected String getDialogSettingsSectionName() {
 		return IDebugUIConstants.PLUGIN_ID + ".LAUNCH_CONFIGURATION_PROPERTIES_DIALOG_SECTION"; //$NON-NLS-1$
 	}
@@ -213,6 +224,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		if (getLaunchConfiguration().equals(manager.getMovedFrom(configuration))) {
@@ -225,10 +237,12 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {}
 }

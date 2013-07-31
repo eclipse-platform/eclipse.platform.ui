@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,8 @@
 package org.eclipse.debug.internal.ui.actions.variables;
 
  
-import com.ibm.icu.text.MessageFormat;
 import java.util.Iterator;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValueModification;
 import org.eclipse.debug.core.model.IVariable;
@@ -33,6 +33,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Action for changing the value of primitives and <code>String</code> variables.
@@ -122,10 +124,11 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 			DebugUIPlugin.errorDialog(shell, ActionMessages.ChangeVariableValue_errorDialogTitle,ActionMessages.ChangeVariableValue_errorDialogMessage, exception);	// 
 			return;
 		}
-		ChangeVariableValueInputDialog inputDialog= new ChangeVariableValueInputDialog(shell, ActionMessages.ChangeVariableValue_1, MessageFormat.format(ActionMessages.ChangeVariableValue_2, new String[] {name}), value, new IInputValidator() { // 
+		ChangeVariableValueInputDialog inputDialog = new ChangeVariableValueInputDialog(shell, ActionMessages.ChangeVariableValue_1, MessageFormat.format(ActionMessages.ChangeVariableValue_2, new Object[] { name }), value, new IInputValidator() { //
 			/**
 			 * Returns an error string if the input is invalid
 			 */
+			@Override
 			public String isValid(String input) {
 				try {
 					if (fVariable.verifyValue(input)) {
@@ -158,7 +161,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	 */
 	protected void update(IStructuredSelection sel) {
 	    isApplicable = false;
-		Iterator iter= sel.iterator();
+		Iterator<Object> iter = sel.iterator();
 		if (iter.hasNext()) {
 			Object object= iter.next();
 			if (object instanceof IValueModification) {
@@ -178,14 +181,16 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
-		Iterator iterator= getStructuredSelection().iterator();
+		Iterator<Object> iterator = getStructuredSelection().iterator();
 		doActionPerformed((IVariable)iterator.next());
 	}
 	
 	/**
 	 * @see SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void selectionChanged(IStructuredSelection sel) {
 		update(sel);
 	}

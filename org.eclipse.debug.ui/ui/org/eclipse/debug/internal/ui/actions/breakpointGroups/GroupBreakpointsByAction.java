@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,19 +43,22 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 	}
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.IMenuCreator#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
      */
-    public Menu getMenu(Control parent) {
+    @Override
+	public Menu getMenu(Control parent) {
         // Never called
         return null;
     }
@@ -63,9 +66,11 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
      */
-    public Menu getMenu(Menu parent) {
+    @Override
+	public Menu getMenu(Menu parent) {
 		Menu menu = new Menu(parent);
 		menu.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuShown(MenuEvent e) {
 				Menu m = (Menu)e.widget;
 				MenuItem[] items = m.getItems();
@@ -107,9 +112,9 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
         item.fill(menu, -1);
 
 		// Add actions for each contributed organizer
-	    List actions = getActions(accel);
+		List<IAction> actions = getActions(accel);
         accel = accel + actions.size();
-        Iterator actionIter = actions.iterator();
+		Iterator<IAction> actionIter = actions.iterator();
 	    while (actionIter.hasNext()) {
 			GroupBreakpointsAction bpAction = (GroupBreakpointsAction) actionIter.next();
 			bpAction.setChecked(bpAction.getOrganizer().equals(organizer));
@@ -126,8 +131,8 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
 		item.fill(menu, -1);
 	}
     
-    public List getActions(int accel) {
-        List actions= new ArrayList();
+	public List<IAction> getActions(int accel) {
+		List<IAction> actions = new ArrayList<IAction>();
         IBreakpointOrganizer[] organizers = BreakpointOrganizerManager.getDefault().getOrganizers();
         for (int i = 0; i < organizers.length; i++) {
         	IBreakpointOrganizer organizer = organizers[i];
@@ -160,6 +165,7 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	    if (action != fAction) {
 	        action.setMenuCreator(this);

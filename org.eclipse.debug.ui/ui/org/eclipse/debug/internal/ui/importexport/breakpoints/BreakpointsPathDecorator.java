@@ -21,10 +21,12 @@ import org.eclipse.swt.graphics.Image;
  */
 public class BreakpointsPathDecorator extends BaseLabelProvider implements ILabelDecorator {
 
+	@Override
 	public Image decorateImage(Image image, Object element) {
 		return null;
 	}
 
+	@Override
 	public String decorateText(String text, Object element) {
 		if (element instanceof IBreakpoint) {
 			IBreakpoint breakpoint = (IBreakpoint) element;

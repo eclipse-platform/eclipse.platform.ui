@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
+ *  Copyright (c) 2004, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -36,10 +36,12 @@ import org.eclipse.jface.viewers.StructuredSelection;
  */
 public class TerminateAndRelaunchAction extends DebugCommandAction {
 	
-    public void postExecute(IRequest request, final Object[] targets) {
+    @Override
+	public void postExecute(IRequest request, final Object[] targets) {
         if (request.getStatus() == null || request.getStatus().isOK()) {
             DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     // Must be run in the UI thread since the launch can require
                     // prompting to proceed
                     for (int i = 0; i < targets.length; i++) {
@@ -53,14 +55,14 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
         }
     }
 
-    protected ISelection getContext() {
+    @Override
+	protected ISelection getContext() {
         // Convert action context to contain only launch objects (bug 356651).
         ISelection context = super.getContext();
         if (context instanceof IStructuredSelection && !context.isEmpty()) {
             IStructuredSelection ss = (IStructuredSelection)context;
-            Set launches = new HashSet(ss.size());
-            for (Iterator itr = ss.iterator(); itr.hasNext();) {
-                
+			Set<ILaunch> launches = new HashSet<ILaunch>(ss.size());
+			for (Iterator<Object> itr = ss.iterator(); itr.hasNext();) {
                 ILaunch launch = DebugUIPlugin.getLaunch(itr.next());
                 if (launch != null) {
                     launches.add(launch);
@@ -72,10 +74,12 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
     }
     
 
-	protected Class getCommandType() {
+	@Override
+	protected Class<ITerminateHandler> getCommandType() {
 		return ITerminateHandler.class;
 	}
 
+	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		ISelection context = event.getContext();
 		if (context instanceof IStructuredSelection) {
@@ -101,35 +105,43 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
 		return false; 
     }
 
-    public String getActionDefinitionId() {
+    @Override
+	public String getActionDefinitionId() {
         return ActionMessages.TerminateAndRelaunchAction_0;
     }
 
-    public String getHelpContextId() {
+    @Override
+	public String getHelpContextId() {
         return "org.eclipse.debug.ui.terminate_and_relaunch_action_context"; //$NON-NLS-1$
     }
 
-    public String getId() {
+    @Override
+	public String getId() {
         return "org.eclipse.debug.ui.debugview.popupMenu.TerminateAndRelaunch"; //$NON-NLS-1$
     }
 
-    public String getText() {
+    @Override
+	public String getText() {
         return ActionMessages.TerminateAndRelaunchAction_3;
     }
 
-    public String getToolTipText() {
+    @Override
+	public String getToolTipText() {
         return ActionMessages.TerminateAndRelaunchAction_4;
     }
 
-    public ImageDescriptor getDisabledImageDescriptor() {
+    @Override
+	public ImageDescriptor getDisabledImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_AND_RELAUNCH);
     }
 
-    public ImageDescriptor getHoverImageDescriptor() {
+    @Override
+	public ImageDescriptor getHoverImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_AND_RELAUNCH);
     }
 
-    public ImageDescriptor getImageDescriptor() {
+    @Override
+	public ImageDescriptor getImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_AND_RELAUNCH);
     }
 }

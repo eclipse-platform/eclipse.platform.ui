@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,6 +155,7 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = (Composite) super.createContents(parent);
 		initializeControls();
@@ -164,6 +165,7 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		initializeDialogUnits(parent);
 		Composite comp = (Composite) super.createDialogArea(parent);
@@ -180,7 +182,7 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		fViewer.setLabelProvider(getLabelProvider());
 		fViewer.setContentProvider(getContentProvider());
 		fViewer.setInput(getViewerInput());
-		List selectedElements = getInitialElementSelections();
+		List<?> selectedElements = getInitialElementSelections();
 		if (selectedElements != null && !selectedElements.isEmpty()){
 			fViewer.setSelection(new StructuredSelection(selectedElements));
 		}
@@ -204,6 +206,7 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionDialog#getDialogBoundsSettings()
 	 */
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings section = settings.getSection(getDialogSettingsId());

@@ -44,22 +44,23 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		//#ifdef ex1
 //#		// TODO: Exercise 1 - Launch a command shell as a system process to echo "foo"
 		//#elseif ex1_answer
 //#		Process process = DebugPlugin.exec(new String[]{"cmd", "/C",  "\"echo foo\""}, null);
 //#		new RuntimeProcess(launch, process, "Hello", null);
-		//#else		
-		
-		List commandList = new ArrayList();
-		
+		//#else
+
+		List<String> commandList = new ArrayList<String>();
+
         // Get Java VM path
         String javaVMHome = System.getProperty("java.home"); //$NON-NLS-1$
         String javaVMExec = javaVMHome + File.separatorChar + "bin" + File.separatorChar + "java"; //$NON-NLS-1$ //$NON-NLS-2$
         if (File.separatorChar == '\\') {
             javaVMExec += ".exe"; //$NON-NLS-1$
-        }   
+        }
         File exe = new File(javaVMExec);
         if (!exe.exists()) {
             abort(MessageFormat.format("Specified java VM executable {0} does not exist.", new Object[]{javaVMExec}), null); //$NON-NLS-1$
@@ -68,7 +69,7 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 
         commandList.add("-cp"); //$NON-NLS-1$
         commandList.add(File.pathSeparator + DebugCorePlugin.getFileInPlugin(new Path("bin"))); //$NON-NLS-1$
-        
+
         commandList.add("org.eclipse.debug.examples.pdavm.PDAVirtualMachine"); //$NON-NLS-1$
 
 		// program name
@@ -76,14 +77,14 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 		if (program == null) {
 			abort("Perl program unspecified.", null); //$NON-NLS-1$
 		}
-		
+
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(program));
 		if (!file.exists()) {
-			abort(MessageFormat.format("Perl program {0} does not exist.", new String[] {file.getFullPath().toString()}), null); //$NON-NLS-1$
+			abort(MessageFormat.format("Perl program {0} does not exist.", new Object[] { file.getFullPath().toString() }), null); //$NON-NLS-1$
 		}
-		
+
 		commandList.add(file.getLocation().toOSString());
-		
+
 		// if in debug mode, add debug arguments - i.e. '-debug requestPort eventPort'
 		int requestPort = -1;
 		int eventPort = -1;
@@ -97,22 +98,22 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 			commandList.add("" + requestPort); //$NON-NLS-1$
 			commandList.add("" + eventPort); //$NON-NLS-1$
 		}
-		
-		String[] commandLine = (String[]) commandList.toArray(new String[commandList.size()]);
+
+		String[] commandLine = commandList.toArray(new String[commandList.size()]);
 		Process process = DebugPlugin.exec(commandLine, null);
 		IProcess p = DebugPlugin.newProcess(launch, process, javaVMExec);
-		// if in debug mode, create a debug target 
+		// if in debug mode, create a debug target
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			IDebugTarget target = new PDADebugTarget(launch, p, requestPort, eventPort);
 			launch.addDebugTarget(target);
 		}
 		//#endif
 	}
-	
+
 	/**
 	 * Throws an exception with a new status containing the given
 	 * message and optional exception.
-	 * 
+	 *
 	 * @param message error message
 	 * @param e underlying exception
 	 * @throws CoreException
@@ -120,10 +121,10 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 	private void abort(String message, Throwable e) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, DebugCorePlugin.PLUGIN_ID, 0, message, e));
 	}
-	
+
 	/**
 	 * Returns a free port number on localhost, or -1 if unable to find a free port.
-	 * 
+	 *
 	 * @return a free port number on localhost, or -1 if unable to find a free port
 	 */
 	public static int findFreePort() {
@@ -131,7 +132,7 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 		try {
 			socket= new ServerSocket(0);
 			return socket.getLocalPort();
-		} catch (IOException e) { 
+		} catch (IOException e) {
 		} finally {
 			if (socket != null) {
 				try {
@@ -140,13 +141,14 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 				}
 			}
 		}
-		return -1;		
-	}	
-	
+		return -1;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#buildForLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		return false;
-	}	
+	}
 }

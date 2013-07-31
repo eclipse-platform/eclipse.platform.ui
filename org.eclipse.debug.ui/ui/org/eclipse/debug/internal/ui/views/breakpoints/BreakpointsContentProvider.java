@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,8 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
      */
-    public Object[] getChildren(Object parentElement) {
+    @Override
+	public Object[] getChildren(Object parentElement) {
         if (parentElement.equals(DebugPlugin.getDefault().getBreakpointManager())) {
         	return fElements;
         } else if (parentElement instanceof BreakpointContainer) {
@@ -52,28 +53,32 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
      */
-    public Object getParent(Object element) {
+    @Override
+	public Object getParent(Object element) {
         return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
      */
-    public boolean hasChildren(Object element) {
+    @Override
+	public boolean hasChildren(Object element) {
     	return getChildren(element).length > 0;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
      */
-    public Object[] getElements(Object inputElement) {
+    @Override
+	public Object[] getElements(Object inputElement) {
         return getChildren(inputElement);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.IContentProvider#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         fDisposed = true;
         fElements = null;
         setOrganizers(null);
@@ -82,7 +87,8 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
      */
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    @Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     	fViewer = (BreakpointsViewer)viewer;
         if (newInput != null) {
             reorganize();
@@ -97,16 +103,16 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
      * if none 
      */
     public void setOrganizers(IBreakpointOrganizer[] organizers) {
-        if (organizers != null && organizers.length == 0) {
-            organizers = null;
-        }
     	// remove previous listeners
     	if (fOrganizers != null) {
     		for (int i = 0; i < fOrganizers.length; i++) {
 				fOrganizers[i].removePropertyChangeListener(this);
 			}
     	}
-        fOrganizers = organizers;
+		fOrganizers = organizers;
+		if (organizers != null && organizers.length == 0) {
+			fOrganizers = null;
+		}
         // add listeners
         if (fOrganizers != null) {
         	for (int i = 0; i < fOrganizers.length; i++) {
@@ -148,14 +154,14 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
      */
     public BreakpointContainer[] getRoots(IBreakpoint breakpoint) {
         if (isShowingGroups()) {
-            List list = new ArrayList();
+			List<BreakpointContainer> list = new ArrayList<BreakpointContainer>();
             for (int i = 0; i < fElements.length; i++) {
                 BreakpointContainer container = (BreakpointContainer) fElements[i];
                 if (container.contains(breakpoint)) {
                     list.add(container);
                 }
             }
-            return (BreakpointContainer[]) list.toArray(new BreakpointContainer[list.size()]);
+            return list.toArray(new BreakpointContainer[list.size()]);
         }
         return null;
     }
@@ -180,7 +186,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
             fElements = breakpoints;
         } else {
             IBreakpointOrganizer organizer = fOrganizers[0];
-            Map categoriesToContainers = new HashMap();
+			Map<IAdaptable, BreakpointContainer> categoriesToContainers = new HashMap<IAdaptable, BreakpointContainer>();
             for (int i = 0; i < breakpoints.length; i++) {
                 IBreakpoint breakpoint = breakpoints[i];
                 IAdaptable[] categories = organizer.getCategories(breakpoint);
@@ -189,7 +195,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
                 }
                 for (int j = 0; j < categories.length; j++) {
                     IAdaptable category = categories[j];
-                    BreakpointContainer container = (BreakpointContainer) categoriesToContainers.get(category);
+                    BreakpointContainer container = categoriesToContainers.get(category);
                     if (container == null) {
                         IBreakpointOrganizer[] nesting = null;
                         if (fOrganizers.length > 1) {
@@ -207,7 +213,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
             if (emptyCategories != null) {
                 for (int i = 0; i < emptyCategories.length; i++) {
                     IAdaptable category = emptyCategories[i];
-                    BreakpointContainer container = (BreakpointContainer) categoriesToContainers.get(category);
+                    BreakpointContainer container = categoriesToContainers.get(category);
                     if (container == null) {
                         container = new BreakpointContainer(category, organizer, null);
                         categoriesToContainers.put(category, container);
@@ -224,6 +230,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IBreakpointOrganizerDelegate.P_CATEGORY_CHANGED)) {
 			// TODO: only re-organize if showing the changed category

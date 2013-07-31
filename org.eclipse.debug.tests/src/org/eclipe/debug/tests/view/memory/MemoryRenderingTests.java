@@ -118,6 +118,7 @@ public class MemoryRenderingTests extends TestCase {
 	public void testBindingChangeNotification() {
 		final boolean[] changed = new boolean[1];
 		IMemoryRenderingBindingsListener listener = new IMemoryRenderingBindingsListener() {
+			@Override
 			public void memoryRenderingBindingsChanged() {
 				changed[0] = true;
 			}		

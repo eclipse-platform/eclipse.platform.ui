@@ -17,32 +17,37 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
- * Fire properties changes events in ISafeRunnable to ensure that
- * exceptions are caught and handled.
+ * Fire properties changes events in ISafeRunnable to ensure that exceptions are
+ * caught and handled.
+ * 
  * @since 3.1
  */
-public class PropertyChangeNotifier implements ISafeRunnable
-{
-	
+public class PropertyChangeNotifier implements ISafeRunnable {
+
 	IPropertyChangeListener fListener;
 	PropertyChangeEvent fEvt;
-	
-	public PropertyChangeNotifier(IPropertyChangeListener listener, PropertyChangeEvent evt)
-	{
+
+	public PropertyChangeNotifier(IPropertyChangeListener listener, PropertyChangeEvent evt) {
 		fListener = listener;
 		fEvt = evt;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable
+	 * )
 	 */
+	@Override
 	public void handleException(Throwable exception) {
 		DebugUIPlugin.log(exception);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 	 */
+	@Override
 	public void run() throws Exception {
 		fListener.propertyChange(fEvt);
 	}

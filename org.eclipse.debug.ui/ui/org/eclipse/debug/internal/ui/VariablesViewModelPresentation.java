@@ -20,6 +20,7 @@ public class VariablesViewModelPresentation extends DelegatingModelPresentation 
 	 * 
 	 * Strips out control characters and replaces them with string representations
 	 */
+	@Override
 	public String getText(Object element) {
 		StringBuffer string= new StringBuffer();
 		StringTokenizer tokenizer= new StringTokenizer(super.getText(element), "\b\f\n\r\t\\", true); //$NON-NLS-1$

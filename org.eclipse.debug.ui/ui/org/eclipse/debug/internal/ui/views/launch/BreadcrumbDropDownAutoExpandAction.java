@@ -46,6 +46,7 @@ class BreadcrumbDropDownAutoExpandAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		fLaunchView.setBreadcrumbDropDownAutoExpand(isChecked()); 
 	}	

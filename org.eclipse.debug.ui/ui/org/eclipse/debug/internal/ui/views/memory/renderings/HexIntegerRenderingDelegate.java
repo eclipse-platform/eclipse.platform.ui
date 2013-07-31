@@ -19,6 +19,7 @@ public class HexIntegerRenderingDelegate implements IMemoryRenderingTypeDelegate
 	public HexIntegerRenderingDelegate() {
 	}
 
+	@Override
 	public IMemoryRendering createRendering(String id) throws CoreException {
 		return new HexIntegerRendering(id);
 	}

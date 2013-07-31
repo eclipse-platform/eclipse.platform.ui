@@ -27,16 +27,19 @@ public class TreePathWrapper {
         fPath = path;
     }
     
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return fPath.hashCode();
     }
     
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         return obj instanceof TreePathWrapper &&
                fPath.equals( ((TreePathWrapper)obj).fPath ); 
     }
     
-    public String toString() {
+    @Override
+	public String toString() {
         if (fPath.getSegmentCount() == 0) {
             return "TreePath:EMPTY"; //$NON-NLS-1$
         }

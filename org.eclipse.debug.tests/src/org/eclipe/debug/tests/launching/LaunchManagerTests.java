@@ -15,11 +15,12 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.LaunchManager;
 
 /**
- * 
+ *
  * Variety of tests for the {@link org.eclipse.debug.internal.core.LaunchManager}
- * 
+ *
  * @since 3.6
  */
+@SuppressWarnings("deprecation")
 public class LaunchManagerTests extends AbstractLaunchTest {
 
 	/**
@@ -38,7 +39,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 		String name = getLaunchManager().generateLaunchConfigurationName(configname);
 		assertTrue("the name nust be '" + configname + "'", name.equals(configname)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	 * Tests generating a launch configuration name with an unsupported char using
 	 * the deprecated method
@@ -48,7 +49,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 		String name = getLaunchManager().generateUniqueLaunchConfigurationNameFrom(configname);
 		assertEquals("config name should be '" + configname + "'", configname, name); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	 * Tests that a valid name is accepted as is.
 	 */
@@ -57,7 +58,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 		String name = getLaunchManager().generateLaunchConfigurationName(configname);
 		assertEquals("Should be the same as the seed", configname, name); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests generating a launch configuration name using a name that is an OS reserved
 	 * name. Win 32 test only.
@@ -69,7 +70,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 			assertEquals("config name should be 'aux'", configname, name); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Tests generating a configuration name that contains an invalid character
 	 */
@@ -78,9 +79,9 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 		String name = getLaunchManager().generateLaunchConfigurationName(configname);
 		assertEquals("config name should be 'config_name'", "config_name", name); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
-	 * Tests generating a name that conflicts with an OS reserved name. This test is for windows only as there 
+	 * Tests generating a name that conflicts with an OS reserved name. This test is for windows only as there
 	 * are no reserved names on other OS's.
 	 */
 	public void testGenerateConflictingName() {
@@ -90,7 +91,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 			assertEquals("config name should be 'launch_configuration'", "launch_configuration", name); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	
+
 	/**
 	 * Tests generating a configuration name that contains an invalid character and where there
 	 * is another config with the replaced name already
@@ -105,10 +106,10 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 		ILaunchConfiguration config = getLaunchConfiguration("config_name"); //$NON-NLS-1$
 		config.delete();
 	}
-	
+
 	/**
-	 * Tests generating a name that conflicts with an OS reserved name and that 
-	 * there is a config with the replaced name already. This test is for windows only as there 
+	 * Tests generating a name that conflicts with an OS reserved name and that
+	 * there is a config with the replaced name already. This test is for windows only as there
 	 * are no reserved names on other OS's.
 	 */
 	public void testGenerateBadNameConflict() throws Exception {
@@ -123,7 +124,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 			config.delete();
 		}
 	}
-		
+
 	/**
 	 * Tests the {@link org.eclipse.debug.core.ILaunchManager#isValidLaunchConfigurationName(String)} method for correctness
 	 */
@@ -136,7 +137,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 			fail("the config name should not have thrown an exception during validation"); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Tests the {@link org.eclipse.debug.core.ILaunchManager#isValidLaunchConfigurationName(String)} method for correctness
 	 */
@@ -150,7 +151,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 		}
 		fail("the config name should have thrown an exception during validation"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests the {@link org.eclipse.debug.core.ILaunchManager#isValidLaunchConfigurationName(String)} method for correctness
 	 */
@@ -166,7 +167,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 			fail("the config name should have thrown an exception during validation"); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Tests that generating a configuration name when there exists a configuration with that name
 	 * already properly updates a '(N)' counter at the end
@@ -188,7 +189,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 			config.delete();
 		}
 	}
-	
+
 	/**
 	 * Tests that removing an accelerator properly removes it without affecting the base string (readable) value
 	 */

@@ -24,18 +24,22 @@ public class ProcessProxy extends EventHandlerModelProxy {
     private IProcess fProcess;
 
     private DebugEventHandler fProcessEventHandler = new DebugEventHandler(this) {
-        protected boolean handlesEvent(DebugEvent event) {
+        @Override
+		protected boolean handlesEvent(DebugEvent event) {
             return event.getSource().equals(fProcess);
         }
 
+		@Override
 		protected void handleChange(DebugEvent event) {
 			fireProcessDelta(IModelDelta.STATE);        			
         }
 
-        protected void handleCreate(DebugEvent event) {
+        @Override
+		protected void handleCreate(DebugEvent event) {
         	// do nothing - Launch change notification handles this
         }
 
+		@Override
 		protected void handleTerminate(DebugEvent event) {
 			fireProcessDelta(IModelDelta.STATE | IModelDelta.UNINSTALL);
 		}
@@ -61,6 +65,7 @@ public class ProcessProxy extends EventHandlerModelProxy {
     /* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#dispose()
 	 */
+	@Override
 	public synchronized void dispose() {
 		super.dispose();
 		fProcess = null;
@@ -70,17 +75,20 @@ public class ProcessProxy extends EventHandlerModelProxy {
         fProcess = process;
     }
 
-    protected synchronized boolean containsEvent(DebugEvent event) {
+    @Override
+	protected synchronized boolean containsEvent(DebugEvent event) {
         return event.getSource().equals(fProcess);
     }
 
-    protected DebugEventHandler[] createEventHandlers() {
+    @Override
+	protected DebugEventHandler[] createEventHandlers() {
         return new DebugEventHandler[] {fProcessEventHandler};
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#installed()
 	 */
+	@Override
 	public void installed(Viewer viewer) {
 		super.installed(viewer);
 		// select process if in run mode

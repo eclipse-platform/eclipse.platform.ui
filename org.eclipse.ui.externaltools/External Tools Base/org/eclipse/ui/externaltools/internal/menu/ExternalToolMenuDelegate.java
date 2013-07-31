@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,17 +21,18 @@ import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
  * external tools launch configuration dialog.
  */
 public class ExternalToolMenuDelegate extends AbstractLaunchToolbarAction {
-	
+
 	/**
 	 * Creates the action delegate
 	 */
 	public ExternalToolMenuDelegate() {
 		super(IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.AbstractLaunchToolbarAction#getOpenDialogAction()
 	 */
+	@Override
 	protected IAction getOpenDialogAction() {
 		IAction action= new OpenExternalToolsConfigurations();
 		action.setActionDefinitionId("org.eclipse.ui.externalTools.commands.OpenExternalToolsConfigurations"); //$NON-NLS-1$

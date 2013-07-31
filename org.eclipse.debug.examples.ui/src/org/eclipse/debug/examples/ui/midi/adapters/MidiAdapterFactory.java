@@ -50,6 +50,7 @@ public class MidiAdapterFactory implements IAdapterFactory {
 	
 	private static IModelProxyFactory fgCheckboxModelProxyFactory = new CheckboxModelProxyFactory();
 
+	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (IElementContentProvider.class.equals(adapterType)) {
 			if (adaptableObject instanceof MidiLaunch) {
@@ -104,6 +105,7 @@ public class MidiAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
+	@Override
 	public Class[] getAdapterList() {
 		return new Class[]{IElementContentProvider.class, IElementLabelProvider.class, IStepOverHandler.class,};
 	}

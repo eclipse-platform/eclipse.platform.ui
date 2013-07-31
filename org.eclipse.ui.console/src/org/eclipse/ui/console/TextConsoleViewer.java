@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * <p>
  * Clients may subclass this class.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public class TextConsoleViewer extends SourceViewer implements LineStyleListener, LineBackgroundListener, MouseTrackListener, MouseMoveListener, MouseListener {
@@ -83,15 +83,18 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
     private IPropertyChangeListener propertyChangeListener;
 
     private IDocumentListener documentListener = new IDocumentListener() {
-        public void documentAboutToBeChanged(DocumentEvent event) {
+        @Override
+		public void documentAboutToBeChanged(DocumentEvent event) {
         }
 
-        public void documentChanged(DocumentEvent event) {
+        @Override
+		public void documentChanged(DocumentEvent event) {
             updateLinks(event.fOffset);
         }
     };
     // event listener used to send event to hyperlink for IHyperlink2
     private Listener mouseUpListener = new Listener() {
+		@Override
 		public void handleEvent(Event event) {
 	        if (hyperlink != null) {
 	            String selection = getTextWidget().getSelectionText();
@@ -109,7 +112,8 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 	};
 
     WorkbenchJob revealJob = new WorkbenchJob("Reveal End of Document") {//$NON-NLS-1$
-        public IStatus runInUIThread(IProgressMonitor monitor) {
+        @Override
+		public IStatus runInUIThread(IProgressMonitor monitor) {
             StyledText textWidget = getTextWidget();
             if (textWidget != null && !textWidget.isDisposed()) {
                 int lineCount = textWidget.getLineCount();
@@ -118,9 +122,10 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
             return Status.OK_STATUS;
         }
     };
-    
+
     private IPositionUpdater positionUpdater = new IPositionUpdater() {
-        public void update(DocumentEvent event) {
+        @Override
+		public void update(DocumentEvent event) {
             try {
                 IDocument document = getDocument();
                 if (document != null) {
@@ -142,7 +147,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
     /**
      * Constructs a new viewer in the given parent for the specified console.
-     * 
+     *
      * @param parent
      *            containing widget
      * @param console
@@ -176,7 +181,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
     /**
      * Sets the tab width used by this viewer.
-     * 
+     *
      * @param tabWidth
      *            the tab width used by this viewer
      */
@@ -190,7 +195,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
     /**
      * Sets the font used by this viewer.
-     * 
+     *
      * @param font
      *            the font used by this viewer
      */
@@ -214,13 +219,14 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.swt.custom.LineStyleListener#lineGetStyle(org.eclipse.swt.custom.LineStyleEvent)
      */
-    public void lineGetStyle(LineStyleEvent event) {
+    @Override
+	public void lineGetStyle(LineStyleEvent event) {
         IDocument document = getDocument();
         if (document != null && document.getLength() > 0) {
-            ArrayList ranges = new ArrayList();
+			ArrayList<StyleRange> ranges = new ArrayList<StyleRange>();
             int offset = event.lineOffset;
             int length = event.lineText.length();
 
@@ -249,12 +255,12 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
             }
 
             if (ranges.size() > 0) {
-                event.styles = (StyleRange[]) ranges.toArray(new StyleRange[ranges.size()]);
+                event.styles = ranges.toArray(new StyleRange[ranges.size()]);
             }
         }
     }
 
-    private void override(List ranges, StyleRange newRange) {
+	private void override(List<StyleRange> ranges, StyleRange newRange) {
         if (ranges.isEmpty()) {
             ranges.add(newRange);
             return;
@@ -263,7 +269,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
         int start = newRange.start;
         int end = start + newRange.length;
         for (int i = 0; i < ranges.size(); i++) {
-            StyleRange existingRange = (StyleRange) ranges.get(i);
+            StyleRange existingRange = ranges.get(i);
             int rEnd = existingRange.start + existingRange.length;
             if (end <= existingRange.start || start >= rEnd) {
                 continue;
@@ -293,7 +299,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
     /**
      * Binary search for the positions overlapping the given range
-     * 
+     *
      * @param offset
      *            the offset of the range
      * @param length
@@ -304,8 +310,9 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
      */
     private Position[] findPosition(int offset, int length, Position[] positions) {
 
-        if (positions.length == 0)
-            return null;
+        if (positions.length == 0) {
+			return null;
+		}
 
         int rangeEnd = offset + length;
         int left = 0;
@@ -319,21 +326,23 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
             position = positions[mid];
             if (rangeEnd < position.getOffset()) {
-                if (left == mid)
-                    right = left;
-                else
-                    right = mid - 1;
+                if (left == mid) {
+					right = left;
+				} else {
+					right = mid - 1;
+				}
             } else if (offset > (position.getOffset() + position.getLength() - 1)) {
-                if (right == mid)
-                    left = right;
-                else
-                    left = mid + 1;
+                if (right == mid) {
+					left = right;
+				} else {
+					left = mid + 1;
+				}
             } else {
                 left = right = mid;
             }
         }
 
-        List list = new ArrayList();
+		List<Position> list = new ArrayList<Position>();
         int index = left - 1;
         if (index >= 0) {
             position = positions[index];
@@ -357,21 +366,22 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
         if (list.isEmpty()) {
             return null;
         }
-        return (Position[]) list.toArray(new Position[list.size()]);
+        return list.toArray(new Position[list.size()]);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.swt.custom.LineBackgroundListener#lineGetBackground(org.eclipse.swt.custom.LineBackgroundEvent)
      */
-    public void lineGetBackground(LineBackgroundEvent event) {
+    @Override
+	public void lineGetBackground(LineBackgroundEvent event) {
         event.lineBackground = null;
     }
 
     /**
      * Returns the hand cursor.
-     * 
+     *
      * @return the hand cursor
      */
     protected Cursor getHandCursor() {
@@ -383,7 +393,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
     /**
      * Returns the text cursor.
-     * 
+     *
      * @return the text cursor
      */
     protected Cursor getTextCursor() {
@@ -395,7 +405,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
     /**
      * Notification a hyperlink has been entered.
-     * 
+     *
      * @param link
      *            the link that was entered
      */
@@ -413,7 +423,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
     /**
      * Notification a link was exited.
-     * 
+     *
      * @param link
      *            the link that was exited
      */
@@ -428,19 +438,21 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
      */
-    public void mouseEnter(MouseEvent e) {
+    @Override
+	public void mouseEnter(MouseEvent e) {
         getTextWidget().addMouseMoveListener(this);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
      */
-    public void mouseExit(MouseEvent e) {
+    @Override
+	public void mouseExit(MouseEvent e) {
         getTextWidget().removeMouseMoveListener(this);
         if (hyperlink != null) {
             linkExited(hyperlink);
@@ -449,18 +461,20 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
      */
-    public void mouseHover(MouseEvent e) {
+    @Override
+	public void mouseHover(MouseEvent e) {
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
      */
-    public void mouseMove(MouseEvent e) {
+    @Override
+	public void mouseMove(MouseEvent e) {
         int offset = -1;
         try {
             Point p = new Point(e.x, e.y);
@@ -474,7 +488,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
     /**
      * The cursor has just be moved to the given offset, the mouse has hovered
      * over the given offset. Update link rendering.
-     * 
+     *
      * @param offset
      */
     protected void updateLinks(int offset) {
@@ -495,7 +509,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
     /**
      * Returns the currently active hyperlink or <code>null</code> if none.
-     * 
+     *
      * @return the currently active hyperlink or <code>null</code> if none
      */
     public IHyperlink getHyperlink() {
@@ -505,7 +519,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
     /**
      * Returns the hyperlink at the specified offset, or <code>null</code> if
      * none.
-     * 
+     *
      * @param offset
      *            offset at which a hyperlink has been requested
      * @return hyperlink at the specified offset, or <code>null</code> if none
@@ -519,34 +533,38 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
      */
-    public void mouseDoubleClick(MouseEvent e) {
+    @Override
+	public void mouseDoubleClick(MouseEvent e) {
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
      */
-    public void mouseDown(MouseEvent e) {
+    @Override
+	public void mouseDown(MouseEvent e) {
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
      */
-    public void mouseUp(MouseEvent e) {
+    @Override
+	public void mouseUp(MouseEvent e) {
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.text.TextViewer#createDocumentAdapter()
      */
-    protected IDocumentAdapter createDocumentAdapter() {
+	@Override
+	protected IDocumentAdapter createDocumentAdapter() {
         if (documentAdapter == null) {
             documentAdapter = new ConsoleDocumentAdapter(consoleWidth = -1);
         }
@@ -556,7 +574,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
     /**
      * Sets the console to have a fixed character width. Use -1 to indicate that
      * a fixed width should not be used.
-     * 
+     *
      * @param width
      *            fixed character width of the console, or -1
      */
@@ -564,7 +582,8 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
         if (consoleWidth != width) {
             consoleWidth = width;
             ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     if (documentAdapter != null) {
                         documentAdapter.setWidth(consoleWidth);
                     }
@@ -575,10 +594,11 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.text.TextViewer#handleDispose()
      */
-    protected void handleDispose() {
+    @Override
+	protected void handleDispose() {
         IDocument document = getDocument();
         if (document != null) {
             document.removeDocumentListener(documentListener);
@@ -603,12 +623,13 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
         ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
         colorRegistry.removeListener(propertyChangeListener);
-        
+
         super.handleDispose();
     }
 
     class HyperlinkColorChangeListener implements IPropertyChangeListener {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             if (event.getProperty().equals(JFacePreferences.ACTIVE_HYPERLINK_COLOR) || event.getProperty().equals(JFacePreferences.HYPERLINK_COLOR)) {
                 getTextWidget().redraw();
             }
@@ -619,14 +640,16 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
     /*
      * work around to memory leak in TextViewer$WidgetCommand
      */
-    protected void updateTextListeners(WidgetCommand cmd) {
+    @Override
+	protected void updateTextListeners(WidgetCommand cmd) {
         super.updateTextListeners(cmd);
         cmd.preservedText = null;
         cmd.event = null;
         cmd.text = null;
     }
 
-    protected void internalRevealRange(int start, int end) {
+    @Override
+	protected void internalRevealRange(int start, int end) {
         StyledText textWidget = getTextWidget();
         int startLine = documentAdapter.getLineAtOffset(start);
         int endLine = documentAdapter.getLineAtOffset(end);
@@ -634,7 +657,8 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
         int top = textWidget.getTopIndex();
         if (top > -1) {
             // scroll vertically
-            int lines = getVisibleLinesInViewport();
+			@SuppressWarnings("deprecation")
+			int lines = getVisibleLinesInViewport();
             int bottom = top + lines;
 
             // two lines at the top and the bottom should always be left
@@ -682,12 +706,13 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
                 int visibleWidth = visibleEnd - visibleStart;
                 int selectionPixelWidth = endPixel - startPixel;
 
-                if (startPixel < visibleStart)
-                    newOffset = startPixel;
-                else if (selectionPixelWidth + bufferZone < visibleWidth)
-                    newOffset = endPixel + bufferZone - visibleWidth;
-                else
-                    newOffset = startPixel;
+                if (startPixel < visibleStart) {
+					newOffset = startPixel;
+				} else if (selectionPixelWidth + bufferZone < visibleWidth) {
+					newOffset = endPixel + bufferZone - visibleWidth;
+				} else {
+					newOffset = startPixel;
+				}
 
                 float index = ((float) newOffset) / ((float) getAverageCharWidth());
 

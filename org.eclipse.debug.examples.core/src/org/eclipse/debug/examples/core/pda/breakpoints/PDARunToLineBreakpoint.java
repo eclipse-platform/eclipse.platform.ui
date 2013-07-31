@@ -36,6 +36,7 @@ public class PDARunToLineBreakpoint extends PDALineBreakpoint {
 	 */
 	public PDARunToLineBreakpoint(final IFile resource, final int lineNumber) throws DebugException {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// associate with workspace root to avoid drawing in editor ruler
 				IMarker marker = ResourcesPlugin.getWorkspace().getRoot().createMarker("org.eclipse.debug.examples.core.pda.markerType.lineBreakpoint"); //$NON-NLS-1$
@@ -55,6 +56,7 @@ public class PDARunToLineBreakpoint extends PDALineBreakpoint {
 	 * 
 	 * @return whether this breakpoint is a run-to-line breakpoint
 	 */
+	@Override
 	public boolean isRunToLineBreakpoint() {
 		return true;
 	}

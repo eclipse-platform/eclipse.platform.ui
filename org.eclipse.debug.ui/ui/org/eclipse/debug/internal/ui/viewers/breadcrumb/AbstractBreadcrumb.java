@@ -167,6 +167,7 @@ public abstract class AbstractBreadcrumb {
 		fComposite.setLayout(gridLayout);
 
 		fDisplayFocusListener= new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 			    if (fComposite.isDisposed()) return;
 			    
@@ -188,6 +189,7 @@ public abstract class AbstractBreadcrumb {
 		fBreadcrumbViewer= createViewer(fComposite);
 
 		fBreadcrumbViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				Object element= ((IStructuredSelection) event.getSelection()).getFirstElement();
 				if (element == null)
@@ -201,6 +203,7 @@ public abstract class AbstractBreadcrumb {
 		});
 
 		fBreadcrumbViewer.addOpenListener(new IOpenListener() {
+			@Override
 			public void open(OpenEvent event) {
 				doOpen(event.getSelection());
 			}
@@ -264,6 +267,7 @@ public abstract class AbstractBreadcrumb {
 		deinstallDisplayListeners();
 
 		fDisplayKeyListener= new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				if (event.keyCode != SWT.ESC)
 					return;

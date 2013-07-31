@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 Keith Seitz and others.
+ * Copyright (c) 2000, 2013 Keith Seitz and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.eclipse.core.runtime.CoreException;
@@ -108,12 +109,13 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * Content provider for the environment table
 	 */
 	protected class EnvironmentVariableContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object inputElement) {
 			EnvironmentVariable[] elements = new EnvironmentVariable[0];
 			ILaunchConfiguration config = (ILaunchConfiguration) inputElement;
-			Map m;
+			Map<String, String> m;
 			try {
-				m = config.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, (Map) null);
+				m = config.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, (Map<String, String>) null);
 			} catch (CoreException e) {
 				DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, "Error reading configuration", e)); //$NON-NLS-1$
 				return elements;
@@ -123,13 +125,15 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 				String[] varNames = new String[m.size()];
 				m.keySet().toArray(varNames);
 				for (int i = 0; i < m.size(); i++) {
-					elements[i] = new EnvironmentVariable(varNames[i], (String) m.get(varNames[i]));
+					elements[i] = new EnvironmentVariable(varNames[i], m.get(varNames[i]));
 				}
 			}
 			return elements;
 		}
+		@Override
 		public void dispose() {
 		}
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (newInput == null){
 				return;
@@ -140,6 +144,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 					return;
 				}
 				tableViewer.setComparator(new ViewerComparator() {
+					@Override
 					public int compare(Viewer iviewer, Object e1, Object e2) {
 						if (e1 == null) {
 							return -1;
@@ -158,6 +163,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * Label provider for the environment table
 	 */
 	public class EnvironmentVariableLabelProvider extends LabelProvider implements ITableLabelProvider {
+		@Override
 		public String getColumnText(Object element, int columnIndex) 	{
 			String result = null;
 			if (element != null) {
@@ -169,10 +175,13 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 					case 1: // value
 						result = var.getValue();
 						break;
+					default:
+						break;
 				}
 			}
 			return result;
 		}
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex == 0) {
 				return DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_ENV_VAR);
@@ -191,6 +200,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		// Create main composite
 		Composite mainComposite = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL);
@@ -214,6 +224,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		Composite comp = SWTFactory.createComposite(parent, 1, 2, GridData.FILL_HORIZONTAL);
 		appendEnvironment= createRadioButton(comp, LaunchConfigurationsMessages.EnvironmentTab_16); 
 		appendEnvironment.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -254,11 +265,13 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		environmentTable.setLabelProvider(new EnvironmentVariableLabelProvider());
 		environmentTable.setColumnProperties(new String[] {P_VARIABLE, P_VALUE});
 		environmentTable.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleTableSelectionChanged(event);
 			}
 		});
 		environmentTable.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (!environmentTable.getSelection().isEmpty()) {
 					handleEnvEditButtonSelected();
@@ -273,6 +286,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		final Table tref = table;
 		final Composite comp = tableComposite;
 		tableComposite.addControlListener(new ControlAdapter() {
+			@Override
 			public void controlResized(ControlEvent e) {
 				Rectangle area = comp.getClientArea();
 				Point size = tref.computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -317,18 +331,21 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		// Create buttons
 		envAddButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_New_4, null); 
 		envAddButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				handleEnvAddButtonSelected();
 			}
 		});
 		envSelectButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_18, null); 
 		envSelectButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				handleEnvSelectButtonSelected();
 			}
 		});
 		envEditButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_Edit_5, null); 
 		envEditButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				handleEnvEditButtonSelected();
 			}
@@ -336,6 +353,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		envEditButton.setEnabled(false);
 		envRemoveButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_Remove_6, null); 
 		envRemoveButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				handleEnvRemoveButtonSelected();
 			}
@@ -377,7 +395,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		for (int i = 0; i < items.length; i++) {
 			EnvironmentVariable existingVariable = (EnvironmentVariable) items[i].getData();
 			if (existingVariable.getName().equals(name)) {
-				boolean overWrite= MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.EnvironmentTab_12, MessageFormat.format(LaunchConfigurationsMessages.EnvironmentTab_13, new String[] {name})); // 
+				boolean overWrite = MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.EnvironmentTab_12, MessageFormat.format(LaunchConfigurationsMessages.EnvironmentTab_13, new Object[] { name })); //
 				if (!overWrite) {
 					return false;
 				}
@@ -396,7 +414,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 */
 	private void handleEnvSelectButtonSelected() {
 		//get Environment Variables from the OS
-		Map envVariables = getNativeEnvironment();
+		Map<String, EnvironmentVariable> envVariables = getNativeEnvironment();
 		
 		//get Environment Variables from the table
 		TableItem[] items = environmentTable.getTable().getItems();
@@ -424,13 +442,11 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * Gets native environment variable from the LaunchManager. Creates EnvironmentVariable objects.
 	 * @return Map of name - EnvironmentVariable pairs based on native environment.
 	 */
-	private Map getNativeEnvironment() {
-		Map stringVars = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
-		HashMap vars = new HashMap();
-		for (Iterator i = stringVars.keySet().iterator(); i.hasNext(); ) {
-			String key = (String) i.next();
-			String value = (String) stringVars.get(key);
-			vars.put(key, new EnvironmentVariable(key, value));
+	private Map<String, EnvironmentVariable> getNativeEnvironment() {
+		Map<String, String> stringVars = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
+		HashMap<String, EnvironmentVariable> vars = new HashMap<String, EnvironmentVariable>();
+		for (Entry<String, String> entry : stringVars.entrySet()) {
+			vars.put(entry.getKey(), new EnvironmentVariable(entry.getKey(), entry.getValue()));
 		}
 		return vars;
 	}
@@ -476,12 +492,15 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 */
 	private void handleEnvRemoveButtonSelected() {
 		IStructuredSelection sel = (IStructuredSelection) environmentTable.getSelection();
-		environmentTable.getControl().setRedraw(false);
-		for (Iterator i = sel.iterator(); i.hasNext(); ) {
-			EnvironmentVariable var = (EnvironmentVariable) i.next();	
-			environmentTable.remove(var);
+		try {
+			environmentTable.getControl().setRedraw(false);
+			for (Iterator<?> i = sel.iterator(); i.hasNext();) {
+				EnvironmentVariable var = (EnvironmentVariable) i.next();
+				environmentTable.remove(var);
+			}
+		} finally {
+			environmentTable.getControl().setRedraw(true);
 		}
-		environmentTable.getControl().setRedraw(true);
 		updateAppendReplace();
 		updateLaunchConfigurationDialog();
 	}
@@ -497,6 +516,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.removeAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES);
 	}
@@ -504,6 +524,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		boolean append= true;
 		try {
@@ -526,18 +547,18 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * Stores the environment in the given configuration
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {	
 		// Convert the table's items into a Map so that this can be saved in the
 		// configuration's attributes.
 		TableItem[] items = environmentTable.getTable().getItems();
-		Map map = new HashMap(items.length);
-		for (int i = 0; i < items.length; i++)
-		{
+		Map<String, String> map = new HashMap<String, String>(items.length);
+		for (int i = 0; i < items.length; i++) {
 			EnvironmentVariable var = (EnvironmentVariable) items[i].getData();
 			map.put(var.getName(), var.getValue());
 		} 
 		if (map.size() == 0) {
-			configuration.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, (Map) null);
+			configuration.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, (Map<String, String>) null);
 		} else {
 			configuration.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);
 		}
@@ -566,6 +587,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return LaunchConfigurationsMessages.EnvironmentTab_Environment_7; 
 	}
@@ -575,6 +597,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * 
 	 * @since 3.3
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.debug.ui.environmentTab"; //$NON-NLS-1$
 	}
@@ -582,6 +605,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_ENVIRONMENT);
 	}
@@ -589,6 +613,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when activated
 	}
@@ -596,6 +621,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when deactivated
 	}
@@ -617,6 +643,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 		 */
+		@Override
 		protected String getDialogSettingsId() {
 			return IDebugUIConstants.PLUGIN_ID + ".ENVIRONMENT_TAB.NATIVE_ENVIROMENT_DIALOG"; //$NON-NLS-1$
 		}
@@ -624,6 +651,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
 		 */
+		@Override
 		protected String getHelpContextId() {
 			return IDebugHelpContextIds.SELECT_NATIVE_ENVIRONMENT_DIALOG;
 		}
@@ -631,6 +659,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
 		 */
+		@Override
 		protected Object getViewerInput() {
 			return fInput;
 		}
@@ -638,6 +667,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
 		 */
+		@Override
 		protected String getViewerLabel() {
 			return LaunchConfigurationsMessages.EnvironmentTab_19;
 		}
@@ -645,22 +675,30 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
 		 */
+		@Override
 		protected IBaseLabelProvider getLabelProvider() {
 			return new ILabelProvider() {
+				@Override
 				public Image getImage(Object element) {
 					return DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_ENVIRONMENT);
 				}
+				@Override
 				public String getText(Object element) {
 					EnvironmentVariable var = (EnvironmentVariable) element;
-					return MessageFormat.format(LaunchConfigurationsMessages.EnvironmentTab_7, new String[] {var.getName(), var.getValue()}); 
+					return MessageFormat.format(LaunchConfigurationsMessages.EnvironmentTab_7, new Object[] {
+							var.getName(), var.getValue() });
 				}
+				@Override
 				public void addListener(ILabelProviderListener listener) {
 				}
+				@Override
 				public void dispose() {
 				}
+				@Override
 				public boolean isLabelProperty(Object element, String property) {
 					return false;
 				}
+				@Override
 				public void removeListener(ILabelProviderListener listener) {
 				}				
 			};
@@ -669,31 +707,36 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getContentProvider()
 		 */
+		@Override
 		protected IContentProvider getContentProvider() {
 			return new IStructuredContentProvider() {
+				@Override
 				public Object[] getElements(Object inputElement) {
 					EnvironmentVariable[] elements = null;
 					if (inputElement instanceof HashMap) {
-						Comparator comparator = new Comparator() {
+						Comparator<Object> comparator = new Comparator<Object>() {
+							@Override
 							public int compare(Object o1, Object o2) {
-								String s1 = (String)o1;
-								String s2 = (String)o2;
+								String s1 = (String) o1;
+								String s2 = (String) o2;
 								return s1.compareTo(s2);
 							}
 						};
-						TreeMap envVars = new TreeMap(comparator);
-						envVars.putAll((Map)inputElement);
+						TreeMap<Object, Object> envVars = new TreeMap<Object, Object>(comparator);
+						envVars.putAll((Map<?, ?>) inputElement);
 						elements = new EnvironmentVariable[envVars.size()];
 						int index = 0;
-						for (Iterator iterator = envVars.keySet().iterator(); iterator.hasNext(); index++) {
+						for (Iterator<Object> iterator = envVars.keySet().iterator(); iterator.hasNext(); index++) {
 							Object key = iterator.next();
 							elements[index] = (EnvironmentVariable) envVars.get(key);
 						}
 					}
 					return elements;
 				}
+				@Override
 				public void dispose() {	
 				}
+				@Override
 				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 				}
 			};

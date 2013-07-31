@@ -23,18 +23,22 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  */
 public class RegisterGroupContentProvider extends ElementContentProvider {
 
+	@Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return ((IRegisterGroup)element).getRegisters().length;
 	}
 
+	@Override
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return getElements(((IRegisterGroup)parent).getRegisters(), index, length);
 	}
 	
+	@Override
 	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return ((IRegisterGroup)element).hasRegisters();
 	}
 
+	@Override
 	protected boolean supportsContextId(String id) {
 		return IDebugUIConstants.ID_REGISTER_VIEW.equals(id);
 	}

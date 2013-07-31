@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Frederic Gurr - Fixed restore default behavior (bug 346082)
@@ -33,7 +33,7 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 
 	private Button promptForToolMigrationButton;
 	private Button promptForProjectMigrationButton;
-	
+
 	public ExternalToolsPreferencePage() {
 		setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
 		setDescription(ExternalToolsUIMessages.ExternalToolsPreferencePage_External_tool_project_builders_migration_2);
@@ -42,6 +42,7 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IExternalToolsHelpContextIds.EXTERNAL_TOOLS_PREFERENCE_PAGE);
 		//The main composite
@@ -51,15 +52,15 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 		layout.marginWidth=0;
 		composite.setLayout(layout);
 		composite.setFont(parent.getFont());
-				
+
 		promptForToolMigrationButton= createCheckButton(composite, ExternalToolsUIMessages.ExternalToolsPreferencePage_Prompt_before_migrating_3, IPreferenceConstants.PROMPT_FOR_TOOL_MIGRATION);
 		promptForProjectMigrationButton= createCheckButton(composite, ExternalToolsUIMessages.ExternalToolsPreferencePage_1, IPreferenceConstants.PROMPT_FOR_PROJECT_MIGRATION);
-		
+
 		applyDialogFont(composite);
-		
+
 		return composite;
 	}
-	
+
 	/**
 	 * Returns a new check button with the given label for the given preference.
 	 */
@@ -71,16 +72,18 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 		button.setSelection(getPreferenceStore().getBoolean(preferenceKey));
 		return button;
 	}
-	
+
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		getPreferenceStore().setValue(IPreferenceConstants.PROMPT_FOR_TOOL_MIGRATION, promptForToolMigrationButton.getSelection());
 		getPreferenceStore().setValue(IPreferenceConstants.PROMPT_FOR_PROJECT_MIGRATION, promptForProjectMigrationButton.getSelection());
@@ -90,6 +93,7 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		promptForToolMigrationButton.setSelection(getPreferenceStore().getDefaultBoolean(IPreferenceConstants.PROMPT_FOR_TOOL_MIGRATION));
 		promptForProjectMigrationButton.setSelection(getPreferenceStore().getDefaultBoolean(IPreferenceConstants.PROMPT_FOR_PROJECT_MIGRATION));

@@ -113,6 +113,7 @@ public abstract class SequencerControl {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj != null) {
 			if (getClass().equals(obj.getClass())) {
@@ -126,6 +127,7 @@ public abstract class SequencerControl {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getSequencer().hashCode() + getClass().hashCode();
 	}	

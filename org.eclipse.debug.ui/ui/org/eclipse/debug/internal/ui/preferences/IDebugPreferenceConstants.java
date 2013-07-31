@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,11 +40,13 @@ public interface IDebugPreferenceConstants {
 	/**
 	 * @deprecated use IDebugUIConstants.PREF_MEMORY_HISTORY_UNKNOWN_COLOR instead
 	 */
+	@Deprecated
 	public static final String MEMORY_VIEW_UNBUFFERED_LINE_COLOR = IDebugUIConstants.PLUGIN_ID + ".MemoryViewLineColor"; //$NON-NLS-1$
 	
 	/**
 	 * @deprecated use IDebugUIConstants.PREF_MEMORY_HISTORY_KNOWN_COLOR instead
 	 */
+	@Deprecated
 	public static final String MEMORY_VIEW_BUFFERED_LINE_COLOR = IDebugUIConstants.PLUGIN_ID + ".MemoryViewBufferedLineColor"; //$NON-NLS-1$
 	
 	/**
@@ -104,6 +106,7 @@ public interface IDebugPreferenceConstants {
 	 * 
 	 * @deprecated no longer supported
 	 */
+	@Deprecated
 	public static final String PREF_LAST_LAUNCH_CONFIGURATION_SELECTION = IDebugUIConstants.PLUGIN_ID + ".lastLaunchConfigSelection"; //$NON-NLS-1$
 		
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,12 +28,13 @@ public class SelectedResourceResolver extends ResourceResolver implements IDynam
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.variables.IDynamicVariableResolver#resolveValue(org.eclipse.core.variables.IDynamicVariable, java.lang.String)
 	 */
+	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
 		if (resource != null) {
 			return translateToValue(resource, variable);
 		}
-		abort(MessageFormat.format(StringSubstitutionMessages.SelectedResourceResolver_0, new String[]{getReferenceExpression(variable, argument)}), null);	
+		abort(MessageFormat.format(StringSubstitutionMessages.SelectedResourceResolver_0, new Object[] { getReferenceExpression(variable, argument) }), null);
 		return null;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.ui.externaltools.internal.ui;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -43,8 +42,8 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
 public class TreeAndListGroup implements ISelectionChangedListener {
 	private Object root;
 	private Object currentTreeSelection;
-	private List selectionChangedListeners = new ArrayList();
-	private List doubleClickListeners= new ArrayList();
+	private List<ISelectionChangedListener> selectionChangedListeners = new ArrayList<ISelectionChangedListener>();
+	private List<IDoubleClickListener> doubleClickListeners = new ArrayList<IDoubleClickListener>();
 
 	private ITreeContentProvider treeContentProvider;
 	private IStructuredContentProvider listContentProvider;
@@ -101,11 +100,11 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionChangedListeners.add(listener);
 	}
-	
+
 	/**
 	 * Add the given listener to the collection of clients that listen to
 	 * double-click events in the list viewer
-	 * 
+	 *
 	 * @param listener IDoubleClickListener
 	 */
 	public void addDoubleClickListener(IDoubleClickListener listener) {
@@ -117,20 +116,18 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 	 * viewer
 	 */
 	protected void notifySelectionListeners(SelectionChangedEvent event) {
-		Iterator iter = selectionChangedListeners.iterator();
-		while (iter.hasNext()) {
-			 ((ISelectionChangedListener) iter.next()).selectionChanged(event);
+		for (ISelectionChangedListener listener : selectionChangedListeners) {
+			listener.selectionChanged(event);
 		}
 	}
-	
+
 	/**
 	 * Notify all double click listeners that a double click event has occurred
 	 * in the list viewer
 	 */
 	protected void notifyDoubleClickListeners(DoubleClickEvent event) {
-		Iterator iter= doubleClickListeners.iterator();
-		while (iter.hasNext()) {
-			((IDoubleClickListener) iter.next()).doubleClick(event);
+		for (IDoubleClickListener listener : doubleClickListeners) {
+			listener.doubleClick(event);
 		}
 	}
 
@@ -178,11 +175,13 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 		listViewer.setLabelProvider(listLabelProvider);
 		listViewer.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				notifySelectionListeners(event);
 			}
 		});
 		listViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (!event.getSelection().isEmpty()) {
 					notifyDoubleClickListeners(event);
@@ -207,30 +206,30 @@ public class TreeAndListGroup implements ISelectionChangedListener {
         treeViewer.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		treeViewer.addSelectionChangedListener(this);
 	}
-	
+
 	public Table getListTable() {
 		return listViewer.getTable();
 	}
-	
+
 	public IStructuredSelection getListTableSelection() {
 		ISelection selection=  this.listViewer.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			return (IStructuredSelection)selection;
-		} 
+		}
 		return StructuredSelection.EMPTY;
 	}
-	
+
 	protected void initialListItem(Object element) {
 		Object parent = treeContentProvider.getParent(element);
 		selectAndRevealFolder(parent);
 	}
-	
+
 	public void selectAndRevealFolder(Object treeElement) {
 		treeViewer.reveal(treeElement);
 		IStructuredSelection selection = new StructuredSelection(treeElement);
 		treeViewer.setSelection(selection);
 	}
-	
+
 	public void selectAndRevealFile(Object treeElement) {
 		listViewer.reveal(treeElement);
 		IStructuredSelection selection = new StructuredSelection(treeElement);
@@ -247,6 +246,7 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 		Object selectedElement = selection.getFirstElement();

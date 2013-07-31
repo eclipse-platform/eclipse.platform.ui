@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,35 +28,43 @@ public class TerminateCommandAction extends DebugCommandAction {
 		setActionDefinitionId("org.eclipse.debug.ui.commands.Terminate"); //$NON-NLS-1$
 	}
 
-    public String getText() {
+    @Override
+	public String getText() {
         return ActionMessages.TerminateAction_0;
     }
 
-    public String getHelpContextId() {
+    @Override
+	public String getHelpContextId() {
         return "org.eclipse.debug.ui.terminate_action_context"; //$NON-NLS-1$
     }
 
-    public String getId() {
+    @Override
+	public String getId() {
         return "org.eclipse.debug.ui.debugview.toolbar.terminate"; //$NON-NLS-1$
     }
 
-    public String getToolTipText() {
+    @Override
+	public String getToolTipText() {
         return ActionMessages.TerminateAction_3;
     }
 
-    public ImageDescriptor getDisabledImageDescriptor() {
+    @Override
+	public ImageDescriptor getDisabledImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE);
     }
 
-    public ImageDescriptor getHoverImageDescriptor() {
+    @Override
+	public ImageDescriptor getHoverImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_TERMINATE);
     }
 
-    public ImageDescriptor getImageDescriptor() {
+    @Override
+	public ImageDescriptor getImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_TERMINATE);
     }
 
-	protected Class getCommandType() {
+	@Override
+	protected Class<ITerminateHandler> getCommandType() {
 		return ITerminateHandler.class;
 	}
 }

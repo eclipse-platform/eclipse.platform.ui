@@ -39,6 +39,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
 	/**
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#getDisabledImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
 		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TOGGLE_STEP_FILTERS);
 	}
@@ -46,6 +47,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
 	/**
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#getHelpContextId()
 	 */
+	@Override
 	public String getHelpContextId() {
 		return "org.eclipse.debug.ui.step_with_filters_action_context"; //$NON-NLS-1$
 	}
@@ -53,6 +55,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
 	/**
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#getHoverImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getHoverImageDescriptor() {
 		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TOGGLE_STEP_FILTERS);
 	}
@@ -60,6 +63,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
 	/**
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#getId()
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.debug.ui.actions.ToggleStepFilters"; //$NON-NLS-1$
 	}
@@ -67,6 +71,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
 	/**
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#getImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TOGGLE_STEP_FILTERS);
 	}
@@ -74,6 +79,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
 	/**
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#getText()
 	 */
+	@Override
 	public String getText() {
 		return ActionMessages.ToggleStepFiltersAction_1;
 	}
@@ -81,6 +87,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
 	/**
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#getToolTipText()
 	 */
+	@Override
 	public String getToolTipText() {		
 		return ActionMessages.ToggleStepFiltersAction_0;
 	}
@@ -88,6 +95,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
 	/**
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#getInitialEnablement()
 	 */
+	@Override
 	protected boolean getInitialEnablement() {
 		return true;
 	}
@@ -95,14 +103,16 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
 	/**
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#getCommandType()
 	 */
-	protected Class getCommandType() {
+	@Override
+	protected Class<IStepFiltersHandler> getCommandType() {
 		return IStepFiltersHandler.class;
 	}
 
     /**
      * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#run()
      */
-    public void run() {
+    @Override
+	public void run() {
     	// ignore initial call to run from abstract debug view
     	// that runs the action to initialize it's state when
     	// the workbench persisted the action as "on"
@@ -116,13 +126,15 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
     /**
      * @see org.eclipse.jface.action.Action#getStyle()
      */
-    public int getStyle() {
+    @Override
+	public int getStyle() {
     	return AS_CHECK_BOX;
     }
 
 	/**
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
 	 */
+	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		ISelection context = event.getContext();
 		if (context.isEmpty()) {
@@ -135,6 +147,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
 	/**
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#init(org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	public void init(IWorkbenchPart part) {
 		super.init(part);
 		initState();
@@ -143,6 +156,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
 	/**
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		super.init(window);
 		initState();
@@ -161,6 +175,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
 	/**
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugPlugin.getUniqueIdentifier());
@@ -169,6 +184,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
 		}
 	}
 
+	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (event.getKey().equals(StepFilterManager.PREF_USE_STEP_FILTERS)) {
 			boolean checked = DebugUITools.isUseStepFilters();

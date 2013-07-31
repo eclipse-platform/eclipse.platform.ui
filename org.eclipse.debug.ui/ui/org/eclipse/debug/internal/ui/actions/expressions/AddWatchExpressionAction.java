@@ -30,12 +30,14 @@ public class AddWatchExpressionAction extends WatchExpressionAction implements I
 	/**
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 	}
 
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		// create a watch expression
 		IWatchExpression watchExpression= DebugPlugin.getDefault().getExpressionManager().newWatchExpression(IInternalDebugCoreConstants.EMPTY_STRING);
@@ -50,6 +52,7 @@ public class AddWatchExpressionAction extends WatchExpressionAction implements I
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 

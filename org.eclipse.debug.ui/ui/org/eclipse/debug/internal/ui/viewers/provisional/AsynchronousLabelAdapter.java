@@ -37,10 +37,12 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.IAsynchronousLabelAdapter#retrieveLabel(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext, org.eclipse.debug.ui.viewers.ILabelRequestMonitor)
 	 */
+	@Override
 	public void retrieveLabel(final Object element, final IPresentationContext context, final ILabelRequestMonitor result) {
 		Job job = null;
 		if (requiresUIJob(element)) {
 			job = new UIJob("Retrieving labels") { //$NON-NLS-1$
+				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					computeLabels(element, context, result);
 					return Status.OK_STATUS;
@@ -48,6 +50,7 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
 			};
 		} else {
 			job = new Job("Retrieving labels") { //$NON-NLS-1$
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					computeLabels(element, context, result);
 					return Status.OK_STATUS;

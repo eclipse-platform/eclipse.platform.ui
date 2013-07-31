@@ -85,6 +85,7 @@ public abstract class TableEditorImpl {
 					fCellEditor.setFocus();
 					if (fFocusListener == null) {
 						fFocusListener = new FocusAdapter() {
+							@Override
 							public void focusLost(FocusEvent e) {
 								applyEditorValue();
 							}
@@ -92,6 +93,7 @@ public abstract class TableEditorImpl {
 					}
 					control.addFocusListener(fFocusListener);
 					fMouseListener = new MouseAdapter() {
+						@Override
 						public void mouseDown(MouseEvent e) {
 							// time wrap?
 							// check for expiration of doubleClickTime
@@ -276,14 +278,17 @@ public abstract class TableEditorImpl {
 
 	private void initCellEditorListener() {
 		fCellEditorListener = new ICellEditorListener() {
+			@Override
 			public void editorValueChanged(boolean oldValidState, boolean newValidState) {
 				// Ignore.
 			}
 
+			@Override
 			public void cancelEditor() {
 				TableEditorImpl.this.cancelEditing();
 			}
 
+			@Override
 			public void applyEditorValue() {
 				TableEditorImpl.this.applyEditorValue();
 			}

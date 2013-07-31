@@ -29,14 +29,16 @@ class BreadcrumbWorkbenchPart implements IWorkbenchPart {
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         return (obj instanceof BreadcrumbWorkbenchPart);
     }
 
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return getClass().hashCode();
     }
 
@@ -52,65 +54,75 @@ class BreadcrumbWorkbenchPart implements IWorkbenchPart {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#addPropertyListener(org.eclipse.ui.IPropertyListener)
      */
-    public void addPropertyListener(IPropertyListener listener) {
+    @Override
+	public void addPropertyListener(IPropertyListener listener) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createPartControl(Composite parent) {
+    @Override
+	public void createPartControl(Composite parent) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#getSite()
      */
-    public IWorkbenchPartSite getSite() {
+    @Override
+	public IWorkbenchPartSite getSite() {
         return fSite;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#getTitle()
      */
-    public String getTitle() {
+    @Override
+	public String getTitle() {
         return ""; //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#getTitleImage()
      */
-    public Image getTitleImage() {
+    @Override
+	public Image getTitleImage() {
         return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#getTitleToolTip()
      */
-    public String getTitleToolTip() {
+    @Override
+	public String getTitleToolTip() {
         return ""; //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#removePropertyListener(org.eclipse.ui.IPropertyListener)
      */
-    public void removePropertyListener(IPropertyListener listener) {
+    @Override
+	public void removePropertyListener(IPropertyListener listener) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#setFocus()
      */
-    public void setFocus() {
+    @Override
+	public void setFocus() {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
-    public Object getAdapter(Class adapter) {
+    @Override
+	public Object getAdapter(Class adapter) {
         return null;
     }
 }

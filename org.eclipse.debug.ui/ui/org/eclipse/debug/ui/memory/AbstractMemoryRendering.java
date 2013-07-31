@@ -73,6 +73,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 			setSystem(true);
 		}
 
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			fRunnable.run();
 			return Status.OK_STATUS;
@@ -100,6 +101,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#init(org.eclipse.debug.ui.memory.IMemoryRenderingSite, org.eclipse.debug.core.model.IMemoryBlock)
 	 */
+	@Override
 	public void init(IMemoryRenderingContainer container, IMemoryBlock block) {
 		fContainer = container;
 		fMemoryBlock = block;
@@ -110,12 +112,14 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#dispose()
 	 */
+	@Override
 	public void dispose()
 	{
 		// disconnect from memory block when rendering is disposed
 		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{
 			Runnable runnable = new Runnable(){
+				@Override
 				public void run() {
 						((IMemoryBlockExtension)fMemoryBlock).disconnect(AbstractMemoryRendering.this);		
 				}};
@@ -137,6 +141,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#activated()
 	 */
+	@Override
 	public void activated() {
 		if (fContainer.getMemoryRenderingSite().getSynchronizationService() != null)
 			fContainer.getMemoryRenderingSite().getSynchronizationService().setSynchronizationProvider(this);
@@ -145,6 +150,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#deactivated()
 	 */
+	@Override
 	public void deactivated() {
 		// do nothing when deactivated
 		// we do not want to set the sync provider from rendering site
@@ -156,12 +162,14 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#becomesVisible()
 	 */
+	@Override
 	public void becomesVisible() {
 		fVisible = true;
 		
 		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{
 			Runnable runnable = new Runnable(){
+				@Override
 				public void run() {
 					((IMemoryBlockExtension)fMemoryBlock).connect(AbstractMemoryRendering.this);		
 				}};
@@ -172,11 +180,13 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#becomesHidden()
 	 */
+	@Override
 	public void becomesHidden() {
 		fVisible = false;
 		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{
 			Runnable runnable = new Runnable(){
+				@Override
 				public void run() {
 						((IMemoryBlockExtension)fMemoryBlock).disconnect(AbstractMemoryRendering.this);		
 				}};
@@ -187,6 +197,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#getMemoryBlock()
 	 */
+	@Override
 	public IMemoryBlock getMemoryBlock() {
 		return fMemoryBlock;
 	}
@@ -194,6 +205,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#getRenderingId()
 	 */
+	@Override
 	public String getRenderingId()
 	{
 		return fRenderingId;
@@ -202,6 +214,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
+	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 				
 		if (fPropertyListeners == null)
@@ -213,6 +226,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
+	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		
 		if (fPropertyListeners == null)
@@ -223,6 +237,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return decorateImage(null);
 	}
@@ -243,6 +258,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#getLabel()
 	 */
+	@Override
 	public  String getLabel()
 	{
 		if (fMemoryBlock == null)
@@ -341,6 +357,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 			ISelectionProvider selProvider = site.getSite().getSelectionProvider();
 			
 			fMenuListener = new IMenuListener() {
+							@Override
 							public void menuAboutToShow(IMenuManager manager) {
 								manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 							}};

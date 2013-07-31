@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,6 +27,7 @@ public class ProgramMainTab extends ExternalToolsMainTab {
 	 * location as a String containing the workspace_loc variable or
 	 * <code>null</code> if no location was obtained from the user.
 	 */
+	@Override
 	protected void handleWorkspaceLocationButtonSelected() {
 		FileSelectionDialog dialog;
 		dialog = new FileSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), ExternalToolsProgramMessages.ProgramMainTab_Select);
@@ -44,11 +45,12 @@ public class ProgramMainTab extends ExternalToolsMainTab {
 			locationField.setText(expression.toString());
 		}
 	}
-	
-	
+
+
    	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_PROGRAM_MAIN_TAB);

@@ -72,13 +72,13 @@ public class MemorySegment extends PlatformObject {
 		if (start + length > fBytes.length)
 			return new MemoryByte[0];
 		
-		ArrayList ret = new ArrayList();
+		ArrayList<MemoryByte> ret = new ArrayList<MemoryByte>();
 		
 		for (int i=start; i< start+length; i++)
 		{
 			ret.add(fBytes[i]);
 		}
-		return (MemoryByte[]) ret.toArray(new MemoryByte[ret.size()]);
+		return ret.toArray(new MemoryByte[ret.size()]);
 	}
 	
 }

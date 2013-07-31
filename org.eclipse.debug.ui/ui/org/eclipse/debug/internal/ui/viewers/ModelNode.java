@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,7 +93,7 @@ public class ModelNode {
 	 * @return
 	 */
 	public synchronized TreePath getTreePath() {
-		List path = new ArrayList();
+		List<Object> path = new ArrayList<Object>();
 		ModelNode node = this;
 		while (node != null) {
 			path.add(0, node.getElement());
@@ -194,7 +194,8 @@ public class ModelNode {
         fIsContainer = container;
     }
     
-    public String toString() {
+    @Override
+	public String toString() {
     	StringBuffer buf = new StringBuffer();
     	if (isDisposed()) {
     		buf.append("[DISPOSED] "); //$NON-NLS-1$

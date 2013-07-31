@@ -45,6 +45,7 @@ public class TrackColumnPresentation extends AbstractColumnPresentation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#getAvailableColumns()
 	 */
+	@Override
 	public String[] getAvailableColumns() {
 		return COLUMN_IDS;
 	}
@@ -52,6 +53,7 @@ public class TrackColumnPresentation extends AbstractColumnPresentation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#getHeader(java.lang.String)
 	 */
+	@Override
 	public String getHeader(String id) {
 		if (COL_TICK.equals(id)) {
 			return "Tick"; //$NON-NLS-1$
@@ -71,6 +73,7 @@ public class TrackColumnPresentation extends AbstractColumnPresentation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#getId()
 	 */
+	@Override
 	public String getId() {
 		return ID;
 	}
@@ -78,6 +81,7 @@ public class TrackColumnPresentation extends AbstractColumnPresentation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#getInitialColumns()
 	 */
+	@Override
 	public String[] getInitialColumns() {
 		return COLUMN_INITIAL;
 	}
@@ -85,6 +89,7 @@ public class TrackColumnPresentation extends AbstractColumnPresentation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#isOptional()
 	 */
+	@Override
 	public boolean isOptional() {
 		return false;
 	}

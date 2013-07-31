@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2011 IBM Corporation and others.
+ *  Copyright (c) 2006, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -75,22 +75,22 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	/**
 	 * Maps the perspectives in this window to its last activated workbench context
 	 */
-	private final Map fPerspectiveToActiveContext = new HashMap();
+	private final Map<IPerspectiveDescriptor, String> fPerspectiveToActiveContext = new HashMap<IPerspectiveDescriptor, String>();
 	
 	/**
 	 * Map of the perspectives to all workbench contexts activated in that perspective 
 	 */
-	private final Map fPerspectiveToActivatedContexts = new HashMap();
+	private final Map<IPerspectiveDescriptor, Set<String>> fPerspectiveToActivatedContexts = new HashMap<IPerspectiveDescriptor, Set<String>>();
 	
 	/**
 	 * Map of context id's to context view bindings
 	 */
-	private Map fContextIdsToBindings;
+	private Map<String, DebugContextViewBindings> fContextIdsToBindings;
     	
 	/**
 	 * List of perspectives that debugging is allowed in
 	 */
-	private Set fEnabledPerspectives = new HashSet();	
+	private Set<String> fEnabledPerspectives = new HashSet<String>();
     
     /**
      * Whether to ignore perspective change call backs (set to 
@@ -140,10 +140,10 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     private static final String XML_VALUE_CLOSED = "closed"; //$NON-NLS-1$
     
     // ids of base debug views in debug perspective that should not be auto-closed
-    private static Set fgBaseDebugViewIds = null;
+	private static Set<String> fgBaseDebugViewIds = null;
     
     static {
-        fgBaseDebugViewIds = new HashSet();
+		fgBaseDebugViewIds = new HashSet<String>();
         fgBaseDebugViewIds.add(IDebugUIConstants.ID_DEBUG_VIEW);
         fgBaseDebugViewIds.add(IDebugUIConstants.ID_VARIABLE_VIEW);
         fgBaseDebugViewIds.add(IDebugUIConstants.ID_BREAKPOINT_VIEW);
@@ -166,7 +166,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     	// all bindings including inherited bindings, top down in activation order
     	private String[] fAllViewBindingIds = null;
     	// associated binding to activate
-    	private final Map fAllViewIdToBindings = new HashMap();
+		private final Map<String, ViewBinding> fAllViewIdToBindings = new HashMap<String, ViewBinding>();
     	// all context id's in this context hierarchy (top down order)
     	private String[] fAllConetxtIds = null;
 
@@ -222,7 +222,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     		if (fParentId == null) {
     			return null;
     		}
-    		return (DebugContextViewBindings) fContextIdsToBindings.get(fParentId);
+    		return fContextIdsToBindings.get(fParentId);
     	}
     	
     	/**
@@ -232,7 +232,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     	 * @param perspective the perspective description
     	 * @param allViewIds that are relevant to the chain activation.
     	 */
-    	public void activateChain(IWorkbenchPage page, IPerspectiveDescriptor perspective, Set allViewIds) {
+		public void activateChain(IWorkbenchPage page, IPerspectiveDescriptor perspective, Set<String> allViewIds) {
     		initializeChain();
     		doActivation(page, perspective, allViewIds, fAllConetxtIds);
     	}	
@@ -251,7 +251,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     	 * @param allViewIds id's of all the views that are relevant in this context activation
     	 * @param contextIds associated contexts that are activated
     	 */
-    	private void doActivation(IWorkbenchPage page, IPerspectiveDescriptor perspective, Set allViewIds, String[] contextIds) {
+		private void doActivation(IWorkbenchPage page, IPerspectiveDescriptor perspective, Set<String> allViewIds, String[] contextIds) {
     		// note activation of all the relevant contexts
     		for (int i = 0; i < contextIds.length; i++) {
 				addActivated(contextIds[i]);
@@ -261,7 +261,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     		// activate the view bindings and bring most relevant views to top
     		for (int i = 0; i < fAllViewBindingIds.length; i++) {
 				String viewId = fAllViewBindingIds[i];
-				ViewBinding binding = (ViewBinding) fAllViewIdToBindings.get(viewId);
+				ViewBinding binding = fAllViewIdToBindings.get(viewId);
 				binding.activated(page, perspective);
                 binding.checkZOrder(page, allViewIds);
 			}
@@ -273,18 +273,16 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     	 */
     	private synchronized void initializeChain() {
     		if (fAllViewBindingIds == null) {
-    			List orderedIds = new ArrayList();
-    			List contexts = new ArrayList();
+				List<String> orderedIds = new ArrayList<String>();
+				List<DebugContextViewBindings> contexts = new ArrayList<DebugContextViewBindings>();
     			DebugContextViewBindings context = this;
     			while (context != null) {
     				contexts.add(0, context);
     				context = context.getParentContext();
     			}
-    			Iterator iterator = contexts.iterator();
     			fAllConetxtIds = new String[contexts.size()];
     			int pos = 0;
-    			while (iterator.hasNext()) {
-    				DebugContextViewBindings bindings = (DebugContextViewBindings) iterator.next();
+				for (DebugContextViewBindings bindings : contexts) {
     				fAllConetxtIds[pos] = bindings.getId();
     				pos++;
     				for (int i = 0; i < bindings.fViewBindingIds.length; i++) {
@@ -298,7 +296,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     					}
 					}
     			}
-    			fAllViewBindingIds = (String[]) orderedIds.toArray(new String[orderedIds.size()]);
+    			fAllViewBindingIds = orderedIds.toArray(new String[orderedIds.size()]);
     		}
     	}
     	
@@ -315,7 +313,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 			}
 			for (int i = 0; i < fViewBindingIds.length; i++) {
 				String viewId = fViewBindingIds[i];
-				ViewBinding binding = (ViewBinding) fAllViewIdToBindings.get(viewId);
+				ViewBinding binding = fAllViewIdToBindings.get(viewId);
 				binding.deactivated(page, perspective);
 			}
     	}
@@ -328,7 +326,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     	 */
     	public void setViewOpened(boolean opened, String viewId) {
     		initializeChain();
-    		ViewBinding binding = (ViewBinding)fAllViewIdToBindings.get(viewId);
+    		ViewBinding binding = fAllViewIdToBindings.get(viewId);
     		if (binding != null) {
     			if (opened) {
     				binding.userOpened();
@@ -340,7 +338,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 
         public void applyUserSettings(String viewId, Element viewElement) {
         	initializeChain();
-        	ViewBinding binding = (ViewBinding) fAllViewIdToBindings.get(viewId);
+        	ViewBinding binding = fAllViewIdToBindings.get(viewId);
         	if (binding != null) {
         		binding.applyUserSettings(viewElement);
         	}
@@ -353,12 +351,12 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
          * @param root the root XML element
          * @param alreadyDone views already done
          */
-        public void saveBindings(Document document, Element root, Set alreadyDone) {
+		public void saveBindings(Document document, Element root, Set<String> alreadyDone) {
         	for (int i = 0; i < fViewBindingIds.length; i++) {
 				String viewId = fViewBindingIds[i];
         		if (!alreadyDone.contains(viewId)) {
         			alreadyDone.add(viewId);
-        			ViewBinding binding = (ViewBinding) fAllViewIdToBindings.get(viewId);
+        			ViewBinding binding = fAllViewIdToBindings.get(viewId);
         			binding.saveBindings(document, root);
         		}
 			}
@@ -373,15 +371,15 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         /**
          * Set of perspectives this view was opened in by the user
          */
-        private final Set fUserOpened = new HashSet();
+		private final Set<String> fUserOpened = new HashSet<String>();
         /**
          * Set of perspectives this view was closed in by the user
          */
-        private final Set fUserClosed = new HashSet();
+		private final Set<String> fUserClosed = new HashSet<String>();
         /**
          * Set of perspectives this view was auto-opened by view management.
          */
-        private final Set fAutoOpened = new HashSet();
+		private final Set<String> fAutoOpened = new HashSet<String>();
         
         public ViewBinding(IConfigurationElement element) {
             fElement = element;
@@ -512,7 +510,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
          * @param page the page to check
          * @param relevantViews the array of view identifiers
          */
-        public void checkZOrder(IWorkbenchPage page, Set relevantViews) {
+		public void checkZOrder(IWorkbenchPage page, Set<String> relevantViews) {
         	// see if view is open already
         	IViewPart part = page.findView(getViewId());
         	if (part != null) {
@@ -572,8 +570,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
             }
         }
         
-        private void appendPerspectives(Document document, Element parent, Set perpectives, String xmlValue) {
-            String[] ids = (String[]) perpectives.toArray(new String[perpectives.size()]);
+		private void appendPerspectives(Document document, Element parent, Set<String> perpectives, String xmlValue) {
+            String[] ids = perpectives.toArray(new String[perpectives.size()]);
             for (int i = 0; i < ids.length; i++) {
                 String id = ids[i];
                 Element element = document.createElement(XML_ELEMENT_PERSPECTIVE);
@@ -654,7 +652,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 * Loads extensions which map context id's to view bindings.
 	 */
 	private void loadContextToViewExtensions() {
-        fContextIdsToBindings = new HashMap();
+		fContextIdsToBindings = new HashMap<String, DebugContextViewBindings>();
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), ID_CONTEXT_VIEW_BINDINGS);
 		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
 		for (int i = 0; i < configurationElements.length; i++) {
@@ -666,7 +664,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     				continue;
     			}
                 ViewBinding info = new ViewBinding(element);
-    			DebugContextViewBindings bindings = (DebugContextViewBindings) fContextIdsToBindings.get(contextId);
+    			DebugContextViewBindings bindings = fContextIdsToBindings.get(contextId);
     			if (bindings == null) {
     				bindings = new DebugContextViewBindings(contextId);
     				fContextIdsToBindings.put(contextId, bindings);
@@ -694,9 +692,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
                         Element entry = (Element) node;
                         if(entry.getNodeName().equalsIgnoreCase(XML_ELEMENT_VIEW)){
                             String id = entry.getAttribute(XML_ATTR_ID);
-                            Iterator bindings = fContextIdsToBindings.values().iterator();
-                            while (bindings.hasNext()) {
-                            	DebugContextViewBindings binding = (DebugContextViewBindings) bindings.next();
+							for (DebugContextViewBindings binding : fContextIdsToBindings.values()) {
                             	binding.applyUserSettings(id, entry);
                             }
                         }
@@ -753,8 +749,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 * 
 	 * @return list
 	 */
-	public static Set parseList(String listString) {
-		Set list = new HashSet(10);
+	public static Set<String> parseList(String listString) {
+		Set<String> list = new HashSet<String>(10);
 		StringTokenizer tokenizer = new StringTokenizer(listString, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();
@@ -771,9 +767,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
      * 
      * @since 3.5
      */
-    public static Set getDefaultEnabledPerspectives() {
-        Set perspectives = new HashSet(4);
-        
+	public static Set<String> getDefaultEnabledPerspectives() {
+		Set<String> perspectives = new HashSet<String>(4);
         IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), ID_CONTEXT_VIEW_BINDINGS);
         IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
         for (int i = 0; i < configurationElements.length; i++) {
@@ -793,7 +788,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		if (isEnabledPerspective()) {
 			if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
-				Iterator iterator = ss.iterator();
+				Iterator<?> iterator = ss.iterator();
 				while (iterator.hasNext()) {
 					Object target = iterator.next();
 					ILaunch launch = DebugModelContextBindingManager.getLaunch(target);
@@ -806,24 +801,24 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 								// Include the word '.internal.' so the context is filtered from the key binding pref page (Bug 144019) also see PerspectiveManager.handleBreakpointHit()
 								if (fContextService.getActiveContextIds().contains(type.getIdentifier() + ".internal." + getActivePerspective().getId())) { //$NON-NLS-1$
 									// get the leaf contexts to be activated
-									List workbenchContexts = DebugModelContextBindingManager.getDefault().getWorkbenchContextsForDebugContext(target);
+									List<String> workbenchContexts = DebugModelContextBindingManager.getDefault().getWorkbenchContextsForDebugContext(target);
 									// TODO: do we need to check if contexts are actually enabled in workbench first?
 									if (!workbenchContexts.isEmpty()) {
 									    // Quickly check if any contexts need activating
 									    boolean needToActivate = false;
 									    for (int i = 0; i < workbenchContexts.size(); i++) {
-                                            if (!isActivated((String)workbenchContexts.get(i))) {
+                                            if (!isActivated(workbenchContexts.get(i))) {
                                                 needToActivate = true;
                                                 break;
                                             }
 									    }
 									    
 									    if (needToActivate) {
-									        Set allViewIds = getAllContextsViewIDs(workbenchContexts);
+											Set<String> allViewIds = getAllContextsViewIDs(workbenchContexts);
 									        
     										// if all contexts already activate and last context is already active context == done
                                             for (int i = 0; i < workbenchContexts.size(); i++) {
-    											String contextId = (String)workbenchContexts.get(i);
+    											String contextId = workbenchContexts.get(i);
     											if (!isActivated(contextId)) {
     												activateChain(contextId, getActivePerspective(), allViewIds);
     											}
@@ -850,7 +845,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	private boolean isActiveContext(String contextId) {
 		IPerspectiveDescriptor activePerspective = getActivePerspective();
 		if (activePerspective != null) {
-			String activeId = (String) fPerspectiveToActiveContext.get(activePerspective);
+			String activeId = fPerspectiveToActiveContext.get(activePerspective);
 			return contextId.equals(activeId);
 		}
 		return false;
@@ -865,7 +860,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	private boolean isActivated(String contextId) {
 		IPerspectiveDescriptor activePerspective = getActivePerspective();
 		if (activePerspective != null) {
-			Set contexts = (Set) fPerspectiveToActivatedContexts.get(activePerspective); 
+			Set<String> contexts = fPerspectiveToActivatedContexts.get(activePerspective);
 			if (contexts != null) {
 				return contexts.contains(contextId);
 			}
@@ -876,9 +871,9 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	private void addActivated(String contextId) {
 		IPerspectiveDescriptor activePerspective = getActivePerspective();
 		if (activePerspective != null) {
-			Set contexts = (Set) fPerspectiveToActivatedContexts.get(activePerspective); 
+			Set<String> contexts = fPerspectiveToActivatedContexts.get(activePerspective);
 			if (contexts == null) {
-				contexts = new HashSet();
+				contexts = new HashSet<String>();
 				fPerspectiveToActivatedContexts.put(activePerspective, contexts);
 			}
 			contexts.add(contextId);
@@ -888,13 +883,14 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	private void removeActivated(String contextId) {
 		IPerspectiveDescriptor activePerspective = getActivePerspective();
 		if (activePerspective != null) {
-			Set contexts = (Set) fPerspectiveToActivatedContexts.get(activePerspective); 
+			Set<String> contexts = fPerspectiveToActivatedContexts.get(activePerspective);
 			if (contexts != null) {
 				contexts.remove(contextId);
 			}
 		}		
 	}
 
+	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
 			contextActivated(event.getContext());
@@ -904,18 +900,21 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveOpened(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
 	 */
+	@Override
 	public void perspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {        
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveClosed(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
 	 */
+	@Override
 	public void perspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveDeactivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
 	 */
+	@Override
 	public void perspectiveDeactivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 	}
 	
@@ -925,12 +924,10 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 * @param perspective the perspective descriptor
 	 */
 	private void clean(IPerspectiveDescriptor perspective) {
-		Set contexts = (Set) fPerspectiveToActivatedContexts.remove(perspective);
+		Set<String> contexts = fPerspectiveToActivatedContexts.remove(perspective);
 		fPerspectiveToActiveContext.remove(perspective);
 		if (contexts != null) {
-			Iterator iterator = contexts.iterator();
-			while (iterator.hasNext()) {
-				String id = (String) iterator.next();
+			for (String id : contexts) {
 				deactivate(id, perspective);
 			}
 		}
@@ -939,23 +936,23 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveSavedAs(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IPerspectiveDescriptor)
 	 */
+	@Override
 	public void perspectiveSavedAs(IWorkbenchPage page, IPerspectiveDescriptor oldPerspective, IPerspectiveDescriptor newPerspective) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveListener2#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
 	 */
+	@Override
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
 		if (!fIgnoreChanges && page.getWorkbenchWindow().equals(fWindow)) {
 			if(partRef != null) {
                 if (IWorkbenchPage.CHANGE_VIEW_SHOW == changeId || IWorkbenchPage.CHANGE_VIEW_HIDE == changeId) {
                     // Update only the contexts which are currently active (Bug 128065)
-                    Set activatedContexts = (Set)fPerspectiveToActivatedContexts.get(perspective);
+					Set<String> activatedContexts = fPerspectiveToActivatedContexts.get(perspective);
                     if (activatedContexts != null) {
-                    	Iterator iterator = activatedContexts.iterator();
-                    	while (iterator.hasNext()) {
-                    	    DebugContextViewBindings bindings = 
-                    	        (DebugContextViewBindings)fContextIdsToBindings.get(iterator.next());
+						for (String id : activatedContexts) {
+							DebugContextViewBindings bindings = fContextIdsToBindings.get(id);
                     	    if (bindings != null) {
                     	        bindings.setViewOpened(IWorkbenchPage.CHANGE_VIEW_SHOW == changeId, partRef.getId());
                     	    }
@@ -969,6 +966,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
 	 */
+	@Override
 	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		if (page.getWorkbenchWindow().equals(fWindow)) {
 		    fActivePerspective = perspective;
@@ -982,6 +980,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
 	 */
+	@Override
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 	}
 	
@@ -991,30 +990,28 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 * @param contextId the identifier of the {@link DebugContextViewBindings} to activate
 	 * @param perspective the perspective description
 	 */
-	private void activateChain(String contextId, IPerspectiveDescriptor perspective, Set allViewIds) {
-	    if (fWindow == null)
-		 {
+	private void activateChain(String contextId, IPerspectiveDescriptor perspective, Set<String> allViewIds) {
+		if (fWindow == null) {
 			return; // disposed
 		}
 	    
 		IWorkbenchPage page = fWindow.getActivePage();
 		if (page != null) {
-			DebugContextViewBindings bindings= (DebugContextViewBindings) fContextIdsToBindings.get(contextId);
+			DebugContextViewBindings bindings= fContextIdsToBindings.get(contextId);
 			if (bindings != null) {
 				bindings.activateChain(page, perspective, allViewIds);
 			}
 		}
 	}
 	
-	private Set getAllContextsViewIDs(List contextsIds) {
-        if (fWindow == null)
-		 {
+	private Set<String> getAllContextsViewIDs(List<String> contextsIds) {
+		if (fWindow == null) {
 			return Collections.EMPTY_SET; // disposed
 		}
         
-        TreeSet viewIds = new TreeSet();
+		TreeSet<String> viewIds = new TreeSet<String>();
         for (int i = 0; i < contextsIds.size(); i++) {
-            DebugContextViewBindings bindings= (DebugContextViewBindings) fContextIdsToBindings.get(contextsIds.get(i));
+            DebugContextViewBindings bindings= fContextIdsToBindings.get(contextsIds.get(i));
             if (bindings != null) {
                 String[] bindingViewIds = bindings.getAllViewBindingsIds();
                 for (int j = 0; j < bindingViewIds.length; j++) {
@@ -1029,13 +1026,10 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 * Links each debug context view bindings with its parent context bindings 
 	 */
 	private void linkParentContexts() {
-		Iterator iterator = fContextIdsToBindings.entrySet().iterator();
-		while (iterator.hasNext()) {
-			Entry entry = (Entry)iterator.next();
-			String contextId = (String) entry.getKey();
-			DebugContextViewBindings bindings = (DebugContextViewBindings) entry.getValue();
+		for (Entry<String, DebugContextViewBindings> entry : fContextIdsToBindings.entrySet()) {
+			DebugContextViewBindings bindings = entry.getValue();
 			if (!bindings.getId().equals(DEBUG_CONTEXT)) {
-				Context context = fContextService.getContext(contextId);
+				Context context = fContextService.getContext(entry.getKey());
 				try {
 					bindings.setParentId(context.getParentId());
 				} catch (NotDefinedException e) {
@@ -1063,13 +1057,12 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.contexts.IContextManagerListener#contextManagerChanged(org.eclipse.core.commands.contexts.ContextManagerEvent)
 	 */
+	@Override
 	public void contextManagerChanged(ContextManagerEvent event) {
 		if (event.isActiveContextsChanged() && getActivePerspective() != null) {
-			Set disabledContexts = getDisabledContexts(event);
+			Set<String> disabledContexts = getDisabledContexts(event);
 			if (!disabledContexts.isEmpty()) {
-				Iterator contexts = disabledContexts.iterator();
-				while (contexts.hasNext()) {
-					String contextId = (String)contexts.next();
+				for (String contextId : disabledContexts) {
 					if (isViewContext(contextId)) {
 						if (isActivated(contextId)) {
 							deactivate(contextId, getActivePerspective());
@@ -1090,7 +1083,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	    
 		IWorkbenchPage page = fWindow.getActivePage();
 		if (page != null) {
-			DebugContextViewBindings bindings = (DebugContextViewBindings) fContextIdsToBindings.get(contextId);
+			DebugContextViewBindings bindings = fContextIdsToBindings.get(contextId);
 			if (bindings != null) {
 				bindings.deactivate(page, perspective);
 			}
@@ -1103,9 +1096,9 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 * @param event the event
 	 * @return disabled context id's
 	 */
-	private Set getDisabledContexts(ContextManagerEvent event) {
-		Set prev = new HashSet(event.getPreviouslyActiveContextIds());
-		Set activeContextIds = event.getContextManager().getActiveContextIds();
+	private Set<String> getDisabledContexts(ContextManagerEvent event) {
+		Set<String> prev = new HashSet<String>(event.getPreviouslyActiveContextIds());
+		Set<String> activeContextIds = event.getContextManager().getActiveContextIds();
 		if (activeContextIds != null) {
 			prev.removeAll(activeContextIds);
 		}
@@ -1130,10 +1123,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
             Document document = DebugPlugin.newDocument();
             Element root = document.createElement(XML_ELEMENT_VIEW_BINDINGS);
             document.appendChild(root);
-            Set done = new HashSet();
-            Iterator bindings = fContextIdsToBindings.values().iterator();
-            while (bindings.hasNext()) {
-                DebugContextViewBindings binding = (DebugContextViewBindings) bindings.next();
+			Set<String> done = new HashSet<String>();
+			for (DebugContextViewBindings binding : fContextIdsToBindings.values()) {
                 binding.saveBindings(document, root, done);
             }
             String prefValue = IInternalDebugCoreConstants.EMPTY_STRING;
@@ -1156,7 +1147,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
      * @return the array of perspective identifiers in which debugging is enabled 
      */
     public String[] getEnabledPerspectives() {
-    	return (String[]) fEnabledPerspectives.toArray(new String[fEnabledPerspectives.size()]);
+    	return fEnabledPerspectives.toArray(new String[fEnabledPerspectives.size()]);
     }
     
     /**
@@ -1189,6 +1180,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveListener4#perspectivePreDeactivate(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
 	 */
+	@Override
 	public void perspectivePreDeactivate(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		if (page.getWorkbenchWindow().equals(fWindow)) {
             fActivePerspective = null;
@@ -1196,6 +1188,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		}
 	}
 
+	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (!fIgnoreChanges) {
 			if (IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES.equals(event.getKey())) {

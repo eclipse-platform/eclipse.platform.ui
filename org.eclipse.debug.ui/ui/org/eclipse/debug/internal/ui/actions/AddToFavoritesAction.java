@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,9 @@
 package org.eclipse.debug.internal.ui.actions;
 
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunch;
@@ -32,6 +32,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Adds the selected launch configuration to the launch favorites.
@@ -54,6 +56,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 	/**
 	 * @see org.eclipse.ui.actions.SelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		setLaunchConfiguration(null);
 		setMode(null);
@@ -83,7 +86,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 					setGroup(group);
 					setLaunchConfiguration(configuration);
 					setMode(launch.getLaunchMode());				
-					setText(MessageFormat.format(ActionMessages.AddToFavoritesAction_1, new String[]{DebugUIPlugin.removeAccelerators(getGroup().getLabel())})); 
+					setText(MessageFormat.format(ActionMessages.AddToFavoritesAction_1, new Object[] { DebugUIPlugin.removeAccelerators(getGroup().getLabel()) }));
 				}
 			}
 		}
@@ -99,7 +102,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 		
 		if (getGroup() != null) {
 			try {
-				List groups = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
+				List<String> groups = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List<String>) null);
 				if (groups != null) {
 					return !groups.contains(getGroup().getIdentifier());
 				}
@@ -163,14 +166,16 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 	/**
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		final CoreException[] ex = new CoreException[1];
 		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				try {
-					List list = getLaunchConfiguration().getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
+					List<String> list = getLaunchConfiguration().getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List<String>) null);
 					if (list == null) {
-						list = new ArrayList();
+						list = new ArrayList<String>();
 					}
 					list.add(getGroup().getIdentifier());
 					ILaunchConfigurationWorkingCopy copy = getLaunchConfiguration().getWorkingCopy();

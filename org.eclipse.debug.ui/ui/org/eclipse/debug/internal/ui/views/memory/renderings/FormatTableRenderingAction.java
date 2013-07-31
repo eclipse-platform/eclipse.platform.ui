@@ -31,6 +31,7 @@ public class FormatTableRenderingAction extends Action {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".FormatTableRenderingAction_context"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void run() {
 		FormatTableRenderingDialog dialog = new FormatTableRenderingDialog(fRendering, DebugUIPlugin.getShell());
 		dialog.open();

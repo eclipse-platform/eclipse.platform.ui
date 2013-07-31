@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.
  */
+@SuppressWarnings("deprecation")
 public class FileLink implements IConsoleHyperlink {
 
 	private IFile fFile;
@@ -72,6 +73,7 @@ public class FileLink implements IConsoleHyperlink {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsoleHyperlink#linkActivated()
 	 */
+	@Override
 	public void linkActivated() {
 		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
 		if (window != null) {
@@ -123,12 +125,14 @@ public class FileLink implements IConsoleHyperlink {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsoleHyperlink#linkEntered()
 	 */
+	@Override
 	public void linkEntered() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsoleHyperlink#linkExited()
 	 */
+	@Override
 	public void linkExited() {
 	}
 	

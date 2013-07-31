@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,15 +31,18 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class TerminateAllAction extends DebugCommandAction implements ILaunchesListener2 {
 		
+	@Override
 	protected ISelection getContext() {
 		return new StructuredSelection(getLaunchManager().getLaunches());
 	}
 	
+	@Override
 	public void dispose() {
 		getLaunchManager().removeLaunchListener(this);
 		super.dispose();
 	}
 
+	@Override
 	public void init(IWorkbenchPart part) {
 		super.init(part);
 		ILaunchManager launchManager = getLaunchManager();
@@ -53,50 +56,60 @@ public class TerminateAllAction extends DebugCommandAction implements ILaunchesL
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
 
+	@Override
 	public String getHelpContextId() {
 		return "org.eclipse.debug.ui.terminate_all_action_context"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getId() {
 		return "org.eclipse.debug.ui.debugview.popupMenu.terminateAll"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getText() {
 		return ActionMessages.TerminateAllAction_2;
 	}
 
+	@Override
 	public String getToolTipText() {
 		return ActionMessages.TerminateAllAction_3;
 	}
 
+	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
 		return DebugPluginImages
 				.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_ALL);
 	}
 
+	@Override
 	public ImageDescriptor getHoverImageDescriptor() {
 		return DebugPluginImages
 				.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_ALL);
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return DebugPluginImages
 				.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_ALL);
 	}
 
-	protected Class getCommandType() {
+	@Override
+	protected Class<ITerminateHandler> getCommandType() {
 		return ITerminateHandler.class;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesTerminated(ILaunch[] launches) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesAdded(ILaunch[] launches) {
 		setEnabled(true);
 	}
@@ -104,12 +117,14 @@ public class TerminateAllAction extends DebugCommandAction implements ILaunchesL
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesChanged(ILaunch[] launches) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 		setEnabled(getLaunchManager().getLaunches().length > 0);
 	}

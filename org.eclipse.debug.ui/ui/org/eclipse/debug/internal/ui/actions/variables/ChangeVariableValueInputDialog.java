@@ -104,6 +104,7 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
 			value= text.getText();
@@ -115,6 +116,7 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * Method declared in Window.
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (title != null)
@@ -123,6 +125,7 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Cancel buttons by default
 		okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
@@ -138,6 +141,7 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
 		// create composite
@@ -165,6 +169,7 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 		text.setFont(font);
 		text.addModifyListener(
 				new ModifyListener() {
+					@Override
 					public void modifyText(ModifyEvent e) {
 						if (okButton.isEnabled()) {
 							return;
@@ -248,6 +253,7 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 		
 		errorMessageLabel.getParent().update();
 	}
+	@Override
 	protected void okPressed() {
 		validateInput();
 		if (okButton.isEnabled()) {
@@ -267,7 +273,8 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 	 /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
-    protected IDialogSettings getDialogBoundsSettings() {
+    @Override
+	protected IDialogSettings getDialogBoundsSettings() {
     	 IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
          IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
          if (section == null) {
@@ -279,6 +286,7 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#handleShellCloseEvent()
 	 */
+	@Override
 	protected void handleShellCloseEvent() {
 		value= null;
 		super.handleShellCloseEvent();

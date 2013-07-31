@@ -32,8 +32,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
- * Represents a tab in the Memory View.  This is where memory renderings
- * are hosted in the Memory View.
+ * Represents a tab in the Memory View. This is where memory renderings are
+ * hosted in the Memory View.
+ * 
  * @since 3.1
  */
 public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, Listener {
@@ -45,42 +46,42 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 	private boolean fIsDisposed = false;
 	private Control fControl;
 	private RenderingViewPane fContainer;
-	
-	
-	public MemoryViewTab(CTabItem tabItem, IMemoryRendering rendering, RenderingViewPane container)
-	{
+
+	public MemoryViewTab(CTabItem tabItem, IMemoryRendering rendering, RenderingViewPane container) {
 		fTabItem = tabItem;
 		fRendering = rendering;
 		fContainer = container;
-		
+
 		// set the rendering as the synchronization provider
-		// as the new rendering should be in focus and have control 
+		// as the new rendering should be in focus and have control
 		// after it's created
-		
+
 		if (container.getMemoryRenderingSite().getSynchronizationService() != null)
 			container.getMemoryRenderingSite().getSynchronizationService().setSynchronizationProvider(rendering);
 		Control control = createViewTab();
-		
+
 		control.addListener(SWT.Activate, this);
 		control.addListener(SWT.Deactivate, this);
-		
+
 		fTabItem.setControl(control);
 		fTabItem.setData(this);
 		fTabItem.setText(getLabel());
 		fTabItem.setImage(getImage());
-		
+
 		fTabItem.addDisposeListener(fDisposeListener = new DisposeListener() {
 
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				fTabItem.removeDisposeListener(fDisposeListener);
 				dispose();
-			}});
+			}
+		});
 	}
-	
-	private Control createViewTab()
-	{   
+
+	private Control createViewTab() {
 		ISafeRunnable safeRunnable = new ISafeRunnable() {
 
+			@Override
 			public void handleException(Throwable exception) {
 				// create an error rendering to fill the view tab
 				ErrorRendering rendering = new ErrorRendering(fRendering.getRenderingId(), exception);
@@ -88,72 +89,80 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 
 				// dispose the rendering
 				fRendering.dispose();
-				
+
 				fRendering = rendering;
 				fControl = rendering.createControl(fTabItem.getParent());
 			}
 
+			@Override
 			public void run() throws Exception {
 				fControl = fRendering.createControl(fTabItem.getParent());
 				fRendering.addPropertyChangeListener(getInstance());
-			}};
-			
+			}
+		};
+
 		SafeRunner.run(safeRunnable);
 		return fControl;
 	}
-	
-	private String getLabel()
-	{
+
+	private String getLabel() {
 		return fRendering.getLabel();
 	}
-	
-	private Image getImage()
-	{
+
+	private Image getImage() {
 		return fRendering.getImage();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#dispose()
 	 */
+	@Override
 	public void dispose() {
-		
+
 		if (fIsDisposed)
 			return;
-		
+
 		fIsDisposed = true;
-		
+
 		fRendering.removePropertyChangeListener(this);
-		
-		if (!fControl.isDisposed())
-		{
+
+		if (!fControl.isDisposed()) {
 			fControl.removeListener(SWT.Activate, this);
 			fControl.removeListener(SWT.Deactivate, this);
 		}
-		
+
 		// always deactivate rendering before disposing it.
 		fRendering.deactivated();
-		
+
 		fRendering.dispose();
 	}
-	
-	public boolean isDisposed()
-	{
+
+	@Override
+	public boolean isDisposed() {
 		return fIsDisposed;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#isEnabled()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#isEnabled()
 	 */
+	@Override
 	public boolean isEnabled() {
 		return fEnabled;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#setEnabled(boolean)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#setEnabled(
+	 * boolean)
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		fEnabled = enabled;
-		
+
 		if (fEnabled)
 			fRendering.becomesVisible();
 		else
@@ -161,67 +170,73 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#setTabLabel(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#setTabLabel
+	 * (java.lang.String)
 	 */
+	@Override
 	public void setTabLabel(String label) {
 		fTabItem.setText(label);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#getTabLabel()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#getTabLabel()
 	 */
+	@Override
 	public String getTabLabel() {
 		return fTabItem.getText();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#getRendering()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#getRendering()
 	 */
+	@Override
 	public IMemoryRendering getRendering() {
 		return fRendering;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse
+	 * .jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
-		
+
 		// make sure this runs on the UI thread, otherwise, it
 		// will get to a swt exception
-		
+
 		WorkbenchJob job = new WorkbenchJob("MemoryViewTab PropertyChanged") { //$NON-NLS-1$
 
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (isDisposed())
 					return Status.OK_STATUS;
-					
-				if (event.getSource() == fRendering)
-				{
-					if (event.getProperty().equals(IBasicPropertyConstants.P_TEXT))
-					{
+
+				if (event.getSource() == fRendering) {
+					if (event.getProperty().equals(IBasicPropertyConstants.P_TEXT)) {
 						Object value = event.getNewValue();
-						if (value != null && value instanceof String)
-						{
-							String label = (String)value;
+						if (value != null && value instanceof String) {
+							String label = (String) value;
 							setTabLabel(label);
-						}
-						else
-						{
+						} else {
 							setTabLabel(fRendering.getLabel());
 						}
 					}
-					
-					if (event.getProperty().equals(IBasicPropertyConstants.P_IMAGE))
-					{
+
+					if (event.getProperty().equals(IBasicPropertyConstants.P_IMAGE)) {
 						Object value = event.getNewValue();
-						if (value != null && value instanceof Image)
-						{
-							Image image = (Image)value;
+						if (value != null && value instanceof Image) {
+							Image image = (Image) value;
 							fTabItem.setImage(image);
-						}
-						else
-						{
+						} else {
 							fTabItem.setImage(fRendering.getImage());
 						}
 					}
@@ -232,23 +247,24 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 		job.setSystem(true);
 		job.schedule();
 	}
-	
-	private MemoryViewTab getInstance()
-	{
+
+	private MemoryViewTab getInstance() {
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.
+	 * Event)
 	 */
+	@Override
 	public void handleEvent(Event event) {
-		if (event.type == SWT.Activate)
-		{
+		if (event.type == SWT.Activate) {
 			fRendering.activated();
 			fContainer.setRenderingSelection(fRendering);
 		}
-		if (event.type == SWT.Deactivate)
-		{
+		if (event.type == SWT.Deactivate) {
 			fRendering.deactivated();
 		}
 	}

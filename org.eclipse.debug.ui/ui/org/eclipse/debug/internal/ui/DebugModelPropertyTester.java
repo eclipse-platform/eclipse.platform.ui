@@ -38,6 +38,7 @@ public class DebugModelPropertyTester extends PropertyTester {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.expressions.PropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
 	 */
+	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if (MODEL_TYPE_PROPERTY.equals(property)){
 			IDebugTarget target = null;

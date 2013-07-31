@@ -23,7 +23,8 @@ import org.eclipse.jface.window.Window;
  */
 public class PushHandler extends AbstractDataStackViewHandler {
 
-   protected void doExecute(DataStackView view, PDAThread thread, ISelection selection) throws ExecutionException {
+   @Override
+protected void doExecute(DataStackView view, PDAThread thread, ISelection selection) throws ExecutionException {
 		InputDialog dialog = new InputDialog(view.getSite().getShell(), "Specify Value", "Enter value to push", null, null); //$NON-NLS-1$ //$NON-NLS-2$
        if (dialog.open() == Window.OK) {
            try {

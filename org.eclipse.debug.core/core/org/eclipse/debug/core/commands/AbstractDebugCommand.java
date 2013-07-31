@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,25 +33,25 @@ import org.eclipse.debug.internal.core.DebugOptions;
  * @since 3.6
  */
 public abstract class AbstractDebugCommand implements IDebugCommandHandler {
-	
+
 	/**
 	 * Job to update enabled state of action.
 	 */
 	private class UpdateJob extends Job implements IJobChangeListener {
-		
+
 		/**
 		 * The request to update
 		 */
 		private IEnabledStateRequest request;
-		
+
 		/**
 		 * Whether this job has been run
 		 */
 		private boolean run = false;
-		
+
 		/**
 		 * Creates a new job to update the specified request
-		 * 
+		 *
 		 * @param stateRequest the {@link IEnabledStateRequest}
 		 */
 		UpdateJob(IEnabledStateRequest stateRequest) {
@@ -61,10 +61,11 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 			setRule(getEnabledStateSchedulingRule(request));
 			getJobManager().addJobChangeListener(this);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			run = true;
 			if (DebugOptions.DEBUG_COMMANDS) {
@@ -116,10 +117,11 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 			monitor.done();
 			return Status.OK_STATUS;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
 		 */
+		@Override
 		public boolean belongsTo(Object family) {
 			Object myFamily = getEnabledStateJobFamily(request);
 			if (myFamily != null) {
@@ -128,12 +130,15 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 			return false;
 		}
 
+		@Override
 		public void aboutToRun(IJobChangeEvent event) {
 		}
 
+		@Override
 		public void awake(IJobChangeEvent event) {
 		}
 
+		@Override
 		public void done(IJobChangeEvent event) {
 			if (event.getJob() == this) {
 				if (!run) {
@@ -147,17 +152,20 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 			}
 		}
 
+		@Override
 		public void running(IJobChangeEvent event) {
 		}
 
+		@Override
 		public void scheduled(IJobChangeEvent event) {
 		}
 
+		@Override
 		public void sleeping(IJobChangeEvent event) {
 		}
-				
+
 	}
-	
+
 	/**
 	 * Scheduling rule to serialize commands on an object
 	 */
@@ -171,18 +179,20 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 		 */
+		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
 		 */
+		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			if (rule instanceof SerialPerObjectRule) {
 				SerialPerObjectRule vup = (SerialPerObjectRule) rule;
@@ -192,12 +202,14 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 		}
 
 	}
-   
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.commands.IDebugCommandHandler#execute(org.eclipse.debug.core.commands.IDebugCommandRequest)
 	 */
+	@Override
 	public boolean execute(final IDebugCommandRequest request) {
 		Job job = new Job(getExecuteTaskName()) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				if (DebugOptions.DEBUG_COMMANDS) {
 					DebugOptions.trace("execute: " + AbstractDebugCommand.this); //$NON-NLS-1$
@@ -222,6 +234,7 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 				monitor.done();
 				return Status.OK_STATUS;
 			}
+			@Override
 			public boolean belongsTo(Object family) {
 				Object jobFamily = getExecuteJobFamily(request);
 				if (jobFamily != null) {
@@ -234,53 +247,54 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 		job.setRule(getExecuteSchedulingRule(request));
 		job.schedule();
 		return isRemainEnabled(request);
-	}	
-	
+	}
+
 	/**
 	 * Returns whether this command should remain enabled after starting execution of the specified request.
-	 * 
+	 *
 	 * @param request the request being executed
 	 * @return whether to remain enabled while executing the request
 	 */
 	protected boolean isRemainEnabled(IDebugCommandRequest request) {
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.commands.IDebugCommandHandler#canExecute(org.eclipse.debug.core.commands.IEnabledStateRequest)
 	 */
+	@Override
 	public void canExecute(final IEnabledStateRequest request) {
 		Job job = new UpdateJob(request);
 		job.schedule();
 	}
-	
+
 	/**
 	 * Returns the name to use for a job and progress monitor task names when performing
 	 * an {@link IEnabledStateRequest}.
-	 * 
+	 *
 	 * @return task name
 	 */
 	protected String getEnabledStateTaskName() {
 		// this is a system job name and does not need to be NLS'd
 		return "Check Debug Command"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Returns the name to use for jobs and progress monitor task names when executing
 	 * an {@link IDebugCommandRequest}.
-	 * 
+	 *
 	 * @return task name
 	 */
 	protected String getExecuteTaskName() {
 		// this is a system job name and does not need to be NLS'd
 		return "Execute Debug Command"; //$NON-NLS-1$
-	}	
+	}
 
 	/**
 	 * Executes this command synchronously on the specified targets, reporting progress. This method
 	 * is called by a job. If an exception is thrown, the calling job will set the associated status
 	 * on the request object. The calling job also calls #done() on the request object after this method
-	 * is called, and sets a cancel status on the progress monitor if the request is canceled. 
+	 * is called, and sets a cancel status on the progress monitor if the request is canceled.
 	 * <p>
 	 * Handlers must override this method.
 	 * </p>
@@ -296,7 +310,7 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 	 * is called by a job. If an exception is thrown, the calling job will set the associated status
 	 * on the request object and report that this command is not enabled. The calling job also calls #done()
 	 * on the request object after this method is called, and sets a cancel status on the progress monitor if
-	 * the request is canceled. Enabled state is set to <code>false</code> if the request is canceled. 
+	 * the request is canceled. Enabled state is set to <code>false</code> if the request is canceled.
 	 * <p>
 	 * Handlers must override this method.
 	 * </p>
@@ -307,7 +321,7 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 	 * @throws CoreException if a problem is encountered
 	 */
 	protected abstract boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request) throws CoreException;
-	
+
 	/**
 	 * Returns the appropriate target for this command handler for the given object.
 	 * This method is called to map each element in a command request to the target
@@ -317,23 +331,23 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 	 * <p>
 	 * Clients must override this method.
 	 * </p>
-	 * @param element element from a {@link IDebugCommandRequest} 
+	 * @param element element from a {@link IDebugCommandRequest}
 	 * @return associated target object for execution or enabled state update. Cannot return <code>null</code>.
 	 */
-	protected abstract Object getTarget(Object element); 
-	
+	protected abstract Object getTarget(Object element);
+
 	/**
 	 * Convenience method to return an adapter of the specified type for the given object or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @param element element to retrieve adapter for
 	 * @param type adapter type
 	 * @return adapter or <code>null</code>
 	 */
-	protected Object getAdapter(Object element, Class type) {
-    	return DebugPlugin.getAdapter(element, type);	
-	}	
-	
+	protected Object getAdapter(Object element, Class<?> type) {
+    	return DebugPlugin.getAdapter(element, type);
+	}
+
 	/**
 	 * Returns a scheduling rule for this command's {@link IEnabledStateRequest} update job
 	 * or <code>null</code> if none. By default a rule is created to serialize
@@ -347,7 +361,7 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 	protected ISchedulingRule getEnabledStateSchedulingRule(IDebugCommandRequest request) {
 		return new SerialPerObjectRule(request.getElements()[0]);
 	}
-	
+
 	/**
 	 * Returns a scheduling rule for this command's {@link IDebugCommandRequest} execute job
 	 * or <code>null</code> if none. By default, execution jobs have no scheduling rule.
@@ -360,7 +374,7 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 	protected ISchedulingRule getExecuteSchedulingRule(IDebugCommandRequest request) {
 		return null;
 	}
-	
+
 	/**
 	 * Returns the job family for the this command's {@link IEnabledStateRequest} update job
 	 * or <code>null</code> if none. The default implementation returns <code>null</code>.
@@ -372,8 +386,8 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 	 */
 	protected Object getEnabledStateJobFamily(IDebugCommandRequest request) {
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Returns the job family for the this command's {@link IDebugCommandRequest} execute job
 	 * or <code>null</code> if none. The default implementation returns <code>null</code>.
@@ -385,11 +399,11 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 	 */
 	protected Object getExecuteJobFamily(IDebugCommandRequest request) {
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Returns an array of objects with duplicates removed, if any.
-	 * 
+	 *
 	 * @param objects array of objects
 	 * @return array of object in same order with duplicates removed, if any.
 	 */
@@ -397,12 +411,12 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 		if (objects.length == 1) {
 			return objects;
 		} else {
-			LinkedHashSet set = new LinkedHashSet(objects.length);
+			LinkedHashSet<Object> set = new LinkedHashSet<Object>(objects.length);
 			for (int i = 0; i < objects.length; i++) {
 				set.add(objects[i]);
 			}
 			return set.toArray();
 		}
 	}
-	
+
 }

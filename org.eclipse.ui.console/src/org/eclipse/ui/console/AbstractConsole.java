@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,34 +29,35 @@ import org.eclipse.ui.internal.console.ConsoleMessages;
  * @since 3.0
  */
 public abstract class AbstractConsole implements IConsole {
-	
+
 	// property listeners
 	private ListenerList fListeners;
-	
+
 	/**
 	 * Console name
 	 */
 	private String fName = null;
-	
+
 	/**
 	 * Console image descriptor
 	 */
 	private ImageDescriptor fImageDescriptor = null;
-	
+
 	/**
 	 * Console type identifier
 	 */
 	private String fType = null;
-	
+
 	/**
 	 * Used to notify this console of lifecycle methods <code>init()</code>
 	 * and <code>dispose()</code>.
 	 */
 	class Lifecycle implements IConsoleListener {
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.console.IConsoleListener#consolesAdded(org.eclipse.ui.console.IConsole[])
 		 */
+		@Override
 		public void consolesAdded(IConsole[] consoles) {
 			for (int i = 0; i < consoles.length; i++) {
 				IConsole console = consoles[i];
@@ -70,6 +71,7 @@ public abstract class AbstractConsole implements IConsole {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.console.IConsoleListener#consolesRemoved(org.eclipse.ui.console.IConsole[])
 		 */
+		@Override
 		public void consolesRemoved(IConsole[] consoles) {
 			for (int i = 0; i < consoles.length; i++) {
 				IConsole console = consoles[i];
@@ -80,33 +82,35 @@ public abstract class AbstractConsole implements IConsole {
 			}
 		}
 	}
-	
+
 	/**
 	 * Notifies listeners of property changes, handling any exceptions
 	 */
 	class PropertyNotifier implements ISafeRunnable {
-		
+
 		private IPropertyChangeListener fListener;
 		private PropertyChangeEvent fEvent;
-		
+
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
+		@Override
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.INTERNAL_ERROR, ConsoleMessages.AbstractConsole_0, exception); 
+			IStatus status = new Status(IStatus.ERROR, ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.INTERNAL_ERROR, ConsoleMessages.AbstractConsole_0, exception);
 			ConsolePlugin.log(status);
 		}
 
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
+		@Override
 		public void run() throws Exception {
 			fListener.propertyChange(fEvent);
 		}
 
 		/**
 		 * Notifies listeners of the property change
-		 * 
+		 *
 		 * @param event the event that describes the property that has changed
 		 */
 		public void notify(PropertyChangeEvent event) {
@@ -118,14 +122,14 @@ public abstract class AbstractConsole implements IConsole {
 			for (int i= 0; i < copiedListeners.length; i++) {
 				fListener = (IPropertyChangeListener)copiedListeners[i];
                 SafeRunner.run(this);
-			}	
-			fListener = null;			
+			}
+			fListener = null;
 		}
-	}	
-	
+	}
+
 	/**
 	 * Constructs a new console with the given name and image.
-	 * 
+	 *
 	 * @param name console name, cannot be <code>null</code>
 	 * @param imageDescriptor image descriptor, or <code>null</code> if none
 	 * @param autoLifecycle whether this console's lifecycle methods should be called
@@ -137,10 +141,10 @@ public abstract class AbstractConsole implements IConsole {
 	public AbstractConsole(String name, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
 	    this(name, null, imageDescriptor, autoLifecycle);
 	}
-	
+
 	/**
 	 * Constructs a new console with the given name, type, image and lifecycle.
-	 * 
+	 *
 	 * @param name console name, cannot be <code>null</code>
 	 * @param type console type identifier or <code>null</code>
 	 * @param imageDescriptor image descriptor, or <code>null</code> if none
@@ -157,13 +161,13 @@ public abstract class AbstractConsole implements IConsole {
 		if (autoLifecycle) {
 		    ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(new Lifecycle());
 		}
-	}	
-	
+	}
+
 	/**
 	 * Constructs a new console with the given name and image. The console's lifecycle
 	 * methods <code>init()</code> and <code>dispose()</code> will be called when the
 	 * console is added and removed from the console manager.
-	 * 
+	 *
 	 * @param name console name, cannot be <code>null</code>
 	 * @param imageDescriptor image descriptor, or <code>null</code> if none
 	 */
@@ -174,6 +178,7 @@ public abstract class AbstractConsole implements IConsole {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsole#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -181,7 +186,7 @@ public abstract class AbstractConsole implements IConsole {
 	/**
 	 * Sets the name of this console to the specified value and notifies
 	 * property listeners of the change.
-	 * 
+	 *
 	 * @param name the new name
 	 */
 	protected void setName(String name) {
@@ -191,39 +196,42 @@ public abstract class AbstractConsole implements IConsole {
             firePropertyChange(this, IBasicPropertyConstants.P_TEXT, old, name);
         }
     }
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsole#getImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return fImageDescriptor;
 	}
-	
+
 	/**
 	 * Sets the image descriptor for this console to the specified value and notifies
 	 * property listeners of the change.
-	 * 
+	 *
 	 * @param imageDescriptor the new image descriptor
 	 */
 	protected void setImageDescriptor(ImageDescriptor imageDescriptor) {
 		ImageDescriptor old = fImageDescriptor;
 		fImageDescriptor =imageDescriptor;
 		firePropertyChange(this, IBasicPropertyConstants.P_IMAGE, old, imageDescriptor);
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsole#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
+	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		if (fListeners == null) {
 			fListeners = new ListenerList();
 		}
-		fListeners.add(listener);		
+		fListeners.add(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsole#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
+	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		if (fListeners != null) {
 			fListeners.remove(listener);
@@ -232,8 +240,8 @@ public abstract class AbstractConsole implements IConsole {
 
 	/**
 	 * Notify all listeners that the given property has changed.
-	 * 
-	 * @param source the object on which a property has changed 
+	 *
+	 * @param source the object on which a property has changed
 	 * @param property identifier of the property that has changed
 	 * @param oldValue the old value of the property, or <code>null</code>
 	 * @param newValue the new value of the property, or <code>null</code>
@@ -245,19 +253,19 @@ public abstract class AbstractConsole implements IConsole {
 		PropertyNotifier notifier = new PropertyNotifier();
 		notifier.notify(new PropertyChangeEvent(source, property, oldValue, newValue));
 	}
-	
+
 	/**
 	 * Initializes this console. This method should only be called by clients managing a
 	 * console's lifecycle, otherwise this method will be called automatically when this console
 	 * is added to the console manager. The method is called once to initialize this console,
 	 * marking the beginning of its lifecycle.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public final void initialize() {
 	    init();
 	}
-	
+
 	/**
 	 * Called when this console is added to the console manager. Default
 	 * implementation does nothing. Subclasses may override.
@@ -268,19 +276,19 @@ public abstract class AbstractConsole implements IConsole {
 	 */
 	protected void init() {
 	}
-	
+
 	/**
 	 * Disposes this console. This method should only be called by clients managing a
 	 * console's lifecycle, otherwise this method will be called automatically when this
 	 * console is removed from the console manager. The method is called once to dispose
-	 * this console, after which this console will no longer be used. 
-	 * 
+	 * this console, after which this console will no longer be used.
+	 *
 	 * @since 3.1
 	 */
 	public final void destroy() {
 	    dispose();
 	}
-	
+
 	/**
 	 * Called when this console is removed from the console manager. Default
 	 * implementation does nothing. Subclasses may override.
@@ -291,45 +299,46 @@ public abstract class AbstractConsole implements IConsole {
 	 */
 	protected void dispose() {
 	}
-	
+
 	/**
 	 * Shows this console in all console views. This console will be become visible
-	 * if another console is currently pinned. 
-	 * 
+	 * if another console is currently pinned.
+	 *
 	 * @since 3.1
 	 */
     public void activate() {
         ConsolePlugin.getDefault().getConsoleManager().showConsoleView(this);
     }
-    
+
     /**
      * Sets this console's type identifier.
-     * 
-     * @param typeIdentifier the type identifier for this console 
+     *
+     * @param typeIdentifier the type identifier for this console
      * @since 3.1
      */
     protected void setType(String typeIdentifier) {
         fType = typeIdentifier;
     }
-    
+
     /**
      * @see org.eclipse.ui.console.IConsole#getType()
      * @since 3.1
      */
-    public String getType() {
+    @Override
+	public String getType() {
         return fType;
     }
-    
+
     /**
      * Returns the help context identifier for this console, or <code>null</code>
      * if none. When a non-<code>null</code> value is returned the associated help
      * will be installed for this console.
-     * 
+     *
      * @return help context id or <code>null</code>
      * @since 3.2
      */
     public String getHelpContextId() {
     	return null;
     }
-    
+
 }

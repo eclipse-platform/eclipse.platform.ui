@@ -34,6 +34,7 @@ public class AddPDAMemoryBlockAction implements IActionDelegate2{
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
 		if (window != null) {
@@ -73,6 +74,7 @@ public class AddPDAMemoryBlockAction implements IActionDelegate2{
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		PDADebugTarget target = getTarget(selection);
 		action.setEnabled(target != null && !target.isTerminated());
@@ -81,18 +83,21 @@ public class AddPDAMemoryBlockAction implements IActionDelegate2{
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}

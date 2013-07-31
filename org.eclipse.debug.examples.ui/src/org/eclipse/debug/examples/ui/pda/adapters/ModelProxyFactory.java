@@ -20,6 +20,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 public class ModelProxyFactory implements IModelProxyFactory {
 
+	@Override
 	public IModelProxy createModelProxy(Object element, IPresentationContext context) {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			if (element instanceof PDADebugTarget){

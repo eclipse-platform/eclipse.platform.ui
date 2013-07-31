@@ -21,21 +21,27 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 
-public class ResetMemoryBlockPreferencePage extends FieldEditorPreferencePage{
-	
-	public ResetMemoryBlockPreferencePage()
-	{
+public class ResetMemoryBlockPreferencePage extends FieldEditorPreferencePage {
+
+	public ResetMemoryBlockPreferencePage() {
 		super(FieldEditorPreferencePage.GRID);
 		setPreferenceStore(DebugUITools.getPreferenceStore());
 		setTitle(DebugUIMessages.ResetMemoryBlockPreferencePage_0);
 	}
-	
 
+	@Override
 	protected void createFieldEditors() {
-		RadioGroupFieldEditor editor = new RadioGroupFieldEditor(IDebugPreferenceConstants.PREF_RESET_MEMORY_BLOCK, DebugUIMessages.ResetMemoryBlockPreferencePage_1, 1, new String[][] {{DebugUIMessages.ResetMemoryBlockPreferencePage_2, IDebugPreferenceConstants.RESET_VISIBLE},{DebugUIMessages.ResetMemoryBlockPreferencePage_3, IDebugPreferenceConstants.RESET_ALL}}, getFieldEditorParent());
+		RadioGroupFieldEditor editor = new RadioGroupFieldEditor(IDebugPreferenceConstants.PREF_RESET_MEMORY_BLOCK, DebugUIMessages.ResetMemoryBlockPreferencePage_1, 1, new String[][] {
+				{
+						DebugUIMessages.ResetMemoryBlockPreferencePage_2,
+						IDebugPreferenceConstants.RESET_VISIBLE },
+				{
+						DebugUIMessages.ResetMemoryBlockPreferencePage_3,
+						IDebugPreferenceConstants.RESET_ALL } }, getFieldEditorParent());
 		addField(editor);
 	}
-	
+
+	@Override
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".resetMemoryMonitor_preference_page_context"); //$NON-NLS-1$
 		return super.createContents(parent);

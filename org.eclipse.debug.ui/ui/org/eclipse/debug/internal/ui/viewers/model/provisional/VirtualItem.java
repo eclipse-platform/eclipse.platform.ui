@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.eclipse.core.runtime.Assert;
@@ -40,18 +41,20 @@ public class VirtualItem {
      * Index object of a tree item. It allows the indexes to be modified
      * as items are inserted and removed.
      */
-    public static class Index implements Comparable {
+	public static class Index implements Comparable<Object> {
         private Integer fIndexValue;
         
         public Index(int index) {
             fIndexValue = new Integer(index);
         }
         
-        public boolean equals(Object obj) {
+        @Override
+		public boolean equals(Object obj) {
             return obj instanceof Index && ((Index)obj).fIndexValue.equals(fIndexValue);
         }
         
-        public int hashCode() {
+        @Override
+		public int hashCode() {
             return fIndexValue.hashCode();
         }
         
@@ -67,11 +70,13 @@ public class VirtualItem {
             return fIndexValue.intValue();
         }
         
-        public int compareTo(Object obj) {
+        @Override
+		public int compareTo(Object obj) {
             return obj instanceof Index ? fIndexValue.compareTo(((Index)obj).fIndexValue) : 0; 
         }
         
-        public String toString() {
+        @Override
+		public String toString() {
             return fIndexValue.toString();
         }
     }
@@ -92,7 +97,7 @@ public class VirtualItem {
      * keeps the items sorted while allowing indexes (keys) to be modified as 
      * child items are inserted and removed.   
      */
-    private Map fItems = new TreeMap();
+	private Map<Index, VirtualItem> fItems = new TreeMap<Index, VirtualItem>();
     
     /**
      * Flag indicating whether this item has child items.
@@ -115,7 +120,7 @@ public class VirtualItem {
      * The data held by this item.  It includes the element as well as the item
      * display attributes. 
      */
-    private Map fData = new HashMap(1);
+	private Map<String, Object> fData = new HashMap<String, Object>(1);
 
     /**
      * Flag indicating that the item needs to have it's label updated.
@@ -153,7 +158,7 @@ public class VirtualItem {
      * @param index index of item to clear.
      */
     public void clear(Index index) {
-        VirtualItem item = (VirtualItem)fItems.remove(index);
+        VirtualItem item = fItems.remove(index);
         if (item != null) {
             item.dispose();
         }
@@ -166,8 +171,8 @@ public class VirtualItem {
      */
     public void clearAll() {
         fData.clear();
-        for (Iterator itr = fItems.values().iterator(); itr.hasNext();) {
-            ((VirtualItem)itr.next()).dispose();
+		for (VirtualItem item : fItems.values()) {
+			item.dispose();
         }
         fItems.clear();
     }
@@ -192,11 +197,10 @@ public class VirtualItem {
      * @return Item if found, <code>null</code> if not.
      */
     public VirtualItem findItem(Object element) {
-        for (Iterator itr = fItems.values().iterator(); itr.hasNext();) {
-            VirtualItem next = (VirtualItem)itr.next();
-            Object nextData = next.getData();
+		for (VirtualItem item : fItems.values()) {
+			Object nextData = item.getData();
             if ( (element != null && element.equals(nextData)) || (element == null && nextData == null) ) {
-                return next;
+				return item;
             }
         }
         return null;
@@ -334,8 +338,8 @@ public class VirtualItem {
 
         // If collapsed, make sure that all the children are collapsed as well.
         if (!fExpanded) {
-            for (Iterator itr = fItems.values().iterator(); itr.hasNext();) {
-                ((VirtualItem)itr.next()).setExpanded(expanded);
+			for (VirtualItem item : fItems.values()) {
+				item.setExpanded(expanded);
             }
         }
     }
@@ -375,11 +379,11 @@ public class VirtualItem {
      */
     public void setItemCount(int count) {
         fItemCount = count;
-        for (Iterator itr = fItems.entrySet().iterator(); itr.hasNext();) {
-            Map.Entry entry = (Map.Entry)itr.next();
-            int index = ((Index)entry.getKey()).intValue();
+		for (Iterator<Entry<Index, VirtualItem>> itr = fItems.entrySet().iterator(); itr.hasNext();) {
+			Entry<Index, VirtualItem> entry = itr.next();
+            int index = entry.getKey().intValue();
             if (index >= count) {
-                VirtualItem item = (VirtualItem)entry.getValue(); 
+                VirtualItem item = entry.getValue(); 
                 item.dispose();
                 itr.remove();
             }
@@ -414,7 +418,7 @@ public class VirtualItem {
     public VirtualItem getItem(Index index) {
         ensureItems();
         
-        VirtualItem item = (VirtualItem)fItems.get(index); 
+        VirtualItem item = fItems.get(index); 
         if (item == null) {
             item = new VirtualItem(this, index);
             fItems.put(index, item);
@@ -432,8 +436,7 @@ public class VirtualItem {
         if (fItems == null || fItems.size() != fItemCount) {
             return true;
         }
-        for (Iterator itr = fItems.values().iterator(); itr.hasNext();) {
-            VirtualItem child = (VirtualItem)itr.next();
+		for (VirtualItem child : fItems.values()) {
             if (child.needsDataUpdate()) {
                 return true;
             }
@@ -449,7 +452,7 @@ public class VirtualItem {
      * @return Child items array.
      */
     public VirtualItem[] getItems() {
-        return (VirtualItem[]) fItems.values().toArray(new VirtualItem[fItems.size()]);
+        return fItems.values().toArray(new VirtualItem[fItems.size()]);
     }
     
     /**
@@ -468,8 +471,7 @@ public class VirtualItem {
         // Increment all items with an index higher than the given position.
         fItemCount++;
         ensureItems();
-        for (Iterator itr = fItems.keySet().iterator(); itr.hasNext();) {
-            Index childIndex = (Index)itr.next();
+		for (Index childIndex : fItems.keySet()) {
             if (childIndex.intValue() >= position) {
                 childIndex.increment();
             }
@@ -496,13 +498,13 @@ public class VirtualItem {
         ensureItems();
 
         VirtualItem removedItem = null;
-        for (Iterator itr = fItems.entrySet().iterator(); itr.hasNext();) {
-            Map.Entry entry = (Map.Entry)itr.next();
-            Index childIndex = (Index)entry.getKey();
+		for (Iterator<Entry<Index, VirtualItem>> itr = fItems.entrySet().iterator(); itr.hasNext();) {
+			Entry<Index, VirtualItem> entry = itr.next();
+            Index childIndex = entry.getKey();
             if (childIndex.intValue() > position.intValue()) {
                 childIndex.decrement();
             } else if (childIndex.intValue() == position.intValue()) {
-                removedItem = (VirtualItem)entry.getValue();
+                removedItem = entry.getValue();
                 removedItem.dispose();
                 itr.remove();
             }
@@ -511,7 +513,7 @@ public class VirtualItem {
     
     private void ensureItems() {
         if (fItems == null) {
-            fItems = new HashMap( Math.max(1, Math.min(fItemCount, 16)) );
+			fItems = new HashMap<Index, VirtualItem>(Math.max(1, Math.min(fItemCount, 16)));
         }
     }
     
@@ -523,7 +525,8 @@ public class VirtualItem {
         return (VirtualTree)item;
     }
     
-    public String toString() {
+    @Override
+	public String toString() {
         StringBuffer buffer = new StringBuffer();
         toStringItem(buffer, IInternalDebugCoreConstants.EMPTY_STRING);
         return buffer.toString();
@@ -535,7 +538,7 @@ public class VirtualItem {
         buffer.append("\n"); //$NON-NLS-1$
         indent = indent + "  "; //$NON-NLS-1$
         for (int i = 0; i < fItemCount; i++) {
-            VirtualItem item = (VirtualItem)fItems.get(new Index(i));
+            VirtualItem item = fItems.get(new Index(i));
             if (item != null) {
                 item.toStringItem(buffer, indent);
             } else {

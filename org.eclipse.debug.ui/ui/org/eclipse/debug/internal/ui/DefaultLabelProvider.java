@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui;
 
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
@@ -61,11 +60,12 @@ public class DefaultLabelProvider implements ILabelProvider {
 	/**
 	 * Maps image descriptors to images.
 	 */
-	private Map fImages = new HashMap();
+	private Map<ImageDescriptor, Image> fImages = new HashMap<ImageDescriptor, Image>();
 
 	/**
 	 * @see ILabelProvider#getImage(Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		String key= getImageKey(element);
 		if (key == null && element instanceof ILaunch) {
@@ -95,7 +95,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 	 * @return image or <code>null</code>
 	 */
 	private Image getImage(ImageDescriptor descriptor) {
-		Image image = (Image) fImages.get(descriptor);
+		Image image = fImages.get(descriptor);
 		if (image != null) {
 			return image;
 		}
@@ -197,6 +197,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 	/**
 	 * @see ILabelProvider#getText(Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		StringBuffer label= new StringBuffer();
 		try {
@@ -254,7 +255,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 					if (element instanceof IProcess) {
 						IProcess process = (IProcess)element;
 						int exit = process.getExitValue();
-						terminatedMessage= MessageFormat.format(DebugUIMessages.DefaultLabelProvider_16, new String[]{new Integer(exit).toString()}); 
+						terminatedMessage = MessageFormat.format(DebugUIMessages.DefaultLabelProvider_16, new Object[] { new Integer(exit).toString() });
 					} else {
 						terminatedMessage= DebugUIMessages.DefaultLabelProvider_1; 
 					}
@@ -287,7 +288,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 		if (breakpoint instanceof ILineBreakpoint) {
 			try {
 				int lineNumber = ((ILineBreakpoint)breakpoint).getLineNumber();
-				label.append(MessageFormat.format(DebugUIMessages.DefaultLabelProvider_17, new String[]{Integer.toString(lineNumber)})); 
+				label.append(MessageFormat.format(DebugUIMessages.DefaultLabelProvider_17, new Object[] { Integer.toString(lineNumber) }));
 			} catch (CoreException e) {
 			}
 		}
@@ -475,16 +476,16 @@ public class DefaultLabelProvider implements ILabelProvider {
 	/**
 	 * @see IBaseLabelProvider#addListener(ILabelProviderListener)
 	 */
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 	}
 
 	/**
 	 * @see IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
-		Iterator iterator = fImages.values().iterator();
-		while (iterator.hasNext()) {
-			Image image = (Image) iterator.next();
+		for (Image image : fImages.values()) {
 			image.dispose();
 		}
 		fImages.clear();
@@ -493,6 +494,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 	/**
 	 * @see IBaseLabelProvider#isLabelProperty(Object, String)
 	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
@@ -500,6 +502,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 	/**
 	 * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
 	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 	}
 	

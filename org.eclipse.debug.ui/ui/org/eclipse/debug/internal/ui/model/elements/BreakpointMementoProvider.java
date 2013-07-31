@@ -47,6 +47,7 @@ public class BreakpointMementoProvider extends ElementMementoProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementMementoProvider#encodeElement(java.lang.Object, org.eclipse.ui.IMemento, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */
+	@Override
 	protected boolean encodeElement(Object element, IMemento memento, IPresentationContext context) throws CoreException {
 		if (element instanceof IBreakpoint) {
 			
@@ -69,6 +70,7 @@ public class BreakpointMementoProvider extends ElementMementoProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementMementoProvider#isEqual(java.lang.Object, org.eclipse.ui.IMemento, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */
+	@Override
 	protected boolean isEqual(Object element, IMemento memento, IPresentationContext context) throws CoreException {
 		if (element instanceof IBreakpoint) {
 			IBreakpoint breakpoint =(IBreakpoint)element; 

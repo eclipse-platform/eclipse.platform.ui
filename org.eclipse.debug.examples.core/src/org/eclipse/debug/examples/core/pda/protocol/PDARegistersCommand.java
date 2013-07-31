@@ -28,7 +28,8 @@ public class PDARegistersCommand extends PDACommand {
     }
     
 
-    public PDACommandResult createResult(String resultText) {
+    @Override
+	public PDACommandResult createResult(String resultText) {
         return new PDARegistersCommandResult(resultText);
     }
 }

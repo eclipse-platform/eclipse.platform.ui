@@ -35,13 +35,15 @@ public class BreakpointsExpandAllAction implements IViewActionDelegate, IActionD
     private IAction fAction;
 	private BreakpointsView fView;
 
-    public void init(IAction action) {
+    @Override
+	public void init(IAction action) {
         fAction = action;
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		fView = (BreakpointsView) view;
 		IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)fView.getViewer();
@@ -51,13 +53,15 @@ public class BreakpointsExpandAllAction implements IViewActionDelegate, IActionD
 		}
 	}
 
-    public void runWithEvent(IAction action, Event event) {
+    @Override
+	public void runWithEvent(IAction action, Event event) {
         run(action);   
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 	    fView.expandAllElementsInViewer();
 	}
@@ -65,11 +69,13 @@ public class BreakpointsExpandAllAction implements IViewActionDelegate, IActionD
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
 
-    public void dispose() {
+    @Override
+	public void dispose() {
         ITreeModelViewer viewer = (ITreeModelViewer)fView.getViewer();
         if (viewer != null) {
             viewer.removeViewerUpdateListener(this);
@@ -77,16 +83,20 @@ public class BreakpointsExpandAllAction implements IViewActionDelegate, IActionD
         }
     }
 
-    public void viewerUpdatesBegin() {
+    @Override
+	public void viewerUpdatesBegin() {
     }
 
-    public void viewerUpdatesComplete() {
+    @Override
+	public void viewerUpdatesComplete() {
     }
 
-    public void updateStarted(IViewerUpdate update) {
+    @Override
+	public void updateStarted(IViewerUpdate update) {
     }
     
-    public void updateComplete(IViewerUpdate update) {
+    @Override
+	public void updateComplete(IViewerUpdate update) {
           if (!update.isCanceled()) {
               if (TreePath.EMPTY.equals(update.getElementPath())) {
                   update();
@@ -101,7 +111,8 @@ public class BreakpointsExpandAllAction implements IViewActionDelegate, IActionD
         }
     }
     
-    public void modelChanged(IModelDelta delta, IModelProxy proxy) {
+    @Override
+	public void modelChanged(IModelDelta delta, IModelProxy proxy) {
         update();
     }
 }

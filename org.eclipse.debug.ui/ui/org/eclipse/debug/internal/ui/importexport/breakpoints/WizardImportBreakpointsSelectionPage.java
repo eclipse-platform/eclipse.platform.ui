@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sebastian Schmidt and others.
+ * Copyright (c) 2012, 2013 Sebastian Schmidt and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Sebastian Schmidt - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.importexport.breakpoints;
 
@@ -14,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.core.BreakpointManager;
@@ -50,6 +52,7 @@ public class WizardImportBreakpointsSelectionPage extends WizardPage {
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		setDescription(ImportExportMessages.WizardImportBreakpointsSelectionPage_1);
 		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
@@ -61,14 +64,14 @@ public class WizardImportBreakpointsSelectionPage extends WizardPage {
 		setControl(composite);
 	}
 
-	public List getSelectedMarkers() {
+	public List<IMarker> getSelectedMarkers() {
 		if(!fIsVisible) {
 			return null;
 		}
-		List markers = new ArrayList();
-		List breakpoints = fTView.getCheckedElements().toList();
+		List<IMarker> markers = new ArrayList<IMarker>();
+		List<IBreakpoint> breakpoints = fTView.getCheckedElements().toList();
 		for(int i = 0; i < breakpoints.size(); i++) {
-			markers.add(((IBreakpoint) breakpoints.get(i)).getMarker());
+			markers.add(breakpoints.get(i).getMarker());
 		}
 		return markers;
 	}
@@ -77,6 +80,7 @@ public class WizardImportBreakpointsSelectionPage extends WizardPage {
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
 			fIsVisible = true;
@@ -94,6 +98,7 @@ public class WizardImportBreakpointsSelectionPage extends WizardPage {
 
 	private void updateBreakpointsPreviewList(final EmbeddedBreakpointsViewer currentTView) throws InvocationTargetException, InterruptedException {
 		getContainer().run(false, true, new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				WizardImportBreakpointsPage mainPage = (WizardImportBreakpointsPage) getWizard().getPage(
 						ImportExportMessages.WizardImportBreakpoints_0);
@@ -114,6 +119,7 @@ public class WizardImportBreakpointsSelectionPage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_WIZBAN_IMPORT_BREAKPOINTS);
 	}

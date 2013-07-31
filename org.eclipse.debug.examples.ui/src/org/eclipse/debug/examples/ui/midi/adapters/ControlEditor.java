@@ -27,6 +27,7 @@ public class ControlEditor implements IElementEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellEditor(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String, java.lang.Object, org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
 		return new TextCellEditor(parent);
 	}
@@ -34,6 +35,7 @@ public class ControlEditor implements IElementEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellModifier(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
 	 */
+	@Override
 	public ICellModifier getCellModifier(IPresentationContext context, Object element) {
 		return new ControlCellModifier();
 	}

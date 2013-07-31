@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,35 +28,43 @@ public class ResumeCommandAction extends DebugCommandAction{
 		setActionDefinitionId("org.eclipse.debug.ui.commands.Resume"); //$NON-NLS-1$
 	}
 
-    public String getText() {
+    @Override
+	public String getText() {
         return ActionMessages.ResumeAction_0;
     }
 
-    public String getHelpContextId() {
+    @Override
+	public String getHelpContextId() {
         return "org.eclipse.debug.ui.resume_action_context"; //$NON-NLS-1$
     }
 
-    public String getId() {
+    @Override
+	public String getId() {
         return "org.eclipse.debug.ui.debugview.toolbar.resume"; //$NON-NLS-1$
     }
 
-    public String getToolTipText() {
+    @Override
+	public String getToolTipText() {
         return ActionMessages.ResumeAction_3;
     }
 
-    public ImageDescriptor getDisabledImageDescriptor() {
+    @Override
+	public ImageDescriptor getDisabledImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RESUME);
     }
 
-    public ImageDescriptor getHoverImageDescriptor() {
+    @Override
+	public ImageDescriptor getHoverImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RESUME);
     }
 
-    public ImageDescriptor getImageDescriptor() {
+    @Override
+	public ImageDescriptor getImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RESUME);
     }
 
-	protected Class getCommandType() {
+	@Override
+	protected Class<IResumeHandler> getCommandType() {
 		return IResumeHandler.class;
 	}
 }

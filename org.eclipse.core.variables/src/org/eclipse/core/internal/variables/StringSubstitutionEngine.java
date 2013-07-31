@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -12,9 +12,9 @@ package org.eclipse.core.internal.variables;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -28,52 +28,52 @@ import org.eclipse.osgi.util.NLS;
  * Performs string substitution for context and value variables.
  */
 public class StringSubstitutionEngine {
-	
+
 	// delimiters
 	private static final String VARIABLE_START = "${"; //$NON-NLS-1$
-	private static final char VARIABLE_END = '}'; 
-	private static final char VARIABLE_ARG = ':'; 
+	private static final char VARIABLE_END = '}';
+	private static final char VARIABLE_ARG = ':';
 	// parsing states
 	private static final int SCAN_FOR_START = 0;
 	private static final int SCAN_FOR_END = 1;
-	
+
 	/**
 	 * Resulting string
 	 */
 	private StringBuffer fResult;
-	
+
 	/**
 	 * Whether substitutions were performed
 	 */
 	private boolean fSubs;
-	
+
 	/**
 	 * Stack of variables to resolve
 	 */
-	private Stack fStack;
-	
+	private Stack<VariableReference> fStack;
+
 	class VariableReference {
-		
+
 		// the text inside the variable reference
 		private StringBuffer fText;
-		
+
 		public VariableReference() {
 			fText = new StringBuffer();
 		}
-		
+
 		public void append(String text) {
 			fText.append(text);
 		}
-		
+
 		public String getText() {
 			return fText.toString();
 		}
-	
+
 	}
-	
+
 	/**
 	 * Performs recursive string substitution and returns the resulting string.
-	 * 
+	 *
 	 * @param expression expression to resolve
 	 * @param reportUndefinedVariables whether to report undefined variables as an error
 	 * @param resolveVariables if the variables should be resolved during the substitution
@@ -85,34 +85,31 @@ public class StringSubstitutionEngine {
 	 */
 	public String performStringSubstitution(String expression, boolean reportUndefinedVariables, boolean resolveVariables, IStringVariableManager manager) throws CoreException {
 		substitute(expression, reportUndefinedVariables, resolveVariables, manager);
-		List resolvedVariableSets = new ArrayList();
+		List<HashSet<String>> resolvedVariableSets = new ArrayList<HashSet<String>>();
 		while (fSubs) {
-			HashSet resolved = substitute(fResult.toString(), reportUndefinedVariables, true, manager);			
-			
+			HashSet<String> resolved = substitute(fResult.toString(), reportUndefinedVariables, true, manager);
 			for(int i=resolvedVariableSets.size()-1; i>=0; i--) {
-				
-				HashSet prevSet = (HashSet)resolvedVariableSets.get(i);
-
+				HashSet<String> prevSet = resolvedVariableSets.get(i);
 				if (prevSet.equals(resolved)) {
-					HashSet conflictingSet = new HashSet();
-					for (; i<resolvedVariableSets.size(); i++)
-						conflictingSet.addAll((HashSet)resolvedVariableSets.get(i));
-					
+					HashSet<String> conflictingSet = new HashSet<String>();
+					for (; i<resolvedVariableSets.size(); i++) {
+						conflictingSet.addAll(resolvedVariableSets.get(i));
+					}
 					StringBuffer problemVariableList = new StringBuffer();
-					for (Iterator it=conflictingSet.iterator(); it.hasNext(); ) {
-						problemVariableList.append(it.next().toString());
+					for (String string : conflictingSet) {
+						problemVariableList.append(string);
 						problemVariableList.append(", "); //$NON-NLS-1$
 					}
 					problemVariableList.setLength(problemVariableList.length()-2); //truncate the last ", "
-					throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.REFERENCE_CYCLE_ERROR, NLS.bind(VariablesMessages.StringSubstitutionEngine_4, new String[]{problemVariableList.toString()}), null)); 
-				}				
-			}		
-			
-			resolvedVariableSets.add(resolved);			
+					throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.REFERENCE_CYCLE_ERROR, NLS.bind(VariablesMessages.StringSubstitutionEngine_4, new String[]{problemVariableList.toString()}), null));
+				}
+			}
+
+			resolvedVariableSets.add(resolved);
 		}
 		return fResult.toString();
 	}
-	
+
 	/**
 	 * Performs recursive string validation to ensure that all of the variables
 	 * contained in the expression exist
@@ -124,11 +121,11 @@ public class StringSubstitutionEngine {
 	public void validateStringVariables(String expression, IStringVariableManager manager) throws CoreException {
 		performStringSubstitution(expression, true, false, manager);
 	}
-	
+
 	/**
 	 * Makes a substitution pass of the given expression returns a Set of the variables that were resolved in this
 	 *  pass
-	 *  
+	 *
 	 * @param expression source expression
 	 * @param reportUndefinedVariables whether to report undefined variables as an error
 	 * @param resolveVariables whether to resolve the value of any variables
@@ -136,12 +133,12 @@ public class StringSubstitutionEngine {
 	 * @return the set of {@link String}s resolved from the given expression
 	 * @exception CoreException if unable to resolve a variable
 	 */
-	private HashSet substitute(String expression, boolean reportUndefinedVariables, boolean resolveVariables, IStringVariableManager manager) throws CoreException {
+	private HashSet<String> substitute(String expression, boolean reportUndefinedVariables, boolean resolveVariables, IStringVariableManager manager) throws CoreException {
 		fResult = new StringBuffer(expression.length());
-		fStack = new Stack();
+		fStack = new Stack<VariableReference>();
 		fSubs = false;
-		
-		HashSet resolvedVariables = new HashSet();
+
+		HashSet<String> resolvedVariables = new HashSet<String>();
 
 		int pos = 0;
 		int state = SCAN_FOR_START;
@@ -158,7 +155,7 @@ public class StringSubstitutionEngine {
 						pos = start + 2;
 						state = SCAN_FOR_END;
 
-						fStack.push(new VariableReference());						
+						fStack.push(new VariableReference());
 					} else {
 						// done - no more variables
 						fResult.append(expression.substring(pos));
@@ -171,7 +168,7 @@ public class StringSubstitutionEngine {
 					int end = expression.indexOf(VARIABLE_END, pos);
 					if (end < 0) {
 						// variables are not completed
-						VariableReference tos = (VariableReference)fStack.peek();
+						VariableReference tos = fStack.peek();
 						tos.append(expression.substring(pos));
 						pos = expression.length();
 					} else {
@@ -179,18 +176,18 @@ public class StringSubstitutionEngine {
 							// start of a nested variable
 							int length = start - pos;
 							if (length > 0) {
-								VariableReference tos = (VariableReference)fStack.peek();
+								VariableReference tos = fStack.peek();
 								tos.append(expression.substring(pos, start));
 							}
 							pos = start + 2;
-							fStack.push(new VariableReference());	
+							fStack.push(new VariableReference());
 						} else {
 							// end of variable reference
-							VariableReference tos = (VariableReference)fStack.pop();
-							String substring = expression.substring(pos, end);							
+							VariableReference tos = fStack.pop();
+							String substring = expression.substring(pos, end);
 							tos.append(substring);
 							resolvedVariables.add(substring);
-							
+
 							pos = end + 1;
 							String value= resolve(tos, reportUndefinedVariables, resolveVariables, manager);
 							if (value == null) {
@@ -202,35 +199,37 @@ public class StringSubstitutionEngine {
 								state = SCAN_FOR_START;
 							} else {
 								// append to previous variable
-								tos = (VariableReference)fStack.peek();
+								tos = fStack.peek();
 								tos.append(value);
 							}
 						}
 					}
 					break;
+				default:
+					break;
 			}
 		}
 		// process incomplete variable references
 		while (!fStack.isEmpty()) {
-			VariableReference tos = (VariableReference)fStack.pop();
+			VariableReference tos = fStack.pop();
 			if (fStack.isEmpty()) {
 				fResult.append(VARIABLE_START);
 				fResult.append(tos.getText());
 			} else {
-				VariableReference var = (VariableReference)fStack.peek();
+				VariableReference var = fStack.peek();
 				var.append(VARIABLE_START);
 				var.append(tos.getText());
 			}
 		}
-		
+
 
 		return resolvedVariables;
 	}
 
 	/**
 	 * Resolve and return the value of the given variable reference,
-	 * possibly <code>null</code>. 
-	 * 
+	 * possibly <code>null</code>.
+	 *
 	 * @param var the {@link VariableReference} to try and resolve
 	 * @param reportUndefinedVariables whether to report undefined variables as
 	 *  an error
@@ -249,7 +248,7 @@ public class StringSubstitutionEngine {
 			pos++;
 			if (pos < text.length()) {
 				arg = text.substring(pos);
-			} 
+			}
 		} else {
 			name = text;
 		}
@@ -259,30 +258,30 @@ public class StringSubstitutionEngine {
 			if (dynamicVariable == null) {
 				// no variables with the given name
 				if (reportUndefinedVariables) {
-					throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, NLS.bind(VariablesMessages.StringSubstitutionEngine_3, new String[]{name}), null)); 
-				} 
+					throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, NLS.bind(VariablesMessages.StringSubstitutionEngine_3, new String[]{name}), null));
+				}
 				// leave as is
 				return getOriginalVarText(var);
-			} 
-			
+			}
+
 			if (resolveVariables) {
 				fSubs = true;
 				return dynamicVariable.getValue(arg);
-			} 
+			}
 			//leave as is
 			return getOriginalVarText(var);
-		} 
-		
+		}
+
 		if (arg == null) {
 			if (resolveVariables) {
 				fSubs = true;
 				return valueVariable.getValue();
-			} 
+			}
 			//leave as is
 			return getOriginalVarText(var);
-		} 
+		}
 		// error - an argument specified for a value variable
-		throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, NLS.bind(VariablesMessages.StringSubstitutionEngine_4, new String[]{valueVariable.getName()}), null)); 
+		throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, NLS.bind(VariablesMessages.StringSubstitutionEngine_4, new String[]{valueVariable.getName()}), null));
 	}
 
 	private String getOriginalVarText(VariableReference var) {

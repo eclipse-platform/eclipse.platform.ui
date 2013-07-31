@@ -54,6 +54,7 @@ public class ShowTargetBreakpointsAction extends Action {
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		if (fView.getViewer().getControl().isDisposed()) {
 			return;

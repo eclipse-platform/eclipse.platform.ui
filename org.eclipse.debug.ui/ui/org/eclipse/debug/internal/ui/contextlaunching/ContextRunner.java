@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,6 @@ import com.ibm.icu.text.MessageFormat;
  * @see org.eclipse.debug.ui.actions.ContextualLaunchAction
  * 
  *  @since 3.3
- *  CONTEXTLAUNCHING
  */
 public final class ContextRunner {
 	
@@ -113,7 +112,7 @@ public final class ContextRunner {
 		if(group != null) {			
 			LaunchConfigurationManager lcm = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 			String mode = group.getMode();
-			List shortcuts = fLRM.getShortcutsForSelection(selection, mode);
+			List<LaunchShortcutExtension> shortcuts = fLRM.getShortcutsForSelection(selection, mode);
 		// allow the shortcut to translate/provide the resource for the launch
 			IResource overrideResource = fLRM.getLaunchableResource(shortcuts, selection);
 			if(overrideResource != null) {
@@ -127,15 +126,15 @@ public final class ContextRunner {
 				return;
 			}
 		//get the configurations from the resource and participants	
-			List configs = fLRM.getParticipatingLaunchConfigurations(selection, resource, shortcuts, mode);
+			List<ILaunchConfiguration> configs = fLRM.getParticipatingLaunchConfigurations(selection, resource, shortcuts, mode);
 			int csize = configs.size();
 			if(csize == 1) {
-				launch((ILaunchConfiguration) configs.get(0), mode);
+				launch(configs.get(0), mode);
 			}
 			else if(csize < 1) {
 				int esize = shortcuts.size();
 				if(esize == 1) {
-					launchShortcut(selection, (LaunchShortcutExtension) shortcuts.get(0), mode);
+					launchShortcut(selection, shortcuts.get(0), mode);
 				}
 				else if(esize > 1) {
 					showShortcutSelectionDialog(resource, shortcuts, mode, selection);
@@ -154,7 +153,7 @@ public final class ContextRunner {
 							else {
 								String msg = ContextMessages.ContextRunner_7;
 								if(!resource.isAccessible()) {
-									msg = MessageFormat.format(ContextMessages.ContextRunner_13, new String[] {resource.getName()});
+									msg = MessageFormat.format(ContextMessages.ContextRunner_13, new Object[] { resource.getName() });
 								}
 								MessageDialog.openInformation(DebugUIPlugin.getShell(), ContextMessages.ContextRunner_0, msg);
 							}
@@ -229,8 +228,9 @@ public final class ContextRunner {
 					} else {
 						String label = launchMode.getLabel();
 						String modeLabel = DebugUIPlugin.removeAccelerators(label);
-						MessageDialog.openInformation(DebugUIPlugin.getShell(), MessageFormat.format(ContextMessages.ContextRunner_1, new String[]{modeLabel}),
-								MessageFormat.format(ContextMessages.ContextRunner_3, new String[]{configuration.getName(), modeLabel.toLowerCase()}));
+						MessageDialog.openInformation(DebugUIPlugin.getShell(), MessageFormat.format(ContextMessages.ContextRunner_1, new Object[] { modeLabel }), MessageFormat.format(ContextMessages.ContextRunner_3, new Object[] {
+								configuration.getName(),
+								modeLabel.toLowerCase() }));
 					}
 					return false;
 				}
@@ -249,7 +249,7 @@ public final class ContextRunner {
 	 * @param configurations the listing of applicable configurations to present
 	 * @param mode the mode
 	 */
-	protected void showConfigurationSelectionDialog(List configurations, String mode) {
+	protected void showConfigurationSelectionDialog(List<ILaunchConfiguration> configurations, String mode) {
 		LaunchConfigurationSelectionDialog lsd = new LaunchConfigurationSelectionDialog(DebugUIPlugin.getShell(), configurations);
 		if(lsd.open() == IDialogConstants.OK_ID) {
 			ILaunchConfiguration config = (ILaunchConfiguration) lsd.getResult()[0];
@@ -266,7 +266,7 @@ public final class ContextRunner {
 	 * @param mode the mode
 	 * @param selection the current selection
 	 */
-	protected void showShortcutSelectionDialog(IResource resource, List shortcuts, String mode, IStructuredSelection selection) {
+	protected void showShortcutSelectionDialog(IResource resource, List<LaunchShortcutExtension> shortcuts, String mode, IStructuredSelection selection) {
 		LaunchShortcutSelectionDialog dialog = new LaunchShortcutSelectionDialog(shortcuts, resource, mode);
 		if (dialog.open() == Window.OK) {
 			Object[] result = dialog.getResult();

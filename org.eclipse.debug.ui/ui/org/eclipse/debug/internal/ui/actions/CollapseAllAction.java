@@ -37,10 +37,12 @@ public class CollapseAllAction extends Action implements IUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		fViewer.collapseAll();
 	}
 
+	@Override
 	public void update() {
 	    setEnabled( fViewer.getInput() != null && fViewer.getChildCount(TreePath.EMPTY) > 0 );
 	}

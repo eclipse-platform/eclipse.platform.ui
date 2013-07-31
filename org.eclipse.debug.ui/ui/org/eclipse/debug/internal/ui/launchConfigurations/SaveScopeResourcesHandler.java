@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,6 +86,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getContentProvider()
 		 */
+		@Override
 		protected IContentProvider getContentProvider() {
 			return fContentProvider;
 		}
@@ -93,6 +94,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
 		 */
+		@Override
 		protected IBaseLabelProvider getLabelProvider() {
 			return fLabelProvider;
 		}
@@ -100,6 +102,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 		 */
+		@Override
 		protected String getDialogSettingsId() {
 			return SETTINGS_ID;
 		}
@@ -107,6 +110,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
 		 */
+		@Override
 		protected String getHelpContextId() {
 			return IDebugHelpContextIds.SELECT_RESOURCES_TO_SAVE_DIALOG;
 		}
@@ -114,6 +118,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
 		 */
+		@Override
 		protected Object getViewerInput() {
 			return fInput;
 		}
@@ -121,6 +126,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
 		 */
+		@Override
 		protected String getViewerLabel() {
 			return LaunchConfigurationsMessages.SaveScopeResourcesHandler_2;
 		}
@@ -128,11 +134,13 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#addCustomFooterControls(org.eclipse.swt.widgets.Composite)
 		 */
+		@Override
 		protected void addCustomFooterControls(Composite parent) {
 			super.addCustomFooterControls(parent);
 			fSavePref = new Button(parent, SWT.CHECK);
 			fSavePref.setText(LaunchConfigurationsMessages.SaveScopeResourcesHandler_1);
 			fSavePref.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					getCheckBoxTableViewer().setAllChecked(fSavePref.getSelection());
 				}
@@ -142,6 +150,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#okPressed()
 		 */
+		@Override
 		protected void okPressed() {
 			IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 			String val = (fSavePref.getSelection() ? MessageDialogWithToggle.ALWAYS : MessageDialogWithToggle.PROMPT);
@@ -152,6 +161,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
 		 */
+		@Override
 		protected void addViewerListeners(StructuredViewer viewer) {
 			// Override to remove listener that affects the ok button
 		}
@@ -159,6 +169,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog#isValid()
 		 */
+		@Override
 		protected boolean isValid() {
 			return true;
 		}
@@ -175,6 +186,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 	 * 
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
+	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		// retrieve config and projects
 		ILaunchConfiguration config = null;
@@ -202,7 +214,8 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
             return Boolean.FALSE;
         } 
         else {
-            boolean cancel = DebugUIPlugin.preLaunchSave();
+			@SuppressWarnings("deprecation")
+			boolean cancel = DebugUIPlugin.preLaunchSave();
             return Boolean.valueOf(cancel);
         }
     }
@@ -215,7 +228,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 	 * @return the list of dirty editors for this launch to save, never null
 	 */
 	protected IResource[] getScopedDirtyResources(IProject[] projects) {
-		HashSet dirtyres = new HashSet();
+		HashSet<IResource> dirtyres = new HashSet<IResource>();
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 		for(int l = 0; l < windows.length; l++) {
 			IWorkbenchPage[] pages = windows[l].getPages();
@@ -233,7 +246,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 				}
 			}
 		}
-		return (IResource[])dirtyres.toArray(new IResource[dirtyres.size()]);
+		return dirtyres.toArray(new IResource[dirtyres.size()]);
 	}
 	
 	/**

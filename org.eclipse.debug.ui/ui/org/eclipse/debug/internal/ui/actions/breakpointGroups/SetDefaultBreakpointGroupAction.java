@@ -25,7 +25,8 @@ public class SetDefaultBreakpointGroupAction extends AbstractBreakpointsViewActi
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
-    public void run(IAction action) {
+    @Override
+	public void run(IAction action) {
     	SelectBreakpointWorkingsetDialog sbwsd = new SelectBreakpointWorkingsetDialog(DebugUIPlugin.getShell());
     	sbwsd.setTitle(BreakpointGroupMessages.SetDefaultBreakpointGroupAction_0);
     	IWorkingSet workingSet = BreakpointSetOrganizer.getDefaultWorkingSet();
@@ -40,6 +41,7 @@ public class SetDefaultBreakpointGroupAction extends AbstractBreakpointsViewActi
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */
-    public void selectionChanged(IAction action, ISelection selection) {}
+    @Override
+	public void selectionChanged(IAction action, ISelection selection) {}
 
 }

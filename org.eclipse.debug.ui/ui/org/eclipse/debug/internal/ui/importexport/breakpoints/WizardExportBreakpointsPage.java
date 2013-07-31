@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,6 +97,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void handleEvent(Event event) {
 		Widget source = event.widget;
 		if (source == fDestinationBrowseButton) {
@@ -170,12 +171,14 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		SWTFactory.createLabel(composite, ImportExportMessages.WizardExportBreakpointsPage_2, 1);
 		fTView = new EmbeddedBreakpointsViewer(composite, DebugPlugin.getDefault().getBreakpointManager(), fSelection);
 		fTView.getViewer().addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				setPageComplete(detectPageComplete());
 			}
@@ -200,6 +203,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_WIZBAN_EXPORT_BREAKPOINTS);
 	}
@@ -305,23 +309,23 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 			}
 			saveWidgetState();
 			if(path.toFile().exists() && !fOverwriteExistingFilesCheckbox.getSelection()) {
-				if (!MessageDialog.openQuestion(null, ImportExportMessages.WizardBreakpointsPage_12, MessageFormat.format(ImportExportMessages.ImportExportOperations_0, new String[] {path.toPortableString()}))) {
+				if (!MessageDialog.openQuestion(null, ImportExportMessages.WizardBreakpointsPage_12, MessageFormat.format(ImportExportMessages.ImportExportOperations_0, new Object[] { path.toPortableString() }))) {
 					return false;
 				}
 			}
 			// collect breakpoints
 			Object[] elements = fTView.getCheckedElements().toArray();
-			List breakpoints = new ArrayList();
+			List<IBreakpoint> breakpoints = new ArrayList<IBreakpoint>();
 			for (int i = 0; i < elements.length; i++) {
 				Object object = elements[i];
 				if (object instanceof IBreakpoint) {
-					breakpoints.add(object);
+					breakpoints.add((IBreakpoint) object);
 				}
 			}
 			getContainer().run(false, 
 					true, 
 					new ExportBreakpointsOperation(
-							(IBreakpoint[]) breakpoints.toArray(new IBreakpoint[breakpoints.size()]), 
+							breakpoints.toArray(new IBreakpoint[breakpoints.size()]), 
 							path.toOSString()));
 		}
 		catch (InterruptedException e) {

@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     dakshinamurthy.karra@gmail.com - bug 165371
@@ -57,29 +57,30 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 	// Check Buttons
 	private Button fBuildButton;
-	
+
 	// Group box
 	private Group fGroup;
-	
+
 	// Radio Buttons
 	private Button fProjectButton;
 	private Button fSpecificProjectsButton;
 	private Button fWorkspaceButton;
-	
+
 	// Push Button
 	private Button fSelectButton;
-	
+
 	// whether to include referenced projects
 	private Button fReferencedProjects;
-	
+
 	// projects to build (empty if none)
-	private List fProjects = new ArrayList();
-	
+	private List<IProject> fProjects = new ArrayList<IProject>();
+
 	class ProjectsContentProvider implements IStructuredContentProvider {
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((IWorkspace)inputElement).getRoot().getProjects();
 		}
@@ -87,27 +88,30 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
-		
+
 	}
-	
+
 	/**
 	 * Constructor
 	 */
 	public ExternalToolsBuildTab() {
 		setHelpContextId(IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_BUILD_TAB);
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
@@ -117,15 +121,16 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gd);
 		mainComposite.setFont(parent.getFont());
-		
+
 		fBuildButton = createCheckButton(mainComposite, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuildTab_1);
 		fBuildButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateEnabledState();
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
+
 		fGroup = new Group(mainComposite, SWT.NONE);
 		fGroup.setFont(mainComposite.getFont());
 		layout = new GridLayout();
@@ -137,6 +142,7 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 		fGroup.setLayoutData(gd);
 
 		SelectionAdapter adapter = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (((Button)e.getSource()).getSelection()) {
 					updateEnabledState();
@@ -144,34 +150,35 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 				}
 			}
 		};
-		
+
 		fWorkspaceButton = createRadioButton(fGroup, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuildTab_2);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fWorkspaceButton.setLayoutData(gd);
 		fWorkspaceButton.addSelectionListener(adapter);
-		
+
 		fProjectButton = createRadioButton(fGroup, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuildTab_3);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		fProjectButton.setLayoutData(gd);		
+		fProjectButton.setLayoutData(gd);
 		fProjectButton.addSelectionListener(adapter);
-				
+
 		fSpecificProjectsButton = createRadioButton(fGroup, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuildTab_4);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
 		fSpecificProjectsButton.setLayoutData(gd);
-		fSpecificProjectsButton.addSelectionListener(adapter);		
-		
+		fSpecificProjectsButton.addSelectionListener(adapter);
+
 		fSelectButton = createPushButton(fGroup, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuildTab_5, null);
 		gd = (GridData)fSelectButton.getLayoutData();
 		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_END;
 		fSelectButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				selectResources();
 			}
 		});
-		
+
 		createVerticalSpacer(mainComposite, 1);
 		fReferencedProjects = createCheckButton(mainComposite, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuildTab_6);
 	}
@@ -186,28 +193,30 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 			return;
 		}
 		Object[] res = dialog.getResult();
-		fProjects = new ArrayList(res.length);
+		fProjects = new ArrayList<IProject>(res.length);
 		for (int i = 0; i < res.length; i++) {
-			fProjects.add(res[i]);
+			fProjects.add((IProject) res[i]);
 		}
 		updateLaunchConfigurationDialog();
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		updateScope(configuration);
 		updateReferencedProjects(configuration);
-		updateEnabledState();		
+		updateEnabledState();
 	}
-	
+
 	private void updateReferencedProjects(ILaunchConfiguration configuration) {
 		boolean ref = false;
 		try {
@@ -245,7 +254,7 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 			} else if (scope.startsWith("${projects:")) { //$NON-NLS-1$
 				fSpecificProjectsButton.setSelection(true);
 				IProject[] projects = getBuildProjects(configuration, IExternalToolConstants.ATTR_BUILD_SCOPE);
-				fProjects = new ArrayList(projects.length);
+				fProjects = new ArrayList<IProject>(projects.length);
 				for (int i = 0; i < projects.length; i++) {
 					fProjects.add(projects[i]);
 				}
@@ -255,6 +264,7 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		String scope = generateScopeMemento();
 		configuration.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, scope);
@@ -281,7 +291,7 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 				return getBuildScopeAttribute(fProjects);
 			}
 			return null;
-			
+
 		}
 		return "${none}"; //$NON-NLS-1$
 	}
@@ -289,10 +299,11 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return ExternalToolsLaunchConfigurationMessages.ExternalToolsBuildTab_8;
 	}
-	
+
 	/**
 	 * Updates the enablement state of the fields.
 	 */
@@ -314,14 +325,16 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 		}
 		fReferencedProjects.setEnabled(fBuildButton.getSelection() && (fProjectButton.getSelection() || fSpecificProjectsButton.getSelection()));
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return ExternalToolsImages.getImage(org.eclipse.ui.externaltools.internal.model.IExternalToolConstants.IMG_TAB_BUILD);
 	}
 
+	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
@@ -331,10 +344,10 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Returns a collection of projects referenced by a build scope attribute.
-	 * 
+	 *
 	 * @return collection of projects referred to by configuration
 	 */
 	public static IProject[] getBuildProjects(ILaunchConfiguration configuration, String buildScopeId) {
@@ -342,11 +355,11 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 				buildScopeId);
 
 	}
-	
+
 	/**
 	 * Whether referenced projects should be considered when building. Only valid
 	 * when a set of projects is to be built.
-	 * 
+	 *
 	 * @param configuration
 	 * @return whether referenced projects should be considerd when building
 	 * @throws CoreException if unable to access the associated attribute
@@ -355,20 +368,20 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 		return ExternalToolsCoreUtil.isIncludeReferencedProjects(configuration,
 				includeReferencedProjectsId);
 	}
-	
+
 	/**
 	 * Creates and returns a memento for the given project set, to be used as a
 	 * build scope attribute.
-	 * 
+	 *
 	 * @param projects list of projects
 	 * @return an equivalent refresh attribute
 	 */
-	public static String getBuildScopeAttribute(List projects) {
+	public static String getBuildScopeAttribute(List<IProject> projects) {
 		StringBuffer buf = new StringBuffer();
 		buf.append("${projects:"); //$NON-NLS-1$
-		Iterator iterator = projects.iterator();
+		Iterator<IProject> iterator = projects.iterator();
 		while (iterator.hasNext()) {
-			IProject project = (IProject) iterator.next();
+			IProject project = iterator.next();
 			buf.append(project.getName());
 			if (iterator.hasNext()) {
 				buf.append(","); //$NON-NLS-1$
@@ -377,10 +390,11 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 		buf.append("}"); //$NON-NLS-1$
 		return buf.toString();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing on activation
 	}
@@ -388,6 +402,7 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing on deactivation
 	}

@@ -24,6 +24,7 @@ public class WordStructureDelegate implements ILogicalStructureTypeDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate#providesLogicalStructure(org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	public boolean providesLogicalStructure(IValue value) {
 		//#ifdef ex6
 //#		// TODO: Exercise 6 - provide logical structures if the value has multiple words
@@ -41,6 +42,7 @@ public class WordStructureDelegate implements ILogicalStructureTypeDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate#getLogicalStructure(org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	public IValue getLogicalStructure(IValue value) throws CoreException {
 		//#ifdef ex6
 //#		// TODO: Exercise 6 - create an array from the given value

@@ -38,6 +38,7 @@ public abstract class VariableViewToggleAction implements IViewActionDelegate, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		fView = view;
 		boolean checked = getPreferenceValue(view);
@@ -48,6 +49,7 @@ public abstract class VariableViewToggleAction implements IViewActionDelegate, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 		fAction = action;
 	}
@@ -55,12 +57,14 @@ public abstract class VariableViewToggleAction implements IViewActionDelegate, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
@@ -68,6 +72,7 @@ public abstract class VariableViewToggleAction implements IViewActionDelegate, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		IPreferenceStore store = getPreferenceStore();
 		String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
@@ -77,6 +82,7 @@ public abstract class VariableViewToggleAction implements IViewActionDelegate, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 

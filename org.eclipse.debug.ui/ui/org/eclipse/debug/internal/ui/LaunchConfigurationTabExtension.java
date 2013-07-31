@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public final class LaunchConfigurationTabExtension {
 	 * The configuration element backing this proxy
 	 */
 	IConfigurationElement fElement = null;
-	private Set fDelegates = null;
+	private Set<String> fDelegates = null;
 	
 	/**
 	 * Constructor
@@ -102,9 +102,9 @@ public final class LaunchConfigurationTabExtension {
 	 * Returns a set of strings of the launch delegates that this tab contribution is associated with
 	 * @return the set of strings of the associated launch delegates, which can be an empty collection, never <code>null</code>.
 	 */
-	public Set getDelegateSet() {
+	public Set<String> getDelegateSet() {
 		if(fDelegates == null) {
-			fDelegates = new HashSet();
+			fDelegates = new HashSet<String>();
 			IConfigurationElement[] children = fElement.getChildren(IConfigurationElementConstants.ASSOCIATED_DELEGATE);
 			String id = null;
 			for(int i = 0; i < children.length; i++) {

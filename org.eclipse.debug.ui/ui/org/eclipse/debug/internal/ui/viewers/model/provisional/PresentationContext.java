@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,9 @@
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
@@ -46,7 +45,7 @@ public class PresentationContext implements IPresentationContext {
     
     final private String fId;
     final private ListenerList fListeners = new ListenerList();
-    final private Map fProperties = new HashMap();
+	final private Map<String, Object> fProperties = new HashMap<String, Object>();
     private IWorkbenchWindow fWindow;
     private IWorkbenchPart fPart;
 
@@ -99,6 +98,7 @@ public class PresentationContext implements IPresentationContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#getColumns()
 	 */
+	@Override
 	public String[] getColumns() {
 		return (String[]) getProperty(IPresentationContext.PROPERTY_COLUMNS);
 	}
@@ -117,6 +117,7 @@ public class PresentationContext implements IPresentationContext {
 			for (int i = 0; i < listeners.length; i++) {
 				final IPropertyChangeListener listener = (IPropertyChangeListener) listeners[i];
 				SafeRunner.run(new SafeRunnable() {
+					@Override
 					public void run() throws Exception {
 						listener.propertyChange(event);
 					}
@@ -138,6 +139,7 @@ public class PresentationContext implements IPresentationContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext#dispose()
 	 */
+	@Override
 	public void dispose() {
         fProperties.clear();
         setProperty(PROPERTY_DISPOSED, Boolean.TRUE);
@@ -150,6 +152,7 @@ public class PresentationContext implements IPresentationContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
+	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		fListeners.add(listener);
 	}
@@ -157,6 +160,7 @@ public class PresentationContext implements IPresentationContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
+	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		fListeners.remove(listener);
 	}
@@ -164,6 +168,7 @@ public class PresentationContext implements IPresentationContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#getId()
 	 */
+	@Override
 	public String getId() {
 		return fId;
 	}
@@ -171,6 +176,7 @@ public class PresentationContext implements IPresentationContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#getProperty(java.lang.String)
 	 */
+	@Override
 	public Object getProperty(String property) {
 		synchronized (fProperties) {
 			return fProperties.get(property);
@@ -180,6 +186,7 @@ public class PresentationContext implements IPresentationContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#setProperty(java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void setProperty(String property, Object value) {
 	    Object oldValue = null;
 	    boolean propertySet = false;
@@ -251,23 +258,20 @@ public class PresentationContext implements IPresentationContext {
 	    if (fProperties.size() == 0) {
 	        return;
 	    }
-	    
         IMemento properties = memento.createChild(PRESENTATION_CONTEXT_PROPERTIES, getId());
-        Iterator iterator = fProperties.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry entry = (Entry) iterator.next();
+		for (Entry<String, Object> entry : fProperties.entrySet()) {
             if (entry.getValue() instanceof String) {
-                IMemento value = properties.createChild(STRING, (String)entry.getKey());
+                IMemento value = properties.createChild(STRING, entry.getKey());
                 value.putString(STRING, (String)entry.getValue());
             } else if (entry.getValue() instanceof Integer) {
-                IMemento value = properties.createChild(INTEGER, (String)entry.getKey());
+                IMemento value = properties.createChild(INTEGER, entry.getKey());
                 value.putInteger(INTEGER, ((Integer)entry.getValue()).intValue());
             } else if (entry.getValue() instanceof Boolean) {
-                IMemento value = properties.createChild(BOOLEAN, (String)entry.getKey());
+                IMemento value = properties.createChild(BOOLEAN, entry.getKey());
                 value.putBoolean(BOOLEAN, ((Boolean)entry.getValue()).booleanValue());
             } else if (entry.getValue() instanceof IPersistableElement) {
                 IPersistableElement persistable = (IPersistableElement)entry.getValue();
-                IMemento value = properties.createChild(PERSISTABLE, (String)entry.getKey());
+                IMemento value = properties.createChild(PERSISTABLE, entry.getKey());
                 value.putString(PERSISTABLE, persistable.getFactoryId());
                 persistable.saveState(value);
             }
@@ -284,18 +288,21 @@ public class PresentationContext implements IPresentationContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext#getProperties()
 	 */
+	@Override
 	public String[] getProperties() {
 		synchronized (fProperties) {
-			Set keys = fProperties.keySet();
-			return (String[]) keys.toArray(new String[keys.size()]);
+			Set<String> keys = fProperties.keySet();
+			return keys.toArray(new String[keys.size()]);
 		}
 	}
 
-    public IWorkbenchPart getPart() {
+    @Override
+	public IWorkbenchPart getPart() {
         return fPart;
     }
 
-    public IWorkbenchWindow getWindow() {
+    @Override
+	public IWorkbenchWindow getWindow() {
         return fWindow;
     }
 	

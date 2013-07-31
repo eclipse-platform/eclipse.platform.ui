@@ -33,8 +33,10 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#updateChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IElementRequestMonitor)
 	 */
+	@Override
 	public void update(final IChildrenUpdate[] updates) {
 		Job job = new Job("children update") { //$NON-NLS-1$
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				for (int i = 0; i < updates.length; i++) {
 					IChildrenUpdate update = updates[i];
@@ -54,8 +56,10 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate)
 	 */
+	@Override
 	public void update(final IChildrenCountUpdate[] updates) {
 		Job job = new Job("child count update") { //$NON-NLS-1$
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				for (int i = 0; i < updates.length; i++) {
 					IChildrenCountUpdate update = updates[i];
@@ -191,8 +195,10 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate[])
 	 */
+	@Override
 	public void update(final IHasChildrenUpdate[] updates) {
 		Job job = new Job("has children update") { //$NON-NLS-1$
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				for (int i = 0; i < updates.length; i++) {
 					IHasChildrenUpdate update = updates[i];

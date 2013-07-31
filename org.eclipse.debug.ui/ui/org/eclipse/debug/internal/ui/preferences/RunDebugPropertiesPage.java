@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -78,22 +77,22 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	/**
 	 * Set of configurations to be deleted
 	 */
-	private Set fDeletedConfigurations = new HashSet();
+	private Set<ILaunchConfigurationWorkingCopy> fDeletedConfigurations = new HashSet<ILaunchConfigurationWorkingCopy>();
 	
 	/**
 	 * Set of original default candidates for the resource
 	 */
-	private Set fOriginalCandidates;
+	private Set<ILaunchConfiguration> fOriginalCandidates;
 	
 	/**
 	 * Holds configurations that need to be saved when the page closes
 	 */
-	private Set fChangedConfigurations = new HashSet();
+	private Set<ILaunchConfigurationWorkingCopy> fChangedConfigurations = new HashSet<ILaunchConfigurationWorkingCopy>();
 	
 	/**
 	 * List of the applicable launch config types for the backing resource
 	 */
-	private List fTypeCandidates = null;
+	private List<ILaunchConfigurationType> fTypeCandidates = null;
 	
 	//widgets
 	private TableViewer fViewer;
@@ -105,6 +104,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugHelpContextIds.RUN_DEBUG_RESOURCE_PROPERTY_PAGE);
 		collectConfigCandidates(getResource());
@@ -112,7 +112,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		
 		SWTFactory.createWrapLabel(topComposite, DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_0, 2, 300);
 		SWTFactory.createVerticalSpacer(topComposite, 2);
-		SWTFactory.createWrapLabel(topComposite, MessageFormat.format(DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_1, new String[]{getResource().getName()}), 2, 300);
+		SWTFactory.createWrapLabel(topComposite, MessageFormat.format(DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_1, new Object[] { getResource().getName() }), 2, 300);
 		fViewer = createViewer(topComposite);
 		
 		Composite buttonComp = SWTFactory.createComposite(topComposite, 1, 1, GridData.FILL_VERTICAL);
@@ -122,7 +122,9 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		fNewButton.setToolTipText(DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_3);
 		fNewButton.setEnabled(collectTypeCandidates().length > 0);
 		fNewButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleNew();
 			}
@@ -132,7 +134,9 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		fDuplicateButton.setToolTipText(DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_5);
 		fDuplicateButton.setEnabled(false);
 		fDuplicateButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleCopy();
 			}
@@ -141,7 +145,9 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		fEditButton.setToolTipText(DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_7);
 		fEditButton.setEnabled(false);
 		fEditButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleEdit();
 			}
@@ -150,7 +156,9 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		fDeleteButton.setToolTipText(DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_9);
 		fDeleteButton.setEnabled(false);
 		fDeleteButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleDelete();
 			}
@@ -180,6 +188,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		IResource resource = getResource();
 		viewer.setInput(collectConfigCandidates(resource));
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection sel = event.getSelection();
 				if(sel instanceof IStructuredSelection) {
@@ -194,6 +203,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 			}
 		});
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent arg0) {
 				handleEdit();
 			}
@@ -204,6 +214,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	/**
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if(fOriginalCandidates != null) {
 			fOriginalCandidates.clear();
@@ -242,20 +253,21 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	protected ILaunchConfigurationType[] collectTypeCandidates() {
 		if(fTypeCandidates == null) {
 			String[] types = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableConfigurationTypes(getResource());
-			fTypeCandidates = new ArrayList(types.length);
+			fTypeCandidates = new ArrayList<ILaunchConfigurationType>(types.length);
 			for(int i = 0; i < types.length; i++) {
 				fTypeCandidates.add(DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(types[i]));
 			}
 			 
-			Collections.sort(fTypeCandidates, new Comparator() {
-				public int compare(Object o1, Object o2) {
-					ILaunchConfigurationType t1 = (ILaunchConfigurationType) o1;
-					ILaunchConfigurationType t2 = (ILaunchConfigurationType) o2;
+			Collections.sort(fTypeCandidates, new Comparator<ILaunchConfigurationType>() {
+				@Override
+				public int compare(ILaunchConfigurationType o1, ILaunchConfigurationType o2) {
+					ILaunchConfigurationType t1 = o1;
+					ILaunchConfigurationType t2 = o2;
 					return t1.getName().compareTo(t2.getName());
 				}
 			});
 		}
-		return (ILaunchConfigurationType[]) fTypeCandidates.toArray(new ILaunchConfigurationType[fTypeCandidates.size()]);
+		return fTypeCandidates.toArray(new ILaunchConfigurationType[fTypeCandidates.size()]);
 	}
 	
 	/**
@@ -265,9 +277,9 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 * @param resource resource
 	 * @return list of default candidates
 	 */
-	protected Set collectConfigCandidates(IResource resource) {
+	protected Set<ILaunchConfiguration> collectConfigCandidates(IResource resource) {
 		if(fOriginalCandidates == null) {
-			fOriginalCandidates = new HashSet();
+			fOriginalCandidates = new HashSet<ILaunchConfiguration>();
 			try {
 				ILaunchConfiguration[] configs = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(null, resource);
 				for(int i = 0; i < configs.length; i++) {
@@ -300,11 +312,10 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 	//delete 
-		Iterator iter = fDeletedConfigurations.iterator();
-		while (iter.hasNext()) {
-			ILaunchConfigurationWorkingCopy currentConfig = (ILaunchConfigurationWorkingCopy) iter.next();
+		for (ILaunchConfigurationWorkingCopy currentConfig : fDeletedConfigurations) {
 			try{			
 				if (currentConfig.getOriginal() != null){
 					currentConfig.getOriginal().delete();
@@ -314,9 +325,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 			}
 		}
 	//add
-		iter = fChangedConfigurations.iterator();
-		while (iter.hasNext()) {
-			ILaunchConfigurationWorkingCopy currentConfig = (ILaunchConfigurationWorkingCopy) iter.next();
+		for (ILaunchConfigurationWorkingCopy currentConfig : fChangedConfigurations) {
 			try{
 				currentConfig.doSave();
 			} catch (CoreException e) {
@@ -330,6 +339,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		setErrorMessage(null);
 		setValid(true);
@@ -346,15 +356,14 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 * Returns the names of the launch configurations passed in as original input to the tree viewer
 	 * @return the names of the original launch configurations
 	 */
-	private Set getConfigurationNames() {
-		Set names = new HashSet();
-		Iterator iter = fOriginalCandidates.iterator();
-		while (iter.hasNext()) {
-			names.add(((ILaunchConfiguration)iter.next()).getName());
+	private Set<String> getConfigurationNames() {
+		Set<String> names = new HashSet<String>();
+		for(ILaunchConfiguration config : fOriginalCandidates) {
+			names.add(config.getName());
 		}
-		iter = fChangedConfigurations.iterator();
-		while (iter.hasNext()) {
-			names.add(((ILaunchConfiguration)iter.next()).getName());
+		
+		for(ILaunchConfigurationWorkingCopy config : fChangedConfigurations) {
+			names.add(config.getName());
 		}
 		return names;
 	}
@@ -393,7 +402,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		Table table = fViewer.getTable();
 		int[] indices = table.getSelectionIndices();
 		Arrays.sort(indices);
-		ILaunchConfiguration[] configurations = getSelectedConfigurations();
+		ILaunchConfigurationWorkingCopy[] configurations = getSelectedConfigurations();
 		for (int i = 0; i < configurations.length; i++) {
 			fDeletedConfigurations.add(configurations[i]);
 			fChangedConfigurations.remove(configurations[i]);
@@ -417,7 +426,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 			fViewer.refresh(config, true, true);
 		}
 		else if(ret == IDialogConstants.ABORT_ID) {
-			setErrorMessage(MessageFormat.format(DebugPreferencesMessages.RunDebugPropertiesPage_0, new String[] {config.getName()}));
+			setErrorMessage(MessageFormat.format(DebugPreferencesMessages.RunDebugPropertiesPage_0, new Object[] { config.getName() }));
 		}
 	}
 
@@ -445,9 +454,8 @@ public class RunDebugPropertiesPage extends PropertyPage {
 				group = lcm.getLaunchGroup(type, ILaunchManager.PROFILE_MODE);
 			}
 			else {
-				Set modes = type.getSupportedModeCombinations();
-				for(Iterator iter = modes.iterator(); iter.hasNext();) {
-					group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(type, (Set)iter.next());
+				for (Set<String> modes : type.getSupportedModeCombinations()) {
+					group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(type, modes);
 					if(group != null) {
 						break;
 					}
@@ -473,6 +481,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 			 */
+			@Override
 			protected String getDialogSettingsId() {
 				return DebugUIPlugin.getUniqueIdentifier() + ".SELECT_CONFIGURATION_TYPE_DIALOG"; //$NON-NLS-1$
 			}
@@ -480,6 +489,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
 			 */
+			@Override
 			protected Object getViewerInput() {
 				return typeCandidates;
 			}
@@ -487,6 +497,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
 			 */
+			@Override
 			protected String getHelpContextId() {
 				return IDebugHelpContextIds.SELECT_CONFIGURATION_TYPE_DIALOG;
 			}
@@ -494,6 +505,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
 			 */
+			@Override
 			protected String getViewerLabel() {
 				return DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_12;
 			}
@@ -516,7 +528,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 						fViewer.setSelection(new StructuredSelection(wc));
 					}
 					else if(ret == IDialogConstants.ABORT_ID) {
-						setErrorMessage(MessageFormat.format(DebugPreferencesMessages.RunDebugPropertiesPage_0, new String[] {wc.getName()})); 
+						setErrorMessage(MessageFormat.format(DebugPreferencesMessages.RunDebugPropertiesPage_0, new Object[] { wc.getName() }));
 					}
 				} catch (CoreException e) {
 					setErrorMessage(e.getMessage());

@@ -55,14 +55,16 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
     /* (non-Javadoc)
      * @see org.eclipse.jface.util.TransferDragSourceListener#getTransfer()
      */
-    public Transfer getTransfer() {
+    @Override
+	public Transfer getTransfer() {
         return LocalSelectionTransfer.getTransfer();
     }
     
     /* non Java-doc
      * @see org.eclipse.swt.dnd.DragSourceListener#dragStart
      */
-    public void dragStart(DragSourceEvent event) {
+    @Override
+	public void dragStart(DragSourceEvent event) {
         ISelection selection = fViewer.getSelection();
         LocalSelectionTransfer.getTransfer().setSelection(selection);
         LocalSelectionTransfer.getTransfer().setSelectionSetTime(event.time & 0xFFFFFFFFL);
@@ -83,7 +85,8 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
     /* non Java-doc
      * @see org.eclipse.swt.dnd.DragSourceListener#dragSetData
      */     
-    public void dragSetData(DragSourceEvent event) {
+    @Override
+	public void dragSetData(DragSourceEvent event) {
         // For consistency set the data to the selection even though
         // the selection is provided by the LocalSelectionTransfer
         // to the drop target adapter.
@@ -93,7 +96,8 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
     /* non Java-doc
      * @see org.eclipse.swt.dnd.DragSourceListener#dragFinished
      */ 
-    public void dragFinished(DragSourceEvent event) {
+    @Override
+	public void dragFinished(DragSourceEvent event) {
         if (event.detail == DND.DROP_MOVE) {
             // remove from source on move operation
             if (fViewer instanceof BreakpointsViewer) {

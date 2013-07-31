@@ -52,7 +52,8 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
     /**
      * @throws java.lang.Exception
      */
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         fDisplay = PlatformUI.getWorkbench().getDisplay();
         fShell = new Shell(fDisplay);
         fShell.setMaximized(true);
@@ -70,7 +71,8 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
     /**
      * @throws java.lang.Exception
      */
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         fListener.dispose();
         fViewer.getPresentationContext().dispose();
         
@@ -83,7 +85,8 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
 		}
     }
 
-    protected void runTest() throws Throwable {
+    @Override
+	protected void runTest() throws Throwable {
         try {
             super.runTest();
         } catch (Throwable t) {
@@ -104,7 +107,8 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
     	}
     	
     	
-    	 public boolean select(Viewer viewer, Object parentElement, Object element) {
+    	 @Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
     		 if (element instanceof TestElement) {
     			 TestElement te = (TestElement)element;
     			 return !fPattern.matcher(te.getLabel()).find();
@@ -122,7 +126,8 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
             fParentElement = parentElement;
         }
         
-        public boolean isApplicable(ITreeModelViewer viewer, Object parentElement) {
+        @Override
+		public boolean isApplicable(ITreeModelViewer viewer, Object parentElement) {
             if (fParentElement != null) {
                 return fParentElement.equals(parentElement);
             }
@@ -130,7 +135,8 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
             return true;
         }
         
-         public boolean select(Viewer viewer, Object parentElement, Object element) {
+         @Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
              if (element instanceof TestElement) {
                  TestElement te = (TestElement)element;
                  return !fPattern.matcher(te.getLabel()).find();

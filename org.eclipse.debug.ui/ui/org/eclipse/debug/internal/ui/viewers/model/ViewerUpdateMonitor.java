@@ -123,7 +123,8 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IProgressMonitor#done()
      */
-    public final void done() {
+    @Override
+	public final void done() {
     	synchronized (this) {
     		if (isDone()) {
     			return;
@@ -155,6 +156,7 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getPresentationContext()
 	 */
+	@Override
 	public IPresentationContext getPresentationContext() {
 		return fContext;
 	}
@@ -162,6 +164,7 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElement()
 	 */
+	@Override
 	public Object getElement() {
 		return fElement;
 	}
@@ -169,6 +172,7 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElementPath()
 	 */
+	@Override
 	public TreePath getElementPath() {
 		return fElementPath;
 	}
@@ -213,6 +217,7 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getViewerInput()
 	 */
+	@Override
 	public Object getViewerInput() {
 		return fViewerInput;
 	}
@@ -257,6 +262,7 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
 		return fIsDelegated;
 	}
 	
+	@Override
 	public boolean equals(Object obj) {
 	    if (obj instanceof ViewerUpdateMonitor) {
 	        return doEquals((ViewerUpdateMonitor)obj);
@@ -264,6 +270,7 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
 	    return false;
 	}
 
+	@Override
 	public int hashCode() {
 	    return doHashCode();
 	}

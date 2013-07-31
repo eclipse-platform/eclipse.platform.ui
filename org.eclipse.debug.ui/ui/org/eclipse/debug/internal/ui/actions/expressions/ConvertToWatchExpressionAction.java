@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,10 +29,11 @@ public class ConvertToWatchExpressionAction extends WatchExpressionAction {
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		IStructuredSelection selection= getCurrentSelection();
 		IExpressionManager expressionManager= DebugPlugin.getDefault().getExpressionManager();
-		for (Iterator iter= selection.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			IExpression expression= (IExpression) iter.next();
 			// create the new watch expression
 			IWatchExpression watchExpression= expressionManager.newWatchExpression(expression.getExpressionText());

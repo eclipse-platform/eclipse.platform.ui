@@ -24,10 +24,12 @@ class LabelResult extends LabelRequestMonitor implements ILabelResult {
 		super(node, model);
 	}
 	
+	@Override
 	protected synchronized void scheduleViewerUpdate(long ms) {
 		notifyAll();
 	}
 	
+	@Override
 	public synchronized boolean isDone() {
 		return super.isDone();
 	}
@@ -35,6 +37,7 @@ class LabelResult extends LabelRequestMonitor implements ILabelResult {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.ILabelResult#getElement()
 	 */
+	@Override
 	public Object getElement() {
 		return getNode().getElement();
 	}
@@ -42,6 +45,7 @@ class LabelResult extends LabelRequestMonitor implements ILabelResult {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.ILabelResult#getImages()
 	 */
+	@Override
 	public Image[] getImages() {
 		return getModel().getViewer().getImages(getImageDescriptors());
 	}
@@ -49,6 +53,7 @@ class LabelResult extends LabelRequestMonitor implements ILabelResult {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.ILabelResult#getLabels()
 	 */
+	@Override
 	public String[] getLabels() {
 		return super.getLabels();
 	}
@@ -56,6 +61,7 @@ class LabelResult extends LabelRequestMonitor implements ILabelResult {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.ILabelResult#getTreePath()
 	 */
+	@Override
 	public TreePath getTreePath() {
 		return getNode().getTreePath();
 	}
@@ -63,6 +69,7 @@ class LabelResult extends LabelRequestMonitor implements ILabelResult {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.ILabelResult#getDepth()
 	 */
+	@Override
 	public int getDepth() {
 		int level = 0;
 		ModelNode node = getNode().getParentNode();

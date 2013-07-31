@@ -42,6 +42,7 @@ public class LookupSourceAction extends SelectionListenerAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		director = null;
 		frame = null;
@@ -61,6 +62,7 @@ public class LookupSourceAction extends SelectionListenerAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		ISelection selection = fView.getViewer().getSelection();
 		if (selection instanceof IStructuredSelection) {

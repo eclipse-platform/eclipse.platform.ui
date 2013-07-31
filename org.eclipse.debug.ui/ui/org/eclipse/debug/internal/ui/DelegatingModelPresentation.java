@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui;
 
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
@@ -35,6 +34,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IInstructionPointerPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -59,15 +59,16 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 * A mapping of attribute ids to their values
 	 * @see IDebugModelPresentation#setAttribute
 	 */
-	private HashMap fAttributes= new HashMap(3);
+	private HashMap<String, Object> fAttributes = new HashMap<String, Object>(3);
 	/**
 	 * A table of label providers keyed by debug model identifiers.
 	 */
-	private HashMap fLabelProviders= new HashMap(5);
+	private HashMap<String, IDebugModelPresentation> fLabelProviders = new HashMap<String, IDebugModelPresentation>(5);
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#removeAnnotations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IThread)
 	 */
+	@Override
 	public void removeAnnotations(IEditorPart editorPart, IThread thread) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(thread);
 		if (presentation instanceof IDebugEditorPresentation) {
@@ -78,6 +79,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#addAnnotations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
 	 */
+	@Override
 	public boolean addAnnotations(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
 		if (presentation instanceof IDebugEditorPresentation) {
@@ -114,10 +116,10 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 *
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
+	@Override
 	public void addListener(ILabelProviderListener listener) {
-		Iterator i= getLabelProviders().values().iterator();
-		while (i.hasNext()) {
-			((ILabelProvider) i.next()).addListener(listener);
+		for (ILabelProvider p : fLabelProviders.values()) {
+			p.addListener(listener);
 		}
 	}
 
@@ -126,16 +128,17 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 *
 	 * @see IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
-		Iterator i= getLabelProviders().values().iterator();
-		while (i.hasNext()) {
-			((ILabelProvider) i.next()).dispose();
+		for (ILabelProvider p : fLabelProviders.values()) {
+			p.dispose();
 		}
 	}
 
 	/**
 	 * @see IDebugModelPresentation#getImage(Object)
 	 */
+	@Override
 	public Image getImage(Object item) {
 		// Attempt to delegate
 		IDebugModelPresentation lp= getConfiguredPresentation(item);
@@ -152,7 +155,8 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	/**
      * @see IDebugModelPresentation#getText(Object)
      */
-    public String getText(Object item) {
+    @Override
+	public String getText(Object item) {
     	IDebugModelPresentation lp= getConfiguredPresentation(item);
     	if (lp != null) {
     		return lp.getText(item);
@@ -163,6 +167,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorInput(java.lang.Object)
 	 */
+	@Override
 	public IEditorInput getEditorInput(Object item) {
 		IDebugModelPresentation lp= getConfiguredPresentation(item);
 		if (lp != null) {
@@ -174,6 +179,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorId(org.eclipse.ui.IEditorInput, java.lang.Object)
 	 */
+	@Override
 	public String getEditorId(IEditorInput input, Object objectInput) {
 		IDebugModelPresentation lp= getConfiguredPresentation(objectInput);
 		if (lp != null) {
@@ -200,6 +206,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugModelPresentation#computeDetail(org.eclipse.debug.core.model.IValue, org.eclipse.debug.ui.IValueDetailListener)
 	 */
+	@Override
 	public void computeDetail(IValue value, IValueDetailListener listener) {
 		IDebugModelPresentation lp= getConfiguredPresentation(value);
 		if (lp != null) {
@@ -214,10 +221,10 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 *
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
-		Iterator i= getLabelProviders().values().iterator();
-		while (i.hasNext()) {
-			((ILabelProvider) i.next()).removeListener(listener);
+		for (ILabelProvider p : fLabelProviders.values()) {
+			p.removeListener(listener);
 		}
 	}
 
@@ -226,6 +233,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 *
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
 	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		if (element instanceof IDebugElement) {
 			IDebugModelPresentation lp= getConfiguredPresentation(element);
@@ -267,20 +275,20 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 * of nothing is registered for the id.
 	 */
 	public IDebugModelPresentation getPresentation(String id) {
-		return (IDebugModelPresentation) getLabelProviders().get(id);
+		return getLabelProviders().get(id);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugModelPresentation#setAttribute(java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void setAttribute(String id, Object value) {
 		if (value == null) {
 			return;
 		}
 		basicSetAttribute(id, value);
-		Iterator presentations = fLabelProviders.values().iterator();
-		while (presentations.hasNext()) {
-			((IDebugModelPresentation)presentations.next()).setAttribute(id, value);
+		for (IDebugModelPresentation p : fLabelProviders.values()) {
+			p.setAttribute(id, value);
 		}
 	}
 	
@@ -291,7 +299,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 * @param value value
 	 */
 	protected void basicSetAttribute(String id, Object value) {
-		getAttributes().put(id, value);
+		fAttributes.put(id, value);
 	}
 
 	/**
@@ -309,7 +317,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 * Returns the raw attribute map
 	 * @return the raw attribute map
 	 */
-	public HashMap getAttributes() {
+	public HashMap<String, Object> getAttributes() {
 		return fAttributes;
 	}
 	
@@ -319,18 +327,24 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 * @return a copy of the attribute map for this presentation
 	 * @since 3.0
 	 */
-	public Map getAttributeMap() {
-		return (Map) getAttributes().clone();
+	public Map<String, Object> getAttributeMap() {
+		return new HashMap<String, Object>(fAttributes);
 	}
 
-	protected HashMap getLabelProviders() {
+	/**
+	 * Returns the live-list of registered {@link ILabelProvider}s
+	 * 
+	 * @return the live list of label providers
+	 */
+	protected HashMap<String, IDebugModelPresentation> getLabelProviders() {
 		return fLabelProviders;
 	}
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
      */
-    public Color getForeground(Object element) {
+    @Override
+	public Color getForeground(Object element) {
         IDebugModelPresentation presentation = getConfiguredPresentation(element);
         if (presentation instanceof IColorProvider) {
             IColorProvider colorProvider = (IColorProvider) presentation;
@@ -342,7 +356,8 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
      */
-    public Color getBackground(Object element) {
+    @Override
+	public Color getBackground(Object element) {
         IDebugModelPresentation presentation = getConfiguredPresentation(element);
         if (presentation instanceof IColorProvider) {
             IColorProvider colorProvider = (IColorProvider) presentation;
@@ -354,7 +369,8 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
      */
-    public Font getFont(Object element) {
+    @Override
+	public Font getFont(Object element) {
         IDebugModelPresentation presentation = getConfiguredPresentation(element);
         if (presentation instanceof IFontProvider) {
             IFontProvider fontProvider = (IFontProvider) presentation;
@@ -366,6 +382,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerAnnotation(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
 	 */
+	@Override
 	public Annotation getInstructionPointerAnnotation(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
 		Annotation annotation = null;
@@ -431,6 +448,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getMarkerAnnotationSpecificationId(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
 	 */
+	@Override
 	public String getInstructionPointerAnnotationType(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
 		if (presentation instanceof IInstructionPointerPresentation) {
@@ -442,6 +460,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerImage(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
 	 */
+	@Override
 	public Image getInstructionPointerImage(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
 		if (presentation instanceof IInstructionPointerPresentation) {
@@ -453,6 +472,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerText(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
 	 */
+	@Override
 	public String getInstructionPointerText(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
 		if (presentation instanceof IInstructionPointerPresentation) {
@@ -464,6 +484,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugModelPresentationExtension#requiresUIThread(java.lang.Object)
 	 */
+	@Override
 	public boolean requiresUIThread(Object element) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(element);
 		if (presentation == null) {

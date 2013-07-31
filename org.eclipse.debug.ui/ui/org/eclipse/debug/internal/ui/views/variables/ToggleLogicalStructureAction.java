@@ -43,12 +43,14 @@ public class ToggleLogicalStructureAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		if (!getView().isAvailable()) {
 			return;
 		}
 		getView().setShowLogicalStructure(isChecked());	
 		BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				getView().getViewer().refresh();					
 			}
@@ -58,6 +60,7 @@ public class ToggleLogicalStructureAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#setChecked(boolean)
 	 */
+	@Override
 	public void setChecked(boolean value) {
 		super.setChecked(value);
 	}

@@ -54,6 +54,7 @@ public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetList
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.ISuspendTrigger#addSuspendTriggerListener(org.eclipse.debug.ui.contexts.ISuspendTriggerListener)
 	 */
+	@Override
 	public void addSuspendTriggerListener(ISuspendTriggerListener listener) {
         if (fListeners != null) {
             fListeners.add(listener);
@@ -63,6 +64,7 @@ public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetList
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.ISuspendTrigger#removeSuspendTriggerListener(org.eclipse.debug.ui.contexts.ISuspendTriggerListener)
 	 */
+	@Override
 	public void removeSuspendTriggerListener(ISuspendTriggerListener listener) { 
         if (fListeners != null) {
             fListeners.remove(listener);
@@ -75,6 +77,7 @@ public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetList
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		// open the debugger if this is a suspend event and the debug view is not yet open
 		// and the preferences are set to switch
@@ -119,11 +122,13 @@ public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetList
         		for (int i = 0; i < listeners.length; i++) {
         			final ISuspendTriggerListener listener = (ISuspendTriggerListener) listeners[i];
         			SafeRunner.run(new ISafeRunnable() {
-        				public void run() throws Exception {
+        				@Override
+						public void run() throws Exception {
         					listener.suspended(launch, temp);
         				}
         			
-        				public void handleException(Throwable exception) {
+        				@Override
+						public void handleException(Throwable exception) {
         					DebugUIPlugin.log(exception);
         				}
         			

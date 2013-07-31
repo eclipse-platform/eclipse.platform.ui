@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,14 +85,14 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     public IBreakpoint[] getVisibleBreakpoints() {
         IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
         Object[] elements= ((ITreeContentProvider)getContentProvider()).getElements(manager);
-        List list = new ArrayList();
+		List<IBreakpoint> list = new ArrayList<IBreakpoint>();
         for (int i = 0; i < elements.length; i++) {
             TreeItem item = (TreeItem) searchItem(elements[i]);
             if (item != null) {
                 collectExpandedBreakpoints(item, list);
             }
         }
-        return (IBreakpoint[]) list.toArray(new IBreakpoint[list.size()]);
+        return list.toArray(new IBreakpoint[list.size()]);
     }
 
     /**
@@ -102,10 +102,10 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
      * @param item the item to get breakpoints from
      * @param list collection of visible breakpoints
      */
-    private void collectExpandedBreakpoints(TreeItem item, List list) {
+	private void collectExpandedBreakpoints(TreeItem item, List<IBreakpoint> list) {
         Object data = item.getData();
         if (data instanceof IBreakpoint) {
-            list.add(data);
+			list.add((IBreakpoint) data);
             return;
         }
         if (item.getExpanded()) {
@@ -213,7 +213,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     	if(items == null) {
     		return;
     	}
-    	Map containersToBreakpoints = new HashMap();
+		Map<IBreakpointContainer, List<IBreakpoint>> containersToBreakpoints = new HashMap<IBreakpointContainer, List<IBreakpoint>>();
 		IBreakpointContainer container = null;
     	IBreakpoint breakpoint = null;
     	for(int i = 0; i < items.length; i++) {
@@ -221,22 +221,20 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
 	    		breakpoint = (IBreakpoint)items[i].getData();
 	    		container = getRemovableContainer(items[i]);
 	    		if(container != null) {
-	    			List list = (List) containersToBreakpoints.get(container);
+					List<IBreakpoint> list = containersToBreakpoints.get(container);
 	    			if (list == null) {
-	    				list = new ArrayList();
+						list = new ArrayList<IBreakpoint>();
 	    				containersToBreakpoints.put(container, list);
 	    			}
 	    			list.add(breakpoint);
 	    		}
     		}
     	}
-    	Iterator iterator = containersToBreakpoints.entrySet().iterator();
-    	while (iterator.hasNext()) {
-    		Entry entry = (Entry) iterator.next();
-    		container = (IBreakpointContainer) entry.getKey();
-    		List list = (List) entry.getValue();
+		for (Entry<IBreakpointContainer, List<IBreakpoint>> entry : containersToBreakpoints.entrySet()) {
+    		container = entry.getKey();
+			List<IBreakpoint> list = entry.getValue();
     		IBreakpointOrganizer organizer = container.getOrganizer();
-    		IBreakpoint[] breakpoints = (IBreakpoint[]) list.toArray(new IBreakpoint[list.size()]);
+    		IBreakpoint[] breakpoints = list.toArray(new IBreakpoint[list.size()]);
     		if (organizer instanceof IBreakpointOrganizerDelegateExtension) {
 				IBreakpointOrganizerDelegateExtension extension = (IBreakpointOrganizerDelegateExtension) organizer;
 				extension.removeBreakpoints(breakpoints, container.getCategory());
@@ -266,7 +264,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     	if(selection == null  || target == null) {
     		return false;
     	}
-    	for(Iterator iter = selection.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
     		Object currentObject = iter.next();
     		if (!(currentObject instanceof IBreakpoint) || !checkAddableParentContainers(target, (IBreakpoint)currentObject)){
     			return false;
@@ -328,7 +326,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     		System.arraycopy(array, 0, breakpoints, 0, array.length);
     		extension.addBreakpoints(breakpoints, container.getCategory());
     	} else {
-	    	for(Iterator iter = selection.iterator(); iter.hasNext();) {
+			for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 	    		breakpoint = (IBreakpoint) iter.next();
 				organizer.addBreakpoint(breakpoint, container.getCategory());
 	    	}
@@ -340,6 +338,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.Viewer#refresh()
 	 */
+	@Override
 	public void refresh() {
 		super.refresh();
 		initializeCheckedState();
@@ -376,12 +375,12 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
 	 * @return a list of widget occurrences to update or an empty list
 	 */
     private Widget[] searchItems(Object element) {
-        ArrayList list = new ArrayList();
+		ArrayList<TreeItem> list = new ArrayList<TreeItem>();
         TreeItem[] items = getTree().getItems();
         for (int i = 0; i < items.length; i++) {
         	findAllOccurrences(items[i], element, list);
         }
-        return (Widget[]) list.toArray(new Widget[0]);
+        return list.toArray(new Widget[0]);
     }
     
     /**
@@ -390,9 +389,9 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
      * @param item the item in the tree
      * @param element the element to compare
      */
-    private void findAllOccurrences(TreeItem item, Object element, ArrayList list) {
+	private void findAllOccurrences(TreeItem item, Object element, ArrayList<TreeItem> list) {
         if (element.equals(item.getData())) {
-                list.add(item);
+			list.add(item);
         }
         TreeItem[] items = item.getItems();
         for (int i = 0; i < items.length; i++) {

@@ -33,6 +33,7 @@ public class TempoControl extends SequencerControl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#getValue()
 	 */
+	@Override
 	public String getValue() {
 		float bpm = getSequencer().getTempoInBPM();
 		return Float.toString(bpm);
@@ -41,6 +42,7 @@ public class TempoControl extends SequencerControl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#isEditable()
 	 */
+	@Override
 	public boolean isEditable() {
 		return getSequencer().isOpen();
 	}
@@ -48,6 +50,7 @@ public class TempoControl extends SequencerControl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#setValue(java.lang.String)
 	 */
+	@Override
 	public IStatus setValue(String newValue) {
 		try {
 			float value = getFloat(newValue);
@@ -62,6 +65,7 @@ public class TempoControl extends SequencerControl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#validateValue(java.lang.String)
 	 */
+	@Override
 	public IStatus validateValue(String value) {
 		try {
 			getFloat(value);

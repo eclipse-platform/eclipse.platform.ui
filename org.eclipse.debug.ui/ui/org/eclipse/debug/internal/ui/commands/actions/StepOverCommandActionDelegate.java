@@ -25,7 +25,8 @@ public class StepOverCommandActionDelegate extends DebugCommandActionDelegate {
         setAction(new StepOverCommandAction());
     }
 
-    public void init(IAction action) {
+    @Override
+	public void init(IAction action) {
         super.init(action);
     }
     

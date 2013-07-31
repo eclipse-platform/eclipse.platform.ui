@@ -67,13 +67,13 @@ public class TableRenderingLine extends PlatformObject {
 	
 	public MemoryByte[] getBytes(int start, int end)
 	{
-		ArrayList ret = new ArrayList();
+		ArrayList<MemoryByte> ret = new ArrayList<MemoryByte>();
 		
 		for (int i=start; i<end; i++)
 		{
 			ret.add(fBytes[i]);
 		}
-		return (MemoryByte[]) ret.toArray(new MemoryByte[ret.size()]);
+		return ret.toArray(new MemoryByte[ret.size()]);
 	}
 	
 	public String getRawMemoryString()
@@ -279,6 +279,7 @@ public class TableRenderingLine extends PlatformObject {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString()
 	{
 		StringBuffer buf = new StringBuffer();

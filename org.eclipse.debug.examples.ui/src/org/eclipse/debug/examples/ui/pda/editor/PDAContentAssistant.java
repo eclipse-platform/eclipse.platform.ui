@@ -34,7 +34,8 @@ public class PDAContentAssistant extends ContentAssistant {
 
     private IInformationControlCreator getInformationControlCreator() {
         return new IInformationControlCreator() {
-            public IInformationControl createInformationControl(Shell parent) {
+            @Override
+			public IInformationControl createInformationControl(Shell parent) {
                 return new DefaultInformationControl(parent);
             }
         };

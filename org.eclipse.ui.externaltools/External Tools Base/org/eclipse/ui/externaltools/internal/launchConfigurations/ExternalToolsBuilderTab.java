@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     dakshinamurthy.karra@gmail.com - bug 165371
@@ -67,11 +67,11 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	protected Button workingSetButton;
 	protected Button specifyResources;
 	protected Button fLaunchInBackgroundButton;
-	protected IWorkingSet workingSet; 
+	protected IWorkingSet workingSet;
 	protected ILaunchConfiguration fConfiguration;
-	
+
     private boolean fCreateBuildScheduleComponent= true;
-    
+
     // Console Output widgets
     private Button fConsoleOutput;
     private Button fFileOutput;
@@ -80,14 +80,14 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
     private Button fVariables;
     private Button fAppend;
     private Button fWorkspaceBrowse;
-    
+
     /**
      * Constructor
      */
     public ExternalToolsBuilderTab() {
     	setHelpContextId(IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_BUILDER_TAB);
     }
-    
+
     /**
      * Constructor
      * @param createBuildScheduleComponent
@@ -96,11 +96,12 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
         fCreateBuildScheduleComponent= createBuildScheduleComponent;
         setHelpContextId(IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_BUILDER_TAB);
     }
-    
+
 	protected SelectionListener selectionListener= new SelectionAdapter() {
 		/* (non-Javadoc)
 		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 		 */
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			boolean enabled= !fCreateBuildScheduleComponent || autoBuildButton.getSelection() || manualBuild.getSelection();
 			workingSetButton.setEnabled(enabled);
@@ -109,11 +110,12 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		}
 	};
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), getHelpContextId());
-		
+
 		GridLayout layout = new GridLayout();
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
@@ -126,7 +128,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		createLaunchInBackgroundComposite(mainComposite);
 		createBuildScheduleComponent(mainComposite);
 	}
-	
+
 	/**
 	 * Creates the controls needed to edit the launch in background
 	 * attribute of an external tool
@@ -139,12 +141,13 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		data.horizontalSpan = 2;
 		fLaunchInBackgroundButton.setLayoutData(data);
 		fLaunchInBackgroundButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
 		});
 	}
-	
+
 	protected void createBuildScheduleComponent(Composite parent) {
         if (fCreateBuildScheduleComponent) {
     		Label label= new Label(parent, SWT.NONE);
@@ -152,17 +155,18 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
     		label.setFont(parent.getFont());
     		afterClean= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab__Full_builds_2, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_Full, 2);
     		manualBuild= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab__Incremental_builds_4, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_Inc, 2);
-    		autoBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab__Auto_builds__Not_recommended__6, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_Auto, 2);  
+    		autoBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab__Auto_builds__Not_recommended__6, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_Auto, 2);
     		fDuringClean= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_0, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_1, 2);
-    		
+
     		createVerticalSpacer(parent, 2);
         }
-		
+
 		workingSetButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_workingSet_label, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_workingSet_tooltip, 1);
 		specifyResources= createPushButton(parent, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_13, null);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		specifyResources.setLayoutData(gd);
 		specifyResources.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				selectResources();
 			}
@@ -171,54 +175,56 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
         label.setText(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_2);
         label.setFont(parent.getFont());
 	}
-    
+
     private void createOutputCaptureComponent(Composite parent) {
         Group group = new Group(parent, SWT.NONE);
-        group.setText(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_17); 
+        group.setText(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_17);
         GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
         gd.horizontalSpan = 2;
         group.setLayoutData(gd);
         GridLayout layout = new GridLayout(5, false);
         group.setLayout(layout);
         group.setFont(parent.getFont());
-        
-        fConsoleOutput = createCheckButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_18); 
+
+        fConsoleOutput = createCheckButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_18);
         gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
         gd.horizontalSpan = 5;
         fConsoleOutput.setLayoutData(gd);
-        
+
         fConsoleOutput.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 updateLaunchConfigurationDialog();
             }
         });
-        
-        fFileOutput = createCheckButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_19); 
+
+        fFileOutput = createCheckButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_19);
         fFileOutput.setLayoutData(new GridData(SWT.BEGINNING, SWT.NORMAL, false, false));
-        
+
         fFileText = new Text(group, SWT.SINGLE | SWT.BORDER);
         gd = new GridData(SWT.FILL, SWT.NORMAL, true, false);
         gd.horizontalSpan = 4;
         fFileText.setLayoutData(gd);
         fFileText.setFont(parent.getFont());
-        
+
         Label spacer = new Label(group,SWT.NONE);
         gd = new GridData(SWT.FILL, SWT.NORMAL, true, false);
         gd.horizontalSpan=2;
         spacer.setLayoutData(gd);
-        fWorkspaceBrowse = createPushButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_20, null); 
-        fFileBrowse = createPushButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_21, null); 
-        fVariables = createPushButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_22, null); 
+        fWorkspaceBrowse = createPushButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_20, null);
+        fFileBrowse = createPushButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_21, null);
+        fVariables = createPushButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_22, null);
 
         spacer = new Label(group,SWT.NONE);
         spacer.setLayoutData(new GridData(SWT.FILL, SWT.NORMAL, false, false));
-        fAppend = createCheckButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_23); 
+        fAppend = createCheckButton(group, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_23);
         gd = new GridData(SWT.LEFT, SWT.TOP, true, false);
         gd.horizontalSpan = 4;
         fAppend.setLayoutData(gd);
-        
+
         fFileOutput.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 boolean enabled = fFileOutput.getSelection();
                 fFileText.setEnabled(enabled);
                 fFileBrowse.setEnabled(enabled);
@@ -228,19 +234,21 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
                 updateLaunchConfigurationDialog();
             }
         });
-        
+
         fAppend.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 updateLaunchConfigurationDialog();
             }
         });
-        
+
         fWorkspaceBrowse.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
-                dialog.setTitle(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_24); 
-                dialog.setMessage(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_25); 
-                dialog.setInput(ResourcesPlugin.getWorkspace().getRoot()); 
+                dialog.setTitle(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_24);
+                dialog.setMessage(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_25);
+                dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
                 dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
                 int buttonId = dialog.open();
                 if (buttonId == IDialogConstants.OK_ID) {
@@ -251,27 +259,30 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
                 }
             }
         });
-        
+
         fFileBrowse.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 String filePath = fFileText.getText();
                 FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
-                
+
                 filePath = dialog.open();
                 if (filePath != null) {
                     fFileText.setText(filePath);
                 }
             }
         });
-        
+
         fFileText.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
+            @Override
+			public void modifyText(ModifyEvent e) {
                 updateLaunchConfigurationDialog();
             }
         });
-        
+
         fVariables.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
                 dialog.open();
                 String variable = dialog.getVariableExpression();
@@ -279,11 +290,12 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
                     fFileText.insert(variable);
                 }
             }
-            public void widgetDefaultSelected(SelectionEvent e) {   
+            @Override
+			public void widgetDefaultSelected(SelectionEvent e) {
             }
         });
     }
-	
+
 	/*
 	 * Creates a check button in the given composite with the given text
 	 */
@@ -300,11 +312,12 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		StringBuffer buffer= new StringBuffer(IExternalToolConstants.BUILD_TYPE_FULL);
 		buffer.append(',');
 		buffer.append(IExternalToolConstants.BUILD_TYPE_INCREMENTAL);
-		buffer.append(','); 
+		buffer.append(',');
 		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
 		configuration.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, false);
 		configuration.setAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, true);
@@ -313,6 +326,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fConfiguration= configuration;
         if (fCreateBuildScheduleComponent) {
@@ -329,14 +343,14 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 			buildScope= configuration.getAttribute(IExternalToolConstants.ATTR_BUILDER_SCOPE, (String)null);
 		} catch (CoreException e) {
 		}
-		
+
 		workingSetButton.setSelection(buildScope != null);
 		workingSetButton.setEnabled(buildScope != null);
-		
+
 		if (buildScope != null) {
 			workingSet = RefreshTab.getWorkingSet(buildScope);
 		}
-		
+
         if (fCreateBuildScheduleComponent) {
     		int buildTypes[]= BuilderUtils.buildTypesToArray(buildKindString);
     		for (int i = 0; i < buildTypes.length; i++) {
@@ -353,10 +367,12 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
     				case IncrementalProjectBuilder.CLEAN_BUILD:
     					fDuringClean.setSelection(true);
     					break;
+					default:
+						break;
     			}
     		}
         }
-        
+
 		boolean enabled= true;
 		if (fCreateBuildScheduleComponent) {
 			enabled= autoBuildButton.getSelection() || manualBuild.getSelection();
@@ -366,23 +382,23 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		updateRunInBackground(configuration);
         updateConsoleOutput(configuration);
 	}
-	
-	protected void updateRunInBackground(ILaunchConfiguration configuration) { 
+
+	protected void updateRunInBackground(ILaunchConfiguration configuration) {
 		fLaunchInBackgroundButton.setSelection(ExternalToolsCoreUtil.isAsynchronousBuild(configuration));
 	}
-    
+
     private void updateConsoleOutput(ILaunchConfiguration configuration) {
         boolean outputToConsole = true;
         String outputFile = null;
         boolean append = false;
-        
+
         try {
             outputToConsole = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
             outputFile = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
             append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
         } catch (CoreException e) {
         }
-        
+
         fConsoleOutput.setSelection(outputToConsole);
         fAppend.setSelection(append);
         boolean haveOutputFile= outputFile != null;
@@ -400,19 +416,20 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
         if (fCreateBuildScheduleComponent) {
         	StringBuffer buffer= new StringBuffer();
     		if (afterClean.getSelection()) {
     			buffer.append(IExternalToolConstants.BUILD_TYPE_FULL).append(',');
-    		} 
+    		}
     		if (manualBuild.getSelection()){
-    			buffer.append(IExternalToolConstants.BUILD_TYPE_INCREMENTAL).append(','); 
-    		} 
+    			buffer.append(IExternalToolConstants.BUILD_TYPE_INCREMENTAL).append(',');
+    		}
     		if (autoBuildButton.getSelection()) {
     			buffer.append(IExternalToolConstants.BUILD_TYPE_AUTO).append(',');
     		}
-    		
+
     		if (fDuringClean.getSelection()) {
     			buffer.append(IExternalToolConstants.BUILD_TYPE_CLEAN);
     		}
@@ -425,7 +442,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 			configuration.setAttribute(IExternalToolConstants.ATTR_BUILDER_SCOPE, (String)null);
 		}
 		configuration.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, fLaunchInBackgroundButton.getSelection());
-        
+
         boolean captureOutput = false;
         if (fConsoleOutput.getSelection()) {
             captureOutput = true;
@@ -445,7 +462,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
         } else {
             configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
         }
-        
+
         if (!captureOutput) {
             configuration.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, false);
         } else {
@@ -456,20 +473,23 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_Build_Options_9;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(IDE.SharedImages.IMG_OBJ_PROJECT);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
@@ -484,12 +504,13 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 			setErrorMessage(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_16);
             return false;
 		}
-		
+
 		return validateRedirectFile();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
 	 */
+	@Override
 	public boolean canSave() {
 		return isValid(null);
 	}
@@ -499,14 +520,14 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	 */
 	private void selectResources() {
 		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
-		
+
 		if (workingSet == null){
 			workingSet = workingSetManager.createWorkingSet(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_15, new IAdaptable[0]);
 		}
 		IWorkingSetEditWizard wizard= workingSetManager.createWorkingSetEditWizard(workingSet);
 		WizardDialog dialog = new WizardDialog(ExternalToolsPlugin.getStandardDisplay().getActiveShell(), wizard);
-		dialog.create();		
-		
+		dialog.create();
+
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
@@ -516,6 +537,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing on activation
 	}
@@ -523,15 +545,16 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing on deactivation
 	}
-    
+
     private boolean validateRedirectFile() {
         if(fFileOutput.getSelection()) {
             int len = fFileText.getText().trim().length();
             if (len == 0) {
-                setErrorMessage(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_26); 
+                setErrorMessage(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_26);
                 return false;
             }
         }

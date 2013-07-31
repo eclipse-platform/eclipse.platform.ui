@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,16 +44,18 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 	 */
 	public StackFrameSourceDisplayAdapter() {
 		DebugPlugin.getDefault().addDebugEventListener(new IDebugEventSetListener() {
+			@Override
 			public void handleDebugEvents(DebugEvent[] events) {
 				for (int i = 0; i < events.length; i++) {
 					final DebugEvent event = events[i];
 					switch (event.getKind()) {
 						case DebugEvent.TERMINATE:
 							clearCachedModel(event.getSource());
-							// fall through
+							//$FALL-THROUGH$
 						case DebugEvent.RESUME:
 							if (!event.isEvaluation()) {
 								Job uijob = new UIJob("clear source selection"){ //$NON-NLS-1$
+									@Override
 									public IStatus runInUIThread(
 											IProgressMonitor monitor) {
 										clearSourceSelection(event.getSource());
@@ -72,6 +74,8 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 									clearCachedModel(event.getSource());
 								}
 							}
+							break;
+						default:
 							break;
 					}
 				}
@@ -105,6 +109,7 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			if (!monitor.isCanceled()) {				
 				if (!fTarget.isTerminated()) {
@@ -124,6 +129,7 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
 		 */
+		@Override
 		public boolean belongsTo(Object family) {
 			// source lookup jobs are a family per workbench page
 			if (family instanceof SourceLookupJob) {
@@ -152,6 +158,7 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (!monitor.isCanceled() && fResult != null) {
 				DebugUITools.displaySource(fResult, fPage);
@@ -170,6 +177,7 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
 		 */
+		@Override
 		public boolean belongsTo(Object family) {
 			// source display jobs are a family per workbench page
 			if (family instanceof SourceDisplayJob) {
@@ -184,6 +192,7 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
 	 */
+	@Override
 	public synchronized void displaySource(Object context, IWorkbenchPage page, boolean force) {
 		IStackFrame frame = (IStackFrame)context;
 		if (!force && frame.equals(fPrevFrame)) {

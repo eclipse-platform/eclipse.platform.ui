@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,18 +40,18 @@ public class LaunchConfigurationTabGroupExtension {
 	 * A list of sets of modes that this tab group supports
 	 * @since 3.3
 	 */
-	private List fModes = null;
+	private List<Set<String>> fModes = null;
 	
 	/**
 	 * A map of mode sets to descriptions
 	 * @since 3.3
 	 */
-	private Map fDescriptions = null;
+	private Map<Set<String>, String> fDescriptions = null;
 	
 	/**
 	 * Perspectives for each mode
 	 */
-	private Map fPerspectives = null;
+	private Map<Set<String>, String> fPerspectives = null;
 		
 	/**
 	 * Constructs a launch configuration tab extension based
@@ -93,19 +93,19 @@ public class LaunchConfigurationTabGroupExtension {
 	 * @return the set of modes specified in the configuration data, or
 	 *  <code>null</code>
 	 */
-	protected List getModes() {
+	protected List<Set<String>> getModes() {
 		if (fModes == null) {
-			fModes = new ArrayList();
-			fPerspectives = new Hashtable();
+			fModes = new ArrayList<Set<String>>();
+			fPerspectives = new Hashtable<Set<String>, String>();
 			IConfigurationElement[] modes = fConfig.getChildren(IConfigurationElementConstants.LAUNCH_MODE);
 			if (modes.length > 0) {
 				IConfigurationElement element = null;
 				String perspective = null, mode = null;
-				Set mset = null;
+				Set<String> mset = null;
 				for (int i = 0; i < modes.length; i++) {
 					element = modes[i];
 					mode = element.getAttribute(IConfigurationElementConstants.MODE);
-					mset = new HashSet();
+					mset = new HashSet<String>();
 					mset.add(mode);
 					fModes.add(mset);
 					perspective = element.getAttribute(IConfigurationElementConstants.PERSPECTIVE);
@@ -125,9 +125,9 @@ public class LaunchConfigurationTabGroupExtension {
 	 * @param modes the set of launch modes
 	 * @return perspective identifier, or <code>null</code>
 	 */
-	protected String getPerspective(Set modes) {
+	protected String getPerspective(Set<String> modes) {
 		getModes();
-		return (String)fPerspectives.get(modes);
+		return fPerspectives.get(modes);
 	}
 	
 	/**
@@ -181,19 +181,19 @@ public class LaunchConfigurationTabGroupExtension {
 	 * @return a description of the Launch Mode if available. If not available, attempts to return
 	 * a description of the Launch Configuration. If no appropriate description is found an empty string is returned.
 	 */
-	public String getDescription(Set modes) {
+	public String getDescription(Set<String> modes) {
 		String description = null;
 		if(fDescriptions == null) {
-			fDescriptions = new HashMap();
+			fDescriptions = new HashMap<Set<String>, String>();
 			IConfigurationElement[] children = fConfig.getChildren(IConfigurationElementConstants.LAUNCH_MODE);
 			IConfigurationElement child = null;
 			String mode = null;
-			HashSet set = null;
+			HashSet<String> set = null;
 			for (int i = 0; i < children.length; i++) {
 				child = children[i];
 				mode = child.getAttribute(IConfigurationElementConstants.MODE);
 				if(mode != null) {
-					set = new HashSet();
+					set = new HashSet<String>();
 					set.add(mode);
 				}
 				description = child.getAttribute(IConfigurationElementConstants.DESCRIPTION);
@@ -203,7 +203,7 @@ public class LaunchConfigurationTabGroupExtension {
 			}
 			
 		} 
-		description = (String) fDescriptions.get(modes);
+		description = fDescriptions.get(modes);
 		if(description == null) {
 			description = fConfig.getAttribute(IConfigurationElementConstants.DESCRIPTION);
 			

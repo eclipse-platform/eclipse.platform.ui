@@ -46,7 +46,8 @@ public class ResourceExtender extends PropertyTester {
     /* (non-Javadoc)
      * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
      */
-    public boolean test(Object receiver, String method, Object[] args, Object expectedValue) {
+    @Override
+	public boolean test(Object receiver, String method, Object[] args, Object expectedValue) {
         IResource resource = (IResource) ((IAdaptable) receiver).getAdapter(IResource.class);
         if (resource == null) {
         	if (PROPERTY_MATCHES_CONTENT_TYPE.equals(method)) {

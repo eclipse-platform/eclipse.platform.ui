@@ -33,6 +33,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 public class DefaultModelProxyFactory implements IModelProxyFactory {
 
+	@Override
 	public IModelProxy createModelProxy(Object element, IPresentationContext context) {
 		String id = context.getId();
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(id)) {

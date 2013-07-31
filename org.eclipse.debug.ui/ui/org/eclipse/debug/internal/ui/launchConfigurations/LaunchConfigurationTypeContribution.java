@@ -34,6 +34,7 @@ class LaunchConfigurationTypeContribution implements IPluginContribution {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
 	 */
+	@Override
 	public String getLocalId() {
 		return type.getIdentifier();
 	}
@@ -41,6 +42,7 @@ class LaunchConfigurationTypeContribution implements IPluginContribution {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 	 */
+	@Override
 	public String getPluginId() {
 		return type.getPluginIdentifier();
 	}

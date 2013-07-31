@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,16 +19,17 @@ import org.eclipse.core.runtime.CoreException;
  * Abstract implementation of a line breakpoint. This class is
  * intended to be subclassed by debug model specific implementations
  * of line breakpoints.
- * 
+ *
  * @see ILineBreakpoint
  */
 
 public abstract class LineBreakpoint extends Breakpoint implements ILineBreakpoint {
-	
+
 
 	/**
 	 * @see ILineBreakpoint#getLineNumber()
 	 */
+	@Override
 	public int getLineNumber() throws CoreException {
 		IMarker m = getMarker();
 		if (m != null) {
@@ -40,6 +41,7 @@ public abstract class LineBreakpoint extends Breakpoint implements ILineBreakpoi
 	/**
 	 * @see ILineBreakpoint#getCharStart()
 	 */
+	@Override
 	public int getCharStart() throws CoreException {
 		IMarker m = getMarker();
 		if (m != null) {
@@ -51,6 +53,7 @@ public abstract class LineBreakpoint extends Breakpoint implements ILineBreakpoi
 	/**
 	 * @see ILineBreakpoint#getCharEnd()
 	 */
+	@Override
 	public int getCharEnd() throws CoreException {
 		IMarker m = getMarker();
 		if (m != null) {

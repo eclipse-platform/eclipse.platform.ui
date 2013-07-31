@@ -25,6 +25,7 @@ public class MemoryBlock implements IMemoryBlock {
 	/**
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#getStartAddress()
 	 */
+	@Override
 	public long getStartAddress() {
 		return 0;
 	}
@@ -32,6 +33,7 @@ public class MemoryBlock implements IMemoryBlock {
 	/**
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#getLength()
 	 */
+	@Override
 	public long getLength() {
 		return 100;
 	}
@@ -39,6 +41,7 @@ public class MemoryBlock implements IMemoryBlock {
 	/**
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#getBytes()
 	 */
+	@Override
 	public byte[] getBytes() throws DebugException {
 		byte[] bytes = new byte[(int)getLength()];
 		for (int i = 0; i < bytes.length; i++) {
@@ -50,6 +53,7 @@ public class MemoryBlock implements IMemoryBlock {
 	/**
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#supportsValueModification()
 	 */
+	@Override
 	public boolean supportsValueModification() {
 		return false;
 	}
@@ -57,6 +61,7 @@ public class MemoryBlock implements IMemoryBlock {
 	/**
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#setValue(long, byte[])
 	 */
+	@Override
 	public void setValue(long offset, byte[] bytes) throws DebugException {
 
 	}
@@ -64,6 +69,7 @@ public class MemoryBlock implements IMemoryBlock {
 	/**
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		return "no.debugger"; //$NON-NLS-1$
 	}
@@ -71,6 +77,7 @@ public class MemoryBlock implements IMemoryBlock {
 	/**
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return null;
 	}
@@ -78,6 +85,7 @@ public class MemoryBlock implements IMemoryBlock {
 	/**
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return null;
 	}
@@ -85,6 +93,7 @@ public class MemoryBlock implements IMemoryBlock {
 	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		return null;
 	}

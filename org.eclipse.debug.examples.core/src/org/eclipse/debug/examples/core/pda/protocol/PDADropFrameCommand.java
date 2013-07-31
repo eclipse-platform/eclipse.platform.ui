@@ -39,7 +39,8 @@ public class PDADropFrameCommand extends PDACommand {
         super("drop " + threadId); //$NON-NLS-1$
     }
     
-    public PDACommandResult createResult(String resultText) {
+    @Override
+	public PDACommandResult createResult(String resultText) {
         return new PDACommandResult(resultText);
     }
 }

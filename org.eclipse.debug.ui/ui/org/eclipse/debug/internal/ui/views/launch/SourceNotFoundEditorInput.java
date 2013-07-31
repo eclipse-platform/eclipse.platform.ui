@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -22,6 +20,8 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Editor input for a stack frame for which source could not be located.
@@ -56,6 +56,7 @@ public class SourceNotFoundEditorInput extends PlatformObject implements IEditor
 	/**
 	 * @see org.eclipse.ui.IEditorInput#exists()
 	 */
+	@Override
 	public boolean exists() {
 		return false;
 	}
@@ -63,6 +64,7 @@ public class SourceNotFoundEditorInput extends PlatformObject implements IEditor
 	/**
 	 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return DebugUITools.getDefaultImageDescriptor(fFrame);
 	}
@@ -70,6 +72,7 @@ public class SourceNotFoundEditorInput extends PlatformObject implements IEditor
 	/**
 	 * @see org.eclipse.ui.IEditorInput#getName()
 	 */
+	@Override
 	public String getName() {
 		try {
 			return fFrame.getName();
@@ -81,6 +84,7 @@ public class SourceNotFoundEditorInput extends PlatformObject implements IEditor
 	/**
 	 * @see org.eclipse.ui.IEditorInput#getPersistable()
 	 */
+	@Override
 	public IPersistableElement getPersistable() {
 		return null;
 	}
@@ -88,8 +92,9 @@ public class SourceNotFoundEditorInput extends PlatformObject implements IEditor
 	/**
 	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
 	 */
+	@Override
 	public String getToolTipText() {
-		return MessageFormat.format(DebugUIViewsMessages.SourceNotFoundEditorInput_Source_not_found_for__0__2,new String[] {fFrameText}); 
+		return MessageFormat.format(DebugUIViewsMessages.SourceNotFoundEditorInput_Source_not_found_for__0__2, new Object[] { fFrameText });
 	}
 
 }

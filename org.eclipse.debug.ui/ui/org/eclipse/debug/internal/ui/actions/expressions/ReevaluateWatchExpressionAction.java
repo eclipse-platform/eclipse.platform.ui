@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,9 +33,8 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class ReevaluateWatchExpressionAction implements IObjectActionDelegate {
 
-    public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-        // TODO Auto-generated method stub
-        
+    @Override
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
     }
     
     /**
@@ -67,9 +66,10 @@ public class ReevaluateWatchExpressionAction implements IObjectActionDelegate {
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		IDebugElement context = getContext();
-		for (Iterator iter= getCurrentSelection().iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = getCurrentSelection().iterator(); iter.hasNext();) {
 			IWatchExpression expression= (IWatchExpression) iter.next();
 			expression.setExpressionContext(context);
 			if (!expression.isEnabled()) {
@@ -82,6 +82,7 @@ public class ReevaluateWatchExpressionAction implements IObjectActionDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		IDebugElement debugElement = getContext();
 		if (debugElement == null) {

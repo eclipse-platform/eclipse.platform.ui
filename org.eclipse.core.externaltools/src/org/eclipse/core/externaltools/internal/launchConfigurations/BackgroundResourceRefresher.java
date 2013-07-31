@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,21 +25,21 @@ import org.eclipse.debug.core.RefreshUtil;
 import org.eclipse.debug.core.model.IProcess;
 
 /**
- * Refreshes resources as specified by a launch configuration, when 
+ * Refreshes resources as specified by a launch configuration, when
  * an associated process terminates.
  */
 public class BackgroundResourceRefresher implements IDebugEventSetListener  {
 
 	private ILaunchConfiguration fConfiguration;
 	private IProcess fProcess;
-	
-	
-	
+
+
+
 	public BackgroundResourceRefresher(ILaunchConfiguration configuration, IProcess process) {
 		fConfiguration = configuration;
 		fProcess = process;
 	}
-	
+
 	/**
 	 * If the process has already terminated, resource refreshing is done
 	 * immediately in the current thread. Otherwise, refreshing is done when the
@@ -54,10 +54,11 @@ public class BackgroundResourceRefresher implements IDebugEventSetListener  {
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
@@ -68,19 +69,20 @@ public class BackgroundResourceRefresher implements IDebugEventSetListener  {
 			}
 		}
 	}
-	
+
 	/**
 	 * Submits a job to do the refresh
 	 */
 	protected void refresh() {
 		Job job= new Job(ExternalToolsProgramMessages.BackgroundResourceRefresher_0) {
+			@Override
 			public IStatus run(IProgressMonitor monitor) {
 				try {
 					RefreshUtil.refreshResources(fConfiguration, monitor);
 				} catch (CoreException e) {
 					ExternalToolsCore.log(e);
 					return e.getStatus();
-				}	
+				}
 				return Status.OK_STATUS;
 			}
 		};

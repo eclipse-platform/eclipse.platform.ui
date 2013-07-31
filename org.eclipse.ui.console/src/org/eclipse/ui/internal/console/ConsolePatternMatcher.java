@@ -36,7 +36,7 @@ public class ConsolePatternMatcher implements IDocumentListener {
     /**
      * Collection of compiled pattern match listeners
      */
-    private ArrayList fPatterns = new ArrayList();
+	private ArrayList<CompiledPatternMatchListener> fPatterns = new ArrayList<CompiledPatternMatchListener>();
 
     private TextConsole fConsole;
 
@@ -56,10 +56,11 @@ public class ConsolePatternMatcher implements IDocumentListener {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
          */
-        protected IStatus run(IProgressMonitor monitor) {
+        @Override
+		protected IStatus run(IProgressMonitor monitor) {
 			IDocument doc = fConsole.getDocument();
 			String text = null;
 			int prevBaseOffset = -1;
@@ -170,11 +171,12 @@ public class ConsolePatternMatcher implements IDocumentListener {
 			return Status.OK_STATUS;
 		}
 
-        public boolean belongsTo(Object family) {
+		@Override
+		public boolean belongsTo(Object family) {
             return family == fConsole;
         }
-        
-        
+
+
     }
 
     private class CompiledPatternMatchListener {
@@ -203,21 +205,18 @@ public class ConsolePatternMatcher implements IDocumentListener {
     /**
 	 * Adds the given pattern match listener to this console. The listener will
 	 * be connected and receive match notifications.
-	 * 
+	 *
 	 * @param matchListener
 	 *            the pattern match listener to add
 	 */
     public void addPatternMatchListener(IPatternMatchListener matchListener) {
         synchronized (fPatterns) {
-            
-            // check for dups
-            for (Iterator iter = fPatterns.iterator(); iter.hasNext();) {
-                CompiledPatternMatchListener element = (CompiledPatternMatchListener) iter.next();
-                if (element.listener == matchListener) {
-                    return;
-                }
-            }
-            
+			for (CompiledPatternMatchListener listener : fPatterns) {
+				if (listener.listener == matchListener) {
+					return;
+				}
+			}
+
             if (matchListener == null || matchListener.getPattern() == null) {
                 throw new IllegalArgumentException("Pattern cannot be null"); //$NON-NLS-1$
             }
@@ -238,14 +237,14 @@ public class ConsolePatternMatcher implements IDocumentListener {
     /**
      * Removes the given pattern match listener from this console. The listener
      * will be disconnected and will no longer receive match notifications.
-     * 
+     *
      * @param matchListener
      *            the pattern match listener to remove.
      */
     public void removePatternMatchListener(IPatternMatchListener matchListener) {
         synchronized (fPatterns) {
-            for (Iterator iter = fPatterns.iterator(); iter.hasNext();) {
-                CompiledPatternMatchListener element = (CompiledPatternMatchListener) iter.next();
+			for (Iterator<CompiledPatternMatchListener> iter = fPatterns.iterator(); iter.hasNext();) {
+                CompiledPatternMatchListener element = iter.next();
                 if (element.listener == matchListener) {
                     iter.remove();
                     matchListener.disconnect();
@@ -257,46 +256,42 @@ public class ConsolePatternMatcher implements IDocumentListener {
     public void disconnect() {
         fMatchJob.cancel();
         synchronized (fPatterns) {
-            Iterator iterator = fPatterns.iterator();
-            while (iterator.hasNext()) {
-                CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) iterator.next();
-                notifier.dispose();
-            }
+			for (CompiledPatternMatchListener listener : fPatterns) {
+				listener.dispose();
+			}
             fPatterns.clear();
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
      */
-    public void documentAboutToBeChanged(DocumentEvent event) {
+    @Override
+	public void documentAboutToBeChanged(DocumentEvent event) {
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
      */
-    public void documentChanged(DocumentEvent event) {
+    @Override
+	public void documentChanged(DocumentEvent event) {
         if (event.fLength > 0) {
             synchronized (fPatterns) {
                 if (event.fDocument.getLength() == 0) {
                     // document has been cleared, reset match listeners
-                    Iterator iter = fPatterns.iterator();
-                    while (iter.hasNext()) {
-                        CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) iter.next();
-                        notifier.end = 0;
-                    }
+					for (CompiledPatternMatchListener notifier : fPatterns) {
+						notifier.end = 0;
+					}
                 } else {
-                    if (event.fOffset == 0) { 
+                    if (event.fOffset == 0) {
                         //document was trimmed
-                        Iterator iter = fPatterns.iterator();
-                        while (iter.hasNext()) {
-                            CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) iter.next();
-                            notifier.end = notifier.end > event.fLength ? notifier.end-event.fLength : 0;
-                        }
+						for (CompiledPatternMatchListener notifier : fPatterns) {
+							notifier.end = notifier.end > event.fLength ? notifier.end - event.fLength : 0;
+						}
                     }
                 }
             }
@@ -304,7 +299,7 @@ public class ConsolePatternMatcher implements IDocumentListener {
         fMatchJob.schedule();
     }
 
-    
+
     public void forceFinalMatching() {
     	fScheduleFinal = true;
     	fMatchJob.schedule();

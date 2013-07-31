@@ -33,6 +33,7 @@ public abstract class AbstractColumnPresentation implements IColumnPresentation2
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#init(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
+	@Override
 	public void init(IPresentationContext context) {
 		fContext = context;
 	}
@@ -40,6 +41,7 @@ public abstract class AbstractColumnPresentation implements IColumnPresentation2
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fContext = null;
 	}
@@ -47,6 +49,7 @@ public abstract class AbstractColumnPresentation implements IColumnPresentation2
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getImageDescriptor(java.lang.String)
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(String id) {
 		return null;
 	}
@@ -63,6 +66,7 @@ public abstract class AbstractColumnPresentation implements IColumnPresentation2
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation2#getInitialColumnWidth(java.lang.String, int, java.lang.String[])
 	 */
+	@Override
 	public int getInitialColumnWidth(String id, int treeWidgetWidth, String[] visibleColumnIds) {
 		return -1;
 	}

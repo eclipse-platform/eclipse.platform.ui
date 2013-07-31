@@ -46,12 +46,14 @@ public class MessageDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#init(org.eclipse.ui.IWorkbenchPartSite)
 	 */
+	@Override
 	public void init(IWorkbenchPartSite partSite) {
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fControlParent.dispose();
 	}	
@@ -59,6 +61,7 @@ public class MessageDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		fControlParent = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		fControlParent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
@@ -69,6 +72,7 @@ public class MessageDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#setFocus()
 	 */
+	@Override
 	public boolean setFocus() {
 		return false;
 	}
@@ -76,6 +80,7 @@ public class MessageDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#display(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void display(IStructuredSelection selection) {
 		// re-create controls if the layout has changed
 		if (selection != null && selection.size() == 1) {
@@ -95,6 +100,7 @@ public class MessageDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#getID()
 	 */
+	@Override
 	public String getID() {
 		return ID;
 	}
@@ -102,6 +108,7 @@ public class MessageDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#getName()
 	 */
+	@Override
 	public String getName() {
 		return NAME;
 	}
@@ -109,6 +116,7 @@ public class MessageDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return DESCRIPTION;
 	}

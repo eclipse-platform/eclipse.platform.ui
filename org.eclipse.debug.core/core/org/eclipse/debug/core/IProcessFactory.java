@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -47,7 +47,7 @@ import org.eclipse.debug.core.model.IProcess;
  */
 
 public interface IProcessFactory {
-	
+
 	/**
 	 * Creates and returns a new process representing the given
 	 * <code>java.lang.Process</code>. A streams proxy is created
@@ -62,5 +62,5 @@ public interface IProcessFactory {
 	 * @return the process
 	 * @see IProcess
 	 */
-	public IProcess newProcess(ILaunch launch, Process process, String label, Map attributes);
+	public IProcess newProcess(ILaunch launch, Process process, String label, Map<String, String> attributes);
 }

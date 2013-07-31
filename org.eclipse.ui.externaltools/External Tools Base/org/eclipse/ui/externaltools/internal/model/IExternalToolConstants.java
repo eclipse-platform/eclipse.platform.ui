@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     dakshinamurthy.karra@gmail.com - bug 165371
@@ -34,33 +34,39 @@ public interface IExternalToolConstants {
 	 * Variable that expands to the workspace root object (value <code>workspace</code>).
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#VAR_WORKSPACE}
 	 */
+	@Deprecated
 	public static final String VAR_WORKSPACE = org.eclipse.core.externaltools.internal.IExternalToolConstants.VAR_WORKSPACE;
 	/**
 	 * Variable that expands to the project resource (value <code>project</code>).
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#VAR_PROJECT}
 	 */
+	@Deprecated
 	public static final String VAR_PROJECT = org.eclipse.core.externaltools.internal.IExternalToolConstants.VAR_PROJECT;
 	/**
 	 * Variable that expands to the container resource (value <code>container</code>).
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#VAR_CONTAINER}
 	 */
+	@Deprecated
 	public static final String VAR_CONTAINER = org.eclipse.core.externaltools.internal.IExternalToolConstants.VAR_CONTAINER;
 	/**
 	 * Variable that expands to a resource (value <code>resource</code>).
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#VAR_RESOURCE}
 	 */
+	@Deprecated
 	public static final String VAR_RESOURCE = org.eclipse.core.externaltools.internal.IExternalToolConstants.VAR_RESOURCE;
 	/**
 	 * Variable that expands to the working set object (value <code>working_set</code>).
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#VAR_WORKING_SET}
 	 */
+	@Deprecated
 	public static final String VAR_WORKING_SET = org.eclipse.core.externaltools.internal.IExternalToolConstants.VAR_WORKING_SET;
 	// ------- Tool Types -------
 	/**
-	 * External tool type for programs such as executables, batch files, 
+	 * External tool type for programs such as executables, batch files,
 	 * shell scripts, etc (value <code>programType</code>).
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#TOOL_TYPE_PROGRAM}
 	 */
+	@Deprecated
 	public static final String TOOL_TYPE_PROGRAM = org.eclipse.core.externaltools.internal.IExternalToolConstants.TOOL_TYPE_PROGRAM;
 
 	// ------- Build Types -------
@@ -69,6 +75,7 @@ public interface IExternalToolConstants {
 	 * the external tool running as a builder (value <code>incremental</code>).
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#BUILD_TYPE_INCREMENTAL}
 	 */
+	@Deprecated
 	public static final String BUILD_TYPE_INCREMENTAL = org.eclipse.core.externaltools.internal.IExternalToolConstants.BUILD_TYPE_INCREMENTAL;
 
 	/**
@@ -76,6 +83,7 @@ public interface IExternalToolConstants {
 	 * the external tool running as a builder (value <code>full</code>).
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#BUILD_TYPE_FULL}
 	 */
+	@Deprecated
 	public static final String BUILD_TYPE_FULL = org.eclipse.core.externaltools.internal.IExternalToolConstants.BUILD_TYPE_FULL;
 
 	/**
@@ -83,13 +91,15 @@ public interface IExternalToolConstants {
 	 * the external tool running as a builder (value <code>auto</code>).
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#BUILD_TYPE_AUTO}
 	 */
+	@Deprecated
 	public static final String BUILD_TYPE_AUTO = org.eclipse.core.externaltools.internal.IExternalToolConstants.BUILD_TYPE_AUTO;
-	
+
 	/**
 	 * Build type indicating a clean project build request for
 	 * the external tool running as a builder (value <code>clean</code>).
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#BUILD_TYPE_CLEAN}
 	 */
+	@Deprecated
 	public static final String BUILD_TYPE_CLEAN = org.eclipse.core.externaltools.internal.IExternalToolConstants.BUILD_TYPE_CLEAN;
 
 	/**
@@ -97,6 +107,7 @@ public interface IExternalToolConstants {
 	 * the external tool running as a builder (value <code>none</code>).
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#BUILD_TYPE_NONE}
 	 */
+	@Deprecated
 	public static final String BUILD_TYPE_NONE = org.eclipse.core.externaltools.internal.IExternalToolConstants.BUILD_TYPE_NONE;
 
 	// ------- Images -------
@@ -116,15 +127,17 @@ public interface IExternalToolConstants {
 	 * Program launch configuration type identifier.
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#ID_PROGRAM_LAUNCH_CONFIGURATION_TYPE}
 	 */
+	@Deprecated
 	public static final String ID_PROGRAM_LAUNCH_CONFIGURATION_TYPE = org.eclipse.core.externaltools.internal.IExternalToolConstants.ID_PROGRAM_LAUNCH_CONFIGURATION_TYPE;
-	
+
 	/**
 	 * Program builder launch configuration type identifier. Program project
 	 * builders are of this type.
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#ID_PROGRAM_BUILDER_LAUNCH_CONFIGURATION_TYPE}
 	 */
+	@Deprecated
 	public static final String ID_PROGRAM_BUILDER_LAUNCH_CONFIGURATION_TYPE = org.eclipse.core.externaltools.internal.IExternalToolConstants.ID_PROGRAM_BUILDER_LAUNCH_CONFIGURATION_TYPE;
-	
+
 	// ------- Launch configuration category --------
 	/**
 	 * Identifier for external tools launch configuration category. Launch
@@ -132,6 +145,7 @@ public interface IExternalToolConstants {
 	 * launch configuration dialog should belong to this category.
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#ID_EXTERNAL_TOOLS_LAUNCH_CATEGORY}
 	 */
+	@Deprecated
 	public static final String ID_EXTERNAL_TOOLS_LAUNCH_CATEGORY = org.eclipse.core.externaltools.internal.IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_CATEGORY;
 	/**
 	 * Identifier for external tools launch configuration builders category.
@@ -139,6 +153,7 @@ public interface IExternalToolConstants {
 	 * belong to this category.
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY}
 	 */
+	@Deprecated
 	public static final String ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY = org.eclipse.core.externaltools.internal.IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY;
 
 	// ------- Launch configuration groups --------
@@ -160,12 +175,14 @@ public interface IExternalToolConstants {
 	 * Default value is <code>false</code>.
 	 * @deprecated since 3.1 Replaced by <code>org.eclipse.debug.core.DebugPlugin.ATTR_CAPTURE_OUTPUT</code>
 	 */
+	@Deprecated
 	public static final String ATTR_CAPTURE_OUTPUT = PLUGIN_ID + ".ATTR_CAPTURE_OUTPUT"; //$NON-NLS-1$
 	/**
 	 * String attribute identifying the location of an external. Default value
 	 * is <code>null</code>. Encoding is tool specific.
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#ATTR_LOCATION}
 	 */
+	@Deprecated
 	public static final String ATTR_LOCATION = org.eclipse.core.externaltools.internal.IExternalToolConstants.ATTR_LOCATION;
 
 	/**
@@ -174,28 +191,32 @@ public interface IExternalToolConstants {
 	 * THIS ATTRIBUTE IS NOT USED.
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#ATTR_PROMPT_FOR_ARGUMENTS}
 	 */
+	@Deprecated
 	public static final String ATTR_PROMPT_FOR_ARGUMENTS = org.eclipse.core.externaltools.internal.IExternalToolConstants.ATTR_PROMPT_FOR_ARGUMENTS;
-	
+
 	/**
-	 * String attribute identifying the scope of resources that should trigger an 
+	 * String attribute identifying the scope of resources that should trigger an
 	 * external tool to run. Default value is <code>null</code>
 	 * indicating that the builder will be triggered for all changes.
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#ATTR_BUILDER_SCOPE}
 	 */
+	@Deprecated
 	public static final String ATTR_BUILDER_SCOPE = org.eclipse.core.externaltools.internal.IExternalToolConstants.ATTR_BUILDER_SCOPE;
-		
+
 	/**
 	 * String attribute containing an array of build kinds for which an
 	 * external tool builder should be run.
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#ATTR_RUN_BUILD_KINDS}
 	 */
+	@Deprecated
 	public static final String ATTR_RUN_BUILD_KINDS = org.eclipse.core.externaltools.internal.IExternalToolConstants.ATTR_RUN_BUILD_KINDS;
-	
+
 	/**
 	 * Boolean attribute indicating if the console should be shown on external
 	 * tool output. Default value is <code>false</code>.
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#ATTR_SHOW_CONSOLE}
 	 */
+	@Deprecated
 	public static final String ATTR_SHOW_CONSOLE = org.eclipse.core.externaltools.internal.IExternalToolConstants.ATTR_SHOW_CONSOLE;
 
 	/**
@@ -203,6 +224,7 @@ public interface IExternalToolConstants {
 	 * tool. Default value is <code>null</code>, and encoding is tool specific.
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#ATTR_TOOL_ARGUMENTS}
 	 */
+	@Deprecated
 	public static final String ATTR_TOOL_ARGUMENTS = org.eclipse.core.externaltools.internal.IExternalToolConstants.ATTR_TOOL_ARGUMENTS;
 
 	/**
@@ -211,20 +233,23 @@ public interface IExternalToolConstants {
 	 * directory, which is tool specific.
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#ATTR_WORKING_DIRECTORY}
 	 */
+	@Deprecated
 	public static final String ATTR_WORKING_DIRECTORY = org.eclipse.core.externaltools.internal.IExternalToolConstants.ATTR_WORKING_DIRECTORY;
-	
+
 	/**
 	 * String attribute identifying whether an external tool builder configuration
 	 * is enabled. The default value is <code>true</code>, which indicates
 	 * that the configuration will be executed as appropriate by the builder.
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#ATTR_BUILDER_ENABLED}
 	 */
+	@Deprecated
 	public static final String ATTR_BUILDER_ENABLED = org.eclipse.core.externaltools.internal.IExternalToolConstants.ATTR_BUILDER_ENABLED;
-	
+
 	/**
 	 * Status code indicating an unexpected internal error.
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#ERR_INTERNAL_ERROR}
 	 */
+	@Deprecated
 	public static final int ERR_INTERNAL_ERROR = org.eclipse.core.externaltools.internal.IExternalToolConstants.ERR_INTERNAL_ERROR;
 
 	/**
@@ -232,14 +257,16 @@ public interface IExternalToolConstants {
 	 * The value is the name of the disabled builder.
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#ATTR_DISABLED_BUILDER}
 	 */
+	@Deprecated
 	public static final String ATTR_DISABLED_BUILDER = org.eclipse.core.externaltools.internal.IExternalToolConstants.ATTR_DISABLED_BUILDER;
-	
+
 	/**
 	 * boolean attribute identifying that an external tool builder has been configured for triggering
 	 * using the <code>ICommand.setBuilding(int)</code> mechanism
 	 * @since 3.1
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#ATTR_TRIGGERS_CONFIGURED}
 	 */
+	@Deprecated
 	public static final String ATTR_TRIGGERS_CONFIGURED = org.eclipse.core.externaltools.internal.IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED;
 
 	/**
@@ -247,13 +274,15 @@ public interface IExternalToolConstants {
 	 * <code>null</code> indicates the default workspace build.
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#ATTR_BUILD_SCOPE}
 	 */
+	@Deprecated
 	public static final String ATTR_BUILD_SCOPE = org.eclipse.core.externaltools.internal.IExternalToolConstants.ATTR_BUILD_SCOPE;
 
 	/**
-	 * Attribute identifier specifying whether referenced projects should be 
+	 * Attribute identifier specifying whether referenced projects should be
 	 * considered when computing the projects to build. Default value is
 	 * <code>true</code>.
 	 * @deprecated use {@link org.eclipse.core.externaltools.internal.IExternalToolConstants#ATTR_INCLUDE_REFERENCED_PROJECTS}
 	 */
+	@Deprecated
 	public static final String ATTR_INCLUDE_REFERENCED_PROJECTS = org.eclipse.core.externaltools.internal.IExternalToolConstants.ATTR_INCLUDE_REFERENCED_PROJECTS;
 }

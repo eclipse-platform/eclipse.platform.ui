@@ -136,6 +136,7 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 	/* (non-Javadoc)
 	 * @see com.ibm.debug.extended.ui.AbstractMemoryRenderer#getString(java.lang.String, java.math.BigInteger, byte[])
 	 */
+	@Override
 	public String getString(String dataType, BigInteger address, MemoryByte[] data) {
 		
 		boolean invalid = false;
@@ -189,6 +190,7 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 	/* (non-Javadoc)
 	 * @see com.ibm.debug.extended.ui.AbstractMemoryRenderer#getBytes(java.lang.String, java.math.BigInteger, java.lang.String)
 	 */
+	@Override
 	public byte[] getBytes(String dataType, BigInteger address, MemoryByte[] currentValues, String data) {
 		
 		int columnSize = getBytesPerColumn();

@@ -38,6 +38,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void toggleLineBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
 		ITextEditor textEditor = getEditor(part);
 		if (textEditor != null) {
@@ -63,6 +64,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public boolean canToggleLineBreakpoints(IWorkbenchPart part, ISelection selection) {
 		return getEditor(part) != null;
 	}
@@ -92,17 +94,20 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void toggleMethodBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public boolean canToggleMethodBreakpoints(IWorkbenchPart part, ISelection selection) {
 		return false;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void toggleWatchpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
 	    String[] variableAndFunctionName = getVariableAndFunctionName(part, selection);
 	    if (variableAndFunctionName != null && part instanceof ITextEditor && selection instanceof ITextSelection) {
@@ -117,6 +122,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection) {
 		return getVariableAndFunctionName(part, selection) != null;
 	}
@@ -210,7 +216,8 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#toggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
      */
-    public void toggleBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
+    @Override
+	public void toggleBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
         if (canToggleWatchpoints(part, selection)) {
             toggleWatchpoints(part, selection);
         } else {
@@ -221,7 +228,8 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#canToggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
      */
-    public boolean canToggleBreakpoints(IWorkbenchPart part, ISelection selection) {
+    @Override
+	public boolean canToggleBreakpoints(IWorkbenchPart part, ISelection selection) {
         return canToggleLineBreakpoints(part, selection) || canToggleWatchpoints(part, selection);
     }
 }

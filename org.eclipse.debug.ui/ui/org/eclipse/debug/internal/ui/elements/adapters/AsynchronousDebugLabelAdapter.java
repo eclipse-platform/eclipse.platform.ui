@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eclipse.debug.internal.ui.elements.adapters;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -40,6 +39,7 @@ public class AsynchronousDebugLabelAdapter extends AsynchronousLabelAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousLabelAdapter#computeLabels(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext, org.eclipse.debug.ui.viewers.ILabelRequestMonitor)
 	 */
+	@Override
 	protected void computeLabels(Object element, IPresentationContext context, ILabelRequestMonitor monitor) {
     	DelegatingModelPresentation presentation = DebugElementHelper.getPresentation();
     	// Honor view specific settings in a debug view by copying model presentation settings
@@ -48,7 +48,7 @@ public class AsynchronousDebugLabelAdapter extends AsynchronousLabelAdapter {
     	if (element instanceof IDebugElement && context.getPart() instanceof IDebugView) {
     		IDebugView debugView = (IDebugView)context.getPart();
 			IDebugModelPresentation pres = debugView.getPresentation(((IDebugElement)element).getModelIdentifier());
-			Map settings = null;
+			Map<String, Object> settings = null;
     		synchronized (presentation) {
     			if (pres instanceof DelegatingModelPresentation) {
     				settings = ((DelegatingModelPresentation)pres).getAttributes();
@@ -56,10 +56,8 @@ public class AsynchronousDebugLabelAdapter extends AsynchronousLabelAdapter {
     				settings = ((LazyModelPresentation)pres).getAttributes();
     			}
     			if (settings != null) {
-		    		Iterator iterator = settings.entrySet().iterator();
-		    		while (iterator.hasNext()) {
-		    			Map.Entry entry = (Entry) iterator.next();
-		    			presentation.setAttribute((String) entry.getKey(), entry.getValue());
+					for (Entry<String, Object> entry : settings.entrySet()) {
+		    			presentation.setAttribute(entry.getKey(), entry.getValue());
 		    		}
 		        	super.computeLabels(element, context, monitor);
 		        	return;
@@ -72,6 +70,7 @@ public class AsynchronousDebugLabelAdapter extends AsynchronousLabelAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousLabelAdapter#getLabels(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
 	 */
+	@Override
 	protected String[] getLabels(Object element, IPresentationContext context) throws CoreException {
 		return new String[] {DebugElementHelper.getLabel(element)};
 	}
@@ -79,6 +78,7 @@ public class AsynchronousDebugLabelAdapter extends AsynchronousLabelAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousLabelAdapter#getImageDescriptors(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
 	 */
+	@Override
 	protected ImageDescriptor[] getImageDescriptors(Object element, IPresentationContext context) throws CoreException {
 		return new ImageDescriptor[] {DebugElementHelper.getImageDescriptor(element)};
 	}
@@ -86,6 +86,7 @@ public class AsynchronousDebugLabelAdapter extends AsynchronousLabelAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousLabelAdapter#getFontDatas(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
 	 */
+	@Override
 	protected FontData[] getFontDatas(Object element, IPresentationContext context) throws CoreException {
 		FontData[] datas = new FontData[getNumElements(context)];
 		Arrays.fill(datas, DebugElementHelper.getFont(element));
@@ -95,6 +96,7 @@ public class AsynchronousDebugLabelAdapter extends AsynchronousLabelAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousLabelAdapter#getForegrounds(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
 	 */
+	@Override
 	protected RGB[] getForegrounds(Object element, IPresentationContext context) throws CoreException {
 		RGB[] rgbs = new RGB[getNumElements(context)];
 		Arrays.fill(rgbs, DebugElementHelper.getForeground(element));
@@ -104,6 +106,7 @@ public class AsynchronousDebugLabelAdapter extends AsynchronousLabelAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousLabelAdapter#getBackgrounds(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
 	 */
+	@Override
 	protected RGB[] getBackgrounds(Object element, IPresentationContext context) throws CoreException {
 		RGB[] rgbs = new RGB[getNumElements(context)];
 		Arrays.fill(rgbs, DebugElementHelper.getBackground(element));

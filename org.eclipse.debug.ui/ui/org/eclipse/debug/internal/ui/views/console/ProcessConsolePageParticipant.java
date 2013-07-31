@@ -75,7 +75,8 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 	 * Handler to send EOF
 	 */	
 	private class EOFHandler extends AbstractHandler {
-        public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
+        @Override
+		public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
             IStreamsProxy proxy = getProcess().getStreamsProxy();
             if (proxy instanceof IStreamsProxy2) {
                 IStreamsProxy2 proxy2 = (IStreamsProxy2) proxy;
@@ -92,7 +93,8 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsolePageParticipant#init(IPageBookViewPage, IConsole)
      */
-    public void init(IPageBookViewPage page, IConsole console) {
+    @Override
+	public void init(IPageBookViewPage page, IConsole console) {
         fPage = page;
         fConsole = (ProcessConsole) console;
         
@@ -118,7 +120,8 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsolePageParticipant#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         DebugUITools.getDebugContextManager().getContextService(fPage.getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
         if (fRemoveTerminated != null) {
@@ -158,7 +161,8 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
-    public Object getAdapter(Class required) {
+    @Override
+	public Object getAdapter(Class required) {
         if (IShowInSource.class.equals(required)) {
             return this;
         }
@@ -179,7 +183,8 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
     /* (non-Javadoc)
      * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
      */
-    public ShowInContext getShowInContext() {
+    @Override
+	public ShowInContext getShowInContext() {
         IProcess process = getProcess();
         if (process == null) {
             return null;
@@ -203,19 +208,22 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
     /* (non-Javadoc)
      * @see org.eclipse.ui.part.IShowInTargetList#getShowInTargetIds()
      */
-    public String[] getShowInTargetIds() {
+    @Override
+	public String[] getShowInTargetIds() {
         return new String[] {IDebugUIConstants.ID_DEBUG_VIEW};
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
      */
-    public void handleDebugEvents(DebugEvent[] events) {
+    @Override
+	public void handleDebugEvents(DebugEvent[] events) {
         for (int i = 0; i < events.length; i++) {
             DebugEvent event = events[i];
             if (event.getSource().equals(getProcess())) {
                 Runnable r = new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         if (fTerminate != null) {
                             fTerminate.update();
                         }
@@ -234,7 +242,8 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 	/* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsolePageParticipant#activated()
      */
-    public void activated() {
+    @Override
+	public void activated() {
         // add EOF submissions
         IPageSite site = fPage.getSite();
         if(fActivatedContext == null && fActivatedHandler == null) {
@@ -248,7 +257,8 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsolePageParticipant#deactivated()
      */
-    public void deactivated() {
+    @Override
+	public void deactivated() {
         // remove EOF submissions
         IPageSite site = fPage.getSite();
         IHandlerService handlerService = (IHandlerService)site.getService(IHandlerService.class);
@@ -262,6 +272,7 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextEvent(org.eclipse.debug.internal.ui.contexts.provisional.DebugContextEvent)
 	 */
+	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
 			if (fView != null && getProcess().equals(DebugUITools.getCurrentProcess())) {

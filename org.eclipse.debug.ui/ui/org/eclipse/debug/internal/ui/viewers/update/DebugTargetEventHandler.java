@@ -35,10 +35,12 @@ public class DebugTargetEventHandler extends DebugEventHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handlesEvent(org.eclipse.debug.core.DebugEvent)
 	 */
+	@Override
 	protected boolean handlesEvent(DebugEvent event) {
 		return event.getSource() instanceof IDebugTarget;
 	}
 
+	@Override
 	protected void handleChange(DebugEvent event) {
 		int flags = IModelDelta.STATE;
 		if (event.getDetail() == DebugEvent.CONTENT) {
@@ -47,18 +49,22 @@ public class DebugTargetEventHandler extends DebugEventHandler {
 		fireDelta((IDebugTarget) event.getSource(), flags);
 	}
 
+	@Override
 	protected void handleCreate(DebugEvent event) {
         fireDelta((IDebugTarget) event.getSource(), IModelDelta.EXPAND);
 	}
 
+	@Override
 	protected void handleResume(DebugEvent event) {
 		fireDelta((IDebugTarget) event.getSource(), IModelDelta.CONTENT | IModelDelta.STATE | IModelDelta.SELECT);
 	}
 
+	@Override
 	protected void handleSuspend(DebugEvent event) {
 		fireDelta((IDebugTarget) event.getSource(), IModelDelta.CONTENT | IModelDelta.STATE);
 	}
 
+	@Override
 	protected void handleTerminate(DebugEvent event) {
 		fireDelta((IDebugTarget) event.getSource(), IModelDelta.CONTENT | IModelDelta.STATE | IModelDelta.UNINSTALL);
 	}

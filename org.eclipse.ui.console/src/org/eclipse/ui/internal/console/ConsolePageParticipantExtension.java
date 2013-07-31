@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,31 +33,33 @@ public class ConsolePageParticipantExtension implements IPluginContribution {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPluginContribution#getLocalId()
      */
-    public String getLocalId() {
+    @Override
+	public String getLocalId() {
         return fConfig.getAttribute("id"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPluginContribution#getPluginId()
      */
-    public String getPluginId() {
+	@Override
+	public String getPluginId() {
         return fConfig.getContributor().getName();
     }
-    
+
     public boolean isEnabledFor(IConsole console) throws CoreException {
         EvaluationContext context = new EvaluationContext(null, console);
         Expression expression = getEnablementExpression();
         if (expression != null){
         	EvaluationResult evaluationResult = expression.evaluate(context);
-            return evaluationResult == EvaluationResult.TRUE;	
+            return evaluationResult == EvaluationResult.TRUE;
         }
         return true;
     }
-    
+
     public Expression getEnablementExpression() throws CoreException {
 		if (fEnablementExpression == null) {
 			IConfigurationElement[] elements = fConfig.getChildren(ExpressionTagNames.ENABLEMENT);
-			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null; 
+			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null;
 
 			if (enablement != null) {
 			    fEnablementExpression = ExpressionConverter.getDefault().perform(enablement);

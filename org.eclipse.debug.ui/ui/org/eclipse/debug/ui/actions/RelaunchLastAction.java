@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,6 +59,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 		 */
+		@Override
 		public void preferenceChange(PreferenceChangeEvent event) {
 			if(event.getKey().equals(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH)) {
 				initialize(fAction);
@@ -73,6 +74,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose(){
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
 		if(prefs != null) {
@@ -83,6 +85,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window){
 		fWorkbenchWindow = window;
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
@@ -94,6 +97,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action){		
 		if(LaunchingResourceManager.isContextLaunchEnabled()) {
 			ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(getLaunchGroupId());
@@ -108,7 +112,8 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 				} else {
 					String configName = configuration.getName();
 					String title = ActionMessages.RelaunchLastAction_Cannot_relaunch_1; 
-					String message = MessageFormat.format(ActionMessages.RelaunchLastAction_Cannot_relaunch___0___because_it_does_not_support__2__mode_2, new String[] {configName, getMode()}); 
+					String message = MessageFormat.format(ActionMessages.RelaunchLastAction_Cannot_relaunch___0___because_it_does_not_support__2__mode_2, new Object[] {
+							configName, getMode() });
 					MessageDialog.openError(getShell(), title, message);				
 				}
 			} else {
@@ -136,6 +141,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection){
 		if (fAction == null) {
 			initialize(action);

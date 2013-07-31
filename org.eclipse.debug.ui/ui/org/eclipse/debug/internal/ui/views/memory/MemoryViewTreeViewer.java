@@ -17,29 +17,31 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * Customized tree viewer for the Memory View
- * This Tree Viewer has a specialized update policy for the memory view.
- * When the model fires a ADDED delta, the update policy handles the event as follows:
- * If the ADDED delta is accompanied by SELECT, and the added element is an memory blok, then
- * the udpate policy asks the Memory View if the it is currently pinned to a memory block.  If the view
- * is currently pinned, then the SELECT delta is ignored.
+ * Customized tree viewer for the Memory View This Tree Viewer has a specialized
+ * update policy for the memory view. When the model fires a ADDED delta, the
+ * update policy handles the event as follows: If the ADDED delta is accompanied
+ * by SELECT, and the added element is an memory blok, then the udpate policy
+ * asks the Memory View if the it is currently pinned to a memory block. If the
+ * view is currently pinned, then the SELECT delta is ignored.
  * 
- * If the ADDED delta and SELECT delta are recieved in separate nodes, then the delta will be handled as-is and would
- * not take the pinning state of the memory view into account. 
- *
+ * If the ADDED delta and SELECT delta are recieved in separate nodes, then the
+ * delta will be handled as-is and would not take the pinning state of the
+ * memory view into account.
+ * 
  */
 public class MemoryViewTreeViewer extends TreeModelViewer {
 
-	public MemoryViewTreeViewer(Composite parent, int style,
-			IPresentationContext context) {
+	public MemoryViewTreeViewer(Composite parent, int style, IPresentationContext context) {
 		super(parent, style, context);
 	}
-	
-	/* 
-	 * Need to have a customized content provider to define a special update policy for the Memory View
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.InternalTreeModelViewer#createContentProvider()
+
+	/*
+	 * Need to have a customized content provider to define a special update
+	 * policy for the Memory View (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.InternalTreeModelViewer#
+	 * createContentProvider()
 	 */
+	@Override
 	protected ITreeModelContentProvider createContentProvider() {
 		return new MemoryViewTreeModelContentProvider();
 	}

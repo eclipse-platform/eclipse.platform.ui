@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,6 +81,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 			return populated;
 		}
 		
+		@Override
 		public AdaptableList getFiles() {
 			if(!populated) {
 				populateElementChildren();
@@ -88,6 +89,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 			return super.getFiles();
 		}
 		
+		@Override
 		public AdaptableList getFolders() {
 			if(!populated) {
 				populateElementChildren();
@@ -102,12 +104,9 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 		 */
 		private void populateElementChildren() {
 			FileSystemStructureProvider provider = FileSystemStructureProvider.INSTANCE;
-			List allchildren = provider.getChildren(this.getFileSystemObject());
-			File child = null;
+			List<File> allchildren = provider.getChildren(this.getFileSystemObject());
 			DebugFileSystemElement newelement = null;
-			Iterator iter = allchildren.iterator();
-			while(iter.hasNext()) {
-				child = (File) iter.next();
+			for (File child : allchildren) {
 				if(child.isFile()) {
 					Path childpath = new Path(child.getAbsolutePath());
 					String extension = childpath.getFileExtension();
@@ -143,6 +142,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		createRootDirectoryGroup(comp);
@@ -168,12 +168,12 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 		settings.put(OVERWRITE, fOverwrite.getSelection());
 		settings.put(OLD_PATH, fFromDirectory.getText().trim());
 		boolean overwrite = fOverwrite.getSelection();
-		List items = getSelectedResources();
+		List<?> items = getSelectedResources();
 		File config, newconfig = null;
 		boolean owall = false, nowall = false;
 		MessageDialog dialog = null;
-		final List filesToImport = new ArrayList();
-		for(Iterator iter = items.iterator(); iter.hasNext();) {
+		final List<File> filesToImport = new ArrayList<File>();
+		for (Iterator<?> iter = items.iterator(); iter.hasNext();) {
 			config = (File) ((DebugFileSystemElement) iter.next()).getFileSystemObject();
 			newconfig = new File(new Path(LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.toOSString()).append(config.getName()).toOSString());
 			if(newconfig.exists() & !overwrite) {
@@ -184,7 +184,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 					dialog = new MessageDialog(DebugUIPlugin.getShell(), 
 							WizardMessages.ExportLaunchConfigurationsWizardPage_11, 
 							null, 
-							MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_12, new String[] {config.getName()}), 
+ MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_12, new Object[] { config.getName() }),
 							MessageDialog.QUESTION, new String[] {WizardMessages.ExportLaunchConfigurationsWizardPage_13, WizardMessages.ExportLaunchConfigurationsWizardPage_14, WizardMessages.ExportLaunchConfigurationsWizardPage_15, WizardMessages.ExportLaunchConfigurationsWizardPage_16, WizardMessages.ExportLaunchConfigurationsWizardPage_17}, 0);
 					int ret = dialog.open();
 					switch(ret) {
@@ -204,6 +204,8 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 						case 4: {
 							return true;
 						}
+						default:
+							break;
 					}
 				} else if(!nowall) {
 					filesToImport.add(config);
@@ -215,10 +217,11 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 
 		if (!filesToImport.isEmpty()) {
 			Job job = new Job(WizardMessages.ExportLaunchConfigurationsWizard_0) {
+				@Override
 				public IStatus run(IProgressMonitor monitor) {
 					LaunchManager launchManager = (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
 					try {
-						launchManager.importConfigurations((File[]) filesToImport.toArray(new File[filesToImport.size()]), monitor);
+						launchManager.importConfigurations(filesToImport.toArray(new File[filesToImport.size()]), monitor);
 					} catch (CoreException e) {
 						return e.getStatus();
 					}
@@ -234,6 +237,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_WIZBAN_IMPORT_CONFIGS);
 	}
@@ -241,6 +245,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardResourceImportPage#updateWidgetEnablements()
 	 */
+	@Override
 	protected void updateWidgetEnablements() {
 		setPageComplete(determinePageCompletion());
 	}
@@ -248,6 +253,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardResourceImportPage#determinePageCompletion()
 	 */
+	@Override
 	protected boolean determinePageCompletion() {
 		if(fFromDirectory.getText().trim().equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
 			setErrorMessage(WizardMessages.ImportLaunchConfigurationsWizardPage_3);
@@ -265,6 +271,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardResourceImportPage#createSourceGroup(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createSourceGroup(Composite parent) {}
 	
 	/**
@@ -278,6 +285,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
         // source browse button
         Button browse = SWTFactory.createPushButton(comp, WizardMessages.ImportLaunchConfigurationsWizardPage_7, null);
         browse.addSelectionListener(new SelectionAdapter () {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dd = new DirectoryDialog(getContainer().getShell());
 				dd.setText(WizardMessages.ImportLaunchConfigurationsWizardPage_0);
@@ -300,6 +308,8 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
      */
     protected void resetSelection(final IPath path) {
     	BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			@SuppressWarnings("restriction")
+			@Override
 			public void run() {
 				File file = new File(path.toOSString());
 				DebugFileSystemElement dummyparent = new DebugFileSystemElement(IInternalDebugCoreConstants.EMPTY_STRING, null, true);
@@ -317,9 +327,11 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardResourceImportPage#getFileProvider()
 	 */
+	@Override
 	protected ITreeContentProvider getFileProvider() {
 		return new WorkbenchContentProvider() {
-            public Object[] getChildren(Object o) {
+            @Override
+			public Object[] getChildren(Object o) {
                 if (o instanceof DebugFileSystemElement) {
                     DebugFileSystemElement element = (DebugFileSystemElement) o;
                     return element.getFiles().getChildren(element);
@@ -332,9 +344,11 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardResourceImportPage#getFolderProvider()
 	 */
+	@Override
 	protected ITreeContentProvider getFolderProvider() {
 		return new WorkbenchContentProvider() {
-            public Object[] getChildren(Object o) {
+            @Override
+			public Object[] getChildren(Object o) {
                 if (o instanceof DebugFileSystemElement) {
                     DebugFileSystemElement element = (DebugFileSystemElement) o;
                     return element.getFolders().getChildren();
@@ -342,7 +356,8 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
                 return new Object[0];
             }
 
-            public boolean hasChildren(Object o) {
+            @Override
+			public boolean hasChildren(Object o) {
                 if (o instanceof DebugFileSystemElement) {
                     DebugFileSystemElement element = (DebugFileSystemElement) o;
                     if (element.isPopulated()) {

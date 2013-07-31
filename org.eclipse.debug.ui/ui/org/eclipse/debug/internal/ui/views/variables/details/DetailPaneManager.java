@@ -11,9 +11,8 @@
 package org.eclipse.debug.internal.ui.views.variables.details;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -75,6 +74,7 @@ public class DetailPaneManager {
 		 * @param paneID the identifier of the detail pane to create
 		 * @return the new detail pane or <code>null</code> if the backing {@link IDetailPaneFactory} is <code>null</code>
 		 */
+		@Override
 		public IDetailPane createDetailPane(String paneID){
 			if (getFactory() != null){
 				return getFactory().createDetailPane(paneID);
@@ -88,11 +88,12 @@ public class DetailPaneManager {
 		 * @param selection the current view selection
 		 * @return the set of detail pane type for the given selection or an empty set, never <code>null</code>
 		 */
-		public Set getDetailPaneTypes(IStructuredSelection selection){
+		@Override
+		public Set<String> getDetailPaneTypes(IStructuredSelection selection) {
 			if (getFactory() != null){
 				return getFactory().getDetailPaneTypes(selection);
 			}
-			return new HashSet(0);			
+			return Collections.EMPTY_SET;
 		}
 		
 		/** 
@@ -101,6 +102,7 @@ public class DetailPaneManager {
 		 * @param selection the current view selection
 		 * @return the identifier of the default detail pane or <code>null</code> if the backing {@link IDetailPaneFactory} is <code>null</code>
 		 */
+		@Override
 		public String getDefaultDetailPane(IStructuredSelection selection) {
 			if (getFactory() != null){
 				return getFactory().getDefaultDetailPane(selection);
@@ -114,6 +116,7 @@ public class DetailPaneManager {
 		 * @param paneID the detail pane identifier
 		 * @return the name of the detail pane or <code>null</code> if the backing {@link IDetailPaneFactory} is <code>null</code>
 		 */
+		@Override
 		public String getDetailPaneName(String paneID) {
 			if (getFactory() != null){
 				return getFactory().getDetailPaneName(paneID);
@@ -127,6 +130,7 @@ public class DetailPaneManager {
 		 * @param paneID the detail pane identifier
 		 * @return the description of the detail pane or <code>null</code> if the backing {@link IDetailPaneFactory} is <code>null</code>
 		 */
+		@Override
 		public String getDetailPaneDescription(String paneID) {
 			if (getFactory() != null){
 				return getFactory().getDetailPaneDescription(paneID);
@@ -139,7 +143,9 @@ public class DetailPaneManager {
 		 * @return the singleton {@link IDetailPaneFactory}
 		 */
 		private IDetailPaneFactory getFactory(){
-			if (fFactory != null) return fFactory;
+			if (fFactory != null) {
+				return fFactory;
+			}
 			try{
 				Object obj = fConfigElement.createExecutableExtension(IConfigurationElementConstants.CLASS);
 				if(obj instanceof IDetailPaneFactory) {
@@ -168,7 +174,7 @@ public class DetailPaneManager {
 			}
 			Expression expression = getEnablementExpression();
 			if (expression != null) {
-				List list = selection.toList();
+				List<?> list = selection.toList();
 				IEvaluationContext context = DebugUIPlugin.createEvaluationContext(list);
 				context.addVariable("selection", list); //$NON-NLS-1$
 				enabled = evalEnablementExpression(context, expression);
@@ -237,17 +243,17 @@ public class DetailPaneManager {
 	 * Maps the IDs of types of detail panes to the factory that can create them.
 	 * There can currently only be one factory for a given type of details pane.
 	 */
-	private Map fFactoriesByPaneID;
+	private Map<String, IDetailPaneFactory> fFactoriesByPaneID;
 	
 	/**
 	 * Maps a Set of detail pane id's to the one detail pane id that is preferred.
 	 */
-	private Map fPreferredDetailPanes;
+	private Map<Set<String>, String> fPreferredDetailPanes;
 	
 	/**
 	 * The set of all factories that have been loaded from the extension point.
 	 */
-	private Collection fKnownFactories;
+	private List<DetailPaneFactoryExtension> fKnownFactories;
 	
     /**
      * Preference key for storing the preferred detail panes map.
@@ -257,12 +263,14 @@ public class DetailPaneManager {
     public static final String PREF_DETAIL_AREAS = "preferredDetailPanes"; //$NON-NLS-1$
 	
 	private DetailPaneManager(){
-		fFactoriesByPaneID = new HashMap();
+		fFactoriesByPaneID = new HashMap<String, IDetailPaneFactory>();
 		fFactoriesByPaneID.put(MessageDetailPane.ID, new DefaultDetailPaneFactory());
 	}
 	
 	public static DetailPaneManager getDefault(){
-		if (fgSingleton == null) fgSingleton = new DetailPaneManager();
+		if (fgSingleton == null) {
+			fgSingleton = new DetailPaneManager();
+		}
 		return fgSingleton;
 	}
 
@@ -273,8 +281,8 @@ public class DetailPaneManager {
 	 * @return The ID of the preferred detail pane or null
 	 */
 	public String getPreferredPaneFromSelection(IStructuredSelection selection){
-		Collection possibleFactories = getEnabledFactories(selection);
-		Set possiblePaneIDs = getPossiblePaneIDs(possibleFactories, selection);
+		List<IDetailPaneFactory> possibleFactories = getEnabledFactories(selection);
+		Set<String> possiblePaneIDs = getPossiblePaneIDs(possibleFactories, selection);
 		return chooseDetailsAreaIDInSet(possiblePaneIDs, possibleFactories, selection);
 	}
 	
@@ -285,8 +293,8 @@ public class DetailPaneManager {
 	 * @param selection The selection to display in the detail pane
 	 * @return The set of IDs of all possible detail panes for the given selection
 	 */
-	public Set getAvailablePaneIDs(IStructuredSelection selection){
-		Collection possibleFactories = getEnabledFactories(selection);
+	public Set<String> getAvailablePaneIDs(IStructuredSelection selection) {
+		List<IDetailPaneFactory> possibleFactories = getEnabledFactories(selection);
 		return getPossiblePaneIDs(possibleFactories, selection);
 	}
 	
@@ -301,7 +309,7 @@ public class DetailPaneManager {
 	 * @return The instantiated pane or null
 	 */
 	public IDetailPane getDetailPaneFromID(String ID){
-		IDetailPaneFactory factory = (IDetailPaneFactory)fFactoriesByPaneID.get(ID);
+		IDetailPaneFactory factory = fFactoriesByPaneID.get(ID);
 		if (factory != null){
 			return factory.createDetailPane(ID);
 		}
@@ -316,7 +324,7 @@ public class DetailPaneManager {
 	 * @return The name of the details pane or null
 	 */
 	public String getNameFromID(String ID){
-		IDetailPaneFactory factory = (IDetailPaneFactory)fFactoriesByPaneID.get(ID);
+		IDetailPaneFactory factory = fFactoriesByPaneID.get(ID);
 		if (factory != null){
 			return factory.getDetailPaneName(ID);
 		}
@@ -331,7 +339,7 @@ public class DetailPaneManager {
 	 * @return The description of the details pane or null
 	 */
 	public String getDescriptionFromID(String ID){
-		IDetailPaneFactory factory = (IDetailPaneFactory)fFactoriesByPaneID.get(ID);
+		IDetailPaneFactory factory = fFactoriesByPaneID.get(ID);
 		if (factory != null){
 			return factory.getDetailPaneDescription(ID);
 		}
@@ -348,12 +356,12 @@ public class DetailPaneManager {
 	 * 
 	 * @return The factories enabled for the selection or an empty collection.
 	 */
-	private Collection getEnabledFactories(IStructuredSelection selection){
-		Collection factoriesForSelection = new ArrayList();
-		if (fKnownFactories == null) initializeDetailFactories();
-		Iterator iter = fKnownFactories.iterator();
-		while (iter.hasNext()) {
-			IDetailPaneFactory currentFactory = (IDetailPaneFactory) iter.next();
+	private List<IDetailPaneFactory> getEnabledFactories(IStructuredSelection selection) {
+		List<IDetailPaneFactory> factoriesForSelection = new ArrayList<IDetailPaneFactory>();
+		if (fKnownFactories == null) {
+			initializeDetailFactories();
+		}
+		for (IDetailPaneFactory currentFactory : fKnownFactories) {
 			if (currentFactory instanceof DetailPaneFactoryExtension){
 				if (((DetailPaneFactoryExtension)currentFactory).isEnabled(selection)){
 					factoriesForSelection.add(currentFactory);
@@ -371,14 +379,10 @@ public class DetailPaneManager {
 	 * @param selection The selection to be displayed
 	 * @return Set of pane IDs or an empty set
 	 */
-	private Set getPossiblePaneIDs(Collection factoriesToQuery, IStructuredSelection selection){
-		Set idsForSelection = new LinkedHashSet();
-		Iterator factoryIter = factoriesToQuery.iterator();
-		while (factoryIter.hasNext()) {
-			IDetailPaneFactory currentFactory = (IDetailPaneFactory) factoryIter.next();
-			Iterator detailAreaTypes = currentFactory.getDetailPaneTypes(selection).iterator();
-			while (detailAreaTypes.hasNext()) {
-				String currentAreaTypeID = (String) detailAreaTypes.next();
+	private Set<String> getPossiblePaneIDs(List<IDetailPaneFactory> factoriesToQuery, IStructuredSelection selection) {
+		Set<String> idsForSelection = new LinkedHashSet<String>();
+		for (IDetailPaneFactory currentFactory : factoriesToQuery) {
+			for (String currentAreaTypeID : currentFactory.getDetailPaneTypes(selection)) {
 				fFactoriesByPaneID.put(currentAreaTypeID, currentFactory);
 				idsForSelection.add(currentAreaTypeID);				
 			}			
@@ -396,7 +400,7 @@ public class DetailPaneManager {
 	 * @param selection the current selection from the variables view
 	 * @return The preferred detail pane ID or null
 	 */
-	private String chooseDetailsAreaIDInSet(Set possiblePaneIDs, Collection enabledFactories, IStructuredSelection selection){
+	private String chooseDetailsAreaIDInSet(Set<String> possiblePaneIDs, List<IDetailPaneFactory> enabledFactories, IStructuredSelection selection) {
 		if (possiblePaneIDs == null || possiblePaneIDs.isEmpty()){
 			return null;
 		}
@@ -405,18 +409,19 @@ public class DetailPaneManager {
 		
 		if (preferredID == null){
 			// If there is no preferred pane already set, check the factories to see there is a default pane
-			Iterator factoryIterator = enabledFactories.iterator();
-			while (preferredID == null && factoryIterator.hasNext()) {
-				IDetailPaneFactory currentFactory = (IDetailPaneFactory) factoryIterator.next();
+			for (IDetailPaneFactory currentFactory : enabledFactories) {
 				preferredID = currentFactory.getDefaultDetailPane(selection);
+				if (preferredID != null) {
+					break;
+				}
 			}
 			// If the factories don't have a default, try to choose the DefaultDetailPane
 			if (preferredID == null){			
-				Iterator paneIterator = possiblePaneIDs.iterator();
+				Iterator<String> paneIterator = possiblePaneIDs.iterator();
 				// If the DefaultDetailPane is not in the set, just use the first in the set
-				preferredID = (String)paneIterator.next();
+				preferredID = paneIterator.next();
 				while (paneIterator.hasNext() && preferredID != DefaultDetailPaneFactory.DEFAULT_DETAIL_PANE_ID) {
-					String currentID = (String) paneIterator.next();
+					String currentID = paneIterator.next();
 					if (currentID.equals(DefaultDetailPaneFactory.DEFAULT_DETAIL_PANE_ID)){
 						preferredID = currentID;
 					}
@@ -433,7 +438,7 @@ public class DetailPaneManager {
 	 */
 	private synchronized void initializeDetailFactories(){
 		if (fKnownFactories == null){
-			fKnownFactories = new ArrayList();
+			fKnownFactories = new ArrayList<DetailPaneFactoryExtension>();
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_DETAIL_FACTORIES);
 			IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
 			DetailPaneFactoryExtension delegate = null;
@@ -450,11 +455,11 @@ public class DetailPaneManager {
 	 * @param possibleDetailsAreaIDs Set of possible pane IDs
 	 * @return The preferred ID or null
 	 */
-	public String getUserPreferredDetailPane(Set possibleDetailsAreaIDs){
+	public String getUserPreferredDetailPane(Set<String> possibleDetailsAreaIDs) {
 		if (fPreferredDetailPanes == null){
 			loadPreferredDetailsAreas();
 		}
-		return (String)fPreferredDetailPanes.get(possibleDetailsAreaIDs);
+		return fPreferredDetailPanes.get(possibleDetailsAreaIDs);
 		
 	}
 	
@@ -465,12 +470,14 @@ public class DetailPaneManager {
 	 * @param possibleDetailsAreaIDs The set of possible IDs
 	 * @param preferredDetailsAreaID The preferred ID in the set.
 	 */
-	public void setPreferredDetailPane(Set possibleDetailsAreaIDs, String preferredDetailsAreaID){
-		if (possibleDetailsAreaIDs == null) return;
+	public void setPreferredDetailPane(Set<String> possibleDetailsAreaIDs, String preferredDetailsAreaID) {
+		if (possibleDetailsAreaIDs == null) {
+			return;
+		}
 		if (fPreferredDetailPanes == null){
 			loadPreferredDetailsAreas();
 		}
-		String currentKey = (String)fPreferredDetailPanes.get(possibleDetailsAreaIDs);
+		String currentKey = fPreferredDetailPanes.get(possibleDetailsAreaIDs);
 		if (currentKey == null || !currentKey.equals(preferredDetailsAreaID)){
 			fPreferredDetailPanes.put(possibleDetailsAreaIDs, preferredDetailsAreaID);
 			storePreferredDetailsAreas();
@@ -488,12 +495,8 @@ public class DetailPaneManager {
      */
     private void storePreferredDetailsAreas() {
         StringBuffer buffer= new StringBuffer();
-        Iterator iter = fPreferredDetailPanes.entrySet().iterator();
-        while (iter.hasNext()) {
-            Entry entry = (Entry) iter.next();
-            Iterator setIter = ((Set)entry.getKey()).iterator();
-            while (setIter.hasNext()) {
-				String currentID = (String) setIter.next();
+		for (Entry<Set<String>, String> entry : fPreferredDetailPanes.entrySet()) {
+			for (String currentID : entry.getKey()) {
 				buffer.append(currentID);
 				buffer.append(',');
 			}
@@ -519,7 +522,7 @@ public class DetailPaneManager {
      * @see #storePreferredDetailsAreas()
      */
     private void loadPreferredDetailsAreas() {
-    	fPreferredDetailPanes = new HashMap();
+		fPreferredDetailPanes = new HashMap<Set<String>, String>();
     	String preferenceValue = Platform.getPreferencesService().getString(DebugUIPlugin.getUniqueIdentifier(), 
     			PREF_DETAIL_AREAS,
     			"",  //$NON-NLS-1$
@@ -529,7 +532,7 @@ public class DetailPaneManager {
     		String token = entryTokenizer.nextToken();
     		int valueStart = token.indexOf(':');
     		StringTokenizer keyTokenizer = new StringTokenizer(token.substring(0,valueStart),","); //$NON-NLS-1$
-    		Set keys = new LinkedHashSet();
+			Set<String> keys = new LinkedHashSet<String>();
     		while (keyTokenizer.hasMoreTokens()){
     			keys.add(keyTokenizer.nextToken());
     		}

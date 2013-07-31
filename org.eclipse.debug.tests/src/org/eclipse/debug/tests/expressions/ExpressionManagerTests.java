@@ -28,12 +28,12 @@ import org.eclipse.debug.internal.core.IExpressionsListener2;
  * Tests expression manager and listener call backs
  */
 public class ExpressionManagerTests extends TestCase {
-	
+
 	class SinlgeListener implements IExpressionListener {
-		
-		List added = new ArrayList();
-		List removed = new ArrayList();
-		List changed = new ArrayList();
+
+		List<IExpression> added = new ArrayList<IExpression>();
+		List<IExpression> removed = new ArrayList<IExpression>();
+		List<IExpression> changed = new ArrayList<IExpression>();
 		int addedCallbacks = 0;
 		int removedCallbacks = 0;
 		int changedCallbacks = 0;
@@ -41,6 +41,7 @@ public class ExpressionManagerTests extends TestCase {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.core.IExpressionListener#expressionAdded(org.eclipse.debug.core.model.IExpression)
 		 */
+		@Override
 		public void expressionAdded(IExpression expression) {
 			added.add(expression);
 			addedCallbacks++;
@@ -49,6 +50,7 @@ public class ExpressionManagerTests extends TestCase {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.core.IExpressionListener#expressionRemoved(org.eclipse.debug.core.model.IExpression)
 		 */
+		@Override
 		public void expressionRemoved(IExpression expression) {
 			removed.add(expression);
 			removedCallbacks++;
@@ -57,18 +59,19 @@ public class ExpressionManagerTests extends TestCase {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.core.IExpressionListener#expressionChanged(org.eclipse.debug.core.model.IExpression)
 		 */
+		@Override
 		public void expressionChanged(IExpression expression) {
 			changed.add(expression);
 			changedCallbacks++;
 		}
-		
+
 	}
-	
+
 	class MultiListener implements IExpressionsListener {
-		
-		List added = new ArrayList();
-		List removed = new ArrayList();
-		List changed = new ArrayList();
+
+		List<IExpression> added = new ArrayList<IExpression>();
+		List<IExpression> removed = new ArrayList<IExpression>();
+		List<IExpression> changed = new ArrayList<IExpression>();
 		int addedCallbacks = 0;
 		int removedCallbacks = 0;
 		int changedCallbacks = 0;
@@ -76,6 +79,7 @@ public class ExpressionManagerTests extends TestCase {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.core.IExpressionsListener#expressionsAdded(org.eclipse.debug.core.model.IExpression[])
 		 */
+		@Override
 		public void expressionsAdded(IExpression[] expressions) {
 			for (int i = 0; i < expressions.length; i++) {
 				added.add(expressions[i]);
@@ -86,6 +90,7 @@ public class ExpressionManagerTests extends TestCase {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.core.IExpressionsListener#expressionsRemoved(org.eclipse.debug.core.model.IExpression[])
 		 */
+		@Override
 		public void expressionsRemoved(IExpression[] expressions) {
 			for (int i = 0; i < expressions.length; i++) {
 				removed.add(expressions[i]);
@@ -96,26 +101,28 @@ public class ExpressionManagerTests extends TestCase {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.core.IExpressionsListener#expressionsChanged(org.eclipse.debug.core.model.IExpression[])
 		 */
+		@Override
 		public void expressionsChanged(IExpression[] expressions) {
 			for (int i = 0; i < expressions.length; i++) {
 				changed.add(expressions[i]);
 			}
 			changedCallbacks++;
 		}
-		
+
 	}
-	
+
 	class InsertMoveListener extends MultiListener implements IExpressionsListener2 {
 
-		List moved = new ArrayList();
-		List inserted = new ArrayList();
+		List<IExpression> moved = new ArrayList<IExpression>();
+		List<IExpression> inserted = new ArrayList<IExpression>();
 		int insertIndex = -1;
 		int movedCallbacks = 0;
 		int insertedCallbacks = 0;
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.core.IExpressionsListener2#expressionsMoved(org.eclipse.debug.core.model.IExpression[], int)
 		 */
+		@Override
 		public void expressionsMoved(IExpression[] expressions, int index) {
 			for (int i = 0; i < expressions.length; i++) {
 				moved.add(expressions[i]);
@@ -127,6 +134,7 @@ public class ExpressionManagerTests extends TestCase {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.core.IExpressionsListener2#expressionsInserted(org.eclipse.debug.core.model.IExpression[], int)
 		 */
+		@Override
 		public void expressionsInserted(IExpression[] expressions, int index) {
 			for (int i = 0; i < expressions.length; i++) {
 				inserted.add(expressions[i]);
@@ -134,30 +142,31 @@ public class ExpressionManagerTests extends TestCase {
 			insertedCallbacks++;
 			insertIndex = index;
 		}
-		
+
 	}
 
 	/**
 	 * Returns the expression manager.
-	 * 
+	 *
 	 * @return expression manager
 	 */
 	protected IExpressionManager getManager() {
 		return DebugPlugin.getDefault().getExpressionManager();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		// remove all expressions from the manager
 		super.tearDown();
 		getManager().removeExpressions(getManager().getExpressions());
 	}
-	
+
 	/**
 	 * Returns the index of the given expression in the given list or -1 if not present.
-	 * 
+	 *
 	 * @param expression candidate
 	 * @param list list to search
 	 * @return index or -1
@@ -170,7 +179,7 @@ public class ExpressionManagerTests extends TestCase {
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Add expressions and ensure proper call backs are received.
 	 */
@@ -205,7 +214,7 @@ public class ExpressionManagerTests extends TestCase {
 			manager.removeExpressionListener(multi);
 		}
 	}
-	
+
 	/**
 	 * Remove expressions and ensure proper call backs are received.
 	 */
@@ -245,7 +254,7 @@ public class ExpressionManagerTests extends TestCase {
 			manager.removeExpressionListener(multi);
 		}
 	}
-	
+
 	/**
 	 * Change expressions and ensure proper call backs are received.
 	 */
@@ -285,8 +294,8 @@ public class ExpressionManagerTests extends TestCase {
 			manager.removeExpressionListener(single);
 			manager.removeExpressionListener(multi);
 		}
-	}	
-	
+	}
+
 	/**
 	 * Insert expressions and ensure proper call backs are received.
 	 */
@@ -311,9 +320,9 @@ public class ExpressionManagerTests extends TestCase {
 			manager.addExpressionListener(single);
 			manager.addExpressionListener(multi);
 			manager.addExpressionListener(insert);
-			
+
 			manager.insertExpressions(new IExpression[] {exp4, exp5}, exp2, true);
-			
+
 			assertEquals(2, single.addedCallbacks);
 			assertEquals(2, single.added.size());
 			assertEquals(0, single.removedCallbacks);
@@ -328,7 +337,7 @@ public class ExpressionManagerTests extends TestCase {
 			assertEquals(2, insert.inserted.size());
 			assertEquals(0, insert.inserted.indexOf(exp4));
 			assertEquals(1, insert.inserted.indexOf(exp5));
-			
+
 			expressions = manager.getExpressions();
 			assertEquals("Wrong number of expressions", 5, expressions.length); //$NON-NLS-1$
 			assertEquals(0, indexOf(exp1, expressions));
@@ -336,14 +345,14 @@ public class ExpressionManagerTests extends TestCase {
 			assertEquals(2, indexOf(exp5, expressions));
 			assertEquals(3, indexOf(exp2, expressions));
 			assertEquals(4, indexOf(exp3, expressions));
-			
+
 		} finally {
 			manager.removeExpressionListener(single);
 			manager.removeExpressionListener(multi);
 			manager.removeExpressionListener(insert);
 		}
 	}
-	
+
 	/**
 	 * Insert expressions and ensure proper call backs are received.
 	 */
@@ -368,9 +377,9 @@ public class ExpressionManagerTests extends TestCase {
 			manager.addExpressionListener(single);
 			manager.addExpressionListener(multi);
 			manager.addExpressionListener(insert);
-			
+
 			manager.insertExpressions(new IExpression[] {exp4, exp5}, exp2, false);
-			
+
 			assertEquals(2, single.addedCallbacks);
 			assertEquals(2, single.added.size());
 			assertEquals(0, single.removedCallbacks);
@@ -385,7 +394,7 @@ public class ExpressionManagerTests extends TestCase {
 			assertEquals(2, insert.inserted.size());
 			assertEquals(0, insert.inserted.indexOf(exp4));
 			assertEquals(1, insert.inserted.indexOf(exp5));
-			
+
 			expressions = manager.getExpressions();
 			assertEquals("Wrong number of expressions", 5, expressions.length); //$NON-NLS-1$
 			assertEquals(0, indexOf(exp1, expressions));
@@ -393,14 +402,14 @@ public class ExpressionManagerTests extends TestCase {
 			assertEquals(2, indexOf(exp4, expressions));
 			assertEquals(3, indexOf(exp5, expressions));
 			assertEquals(4, indexOf(exp3, expressions));
-			
+
 		} finally {
 			manager.removeExpressionListener(single);
 			manager.removeExpressionListener(multi);
 			manager.removeExpressionListener(insert);
 		}
-	}		
-	
+	}
+
 	/**
 	 * Move expressions and ensure proper call backs are received.
 	 */
@@ -420,9 +429,9 @@ public class ExpressionManagerTests extends TestCase {
 			manager.addExpressionListener(single);
 			manager.addExpressionListener(multi);
 			manager.addExpressionListener(insert);
-			
+
 			manager.moveExpressions(new IExpression[]{exp1,exp2}, exp5, true);
-			
+
 			assertEquals(0, single.addedCallbacks);
 			assertEquals(0, single.removedCallbacks);
 			assertEquals(0, single.changedCallbacks);
@@ -435,7 +444,7 @@ public class ExpressionManagerTests extends TestCase {
 			assertEquals(0, insert.moved.indexOf(exp1));
 			assertEquals(1, insert.moved.indexOf(exp2));
 			assertEquals(2, insert.insertIndex);
-			
+
 			IExpression[] expressions = manager.getExpressions();
 			assertEquals("Wrong number of expressions", 5, expressions.length); //$NON-NLS-1$
 			assertEquals(0, indexOf(exp3, expressions));
@@ -443,14 +452,14 @@ public class ExpressionManagerTests extends TestCase {
 			assertEquals(2, indexOf(exp1, expressions));
 			assertEquals(3, indexOf(exp2, expressions));
 			assertEquals(4, indexOf(exp5, expressions));
-			
+
 		} finally {
 			manager.removeExpressionListener(single);
 			manager.removeExpressionListener(multi);
 			manager.removeExpressionListener(insert);
 		}
 	}
-	
+
 	/**
 	 * Move expressions and ensure proper call backs are received.
 	 */
@@ -470,9 +479,9 @@ public class ExpressionManagerTests extends TestCase {
 			manager.addExpressionListener(single);
 			manager.addExpressionListener(multi);
 			manager.addExpressionListener(insert);
-			
+
 			manager.moveExpressions(new IExpression[]{exp1,exp2}, exp3, false);
-			
+
 			assertEquals(0, single.addedCallbacks);
 			assertEquals(0, single.removedCallbacks);
 			assertEquals(0, single.changedCallbacks);
@@ -485,7 +494,7 @@ public class ExpressionManagerTests extends TestCase {
 			assertEquals(0, insert.moved.indexOf(exp1));
 			assertEquals(1, insert.moved.indexOf(exp2));
 			assertEquals(1, insert.insertIndex);
-			
+
 			IExpression[] expressions = manager.getExpressions();
 			assertEquals("Wrong number of expressions", 5, expressions.length); //$NON-NLS-1$
 			assertEquals(0, indexOf(exp3, expressions));
@@ -493,14 +502,14 @@ public class ExpressionManagerTests extends TestCase {
 			assertEquals(2, indexOf(exp2, expressions));
 			assertEquals(3, indexOf(exp4, expressions));
 			assertEquals(4, indexOf(exp5, expressions));
-			
+
 		} finally {
 			manager.removeExpressionListener(single);
 			manager.removeExpressionListener(multi);
 			manager.removeExpressionListener(insert);
 		}
-	}	
-	
+	}
+
 	/**
 	 * Test persist and restore of expressions
 	 */
@@ -513,7 +522,7 @@ public class ExpressionManagerTests extends TestCase {
 		IWatchExpression exp5 = manager.newWatchExpression("exp5"); //$NON-NLS-1$
 		manager.addExpressions(new IExpression[]{exp1, exp2, exp3, exp4, exp5});
 		manager.storeWatchExpressions();
-		
+
 		// create a new manager that will restore the expressions
 		ExpressionManager manager2 = new ExpressionManager();
 		IExpression[] expressions = manager2.getExpressions();
@@ -524,16 +533,17 @@ public class ExpressionManagerTests extends TestCase {
 		assertEquals("exp4", expressions[3].getExpressionText()); //$NON-NLS-1$
 		assertEquals("exp5", expressions[4].getExpressionText()); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests concurrent access to expressions.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 */
 	public void testConcurrentAccess() throws InterruptedException {
 		final boolean[] done = new boolean[]{false};
 		final Exception[] ex = new Exception[]{null};
 		Runnable add = new Runnable() {
+			@Override
 			public void run() {
 				try {
 					for (int i = 0; i < 1000; i++) {
@@ -546,6 +556,7 @@ public class ExpressionManagerTests extends TestCase {
 			}
 		};
 		Runnable remove = new Runnable() {
+			@Override
 			public void run() {
 				try {
 					do {
@@ -565,5 +576,5 @@ public class ExpressionManagerTests extends TestCase {
 		assertEquals(0, getManager().getExpressions().length);
 		assertNull(ex[0]);
 	}
-		
+
 }

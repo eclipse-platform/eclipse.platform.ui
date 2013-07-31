@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,13 +31,13 @@ import org.eclipse.debug.core.model.ITerminate;
 
 /**
  * Adapter factory for debug commands.
- * 
+ *
  * @since 3.3
  *
  */
 public class CommandAdapterFactory implements IAdapterFactory {
-	
-	
+
+
 	private static ITerminateHandler fgTerminateCommand = new TerminateCommand();
 	private static IStepOverHandler fgStepOverCommand = new StepOverCommand();
 	private static IStepIntoHandler fgStepIntoCommand = new StepIntoCommand();
@@ -51,15 +51,16 @@ public class CommandAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (IStepFiltersHandler.class.equals(adapterType)) {
 			if (adaptableObject instanceof IDebugElement ||
-				adaptableObject instanceof ILaunch || 
+				adaptableObject instanceof ILaunch ||
 				adaptableObject instanceof IProcess) {
 				return fgStepFiltersCommand;
 			}
 		}
-		
+
 		if (ITerminateHandler.class.equals(adapterType)) {
 			if (adaptableObject instanceof ITerminate) {
 				return fgTerminateCommand;
@@ -106,6 +107,7 @@ public class CommandAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	public Class[] getAdapterList() {
 		return new Class[]{
 				ITerminateHandler.class,

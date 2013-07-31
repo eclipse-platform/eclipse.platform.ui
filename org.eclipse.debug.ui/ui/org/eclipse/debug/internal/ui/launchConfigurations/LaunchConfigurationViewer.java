@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,14 +53,15 @@ public class LaunchConfigurationViewer extends TreeViewer {
 	/**
 	 * @see org.eclipse.jface.viewers.StructuredViewer#preservingSelection(java.lang.Runnable)
 	 */
+	@Override
 	protected void preservingSelection(Runnable updateCode) {
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		if(!selection.isEmpty()) {
 			int[] indices = collectIndices(selection.getFirstElement());
 			updateCode.run();
-			ArrayList set = new ArrayList();
+			ArrayList<Object> set = new ArrayList<Object>();
 			Object o = null;
-			for(Iterator iter = selection.iterator(); iter.hasNext();) {
+			for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 				o = iter.next();
 				if(o instanceof ILaunchConfiguration) {
 					if(!((ILaunchConfiguration)o).exists()) {
@@ -155,6 +156,7 @@ public class LaunchConfigurationViewer extends TreeViewer {
 	/**
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object)
 	 */
+	@Override
 	public void remove(Object elementsOrTreePaths) {
 		super.remove(elementsOrTreePaths);
 		fTotalCount--;
@@ -163,6 +165,7 @@ public class LaunchConfigurationViewer extends TreeViewer {
 	/**
 	 * @see org.eclipse.jface.viewers.TreeViewer#internalAdd(org.eclipse.swt.widgets.Widget, java.lang.Object, java.lang.Object[])
 	 */
+	@Override
 	protected void internalAdd(Widget widget, Object parentElement, Object[] childElements) {
 		super.internalAdd(widget, parentElement, childElements);
 		fTotalCount++;
@@ -171,6 +174,7 @@ public class LaunchConfigurationViewer extends TreeViewer {
 	/**
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#inputChanged(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	protected void inputChanged(Object input, Object oldInput) {
 		super.inputChanged(input, oldInput);
 		//calc the total number of items that could be visible in the view

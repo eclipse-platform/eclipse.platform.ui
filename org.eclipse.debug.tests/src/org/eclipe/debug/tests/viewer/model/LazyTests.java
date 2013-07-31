@@ -46,7 +46,8 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
     /**
      * @throws java.lang.Exception
      */
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         fDisplay = PlatformUI.getWorkbench().getDisplay();
         fShell = new Shell(fDisplay);
         fShell.setMaximized(true);
@@ -63,7 +64,8 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         /**
      * @throws java.lang.Exception
      */
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         fListener.dispose();
         fViewer.getPresentationContext().dispose();
         
@@ -76,7 +78,8 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
 		}
     }
 
-    protected void runTest() throws Throwable {
+    @Override
+	protected void runTest() throws Throwable {
         try {
             super.runTest();
         } catch (Throwable t) {

@@ -36,6 +36,7 @@ public class EditBreakpointGroupAction extends AbstractBreakpointsViewAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
         IWorkingSetEditWizard editWizard = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetEditWizard(fSet);
         WizardDialog dialog = new WizardDialog(DebugUIPlugin.getShell(), editWizard);
@@ -45,6 +46,7 @@ public class EditBreakpointGroupAction extends AbstractBreakpointsViewAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
 		fSet = null;		
 		if (sel instanceof IStructuredSelection) {

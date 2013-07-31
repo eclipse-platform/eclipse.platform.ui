@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - clean-up
@@ -35,8 +35,8 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Tests to verify that the viewer property updates when created
- * with the SWT.POPUP style.   
- * 
+ * with the SWT.POPUP style.
+ *
  * @since 3.6
  */
 abstract public class PopupTests extends TestCase implements ITestModelUpdatesListenerConstants {
@@ -44,7 +44,7 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
     Shell fShell;
     ITreeModelViewer fViewer;
     TestModelUpdatesListener fListener;
-    
+
     public PopupTests(String name) {
         super(name);
     }
@@ -52,14 +52,15 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
     /**
      * @throws java.lang.Exception
      */
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         fDisplay = PlatformUI.getWorkbench().getDisplay();
         fShell = new Shell(fDisplay);
         fShell.setMaximized(true);
         fShell.setLayout(new FillLayout());
 
         fViewer = createViewer(fDisplay, fShell, SWT.POP_UP);
-        
+
         fListener = new TestModelUpdatesListener(fViewer, false, false);
 
         fShell.open ();
@@ -68,17 +69,18 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
     protected IInternalTreeModelViewer getCTargetViewer() {
         return (IInternalTreeModelViewer)fViewer;
     }
-    
+
 
     abstract protected ITreeModelViewer createViewer(Display display, Shell shell, int style);
-    
+
     /**
      * @throws java.lang.Exception
      */
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         fListener.dispose();
         fViewer.getPresentationContext().dispose();
-        
+
         // Close the shell and exit.
         fShell.close();
         while (!fShell.isDisposed()) {
@@ -89,16 +91,16 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
     }
 
     /**
-     * This test verifies that content updates are still being performed. 
+     * This test verifies that content updates are still being performed.
      */
     public void testRefreshStruct() throws InterruptedException {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
-        
+
         TestModel model = TestModel.simpleSingleLevel();
         fViewer.setAutoExpandLevel(-1);
 
         // Create the listener
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
@@ -108,7 +110,7 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
 			}
 		}
         model.validateData(fViewer, TreePath.EMPTY);
-        
+
         // Update the model
         TestElement element = model.getRootElement().getChildren()[0];
         TreePath elementPath = new TreePath(new Object[] { element });
@@ -118,8 +120,8 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
 		new TestElement(model, "1.3 - new", new TestElement[0]), //$NON-NLS-1$
         };
         ModelDelta delta = model.setElementChildren(elementPath, newChildren);
-        
-        fListener.reset(elementPath, element, -1, true, false); 
+
+        fListener.reset(elementPath, element, -1, true, false);
         model.postDelta(delta);
         while (!fListener.isFinished()) {
 			if (!fDisplay.readAndDispatch ()) {
@@ -134,7 +136,7 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
      */
     public void testExpandAndSelect() throws InterruptedException {
         TestModel model = TestModel.simpleMultiLevel();
-        
+
         // Create the listener
         fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, true, false);
 
@@ -149,8 +151,8 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
 
         // Create the delta
         fListener.reset();
-        // TODO Investigate: there seem to be unnecessary updates being issued 
-        // by the viewer.  These include the updates that are commented out:  
+        // TODO Investigate: there seem to be unnecessary updates being issued
+        // by the viewer.  These include the updates that are commented out:
         // For now disable checking for extra updates.
         fListener.setFailOnRedundantUpdates(false);
         TestElement element = model.getRootElement();
@@ -162,10 +164,10 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
         delta.addNode(element, 2, IModelDelta.SELECT | IModelDelta.EXPAND, element.fChildren.length);
 
         // Validate the expansion state BEFORE posting the delta.
-        
-        IInternalTreeModelViewer contentProviderViewer = (IInternalTreeModelViewer)fViewer; 
+
+        IInternalTreeModelViewer contentProviderViewer = (IInternalTreeModelViewer)fViewer;
         assertFalse(contentProviderViewer.getExpandedState(path_root_3));
-        
+
         model.postDelta(deltaRoot);
         while (true) {
             if (fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
@@ -185,28 +187,28 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
 
         // Validate the expansion state AFTER posting the delta.
         assertFalse(contentProviderViewer.getExpandedState(path_root_3));
-        
+
         // Verify selection
         ISelection selection = fViewer.getSelection();
         if (selection instanceof ITreeSelection) {
-            List selectionPathsList = Arrays.asList( ((ITreeSelection)selection).getPaths() );
+			List<TreePath> selectionPathsList = Arrays.asList(((ITreeSelection) selection).getPaths());
             assertFalse(selectionPathsList.contains(path_root_3));
         } else {
 			fail("Not a tree selection"); //$NON-NLS-1$
         }
     }
-    
 
-    
+
+
     public void testPreserveExpandedOnSubTreeContent() throws InterruptedException {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = TestModel.simpleMultiLevel();
 
         // Expand all
         fViewer.setAutoExpandLevel(-1);
-        
-        // Create the listener, 
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
+
+        // Create the listener,
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
@@ -219,14 +221,14 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
 
         // Turn off auto-expansion
         fViewer.setAutoExpandLevel(0);
-        
+
         // Set a selection in view
 		TreeSelection originalSelection = new TreeSelection(model.findElement("3.3.1")); //$NON-NLS-1$
         fViewer.setSelection(originalSelection);
 
         // Update the model
 		model.addElementChild(model.findElement("3"), null, 0, new TestElement(model, "3.0 - new", new TestElement[0])); //$NON-NLS-1$ //$NON-NLS-2$
-        
+
         // Create the delta for element "3" with content update.
 		TreePath elementPath = model.findElement("3"); //$NON-NLS-1$
         ModelDelta rootDelta = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
@@ -236,7 +238,7 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
         // Note: Re-expanding nodes causes redundant updates.
         fListener.reset(false, false);
         fListener.addUpdates(getCTargetViewer(), elementPath, model.getElement(elementPath), -1, ALL_UPDATES_COMPLETE);
-        
+
         // Post the sub-tree update
         model.postDelta(rootDelta);
         while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
@@ -257,14 +259,14 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
     }
 
     private boolean areTreeSelectionsEqual(ITreeSelection sel1, ITreeSelection sel2) {
-        Set sel1Set = new HashSet();
+		Set<TreePath> sel1Set = new HashSet<TreePath>();
         sel1Set.addAll( Arrays.asList(sel1.getPaths()) );
-        
-        Set sel2Set = new HashSet();
+
+		Set<TreePath> sel2Set = new HashSet<TreePath>();
         sel2Set.addAll( Arrays.asList(sel2.getPaths()) );
-        
+
         return sel1Set.equals(sel2Set);
     }
-    
+
 
 }

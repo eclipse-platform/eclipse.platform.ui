@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Common function of variable resolvers.
  * Moved to debug core in 3.5, existed in debug.iu since 3.0.
- * 
+ *
  * @since 3.5
  */
 public class ResourceResolver implements IDynamicVariableResolver {
@@ -41,6 +41,7 @@ public class ResourceResolver implements IDynamicVariableResolver {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IContextVariableResolver#resolveValue(org.eclipse.debug.internal.core.stringsubstitution.IContextVariable, java.lang.String)
 	 */
+	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		IResource resource = null;
 		if (argument == null) {
@@ -54,26 +55,26 @@ public class ResourceResolver implements IDynamicVariableResolver {
 				return translateToValue(resource, variable);
 			}
 		}
-		abort(MessageFormat.format(Messages.ResourceResolver_0, new String[]{getReferenceExpression(variable, argument)}), null);
+		abort(MessageFormat.format(Messages.ResourceResolver_0, new Object[] { getReferenceExpression(variable, argument) }), null);
 		return null;
 	}
-	
+
 	/**
 	 * Returns the resource applicable to this resolver, relative to the selected
 	 * resource. This method is called when no argument is present in a variable
 	 * expression. For, example, this method might return the project for the
 	 * selected resource.
-	 * 
+	 *
 	 * @param resource selected resource
 	 * @return resource applicable to this variable resolver
 	 */
 	protected IResource translateSelectedResource(IResource resource) {
 		return resource;
 	}
-	
+
 	/**
 	 * Returns the workspace root
-	 * 
+	 *
 	 * @return workspace root
 	 */
 	protected IWorkspaceRoot getWorkspaceRoot() {
@@ -83,7 +84,7 @@ public class ResourceResolver implements IDynamicVariableResolver {
 	/**
 	 * Returns an expression used to reference the given variable and optional argument.
 	 * For example, <code>${var_name:arg}</code>.
-	 * 
+	 *
 	 * @param variable referenced variable
 	 * @param argument referenced argument or <code>null</code>
 	 * @return variable reference expression
@@ -99,24 +100,24 @@ public class ResourceResolver implements IDynamicVariableResolver {
 		reference.append("}"); //$NON-NLS-1$
 		return reference.toString();
 	}
-	
+
 	/**
 	 * Throws an exception with the given message and underlying exception.
-	 *  
+	 *
 	 * @param message exception message
-	 * @param exception underlying exception or <code>null</code> 
+	 * @param exception underlying exception or <code>null</code>
 	 * @throws CoreException if a problem occurs
 	 */
 	protected void abort(String message, Throwable exception) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception));
 	}
-	
+
 	/**
 	 * Returns the selected resource. Uses the ${selected_resource_path} variable
 	 * to determine the selected resource. This variable is provided by the debug.ui
 	 * plug-in. Selected resource resolution is only available when the debug.ui
 	 * plug-in is present.
-	 * 
+	 *
 	 * @param variable variable referencing a resource
 	 * @return selected resource
 	 * @throws CoreException if there is no selection
@@ -129,13 +130,13 @@ public class ResourceResolver implements IDynamicVariableResolver {
 		} catch (CoreException e) {
 			// unable to resolve a selection
 		}
-		abort(MessageFormat.format(Messages.ResourceResolver_1, new String[]{getReferenceExpression(variable, null)}), null);
-		return null;	
+		abort(MessageFormat.format(Messages.ResourceResolver_1, new Object[] { getReferenceExpression(variable, null) }), null);
+		return null;
 	}
 
 	/**
 	 * Translates the given resource into a value for this variable resolver.
-	 * 
+	 *
 	 * @param resource the resource applicable to this resolver's variable
 	 * @param variable the variable being resolved
 	 * @return variable value
@@ -161,7 +162,7 @@ public class ResourceResolver implements IDynamicVariableResolver {
 		} else if (name.endsWith("_name")) { //$NON-NLS-1$
 			return resource.getName();
 		}
-		abort(MessageFormat.format(Messages.ResourceResolver_2, new String[]{getReferenceExpression(variable, null)}), null);
+		abort(MessageFormat.format(Messages.ResourceResolver_2, new Object[] { getReferenceExpression(variable, null) }), null);
 		return null;
 	}
 

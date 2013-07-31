@@ -25,71 +25,68 @@ import org.eclipse.debug.core.model.IThread;
  */
 public class DecorationManager {
 
-    // map of targets to lists of active decorations
-    private static Map fDecorations = new HashMap(10);
+	// map of targets to lists of active decorations
+	private static Map<IDebugTarget, List<Decoration>> fDecorations = new HashMap<IDebugTarget, List<Decoration>>(10);
 
-    /**
-     * Adds the given decoration for the given stack frame.
-     * 
-     * @param decoration
-     * @param frame
-     */
-    public static void addDecoration(Decoration decoration) {
-        synchronized (fDecorations) {
-            IDebugTarget target = decoration.getThread().getDebugTarget();
-            List list = (List) fDecorations.get(target);
-            if (list == null) {
-                list = new ArrayList();
-                fDecorations.put(target, list);
-            }
-            list.add(decoration);
-        }
-    }
+	/**
+	 * Adds the given decoration for the given stack frame.
+	 * 
+	 * @param decoration
+	 * @param frame
+	 */
+	public static void addDecoration(Decoration decoration) {
+		synchronized (fDecorations) {
+			IDebugTarget target = decoration.getThread().getDebugTarget();
+			List<Decoration> list = fDecorations.get(target);
+			if (list == null) {
+				list = new ArrayList<Decoration>();
+				fDecorations.put(target, list);
+			}
+			list.add(decoration);
+		}
+	}
 
-    /**
-     * Removes any decorations for the given debug target.
-     * 
-     * @param target
-     *            to remove editor decorations for
-     */
-    public static void removeDecorations(IDebugTarget target) {
-    	doRemoveDecorations(target, null);
-    }
-    
-    /**
-     * Removes any decorations for the given thread
-     * 
-     * @param thread
-     *            thread to remove decorations for
-     */
-    public static void removeDecorations(IThread thread) {
-    	doRemoveDecorations(thread.getDebugTarget(), thread);
-    }
+	/**
+	 * Removes any decorations for the given debug target.
+	 * 
+	 * @param target to remove editor decorations for
+	 */
+	public static void removeDecorations(IDebugTarget target) {
+		doRemoveDecorations(target, null);
+	}
+
+	/**
+	 * Removes any decorations for the given thread
+	 * 
+	 * @param thread thread to remove decorations for
+	 */
+	public static void removeDecorations(IThread thread) {
+		doRemoveDecorations(thread.getDebugTarget(), thread);
+	}
 
 	private static void doRemoveDecorations(IDebugTarget target, IThread thread) {
-		ArrayList decorationsToRemove = new ArrayList();
-        synchronized (fDecorations) {
-            List list = (List) fDecorations.get(target);
-            if (list != null) {
-                ListIterator iterator = list.listIterator();
-                while (iterator.hasNext()) {
-                    Decoration decoration = (Decoration) iterator.next();
-                    if (thread == null || thread.equals(decoration.getThread())) {
-	                    decorationsToRemove.add(decoration);
-	                    iterator.remove();
-                    }
-                }
-                if (list.isEmpty()) {
-                	fDecorations.remove(target);
-                }
-            }
-        }
-        Iterator iter = decorationsToRemove.iterator();
-        while (iter.hasNext())
-        {
-        	Decoration decoration = (Decoration)iter.next();
-        	decoration.remove();
-        }
+		ArrayList<Decoration> decorationsToRemove = new ArrayList<Decoration>();
+		synchronized (fDecorations) {
+			List<Decoration> list = fDecorations.get(target);
+			if (list != null) {
+				ListIterator<Decoration> iterator = list.listIterator();
+				while (iterator.hasNext()) {
+					Decoration decoration = iterator.next();
+					if (thread == null || thread.equals(decoration.getThread())) {
+						decorationsToRemove.add(decoration);
+						iterator.remove();
+					}
+				}
+				if (list.isEmpty()) {
+					fDecorations.remove(target);
+				}
+			}
+		}
+		Iterator<Decoration> iter = decorationsToRemove.iterator();
+		while (iter.hasNext()) {
+			Decoration decoration = iter.next();
+			decoration.remove();
+		}
 	}
-	
+
 }

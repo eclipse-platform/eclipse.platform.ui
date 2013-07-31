@@ -22,6 +22,7 @@ public class SourceElementAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adapterType.equals(IWorkbenchAdapter.class)) {
 			return new SourceElementWorkbenchAdapter();
@@ -31,6 +32,7 @@ public class SourceElementAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	public Class[] getAdapterList() {
 		return new Class[] {IWorkbenchAdapter.class};
 	}

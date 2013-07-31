@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 Matt Conway and others.
+ * Copyright (c) 2000, 2013 Matt Conway and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -21,6 +19,8 @@ import org.eclipse.core.variables.IDynamicVariableResolver;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.swt.widgets.Shell;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Base implementation for variable resolvers that prompt the user
@@ -80,7 +80,7 @@ abstract class PromptingResolver implements IDynamicVariableResolver {
 		}
 
 		if (promptHint != null) {
-			dialogMessage = MessageFormat.format(StringSubstitutionMessages.PromptExpanderBase_0, new String[] {promptHint}); 
+			dialogMessage = MessageFormat.format(StringSubstitutionMessages.PromptExpanderBase_0, new Object[] { promptHint });
 		} else {
 			dialogMessage = StringSubstitutionMessages.PromptExpanderBase_1; 
 		}
@@ -89,11 +89,13 @@ abstract class PromptingResolver implements IDynamicVariableResolver {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IContextVariableResolver#resolveValue(org.eclipse.debug.internal.core.stringsubstitution.IContextVariable, java.lang.String)
 	 */
+	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		String value = null;
 		setupDialog(argument);
 
 		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				prompt();
 			}
@@ -103,7 +105,7 @@ abstract class PromptingResolver implements IDynamicVariableResolver {
 			lastValue = dialogResultString;
 		} else {
 			// dialogResultString == null means prompt was cancelled
-			throw new DebugException(new Status(IStatus.CANCEL, DebugUIPlugin.getUniqueIdentifier(), IStatus.CANCEL, MessageFormat.format(StringSubstitutionMessages.PromptingResolver_0, new String[] { variable.getName() }), null)); 
+			throw new DebugException(new Status(IStatus.CANCEL, DebugUIPlugin.getUniqueIdentifier(), IStatus.CANCEL, MessageFormat.format(StringSubstitutionMessages.PromptingResolver_0, new Object[] { variable.getName() }), null));
 		}
 		return value;
 	}

@@ -17,30 +17,34 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 /**
- * Action for pinning the display of the memory view to
- * the current memory block.  The view would not change
- * selection when a new memory block is added if the diplay is pinned.
- *
+ * Action for pinning the display of the memory view to the current memory
+ * block. The view would not change selection when a new memory block is added
+ * if the diplay is pinned.
+ * 
  */
 public class PinMemoryBlockAction implements IViewActionDelegate {
 
 	private MemoryView fView;
+
+	@Override
 	public void init(IViewPart view) {
 		if (view instanceof MemoryView)
-			fView = (MemoryView)view;
+			fView = (MemoryView) view;
 
 	}
 
+	@Override
 	public void run(IAction action) {
 		if (fView == null)
 			return;
-		
+
 		boolean pin = !fView.isPinMBDisplay();
 		fView.setPinMBDisplay(pin);
-		
+
 		action.setChecked(pin);
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 

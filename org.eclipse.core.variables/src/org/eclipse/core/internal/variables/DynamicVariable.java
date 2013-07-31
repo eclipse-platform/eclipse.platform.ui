@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.osgi.util.NLS;
  * Dynamic variable
  */
 public class DynamicVariable extends StringVariable implements IDynamicVariable {
-	
+
 	/**
 	 * Resolver, or <code>null</code> until needed
 	 */
@@ -32,11 +32,12 @@ public class DynamicVariable extends StringVariable implements IDynamicVariable 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IContextVariable#getValue(java.lang.String)
 	 */
+	@Override
 	public String getValue(String argument) throws CoreException {
 		if (!supportsArgument()) {
 			// check for an argument - not supported
 			if (argument != null && argument.length() > 0) {
-				throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, NLS.bind(VariablesMessages.DynamicVariable_0, new String[]{argument, getName()}), null)); 
+				throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, NLS.bind(VariablesMessages.DynamicVariable_0, new String[]{argument, getName()}), null));
 			}
 		}
 		if (fResolver == null) {
@@ -60,7 +61,7 @@ public class DynamicVariable extends StringVariable implements IDynamicVariable 
 
 	/**
 	 * Constructs a new context variable.
-	 * 
+	 *
 	 * @param name variable name
 	 * @param description variable description or <code>null</code>
 	 * @param configurationElement configuration element
@@ -72,9 +73,10 @@ public class DynamicVariable extends StringVariable implements IDynamicVariable 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.variables.IDynamicVariable#supportsArgument()
 	 */
+	@Override
 	public boolean supportsArgument() {
 		String arg = getConfigurationElement().getAttribute("supportsArgument"); //$NON-NLS-1$
 		return arg == null || Boolean.valueOf(arg).booleanValue();
 	}
-	
+
 }

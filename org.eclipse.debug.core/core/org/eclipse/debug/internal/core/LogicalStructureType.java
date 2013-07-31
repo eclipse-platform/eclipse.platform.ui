@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,18 +10,21 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.*;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILogicalStructureType;
+import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate;
+import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2;
+import org.eclipse.debug.core.model.IValue;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Proxy to a logical structure type extension.
- * 
+ *
  * @see IConfigurationElementConstants
  */
 public class LogicalStructureType implements ILogicalStructureType {
@@ -31,11 +34,11 @@ public class LogicalStructureType implements ILogicalStructureType {
 	private String fModelId;
 	// whether the 'description' attribute has been verified to exist: it is only
 	// required when the delegate does *not* implement ILogicalStructureTypeDelegate2.
-	private boolean fVerifiedDescription = false; 
-	
+	private boolean fVerifiedDescription = false;
+
 	/**
 	 * Constructs a new logical structure type, and verifies required attributes.
-	 * 
+	 *
 	 * @param element configuration element
 	 * @exception CoreException if required attributes are missing
 	 */
@@ -46,22 +49,22 @@ public class LogicalStructureType implements ILogicalStructureType {
 
 	/**
 	 * Verifies required attributes.
-	 * 
+	 *
 	 * @exception CoreException if required attributes are missing
 	 */
 	private void verifyAttributes() throws CoreException {
 		verifyAttributeExists(IConfigurationElementConstants.ID);
 		verifyAttributeExists(IConfigurationElementConstants.CLASS);
-		fModelId = fConfigurationElement.getAttribute(IConfigurationElementConstants.MODEL_IDENTIFIER); 
+		fModelId = fConfigurationElement.getAttribute(IConfigurationElementConstants.MODEL_IDENTIFIER);
 		if (fModelId == null) {
 			missingAttribute(IConfigurationElementConstants.MODEL_IDENTIFIER);
 		}
 	}
-	
+
 	/**
 	 * Verifies the given attribute exists
 	 * @param name the name to verify
-	 * 
+	 *
 	 * @exception CoreException if attribute does not exist
 	 */
 	private void verifyAttributeExists(String name) throws CoreException {
@@ -76,26 +79,29 @@ public class LogicalStructureType implements ILogicalStructureType {
 	 * @throws CoreException if a problem is encountered
 	 */
 	private void missingAttribute(String attrName) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, MessageFormat.format(DebugCoreMessages.LogicalStructureType_1, new String[]{attrName}), null));
+		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, MessageFormat.format(DebugCoreMessages.LogicalStructureType_1, new Object[] { attrName }), null));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.ILogicalStructureType#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return fConfigurationElement.getAttribute(IConfigurationElementConstants.DESCRIPTION);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.ILogicalStructureType#getId()
 	 */
+	@Override
 	public String getId() {
 		return fConfigurationElement.getAttribute(IConfigurationElementConstants.ID);
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.ILogicalStructureType#getLogicalStructure(org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	public IValue getLogicalStructure(IValue value) throws CoreException {
 		return getDelegate().getLogicalStructure(value);
 	}
@@ -103,6 +109,7 @@ public class LogicalStructureType implements ILogicalStructureType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.ILogicalStructureType#providesLogicalStructure(org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	public boolean providesLogicalStructure(IValue value) {
 		if (value.getModelIdentifier().equals(fModelId)) {
 			return getDelegate().providesLogicalStructure(value);
@@ -128,6 +135,7 @@ public class LogicalStructureType implements ILogicalStructureType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2#getDescription(org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	public String getDescription(IValue value) {
 		ILogicalStructureTypeDelegate delegate = getDelegate();
 		if (delegate instanceof ILogicalStructureTypeDelegate2) {
@@ -144,7 +152,7 @@ public class LogicalStructureType implements ILogicalStructureType {
 		}
 		String description = getDescription();
 		if (description == null) {
-		    return DebugCoreMessages.LogicalStructureType_0; 
+		    return DebugCoreMessages.LogicalStructureType_0;
 		}
 		return description;
 	}

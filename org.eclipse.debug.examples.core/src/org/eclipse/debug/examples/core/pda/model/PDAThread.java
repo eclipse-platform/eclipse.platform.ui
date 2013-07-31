@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2013 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -46,23 +46,23 @@ import org.eclipse.debug.examples.core.pda.protocol.PDAVMSuspendedEvent;
  * A PDA thread. A PDA VM is single threaded.
  */
 public class PDAThread extends PDADebugElement implements IThread, IPDAEventListener {
-	
+
     /**
      * ID of this thread as reported by PDA.
      */
     private final int fThreadId;
-    
+
 	/**
 	 * Breakpoint this thread is suspended at or <code>null</code>
 	 * if none.
 	 */
 	private IBreakpoint fBreakpoint;
-	
+
 	/**
 	 * Whether this thread is stepping
 	 */
 	private boolean fStepping = false;
-	
+
 	/**
 	 * Whether this thread is suspended
 	 */
@@ -72,45 +72,46 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 	 * Most recent error event or <code>null</code>
 	 */
 	private String fErrorEvent;
-	
+
 	/**
 	 * Table mapping stack frames to current variables
 	 */
-	private Map fVariables = Collections.synchronizedMap(new HashMap());
-	
+	private Map<IStackFrame, IVariable[]> fVariables = Collections.synchronizedMap(new HashMap<IStackFrame, IVariable[]>());
+
 	/**
 	 * Constructs a new thread for the given target
-	 * 
+	 *
 	 * @param target VM
 	 */
 	public PDAThread(PDADebugTarget target, int threadId) {
 		super(target);
 		fThreadId = threadId;
 	}
-	
+
 	/**
 	 * Called by the debug target after the thread is created.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	void start() {
 	    fireCreationEvent();
         getPDADebugTarget().addEventListener(this);
 	}
-	
+
     /**
      * Called by the debug target before the thread is removed.
-     * 
+     *
      * @since 3.5
      */
 	void exit() {
         getPDADebugTarget().removeEventListener(this);
         fireTerminateEvent();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getStackFrames()
 	 */
+	@Override
 	public IStackFrame[] getStackFrames() throws DebugException {
 		if (isSuspended()) {
 		    PDAStackCommandResult result = (PDAStackCommandResult)sendCommand(new PDAStackCommand(fThreadId));
@@ -122,22 +123,25 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 		}
 		return new IStackFrame[0];
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#hasStackFrames()
 	 */
+	@Override
 	public boolean hasStackFrames() throws DebugException {
 		return isSuspended();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getPriority()
 	 */
+	@Override
 	public int getPriority() throws DebugException {
 		return 0;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getTopStackFrame()
 	 */
+	@Override
 	public IStackFrame getTopStackFrame() throws DebugException {
 		IStackFrame[] frames = getStackFrames();
 		if (frames.length > 0) {
@@ -148,45 +152,50 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getName()
 	 */
+	@Override
 	public String getName() {
 		return "Main thread"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getBreakpoints()
 	 */
+	@Override
 	public synchronized IBreakpoint[] getBreakpoints() {
 		if (fBreakpoint == null) {
 			return new IBreakpoint[0];
 		}
 		return new IBreakpoint[]{fBreakpoint};
 	}
-	
+
 	/**
 	 * Notifies this thread it has been suspended by the given breakpoint.
-	 * 
+	 *
 	 * @param breakpoint breakpoint
 	 */
 	public synchronized void suspendedBy(IBreakpoint breakpoint) {
 		fBreakpoint = breakpoint;
 		suspended(DebugEvent.BREAKPOINT);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
 	 */
+	@Override
 	public boolean canResume() {
 		return isSuspended() && !getDebugTarget().isSuspended();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
 	 */
+	@Override
 	public boolean canSuspend() {
 		return !isSuspended();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
 	 */
+	@Override
 	public boolean isSuspended() {
 	    if (getDebugTarget().isTerminated()) {
 	        return false;
@@ -201,9 +210,10 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
+	@Override
 	public void resume() throws DebugException {
 		//#ifdef ex2
-//#		// TODO: Exercise 2 - send resume request to interpreter		
+//#		// TODO: Exercise 2 - send resume request to interpreter
 		//#else
 		sendCommand(new PDAResumeCommand(fThreadId));
 		//#endif
@@ -211,9 +221,10 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
+	@Override
 	public void suspend() throws DebugException {
 		//#ifdef ex2
-//#		// TODO: Exercise 2 - send suspend request to interpreter		
+//#		// TODO: Exercise 2 - send suspend request to interpreter
 		//#else
 	    sendCommand(new PDASuspendCommand(fThreadId));
 		//#endif
@@ -221,74 +232,84 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepInto()
 	 */
+	@Override
 	public boolean canStepInto() {
 		return false;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepOver()
 	 */
+	@Override
 	public boolean canStepOver() {
 		return isSuspended();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepReturn()
 	 */
+	@Override
 	public boolean canStepReturn() {
 		return false;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#isStepping()
 	 */
+	@Override
 	public boolean isStepping() {
 		return fStepping;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepInto()
 	 */
+	@Override
 	public void stepInto() throws DebugException {
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepOver()
 	 */
+	@Override
 	public void stepOver() throws DebugException {
 		sendCommand(new PDAStepCommand(fThreadId));
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepReturn()
 	 */
+	@Override
 	public void stepReturn() throws DebugException {
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
+	@Override
 	public boolean canTerminate() {
 		return !isTerminated();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
+	@Override
 	public boolean isTerminated() {
 		return getDebugTarget().isTerminated();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
+	@Override
 	public void terminate() throws DebugException {
 	    getDebugTarget().terminate();
 	}
-	
+
 	/**
 	 * Sets whether this thread is stepping
-	 * 
+	 *
 	 * @param stepping whether stepping
 	 */
 	private synchronized void setStepping(boolean stepping) {
 		fStepping = stepping;
 	}
-	
+
 	/**
 	 * Sets whether this thread is suspended
-	 * 
+	 *
 	 * @param suspended whether suspended
 	 */
 	private synchronized  void setSuspended(boolean suspended) {
@@ -298,7 +319,7 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 	/**
 	 * Sets the most recent error event encountered, or <code>null</code>
 	 * to clear the most recent error
-	 * 
+	 *
 	 * @param event one of 'unimpinstr' or 'nosuchlabel' or <code>null</code>
 	 */
 	private synchronized void setError(String event) {
@@ -308,7 +329,7 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 	/**
 	 * Returns the most recent error event encountered since the last
 	 * suspend, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the most recent error event encountered since the last
 	 * suspend, or <code>null</code> if none
 	 */
@@ -319,13 +340,14 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.pda.model.IPDAEventListener#handleEvent(java.lang.String)
 	 */
+	@Override
 	public void handleEvent(PDAEvent _event) {
 	    if (_event instanceof PDARunControlEvent && fThreadId == ((PDARunControlEvent)_event).fThreadId) {
 	        PDARunControlEvent event = (PDARunControlEvent)_event;
     		// clear previous state
     		fBreakpoint = null;
     		setStepping(false);
-    		
+
     		// handle events
     		if (event instanceof PDAResumedEvent || event instanceof PDAVMResumedEvent) {
     			setSuspended(false);
@@ -335,7 +357,7 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
     			//#ifdef ex2
     //#			}
     //#			// TODO: Exercise 2 - handle/fire "client" resume event
-    			//#else	
+    			//#else
     			} else if ("client".equals(event.fReason)) { //$NON-NLS-1$
     				resumed(DebugEvent.CLIENT_REQUEST);
     			}
@@ -363,7 +385,7 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
     				suspended(DebugEvent.STEP_END);
     			} else if ("event".equals(event.fReason) && getError() != null) { //$NON-NLS-1$
     				exceptionHit();
-    			} 
+    			}
     			//#endif
     			//#ifdef ex5
     //#			// TODO: Exercise 5 - handle end of drop event
@@ -373,19 +395,19 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
     			}
     			//#endif
     		} else if (_event instanceof PDANoSuchLabelEvent ||
-    		           _event instanceof PDAUnimplementedInstructionEvent) 
+    		           _event instanceof PDAUnimplementedInstructionEvent)
     		{
     			setError(event.fMessage);
     		}
-	    }    		
+	    }
 	}
-	
+
 	/**
 	 * Notification the target has resumed for the given reason.
 	 * Clears any error condition that was last encountered and
 	 * fires a resume event, and clears all cached variables
 	 * for stack frames.
-	 * 
+	 *
 	 * @param detail reason for the resume
 	 */
 	private void resumed(int detail) {
@@ -393,10 +415,10 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 		fVariables.clear();
 		fireResumeEvent(detail);
 	}
-	
+
 	/**
 	 * Notification the target has suspended for the given reason
-	 * 
+	 *
 	 * @param detail reason for the suspend
 	 */
 	private void suspended(int detail) {
@@ -409,12 +431,12 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
      */
     private void exceptionHit() {
     	suspended(DebugEvent.BREAKPOINT);
-    }  
-	
+    }
+
 	/**
 	 * Sets the current variables for the given stack frame. Called
 	 * by PDA stack frame when it is created.
-	 * 
+	 *
 	 * @param frame
 	 * @param variables
 	 */
@@ -423,49 +445,49 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 			fVariables.put(frame, variables);
 		}
 	}
-	
+
 	/**
 	 * Returns the current variables for the given stack frame, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param frame stack frame
 	 * @return variables or <code>null</code>
 	 */
 	protected IVariable[] getVariables(IStackFrame frame) {
 		synchronized (fVariables) {
-			IVariable[] variables = (IVariable[]) fVariables.get(frame);
+			IVariable[] variables = fVariables.get(frame);
 			if (variables == null) {
 				return new IVariable[0];
 			}
 			return variables;
 		}
 	}
-	
+
 	/**
 	 * Pops the top frame off the callstack.
 	 *
 	 * @throws DebugException
-     * 
+     *
      * @since 3.5
 	 */
 	public void popFrame() throws DebugException {
 		//#ifdef ex5
-//#		// TODO: Exercise 5 - send drop request		
+//#		// TODO: Exercise 5 - send drop request
 		//#else
 		sendCommand(new PDADropFrameCommand(fThreadId));
 		//#endif
 	}
-	
+
 	/**
 	 * Returns whether this thread can pop the top stack frame.
 	 *
 	 * @return whether this thread can pop the top stack frame
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public boolean canPopFrame() {
 		//#ifdef ex5
-//#		// TODO: Exercise 5 - allow pop if there is more than 1 frame on the stack		
+//#		// TODO: Exercise 5 - allow pop if there is more than 1 frame on the stack
 		//#else
 		try {
 			return getStackFrames().length > 1;
@@ -474,12 +496,12 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 		//#endif
 		return false;
 	}
-	
+
     /**
      * Returns the values on the data stack (top down)
-     * 
+     *
      * @return the values on the data stack (top down)
-     * 
+     *
      * @since 3.5
      */
     public IValue[] getDataStack() throws DebugException {
@@ -491,14 +513,14 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
             }
             return values;
         }
-        return new IValue[0];       
+        return new IValue[0];
     }
-    	   
+
     /**
      * Returns whether popping the data stack is currently permitted
-     *  
+     *
      * @return whether popping the data stack is currently permitted
-     * 
+     *
      * @since 3.5
      */
     public boolean canPopData() {
@@ -508,13 +530,13 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
         }
         return false;
     }
-    
+
     /**
      * Pops and returns the top of the data stack
-     * 
-     * @return the top value on the stack 
+     *
+     * @return the top value on the stack
      * @throws DebugException if the stack is empty or the request fails
-     * 
+     *
      * @since 3.5
      */
     public IValue popData() throws DebugException {
@@ -526,24 +548,24 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
         requestFailed("Empty stack", null); //$NON-NLS-1$
         return null;
     }
-    
+
     /**
      * Returns whether pushing a value is currently supported.
-     * 
+     *
      * @return whether pushing a value is currently supported
-     * 
+     *
      * @since 3.5
      */
     public boolean canPushData() {
         return !isTerminated() && isSuspended();
     }
-    
+
     /**
      * Pushes a value onto the stack.
-     * 
+     *
      * @param value value to push
      * @throws DebugException on failure
-     * 
+     *
      * @since 3.5
      */
     public void pushData(String value) throws DebugException {
@@ -552,9 +574,9 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 
     /**
      * Returns this thread's unique identifier
-     * 
+     *
      * @return this thread's unique identifier
-     * 
+     *
      * @since 3.5
      */
 	public int getIdentifier() {

@@ -26,7 +26,8 @@ public class VirtualViewerDeltaTests extends DeltaTests {
         super(name);
     }
 
-    protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
+    @Override
+	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
 		return new VirtualTreeModelViewer(fDisplay, 0, new PresentationContext("TestViewer")); //$NON-NLS-1$
     }
 }

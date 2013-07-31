@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class EditContainerAction extends SourceContainerAction {
 	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */	
+	@Override
 	public void run() {
 		ISourceContainer[] replacements = fBrowser.editSourceContainers(getShell(), fDirector, fContainers);
 		int j = 0;
@@ -59,6 +60,7 @@ public class EditContainerAction extends SourceContainerAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if(selection == null || selection.isEmpty()) {
 			return false;
@@ -66,13 +68,13 @@ public class EditContainerAction extends SourceContainerAction {
 		if (getViewer().getTree().getSelection()[0].getParentItem()==null) {
 			// can only edit top level items of same type
 			fContainers = new ISourceContainer[selection.size()];
-			Iterator iterator = selection.iterator();
-			ISourceContainer container = (ISourceContainer) iterator.next();
+			Iterator<ISourceContainer> iterator = selection.iterator();
+			ISourceContainer container = iterator.next();
 			ISourceContainerType type = container.getType();
 			fContainers[0] = container;
 			int i = 1;
 			while (iterator.hasNext()) {
-				container = (ISourceContainer) iterator.next();
+				container = iterator.next();
 				fContainers[i] = container;
 				i++;
 				if (!container.getType().equals(type)) {

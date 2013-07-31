@@ -29,6 +29,7 @@ public abstract class AbstractIntegerRendering extends AbstractAsyncTableRenderi
 		super(renderingId);
 	}
 	
+	@Override
 	public void init(IMemoryRenderingContainer container, IMemoryBlock block) {
 		super.init(container, block);
 		

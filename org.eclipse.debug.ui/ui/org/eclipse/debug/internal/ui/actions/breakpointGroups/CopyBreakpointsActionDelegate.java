@@ -41,6 +41,7 @@ public class CopyBreakpointsActionDelegate extends VirtualCopyToClipboardActionD
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.VirtualCopyToClipboardActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		super.run(action);
 		LocalSelectionTransfer.getTransfer().setSelection(getSelection());
@@ -60,6 +61,7 @@ public class CopyBreakpointsActionDelegate extends VirtualCopyToClipboardActionD
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		super.init(view);
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
@@ -68,6 +70,7 @@ public class CopyBreakpointsActionDelegate extends VirtualCopyToClipboardActionD
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
 		super.dispose();
@@ -76,25 +79,27 @@ public class CopyBreakpointsActionDelegate extends VirtualCopyToClipboardActionD
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
 	 */
+	@Override
 	public void breakpointsAdded(IBreakpoint[] breakpoints) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsRemoved(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
 	 */
+	@Override
 	public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 		// remove deleted breakpoints from drag/drop clipboard
 		if (fStamp == LocalSelectionTransfer.getTransfer().getSelectionSetTime()) {
 			ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
 			if (selection instanceof IStructuredSelection) {
-				Set removed = new HashSet();
+				Set<IBreakpoint> removed = new HashSet<IBreakpoint>();
 				for (int i = 0; i < breakpoints.length; i++) {
 					removed.add(breakpoints[i]);
 				}
 				boolean modified = false;
-				List remain = new ArrayList();
+				List<Object> remain = new ArrayList<Object>();
 				IStructuredSelection ss = (IStructuredSelection) selection;
-				Iterator iterator = ss.iterator();
+				Iterator<?> iterator = ss.iterator();
 				while (iterator.hasNext()) {
 					Object bp = iterator.next();
 					if (removed.contains(bp)) {
@@ -115,6 +120,7 @@ public class CopyBreakpointsActionDelegate extends VirtualCopyToClipboardActionD
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsChanged(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
 	 */
+	@Override
 	public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 	}
 }

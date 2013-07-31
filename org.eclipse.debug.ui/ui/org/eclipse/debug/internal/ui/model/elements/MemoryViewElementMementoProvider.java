@@ -21,6 +21,7 @@ public class MemoryViewElementMementoProvider extends ElementMementoProvider {
 	
 	private static final String OBJECT_ID = "OBJECT_ID"; //$NON-NLS-1$
 
+	@Override
 	protected boolean encodeElement(Object element, IMemento memento,
 			IPresentationContext context) throws CoreException {
 		String id = context.getId();
@@ -35,6 +36,7 @@ public class MemoryViewElementMementoProvider extends ElementMementoProvider {
 		return false;
 	}
 
+	@Override
 	protected boolean isEqual(Object element, IMemento memento,
 			IPresentationContext context) throws CoreException {
 		String id = context.getId();

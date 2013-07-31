@@ -30,6 +30,7 @@ public class HexIntegerRendering extends AbstractIntegerRendering {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.memory.AbstractTableRendering#getString(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[], java.lang.String)
 	 */
+	@Override
 	public String getString(String dataType, BigInteger address,
 			MemoryByte[] data) {
 		StringBuffer strBuffer = new StringBuffer();
@@ -78,6 +79,7 @@ public class HexIntegerRendering extends AbstractIntegerRendering {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.memory.AbstractTableRendering#getBytes(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[], java.lang.String)
 	 */
+	@Override
 	public byte[] getBytes(String dataType, BigInteger address,
 			MemoryByte[] currentValues, String data) {
 
@@ -96,6 +98,7 @@ public class HexIntegerRendering extends AbstractIntegerRendering {
 		return bytes;
 	}
 	
+	@Override
 	public int getNumCharsPerByte()
 	{
 		return 2;

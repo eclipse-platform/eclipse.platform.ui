@@ -22,6 +22,7 @@ public class FolderPrompt extends PromptingResolver {
 	 * Prompts the user to choose a folder.
 	 * @see PromptExpanderBase#prompt()
 	 */
+	@Override
 	public void prompt() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setText(dialogMessage);

@@ -91,6 +91,7 @@ public abstract class AbstractLaunchConfigurationAction extends SelectionListene
 	/**
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public final void run() {
 		if (fConfirmationRequestor != null) {
 			if (!fConfirmationRequestor.getConfirmation()) {
@@ -101,6 +102,7 @@ public abstract class AbstractLaunchConfigurationAction extends SelectionListene
 			/**
 			 * @see java.lang.Runnable#run()
 			 */
+			@Override
 			public void run() {
 				performAction();
 			}

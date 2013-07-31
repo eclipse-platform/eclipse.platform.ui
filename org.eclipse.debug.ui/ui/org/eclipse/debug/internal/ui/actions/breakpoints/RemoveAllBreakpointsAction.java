@@ -51,6 +51,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#isEnabled()
 	 */
+	@Override
 	protected boolean isEnabled() {
 		return DebugPlugin.getDefault().getBreakpointManager().hasBreakpoints();
 	}	
@@ -58,6 +59,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
 	 */
+	@Override
 	public void breakpointsAdded(IBreakpoint[] breakpoints) {
 		update();
 	}
@@ -65,12 +67,14 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsChanged(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
 	 */
+	@Override
 	public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsRemoved(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
 	 */
+	@Override
 	public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 		if (getAction() != null) {
 			update();
@@ -80,6 +84,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#initialize()
 	 */
+	@Override
 	protected void initialize() {
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
 	}
@@ -87,6 +92,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
 		super.dispose();
@@ -95,6 +101,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		final IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 		final IBreakpoint[] breakpoints = breakpointManager.getBreakpoints();
@@ -120,6 +127,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 		}  
 		if (proceed) {
 			new Job(ActionMessages.RemoveAllBreakpointsAction_2) {
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						DebugUITools.deleteBreakpoints(breakpoints, fShell, monitor);
@@ -137,6 +145,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractRemoveAllActionDelegate#init(org.eclipse.ui.IViewPart)
 	 * @since 3.7
 	 */
+	@Override
 	public void init(IViewPart view) {
 		super.init(view);
 		fShell= view.getSite().getShell();
@@ -146,6 +155,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractRemoveAllActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 * @since 3.7
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		super.init(window);
 		fShell= window.getShell();

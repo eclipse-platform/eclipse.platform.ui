@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,7 +80,8 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
      */
-    public void dragEnter(DropTargetEvent event) {
+    @Override
+	public void dragEnter(DropTargetEvent event) {
     	fDropType = DROP_TYPE_DEFAULT;
         event.detail = DND.DROP_NONE;
         
@@ -118,7 +119,7 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
      */
     private boolean isExpressionDrop() {
 	    IStructuredSelection selection = (IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection();
-	    Iterator iterator = selection.iterator();
+		Iterator<?> iterator = selection.iterator();
 	    while (iterator.hasNext()) {
 	    	Object element = iterator.next();
 	        if (getTargetExpression(element) == null){
@@ -133,7 +134,7 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	 */
 	private boolean isVariableDrop() {
 	    IStructuredSelection selection = (IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection();
-	    Iterator iterator = selection.iterator();
+		Iterator<?> iterator = selection.iterator();
 	    while (iterator.hasNext()) {
 	    	Object element = iterator.next();
 	        if (!(element instanceof IVariable)){
@@ -149,7 +150,7 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
      */
     private boolean isWatchAdaptableElementDrop() {
         IStructuredSelection selection = (IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection();
-        Iterator iterator = selection.iterator();
+		Iterator<?> iterator = selection.iterator();
         while (iterator.hasNext()) {
             Object element = iterator.next();
             if (!(element instanceof IAdaptable && 
@@ -164,6 +165,7 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragOver(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
+	@Override
 	public void dragOver(DropTargetEvent event) {
     	super.dragOver(event);
         // Allow scrolling (but not expansion)
@@ -173,7 +175,8 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ViewerDropAdapter#validateDrop(java.lang.Object, int, org.eclipse.swt.dnd.TransferData)
      */
-    public boolean validateDrop(Object target, int operation, TransferData transferType) {
+    @Override
+	public boolean validateDrop(Object target, int operation, TransferData transferType) {
         if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {
         	if (fDropType == DROP_TYPE_EXPRESSION){
         		return validateExpressionDrop(target);
@@ -226,7 +229,7 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	    if (selection != null) {
 	        size = selection.size();
 	        IExpressionManager manager = DebugPlugin.getDefault().getExpressionManager();
-	        Iterator iterator = selection.iterator();
+			Iterator<?> iterator = selection.iterator();
 	        while (iterator.hasNext()) {
 	            Object element = iterator.next();
 	            if (element instanceof IVariable){
@@ -261,7 +264,7 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
         int size = -1;
         if (selection != null) {
             size = selection.size();
-            Iterator iterator = selection.iterator();
+			Iterator<?> iterator = selection.iterator();
             while (iterator.hasNext()) {
                 Object element = iterator.next();
                 if (isFactory2Enabled(element)) {
@@ -317,6 +320,7 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#drop(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
+	@Override
 	public void drop(DropTargetEvent event) {
 	    fCurrentTransferType = event.currentDataType;
 	    // Unless insert after is explicitly set, insert before
@@ -327,7 +331,8 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	/* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ViewerDropAdapter#performDrop(java.lang.Object)
      */
-    public boolean performDrop(Object data) {
+    @Override
+	public boolean performDrop(Object data) {
         if (LocalSelectionTransfer.getTransfer().isSupportedType(fCurrentTransferType)) {
             IStructuredSelection selection = (IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection();
             if (fDropType == DROP_TYPE_EXPRESSION){
@@ -379,8 +384,8 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
      * @return whether the drop was successful
      */
     private boolean performVariableOrWatchAdaptableDrop(IStructuredSelection selection) {
-        List expressions = new ArrayList(selection.size());
-    	for (Iterator itr = selection.iterator(); itr.hasNext(); ) {
+		List<IExpression> expressions = new ArrayList<IExpression>(selection.size());
+		for (Iterator<?> itr = selection.iterator(); itr.hasNext();) {
             Object element = itr.next();
         	String expressionText = createExpressionString(element);
         	if (expressionText != null){
@@ -400,9 +405,9 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	    	if (manager instanceof ExpressionManager){
 	            IExpression targetExpression = getTargetExpression(getCurrentTarget());
 	            if (targetExpression != null){
-	    			((ExpressionManager)manager).insertExpressions((IExpression[])expressions.toArray(new IExpression[expressions.size()]), targetExpression, fInsertBefore);
+	    			((ExpressionManager)manager).insertExpressions(expressions.toArray(new IExpression[expressions.size()]), targetExpression, fInsertBefore);
 	    		} else {
-	    			((ExpressionManager)manager).addExpressions((IExpression[])expressions.toArray(new IExpression[expressions.size()]));
+	    			((ExpressionManager)manager).addExpressions(expressions.toArray(new IExpression[expressions.size()]));
 	    		}
 	    		return true;
 	    	}

@@ -36,6 +36,7 @@ public class LaunchConfigurationDialog extends LaunchConfigurationPropertiesDial
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, ID_LAUNCH_BUTTON, getLaunchButtonText(), true);
 		createButton(parent, ID_CLOSE_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationDialog_Close_1, false);  
@@ -44,6 +45,7 @@ public class LaunchConfigurationDialog extends LaunchConfigurationPropertiesDial
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#getTitleAreaTitle()
 	 */
+	@Override
 	protected String getTitleAreaTitle() {
 		return LaunchConfigurationsMessages.LaunchConfigurationDialog_Modify_attributes_and_launch__1; 
 	}
@@ -51,6 +53,7 @@ public class LaunchConfigurationDialog extends LaunchConfigurationPropertiesDial
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#getHelpContextId()
 	 */
+	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.SINGLE_LAUNCH_CONFIGURATION_DIALOG;
 	}
@@ -58,6 +61,7 @@ public class LaunchConfigurationDialog extends LaunchConfigurationPropertiesDial
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#updateButtons()
 	 */
+	@Override
 	public void updateButtons() {
 		// Launch button
 		getTabViewer().refresh();
@@ -68,6 +72,7 @@ public class LaunchConfigurationDialog extends LaunchConfigurationPropertiesDial
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#getDialogSettingsSectionName()
 	 */
+	@Override
 	protected String getDialogSettingsSectionName() {
 		return IDebugUIConstants.PLUGIN_ID + ".SINGLE_LAUNCH_CONFIGURATION_DIALOG_SECTION"; //$NON-NLS-1$
 	}

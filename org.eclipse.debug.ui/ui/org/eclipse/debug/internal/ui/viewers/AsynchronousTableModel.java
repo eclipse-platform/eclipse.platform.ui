@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.viewers;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -33,6 +32,7 @@ public class AsynchronousTableModel extends AsynchronousModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousModel#add(org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelNode, java.lang.Object)
 	 */
+	@Override
 	protected void add(ModelNode parent, Object element) {}
 	
 	/**
@@ -52,14 +52,14 @@ public class AsynchronousTableModel extends AsynchronousModel {
 	 * @param elements elements to add
 	 */
 	protected void added(Object[] elements) {
-		List kids = null;
+		List<Object> kids = null;
 		boolean changed = false;
     	synchronized (this) {
     		ModelNode[] childrenNodes = getRootNode().getChildrenNodes();
     		if (childrenNodes == null) {
-    			kids = new ArrayList(elements.length);
+				kids = new ArrayList<Object>(elements.length);
     		} else {
-    			kids = new ArrayList(elements.length + childrenNodes.length);
+				kids = new ArrayList<Object>(elements.length + childrenNodes.length);
     			for (int i = 0; i < childrenNodes.length; i++) {
 					kids.add(childrenNodes[i].getElement());
 				}
@@ -95,14 +95,14 @@ public class AsynchronousTableModel extends AsynchronousModel {
 	 * @param index index to insert at
 	 */
 	protected void inserted(Object[] elements, int index) {
-		List kids = null;
+		List<Object> kids = null;
 		boolean changed = false;
     	synchronized (this) {
     		ModelNode[] childrenNodes = getRootNode().getChildrenNodes();
     		if (childrenNodes == null) {
-    			kids = new ArrayList(elements.length);
+				kids = new ArrayList<Object>(elements.length);
     		} else {
-    			kids = new ArrayList(elements.length + childrenNodes.length);
+				kids = new ArrayList<Object>(elements.length + childrenNodes.length);
     			for (int i = 0; i < childrenNodes.length; i++) {
 					kids.add(childrenNodes[i].getElement());
 				}
@@ -137,12 +137,12 @@ public class AsynchronousTableModel extends AsynchronousModel {
 	 * @param elements elements to remove
 	 */
 	protected void removed(Object[] elements) {
-		List kids = null;
+		List<Object> kids = null;
 		boolean changed = false;
     	synchronized (this) {
     		ModelNode[] childrenNodes = getRootNode().getChildrenNodes();
     		if (childrenNodes != null) {
-    			kids = new ArrayList(childrenNodes.length);
+				kids = new ArrayList<Object>(childrenNodes.length);
     			for (int i = 0; i < childrenNodes.length; i++) {
 					kids.add(childrenNodes[i].getElement());
 				}
@@ -180,7 +180,7 @@ public class AsynchronousTableModel extends AsynchronousModel {
             remove(new Object[]{element});
             return;
         }		
-		List list = new ArrayList();
+		List<ModelNode> list = new ArrayList<ModelNode>();
     	synchronized (this) {
     		ModelNode[] nodes = getNodes(element);
     		for (int i = 0; i < nodes.length; i++) {
@@ -190,9 +190,7 @@ public class AsynchronousTableModel extends AsynchronousModel {
 			}
 		}
     	if (!list.isEmpty()) {
-    		Iterator iterator = list.iterator();
-    		while (iterator.hasNext()) {
-    			ModelNode node = (ModelNode) iterator.next();
+			for (ModelNode node : list) {
     			getViewer().nodeChanged(node);
     		}
     	}

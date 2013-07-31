@@ -21,94 +21,79 @@ import org.eclipse.debug.ui.actions.IAddMemoryBlocksTarget;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 
 /**
- * This is the retargettable add memory block action in the Memory View.
- * All AddMemoryBlock actions in the view will use this action to make sure
- * that clients can override the "Add Memory Monitor" dialog. 
- *
+ * This is the retargettable add memory block action in the Memory View. All
+ * AddMemoryBlock actions in the view will use this action to make sure that
+ * clients can override the "Add Memory Monitor" dialog.
+ * 
  */
 public class RetargetAddMemoryBlockAction extends AddMemoryBlockAction {
 
-	public RetargetAddMemoryBlockAction(IMemoryRenderingSite site)
-	{
+	public RetargetAddMemoryBlockAction(IMemoryRenderingSite site) {
 		super(site);
 	}
-	
-	public RetargetAddMemoryBlockAction(IMemoryRenderingSite site, boolean addDefaultRenderings)
-	{
+
+	public RetargetAddMemoryBlockAction(IMemoryRenderingSite site, boolean addDefaultRenderings) {
 		super(site, addDefaultRenderings);
 	}
-	
-	public RetargetAddMemoryBlockAction(String text, int style, IMemoryRenderingSite site)
-	{
+
+	public RetargetAddMemoryBlockAction(String text, int style, IMemoryRenderingSite site) {
 		super(text, style, site);
 	}
 
+	@Override
 	public void run() {
-		//	get current selection from Debug View
+		// get current selection from Debug View
 		Object debugContext = DebugUITools.getPartDebugContext(fSite.getSite());
 		IAddMemoryBlocksTarget target = getAddMemoryBlocksTarget(debugContext);
-		
-		if (target != null)
-		{
+
+		if (target != null) {
 			try {
-				if (target.supportsAddMemoryBlocks(getMemoryView()))
-				{
+				if (target.supportsAddMemoryBlocks(getMemoryView())) {
 					target.addMemoryBlocks(getMemoryView(), getMemoryView().getSite().getSelectionProvider().getSelection());
-				}
-				else
+				} else
 					super.run();
 			} catch (CoreException e) {
 				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.RetargetAddMemoryBlockAction_0, ActionMessages.RetargetAddMemoryBlockAction_1, e);
 			}
-		}
-		else	
-		{
+		} else {
 			super.run();
 		}
 	}
 
+	@Override
 	protected void updateAction(Object debugContext) {
-		
+
 		try {
 			IAddMemoryBlocksTarget target = getAddMemoryBlocksTarget(debugContext);
-			
-			if (target != null)
-			{
-				if (target.supportsAddMemoryBlocks(getMemoryView()))
-				{
+
+			if (target != null) {
+				if (target.supportsAddMemoryBlocks(getMemoryView())) {
 					if (getMemoryView().getSite().getSelectionProvider() != null)
 						setEnabled(target.canAddMemoryBlocks(getMemoryView(), getMemoryView().getSite().getSelectionProvider().getSelection()));
 					else
 						super.updateAction(debugContext);
-				}
-				else
+				} else
 					super.updateAction(debugContext);
-			}
-			else
-			{
+			} else {
 				super.updateAction(debugContext);
 			}
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
 		}
 	}
-	
-	private IAddMemoryBlocksTarget getAddMemoryBlocksTarget(Object debugContext)
-	{
+
+	private IAddMemoryBlocksTarget getAddMemoryBlocksTarget(Object debugContext) {
 		IMemoryBlockRetrieval standardMemRetrieval = MemoryViewUtil.getMemoryBlockRetrieval(debugContext);
-		
+
 		if (standardMemRetrieval == null)
 			return null;
-		
+
 		IAddMemoryBlocksTarget target = null;
-		
-		if (standardMemRetrieval instanceof IAddMemoryBlocksTarget)
-		{
+
+		if (standardMemRetrieval instanceof IAddMemoryBlocksTarget) {
 			target = (IAddMemoryBlocksTarget) standardMemRetrieval;
-		}
-		else if (standardMemRetrieval instanceof IAdaptable)
-		{
-			target = (IAddMemoryBlocksTarget)((IAdaptable)standardMemRetrieval).getAdapter(IAddMemoryBlocksTarget.class);
+		} else if (standardMemRetrieval instanceof IAdaptable) {
+			target = (IAddMemoryBlocksTarget) ((IAdaptable) standardMemRetrieval).getAdapter(IAddMemoryBlocksTarget.class);
 		}
 		return target;
 	}

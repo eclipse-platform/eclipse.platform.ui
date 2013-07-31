@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.ui.progress.IElementCollector;
  * 	 {@link IDeferredWorkbenchAdapter}. Deferred custom content is currently supported
  * 	 by a provisional internal viewer framework.
  */
+@Deprecated
 public abstract class DeferredDebugElementWorkbenchAdapter extends DebugElementWorkbenchAdapter implements IDeferredWorkbenchAdapter {
     
 	/**
@@ -40,20 +41,23 @@ public abstract class DeferredDebugElementWorkbenchAdapter extends DebugElementW
 	/* (non-Javadoc)
      * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#isContainer()
      */
-    public boolean isContainer() {
+    @Override
+	public boolean isContainer() {
         return true;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#getRule(java.lang.Object)
      */
-    public ISchedulingRule getRule(Object object) {
+    @Override
+	public ISchedulingRule getRule(Object object) {
         return null;
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object, org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
 		if (monitor.isCanceled()) {
 			return;

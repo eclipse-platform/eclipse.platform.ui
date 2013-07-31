@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Wind River Systems and others.
+ * Copyright (c) 2011, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,11 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
@@ -35,7 +35,8 @@ public class VirtualTree extends VirtualItem {
     private IVirtualItemValidator fValidator;
     
     private class SelectedItemValidator implements IVirtualItemValidator {
-        public boolean isItemVisible(VirtualItem item) {
+        @Override
+		public boolean isItemVisible(VirtualItem item) {
             // visible items.  For now only mark the selected items as visible.
             for (int i = 0; i < fSelection.length; i++) {
                 VirtualItem selectionItem = fSelection[i]; 
@@ -49,14 +50,15 @@ public class VirtualTree extends VirtualItem {
             return false;
         }
         
-        public void showItem(VirtualItem item) {
+        @Override
+		public void showItem(VirtualItem item) {
         }
     }
     
     /**
      * Set of listeners of the virtual tree.
      */
-    private Set fVirtualItemListeners = new HashSet(1);
+	private Set<IVirtualItemListener> fVirtualItemListeners = new HashSet<IVirtualItemListener>(1);
 
     /**
      * The currently selected items.  This array contains only
@@ -85,22 +87,26 @@ public class VirtualTree extends VirtualItem {
     /**
      * Disposes the virtual tree.
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         super.dispose();
         fVirtualItemListeners.clear();
     }
 
-    public void setNeedsCountUpdate() {
+    @Override
+	public void setNeedsCountUpdate() {
         super.setNeedsCountUpdate();
         clearNeedsLabelUpdate();
         clearNeedsDataUpdate();
     }
     
-    public void setNeedsLabelUpdate() {
+    @Override
+	public void setNeedsLabelUpdate() {
         // no-op
     }
 
-    public void setData(String key, Object data) {
+    @Override
+	public void setData(String key, Object data) {
         super.setData(key, data);
         if (data == null) {
             clearNeedsDataUpdate();
@@ -134,25 +140,27 @@ public class VirtualTree extends VirtualItem {
     }
     
     public void fireItemDisposed(VirtualItem item) {
-        for (Iterator itr = fVirtualItemListeners.iterator(); itr.hasNext();) {
-            ((IVirtualItemListener)itr.next()).disposed(item);
+		for (IVirtualItemListener listener : fVirtualItemListeners) {
+			listener.disposed(item);
         }
     }
     
     public void fireItemRevealed(VirtualItem item) {
-        for (Iterator itr = fVirtualItemListeners.iterator(); itr.hasNext();) {
-            ((IVirtualItemListener)itr.next()).revealed(item);
+		for (IVirtualItemListener listener : fVirtualItemListeners) {
+			listener.revealed(item);
         }        
     }
 
-    public void setData(Object data) {
+    @Override
+	public void setData(Object data) {
         super.setData(data);
         // The root item always has children as long as the input is non-null, 
         // so that it should be expanded.
         setHasItems(data != null);
     }
 
-    public void setHasItems(boolean hasChildren) {
+    @Override
+	public void setHasItems(boolean hasChildren) {
         super.setHasItems(hasChildren);
         // The root item is always expanded as long as it has children. 
         if (hasChildren) {

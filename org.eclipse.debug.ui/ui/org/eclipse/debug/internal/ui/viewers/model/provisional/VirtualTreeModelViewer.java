@@ -68,7 +68,8 @@ public class VirtualTreeModelViewer extends InternalVirtualTreeModelViewer {
      * 
      * @return presentation context
      */
-    public IPresentationContext getPresentationContext() {
+    @Override
+	public IPresentationContext getPresentationContext() {
         return super.getPresentationContext();
     }   
 
@@ -77,7 +78,8 @@ public class VirtualTreeModelViewer extends InternalVirtualTreeModelViewer {
      * 
      * @param listener model delta listener
      */
-    public void addModelChangedListener(IModelChangedListener listener) {
+    @Override
+	public void addModelChangedListener(IModelChangedListener listener) {
         super.addModelChangedListener(listener); 
     }
     
@@ -86,7 +88,8 @@ public class VirtualTreeModelViewer extends InternalVirtualTreeModelViewer {
      * 
      * @param listener model delta listener
      */
-    public void removeModelChangedListener(IModelChangedListener listener) {
+    @Override
+	public void removeModelChangedListener(IModelChangedListener listener) {
         super.removeModelChangedListener(listener);
     }   
     
@@ -95,7 +98,8 @@ public class VirtualTreeModelViewer extends InternalVirtualTreeModelViewer {
      * 
      * @param listener listener
      */
-    public void addViewerUpdateListener(IViewerUpdateListener listener) {
+    @Override
+	public void addViewerUpdateListener(IViewerUpdateListener listener) {
         super.addViewerUpdateListener(listener);
     }
 
@@ -104,7 +108,8 @@ public class VirtualTreeModelViewer extends InternalVirtualTreeModelViewer {
      * 
      * @param listener listener
      */
-    public void removeViewerUpdateListener(IViewerUpdateListener listener) {
+    @Override
+	public void removeViewerUpdateListener(IViewerUpdateListener listener) {
         super.removeViewerUpdateListener(listener);
     }
         
@@ -114,7 +119,8 @@ public class VirtualTreeModelViewer extends InternalVirtualTreeModelViewer {
      * 
      * @return whether columns can be toggled on/off
      */
-    public boolean canToggleColumns() {
+    @Override
+	public boolean canToggleColumns() {
         return super.canToggleColumns();
     }   
     
@@ -124,7 +130,8 @@ public class VirtualTreeModelViewer extends InternalVirtualTreeModelViewer {
      * 
      * @return column presentation or <code>null</code>
      */
-    public IColumnPresentation getColumnPresentation() {
+    @Override
+	public IColumnPresentation getColumnPresentation() {
         return super.getColumnPresentation();
     }   
     
@@ -134,7 +141,8 @@ public class VirtualTreeModelViewer extends InternalVirtualTreeModelViewer {
      *  
      * @return visible columns identifiers or <code>null</code>
      */
-    public String[] getVisibleColumns() {
+    @Override
+	public String[] getVisibleColumns() {
         return super.getVisibleColumns();
     }   
     
@@ -143,7 +151,8 @@ public class VirtualTreeModelViewer extends InternalVirtualTreeModelViewer {
      * 
      * @param memento the {@link IMemento} to read from
      */
-    public void initState(IMemento memento) {
+    @Override
+	public void initState(IMemento memento) {
         super.initState(memento);
     }
     
@@ -152,14 +161,16 @@ public class VirtualTreeModelViewer extends InternalVirtualTreeModelViewer {
      * 
      * @param memento the {@link IMemento} to save to
      */
-    public void saveState(IMemento memento) {
+    @Override
+	public void saveState(IMemento memento) {
         super.saveState(memento);
     }
     
     /**
      * @return Returns true if columns are being displayed currently. 
      */    
-    public boolean isShowColumns() {
+    @Override
+	public boolean isShowColumns() {
         return super.isShowColumns();
     }   
     
@@ -169,7 +180,8 @@ public class VirtualTreeModelViewer extends InternalVirtualTreeModelViewer {
      * @param show whether to show columns if the current input supports
      *  columns
      */
-    public void setShowColumns(boolean show) {
+    @Override
+	public void setShowColumns(boolean show) {
         super.setShowColumns(show);
     }   
     
@@ -181,23 +193,28 @@ public class VirtualTreeModelViewer extends InternalVirtualTreeModelViewer {
      * 
      * @param ids column identifiers or <code>null</code>
      */
-    public void setVisibleColumns(String[] ids) {
+    @Override
+	public void setVisibleColumns(String[] ids) {
         super.setVisibleColumns(ids);
     }       
 
-    public void updateViewer(IModelDelta delta) {
+    @Override
+	public void updateViewer(IModelDelta delta) {
         super.updateViewer(delta);
     }
     
-    public ViewerLabel getElementLabel(TreePath path, String columnId) {
+    @Override
+	public ViewerLabel getElementLabel(TreePath path, String columnId) {
         return super.getElementLabel(path, columnId);
     }
     
-    public VirtualItem[] findItems(Object elementOrTreePath) {
+    @Override
+	public VirtualItem[] findItems(Object elementOrTreePath) {
         return super.findItems(elementOrTreePath);
     }
     
-    public VirtualItem findItem(TreePath path) {
+    @Override
+	public VirtualItem findItem(TreePath path) {
         return super.findItem(path);
     }
 

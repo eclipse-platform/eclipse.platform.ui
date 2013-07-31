@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -41,16 +41,16 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	 * 
 	 * @since 3.5
 	 */
-	class TabCollector implements Iterator {
+	class TabCollector implements Iterator<ILaunchConfigurationTab> {
 
-		private HashSet idSet = null;
-		private ArrayList tabList = null;
-		private ArrayList extList = null;
+		private HashSet<String> idSet = null;
+		private ArrayList<ILaunchConfigurationTab> tabList = null;
+		private ArrayList<LaunchConfigurationTabExtension> extList = null;
 		
-		public TabCollector(List tabs, List exts) {
-			tabList = new ArrayList(tabs);
-			extList = new ArrayList(exts);
-			idSet = new HashSet(tabList.size() + extList.size());
+		public TabCollector(List<ILaunchConfigurationTab> tabs, List<LaunchConfigurationTabExtension> exts) {
+			tabList = new ArrayList<ILaunchConfigurationTab>(tabs);
+			extList = new ArrayList<LaunchConfigurationTabExtension>(exts);
+			idSet = new HashSet<String>(tabList.size() + extList.size());
 		}
 		
 		/**
@@ -59,8 +59,8 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 		 * @return the next tab extension tab
 		 */
 		private ILaunchConfigurationTab nextExtensionTab() {
-			for (Iterator iterator = extList.iterator(); iterator.hasNext();) {
-				LaunchConfigurationTabExtension launchConfigurationTabExtension = (LaunchConfigurationTabExtension)iterator.next();
+			for (Iterator<LaunchConfigurationTabExtension> iterator = extList.iterator(); iterator.hasNext();) {
+				LaunchConfigurationTabExtension launchConfigurationTabExtension = iterator.next();
 				String relativeTab = launchConfigurationTabExtension.getRelativeTabId();
 				if (relativeTab == null || idSet.contains(relativeTab)) {
 					iterator.remove();
@@ -73,6 +73,7 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#hasNext()
 		 */
+		@Override
 		public boolean hasNext() {
 			return extList.size() > 0 || tabList.size() > 0;
 		}
@@ -80,14 +81,15 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#next()
 		 */
-		public Object next() {
+		@Override
+		public ILaunchConfigurationTab next() {
 			ILaunchConfigurationTab nextTab = nextExtensionTab();
 			if (nextTab == null) {
 				if (tabList.size() > 0) { 
-					nextTab = (ILaunchConfigurationTab)tabList.remove(0);
+					nextTab = tabList.remove(0);
 				}
 				else {
-					LaunchConfigurationTabExtension launchConfigurationTabExtension = (LaunchConfigurationTabExtension)extList.remove(0);
+					LaunchConfigurationTabExtension launchConfigurationTabExtension = extList.remove(0);
 					nextTab = launchConfigurationTabExtension.getTab();
 				}
 			}
@@ -103,6 +105,7 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#remove()
 		 */
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
@@ -113,7 +116,7 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	/**
 	 * listing of tab extensions that we have to create
 	 */
-	private List fTabs = null;
+	private List<ILaunchConfigurationTab> fTabs = null;
 	private String fMode = null;
 	private ILaunchConfiguration fConfig = null;
 	
@@ -132,6 +135,7 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
 	 */
+	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		if(fGroup != null) {
 			fGroup.createTabs(dialog, mode);
@@ -142,13 +146,14 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fGroup.dispose();
 		if(fTabs != null) {
-			List tabs = Arrays.asList(fGroup.getTabs());
+			List<ILaunchConfigurationTab> tabs = Arrays.asList(fGroup.getTabs());
 			ILaunchConfigurationTab tab = null;
 			for(int i = 0; i < fTabs.size(); i++) {
-				tab = (ILaunchConfigurationTab)fTabs.get(i);
+				tab = fTabs.get(i);
 				if(!tabs.contains(tab)) {
 					tab.dispose();
 				}
@@ -160,16 +165,17 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#getTabs()
 	 */
+	@Override
 	public ILaunchConfigurationTab[] getTabs() {
 		if(fTabs == null) {
 			try {
-				fTabs = new ArrayList();
+				fTabs = new ArrayList<ILaunchConfigurationTab>();
 				LaunchConfigurationTabExtension[] ext = LaunchConfigurationPresentationManager.getDefault().getTabExtensions(fGroupId, fConfig, fMode);
 				//if there are no extensions bypass and do a raw copy into
 				if(ext.length > 0) {
 					TabCollector collector = new TabCollector(Arrays.asList(fGroup.getTabs()), Arrays.asList(ext));
 					while(collector.hasNext()) {
-					    Object next = collector.next();
+						ILaunchConfigurationTab next = collector.next();
 					    if (next != null) {
 					        fTabs.add(next);
 					    }
@@ -184,19 +190,20 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 			}
 			catch (CoreException ce) {DebugUIPlugin.log(ce);}
 		}
-		return (ILaunchConfigurationTab[]) fTabs.toArray(new ILaunchConfigurationTab[fTabs.size()]);
+		return fTabs.toArray(new ILaunchConfigurationTab[fTabs.size()]);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fGroup.initializeFrom(configuration);
 		if(fTabs != null) {
-			List tabs = Arrays.asList(fGroup.getTabs());
+			List<ILaunchConfigurationTab> tabs = Arrays.asList(fGroup.getTabs());
 			ILaunchConfigurationTab tab = null;
 			for(int i = 0; i < fTabs.size(); i++) {
-				tab = (ILaunchConfigurationTab)fTabs.get(i);
+				tab = fTabs.get(i);
 				if(!tabs.contains(tab)) {
 					tab.initializeFrom(configuration);
 				}
@@ -207,6 +214,8 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#launched(org.eclipse.debug.core.ILaunch)
 	 */
+	@SuppressWarnings("deprecation")
+	@Override
 	public void launched(ILaunch launch) {
 		if(fGroup != null) {
 			fGroup.launched(launch);
@@ -216,13 +225,14 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		fGroup.performApply(configuration);
 		if(fTabs != null) {
-			List tabs = Arrays.asList(fGroup.getTabs());
+			List<ILaunchConfigurationTab> tabs = Arrays.asList(fGroup.getTabs());
 			ILaunchConfigurationTab tab = null;
 			for(int i = 0; i < fTabs.size(); i++) {
-				tab = (ILaunchConfigurationTab)fTabs.get(i);
+				tab = fTabs.get(i);
 				if(!tabs.contains(tab)) {
 					tab.performApply(configuration);
 				}
@@ -233,13 +243,14 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		fGroup.setDefaults(configuration);
 		if(fTabs != null) {
-			List tabs = Arrays.asList(fGroup.getTabs());
+			List<ILaunchConfigurationTab> tabs = Arrays.asList(fGroup.getTabs());
 			ILaunchConfigurationTab tab = null;
 			for(int i = 0; i < fTabs.size(); i++) {
-				tab = (ILaunchConfigurationTab)fTabs.get(i);
+				tab = fTabs.get(i);
 				if(!tabs.contains(tab)) {
 					tab.setDefaults(configuration);
 				}

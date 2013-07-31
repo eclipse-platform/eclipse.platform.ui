@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public final class XMLMemento {
      * <p>
      * Same as calling createReadRoot(reader, null)
      * </p>
-     * 
+     *
      * @param reader the <code>Reader</code> used to create the memento's document
      * @return a memento on the first <code>Element</code> for reading the document
      * @throws Exception if IO problems, invalid format, or no element.
@@ -61,7 +61,7 @@ public final class XMLMemento {
      * Creates a <code>Document</code> from the <code>Reader</code>
      * and returns a memento on the first <code>Element</code> for reading
      * the document.
-     * 
+     *
      * @param reader the <code>Reader</code> used to create the memento's document
      * @param baseDir the directory used to resolve relative file names
      * 		in the XML document. This directory must exist and include the
@@ -97,10 +97,10 @@ public final class XMLMemento {
            // errorMessage = WorkbenchMessages.XMLMemento_parserConfigError;
         } catch (IOException e) {
             exception = e;
-           // errorMessage = WorkbenchMessages.XMLMemento_ioError; 
+           // errorMessage = WorkbenchMessages.XMLMemento_ioError;
         } catch (SAXException e) {
             exception = e;
-           // errorMessage = WorkbenchMessages.XMLMemento_formatError; 
+           // errorMessage = WorkbenchMessages.XMLMemento_formatError;
         }
 
         String problemText = null;
@@ -110,13 +110,13 @@ public final class XMLMemento {
         if (problemText == null || problemText.length() == 0) {
 			problemText = errorMessage != null ? errorMessage
                     :"ERROR"; //;WorkbenchMessages.XMLMemento_noElement; //$NON-NLS-1$
-		} 
+		}
         throw new Exception(problemText, exception);
     }
 
     /**
      * Returns a root memento for writing a document.
-     * 
+     *
      * @param type the element node type to create on the document
      * @return the root memento for writing a document
      */
@@ -141,7 +141,7 @@ public final class XMLMemento {
      * <code>createWriteRoot</code> to create the initial
      * memento on a document.
      * </p>
-     * 
+     *
      * @param document the document for the memento
      * @param element the element node for the memento
      */
@@ -220,7 +220,7 @@ public final class XMLMemento {
 		}
 
         // Extract each node with given type.
-        ArrayList list = new ArrayList(size);
+		ArrayList<Element> list = new ArrayList<Element>(size);
         for (int nX = 0; nX < size; nX++) {
             Node node = nodes.item(nX);
             if (node instanceof Element) {
@@ -235,7 +235,7 @@ public final class XMLMemento {
         size = list.size();
         XMLMemento[] results = new XMLMemento[size];
         for (int x = 0; x < size; x++) {
-            results[x] = new XMLMemento(factory, (Element) list.get(x));
+            results[x] = new XMLMemento(factory, list.get(x));
         }
         return results;
     }
@@ -330,9 +330,9 @@ public final class XMLMemento {
 	}
 
     /**
-     * Returns the Text node of the memento. Each memento is allowed only 
+     * Returns the Text node of the memento. Each memento is allowed only
      * one Text node.
-     * 
+     *
      * @return the Text node of the memento, or <code>null</code> if
      * the memento has no Text node.
      */
@@ -432,7 +432,7 @@ public final class XMLMemento {
         Text textNode = getTextNode();
         if (textNode == null) {
             textNode = factory.createTextNode(data);
-			// Always add the text node as the first child (fixes bug 93718) 
+			// Always add the text node as the first child (fixes bug 93718)
 			element.insertBefore(textNode, element.getFirstChild());
         } else {
             textNode.setData(data);
@@ -441,8 +441,8 @@ public final class XMLMemento {
 
     /**
      * Saves this memento's document current values to the
-     * specified writer. 
-     * 
+     * specified writer.
+     *
      * @param writer the writer used to save the memento's document
      * @throws IOException if there is a problem serializing the document to the stream.
      */
@@ -457,10 +457,10 @@ public final class XMLMemento {
 
 	/**
      * A simple XML writer.  Using this instead of the javax.xml.transform classes allows
-     * compilation against JCL Foundation (bug 80053). 
+     * compilation against JCL Foundation (bug 80053).
      */
     private static final class DOMWriter extends PrintWriter {
-    	
+
 //    	private int tab;
 
     	/* constants */
@@ -468,7 +468,7 @@ public final class XMLMemento {
 
     	/**
     	 * Creates a new DOM writer on the given output writer.
-    	 * 
+    	 *
     	 * @param output the output writer
     	 */
     	public DOMWriter(Writer output) {
@@ -479,7 +479,7 @@ public final class XMLMemento {
 
     	/**
     	 * Prints the given element.
-    	 * 
+    	 *
     	 * @param element the element to print
     	 */
         public void print(Element element) {
@@ -521,7 +521,7 @@ public final class XMLMemento {
         	// In 3.0, elements were separated by a newline but not indented.
     		// This causes getTextData() to return "\n" even if no text data had explicitly been set.
         	// The code here emulates that behaviour.
-    		
+
 //    		for (int i = 0; i < tab; i++)
 //    			super.print("\t"); //$NON-NLS-1$
     	}
@@ -550,7 +550,7 @@ public final class XMLMemento {
     		sb.append(">"); //$NON-NLS-1$
    			print(sb.toString());
     	}
-    	
+
     	private static void appendEscapedChar(StringBuffer buffer, char c) {
     		String replacement = getReplacement(c);
     		if (replacement != null) {
@@ -593,6 +593,8 @@ public final class XMLMemento {
 					return "#x0A"; //$NON-NLS-1$
 				case '\u0009':
 					return "#x09"; //$NON-NLS-1$
+				default:
+					break;
     		}
     		return null;
     	}

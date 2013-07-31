@@ -30,17 +30,20 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  */
 public class MemoryBlockContentProvider extends ElementContentProvider {
 
+	@Override
 	protected int getChildCount(Object element, IPresentationContext context,
 			IViewerUpdate monitor) throws CoreException {
 		return 0;
 	}
 
+	@Override
 	protected Object[] getChildren(Object parent, int index, int length,
 			IPresentationContext context, IViewerUpdate monitor)
 			throws CoreException {
 		return EMPTY;
 	}
 
+	@Override
 	protected boolean supportsContextId(String id) {
 		if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))
 			return true;

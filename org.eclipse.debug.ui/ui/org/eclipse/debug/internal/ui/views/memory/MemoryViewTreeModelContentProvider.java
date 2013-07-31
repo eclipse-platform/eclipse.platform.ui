@@ -19,22 +19,17 @@ import org.eclipse.debug.internal.ui.viewers.model.TreeModelContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 
-public class MemoryViewTreeModelContentProvider extends
-		TreeModelContentProvider {
-	
+public class MemoryViewTreeModelContentProvider extends TreeModelContentProvider {
+
+	@Override
 	protected void updateNodes(IModelDelta[] nodes, int mask) {
-		
-		if (getViewer() instanceof TreeModelViewer)
-		{
-	        for (int i = 0; i < nodes.length; i++) {
+
+		if (getViewer() instanceof TreeModelViewer) {
+			for (int i = 0; i < nodes.length; i++) {
 				IModelDelta node = nodes[i];
 				int flags = node.getFlags();
 
-				if((mask & ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS) != 0 &&
-				   (flags & IModelDelta.ADDED) != 0 && 
-				   (flags & IModelDelta.SELECT) != 0 &&
-				   node.getElement() instanceof IMemoryBlock) 
-				{
+				if ((mask & ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS) != 0 && (flags & IModelDelta.ADDED) != 0 && (flags & IModelDelta.SELECT) != 0 && node.getElement() instanceof IMemoryBlock) {
 					if ((flags & IModelDelta.SELECT) != 0) {
 						if (getPresentationContext().getPart() instanceof MemoryView) {
 							MemoryView view = (MemoryView) getPresentationContext().getPart();
@@ -54,53 +49,51 @@ public class MemoryViewTreeModelContentProvider extends
 				}
 				flags = flags & mask;
 
-	            if ((flags & IModelDelta.ADDED) != 0) {
-	                handleAdd(node);
-	            }
-	            if ((flags & IModelDelta.REMOVED) != 0) {
-	                handleRemove(node);
-	            }
-	            if ((flags & IModelDelta.CONTENT) != 0) {
-	                handleContent(node);
-	            }
-	            if ((flags & IModelDelta.STATE) != 0) {
-	                handleState(node);
-	            }
-	            if ((flags & IModelDelta.INSERTED) != 0) {
-	                handleInsert(node);
-	            }
-	            if ((flags & IModelDelta.REPLACED) != 0) {
-	                handleReplace(node);
-	            }
-	            if ((flags & IModelDelta.INSTALL) != 0) {
-	                handleInstall(node);
-	            }
-	            if ((flags & IModelDelta.UNINSTALL) != 0) {
-	                handleUninstall(node);
-	            }
-	            if ((flags & IModelDelta.EXPAND) != 0) {
-	                handleExpand(node);
-	            }
-	            if ((flags & IModelDelta.COLLAPSE) != 0) {
-	                handleCollapse(node);
-	            }
-	            if ((flags & IModelDelta.SELECT) != 0) {
-	                handleSelect(node);
-	            }
-	            if ((flags & IModelDelta.REVEAL) != 0) {
-	                handleReveal(node);
-	            }
-	            updateNodes(node.getChildDeltas(), mask);
-	        }
+				if ((flags & IModelDelta.ADDED) != 0) {
+					handleAdd(node);
+				}
+				if ((flags & IModelDelta.REMOVED) != 0) {
+					handleRemove(node);
+				}
+				if ((flags & IModelDelta.CONTENT) != 0) {
+					handleContent(node);
+				}
+				if ((flags & IModelDelta.STATE) != 0) {
+					handleState(node);
+				}
+				if ((flags & IModelDelta.INSERTED) != 0) {
+					handleInsert(node);
+				}
+				if ((flags & IModelDelta.REPLACED) != 0) {
+					handleReplace(node);
+				}
+				if ((flags & IModelDelta.INSTALL) != 0) {
+					handleInstall(node);
+				}
+				if ((flags & IModelDelta.UNINSTALL) != 0) {
+					handleUninstall(node);
+				}
+				if ((flags & IModelDelta.EXPAND) != 0) {
+					handleExpand(node);
+				}
+				if ((flags & IModelDelta.COLLAPSE) != 0) {
+					handleCollapse(node);
+				}
+				if ((flags & IModelDelta.SELECT) != 0) {
+					handleSelect(node);
+				}
+				if ((flags & IModelDelta.REVEAL) != 0) {
+					handleReveal(node);
+				}
+				updateNodes(node.getChildDeltas(), mask);
+			}
 		}
 	}
-	
-	private boolean isFirstMemoryBlock()
-	{
+
+	private boolean isFirstMemoryBlock() {
 		Object input = getViewer().getInput();
-		if (input instanceof IMemoryBlockRetrieval)
-		{
-			IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks((IMemoryBlockRetrieval)input);
+		if (input instanceof IMemoryBlockRetrieval) {
+			IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks((IMemoryBlockRetrieval) input);
 			if (memoryBlocks.length == 1)
 				return true;
 		}

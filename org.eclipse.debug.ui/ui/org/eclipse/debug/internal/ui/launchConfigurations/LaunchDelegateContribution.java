@@ -32,6 +32,7 @@ public class LaunchDelegateContribution implements IPluginContribution {
 	/**
 	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
 	 */
+	@Override
 	public String getLocalId() {
 		return fDelegate.getId();
 	}
@@ -39,6 +40,7 @@ public class LaunchDelegateContribution implements IPluginContribution {
 	/**
 	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 	 */
+	@Override
 	public String getPluginId() {
 		return fDelegate.getPluginIdentifier();
 	}

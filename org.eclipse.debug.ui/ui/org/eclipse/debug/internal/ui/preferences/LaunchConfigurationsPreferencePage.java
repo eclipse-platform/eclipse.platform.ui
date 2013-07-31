@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,6 +88,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 		 */
+		@Override
 		protected String getDialogSettingsId() {
 			return IDebugUIConstants.PLUGIN_ID + ".MIGRATION_SELECTION_DIALOG"; //$NON-NLS-1$
 		}
@@ -95,6 +96,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
 		 */
+		@Override
 		protected String getHelpContextId() {
 			return IDebugHelpContextIds.SELECT_LAUNCH_CONFIGURATION_MIGRATION_DIALOG;
 		}
@@ -102,6 +104,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
 		 */
+		@Override
 		protected Object getViewerInput() {
 			return fInput;
 		}
@@ -109,6 +112,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
 		 */
+		@Override
 		protected String getViewerLabel() {
 			return DebugPreferencesMessages.LaunchingPreferencePage_0;
 		}
@@ -116,6 +120,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getContentProvider()
 		 */
+		@Override
 		protected IContentProvider getContentProvider() {
 			return new WorkbenchContentProvider();	
 		}
@@ -123,6 +128,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
 		 */
+		@Override
 		protected IBaseLabelProvider getLabelProvider() {
 			return DebugUITools.newDebugModelPresentation();
 		}
@@ -133,12 +139,15 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	 */
 	class TableContentProvider implements IStructuredContentProvider {
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getLaunchConfigurationTypes();
 		}
 
+		@Override
 		public void dispose() {}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 	}
 		
@@ -155,7 +164,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	/**
 	 * a list of the field editors
 	 */
-	private List fFieldEditors;
+	private List<FieldEditor> fFieldEditors;
 	
 	/**
 	 * Boolean editor for debug core plug-in preference
@@ -179,6 +188,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_PREFERENCE_PAGE);
@@ -187,8 +197,9 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
-		fFieldEditors = new ArrayList();
+		fFieldEditors = new ArrayList<FieldEditor>();
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 		//filtering options
 		Group group = SWTFactory.createGroup(comp, DebugPreferencesMessages.LaunchingPreferencePage_32, 1, 1, GridData.FILL_HORIZONTAL);
@@ -217,7 +228,9 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 
 		fMigrateNow.setLayoutData(gd);
 		fMigrateNow.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleMigrateNowSelected();
 			}			
@@ -237,6 +250,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 		BooleanFieldEditor2 editor = new BooleanFieldEditor2(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES, DebugPreferencesMessages.LaunchConfigurationsPreferencePage_0, SWT.NONE, comp);
 		editor.setPropertyChangeListener(new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				boolean newvalue = false;
 				if(event.getNewValue() instanceof Boolean) {
@@ -287,7 +301,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 			ILaunchManager lmanager = DebugPlugin.getDefault().getLaunchManager();
 			ILaunchConfiguration[] configurations = lmanager.getMigrationCandidates();
 			//separate the private from the public 
-			List pub = new ArrayList();
+			List<ILaunchConfiguration> pub = new ArrayList<ILaunchConfiguration>();
 			for(int i = 0; i < configurations.length; i++) {
 				if(DebugUITools.isPrivate(configurations[i])) {
 					//auto-migrate private ones
@@ -324,6 +338,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {}
 
 	/**
@@ -333,7 +348,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	private void initFieldEditors() {
 		FieldEditor editor;
 		for(int i = 0; i < fFieldEditors.size(); i++) {
-			editor = (FieldEditor)fFieldEditors.get(i);
+			editor = fFieldEditors.get(i);
 			editor.setPreferenceStore(getPreferenceStore());
 			editor.load();
 		}
@@ -357,11 +372,12 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		fDeleteConfigs.setSelection(Preferences.getDefaultBoolean(DebugPlugin.getUniqueIdentifier(), DebugPlugin.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, true));
 		FieldEditor editor = null;
 		for(int i = 0; i < fFieldEditors.size(); i++) {
-			editor = (FieldEditor)fFieldEditors.get(i);
+			editor = fFieldEditors.get(i);
 			editor.loadDefault();
 			if(editor instanceof BooleanFieldEditor2) {
 				fTable.setEnabled(((BooleanFieldEditor2)editor).getBooleanValue());
@@ -373,10 +389,11 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		//save field editors
 		for(int i = 0; i < fFieldEditors.size(); i++) {
-			((FieldEditor)fFieldEditors.get(i)).store();
+			fFieldEditors.get(i).store();
 		}
 		Preferences.setBoolean(DebugPlugin.getUniqueIdentifier(), DebugPlugin.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, fDeleteConfigs.getSelection(), null);
 		//save table

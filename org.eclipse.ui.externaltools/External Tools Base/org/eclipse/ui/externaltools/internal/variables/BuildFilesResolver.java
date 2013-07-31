@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Matthew Conway and others.
+ * Copyright (c) 2007, 2013 Matthew Conway and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Conway - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.variables;
 
@@ -33,16 +34,17 @@ public class BuildFilesResolver implements IDynamicVariableResolver
     // list of files to a unix command
     private static final String FILE_LIST_SEPARATOR = " "; //$NON-NLS-1$
 
-    public String resolveValue(IDynamicVariable variable, String argument) throws CoreException
+	@Override
+	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException
     {
         String result = null;
-        
+
         IResourceDelta buildDelta = ExternalToolBuilder.getBuildDelta();
         if (buildDelta != null)
         {
             final StringBuffer fileList = new StringBuffer();
-            final Set changedResources = new LinkedHashSet();
-            
+			final Set<String> changedResources = new LinkedHashSet<String>();
+
             // Use the argument to determine which deltas to visit - if none,
             // then defaults to all
             int deltas = 0;
@@ -52,17 +54,17 @@ public class BuildFilesResolver implements IDynamicVariableResolver
                 // Check delta kinds
                 if (argument.indexOf(ARG_ADDED) > -1)
                 {
-                    deltas |= IResourceDelta.ADDED; 
+                    deltas |= IResourceDelta.ADDED;
                 }
                 if (argument.indexOf(ARG_CHANGED) > -1)
                 {
-                    deltas |= IResourceDelta.CHANGED; 
+                    deltas |= IResourceDelta.CHANGED;
                 }
                 if (argument.indexOf(ARG_REMOVED) > -1)
                 {
-                    deltas |= IResourceDelta.REMOVED; 
+                    deltas |= IResourceDelta.REMOVED;
                 }
-                
+
                 // Check wether to include files and/or directories
                 if (argument.indexOf(ARG_DIRS) > -1)
                 {
@@ -86,14 +88,15 @@ public class BuildFilesResolver implements IDynamicVariableResolver
             final int trackDeltas = deltas;
             final boolean trackDirs = dirs;
             final boolean trackFiles = files;
-            
-            
+
+
             buildDelta.accept(new IResourceDeltaVisitor()
             {
-                public boolean visit(IResourceDelta delta) throws CoreException
+                @Override
+				public boolean visit(IResourceDelta delta) throws CoreException
                 {
                     IResource resource = delta.getResource();
-                    
+
                     // Only track files with the right kind of delta
                     boolean isTracked = (delta.getKind() & trackDeltas) > 0;
                     if (isTracked)
@@ -103,7 +106,7 @@ public class BuildFilesResolver implements IDynamicVariableResolver
                         // Only track files if desired
                         isTracked |= trackFiles && resource.getType() == IResource.FILE;
                     }
-                    
+
                     //  If tracking a change, then add it to the change set for inclusion in the variable's output
                     if (isTracked)
                     {
@@ -114,7 +117,7 @@ public class BuildFilesResolver implements IDynamicVariableResolver
                             {
                                 fileList.append(FILE_LIST_SEPARATOR);
                             }
-                            
+
                             // Since space is our separator, we need to add quotes
                             // around each file to handle filenames with embedded
                             // spaces. We also need to escape out embedded quotes in
@@ -130,7 +133,7 @@ public class BuildFilesResolver implements IDynamicVariableResolver
             }, deltas);
             result = fileList.toString();
         }
-       
+
         return result;
     }
 }

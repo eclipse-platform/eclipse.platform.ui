@@ -16,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -89,10 +88,11 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 3.0
  */
+@SuppressWarnings("deprecation")
 public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSetListener, IPropertyChangeListener {
     private IProcess fProcess = null;
 
-    private List fStreamListeners = new ArrayList();
+	private List<StreamListener> fStreamListeners = new ArrayList<StreamListener>();
 
     private IConsoleColorProvider fColorProvider;
 
@@ -160,10 +160,10 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
                 fFileOutputStream = new FileOutputStream(outputFile, append);
                 fileLoc = outputFile.getAbsolutePath();
                 
-                message = MessageFormat.format(ConsoleMessages.ProcessConsole_1, new String[] {fileLoc}); 
+				message = MessageFormat.format(ConsoleMessages.ProcessConsole_1, new Object[] { fileLoc });
                 addPatternMatchListener(new ConsoleLogFilePatternMatcher(fileLoc));
             } catch (FileNotFoundException e) {
-                message = MessageFormat.format(ConsoleMessages.ProcessConsole_2, new String[] {file}); 
+				message = MessageFormat.format(ConsoleMessages.ProcessConsole_2, new Object[] { file });
             } catch (CoreException e) {
                 DebugUIPlugin.log(e);
             }
@@ -254,7 +254,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
 
         if (process.isTerminated()) {
-            return MessageFormat.format(ConsoleMessages.ProcessConsole_0, new String[] { label }); 
+			return MessageFormat.format(ConsoleMessages.ProcessConsole_0, new Object[] { label });
         }
         return label;
     }
@@ -262,7 +262,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
     /**
      * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
      */
-    public void propertyChange(PropertyChangeEvent evt) {
+    @Override
+	public void propertyChange(PropertyChangeEvent evt) {
         String property = evt.getProperty();
         IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
         if (property.equals(IDebugPreferenceConstants.CONSOLE_WRAP) || property.equals(IDebugPreferenceConstants.CONSOLE_WIDTH)) {
@@ -289,23 +290,27 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             setTabWidth(tabWidth);
         } else if (property.equals(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT)) {
             boolean activateOnOut = store.getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT);
-            IOConsoleOutputStream stream = getStream(IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM);
+			@SuppressWarnings("resource")
+			IOConsoleOutputStream stream = getStream(IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM);
             if (stream != null) {
                 stream.setActivateOnWrite(activateOnOut);
             }
         } else if (property.equals(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR)) {
             boolean activateOnErr = store.getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR);
-            IOConsoleOutputStream stream = getStream(IDebugUIConstants.ID_STANDARD_ERROR_STREAM);
+			@SuppressWarnings("resource")
+			IOConsoleOutputStream stream = getStream(IDebugUIConstants.ID_STANDARD_ERROR_STREAM);
             if (stream != null) {
                 stream.setActivateOnWrite(activateOnErr);
             }
         } else if (property.equals(IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR)) {
-            IOConsoleOutputStream stream = getStream(IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM);
+			@SuppressWarnings("resource")
+			IOConsoleOutputStream stream = getStream(IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM);
             if (stream != null) {
                 stream.setColor(fColorProvider.getColor(IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM));
             }
         } else if (property.equals(IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR)) {
-            IOConsoleOutputStream stream = getStream(IDebugUIConstants.ID_STANDARD_ERROR_STREAM);
+			@SuppressWarnings("resource")
+			IOConsoleOutputStream stream = getStream(IDebugUIConstants.ID_STANDARD_ERROR_STREAM);
             if (stream != null) {
                 stream.setColor(fColorProvider.getColor(IDebugUIConstants.ID_STANDARD_ERROR_STREAM));
             }
@@ -323,9 +328,9 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
     /**
      * @see org.eclipse.debug.ui.console.IConsole#getStream(java.lang.String)
      */
-    public IOConsoleOutputStream getStream(String streamIdentifier) {
-        for (Iterator i = fStreamListeners.iterator(); i.hasNext();) {
-            StreamListener listener = (StreamListener) i.next();
+    @Override
+	public IOConsoleOutputStream getStream(String streamIdentifier) {
+		for (StreamListener listener : fStreamListeners) {
             if (listener.fStreamId.equals(streamIdentifier)) {
                 return listener.fStream;
             }
@@ -336,14 +341,16 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
     /**
      * @see org.eclipse.debug.ui.console.IConsole#getProcess()
      */
-    public IProcess getProcess() {
+    @Override
+	public IProcess getProcess() {
         return fProcess;
     }
 
     /**
      * @see org.eclipse.ui.console.IOConsole#dispose()
      */
-    protected void dispose() {
+    @Override
+	protected void dispose() {
         super.dispose();
         fColorProvider.disconnect();
         closeStreams();
@@ -354,14 +361,13 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
     }
 
     /**
-     * cleanup method to clsoe all of the open stream to this console 
-     */
+	 * cleanup method to close all of the open stream to this console
+	 */
     private synchronized void closeStreams() {
         if (fStreamsClosed) {
             return;
         }
-        for (Iterator i = fStreamListeners.iterator(); i.hasNext();) {
-            StreamListener listener = (StreamListener) i.next();
+		for (StreamListener listener : fStreamListeners) {
             listener.closeStream();
         }
         if (fFileOutputStream != null) {
@@ -381,11 +387,11 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
     }
 
     /**
-     * disposes ofthe listeners for each of the stream associated with this console
-     */
+	 * disposes the listeners for each of the stream associated with this
+	 * console
+	 */
     private synchronized void disposeStreams() {
-        for (Iterator i = fStreamListeners.iterator(); i.hasNext();) {
-            StreamListener listener = (StreamListener) i.next();
+		for (StreamListener listener : fStreamListeners) {
             listener.dispose();
         }
         fFileOutputStream = null;
@@ -395,7 +401,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
     /**
      * @see org.eclipse.ui.console.AbstractConsole#init()
      */
-    protected void init() {
+    @Override
+	protected void init() {
         super.init();
         if (fProcess.isTerminated()) {
             closeStreams();
@@ -418,7 +425,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
 
         DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 setFont(JFaceResources.getFont(IDebugUIConstants.PREF_CONSOLE_FONT));
                 setBackground(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR));
             }
@@ -430,7 +438,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
      * 
      * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
      */
-    public void handleDebugEvents(DebugEvent[] events) {
+    @Override
+	public void handleDebugEvents(DebugEvent[] events) {
         for (int i = 0; i < events.length; i++) {
             DebugEvent event = events[i];
             if (event.getSource().equals(getProcess())) {
@@ -453,6 +462,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         String name = getName();
         if (!name.equals(newName)) {
         	UIJob job = new UIJob("Update console title") { //$NON-NLS-1$
+				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					 ProcessConsole.this.setName(newName);
 	                 warnOfContentChange();
@@ -474,7 +484,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
     /**
      * @see org.eclipse.debug.ui.console.IConsole#connect(org.eclipse.debug.core.model.IStreamsProxy)
      */
-    public void connect(IStreamsProxy streamsProxy) {
+    @Override
+	public void connect(IStreamsProxy streamsProxy) {
         IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
         IStreamMonitor streamMonitor = streamsProxy.getErrorStreamMonitor();
         if (streamMonitor != null) {
@@ -494,7 +505,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
     /**
      * @see org.eclipse.debug.ui.console.IConsole#connect(org.eclipse.debug.core.model.IStreamMonitor, java.lang.String)
      */
-    public void connect(IStreamMonitor streamMonitor, String streamIdentifier) {
+    @Override
+	public void connect(IStreamMonitor streamMonitor, String streamIdentifier) {
         connect(streamMonitor, streamIdentifier, false);
     }
     
@@ -505,7 +517,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
      * @param streamIdentifier stream identifier
      * @param activateOnWrite whether the stream should displayed when written to 
      */
-    private void connect(IStreamMonitor streamMonitor, String streamIdentifier, boolean activateOnWrite) {
+	@SuppressWarnings("resource")
+	private void connect(IStreamMonitor streamMonitor, String streamIdentifier, boolean activateOnWrite) {
         IOConsoleOutputStream stream = null;
         if (fAllocateConsole) {
             stream = newOutputStream();
@@ -522,7 +535,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
     /**
      * @see org.eclipse.debug.ui.console.IConsole#addLink(org.eclipse.debug.ui.console.IConsoleHyperlink, int, int)
      */
-    public void addLink(IConsoleHyperlink link, int offset, int length) {
+    @Override
+	public void addLink(IConsoleHyperlink link, int offset, int length) {
         try {
             addHyperlink(link, offset, length);
         } catch (BadLocationException e) {
@@ -533,7 +547,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
     /**
      * @see org.eclipse.debug.ui.console.IConsole#addLink(org.eclipse.ui.console.IHyperlink, int, int)
      */
-    public void addLink(IHyperlink link, int offset, int length) {
+    @Override
+	public void addLink(IHyperlink link, int offset, int length) {
         try {
             addHyperlink(link, offset, length);
         } catch (BadLocationException e) {
@@ -544,7 +559,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
     /**
      * @see org.eclipse.debug.ui.console.IConsole#getRegion(org.eclipse.debug.ui.console.IConsoleHyperlink)
      */
-    public IRegion getRegion(IConsoleHyperlink link) {
+    @Override
+	public IRegion getRegion(IConsoleHyperlink link) {
         return super.getRegion(link);
     }
 
@@ -578,22 +594,25 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
          * @see org.eclipse.debug.core.IStreamListener#streamAppended(java.lang.String,
          *      org.eclipse.debug.core.model.IStreamMonitor)
          */
-        public void streamAppended(String text, IStreamMonitor monitor) {
+        @Override
+		public void streamAppended(String text, IStreamMonitor monitor) {
             String encoding = getEncoding();
             if (fFlushed) {
                 try {
                     if (fStream != null) {
-                    	if (encoding == null)
-                    		fStream.write(text);
-                    	else 
-                    		fStream.write(text.getBytes(encoding));
+                    	if (encoding == null) {
+							fStream.write(text);
+						} else {
+							fStream.write(text.getBytes(encoding));
+						}
                     }
                     if (fFileOutputStream != null) {
                         synchronized (fFileOutputStream) {
-                        	if (encoding == null)
-                        		fFileOutputStream.write(text.getBytes());
-                        	else 
-                        		fFileOutputStream.write(text.getBytes(encoding));
+                        	if (encoding == null) {
+								fFileOutputStream.write(text.getBytes());
+							} else {
+								fFileOutputStream.write(text.getBytes(encoding));
+							}
                         }
                     }
                 } catch (IOException e) {
@@ -671,7 +690,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
          * 
          * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
          */
-        protected IStatus run(IProgressMonitor monitor) {
+        @Override
+		protected IStatus run(IProgressMonitor monitor) {
             String encoding = getEncoding();
             try {
                 byte[] b = new byte[1024];
@@ -680,10 +700,11 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
                     read = fInput.read(b);
                     if (read > 0) {
                         String s;
-                        if (encoding != null)
-                            s = new String(b, 0, read, encoding);
-                        else
-                            s = new String(b, 0, read);
+                        if (encoding != null) {
+							s = new String(b, 0, read, encoding);
+						} else {
+							s = new String(b, 0, read);
+						}
                         streamsProxy.write(s);
                     }
                 }
@@ -699,7 +720,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
      * 
      * @see org.eclipse.ui.console.IConsole#getImageDescriptor()
      */
-    public ImageDescriptor getImageDescriptor() {
+    @Override
+	public ImageDescriptor getImageDescriptor() {
         if (super.getImageDescriptor() == null) {
             setImageDescriptor(computeImageDescriptor());
         }
@@ -723,11 +745,13 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
     		return buffer.toString();
     	}
     	
-        public String getPattern() {
+        @Override
+		public String getPattern() {
             return fFilePath;
         }
 
-        public void matchFound(PatternMatchEvent event) {
+        @Override
+		public void matchFound(PatternMatchEvent event) {
             try {
                 addHyperlink(new ConsoleLogFileHyperlink(fFilePath), event.getOffset(), event.getLength());
                 removePatternMatchListener(this);
@@ -735,18 +759,22 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             }
         }
 
-        public int getCompilerFlags() {
+        @Override
+		public int getCompilerFlags() {
             return 0;
         }
 
-        public String getLineQualifier() {
+        @Override
+		public String getLineQualifier() {
             return null;
         }
 
-        public void connect(TextConsole console) {
+        @Override
+		public void connect(TextConsole console) {
         }
 
-        public void disconnect() {
+        @Override
+		public void disconnect() {
         }
     }
 
@@ -756,7 +784,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             fFilePath = filePath;
         }
         
-        public void linkActivated() {
+        @Override
+		public void linkActivated() {
             IEditorInput input;
             Path path = new Path(fFilePath);
             IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -776,9 +805,11 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             } catch (PartInitException e) {
             }
         }
-        public void linkEntered() {
+        @Override
+		public void linkEntered() {
         }
-        public void linkExited() {
+        @Override
+		public void linkExited() {
         }
     }
     
@@ -791,36 +822,44 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             fFile = file;
         }
         
-        public IStorage getStorage() {
+        @Override
+		public IStorage getStorage() {
             return fStorage;
         }
 
-        public ImageDescriptor getImageDescriptor() {
+        @Override
+		public ImageDescriptor getImageDescriptor() {
             return null;
         }
 
-        public String getName() {
+        @Override
+		public String getName() {
             return getStorage().getName();
         }
 
-        public IPersistableElement getPersistable() {
+        @Override
+		public IPersistableElement getPersistable() {
             return null;
         }
 
-        public String getToolTipText() {
+        @Override
+		public String getToolTipText() {
             return getStorage().getFullPath().toOSString();
         }
         
-        public boolean equals(Object object) {
+        @Override
+		public boolean equals(Object object) {
             return object instanceof StorageEditorInput &&
              getStorage().equals(((StorageEditorInput)object).getStorage());
         }
         
-        public int hashCode() {
+        @Override
+		public int hashCode() {
             return getStorage().hashCode();
         }
 
-        public boolean exists() {
+        @Override
+		public boolean exists() {
             return fFile.exists();
         }
     }
@@ -828,6 +867,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.AbstractConsole#getHelpContextId()
 	 */
+	@Override
 	public String getHelpContextId() {
 		return IDebugHelpContextIds.PROCESS_CONSOLE;
 	} 

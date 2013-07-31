@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ public class SourceLookupManager implements IWindowListener {
 	/**
 	 * Services per window
 	 */
-	private Map fServices = new HashMap();
+	private Map<IWorkbenchWindow, SourceLookupService> fServices = new HashMap<IWorkbenchWindow, SourceLookupService>();
 	
 	private SourceLookupManager() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
@@ -58,20 +58,23 @@ public class SourceLookupManager implements IWindowListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowActivated(IWorkbenchWindow window) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowDeactivated(IWorkbenchWindow window) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowClosed(IWorkbenchWindow window) {
-		SourceLookupService service = (SourceLookupService) fServices.get(window);
+		SourceLookupService service = fServices.get(window);
 		if (service != null) {
 			fServices.remove(window);
 			service.dispose();
@@ -81,8 +84,9 @@ public class SourceLookupManager implements IWindowListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowOpened(IWorkbenchWindow window) {
-		SourceLookupService service = (SourceLookupService) fServices.get(window);
+		SourceLookupService service = fServices.get(window);
 		if (service == null) {
 			service = new SourceLookupService(window);
 			fServices.put(window, service);
@@ -94,7 +98,7 @@ public class SourceLookupManager implements IWindowListener {
 	 */
 	public void displaySource(Object context, IWorkbenchPage page, boolean forceSourceLookup) {
 		IWorkbenchWindow window = page.getWorkbenchWindow();
-		SourceLookupService service = (SourceLookupService) fServices.get(window);
+		SourceLookupService service = fServices.get(window);
 		if (service != null) {
 			service.displaySource(context, page, forceSourceLookup);
 		}

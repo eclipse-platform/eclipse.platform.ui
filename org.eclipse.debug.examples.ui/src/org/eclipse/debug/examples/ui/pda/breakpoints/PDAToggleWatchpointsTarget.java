@@ -47,7 +47,8 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
         fModificationModeEnabled = modification;
     }
     
-    public boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection) {
+    @Override
+	public boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection) {
         if (super.canToggleWatchpoints(part, selection)) {
             return true;
         } else {
@@ -62,6 +63,7 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void toggleWatchpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
 	    String[] variableAndFunctionName = getVariableAndFunctionName(part, selection);
 	    
@@ -88,7 +90,8 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
 			new Job("Toggle PDA Watchpoint") { //$NON-NLS-1$
 	            { setSystem(true); }
 	            
-	            protected IStatus run(IProgressMonitor monitor) {
+	            @Override
+				protected IStatus run(IProgressMonitor monitor) {
 	                try {
     	                IFile file = getResource(var.getStackFrame());
     	                String varName = var.getName();
@@ -101,7 +104,8 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
 						new WorkbenchJob(shell.getDisplay(), "Toggle PDA Watchpoint") { //$NON-NLS-1$
 	                        { setSystem(true); }
 	                        
-	                        public IStatus runInUIThread(IProgressMonitor submonitor) {
+	                        @Override
+							public IStatus runInUIThread(IProgressMonitor submonitor) {
 								ErrorDialog.openError(shell, "Failed to create PDA watchpoint", "Failed to create PDA watchpoint.\n", e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 	                            return Status.OK_STATUS;
 	                        }
@@ -151,7 +155,8 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#toggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
      */
-    public void toggleBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
+    @Override
+	public void toggleBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
         if (canToggleWatchpoints(part, selection)) {
             toggleWatchpoints(part, selection);
         } else {
@@ -162,7 +167,8 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#canToggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
      */
-    public boolean canToggleBreakpoints(IWorkbenchPart part, ISelection selection) {
+    @Override
+	public boolean canToggleBreakpoints(IWorkbenchPart part, ISelection selection) {
         return canToggleLineBreakpoints(part, selection) || canToggleWatchpoints(part, selection);
     }
 }

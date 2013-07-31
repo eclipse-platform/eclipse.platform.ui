@@ -29,7 +29,8 @@ public class PDAChildrenCommand extends PDACommand {
         super("children " + threadId + " " + frameId + " " + name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
     
-    public PDACommandResult createResult(String resultText) {
+    @Override
+	public PDACommandResult createResult(String resultText) {
         return new PDAListResult(resultText);
     }
 }

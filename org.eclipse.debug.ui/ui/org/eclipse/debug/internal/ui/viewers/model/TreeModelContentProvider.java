@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckboxModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
@@ -77,7 +76,10 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      * Used to install different model proxy instances for one element depending
      * on the tree path.
      */
-    private Map fTreeModelProxies = new HashMap(); // tree model proxy by
+	private Map<TreePath, IModelProxy> fTreeModelProxies = new HashMap<TreePath, IModelProxy>(); // tree
+																									// model
+																									// proxy
+																									// by
                                                    // element tree path
 
     /**
@@ -86,7 +88,10 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      * Used to install a single model proxy which is responsible for all
      * instances of an element in the model tree.
      */
-    private Map fModelProxies = new HashMap(); // model proxy by element
+	private Map<Object, IModelProxy> fModelProxies = new HashMap<Object, IModelProxy>(); // model
+																							// proxy
+																							// by
+																							// element
 
     /**
      * Map of nodes that have been filtered from the viewer.
@@ -112,15 +117,15 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
     /**
      * Map of updates in progress: element path -> list of requests
      */
-    private Map fRequestsInProgress = new HashMap();
+	private Map<TreePath, List<ViewerUpdateMonitor>> fRequestsInProgress = new HashMap<TreePath, List<ViewerUpdateMonitor>>();
 
     /**
      * Map of dependent requests waiting for parent requests to complete:
      * element path -> list of requests
      */
-    private Map fWaitingRequests = new HashMap();
+	private Map<TreePath, List<ViewerUpdateMonitor>> fWaitingRequests = new HashMap<TreePath, List<ViewerUpdateMonitor>>();
 
-    private List fCompletedUpdates = new ArrayList();
+	private List<ViewerUpdateMonitor> fCompletedUpdates = new ArrayList<ViewerUpdateMonitor>();
     
     private Runnable fCompletedUpdatesRunnable;
 
@@ -143,18 +148,18 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      */
     static final TreePath EMPTY_TREE_PATH = new TreePath(new Object[] {});
 
-    public void dispose() {
-        if (fViewer == null) return;
+    @Override
+	public void dispose() {
+        if (fViewer == null) {
+			return;
+		}
         
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
         
         // cancel pending updates
-        Iterator iterator = fRequestsInProgress.values().iterator();
-        while (iterator.hasNext()) {
-            List requests = (List) iterator.next();
-            Iterator reqIter = requests.iterator();
-            while (reqIter.hasNext()) {
-                ((IRequest) reqIter.next()).cancel();
+		for (List<ViewerUpdateMonitor> requests : fRequestsInProgress.values()) {
+			for (ViewerUpdateMonitor vu : requests) {
+				vu.cancel();
             }
         }
         fWaitingRequests.clear();
@@ -178,7 +183,8 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
         }
     }
 
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    @Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         synchronized(this) {
             fViewer = (IInternalTreeModelViewer) viewer;
         }
@@ -190,7 +196,8 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
         }
     }
     
-    public void postInputChanged(IInternalTreeModelViewer viewer, Object oldInput, Object newInput) {
+    @Override
+	public void postInputChanged(IInternalTreeModelViewer viewer, Object oldInput, Object newInput) {
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
         
         cancelSubtreeUpdates(TreePath.EMPTY);
@@ -203,39 +210,48 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
         } 
     }
 
-    public void addViewerUpdateListener(IViewerUpdateListener listener) {
+    @Override
+	public void addViewerUpdateListener(IViewerUpdateListener listener) {
         fUpdateListeners.add(listener);
     }
 
-    public void removeViewerUpdateListener(IViewerUpdateListener listener) {
+    @Override
+	public void removeViewerUpdateListener(IViewerUpdateListener listener) {
         fUpdateListeners.remove(listener);
     }
 
-    public void addStateUpdateListener(IStateUpdateListener listener) {
+    @Override
+	public void addStateUpdateListener(IStateUpdateListener listener) {
         fStateTracker.addStateUpdateListener(listener);
     }
 
-    public void preserveState(TreePath path) {
+    @Override
+	public void preserveState(TreePath path) {
         fStateTracker.appendToPendingStateDelta(path);        
     }
     
-    public void removeStateUpdateListener(IStateUpdateListener listener) {
+    @Override
+	public void removeStateUpdateListener(IStateUpdateListener listener) {
         fStateTracker.removeStateUpdateListener(listener);
     }
 
-    public void addModelChangedListener(IModelChangedListener listener) {
+    @Override
+	public void addModelChangedListener(IModelChangedListener listener) {
         fModelListeners.add(listener);
     }
 
-    public void removeModelChangedListener(IModelChangedListener listener) {
+    @Override
+	public void removeModelChangedListener(IModelChangedListener listener) {
         fModelListeners.remove(listener);
     }
     
-    public void cancelRestore(final TreePath path, final int flags) {
+    @Override
+	public void cancelRestore(final TreePath path, final int flags) {
         fStateTracker.cancelRestore(path, flags);
     }
 
-    public boolean setChecked(TreePath path, boolean checked) {
+    @Override
+	public boolean setChecked(TreePath path, boolean checked) {
         IModelProxy elementProxy = getElementProxy(path);
         if (elementProxy instanceof ICheckboxModelProxy) {
             return ((ICheckboxModelProxy) elementProxy).setChecked(getPresentationContext(), getViewer().getInput(), path, checked);
@@ -277,7 +293,8 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
             } else if (proxy != null) {
                 final IModelProxy finalProxy = proxy;
                 Job job = new Job("Model Proxy installed notification job") {//$NON-NLS-1$
-                    protected IStatus run(IProgressMonitor monitor) {
+                    @Override
+					protected IStatus run(IProgressMonitor monitor) {
                         if (!monitor.isCanceled()) {
                             IPresentationContext context = null;
                             Viewer viewer = null;
@@ -296,7 +313,8 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
                         return Status.OK_STATUS;
                     }
 
-                    public boolean shouldRun() {
+                    @Override
+					public boolean shouldRun() {
                         return !isDisposed();
                     }
                 };
@@ -313,13 +331,13 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      */
     private IModelProxy getElementProxy(TreePath path) {
         while (path != null) {
-            IModelProxy proxy = (IModelProxy) fTreeModelProxies.get(path);
+            IModelProxy proxy = fTreeModelProxies.get(path);
             if (proxy != null) {
                 return proxy;
             }
 
             Object element = path.getSegmentCount() == 0 ? getViewer().getInput() : path.getLastSegment();
-            proxy = (IModelProxy) fModelProxies.get(element);
+            proxy = fModelProxies.get(element);
             if (proxy != null) {
                 return proxy;
             }
@@ -334,17 +352,11 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      */
     private void disposeAllModelProxies() {
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
-        
-        Iterator updatePolicies = fModelProxies.values().iterator();
-        while (updatePolicies.hasNext()) {
-            IModelProxy proxy = (IModelProxy) updatePolicies.next();
+		for (IModelProxy proxy : fModelProxies.values()) {
             proxy.dispose();
         }
         fModelProxies.clear();
-
-        updatePolicies = fTreeModelProxies.values().iterator();
-        while (updatePolicies.hasNext()) {
-            IModelProxy proxy = (IModelProxy) updatePolicies.next();
+		for (IModelProxy proxy : fTreeModelProxies.values()) {
             proxy.dispose();
         }
         fTreeModelProxies.clear();
@@ -355,17 +367,18 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      * @param path the {@link TreePath} to dispose the model proxy for
      */
     private void disposeModelProxy(TreePath path) {
-        IModelProxy proxy = (IModelProxy) fTreeModelProxies.remove(path);
+        IModelProxy proxy = fTreeModelProxies.remove(path);
         if (proxy != null) {
             proxy.dispose();
         }
-        proxy = (IModelProxy) fModelProxies.remove(path.getLastSegment());
+        proxy = fModelProxies.remove(path.getLastSegment());
         if (proxy != null) {
             proxy.dispose();
         }
     }    
     
-    public void modelChanged(final IModelDelta delta, final IModelProxy proxy) {
+    @Override
+	public void modelChanged(final IModelDelta delta, final IModelProxy proxy) {
         Display display = null;
 
         // Check if the viewer is still available, i.e. if the content provider
@@ -383,7 +396,8 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
             }
             else {
                 fViewer.getDisplay().asyncExec(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         doModelChanged(delta, proxy);
                     }
                 });
@@ -415,18 +429,23 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
         }
     }
     
-    public void setModelDeltaMask(int mask) {
+    @Override
+	public void setModelDeltaMask(int mask) {
         fModelDeltaMask = mask;
     }
 
-    public int getModelDeltaMask() {
+    @Override
+	public int getModelDeltaMask() {
         return fModelDeltaMask;
     }
 
-    public void updateModel(IModelDelta delta, int mask) {
+    @Override
+	public void updateModel(IModelDelta delta, int mask) {
     	// Processing deltas with null input leads to NPEs
     	// (Bug 380288 - NPE switching to the Breakpoints View)
-    	if (getViewer() == null || getViewer().getInput() == null) return;
+    	if (getViewer() == null || getViewer().getInput() == null) {
+			return;
+		}
     	
         IModelDelta[] deltaArray = new IModelDelta[] { delta };
         updateNodes(deltaArray, mask & (IModelDelta.REMOVED | IModelDelta.UNINSTALL));
@@ -445,7 +464,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      * @return corresponding tree path
      */
     TreePath getFullTreePath(IModelDelta node) {
-        ArrayList list = new ArrayList();
+		ArrayList<Object> list = new ArrayList<Object>();
         while (node.getParentDelta() != null) {
             list.add(0, node.getElement());
             node = node.getParentDelta();
@@ -461,7 +480,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      * @return corresponding tree path
      */
     TreePath getViewerTreePath(IModelDelta node) {
-        ArrayList list = new ArrayList();
+		ArrayList<Object> list = new ArrayList<Object>();
         IModelDelta parentDelta = node.getParentDelta();
         while (parentDelta != null) {
             list.add(0, node.getElement());
@@ -482,23 +501,28 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
         }
     }
 
-    public int viewToModelIndex(TreePath parentPath, int index) {
+    @Override
+	public int viewToModelIndex(TreePath parentPath, int index) {
         return fTransform.viewToModelIndex(parentPath, index);
     }
 
-    public int viewToModelCount(TreePath parentPath, int count) {
+    @Override
+	public int viewToModelCount(TreePath parentPath, int count) {
         return fTransform.viewToModelCount(parentPath, count);
     }
 
-    public int modelToViewIndex(TreePath parentPath, int index) {
+    @Override
+	public int modelToViewIndex(TreePath parentPath, int index) {
         return fTransform.modelToViewIndex(parentPath, index);
     }
 
-    public int modelToViewChildCount(TreePath parentPath, int count) {
+    @Override
+	public int modelToViewChildCount(TreePath parentPath, int count) {
         return fTransform.modelToViewCount(parentPath, count);
     }
 
-    public boolean areTreeModelViewerFiltersApplicable(Object parentElement) {
+    @Override
+	public boolean areTreeModelViewerFiltersApplicable(Object parentElement) {
         ViewerFilter[] filters = fViewer.getFilters();
         if (filters.length > 0) {
             for (int j = 0; j < filters.length; j++) {
@@ -512,7 +536,8 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
         return false;
     }
 
-    public boolean shouldFilter(Object parentElementOrTreePath, Object element) {
+    @Override
+	public boolean shouldFilter(Object parentElementOrTreePath, Object element) {
         ViewerFilter[] filters = fViewer.getFilters();
         if (filters.length > 0) {
             for (int j = 0; j < filters.length; j++) {
@@ -520,7 +545,9 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
                     // Skip the filter if not applicable to parent element
                     Object parentElement = parentElementOrTreePath instanceof TreePath 
                         ? ((TreePath)parentElementOrTreePath).getLastSegment() : parentElementOrTreePath;
-                    if (parentElement == null) parentElement = fViewer.getInput();
+                    if (parentElement == null) {
+						parentElement = fViewer.getInput();
+					}
                     if (!((TreeModelViewerFilter)filters[j]).isApplicable(fViewer, parentElement)) {
                         continue;
                     }
@@ -534,7 +561,8 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
         return false;
     }
 
-    public void unmapPath(TreePath path) {
+    @Override
+	public void unmapPath(TreePath path) {
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
         fTransform.clear(path);
         cancelSubtreeUpdates(path);
@@ -589,9 +617,9 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
     void updateStarted(ViewerUpdateMonitor update) {
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
         
-        List requests = (List) fRequestsInProgress.get(update.getSchedulingPath());
+		List<ViewerUpdateMonitor> requests = fRequestsInProgress.get(update.getSchedulingPath());
         if (requests == null) {
-            requests = new ArrayList();
+			requests = new ArrayList<ViewerUpdateMonitor>();
             fRequestsInProgress.put(update.getSchedulingPath(), requests);
         }
         requests.add(update);
@@ -613,9 +641,9 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      * 
      * @param updates the updates to notify
      */
-    void updatesComplete(final List updates) {
+	void updatesComplete(final List<ViewerUpdateMonitor> updates) {
     	for (int i = 0; i < updates.size(); i++) {
-    		ViewerUpdateMonitor update = (ViewerUpdateMonitor)updates.get(i);
+    		ViewerUpdateMonitor update = updates.get(i);
 	        notifyUpdate(UPDATE_COMPLETE, update);
 	        if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 	            DebugUIPlugin.trace("\tEND - " + update); //$NON-NLS-1$
@@ -624,15 +652,18 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
     	
     	// Wait a single cycle to allow viewer to queue requests triggered by completed updates.
         getViewer().getDisplay().asyncExec(new Runnable() {
-            public void run() {
-                if (isDisposed()) return;
+            @Override
+			public void run() {
+                if (isDisposed()) {
+					return;
+				}
 
             	for (int i = 0; i < updates.size(); i++) {
-            		ViewerUpdateMonitor update = (ViewerUpdateMonitor)updates.get(i);
+            		ViewerUpdateMonitor update = updates.get(i);
 	                
             		// Search for update in list using identity test.  Otherwise a completed canceled
             		// update may trigger removal of up-to-date running update on the same element.
-	                List requests = (List) fRequestsInProgress.get(update.getSchedulingPath());
+					List<ViewerUpdateMonitor> requests = fRequestsInProgress.get(update.getSchedulingPath());
 	            	boolean found = false;
 	            	if (requests != null) {
     	            	for (int j = 0; j < requests.size(); j++) {
@@ -694,7 +725,8 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
             for (int i = 0; i < listeners.length; i++) {
                 final IViewerUpdateListener listener = (IViewerUpdateListener) listeners[i];
                 SafeRunner.run(new ISafeRunnable() {
-                    public void run() throws Exception {
+                    @Override
+					public void run() throws Exception {
                         switch (type) {
                         case UPDATE_SEQUENCE_BEGINS:
                             listener.viewerUpdatesBegin();
@@ -708,10 +740,13 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
                         case UPDATE_COMPLETE:
                             listener.updateComplete(update);
                             break;
+							default:
+								break;
                         }
                     }
 
-                    public void handleException(Throwable exception) {
+                    @Override
+					public void handleException(Throwable exception) {
                         DebugUIPlugin.log(exception);
                     }
                 });
@@ -726,34 +761,28 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      */
     private void cancelSubtreeUpdates(TreePath path) {
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );        
-        
-        Iterator iterator = fRequestsInProgress.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Entry entry = (Entry) iterator.next();
-            TreePath entryPath = (TreePath) entry.getKey();
+		for (Entry<TreePath, List<ViewerUpdateMonitor>> entry : fRequestsInProgress.entrySet()) {
+            TreePath entryPath = entry.getKey();
             if (entryPath.startsWith(path, null)) {
-                List requests = (List) entry.getValue();
-                Iterator reqIter = requests.iterator();
+				List<ViewerUpdateMonitor> requests = entry.getValue();
+				Iterator<ViewerUpdateMonitor> reqIter = requests.iterator();
                 while (reqIter.hasNext()) {
                     // Cancel update and remove from requests list.  Removing from 
                     // fRequestsInProgress ensures that isRequestBlocked() won't be triggered 
                     // by a canceled update.
-                    ((IRequest) reqIter.next()).cancel();
+					reqIter.next().cancel();
                     reqIter.remove();
                 }
             }
         }
-        List purge = new ArrayList();
-        iterator = fWaitingRequests.keySet().iterator();
-        while (iterator.hasNext()) {
-            TreePath entryPath = (TreePath) iterator.next();
+		List<TreePath> purge = new ArrayList<TreePath>();
+		for (TreePath entryPath : fWaitingRequests.keySet()) {
             if (entryPath.startsWith(path, null)) {
                 purge.add(entryPath);
             }
         }
-        iterator = purge.iterator();
-        while (iterator.hasNext()) {
-            fWaitingRequests.remove(iterator.next());
+		for (TreePath tp : purge) {
+			fWaitingRequests.remove(tp);
         }
         
         fStateTracker.cancelStateSubtreeUpdates(path);
@@ -769,20 +798,20 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
     	Assert.isTrue(getViewer().getDisplay().getThread() == Thread.currentThread());
     	
         TreePath schedulingPath = update.getSchedulingPath();
-        List requests = (List) fWaitingRequests.get(schedulingPath);
+		List<ViewerUpdateMonitor> requests = fWaitingRequests.get(schedulingPath);
         if (requests == null) {
-            requests = new LinkedList();
+			requests = new LinkedList<ViewerUpdateMonitor>();
             requests.add(update);
             fWaitingRequests.put(schedulingPath, requests);
 
-            List inProgressList = (List)fRequestsInProgress.get(schedulingPath);
+			List<ViewerUpdateMonitor> inProgressList = fRequestsInProgress.get(schedulingPath);
             if (inProgressList != null) {
                 int staleUpdateIndex = inProgressList.indexOf(update);
                 if (staleUpdateIndex >= 0) {
                     // Cancel update and remove from requests list.  Removing from 
                     // fRequestsInProgress ensures that isRequestBlocked() won't be triggered 
                     // by a canceled update.
-                    ViewerUpdateMonitor staleUpdate = (ViewerUpdateMonitor)inProgressList.remove(staleUpdateIndex);
+                    ViewerUpdateMonitor staleUpdate = inProgressList.remove(staleUpdateIndex);
                     staleUpdate.cancel();
                     // Note: Do not reset the inProgressList to null.  This would cause the 
                     // updateStarted() method to think that a new update sequence is 
@@ -792,8 +821,11 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
             }
             if (inProgressList == null || inProgressList.isEmpty()) {
                 getViewer().getDisplay().asyncExec(new Runnable() {
-                    public void run() {
-                    	if (isDisposed()) return;
+                    @Override
+					public void run() {
+                    	if (isDisposed()) {
+							return;
+						}
                         trigger(update.getSchedulingPath());
                     }                	
                 });
@@ -813,10 +845,8 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      * toCoalesce parameter request.  Either way the returned request needs to be added to the 
      * waiting requests list.  
      */
-    private ViewerUpdateMonitor coalesce(List requests, ViewerUpdateMonitor toCoalesce) {
-        Iterator reqIter = requests.iterator();
-        while (reqIter.hasNext()) {
-            ViewerUpdateMonitor waiting = (ViewerUpdateMonitor) reqIter.next();
+	private ViewerUpdateMonitor coalesce(List<ViewerUpdateMonitor> requests, ViewerUpdateMonitor toCoalesce) {
+		for (ViewerUpdateMonitor waiting : requests) {
             if (waiting.coalesce(toCoalesce)) {
                 requests.remove(waiting);
                 // coalesced with existing request, done
@@ -836,8 +866,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      */
     boolean areChildrenUpdatesPending(TreePath path) {
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );        
-        
-        List requests = (List) fWaitingRequests.get(path);
+		List<ViewerUpdateMonitor> requests = fWaitingRequests.get(path);
         if (requests != null) {
             for (int i = 0; i < requests.size(); i++) {
                 if (requests.get(i) instanceof ChildrenUpdate) {
@@ -845,7 +874,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
                 }
             }
         }
-        requests = (List) fRequestsInProgress.get(path);
+        requests = fRequestsInProgress.get(path);
         if (requests != null) {
             int numChildrenUpdateRequests = 0;
             for (int i = 0; i < requests.size(); i++) {
@@ -877,22 +906,20 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
         if (fWaitingRequests.isEmpty()) {
             return;
         }
-        List waiting = (List) fWaitingRequests.get(schedulingPath);
+		List<ViewerUpdateMonitor> waiting = fWaitingRequests.get(schedulingPath);
         if (waiting == null) {
             // no waiting, update the entry with the shortest path
             int length = Integer.MAX_VALUE;
-            Iterator entries = fWaitingRequests.entrySet().iterator();
-            Entry candidate = null;
-            while (entries.hasNext()) {
-                Entry entry = (Entry) entries.next();
-                TreePath key = (TreePath) entry.getKey();
+			Entry<TreePath, List<ViewerUpdateMonitor>> candidate = null;
+			for (Entry<TreePath, List<ViewerUpdateMonitor>> entry : fWaitingRequests.entrySet()) {
+                TreePath key = entry.getKey();
                 if (key.getSegmentCount() < length && !isRequestBlocked(key)) {
                     candidate = entry;
                     length = key.getSegmentCount();
                 }
             }
             if (candidate != null) {
-                startHighestPriorityRequest((TreePath) candidate.getKey(), (List) candidate.getValue());
+                startHighestPriorityRequest(candidate.getKey(), candidate.getValue());
             }
         } else if (!isRequestBlocked(schedulingPath)) {
             // start the highest priority request
@@ -908,14 +935,14 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      */
     private boolean isRequestBlocked(TreePath requestPath) {
         TreePath parentPath = requestPath;
-        List parentRequests = (List)fRequestsInProgress.get(parentPath); 
+		List<ViewerUpdateMonitor> parentRequests = fRequestsInProgress.get(parentPath);
         while (parentRequests == null || parentRequests.isEmpty()) {
             parentPath = parentPath.getParentPath();
             if (parentPath == null) {
                 // no running requests: start request
                 return false;
             }
-            parentRequests = (List)fRequestsInProgress.get(parentPath);
+            parentRequests = fRequestsInProgress.get(parentPath);
         }
         return true;
     }
@@ -924,12 +951,10 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      * @param key the {@link TreePath}
      * @param waiting the list of waiting requests
      */
-    private void startHighestPriorityRequest(TreePath key, List waiting) {
+	private void startHighestPriorityRequest(TreePath key, List<ViewerUpdateMonitor> waiting) {
         int priority = 4;
         ViewerUpdateMonitor next = null;
-        Iterator requests = waiting.iterator();
-        while (requests.hasNext()) {
-            ViewerUpdateMonitor vu = (ViewerUpdateMonitor) requests.next();
+		for (ViewerUpdateMonitor vu : waiting) {
             if (vu.getPriority() < priority) {
                 next = vu;
                 priority = next.getPriority();
@@ -971,12 +996,12 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
     private void rescheduleUpdates(TreePath parentPath, int modelIndex) {
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );        
         
-        List requests = (List) fRequestsInProgress.get(parentPath);
-        List reCreate = null;
+		List<ViewerUpdateMonitor> requests = fRequestsInProgress.get(parentPath);
+		List<IChildrenUpdate> reCreate = null;
         if (requests != null) {
-            Iterator iterator = requests.iterator();
+			Iterator<ViewerUpdateMonitor> iterator = requests.iterator();
             while (iterator.hasNext()) {
-                IViewerUpdate update = (IViewerUpdate) iterator.next();
+				ViewerUpdateMonitor update = iterator.next();
                 if (update instanceof IChildrenUpdate) {
                     IChildrenUpdate childrenUpdate = (IChildrenUpdate) update;
                     if (childrenUpdate.getOffset() > modelIndex) {
@@ -986,7 +1011,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
                         childrenUpdate.cancel();
                         iterator.remove();
                         if (reCreate == null) {
-                            reCreate = new ArrayList();
+							reCreate = new ArrayList<IChildrenUpdate>();
                         }
                         reCreate.add(childrenUpdate);
                         if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
@@ -996,11 +1021,9 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
                 }
             }
         }
-        requests = (List) fWaitingRequests.get(parentPath);
+        requests = fWaitingRequests.get(parentPath);
         if (requests != null) {
-            Iterator iterator = requests.iterator();
-            while (iterator.hasNext()) {
-                IViewerUpdate update = (IViewerUpdate) iterator.next();
+			for (ViewerUpdateMonitor update : requests) {
                 if (update instanceof IChildrenUpdate) {
                     IChildrenUpdate childrenUpdate = (IChildrenUpdate) update;
                     if (childrenUpdate.getOffset() > modelIndex) {
@@ -1016,9 +1039,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
         // have to do this last else the requests would be waiting and
         // get modified.
         if (reCreate != null) {
-            Iterator iterator = reCreate.iterator();
-            while (iterator.hasNext()) {
-                IChildrenUpdate childrenUpdate = (IChildrenUpdate) iterator.next();
+			for (IChildrenUpdate childrenUpdate : reCreate) {
                 int start = childrenUpdate.getOffset() - 1;
                 int end = start + childrenUpdate.getLength();
                 for (int i = start; i < end; i++) {
@@ -1071,37 +1092,37 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );        
         
         TreePath parentPath = path.getParentPath();
-        List requests = (List) fWaitingRequests.get(path);
+		List<ViewerUpdateMonitor> requests = fWaitingRequests.get(path);
         if (requests != null) {
             for (int i = 0; i < requests.size(); i++) {
-                ViewerUpdateMonitor update = (ViewerUpdateMonitor) requests.get(i);
+                ViewerUpdateMonitor update = requests.get(i);
                 if (update instanceof ChildrenUpdate) {
                     return true;
                 }
             }
         }
-        requests = (List) fWaitingRequests.get(parentPath);
+        requests = fWaitingRequests.get(parentPath);
         if (requests != null) {
             for (int i = 0; i < requests.size(); i++) {
-                ViewerUpdateMonitor update = (ViewerUpdateMonitor) requests.get(i);
+                ViewerUpdateMonitor update = requests.get(i);
                 if (update.containsUpdate(path)) {
                     return true;
                 }
             }
         }
-        requests = (List) fRequestsInProgress.get(path);
+        requests = fRequestsInProgress.get(path);
         if (requests != null) {
             for (int i = 0; i < requests.size(); i++) {
-                ViewerUpdateMonitor update = (ViewerUpdateMonitor) requests.get(i);
+                ViewerUpdateMonitor update = requests.get(i);
                 if (update instanceof ChildrenUpdate) {
                     return true;
                 }
             }
         }
-        requests = (List) fRequestsInProgress.get(parentPath);
+        requests = fRequestsInProgress.get(parentPath);
         if (requests != null) {
             for (int i = 0; i < requests.size(); i++) {
-                ViewerUpdateMonitor update = (ViewerUpdateMonitor) requests.get(i);
+                ViewerUpdateMonitor update = requests.get(i);
                 if (update.getElement().equals(path.getLastSegment())) {
                     return true;
                 }
@@ -1597,6 +1618,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILazyTreePathContentProvider#getParents(java.lang.Object)
 	 */
+	@Override
 	public TreePath[] getParents(Object element) {
 		return null;
 	}
@@ -1604,6 +1626,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILazyTreePathContentProvider#updateChildCount(org.eclipse.jface.viewers.TreePath, int)
 	 */
+	@Override
 	public void updateChildCount(TreePath treePath, int currentChildCount) {
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );        
         
@@ -1616,6 +1639,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILazyTreePathContentProvider#updateElement(org.eclipse.jface.viewers.TreePath, int)
 	 */
+	@Override
 	public void updateElement(TreePath parentPath, int viewIndex) {
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
 	    
@@ -1629,6 +1653,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILazyTreePathContentProvider#updateHasChildren(org.eclipse.jface.viewers.TreePath)
 	 */
+	@Override
 	public void updateHasChildren(TreePath path) {
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
 	    
@@ -1648,12 +1673,15 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	    Display display;
 	    Runnable updateJob = null;
 	    synchronized(this) {
-	        if (isDisposed()) return;
+	        if (isDisposed()) {
+				return;
+			}
 	        display = getViewer().getDisplay();
 	        fCompletedUpdates.add(update);
             if (fCompletedUpdatesRunnable == null) {
 	            fCompletedUpdatesRunnable = new Runnable() {
-	                public void run() {
+	                @Override
+					public void run() {
 	                    if (!isDisposed()) {
 	                        performUpdates();
 	                    }
@@ -1678,19 +1706,19 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	private void performUpdates() {
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
 	    
-        List jobCompletedUpdates;
+		List<ViewerUpdateMonitor> jobCompletedUpdates;
         synchronized(this) {
             if (isDisposed()) {
                 return;
             }
             jobCompletedUpdates = fCompletedUpdates;
             fCompletedUpdatesRunnable = null;
-            fCompletedUpdates = new ArrayList();
+			fCompletedUpdates = new ArrayList<ViewerUpdateMonitor>();
         }
         // necessary to check if viewer is disposed
         try {
 	        for (int i = 0; i < jobCompletedUpdates.size(); i++) {
-	        	ViewerUpdateMonitor completedUpdate = (ViewerUpdateMonitor)jobCompletedUpdates.get(i);
+	        	ViewerUpdateMonitor completedUpdate = jobCompletedUpdates.get(i);
                 if (!completedUpdate.isCanceled() && !isDisposed()) {
                     IStatus status = completedUpdate.getStatus();
                     if (status == null || status.isOK()) {

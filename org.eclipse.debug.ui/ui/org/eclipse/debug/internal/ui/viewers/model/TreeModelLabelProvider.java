@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,10 @@ package org.eclipse.debug.internal.ui.viewers.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -54,28 +54,28 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	/**
 	 * Note: access this variable should be synchronized with <code>this</code>.
 	 */
-	private List fComplete;
+	private List<ILabelUpdate> fComplete;
 	
 	/**
 	 * Cache of images used for elements in this label provider. Label updates
 	 * use the method <code>getImage(...)</code> to cache images for
 	 * image descriptors. The images are disposed with this label provider.
 	 */
-	private Map fImageCache = new HashMap();
+	private Map<ImageDescriptor, Image> fImageCache = new HashMap<ImageDescriptor, Image>();
 
 	/**
 	 * Cache of the fonts used for elements in this label provider. Label updates
 	 * use the method <code>getFont(...)</code> to cache fonts for
 	 * FontData objects. The fonts are disposed with this label provider.
 	 */
-	private Map fFontCache = new HashMap();
+	private Map<FontData, Font> fFontCache = new HashMap<FontData, Font>();
 
 	/**
 	 * Cache of the colors used for elements in this label provider. Label updates
 	 * use the method <code>getColor(...)</code> to cache colors for
 	 * RGB values. The colors are disposed with this label provider.
 	 */
-	private Map fColorCache = new HashMap();
+	private Map<RGB, Color> fColorCache = new HashMap<RGB, Color>();
 	
 	/**
 	 * Label listeners
@@ -86,7 +86,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	 * Updates waiting to be sent to the label provider.  The map contains
 	 * lists of updates, keyed using the provider. 
 	 */
-	private Map fPendingUpdates = new HashMap();
+	private Map<IElementLabelProvider, List<ILabelUpdate>> fPendingUpdates = new HashMap<IElementLabelProvider, List<ILabelUpdate>>();
 	
 	/**
 	 * A runnable that will send the label update requests.
@@ -98,7 +98,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	/**
 	 * List of updates in progress
 	 */
-	private List fUpdatesInProgress = new ArrayList();
+	private List<ILabelUpdate> fUpdatesInProgress = new ArrayList<ILabelUpdate>();
 	
     /**
      * Delta visitor actively cancels the outstanding label updates for 
@@ -108,7 +108,8 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
         /* (non-Javadoc)
          * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelDeltaVisitor#visit(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta, int)
          */
-        public boolean visit(IModelDelta delta, int depth) {
+        @Override
+		public boolean visit(IModelDelta delta, int depth) {
             if ((delta.getFlags() & IModelDelta.CONTENT) > 0) {
                 cancelElementUpdates(delta.getElement(), true);
                 return false;
@@ -141,11 +142,12 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	 * @param descriptor image descriptor or <code>null</code>
 	 * @return image or <code>null</code>
 	 */
+	@Override
 	public Image getImage(ImageDescriptor descriptor) {
 		if (descriptor == null) {
 			return null;
 		}
-		Image image = (Image) fImageCache.get(descriptor);
+		Image image = fImageCache.get(descriptor);
 		if (image == null) {
 			image = new Image(getDisplay(), descriptor.getImageData());
 			fImageCache.put(descriptor, image);
@@ -169,11 +171,12 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	 * @param fontData font data or <code>null</code>
 	 * @return font font or <code>null</code>
 	 */
+	@Override
 	public Font getFont(FontData fontData) {
 		if (fontData == null) {
 			return null;
 		}
-		Font font = (Font) fFontCache.get(fontData);
+		Font font = fFontCache.get(fontData);
 		if (font == null) {
 			font = new Font(getDisplay(), fontData);
 			fFontCache.put(fontData, font);
@@ -188,11 +191,12 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	 * @param rgb RGB or <code>null</code>
 	 * @return color or <code>null</code>
 	 */
+	@Override
 	public Color getColor(RGB rgb) {
 		if (rgb == null) {
 			return null;
 		}
-		Color color = (Color) fColorCache.get(rgb);
+		Color color = fColorCache.get(rgb);
 		if (color == null) {
 			color = new Color(getDisplay(), rgb);
 			fColorCache.put(rgb, color);
@@ -203,60 +207,48 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
         Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());
         
 	    fViewer.removeModelChangedListener(this);
 	    fViewer = null;
 	    
-	    List complete = null;
+		List<ILabelUpdate> complete = null;
 	    synchronized(this) {
 	        complete = fComplete;
 	        fComplete = null;
 	    }
 	    if (complete != null) {
-            for (Iterator itr = complete.iterator(); itr.hasNext();) {
-                ((ILabelUpdate)itr.next()).cancel();
-            }
+			for (ILabelUpdate update : complete) {
+				update.cancel();
+			}
 	    }
-	    
-		Iterator updatesInProgress = fUpdatesInProgress.iterator();
-		while (updatesInProgress.hasNext()) {
-			ILabelUpdate currentUpdate = (ILabelUpdate) updatesInProgress.next();
+		for (ILabelUpdate currentUpdate : fUpdatesInProgress) {
 			currentUpdate.cancel();			
 		}
 
 		if (fPendingUpdatesRunnable != null) {
 			fPendingUpdatesRunnable = null;
 		}
-		for (Iterator itr = fPendingUpdates.values().iterator(); itr.hasNext();) {
-		    List updateList = (List)itr.next();
-		    for (Iterator listItr = updateList.iterator(); listItr.hasNext();) {
-		        ((LabelUpdate)listItr.next()).cancel();
+		for (List<ILabelUpdate> updateList : fPendingUpdates.values()) {
+			for (ILabelUpdate update : updateList) {
+				update.cancel();
 		    }
 		}
 		fPendingUpdates.clear();
-		Iterator images = fImageCache.values().iterator();
-		while (images.hasNext()) {
-			Image image = (Image) images.next();
+		for (Image image : fImageCache.values()) {
 			image.dispose();
 		}
 		fImageCache.clear();
-		
-		Iterator fonts = fFontCache.values().iterator();
-		while (fonts.hasNext()) {
-			Font font = (Font) fonts.next();
+		for (Font font : fFontCache.values()) {
 			font.dispose();
 		}
 		fFontCache.clear();
-		
-		Iterator colors = fColorCache.values().iterator();
-		while (colors.hasNext()) {
-			Color color = (Color) colors.next();
+		for (Color color : fColorCache.values()) {
 			color.dispose();
 		}
 		fColorCache.clear();
-
 		super.dispose();
 	}
 
@@ -264,10 +256,12 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	    return fViewer == null;
 	}
 	
+	@Override
 	public void update(ViewerCell cell) {
 		// NOT USED - the viewer updates each row instead 
 	}	
 	
+	@Override
 	public boolean update(TreePath elementPath) {
         Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());
 	    
@@ -277,15 +271,18 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 		Object element = elementPath.getLastSegment();
 		IElementLabelProvider presentation = ViewerAdapterService.getLabelProvider(element);
 		if (presentation != null) {
-		    List updates = (List)fPendingUpdates.get(presentation);
+			List<ILabelUpdate> updates = fPendingUpdates.get(presentation);
 		    if (updates == null) {
-		        updates = new LinkedList();
+				updates = new LinkedList<ILabelUpdate>();
 		        fPendingUpdates.put(presentation, updates);
 		    }
 		    updates.add(new LabelUpdate(fViewer.getInput(), elementPath, this, visibleColumns, fViewer.getPresentationContext()));
 		    fPendingUpdatesRunnable = new Runnable() {
-		        public void run() {
-		            if (isDisposed()) return;
+		        @Override
+				public void run() {
+		            if (isDisposed()) {
+						return;
+					}
                     startRequests(this);
 		        }
 		    };
@@ -302,10 +299,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
      */
     private void cancelPathUpdates(TreePath elementPath) {
         Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());
-        
-        Iterator updatesInProgress = fUpdatesInProgress.iterator();
-        while (updatesInProgress.hasNext()) {
-            ILabelUpdate currentUpdate = (ILabelUpdate) updatesInProgress.next();
+		for (ILabelUpdate currentUpdate : fUpdatesInProgress) {
             if (elementPath.equals(currentUpdate.getElementPath())) {
                 currentUpdate.cancel();
             }
@@ -340,15 +334,14 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
         if (runnable != fPendingUpdatesRunnable) {
             return;
         }
-
 	    if (!fPendingUpdates.isEmpty()) {
-            for (Iterator itr = fPendingUpdates.keySet().iterator(); itr.hasNext();) {
-                IElementLabelProvider provider = (IElementLabelProvider)itr.next();
-                List list = (List)fPendingUpdates.get(provider);
-                for (Iterator listItr = list.iterator(); listItr.hasNext();) {
-                    updateStarted((ILabelUpdate)listItr.next());
+			List<ILabelUpdate> list = null;
+			for (Entry<IElementLabelProvider, List<ILabelUpdate>> entry : fPendingUpdates.entrySet()) {
+				list = entry.getValue();
+				for (ILabelUpdate update : list) {
+					updateStarted(update);
                 }
-                provider.update( (ILabelUpdate[])list.toArray(new ILabelUpdate[list.size()]) );
+				entry.getKey().update(list.toArray(new ILabelUpdate[list.size()]));
             }
 	    }
 	    fPendingUpdates.clear();
@@ -364,10 +357,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
     * of the update
     */
    private void cancelElementUpdates(Object element, boolean searchFullPath) {
-       Iterator updatesInProgress = fUpdatesInProgress.iterator();
-         while (updatesInProgress.hasNext()) {
-            ILabelUpdate currentUpdate = (ILabelUpdate) updatesInProgress.next();
-            
+		for (ILabelUpdate currentUpdate : fUpdatesInProgress) {
             if (searchFullPath) {
                 if (element.equals(fViewer.getInput())) {
                     currentUpdate.cancel();
@@ -403,24 +393,28 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
      * @param update Update that is to be completed.
      */
     synchronized void complete(ILabelUpdate update) {
-        if (fViewer == null) return;
+        if (fViewer == null) {
+			return;
+		}
         
 		if (fComplete == null) {
-			fComplete = new LinkedList();
+			fComplete = new LinkedList<ILabelUpdate>();
 			fViewer.getDisplay().asyncExec(new Runnable() {
-			    public void run() {
-			        if (isDisposed()) return;
-                    List updates = null;
+			    @Override
+				public void run() {
+			        if (isDisposed()) {
+						return;
+					}
+					List<ILabelUpdate> updates = null;
                     synchronized (TreeModelLabelProvider.this) {
                         updates = fComplete;
                         fComplete = null;
                     }
-                    for (Iterator itr = updates.iterator(); itr.hasNext();) {
-                        LabelUpdate itrUpdate = (LabelUpdate)itr.next();
+					for (ILabelUpdate itrUpdate : updates) {
                         if (itrUpdate.isCanceled()) {
                             updateComplete(itrUpdate);
                         } else {
-                            itrUpdate.performUpdate();
+							((LabelUpdate) itrUpdate).performUpdate();
                         }
                     }
 			    }
@@ -429,10 +423,12 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 		fComplete.add(update);
     }
     
+	@Override
 	public void addLabelUpdateListener(ILabelUpdateListener listener) {
 		fLabelListeners.add(listener);
 	}
 	
+	@Override
 	public void removeLabelUpdateListener(ILabelUpdateListener listener) {
 		fLabelListeners.remove(listener);
 	}
@@ -486,6 +482,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 			for (int i = 0; i < listeners.length; i++) {
 				final ILabelUpdateListener listener = (ILabelUpdateListener) listeners[i];
 				SafeRunner.run(new ISafeRunnable() {
+					@Override
 					public void run() throws Exception {
 						switch (type) {
 							case TreeModelContentProvider.UPDATE_SEQUENCE_BEGINS:
@@ -500,8 +497,11 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 							case TreeModelContentProvider.UPDATE_COMPLETE:
 								listener.labelUpdateComplete(update);
 								break;
+							default:
+								break;
 						}
 					}
+					@Override
 					public void handleException(Throwable exception) {
 						DebugUIPlugin.log(exception);
 					}
@@ -510,6 +510,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 		}
 	}
 
+	@Override
 	public void modelChanged(IModelDelta delta, IModelProxy proxy) {
 	    delta.accept(fCancelPendingUpdatesVisitor);
     }

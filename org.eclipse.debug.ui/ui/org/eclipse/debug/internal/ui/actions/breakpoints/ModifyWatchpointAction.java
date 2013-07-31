@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,10 +34,11 @@ public abstract class ModifyWatchpointAction implements IObjectActionDelegate, I
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
-    public void run(IAction action) {
+    @Override
+	public void run(IAction action) {
         try {
 	        if (fWatchpoints != null) {
-	            Iterator iterator = fWatchpoints.iterator();
+				Iterator<?> iterator = fWatchpoints.iterator();
 	            while (iterator.hasNext()) {
 	                IWatchpoint watchpoint = (IWatchpoint)iterator.next();
 	                toggleWatchpoint(watchpoint, action.isChecked());
@@ -61,17 +62,19 @@ public abstract class ModifyWatchpointAction implements IObjectActionDelegate, I
     /* (non-Javadoc)
      * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
      */
-    public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+    @Override
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */
-    public void selectionChanged(IAction action, ISelection selection) {
+    @Override
+	public void selectionChanged(IAction action, ISelection selection) {
         if (selection instanceof IStructuredSelection) {
             fWatchpoints = (IStructuredSelection) selection;
             if (!selection.isEmpty()) {
-	            Iterator iterator = fWatchpoints.iterator();
+				Iterator<?> iterator = fWatchpoints.iterator();
 	            while (iterator.hasNext()) {
 	                Object next = iterator.next();
 	                if (next instanceof IWatchpoint) {
@@ -109,20 +112,23 @@ public abstract class ModifyWatchpointAction implements IObjectActionDelegate, I
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
      */
-    public void init(IAction action) {
+    @Override
+	public void init(IAction action) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         fWatchpoints = null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
      */
-    public void runWithEvent(IAction action, Event event) {
+    @Override
+	public void runWithEvent(IAction action, Event event) {
         run(action);
     }
 }

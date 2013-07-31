@@ -39,12 +39,12 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
 	/**
 	 * Child breakpoints - inserting new element into this collection should use the insertBreakpoint method
 	 */
-    final private List fBreakpoints = new ArrayList();
+	final private List<IBreakpoint> fBreakpoints = new ArrayList<IBreakpoint>();
     
     /**
      * Child containers - inserting new element into this container should use the insertChildContainer method
      */
-    final private List fChildContainers = new ArrayList();
+	final private List<BreakpointContainer> fChildContainers = new ArrayList<BreakpointContainer>();
 	
     /**
      * The category for this container
@@ -158,8 +158,9 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
     	}
     	int index = fBreakpoints.size();
     	for (; fComparator != null && index > 0; index--) {
-    		if (fComparator.compare(fBreakpoints.get(index-1), breakpoint) < 0)
-    			break;
+    		if (fComparator.compare(fBreakpoints.get(index-1), breakpoint) < 0) {
+				break;
+			}
     	}
     	if (index < 0) {
     		index = 0;
@@ -177,12 +178,14 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
     private int insertChildContainer(BreakpointContainer container) {
     	int index = fChildContainers.size();
     	for (; fComparator != null && index > 0; index--) {
-    		if (fComparator.compare(fChildContainers.get(index-1), container) < 0)
-    			break;
+    		if (fComparator.compare(fChildContainers.get(index-1), container) < 0) {
+				break;
+			}
     	}
     	
-    	if (index < 0)
-    		index = 0;
+    	if (index < 0) {
+			index = 0;
+		}
     	fChildContainers.add(index, container);
     	
     	return index;
@@ -225,10 +228,9 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
      */
     private static IAdaptable[] getCategories(IBreakpoint breakpoint, IBreakpointOrganizer organizer) {
     	IAdaptable[] categories = organizer.getCategories(breakpoint);
-    	
-    	if (categories == null || categories.length == 0) 
-    		categories = OtherBreakpointCategory.getCategories(organizer);
-    	
+    	if (categories == null || categories.length == 0) {
+			categories = OtherBreakpointCategory.getCategories(organizer);
+		}
     	return categories;
     }
     
@@ -239,21 +241,13 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
      * @param category the category
      * @return the breakpoint container, can be <code>null</code>.
      */
-    private static BreakpointContainer findExistingContainer(List containers, IAdaptable category) {
-    	BreakpointContainer container = null;
-    	
-    	Iterator containerIt = containers.iterator();
-    	while (containerIt.hasNext()) {
-    		container = (BreakpointContainer) containerIt.next();
-    		IAdaptable containerCategory = container.getCategory();
-    		
-    		if (category.equals(containerCategory))
-    			break;
-    		
-    		container = null;
+	private static BreakpointContainer findExistingContainer(List<BreakpointContainer> containers, IAdaptable category) {
+		for (BreakpointContainer c : containers) {
+    		if (category.equals(c.getCategory())) {
+				return c;
+			}
     	}
-    	
-    	return container;
+    	return null;
     }
     
     // TODO [pchuong]: can be remove if BreakpointsContentProvider no longer uses this class
@@ -270,7 +264,9 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
      */
     public void addBreakpoint(IBreakpoint breakpoint, ModelDelta rootDelta) {    	
     	final int bpIndex = insertBreakpoint(breakpoint);
-    	if (bpIndex < 0) return;
+    	if (bpIndex < 0) {
+			return;
+		}
     	
         if (hasNesting()) {
             IBreakpointOrganizer organizer = fNesting[0];
@@ -329,10 +325,9 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
     	if (removed) {
     		boolean addRemoveBpDelta = getContainers().length == 0;
         	
-    		Iterator it = fChildContainers.iterator();
+			Iterator<BreakpointContainer> it = fChildContainers.iterator();
     		while (it.hasNext()) {
-    			BreakpointContainer container = (BreakpointContainer) it.next();
-    			
+    			BreakpointContainer container = it.next();
 				// if the breakpoint contains in the container and it is the only breakpoint,
 				// than remove the container from the collection
     			if (container.contains(breakpoint)) {
@@ -344,7 +339,6 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
 	    			} else {
 	    				childDelta = rootDelta.addNode(container, IModelDelta.STATE);
 	    			}
-	    			
     				// remove the breakpoint from the nested containers
 	    			container.removeBreakpoint(breakpoint, childDelta);
     			}
@@ -376,11 +370,12 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
      * @param breakpoints the breakpoint to update
      * @param add true if breakpoint should be added to the cache, otherwise remove the breakpoint from the cache
      */
-    private static void updateSelfAndAncestorsBreakpointCache(BreakpointContainer container, List breakpoints, boolean add) {
+	private static void updateSelfAndAncestorsBreakpointCache(BreakpointContainer container, List<IBreakpoint> breakpoints, boolean add) {
     	if (container != null) {
     		container.fBreakpoints.removeAll(breakpoints);
-    		if (add)
-    			container.fBreakpoints.addAll(breakpoints);
+    		if (add) {
+				container.fBreakpoints.addAll(breakpoints);
+			}
     		updateSelfAndAncestorsBreakpointCache(container.getParent(), breakpoints, add);
     	}
     }
@@ -396,7 +391,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
     	int index = destContainer.insertBreakpoint(breakpoint);
     	Assert.isTrue(index >= 0);
     	
-    	List breakpoints = destContainer.fBreakpoints;
+		List<IBreakpoint> breakpoints = destContainer.fBreakpoints;
     	destContainerDelta.addNode(breakpoint, index/*breakpoints.indexOf(breakpoint)*/, IModelDelta.ADDED|IModelDelta.INSTALL, 0);
     	destContainerDelta.setFlags(destContainerDelta.getFlags() | IModelDelta.EXPAND);
 
@@ -416,7 +411,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
     	sourceContainer.fParent = destContainer;
     	
     	// add the breakpoints to the parent containers.
-    	List breakpoints = Arrays.asList(sourceContainer.getBreakpoints());
+		List<IBreakpoint> breakpoints = Arrays.asList(sourceContainer.getBreakpoints());
     	updateSelfAndAncestorsBreakpointCache(destContainer, breakpoints, true);
     	
     	int index = destContainer.fChildContainers.indexOf(sourceContainer);
@@ -457,7 +452,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
      */
     static public void removeBreakpoint(BreakpointContainer container, IBreakpoint breakpoint, ModelDelta containerDelta) {
     	container.removeBreakpoint(breakpoint, containerDelta);
-    	List breakpoints = new ArrayList();
+		List<IBreakpoint> breakpoints = new ArrayList<IBreakpoint>();
     	breakpoints.add(breakpoint);
     	updateSelfAndAncestorsBreakpointCache(container.getParent(), breakpoints, false);
     }
@@ -476,11 +471,10 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
     	}
     	
     	if (container.fChildContainers.size() == 0) {
-    		List breakpoints = new ArrayList();
-    		
-    		Iterator iterator = container.fBreakpoints.iterator();
+			List<IBreakpoint> breakpoints = new ArrayList<IBreakpoint>();
+			Iterator<IBreakpoint> iterator = container.fBreakpoints.iterator();
     		while (iterator.hasNext()) {
-				Object obj = iterator.next();
+				IBreakpoint obj = iterator.next();
 				breakpoints.add(obj);
 				delta.addNode(obj, IModelDelta.UNINSTALL|IModelDelta.REMOVED);
 				iterator.remove();				
@@ -491,12 +485,11 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
     		return;
     	}
     	
-    	Iterator iterator = container.fChildContainers.iterator();
+		Iterator<BreakpointContainer> iterator = container.fChildContainers.iterator();
     	while (iterator.hasNext()) {
-    		BreakpointContainer childContainer = (BreakpointContainer) iterator.next();    		
+    		BreakpointContainer childContainer = iterator.next();    		
     		ModelDelta childDelta = delta.addNode(childContainer, IModelDelta.REMOVED|IModelDelta.UNINSTALL);    		
     		iterator.remove();
-    		
     		removeAll(childContainer, childDelta);
     	}
     }
@@ -515,8 +508,9 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
      * 
      * @return the breakpoints in this container
      */
-    public IBreakpoint[] getBreakpoints() {
-        return (IBreakpoint[]) fBreakpoints.toArray(new IBreakpoint[fBreakpoints.size()]);
+    @Override
+	public IBreakpoint[] getBreakpoints() {
+        return fBreakpoints.toArray(new IBreakpoint[fBreakpoints.size()]);
     }
     
     /**
@@ -524,7 +518,8 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
      * 
      * @return container category
      */
-    public IAdaptable getCategory() {
+    @Override
+	public IAdaptable getCategory() {
         return fCategory;
     }
     
@@ -559,7 +554,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
      * @return the containers nested in this container, can be empty.
      */
     public BreakpointContainer[] getContainers() {
-        return (BreakpointContainer[]) fChildContainers.toArray(new BreakpointContainer[fChildContainers.size()]);
+        return fChildContainers.toArray(new BreakpointContainer[fChildContainers.size()]);
     }
     
     /**
@@ -567,7 +562,8 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
      * 
      * @return this container's organizer
      */
-    public IBreakpointOrganizer getOrganizer() {
+    @Override
+	public IBreakpointOrganizer getOrganizer() {
         return fOrganizer;
     }
     
@@ -577,7 +573,8 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
      * @param breakpoint the breakpoint to check
      * @return true if this container contains the given breakpoint
      */
-    public boolean contains(IBreakpoint breakpoint) {
+    @Override
+	public boolean contains(IBreakpoint breakpoint) {
         return fBreakpoints.contains(breakpoint);
     }    
     
@@ -593,7 +590,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
             if (containers.length == 0) {
                 return new BreakpointContainer[]{this};
             }
-            ArrayList list = new ArrayList();
+			ArrayList<BreakpointContainer> list = new ArrayList<BreakpointContainer>();
             for (int i = 0; i < containers.length; i++) {
             	BreakpointContainer container = containers[i];
             	BreakpointContainer[] subcontainers = container.getContainers(breakpoint);
@@ -603,7 +600,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
                     }
                 }
             }
-            return (BreakpointContainer[]) list.toArray(new BreakpointContainer[list.size()]);
+            return list.toArray(new BreakpointContainer[list.size()]);
         }
         return new BreakpointContainer[0];
     }
@@ -612,18 +609,16 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
 	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
         if (obj instanceof BreakpointContainer) {
-        	
         	BreakpointContainer container = (BreakpointContainer) obj;
-        	
             // With Group by "Advanced" the same category can contain a different subset of breakpoints,
             // therefore to have the same category is not enough to be equal.
             if (! (fParent != null && container.fParent != null && fParent.equals(container.fParent) || 
             		fParent == null && container.fParent == null) ) {
                 return false;
             }
-            
         	if (getCategory() != null && container.getCategory() != null) {        		
         		return getCategory().equals(container.getCategory());
         	} else {
@@ -632,11 +627,12 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
         }
         return super.equals(obj);
 	}
-	
+
     /*
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
      */
+	@Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return getChildren().length;
 	}
@@ -645,6 +641,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
+	@Override
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {		
 		return getElements(getChildren(), index, length);
 	}
@@ -653,6 +650,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#supportsContextId(java.lang.String)
 	 */
+	@Override
 	protected boolean supportsContextId(String id) {
 		return id.equals(IDebugUIConstants.ID_BREAKPOINT_VIEW);
 	}	
@@ -661,6 +659,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}

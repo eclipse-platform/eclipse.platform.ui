@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,7 +98,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		
 		private ILaunchConfigurationType fType = null;
 		private ILaunchDelegate fDelegate = null;
-		private Map fPerspectives = null;
+		private Map<Set<String>, String> fPerspectives = null;
 		
 		/**
 		 * Constructor
@@ -106,10 +106,10 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		 * @param delegate
 		 * @param modes
 		 */
-		public PerspectiveContext(ILaunchConfigurationType type, ILaunchDelegate delegate, Set modes) {
+		public PerspectiveContext(ILaunchConfigurationType type, ILaunchDelegate delegate, Set<String> modes) {
 			fType = type;
 			fDelegate = delegate;
-			fPerspectives = new HashMap();
+			fPerspectives = new HashMap<Set<String>, String>();
 			fPerspectives.put(modes, null);
 		}
 		
@@ -121,6 +121,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		 * </ol>
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
+		@Override
 		public boolean equals(Object object) {
 			ILaunchDelegate delegate = null;
 			ILaunchConfigurationType type = null;
@@ -148,9 +149,24 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 			return super.equals(object);
 		}
 		
+		@Override
+		public int hashCode() {
+			if (fType != null) {
+				int hash = fType.getIdentifier().hashCode();
+				if (fDelegate != null) {
+					hash += fDelegate.hashCode();
+				}
+				return hash;
+			}
+			return super.hashCode();
+		}
+
 		public ILaunchConfigurationType getLaunchConfigurationType() {return fType;}
 		public ILaunchDelegate getLaunchDelegate() {return fDelegate;}
-		public Map getPersepctiveMap() {return fPerspectives;}
+
+		public Map<Set<String>, String> getPersepctiveMap() {
+			return fPerspectives;
+		}
 		
 		/**
 		 * Creates a new mapping of the specified perspective id to the specified mode set.
@@ -158,9 +174,9 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		 * @param modes the set of modes 
 		 * @param pid the id of the perspective
 		 */
-		public void setPerspective(Set modes, String pid) {
+		public void setPerspective(Set<String> modes, String pid) {
 			if(fPerspectives == null) {
-				fPerspectives = new HashMap();
+				fPerspectives = new HashMap<Set<String>, String>();
 			}
 			fPerspectives.put(modes, pid);
 		}
@@ -171,9 +187,9 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		 * @return the perspective id associated with the given mode set, or
 		 * <code>null</code>, if there isn't one
 		 */
-		public String getPerspective(Set modes) {
+		public String getPerspective(Set<String> modes) {
 			if(fPerspectives != null) {
-				return (String) fPerspectives.get(modes);
+				return fPerspectives.get(modes);
 			}
 			return null;
 		}
@@ -192,6 +208,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 			setRule(AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(this));
 		}
 		
+		@Override
 		protected IStatus run(final IProgressMonitor monitor) {
 	        if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
@@ -201,7 +218,8 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	            return Status.CANCEL_STATUS;
 	        }
 	        asyncDisplay.asyncExec(new Runnable() {
-	            public void run() {
+	            @Override
+				public void run() {
 	                IStatus result = null;
 	                Throwable throwable = null;
 	                try {
@@ -236,7 +254,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * 
 	 * @since 3.3
 	 */
-	private Set fPerspectiveContexts = null;
+	private Set<PerspectiveContext> fPerspectiveContexts = null;
 	
 	/**
 	 * id for the 'delegate' attribute
@@ -256,7 +274,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
      * Maps each launch to its perspective context activation. These
      * are disabled when a launch terminates.
      */
-    private Map fLaunchToContextActivations = new HashMap();
+	private Map<ILaunch, IContextActivation[]> fLaunchToContextActivations = new HashMap<ILaunch, IContextActivation[]>();
 
 	/**
 	 * Called by the debug ui plug-in on startup.
@@ -284,14 +302,16 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * 
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
+	@Override
 	public synchronized void launchRemoved(final ILaunch launch) {
         ISuspendTrigger trigger = (ISuspendTrigger) launch.getAdapter(ISuspendTrigger.class);
         if (trigger != null) {
             trigger.removeSuspendTriggerListener(this);
         }
         Runnable r= new Runnable() {
+			@Override
 			public void run() {
-		        IContextActivation[] activations = (IContextActivation[]) fLaunchToContextActivations.remove(launch);
+		        IContextActivation[] activations = fLaunchToContextActivations.remove(launch);
 		        if (activations != null) {
 		        	for (int i = 0; i < activations.length; i++) {
 						IContextActivation activation = activations[i];
@@ -308,6 +328,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * 
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
+	@Override
 	public void launchChanged(ILaunch launch) {}	
 
 	/** 
@@ -316,6 +337,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * 
 	 * @see ILaunchListener#launchAdded(ILaunch)
 	 */
+	@Override
 	public synchronized void launchAdded(ILaunch launch) {
         ISuspendTrigger trigger = (ISuspendTrigger) launch.getAdapter(ISuspendTrigger.class);
         if (trigger != null) {
@@ -340,6 +362,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		final String id = perspectiveId;
 		// switch
 		Job switchJob = new MyUIJob("Perspective Switch Job") { //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				IWorkbenchWindow window = getWindowForPerspective(id);
 				if (id != null && window != null && shouldSwitchPerspective(window, id, IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE)) {
@@ -371,7 +394,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		} catch (WorkbenchException e) {
 			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
 			LaunchConfigurationsMessages.PerspectiveManager_Error_1,  
-			MessageFormat.format(LaunchConfigurationsMessages.PerspectiveManager_Unable_to_switch_to_perspective___0__2, new String[]{id}), 
+ MessageFormat.format(LaunchConfigurationsMessages.PerspectiveManager_Unable_to_switch_to_perspective___0__2, new Object[] { id }),
 			e);
 		}
 	}
@@ -405,9 +428,10 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 */
 	protected void switchFailed(final Throwable t, final String launchName) {
 		sync(new Runnable() {
+			@Override
 			public void run() {
 				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.PerspectiveManager_Error_1,  
-				 MessageFormat.format(LaunchConfigurationsMessages.PerspectiveManager_Unable_to_switch_perpsectives_as_specified_by_launch___0__4, new String[] {launchName}), 
+ MessageFormat.format(LaunchConfigurationsMessages.PerspectiveManager_Unable_to_switch_perpsectives_as_specified_by_launch___0__4, new Object[] { launchName }),
 				 t);
 			}});
 	}
@@ -432,6 +456,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		// window can be accessed
 		final String targetId = perspectiveId;
 		Job switchJob = new MyUIJob("Perspective Switch Job") { //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				IWorkbenchWindow window = null;
 				if (targetId != null) {
@@ -601,7 +626,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 			return false;
 		}
 		String perspectiveDesc = getPerspectiveDescription(perspectiveId);
-		String[] args;
+		Object[] args;
 		if (perspectiveDesc != null) {
 			args = new String[] { perspectiveName , perspectiveDesc };
 		}
@@ -735,7 +760,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		if (config == null) {
 			return null;
 		}
-		Set modes = launch.getLaunchConfiguration().getModes();
+		Set<String> modes = launch.getLaunchConfiguration().getModes();
 		modes.add(launch.getLaunchMode());
 		String perspectiveId = getLaunchPerspective(config.getType(), modes, resolveLaunchDelegate(launch));
 		if (perspectiveId != null && perspectiveId.equals(IDebugUIConstants.PERSPECTIVE_NONE)) {
@@ -754,7 +779,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * 
 	 * @since 3.3
 	 */
-	public String getLaunchPerspective(ILaunchConfigurationType type, Set modes, ILaunchDelegate delegate) {
+	public String getLaunchPerspective(ILaunchConfigurationType type, Set<String> modes, ILaunchDelegate delegate) {
 		String id = null;
 		PerspectiveContext context = findContext(new PerspectiveContext(type, delegate, modes));
 		if(context == null || (context != null && !context.getPersepctiveMap().containsKey(modes))) {
@@ -785,7 +810,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * @since 3.0
 	 */
 	public String getLaunchPerspective(ILaunchConfigurationType type, String mode) {
-		HashSet modes = new HashSet();
+		HashSet<String> modes = new HashSet<String>();
 		modes.add(mode);
 		return getLaunchPerspective(type, modes, null);
 	}
@@ -807,7 +832,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * @since 3.0
 	 */
 	public void setLaunchPerspective(ILaunchConfigurationType type, String mode, String perspective) {
-		HashSet modes = new HashSet();
+		HashSet<String> modes = new HashSet<String>();
 		modes.add(mode);
 		setLaunchPerspective(type, modes, null, perspective);
 	}
@@ -825,7 +850,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * 
 	 * @since 3.3
 	 */
-	public void setLaunchPerspective(ILaunchConfigurationType type, Set modes, ILaunchDelegate delegate, String perspectiveid) {
+	public void setLaunchPerspective(ILaunchConfigurationType type, Set<String> modes, ILaunchDelegate delegate, String perspectiveid) {
 		PerspectiveContext context = new PerspectiveContext(type, delegate, modes);
 		String id = null;
 		if(!IDebugUIConstants.PERSPECTIVE_NONE.equals(perspectiveid)) {
@@ -855,16 +880,12 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * @since 3.3
 	 */
 	private PerspectiveContext findContext(PerspectiveContext context) {
-		PerspectiveContext item = null;
-		Object o = null;
-		for(Iterator iter = fPerspectiveContexts.iterator(); iter.hasNext();) {
-			o = iter.next();
-			if(context.equals(o)) {
-				item = (PerspectiveContext) o;
-				return item;
+		for (PerspectiveContext c : fPerspectiveContexts) {
+			if (context.equals(c)) {
+				return c;
 			}
 		}
-		return item;
+		return null;
 	}
 	
 	/**
@@ -879,20 +900,16 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		Document doc = DebugUIPlugin.getDocument();
 		Element root = doc.createElement(IConfigurationElementConstants.LAUNCH_PERSPECTIVES);
 		doc.appendChild(root);
-		PerspectiveContext context = null;
-		Map modesets = null;
+		Map<Set<String>, String> modesets = null;
 		Element element = null;
-		Set modes = null;
 		String id = null;
 		ILaunchConfigurationType type = null;
 		ILaunchDelegate delegate = null;
-		for(Iterator iter = fPerspectiveContexts.iterator(); iter.hasNext();) {
-			context = (PerspectiveContext) iter.next();
+		for (PerspectiveContext context : fPerspectiveContexts) {
 			modesets = context.getPersepctiveMap();
 			type = context.getLaunchConfigurationType();
 			delegate = context.getLaunchDelegate();
-			for(Iterator iter2 = modesets.keySet().iterator(); iter2.hasNext();) {
-				modes = (Set) iter2.next();
+			for (Set<String> modes : modesets.keySet()) {
 				id = context.getPerspective(modes);
 				String defaultId = getDefaultLaunchPerspective(type, delegate, modes);
 				if(id == null && defaultId != null) {
@@ -916,25 +933,6 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	}
 
 	/**
-	 * Returns the default perspective to switch to when a configuration of the given
-	 * type is launched in the given mode, or <code>null</code> if none.
-	 * 
-	 * <p>
-	 * Calling this method is equivalent to using the new method <code>getDefaultLaunchPerspective(ILaunchConfigurationType type, ILaunchDelegate delegate, Set modes)</code>
-	 * with a null delegate and the specified mode comprising a set of one mode
-	 * </p>
-	 * 
-	 * @param type launch configuration type
-	 * @param mode launch mode
-	 * @return perspective identifier, or <code>null</code>
-	 */
-	public String getDefaultLaunchPerspective(ILaunchConfigurationType type, String mode) {
-		HashSet modes = new HashSet();
-		modes.add(mode);
-		return getDefaultLaunchPerspective(type, null, modes);
-	}
-
-	/**
 	 * Returns the default perspective to switch to when a configuration of the given type is launched by the specified
 	 * launch delegate in the given mode set, or <code>null</code> if none
 	 * @param type the type
@@ -944,7 +942,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * 
 	 * @since 3.3
 	 */
-	public String getDefaultLaunchPerspective(ILaunchConfigurationType type, ILaunchDelegate delegate, Set modes) {
+	public String getDefaultLaunchPerspective(ILaunchConfigurationType type, ILaunchDelegate delegate, Set<String> modes) {
 		String id = null;
 		if(delegate != null) {
 			id = delegate.getPerspectiveId(modes);
@@ -970,7 +968,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * @throws CoreException
 	 */
 	private ILaunchDelegate resolveLaunchDelegate(ILaunch launch) throws CoreException {
-		Set modes = launch.getLaunchConfiguration().getModes();
+		Set<String> modes = launch.getLaunchConfiguration().getModes();
 		modes.add(launch.getLaunchMode());
 		ILaunchConfigurationType type = launch.getLaunchConfiguration().getType();
 		ILaunchDelegate[] delegates = LaunchConfigurationManager.filterLaunchDelegates(type, modes);
@@ -992,7 +990,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 */
 	private void initPerspectives() {
 		if(fPerspectiveContexts == null) {
-			fPerspectiveContexts = new HashSet();
+			fPerspectiveContexts = new HashSet<PerspectiveContext>();
 			String xml = DebugUIPlugin.getDefault().getPreferenceStore().getString(IInternalDebugUIConstants.PREF_LAUNCH_PERSPECTIVES);
 			if (xml != null && xml.length() > 0) {
 				try {
@@ -1001,7 +999,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 					LaunchManager lm = (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
 					ILaunchConfigurationType lctype = null;
 					ILaunchDelegate ldelegate = null;
-					Set modes = null;
+					Set<String> modes = null;
 					Node node = null;
 					Element element = null;
 					for (int i = 0; i < list.getLength(); ++i) {
@@ -1036,8 +1034,8 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * 
 	 * @since 3.3
 	 */
-	private Set parseModes(String modes) {
-		HashSet modeset = new HashSet();
+	private Set<String> parseModes(String modes) {
+		HashSet<String> modeset = new HashSet<String>();
 		String[] ms = modes.split(","); //$NON-NLS-1$
 		for(int i = 0; i < ms.length; i++) {
 			modeset.add(ms[i].trim());
@@ -1046,14 +1044,16 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	}
 	
 	/**
-	 * Creates a standard comma separated list of the modes from the specified set
+	 * Creates a standard comma separated list of the modes from the specified
+	 * set
+	 * 
 	 * @param modes the set to write to string
-	 * @return the 
+	 * @return the mode set as a string
 	 */
-	private String createModesetString(Set modes) {
+	private String createModesetString(Set<String> modes) {
 		String str = IInternalDebugCoreConstants.EMPTY_STRING;
 		if(modes != null) {
-			for(Iterator iter = modes.iterator(); iter.hasNext();) {
+			for (Iterator<String> iter = modes.iterator(); iter.hasNext();) {
 				str += iter.next();
 				if(iter.hasNext()) {
 					str += ","; //$NON-NLS-1$
@@ -1077,6 +1077,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.ISuspendTriggerListener#suspended(org.eclipse.debug.core.ILaunch, java.lang.Object)
 	 */
+	@Override
 	public void suspended(ILaunch launch, Object context) {
 		handleBreakpointHit(launch);
 	}
@@ -1084,21 +1085,25 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	/**
 	 * @see org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core.resources.ISaveContext)
 	 */
+	@Override
 	public void doneSaving(ISaveContext context) {}
 
 	/**
 	 * @see org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse.core.resources.ISaveContext)
 	 */
+	@Override
 	public void prepareToSave(ISaveContext context) throws CoreException {}
 
 	/**
 	 * @see org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core.resources.ISaveContext)
 	 */
+	@Override
 	public void rollback(ISaveContext context) {}
 
 	/**
 	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
 	 */
+	@Override
 	public void saving(ISaveContext context) throws CoreException {
 		try {
 			DebugUIPlugin.getDefault().getPreferenceStore().putValue(IInternalDebugUIConstants.PREF_LAUNCH_PERSPECTIVES, generatePerspectiveXML());			

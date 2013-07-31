@@ -38,6 +38,7 @@ public class WorkingSetSourceContainerType extends AbstractSourceContainerTypeDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
 	 */	
+	@Override
 	public String getMemento(ISourceContainer container) throws CoreException {
 		WorkingSetSourceContainer workingSet = (WorkingSetSourceContainer) container;
 		Document doc = newDocument();		
@@ -50,6 +51,7 @@ public class WorkingSetSourceContainerType extends AbstractSourceContainerTypeDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#createSourceContainer(java.lang.String)
 	 */
+	@Override
 	public ISourceContainer createSourceContainer(String memento)throws CoreException {
 		IWorkingSet workingSet = null;
 		Exception ex = null;

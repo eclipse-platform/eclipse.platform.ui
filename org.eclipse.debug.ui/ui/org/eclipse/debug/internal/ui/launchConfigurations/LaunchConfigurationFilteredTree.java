@@ -70,6 +70,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 	/**
 	 * @see org.eclipse.ui.dialogs.FilteredTree#doCreateTreeViewer(org.eclipse.swt.widgets.Composite, int)
 	 */
+	@Override
 	protected TreeViewer doCreateTreeViewer(Composite cparent, int style) {
 		treeViewer = new LaunchConfigurationViewer(cparent, style);
 		treeViewer.setLabelProvider(new DecoratingLabelProvider(DebugUITools.newDebugModelPresentation(), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
@@ -83,6 +84,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 			}
 		}
 		treeViewer.getControl().addHelpListener(new HelpListener() {
+			@Override
 			public void helpRequested(HelpEvent evt) {
 				handleHelpRequest(evt);
 			}
@@ -93,6 +95,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 	/**
 	 * @see org.eclipse.ui.dialogs.FilteredTree#createControl(org.eclipse.swt.widgets.Composite, int)
 	 */
+	@Override
 	protected void createControl(Composite cparent, int treeStyle) {
 		super.createControl(cparent, treeStyle);
 		setBackground(cparent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
@@ -102,6 +105,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 	 * @see org.eclipse.ui.dialogs.FilteredTree#init(int, org.eclipse.ui.dialogs.PatternFilter)
 	 * force it to do nothing so that we can initialize the class properly
 	 */
+	@Override
 	protected void init(int treeStyle, PatternFilter filter) {}
 
 	/**
@@ -131,6 +135,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredTree#textChanged()
 	 */
+	@Override
 	protected void textChanged() {
 		LaunchConfigurationsDialog dialog = (LaunchConfigurationsDialog)LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
 		if(dialog == null) {
@@ -221,6 +226,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 	 * 
 	 * @see org.eclipse.ui.dialogs.FilteredTree#updateToolbar(boolean)
 	 */
+	@Override
 	protected void updateToolbar(boolean visible) {
 		super.updateToolbar(visible);
 		// update filter count

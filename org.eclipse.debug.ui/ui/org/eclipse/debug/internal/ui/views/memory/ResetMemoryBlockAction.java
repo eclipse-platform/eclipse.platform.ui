@@ -26,26 +26,30 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 /**
- * The popup menu action for a memory rendering used to reset the current selection
- * to the default first memory position
+ * The popup menu action for a memory rendering used to reset the current
+ * selection to the default first memory position
  * 
  * @since 3.2.0
  */
-public class ResetMemoryBlockAction  implements IViewActionDelegate{
+public class ResetMemoryBlockAction implements IViewActionDelegate {
 
 	private IViewPart fView;
-	private ArrayList fSelectedMB = new ArrayList();
+	private ArrayList<Object> fSelectedMB = new ArrayList<Object>();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		fView = view;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		if (fSelectedMB.isEmpty()) {
 			return;
@@ -55,25 +59,29 @@ public class ResetMemoryBlockAction  implements IViewActionDelegate{
 		if (resetPref.equals(IDebugPreferenceConstants.RESET_VISIBLE)) {
 			resetVisible = true;
 		}
-		Iterator iter = fSelectedMB.iterator();
-		while(iter.hasNext()) {
-			IMemoryBlock mb = (IMemoryBlock)iter.next();
+		Iterator<Object> iter = fSelectedMB.iterator();
+		while (iter.hasNext()) {
+			IMemoryBlock mb = (IMemoryBlock) iter.next();
 			if (fView instanceof MemoryView) {
-				MemoryView memView = (MemoryView)fView;
+				MemoryView memView = (MemoryView) fView;
 				IMemoryRenderingContainer[] containers = memView.getMemoryRenderingContainers();
-				
-				for (int i=0; i<containers.length; i++) {
+
+				for (int i = 0; i < containers.length; i++) {
 					if (containers[i] instanceof RenderingViewPane) {
-						((RenderingViewPane)containers[i]).resetRenderings(mb, resetVisible);
+						((RenderingViewPane) containers[i]).resetRenderings(mb, resetVisible);
 					}
 				}
 			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
+	 * .IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		action.setEnabled(!selection.isEmpty());
 		if (selection instanceof IStructuredSelection) {

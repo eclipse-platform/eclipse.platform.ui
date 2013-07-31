@@ -188,6 +188,7 @@ public class TableRenderingContentInput extends PlatformObject {
 		fNumLines = numLines;
 	}
 	
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == AbstractTableRendering.class)
 		{

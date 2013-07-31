@@ -122,6 +122,7 @@ public class UnsignedIntegerRendering extends AbstractIntegerRendering {
 	/* (non-Javadoc)
 	 * @see com.ibm.debug.extended.ui.AbstractMemoryRenderer#getString(java.lang.String, java.math.BigInteger, byte[])
 	 */
+	@Override
 	public String getString(String dataType, BigInteger address, MemoryByte[] data) {
 		
 		String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
@@ -173,6 +174,7 @@ public class UnsignedIntegerRendering extends AbstractIntegerRendering {
 	/* (non-Javadoc)
 	 * @see com.ibm.debug.extended.ui.AbstractMemoryRenderer#getBytes(java.lang.String, java.math.BigInteger, java.lang.String)
 	 */
+	@Override
 	public byte[] getBytes(String dataType, BigInteger address, MemoryByte[] currentValues, String data) {
 		
 		int columnSize = getBytesPerColumn();

@@ -14,50 +14,43 @@ import java.util.ArrayList;
 
 /**
  * Class for managing the secondary ids for Memory View
- *
+ * 
  */
-public class MemoryViewIdRegistry{
-	
-	private static ArrayList fgRegistry;
-	
-	public static  void registerView(String secondaryId)
-	{
-		ArrayList registry = getRegistry();
-		
-		if (!registry.contains(secondaryId))
-		{
+public class MemoryViewIdRegistry {
+
+	private static ArrayList<String> fgRegistry;
+
+	public static void registerView(String secondaryId) {
+		ArrayList<String> registry = getRegistry();
+
+		if (!registry.contains(secondaryId)) {
 			registry.add(secondaryId);
 		}
 	}
-	
-	public static  void deregisterView(String secondaryId)
-	{
-		ArrayList registry = getRegistry();
-		
-		if (registry.contains(secondaryId))
-		{
+
+	public static void deregisterView(String secondaryId) {
+		ArrayList<String> registry = getRegistry();
+
+		if (registry.contains(secondaryId)) {
 			registry.remove(secondaryId);
 		}
 	}
-	
-	public static String getUniqueSecondaryId(String viewId)
-	{
+
+	public static String getUniqueSecondaryId(String viewId) {
 		int cnt = 0;
 		String id = viewId + "." + cnt; //$NON-NLS-1$
-		ArrayList registry = getRegistry();
-		while (registry.contains(id))
-		{
-			cnt ++;
+		ArrayList<String> registry = getRegistry();
+		while (registry.contains(id)) {
+			cnt++;
 			id = viewId + "." + cnt; //$NON-NLS-1$
 		}
 		return id;
 	}
-	
-	private static ArrayList getRegistry()
-	{
+
+	private static ArrayList<String> getRegistry() {
 		if (fgRegistry == null)
-			fgRegistry = new ArrayList();
-		
+			fgRegistry = new ArrayList<String>();
+
 		return fgRegistry;
 	}
 }

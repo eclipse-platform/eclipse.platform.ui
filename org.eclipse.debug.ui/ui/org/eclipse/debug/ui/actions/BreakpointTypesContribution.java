@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Wind River Systems and others.
+ * Copyright (c) 2012, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,11 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipse.debug.ui.actions;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -68,15 +68,17 @@ import org.eclipse.ui.services.IServiceLocator;
 public class BreakpointTypesContribution extends CompoundContributionItem implements IWorkbenchContribution {
     
     private class SelectTargetAction extends Action {
-        private final Set fPossibleIDs;
+		private final Set<String> fPossibleIDs;
         private final String fID;
-        SelectTargetAction(String name, Set possibleIDs, String ID) {
+
+		SelectTargetAction(String name, Set<String> possibleIDs, String ID) {
             super(name, AS_RADIO_BUTTON);
             fID = ID;
             fPossibleIDs = possibleIDs;
         }
 
-        public void run() {
+        @Override
+		public void run() {
             if (isChecked()) {
                 // Note: setPreferredTarget is not declared on the
                 // IToggleBreakpontsTargetManager interface.
@@ -89,12 +91,14 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
 
     private static IContributionItem[] NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS = new IContributionItem[] { 
     	new ContributionItem() {
+			@Override
 			public void fill(Menu menu, int index) {
 				MenuItem item = new MenuItem(menu, SWT.NONE);
 				item.setEnabled(false);
 				item.setText(Messages.BreakpointTypesContribution_0);
 			}
 	
+			@Override
 			public boolean isEnabled() {
 				return false;
 			}
@@ -104,7 +108,8 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
     /* (non-Javadoc)
      * @see org.eclipse.ui.actions.CompoundContributionItem#getContributionItems()
      */
-    protected IContributionItem[] getContributionItems() {
+    @Override
+	protected IContributionItem[] getContributionItems() {
         IWorkbenchPart part = null;
         ISelection selection = null;
         
@@ -125,12 +130,11 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
         
         // Get breakpoint toggle target IDs.
         IToggleBreakpointsTargetManager manager = DebugUITools.getToggleBreakpointsTargetManager(); 
-        Set enabledIDs = manager.getEnabledToggleBreakpointsTargetIDs(part, selection);
+		Set<String> enabledIDs = manager.getEnabledToggleBreakpointsTargetIDs(part, selection);
         String preferredId = manager.getPreferredToggleBreakpointsTargetID(part, selection);
 
-        List actions = new ArrayList(enabledIDs.size());
-        for (Iterator i = enabledIDs.iterator(); i.hasNext();) {
-            String id = (String) i.next();
+		List<Action> actions = new ArrayList<Action>(enabledIDs.size());
+		for (String id : enabledIDs) {
             Action action = new SelectTargetAction(manager.getToggleBreakpointsTargetName(id), enabledIDs, id);
             if (id.equals(preferredId)) {
                 action.setChecked(true);
@@ -144,7 +148,7 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
         
         IContributionItem[] items = new IContributionItem[enabledIDs.size()];
         for (int i = 0; i < actions.size(); i++) {
-            items[i] = new ActionContributionItem((Action) actions.get(i));
+            items[i] = new ActionContributionItem(actions.get(i));
         }
         return items;
     }
@@ -152,7 +156,8 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
     /* (non-Javadoc)
      * @see org.eclipse.ui.menus.IWorkbenchContribution#initialize(org.eclipse.ui.services.IServiceLocator)
      */
-    public void initialize(IServiceLocator serviceLocator) {
+    @Override
+	public void initialize(IServiceLocator serviceLocator) {
         fServiceLocator = serviceLocator;
     }
 }

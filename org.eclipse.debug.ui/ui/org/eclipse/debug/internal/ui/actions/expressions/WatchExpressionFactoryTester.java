@@ -32,6 +32,7 @@ public class WatchExpressionFactoryTester extends PropertyTester {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.expressions.PropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
 	 */
+	@Override
 	public boolean test(Object element, String property, Object[] args, Object expectedValue) {
 		if (CAN_CREATE_WATCH_EXPRESSION_PROPERTY.equals(property)){
 	        if (element instanceof IVariable) {

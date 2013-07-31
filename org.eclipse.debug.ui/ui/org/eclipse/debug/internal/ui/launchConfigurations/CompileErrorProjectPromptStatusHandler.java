@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,13 +36,13 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
+	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		ILaunchConfiguration config = null;
-		List projects = new ArrayList();
-		
+		List<Object> projects = new ArrayList<Object>();
 		if (source instanceof List) {
-			List args = (List) source;
-			Iterator iterator = args.iterator();
+			List<?> args = (List<?>) source;
+			Iterator<?> iterator = args.iterator();
 			while (iterator.hasNext()) {
 				Object arg = iterator.next();
 				if (arg instanceof ILaunchConfiguration) {
@@ -72,7 +72,7 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 			projectMessage = projectList.toString();
 		}
 		String title =  LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_0; 
-		String message = MessageFormat.format(LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_2, new String[]{projectMessage}); 
+		String message = MessageFormat.format(LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_2, new Object[] { projectMessage });
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore(); 
 		
 		String pref = store.getString(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);

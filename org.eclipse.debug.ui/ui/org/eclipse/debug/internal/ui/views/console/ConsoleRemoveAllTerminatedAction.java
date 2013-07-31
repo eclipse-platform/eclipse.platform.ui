@@ -34,6 +34,7 @@ public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate,
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
+	@Override
 	public void update() {
 		ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
 		for (int i = 0; i < launches.length; i++) {
@@ -50,6 +51,7 @@ public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate,
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
 		RemoveAllTerminatedAction.removeTerminatedLaunches(launches);
@@ -69,7 +71,8 @@ public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate,
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
      */
-    public void launchesRemoved(ILaunch[] launches) {
+    @Override
+	public void launchesRemoved(ILaunch[] launches) {
        if (isEnabled()) {
            update();
        }
@@ -78,18 +81,21 @@ public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate,
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
      */
-    public void launchesAdded(ILaunch[] launches) {
+    @Override
+	public void launchesAdded(ILaunch[] launches) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
      */
-    public void launchesChanged(ILaunch[] launches) {
+    @Override
+	public void launchesChanged(ILaunch[] launches) {
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesTerminated(ILaunch[] launches) {
 		update();
 	}	

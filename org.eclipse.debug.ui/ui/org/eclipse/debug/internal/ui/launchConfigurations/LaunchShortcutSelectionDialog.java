@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,6 @@ import com.ibm.icu.text.MessageFormat;
  * @see {@link org.eclipse.debug.internal.ui.actions.ContextLaunchingAction}
  * 
  * @since 3.3
- * CONTEXTLAUNCHING
  */
 public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDialog {
 
@@ -53,7 +52,7 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 	private String fModeName = null;
 	private String fMode = null;
 	private IResource fResource = null;
-	private List fShortcuts = null;
+	private List<LaunchShortcutExtension> fShortcuts = null;
 	private Text fDescriptionText = null;
 	
 	/**
@@ -62,7 +61,7 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 	 * @param resource
 	 * @param mode
 	 */
-	public LaunchShortcutSelectionDialog(List shortcuts, IResource resource, String mode) {
+	public LaunchShortcutSelectionDialog(List<LaunchShortcutExtension> shortcuts, IResource resource, String mode) {
 		super(DebugUIPlugin.getShell());
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fShortcuts = shortcuts;
@@ -73,12 +72,13 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 		if (lmode != null) {
 			fModeName = DebugUIPlugin.removeAccelerators(lmode.getLabel());
 		}
-		setTitle(MessageFormat.format(LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_0, new String[] {fModeName}));
+		setTitle(MessageFormat.format(LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_0, new Object[] { fModeName }));
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
 	 */
+	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.SELECT_LAUNCH_METHOD_DIALOG;
 	}
@@ -86,6 +86,7 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 	 */
+	@Override
 	protected String getDialogSettingsId() {
 		return DIALOG_SETTINGS;
 	}
@@ -93,9 +94,11 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugListSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
 	 */
+	@Override
 	protected void addViewerListeners(StructuredViewer viewer) {
 		super.addViewerListeners(viewer);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
 				if (!selection.isEmpty()) {
@@ -110,6 +113,7 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addCustomFooterControls(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void addCustomFooterControls(Composite parent) {
 		super.addCustomFooterControls(parent);
 		Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_2, 1, 1, GridData.FILL_BOTH);
@@ -122,6 +126,7 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
 	 */
+	@Override
 	protected Object getViewerInput() {
 		return fShortcuts;
 	}
@@ -129,18 +134,21 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
 	 */
+	@Override
 	protected String getViewerLabel() {
 		if(fResource == null) {
-			return MessageFormat.format(LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_4, new String[] {fModeName.toLowerCase()});
+			return MessageFormat.format(LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_4, new Object[] { fModeName.toLowerCase() });
 		}
 		else {
-			return MessageFormat.format(LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_1, new String[] {fModeName.toLowerCase(), fResource.getName()});
+			return MessageFormat.format(LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_1, new Object[] {
+					fModeName.toLowerCase(), fResource.getName() });
 		}
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugListSelectionDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		getButton(IDialogConstants.OK_ID).setEnabled(!getViewer().getSelection().isEmpty());

@@ -42,7 +42,8 @@ public class GroupBreakpointsAction extends Action {
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.IAction#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         if (isChecked()) {
             if (fOrganzier == null) {
                 fView.setBreakpointOrganizers(null);

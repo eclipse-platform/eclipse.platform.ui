@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,7 +67,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 	private TreeViewer fSelectedViewer;
 	private SelectedOrganizerProvider fSelectedOrganizersProvider= new SelectedOrganizerProvider();
 	
-	private List fResult= new ArrayList();
+	private List<Object> fResult = new ArrayList<Object>();
 
 	private Button fAddButton;
 	private Button fRemoveButton;
@@ -79,6 +79,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 	 * dialog.
 	 */
 	private SelectionAdapter fSelectionListener= new SelectionAdapter() {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object source= e.getSource();
 			if (source == fAddButton) {
@@ -102,6 +103,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		ILabelProvider labelProvider= new BreakpointOrganzierLabelProvider();
 		
@@ -135,6 +137,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getDialogArea(), IDebugHelpContextIds.GROUP_BREAKPOINTS_DIALOG);
@@ -186,11 +189,13 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setFont(parent.getFont());
 		fAvailableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				handleAddPressed();
 			}
 		});
 		fAvailableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateAddButton();
 			}
@@ -227,11 +232,13 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tree.setFont(parent.getFont());
 		fSelectedViewer.addDoubleClickListener(new IDoubleClickListener() {
-            public void doubleClick(DoubleClickEvent event) {
+            @Override
+			public void doubleClick(DoubleClickEvent event) {
                 handleRemovePressed();
             }
         });
 		fSelectedViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSelectedButtons();
 			}
@@ -265,12 +272,13 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 	 * @return the breakpoint organizers chosen by the user
 	 */
 	public IBreakpointOrganizer[] getOrganizers() {
-		return (IBreakpointOrganizer[]) fResult.toArray(new IBreakpointOrganizer[fResult.size()]);
+		return fResult.toArray(new IBreakpointOrganizer[fResult.size()]);
 	}
 	
 	/**
 	 * When the user presses OK, convert the tree selection into a list.
 	 */
+	@Override
 	protected void okPressed() {
 		Object[] factories= fSelectedOrganizersProvider.getElements(null);
 		while (factories.length > 0) {
@@ -290,7 +298,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 		if (selection.size() < 1) {
 			return;
 		}
-		Iterator iter= selection.iterator();
+		Iterator<?> iter = selection.iterator();
 		while (iter.hasNext()) {
 			fSelectedOrganizersProvider.addSelected((IBreakpointOrganizer) iter.next());
 		}
@@ -306,7 +314,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 		if (selection.size() < 1) {
 			return;
 		}
-		Iterator iter= selection.iterator();
+		Iterator<?> iter = selection.iterator();
 		while (iter.hasNext()) {
 			fAvailableOrganizersProvider.addAvailable((IBreakpointOrganizer) iter.next());
 		}
@@ -318,7 +326,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 	 */
 	public void handleMoveUpPressed() {
 		IStructuredSelection selection = (IStructuredSelection) fSelectedViewer.getSelection();
-		Iterator iter = selection.iterator();
+		Iterator<?> iter = selection.iterator();
 		while (iter.hasNext()) {
 			fSelectedOrganizersProvider.moveUp(iter.next());
 		}
@@ -402,19 +410,22 @@ public class GroupBreakpointsByDialog extends TrayDialog {
      * that are available but not currently selected.
 	 */
 	private class AvailableOrganizersProvider implements IStructuredContentProvider {
-		protected List availableOrganziers= new ArrayList();
+		protected List<IBreakpointOrganizer> availableOrganziers = new ArrayList<IBreakpointOrganizer>();
 		
 		public void addAvailable(IBreakpointOrganizer organizer) {
             availableOrganziers.add(organizer);
 			fSelectedOrganizersProvider.selectedOrganizers.remove(organizer);
 		}
 		
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return availableOrganziers.toArray();
 		}
 		
+		@Override
 		public void dispose() {
 		}
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
@@ -425,7 +436,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 	 * appear in the breakpoints view.
 	 */
 	private class SelectedOrganizerProvider implements ITreeContentProvider {
-		protected List selectedOrganizers= new ArrayList();
+		protected List<Object> selectedOrganizers = new ArrayList<Object>();
 		
 		public void addSelected(IBreakpointOrganizer organizer) {
             selectedOrganizers.add(organizer);
@@ -448,6 +459,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 			}
 		}
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			// A factory's "child" is the next factory in the list
 			int index = selectedOrganizers.indexOf(parentElement);
@@ -457,6 +469,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 			return new Object[0];
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			// A factory's "parent" is the factory before it
 			int index = selectedOrganizers.indexOf(element);
@@ -466,6 +479,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 			return selectedOrganizers.get(index - 1);
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			// A factory has "children" if there are more
 			// factories after it.
@@ -473,14 +487,17 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 			return index != -1 && index < selectedOrganizers.size() - 1;
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (selectedOrganizers.size() > 0) {
 				return new Object[] { selectedOrganizers.get(0) };
 			}
 			return new Object[0];
 		}
+		@Override
 		public void dispose() {
 		}
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
@@ -489,19 +506,21 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 	 * Label provider which provides text and images for breakpoint container factories
 	 */
 	private class BreakpointOrganzierLabelProvider extends LabelProvider {
-		private HashMap fImageCache= new HashMap();
+		private HashMap<ImageDescriptor, Image> fImageCache = new HashMap<ImageDescriptor, Image>();
 		
+		@Override
 		public String getText(Object element) {
 			if (element instanceof IBreakpointOrganizer) {
 				return ((IBreakpointOrganizer) element).getLabel();
 			}
 			return super.getText(element);
 		}
+		@Override
 		public Image getImage(Object element) {
 			if (element instanceof IBreakpointOrganizer) {
 				ImageDescriptor imageDescriptor = ((IBreakpointOrganizer) element).getImageDescriptor();
 				if (imageDescriptor != null) {
-					Image image = (Image) fImageCache.get(imageDescriptor);
+					Image image = fImageCache.get(imageDescriptor);
 					if (image == null) {
 						image= imageDescriptor.createImage();
 						if (image != null) {
@@ -513,10 +532,10 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 			}
 			return super.getImage(element);
 		}
+		@Override
 		public void dispose() {
-			Iterator imageIter = fImageCache.values().iterator();
-			while (imageIter.hasNext()) {
-				((Image) imageIter.next()).dispose();
+			for (Image image : fImageCache.values()) {
+				image.dispose();
 			}
 			super.dispose();
 		}
@@ -527,7 +546,8 @@ public class GroupBreakpointsByDialog extends TrayDialog {
      * 
      * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
      */
-    protected void configureShell(Shell shell) {
+    @Override
+	protected void configureShell(Shell shell) {
         super.configureShell(shell);
         shell.setText(BreakpointGroupMessages.GroupBreakpointsByDialog_7); 
     }

@@ -32,6 +32,7 @@ public class StandardDecoration extends Decoration {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.launch.Decoration#remove()
 	 */
+	@Override
 	public void remove() {
 		fPresentation.removeAnnotations(fEditor, fThread);
 	}
@@ -39,6 +40,7 @@ public class StandardDecoration extends Decoration {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.launch.Decoration#getThread()
 	 */
+	@Override
 	public IThread getThread() {
 		return fThread;
 	}

@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -35,6 +35,7 @@ public class SystemVariableResolver implements IDynamicVariableResolver {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.variables.IDynamicVariableResolver#resolveValue(org.eclipse.core.variables.IDynamicVariable, java.lang.String)
 	 */
+	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		if ("ARCH".equals(argument)) { //$NON-NLS-1$
 			return Platform.getOSArch();
@@ -51,14 +52,15 @@ public class SystemVariableResolver implements IDynamicVariableResolver {
 		}
 		return null;
 	}
-	
+
 	private static String getCorrectPath(String path) {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < path.length(); i++) {
 			char c = path.charAt(i);
 			if (Platform.getOS().equals("win32")) { //$NON-NLS-1$
-				if (i == 0 && c == '/')
+				if (i == 0 && c == '/') {
 					continue;
+				}
 			}
 			// Some VMs may return %20 instead of a space
 			if (c == '%' && i + 2 < path.length()) {
@@ -73,5 +75,5 @@ public class SystemVariableResolver implements IDynamicVariableResolver {
 			buf.append(c);
 		}
 		return buf.toString();
-	}	
+	}
 }

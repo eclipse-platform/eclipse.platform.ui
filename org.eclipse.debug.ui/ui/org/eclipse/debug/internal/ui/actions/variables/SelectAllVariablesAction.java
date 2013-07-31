@@ -16,6 +16,7 @@ import org.eclipse.debug.ui.IDebugView;
 public class SelectAllVariablesAction extends SelectAllAction {
 
 	
+	@Override
 	protected String getActionId() {
 		return IDebugView.SELECT_ALL_ACTION + ".Variables"; //$NON-NLS-1$
 	}
@@ -23,12 +24,14 @@ public class SelectAllVariablesAction extends SelectAllAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#initialize()
 	 */
+	@Override
 	protected void initialize() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#isEnabled()
 	 */
+	@Override
 	protected boolean isEnabled() {
 		// TODO: only enable when stuff present
 		return true;

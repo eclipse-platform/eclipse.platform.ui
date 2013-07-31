@@ -22,10 +22,10 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.preferences.StringVariablePreferencePage;
-import org.eclipse.debug.ui.stringsubstitution.IArgumentSelector;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringSubstitutionMessages;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableLabelProvider;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringVariablePresentationManager;
+import org.eclipse.debug.ui.stringsubstitution.IArgumentSelector;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -87,7 +87,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	}
 
 	//no filtering by default
-	private ArrayList fFilters = new ArrayList();
+	private ArrayList<VariableFilter> fFilters = new ArrayList<VariableFilter>();
 	//when filtering is on, do not show all by default
 	private boolean fShowAllSelected = false;
 
@@ -160,9 +160,11 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	private void updateElements() {
 		final Display display = DebugUIPlugin.getStandardDisplay();
 		BusyIndicator.showWhile(display, new Runnable() {
+			@Override
 			public void run() {
 				final IStringVariable[] elements = VariablesPlugin.getDefault().getStringVariableManager().getVariables();
 				display.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						setListElements(elements);
 					}
@@ -181,15 +183,16 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		}
 	}
 
+	@Override
 	protected void setListElements(Object[] elements) {
-		ArrayList filtered = new ArrayList();
+		ArrayList<Object> filtered = new ArrayList<Object>();
 		filtered.addAll(Arrays.asList(elements));
 		if(!fFilters.isEmpty() && !fShowAllSelected) {
 			for (int i = 0; i < elements.length; i++) {
 				if(elements[i] instanceof IDynamicVariable) {
 					boolean bFiltered = false;
 					for (int j = 0; (j < fFilters.size()) && !bFiltered; j++) {
-						VariableFilter filter = (VariableFilter)fFilters.get(j);
+						VariableFilter filter = fFilters.get(j);
 						if(filter.isFiltered((IDynamicVariable)elements[i])) {
 							filtered.remove(elements[i]);
 							bFiltered = true;
@@ -204,6 +207,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Control ctrl = super.createContents(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(ctrl, IDebugHelpContextIds.VARIABLE_SELECTION_DIALOG);
@@ -213,6 +217,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Control control = super.createDialogArea(parent);
 		createArgumentArea((Composite)control);
@@ -235,7 +240,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 			for (int i = 0;(i < elements.length) && !bNeedShowAll; i++) {
 				if(elements[i] instanceof IDynamicVariable) {
 					for (int j = 0; (j < fFilters.size()) && !bNeedShowAll; j++) {
-						VariableFilter filter = (VariableFilter)fFilters.get(j);
+						VariableFilter filter = fFilters.get(j);
 						if(filter.isFiltered((IDynamicVariable)elements[i])) {
 							bNeedShowAll = true;
 						}
@@ -248,6 +253,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 			updateDescription();
 			fShowAllButton = SWTFactory.createCheckButton(btnContainer, StringSubstitutionMessages.StringVariableSelectionDialog_9, null, fShowAllSelected, 1);
 			fShowAllButton.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					fShowAllSelected = fShowAllButton.getSelection();
 					updateDescription();
@@ -262,6 +268,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		
 		Button editButton = SWTFactory.createPushButton(btnContainer, StringSubstitutionMessages.StringVariableSelectionDialog_0, null, GridData.HORIZONTAL_ALIGN_END);
 		editButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				editVariables();
 			}
@@ -277,6 +284,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		
 		fArgumentButton = SWTFactory.createPushButton(args, StringSubstitutionMessages.StringVariableSelectionDialog_7, null);
 		fArgumentButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				configureArgument();
 			}
@@ -299,12 +307,14 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	protected void editVariables() {
 		final Display display = DebugUIPlugin.getStandardDisplay();
 		BusyIndicator.showWhile(display, new Runnable() {
+			@Override
 			public void run() {
 				// show the preference page in a new dialog rather than using the utility method to re-use a
 				// preference page, in case this dialog is being opened from a preference page
 				if (showVariablesPage()) {
 					final IStringVariable[] elements = VariablesPlugin.getDefault().getStringVariableManager().getVariables();
 					display.asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							setListElements(elements);
 						}
@@ -328,6 +338,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);
 		final boolean [] result = new boolean[] { false };
 		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				dialog.create();
 				dialog.setMessage(targetNode.getLabelText());
@@ -355,6 +366,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	 * 
 	 * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#handleSelectionChanged()
 	 */
+	@Override
 	protected void handleSelectionChanged() {
 		super.handleSelectionChanged();
 		Object[] objects = getSelectedElements();
@@ -381,6 +393,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		fArgumentValue = fArgumentText.getText().trim();
 		super.okPressed();
@@ -398,7 +411,8 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	 /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
-    protected IDialogSettings getDialogBoundsSettings() {
+    @Override
+	protected IDialogSettings getDialogBoundsSettings() {
     	 IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
          IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
          if (section == null) {

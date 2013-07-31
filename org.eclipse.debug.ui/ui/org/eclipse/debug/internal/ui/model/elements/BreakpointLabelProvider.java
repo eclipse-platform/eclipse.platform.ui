@@ -28,6 +28,7 @@ public class BreakpointLabelProvider extends DebugElementLabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getLabel(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String, int)
 	 */
+	@Override
 	protected String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId, int columnIndex) throws CoreException {
 		if (columnIndex == 0)
 			return super.getLabel(elementPath, presentationContext, columnId, columnIndex);
@@ -38,6 +39,7 @@ public class BreakpointLabelProvider extends DebugElementLabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getImageDescriptor(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String, int)
 	 */
+	@Override
 	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId, int columnIndex) throws CoreException {
 		if (columnIndex == 0)
 			return super.getImageDescriptor(elementPath, presentationContext, columnId, columnIndex);
@@ -49,6 +51,7 @@ public class BreakpointLabelProvider extends DebugElementLabelProvider {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getChecked(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */
+	@Override
 	public boolean getChecked(TreePath path, IPresentationContext presentationContext) throws CoreException {
 		Object lastSegment = path.getLastSegment();
 		if (lastSegment instanceof IBreakpoint) {

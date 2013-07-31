@@ -50,6 +50,7 @@ public class FilterLaunchConfigurationAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		SWTFactory.showPreferencePage("org.eclipse.debug.ui.LaunchConfigurations"); //$NON-NLS-1$
 	}
@@ -57,6 +58,7 @@ public class FilterLaunchConfigurationAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return LaunchConfigurationsMessages.LaunchConfigurationsDialog_4;
 	}
@@ -64,6 +66,7 @@ public class FilterLaunchConfigurationAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getDisabledImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
 		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS);
 	}
@@ -71,6 +74,7 @@ public class FilterLaunchConfigurationAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS);
 	}
@@ -78,6 +82,7 @@ public class FilterLaunchConfigurationAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getMenuCreator()
 	 */
+	@Override
 	public IMenuCreator getMenuCreator() {
 		return fMenuCreator;
 	}
@@ -85,6 +90,7 @@ public class FilterLaunchConfigurationAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getToolTipText()
 	 */
+	@Override
 	public String getToolTipText() {
 		return LaunchConfigurationsMessages.LaunchConfigurationsDialog_4;
 	}

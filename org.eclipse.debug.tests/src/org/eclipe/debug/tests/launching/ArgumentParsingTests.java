@@ -35,41 +35,41 @@ import org.eclipse.osgi.service.environment.Constants;
  * {@link org.eclipse.debug.core.DebugPlugin#renderArguments(String[], int[])}.
  */
 public class ArgumentParsingTests extends TestCase {
-	
+
 	private void execute1Arg(String cmdLine) throws Exception {
 		execute1Arg(cmdLine, cmdLine);
 	}
-	
+
 	private void execute1Arg(String cmdLine, String argParsed) throws Exception {
 		execute1Arg(cmdLine, argParsed, cmdLine);
 	}
-	
+
 	private void execute1Arg(String cmdLine, String argParsed, String rendered) throws Exception {
 		execute("a " + cmdLine + " b", new String[] { "a", argParsed, "b" }, "a " + rendered + " b"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 	}
-	
+
 	private static void execute(String commandLine, String[] expectedArgs) throws Exception {
 		execute(commandLine, expectedArgs, commandLine);
 	}
-	
+
 	private static void execute(String commandLine, String[] expectedArgs, String expectedRendered) throws Exception {
 		String[] arguments = DebugPlugin.parseArguments(commandLine);
 		assertEquals("unexpected parseArguments result;", //$NON-NLS-1$
 				Arrays.asList(expectedArgs).toString(),
 				Arrays.asList(arguments).toString());
-		
+
 		runCommandLine(commandLine, arguments);
-		
+
 		String rendered = DebugPlugin.renderArguments(arguments, null);
 		assertEquals("unexpected renderArguments result;", expectedRendered, rendered); //$NON-NLS-1$
-		
+
 		if (!commandLine.equals(rendered)) {
 			String[] arguments2 = DebugPlugin.parseArguments(rendered);
 			assertEquals("parsing rendered command line doesn't yield original arguments;", //$NON-NLS-1$
 					Arrays.asList(expectedArgs).toString(),
 					Arrays.asList(arguments2).toString());
 		}
-		
+
 	}
 
 	private static void runCommandLine(String commandLine, String[] arguments) throws IOException,
@@ -80,20 +80,20 @@ public class ArgumentParsingTests extends TestCase {
 		}
 		classPathUrl = FileLocator.toFileURL(classPathUrl);
 		File classPathFile = URIUtil.toFile(URIUtil.toURI(classPathUrl));
-		
+
 		String[] execArgs= new String[arguments.length + 4];
 		execArgs[0] = new Path(System.getProperty("java.home")).append("bin/java").toOSString(); //$NON-NLS-1$ //$NON-NLS-2$
 		execArgs[1] = "-cp"; //$NON-NLS-1$
 		execArgs[2]= classPathFile.getAbsolutePath();
 		execArgs[3]= ArgumentsPrinter.class.getName();
 		System.arraycopy(arguments, 0, execArgs, 4, arguments.length);
-		
-		ArrayList resultArgs = runCommandLine(execArgs);
-		
+
+		ArrayList<String> resultArgs = runCommandLine(execArgs);
+
 		assertEquals("unexpected exec result;", //$NON-NLS-1$
 				Arrays.asList(arguments).toString(),
 				resultArgs.toString());
-		
+
 		if (! Platform.getOS().equals(Constants.OS_WIN32)) {
 			execArgs = new String[] { "sh", "-c", execArgs[0] + " " + execArgs[1] + " " + execArgs[2] + " " + execArgs[3] + " " + commandLine }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			resultArgs = runCommandLine(execArgs);
@@ -103,20 +103,20 @@ public class ArgumentParsingTests extends TestCase {
 		}
 	}
 
-	private static ArrayList runCommandLine(String[] execArgs)
+	private static ArrayList<String> runCommandLine(String[] execArgs)
 			throws CoreException, IOException {
 		execArgs = quoteWindowsArgs(execArgs);
 		Process process = DebugPlugin.exec(execArgs, null);
 		BufferedReader procOut = new BufferedReader(new InputStreamReader(process.getInputStream()));
-		
-		ArrayList procArgs= new ArrayList();
+
+		ArrayList<String> procArgs = new ArrayList<String>();
 		String procArg;
 		while ((procArg = procOut.readLine()) != null) {
 			procArgs.add(procArg);
 		}
 		return procArgs;
 	}
-	
+
 	private static String[] quoteWindowsArgs(String[] cmdLine) {
 		// see https://bugs.eclipse.org/387504#c13 , workaround for http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6511002
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
@@ -128,8 +128,8 @@ public class ArgumentParsingTests extends TestCase {
 		}
 		return cmdLine;
 	}
-	
-	
+
+
 	private static boolean needsQuoting(String s) {
 		int len = s.length();
 		if (len == 0) {
@@ -139,6 +139,8 @@ public class ArgumentParsingTests extends TestCase {
 			switch (s.charAt(i)) {
 				case ' ': case '\t': case '\\': case '"':
 					return true;
+				default:
+					break;
 			}
 		}
 		return false;
@@ -152,7 +154,7 @@ public class ArgumentParsingTests extends TestCase {
 		s = s.replaceAll("([\\\\]*)\\z", "$1$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		return "\"" + s + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	// -- tests:
 
 	public void testEmpty() throws Exception {
@@ -177,7 +179,7 @@ public class ArgumentParsingTests extends TestCase {
 		Arrays.fill(args, "a"); //$NON-NLS-1$
 		execute(buf.toString(), args, buf.toString().trim());
 	}
-	
+
 	public void testEscape() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 			execute1Arg("\\1"); //$NON-NLS-1$
@@ -185,15 +187,15 @@ public class ArgumentParsingTests extends TestCase {
 			execute1Arg("\\1", "1", "1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
-	
+
 	public void testEscapeDoubleQuote1() throws Exception {
 		execute1Arg("\\\"", "\"", "\\\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
-	
+
 	public void testEscapeDoubleQuote2() throws Exception {
 		execute1Arg("arg=\\\"bla\\\"", "arg=\"bla\"", "arg=\\\"bla\\\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
-	
+
 	public void testDoubleQuoted1() throws Exception {
 		execute1Arg("\"1 2\"", "1 2"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -201,7 +203,7 @@ public class ArgumentParsingTests extends TestCase {
 	public void testDoubleQuoted2() throws Exception {
 		execute1Arg("\"1\"", "1", "1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
-	
+
 	public void testDoubleQuoted3() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 //			execute1Arg("\"\"", "", "\"\""); // would be correct, but ProcessImpl is buggy on Windows JDKs
@@ -210,7 +212,7 @@ public class ArgumentParsingTests extends TestCase {
 			execute1Arg("\"\"", "", "\"\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
-	
+
 	public void testDoubleQuoted4() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 			execute1Arg("\"\"\"\"", "\"", "\\\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -218,11 +220,11 @@ public class ArgumentParsingTests extends TestCase {
 			execute1Arg("\"\"\"\"", "", "\"\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
-	
+
 	public void testDoubleQuoted5() throws Exception {
 		execute1Arg("ab\"cd\"ef\"gh\"", "abcdefgh", "abcdefgh"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
-	
+
 	public void testDoubleQuotedWithSpace1() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 			execute1Arg("\"\"\"1\"\" 2\"", "\"1\" 2", "\"\\\"1\\\" 2\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -230,11 +232,11 @@ public class ArgumentParsingTests extends TestCase {
 			execute1Arg("\"\"\"1\"\" 2\"", "1 2", "\"1 2\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
-	
+
 	public void testDoubleQuotedWithSpace2() throws Exception {
 		execute1Arg("\"\\\"1\\\" 2\"", "\"1\" 2"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	public void testSingleQuoted1() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 			execute("'1 2'", new String[] { "'1", "2'" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -242,7 +244,7 @@ public class ArgumentParsingTests extends TestCase {
 			execute("'1 2'", new String[] { "1 2" }, "\"1 2\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
-	
+
 	public void testSingleQuoted2() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 			execute1Arg("'1'", "'1'", "'1'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -250,11 +252,11 @@ public class ArgumentParsingTests extends TestCase {
 			execute1Arg("'1'", "1", "1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
-	
+
 	public void testWindows1() throws Exception {
 		execute("\"a b c\" d e", new String[] { "a b c", "d", "e" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
-	
+
 	public void testWindows2() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 			execute("\"ab\\\"c\" \"\\\\\" d", new String[] { "ab\"c", "\\", "d" }, "ab\\\"c \\ d"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
@@ -262,7 +264,7 @@ public class ArgumentParsingTests extends TestCase {
 			execute("\"ab\\\"c\" \"\\\\\" d", new String[] { "ab\"c", "\\", "d" }, "ab\\\"c \\\\ d"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 	}
-	
+
 	public void testWindows3() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 			execute("a\\\\\\b d\"e f\"g h", new String[] { "a\\\\\\b", "de fg", "h" }, "a\\\\\\b \"de fg\" h"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
@@ -270,11 +272,11 @@ public class ArgumentParsingTests extends TestCase {
 			execute("a\\\\\\b d\"e f\"g h", new String[] { "a\\b", "de fg", "h" }, "a\\\\b \"de fg\" h"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 	}
-	
+
 	public void testWindows4() throws Exception {
 		execute("a\\\\\\\"b c d", new String[] { "a\\\"b", "c", "d" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
-	
+
 	public void testWindows5() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 			execute("a\\\\\\\\\"b c\" d e", new String[] { "a\\\\b c", "d", "e" }, "\"a\\\\b c\" d e"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
@@ -282,7 +284,7 @@ public class ArgumentParsingTests extends TestCase {
 			execute("a\\\\\\\\\"b c\" d e", new String[] { "a\\\\b c", "d", "e" }, "\"a\\\\\\\\b c\" d e"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 	}
-	
+
 	public void testAllInOne() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 			execute("1 \"\" 2 \" \" 3 \\\" 4 \"a b\" 5 \\\"bla\\\" 6 \"ab\"cd 7 ef\"gh\" 8 i\"\"j 9 \"x\\\"y\\\\\" 10 z\\\\z 11 \"two-quotes:\"\"\"\"\" 12 \"g\"\"h\" 13 \"\"\"a\"\" b\"", //$NON-NLS-1$
@@ -294,5 +296,5 @@ public class ArgumentParsingTests extends TestCase {
 					"1 \"\" 2 \" \" 3 \\\" 4 \"a b\" 5 \\\"bla\\\" 6 abcd 7 efgh 8 ij 9 x\\\"y\\\\ 10 z\\\\z 11 two-quotes: 12 gh 13 \"a b\""); //$NON-NLS-1$
 		}
 	}
-	
+
 }

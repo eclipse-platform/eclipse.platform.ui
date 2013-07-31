@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -134,6 +134,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	/**
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Viewer createViewer(Composite parent) {
 		fTree = new LaunchConfigurationFilteredTree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter(), fLaunchGroup, fFilters);
 		fTree.createViewControl();
@@ -146,20 +147,25 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	/**
 	 * @see org.eclipse.debug.ui.AbstractDebugView#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class key) {
 		if (key == IContextProvider.class) {
 			return new IContextProvider () {
+				@Override
 				public int getContextChangeMask() {
 					return SELECTION;
 				}
 
+				@Override
 				public IContext getContext(Object target) {
 					String id = fTree.computeContextId();
-					if (id!=null)
+					if (id!=null) {
 						return HelpSystem.getContext(id);
+					}
 					return null;
 				}
 
+				@Override
 				public String getSearchExpression(Object target) {
 					return null;
 				}
@@ -182,6 +188,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	/**
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createActions()
 	 */
+	@Override
 	protected void createActions() {
 		fCreateAction = new CreateLaunchConfigurationAction(getViewer(), getLaunchGroup().getMode());
 		setAction(CreateLaunchConfigurationAction.ID_CREATE_ACTION, fCreateAction);
@@ -204,6 +211,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	/**
 	 * @see org.eclipse.debug.ui.AbstractDebugView#getHelpContextId()
 	 */
+	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.LAUNCH_CONFIGURATION_VIEW;
 	}
@@ -211,6 +219,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	/**
 	 * @see org.eclipse.debug.ui.AbstractDebugView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	protected void fillContextMenu(IMenuManager menu) {
 		menu.add(fCreateAction);
 		menu.add(fDuplicateAction);
@@ -221,6 +230,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	/**
 	 * @see org.eclipse.debug.ui.AbstractDebugView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
 	 */
+	@Override
 	protected void configureToolBar(IToolBarManager tbm) {}
 	
 	/**
@@ -235,6 +245,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fCreateAction.dispose();
 		fDeleteAction.dispose();
@@ -247,6 +258,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationAdded(final ILaunchConfiguration configuration) {
 		if(isSupportedConfiguration(configuration)) {
 			//due to notification and async messages we need to collect the moved from config 
@@ -256,7 +268,8 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 			// handle asynchronously: @see bug 198428 - Deadlock deleting launch configuration
 			Display display = DebugUIPlugin.getStandardDisplay();
 	        display.asyncExec(new Runnable() {
-	            public void run() {
+	            @Override
+				public void run() {
 	            	if(!fTree.isDisposed()) {
 	            		handleConfigurationAdded(configuration, from);
 	            	}
@@ -336,11 +349,13 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {}
 
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationRemoved(final ILaunchConfiguration configuration) {
 		// if moved, ignore
 		ILaunchConfiguration to = getLaunchManager().getMovedTo(configuration);
@@ -350,7 +365,8 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		// handle asynchronously: @see bug 198428 - Deadlock deleting launch configuration
 		Display display = DebugUIPlugin.getStandardDisplay();
 		display.asyncExec(new Runnable() {
-	        public void run() {
+	        @Override
+			public void run() {
 	        	if(!fTree.isDisposed()) {
 	        		handleConfigurationRemoved(configuration);
 	        	}
@@ -379,6 +395,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		createContextMenu(getViewer().getControl());
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, getHelpContextId());
 		getViewer().getControl().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				handleKeyPressed(e);
 			}
@@ -393,6 +410,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	/**
 	 * @see org.eclipse.debug.ui.IDebugView#getViewer()
 	 */
+	@Override
 	public Viewer getViewer() {
 		return fTree.getLaunchConfigurationViewer();
 	}
@@ -403,7 +421,9 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 */
 	public void updateFilterLabel() {
 		LaunchConfigurationViewer viewer = (LaunchConfigurationViewer) getViewer();
-		fFilteredNotice.setText(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationView_0, new String[] {Integer.toString(viewer.getNonFilteredChildCount()), Integer.toString(viewer.getTotalChildCount())}));
+		fFilteredNotice.setText(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationView_0, new Object[] {
+				Integer.toString(viewer.getNonFilteredChildCount()),
+				Integer.toString(viewer.getTotalChildCount()) }));
 	}
 	
 	/**

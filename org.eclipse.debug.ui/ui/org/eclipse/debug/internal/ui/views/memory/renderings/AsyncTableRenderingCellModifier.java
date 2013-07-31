@@ -48,6 +48,7 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
         
         Job job = new Job("AsyncTableRenderingCellModifier"){ //$NON-NLS-1$
 
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				fMBSupportsValueModification = fRendering.getMemoryBlock().supportsValueModification();
 				return Status.OK_STATUS;
@@ -62,7 +63,8 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
      * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object,
      *      java.lang.String)
      */
-    public boolean canModify(Object element, String property) {
+    @Override
+	public boolean canModify(Object element, String property) {
         boolean canModify = true;
         try {
             if (!(element instanceof MemorySegment))
@@ -122,7 +124,8 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
      * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object,
      *      java.lang.String)
      */
-    public Object getValue(Object element, String property) {
+    @Override
+	public Object getValue(Object element, String property) {
     	
         // give back the value of the column
 
@@ -160,7 +163,8 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
      * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object,
      *      java.lang.String, java.lang.Object)
      */
-    public void modify(Object element, final String property, final Object value) {
+    @Override
+	public void modify(Object element, final String property, final Object value) {
     	
         MemorySegment segment = null;
         if (element instanceof TableItem) {
@@ -179,6 +183,7 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
         
         Job job = new Job("Set Values"){ //$NON-NLS-1$
 
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 		            // calculate offset to update

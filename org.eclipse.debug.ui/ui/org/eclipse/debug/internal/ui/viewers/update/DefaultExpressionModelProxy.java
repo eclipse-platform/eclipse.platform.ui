@@ -29,6 +29,7 @@ public class DefaultExpressionModelProxy extends EventHandlerModelProxy {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#dispose()
 	 */
+	@Override
 	public synchronized void dispose() {
 		super.dispose();
 		fExpression = null;
@@ -37,6 +38,7 @@ public class DefaultExpressionModelProxy extends EventHandlerModelProxy {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#createEventHandlers()
 	 */
+	@Override
 	protected DebugEventHandler[] createEventHandlers() {
 		return new DebugEventHandler[]{new ExpressionEventHandler(this)};
 	}
@@ -44,6 +46,7 @@ public class DefaultExpressionModelProxy extends EventHandlerModelProxy {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#containsEvent(org.eclipse.debug.core.DebugEvent)
 	 */
+	@Override
 	protected boolean containsEvent(DebugEvent event) {
 		// handles change events from expressions and debug targets
 		if (event.getSource().equals(fExpression) || event.getSource().equals(fExpression.getDebugTarget())) {

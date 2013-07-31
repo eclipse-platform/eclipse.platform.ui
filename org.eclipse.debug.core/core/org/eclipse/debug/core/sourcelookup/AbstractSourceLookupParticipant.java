@@ -1,10 +1,10 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,14 +28,15 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
  * @since 3.0
  */
 public abstract class AbstractSourceLookupParticipant implements ISourceLookupParticipant {
-	
+
 	private ISourceLookupDirector fDirector;
-	
-	protected static final Object[] EMPTY = new Object[0]; 
-	
+
+	protected static final Object[] EMPTY = new Object[0];
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#init(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
 	 */
+	@Override
 	public void init(ISourceLookupDirector director) {
 		fDirector = director;
 	}
@@ -43,19 +44,21 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fDirector = null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#findSourceElements(java.lang.Object)
 	 */
+	@Override
 	public Object[] findSourceElements(Object object) throws CoreException {
-		List results = null;
+		List<Object> results = null;
 		CoreException single = null;
 		MultiStatus multiStatus = null;
 		if (isFindDuplicates()) {
-			results = new ArrayList();
+			results = new ArrayList<Object>();
 		}
 		String name = getSourceName(object);
 		if (name != null) {
@@ -75,7 +78,7 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 							} else {
 								if (objects.length == 1) {
 									return objects;
-								} 
+								}
 								return new Object[]{objects[0]};
 							}
 						}
@@ -101,14 +104,14 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 			return EMPTY;
 		}
 		return results.toArray();
-	}	
-	
+	}
+
 	/**
 	 * Returns the source container to search in place of the given source
 	 * container, or <code>null</code> if the given source container is not
 	 * to be searched. The default implementation does not translate source
 	 * containers. Subclasses should override if required.
-	 *  
+	 *
 	 * @param container the source container about to be searched (proxy)
 	 * @return the source container to be searched (delegate), or <code>null</code>
 	 * 	if the source container should not be searched
@@ -116,22 +119,22 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 	protected ISourceContainer getDelegateContainer(ISourceContainer container) {
 		return container;
 	}
-	
+
 	/**
 	 * Returns the source lookup director this participant is registered with
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the source lookup director this participant is registered with
 	 *  or <code>null</code> if none
 	 */
 	protected ISourceLookupDirector getDirector() {
 		return fDirector;
 	}
-	
+
 	/**
 	 * Returns whether this participant's source lookup director is configured
 	 * to search for duplicate source elements.
-	 * 
+	 *
 	 * @return whether this participant's source lookup director is configured
 	 * to search for duplicate source elements
 	 * @since 3.5
@@ -147,7 +150,7 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 	/**
 	 * Returns the source containers currently registered with this participant's
 	 * source lookup director.
-	 * 
+	 *
 	 * @return the source containers currently registered with this participant's
 	 * source lookup director
 	 */
@@ -158,10 +161,11 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 		}
 		return new ISourceContainer[0];
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#sourceContainersChanged(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
 	 */
+	@Override
 	public void sourceContainersChanged(ISourceLookupDirector director) {
 	}
 }

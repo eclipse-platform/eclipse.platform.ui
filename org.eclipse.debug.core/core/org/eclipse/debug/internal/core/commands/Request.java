@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,19 +18,21 @@ import org.eclipse.debug.core.IRequest;
  * @since 3.3
  */
 public class Request implements IRequest {
-	
+
 	private IStatus fStatus;
 	private boolean fCanceled = false;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IRequest#done()
 	 */
+	@Override
 	public void done() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IRequest#getStatus()
 	 */
+	@Override
 	public IStatus getStatus() {
 		return fStatus;
 	}
@@ -38,6 +40,7 @@ public class Request implements IRequest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IRequest#setStatus(org.eclipse.core.runtime.IStatus)
 	 */
+	@Override
 	public void setStatus(IStatus status) {
 		fStatus = status;
 	}
@@ -45,6 +48,7 @@ public class Request implements IRequest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IRequest#cancel()
 	 */
+	@Override
 	public synchronized void cancel() {
 		fCanceled = true;
 	}
@@ -52,6 +56,7 @@ public class Request implements IRequest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IRequest#isCanceled()
 	 */
+	@Override
 	public synchronized boolean isCanceled() {
 		return fCanceled;
 	}

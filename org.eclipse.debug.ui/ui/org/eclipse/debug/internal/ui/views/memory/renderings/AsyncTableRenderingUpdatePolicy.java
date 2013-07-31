@@ -35,6 +35,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 {
+	@Override
 	public void modelChanged(IModelDelta node, IModelProxy proxy) {
 		
 		// clear current cache as it becomes invalid when the memory block is changed
@@ -123,6 +124,7 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 								descriptor.updateContentBaseAddress();
 								UIJob job = new UIJob("go to address"){ //$NON-NLS-1$
 			
+									@Override
 									public IStatus runInUIThread(IProgressMonitor monitor) {
 										try {
 											rendering.goToAddress(address);

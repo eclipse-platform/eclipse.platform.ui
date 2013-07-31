@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-
 package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.debug.internal.ui.DebugUIMessages;
@@ -24,17 +23,17 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 
 public class SetPaddedStringPreferencePage extends FieldEditorPreferencePage {
-	
+
 	private StringFieldEditor fPaddedString;
 
-	public SetPaddedStringPreferencePage()
-	{
+	public SetPaddedStringPreferencePage() {
 		super(FieldEditorPreferencePage.GRID);
 		setPreferenceStore(DebugUITools.getPreferenceStore());
 		setTitle(DebugUIMessages.SetPaddedStringDialog_0);
-		
+
 	}
 
+	@Override
 	protected void createFieldEditors() {
 		fPaddedString = new StringFieldEditor(IDebugUIConstants.PREF_PADDED_STR, DebugUIMessages.SetPaddedStringPreferencePage_0, getFieldEditorParent());
 		fPaddedString.setEmptyStringAllowed(false);
@@ -42,12 +41,14 @@ public class SetPaddedStringPreferencePage extends FieldEditorPreferencePage {
 		addField(fPaddedString);
 	}
 
+	@Override
 	protected Label createDescriptionLabel(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(DebugUIMessages.SetPaddedStringDialog_1);
 		return label;
 	}
 
+	@Override
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".SetPaddedStrDialog_context"); //$NON-NLS-1$
 		return super.createContents(parent);

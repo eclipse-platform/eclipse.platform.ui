@@ -28,6 +28,7 @@ import org.eclipse.swt.graphics.RGB;
  */
 public class DebugElementLabelProvider extends ElementLabelProvider {
 
+	@Override
 	protected String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		Object element = elementPath.getLastSegment();
 		if (presentationContext instanceof DebugModelPresentationContext) {
@@ -37,6 +38,7 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 		return DebugElementHelper.getLabel(element);
 	}
 
+	@Override
 	protected RGB getBackground(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		Object element = elementPath.getLastSegment();
 		if (presentationContext instanceof DebugModelPresentationContext) {
@@ -46,6 +48,7 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 		return DebugElementHelper.getBackground(element);
 	}
 
+	@Override
 	protected FontData getFontData(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		Object element = elementPath.getLastSegment();
 		if (presentationContext instanceof DebugModelPresentationContext) {
@@ -56,6 +59,7 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 		return DebugElementHelper.getFont(element);
 	}
 
+	@Override
 	protected RGB getForeground(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		Object element = elementPath.getLastSegment();
 		if (presentationContext instanceof DebugModelPresentationContext) {
@@ -65,6 +69,7 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 		return DebugElementHelper.getForeground(element);
 	}
 
+	@Override
 	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		Object element = elementPath.getLastSegment();
 		if (presentationContext instanceof DebugModelPresentationContext) {
@@ -95,7 +100,8 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#requiresUIJob(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
      */
-    protected boolean requiresUIJob(ILabelUpdate[] updates) {
+    @Override
+	protected boolean requiresUIJob(ILabelUpdate[] updates) {
     	if (updates.length > 0) {
 	    	ILabelUpdate update = updates[0];
 			IPresentationContext context = update.getPresentationContext();

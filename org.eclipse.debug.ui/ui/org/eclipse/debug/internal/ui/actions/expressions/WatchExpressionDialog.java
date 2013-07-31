@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -84,6 +84,7 @@ public class WatchExpressionDialog extends StatusDialog {
 	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
 		
@@ -108,8 +109,10 @@ public class WatchExpressionDialog extends StatusDialog {
 		fSnippetViewer.setEditable(true);
 		fSnippetViewer.setDocument(document);
 		document.addDocumentListener(new IDocumentListener() {
+			@Override
 			public void documentAboutToBeChanged(DocumentEvent event) {
 			}
+			@Override
 			public void documentChanged(DocumentEvent event) {
 				checkValues();
 			}
@@ -144,6 +147,7 @@ public class WatchExpressionDialog extends StatusDialog {
 		menuManager.add(copyAction);
 		menuManager.add(pasteAction);
 		menuManager.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				cutAction.update();
 				copyAction.update();
@@ -160,7 +164,7 @@ public class WatchExpressionDialog extends StatusDialog {
 		fCheckBox.setFont(font);
 
 		String tipText = MessageFormat.format(ActionMessages.WatchExpressionDialog_5,
-				new String[] { getCtrlReturnText() });
+ new Object[] { getCtrlReturnText() });
 		fTip= new Label(container, SWT.LEFT);
 		fTip.setText(tipText);
 		fTip.setFont(font);
@@ -187,6 +191,7 @@ public class WatchExpressionDialog extends StatusDialog {
 	/**
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		fWatchExpression.setEnabled(fCheckBox.getSelection());
 		fWatchExpression.setExpressionText(fSnippetViewer.getDocument().get());

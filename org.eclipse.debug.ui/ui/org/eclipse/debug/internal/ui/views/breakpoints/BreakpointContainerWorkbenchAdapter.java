@@ -28,7 +28,8 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, I
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
      */
-    public Object[] getChildren(Object o) {
+    @Override
+	public Object[] getChildren(Object o) {
         // not used
         return null;
     }
@@ -36,7 +37,8 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, I
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
      */
-    public ImageDescriptor getImageDescriptor(Object object) {
+    @Override
+	public ImageDescriptor getImageDescriptor(Object object) {
         if (object instanceof IBreakpointContainer) {
             IBreakpointContainer container = (IBreakpointContainer) object;
             IAdaptable category = container.getCategory();
@@ -54,7 +56,8 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, I
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
      */
-    public String getLabel(Object object) {
+    @Override
+	public String getLabel(Object object) {
         if (object instanceof IBreakpointContainer) {
             IBreakpointContainer container = (IBreakpointContainer) object;
             IAdaptable category = container.getCategory();
@@ -72,14 +75,16 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, I
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
      */
-    public Object getParent(Object o) {
+    @Override
+	public Object getParent(Object o) {
         return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter2#getForeground(java.lang.Object)
      */
-    public RGB getForeground(Object object) {
+    @Override
+	public RGB getForeground(Object object) {
         if (object instanceof IBreakpointContainer) {
             IBreakpointContainer container = (IBreakpointContainer) object;
             IAdaptable category = container.getCategory();
@@ -94,7 +99,8 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, I
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter2#getBackground(java.lang.Object)
      */
-    public RGB getBackground(Object object) {
+    @Override
+	public RGB getBackground(Object object) {
         if (object instanceof IBreakpointContainer) {
             IBreakpointContainer container = (IBreakpointContainer) object;
             IAdaptable category = container.getCategory();
@@ -109,7 +115,8 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, I
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter2#getFont(java.lang.Object)
      */
-    public FontData getFont(Object object) {
+    @Override
+	public FontData getFont(Object object) {
         if (object instanceof IBreakpointContainer) {
             IBreakpointContainer container = (IBreakpointContainer) object;
             IAdaptable category = container.getCategory();

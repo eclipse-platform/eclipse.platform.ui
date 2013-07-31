@@ -38,6 +38,7 @@ public abstract class ShowWhenContentChangesAction extends Action implements IPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 	    String property = event.getProperty();
         if (property.equals(getKey())) {
@@ -68,6 +69,7 @@ public abstract class ShowWhenContentChangesAction extends Action implements IPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		IPreferenceStore store = getPreferenceStore();
 		boolean show = isChecked();

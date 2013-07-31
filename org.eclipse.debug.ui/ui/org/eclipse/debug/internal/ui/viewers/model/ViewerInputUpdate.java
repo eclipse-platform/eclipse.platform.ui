@@ -64,7 +64,8 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
      * When <code>done()</code> is called, the viewer must be informed that the update is complete in the UI thread.
      */
     protected WorkbenchJob fViewerInputUpdateJob = new WorkbenchJob("Asynchronous viewer input update") { //$NON-NLS-1$
-        public IStatus runInUIThread(IProgressMonitor monitor) {
+        @Override
+		public IStatus runInUIThread(IProgressMonitor monitor) {
         	if (ViewerInputUpdate.this.isCanceled()){
         		return Status.CANCEL_STATUS;
         	}
@@ -92,6 +93,7 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate#getPresentationContext()
 	 */
+	@Override
 	public IPresentationContext getPresentationContext() {
 		return fContext;
 	}
@@ -99,7 +101,8 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
 	/* (non-Javadoc)
      * @see org.eclipse.core.runtime.IProgressMonitor#done()
      */
-    public final void done() {
+    @Override
+	public final void done() {
     	synchronized (this) {
     		if (isDone()) {
     			return;
@@ -121,6 +124,7 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate#getElement()
 	 */
+	@Override
 	public Object getElement() {
 		return fSource;
 	}
@@ -128,6 +132,7 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElementPath()
 	 */
+	@Override
 	public TreePath getElementPath() {
 		return TreePath.EMPTY;
 	}
@@ -135,6 +140,7 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate#setViewerInput(java.lang.Object)
 	 */
+	@Override
 	public void setInputElement(Object element) {
 		fInputElement = element;
 	}
@@ -142,6 +148,7 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate#getViewerInput()
 	 */
+	@Override
 	public Object getInputElement() {
 		return fInputElement;
 	}
@@ -149,6 +156,7 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getViewerInput()
 	 */
+	@Override
 	public Object getViewerInput() {
 		return fViewerInput;
 	}

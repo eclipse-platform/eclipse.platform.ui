@@ -27,13 +27,15 @@ public class JFaceViewerDeltaTests extends DeltaTests {
         super(name);
     }
 
-    protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
+    @Override
+	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
 		return new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer")); //$NON-NLS-1$
     }
     
     /**
      * TODO: remove this method when bug 292322 gets fixed in TreeViewer
      */
-    public void testBug292322() {
+    @Override
+	public void testBug292322() {
     }
 }

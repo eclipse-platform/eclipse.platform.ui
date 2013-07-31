@@ -22,23 +22,23 @@ import org.eclipse.ui.PlatformUI;
  * Toolbar "Add Memory Rendering Action" from Memory Rendering Pane
  */
 public class AddMemoryRenderingAction extends AddMemoryBlockAction {
-	
+
 	private IMemoryRenderingContainer fContainer;
-	
-	public AddMemoryRenderingAction(IMemoryRenderingContainer container)
-	{
-		super(DebugUIMessages.AddMemoryRenderingAction_Add_renderings, AS_PUSH_BUTTON, container.getMemoryRenderingSite()); 
-		setToolTipText(DebugUIMessages.AddMemoryRenderingAction_Add_renderings); 
+
+	public AddMemoryRenderingAction(IMemoryRenderingContainer container) {
+		super(DebugUIMessages.AddMemoryRenderingAction_Add_renderings, AS_PUSH_BUTTON, container.getMemoryRenderingSite());
+		setToolTipText(DebugUIMessages.AddMemoryRenderingAction_Add_renderings);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, DebugUIPlugin.getUniqueIdentifier() + ".AddRenderingContextAction_context"); //$NON-NLS-1$
 		fContainer = container;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		if (fContainer instanceof RenderingViewPane)
 			((RenderingViewPane) fContainer).showCreateRenderingTab();
 	}
 }
-

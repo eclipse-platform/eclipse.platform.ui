@@ -29,10 +29,12 @@ public class AsynchronousSchedulingRuleFactory {
 		public SerialRule() {
 		}
 
+		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
 
+		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule instanceof SerialRule;
 		}
@@ -49,6 +51,7 @@ public class AsynchronousSchedulingRuleFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 		 */
+		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
@@ -56,6 +59,7 @@ public class AsynchronousSchedulingRuleFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
 		 */
+		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			if (rule instanceof SerialPerObjectRule) {
 				SerialPerObjectRule vup = (SerialPerObjectRule) rule;

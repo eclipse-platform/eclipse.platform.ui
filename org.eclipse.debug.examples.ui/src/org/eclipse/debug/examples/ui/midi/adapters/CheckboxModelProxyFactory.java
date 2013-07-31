@@ -24,6 +24,7 @@ public class CheckboxModelProxyFactory implements IModelProxyFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory#createModelProxy(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */
+	@Override
 	public IModelProxy createModelProxy(Object element, IPresentationContext context) {
 		if (CheckboxView.ID.equals(context.getId())) {
 			if (element instanceof Track) {

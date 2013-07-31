@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,11 +17,12 @@ import org.eclipse.debug.core.model.IDropToFrame;
 
 /**
  * Default drop to frame command for the standard debug model.
- * 
+ *
  * @since 3.3
  */
 public class DropToFrameCommand extends StepCommand implements IDropToFrameHandler {
 
+	@Override
 	protected Object getTarget(Object element) {
 		return getAdapter(element, IDropToFrame.class);
 	}
@@ -29,6 +30,7 @@ public class DropToFrameCommand extends StepCommand implements IDropToFrameHandl
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.commands.StepCommand#isSteppable(java.lang.Object)
 	 */
+	@Override
 	protected boolean isSteppable(Object target) throws CoreException {
 		return ((IDropToFrame)target).canDropToFrame();
 	}
@@ -36,6 +38,7 @@ public class DropToFrameCommand extends StepCommand implements IDropToFrameHandl
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.commands.StepCommand#step(java.lang.Object)
 	 */
+	@Override
 	protected void step(Object target) throws CoreException {
 		((IDropToFrame)target).dropToFrame();
 	}
@@ -43,6 +46,7 @@ public class DropToFrameCommand extends StepCommand implements IDropToFrameHandl
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.commands.AbstractDebugCommand#getEnabledStateJobFamily(org.eclipse.debug.core.commands.IDebugCommandRequest)
 	 */
+	@Override
 	protected Object getEnabledStateJobFamily(IDebugCommandRequest request) {
 		return IDropToFrameHandler.class;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,10 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
-
 import java.util.List;
 
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.actions.SelectionListenerAction;
+
 
 /**
  * The action for sorting the order of source containers in the dialog.
@@ -26,21 +29,21 @@ public class DownAction	extends SourceContainerAction {
 	/**
 	 * @see IAction#run()
 	 */
+	@Override
 	public void run() {
-		List targets = getOrderedSelection();
+		List<ISourceContainer> targets = getOrderedSelection();
 		if (targets.isEmpty()) {
 			return;
 		}
-		List list = getEntriesAsList();
+		List<ISourceContainer> list = getEntriesAsList();
 		int bottom = list.size() - 1;
 		int index = 0;
-		for (int i = targets.size() - 1; i >= 0; i--) {
-			Object target = targets.get(i);
-			index = list.indexOf(target);
+		for (ISourceContainer container : targets) {
+			index = list.indexOf(container);
 			if (index < bottom) {
 				bottom = index + 1;
-				Object temp = list.get(bottom);
-				list.set(bottom, target);
+				ISourceContainer temp = list.get(bottom);
+				list.set(bottom, container);
 				list.set(index, temp);
 			}
 			bottom = index;
@@ -51,6 +54,7 @@ public class DownAction	extends SourceContainerAction {
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return !selection.isEmpty() && !isIndexSelected(selection, getEntriesAsList().size() - 1) && getViewer().getTree().getSelection()[0].getParentItem()==null;	
 	}

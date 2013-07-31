@@ -49,6 +49,7 @@ public class TableRenderingPreferencePage extends PreferencePage implements
 		super(title);
 	}
 
+	@Override
 	protected Control createContents(Composite parent) {
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".table_renderings_preference_page_context"); //$NON-NLS-1$
@@ -109,6 +110,7 @@ public class TableRenderingPreferencePage extends PreferencePage implements
 		fManual.setSelection(!isAuto);
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(FieldEditor.VALUE))
 		{
@@ -161,10 +163,12 @@ public class TableRenderingPreferencePage extends PreferencePage implements
 		}
 	}
 	
+	@Override
 	protected IPreferenceStore doGetPreferenceStore() {
 		return DebugUIPlugin.getDefault().getPreferenceStore();
 	}
 	
+	@Override
 	public void dispose() {
 		fAuto.removeSelectionListener(this);
 		fManual.removeSelectionListener(this);
@@ -174,14 +178,17 @@ public class TableRenderingPreferencePage extends PreferencePage implements
 		super.dispose();
 	}
 
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 		// do nothing
 	}
 
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		updateTextEditorsEnablement();
 	}
 	
+	@Override
 	public boolean performOk() {
 		boolean auto = fAuto.getSelection();
 		boolean currentValue = getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DYNAMIC_LOAD_MEM);
@@ -194,6 +201,7 @@ public class TableRenderingPreferencePage extends PreferencePage implements
 		return super.performOk();
 	}
 	
+	@Override
 	protected void performDefaults() {
 		
 		boolean auto = getPreferenceStore().getDefaultBoolean(IDebugPreferenceConstants.PREF_DYNAMIC_LOAD_MEM);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 	/**
 	 * @see AbstractLaunchConfigurationAction#performAction()
 	 */
+	@Override
 	protected void performAction() {
 		if(!shouldDelete()) {
 			return;
@@ -62,7 +63,7 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 		IStructuredSelection selection = getStructuredSelection();
 
 		getViewer().getControl().setRedraw(false);
-		Iterator iterator = selection.iterator();
+		Iterator<?> iterator = selection.iterator();
 		while (iterator.hasNext()) {
 			ILaunchConfiguration configuration = (ILaunchConfiguration)iterator.next();
 			try {
@@ -77,11 +78,12 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 	/**
 	 * @see org.eclipse.ui.actions.SelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			return false;
 		}
-		Iterator items = selection.iterator();
+		Iterator<?> items = selection.iterator();
 		while (items.hasNext()) {
 			if (!(items.next() instanceof ILaunchConfiguration)) {
 				return false;
@@ -93,6 +95,7 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getDisabledImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
 		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DELETE_CONFIG);
 	}
@@ -100,6 +103,7 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DELETE_CONFIG);
 	}
@@ -107,6 +111,7 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getToolTipText()
 	 */
+	@Override
 	public String getToolTipText() {
 		return LaunchConfigurationsMessages.LaunchConfigurationsDialog_1;
 	}

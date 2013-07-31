@@ -31,7 +31,8 @@ public class ViewerInputService {
      * @since 3.6
      */
     public final static Object NULL_INPUT = new IViewerInputProvider() {
-        public void update(IViewerInputUpdate update) {
+        @Override
+		public void update(IViewerInputUpdate update) {
             update.setInputElement(null);
             update.done();
         }
@@ -45,6 +46,7 @@ public class ViewerInputService {
 	private ITreeModelViewer fViewer;
 	
 	private IViewerInputRequestor fProxyRequest = new IViewerInputRequestor() {
+		@Override
 		public void viewerInputComplete(final IViewerInputUpdate update) {
 			synchronized (ViewerInputService.this) {
 				if (fPendingUpdate == update) {

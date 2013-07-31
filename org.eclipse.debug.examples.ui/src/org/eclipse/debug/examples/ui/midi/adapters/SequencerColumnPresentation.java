@@ -38,6 +38,7 @@ public class SequencerColumnPresentation extends AbstractColumnPresentation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#getAvailableColumns()
 	 */
+	@Override
 	public String[] getAvailableColumns() {
 		return COLUMN_IDS;
 	}
@@ -45,6 +46,7 @@ public class SequencerColumnPresentation extends AbstractColumnPresentation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#getHeader(java.lang.String)
 	 */
+	@Override
 	public String getHeader(String id) {
 		if (COL_NAME.equals(id)) {
 			return "Control"; //$NON-NLS-1$
@@ -58,6 +60,7 @@ public class SequencerColumnPresentation extends AbstractColumnPresentation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#getId()
 	 */
+	@Override
 	public String getId() {
 		return ID;
 	}
@@ -65,6 +68,7 @@ public class SequencerColumnPresentation extends AbstractColumnPresentation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#getInitialColumns()
 	 */
+	@Override
 	public String[] getInitialColumns() {
 		return COLUMN_IDS;
 	}
@@ -72,6 +76,7 @@ public class SequencerColumnPresentation extends AbstractColumnPresentation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#isOptional()
 	 */
+	@Override
 	public boolean isOptional() {
 		return false;
 	}

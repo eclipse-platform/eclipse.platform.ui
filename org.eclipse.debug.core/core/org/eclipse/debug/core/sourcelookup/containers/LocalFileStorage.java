@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,35 +36,37 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class LocalFileStorage extends PlatformObject implements IStorage {
-	
+
 	/**
 	 * The file this storage refers to.
-	 */ 
+	 */
 	private File fFile;
-		
+
 	/**
 	 * Constructs and returns storage for the given file.
-	 * 
+	 *
 	 * @param file a local file
 	 */
 	public LocalFileStorage(File file){
 		setFile(file);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IStorage#getContents()
 	 */
+	@Override
 	public InputStream getContents() throws CoreException {
 		try {
 			return new FileInputStream(getFile());
 		} catch (IOException e){
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, SourceLookupMessages.LocalFileStorage_0, e)); 
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, SourceLookupMessages.LocalFileStorage_0, e));
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IStorage#getFullPath()
 	 */
+	@Override
 	public IPath getFullPath() {
 		try {
 			return new Path(getFile().getCanonicalPath());
@@ -77,6 +79,7 @@ public class LocalFileStorage extends PlatformObject implements IStorage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IStorage#getName()
 	 */
+	@Override
 	public String getName() {
 		return getFile().getName();
 	}
@@ -84,40 +87,43 @@ public class LocalFileStorage extends PlatformObject implements IStorage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IStorage#isReadOnly()
 	 */
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}
-	
+
 	/**
 	 * Sets the file associated with this storage
-	 * 
+	 *
 	 * @param file a local file
 	 */
 	private void setFile(File file) {
-		fFile = file;	
+		fFile = file;
 	}
-	
+
 	/**
 	 * Returns the file associated with this storage
-	 * 
+	 *
 	 * @return file
 	 */
 	public File getFile() {
 		return fFile;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	public boolean equals(Object object) {		
+	@Override
+	public boolean equals(Object object) {
 		return object instanceof LocalFileStorage &&
 			 getFile().equals(((LocalFileStorage)object).getFile());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getFile().hashCode();
-	}	
+	}
 }

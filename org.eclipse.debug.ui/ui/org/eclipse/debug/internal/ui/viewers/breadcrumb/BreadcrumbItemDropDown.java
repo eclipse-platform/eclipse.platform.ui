@@ -80,6 +80,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		/*
 		 * @see org.eclipse.jface.resource.CompositeImageDescriptor#drawCompositeImage(int, int)
 		 */
+		@Override
 		protected void drawCompositeImage(int width, int height) {
 			Display display= fParentComposite.getDisplay();
 
@@ -133,6 +134,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		/*
 		 * @see org.eclipse.jface.resource.CompositeImageDescriptor#getSize()
 		 */
+		@Override
 		protected Point getSize() {
 			return new Point(10, 16);
 		}
@@ -180,13 +182,15 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		fToolBar= new ToolBar(composite, SWT.FLAT);
 		fToolBar.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
 		fToolBar.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-            public void getName(AccessibleEvent e) {
+            @Override
+			public void getName(AccessibleEvent e) {
                 e.result= BreadcrumbMessages.BreadcrumbItemDropDown_showDropDownMenu_action_toolTip;
             }
         });
 		ToolBarManager manager= new ToolBarManager(fToolBar);
 
 		final Action showDropDownMenuAction= new Action(null, SWT.NONE) {
+			@Override
 			public void run() {
 				Shell shell= fParent.getDropDownShell();
 				if (shell != null)
@@ -210,6 +214,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		if (IS_MAC_WORKAROUND) {
 			manager.getControl().addMouseListener(new MouseAdapter() {
 				// see also BreadcrumbItemDetails#addElementListener(Control)
+				@Override
 				public void mouseDown(MouseEvent e) {
 					showDropDownMenuAction.run();
 				}
@@ -280,7 +285,8 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
             /*
              * @see org.eclipse.swt.events.ControlAdapter#controlResized(org.eclipse.swt.events.ControlEvent)
              */
-            public void controlResized(ControlEvent e) {
+            @Override
+			public void controlResized(ControlEvent e) {
                 if (fIsResizingProgrammatically)
                     return;
                 
@@ -322,6 +328,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	 */
 	private void installCloser(final Shell shell) {
 		final Listener focusListener= new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				Widget focusElement= event.widget;
 				boolean isFocusBreadcrumbTreeFocusWidget= focusElement == shell || focusElement instanceof Control && ((Control)focusElement).getShell() == shell;
@@ -364,12 +371,14 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		display.addFilter(SWT.FocusOut, focusListener);
 
 		final ControlListener controlListener= new ControlListener() {
+			@Override
 			public void controlMoved(ControlEvent e) {
 			    if (!shell.isDisposed()) {
 			        shell.close();
 			    }
 			}
 
+			@Override
 			public void controlResized(ControlEvent e) {
                 if (!shell.isDisposed()) {
                     shell.close();
@@ -379,6 +388,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		fToolBar.getShell().addControlListener(controlListener);
 
 		shell.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				if (DebugUIPlugin.DEBUG_BREADCRUMB) {
 					DebugUIPlugin.trace("==> shell disposed"); //$NON-NLS-1$
@@ -393,9 +403,11 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 			}
 		});
 		shell.addShellListener(new ShellListener() {
+			@Override
 			public void shellActivated(ShellEvent e) {
 			}
 
+			@Override
 			public void shellClosed(ShellEvent e) {
 				if (DebugUIPlugin.DEBUG_BREADCRUMB) {
 					DebugUIPlugin.trace("==> shellClosed"); //$NON-NLS-1$
@@ -406,12 +418,15 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 				fMenuIsShown= false;
 			}
 
+			@Override
 			public void shellDeactivated(ShellEvent e) {
 			}
 
+			@Override
 			public void shellDeiconified(ShellEvent e) {
 			}
 
+			@Override
 			public void shellIconified(ShellEvent e) {
 			}
 		});
@@ -607,17 +622,20 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
         return (fParent.getViewer().getStyle() & SWT.BOTTOM) == 0;
     }
 
-    public void close() {
+    @Override
+	public void close() {
         if (fShell != null && !fShell.isDisposed()) {
             fShell.close();
         }
     }
     
-    public void notifySelection(ISelection selection) {
+    @Override
+	public void notifySelection(ISelection selection) {
         fParent.getViewer().fireMenuSelection(selection);        
     }
     
-    public void updateSize() {
+    @Override
+	public void updateSize() {
         if (fShell != null && !fShell.isDisposed()) {
             resizeShell(fShell);
         }

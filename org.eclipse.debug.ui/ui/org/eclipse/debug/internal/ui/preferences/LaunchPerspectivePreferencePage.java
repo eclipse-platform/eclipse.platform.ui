@@ -11,12 +11,12 @@
 package org.eclipse.debug.internal.ui.preferences;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.debug.core.DebugPlugin;
@@ -80,10 +80,10 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	final class PerspectiveChange {
 		private ILaunchConfigurationType fType = null;
 		private ILaunchDelegate fDelegate = null;
-		private Set fModes = null;
+		private Set<String> fModes = null;
 		private String fPid = null;
 		
-		public PerspectiveChange(ILaunchConfigurationType type, ILaunchDelegate delegate, Set modes, String perspectiveid) {
+		public PerspectiveChange(ILaunchConfigurationType type, ILaunchDelegate delegate, Set<String> modes, String perspectiveid) {
 			fType = type;
 			fDelegate = delegate;
 			fModes = modes;
@@ -93,7 +93,11 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		public ILaunchConfigurationType getType() {return fType;}
 		public ILaunchDelegate getDelegate() {return fDelegate;}
 		public String getPerspectiveId() {return fPid;}
-		public Set getModes() {return fModes;}
+
+		public Set<String> getModes() {
+			return fModes;
+		}
+		@Override
 		public boolean equals(Object o) {
 			if(o instanceof PerspectiveChange) {
 				PerspectiveChange change = (PerspectiveChange) o;
@@ -102,6 +106,11 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 						change.getModes().equals(fModes);
 			}
 			return super.equals(o);
+		}
+
+		@Override
+		public int hashCode() {
+			return fDelegate.hashCode() + fType.hashCode() + fModes.hashCode();
 		}
 	}
 	
@@ -112,6 +121,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		public PerspectivesTreeViewer(Tree tree) {
 			super(tree);
 		}
+		@Override
 		public Object[] getFilteredChildren(Object o) {return super.getFilteredChildren(o);}
 	}
 	
@@ -119,6 +129,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	 * Provides content for the configuration tree viewer
 	 */
 	final class PerspectiveContentProvider implements ITreeContentProvider {
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if(parentElement instanceof ILaunchConfigurationType) {
 				ILaunchConfigurationType type = (ILaunchConfigurationType) parentElement;
@@ -126,12 +137,17 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 			}
 			return new Object[0];
 		}
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
 		}
+		@Override
 		public boolean hasChildren(Object element) {return element instanceof ILaunchConfigurationType;}
+		@Override
 		public Object getParent(Object element) {return null;}
+		@Override
 		public void dispose() {}
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 	}
 	
@@ -164,7 +180,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 				children[i].dispose();
 			}
 			if(fgCurrentWorkingContext == null) {
-				fgCurrentWorkingContext = new HashSet();
+				fgCurrentWorkingContext = new HashSet<Object>();
 			}
 			fgCurrentWorkingContext.clear();
 			if(!selection.isEmpty()) {
@@ -191,15 +207,19 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	 * Caches
 	 */
 	private static String[] fgPerspectiveLabels = null;
-	private static Map fgPerspectiveIdMap = null;
-	private static HashSet fgChangeSet = null;
-	private static HashSet fgCurrentWorkingContext = null;
+	private static Map<String, String> fgPerspectiveIdMap = null;
+	private static HashSet<PerspectiveChange> fgChangeSet = null;
+	private static HashSet<Object> fgCurrentWorkingContext = null;
 	
 	/**
 	 * A default selection listener to be reused by all combo boxes presenting perspective data
 	 */
 	private SelectionListener fSelectionListener = new SelectionListener() {
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {}
+
+		@SuppressWarnings("unchecked")
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object o = e.getSource();
 			if(o instanceof Combo) {
@@ -207,8 +227,8 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 				LaunchDelegate delegate = null;
 				ILaunchConfigurationType type = null;
 				PerspectiveChange change = null;
-				Set modes = null;
-				for(Iterator iter = fgCurrentWorkingContext.iterator(); iter.hasNext();) {
+				Set<String> modes = null;
+				for (Iterator<Object> iter = fgCurrentWorkingContext.iterator(); iter.hasNext();) {
 					o = iter.next();
 					if(o instanceof ILaunchDelegate) {
 						delegate = (LaunchDelegate) o;
@@ -218,14 +238,14 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 						delegate = null;
 						type = (ILaunchConfigurationType) o;
 					}
-					modes = (Set) combo.getData();
+					modes = (Set<String>) combo.getData();
 					change = findChange(type, delegate, modes);
 					if(change == null) {
-						change = new PerspectiveChange(type, delegate, modes, (String)fgPerspectiveIdMap.get(combo.getText()));
+						change = new PerspectiveChange(type, delegate, modes, fgPerspectiveIdMap.get(combo.getText()));
 						fgChangeSet.add(change);
 					}
 					else {
-						change.fPid = (String)fgPerspectiveIdMap.get(combo.getText());
+						change.fPid = fgPerspectiveIdMap.get(combo.getText());
 					}
 				}
 			}
@@ -240,6 +260,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	/**
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		PlatformUI.getWorkbench().getActivitySupport().getActivityManager().removeActivityManagerListener(this);
 		fgPerspectiveIdMap.clear();
@@ -257,6 +278,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.PERSPECTIVE_PREFERENCE_PAGE);
@@ -265,6 +287,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		
 		SWTFactory.createWrapLabel(parent, DebugPreferencesMessages.PerspectivePreferencePage_0, 2, 300);
@@ -317,11 +340,13 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		fTree.setLayoutData(gd);
 		fTreeViewer = new PerspectivesTreeViewer(fTree);
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				fPerspectivesPanel.refreshPanel((IStructuredSelection) event.getSelection());
 			}
 		});
 		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				IStructuredSelection ss = (IStructuredSelection) event.getSelection();
 				if(!ss.isEmpty()) {
@@ -344,17 +369,15 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	 * @param selection the selection in the tree viewer
 	 */
 	protected void createCombos(Composite parent, Object[] selection) {
-		Set modes = collectCommonModeSets(selection);
+		Set<Set<String>> modes = collectCommonModeSets(selection);
 		if(modes.isEmpty()) {
 			fPerspectivesPanel.setMessage(DebugPreferencesMessages.LaunchPerspectivePreferencePage_1);
 			return;
 		}
 		fPerspectivesPanel.setMessage(IInternalDebugCoreConstants.EMPTY_STRING);
-		List fmodes = null;
+		List<String> fmodes = null;
 		Combo combo = null;
-		Set smodes = null;
-		for(Iterator iter = modes.iterator(); iter.hasNext();) {
-			smodes = (Set) iter.next();
+		for (Set<String> smodes : modes) {
 			fmodes = LaunchConfigurationPresentationManager.getDefault().getLaunchModeNames(smodes);
 			if(!fmodes.isEmpty()) {
 				//add the mode set and create a combo
@@ -381,17 +404,17 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	 * @param modes the set of modes 
 	 * @return the text to select in the current combo / current working set context, or "None" 
 	 */
-	private String getComboSelection(Set modes) {
+	private String getComboSelection(Set<String> modes) {
 		String text = DebugPreferencesMessages.PerspectivePreferencePage_4;
 		IStructuredSelection ss = (IStructuredSelection) fTreeViewer.getSelection();
 		if(ss != null && !ss.isEmpty()) {
 			Object o = null;
-			Set tmp = new HashSet();
+			Set<String> tmp = new HashSet<String>();
 			String id = null;
 			ILaunchConfigurationType type = null;
 			LaunchDelegate delegate = null;
 			PerspectiveChange change = null;
-			for(Iterator iter = ss.iterator(); iter.hasNext();) {
+			for (Iterator<?> iter = ss.iterator(); iter.hasNext();) {
 				o = iter.next();
 				if(o instanceof LaunchDelegate) {
 					delegate = (LaunchDelegate) o;
@@ -413,13 +436,11 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 				tmp.add(id);
 			}
 			if(tmp.size() == 1) {
-				id = (String) tmp.iterator().next();
+				id = tmp.iterator().next();
 				if(!IDebugUIConstants.PERSPECTIVE_NONE.equals(id)) {
-					String label = null;
-					for(Iterator iter = fgPerspectiveIdMap.keySet().iterator(); iter.hasNext();) {
-						label = (String) iter.next();
-						if(id.equals(fgPerspectiveIdMap.get(label))) {
-							return label;
+					for (Entry<String, String> entry : fgPerspectiveIdMap.entrySet()) {
+						if (id.equals(entry.getValue())) {
+							return entry.getKey();
 						}
 					}
 				}
@@ -437,56 +458,51 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	 * @param modes the current mode set
 	 * @return the existing <code>PerspectiveChange</code> if there is one, <code>null</code> otherwise
 	 */
-	private PerspectiveChange findChange(ILaunchConfigurationType type, ILaunchDelegate delegate, Set modes) {
+	private PerspectiveChange findChange(ILaunchConfigurationType type, ILaunchDelegate delegate, Set<String> modes) {
 		PerspectiveChange change = new PerspectiveChange(type, delegate, modes, null);
-		Object o = null;
-		for(Iterator iter = fgChangeSet.iterator(); iter.hasNext();) {
-			o = iter.next();
-			if(change.equals(o)) {
-				return (PerspectiveChange) o;
+		for (PerspectiveChange ch : fgChangeSet) {
+			if (change.equals(ch)) {
+				return ch;
 			}
 		}
 		return null;
 	}
 	
 	/**
-	 * Collects a list of mode sets that are common to the current selection context. It is possible
-	 * that there are no mode sets in comomon.
+	 * Collects a list of mode sets that are common to the current selection
+	 * context. It is possible that there are no mode sets in common.
+	 * 
 	 * @param selection the current selection context
 	 * @return a list of mode sets or an empty list, never <code>null</code>
 	 */
-	protected Set collectCommonModeSets(Object[] selection) {
-		HashSet common = new HashSet();
+	protected Set<Set<String>> collectCommonModeSets(Object[] selection) {
+
 	//prep selection context, remove types from the equation
-		HashSet delegates = new HashSet();
+		HashSet<ILaunchDelegate> delegates = new HashSet<ILaunchDelegate>();
 		Object o = null;
-		Object[] kids = null;
 		for(int i = 0; i < selection.length; i++) {
 			o = selection[i];
 			if(o instanceof ILaunchDelegate) {
-				delegates.add(o);
+				delegates.add((ILaunchDelegate) o);
 			}
 			else if(o instanceof ILaunchConfigurationType) {
 				fgCurrentWorkingContext.add(o);
-				kids = fTreeViewer.getFilteredChildren(o);
-				delegates.addAll(Arrays.asList(kids));
+				Object[] kids = fTreeViewer.getFilteredChildren(o);
+				for (int j = 0; j < kids.length; j++) {
+					delegates.add((ILaunchDelegate) kids[i]);
+				}
 			}
 		}
 	//compare the listing of delegates to find common mode sets
-		ILaunchDelegate delegate = null;
-		List modes = null;
-		HashSet pruned = new HashSet();
-		Set fmodes = null;
-		if(!delegates.isEmpty()) {
-			for(Iterator iter = delegates.iterator(); iter.hasNext();) {
-				delegate = (ILaunchDelegate) iter.next();
-				modes = delegate.getModes();
-				for(Iterator iter2 = modes.iterator(); iter2.hasNext();) {
-					fmodes = (Set) iter2.next();
-					if(isCommonModeset(fmodes, delegates, pruned)) {
-						common.add(fmodes);
-						fgCurrentWorkingContext.add(delegate);
-					}
+		HashSet<Set<String>> common = new HashSet<Set<String>>();
+		List<Set<String>> modes = null;
+		HashSet<Set<String>> pruned = new HashSet<Set<String>>();
+		for (ILaunchDelegate delegate : delegates) {
+			modes = delegate.getModes();
+			for (Set<String> fmodes : modes) {
+				if (isCommonModeset(fmodes, delegates, pruned)) {
+					common.add(fmodes);
+					fgCurrentWorkingContext.add(delegate);
 				}
 			}
 		}
@@ -501,12 +517,10 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	 * @param pruned the monotonic listing of pruned mode sets
 	 * @return true if the specified mode set is common to all members of the specified listing of launch delegates, false otherwise
 	 */
-	private boolean isCommonModeset(Set modeset, Set delegates, Set pruned) {
+	private boolean isCommonModeset(Set<String> modeset, Set<ILaunchDelegate> delegates, Set<Set<String>> pruned) {
 		if(!pruned.contains(modeset)) {
-			ILaunchDelegate delegate = null;
 			boolean common = true;
-			for(Iterator iter = delegates.iterator(); iter.hasNext();) {
-				delegate = (ILaunchDelegate) iter.next();
+			for (ILaunchDelegate delegate : delegates) {
 				common &= delegate.getModes().contains(modeset);
 			}
 			if(!common) {
@@ -537,6 +551,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		fgChangeSet.clear();
 		fSwitchLaunch.loadDefault();
@@ -545,23 +560,19 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		PerspectiveManager pm = DebugUIPlugin.getDefault().getPerspectiveManager();
 		TreeItem[] items = fTree.getItems();
 		ILaunchConfigurationType type = null;
-		Set modes = null;
-		Set modeset = null;
-		Object[] delegates = null;
+		Set<Set<String>> modes = null;
+		ILaunchDelegate[] delegates = null;
 		for(int i = 0; i < items.length; i++) {
-			//reset type
 			type = (ILaunchConfigurationType) items[i].getData();
 			modes = type.getSupportedModeCombinations();
-			delegates = fTreeViewer.getFilteredChildren(type);
-			for(Iterator iter = modes.iterator(); iter.hasNext();) {
-				modeset = (Set) iter.next();
+			delegates = (ILaunchDelegate[]) fTreeViewer.getFilteredChildren(type);
+			for (Set<String> modeset : modes) {
 				fgChangeSet.add(new PerspectiveChange(type, null, modeset, pm.getDefaultLaunchPerspective(type, null, modeset)));
 			}
 			for(int j = 0; j < delegates.length; j++) {
-				modes = new HashSet(((ILaunchDelegate)delegates[j]).getModes());
-				for(Iterator iter = modes.iterator(); iter.hasNext();) {
-					modeset = (Set) iter.next();
-					fgChangeSet.add(new PerspectiveChange(type, (ILaunchDelegate) delegates[j], modeset, pm.getDefaultLaunchPerspective(type, (ILaunchDelegate) delegates[j], modeset)));
+				modes = new HashSet<Set<String>>(delegates[j].getModes());
+				for (Set<String> modeset : modes) {
+					fgChangeSet.add(new PerspectiveChange(type, delegates[j], modeset, pm.getDefaultLaunchPerspective(type, delegates[j], modeset)));
 				}
 			}
 		}
@@ -576,12 +587,13 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
-		fgChangeSet = new HashSet();
+		fgChangeSet = new HashSet<PerspectiveChange>();
 	//init the labels mapping and the list of labels
-		fgPerspectiveIdMap = new HashMap();
-		ArrayList labels = new ArrayList();
+		fgPerspectiveIdMap = new HashMap<String, String>();
+		ArrayList<String> labels = new ArrayList<String>();
 		labels.add(DebugPreferencesMessages.PerspectivePreferencePage_4);
 		IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
@@ -593,12 +605,13 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 				fgPerspectiveIdMap.put(label, descriptors[i].getId());
 			}
 		}
-		fgPerspectiveLabels = (String[]) labels.toArray(new String[labels.size()]);
+		fgPerspectiveLabels = labels.toArray(new String[labels.size()]);
 	}
 
 	/**
 	 * @see org.eclipse.ui.activities.IActivityManagerListener#activityManagerChanged(org.eclipse.ui.activities.ActivityManagerEvent)
 	 */
+	@Override
 	public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
 		if(!fTree.isDisposed()) {
 			fTreeViewer.refresh();
@@ -608,14 +621,13 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		fSwitchLaunch.store();
 		fSwitchSuspend.store();
 		if(!fgChangeSet.isEmpty()) {
-			PerspectiveChange change = null;
 			PerspectiveManager mgr = DebugUIPlugin.getDefault().getPerspectiveManager();
-			for(Iterator iter = fgChangeSet.iterator(); iter.hasNext();) {
-				change = (PerspectiveChange) iter.next();
+			for (PerspectiveChange change : fgChangeSet) {
 				mgr.setLaunchPerspective(change.getType(), change.getModes(), change.getDelegate(), change.getPerspectiveId());
 			}
 		}

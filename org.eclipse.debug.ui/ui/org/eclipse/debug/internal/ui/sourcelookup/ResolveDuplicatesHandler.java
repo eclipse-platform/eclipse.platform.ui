@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.sourcelookup;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -23,7 +22,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
- * Status handler to prompt for dupicate source element resolution.
+ * Status handler to prompt for duplicate source element resolution.
  * 
  * @since 3.0
  */
@@ -31,13 +30,14 @@ public class ResolveDuplicatesHandler implements IStatusHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
+	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		Object[] args = (Object[])source;
-		List sources = (List) args[1];
+		List<?> sources = (List<?>) args[1];
 		return resolveSourceElement(sources);
 	}
 	
-	public Object resolveSourceElement(List sources) {
+	public Object resolveSourceElement(List<?> sources) {
 		Object file = null;
 		sources = removeSourceNotFoundEditors(sources);
 		if(sources.size() == 1) {
@@ -64,14 +64,11 @@ public class ResolveDuplicatesHandler implements IStatusHandler {
 	 * @param sources the list to be filtered
 	 * @return the filtered list, may be empty
 	 */
-	private List removeSourceNotFoundEditors(List sources){
-		Iterator iterator = sources.iterator();
-		List filteredList = new ArrayList();
-		Object next;
-		while(iterator.hasNext()) {
-			next = iterator.next();
-			if (!(next instanceof CommonSourceNotFoundEditor)) {
-				filteredList.add(next);
+	private List<Object> removeSourceNotFoundEditors(List<?> sources) {
+		List<Object> filteredList = new ArrayList<Object>();
+		for (Object obj : sources) {
+			if (!(obj instanceof CommonSourceNotFoundEditor)) {
+				filteredList.add(obj);
 			}
 		}
 		if (filteredList.isEmpty() && sources.get(0) != null) {

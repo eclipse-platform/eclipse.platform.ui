@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,6 +63,7 @@ public class LaunchShortcutAction extends Action {
 	 * 
 	 * @see IAction#run()
 	 */
+	@Override
 	public void run() {
 		IStructuredSelection ss = SelectedResourceManager.getDefault().getCurrentSelection();
 		Object o = ss.getFirstElement();
@@ -77,19 +78,20 @@ public class LaunchShortcutAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(Event event) {
 		if ((event.stateMask & SWT.MOD1) > 0) {
-			Set types = fShortcut.getAssociatedConfigurationTypes();
+			Set<String> types = fShortcut.getAssociatedConfigurationTypes();
 			if(!types.isEmpty()) {
 				LaunchingResourceManager lrm = DebugUIPlugin.getDefault().getLaunchingResourceManager();
 				IStructuredSelection selection = SelectedResourceManager.getDefault().getCurrentSelection();
-				ArrayList shortcuts = new ArrayList();
+				ArrayList<LaunchShortcutExtension> shortcuts = new ArrayList<LaunchShortcutExtension>();
 				shortcuts.add(fShortcut);
 				IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
 				if(resource == null) {
 					resource = lrm.getLaunchableResource(shortcuts, selection);
 				}
-				List configs = lrm.getParticipatingLaunchConfigurations(selection, resource, shortcuts, fMode);
+				List<ILaunchConfiguration> configs = lrm.getParticipatingLaunchConfigurations(selection, resource, shortcuts, fMode);
 				LaunchConfigurationManager lcm = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 				ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType((String) types.toArray()[0]);
 				String groupid = null;
@@ -100,7 +102,7 @@ public class LaunchShortcutAction extends Action {
 				ILaunchConfiguration config = lcm.getMRUConfiguration(configs, group, resource);
 				if(config == null) {
 					if(configs.size() > 0) {
-						config = (ILaunchConfiguration) configs.get(0);
+						config = configs.get(0);
 					}
 				}
 				if(config != null) {
@@ -140,7 +142,7 @@ public class LaunchShortcutAction extends Action {
 				if (expression == null) {
 					enabled = !ss.isEmpty();
 				} else {
-					List list = ss.toList();
+					List<?> list = ss.toList();
 					IEvaluationContext context = DebugUIPlugin.createEvaluationContext(list);
 					context.addVariable("selection", list); //$NON-NLS-1$
 					enabled = fShortcut.evalEnablementExpression(context, expression);

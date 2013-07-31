@@ -27,7 +27,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 abstract public class AbstractDataStackViewHandler extends AbstractHandler {
 
-    public Object execute(ExecutionEvent event) throws ExecutionException {
+    @Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
         IWorkbenchPart part = HandlerUtil.getActivePartChecked(event);
         if (part instanceof DataStackView) {
             DataStackView view = (DataStackView)part;

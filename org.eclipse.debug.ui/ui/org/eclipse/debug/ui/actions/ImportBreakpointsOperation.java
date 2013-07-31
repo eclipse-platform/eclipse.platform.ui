@@ -23,30 +23,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubMonitor;
+import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.jface.operation.IRunnableWithProgress;
-
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.XMLMemento;
-
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IBreakpointImportParticipant;
@@ -54,8 +42,15 @@ import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.importexport.breakpoints.IImportExportConstants;
 import org.eclipse.debug.internal.ui.importexport.breakpoints.ImportExportMessages;
-
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.XMLMemento;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Imports breakpoints from a file or string buffer into the workspace.
@@ -73,7 +68,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 
 	private boolean fCreateWorkingSets = false;
 
-	private ArrayList fAdded = new ArrayList();
+	private ArrayList<IBreakpoint> fAdded = new ArrayList<IBreakpoint>();
 	
 	private String fCurrentWorkingSetProperty = null;
 
@@ -162,6 +157,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void run(final IProgressMonitor monitor) throws InvocationTargetException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, ImportExportMessages.ImportOperation_0, 1);
 		Reader reader = null;
@@ -175,7 +171,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 			IMemento[] nodes = memento.getChildren(IImportExportConstants.IE_NODE_BREAKPOINT);
 			IWorkspaceRoot workspace = ResourcesPlugin.getWorkspace().getRoot();
 			localmonitor.setWorkRemaining(nodes.length);
-			Map attributes = null;
+			Map<String, Object> attributes = null;
 			IBreakpointImportParticipant[] participants = null;
 			for(int i = 0; i < nodes.length; i++) {
 				if(localmonitor.isCanceled()) {
@@ -218,20 +214,20 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 				localmonitor.worked(1);
 			}
 			if(fAdded.size() > 0 && fImportBreakpoints) {
-				fManager.addBreakpoints((IBreakpoint[])fAdded.toArray(new IBreakpoint[fAdded.size()]));
+				fManager.addBreakpoints(fAdded.toArray(new IBreakpoint[fAdded.size()]));
 			}
 		} 
 		catch(FileNotFoundException e) {
 			throw new InvocationTargetException(e, 
-					MessageFormat.format("Breakpoint import file not found: {0}", new String[]{fFileName})); //$NON-NLS-1$
+ MessageFormat.format("Breakpoint import file not found: {0}", new Object[] { fFileName })); //$NON-NLS-1$
 		}
 		catch (UnsupportedEncodingException e) {
 			throw new InvocationTargetException(e, 
-					MessageFormat.format("The import file was written in non-UTF-8 encoding.", new String[]{fFileName})); //$NON-NLS-1$
+ MessageFormat.format("The import file was written in non-UTF-8 encoding.", new Object[] { fFileName })); //$NON-NLS-1$
 		}
 		catch(CoreException ce) {
 			throw new InvocationTargetException(ce, 
-					MessageFormat.format("There was a problem importing breakpoints from: {0}", new String[] {fFileName})); //$NON-NLS-1$
+ MessageFormat.format("There was a problem importing breakpoints from: {0}", new Object[] { fFileName })); //$NON-NLS-1$
 		}
 		finally {
 			localmonitor.done();
@@ -253,7 +249,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * @return the marker for an existing breakpoint or <code>null</code> if one could not be located
 	 * @since 3.5
 	 */
-	protected IMarker findExistingMarker(Map attributes, IBreakpointImportParticipant[] participants) {
+	protected IMarker findExistingMarker(Map<String, Object> attributes, IBreakpointImportParticipant[] participants) {
 		IBreakpoint[] bps = fManager.getBreakpoints();		 
 		for(int i = 0; i < bps.length; i++) {
 			for(int j = 0; j < participants.length; j++) {
@@ -280,8 +276,8 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * @return a new map of all of the breakpoint attributes from the given memento.
 	 * @since 3.5
 	 */
-	protected Map collectBreakpointProperties(IMemento memento) {
-		HashMap map = new HashMap();
+	protected Map<String, Object> collectBreakpointProperties(IMemento memento) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
 		
 		//collect attributes from the 'breakpoint' node
 		map.put(IImportExportConstants.IE_BP_ENABLED, memento.getBoolean(IImportExportConstants.IE_BP_ENABLED));
@@ -310,7 +306,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * @param memento the memento to read a name / value attribute from 
 	 * @param map the map to add the read attribute to
 	 */
-	private void readAttribute(IMemento memento, Map map) {
+	private void readAttribute(IMemento memento, Map<String, Object> map) {
 		String name = memento.getString(IImportExportConstants.IE_NODE_NAME), 
 		   	   value = memento.getString(IImportExportConstants.IE_NODE_VALUE);
 		if (value != null && name != null) {
@@ -339,14 +335,12 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * @param participants the list of participants used to verify the restored breakpoint
 	 * @since 3.5
 	 */
-	protected void restoreBreakpoint(IMarker marker, final Map attributes, IBreakpointImportParticipant[] participants) {
-		String key = null;
-		for(Iterator iter = attributes.keySet().iterator(); iter.hasNext();) {
-			key = (String) iter.next();
+	protected void restoreBreakpoint(IMarker marker, final Map<String, Object> attributes, IBreakpointImportParticipant[] participants) {
+		for (Entry<String, Object> entry : attributes.entrySet()) {
 			try {
-				marker.setAttribute(key, attributes.get(key));
+				marker.setAttribute(entry.getKey(), entry.getValue());
+			} catch (CoreException ce) {
 			}
-			catch(CoreException ce) {}
 		}
 		IBreakpoint breakpoint = null;
 		try {
@@ -386,14 +380,13 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 */
 	private void updateWorkingSets(String[] wsnames, IBreakpoint breakpoint) {
 		IWorkingSetManager mgr = PlatformUI.getWorkbench().getWorkingSetManager();
-		IWorkingSet set = null;
-		ArrayList sets = new ArrayList();
+		ArrayList<IWorkingSet> sets = new ArrayList<IWorkingSet>();
 		collectContainingWorkingsets(breakpoint, sets);
 		for (int i = 0; i < wsnames.length; i++) {
 			if("".equals(wsnames[i])) { //$NON-NLS-1$
 				continue;
 			}
-			set = mgr.getWorkingSet(wsnames[i]);
+			IWorkingSet set = mgr.getWorkingSet(wsnames[i]);
 			if(set == null) {
 				//create working set
 				set = mgr.createWorkingSet(wsnames[i], new IAdaptable[] {});
@@ -409,12 +402,11 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 			}
 			sets.remove(set);
 		}
-		ArrayList items = null;
-		for(Iterator iter = sets.iterator(); iter.hasNext();) {
-			set = (IWorkingSet) iter.next();
-			items = new ArrayList(Arrays.asList(set.getElements()));
+		ArrayList<IAdaptable> items = null;
+		for (IWorkingSet set : sets) {
+			items = new ArrayList<IAdaptable>(Arrays.asList(set.getElements()));
 			if(items.remove(breakpoint)) {
-				set.setElements((IAdaptable[]) items.toArray(new IAdaptable[items.size()]));
+				set.setElements(items.toArray(new IAdaptable[items.size()]));
 			}
 		}
 	}
@@ -427,7 +419,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * @param collector the list to collect containing working sets in 
 	 * @since 3.5
 	 */
-	private void collectContainingWorkingsets(IBreakpoint breakpoint, List collector) {
+	private void collectContainingWorkingsets(IBreakpoint breakpoint, List<IWorkingSet> collector) {
 		IWorkingSetManager mgr = PlatformUI.getWorkbench().getWorkingSetManager();
 		IWorkingSet[] sets = mgr.getWorkingSets();
 		for (int i = 0; i < sets.length; i++) {
@@ -462,6 +454,6 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * @since 3.5
 	 */
 	public IBreakpoint[] getImportedBreakpoints() {
-		return (IBreakpoint[])fAdded.toArray(new IBreakpoint[fAdded.size()]);
+		return fAdded.toArray(new IBreakpoint[fAdded.size()]);
 	}
 }

@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Wind River Systems and others.
+ * Copyright (c) 2009, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipe.debug.tests.viewer.model;
 
@@ -24,28 +25,29 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * 
+ *
  */
 public class TreeModelViewerAutopopulateAgent implements IViewerUpdateListener {
 
     private TreeModelViewer fViewer;
-    
-    
+
+
     public TreeModelViewerAutopopulateAgent(TreeModelViewer viewer) {
         fViewer = viewer;
         fViewer.addViewerUpdateListener(this);
     }
-    
+
     public void dispose() {
         fViewer.removeViewerUpdateListener(this);
         fViewer = null;
     }
-    
-    public void updateComplete(IViewerUpdate update) {
+
+    @Override
+	public void updateComplete(IViewerUpdate update) {
         if (update instanceof IChildrenCountUpdate) {
             TreePath path = update.getElementPath();
-            ILazyTreePathContentProvider contentProvider = (ILazyTreePathContentProvider) fViewer.getContentProvider(); 
-                
+            ILazyTreePathContentProvider contentProvider = (ILazyTreePathContentProvider) fViewer.getContentProvider();
+
             Widget[] items = fViewer.testFindItems(update.getElement());
             for (int i = 0; i < items.length; i++) {
                 if ( path.equals(getTreePath(items[i])) ) {
@@ -58,25 +60,28 @@ public class TreeModelViewerAutopopulateAgent implements IViewerUpdateListener {
         }
     }
 
-    public void updateStarted(IViewerUpdate update) {
+    @Override
+	public void updateStarted(IViewerUpdate update) {
         // TODO Auto-generated method stub
 
     }
 
-    public void viewerUpdatesBegin() {
+    @Override
+	public void viewerUpdatesBegin() {
         // TODO Auto-generated method stub
 
     }
 
-    public void viewerUpdatesComplete() {
+    @Override
+	public void viewerUpdatesComplete() {
         // TODO Auto-generated method stub
 
     }
-    
+
     private TreePath getTreePath(Widget w) {
         if (w instanceof TreeItem) {
             TreeItem item = (TreeItem)w;
-            LinkedList segments = new LinkedList();
+			LinkedList<Object> segments = new LinkedList<Object>();
             while (item != null) {
                 Object segment = item.getData();
                 Assert.isNotNull(segment);
@@ -95,5 +100,5 @@ public class TreeModelViewerAutopopulateAgent implements IViewerUpdateListener {
             return ((TreeItem)w).getItemCount();
         }
         return 0;
-    }        
+    }
 }

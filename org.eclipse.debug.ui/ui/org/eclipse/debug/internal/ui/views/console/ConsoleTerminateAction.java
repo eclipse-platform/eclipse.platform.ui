@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.commands.ITerminateHandler;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -57,6 +58,7 @@ public class ConsoleTerminateAction extends Action implements IUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
+	@Override
 	public void update() {
 		IProcess process = fConsole.getProcess(); 
 		setEnabled(process.canTerminate());
@@ -65,9 +67,10 @@ public class ConsoleTerminateAction extends Action implements IUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		IProcess process = fConsole.getProcess();
-		List targets = collectTargets(process);
+		List<ITerminate> targets = collectTargets(process);
 		targets.add(process);
         DebugCommandService service = DebugCommandService.getService(fWindow);
         service.executeCommand(ITerminateHandler.class, targets.toArray(), null);
@@ -79,10 +82,10 @@ public class ConsoleTerminateAction extends Action implements IUpdate {
 	 * @param process the process to collect {@link IDebugTarget}s for
 	 * @return associated targets
 	 */
-	private List collectTargets(IProcess process) {
+	private List<ITerminate> collectTargets(IProcess process) {
         ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
         ILaunch[] launches = launchManager.getLaunches();
-        List targets = new ArrayList();
+		List<ITerminate> targets = new ArrayList<ITerminate>();
         for (int i = 0; i < launches.length; i++) {
             ILaunch launch = launches[i];
             IProcess[] processes = launch.getProcesses();

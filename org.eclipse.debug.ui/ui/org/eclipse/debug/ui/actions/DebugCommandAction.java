@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,7 +80,8 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
     private IAction fAction;
 
     private IEnabledTarget fEnabledTarget = new IEnabledTarget() {
-        public void setEnabled(boolean enabled) {
+        @Override
+		public void setEnabled(boolean enabled) {
             DebugCommandAction.this.setEnabled(enabled);
         }
     };
@@ -91,8 +92,9 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
     public DebugCommandAction() {
         super();
         String helpContextId = getHelpContextId();
-        if (helpContextId != null)
-            PlatformUI.getWorkbench().getHelpSystem().setHelp(this, helpContextId);
+        if (helpContextId != null) {
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, helpContextId);
+		}
         setEnabled(false);
     }
 
@@ -118,7 +120,8 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
     	return fUpdateService.executeCommand(
     	    getCommandType(), targets, 
     	    new ICommandParticipant() {
-    	        public void requestDone(org.eclipse.debug.core.IRequest request) {
+    	        @Override
+				public void requestDone(org.eclipse.debug.core.IRequest request) {
     	            DebugCommandAction.this.postExecute(request, targets);
     	        }    	      
     	    });
@@ -145,19 +148,21 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * 
      * @see org.eclipse.debug.core.commands.IDebugCommandHandler
      */
-    abstract protected Class getCommandType();  
+	abstract protected Class<?> getCommandType();
 
     /**
      * @see org.eclipse.debug.ui.contexts.IDebugContextListener#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
      */
-    public void debugContextChanged(DebugContextEvent event) {
+    @Override
+	public void debugContextChanged(DebugContextEvent event) {
     	fUpdateService.postUpdateCommand(getCommandType(), fEnabledTarget);
 	}
 
     /**
      * @see org.eclipse.jface.action.Action#setEnabled(boolean)
      */
-    public void setEnabled(boolean enabled) {
+    @Override
+	public void setEnabled(boolean enabled) {
         synchronized (this) {
             if (!fInitialized) {
                 fInitialized = true;
@@ -240,7 +245,8 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * (non-Javadoc)
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         synchronized (this) {
             if (!fInitialized) {
                 try {
@@ -263,7 +269,8 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * (non-Javadoc)
      * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
      */
-    public void runWithEvent(Event event) {
+    @Override
+	public void runWithEvent(Event event) {
         run();
     }
 
@@ -302,37 +309,43 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * (non-Javadoc)
      * @see org.eclipse.jface.action.Action#getId()
      */
-    public abstract String getId();
+    @Override
+	public abstract String getId();
 
     /*
      * (non-Javadoc)
      * @see org.eclipse.jface.action.Action#getText()
      */
-    public abstract String getText();
+    @Override
+	public abstract String getText();
 
     /*
      * (non-Javadoc)
      * @see org.eclipse.jface.action.Action#getToolTipText()
      */
-    public abstract String getToolTipText();
+    @Override
+	public abstract String getToolTipText();
 
     /*
      * (non-Javadoc)
      * @see org.eclipse.jface.action.Action#getDisabledImageDescriptor()
      */
-    public abstract ImageDescriptor getDisabledImageDescriptor();
+    @Override
+	public abstract ImageDescriptor getDisabledImageDescriptor();
 
     /*
      * (non-Javadoc)
      * @see org.eclipse.jface.action.Action#getHoverImageDescriptor()
      */
-    public abstract ImageDescriptor getHoverImageDescriptor();
+    @Override
+	public abstract ImageDescriptor getHoverImageDescriptor();
 
     /*
      * (non-Javadoc)
      * @see org.eclipse.jface.action.Action#getImageDescriptor()
      */
-    public abstract ImageDescriptor getImageDescriptor();
+    @Override
+	public abstract ImageDescriptor getImageDescriptor();
     
     /**
      * Returns the workbench proxy associated with this action or <code>null</code>

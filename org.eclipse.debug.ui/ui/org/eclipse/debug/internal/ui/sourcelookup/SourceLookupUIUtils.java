@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ public class SourceLookupUIUtils {
 	 */
 	public static final String CONTAINER_ID_ATTRIBUTE = "containerTypeID";	//$NON-NLS-1$
 	
-	private static Hashtable fSourceContainerPresentationHashtable;
+	private static Hashtable<String, IConfigurationElement> fSourceContainerPresentationHashtable;
 	
 	/**
 	 * Constructor. Reads in Source Container Presentation extension implementations.
@@ -59,7 +59,7 @@ public class SourceLookupUIUtils {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), CONTAINER_PRESENTATION_EXTENSION);		
 		//read in SourceContainer presentation extensions
 		IConfigurationElement[] sourceContainerPresentationExtensions =extensionPoint.getConfigurationElements();
-		fSourceContainerPresentationHashtable = new Hashtable();
+		fSourceContainerPresentationHashtable = new Hashtable<String, IConfigurationElement>();
 		for (int i = 0; i < sourceContainerPresentationExtensions.length; i++) {
 			fSourceContainerPresentationHashtable.put(
 					sourceContainerPresentationExtensions[i].getAttribute(CONTAINER_ID_ATTRIBUTE),
@@ -75,8 +75,9 @@ public class SourceLookupUIUtils {
 	 * @return the image for the type specified
 	 */
 	public static Image getSourceContainerImage(String id){
-		if(fSourceContainerPresentationHashtable == null)
+		if(fSourceContainerPresentationHashtable == null) {
 			new SourceLookupUIUtils();
+		}
 		return DebugPluginImages.getImage(id);
 	}
 	
@@ -87,13 +88,15 @@ public class SourceLookupUIUtils {
 	 */
 	public static ISourceContainerBrowser getSourceContainerBrowser(String typeID)
 	{
-		if(fSourceContainerPresentationHashtable == null)
+		if(fSourceContainerPresentationHashtable == null) {
 			new SourceLookupUIUtils();
-		IConfigurationElement element = (IConfigurationElement)fSourceContainerPresentationHashtable.get(typeID);
+		}
+		IConfigurationElement element = fSourceContainerPresentationHashtable.get(typeID);
 		ISourceContainerBrowser browser = null;
 		try{
-			if(element!= null && element.getAttribute(BROWSER_CLASS_ATTRIBUTE) != null)
+			if(element!= null && element.getAttribute(BROWSER_CLASS_ATTRIBUTE) != null) {
 				browser = (ISourceContainerBrowser) element.createExecutableExtension(BROWSER_CLASS_ATTRIBUTE);
+			}
 		}catch(CoreException e){}
 		return browser;
 	}

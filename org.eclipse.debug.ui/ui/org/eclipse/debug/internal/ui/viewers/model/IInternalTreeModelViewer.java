@@ -35,7 +35,8 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @return an array of viewer filters
      * @see org.eclipse.jface.viewers.StructuredViewer#setFilters(ViewerFilter[])
      */    
-    public ViewerFilter[] getFilters();
+    @Override
+	public ViewerFilter[] getFilters();
 
     /**
      * Reveals the given element in the viewer.

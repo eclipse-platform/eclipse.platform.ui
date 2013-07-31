@@ -30,6 +30,7 @@ public class TableRenderingPrefAction extends ActionDelegate implements IViewAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		IPreferencePage page = new TableRenderingPreferencePage(DebugUIMessages.TableRenderingPrefAction_0);
 		showPreferencePage("org.eclipse.debug.ui.tableRenderingPreferencepage", page);	 //$NON-NLS-1$
@@ -38,6 +39,7 @@ public class TableRenderingPrefAction extends ActionDelegate implements IViewAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 	}
 	
@@ -49,6 +51,7 @@ public class TableRenderingPrefAction extends ActionDelegate implements IViewAct
 		final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);
 		final boolean [] result = new boolean[] { false };
 		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				dialog.create();
 				dialog.setMessage(targetNode.getLabelText());

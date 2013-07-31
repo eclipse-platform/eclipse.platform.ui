@@ -19,51 +19,56 @@ import org.eclipse.ui.IViewPart;
 
 /**
  * @since 3.0
- *
+ * 
  */
 public class RemoveRenderingContextAction implements IViewActionDelegate {
 
 	private IMemoryRenderingSite fMemoryView;
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
-		if (view instanceof IMemoryRenderingSite)
-		{
-			fMemoryView = (IMemoryRenderingSite)view;
+		if (view instanceof IMemoryRenderingSite) {
+			fMemoryView = (IMemoryRenderingSite) view;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		if (fMemoryView == null)
 			return;
-		
+
 		IMemoryRenderingContainer container = getRenderingContainer(action);
-		if (container != null)
-		{		
+		if (container != null) {
 			RemoveMemoryRenderingAction removeAction = new RemoveMemoryRenderingAction(container);
 			removeAction.run();
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
+	 * .IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		IMemoryRenderingContainer container = getRenderingContainer(action);
-		if (container instanceof RenderingViewPane)
-		{
-			if (!((RenderingViewPane)container).canRemoveRendering())
+		if (container instanceof RenderingViewPane) {
+			if (!((RenderingViewPane) container).canRemoveRendering())
 				action.setEnabled(false);
 			else
 				action.setEnabled(true);
 		}
 	}
-	
+
 	/**
 	 * @param action
 	 * @return
@@ -72,16 +77,14 @@ public class RemoveRenderingContextAction implements IViewActionDelegate {
 		IMemoryRenderingContainer[] viewPanes = fMemoryView.getMemoryRenderingContainers();
 		String actionId = action.getId();
 		IMemoryRenderingContainer selectedPane = null;
-		
-		for (int i=0; i<viewPanes.length; i++)
-		{
-			if (actionId.indexOf(viewPanes[i].getId()) != -1)
-			{
+
+		for (int i = 0; i < viewPanes.length; i++) {
+			if (actionId.indexOf(viewPanes[i].getId()) != -1) {
 				selectedPane = viewPanes[i];
 				break;
 			}
 		}
-		
+
 		return selectedPane;
 	}
 

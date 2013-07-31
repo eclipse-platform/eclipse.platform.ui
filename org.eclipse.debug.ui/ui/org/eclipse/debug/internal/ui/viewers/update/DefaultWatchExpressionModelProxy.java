@@ -50,9 +50,11 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
 	 */
+	@Override
 	public void installed(final Viewer viewer) {
 		super.installed(viewer);
 		UIJob job = new UIJob("install watch expression model proxy") { //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 			    if (!isDisposed()) {
     				IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -86,6 +88,7 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DefaultExpressionModelProxy#dispose()
 	 */
+	@Override
 	public synchronized void dispose() {
 		super.dispose();
 		if (fWindow != null) {
@@ -97,6 +100,7 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#createEventHandlers()
 	 */
+	@Override
 	protected DebugEventHandler[] createEventHandlers() {
 		return new DebugEventHandler[]{new ExpressionEventHandler(this)};
 	}
@@ -129,6 +133,7 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
 	 */
+	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
 			contextActivated(event.getContext());

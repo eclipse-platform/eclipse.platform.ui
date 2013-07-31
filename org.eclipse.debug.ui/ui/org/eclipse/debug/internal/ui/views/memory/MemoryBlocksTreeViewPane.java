@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
  *                 display memory blocks that do not reference IDebugTarget
  *     
  *******************************************************************************/
- 
+
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.util.ArrayList;
@@ -66,14 +66,13 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
-
 /**
  * Tree viewer for memory blocks
  */
-public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionChangedListener,  IMemoryViewPane, IMemoryRenderingContainer{
-	
+public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionChangedListener, IMemoryViewPane, IMemoryRenderingContainer {
+
 	public static final String PANE_ID = DebugUIPlugin.getUniqueIdentifier() + ".MemoryView.MemoryBlocksTreeViewPane"; //$NON-NLS-1$
-	
+
 	private IViewPart fParent;
 	private IPresentationContext fPresentationContext;
 	private MemoryViewTreeViewer fTreeViewer;
@@ -87,85 +86,83 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	private TreeViewPaneContextListener fDebugContextListener;
 	private ViewPaneEventHandler fEvtHandler;
 	private String fLabel;
-	
-	class TreeViewerRemoveMemoryBlocksAction extends Action
-	{
-		TreeViewerRemoveMemoryBlocksAction()
-		{
-			super();
-			setText(DebugUIMessages.RemoveMemoryBlockAction_title); 
 
-			setToolTipText(DebugUIMessages.RemoveMemoryBlockAction_tooltip); 
-			setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_MEMORY));	
+	class TreeViewerRemoveMemoryBlocksAction extends Action {
+		TreeViewerRemoveMemoryBlocksAction() {
+			super();
+			setText(DebugUIMessages.RemoveMemoryBlockAction_title);
+
+			setToolTipText(DebugUIMessages.RemoveMemoryBlockAction_tooltip);
+			setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_MEMORY));
 			setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_REMOVE_MEMORY));
 			setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_MEMORY));
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".RemoveMemoryBlockAction_context"); //$NON-NLS-1$
 			setEnabled(true);
 		}
-		
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
+		@Override
 		public void run() {
 			ISelection selected = fTreeViewer.getSelection();
-			
-			if (selected != null && selected instanceof IStructuredSelection)
-			{
-				Object[] selectedMemBlks = ((IStructuredSelection)selected).toArray();
-				ArrayList memoryBlocks = new ArrayList();
-				for (int i=0; i<selectedMemBlks.length; i++)
-				{
-					if (selectedMemBlks[i] instanceof IMemoryBlock)
+
+			if (selected != null && selected instanceof IStructuredSelection) {
+				Object[] selectedMemBlks = ((IStructuredSelection) selected).toArray();
+				ArrayList<Object> memoryBlocks = new ArrayList<Object>();
+				for (int i = 0; i < selectedMemBlks.length; i++) {
+					if (selectedMemBlks[i] instanceof IMemoryBlock) {
 						memoryBlocks.add(selectedMemBlks[i]);
+					}
 				}
-				
-				DebugPlugin.getDefault().getMemoryBlockManager().removeMemoryBlocks((IMemoryBlock[])memoryBlocks.toArray(new IMemoryBlock[memoryBlocks.size()]));
+
+				DebugPlugin.getDefault().getMemoryBlockManager().removeMemoryBlocks(memoryBlocks.toArray(new IMemoryBlock[memoryBlocks.size()]));
 			}
 		}
 	}
-	
-	class TreeViewerRemoveAllMemoryBlocksAction extends Action
-	{
-		TreeViewerRemoveAllMemoryBlocksAction()
-		{
-			super();
-			setText(DebugUIMessages.MemoryBlocksTreeViewPane_2); 
 
-			setToolTipText(DebugUIMessages.MemoryBlocksTreeViewPane_2); 
-			setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_ALL));	
+	class TreeViewerRemoveAllMemoryBlocksAction extends Action {
+		TreeViewerRemoveAllMemoryBlocksAction() {
+			super();
+			setText(DebugUIMessages.MemoryBlocksTreeViewPane_2);
+
+			setToolTipText(DebugUIMessages.MemoryBlocksTreeViewPane_2);
+			setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_ALL));
 			setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_ALL));
 			setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL));
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".RemoveAllMemoryBlocksAction_context"); //$NON-NLS-1$
 		}
-		
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
+		@Override
 		public void run() {
-			
-			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+
+			IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
 			if (window == null) {
 				return;
 			}
-			boolean proceed = MessageDialog.openQuestion(window.getShell(), DebugUIMessages.MemoryBlocksTreeViewPane_0, DebugUIMessages.MemoryBlocksTreeViewPane_1); // 
+			boolean proceed = MessageDialog.openQuestion(window.getShell(), DebugUIMessages.MemoryBlocksTreeViewPane_0, DebugUIMessages.MemoryBlocksTreeViewPane_1); //
 			if (proceed) {
 				IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(fRetrieval);
 				DebugPlugin.getDefault().getMemoryBlockManager().removeMemoryBlocks(memoryBlocks);
 			}
-		}		
+		}
 	}
-	
-	class ViewPaneEventHandler implements IMemoryBlockListener, IDebugEventSetListener
-	{
+
+	class ViewPaneEventHandler implements IMemoryBlockListener, IDebugEventSetListener {
 		private boolean fDisposed = false;
-		
-		public ViewPaneEventHandler()
-		{
+
+		public ViewPaneEventHandler() {
 			DebugPlugin.getDefault().getMemoryBlockManager().addListener(this);
 			DebugPlugin.getDefault().addDebugEventListener(this);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
@@ -174,54 +171,67 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			DebugPlugin.getDefault().removeDebugEventListener(this);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.core.memory.IMemoryBlockListener#MemoryBlockAdded(org.eclipse.debug.core.model.IMemoryBlock)
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.debug.internal.core.memory.IMemoryBlockListener#
+		 * MemoryBlockAdded(org.eclipse.debug.core.model.IMemoryBlock)
 		 */
+		@Override
 		public void memoryBlocksAdded(final IMemoryBlock[] memory) {
 			// if the content provider is disposed, do not handle event
-			if (fDisposed)
+			if (fDisposed) {
 				return;
+			}
 			updateActionsEnablement();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.core.memory.IMemoryBlockListener#MemoryBlockRemoved(org.eclipse.debug.core.model.IMemoryBlock)
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.debug.internal.core.memory.IMemoryBlockListener#
+		 * MemoryBlockRemoved(org.eclipse.debug.core.model.IMemoryBlock)
 		 */
+		@Override
 		public void memoryBlocksRemoved(final IMemoryBlock[] memory) {
-			if (fDisposed)
+			if (fDisposed) {
 				return;
+			}
 			updateActionsEnablement();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.views.memory.BasicDebugViewContentProvider#doHandleDebugEvent(org.eclipse.debug.core.DebugEvent)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.debug.internal.ui.views.memory.BasicDebugViewContentProvider
+		 * #doHandleDebugEvent(org.eclipse.debug.core.DebugEvent)
 		 */
 		protected void doHandleDebugEvent(DebugEvent event) {
-			
+
 			// if the view is disposed, do not handle event
-			if (fDisposed)
+			if (fDisposed) {
 				return;
-			
-			if (event.getKind() == DebugEvent.TERMINATE)
-			{
-				// should only handle the terminate event if the target is terminated
-				if (event.getSource() instanceof IDebugTarget)
-				{
+			}
+
+			if (event.getKind() == DebugEvent.TERMINATE) {
+				// should only handle the terminate event if the target is
+				// terminated
+				if (event.getSource() instanceof IDebugTarget) {
 					IMemoryBlockRetrieval srcRetrieval = MemoryViewUtil.getMemoryBlockRetrieval(event.getSource());
-					if (srcRetrieval == fRetrieval)
-					{
+					if (srcRetrieval == fRetrieval) {
 						// #setInput must be done on the UI thread
-						UIJob job = new UIJob("setInput"){ //$NON-NLS-1$
+						UIJob job = new UIJob("setInput") { //$NON-NLS-1$
+							@Override
 							public IStatus runInUIThread(IProgressMonitor monitor) {
-								
-								// if viewpane is disposed, do not handle event							
-								if (fTreeViewer.getContentProvider() == null)
-									return  Status.OK_STATUS;
-								
+
+								// if viewpane is disposed, do not handle event
+								if (fTreeViewer.getContentProvider() == null) {
+									return Status.OK_STATUS;
+								}
+
 								fTreeViewer.setInput(null);
 								return Status.OK_STATUS;
-							}};
-							
+							}
+						};
+
 						job.setSystem(true);
 						job.schedule();
 					}
@@ -229,37 +239,32 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			}
 		}
 
+		@Override
 		public void handleDebugEvents(DebugEvent[] events) {
-			for (int i=0; i<events.length; i++)
-			{
+			for (int i = 0; i < events.length; i++) {
 				doHandleDebugEvent(events[i]);
 			}
 		}
 	}
-	
-	class TreeViewPaneContextListener implements IDebugContextListener
-	{
+
+	class TreeViewPaneContextListener implements IDebugContextListener {
 		public void contextActivated(ISelection selection) {
-			
-			if (selection.isEmpty() && fRetrieval != null)
-			{
+
+			if (selection.isEmpty() && fRetrieval != null) {
 				fRetrieval = null;
-				if (fTreeViewer != null && fTreeViewer.getContentProvider() != null)
+				if (fTreeViewer != null && fTreeViewer.getContentProvider() != null) {
 					fTreeViewer.setInput(fRetrieval);
+				}
 				updateActionsEnablement();
 				return;
 			}
-			
-			if (selection instanceof IStructuredSelection)
-			{		
-				Object obj = ((IStructuredSelection)selection).getFirstElement();
-				if (obj instanceof IAdaptable)
-				{
-					IAdaptable context = (IAdaptable)obj;
+
+			if (selection instanceof IStructuredSelection) {
+				Object obj = ((IStructuredSelection) selection).getFirstElement();
+				if (obj instanceof IAdaptable) {
+					IAdaptable context = (IAdaptable) obj;
 					IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
-					if (retrieval != null && retrieval != fRetrieval &&
-						fTreeViewer != null && fTreeViewer.getContentProvider() != null)
-					{
+					if (retrieval != null && retrieval != fRetrieval && fTreeViewer != null && fTreeViewer.getContentProvider() != null) {
 						// set new setting
 						fRetrieval = retrieval;
 						fTreeViewer.setInput(fRetrieval);
@@ -269,79 +274,85 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextEvent(org.eclipse.debug.internal.ui.contexts.provisional.DebugContextEvent)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener
+		 * #contextEvent(org.eclipse.debug.internal.ui.contexts.provisional.
+		 * DebugContextEvent)
 		 */
+		@Override
 		public void debugContextChanged(DebugContextEvent event) {
 			if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
 				contextActivated(event.getContext());
 			}
 		}
 	}
-	
-	public MemoryBlocksTreeViewPane(IViewPart parent)
-	{
+
+	public MemoryBlocksTreeViewPane(IViewPart parent) {
 		fParent = parent;
 		fSelectionProvider = new ViewPaneSelectionProvider();
 	}
-	
-	public Control createViewPane(Composite parent, String paneId, String label)
-	{
+
+	@Override
+	public Control createViewPane(Composite parent, String paneId, String label) {
 		fPaneId = paneId;
 		int style = SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL;
 
 		fLabel = label;
-		
+
 		IMemoryRenderingSite site = getMemoryRenderingSite();
 		fPresentationContext = new MemoryViewPresentationContext(site, this, null);
 		fTreeViewer = new MemoryViewTreeViewer(parent, style, fPresentationContext);
-		
+
 		IAdaptable context = DebugUITools.getPartDebugContext(fParent.getSite());
 		IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
-		if (retrieval != null)
+		if (retrieval != null) {
 			fTreeViewer.setInput(retrieval);
-		
+		}
+
 		fRetrieval = retrieval;
-		
+
 		fParent.getViewSite().getSelectionProvider().addSelectionChangedListener(this);
 		fParent.getViewSite().getPage().addSelectionListener(this);
-		
+
 		fDebugContextListener = new TreeViewPaneContextListener();
 		DebugUITools.addPartDebugContextListener(fParent.getSite(), fDebugContextListener);
-		
+
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection treeSelected = event.getSelection();
 				fSelectionProvider.setSelection(treeSelected);
-			}});
+			}
+		});
 
 		updateRetrieval();
 		fEvtHandler = new ViewPaneEventHandler();
-		
+
 		// create context menu
 		MenuManager mgr = createContextMenuManager();
 		Menu menu = mgr.createContextMenu(fTreeViewer.getControl());
 		fTreeViewer.getControl().setMenu(menu);
-		
+
 		GridData data = new GridData();
 		data.grabExcessHorizontalSpace = true;
 		data.grabExcessVerticalSpace = true;
 		data.horizontalAlignment = SWT.FILL;
 		data.verticalAlignment = SWT.FILL;
 		fTreeViewer.getControl().setLayoutData(data);
-		
+
 		updateActionsEnablement();
-		
+
 		return fTreeViewer.getControl();
 	}
-	
-	
+
 	/**
 	 * 
 	 */
 	private void updateRetrieval() {
-		
+
 		Object context = DebugUITools.getPartDebugContext(fParent.getSite());
 		fRetrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
 	}
@@ -350,6 +361,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				manager.add(fAddMemoryBlockAction);
 				manager.add(fRemoveMemoryBlockAction);
@@ -361,212 +373,238 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		fParent.getSite().registerContextMenu(getId(), menuMgr, fSelectionProvider);
 		return menuMgr;
 	}
-	
-	public void dispose()
-	{
+
+	@Override
+	public void dispose() {
 		fParent.getViewSite().getSelectionProvider().removeSelectionChangedListener(this);
-		fParent.getViewSite().getPage().removeSelectionListener(this); 
+		fParent.getViewSite().getPage().removeSelectionListener(this);
 		fAddMemoryBlockAction.dispose();
 		DebugUITools.removePartDebugContextListener(fParent.getSite(), fDebugContextListener);
-		fEvtHandler.dispose();	
-        fPresentationContext.dispose();
+		fEvtHandler.dispose();
+		fPresentationContext.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.
+	 * IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		
 
+		if (selection instanceof IStructuredSelection) {
+			Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-		if (selection instanceof IStructuredSelection)
-		{
-			Object obj = ((IStructuredSelection)selection).getFirstElement();
-		
-			if (obj instanceof IMemoryBlock)
-			{
+			if (obj instanceof IMemoryBlock) {
 				// if the selection event comes from this view
-				if (part == fParent)
-				{
-					// do not change selection if the selection is already correct
+				if (part == fParent) {
+					// do not change selection if the selection is already
+					// correct
 					ISelection treeSel = fTreeViewer.getSelection();
-					if (treeSel instanceof IStructuredSelection)
-					{
-						if (((IStructuredSelection)treeSel).getFirstElement() == obj)
+					if (treeSel instanceof IStructuredSelection) {
+						if (((IStructuredSelection) treeSel).getFirstElement() == obj) {
 							return;
+						}
 					}
-					// remove itself as selection listener when handling selection changed event
+					// remove itself as selection listener when handling
+					// selection changed event
 					removeSelctionListener(this);
 					fTreeViewer.setSelection(selection);
-					// remove itself as selection listener when handling selection changed event
+					// remove itself as selection listener when handling
+					// selection changed event
 					addSelectionListener(this);
 				}
 			}
 		}
-		
+
 	}
 
-
-	
-	public String getId()
-	{
+	@Override
+	public String getId() {
 		return fPaneId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#getActions()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#getActions()
 	 */
+	@Override
 	public IAction[] getActions() {
-		
-		if (fAddMemoryBlockAction == null)
-			fAddMemoryBlockAction = new RetargetAddMemoryBlockAction((IMemoryRenderingSite)fParent);
-		
-		if (fRemoveMemoryBlockAction == null)
-		{
+
+		if (fAddMemoryBlockAction == null) {
+			fAddMemoryBlockAction = new RetargetAddMemoryBlockAction((IMemoryRenderingSite) fParent);
+		}
+
+		if (fRemoveMemoryBlockAction == null) {
 			fRemoveMemoryBlockAction = new TreeViewerRemoveMemoryBlocksAction();
 		}
-		
-		if (fRemoveAllMemoryBlocksAction == null)
-		{
+
+		if (fRemoveAllMemoryBlocksAction == null) {
 			fRemoveAllMemoryBlocksAction = new TreeViewerRemoveAllMemoryBlocksAction();
 		}
-		
+
 		updateActionsEnablement();
-		
-		return new IAction[]{fAddMemoryBlockAction, fRemoveMemoryBlockAction, fRemoveAllMemoryBlocksAction};
+
+		return new IAction[] {
+				fAddMemoryBlockAction, fRemoveMemoryBlockAction,
+				fRemoveAllMemoryBlocksAction };
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#addSelectionListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#
+	 * addSelectionListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
-	public void addSelectionListener(ISelectionChangedListener listener)
-	{
-		if (fSelectionProvider == null)
+	@Override
+	public void addSelectionListener(ISelectionChangedListener listener) {
+		if (fSelectionProvider == null) {
 			fSelectionProvider = new ViewPaneSelectionProvider();
-		
+		}
+
 		fSelectionProvider.addSelectionChangedListener(listener);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#removeSelctionListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#
+	 * removeSelctionListener
+	 * (org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
-	public void removeSelctionListener(ISelectionChangedListener listener)
-	{
-		if (fSelectionProvider == null)
+	@Override
+	public void removeSelctionListener(ISelectionChangedListener listener) {
+		if (fSelectionProvider == null) {
 			return;
-		
+		}
+
 		fSelectionProvider.removeSelectionChangedListener(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#getSelectionProvider()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#
+	 * getSelectionProvider()
 	 */
+	@Override
 	public ISelectionProvider getSelectionProvider() {
 		return fSelectionProvider;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#restoreViewPane()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#restoreViewPane
+	 * ()
 	 */
+	@Override
 	public void restoreViewPane() {
 		updateRetrieval();
 		updateActionsEnablement();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#getControl()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return fTreeViewer.getControl();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#setVisible(boolean)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#setVisible
+	 * (boolean)
 	 */
+	@Override
 	public void setVisible(boolean visible) {
-		if (fVisible != visible)
-		{
+		if (fVisible != visible) {
 			fVisible = visible;
-			
-			if(fVisible)
-			{
+
+			if (fVisible) {
 				fTreeViewer.refresh();
 				fTreeViewer.getControl().setFocus();
 			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#isVisible()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#isVisible()
 	 */
+	@Override
 	public boolean isVisible() {
 		return fVisible;
 	}
-	
-	private void updateActionsEnablement()
-	{
-		if (fRemoveMemoryBlockAction == null)
+
+	private void updateActionsEnablement() {
+		if (fRemoveMemoryBlockAction == null) {
 			return;
-		
-		if (fRemoveAllMemoryBlocksAction == null)
+		}
+
+		if (fRemoveAllMemoryBlocksAction == null) {
 			return;
-		
-		if (fRetrieval != null)
-		{
+		}
+
+		if (fRetrieval != null) {
 			IMemoryBlock[] memBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(fRetrieval);
-			if(memBlocks.length > 0)
-			{
+			if (memBlocks.length > 0) {
 				fRemoveMemoryBlockAction.setEnabled(true);
 				fRemoveAllMemoryBlocksAction.setEnabled(true);
-			}
-			else
-			{
+			} else {
 				fRemoveMemoryBlockAction.setEnabled(false);
-				fRemoveAllMemoryBlocksAction.setEnabled(false);				
+				fRemoveAllMemoryBlocksAction.setEnabled(false);
 			}
-		}
-		else
-		{
+		} else {
 			fRemoveMemoryBlockAction.setEnabled(false);
 			fRemoveAllMemoryBlocksAction.setEnabled(false);
 		}
 	}
 
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		// only handle selection changed from parent's selection provider
-		if (event.getSource() == fParent.getSite().getSelectionProvider())
-		{
+		if (event.getSource() == fParent.getSite().getSelectionProvider()) {
 			MemoryBlocksTreeViewPane.this.selectionChanged(fParent, event.getSelection());
 		}
 	}
-	
-	public StructuredViewer getViewer()
-	{
+
+	public StructuredViewer getViewer() {
 		return fTreeViewer;
 	}
 
+	@Override
 	public IMemoryRenderingSite getMemoryRenderingSite() {
-		if (fParent instanceof IMemoryRenderingSite)
-			return (IMemoryRenderingSite)fParent;
+		if (fParent instanceof IMemoryRenderingSite) {
+			return (IMemoryRenderingSite) fParent;
+		}
 		return null;
 	}
 
+	@Override
 	public void addMemoryRendering(IMemoryRendering rendering) {
 		// do nothing
 	}
 
+	@Override
 	public void removeMemoryRendering(IMemoryRendering rendering) {
 		// do nothing
 	}
 
+	@Override
 	public IMemoryRendering[] getRenderings() {
 		return new IMemoryRendering[0];
 	}
 
+	@Override
 	public IMemoryRendering getActiveRendering() {
 		return null;
 	}
 
+	@Override
 	public String getLabel() {
 		return fLabel;
 	}

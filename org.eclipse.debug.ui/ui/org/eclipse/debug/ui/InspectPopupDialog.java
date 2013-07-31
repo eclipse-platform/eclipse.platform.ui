@@ -94,7 +94,8 @@ public class InspectPopupDialog extends DebugPopup {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.DebugPopup#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createDialogArea(Composite parent) {
+    @Override
+	protected Control createDialogArea(Composite parent) {
         Composite composite = new Composite(parent, parent.getStyle());
         GridLayout layout = new GridLayout();
         composite.setLayout(layout);
@@ -125,10 +126,12 @@ public class InspectPopupDialog extends DebugPopup {
       
         fTree = fViewer.getTree();
         fTree.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
             	fDetailPane.display((IStructuredSelection)fViewer.getSelection());
             }
-            public void widgetDefaultSelected(SelectionEvent e) {}
+            @Override
+			public void widgetDefaultSelected(SelectionEvent e) {}
         });
 
         initSashWeights();
@@ -147,12 +150,16 @@ public class InspectPopupDialog extends DebugPopup {
         TreeRoot treeRoot = new TreeRoot();
         // add update listener to auto-select and display details of root expression
         fViewer.addViewerUpdateListener(new IViewerUpdateListener() {
+			@Override
 			public void viewerUpdatesComplete() {
 			}		
+			@Override
 			public void viewerUpdatesBegin() {
 			}
+			@Override
 			public void updateStarted(IViewerUpdate update) {
 			}
+			@Override
 			public void updateComplete(IViewerUpdate update) {
 				if (update instanceof IChildrenUpdate) {
 					TreeSelection selection = new TreeSelection(new TreePath(new Object[]{fExpression}));
@@ -191,7 +198,8 @@ public class InspectPopupDialog extends DebugPopup {
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.PopupDialog#saveDialogBounds(org.eclipse.swt.widgets.Shell)
      */
-    protected void saveDialogBounds(Shell shell) {
+    @Override
+	protected void saveDialogBounds(Shell shell) {
     	super.saveDialogBounds(shell);
     	if (fSashForm != null && !fSashForm.isDisposed()){
 	    	int[] weights = fSashForm.getWeights();
@@ -219,12 +227,14 @@ public class InspectPopupDialog extends DebugPopup {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 		 */
+		@Override
 		protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 			return 1;
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 		 */
+		@Override
 		protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 			return new Object[] { fExpression };
 		}
@@ -232,6 +242,7 @@ public class InspectPopupDialog extends DebugPopup {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#supportsContextId(java.lang.String)
 		 */
+		@Override
 		protected boolean supportsContextId(String id) {
 			return true;
 		}
@@ -261,7 +272,8 @@ public class InspectPopupDialog extends DebugPopup {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.DebugPopup#close()
      */
-    public boolean close() {
+    @Override
+	public boolean close() {
     	if (!wasPersisted()) {
     		fExpression.dispose();
     	}
@@ -273,14 +285,16 @@ public class InspectPopupDialog extends DebugPopup {
 	/* (non-Javadoc)
      * @see org.eclipse.debug.ui.DebugPopup#getActionText()
      */
-    protected String getActionText() {
+    @Override
+	protected String getActionText() {
 		return DebugUIViewsMessages.InspectPopupDialog_0;
 	}
 
 	/* (non-Javadoc)
      * @see org.eclipse.debug.ui.DebugPopup#persist()
      */
-    protected void persist() {
+    @Override
+	protected void persist() {
     	super.persist();
         DebugPlugin.getDefault().getExpressionManager().addExpression(fExpression);
 
@@ -300,7 +314,8 @@ public class InspectPopupDialog extends DebugPopup {
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.PopupDialog#getInitialSize()
      */
-    protected Point getInitialSize() {
+    @Override
+	protected Point getInitialSize() {
         Point initialSize = super.getInitialSize();
         initialSize.x = Math.max(initialSize.x, MIN_WIDTH);
         initialSize.y = Math.max(initialSize.y, MIN_HEIGHT);
@@ -310,8 +325,9 @@ public class InspectPopupDialog extends DebugPopup {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.PopupDialog#getBackgroundColorExclusions()
 	 */
-	protected List getBackgroundColorExclusions() {
-		List list = super.getBackgroundColorExclusions();
+	@Override
+	protected List<Control> getBackgroundColorExclusions() {
+		List<Control> list = super.getBackgroundColorExclusions();
 		list.add(fSashForm);
 		return list;
 	}
@@ -325,6 +341,7 @@ public class InspectPopupDialog extends DebugPopup {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getCurrentPaneID()
 		 */
+		@Override
 		public String getCurrentPaneID() {
 			return fDetailPane.getCurrentPaneID();
 		}
@@ -332,6 +349,7 @@ public class InspectPopupDialog extends DebugPopup {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getCurrentSelection()
 		 */
+		@Override
 		public IStructuredSelection getCurrentSelection() {
 			return (IStructuredSelection)fViewer.getSelection();
 		}
@@ -339,6 +357,7 @@ public class InspectPopupDialog extends DebugPopup {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#refreshDetailPaneContents()
 		 */
+		@Override
 		public void refreshDetailPaneContents() {		
 			fDetailPane.display(getCurrentSelection());
 		}
@@ -346,6 +365,7 @@ public class InspectPopupDialog extends DebugPopup {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getParentComposite()
 		 */
+		@Override
 		public Composite getParentComposite() {
 			return fDetailPaneComposite;
 		}
@@ -353,6 +373,7 @@ public class InspectPopupDialog extends DebugPopup {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getWorkbenchPartSite()
 		 */
+		@Override
 		public IWorkbenchPartSite getWorkbenchPartSite() {
 			return null;
 		}
@@ -360,6 +381,7 @@ public class InspectPopupDialog extends DebugPopup {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#paneChanged(java.lang.String)
 		 */
+		@Override
 		public void paneChanged(String newPaneID) {
 			if (newPaneID.equals(DefaultDetailPane.ID)){
 				Display display = getShell().getDisplay();

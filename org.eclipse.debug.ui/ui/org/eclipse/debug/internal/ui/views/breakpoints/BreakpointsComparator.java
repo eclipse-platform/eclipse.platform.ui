@@ -34,6 +34,7 @@ public class BreakpointsComparator extends ViewerComparator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerComparator#isSorterProperty(java.lang.Object, java.lang.String)
 	 */
+	@Override
 	public boolean isSorterProperty(Object element,String propertyId) {
 		return propertyId.equals(IBasicPropertyConstants.P_TEXT);
 	}
@@ -56,6 +57,7 @@ public class BreakpointsComparator extends ViewerComparator {
 	 *  equal to the second element; and a positive number if the first
 	 *  element is greater than the second element
 	 */
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
         if (!(e1 instanceof IBreakpoint)) {
             return super.compare(viewer, e1, e2);

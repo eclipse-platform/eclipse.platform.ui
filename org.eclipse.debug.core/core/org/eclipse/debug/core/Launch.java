@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.debug.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
@@ -38,16 +37,15 @@ import org.eclipse.debug.internal.core.LaunchManager;
  * @see ILaunch
  * @see ILaunchManager
  */
-
 public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILaunchListener, ILaunchConfigurationListener, IDebugEventSetListener {
-	
+
 	/**
 	 * The debug targets associated with this
 	 * launch (the primary target is the first one
 	 * in this collection), or empty if
 	 * there are no debug targets.
 	 */
-	private List fTargets= new ArrayList();
+	private List<IDebugTarget> fTargets = new ArrayList<IDebugTarget>();
 
 	/**
 	 * The configuration that was launched, or null.
@@ -58,7 +56,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 * The system processes associated with
 	 * this launch, or empty if none.
 	 */
-	private List fProcesses= new ArrayList();
+	private List<IProcess> fProcesses = new ArrayList<IProcess>();
 
 	/**
 	 * The source locator to use in the debug session
@@ -70,19 +68,19 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 * The mode this launch was launched in.
 	 */
 	private String fMode;
-	
+
 	/**
 	 * Table of client defined attributes
 	 */
-	private HashMap fAttributes;	
-	
+	private HashMap<String, String> fAttributes;
+
 	/**
 	 * Flag indicating that change notification should
 	 * be suppressed. <code>true</code> until this
 	 * launch has been initialized.
 	 */
 	private boolean fSuppressChange = true;
-		
+
 	/**
 	 * Constructs a launch with the specified attributes.
 	 *
@@ -92,7 +90,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 * @param locator the source locator to use for this debug session, or
 	 * 	<code>null</code> if not supported
 	 */
-	public Launch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {		
+	public Launch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
 		fConfiguration = launchConfiguration;
 		setSourceLocator(locator);
 		fMode = mode;
@@ -100,35 +98,32 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		getLaunchManager().addLaunchListener(this);
 		getLaunchManager().addLaunchConfigurationListener(this);
 	}
-	
+
 	/**
 	 * Registers debug event listener.
 	 */
 	private void addEventListener() {
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
-	
+
 	/**
 	 * Removes debug event listener.
 	 */
 	private void removeEventListener() {
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
+	@Override
 	public boolean canTerminate() {
-		List processes = getProcesses0();
-		for (int i = 0; i < processes.size(); i++) {
-			IProcess process = (IProcess)processes.get(i);
+		for (IProcess process : getProcesses0()) {
 			if (process.canTerminate()) {
 				return true;
 			}
 		}
-		List targets = getDebugTargets0();
-		for (int i = 0; i < targets.size(); i++) {
-			IDebugTarget target = (IDebugTarget)targets.get(i);
+		for (IDebugTarget target : getDebugTargets0()) {
 			if (target.canTerminate() || target.canDisconnect()) {
 				return true;
 			}
@@ -139,8 +134,9 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/**
 	 * @see ILaunch#getChildren()
 	 */
+	@Override
 	public Object[] getChildren() {
-		ArrayList children = new ArrayList(getDebugTargets0());
+		ArrayList<Object> children = new ArrayList<Object>(getDebugTargets0());
 		children.addAll(getProcesses0());
 		return children.toArray();
 	}
@@ -148,77 +144,76 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/**
 	 * @see ILaunch#getDebugTarget()
 	 */
+	@Override
 	public IDebugTarget getDebugTarget() {
 		if (!getDebugTargets0().isEmpty()) {
-			return (IDebugTarget)getDebugTargets0().get(0);
+			return getDebugTargets0().get(0);
 		}
 		return null;
 	}
-		
+
 	/**
 	 * @see ILaunch#getProcesses()
 	 */
+	@Override
 	public IProcess[] getProcesses() {
-		return (IProcess[])getProcesses0().toArray(new IProcess[getProcesses0().size()]);
+		return getProcesses0().toArray(new IProcess[getProcesses0().size()]);
 	}
-	
+
 	/**
 	 * Returns the processes associated with this
 	 * launch, in its internal form - a list.
-	 * 
+	 *
 	 * @return list of processes
 	 */
-	protected List getProcesses0() {
+	protected List<IProcess> getProcesses0() {
 		return fProcesses;
-	}	
-	
+	}
+
 	/**
 	 * @see ILaunch#getSourceLocator()
 	 */
+	@Override
 	public ISourceLocator getSourceLocator() {
 		return fLocator;
 	}
-	
+
 	/**
 	 * @see ILaunch#setSourceLocator(ISourceLocator)
 	 */
+	@Override
 	public void setSourceLocator(ISourceLocator sourceLocator) {
 		fLocator = sourceLocator;
-	}	
+	}
 
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
+	@Override
 	public boolean isTerminated() {
 		if (getProcesses0().isEmpty() && getDebugTargets0().isEmpty()) {
 			return false;
 		}
-
-		Iterator processes = getProcesses0().iterator();
-		while (processes.hasNext()) {
-			IProcess process = (IProcess)processes.next();
+		for (IProcess process : getProcesses0()) {
 			if (!process.isTerminated()) {
 				return false;
 			}
 		}
-		
-		Iterator targets = getDebugTargets0().iterator();
-		while (targets.hasNext()) {
-			IDebugTarget target = (IDebugTarget)targets.next();
+		for (IDebugTarget target : getDebugTargets0()) {
 			if (!(target.isTerminated() || target.isDisconnected())) {
 				return false;
 			}
 		}
-		
 		return true;
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
+	@Override
 	public void terminate() throws DebugException {
-		MultiStatus status= 
-			new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, DebugCoreMessages.Launch_terminate_failed, null); 
+		MultiStatus status=
+			new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, DebugCoreMessages.Launch_terminate_failed, null);
 		//stop targets first to free up and sockets, etc held by the target
 		// terminate or disconnect debug target if it is still alive
 		IDebugTarget[] targets = getDebugTargets();
@@ -261,20 +256,22 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		IStatus[] children= status.getChildren();
 		if (children.length == 1) {
 			throw new DebugException(children[0]);
-		} 
+		}
 		throw new DebugException(status);
 	}
 
 	/**
 	 * @see ILaunch#getLaunchMode()
 	 */
+	@Override
 	public String getLaunchMode() {
 		return fMode;
 	}
-	
+
 	/**
 	 * @see ILaunch#getLaunchConfiguration()
 	 */
+	@Override
 	public ILaunchConfiguration getLaunchConfiguration() {
 		return fConfiguration;
 	}
@@ -282,43 +279,47 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/**
 	 * @see ILaunch#setAttribute(String, String)
 	 */
+	@Override
 	public void setAttribute(String key, String value) {
 		if (fAttributes == null) {
-			fAttributes = new HashMap(5);
+			fAttributes = new HashMap<String, String>(5);
 		}
-		fAttributes.put(key, value);		
+		fAttributes.put(key, value);
 	}
 
 	/**
 	 * @see ILaunch#getAttribute(String)
 	 */
+	@Override
 	public String getAttribute(String key) {
 		if (fAttributes == null) {
 			return null;
 		}
-		return (String)fAttributes.get(key);
+		return fAttributes.get(key);
 	}
 
 	/**
 	 * @see ILaunch#getDebugTargets()
 	 */
+	@Override
 	public IDebugTarget[] getDebugTargets() {
-		return (IDebugTarget[])fTargets.toArray(new IDebugTarget[fTargets.size()]);
+		return fTargets.toArray(new IDebugTarget[fTargets.size()]);
 	}
-	
+
 	/**
 	 * Returns the debug targets associated with this
 	 * launch, in its internal form - a list
-	 * 
+	 *
 	 * @return list of debug targets
 	 */
-	protected List getDebugTargets0() {
+	protected List<IDebugTarget> getDebugTargets0() {
 		return fTargets;
-	}	
+	}
 
 	/**
 	 * @see ILaunch#addDebugTarget(IDebugTarget)
 	 */
+	@Override
 	public void addDebugTarget(IDebugTarget target) {
 		if (target != null) {
 			if (!getDebugTargets0().contains(target)) {
@@ -328,21 +329,23 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 			}
 		}
 	}
-	
+
 	/**
 	 * @see ILaunch#removeDebugTarget(IDebugTarget)
 	 */
+	@Override
 	public void removeDebugTarget(IDebugTarget target) {
 		if (target != null) {
 			if (getDebugTargets0().remove(target)) {
 				fireChanged();
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * @see ILaunch#addProcess(IProcess)
 	 */
+	@Override
 	public void addProcess(IProcess process) {
 		if (process != null) {
 			if (!getProcesses0().contains(process)) {
@@ -352,21 +355,22 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 			}
 		}
 	}
-	
+
 	/**
 	 * @see ILaunch#removeProcess(IProcess)
 	 */
+	@Override
 	public void removeProcess(IProcess process) {
 		if (process != null) {
 			if (getProcesses0().remove(process)) {
 				fireChanged();
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * Adds the given processes to this launch.
-	 * 
+	 *
 	 * @param processes processes to add
 	 */
 	protected void addProcesses(IProcess[] processes) {
@@ -377,7 +381,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 			}
 		}
 	}
-	
+
 	/**
 	 * Notifies listeners that this launch has changed.
 	 * Has no effect of this launch has not yet been
@@ -402,84 +406,79 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		}
 		removeEventListener();
 	}
-	
+
 	/**
 	 * @see ILaunch#hasChildren()
 	 */
+	@Override
 	public boolean hasChildren() {
 		return getProcesses0().size() > 0 || (getDebugTargets0().size() > 0);
 	}
-	
+
 	/**
-     * Returns whether any processes or targets can be disconnected. 
+     * Returns whether any processes or targets can be disconnected.
      * Ones that are already terminated or disconnected are ignored.
-     * 
+     *
 	 * @see org.eclipse.debug.core.model.IDisconnect#canDisconnect()
 	 */
+	@Override
 	public boolean canDisconnect() {
-        List processes = getProcesses0();
-        for (int i = 0; i < processes.size(); i++) {
-            if (processes.get(i) instanceof IDisconnect) {
-                IDisconnect process = (IDisconnect)processes.get(i); 
-                if (process.canDisconnect()) {
-                    return true;
-                }
-            }
-        }
-        List targets = getDebugTargets0();
-        for (int i = 0; i < targets.size(); i++) {
-            if ( ((IDebugTarget)targets.get(i)).canDisconnect() ) {
-                return true;
-            }
-        }
+		for (IProcess process : getProcesses0()) {
+			if (process instanceof IDisconnect) {
+				if (((IDisconnect) process).canDisconnect()) {
+					return true;
+				}
+			}
+		}
+		for (IDebugTarget target : getDebugTargets0()) {
+			if (target.canDisconnect()) {
+				return true;
+			}
+		}
         return false;
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.model.IDisconnect#disconnect()
 	 */
+	@Override
 	public void disconnect() throws DebugException {
-        List processes = getProcesses0();
-        for (int i = 0; i < processes.size(); i++) {
-            if (processes.get(i) instanceof IDisconnect) {
-                IDisconnect disconnect = (IDisconnect)processes.get(i);
-                if (disconnect.canDisconnect()) {
-                    disconnect.disconnect();
-                }
-            }
-        }
-        List targets = getDebugTargets0();
-        for (int i = 0; i < targets.size(); i++) {
-            IDebugTarget debugTarget = (IDebugTarget)targets.get(i);
-            if (debugTarget.canDisconnect()) {
-                debugTarget.disconnect();
-            }
-        }
+		for (IProcess process : getProcesses0()) {
+			if (process instanceof IDisconnect) {
+				IDisconnect dis = (IDisconnect) process;
+				if (dis.canDisconnect()) {
+					dis.disconnect();
+				}
+			}
+		}
+		for (IDebugTarget target : getDebugTargets0()) {
+			if (target.canDisconnect()) {
+				target.disconnect();
+			}
+		}
 	}
 
 	/**
-     * Returns whether all of the contained targets and processes are 
-     * disconnected. Processes that don't support disconnecting are not 
+     * Returns whether all of the contained targets and processes are
+     * disconnected. Processes that don't support disconnecting are not
      * counted.
-     * 
+     *
 	 * @see org.eclipse.debug.core.model.IDisconnect#isDisconnected()
 	 */
+	@Override
 	public boolean isDisconnected() {
-        List processes = getProcesses0();
-        for (int i = 0; i < processes.size(); i++) {
-            if (processes.get(i) instanceof IDisconnect) {
-                IDisconnect process = (IDisconnect)processes.get(i); 
-                if (!process.isDisconnected()) {
-                    return false;
-                }
-            }
-        }
-        List targets = getDebugTargets0();
-        for (int i = 0; i < targets.size(); i++) {
-            if ( !((IDebugTarget)targets.get(i)).isDisconnected() ) {
-                return false;
-            }
-        }
+		for (IProcess process : getProcesses0()) {
+			if (process instanceof IDisconnect) {
+				if (!((IDisconnect) process).isDisconnected()) {
+					return false;
+				}
+			}
+		}
+		for (IDebugTarget target : getDebugTargets0()) {
+			if (!target.isDisconnected()) {
+				return false;
+			}
+		}
         // only return true if there are processes or targets that are disconnected
         return hasChildren();
 	}
@@ -487,6 +486,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchRemoved(ILaunch launch) {
 		if (this.equals(launch)) {
 			removeEventListener();
@@ -497,7 +497,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 
 	/**
 	 * Returns the launch manager.
-	 * 
+	 *
 	 * @return the launch manager.
 	 */
 	protected ILaunchManager getLaunchManager() {
@@ -507,22 +507,25 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchAdded(ILaunch launch) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchChanged(ILaunch launch) {
 	}
 
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * If the launch configuration this launch is associated with is
 	 * moved, update the underlying handle to the new location.
-	 *  
+	 *
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
 		ILaunchConfiguration from = getLaunchManager().getMovedFrom(configuration);
 		if (from != null && from.equals(getLaunchConfiguration())) {
@@ -534,15 +537,17 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {}
 
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Update the launch configuration associated with this launch if the
 	 * underlying configuration is deleted.
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
 		if (configuration.equals(getLaunchConfiguration())) {
 			if (getLaunchManager().getMovedTo(configuration) == null) {
@@ -555,6 +560,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
@@ -578,6 +584,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(ILaunch.class)) {
 			return this;
@@ -588,7 +595,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		}
 		return super.getAdapter(adapter);
 	}
-	
-	
+
+
 
 }

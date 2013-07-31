@@ -25,6 +25,7 @@ public class DebugUIAdapterFactory implements IAdapterFactory {
 	/**
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(Object, Class)
 	 */
+	@Override
 	public Object getAdapter(Object obj, Class adapterType) {
 		if (adapterType.isInstance(obj)) {
 			return obj;
@@ -54,6 +55,7 @@ public class DebugUIAdapterFactory implements IAdapterFactory {
 	/**
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	public Class[] getAdapterList() {
 		return new Class[] {IPersistableElement.class, IWorkbenchAdapter.class, IWorkbenchAdapter2.class};
 	}

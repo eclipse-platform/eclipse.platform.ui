@@ -12,9 +12,9 @@ package org.eclipse.debug.ui;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -113,19 +113,19 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * Map of actions. Keys are strings, values
 	 * are <code>IAction</code>.
 	 */
-	private Map fActionMap = null;
+	private Map<String, IAction> fActionMap = null;
 	
 	/**
 	 * Map of actions. Keys are strings, values
 	 * are <code>IAction</code>.
 	 */
-	private List fUpdateables = null;
+	private List<IUpdate> fUpdateables = null;
 	
 	/**
 	 * The collection of menu managers that are
 	 * relevant for this view.
 	 */
-	private List fContextMenuManagers;
+	private List<IMenuManager> fContextMenuManagers;
 	
 	/**
 	 * The memento that was used to persist the state of this view.
@@ -151,9 +151,9 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 */
 	private String fEarlyMessage= null;
 	
-	private static Set fgGlobalActionIds;
+	private static Set<String> fgGlobalActionIds;
 	static {
-		fgGlobalActionIds = new HashSet();
+		fgGlobalActionIds = new HashSet<String>();
 		fgGlobalActionIds.add(SELECT_ALL_ACTION);
 		fgGlobalActionIds.add(COPY_ACTION);
 		fgGlobalActionIds.add(CUT_ACTION);
@@ -173,6 +173,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		 * 
 		 * @see org.eclipse.ui.IPartListener2#partVisible(IWorkbenchPartReference)
 		 */
+		@Override
 		public void partVisible(IWorkbenchPartReference ref) {
 			IWorkbenchPart part= ref.getPart(false);
 			if (part == AbstractDebugView.this) {
@@ -183,6 +184,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		/**
 		 * @see org.eclipse.ui.IPartListener2#partHidden(IWorkbenchPartReference)
 		 */
+		@Override
 		public void partHidden(IWorkbenchPartReference ref) {
 			IWorkbenchPart part= ref.getPart(false);
 			if (part == AbstractDebugView.this) {
@@ -193,36 +195,42 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		/**
 		 * @see org.eclipse.ui.IPartListener2#partActivated(IWorkbenchPartReference)
 		 */
+		@Override
 		public void partActivated(IWorkbenchPartReference ref) {
 		}
 
 		/**
 		 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(IWorkbenchPartReference)
 		 */
+		@Override
 		public void partBroughtToTop(IWorkbenchPartReference ref) {
 		}
 
 		/**
 		 * @see org.eclipse.ui.IPartListener2#partClosed(IWorkbenchPartReference)
 		 */
+		@Override
 		public void partClosed(IWorkbenchPartReference ref) {
 		}
 
 		/**
 		 * @see org.eclipse.ui.IPartListener2#partDeactivated(IWorkbenchPartReference)
 		 */
+		@Override
 		public void partDeactivated(IWorkbenchPartReference ref) {
 		}
 
 		/**
 		 * @see org.eclipse.ui.IPartListener2#partOpened(IWorkbenchPartReference)
 		 */
+		@Override
 		public void partOpened(IWorkbenchPartReference ref) {
 		}
 		
 		/**
 		 * @see org.eclipse.ui.IPartListener2#partInputChanged(IWorkbenchPartReference)
 		 */
+		@Override
 		public void partInputChanged(IWorkbenchPartReference ref){
 		}
 
@@ -232,8 +240,8 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * Constructs a new debug view.
 	 */
 	public AbstractDebugView() {
-		fActionMap = new HashMap(5);
-		fUpdateables= new ArrayList(3);
+		fActionMap = new HashMap<String, IAction>(5);
+		fUpdateables = new ArrayList<IUpdate>(3);
 	}
 	
 	/**
@@ -244,6 +252,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 * @see IDebugView
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == IDebugView.class) {
 			return this;
@@ -268,6 +277,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		/**
 		 * @see IPage#createControl(Composite)
 		 */
+		@Override
 		public void createControl(Composite parent) {
 			Viewer viewer = createViewer(parent);
 			setViewer(viewer);			
@@ -276,6 +286,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		/**
 		 * @see IPage#getControl()
 		 */
+		@Override
 		public Control getControl() {
 			return getDefaultControl();
 		}
@@ -283,6 +294,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		/**
 		 * @see IPage#setFocus()
 		 */
+		@Override
 		public void setFocus() {
 			Viewer viewer= getViewer();
 			if (viewer != null) {
@@ -316,6 +328,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * @see AbstractDebugView#getHelpContextId()
 	 * @see AbstractDebugView#fillContextMenu(IMenuManager)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		registerPartListener();
 		super.createPartControl(parent);
@@ -331,6 +344,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		}
 		if (viewer != null) {
 			getViewer().getControl().addKeyListener(new KeyAdapter() {
+				@Override
 				public void keyPressed(KeyEvent e) {
 					handleKeyPressed(e);
 				}
@@ -355,6 +369,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * 
 	 * @see PageBookView#createDefaultPage(PageBook)
 	 */
+	@Override
 	protected IPage createDefaultPage(PageBook book) {
 		ViewerPage page = new ViewerPage();
 		page.createControl(book);
@@ -391,6 +406,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * @see IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		saveAllCheckedActionStates();
 		deregisterPartListener();
@@ -466,6 +482,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * @see IDebugView#getViewer()
 	 */
+	@Override
 	public Viewer getViewer() {
 		return fViewer;
 	}
@@ -501,6 +518,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * @see IDebugView#getPresentation(String)
 	 */
+	@Override
 	public IDebugModelPresentation getPresentation(String id) {
 		if (getViewer() instanceof StructuredViewer) {
 			IBaseLabelProvider lp = ((StructuredViewer)getViewer()).getLabelProvider();
@@ -533,6 +551,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		MenuManager menuMgr= new MenuManager("#PopUp"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager mgr) {
 				fillContextMenu(mgr);
 			}
@@ -552,6 +571,8 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * 
 	 * @deprecated @see AbstractDebugView.getContextMenuManagers()
 	 */
+	@Deprecated
+	@Override
 	public IMenuManager getContextMenuManager() {
 		if (fContextMenuManagers != null) {
 			fContextMenuManagers.get(fContextMenuManagers.size() - 1);
@@ -565,7 +586,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * @return the context menu managers relevant to this view
 	 * @since 2.1
 	 */
-	public List getContextMenuManagers() {
+	public List<IMenuManager> getContextMenuManagers() {
 		return fContextMenuManagers;
 	}
 	
@@ -598,6 +619,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		// This is done in a runnable to be run after this view's pane
 		// is created
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				if (!isAvailable()) {
 					return;
@@ -644,6 +666,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * @see IViewPart#init(IViewSite, IMemento)
 	 */
+	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		//store the memento to be used when this view is created.
@@ -673,6 +696,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * @see IDebugView#setAction(String, IAction)
 	 */
+	@Override
 	public void setAction(String actionID, IAction action) {
 		if (action == null) {
 			Object removedAction= fActionMap.remove(actionID);
@@ -680,7 +704,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		} else {
 			fActionMap.put(actionID, action);
 			if (action instanceof IUpdate) {
-				fUpdateables.add(action);
+				fUpdateables.add((IUpdate) action);
 			}
 		}
 		if (fgGlobalActionIds.contains(actionID)) {
@@ -692,17 +716,17 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * @see IDebugView#getAction(String)
 	 */
+	@Override
 	public IAction getAction(String actionID) {
-		return (IAction) fActionMap.get(actionID);
+		return fActionMap.get(actionID);
 	}
 	
 	/**
 	 * Updates all the registered updatables.
 	 */
 	public void updateObjects() {
-		Iterator actions = fUpdateables.iterator();
-		while (actions.hasNext()) {
-			((IUpdate)actions.next()).update();
+		for (IUpdate update : fUpdateables) {
+			update.update();
 		}
 	}
 			
@@ -728,6 +752,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 *  
 	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
 	 */
+	@Override
 	public void doubleClick(DoubleClickEvent event) {
 		IAction action = getAction(DOUBLE_CLICK_ACTION);
 		if (action != null && !event.getSelection().isEmpty() && action.isEnabled()) {
@@ -808,6 +833,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * @see PageBookView#isImportant(IWorkbenchPart)
 	 */
+	@Override
 	protected boolean isImportant(IWorkbenchPart part) {
 		return false;
 	}
@@ -815,6 +841,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * @see PageBookView#doCreatePage(IWorkbenchPart)
 	 */
+	@Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
 		return null;
 	}
@@ -822,12 +849,14 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * @see PageBookView#doDestroyPage(org.eclipse.ui.IWorkbenchPart, org.eclipse.ui.part.PageBookView.PageRec)
 	 */
+	@Override
 	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
 	}
 
 	/**
 	 * @see PageBookView#getBootstrapPart()
 	 */
+	@Override
 	protected IWorkbenchPart getBootstrapPart() {
 		return null;
 	}
@@ -908,6 +937,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * @see IDebugView#add(IUpdate)
 	 */
+	@Override
 	public void add(IUpdate updatable) {
 		if (!fUpdateables.contains(updatable)) {
 			fUpdateables.add(updatable);
@@ -917,6 +947,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * @see IDebugView#remove(IUpdate)
 	 */
+	@Override
 	public void remove(IUpdate updatable) {
 		fUpdateables.remove(updatable);
 	}
@@ -929,7 +960,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 */
 	public void addContextMenuManager(IMenuManager contextMenuManager) {
 		if (fContextMenuManagers == null) {
-			fContextMenuManagers= new ArrayList();
+			fContextMenuManagers = new ArrayList<IMenuManager>();
 		}
 		fContextMenuManagers.add(contextMenuManager);
 	}
@@ -993,14 +1024,14 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * presentation in this view associated with the given debug model
 	 * @since 3.0
 	 */
-	public Map getPresentationAttributes(String modelId) {
+	public Map<String, Object> getPresentationAttributes(String modelId) {
 		IDebugModelPresentation presentation = getPresentation(modelId);
 		if (presentation instanceof DelegatingModelPresentation) {
 			return ((DelegatingModelPresentation)presentation).getAttributeMap();
 		} else if (presentation instanceof LazyModelPresentation) {
 			return ((LazyModelPresentation)presentation).getAttributeMap();
 		}
-		return new HashMap();
+		return Collections.EMPTY_MAP;
 	}
 }	
 

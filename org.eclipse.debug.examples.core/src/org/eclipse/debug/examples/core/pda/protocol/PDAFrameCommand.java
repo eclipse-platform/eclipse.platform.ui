@@ -31,7 +31,8 @@ public class PDAFrameCommand extends PDACommand {
     }
     
 
-    public PDACommandResult createResult(String resultText) {
+    @Override
+	public PDACommandResult createResult(String resultText) {
         return new PDAFrameCommandResult(resultText);
     }
 }

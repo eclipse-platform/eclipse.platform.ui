@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
     /**
      * Map of elements to timer tasks
      */
-    private Map fTimerTasks = new HashMap();
+	private Map<Object, PendingSuspendTask> fTimerTasks = new HashMap<Object, PendingSuspendTask>();
 
     /**
      * Timer for timer tasks
@@ -40,7 +40,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
      * Map of event source to resume events with a pending suspend that timed
      * out.
      */
-    private Map fPendingSuspends = new HashMap();
+	private Map<Object, DebugEvent> fPendingSuspends = new HashMap<Object, DebugEvent>();
 
     /**
      * Event handlers for specific elements
@@ -73,7 +73,8 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
          * 
          * @see java.util.TimerTask#run()
          */
-        public void run() {
+        @Override
+		public void run() {
             synchronized (fPendingSuspends) {
                 fPendingSuspends.put(fEvent.getSource(), fEvent);
             }
@@ -89,7 +90,8 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
      */
     protected abstract DebugEventHandler[] createEventHandlers();
 
-    public synchronized void dispose() {
+    @Override
+	public synchronized void dispose() {
     	super.dispose();
         fTimer.cancel();
         fTimerTasks.clear();
@@ -100,7 +102,8 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
         }
     }
 
-    public void init(IPresentationContext context) {
+    @Override
+	public void init(IPresentationContext context) {
     	super.init(context);
         DebugPlugin.getDefault().addDebugEventListener(this);
         fHandlers = createEventHandlers();
@@ -111,7 +114,8 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
      * 
      * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
      */
-    public final void handleDebugEvents(DebugEvent[] events) {
+    @Override
+	public final void handleDebugEvents(DebugEvent[] events) {
         if (isDisposed()) {
             return;
         }
@@ -186,14 +190,14 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
     protected void dispatchSuspend(DebugEventHandler handler, DebugEvent event) {
         // stop timer, if any
         synchronized (this) {
-            TimerTask task = (TimerTask) fTimerTasks.remove(event.getSource());
+            TimerTask task = fTimerTasks.remove(event.getSource());
             if (task != null) {
                 task.cancel();
             }
         }
         DebugEvent resume = null;
         synchronized (this) {
-            resume = (DebugEvent) fPendingSuspends.remove(event.getSource());
+            resume = fPendingSuspends.remove(event.getSource());
         }
         if (resume == null) {
             handler.handleSuspend(event);

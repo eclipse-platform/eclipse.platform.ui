@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public class BuildProjectResolver implements IDynamicVariableResolver {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.variables.IDynamicVariableResolver#resolveValue(org.eclipse.core.variables.IDynamicVariable, java.lang.String)
 	 */
+	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		IResource resource= ExternalToolBuilder.getBuildProject();
 		if (argument != null && resource != null) {
@@ -40,22 +41,22 @@ public class BuildProjectResolver implements IDynamicVariableResolver {
 		abort(NLS.bind(VariableMessages.BuildProjectResolver_3, new String[]{getReferenceExpression(variable, argument)}), null);
 		return null;
 	}
-	
+
 	/**
 	 * Throws an exception with the given message and underlying exception.
-	 *  
+	 *
 	 * @param message exception message
-	 * @param exception underlying exception or <code>null</code> 
+	 * @param exception underlying exception or <code>null</code>
 	 * @throws CoreException
 	 */
 	protected void abort(String message, Throwable exception) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, ExternalToolsPlugin.PLUGIN_ID, IExternalToolConstants.ERR_INTERNAL_ERROR, message, exception));
 	}
-	
+
 	/**
 	 * Returns an expression used to reference the given variable and optional argument.
 	 * For example, <code>${var_name:arg}</code>.
-	 * 
+	 *
 	 * @param variable referenced variable
 	 * @param argument referenced argument or <code>null</code>
 	 * @return vraiable reference expression

@@ -42,6 +42,7 @@ public class DuplicateLaunchConfigurationAction extends AbstractLaunchConfigurat
 	/**
 	 * @see AbstractLaunchConfigurationAction#performAction()
 	 */
+	@Override
 	protected void performAction() {
 		ILaunchConfiguration original = (ILaunchConfiguration)getStructuredSelection().getFirstElement();
 		String newName = DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(original.getName());
@@ -56,6 +57,7 @@ public class DuplicateLaunchConfigurationAction extends AbstractLaunchConfigurat
 	/**
 	 * @see org.eclipse.ui.actions.SelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return selection.size() == 1 && selection.getFirstElement() instanceof ILaunchConfiguration;
 	}
@@ -63,6 +65,7 @@ public class DuplicateLaunchConfigurationAction extends AbstractLaunchConfigurat
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getDisabledImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
 		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DUPLICATE_CONFIG);
 	}
@@ -70,6 +73,7 @@ public class DuplicateLaunchConfigurationAction extends AbstractLaunchConfigurat
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DUPLICATE_CONFIG);
 	}
@@ -77,6 +81,7 @@ public class DuplicateLaunchConfigurationAction extends AbstractLaunchConfigurat
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getToolTipText()
 	 */
+	@Override
 	public String getToolTipText() {
 		return LaunchConfigurationsMessages.LaunchConfigurationsDialog_5;
 	}

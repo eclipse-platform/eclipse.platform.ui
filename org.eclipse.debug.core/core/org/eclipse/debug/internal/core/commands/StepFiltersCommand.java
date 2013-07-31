@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,11 +22,12 @@ import org.eclipse.debug.core.model.IStepFilters;
 
 /**
  * Default toggle step filters command for the standard debug model.
- * 
+ *
  * @since 3.3
  */
 public class StepFiltersCommand extends ForEachCommand implements IStepFiltersHandler {
 
+	@Override
 	protected Object getTarget(Object element) {
 		IDebugTarget[] targets = getDebugTargets(element);
 		if (targets.length > 0) {
@@ -46,7 +47,7 @@ public class StepFiltersCommand extends ForEachCommand implements IStepFiltersHa
 		}
         return null;
 	}
-	
+
    private IDebugTarget[] getDebugTargets(Object element) {
 		if (element instanceof IDebugElement) {
 			IDebugElement debugElement = (IDebugElement) element;
@@ -65,6 +66,7 @@ public class StepFiltersCommand extends ForEachCommand implements IStepFiltersHa
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.commands.ForEachCommand#execute(java.lang.Object)
 	 */
+	@Override
 	protected void execute(Object target) throws CoreException {
 		if (target == null) {
 			return;
@@ -75,10 +77,11 @@ public class StepFiltersCommand extends ForEachCommand implements IStepFiltersHa
 			filter.setStepFiltersEnabled(DebugPlugin.isUseStepFilters());
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.commands.ForEachCommand#isExecutable(java.lang.Object)
 	 */
+	@Override
 	protected boolean isExecutable(Object target) {
 		IStepFilters[] filters = (IStepFilters[]) target;
 		for (int i = 0; i < filters.length; i++) {
@@ -89,11 +92,12 @@ public class StepFiltersCommand extends ForEachCommand implements IStepFiltersHa
 		}
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.commands.AbstractDebugCommand#getEnabledStateJobFamily(org.eclipse.debug.core.commands.IDebugCommandRequest)
 	 */
+	@Override
 	protected Object getEnabledStateJobFamily(IDebugCommandRequest request) {
 		return IStepFiltersHandler.class;
-	}	
+	}
 }

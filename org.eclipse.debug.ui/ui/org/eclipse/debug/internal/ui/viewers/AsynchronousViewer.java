@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,21 +82,21 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * use the method <code>getImage(...)</code> to cache images for
 	 * image descriptors. The images are disposed when this viewer is disposed.
 	 */
-	private Map fImageCache = new HashMap();
+	private Map<ImageDescriptor, Image> fImageCache = new HashMap<ImageDescriptor, Image>();
 
 	/**
 	 * Cache of the fonts used for elements in this tree viewer. Label updates
 	 * use the method <code>getFont(...)</code> to cache fonts for
 	 * FontData objects. The fonts are disposed with the viewer.
 	 */
-	private Map fFontCache = new HashMap();
+	private Map<FontData, Font> fFontCache = new HashMap<FontData, Font>();
 
 	/**
 	 * Cache of the colors used for elements in this tree viewer. Label updates
 	 * use the method <code>getColor(...)</code> to cache colors for
 	 * RGB values. The colors are disposed with the viewer.
 	 */
-	private Map fColorCache = new HashMap();
+	private Map<RGB, Color> fColorCache = new HashMap<RGB, Color>();
 
 	/**
 	 * The context in which this viewer is being used - i.e. what part it is contained
@@ -138,6 +138,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * Hash lookup is required, don't let subclasses change behavior.
 	 * @param enable if hash lookup should be used in the viewer
 	 */
+	@Override
 	public final void setUseHashlookup(boolean enable) {
 		Assert.isTrue(enable);
 		super.setUseHashlookup(enable);
@@ -146,6 +147,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#hookControl(org.eclipse.swt.widgets.Control)
 	 */
+	@Override
 	protected void hookControl(Control control) {
 		super.hookControl(control);
 		control.addListener(SWT.SetData, this);
@@ -156,23 +158,15 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * so it can perform cleanup.
 	 */
 	public synchronized void dispose() {
-		Iterator images = fImageCache.values().iterator();
-		while (images.hasNext()) {
-			Image image = (Image) images.next();
+		for (Image image : fImageCache.values()) {
 			image.dispose();
 		}
 		fImageCache.clear();
-		
-		Iterator fonts = fFontCache.values().iterator();
-		while (fonts.hasNext()) {
-			Font font = (Font) fonts.next();
+		for (Font font : fFontCache.values()) {
 			font.dispose();
 		}
 		fFontCache.clear();
-		
-		Iterator colors = fColorCache.values().iterator();
-		while (colors.hasNext()) {
-			Color color = (Color) colors.next();
+		for (Color color : fColorCache.values()) {
 			color.dispose();
 		}
 		fColorCache.clear();
@@ -228,6 +222,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#unmapAllElements()
 	 */
+	@Override
 	protected synchronized void unmapAllElements() {
 		super.unmapAllElements();
 		AsynchronousModel model = getModel();
@@ -239,6 +234,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.Viewer#inputChanged(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	protected synchronized void inputChanged(Object input, Object oldInput) {
 		fPendingSelection = null;
 		if (fCurrentSelection != null) {
@@ -306,7 +302,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		if (descriptor == null) {
 			return null;
 		}
-		Image image = (Image) fImageCache.get(descriptor);
+		Image image = fImageCache.get(descriptor);
 		if (image == null) {
 			image = new Image(getControl().getDisplay(), descriptor.getImageData());
 			fImageCache.put(descriptor, image);
@@ -342,7 +338,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		if (fontData == null) {
 			return null;
 		}
-		Font font = (Font) fFontCache.get(fontData);
+		Font font = fFontCache.get(fontData);
 		if (font == null) {
 			font = new Font(getControl().getDisplay(), fontData);
 			fFontCache.put(fontData, font);
@@ -376,7 +372,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		if (rgb == null) {
 			return null;
 		}
-		Color color = (Color) fColorCache.get(rgb);
+		Color color = fColorCache.get(rgb);
 		if (color == null) {
 			color = new Color(getControl().getDisplay(), rgb);
 			fColorCache.put(rgb, color);
@@ -396,6 +392,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#doFindItem(java.lang.Object)
 	 */
+	@Override
 	protected Widget doFindItem(Object element) {
 		// this viewer maps model nodes to widgets, so the element is a ModelNode
 		AsynchronousModel model = getModel();
@@ -416,7 +413,8 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
      * 
      * @see org.eclipse.jface.viewers.StructuredViewer#doFindInputItem(java.lang.Object)
      */
-    protected Widget doFindInputItem(Object element) {
+    @Override
+	protected Widget doFindInputItem(Object element) {
     	if (element instanceof ModelNode) {
 			ModelNode node = (ModelNode) element;
 			if (node.getElement().equals(getInput())) {
@@ -429,12 +427,14 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#doUpdateItem(org.eclipse.swt.widgets.Widget, java.lang.Object, boolean)
 	 */
+	@Override
 	protected void doUpdateItem(Widget item, Object element, boolean fullMap) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#internalRefresh(java.lang.Object)
 	 */
+	@Override
 	protected void internalRefresh(Object element) {
 		// get the nodes in the model
 		AsynchronousModel model = getModel();
@@ -467,6 +467,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.Viewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean)
 	 */
+	@Override
 	public synchronized void setSelection(ISelection selection, boolean reveal) {
 		setSelection(selection, reveal, false);
 	}
@@ -497,6 +498,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			attemptSelection(reveal);
 		} else {
 			WorkbenchJob job = new WorkbenchJob("attemptSelection") { //$NON-NLS-1$
+				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					attemptSelection(reveal);
 					return Status.OK_STATUS;
@@ -531,6 +533,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getSelection()
 	 */
+	@Override
 	public ISelection getSelection() {
 		Control control = getControl();
 		if (control == null || control.isDisposed() || fCurrentSelection == null) {
@@ -542,6 +545,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#handleSelect(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	protected void handleSelect(SelectionEvent event) {
 		// handle case where an earlier selection listener disposed the control.
 		Control control = getControl();
@@ -553,6 +557,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#handlePostSelect(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	protected void handlePostSelect(SelectionEvent e) {
 		SelectionChangedEvent event = new SelectionChangedEvent(this, newSelectionFromWidget());
 		firePostSelectionChanged(event);
@@ -591,6 +596,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#setSelectionToWidget(org.eclipse.jface.viewers.ISelection, boolean)
 	 */
+	@Override
 	final protected void setSelectionToWidget(ISelection selection, final boolean reveal) {
 		// NOT USED
 		throw new IllegalArgumentException("This method should not be called"); //$NON-NLS-1$
@@ -599,6 +605,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#setSelectionToWidget(java.util.List, boolean)
 	 */
+	@Override
 	final protected void setSelectionToWidget(List l, boolean reveal) {
 		// NOT USED
 		throw new IllegalArgumentException("This method should not be called"); //$NON-NLS-1$
@@ -676,12 +683,15 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * A content provider that does nothing.
 	 */
 	private class NullContentProvider implements IStructuredContentProvider {
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return null;
 		}
@@ -701,6 +711,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#preservingSelection(java.lang.Runnable)
 	 */
+	@Override
 	protected synchronized void preservingSelection(Runnable updateCode) {
 		if (fPendingSelection == null || fPendingSelection.isEmpty()) {
 			ISelection oldSelection = null;
@@ -720,6 +731,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 					}
 				} else {
 					WorkbenchJob job = new WorkbenchJob("attemptSelection") { //$NON-NLS-1$
+						@Override
 						public IStatus runInUIThread(IProgressMonitor monitor) {
 							synchronized (AsynchronousViewer.this) {
 	                            if (!getControl().isDisposed()) {
@@ -779,7 +791,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		}
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
-			Iterator iterator = ss.iterator();
+			Iterator<?> iterator = ss.iterator();
 			while (iterator.hasNext()) {
 				Object element = iterator.next();
 				if (getModel().getNodes(element) == null) {
@@ -819,6 +831,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#updateSelection(org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	protected synchronized void updateSelection(ISelection selection) {
 		fCurrentSelection = selection;
 		super.updateSelection(selection);
@@ -1041,6 +1054,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * 
 	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void handleEvent(final Event event) {		
 		update((Item)event.item, event.index);
     }

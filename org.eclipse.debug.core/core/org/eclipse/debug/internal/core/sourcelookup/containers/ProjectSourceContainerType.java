@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.w3c.dom.Node;
 
 /**
  * The type for creating/restoring a project source container.
- * 
+ *
  * @since 3.0
  */
 public class ProjectSourceContainerType extends AbstractSourceContainerTypeDelegate {
@@ -32,6 +32,7 @@ public class ProjectSourceContainerType extends AbstractSourceContainerTypeDeleg
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
 	 */
+	@Override
 	public String getMemento(ISourceContainer container) throws CoreException {
 		ProjectSourceContainer project = (ProjectSourceContainer) container;
 		Document document = newDocument();
@@ -49,6 +50,7 @@ public class ProjectSourceContainerType extends AbstractSourceContainerTypeDeleg
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#createSourceContainer(java.lang.String)
 	 */
+	@Override
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
 		Node node = parseDocument(memento);
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -56,17 +58,17 @@ public class ProjectSourceContainerType extends AbstractSourceContainerTypeDeleg
 			if ("project".equals(element.getNodeName())) { //$NON-NLS-1$
 				String string = element.getAttribute("name"); //$NON-NLS-1$
 				if (string == null || string.length() == 0) {
-					abort(SourceLookupMessages.ProjectSourceContainerType_10, null); 
+					abort(SourceLookupMessages.ProjectSourceContainerType_10, null);
 				}
 				String nest = element.getAttribute("referencedProjects"); //$NON-NLS-1$
 				boolean ref = "true".equals(nest); //$NON-NLS-1$
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				IProject project = workspace.getRoot().getProject(string);
 				return new ProjectSourceContainer(project, ref);
-			} 
-			abort(SourceLookupMessages.ProjectSourceContainerType_11, null); 
+			}
+			abort(SourceLookupMessages.ProjectSourceContainerType_11, null);
 		}
-		abort(SourceLookupMessages.ProjectSourceContainerType_12, null); 
+		abort(SourceLookupMessages.ProjectSourceContainerType_12, null);
 		return null;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class BuilderCoreUtils {
 	public static final String LAUNCH_CONFIG_HANDLE = "LaunchConfigHandle"; //$NON-NLS-1$
 	/**
 	 * Constant added to the build command to determine if we are doing an incremental build after a clean
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	public static final String INC_CLEAN = "incclean"; //$NON-NLS-1$
@@ -71,15 +71,14 @@ public class BuilderCoreUtils {
 	 * Returns a launch configuration from the given ICommand arguments. If the
 	 * given arguments are from an old-style external tool, an unsaved working
 	 * copy will be created from the arguments and returned.
-	 * 
+	 *
 	 * @param commandArgs
 	 *            the builder ICommand arguments
 	 * @return a launch configuration, a launch configuration working copy, or
 	 *         <code>null</code> if not possible.
 	 */
-	public static ILaunchConfiguration configFromBuildCommandArgs(
-			IProject project, Map commandArgs, String[] version) {
-		String configHandle = (String) commandArgs.get(LAUNCH_CONFIG_HANDLE);
+	public static ILaunchConfiguration configFromBuildCommandArgs(IProject project, Map<String, String> commandArgs, String[] version) {
+		String configHandle = commandArgs.get(LAUNCH_CONFIG_HANDLE);
 		if (configHandle == null) {
 			// Probably an old-style (Eclipse 1.0 or 2.0) external tool. Try to
 			// migrate.
@@ -143,12 +142,14 @@ public class BuilderCoreUtils {
 				case IncrementalProjectBuilder.CLEAN_BUILD:
 					newCommand.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, true);
 					break;
+				default:
+					break;
 			}
 		}
 		if(!isfull && isinc) {
-			Map args = newCommand.getArguments();
+			Map<String, String> args = newCommand.getArguments();
 			if(args == null) {
-				args = new HashMap();
+				args = new HashMap<String, String>();
 			}
 			newCommand.setBuilding(IncrementalProjectBuilder.FULL_BUILD, true);
 			args.put(INC_CLEAN, Boolean.TRUE.toString());
@@ -168,7 +169,7 @@ public class BuilderCoreUtils {
 	 * translated into launch config working copies in memory, but they're not
 	 * considered "migrated" until the config has been saved and the project
 	 * spec updated.
-	 * 
+	 *
 	 * @param config
 	 *            the config to examine
 	 * @return whether the given config represents an unmigrated builder
@@ -181,12 +182,11 @@ public class BuilderCoreUtils {
 	/**
 	 * Converts the given config to a build command which is stored in the given
 	 * command.
-	 * 
+	 *
 	 * @return the configured build command
 	 */
-	public static ICommand toBuildCommand(IProject project,
-			ILaunchConfiguration config, ICommand command) throws CoreException {
-		Map args = null;
+	public static ICommand toBuildCommand(IProject project, ILaunchConfiguration config, ICommand command) throws CoreException {
+		Map<String, String> args = null;
 		if (isUnmigratedConfig(config)) {
 			// This config represents an old external tool builder that hasn't
 			// been edited. Try to find the old ICommand and reuse the
@@ -204,20 +204,20 @@ public class BuilderCoreUtils {
 				}
 			}
 		} else {
+			ILaunchConfiguration temp = config;
 			if (config instanceof ILaunchConfigurationWorkingCopy) {
 				ILaunchConfigurationWorkingCopy workingCopy = (ILaunchConfigurationWorkingCopy) config;
 				if (workingCopy.getOriginal() != null) {
-					config = workingCopy.getOriginal();
+					temp = workingCopy.getOriginal();
 				}
 			}
-			args = new HashMap();
+			args = new HashMap<String, String>();
 			// Launch configuration builders are stored with a project-relative
 			// path
 			StringBuffer buffer = new StringBuffer(PROJECT_TAG);
 			// Append the project-relative path (workspace path minus first
 			// segment)
-			buffer.append('/').append(
-					config.getFile().getFullPath().removeFirstSegments(1));
+			buffer.append('/').append(temp.getFile().getFullPath().removeFirstSegments(1));
 			args.put(LAUNCH_CONFIG_HANDLE, buffer.toString());
 		}
 		command.setBuilderName(ExternalToolBuilder.ID);
@@ -249,7 +249,7 @@ public class BuilderCoreUtils {
 	 * may be changed during the migration. The name of the configuration will
 	 * only be changed if the current name is not a valid name for a saved
 	 * config.
-	 * 
+	 *
 	 * @param workingCopy
 	 *            the launch configuration containing attributes from an
 	 *            old-style project builder.
@@ -282,7 +282,7 @@ public class BuilderCoreUtils {
 
 	/**
 	 * Converts the build types string into an array of build kinds.
-	 * 
+	 *
 	 * @param buildTypes
 	 *            the string of built types to convert
 	 * @return the array of build kinds.

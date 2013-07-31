@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,8 @@ class BuilderLabelProvider extends LabelProvider {
 
 		private Image builderImage = ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_BUILDER).createImage();
 		private Image invalidBuildToolImage = ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_INVALID_BUILD_TOOL).createImage();
-		
+
+		@Override
 		public String getText(Object element) {
 			if (element instanceof ICommand) {
 				return getCommandText((ICommand) element);
@@ -45,7 +46,8 @@ class BuilderLabelProvider extends LabelProvider {
 			}
 			return super.getText(element);
 		}
-		
+
+		@Override
 		public Image getImage(Object element) {
 			if (element instanceof ICommand) {
 				return getCommandImage();
@@ -56,12 +58,12 @@ class BuilderLabelProvider extends LabelProvider {
 			}
 			return super.getImage(element);
 		}
-		
+
 		public String getCommandText(ICommand command) {
 			String builderID = command.getBuilderName();
 			return getBuilderName(builderID);
 		}
-		
+
 		private String getBuilderName(String builderID) {
 			// Get the human-readable name of the builder
 			IExtension extension = Platform.getExtensionRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderID);
@@ -73,16 +75,16 @@ class BuilderLabelProvider extends LabelProvider {
 			}
 			return builderName;
 		}
-		
+
 		/**
 		 * Returns the image for build commands.
-		 * 
+		 *
 		 * @return the build command image
 		 */
 		public Image getCommandImage() {
 			return builderImage;
 		}
-		
+
 		/**
 		 * Returns a text label for the given object from a debug
 		 * model presentation.
@@ -102,7 +104,7 @@ class BuilderLabelProvider extends LabelProvider {
 			}
 			return debugModelPresentation.getText(element);
 		}
-		
+
 		/**
 		 * Returns an image for the given object from a debug
 		 * model presentation.
@@ -125,6 +127,7 @@ class BuilderLabelProvider extends LabelProvider {
 			/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 		 */
+	@Override
 		public void dispose() {
 			builderImage.dispose();
 			invalidBuildToolImage.dispose();

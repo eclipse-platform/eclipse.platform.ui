@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,8 +40,8 @@ import org.eclipse.ui.progress.UIJob;
 abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 
 	private Object fPendingTopIndexKey;
-	private ArrayList fTopIndexQueue = new ArrayList();
-	
+	private ArrayList<Object> fTopIndexQueue = new ArrayList<Object>();
+
 	private boolean fPendingResizeColumns;
 	private ListenerList fVirtualContentListeners;
 	private SelectionListener fScrollSelectionListener;
@@ -54,57 +54,52 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 		fPresentationErrorListeners = new ListenerList();
 		initScrollBarListener();
 	}
-	
-	private void initScrollBarListener()
-	{
+
+	private void initScrollBarListener() {
 		ScrollBar scroll = getTable().getVerticalBar();
 		fScrollSelectionListener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleScrollBarSelection();
-			}};
+			}
+		};
 		scroll.addSelectionListener(fScrollSelectionListener);
 	}
 
-	public void setTopIndex(Object key)
-	{
+	public void setTopIndex(Object key) {
 		fPendingTopIndexKey = key;
 		attemptSetTopIndex();
 	}
-	
-	protected Object getPendingSetTopIndexKey()
-	{
+
+	protected Object getPendingSetTopIndexKey() {
 		return fPendingTopIndexKey;
 	}
-	
+
+	@Override
 	protected void handlePresentationFailure(IStatusMonitor monitor, IStatus status) {
 		notifyPresentationError(monitor, status);
 	}
-	
-	public void disposeColumns()
-	{
+
+	public void disposeColumns() {
 		// clean up old columns
 		TableColumn[] oldColumns = getTable().getColumns();
-		
-		for (int i=0; i<oldColumns.length; i++)
-		{
+
+		for (int i = 0; i < oldColumns.length; i++) {
 			oldColumns[i].dispose();
 		}
 	}
-	
-	public void disposeCellEditors()
-	{
+
+	public void disposeCellEditors() {
 		// clean up old cell editors
 		CellEditor[] oldCellEditors = getCellEditors();
-		
-		if (oldCellEditors != null)
-		{
-			for (int i=0; i<oldCellEditors.length; i++)
-			{
+
+		if (oldCellEditors != null) {
+			for (int i = 0; i < oldCellEditors.length; i++) {
 				oldCellEditors[i].dispose();
 			}
 		}
 	}
-    
+
 	/**
 	 * Resize column to the preferred size.
 	 */
@@ -112,197 +107,183 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 		fPendingResizeColumns = true;
 		fPendingResizeColumns = attemptResizeColumnsToPreferredSize();
 	}
-	
-	private boolean attemptResizeColumnsToPreferredSize()
-	{
-		if (fPendingResizeColumns)
-		{
-			if(!hasPendingUpdates()) {
-				UIJob job = new UIJob("packcolumns"){ //$NON-NLS-1$
 
+	private boolean attemptResizeColumnsToPreferredSize() {
+		if (fPendingResizeColumns) {
+			if (!hasPendingUpdates()) {
+				UIJob job = new UIJob("packcolumns") { //$NON-NLS-1$
+
+					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						Table table = getTable();
-						
-						if (!table.isDisposed())
-						{
-							// if table size is zero, the rendering has not been made visible
+
+						if (!table.isDisposed()) {
+							// if table size is zero, the rendering has not been
+							// made visible
 							// cannot pack until the rendering is visible
-							if (table.getSize().x > 0)
-							{
+							if (table.getSize().x > 0) {
 								TableColumn[] columns = table.getColumns();
-								for (int i=0 ;i<columns.length-1; i++)
-								{	
+								for (int i = 0; i < columns.length - 1; i++) {
 									columns[i].pack();
-								}	
-							}
-							else
-							{
+								}
+							} else {
 								fPendingResizeColumns = true;
 							}
 						}
 						return Status.OK_STATUS;
-					}};
+					}
+				};
 				job.setSystem(true);
-				job.schedule();	
+				job.schedule();
 				return false;
 			}
 		}
 		return fPendingResizeColumns;
 	}
-	
+
 	/**
 	 * Attempts to update any pending setTopIndex
 	 */
 	protected synchronized void attemptSetTopIndex() {
 		if (fPendingTopIndexKey != null) {
-            Object remaining = doAttemptSetTopIndex(fPendingTopIndexKey);
-            if (remaining == null)
-            {
-            	fPendingTopIndexKey = remaining;
-            }
+			Object remaining = doAttemptSetTopIndex(fPendingTopIndexKey);
+			if (remaining == null) {
+				fPendingTopIndexKey = remaining;
+			}
 		}
 	}
-	
-	private synchronized Object doAttemptSetTopIndex(final Object topIndexKey)
-	{
+
+	private synchronized Object doAttemptSetTopIndex(final Object topIndexKey) {
 		final int i = getVirtualContentModel().indexOfKey(topIndexKey);
-		if (i >= 0)
-		{
-			UIJob job = new UIJob("set top index"){ //$NON-NLS-1$
+		if (i >= 0) {
+			UIJob job = new UIJob("set top index") { //$NON-NLS-1$
 
-				public IStatus runInUIThread(IProgressMonitor monitor)  {
-						if (getTable().isDisposed())
-						{
-							fTopIndexQueue.clear();
-							return Status.OK_STATUS;
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					if (getTable().isDisposed()) {
+						fTopIndexQueue.clear();
+						return Status.OK_STATUS;
+					}
+
+					int idx = getVirtualContentModel().indexOfKey(topIndexKey);
+					if (idx >= 0) {
+						if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
+							DebugUIPlugin.trace("actual set top index: " + ((BigInteger) topIndexKey).toString(16)); //$NON-NLS-1$
 						}
-						
-						int idx = getVirtualContentModel().indexOfKey(topIndexKey);
-						if (idx >= 0)
-						{
+						fPendingTopIndexKey = null;
+						setTopIndexKey(topIndexKey);
+						getTable().setTopIndex(idx);
+						tableTopIndexSetComplete();
+
+						if (getTable().getTopIndex() != idx) {
 							if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
-								DebugUIPlugin.trace("actual set top index: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+								DebugUIPlugin.trace(">>> FAILED set top index : " + ((BigInteger) topIndexKey).toString(16)); //$NON-NLS-1$
 							}
-							fPendingTopIndexKey = null;
-							setTopIndexKey(topIndexKey);
-							getTable().setTopIndex(idx);							
-							tableTopIndexSetComplete();		
-							
-							if (getTable().getTopIndex() != idx  )
-							{
+
+							// only retry if we have pending updates
+							if (hasPendingUpdates()) {
 								if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
-									DebugUIPlugin.trace(">>> FAILED set top index : " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+									DebugUIPlugin.trace(">>> Retry top index: " + ((BigInteger) topIndexKey).toString(16)); //$NON-NLS-1$
 								}
 
-								// only retry if we have pending updates
-								if (hasPendingUpdates())
-								{
-									if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
-										DebugUIPlugin.trace(">>> Retry top index: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
-									}
-
-									fPendingTopIndexKey = topIndexKey;
-								}
-							}														
-						}
-						else
-						{
-							if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
-								DebugUIPlugin.trace("cannot find key, put it back to the queue: " + topIndexKey); //$NON-NLS-1$
+								fPendingTopIndexKey = topIndexKey;
 							}
-							fPendingTopIndexKey = topIndexKey;
 						}
-						
-						// remove the top index key from queue when it is processed
-						removeKeyFromQueue(topIndexKey);
-						
+					} else {
+						if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
+							DebugUIPlugin.trace("cannot find key, put it back to the queue: " + topIndexKey); //$NON-NLS-1$
+						}
+						fPendingTopIndexKey = topIndexKey;
+					}
+
+					// remove the top index key from queue when it is processed
+					removeKeyFromQueue(topIndexKey);
+
 					return Status.OK_STATUS;
-				}};
-				
+				}
+			};
+
 			// set top index does not happen immediately, keep track of
 			// all pending set top index
 			addKeyToQueue(topIndexKey);
-			
+
 			job.setSystem(true);
 			job.schedule();
 			return topIndexKey;
 		}
 		return topIndexKey;
 	}
-	
-	protected void tableTopIndexSetComplete()
-	{
-		
+
+	protected void tableTopIndexSetComplete() {
+
 	}
-	 
-	 public void addVirtualContentListener(IVirtualContentListener listener)
-	 {
-		 fVirtualContentListeners.add(listener);
-	 }
-	 
-	 public void removeVirtualContentListener(IVirtualContentListener listener)
-	 {
-		 fVirtualContentListeners.remove(listener);
-	 }
-	 
-	 protected void notifyListenersAtBufferStart()
-	 {
-		 int topIdx = getTable().getTopIndex();
-		 Object[] listeners = fVirtualContentListeners.getListeners();
-	 
+
+	public void addVirtualContentListener(IVirtualContentListener listener) {
+		fVirtualContentListeners.add(listener);
+	}
+
+	public void removeVirtualContentListener(IVirtualContentListener listener) {
+		fVirtualContentListeners.remove(listener);
+	}
+
+	protected void notifyListenersAtBufferStart() {
+		int topIdx = getTable().getTopIndex();
+		Object[] listeners = fVirtualContentListeners.getListeners();
+
 		for (int i = 0; i < listeners.length; i++) {
 			final IVirtualContentListener listener = (IVirtualContentListener) listeners[i];
-			if (topIdx < listener.getThreshold(IVirtualContentListener.BUFFER_START))
-			{
+			if (topIdx < listener.getThreshold(IVirtualContentListener.BUFFER_START)) {
 				SafeRunner.run(new ISafeRunnable() {
-					public void run() throws Exception {	
+					@Override
+					public void run() throws Exception {
 						listener.handledAtBufferStart();
 					}
+
+					@Override
 					public void handleException(Throwable exception) {
 						DebugUIPlugin.log(exception);
 					}
 				});
 			}
 		}
-	 }
-	 
-	 protected void notifyListenersAtBufferEnd()
-	 {
+	}
+
+	protected void notifyListenersAtBufferEnd() {
 		Object[] listeners = fVirtualContentListeners.getListeners();
 		int topIdx = getTable().getTopIndex();
 		int bottomIdx = topIdx + getNumberOfVisibleLines();
 		int elementsCnt = getVirtualContentModel().getElements().length;
 		int numLinesLeft = elementsCnt - bottomIdx;
-	 
+
 		for (int i = 0; i < listeners.length; i++) {
 			final IVirtualContentListener listener = (IVirtualContentListener) listeners[i];
-			if (numLinesLeft <= listener.getThreshold(IVirtualContentListener.BUFFER_END))
-			{
+			if (numLinesLeft <= listener.getThreshold(IVirtualContentListener.BUFFER_END)) {
 				SafeRunner.run(new ISafeRunnable() {
+					@Override
 					public void run() throws Exception {
 						listener.handleAtBufferEnd();
 					}
+
+					@Override
 					public void handleException(Throwable exception) {
 						DebugUIPlugin.log(exception);
 					}
 				});
 			}
 		}
-	 }
-	 
-	protected void  handleScrollBarSelection()
-	{
-//		 ignore event if there is pending set top index in the queue
-		if (!fTopIndexQueue.isEmpty())
+	}
+
+	protected void handleScrollBarSelection() {
+		// ignore event if there is pending set top index in the queue
+		if (!fTopIndexQueue.isEmpty()) {
 			return;
+		}
 		topIndexChanged();
 	}
-	
-	public void topIndexChanged()
-	{
-		if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING)
-		{
-			MemorySegment a = (MemorySegment)getTable().getItem(getTable().getTopIndex()).getData();
+
+	public void topIndexChanged() {
+		if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
+			MemorySegment a = (MemorySegment) getTable().getItem(getTable().getTopIndex()).getData();
 			DebugUIPlugin.trace(Thread.currentThread().getName() + " " + this + " handle scroll bar moved:  top index: " + a.getAddress().toString(16)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
@@ -311,64 +292,59 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 		notifyListenersAtBufferStart();
 		notifyListenersAtBufferEnd();
 	}
-	
-	protected void setTopIndexKey(Object key)
-	{
+
+	protected void setTopIndexKey(Object key) {
 		fTopIndexKey = key;
 	}
-	
-	protected Object getTopIndexKey()
-	{
+
+	protected Object getTopIndexKey() {
 		return fTopIndexKey;
 	}
 
+	@Override
 	protected synchronized void preservingSelection(Runnable updateCode) {
 		Object oldTopIndexKey = null;
 		if (fPendingTopIndexKey == null) {
 			// preserve selection
 			oldTopIndexKey = getTopIndexKey();
-		}
-		else
-		{
+		} else {
 			oldTopIndexKey = fPendingTopIndexKey;
 		}
-		
+
 		try {
 
 			// perform the update
 			updateCode.run();
-		} finally {			
-			if (oldTopIndexKey != null)
-			{
+		} finally {
+			if (oldTopIndexKey != null) {
 				setTopIndex(oldTopIndexKey);
 			}
 		}
 
 	}
-	
-	public void addPresentationErrorListener(IPresentationErrorListener errorListener)
-	{
+
+	public void addPresentationErrorListener(IPresentationErrorListener errorListener) {
 		fPresentationErrorListeners.add(errorListener);
 	}
-	
-	public void removePresentationErrorListener(IPresentationErrorListener errorListener)
-	{
+
+	public void removePresentationErrorListener(IPresentationErrorListener errorListener) {
 		fPresentationErrorListeners.remove(errorListener);
 	}
-	
-	private void notifyPresentationError(final IStatusMonitor monitor, final IStatus status)
-	{
+
+	private void notifyPresentationError(final IStatusMonitor monitor, final IStatus status) {
 		Object[] listeners = fPresentationErrorListeners.getListeners();
-	 
+
 		for (int i = 0; i < listeners.length; i++) {
-			
-			if (listeners[i] instanceof IPresentationErrorListener)
-			{
-				final IPresentationErrorListener listener = (IPresentationErrorListener)listeners[i];
+
+			if (listeners[i] instanceof IPresentationErrorListener) {
+				final IPresentationErrorListener listener = (IPresentationErrorListener) listeners[i];
 				SafeRunner.run(new ISafeRunnable() {
+					@Override
 					public void run() throws Exception {
 						listener.handlePresentationFailure(monitor, status);
 					}
+
+					@Override
 					public void handleException(Throwable exception) {
 						DebugUIPlugin.log(exception);
 					}
@@ -377,108 +353,104 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 		}
 	}
 
+	@Override
 	protected AsynchronousModel createModel() {
 		return createVirtualContentTableModel();
 	}
-	
+
 	abstract protected AbstractVirtualContentTableModel createVirtualContentTableModel();
-	
-	private void addKeyToQueue(Object topIndexKey)
-	{
-		synchronized(fTopIndexQueue){
+
+	private void addKeyToQueue(Object topIndexKey) {
+		synchronized (fTopIndexQueue) {
 			if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
-				DebugUIPlugin.trace(" >>> add to top index queue: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+				DebugUIPlugin.trace(" >>> add to top index queue: " + ((BigInteger) topIndexKey).toString(16)); //$NON-NLS-1$
 			}
 			fTopIndexQueue.add(topIndexKey);
 		}
 	}
-	
-	private void removeKeyFromQueue(Object topIndexKey)
-	{
-		synchronized(fTopIndexQueue){
+
+	private void removeKeyFromQueue(Object topIndexKey) {
+		synchronized (fTopIndexQueue) {
 			if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
-				DebugUIPlugin.trace(" >>> remove frome top index queue: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+				DebugUIPlugin.trace(" >>> remove frome top index queue: " + ((BigInteger) topIndexKey).toString(16)); //$NON-NLS-1$
 			}
 			fTopIndexQueue.remove(topIndexKey);
 		}
 	}
-	
-	public AbstractVirtualContentTableModel getVirtualContentModel()
-	{
-		if (getModel() instanceof AbstractVirtualContentTableModel)
+
+	public AbstractVirtualContentTableModel getVirtualContentModel() {
+		if (getModel() instanceof AbstractVirtualContentTableModel) {
 			return (AbstractVirtualContentTableModel) getModel();
+		}
 		return null;
 	}
-	
-	private int getNumberOfVisibleLines()
-	{	
+
+	private int getNumberOfVisibleLines() {
 		Table table = getTable();
 		int height = table.getSize().y;
-		
+
 		// when table is not yet created, height is zero
-		if (height == 0)
-		{
+		if (height == 0) {
 			// make use of the table viewer to estimate table size
 			height = table.getParent().getSize().y;
 		}
-		
+
 		// height of border
 		int border = table.getHeaderHeight();
-		
+
 		// height of scroll bar
 		int scroll = table.getHorizontalBar().getSize().y;
 
-		// height of table is table's area minus border and scroll bar height		
-		height = height-border-scroll;
+		// height of table is table's area minus border and scroll bar height
+		height = height - border - scroll;
 
 		// calculate number of visible lines
 		int lineHeight = getMinTableItemHeight(table);
-		
-		int numberOfLines = height/lineHeight;
-		
-		if (numberOfLines <= 0)
+
+		int numberOfLines = height / lineHeight;
+
+		if (numberOfLines <= 0) {
 			return 20;
-	
-		return numberOfLines;		
+		}
+
+		return numberOfLines;
 	}
-	
-	private int getMinTableItemHeight(Table table){
-		
+
+	private int getMinTableItemHeight(Table table) {
+
 		// Hack to get around Linux GTK problem.
 		// On Linux GTK, table items have variable item height as
-		// carriage returns are actually shown in a cell.  Some rows will be
-		// taller than others.  When calculating number of visible lines, we
-		// need to find the smallest table item height.  Otherwise, the rendering
-		// underestimates the number of visible lines.  As a result the rendering
+		// carriage returns are actually shown in a cell. Some rows will be
+		// taller than others. When calculating number of visible lines, we
+		// need to find the smallest table item height. Otherwise, the rendering
+		// underestimates the number of visible lines. As a result the rendering
 		// will not be able to get more memory as needed.
-		if (MemoryViewUtil.isLinuxGTK())
-		{
+		if (MemoryViewUtil.isLinuxGTK()) {
 			// check each of the items and find the minimum
 			TableItem[] items = table.getItems();
 			int minHeight = table.getItemHeight();
-			for (int i=0; i<items.length; i++)
-			{
-				if (items[i].getData() != null)
+			for (int i = 0; i < items.length; i++) {
+				if (items[i].getData() != null) {
 					minHeight = Math.min(items[i].getBounds(0).height, minHeight);
+				}
 			}
-			
+
 			return minHeight;
-				
+
 		}
 		return table.getItemHeight();
 	}
 
+	@Override
 	protected void updateComplete(IStatusMonitor monitor) {
 		super.updateComplete(monitor);
 		attemptSetTopIndex();
-		if (monitor instanceof ILabelRequestMonitor)
-		{
+		if (monitor instanceof ILabelRequestMonitor) {
 			fPendingResizeColumns = attemptResizeColumnsToPreferredSize();
 		}
 	}
-	
-	protected boolean hasPendingSetTopIndex()
-	{
+
+	protected boolean hasPendingSetTopIndex() {
 		return !fTopIndexQueue.isEmpty();
 	}
 

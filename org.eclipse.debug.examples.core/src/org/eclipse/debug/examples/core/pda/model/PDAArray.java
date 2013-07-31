@@ -30,6 +30,7 @@ public class PDAArray extends PDAValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
 	 */
+	@Override
 	public boolean hasVariables() throws DebugException {
 		return true;
 	}
@@ -37,6 +38,7 @@ public class PDAArray extends PDAValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
+	@Override
 	public IVariable[] getVariables() throws DebugException {
 		String string = getValueString();
 		String[] words = string.split("\\W+"); //$NON-NLS-1$

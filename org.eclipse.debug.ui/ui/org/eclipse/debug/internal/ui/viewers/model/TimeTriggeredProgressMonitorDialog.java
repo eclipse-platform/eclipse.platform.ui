@@ -82,7 +82,8 @@ public class TimeTriggeredProgressMonitorDialog extends ProgressMonitorDialog {
 			 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String,
 			 *      int)
 			 */
-            public void beginTask(String name, int totalWork) {
+            @Override
+			public void beginTask(String name, int totalWork) {
                 superMonitor.beginTask(name, totalWork);
                 checkTicking();
             }
@@ -107,7 +108,8 @@ public class TimeTriggeredProgressMonitorDialog extends ProgressMonitorDialog {
 			 * 
 			 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 			 */
-            public void done() {
+            @Override
+			public void done() {
                 superMonitor.done();
                 checkTicking();
             }
@@ -117,7 +119,8 @@ public class TimeTriggeredProgressMonitorDialog extends ProgressMonitorDialog {
 			 * 
 			 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
 			 */
-            public void internalWorked(double work) {
+            @Override
+			public void internalWorked(double work) {
                 superMonitor.internalWorked(work);
                 checkTicking();
             }
@@ -127,7 +130,8 @@ public class TimeTriggeredProgressMonitorDialog extends ProgressMonitorDialog {
 			 * 
 			 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
 			 */
-            public boolean isCanceled() {
+            @Override
+			public boolean isCanceled() {
                 return superMonitor.isCanceled();
             }
 
@@ -136,7 +140,8 @@ public class TimeTriggeredProgressMonitorDialog extends ProgressMonitorDialog {
 			 * 
 			 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
 			 */
-            public void setCanceled(boolean value) {
+            @Override
+			public void setCanceled(boolean value) {
                 superMonitor.setCanceled(value);
 
             }
@@ -146,7 +151,8 @@ public class TimeTriggeredProgressMonitorDialog extends ProgressMonitorDialog {
 			 * 
 			 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
 			 */
-            public void setTaskName(String name) {
+            @Override
+			public void setTaskName(String name) {
                 superMonitor.setTaskName(name);
                 checkTicking();
 
@@ -157,7 +163,8 @@ public class TimeTriggeredProgressMonitorDialog extends ProgressMonitorDialog {
 			 * 
 			 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
 			 */
-            public void subTask(String name) {
+            @Override
+			public void subTask(String name) {
                 superMonitor.subTask(name);
                 checkTicking();
             }
@@ -167,7 +174,8 @@ public class TimeTriggeredProgressMonitorDialog extends ProgressMonitorDialog {
 			 * 
 			 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
 			 */
-            public void worked(int work) {
+            @Override
+			public void worked(int work) {
                 superMonitor.worked(work);
                 checkTicking();
 
@@ -180,7 +188,8 @@ public class TimeTriggeredProgressMonitorDialog extends ProgressMonitorDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#getProgressMonitor()
 	 */
-    public IProgressMonitor getProgressMonitor() {
+    @Override
+	public IProgressMonitor getProgressMonitor() {
         if (wrapperedMonitor == null) {
 			createWrapperedMonitor();
 		}
@@ -192,13 +201,15 @@ public class TimeTriggeredProgressMonitorDialog extends ProgressMonitorDialog {
     * 
     * @see org.eclipse.jface.operations.IRunnableContext#run(boolean, boolean, IRunnableWithProgress)
     */
-    public void run(final boolean fork, final boolean cancelable,
+    @Override
+	public void run(final boolean fork, final boolean cancelable,
             final IRunnableWithProgress runnable) throws InvocationTargetException,
             InterruptedException {
     	final InvocationTargetException[] invokes = new InvocationTargetException[1];
         final InterruptedException[] interrupt = new InterruptedException[1];
         Runnable dialogWaitRunnable = new Runnable() {
-    		public void run() {
+    		@Override
+			public void run() {
     			try {
     				TimeTriggeredProgressMonitorDialog.super.run(fork, cancelable, runnable);
     			} catch (InvocationTargetException e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.actions;
 
 
-import com.ibm.icu.text.MessageFormat;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
@@ -29,6 +28,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Opens the launch configuration dialog on a single launch configuration, based
@@ -52,6 +53,7 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 	/**
 	 * @see org.eclipse.ui.actions.SelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		setLaunchConfiguration(null);
 		setMode(null);
@@ -90,7 +92,7 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 					setLaunchConfiguration(configuration);
 					setMode(launch.getLaunchMode());
 					setIsTerminated(launch.isTerminated());
-					setText(MessageFormat.format(ActionMessages.EditLaunchConfigurationAction_1, new String[]{configuration.getName()})); 
+					setText(MessageFormat.format(ActionMessages.EditLaunchConfigurationAction_1, new Object[] { configuration.getName() }));
 					ImageDescriptor descriptor = null;
 					try {
 						descriptor = DebugPluginImages.getImageDescriptor(configuration.getType().getIdentifier());
@@ -137,6 +139,7 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 	/**
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		ILaunchGroup group = DebugUITools.getLaunchGroup(getLaunchConfiguration(), getMode());
 		if (group != null) {

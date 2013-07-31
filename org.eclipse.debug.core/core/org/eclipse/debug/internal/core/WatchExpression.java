@@ -1,10 +1,10 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,17 +26,17 @@ import org.eclipse.debug.core.model.IWatchExpressionResult;
 
 /**
  * Base watch expression implementation.
- * 
+ *
  * @since 3.0
  */
 public class WatchExpression implements IWatchExpression {
-	
+
 	protected String fExpressionText;
 	protected IWatchExpressionResult fResult;
 	protected IDebugElement fCurrentContext;
 	private boolean fEnabled= true;
 	private boolean fPending= false;
-	
+
 	/**
 	 * Creates a new watch expression with the given expression
 	 * text.
@@ -49,7 +49,7 @@ public class WatchExpression implements IWatchExpression {
 	/**
 	 * Creates a new watch expression with the given expression
 	 * and the given enablement;
-	 * 
+	 *
 	 * @param expressionText the text of the expression to be evaluated
 	 * @param enabled whether or not the new expression should be enabled
 	 */
@@ -57,20 +57,22 @@ public class WatchExpression implements IWatchExpression {
 		this(expressionText);
 		fEnabled= enabled;
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.core.model.IWatchExpression#evaluate()
 	 */
+	@Override
 	public void evaluate() {
 		IDebugElement context= fCurrentContext;
 		if (context == null) {
 			return;
 		}
-			
+
 		IWatchExpressionListener listener= new IWatchExpressionListener() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.core.model.IWatchExpressionListener#watchEvaluationFinished(org.eclipse.debug.core.model.IWatchExpressionResult)
 			 */
+			@Override
 			public void watchEvaluationFinished(IWatchExpressionResult result) {
 				setResult(result);
 			}
@@ -82,18 +84,23 @@ public class WatchExpression implements IWatchExpression {
 		} else {
 			// No delegate provided
 			listener.watchEvaluationFinished(new IWatchExpressionResult() {
+				@Override
 				public IValue getValue() {
 					return null;
 				}
+				@Override
 				public boolean hasErrors() {
 					return true;
 				}
+				@Override
 				public String[] getErrorMessages() {
-					return new String[] { DebugCoreMessages.WatchExpression_0 }; 
+					return new String[] { DebugCoreMessages.WatchExpression_0 };
 				}
+				@Override
 				public String getExpressionText() {
 					return WatchExpression.this.getExpressionText();
 				}
+				@Override
 				public DebugException getException() {
 					return null;
 				}
@@ -104,6 +111,7 @@ public class WatchExpression implements IWatchExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IWatchExpression#setExpressionContext(org.eclipse.debug.core.model.IDebugElement)
 	 */
+	@Override
 	public void setExpressionContext(IDebugElement context) {
 		synchronized (this) {
 			fCurrentContext= context;
@@ -115,14 +123,14 @@ public class WatchExpression implements IWatchExpression {
 		if (!isEnabled()) {
 			return;
 		}
-		
+
 		evaluate();
 	}
 
 	/**
 	 * Sets the result of the last expression and fires notification that
 	 * this expression's value has changed.
-	 * 
+	 *
 	 * @param result result of a watch expression
 	 */
 	public void setResult(IWatchExpressionResult result) {
@@ -141,7 +149,7 @@ public class WatchExpression implements IWatchExpression {
 	protected void fireEvent(DebugEvent event) {
 		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {event});
 	}
-	
+
 	/**
 	 * Notifies the expression manager that this watch expression's
 	 * values have changed so the manager can update the
@@ -154,6 +162,7 @@ public class WatchExpression implements IWatchExpression {
 	/**
 	 * @see org.eclipse.debug.core.model.IExpression#getExpressionText()
 	 */
+	@Override
 	public String getExpressionText() {
 		return fExpressionText;
 	}
@@ -161,6 +170,7 @@ public class WatchExpression implements IWatchExpression {
 	/**
 	 * @see org.eclipse.debug.core.model.IExpression#getValue()
 	 */
+	@Override
 	public synchronized IValue getValue() {
 		if (fResult == null) {
 			return null;
@@ -171,6 +181,7 @@ public class WatchExpression implements IWatchExpression {
 	/**
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
+	@Override
 	public IDebugTarget getDebugTarget() {
 		IDebugElement element = fCurrentContext;
 		if (element != null) {
@@ -182,12 +193,14 @@ public class WatchExpression implements IWatchExpression {
 	/**
 	 * @see org.eclipse.debug.core.model.IExpression#dispose()
 	 */
+	@Override
 	public void dispose() {
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		synchronized (this) {
 			IValue value = getValue();
@@ -196,7 +209,7 @@ public class WatchExpression implements IWatchExpression {
 			}
 			if (fCurrentContext != null) {
 				return fCurrentContext.getModelIdentifier();
-			}			
+			}
 		}
 		return DebugPlugin.getUniqueIdentifier();
 	}
@@ -204,17 +217,19 @@ public class WatchExpression implements IWatchExpression {
 	/**
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		IDebugTarget debugTarget = getDebugTarget();
 		if (debugTarget != null) {
 		    return debugTarget.getLaunch();
 		}
-		return null; 
+		return null;
 	}
 
 	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		//CONTEXTLAUNCHING
 		if(adapter.equals(ILaunchConfiguration.class)) {
@@ -228,9 +243,10 @@ public class WatchExpression implements IWatchExpression {
 
 	/**
 	 * Set the enabled state of the {@link WatchExpression}
-	 * 
+	 *
 	 * @param enabled the new enabled state
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		fEnabled= enabled;
 		watchExpressionChanged();
@@ -241,6 +257,7 @@ public class WatchExpression implements IWatchExpression {
 	 * Set the text of the expression
 	 * @param expression the new expression text
 	 */
+	@Override
 	public void setExpressionText(String expression) {
 		fExpressionText= expression;
 		watchExpressionChanged();
@@ -252,6 +269,7 @@ public class WatchExpression implements IWatchExpression {
 	 * 		Enabled watch expressions will continue to update their value
 	 * 		automatically. Disabled expressions require a manual update.
 	 */
+	@Override
 	public boolean isEnabled() {
 		return fEnabled;
 	}
@@ -259,13 +277,14 @@ public class WatchExpression implements IWatchExpression {
 	/**
 	 * @see org.eclipse.debug.core.model.IWatchExpression#isPending()
 	 */
+	@Override
 	public synchronized boolean isPending() {
 		return fPending;
 	}
-	
+
 	/**
 	 * Sets the pending state of this expression.
-	 * 
+	 *
 	 * @param pending whether or not this expression should be
 	 * 		flagged as pending
 	 */
@@ -279,13 +298,15 @@ public class WatchExpression implements IWatchExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IErrorReportingExpression#hasErrors()
 	 */
+	@Override
 	public boolean hasErrors() {
 		return fResult != null && fResult.hasErrors();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IErrorReportingExpression#getErrorMessages()
 	 */
+	@Override
 	public String[] getErrorMessages() {
 		if (fResult == null) {
 			return new String[0];

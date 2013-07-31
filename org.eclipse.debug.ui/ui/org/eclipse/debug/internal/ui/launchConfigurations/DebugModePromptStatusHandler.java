@@ -29,6 +29,7 @@ public class DebugModePromptStatusHandler implements IStatusHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
+	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		if (source instanceof ILaunchConfiguration) {
 			ILaunchConfiguration config = (ILaunchConfiguration)source;

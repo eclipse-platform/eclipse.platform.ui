@@ -34,11 +34,13 @@ public class ClockSliderDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		fSlider = new Slider(parent, SWT.HORIZONTAL);
 		fSlider.setMinimum(0);
 		fSlider.setMaximum(1000);
 		fSlider.addSelectionListener(new SelectionAdapter(){
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int selection = fSlider.getSelection();
 				if (fControl != null) {
@@ -52,6 +54,7 @@ public class ClockSliderDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#display(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void display(IStructuredSelection selection) {
 		fControl = null;
 		if (selection == null || selection.isEmpty()) {
@@ -70,12 +73,14 @@ public class ClockSliderDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#dispose()
 	 */
+	@Override
 	public void dispose() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return "Location (seconds)"; //$NON-NLS-1$
 	}
@@ -83,6 +88,7 @@ public class ClockSliderDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#getID()
 	 */
+	@Override
 	public String getID() {
 		return ControlDetailPaneFactory.ID_CLOCK_SLIDER;
 	}
@@ -90,6 +96,7 @@ public class ClockSliderDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#getName()
 	 */
+	@Override
 	public String getName() {
 		return "Clock Slider (seconds)"; //$NON-NLS-1$
 	}
@@ -97,12 +104,14 @@ public class ClockSliderDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#init(org.eclipse.ui.IWorkbenchPartSite)
 	 */
+	@Override
 	public void init(IWorkbenchPartSite partSite) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#setFocus()
 	 */
+	@Override
 	public boolean setFocus() {
 		fSlider.setFocus();
 		return true;

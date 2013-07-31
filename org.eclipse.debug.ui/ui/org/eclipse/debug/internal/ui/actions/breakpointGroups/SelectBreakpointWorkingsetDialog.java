@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,10 +48,12 @@ public class SelectBreakpointWorkingsetDialog extends AbstractDebugCheckboxSelec
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
 	 */
+	@Override
 	protected void addViewerListeners(StructuredViewer viewer) {
 		CheckboxTableViewer checkViewer = getCheckBoxTableViewer();
 		if (checkViewer != null){
 			checkViewer.addCheckStateListener(new ICheckStateListener(){
+				@Override
 				public void checkStateChanged(CheckStateChangedEvent event) {
 					getCheckBoxTableViewer().setCheckedElements(new Object[] {event.getElement()});
 					getButton(IDialogConstants.OK_ID).setEnabled(true);
@@ -66,18 +68,19 @@ public class SelectBreakpointWorkingsetDialog extends AbstractDebugCheckboxSelec
 	 */
 	private IWorkingSet[] getBreakpointWorkingSets() {
 		IWorkingSet[] ws = PlatformUI.getWorkbench().getWorkingSetManager().getAllWorkingSets();
-		ArrayList list = new ArrayList();
+		ArrayList<IWorkingSet> list = new ArrayList<IWorkingSet>();
 		for(int i = 0; i < ws.length; i++) {
 			if(IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(ws[i].getId())) {
 				list.add(ws[i]);
 			}
 		}
-		return (IWorkingSet[]) list.toArray(new IWorkingSet[list.size()]);
+		return list.toArray(new IWorkingSet[list.size()]);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
 	 */
+	@Override
 	protected Object getViewerInput() {
 		return fWorkingSetList;
 	}
@@ -85,6 +88,7 @@ public class SelectBreakpointWorkingsetDialog extends AbstractDebugCheckboxSelec
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 	 */
+	@Override
 	protected String getDialogSettingsId() {
 		return SETTINGS_ID;
 	}
@@ -92,6 +96,7 @@ public class SelectBreakpointWorkingsetDialog extends AbstractDebugCheckboxSelec
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
 	 */
+	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.SELECT_DEFAULT_WORKINGSET_DIALOG;
 	}
@@ -99,6 +104,7 @@ public class SelectBreakpointWorkingsetDialog extends AbstractDebugCheckboxSelec
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
 	 */
+	@Override
 	protected String getViewerLabel() {
 		return BreakpointGroupMessages.SelectBreakpointWorkingsetDialog_0;
 	}

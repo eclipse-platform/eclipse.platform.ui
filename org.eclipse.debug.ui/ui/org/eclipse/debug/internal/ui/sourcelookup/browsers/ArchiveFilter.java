@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -32,16 +33,17 @@ public class ArchiveFilter extends ViewerFilter {
 	/**
 	 * Collection of archives and containers to display
 	 */
-	private Set fArchives;
+	private Set<IResource> fArchives;
 	
 	/**
 	 * Collection of already existing archives
 	 */
-	private List fExisting;
+	private List<ISourceContainer> fExisting;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		return fArchives.contains(element) && !fExisting.contains(element);
 	}
@@ -52,7 +54,7 @@ public class ArchiveFilter extends ViewerFilter {
 	 * 
 	 * @param objects resources to exclude
 	 */
-	public ArchiveFilter(List objects) {
+	public ArchiveFilter(List<ISourceContainer> objects) {
 		fExisting = objects;
 		init();
 	}
@@ -62,8 +64,9 @@ public class ArchiveFilter extends ViewerFilter {
 	 */
 	private void init() {
 		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
+			@Override
 			public void run() {
-				fArchives = new HashSet();
+				fArchives = new HashSet<IResource>();
 				traverse(ResourcesPlugin.getWorkspace().getRoot(), fArchives);
 			}
 		});
@@ -76,7 +79,7 @@ public class ArchiveFilter extends ViewerFilter {
 	 * @param set the set to add any found archives to
 	 * @return <code>true</code> if any archives have been added false otherwise
 	 */
-	private boolean traverse(IContainer container, Set set) {
+	private boolean traverse(IContainer container, Set<IResource> set) {
 		boolean added = false;
 		try {	
 			IResource[] resources = container.members();

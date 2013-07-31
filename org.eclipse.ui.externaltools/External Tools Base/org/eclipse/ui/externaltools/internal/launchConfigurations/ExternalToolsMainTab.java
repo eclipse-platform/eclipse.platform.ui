@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,16 +72,17 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	protected Button argumentVariablesButton;
 
 	protected SelectionAdapter selectionAdapter;
-	
+
 	protected boolean fInitializing= false;
 	private boolean userEdited= false;
 
 	protected WidgetListener fListener= new WidgetListener();
-	
+
 	/**
 	 * A listener to update for text modification and widget selection.
 	 */
 	protected class WidgetListener extends SelectionAdapter implements ModifyListener {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			if (!fInitializing) {
 				setDirty(true);
@@ -89,6 +90,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 				updateLaunchConfigurationDialog();
 			}
 		}
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			setDirty(true);
 			Object source= e.getSource();
@@ -110,10 +112,11 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		}
 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
@@ -128,14 +131,14 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		createWorkDirectoryComponent(mainComposite);
 		createArgumentComponent(mainComposite);
 		createVerticalSpacer(mainComposite, 1);
-		
+
 		Dialog.applyDialogFont(parent);
 	}
-	
+
 	/**
 	 * Creates the controls needed to edit the location
 	 * attribute of an external tool
-	 * 
+	 *
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createLocationComponent(Composite parent) {
@@ -143,41 +146,41 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		String locationLabel = getLocationLabel();
 		group.setText(locationLabel);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;	
+		layout.numColumns = 1;
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayout(layout);
 		group.setLayoutData(gridData);
-		
+
 		locationField = new Text(group, SWT.BORDER);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		locationField.setLayoutData(gridData);
 		locationField.addModifyListener(fListener);
 		addControlAccessibleListener(locationField, group.getText());
-		
+
 		Composite buttonComposite = new Composite(group, SWT.NONE);
 		layout = new GridLayout();
 		layout.marginHeight = 0;
-        layout.marginWidth = 0;   
+        layout.marginWidth = 0;
 		layout.numColumns = 3;
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(gridData);
 		buttonComposite.setFont(parent.getFont());
-		
+
 		workspaceLocationButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab__Browse_Workspace____3, null);
 		workspaceLocationButton.addSelectionListener(fListener);
 		addControlAccessibleListener(workspaceLocationButton, group.getText() + " " + workspaceLocationButton.getText()); //$NON-NLS-1$
-		
+
 		fileLocationButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab_Brows_e_File_System____4, null);
 		fileLocationButton.addSelectionListener(fListener);
 		addControlAccessibleListener(fileLocationButton, group.getText() + " " + fileLocationButton.getText()); //$NON-NLS-1$
-		
+
 		variablesLocationButton = createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab_31, null);
-		variablesLocationButton.addSelectionListener(fListener);	
+		variablesLocationButton.addSelectionListener(fListener);
 		addControlAccessibleListener(variablesLocationButton, group.getText() + " " + variablesLocationButton.getText());	 //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Returns the label used for the location widgets. Subclasses may wish to override.
 	 */
@@ -188,7 +191,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	/**
 	 * Creates the controls needed to edit the working directory
 	 * attribute of an external tool
-	 * 
+	 *
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createWorkDirectoryComponent(Composite parent) {
@@ -200,14 +203,14 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayout(layout);
 		group.setLayoutData(gridData);
-		
+
 		workDirectoryField = new Text(group, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		workDirectoryField.setLayoutData(data);
 		workDirectoryField.addModifyListener(fListener);
 		addControlAccessibleListener(workDirectoryField,group.getText());
-		
+
 		Composite buttonComposite = new Composite(group, SWT.NONE);
 		layout = new GridLayout();
         layout.marginWidth = 0;
@@ -217,20 +220,20 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(gridData);
 		buttonComposite.setFont(parent.getFont());
-		
+
 		workspaceWorkingDirectoryButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab_Browse_Wor_kspace____6, null);
 		workspaceWorkingDirectoryButton.addSelectionListener(fListener);
 		addControlAccessibleListener(workspaceWorkingDirectoryButton, group.getText() + " " + workspaceWorkingDirectoryButton.getText()); //$NON-NLS-1$
-		
+
 		fileWorkingDirectoryButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab_Browse_F_ile_System____7, null);
 		fileWorkingDirectoryButton.addSelectionListener(fListener);
 		addControlAccessibleListener(fileWorkingDirectoryButton, group.getText() + " " + fileLocationButton.getText()); //$NON-NLS-1$
-		
+
 		variablesWorkingDirectoryButton = createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab_32, null);
 		variablesWorkingDirectoryButton.addSelectionListener(fListener);
 		addControlAccessibleListener(variablesWorkingDirectoryButton, group.getText() + " " + variablesWorkingDirectoryButton.getText()); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Return the String to use as the label for the working directory field.
 	 * Subclasses may wish to override.
@@ -238,7 +241,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	protected String getWorkingDirectoryLabel() {
 		return ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab_Working__Directory__5;
 	}
-	
+
 	/**
 	 * Creates the controls needed to edit the argument and
 	 * prompt for argument attributes of an external tool
@@ -248,30 +251,31 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	protected void createArgumentComponent(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
 		String groupName = ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab__Arguments___1;
-		group.setText(groupName); 
+		group.setText(groupName);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		group.setLayout(layout);
 		group.setLayoutData(gridData);
         group.setFont(parent.getFont());
-		
+
 		argumentField = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		argumentField.addTraverseListener(new TraverseListener() {
+			@Override
 			public void keyTraversed(TraverseEvent event) {
 				if (event.detail == SWT.TRAVERSE_RETURN && (event.stateMask & SWT.MODIFIER_MASK) != 0) {
 					event.doit= true;
 				}
 			}
 		});
-		
+
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		gridData.heightHint = 30;
 		argumentField.setLayoutData(gridData);
 		argumentField.addModifyListener(fListener);
 		addControlAccessibleListener(argumentField, group.getText());
-		
+
 		Composite composite = new Composite(group, SWT.NONE);
 		layout = new GridLayout();
 		layout.numColumns= 1;
@@ -281,7 +285,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		composite.setLayout(layout);
 		composite.setLayoutData(gridData);
 		composite.setFont(parent.getFont());
-		
+
 		argumentVariablesButton= createPushButton(composite, ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab_Varia_bles____2, null);
 		argumentVariablesButton.addSelectionListener(fListener);
 		addControlAccessibleListener(argumentVariablesButton, argumentVariablesButton.getText()); // need to strip the mnemonic from buttons
@@ -292,10 +296,11 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		gridData.horizontalSpan = 2;
 		instruction.setLayoutData(gridData);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(FIRST_EDIT, true);
 	}
@@ -303,6 +308,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fInitializing= true;
 		updateLocation(configuration);
@@ -311,29 +317,29 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		fInitializing= false;
 		setDirty(false);
 	}
-	
+
 	/**
 	 * Updates the working directory widgets to match the state of the given launch
 	 * configuration.
 	 */
 	protected void updateWorkingDirectory(ILaunchConfiguration configuration) {
-		String workingDir= IExternalToolConstants.EMPTY_STRING; 
+		String workingDir= IExternalToolConstants.EMPTY_STRING;
 		try {
-			workingDir= configuration.getAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, IExternalToolConstants.EMPTY_STRING); 
+			workingDir= configuration.getAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, IExternalToolConstants.EMPTY_STRING);
 		} catch (CoreException ce) {
 			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab_Error_reading_configuration_10, ce);
 		}
 		workDirectoryField.setText(workingDir);
 	}
-	
+
 	/**
 	 * Updates the location widgets to match the state of the given launch
 	 * configuration.
 	 */
 	protected void updateLocation(ILaunchConfiguration configuration) {
-		String location= IExternalToolConstants.EMPTY_STRING; 
+		String location= IExternalToolConstants.EMPTY_STRING;
 		try {
-			location= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, IExternalToolConstants.EMPTY_STRING); 
+			location= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, IExternalToolConstants.EMPTY_STRING);
 		} catch (CoreException ce) {
 			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab_Error_reading_configuration_10, ce);
 		}
@@ -345,9 +351,9 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * configuration.
 	 */
 	protected void updateArgument(ILaunchConfiguration configuration) {
-		String arguments= IExternalToolConstants.EMPTY_STRING; 
+		String arguments= IExternalToolConstants.EMPTY_STRING;
 		try {
-			arguments= configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, IExternalToolConstants.EMPTY_STRING); 
+			arguments= configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, IExternalToolConstants.EMPTY_STRING);
 		} catch (CoreException ce) {
 			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab_Error_reading_configuration_7, ce);
 		}
@@ -357,6 +363,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		String location= locationField.getText().trim();
 		if (location.length() == 0) {
@@ -364,7 +371,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		} else {
 			configuration.setAttribute(IExternalToolConstants.ATTR_LOCATION, location);
 		}
-		
+
 		String workingDirectory= workDirectoryField.getText().trim();
 		if (workingDirectory.length() == 0) {
 			configuration.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String)null);
@@ -378,7 +385,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		} else {
 			configuration.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
 		}
-		
+
 		if(userEdited) {
 			configuration.setAttribute(FIRST_EDIT, (String)null);
 		}
@@ -387,13 +394,15 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab__Main_17;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
@@ -405,7 +414,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		}
 		return validateLocation(newConfig) && validateWorkDirectory();
 	}
-	
+
 	/**
 	 * Validates the content of the location field.
 	 */
@@ -421,7 +430,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			}
 			return false;
 		}
-		
+
 		String expandedLocation= null;
 		try {
 			expandedLocation= resolveValue(location);
@@ -432,7 +441,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			setErrorMessage(e.getStatus().getMessage());
 			return false;
 		}
-		
+
 		File file = new File(expandedLocation);
 		if (!file.exists()) { // The file does not exist.
 			if (!newConfig) {
@@ -448,10 +457,10 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Validates the variables of the given string to determine if all variables are valid
-	 * 
+	 *
 	 * @param expression expression with variables
 	 * @exception CoreException if a variable is specified that does not exist
 	 */
@@ -459,7 +468,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		manager.validateStringVariables(expression);
 	}
-	
+
 	private String resolveValue(String expression) throws CoreException {
 		String expanded= null;
 		try {
@@ -470,10 +479,10 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		}
 		return expanded;
 	}
-	
+
 	/**
 	 * Validates the value of the given string to determine if any/all variables are valid
-	 * 
+	 *
 	 * @param expression expression with variables
 	 * @return whether the expression contained any variable values
 	 * @exception CoreException if variable resolution fails
@@ -502,7 +511,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			setErrorMessage(e.getStatus().getMessage());
 			return false;
 		}
-			
+
 		File file = new File(expandedDir);
 		if (!file.exists()) { // The directory does not exist.
 			setErrorMessage(ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab_External_tool_working_directory_does_not_exist_or_is_invalid_21);
@@ -514,7 +523,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Prompts the user to choose a location from the filesystem and
 	 * sets the location as the full path of the selected file.
@@ -527,7 +536,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			locationField.setText(text);
 		}
 	}
-	
+
 	/**
 	 * Prompts the user for a workspace location within the workspace and sets
 	 * the location as a String containing the workspace_loc variable or
@@ -544,7 +553,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		IResource resource = (IResource)results[0];
 		locationField.setText(newVariableExpression("workspace_loc", resource.getFullPath().toString())); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Prompts the user for a working directory location within the workspace
 	 * and sets the working directory as a String containing the workspace_loc
@@ -553,7 +562,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	protected void handleWorkspaceWorkingDirectoryButtonSelected() {
 		ContainerSelectionDialog containerDialog;
 		containerDialog = new ContainerSelectionDialog(
-			getShell(), 
+			getShell(),
 			ResourcesPlugin.getWorkspace().getRoot(),
 			false,
 			ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab_23);
@@ -567,7 +576,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			workDirectoryField.setText(text);
 		}
 	}
-	
+
 	/**
 	 * Returns a new variable expression with the given variable and the given argument.
 	 * @see IStringVariableManager#generateVariableExpression(String, String)
@@ -575,7 +584,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	protected String newVariableExpression(String varName, String arg) {
 		return VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression(varName, arg);
 	}
-	
+
 	/**
 	 * Prompts the user to choose a working directory from the filesystem.
 	 */
@@ -588,7 +597,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			workDirectoryField.setText(text);
 		}
 	}
-	
+
 	/**
 	 * A variable entry button has been pressed for the given text
 	 * field. Prompt the user for a variable and enter the result
@@ -610,26 +619,29 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		dialog.open();
 		return dialog.getVariableExpression();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return ExternalToolsImages.getImage(org.eclipse.ui.externaltools.internal.model.IExternalToolConstants.IMG_TAB_MAIN);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 	}
-	
+
 	/*
 	 * Fix for Bug 60163 Accessibility: New Builder Dialog missing object info for textInput controls
 	 */
@@ -642,15 +654,17 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		}
 		control.getAccessible().addAccessibleListener(new ControlAccessibleListener(stripped.toString()));
 	}
-	
+
 	private class ControlAccessibleListener extends AccessibleAdapter {
 		private String controlName;
 		ControlAccessibleListener(String name) {
 			controlName = name;
 		}
+
+		@Override
 		public void getName(AccessibleEvent e) {
 			e.result = controlName;
 		}
-		
+
 	}
 }

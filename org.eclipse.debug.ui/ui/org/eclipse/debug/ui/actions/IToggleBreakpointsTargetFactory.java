@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Wind River Systems and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,7 +73,7 @@ public interface IToggleBreakpointsTargetFactory {
      * @return Set of <code>String</code> IDs for possible toggle breakpoint 
      * targets, possibly empty
      */
-    public Set getToggleTargets(IWorkbenchPart part, ISelection selection);
+	public Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection);
     
     /**
      * Returns the identifier of the default toggle breakpoints target to use 

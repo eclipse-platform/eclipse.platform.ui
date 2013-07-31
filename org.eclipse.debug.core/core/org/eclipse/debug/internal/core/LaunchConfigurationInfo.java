@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
- 
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,12 +38,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.ibm.icu.text.MessageFormat;
- 
+
 /**
  * The information associated with a launch configuration handle.
  */
 public class LaunchConfigurationInfo {
-	
+
 	/**
 	 * Constants for XML element names and attributes
 	 */
@@ -60,24 +60,26 @@ public class LaunchConfigurationInfo {
 	private static final String INT_ATTRIBUTE = "intAttribute"; //$NON-NLS-1$
 	private static final String STRING_ATTRIBUTE = "stringAttribute"; //$NON-NLS-1$
 	private static final String TYPE = "type"; //$NON-NLS-1$
-	
+
 	/**
 	 * This configurations attribute table. Keys are <code>String</code>s and
-	 * values are one of <code>String</code>, <code>Integer</code>, or
-	 * <code>Boolean</code>.
+	 * values are one of <code>String</code>, <code>Integer</code>,
+	 * <code>Boolean</code>, <code>Set&lt;String&gt;</code>,
+	 * <code>List&lt;String&gt;</code>, or
+	 * <code>Map&lt;String, String&gt;</code>
 	 */
-	private TreeMap fAttributes;
-	
+	private TreeMap<String, Object> fAttributes;
+
 	/**
 	 * This launch configuration's type
 	 */
 	private ILaunchConfigurationType fType;
-	
+
 	/**
 	 * Whether running on Sun 1.4 VM - see bug 110215
 	 */
 	private static boolean fgIsSun14x = false;
-	
+
 	static {
 		String vendor = System.getProperty("java.vm.vendor"); //$NON-NLS-1$
 		if (vendor.startsWith("Sun Microsystems")) { //$NON-NLS-1$
@@ -87,52 +89,52 @@ public class LaunchConfigurationInfo {
 			}
 		}
 	}
-	
+
 	/**
 	 * Constructs a new empty info
 	 */
 	protected LaunchConfigurationInfo() {
-		setAttributeTable(new TreeMap());
+		setAttributeTable(new TreeMap<String, Object>());
 	}
-	
+
 	/**
 	 * Returns this configuration's attribute table.
-	 * 
+	 *
 	 * @return attribute table
 	 */
-	private TreeMap getAttributeTable() {
+	private TreeMap<String, Object> getAttributeTable() {
 		return fAttributes;
 	}
 
 	/**
 	 * Sets this configuration's attribute table.
-	 * 
+	 *
 	 * @param table
 	 *            attribute table
-	 */	
-	private void setAttributeTable(TreeMap table) {
+	 */
+	private void setAttributeTable(TreeMap<String, Object> table) {
 		fAttributes = table;
 	}
-	
+
 	/**
 	 * Sets the attributes in this info to those in the given map.
-	 * 
+	 *
 	 * @param map the {@link Map} of attributes to set
 	 */
-	protected void setAttributes(Map map) {
+	protected void setAttributes(Map<String, ?> map) {
 		if (map == null) {
-			setAttributeTable(new TreeMap());
+			setAttributeTable(new TreeMap<String, Object>());
 			return;
 		}
-		setAttributeTable(new TreeMap(map));
+		setAttributeTable(new TreeMap<String, Object>(map));
 	}
-	
+
 	/**
 	 * Returns the <code>String</code> attribute with the given key or the
 	 * given default value if undefined.
 	 * @param key the attribute name
 	 * @param defaultValue the value to be returned if the given key does not exist in the attribute table
-	 * 
+	 *
 	 * @return attribute specified by given key or the defaultValue if undefined
 	 * @throws CoreException
 	 *             if the attribute with the given key exists but is not a
@@ -143,23 +145,23 @@ public class LaunchConfigurationInfo {
 		if (attr != null) {
 			if (attr instanceof String) {
 				return (String)attr;
-			} 
+			}
 			throw new DebugException(
 				new Status(
 				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_java_lang_String__1, new String[] {key}), null 
+ DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_java_lang_String__1, new Object[] { key }), null
 				)
 			);
 		}
 		return defaultValue;
 	}
-	
+
 	/**
 	 * Returns the <code>int</code> attribute with the given key or the given
 	 * default value if undefined.
 	 * @param key the name of the attribute
 	 * @param defaultValue the default value to return if the key does not appear in the attribute table
-	 * 
+	 *
 	 * @return attribute specified by given key or the defaultValue if undefined
 	 * @throws CoreException
 	 *             if the attribute with the given key exists but is not an
@@ -170,23 +172,23 @@ public class LaunchConfigurationInfo {
 		if (attr != null) {
 			if (attr instanceof Integer) {
 				return ((Integer)attr).intValue();
-			} 
+			}
 			throw new DebugException(
 				new Status(
 				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_int__2, new String[] {key}), null 
+ DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_int__2, new Object[] { key }), null
 				)
 			);
 		}
 		return defaultValue;
 	}
-	
+
 	/**
 	 * Returns the <code>boolean</code> attribute with the given key or the
 	 * given default value if undefined.
 	 * @param key the name of the attribute
 	 * @param defaultValue the default value to return if the key does not appear in the attribute table
-	 * 
+	 *
 	 * @return attribute specified by given key or the defaultValue if undefined
 	 * @throws CoreException
 	 *             if the attribute with the given key exists but is not a
@@ -197,123 +199,127 @@ public class LaunchConfigurationInfo {
 		if (attr != null) {
 			if (attr instanceof Boolean) {
 				return ((Boolean)attr).booleanValue();
-			} 
+			}
 			throw new DebugException(
 				new Status(
 				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_boolean__3, new String[] {key}), null 
+ DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_boolean__3, new Object[] { key }), null
 				)
 			);
 		}
 		return defaultValue;
 	}
-	
+
 	/**
 	 * Returns the <code>java.util.List</code> attribute with the given key or
 	 * the given default value if undefined.
 	 * @param key the name of the attribute
 	 * @param defaultValue the default value to return if the key does not appear in the attribute table
-	 * 
+	 *
 	 * @return attribute specified by given key or the defaultValue if undefined
 	 * @throws CoreException
 	 *             if the attribute with the given key exists but is not a
 	 *             <code>java.util.List</code>
 	 */
-	protected List getListAttribute(String key, List defaultValue) throws CoreException {
+	@SuppressWarnings("unchecked")
+	protected List<String> getListAttribute(String key, List<String> defaultValue) throws CoreException {
 		Object attr = getAttributeTable().get(key);
 		if (attr != null) {
 			if (attr instanceof List) {
-				return (List)attr;
-			} 
+				return (List<String>) attr;
+			}
 			throw new DebugException(
 				new Status(
 				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_java_util_List__1, new String[] {key}), null 
+ DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_java_util_List__1, new Object[] { key }), null
 				)
 			);
 		}
 		return defaultValue;
 	}
-	
+
 	/**
 	 * Returns the <code>java.util.Set</code> attribute with the given key or
 	 * the given default value if undefined.
+	 *
 	 * @param key the name of the attribute
-	 * @param defaultValue the default value to return if the key does not xist in the attribute table
-	 * 
+	 * @param defaultValue the default value to return if the key does not exist
+	 *            in the attribute table
+	 *
 	 * @return attribute specified by given key or the defaultValue if undefined
-	 * @throws CoreException
-	 *             if the attribute with the given key exists but is not a
-	 *             <code>java.util.Set</code>
-	 * 
+	 * @throws CoreException if the attribute with the given key exists but is
+	 *             not a <code>java.util.Set</code>
+	 *
 	 * @since 3.3
 	 */
-	protected Set getSetAttribute(String key, Set defaultValue) throws CoreException {
+	@SuppressWarnings("unchecked")
+	protected Set<String> getSetAttribute(String key, Set<String> defaultValue) throws CoreException {
 		Object attr = getAttributeTable().get(key);
 		if (attr != null) {
 			if (attr instanceof Set) {
-				return (Set)attr;
-			} 
+				return (Set<String>) attr;
+			}
 			throw new DebugException(
 				new Status(
 				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_35, new String[] {key}), null 
+ DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_35, new Object[] { key }), null
 				)
 			);
 		}
 		return defaultValue;
 	}
-	
+
 	/**
 	 * Returns the <code>java.util.Map</code> attribute with the given key or
 	 * the given default value if undefined.
 	 * @param key the name of the attribute
 	 * @param defaultValue the default value to return if the key does not exist in the attribute table
-	 * 
+	 *
 	 * @return attribute specified by given key or the defaultValue if undefined
 	 * @throws CoreException
 	 *             if the attribute with the given key exists but is not a
 	 *             <code>java.util.Map</code>
 	 */
-	protected Map getMapAttribute(String key, Map defaultValue) throws CoreException {
+	@SuppressWarnings("unchecked")
+	protected Map<String, String> getMapAttribute(String key, Map<String, String> defaultValue) throws CoreException {
 		Object attr = getAttributeTable().get(key);
 		if (attr != null) {
 			if (attr instanceof Map) {
-				return (Map)attr;
-			} 
+				return (Map<String, String>) attr;
+			}
 			throw new DebugException(
 				new Status(
 				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_java_util_Map__1, new String[] {key}), null 
+ DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_java_util_Map__1, new Object[] { key }), null
 				)
 			);
 		}
 		return defaultValue;
 	}
-	
+
 	/**
 	 * Sets this configuration's type.
-	 * 
+	 *
 	 * @param type
 	 *            launch configuration type
 	 */
 	protected void setType(ILaunchConfigurationType type) {
 		fType = type;
 	}
-	
+
 	/**
 	 * Returns this configuration's type.
-	 * 
+	 *
 	 * @return launch configuration type
 	 */
 	protected ILaunchConfigurationType getType() {
 		return fType;
-	}	
-	
-	
+	}
+
+
 	/**
 	 * Returns a copy of this info object
-	 * 
+	 *
 	 * @return copy of this info
 	 */
 	protected LaunchConfigurationInfo getCopy() {
@@ -322,20 +328,20 @@ public class LaunchConfigurationInfo {
 		copy.setAttributeTable(getAttributes());
 		return copy;
 	}
-	
+
 	/**
 	 * Returns a copy of this info's attribute map.
-	 * 
+	 *
 	 * @return a copy of this info's attribute map
 	 */
-	protected TreeMap getAttributes() {
-		return (TreeMap)getAttributeTable().clone();
+	protected TreeMap<String, Object> getAttributes() {
+		return new TreeMap<String, Object>(getAttributeTable());
 	}
-	
+
 	/**
 	 * Sets the given attribute to the given value. Only working copy's should
 	 * use this API.
-	 * 
+	 *
 	 * @param key
 	 *            attribute key
 	 * @param value
@@ -348,10 +354,10 @@ public class LaunchConfigurationInfo {
 			getAttributeTable().put(key, value);
 		}
 	}
-	
+
 	/**
 	 * Returns the content of this info as XML
-	 * 
+	 *
 	 * @return the content of this info as XML
 	 * @throws CoreException
 	 *             if a attribute has been set with a null key
@@ -362,22 +368,20 @@ public class LaunchConfigurationInfo {
 	 * @throws TransformerException
 	 *             if an exception occurs creating the XML
 	 */
+	@SuppressWarnings("unchecked")
 	protected String getAsXML() throws CoreException, IOException, ParserConfigurationException, TransformerException {
-
 		Document doc = LaunchManager.getDocument();
-		Element configRootElement = doc.createElement(LAUNCH_CONFIGURATION); 
+		Element configRootElement = doc.createElement(LAUNCH_CONFIGURATION);
 		doc.appendChild(configRootElement);
-		
-		configRootElement.setAttribute(TYPE, getType().getIdentifier()); 
-		
-		Iterator keys = getAttributeTable().keySet().iterator();
-		while (keys.hasNext()) {
-			String key = (String)keys.next();
+
+		configRootElement.setAttribute(TYPE, getType().getIdentifier());
+
+		for (String key : getAttributeTable().keySet()) {
 			if (key == null) {
 				throw new DebugException(
 					new Status(
 						IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-						DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationInfo_36, null 
+						DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationInfo_36, null
 					)
 				);
 			}
@@ -389,26 +393,25 @@ public class LaunchConfigurationInfo {
 			String valueString = null;
 			if (value instanceof String) {
 				valueString = (String)value;
-				element = createKeyValueElement(doc, STRING_ATTRIBUTE, key, valueString); 
+				element = createKeyValueElement(doc, STRING_ATTRIBUTE, key, valueString);
 			} else if (value instanceof Integer) {
 				valueString = ((Integer)value).toString();
-				element = createKeyValueElement(doc, INT_ATTRIBUTE, key, valueString); 
+				element = createKeyValueElement(doc, INT_ATTRIBUTE, key, valueString);
 			} else if (value instanceof Boolean) {
 				valueString = ((Boolean)value).toString();
-				element = createKeyValueElement(doc, BOOLEAN_ATTRIBUTE, key, valueString); 
-			} else if (value instanceof List) {				
-				element = createListElement(doc, LIST_ATTRIBUTE, key, (List)value); 
-			} else if (value instanceof Map) {				
-				element = createMapElement(doc, MAP_ATTRIBUTE, key, (Map)value); 
+				element = createKeyValueElement(doc, BOOLEAN_ATTRIBUTE, key, valueString);
+			} else if (value instanceof List) {
+				element = createListElement(doc, LIST_ATTRIBUTE, key, (List<String>) value);
+			} else if (value instanceof Map) {
+				element = createMapElement(doc, MAP_ATTRIBUTE, key, (Map<String, String>) value);
 			} else if(value instanceof Set) {
-				element = createSetElement(doc, SET_ATTRIBUTE, key, (Set)value); 
+				element = createSetElement(doc, SET_ATTRIBUTE, key, (Set<String>) value);
 			}
 			configRootElement.appendChild(element);
 		}
-
 		return LaunchManager.serializeDocument(doc);
 	}
-	
+
 	/**
 	 * Helper method that creates a 'key value' element of the specified type
 	 * with the specified attribute values.
@@ -420,109 +423,105 @@ public class LaunchConfigurationInfo {
 	 */
 	protected Element createKeyValueElement(Document doc, String elementType, String key, String value) {
 		Element element = doc.createElement(elementType);
-		element.setAttribute(KEY, key); 
+		element.setAttribute(KEY, key);
 		element.setAttribute(VALUE, value);
 		return element;
 	}
-	
+
 	/**
 	 * Creates a new <code>Element</code> for the specified
 	 * <code>java.util.List</code>
-	 * 
+	 *
 	 * @param doc the doc to add the element to
 	 * @param elementType the type of the element
 	 * @param listKey the key for the element
 	 * @param list the list to fill the new element with
 	 * @return the new element
 	 */
-	protected Element createListElement(Document doc, String elementType, String listKey, List list) {
+	protected Element createListElement(Document doc, String elementType, String listKey, List<String> list) {
 		Element listElement = doc.createElement(elementType);
-		listElement.setAttribute(KEY, listKey); 
-		Iterator iterator = list.iterator();
-		while (iterator.hasNext()) {
-			String value = (String) iterator.next();
-			Element element = doc.createElement(LIST_ENTRY); 
+		listElement.setAttribute(KEY, listKey);
+		for (String value : list) {
+			Element element = doc.createElement(LIST_ENTRY);
 			element.setAttribute(VALUE, value);
 			listElement.appendChild(element);
-		}		
+		}
 		return listElement;
 	}
-	
+
 	/**
 	 * Creates a new <code>Element</code> for the specified
 	 * <code>java.util.Set</code>
-	 * 
+	 *
 	 * @param doc the doc to add the element to
 	 * @param elementType the type of the element
 	 * @param setKey the key for the element
 	 * @param set the set to fill the new element with
 	 * @return the new element
-	 * 
+	 *
 	 * @since 3.3
 	 */
-	protected Element createSetElement(Document doc, String elementType, String setKey, Set set) {
+	protected Element createSetElement(Document doc, String elementType, String setKey, Set<String> set) {
 		Element setElement = doc.createElement(elementType);
 		setElement.setAttribute(KEY, setKey);
 		// persist in sorted order
-		List list = new ArrayList(set);
+		List<String> list = new ArrayList<String>(set);
 		Collections.sort(list);
 		Element element = null;
-		for(Iterator iter = list.iterator(); iter.hasNext();) {
+		for (String str : list) {
 			element = doc.createElement(SET_ENTRY);
-			element.setAttribute(VALUE, (String) iter.next());
+			element.setAttribute(VALUE, str);
 			setElement.appendChild(element);
 		}
 		return setElement;
 	}
-	
+
 	/**
 	 * Creates a new <code>Element</code> for the specified
 	 * <code>java.util.Map</code>
-	 * 
+	 *
 	 * @param doc the doc to add the element to
 	 * @param elementType the type of the element
 	 * @param mapKey the key for the element
 	 * @param map the map to fill the new element with
 	 * @return the new element
-	 * 
+	 *
 	 */
-	protected Element createMapElement(Document doc, String elementType, String mapKey, Map map) {
+	protected Element createMapElement(Document doc, String elementType, String mapKey, Map<String, String> map) {
 		Element mapElement = doc.createElement(elementType);
 		mapElement.setAttribute(KEY, mapKey);
 		// persist in sorted order based on keys
-		List keys = new ArrayList(map.keySet());
+		List<String> keys = new ArrayList<String>(map.keySet());
 		Collections.sort(keys);
-		Iterator iterator = keys.iterator();
-		while (iterator.hasNext()) {
-			String key = (String) iterator.next();
-			String value = (String) map.get(key);
-			Element element = doc.createElement(MAP_ENTRY); 
-			element.setAttribute(KEY, key); 
-			element.setAttribute(VALUE, value); 
+		for (String key : keys) {
+			String value = map.get(key);
+			Element element = doc.createElement(MAP_ENTRY);
+			element.setAttribute(KEY, key);
+			element.setAttribute(VALUE, value);
 			mapElement.appendChild(element);
-		}		
-		return mapElement;		
+		}
+		return mapElement;
 	}
-	
+
 	/**
 	 * Initializes the mapping of attributes from the XML file
 	 * @param root the root node from the XML document
 	 * @throws CoreException if a problem is encountered
 	 */
 	protected void initializeFromXML(Element root) throws CoreException {
-		if (!root.getNodeName().equalsIgnoreCase(LAUNCH_CONFIGURATION)) { 
+		if (!root.getNodeName().equalsIgnoreCase(LAUNCH_CONFIGURATION)) {
 			throw getInvalidFormatDebugException();
 		}
-		
+
 		// read type
-		String id = root.getAttribute(TYPE); 
+		String id = root.getAttribute(TYPE);
 		if (id == null) {
 			throw getInvalidFormatDebugException();
-		} 
-		
+		}
+
 		ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(id);
 		if (type == null) {
-			String message= MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_missing_type, new Object[]{id}); 
+			String message= MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_missing_type, new Object[]{id});
 			throw new DebugException(
 					new Status(
 					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
@@ -530,7 +529,7 @@ public class LaunchConfigurationInfo {
 				);
 		}
 		setType(type);
-		
+
 		NodeList list = root.getChildNodes();
 		Node node = null;
 		Element element = null;
@@ -541,23 +540,23 @@ public class LaunchConfigurationInfo {
 			if (nodeType == Node.ELEMENT_NODE) {
 				element = (Element) node;
 				nodeName = element.getNodeName();
-				if (nodeName.equalsIgnoreCase(STRING_ATTRIBUTE)) { 
+				if (nodeName.equalsIgnoreCase(STRING_ATTRIBUTE)) {
 					setStringAttribute(element);
-				} else if (nodeName.equalsIgnoreCase(INT_ATTRIBUTE)) { 
+				} else if (nodeName.equalsIgnoreCase(INT_ATTRIBUTE)) {
 					setIntegerAttribute(element);
-				} else if (nodeName.equalsIgnoreCase(BOOLEAN_ATTRIBUTE))  { 
+				} else if (nodeName.equalsIgnoreCase(BOOLEAN_ATTRIBUTE))  {
 					setBooleanAttribute(element);
-				} else if (nodeName.equalsIgnoreCase(LIST_ATTRIBUTE)) {   
-					setListAttribute(element);					
-				} else if (nodeName.equalsIgnoreCase(MAP_ATTRIBUTE)) {    
-					setMapAttribute(element);										
-				} else if(nodeName.equalsIgnoreCase(SET_ATTRIBUTE)) { 
+				} else if (nodeName.equalsIgnoreCase(LIST_ATTRIBUTE)) {
+					setListAttribute(element);
+				} else if (nodeName.equalsIgnoreCase(MAP_ATTRIBUTE)) {
+					setMapAttribute(element);
+				} else if(nodeName.equalsIgnoreCase(SET_ATTRIBUTE)) {
 					setSetAttribute(element);
 				}
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * Loads a <code>String</code> from the specified element into the local attribute mapping
 	 * @param element the element to load from
@@ -566,7 +565,7 @@ public class LaunchConfigurationInfo {
 	protected void setStringAttribute(Element element) throws CoreException {
 		setAttribute(getKeyAttribute(element), getValueAttribute(element));
 	}
-	
+
 	/**
 	 * Loads an <code>Integer</code> from the specified element into the local attribute mapping
 	 * @param element the element to load from
@@ -575,7 +574,7 @@ public class LaunchConfigurationInfo {
 	protected void setIntegerAttribute(Element element) throws CoreException {
 		setAttribute(getKeyAttribute(element), new Integer(getValueAttribute(element)));
 	}
-	
+
 	/**
 	 * Loads a <code>Boolean</code> from the specified element into the local attribute mapping
 	 * @param element the element to load from
@@ -584,26 +583,26 @@ public class LaunchConfigurationInfo {
 	protected void setBooleanAttribute(Element element) throws CoreException {
 		setAttribute(getKeyAttribute(element), Boolean.valueOf(getValueAttribute(element)));
 	}
-	
+
 	/**
 	 * Reads a <code>List</code> attribute from the specified XML node and
 	 * loads it into the mapping of attributes
-	 * 
+	 *
 	 * @param element the element to read the list attribute from
 	 * @throws CoreException if the element has an invalid format
 	 */
 	protected void setListAttribute(Element element) throws CoreException {
-		String listKey = element.getAttribute(KEY);  
+		String listKey = element.getAttribute(KEY);
 		NodeList nodeList = element.getChildNodes();
 		int entryCount = nodeList.getLength();
-		List list = new ArrayList(entryCount);
+		List<String> list = new ArrayList<String>(entryCount);
 		Node node = null;
 		Element selement = null;
 		for (int i = 0; i < entryCount; i++) {
 			node = nodeList.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				selement = (Element) node;		
-				if (!selement.getNodeName().equalsIgnoreCase(LIST_ENTRY)) { 
+				selement = (Element) node;
+				if (!selement.getNodeName().equalsIgnoreCase(LIST_ENTRY)) {
 					throw getInvalidFormatDebugException();
 				}
 				list.add(getValueAttribute(selement));
@@ -611,28 +610,28 @@ public class LaunchConfigurationInfo {
 		}
 		setAttribute(listKey, list);
 	}
-		
+
 	/**
 	 * Reads a <code>Set</code> attribute from the specified XML node and
 	 * loads it into the mapping of attributes
-	 * 
+	 *
 	 * @param element the element to read the set attribute from
 	 * @throws CoreException if the element has an invalid format
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected void setSetAttribute(Element element) throws CoreException {
 		String setKey = element.getAttribute(KEY);
 		NodeList nodeList = element.getChildNodes();
 		int entryCount = nodeList.getLength();
-		Set set = new HashSet(entryCount);
+		Set<String> set = new HashSet<String>(entryCount);
 		Node node = null;
 		Element selement = null;
 		for(int i = 0; i < entryCount; i++) {
 			node = nodeList.item(i);
 			if(node.getNodeType() == Node.ELEMENT_NODE) {
 				selement = (Element)node;
-				if(!selement.getNodeName().equalsIgnoreCase(SET_ENTRY)) { 
+				if(!selement.getNodeName().equalsIgnoreCase(SET_ENTRY)) {
 					throw getInvalidFormatDebugException();
 				}
 				set.add(getValueAttribute(selement));
@@ -640,26 +639,26 @@ public class LaunchConfigurationInfo {
 		}
 		setAttribute(setKey, set);
 	}
-	
+
 	/**
 	 * Reads a <code>Map</code> attribute from the specified XML node and
 	 * loads it into the mapping of attributes
-	 * 
+	 *
 	 * @param element the element to read the map attribute from
 	 * @throws CoreException if the element has an invalid format
 	 */
 	protected void setMapAttribute(Element element) throws CoreException {
-		String mapKey = element.getAttribute(KEY);  
+		String mapKey = element.getAttribute(KEY);
 		NodeList nodeList = element.getChildNodes();
 		int entryCount = nodeList.getLength();
-		Map map = new HashMap(entryCount);
+		Map<String, String> map = new HashMap<String, String>(entryCount);
 		Node node = null;
 		Element selement = null;
 		for (int i = 0; i < entryCount; i++) {
 			node = nodeList.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				selement = (Element) node;		
-				if (!selement.getNodeName().equalsIgnoreCase(MAP_ENTRY)) { 
+				selement = (Element) node;
+				if (!selement.getNodeName().equalsIgnoreCase(MAP_ENTRY)) {
 					throw getInvalidFormatDebugException();
 				}
 				map.put(getKeyAttribute(selement), getValueAttribute(selement));
@@ -667,7 +666,7 @@ public class LaunchConfigurationInfo {
 		}
 		setAttribute(mapKey, map);
 	}
-		
+
 	/**
 	 * Returns the <code>String</code> representation of the 'key' attribute from the specified element
 	 * @param element the element to read from
@@ -681,7 +680,7 @@ public class LaunchConfigurationInfo {
 		}
 		return key;
 	}
-	
+
 	/**
 	 * Returns the <code>String</code> representation of the 'value' attribute from the specified element
 	 * @param element the element to read from
@@ -689,71 +688,72 @@ public class LaunchConfigurationInfo {
 	 * @throws CoreException if a problem is encountered
 	 */
 	protected String getValueAttribute(Element element) throws CoreException {
-		String value = element.getAttribute(VALUE);   
+		String value = element.getAttribute(VALUE);
 		if (value == null) {
 			throw getInvalidFormatDebugException();
 		}
 		return value;
 	}
-	
+
 	/**
 	 * Returns an invalid format exception for reuse
 	 * @return an invalid format exception
 	 */
 	protected DebugException getInvalidFormatDebugException() {
-		return 
+		return
 			new DebugException(
 				new Status(
 				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationInfo_Invalid_launch_configuration_XML__10, null 
+				 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationInfo_Invalid_launch_configuration_XML__10, null
 				)
 			);
 	}
-	
+
 	/**
 	 * Two <code>LaunchConfigurationInfo</code> objects are equal if and only
 	 * if they have the same type and they have the same set of attributes with
 	 * the same values.
-	 * 
+	 *
 	 * @see Object#equals(Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
-		
+
 		// Make sure it's a LaunchConfigurationInfo object
 		if (!(obj instanceof LaunchConfigurationInfo)) {
 			return false;
 		}
-		
+
 		// Make sure the types are the same
 		LaunchConfigurationInfo other = (LaunchConfigurationInfo) obj;
 		if (!fType.getIdentifier().equals(other.getType().getIdentifier())) {
 			return false;
 		}
-		
+
 		// Make sure the attributes are the same
 		return compareAttributes(fAttributes, other.getAttributeTable());
 	}
-	
+
 	/**
 	 * Returns whether the two attribute maps are equal, consulting registered
 	 * comparator extensions.
-	 * 
+	 *
 	 * @param map1  attribute map
 	 * @param map2 attribute map
 	 * @return whether the two attribute maps are equal
 	 */
-	protected boolean compareAttributes(TreeMap map1, TreeMap map2) {
+	protected boolean compareAttributes(TreeMap<String, Object> map1, TreeMap<String, Object> map2) {
 		LaunchManager manager = (LaunchManager)DebugPlugin.getDefault().getLaunchManager();
 		if (map1.size() == map2.size()) {
-			Iterator attributes = map1.keySet().iterator();
+			Iterator<String> attributes = map1.keySet().iterator();
 			while (attributes.hasNext()) {
-				String key = (String)attributes.next();
+				String key = attributes.next();
 				Object attr1 = map1.get(key);
 				Object attr2 = map2.get(key);
 				if (attr2 == null) {
 					return false;
 				}
-				Comparator comp = manager.getComparator(key);
+				Comparator<Object> comp = manager.getComparator(key);
 				if (comp == null) {
 					if (fgIsSun14x) {
 						if(attr2 instanceof String & attr1 instanceof String) {
@@ -776,14 +776,15 @@ public class LaunchConfigurationInfo {
 					}
 				}
 			}
-			return true;	
+			return true;
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return fType.hashCode() + fAttributes.size();
 	}
@@ -792,20 +793,20 @@ public class LaunchConfigurationInfo {
 	 * Returns if the attribute map contains the specified key
 	 * @param attributeName the name of the attribute to check for
 	 * @return true if the attribute map contains the specified key, false otherwise
-	 * 
+	 *
 	 * @since 3.4.0
 	 */
 	protected boolean hasAttribute(String attributeName) {
 		return fAttributes.containsKey(attributeName);
 	}
-	
+
 	/**
 	 * Removes the specified attribute from the mapping and returns
 	 * its value, or <code>null</code> if none. Does nothing
 	 * if the attribute name is <code>null</code>
 	 * @param attributeName the name of the attribute to remove
 	 * @return attribute value or <code>null</code>
-	 * 
+	 *
 	 * @since 3.4.0
 	 */
 	protected Object removeAttribute(String attributeName) {

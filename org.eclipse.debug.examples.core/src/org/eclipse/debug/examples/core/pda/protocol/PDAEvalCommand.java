@@ -38,7 +38,8 @@ public class PDAEvalCommand extends PDACommand {
         super("eval " + threadId + " " + operation); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
-    public PDACommandResult createResult(String resultText) {
+    @Override
+	public PDACommandResult createResult(String resultText) {
         return new PDACommandResult(resultText);
     }
 }

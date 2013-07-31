@@ -194,6 +194,7 @@ public interface IDebugUIConstants {
 	 * @since 2.0
 	 * @deprecated no longer used
 	 */
+	@Deprecated
 	public static final String PREF_SHOW_TYPE_NAMES = PLUGIN_ID + ".show_type_names"; //$NON-NLS-1$	
 	
 	/**
@@ -204,6 +205,7 @@ public interface IDebugUIConstants {
 	 * @since 2.0
 	 * @deprecated no longer used
 	 */
+	@Deprecated
 	public static final String PREF_SHOW_DETAIL_PANE = PLUGIN_ID + ".show_detail_pane"; //$NON-NLS-1$
 	
 	/**
@@ -289,6 +291,7 @@ public interface IDebugUIConstants {
 	 * @deprecated Use org.eclipse.ui.console.IConsoleConstants.ID_CONSOLE_VIEW 
 	 * @since 3.0
 	 */
+	@Deprecated
 	public static final String ID_CONSOLE_VIEW= "org.eclipse.debug.ui.ConsoleView"; //$NON-NLS-1$
 	
 	// Console stream identifiers
@@ -337,6 +340,7 @@ public interface IDebugUIConstants {
 	
 	/** Clear action image identifier. 
 	 * @deprecated use the platform shared image for clear - {@link ISharedImages#IMG_ETOOL_CLEAR}*/
+	@Deprecated
 	public static final String IMG_LCL_CLEAR= "IMG_LCL_CLEAR"; //$NON-NLS-1$
 	
 	/** Display variable type names action image identifier. */
@@ -854,6 +858,7 @@ public interface IDebugUIConstants {
 	 * @deprecated Since 3.0, this launch configuration attribute is no longer supported.
 	 *  Use <code>DebugUITools.setLaunchPerspective(ILaunchConfigurationType type, String mode, String perspective)</code>.
 	 */
+	@Deprecated
 	public static final String ATTR_TARGET_RUN_PERSPECTIVE = PLUGIN_ID + ".target_run_perspective";	 //$NON-NLS-1$
 	
 	/**
@@ -867,6 +872,7 @@ public interface IDebugUIConstants {
 	 * @deprecated Since 3.0, this launch configuration attribute is no longer supported.
 	 *  Use <code>DebugUITools.setLaunchPerspective(ILaunchConfigurationType type, String mode, String perspective)</code>.
 	 */
+	@Deprecated
 	public static final String ATTR_TARGET_DEBUG_PERSPECTIVE = PLUGIN_ID + ".target_debug_perspective";		 //$NON-NLS-1$
 	
 	/**
@@ -896,6 +902,7 @@ public interface IDebugUIConstants {
 	 * @since 2.0
 	 * @deprecated use <code>ATTR_FAVORITE_GROUPS</code> instead
 	 */
+	@Deprecated
 	public static final String ATTR_DEBUG_FAVORITE = PLUGIN_ID + ".debugFavorite"; //$NON-NLS-1$	
 	
 	/**
@@ -906,6 +913,7 @@ public interface IDebugUIConstants {
 	 * @since 2.0
 	 * @deprecated use <code>ATTR_FAVORITE_GROUPS</code> instead
 	 */
+	@Deprecated
 	public static final String ATTR_RUN_FAVORITE = PLUGIN_ID + ".runFavorite"; //$NON-NLS-1$		
 	
 	/**
@@ -941,6 +949,7 @@ public interface IDebugUIConstants {
 	 * @since 3.1
      * @deprecated in 3.3 Please use DebugPlugin.ATTR_CONSOLE_ENCODING instead.
 	 */
+	@Deprecated
 	public static final String ATTR_CONSOLE_ENCODING = DebugPlugin.ATTR_CONSOLE_ENCODING;
 	
 	/**
@@ -986,6 +995,7 @@ public interface IDebugUIConstants {
 	 * @deprecated The Debug Action Groups extension point no longer exists. Product
 	 *  vendors should use Activities instead. 
 	 */
+	@Deprecated
 	public static final String EXTENSION_POINT_DEBUG_ACTION_GROUPS= "debugActionGroups";	 //$NON-NLS-1$
 	
 	/**
@@ -1074,7 +1084,8 @@ public interface IDebugUIConstants {
      * @since 3.1
      * @deprecated  As of release 3.4, replaced by {@link #EXTENSION_POINT_MEMORY_RENDERINGS}
      */
-    public static final String EXTENSION_POINT_MEMORY_RENDERIGNS = "memoryRenderings"; //$NON-NLS-1$
+    @Deprecated
+	public static final String EXTENSION_POINT_MEMORY_RENDERIGNS = "memoryRenderings"; //$NON-NLS-1$
     
     /**
      * Memory renderings extension point identifier (value

@@ -19,11 +19,13 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 public class MemoryRetrievalContentProvider extends ElementContentProvider {
 
+	@Override
 	protected int getChildCount(Object element, IPresentationContext context,
 			IViewerUpdate monitor) throws CoreException {
 		return getAllChildren(element, context, monitor).length;
 	}
 
+	@Override
 	protected Object[] getChildren(Object parent, int index, int length,
 			IPresentationContext context, IViewerUpdate monitor)
 			throws CoreException {
@@ -53,6 +55,7 @@ public class MemoryRetrievalContentProvider extends ElementContentProvider {
         return EMPTY;
 	}
 
+	@Override
 	protected boolean supportsContextId(String id) {
 		return id.equals(IDebugUIConstants.ID_MEMORY_VIEW);
 	}

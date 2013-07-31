@@ -34,6 +34,7 @@ public final class RunAction extends ExecutionAction {
 	/**
 	 * @see ExecutionAction#getMode()
 	 */
+	@Override
 	protected String getMode() {
 		return ILaunchManager.RUN_MODE;
 	}

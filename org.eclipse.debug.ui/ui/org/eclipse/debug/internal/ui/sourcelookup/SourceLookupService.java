@@ -46,6 +46,7 @@ public class SourceLookupService implements IDebugContextListener, ISourceDispla
 		fWindow = null;
 	}
 
+	@Override
 	public synchronized void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
 			displaySource(event.getContext(), event.getDebugContextProvider().getPart(), false);
@@ -81,6 +82,7 @@ public class SourceLookupService implements IDebugContextListener, ISourceDispla
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
 	 */
+	@Override
 	public void displaySource(Object context, IWorkbenchPage page, boolean forceSourceLookup) {
 		if (context instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) context;

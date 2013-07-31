@@ -50,7 +50,8 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 	private IDocument fDocument;
 	private IVerticalRulerInfo fRulerInfo;
 	private IToggleBreakpointsTargetManagerListener fListener = new IToggleBreakpointsTargetManagerListener() {
-	    public void preferredTargetsChanged() {
+	    @Override
+		public void preferredTargetsChanged() {
 	        update();	        
 	    }
 	};
@@ -78,6 +79,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		doIt(null);
 	}
@@ -85,6 +87,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(Event event) {
 		doIt(event);
 	}
@@ -186,6 +189,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
+	@Override
 	public void update() {
 		IDocument document= getDocument();
 		if (document != null) {

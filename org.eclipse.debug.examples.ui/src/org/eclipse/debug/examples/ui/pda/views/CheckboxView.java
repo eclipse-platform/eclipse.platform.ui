@@ -17,14 +17,17 @@ import org.eclipse.swt.SWT;
 public class CheckboxView extends VariablesView {
 	public static String ID = "CHECKBOX_VIEW_ID"; //$NON-NLS-1$
 	
+	@Override
 	protected int getViewerStyle() {
 		return SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL | SWT.FULL_SELECTION | SWT.CHECK;
 	}
 	
+	@Override
 	protected String getHelpContextId() {
 		return ID;
 	}
 	
+	@Override
 	protected String getPresentationContextId() {	
 		return ID;
 	}

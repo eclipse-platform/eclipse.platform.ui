@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.console" version="2">
+    <resource path="src/org/eclipse/ui/console/TextConsolePage.java" type="org.eclipse.ui.console.TextConsolePage">
+        <filter comment="Known illegal use" id="574668824">
+            <message_arguments>
+                <message_argument value="IPageBookViewPage"/>
+                <message_argument value="TextConsolePage"/>
+                <message_argument value="IPage"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

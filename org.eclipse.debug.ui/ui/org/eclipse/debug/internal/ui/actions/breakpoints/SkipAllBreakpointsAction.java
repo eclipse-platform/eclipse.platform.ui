@@ -77,6 +77,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run(){
 		IWorkbenchSiteProgressService progressService = null;
 		if (fPart != null) {
@@ -85,6 +86,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 		}
 		final boolean enabled = !getBreakpointManager().isEnabled();
 		Job job = new Job(getText()) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				if (!monitor.isCanceled()) {
 					IBreakpointManager bm = getBreakpointManager();
@@ -124,6 +126,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {
 		getBreakpointManager().removeBreakpointManagerListener(this);
 	}
@@ -131,6 +134,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		updateActionCheckedState();
 		getBreakpointManager().addBreakpointManagerListener(this);
@@ -139,6 +143,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		setChecked(action.isChecked());
 		run();	
@@ -151,6 +156,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fAction = action;
 	}
@@ -158,6 +164,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointManagerListener#breakpointManagerEnablementChanged(boolean)
 	 */
+	@Override
 	public void breakpointManagerEnablementChanged(boolean enabled) {
 		if (fAction != null) {
 			fAction.setChecked(!enabled);
@@ -167,6 +174,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 		fAction = action;
 		updateActionCheckedState();
@@ -175,6 +183,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}

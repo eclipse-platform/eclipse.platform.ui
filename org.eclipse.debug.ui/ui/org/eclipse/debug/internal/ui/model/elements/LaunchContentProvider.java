@@ -24,6 +24,7 @@ public class LaunchContentProvider extends ElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
+	@Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return ((ILaunch)element).getChildren().length;
 	}
@@ -31,6 +32,7 @@ public class LaunchContentProvider extends ElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#supportsContextId(java.lang.String)
 	 */
+	@Override
 	protected boolean supportsContextId(String id) {
 		return IDebugUIConstants.ID_DEBUG_VIEW.equals(id);
 	}
@@ -38,10 +40,12 @@ public class LaunchContentProvider extends ElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
+	@Override
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return getElements(((ILaunch)parent).getChildren(), index, length);
 	}
 
+	@Override
 	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return ((ILaunch)element).hasChildren();
 	}

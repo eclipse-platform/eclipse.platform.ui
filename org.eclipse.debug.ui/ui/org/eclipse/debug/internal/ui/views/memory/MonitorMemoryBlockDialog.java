@@ -11,7 +11,6 @@
 
 package org.eclipse.debug.internal.ui.views.memory;
 
-
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
@@ -33,7 +32,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * @since 3.0
  */
-public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListener{
+public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListener {
 
 	private Combo expressionInput;
 	private Text lengthInput;
@@ -42,30 +41,36 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 	private boolean needLength = true;
 	private String fPrefillExp = null;
 	private String fPrefillLength = null;
-	
+
 	/**
-	 * the predefined width of the wrapping label for the expression to enter combo
+	 * the predefined width of the wrapping label for the expression to enter
+	 * combo
+	 * 
 	 * @since 3.3
 	 */
 	private static final int LABEL_WIDTH = 210;
-	
+
 	/**
 	 * @param parentShell
 	 */
 	public MonitorMemoryBlockDialog(Shell parentShell, IMemoryBlockRetrieval memRetrieval, String prefillExp, String prefillLength) {
 		super(parentShell);
-		
+
 		if (memRetrieval instanceof IMemoryBlockRetrievalExtension)
 			needLength = false;
-		
+
 		fPrefillExp = prefillExp;
 		fPrefillLength = prefillLength;
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
+	 * .Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
 		SWTFactory.createWrapLabel(comp, DebugUIMessages.MonitorMemoryBlockDialog_EnterExpressionToMonitor, 1, LABEL_WIDTH);
@@ -74,7 +79,7 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 			expressionInput.setText(fPrefillExp);
 		}
 		expressionInput.addModifyListener(this);
-		
+
 		if (needLength) {
 			SWTFactory.createLabel(comp, DebugUIMessages.MonitorMemoryBlockDialog_NumberOfBytes, 1);
 			lengthInput = SWTFactory.createSingleText(comp, 1);
@@ -86,32 +91,39 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IDebugUIConstants.PLUGIN_ID + ".MonitorMemoryBlockDialog_context"); //$NON-NLS-1$
 		return comp;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets
+	 * .Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		
+
 		newShell.setText(DebugUIMessages.MonitorMemoryBlockDialog_MonitorMemory);
 	}
-	
+
 	/**
 	 * @return the entered expression
 	 */
 	public String getExpression() {
 		return expression;
 	}
-	
+
 	/**
 	 * @return the entered length
 	 */
 	public String getLength() {
 		return length;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 
 		expression = expressionInput.getText();
@@ -125,43 +137,47 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 		super.okPressed();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events
+	 * .ModifyEvent)
 	 */
+	@Override
 	public void modifyText(ModifyEvent e) {
 		updateOKButtonState();
 	}
 
 	private void updateOKButtonState() {
-		if (needLength)
-		{
+		if (needLength) {
 			String lengthText = lengthInput.getText();
 			String input = expressionInput.getText();
-			
-			if (input == null || input.equals(IInternalDebugCoreConstants.EMPTY_STRING) || lengthText == null || lengthText.equals(IInternalDebugCoreConstants.EMPTY_STRING))
-			{
-				getButton(IDialogConstants.OK_ID).setEnabled(false);	
-			}
-			else
-			{
+
+			if (input == null || input.equals(IInternalDebugCoreConstants.EMPTY_STRING) || lengthText == null || lengthText.equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
+				getButton(IDialogConstants.OK_ID).setEnabled(false);
+			} else {
 				getButton(IDialogConstants.OK_ID).setEnabled(true);
-			}			
+			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets.Composite)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets
+	 * .Composite)
 	 */
+	@Override
 	protected Control createButtonBar(Composite parent) {
-		
-		Control ret =  super.createButtonBar(parent);
-		
+
+		Control ret = super.createButtonBar(parent);
+
 		if (needLength)
 			updateOKButtonState();
 		else
 			// always enable the OK button if we only need the expression
 			getButton(IDialogConstants.OK_ID).setEnabled(true);
-		
+
 		return ret;
 	}
 }

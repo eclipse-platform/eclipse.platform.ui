@@ -14,7 +14,6 @@ package org.eclipse.debug.ui.actions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -46,6 +45,7 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
@@ -100,6 +100,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	/**
 	 * @see IAction#run()
 	 */
+	@Override
 	public void run() {
 		//do nothing, this action just creates a cascading menu.
 	}
@@ -107,6 +108,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	/**
 	 * @see IMenuCreator#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fCreatedMenu != null) {
 			fCreatedMenu.dispose();
@@ -116,6 +118,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	/**
 	 * @see IMenuCreator#getMenu(Control)
 	 */
+	@Override
 	public Menu getMenu(Control parent) {
 		return null;
 	}
@@ -123,6 +126,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	/**
 	 * @see IMenuCreator#getMenu(Menu)
 	 */
+	@Override
 	public Menu getMenu(Menu parent) {
 		if (fCreatedMenu != null) {
 			 fCreatedMenu.dispose();
@@ -138,7 +142,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	private IEvaluationContext createContext() {
 		IStructuredSelection ss = SelectedResourceManager.getDefault().getCurrentSelection();
 		Object o = ss.getFirstElement();
-		List list = new ArrayList(0);
+		List<IEditorInput> list = new ArrayList<IEditorInput>(0);
 		if(o instanceof IEditorPart) {
 			list.add(((IEditorPart)o).getEditorInput());
 		}
@@ -157,11 +161,11 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	private void fillMenu() {
 		IEvaluationContext context = createContext();
 		int accelerator = 1;
-		List allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts(fGroup.getCategory());
-		Iterator iter = allShortCuts.iterator();
-		List filteredShortCuts = new ArrayList(10);
+		List<LaunchShortcutExtension> allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts(fGroup.getCategory());
+		Iterator<LaunchShortcutExtension> iter = allShortCuts.iterator();
+		List<LaunchShortcutExtension> filteredShortCuts = new ArrayList<LaunchShortcutExtension>(10);
 		while (iter.hasNext()) {
-			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
+			LaunchShortcutExtension ext = iter.next();
 			try {
 				if (!WorkbenchActivityHelper.filterItem(ext) && isApplicable(ext, context)) {
 					filteredShortCuts.add(ext);
@@ -187,13 +191,8 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		}
 		catch(CoreException ce) {DebugUIPlugin.log(ce);}
 		//second add the launch shortcuts if any
-		iter = filteredShortCuts.iterator();
-		while (iter.hasNext()) {
-			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
-			Set modes = ext.getModes(); // supported launch modes
-			Iterator modeIter = modes.iterator();
-			while (modeIter.hasNext()) {
-				String modee = (String) modeIter.next();
+		for (LaunchShortcutExtension ext : filteredShortCuts) {
+			for (String modee : ext.getModes()) {
 				if (modee.equals(mode)) {
 					populateMenuItem(modee, ext, fCreatedMenu, accelerator++);
 				}
@@ -215,7 +214,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 * @since 3.3
 	 */
 	private Object getSelection(IEvaluationContext context) {
-		List list = (List) context.getVariable("selection"); //$NON-NLS-1$
+		List<?> list = (List<?>) context.getVariable("selection"); //$NON-NLS-1$
 		return (list.isEmpty() ? null : list.get(0));
 	}
 	
@@ -269,6 +268,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		// Add listener to re-populate the menu each time
 		// it is shown to reflect changes in selection or active perspective
 		fCreatedMenu.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuShown(MenuEvent e) {
 				Menu m = (Menu)e.widget;
 				MenuItem[] items = m.getItems();
@@ -301,11 +301,13 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {}
 
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		// do nothing - this is just a menu
 	}
@@ -313,6 +315,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	    if (!fInitialized) {
 	        action.setEnabled(existsConfigTypesForMode());

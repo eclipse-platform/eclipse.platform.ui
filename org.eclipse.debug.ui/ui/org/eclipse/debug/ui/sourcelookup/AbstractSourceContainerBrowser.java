@@ -26,6 +26,7 @@ public class AbstractSourceContainerBrowser implements ISourceContainerBrowser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#addSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
 	 */
+	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		return new ISourceContainer[0];
 	}
@@ -36,12 +37,14 @@ public class AbstractSourceContainerBrowser implements ISourceContainerBrowser {
 	 * 
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#canAddSourceContainers(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
 	 */
+	@Override
 	public boolean canAddSourceContainers(ISourceLookupDirector director) {
 		return true;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#editSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.sourcelookup.ISourceLookupDirector, org.eclipse.debug.core.sourcelookup.ISourceContainer[])
 	 */
+	@Override
 	public ISourceContainer[] editSourceContainers(Shell shell, ISourceLookupDirector director, ISourceContainer[] containers) {
 		return new ISourceContainer[0];
 	}
@@ -52,6 +55,7 @@ public class AbstractSourceContainerBrowser implements ISourceContainerBrowser {
 	 * 
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#canEditSourceContainers(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector, org.eclipse.debug.core.sourcelookup.ISourceContainer[])
 	 */
+	@Override
 	public boolean canEditSourceContainers(ISourceLookupDirector director, ISourceContainer[] containers) {
 		return false;
 	}

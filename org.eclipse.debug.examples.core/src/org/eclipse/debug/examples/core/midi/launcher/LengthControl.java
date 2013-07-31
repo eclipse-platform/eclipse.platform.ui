@@ -28,6 +28,7 @@ public class LengthControl extends TimeControl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.midi.launcher.TimeControl#getTimeValue()
 	 */
+	@Override
 	protected long getTimeValue() {
 		return getSequencer().getMicrosecondLength();
 	}

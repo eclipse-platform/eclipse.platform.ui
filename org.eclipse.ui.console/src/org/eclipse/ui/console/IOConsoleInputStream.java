@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
 /**
- * InputStream used to read input from an {@link IOConsole}. 
+ * InputStream used to read input from an {@link IOConsole}.
  * This stream will buffer input that it receives until it has been read.
  * An input stream is available from its {@link IOConsole}.
  * @since 3.1
@@ -31,44 +31,44 @@ public class IOConsoleInputStream extends InputStream {
      * Buffer to hold data from console until it is read.
      */
     private byte[] input = new byte[100];
-    
+
     /**
      * Location in the buffer that the next byte of data from the
      * console should be stored.
      */
     private int inPointer = 0;
-    
+
     /**
      * Location in the buffer that the next byte of data read from
      * this stream should come from.
      */
     private int outPointer = 0;
-    
+
     /**
-     * The number of bytes of real data currently in the buffer. 
+     * The number of bytes of real data currently in the buffer.
      */
     private int size = 0;
-    
+
     /**
      * Flag to indicate that EOF has been sent already.
      */
     private boolean eofSent = false;
-    
+
     /**
      * Flag to indicate that the stream has been closed.
      */
     private boolean closed = false;
-    
+
     /**
      * The console that this stream is connected to.
      */
     private IOConsole console;
-    
+
     /**
      * The color used to display input in the console.
      */
     private Color color;
-    
+
     /**
      * The font style used to decorate input in the console.
      */
@@ -77,23 +77,24 @@ public class IOConsoleInputStream extends InputStream {
 
     /**
      * Constructs a new input stream on the given console.
-     * 
+     *
      * @param console I/O console
      */
     IOConsoleInputStream(IOConsole console) {
         this.console = console;
     }
-    
+
     /*
      *  (non-Javadoc)
      * @see java.io.InputStream#read(byte[], int, int)
      */
-    public synchronized int read(byte[] b, int off, int len) throws IOException {
+    @Override
+	public synchronized int read(byte[] b, int off, int len) throws IOException {
         waitForData();
         if (available() == -1) {
             return -1;
         }
-    
+
         int toCopy = Math.min(len, size);
         if(input.length-outPointer > toCopy) {
             System.arraycopy(input, outPointer, b, off, toCopy);
@@ -108,12 +109,13 @@ public class IOConsoleInputStream extends InputStream {
         }
         return toCopy;
     }
-    
+
     /*
      *  (non-Javadoc)
      * @see java.io.InputStream#read(byte[])
      */
-    public int read(byte[] b) throws IOException {
+    @Override
+	public int read(byte[] b) throws IOException {
         return read(b, 0, b.length);
     }
 
@@ -121,12 +123,13 @@ public class IOConsoleInputStream extends InputStream {
      *  (non-Javadoc)
      * @see java.io.InputStream#read()
      */
-    public synchronized int read() throws IOException {
+    @Override
+	public synchronized int read() throws IOException {
         waitForData();
-        if (available() == -1) { 
+        if (available() == -1) {
             return -1;
         }
-        
+
         byte b = input[outPointer];
         outPointer++;
         if (outPointer == input.length) {
@@ -135,7 +138,7 @@ public class IOConsoleInputStream extends InputStream {
         size -= 1;
         return b;
     }
-    
+
     /**
      * Blocks until data is available to be read.
      * Ensure that the monitor for this object is obtained before
@@ -152,25 +155,26 @@ public class IOConsoleInputStream extends InputStream {
 
     /**
      * Appends text to this input stream's buffer.
-     * 
+     *
      * @param text the text to append to the buffer.
      */
     public synchronized void appendData(String text) {
     	String encoding = console.getEncoding();
         byte[] newData;
-        if (encoding!=null)
+        if (encoding!=null) {
 			try {
 				newData = text.getBytes(encoding);
 			} catch (UnsupportedEncodingException e) {
-				newData = text.getBytes();	
+				newData = text.getBytes();
 			}
-		else
-        	newData = text.getBytes();
-        
+		} else {
+			newData = text.getBytes();
+		}
+
         while(input.length-size < newData.length) {
             growArray();
         }
-        
+
         if (size == 0) { //inPointer == outPointer
             System.arraycopy(newData, 0, input, 0, newData.length);
             inPointer = newData.length;
@@ -186,13 +190,13 @@ public class IOConsoleInputStream extends InputStream {
             inPointer = newData.length-(input.length-inPointer);
             size += newData.length;
         }
-        
+
         if (inPointer == input.length) {
             inPointer = 0;
         }
         notifyAll();
     }
-    
+
     /**
      * Enlarges the buffer.
      */
@@ -212,7 +216,7 @@ public class IOConsoleInputStream extends InputStream {
 
     /**
      * Returns this stream's font style.
-     * 
+     *
      * @return the font style used to decorate input in the associated console
      */
     public int getFontStyle() {
@@ -221,7 +225,7 @@ public class IOConsoleInputStream extends InputStream {
 
     /**
      * Sets this stream's font style.
-     * 
+     *
      * @param newFontStyle the font style to be used to decorate input in the associated console
      */
     public void setFontStyle(int newFontStyle) {
@@ -231,10 +235,10 @@ public class IOConsoleInputStream extends InputStream {
             console.firePropertyChange(this, IConsoleConstants.P_FONT_STYLE, new Integer(old), new Integer(fontStyle));
         }
     }
-    
+
     /**
      * Sets the color to used to decorate input in the associated console.
-     * 
+     *
      * @param newColor the color to used to decorate input in the associated console.
      */
     public void setColor(Color newColor) {
@@ -244,37 +248,39 @@ public class IOConsoleInputStream extends InputStream {
             console.firePropertyChange(this, IConsoleConstants.P_STREAM_COLOR, old, newColor);
         }
     }
-    
+
     /**
      * Returns the color used to decorate input in the associated console
-     * 
+     *
      * @return the color used to decorate input in the associated console
      */
     public Color getColor() {
         return color;
     }
-    
+
     /* (non-Javadoc)
      * @see java.io.InputStream#available()
      */
-    public int available() throws IOException {
+	@Override
+	public int available() throws IOException {
         if (closed && eofSent) {
             throw new IOException("Input Stream Closed"); //$NON-NLS-1$
         } else if (size == 0) {
             if (!eofSent) {
                 eofSent = true;
                 return -1;
-            } 
+            }
             throw new IOException("Input Stream Closed"); //$NON-NLS-1$
         }
-        
+
         return size;
     }
-    
+
     /* (non-Javadoc)
      * @see java.io.InputStream#close()
      */
-    public synchronized void close() throws IOException {
+    @Override
+	public synchronized void close() throws IOException {
         if(closed) {
             throw new IOException("Input Stream Closed"); //$NON-NLS-1$
         }

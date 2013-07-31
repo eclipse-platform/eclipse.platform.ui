@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.ui.console.TextConsoleViewer;
 
 /**
  * Viewer used to display an IOConsole
- * 
+ *
  * @since 3.1
  */
 public class IOConsoleViewer extends TextConsoleViewer {
@@ -34,7 +34,7 @@ public class IOConsoleViewer extends TextConsoleViewer {
     private boolean fAutoScroll = true;
 
     private IDocumentListener fDocumentListener;
-    
+
     public IOConsoleViewer(Composite parent, TextConsole console) {
         super(parent, console);
     }
@@ -49,10 +49,11 @@ public class IOConsoleViewer extends TextConsoleViewer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.text.TextViewer#handleVerifyEvent(org.eclipse.swt.events.VerifyEvent)
      */
-    protected void handleVerifyEvent(VerifyEvent e) {
+    @Override
+	protected void handleVerifyEvent(VerifyEvent e) {
         IDocument doc = getDocument();
         String[] legalLineDelimiters = doc.getLegalLineDelimiters();
         String eventString = e.text;
@@ -94,7 +95,8 @@ public class IOConsoleViewer extends TextConsoleViewer {
      */
     public void setReadOnly() {
         ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 StyledText text = getTextWidget();
                 if (text != null && !text.isDisposed()) {
                     text.setEditable(false);
@@ -109,15 +111,16 @@ public class IOConsoleViewer extends TextConsoleViewer {
     public boolean isReadOnly() {
         return !getTextWidget().getEditable();
     }
-   
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.ITextViewer#setDocument(org.eclipse.jface.text.IDocument)
      */
-    public void setDocument(IDocument document) {
+    @Override
+	public void setDocument(IDocument document) {
         IDocument oldDocument= getDocument();
-        
+
         super.setDocument(document);
-        
+
         if (oldDocument != null) {
             oldDocument.removeDocumentListener(getDocumentListener());
         }
@@ -125,14 +128,16 @@ public class IOConsoleViewer extends TextConsoleViewer {
             document.addDocumentListener(getDocumentListener());
         }
     }
-    
+
     private IDocumentListener getDocumentListener() {
         if (fDocumentListener == null) {
             fDocumentListener= new IDocumentListener() {
-                public void documentAboutToBeChanged(DocumentEvent event) {
+				@Override
+				public void documentAboutToBeChanged(DocumentEvent event) {
                 }
 
-                public void documentChanged(DocumentEvent event) {
+                @Override
+				public void documentChanged(DocumentEvent event) {
                     if (fAutoScroll) {
                         revealEndOfDocument();
                     }

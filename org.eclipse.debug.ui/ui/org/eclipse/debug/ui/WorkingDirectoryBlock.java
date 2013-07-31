@@ -74,9 +74,11 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 	 * A listener to update for text changes and widget selection
 	 */
 	private class WidgetListener extends SelectionAdapter implements ModifyListener {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			scheduleUpdateJob();
 		}
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object source= e.getSource();
 			if (source == fWorkspaceButton) {
@@ -142,6 +144,7 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public final void createControl(Composite parent) {
 		Font font = parent.getFont();	
 		Group group = SWTFactory.createGroup(parent, DebugUIMessages.WorkingDirectoryBlock_12, 2, 1, GridData.FILL_HORIZONTAL);
@@ -315,6 +318,7 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		setErrorMessage(null);
 		setMessage(null);
@@ -353,6 +357,7 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(workingDirectoryAttribteName, (String)null);
 	}
@@ -360,6 +365,7 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setLaunchConfiguration(configuration);
 		try {			
@@ -377,6 +383,7 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if(fUseDefaultDirButton.getSelection()) {
 			configuration.setAttribute(workingDirectoryAttribteName, (String)null);
@@ -389,6 +396,7 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return DebugUIMessages.WorkingDirectoryBlock_Working_Directory_8; 
 	}

@@ -76,6 +76,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 			update();
 		}
 
+		@Override
 		public void debugContextChanged(DebugContextEvent event) {
 			contextActivated(event.getContext());
 		}
@@ -85,6 +86,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	/*(non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 		DebugUITools.getDebugContextManager().getContextService(fActivePart.getSite().getWorkbenchWindow()).removeDebugContextListener(fContextListener);
 		fActivePart = null;
@@ -94,6 +96,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		if (fPartTarget != null && fTargetElement != null) {
 			try {
@@ -106,6 +109,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		this.fAction = action;
 		update();
@@ -119,6 +123,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 			return;
 		}
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				boolean enabled = false;
 				if (fPartTarget != null && fTargetElement != null) {
@@ -140,6 +145,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 		this.fAction = action; 
 		if (action != null) {
@@ -151,12 +157,14 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		init(action);
 		bindTo(targetEditor);	
@@ -165,6 +173,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		bindTo(view);
 	}

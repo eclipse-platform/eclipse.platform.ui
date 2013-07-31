@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,6 +78,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void handleEvent(Event event) {
 		Widget source = event.widget;
 		if(source == fBrowseForFileButton) {
@@ -101,6 +102,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
@@ -115,6 +117,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_WIZBAN_IMPORT_BREAKPOINTS);
 	}
@@ -133,7 +136,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		}
 		File file = new File(fileName);
 		if (!file.exists() || file.isDirectory()) {
-			setMessage(MessageFormat.format(ImportExportMessages.WizardImportBreakpointsPage_1, new String[]{fileName}), ERROR);
+			setMessage(MessageFormat.format(ImportExportMessages.WizardImportBreakpointsPage_1, new Object[] { fileName }), ERROR);
 			return false;
 		}
 		
@@ -208,11 +211,12 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		return finish(null);
 	}
 
-	public boolean finish(final List selectedMarkers) {
+	public boolean finish(final List<IMarker> selectedMarkers) {
 		try {
 			saveWidgetState();
 			getContainer().run(false, true, 
 					new IRunnableWithProgress() {
+						@Override
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							ImportBreakpointsOperation operation = new ImportBreakpointsOperation(
 									fFileNameField.getText().trim(), 
@@ -230,8 +234,8 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 								boolean selected = false;
 								for(int j = 0; j < selectedMarkers.size(); j++) {
 									try {
-										Map importedMarkerAttributes = importedBreakpoints[i].getMarker().getAttributes();
-										Map selectedMarkerAttributes = ((IMarker) selectedMarkers.get(j)).getAttributes();
+								Map<String, Object> importedMarkerAttributes = importedBreakpoints[i].getMarker().getAttributes();
+								Map<String, Object> selectedMarkerAttributes = selectedMarkers.get(j).getAttributes();
 										if(importedMarkerAttributes.equals(selectedMarkerAttributes)) {
 											selected = true;
 											break;

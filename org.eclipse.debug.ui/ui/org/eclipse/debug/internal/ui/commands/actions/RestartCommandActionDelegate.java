@@ -28,28 +28,34 @@ public class RestartCommandActionDelegate implements IWorkbenchWindowActionDeleg
 
     private DebugCommandAction fDebugAction = new RestartCommandAction();
     
-    public void dispose() {
+    @Override
+	public void dispose() {
         fDebugAction.dispose();
     }
 
-    public void init(IWorkbenchWindow window) {
+    @Override
+	public void init(IWorkbenchWindow window) {
         fDebugAction.init(window);
     }
 
-    public void run(IAction action) {
+    @Override
+	public void run(IAction action) {
         fDebugAction.run();
     }
 
-    public void selectionChanged(IAction action, ISelection selection) {
+    @Override
+	public void selectionChanged(IAction action, ISelection selection) {
         // do nothing
     }
 
-    public void init(IAction action) {
+    @Override
+	public void init(IAction action) {
         fDebugAction.setActionProxy(action);
         
     }
 
-    public void runWithEvent(IAction action, Event event) {
+    @Override
+	public void runWithEvent(IAction action, Event event) {
         run(action);
     }
 }

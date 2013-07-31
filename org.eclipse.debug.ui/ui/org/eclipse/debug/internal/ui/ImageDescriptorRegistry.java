@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.debug.internal.ui;
  
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
@@ -27,7 +26,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public class ImageDescriptorRegistry {
 
-	private Map fRegistry= Collections.synchronizedMap(new HashMap(10));
+	private Map<ImageDescriptor, Image> fRegistry = Collections.synchronizedMap(new HashMap<ImageDescriptor, Image>(10));
 	private Display fDisplay;
 	
 	/**
@@ -58,17 +57,20 @@ public class ImageDescriptorRegistry {
 	 *  if the image descriptor can't create the requested image.
 	 */
 	public Image get(ImageDescriptor descriptor) {
-		if (descriptor == null)
+		if (descriptor == null) {
 			descriptor= ImageDescriptor.getMissingImageDescriptor();
+		}
 			
-		Image result= (Image)fRegistry.get(descriptor);
-		if (result != null)
+		Image result= fRegistry.get(descriptor);
+		if (result != null) {
 			return result;
+		}
 	
 		Assert.isTrue(fDisplay == DebugUIPlugin.getStandardDisplay(), DebugUIMessages.ImageDescriptorRegistry_0); 
 		result= descriptor.createImage();
-		if (result != null)
+		if (result != null) {
 			fRegistry.put(descriptor, result);
+		}
 		return result;
 	}
 
@@ -76,8 +78,7 @@ public class ImageDescriptorRegistry {
 	 * Disposes all images managed by this registry.
 	 */	
 	public void dispose() {
-		for (Iterator iter= fRegistry.values().iterator(); iter.hasNext(); ) {
-			Image image= (Image)iter.next();
+		for (Image image : fRegistry.values()) {
 			image.dispose();
 		}
 		fRegistry.clear();
@@ -85,9 +86,11 @@ public class ImageDescriptorRegistry {
 	
 	private void hookDisplay() {
 		fDisplay.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				fDisplay.disposeExec(new Runnable() {
 
+					@Override
 					public void run() {
 						dispose();
 					}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class LogicalStructureCache {
 	/**
 	 * Maps a ILogicalStructureType to the cache for that type
 	 */
-	private Map fCacheForType = new HashMap();
+	private Map<ILogicalStructureType, LogicalStructureTypeCache> fCacheForType = new HashMap<ILogicalStructureType, LogicalStructureTypeCache>();
 	
 	/**
 	 * Returns the logical value to replace the given value using the specified logical structure.
@@ -69,7 +69,7 @@ public class LogicalStructureCache {
 	 * @return the cache associated with the logical structure type
 	 */
 	protected LogicalStructureTypeCache getCacheForType(ILogicalStructureType type){
-		LogicalStructureTypeCache cache = (LogicalStructureTypeCache)fCacheForType.get(type);
+		LogicalStructureTypeCache cache = fCacheForType.get(type);
 		if (cache == null){
 			cache = new LogicalStructureTypeCache(type);
 			fCacheForType.put(type, cache);
@@ -88,12 +88,12 @@ public class LogicalStructureCache {
 		/**
 		 * Maps a raw IValue to its calculated logical IValue  
 		 */
-		private Map fKnownValues = new HashMap();
+		private Map<IValue, IValue> fKnownValues = new HashMap<IValue, IValue>();
 		
 		/**
 		 * Set of raw IValues that logical values are currently being evaluated for.
 		 */
-		private Set fPendingValues = new HashSet();
+		private Set<IValue> fPendingValues = new HashSet<IValue>();
 		
 		public LogicalStructureTypeCache(ILogicalStructureType type){
 			fType = type;
@@ -110,7 +110,7 @@ public class LogicalStructureCache {
 		public IValue getLogicalStructure(IValue value) throws CoreException {
 			// Check if the value has already been evaluated
 			synchronized (fKnownValues) {
-				IValue logical = (IValue)fKnownValues.get(value);
+				IValue logical = fKnownValues.get(value);
 				if (logical != null){
 					return logical;
 				}

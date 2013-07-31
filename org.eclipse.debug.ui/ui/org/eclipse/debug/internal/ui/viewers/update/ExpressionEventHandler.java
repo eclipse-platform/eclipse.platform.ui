@@ -32,11 +32,13 @@ public class ExpressionEventHandler extends DebugEventHandler {
         super(proxy);
     }
 
-    protected boolean handlesEvent(DebugEvent event) {
+    @Override
+	protected boolean handlesEvent(DebugEvent event) {
         return event.getKind() == DebugEvent.CHANGE;
     }
 
-    protected void handleChange(DebugEvent event) {
+    @Override
+	protected void handleChange(DebugEvent event) {
     	ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getExpressionManager(), IModelDelta.NO_CHANGE);
 		IExpression expression = null;
     	if (event.getSource() instanceof IExpression) {
@@ -62,7 +64,8 @@ public class ExpressionEventHandler extends DebugEventHandler {
 		}
     }
 
-    protected void refreshRoot(DebugEvent event) {
+    @Override
+	protected void refreshRoot(DebugEvent event) {
         ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getExpressionManager(), IModelDelta.CONTENT);
         fireDelta(delta);
     }

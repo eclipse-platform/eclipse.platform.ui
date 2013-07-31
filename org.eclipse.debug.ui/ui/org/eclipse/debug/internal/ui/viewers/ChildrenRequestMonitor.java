@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
 	/**
 	 * Collection of children retrieved
 	 */
-    private List fChildren = new ArrayList();
+	private List<Object> fChildren = new ArrayList<Object>();
 
     /**
      * Constucts a monitor to retrieve and update the children of the given
@@ -48,7 +48,8 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.viewers.IChildrenRequestMonitor#addChild(java.lang.Object)
      */
-    public void addChild(Object child) {
+    @Override
+	public void addChild(Object child) {
         synchronized (fChildren) {
             fChildren.add(child);
         }
@@ -59,7 +60,8 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.viewers.IChildrenRequestMonitor#addChildren(java.lang.Object[])
      */
-    public void addChildren(Object[] children) {
+    @Override
+	public void addChildren(Object[] children) {
         synchronized (fChildren) {
             for (int i = 0; i < children.length; i++) {
                 fChildren.add(children[i]);
@@ -72,20 +74,22 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#contains(org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor)
      */
-    protected boolean contains(AsynchronousRequestMonitor update) {
+    @Override
+	protected boolean contains(AsynchronousRequestMonitor update) {
         return (update instanceof ChildrenRequestMonitor) && contains(update.getNode());
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#performUpdate()
      */
-    protected void performUpdate() {
+    @Override
+	protected void performUpdate() {
         synchronized (fChildren) {
             if (fFirstUpdate) {
             	getModel().setChildren(getNode(), fChildren);
                 fFirstUpdate = false;
             } else {
-                for (Iterator iter = fChildren.iterator(); iter.hasNext();) {
+				for (Iterator<Object> iter = fChildren.iterator(); iter.hasNext();) {
                     Object child = iter.next();
                     getModel().add(getNode(), child);    
                 }

@@ -24,9 +24,11 @@ public class WorkingDirectoryStatusHandler implements IStatusHandler {
 	/**
 	 * @see IStatusHandler#handleStatus(IStatus, Object)
 	 */
+	@Override
 	public Object handleStatus(IStatus status, Object source) {
 		final boolean[] result = new boolean[1];
 		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				String title= DebugUIMessages.WorkingDirectoryStatusHandler_Eclipse_Runtime_1; 
 				String message= DebugUIMessages.WorkingDirectoryStatusHandler_0; 

@@ -60,6 +60,7 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.LAUNCHING_PREFERENCE_PAGE);
@@ -68,6 +69,7 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
 		//save dirty editors
@@ -153,7 +155,9 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		fUseOldLaunching = SWTFactory.createRadioButton(group, DebugPreferencesMessages.LaunchingPreferencePage_37);
 		fUseContextLaunching = SWTFactory.createRadioButton(group, DebugPreferencesMessages.LaunchingPreferencePage_38);
 		fUseContextLaunching.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = ((Button)e.widget).getSelection();
 				fCheckParent.setEnabled(enabled);
@@ -182,11 +186,13 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		boolean value = getPreferenceStore().getDefaultBoolean(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH);
 		fUseOldLaunching.setSelection(!value);
@@ -202,6 +208,7 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH, fUseContextLaunching.getSelection());
 		getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT, fCheckParent.getSelection());
@@ -212,6 +219,7 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 	/**
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
+	@Override
 	protected void createFieldEditors() {
 		//do nothing we overload the create contents method
 	}

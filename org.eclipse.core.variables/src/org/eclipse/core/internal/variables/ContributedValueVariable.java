@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,27 +21,27 @@ import org.eclipse.osgi.util.NLS;
  * Implementation of a value variable.
  */
 public class ContributedValueVariable extends StringVariable implements IValueVariable {
-	
+
 	/**
-	 * Variable value or <code>null</code> if none 
+	 * Variable value or <code>null</code> if none
 	 */
 	private String fValue;
-	
+
 	/**
 	 * Whether this variable's value has been initialized
 	 */
 	private boolean fInitialized = false;
-	
+
 	/**
 	 * Whether this variable is read only.  If true, users cannot change the value.
 	 */
 	private boolean fReadOnly;
-	
+
 	/**
 	 * Constructs a new value variable with the given name, description, read only
 	 * property and associated configuration element.  The value will be initialized
 	 * from the configuration element the first time getValue() is called.
-	 * 
+	 *
 	 * @param name variable name
 	 * @param description variable description or <code>null</code>
 	 * @param readOnly whether the variable should be a read only variable
@@ -51,10 +51,11 @@ public class ContributedValueVariable extends StringVariable implements IValueVa
 		super(name, description, configurationElement);
 		fReadOnly = readOnly;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.variables.IValueVariable#setValue(java.lang.String)
 	 */
+	@Override
 	public void setValue(String value) {
 		if (!isReadOnly() || !isInitialized()){
 			fValue = value;
@@ -62,10 +63,11 @@ public class ContributedValueVariable extends StringVariable implements IValueVa
 			StringVariableManager.getDefault().notifyChanged(this);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.variables.IValueVariable#getValue()
 	 */
+	@Override
 	public String getValue() {
 		if (!isInitialized()) {
 			initialize();
@@ -111,14 +113,14 @@ public class ContributedValueVariable extends StringVariable implements IValueVa
 	 * <li>its configuration element's initializer</li>
 	 * </ul>
 	 * @return whether this variable has been initialized with a value
-	 */	
+	 */
 	protected boolean isInitialized() {
 		return fInitialized;
-	} 
-	
+	}
+
 	/**
 	 * Sets whether this variable has been initialized with a value.
-	 *  
+	 *
 	 * @param initialized whether this variable has been initialized
 	 */
 	protected void setInitialized(boolean initialized) {
@@ -128,6 +130,7 @@ public class ContributedValueVariable extends StringVariable implements IValueVa
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.variables.IValueVariable#isReadOnly()
 	 */
+	@Override
 	public boolean isReadOnly() {
 		return fReadOnly;
 	}
@@ -135,6 +138,7 @@ public class ContributedValueVariable extends StringVariable implements IValueVa
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.variables.IValueVariable#isContributed()
 	 */
+	@Override
 	public boolean isContributed() {
 		return getConfigurationElement() != null;
 	}

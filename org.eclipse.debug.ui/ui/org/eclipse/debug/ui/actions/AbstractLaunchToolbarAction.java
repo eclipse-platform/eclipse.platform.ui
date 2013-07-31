@@ -49,6 +49,7 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 	 *
 	 * @param menu the menu to fill
 	 */
+	@Override
 	protected void fillMenu(Menu menu) {
 		super.fillMenu(menu);
 		// Separator between history and common actions
@@ -74,6 +75,7 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		//always ignore external tools during context launching
 		if(LaunchingResourceManager.isContextLaunchEnabled(getLaunchGroupIdentifier())) {

@@ -41,14 +41,16 @@ public class PDAScanner extends BufferedRuleBasedScanner {
         /* (non-Javadoc)
          * @see org.eclipse.jface.text.rules.IWordDetector#isWordStart(char)
          */
-        public boolean isWordStart(char c) {
+        @Override
+		public boolean isWordStart(char c) {
             return Character.isLetter(c);
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.jface.text.rules.IWordDetector#isWordPart(char)
          */
-        public boolean isWordPart(char c) {
+        @Override
+		public boolean isWordPart(char c) {
             return Character.isLetter(c) || c == '_';
         }
     }
@@ -61,14 +63,16 @@ public class PDAScanner extends BufferedRuleBasedScanner {
         /* (non-Javadoc)
          * @see org.eclipse.jface.text.rules.IWordDetector#isWordStart(char)
          */
-        public boolean isWordStart(char c) {
+        @Override
+		public boolean isWordStart(char c) {
             return c == ':';
         }
         
         /* (non-Javadoc)
          * @see org.eclipse.jface.text.rules.IWordDetector#isWordPart(char)
          */
-        public boolean isWordPart(char c) {
+        @Override
+		public boolean isWordPart(char c) {
             return super.isWordPart(c) || Character.isDigit(c);
         }
     }

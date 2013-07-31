@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Wind River Systems and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,6 +53,7 @@ import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetManagerListener;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.viewers.ISelection;
@@ -80,7 +80,7 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      */
     public static String DEFAULT_TOGGLE_TARGET_ID = "default"; //$NON-NLS-1$
     
-    private static Set DEFAULT_TOGGLE_TARGET_ID_SET = new TreeSet();
+	private static Set<String> DEFAULT_TOGGLE_TARGET_ID_SET = new TreeSet<String>();
     static {
         DEFAULT_TOGGLE_TARGET_ID_SET.add(DEFAULT_TOGGLE_TARGET_ID);
     }
@@ -104,7 +104,9 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
          * @return Returns the instantiated factory specified by the class property. 
          */
         private IToggleBreakpointsTargetFactory getFactory() {
-            if (fFactory != null) return fFactory;
+            if (fFactory != null) {
+				return fFactory;
+			}
             try{
                 Object obj = fConfigElement.createExecutableExtension(IConfigurationElementConstants.CLASS);
                 if(obj instanceof IToggleBreakpointsTargetFactory) {
@@ -165,11 +167,11 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
         private boolean evalEnablementExpression(IWorkbenchPart part, ISelection selection, Expression exp) {
             if (exp != null){
                 IEvaluationContext context = DebugUIPlugin.createEvaluationContext(part);
-                List debugContextList = getDebugContext(part).toList();
+				List<Object> debugContextList = getDebugContext(part).toList();
                 context.addVariable(IConfigurationElementConstants.DEBUG_CONTEXT, debugContextList); 
 
                 if (selection instanceof IStructuredSelection) {
-                    List selectionList = ((IStructuredSelection)selection).toList();
+					List<Object> selectionList = ((IStructuredSelection) selection).toList();
                     context.addVariable(IConfigurationElementConstants.SELECTION, selectionList); 
                 }
 
@@ -190,9 +192,9 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
         }
         
         /**
-         * @return Returns an expression that represents the enablement logic for the
-         * breakpiont toggle target.
-         */
+		 * @return Returns an expression that represents the enablement logic
+		 *         for the breakpoint toggle target.
+		 */
         private Expression getEnablementExpression(){
             if (fEnablementExpression == null) {
                 try{
@@ -215,7 +217,8 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
          * @param targetID ID to create toggle target for 
          * @return The created toggle target, or null.
          */
-        public IToggleBreakpointsTarget createToggleTarget(String targetID) {
+        @Override
+		public IToggleBreakpointsTarget createToggleTarget(String targetID) {
             IToggleBreakpointsTargetFactory factory = getFactory();
             if (factory != null) {
                 return factory.createToggleTarget(targetID);
@@ -231,7 +234,8 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
          * @return Set of <code>String</code> IDs for possible toggle breakpoint 
          * targets, possibly empty
          */
-        public Set getToggleTargets(IWorkbenchPart part, ISelection selection) {
+        @Override
+		public Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection) {
             IToggleBreakpointsTargetFactory factory = getFactory();
             if (factory != null) {
                 return factory.getToggleTargets(part, selection);
@@ -245,7 +249,8 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
          * @param targetID toggle breakpoints target identifier
          * @return toggle target name
          */
-        public String getToggleTargetName(String targetID) {
+        @Override
+		public String getToggleTargetName(String targetID) {
             IToggleBreakpointsTargetFactory factory = getFactory();
             if (factory != null) {
                 return factory.getToggleTargetName(targetID);
@@ -259,7 +264,8 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
          * @param targetID toggle breakpoints target identifier
          * @return toggle target name or <code>null</code> if none
          */
-        public String getToggleTargetDescription(String targetID) {
+        @Override
+		public String getToggleTargetDescription(String targetID) {
             IToggleBreakpointsTargetFactory factory = getFactory();
             if (factory != null) {
                 return factory.getToggleTargetDescription(targetID);
@@ -274,7 +280,8 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
          * @param selection The current selection
          * @return a breakpoint toggle target identifier or <code>null</code>
          */
-        public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) { 
+        @Override
+		public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) { 
             IToggleBreakpointsTargetFactory factory = getFactory();
             if (factory != null) {
                 return factory.getDefaultToggleTarget(part, selection);
@@ -361,7 +368,8 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
          * @param targetID not used
          * @return always returns null
          */
-        public IToggleBreakpointsTarget createToggleTarget(String targetID) {
+        @Override
+		public IToggleBreakpointsTarget createToggleTarget(String targetID) {
             return null;
         }
         
@@ -375,22 +383,26 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
             return getToggleBreakpointsTarget(part, getSelectionElement(selection));
         }
         
-        public Set getToggleTargets(IWorkbenchPart part, ISelection selection) {
+        @Override
+		public Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection) {
             if (isEnabled(part, selection)) {
                 return DEFAULT_TOGGLE_TARGET_ID_SET;
             } 
             return Collections.EMPTY_SET;
         }
 
-        public String getToggleTargetName(String targetID) {
+        @Override
+		public String getToggleTargetName(String targetID) {
             return ActionMessages.ToggleBreakpointsTargetManager_defaultToggleTarget_name;
         }
 
-        public String getToggleTargetDescription(String targetID) {
+        @Override
+		public String getToggleTargetDescription(String targetID) {
             return ActionMessages.ToggleBreakpointsTargetManager_defaultToggleTarget_description;
         }
         
-        public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
+        @Override
+		public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
             return DEFAULT_TOGGLE_TARGET_ID;
         }
     }
@@ -410,7 +422,9 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
     private static ToggleBreakpointsTargetManager fgSingleton;
 
     public static ToggleBreakpointsTargetManager getDefault(){
-        if (fgSingleton == null) fgSingleton = new ToggleBreakpointsTargetManager();
+        if (fgSingleton == null) {
+			fgSingleton = new ToggleBreakpointsTargetManager();
+		}
         return fgSingleton;
     }
     
@@ -418,18 +432,18 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      * Maps the IDs of toggle breakpoint targets to their instances.  The target
      * IDs must be unique.
      */
-    private Map fKnownFactories;
+	private Map<String, IToggleBreakpointsTargetFactory> fKnownFactories;
 
     /**
      * Maps a Set of target id's to the one target id that is preferred.
      */
-    private Map fPreferredTargets;
+	private Map<Set<String>, String> fPreferredTargets;
     
     /**
      * Maps the IDs of toggle targets to the factory that can create them.
      * There can currently only be one factory for a given toggle target.
      */
-    private Map fFactoriesByTargetID = new HashMap();
+	private Map<String, IToggleBreakpointsTargetFactory> fFactoriesByTargetID = new HashMap<String, IToggleBreakpointsTargetFactory>();
     
     /**
      * List of listeners to changes in the preferred toggle targets list.
@@ -440,7 +454,7 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      * Initializes the collection of known factories from extension point contributions.
      */
     private void initializeFactories() {
-        fKnownFactories = new LinkedHashMap();
+		fKnownFactories = new LinkedHashMap<String, IToggleBreakpointsTargetFactory>();
         fKnownFactories.put(DEFAULT_TOGGLE_TARGET_ID, new ToggleBreakpointsTargetAdapterFactory());
         IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_TOGGLE_BREAKPOINTS_TARGET_FACTORIES);
         IConfigurationElement[] elements = ep.getConfigurationElements();
@@ -475,13 +489,13 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      * @return The factories enabled for the part and selection or an empty 
      * collection.
      */
-    private Set getEnabledFactories(IWorkbenchPart part, ISelection selection) {
-        if (fKnownFactories == null) initializeFactories();
-
-        Set set = new HashSet();
-        for (Iterator itr = fKnownFactories.keySet().iterator(); itr.hasNext(); ) {
-            String id = (String)itr.next();
-            IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory)fKnownFactories.get(id);
+	private Set<IToggleBreakpointsTargetFactory> getEnabledFactories(IWorkbenchPart part, ISelection selection) {
+        if (fKnownFactories == null) {
+			initializeFactories();
+		}
+		Set<IToggleBreakpointsTargetFactory> set = new HashSet<IToggleBreakpointsTargetFactory>();
+		for (Entry<String, IToggleBreakpointsTargetFactory> entry : fKnownFactories.entrySet()) {
+			IToggleBreakpointsTargetFactory factory = entry.getValue();
             if (factory instanceof ToggleTargetFactory && 
                 ((ToggleTargetFactory)factory).isEnabled(part, selection)) {
                 set.add(factory);
@@ -502,14 +516,10 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      * @param selection active selection in part
      * @return Set of toggle target IDs or an empty set
      */
-    private Set getEnabledTargetIDs(Collection factoriesToQuery, IWorkbenchPart part, ISelection selection){
-        Set idsForSelection = new TreeSet();
-        Iterator factoriesItr = factoriesToQuery.iterator();
-        while (factoriesItr.hasNext()) {
-            IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory) factoriesItr.next();
-            Iterator targetIDsItr = factory.getToggleTargets(part, selection).iterator();
-            while (targetIDsItr.hasNext()) {
-                String targetID = (String) targetIDsItr.next();
+	private Set<String> getEnabledTargetIDs(Set<IToggleBreakpointsTargetFactory> factoriesToQuery, IWorkbenchPart part, ISelection selection) {
+		Set<String> idsForSelection = new TreeSet<String>();
+		for (IToggleBreakpointsTargetFactory factory : factoriesToQuery) {
+			for(String targetID : factory.getToggleTargets(part, selection)) {
                 fFactoriesByTargetID.put(targetID, factory);
                 idsForSelection.add(targetID);             
             }           
@@ -517,19 +527,28 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
         return idsForSelection;
     }
 
-    public Set getEnabledToggleBreakpointsTargetIDs(IWorkbenchPart part, ISelection selection) {
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetManager#
+	 * getEnabledToggleBreakpointsTargetIDs(org.eclipse.ui.IWorkbenchPart,
+	 * org.eclipse.jface.viewers.ISelection)
+	 */
+    @Override
+	public Set<String> getEnabledToggleBreakpointsTargetIDs(IWorkbenchPart part, ISelection selection) {
         return getEnabledTargetIDs(getEnabledFactories(part, selection), part, selection);
     }
 
-    public String getPreferredToggleBreakpointsTargetID(IWorkbenchPart part, ISelection selection) {
-        Set factories = getEnabledFactories(part, selection);
-        Set possibleIDs = getEnabledTargetIDs(factories, part, selection);
+    @Override
+	public String getPreferredToggleBreakpointsTargetID(IWorkbenchPart part, ISelection selection) {
+		Set<IToggleBreakpointsTargetFactory> factories = getEnabledFactories(part, selection);
+		Set<String> possibleIDs = getEnabledTargetIDs(factories, part, selection);
         return chooseToggleTargetIDInSet(possibleIDs, part, selection);
     }
 
-    public IToggleBreakpointsTarget getToggleBreakpointsTarget(IWorkbenchPart part, ISelection selection) {
+    @Override
+	public IToggleBreakpointsTarget getToggleBreakpointsTarget(IWorkbenchPart part, ISelection selection) {
         String id = getPreferredToggleBreakpointsTargetID(part, selection);
-        IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory)fFactoriesByTargetID.get(id);
+        IToggleBreakpointsTargetFactory factory = fFactoriesByTargetID.get(id);
         if (factory != null) {
             if (DEFAULT_TOGGLE_TARGET_ID.equals(id)) {
                 return ((ToggleBreakpointsTargetAdapterFactory)factory).createDefaultToggleTarget(part, selection);
@@ -540,27 +559,31 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
         return null;
     }
     
-    public String getToggleBreakpointsTargetName(String id) {
-        IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory)fFactoriesByTargetID.get(id);
+    @Override
+	public String getToggleBreakpointsTargetName(String id) {
+        IToggleBreakpointsTargetFactory factory = fFactoriesByTargetID.get(id);
         if (factory != null) {
             return factory.getToggleTargetName(id);
         }
         return null;
     }
     
-    public String getToggleBreakpointsTargetDescription(String id) {
-        IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory)fFactoriesByTargetID.get(id);
+    @Override
+	public String getToggleBreakpointsTargetDescription(String id) {
+        IToggleBreakpointsTargetFactory factory = fFactoriesByTargetID.get(id);
         if (factory != null) {
             return factory.getToggleTargetDescription(id);
         }
         return null;
     }
 
-    public void addChangedListener(IToggleBreakpointsTargetManagerListener listener) {
+    @Override
+	public void addChangedListener(IToggleBreakpointsTargetManagerListener listener) {
         fChangedListners.add(listener);
     }
 
-    public void removeChangedListener(IToggleBreakpointsTargetManagerListener listener) {
+    @Override
+	public void removeChangedListener(IToggleBreakpointsTargetManagerListener listener) {
         fChangedListners.remove(listener);
     }
 
@@ -574,12 +597,8 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      */
     private void storePreferredTargets() {
         StringBuffer buffer= new StringBuffer();
-        Iterator iter = fPreferredTargets.entrySet().iterator();
-        while (iter.hasNext()) {
-            Entry entry = (Entry) iter.next();
-            Iterator setIter = ((Set)entry.getKey()).iterator();
-            while (setIter.hasNext()) {
-                String currentID = (String) setIter.next();
+		for (Entry<Set<String>, String> entry : fPreferredTargets.entrySet()) {
+			for (String currentID : entry.getKey()) {
                 buffer.append(currentID);
                 buffer.append(',');
             }
@@ -600,7 +619,7 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      * @see #storePreferredTargets()
      */
     private void loadPreferredTargets() {
-        fPreferredTargets = new HashMap();
+		fPreferredTargets = new HashMap<Set<String>, String>();
         String preferenceValue = Platform.getPreferencesService().getString(
         		DebugUIPlugin.getUniqueIdentifier(), 
         		PREF_TARGETS, 
@@ -614,7 +633,7 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
             String token = entryTokenizer.nextToken();
             int valueStart = token.indexOf(':');
             StringTokenizer keyTokenizer = new StringTokenizer(token.substring(0,valueStart),","); //$NON-NLS-1$
-            Set keys = new TreeSet();
+			Set<String> keys = new TreeSet<String>();
             while (keyTokenizer.hasMoreTokens()){
                 keys.add(keyTokenizer.nextToken());
             }
@@ -629,15 +648,19 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      * @param possibleIDs The set of possible IDs
      * @param preferredID The preferred ID in the set.
      */
-    public void setPreferredTarget(Set possibleIDs, String preferredID) {
-        if (possibleIDs == null) return;
+	public void setPreferredTarget(Set<String> possibleIDs, String preferredID) {
+        if (possibleIDs == null) {
+			return;
+		}
 
-        if (fKnownFactories == null) initializeFactories();
+        if (fKnownFactories == null) {
+			initializeFactories();
+		}
 
         if (fPreferredTargets == null){
             loadPreferredTargets();
         }
-        String currentKey = (String)fPreferredTargets.get(possibleIDs);
+        String currentKey = fPreferredTargets.get(possibleIDs);
         if (currentKey == null || !currentKey.equals(preferredID)){
             fPreferredTargets.put(possibleIDs, preferredID);
             storePreferredTargets();
@@ -651,11 +674,11 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      * @param possibleTargetIDs The set of possible toggle target IDs
      * @return The preferred ID or null
      */
-    private String getUserPreferredTarget(Set possibleTargetIDs){
+	private String getUserPreferredTarget(Set<String> possibleTargetIDs) {
         if (fPreferredTargets == null){
             loadPreferredTargets();
         }
-        return (String)fPreferredTargets.get(possibleTargetIDs);
+        return fPreferredTargets.get(possibleTargetIDs);
     }
 
     /**
@@ -668,7 +691,7 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      * @param selection The active selection to use with toggle target 
      * @return The preferred toggle target ID or null
      */
-    private String chooseToggleTargetIDInSet(Set possibleTargetIDs, IWorkbenchPart part, ISelection selection){
+	private String chooseToggleTargetIDInSet(Set<String> possibleTargetIDs, IWorkbenchPart part, ISelection selection) {
         if (possibleTargetIDs == null || possibleTargetIDs.isEmpty()){
             return null;
         }
@@ -677,10 +700,9 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
         
         if (preferredID == null){
             // If there is no preferred pane already set, check the factories to see there is a default target
-            Iterator possibleIDsIterator = possibleTargetIDs.iterator();
+			Iterator<String> possibleIDsIterator = possibleTargetIDs.iterator();
             while (preferredID == null && possibleIDsIterator.hasNext()) {
-                IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory)
-                        fFactoriesByTargetID.get(possibleIDsIterator.next());
+                IToggleBreakpointsTargetFactory factory = fFactoriesByTargetID.get(possibleIDsIterator.next());
                 if (factory != null) {
                     preferredID = factory.getDefaultToggleTarget(part, selection);
                 }
@@ -689,7 +711,7 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
             // Also make sure that the default is among the available toggle target
             // IDs (bug 352502).
             if (preferredID == null || !possibleTargetIDs.contains(preferredID)) {
-                preferredID= (String)possibleTargetIDs.iterator().next();
+                preferredID= possibleTargetIDs.iterator().next();
             }
             setPreferredTarget(possibleTargetIDs, preferredID);
         }
@@ -716,11 +738,11 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
     	IAnnotationModel annotationModel = provider.getAnnotationModel(input);
 		if (annotationModel != null) {
 			IDocument document = provider.getDocument(input);
-			Iterator iterator = annotationModel.getAnnotationIterator();
+			Iterator<Annotation> iterator = annotationModel.getAnnotationIterator();
 			while (iterator.hasNext()) {
-				Object object = iterator.next();
-				if (object instanceof SimpleMarkerAnnotation) {
-					SimpleMarkerAnnotation markerAnnotation = (SimpleMarkerAnnotation) object;
+				Annotation annot = iterator.next();
+				if (annot instanceof SimpleMarkerAnnotation) {
+					SimpleMarkerAnnotation markerAnnotation = (SimpleMarkerAnnotation) annot;
 					IMarker marker = markerAnnotation.getMarker();
 					try {
 						if (marker.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {

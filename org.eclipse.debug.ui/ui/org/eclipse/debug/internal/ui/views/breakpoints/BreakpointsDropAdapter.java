@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,8 @@ public class BreakpointsDropAdapter extends ViewerDropAdapter {
     /**
      * @see org.eclipse.jface.viewers.ViewerDropAdapter#performDrop(java.lang.Object)
      */
-    public boolean performDrop(Object data) {
+    @Override
+	public boolean performDrop(Object data) {
     	// This is temporary
     	if (getViewer() instanceof BreakpointsViewer) {
     		return ((BreakpointsViewer)getViewer()).performDrop(fTarget, (IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection());
@@ -70,10 +71,11 @@ public class BreakpointsDropAdapter extends ViewerDropAdapter {
 	/**
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#determineTarget(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
+	@Override
 	protected Object determineTarget(DropTargetEvent event) {
 		fTarget = (Item) event.item;
 		if (fTarget instanceof TreeItem) {
-			List list = new ArrayList();
+			List<Object> list = new ArrayList<Object>();
 			TreeItem item = (TreeItem)fTarget;
 			while (item != null) {
 				list.add(item.getData());
@@ -89,7 +91,8 @@ public class BreakpointsDropAdapter extends ViewerDropAdapter {
     /**
      * @see org.eclipse.jface.viewers.ViewerDropAdapter#validateDrop(java.lang.Object, int, org.eclipse.swt.dnd.TransferData)
      */
-    public boolean validateDrop(Object target, int operation, TransferData transferType) {
+    @Override
+	public boolean validateDrop(Object target, int operation, TransferData transferType) {
     	// This is temporary
     	if (getViewer() instanceof BreakpointsViewer) {
     		return ((BreakpointsViewer)getViewer()).canDrop(fTarget, (IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection());

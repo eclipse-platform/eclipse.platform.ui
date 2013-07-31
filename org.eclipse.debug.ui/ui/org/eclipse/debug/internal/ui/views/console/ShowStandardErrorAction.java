@@ -35,6 +35,7 @@ public class ShowStandardErrorAction extends ShowWhenContentChangesAction {
 		setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STANDARD_ERR));
 	}
 
+	@Override
 	protected String getKey() {
 		return IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR;
 	}

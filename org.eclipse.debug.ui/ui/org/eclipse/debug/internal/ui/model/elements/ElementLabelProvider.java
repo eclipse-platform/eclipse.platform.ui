@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,6 +70,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			fUpdater.run();
 			return Status.OK_STATUS;
@@ -78,6 +79,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider.ILabelJob#queue(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate)
 		 */
+		@Override
 		public boolean queue(ILabelUpdate[] updates) {
 			return fUpdater.queue(updates);
 		}
@@ -85,6 +87,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 		 */
+		@Override
 		public boolean shouldRun() {
 			return fUpdater.shouldRun();
 		}
@@ -107,6 +110,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			fUpdater.run();
 			return Status.OK_STATUS;
@@ -115,6 +119,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider.ILabelJob#queue(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate)
 		 */
+		@Override
 		public boolean queue(ILabelUpdate[] updates) {
 			return fUpdater.queue(updates);
 		}
@@ -122,6 +127,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 		 */
+		@Override
 		public boolean shouldRun() {
 			return fUpdater.shouldRun();
 		}		
@@ -131,9 +137,8 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * Queue of label updates
 	 */
 	class LabelUpdater implements Runnable {
-		
-		LinkedList fQueue = new LinkedList();
-		
+		LinkedList<ILabelUpdate> fQueue = new LinkedList<ILabelUpdate>();
+
 		public synchronized boolean queue(ILabelUpdate[] updates) {
 			if (fQueue == null) {
 				return false;
@@ -148,6 +153,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		/* (non-Javadoc)
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			ILabelUpdate update = getNextUpdate();
 			while (update != null) {
@@ -182,7 +188,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 			}
 			ILabelUpdate update = null;
 			try {
-				update = (ILabelUpdate) fQueue.removeFirst();
+				update = fQueue.removeFirst();
 			} catch (NoSuchElementException e) {
 				fQueue = null;
 			}
@@ -345,7 +351,8 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
      */
-    public synchronized void update(ILabelUpdate[] updates) {
+    @Override
+	public synchronized void update(ILabelUpdate[] updates) {
 		if (fLabelJob == null) {
 			fLabelJob = newLabelJob(updates);
 		}

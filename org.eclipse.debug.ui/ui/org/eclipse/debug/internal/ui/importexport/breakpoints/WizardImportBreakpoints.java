@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui.importexport.breakpoints;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -65,14 +66,16 @@ public class WizardImportBreakpoints extends Wizard implements IImportWizard {
 		DebugUIPlugin plugin = DebugUIPlugin.getDefault();
 		IDialogSettings workbenchSettings = plugin.getDialogSettings();
 		IDialogSettings section = workbenchSettings.getSection(IMPORT_DIALOG_SETTINGS);
-		if (section == null)
+		if (section == null) {
 			section = workbenchSettings.addNewSection(IMPORT_DIALOG_SETTINGS);
+		}
 		setDialogSettings(section);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		super.addPages();
 		fMainPage = new WizardImportBreakpointsPage(ImportExportMessages.WizardImportBreakpoints_0);
@@ -84,6 +87,7 @@ public class WizardImportBreakpoints extends Wizard implements IImportWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		fMainPage = null;
@@ -92,19 +96,22 @@ public class WizardImportBreakpoints extends Wizard implements IImportWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
-		List selectedBreakpoints = fSelectionPage.getSelectedMarkers();
+		List<IMarker> selectedBreakpoints = fSelectionPage.getSelectedMarkers();
 		return fMainPage.finish(selectedBreakpoints);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle(ImportExportMessages.WizardImportBreakpoints_0);
         setNeedsProgressMonitor(true);
 	}
 
+	@Override
 	public boolean needsProgressMonitor() {
 		return true;
 	}

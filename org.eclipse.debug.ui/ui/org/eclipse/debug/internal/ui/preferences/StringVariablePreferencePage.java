@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,11 +112,13 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 	/**
 	 * @see PreferencePage#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.SIMPLE_VARIABLE_PREFERENCE_PAGE);
 	}
 
+	@Override
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
 		Font font= parent.getFont();
@@ -165,6 +167,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		variableTable.setColumnProperties(variableTableColumnProperties);
 		variableTable.addFilter(new VariableFilter());
 		variableTable.setComparator(new ViewerComparator() {
+			@Override
 			public int compare(Viewer iViewer, Object e1, Object e2) {
 				if (e1 == null) {
 					return -1;
@@ -177,12 +180,14 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		});
 		
 		variableTable.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleTableSelectionChanged(event);
 			}
 		});
 		
 		variableTable.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (!variableTable.getSelection().isEmpty()) {
 					handleEditButtonPressed();
@@ -190,6 +195,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			}
 		});
 		variableTable.getTable().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent event) {
 				if (event.character == SWT.DEL && event.stateMask == 0) {
 					handleRemoveButtonPressed();
@@ -232,6 +238,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		envAddButton = SWTFactory.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_7, null); 
 		envAddButton.addSelectionListener(new SelectionAdapter()
 		{
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				handleAddButtonPressed();
 			}
@@ -239,6 +246,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		envEditButton = SWTFactory.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_8, null); 
 		envEditButton.addSelectionListener(new SelectionAdapter()
 		{
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				handleEditButtonPressed();
 			}
@@ -247,6 +255,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		envRemoveButton = SWTFactory.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_9, null); 
 		envRemoveButton.addSelectionListener(new SelectionAdapter()
 		{
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				handleRemoveButtonPressed();
 			}
@@ -294,19 +303,22 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			MessageDialog.openError(getShell(),DebugPreferencesMessages.StringVariablePreferencePage_21, DebugPreferencesMessages.StringVariablePreferencePage_20);
 			return false;
 		}
-		List editedVariables= variableContentProvider.getWorkingSetVariables();
-		Iterator iter= editedVariables.iterator();
+		List<VariableWrapper> editedVariables = variableContentProvider.getWorkingSetVariables();
+		Iterator<VariableWrapper> iter = editedVariables.iterator();
 		while (iter.hasNext()) {
-			VariableWrapper currentVariable = (VariableWrapper) iter.next();
+			VariableWrapper currentVariable = iter.next();
 			if (!currentVariable.isRemoved()) {
 				String currentName = currentVariable.getName();
 				if (currentName.equals(name)) {
 					if (currentVariable.isReadOnly()){
-						MessageDialog.openError(getShell(),DebugPreferencesMessages.StringVariablePreferencePage_23, MessageFormat.format(DebugPreferencesMessages.StringVariablePreferencePage_22, new String[] {name}));
+						MessageDialog.openError(getShell(), DebugPreferencesMessages.StringVariablePreferencePage_23, MessageFormat.format(DebugPreferencesMessages.StringVariablePreferencePage_22, new Object[] { name }));
 						return false;
 					}
 					else {
-						MessageDialog dialog = new MessageDialog(getShell(), DebugPreferencesMessages.SimpleVariablePreferencePage_15, null, MessageFormat.format(DebugPreferencesMessages.SimpleVariablePreferencePage_16, new String[] {name}), MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
+						MessageDialog dialog = new MessageDialog(getShell(), DebugPreferencesMessages.SimpleVariablePreferencePage_15, null, MessageFormat.format(DebugPreferencesMessages.SimpleVariablePreferencePage_16, new Object[] { name }), MessageDialog.QUESTION, new String[] {
+								IDialogConstants.YES_LABEL,
+								IDialogConstants.NO_LABEL,
+								IDialogConstants.CANCEL_LABEL }, 0);
 						int overWrite= dialog.open(); 
 						if (overWrite == 0) {
 							currentVariable.setValue(value);
@@ -337,7 +349,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		String value= variable.getValue();
 		String description= variable.getDescription();
 		String name= variable.getName();
-		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), MessageFormat.format(DebugPreferencesMessages.SimpleVariablePreferencePage_14, new String[] {name})); 
+		MultipleInputDialog dialog = new MultipleInputDialog(getShell(), MessageFormat.format(DebugPreferencesMessages.SimpleVariablePreferencePage_14, new Object[] { name }));
 		dialog.addBrowseField(VALUE_LABEL, value, true);
 		dialog.addTextField(DESCRIPTION_LABEL, description, true);
 	
@@ -359,22 +371,22 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 	 */
 	private void handleRemoveButtonPressed() {
 		IStructuredSelection selection= (IStructuredSelection) variableTable.getSelection();
-		List variablesToRemove= selection.toList();
+		List<VariableWrapper> variablesToRemove = selection.toList();
 		StringBuffer contributedVariablesToRemove= new StringBuffer();
-		Iterator iter= variablesToRemove.iterator();
+		Iterator<VariableWrapper> iter = variablesToRemove.iterator();
 		while (iter.hasNext()) {
-			VariableWrapper variable = (VariableWrapper) iter.next();
+			VariableWrapper variable = iter.next();
 			if (variable.isContributed()) {
 				contributedVariablesToRemove.append('\t').append(variable.getName()).append('\n');
 			}
 		}
 		if (contributedVariablesToRemove.length() > 0) {
-			boolean remove= MessageDialog.openQuestion(getShell(), DebugPreferencesMessages.SimpleLaunchVariablePreferencePage_21, MessageFormat.format(DebugPreferencesMessages.SimpleLaunchVariablePreferencePage_22, new String[] {contributedVariablesToRemove.toString()})); // 
+			boolean remove = MessageDialog.openQuestion(getShell(), DebugPreferencesMessages.SimpleLaunchVariablePreferencePage_21, MessageFormat.format(DebugPreferencesMessages.SimpleLaunchVariablePreferencePage_22, new Object[] { contributedVariablesToRemove.toString() })); //
 			if (!remove) {
 				return;
 			}
 		}
-		VariableWrapper[] variables= (VariableWrapper[]) variablesToRemove.toArray(new VariableWrapper[0]);
+		VariableWrapper[] variables= variablesToRemove.toArray(new VariableWrapper[0]);
 		for (int i = 0; i < variables.length; i++) {
 			variables[i].setRemoved(true);
 		} 
@@ -398,12 +410,14 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		}
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
 	/**
 	 * Clear the variables.
 	 */
+	@Override
 	protected void performDefaults() {
 		variableContentProvider.init();
 		variableTable.refresh();
@@ -413,6 +427,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 	/**
 	 * Sets the saved state for reversion.
 	 */
+	@Override
 	public boolean performOk() {
 		variableContentProvider.saveChanges();
 		saveColumnWidths();
@@ -468,8 +483,9 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		/**
 		 * The content provider stores variable wrappers for use during editing.
 		 */
-		private List fWorkingSet = new ArrayList();
+		private List<VariableWrapper> fWorkingSet = new ArrayList<VariableWrapper>();
 		
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return fWorkingSet.toArray();
 		}
@@ -483,9 +499,11 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			fWorkingSet.add(variable);
 		}		
 
+		@Override
 		public void dispose() {
 		}
 		
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (newInput == null || !(newInput instanceof IStringVariableManager)){
 				return;
@@ -498,11 +516,11 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		 */
 		public void saveChanges() {
 			IStringVariableManager manager = getVariableManager();
-			Iterator iterator = fWorkingSet.iterator();
-			List remove = new ArrayList();
-			List add = new ArrayList();
+			Iterator<VariableWrapper> iterator = fWorkingSet.iterator();
+			List<IValueVariable> remove = new ArrayList<IValueVariable>();
+			List<IValueVariable> add = new ArrayList<IValueVariable>();
 			while (iterator.hasNext()) {
-				VariableWrapper variable = (VariableWrapper) iterator.next();
+				VariableWrapper variable = iterator.next();
 				if (!variable.isReadOnly()) {
 					IValueVariable underlyingVariable = variable.getUnderlyingVariable();
 					if (variable.isRemoved()) {
@@ -522,12 +540,12 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			}
 			// remove
 			if (!remove.isEmpty()) {
-				manager.removeVariables((IValueVariable[]) remove.toArray(new IValueVariable[remove.size()]));
+				manager.removeVariables(remove.toArray(new IValueVariable[remove.size()]));
 			}
 			// add
 			if (!add.isEmpty()) {
 				try {
-					manager.addVariables((IValueVariable[]) add.toArray(new IValueVariable[add.size()]));
+					manager.addVariables(add.toArray(new IValueVariable[add.size()]));
 				} catch (CoreException e) {
 				DebugUIPlugin.errorDialog(getShell(), DebugPreferencesMessages.StringVariablePreferencePage_24, DebugPreferencesMessages.StringVariablePreferencePage_25, e.getStatus()); // 
 				}
@@ -551,7 +569,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		 * 
 		 * @return the working set of variables (not yet saved)
 		 */
-		public List getWorkingSetVariables() {
+		public List<VariableWrapper> getWorkingSetVariables() {
 			return fWorkingSet;
 		}
 		
@@ -646,9 +664,11 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 	}
 	
 	private class SimpleVariableLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider {
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			if (element instanceof VariableWrapper) {
 				VariableWrapper variable= (VariableWrapper) element;
@@ -683,11 +703,14 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
                             }
 						}
 						return contribution;
+					default:
+						break;
 						
 				}
 			}
 			return null;
 		}
+		@Override
 		public Color getForeground(Object element) {
 			if (element instanceof VariableWrapper) {
 				if (((VariableWrapper) element).isReadOnly()) {
@@ -697,6 +720,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			}
 			return null;
 		}
+		@Override
 		public Color getBackground(Object element) {
 			if (element instanceof VariableWrapper) {
 				if (((VariableWrapper) element).isReadOnly()) {
@@ -713,6 +737,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			return !((VariableWrapper)element).isRemoved();
 		}

@@ -24,6 +24,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  */
 public class DefaultModelSelectionPolicyFactory implements IModelSelectionPolicyFactory {
 
+	@Override
 	public IModelSelectionPolicy createModelSelectionPolicyAdapter(Object element, IPresentationContext context) {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			if (element instanceof IDebugElement) {

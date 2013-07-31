@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,8 @@ public class LaunchConfigurationAction extends Action {
 	 * @param image the image for the action
 	 */
 	public LaunchConfigurationAction(ILaunchConfiguration config, String mode, String text, ImageDescriptor image, int accelerator) {
-		super(MessageFormat.format(ActionMessages.LaunchConfigurationAction_0, new String[] {Integer.toString(accelerator), text}), image);
+		super(MessageFormat.format(ActionMessages.LaunchConfigurationAction_0, new Object[] {
+				Integer.toString(accelerator), text }), image);
 		fConfig = config;
 		fMode = mode;
 	}
@@ -57,6 +58,7 @@ public class LaunchConfigurationAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		DebugUITools.launch(fConfig, fMode);
 	}
@@ -64,6 +66,7 @@ public class LaunchConfigurationAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(Event event) {
 		if ((event.stateMask & SWT.MOD1) > 0) {
 			try {

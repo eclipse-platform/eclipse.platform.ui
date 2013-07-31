@@ -83,6 +83,7 @@ class BreadcrumbItem extends Item {
 	/*
 	 * @see org.eclipse.swt.widgets.Widget#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fContainer.dispose();
 		super.dispose();
@@ -207,6 +208,7 @@ class BreadcrumbItem extends Item {
 	/*
 	 * @see org.eclipse.swt.widgets.Item#setText(java.lang.String)
 	 */
+	@Override
 	public void setText(String string) {
 		super.setText(string);
 		fDetailsBlock.setText(string);
@@ -219,6 +221,7 @@ class BreadcrumbItem extends Item {
 	/*
 	 * @see org.eclipse.swt.widgets.Item#setImage(org.eclipse.swt.graphics.Image)
 	 */
+	@Override
 	public void setImage(Image image) {
 		super.setImage(image);
 		fDetailsBlock.setImage(image);

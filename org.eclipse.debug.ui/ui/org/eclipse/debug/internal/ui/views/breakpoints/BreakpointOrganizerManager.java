@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,9 +42,9 @@ public class BreakpointOrganizerManager {
 	private static BreakpointOrganizerManager fgManager;
 	
 	// map for lookup by id
-    private Map fOrganizers = new HashMap();
+	private Map<String, IBreakpointOrganizer> fOrganizers = new HashMap<String, IBreakpointOrganizer>();
     // cached sorted list by label
-    private List fSorted = null;
+	private List<IBreakpointOrganizer> fSorted = null;
 
 	/**
 	 * Returns the singleton instance of the breakpoint container
@@ -69,14 +69,15 @@ public class BreakpointOrganizerManager {
 	}
 	
 	/**
-	 * Forces instantiation of orgranizer delegate.
+	 * Forces instantiation of organizer delegate.
 	 * 
 	 * @param organizerId organizer to start
 	 */
 	private void start(String organizerId) {
         IBreakpointOrganizer organizer = getOrganizer(organizerId);
         IPropertyChangeListener listener = new IPropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent event) {
+            @Override
+			public void propertyChange(PropertyChangeEvent event) {
             }
         };
         organizer.addPropertyChangeListener(listener);
@@ -117,22 +118,19 @@ public class BreakpointOrganizerManager {
      */
     public IBreakpointOrganizer[] getOrganizers() {
     	if (fSorted == null) {
-	        Collection collection = fOrganizers.values();
-	        fSorted = new ArrayList();
+			Collection<IBreakpointOrganizer> collection = fOrganizers.values();
+			fSorted = new ArrayList<IBreakpointOrganizer>();
 	        fSorted.addAll(collection);
-	        Collections.sort(fSorted, new Comparator() {
+			Collections.sort(fSorted, new Comparator<Object>() {
+				@Override
 				public int compare(Object o1, Object o2) {
 					IBreakpointOrganizer b1 = (IBreakpointOrganizer)o1;
 					IBreakpointOrganizer b2 = (IBreakpointOrganizer)o2;
 					return b1.getLabel().compareTo(b2.getLabel());
 				}
-
-				public boolean equals(Object obj) {
-					return this == obj;
-				}
 			});
     	}
-    	return (IBreakpointOrganizer[]) fSorted.toArray(new IBreakpointOrganizer[fSorted.size()]);
+    	return fSorted.toArray(new IBreakpointOrganizer[fSorted.size()]);
     }
     
     /**
@@ -141,7 +139,7 @@ public class BreakpointOrganizerManager {
      * @return breakpoint organizer or <code>null</code>
      */
     public IBreakpointOrganizer getOrganizer(String id) {
-        return (IBreakpointOrganizer) fOrganizers.get(id);
+        return fOrganizers.get(id);
     }
     
     /**

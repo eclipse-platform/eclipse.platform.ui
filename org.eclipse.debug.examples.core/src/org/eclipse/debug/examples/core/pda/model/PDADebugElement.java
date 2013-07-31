@@ -39,6 +39,7 @@ public class PDADebugElement extends DebugElement {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		return DebugCorePlugin.ID_PDA_DEBUG_MODEL;
 	}

@@ -35,6 +35,7 @@ public class DetailPaneMaxLengthAction extends Action {
 		
 	}
 	
+	@Override
 	public void run() {
 		DetailPaneMaxLengthDialog dialog = new DetailPaneMaxLengthDialog(fDialogShell);
 		dialog.open();

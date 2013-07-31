@@ -107,9 +107,11 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	private RedoActionHandler fRedoAction;
 
 
+	@Override
 	public void dispose() {
-		if (fClipboard != null)
-			fClipboard.dispose();		
+		if (fClipboard != null) {
+			fClipboard.dispose();
+		}		
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointManagerListener(this);
 
 		fUndoAction.dispose();
@@ -122,6 +124,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getDetailPanePreferenceKey()
 	 */
+	@Override
 	protected String getDetailPanePreferenceKey() {
 		return IDebugPreferenceConstants.BREAKPOINTS_DETAIL_PANE_ORIENTATION;
 	}
@@ -130,6 +133,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getHelpContextId()
 	 */
+	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.BREAKPOINT_VIEW;
 	}
@@ -138,6 +142,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getViewerStyle()
 	 */
+	@Override
 	protected int getViewerStyle() {
 		return SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL | SWT.FULL_SELECTION | SWT.CHECK;
 	}
@@ -146,6 +151,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Viewer createViewer(Composite parent) {
 		TreeModelViewer viewer = (TreeModelViewer) super.createViewer(parent);		
 		
@@ -162,12 +168,14 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getModelPresentation()
 	 */
+	@Override
 	protected IDebugModelPresentation getModelPresentation() {
 		if (fModelPresentation == null) {
 			fModelPresentation = new VariablesViewModelPresentation() {
 				/**
 				 * Undo double slashes.
 				 */
+				@Override
 				public String getText(Object element) {					
 			    	IDebugModelPresentation lp= getConfiguredPresentation(element);
 			    	if (lp != null) {
@@ -192,6 +200,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
 	 */
+	@Override
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
 		tbm.add(getAction(ACTION_SHOW_MODEL_BREAKPOINT)); 
@@ -204,6 +213,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	protected void fillContextMenu(IMenuManager menu) {
 		updateObjects();
 		menu.add(new Separator(IDebugUIConstants.EMPTY_NAVIGATION_GROUP));
@@ -230,6 +240,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createActions()
 	 */
+	@Override
 	protected void createActions() {
 		IAction action = new OpenBreakpointMarkerAction(getViewer());
 		setAction(ACTION_GOTO_MARKER, action);
@@ -269,6 +280,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 * 
 	 * @seeorg.eclipse.debug.internal.ui.views.variables.VariablesView#getToggleActionLabel()
 	 */
+	@Override
 	protected String getToggleActionLabel() {
 		return DebugUIViewsMessages.BreakpointsView_12;
 	}
@@ -278,6 +290,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 * 
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getPresentationContextId()
 	 */
+	@Override
 	protected String getPresentationContextId() {
 		return IDebugUIConstants.ID_BREAKPOINT_VIEW;
 	}
@@ -287,6 +300,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 * 
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#contextActivated(org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	protected void contextActivated(ISelection selection) {
 	    IPresentationContext presentationContext = getTreeModelViewer().getPresentationContext();
 	    
@@ -306,6 +320,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 * 
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#setViewerInput(java.lang.Object)
 	 */
+	@Override
 	protected void setViewerInput(Object context) {
 		Object current = getViewer().getInput();
 		if (current == null && context == null) {
@@ -330,6 +345,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#viewerInputUpdateComplete(org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate)
 	 */
+	@Override
 	protected void viewerInputUpdateComplete(IViewerInputUpdate update) {		
 		// handles non-standard debug model
 	    IStatus status = update.getStatus();
@@ -384,17 +400,18 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
                 if (value != null) {
                     String[] ids = value.split(","); //$NON-NLS-1$
     				BreakpointOrganizerManager manager = BreakpointOrganizerManager.getDefault();
-    				List organziers= new ArrayList();
+					List<IBreakpointOrganizer> organziers = new ArrayList<IBreakpointOrganizer>();
                     for (int i = 0; i < ids.length; i++) {
                         IBreakpointOrganizer organizer = manager.getOrganizer(ids[i]);
                         if (organizer != null) {
                             organziers.add(organizer);
                         }
                     }
-                    fOrganizers = (IBreakpointOrganizer[]) organziers.toArray(new IBreakpointOrganizer[organziers.size()]);
+                    fOrganizers = organziers.toArray(new IBreakpointOrganizer[organziers.size()]);
                     
-                    for (int i = 0; i < fOrganizers.length; i++)
-        				fOrganizers[i].addPropertyChangeListener(this);
+                    for (int i = 0; i < fOrganizers.length; i++) {
+						fOrganizers[i].addPropertyChangeListener(this);
+					}
                 }
 			}
 		}
@@ -404,6 +421,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
      * Initializes drag and drop for the breakpoints viewer
      * @param viewer the viewer to add drag and drop support to
      */
+	@Override
 	protected void initDragAndDrop(TreeModelViewer viewer) {
         int ops = DND.DROP_MOVE | DND.DROP_COPY;
         // drop
@@ -416,6 +434,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#saveViewerState(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void saveViewerState(IMemento memento) {
 		StringBuffer buffer = new StringBuffer();
         if (fOrganizers != null) {
@@ -502,8 +521,10 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointManagerListener#breakpointManagerEnablementChanged(boolean)
 	 */
+	@Override
 	public void breakpointManagerEnablementChanged(boolean enabled) {
 		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				IAction action = getAction(ACTION_SKIP_BREAKPOINTS);
 				if (action != null) {
@@ -524,7 +545,8 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
         
         virtualViewer.setAutoExpandLevel(-1);
         virtualViewer.addViewerUpdateListener(new IViewerUpdateListener() {
-            public void viewerUpdatesComplete() {
+            @Override
+			public void viewerUpdatesComplete() {
             	ModelDelta stateDelta = new ModelDelta(virtualViewer.getInput(), IModelDelta.NO_CHANGE);
                 virtualViewer.saveElementState(TreePath.EMPTY, stateDelta, IModelDelta.EXPAND);
                 ITreeModelViewer treeModelViewer = ((ITreeModelViewer) getViewer());
@@ -533,9 +555,12 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
                 }
                 virtualViewer.dispose();
             }
-            public void viewerUpdatesBegin() {}
-            public void updateStarted(IViewerUpdate update) {}
-            public void updateComplete(IViewerUpdate update) {}
+            @Override
+			public void viewerUpdatesBegin() {}
+            @Override
+			public void updateStarted(IViewerUpdate update) {}
+            @Override
+			public void updateComplete(IViewerUpdate update) {}
         });
         virtualViewer.setInput(getViewer().getInput());
 	}
@@ -576,7 +601,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
     	}
     	IStructuredSelection ss = (IStructuredSelection) selection;
     	IBreakpointContainer container = (IBreakpointContainer) target;
-    	for(Iterator iter = ss.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = ss.iterator(); iter.hasNext();) {
     		IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(iter.next(), IBreakpoint.class);
     		if (breakpoint == null || container.contains(breakpoint) || !container.getOrganizer().canAdd(breakpoint, container.getCategory())) {
                 return false;
@@ -728,29 +753,26 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
     	if (paths == null) {
     		return;
     	}
-
-    	Map containersToBreakpoints = new HashMap();
+		Map<IBreakpointContainer, List<IBreakpoint>> containersToBreakpoints = new HashMap<IBreakpointContainer, List<IBreakpoint>>();
     	for (int i = 0; i < paths.length; i++) {
             IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(paths[i].getLastSegment(), IBreakpoint.class);
     		if (breakpoint != null) {
 	    		IBreakpointContainer container = getRemovableContainer(paths[i]);
 	    		if(container != null) {
-	    			List list = (List) containersToBreakpoints.get(container);
+					List<IBreakpoint> list = containersToBreakpoints.get(container);
 	    			if (list == null) {
-	    				list = new ArrayList();
+						list = new ArrayList<IBreakpoint>();
 	    				containersToBreakpoints.put(container, list);
 	    			}
 	    			list.add(breakpoint);
 	    		}
     		}
     	}
-    	Iterator iterator = containersToBreakpoints.entrySet().iterator();
-    	while (iterator.hasNext()) {
-    		Entry entry = (Entry) iterator.next();
-    		IBreakpointContainer container = (IBreakpointContainer) entry.getKey();
-    		List list = (List) entry.getValue();
+		for (Entry<IBreakpointContainer, List<IBreakpoint>> entry : containersToBreakpoints.entrySet()) {
+    		IBreakpointContainer container = entry.getKey();
+			List<IBreakpoint> list = entry.getValue();
     		IBreakpointOrganizer organizer = container.getOrganizer();
-    		IBreakpoint[] breakpoints = (IBreakpoint[]) list.toArray(new IBreakpoint[list.size()]);
+    		IBreakpoint[] breakpoints = list.toArray(new IBreakpoint[list.size()]);
     		if (organizer instanceof IBreakpointOrganizerDelegateExtension) {
 				IBreakpointOrganizerDelegateExtension extension = (IBreakpointOrganizerDelegateExtension) organizer;
 				extension.removeBreakpoints(breakpoints, container.getCategory());
@@ -779,8 +801,8 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		}
     	
     	IBreakpointOrganizer organizer = container.getOrganizer();
-        List breakpoints = new ArrayList(selection.size());
-        for (Iterator iter = selection.iterator(); iter.hasNext();) {
+		List<IBreakpoint> breakpoints = new ArrayList<IBreakpoint>(selection.size());
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
             IBreakpoint breakpoint = (IBreakpoint) DebugPlugin.getAdapter(iter.next(), IBreakpoint.class);
             if (breakpoint != null) {
                 breakpoints.add(breakpoint);
@@ -789,15 +811,14 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
     	if (organizer instanceof IBreakpointOrganizerDelegateExtension) {
     		IBreakpointOrganizerDelegateExtension extension = (IBreakpointOrganizerDelegateExtension) organizer;
     		extension.addBreakpoints(
-    		    (IBreakpoint[])breakpoints.toArray(new IBreakpoint[breakpoints.size()]), 
+    		    breakpoints.toArray(new IBreakpoint[breakpoints.size()]), 
     		    container.getCategory());
     	} else {
 	    	for (int i = 0; i < breakpoints.size(); i++) {
-	    	    organizer.addBreakpoint((IBreakpoint)breakpoints.get(i), container.getCategory());
+	    	    organizer.addBreakpoint(breakpoints.get(i), container.getCategory());
 	    	}
     	}
     	// TODO expandToLevel(target.getData(), ALL_LEVELS);
-    	
     	return true;
     }
 
@@ -819,9 +840,8 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
     	if (selection == null  || target == null) {
     		return false;
     	}
-    	for(Iterator iter = selection.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
             IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(iter.next(), IBreakpoint.class);
-
     		if (breakpoint == null || !checkAddableParentContainers(target, breakpoint)){
     			return false;
     		}

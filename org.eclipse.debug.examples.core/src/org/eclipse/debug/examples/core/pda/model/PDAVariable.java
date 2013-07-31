@@ -46,6 +46,7 @@ public class PDAVariable extends PDADebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
+	@Override
 	public IValue getValue() throws DebugException {
 		PDACommandResult result = sendCommand(new PDAVarCommand(
 		    fFrame.getThreadIdentifier(), getStackFrame().getIdentifier(), getName()));
@@ -55,24 +56,28 @@ public class PDAVariable extends PDADebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getName()
 	 */
+	@Override
 	public String getName() throws DebugException {
 		return fName;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		return "Thing"; //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
 	 */
+	@Override
 	public boolean hasValueChanged() throws DebugException {
 		return false;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
 	 */
+	@Override
 	public void setValue(String expression) throws DebugException {
         sendCommand(new PDASetVarCommand(
             fFrame.getThreadIdentifier(), getStackFrame().getIdentifier(), getName(), expression));
@@ -81,23 +86,27 @@ public class PDAVariable extends PDADebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	public void setValue(IValue value) throws DebugException {
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#supportsValueModification()
 	 */
+	@Override
 	public boolean supportsValueModification() {
 		return true;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang.String)
 	 */
+	@Override
 	public boolean verifyValue(String expression) throws DebugException {
 		return true;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	public boolean verifyValue(IValue value) throws DebugException {
 		return false;
 	}

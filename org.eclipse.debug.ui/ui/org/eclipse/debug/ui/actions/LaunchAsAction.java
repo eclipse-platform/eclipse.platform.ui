@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.debug.ui.actions;
 
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugPlugin;
@@ -50,6 +49,7 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  *  menus. Use <code>LaunchShorcutsAction</code> instead.
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWindowPulldownDelegate2 {
 	
 	/**
@@ -93,6 +93,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	/**
 	 * @see IAction#run()
 	 */
+	@Override
 	public void run() {
 		//do nothing, this action just creates a cascading menu.
 	}
@@ -114,6 +115,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	/**
 	 * @see IMenuCreator#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (getCreatedMenu() != null) {
 			getCreatedMenu().dispose();
@@ -123,6 +125,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	/**
 	 * @see IMenuCreator#getMenu(Control)
 	 */
+	@Override
 	public Menu getMenu(Control parent) {
 		return null;
 	}
@@ -130,6 +133,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	/**
 	 * @see IMenuCreator#getMenu(Menu)
 	 */
+	@Override
 	public Menu getMenu(Menu parent) {
 		if (getCreatedMenu() != null) {
 			 getCreatedMenu().dispose();
@@ -142,7 +146,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	
 	private void fillMenu() {
 		//Retrieve the current perspective and the registered shortcuts
-		 List shortcuts = null;
+		List<LaunchShortcutExtension> shortcuts = null;
 		 String activePerspID = getActivePerspectiveID();
 		 if (activePerspID != null) {
 			 shortcuts = getLaunchConfigurationManager().getLaunchShortcuts(activePerspID, getCategory());
@@ -155,11 +159,8 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 		 }
 
 		 int menuCount = 1;
-		 
-		 Iterator iter = shortcuts.iterator();
 		 String mode = getMode();
-		 while (iter.hasNext()) {
-			 LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
+		for (LaunchShortcutExtension ext : shortcuts) {
 			 if (ext.getModes().contains(mode) && !WorkbenchActivityHelper.filterItem(ext)) {
 				populateMenu(mode, ext, getCreatedMenu(), menuCount);
 				menuCount++;
@@ -174,6 +175,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 		// Add listener to re-populate the menu each time
 		// it is shown to reflect changes in selection or active perspective
 		fCreatedMenu.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuShown(MenuEvent e) {
 				Menu m = (Menu)e.widget;
 				MenuItem[] items = m.getItems();
@@ -262,6 +264,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 //		if (window instanceof WorkbenchWindow) {
 //			fKeyBindingService= ((WorkbenchWindow)window).getKeyBindingService();
@@ -271,6 +274,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		// do nothing - this is just a menu
 	}
@@ -278,6 +282,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (fAction == null) {
 			initialize(action);
@@ -302,10 +307,8 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	 * the mode of this action
 	 */
 	private boolean existsShortcutsForMode() {
-		List shortcuts = getLaunchConfigurationManager().getLaunchShortcuts(getCategory());
-		Iterator iter = shortcuts.iterator();
-		while (iter.hasNext()) {
-			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
+		List<LaunchShortcutExtension> shortcuts = getLaunchConfigurationManager().getLaunchShortcuts(getCategory());
+		for (LaunchShortcutExtension ext : shortcuts) {
 			if (ext.getModes().contains(getMode())) {
 				return true;
 			}

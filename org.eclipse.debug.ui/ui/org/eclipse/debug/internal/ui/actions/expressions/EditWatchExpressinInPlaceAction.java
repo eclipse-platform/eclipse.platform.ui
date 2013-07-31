@@ -40,7 +40,8 @@ public class EditWatchExpressinInPlaceAction extends Action implements ISelectio
         fEditActionDelegate.selectionChanged(this, selectionProvider.getSelection());
     }
     
-    public void selectionChanged(SelectionChangedEvent event) {
+    @Override
+	public void selectionChanged(SelectionChangedEvent event) {
         IStructuredSelection selection = fEditActionDelegate.getCurrentSelection();
         setEnabled(selection != null && selection.size() == 1);
     }
@@ -49,7 +50,8 @@ public class EditWatchExpressinInPlaceAction extends Action implements ISelectio
         fView.getSite().getSelectionProvider().removeSelectionChangedListener(this);
     }
     
-    public void run() {
+    @Override
+	public void run() {
         IStructuredSelection selelection = fEditActionDelegate.getCurrentSelection();
         
         if (selelection.size() != 1) {

@@ -46,7 +46,8 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
     /**
      * @throws java.lang.Exception
      */
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         fDisplay = PlatformUI.getWorkbench().getDisplay();
         fShell = new Shell(fDisplay);
         fShell.setMaximized(true);
@@ -65,7 +66,8 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
     /**
      * @throws java.lang.Exception
      */
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         fListener.dispose();
         fViewer.getPresentationContext().dispose();
         
@@ -78,7 +80,8 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
 		}
     }
     
-    protected void runTest() throws Throwable {
+    @Override
+	protected void runTest() throws Throwable {
         try {
             super.runTest();
         } catch (Throwable t) {
@@ -375,7 +378,8 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
 
         fViewer.addFilter(new ViewerFilter() {
-            public boolean select(Viewer viewer, Object parentElement, Object element) {
+            @Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
                 if (element instanceof TestElement) {
                     String id = ((TestElement)element).getID();
 					if (id.startsWith("model.")) { //$NON-NLS-1$

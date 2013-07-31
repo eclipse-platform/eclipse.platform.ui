@@ -27,6 +27,7 @@ public class SequencerColumnFactory implements IColumnPresentationFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory#createColumnPresentation(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
 	 */
+	@Override
 	public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
 		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId()) || CheckboxView.ID.equals(context.getId())) {
 			return new SequencerColumnPresentation();
@@ -37,6 +38,7 @@ public class SequencerColumnFactory implements IColumnPresentationFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory#getColumnPresentationId(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
 	 */
+	@Override
 	public String getColumnPresentationId(IPresentationContext context, Object element) {
 		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId()) || CheckboxView.ID.equals(context.getId())) {
 			return SequencerColumnPresentation.ID;

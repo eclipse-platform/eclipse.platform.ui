@@ -40,6 +40,7 @@ public class LaunchConfigurationSelectionDialog extends AbstractDebugListSelecti
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 	 */
+	@Override
 	protected String getDialogSettingsId() {
 		return DIALOG_SETTINGS;
 	}
@@ -47,6 +48,7 @@ public class LaunchConfigurationSelectionDialog extends AbstractDebugListSelecti
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
 	 */
+	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.SELECT_LAUNCH_CONFIGURATION_DIALOG;
 	}
@@ -54,6 +56,7 @@ public class LaunchConfigurationSelectionDialog extends AbstractDebugListSelecti
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
 	 */
+	@Override
 	protected Object getViewerInput() {
 		return fInput;
 	}
@@ -61,6 +64,7 @@ public class LaunchConfigurationSelectionDialog extends AbstractDebugListSelecti
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
 	 */
+	@Override
 	protected String getViewerLabel() {
 		return LaunchConfigurationsMessages.LaunchConfigurationSelectionDialog_1;
 	}

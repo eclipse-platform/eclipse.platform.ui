@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,10 +24,9 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Class to cache the breakpoint to workingset information in its underlying
- * marker as breakpoints are moved between breakpoint working sets.
- * It resolves the need for constant attribute lookup and parsing to 
- * fix bug 103731
+ * Class to cache the breakpoint to working set information in its underlying
+ * marker as breakpoints are moved between breakpoint working sets. It resolves
+ * the need for constant attribute lookup and parsing to fix bug 103731
  * 
  * @since 3.2
  */
@@ -38,13 +37,13 @@ public class BreakpointWorkingSetCache {
 	 * key: marker
 	 * value: vector of working sets the marker belongs to
 	 */
-	HashMap fCache = null;
+	HashMap<IMarker, Vector<Object>> fCache = null;
 	
 	/**
 	 * Default constructor
 	 */
 	public BreakpointWorkingSetCache() {
-		fCache = new HashMap(15);
+		fCache = new HashMap<IMarker, Vector<Object>>(15);
 	}
 	
 	/**
@@ -53,9 +52,9 @@ public class BreakpointWorkingSetCache {
 	 * @param entry the entry to add to the cache
 	 */
 	public void addEntry(IMarker marker, Object entry) {
-		Vector list = (Vector)fCache.get(marker);
+		Vector<Object> list = fCache.get(marker);
 		if (list == null) {
-			list = new Vector();
+			list = new Vector<Object>();
 			list.addElement(entry);
 			fCache.put(marker, list);
 		}
@@ -72,7 +71,7 @@ public class BreakpointWorkingSetCache {
 	 * @param entry the entry to remove
 	 */
 	public void removeMappedEntry(IMarker marker, Object entry) {
-		Vector list = (Vector)fCache.get(marker);
+		Vector<Object> list = fCache.get(marker);
 		if(list != null) {
 			list.remove(entry);
 		}
@@ -84,7 +83,7 @@ public class BreakpointWorkingSetCache {
 	 */
 	public void flushMarkerCache(IMarker marker) {
 		IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
-		Vector list = (Vector)fCache.get(marker);
+		Vector<Object> list = fCache.get(marker);
 		if(list != null) {
 			String names = IImportExportConstants.DELIMITER;
 			String ids = IImportExportConstants.DELIMITER;

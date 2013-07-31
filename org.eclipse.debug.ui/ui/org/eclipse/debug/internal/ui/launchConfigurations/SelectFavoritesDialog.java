@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog 
 	 * Content provider for table
 	 */	
 	protected class LaunchConfigurationContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object inputElement) {
 			ILaunchConfiguration[] all = null;
 			try {
@@ -48,7 +49,7 @@ public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog 
 				DebugUIPlugin.log(e);
 				return new ILaunchConfiguration[0];
 			}
-			List list = new ArrayList(all.length);
+			List<ILaunchConfiguration> list = new ArrayList<ILaunchConfiguration>(all.length);
 			ViewerFilter filter = new LaunchGroupFilter(fHistory.getLaunchGroup());
 			for (int i = 0; i < all.length; i++) {
 				if (filter.select(null, null, all[i])) {
@@ -61,12 +62,14 @@ public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog 
 			return objs;
 		}
 
+		@Override
 		public void dispose() {}
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 	}	
 	
 	private LaunchHistory fHistory;
-	private List fCurrentFavoriteSet;
+	private List<ILaunchConfiguration> fCurrentFavoriteSet;
 	
 	/**
 	 * Constructor
@@ -74,11 +77,11 @@ public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog 
 	 * @param history
 	 * @param favorites
 	 */
-	public SelectFavoritesDialog(Shell parentShell, LaunchHistory history, List favorites) {
+	public SelectFavoritesDialog(Shell parentShell, LaunchHistory history, List<ILaunchConfiguration> favorites) {
 		super(parentShell);
 		fHistory = history;
 		fCurrentFavoriteSet = favorites;
-		setTitle(MessageFormat.format(LaunchConfigurationsMessages.FavoritesDialog_0, new String[]{getModeLabel()}));
+		setTitle(MessageFormat.format(LaunchConfigurationsMessages.FavoritesDialog_0, new Object[] { getModeLabel() }));
 		setShowSelectAllButtons(true);
 	}
 
@@ -94,6 +97,7 @@ public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 	 */
+	@Override
 	protected String getDialogSettingsId() {
 		return IDebugUIConstants.PLUGIN_ID + ".SELECT_FAVORITESS_DIALOG"; //$NON-NLS-1$
 	}
@@ -101,6 +105,7 @@ public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
 	 */
+	@Override
 	protected Object getViewerInput() {
 		return fHistory.getLaunchGroup().getMode();
 	}
@@ -108,6 +113,7 @@ public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getContentProvider()
 	 */
+	@Override
 	protected IContentProvider getContentProvider() {
 		return new LaunchConfigurationContentProvider();
 	}
@@ -115,6 +121,7 @@ public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
 	 */
+	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.SELECT_FAVORITES_DIALOG;
 	}
@@ -122,6 +129,7 @@ public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
 	 */
+	@Override
 	protected String getViewerLabel() {
 		return LaunchConfigurationsMessages.FavoritesDialog_7;
 	}

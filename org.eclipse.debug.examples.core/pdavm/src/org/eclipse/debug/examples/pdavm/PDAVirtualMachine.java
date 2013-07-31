@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Bjorn Freeman-Benson - initial API and implementation
  *     Pawel Piech (Wind River) - ported PDA Virtual Machine to Java (Bug 261400)
@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -35,46 +36,48 @@ import java.util.regex.Pattern;
 
 /**
  * Push Down Automata interpreter.
- * 
+ *
  * @since 3.5
  */
 public class PDAVirtualMachine {
 
-    static class Stack extends LinkedList {
+	static class Stack extends LinkedList<Object> {
         private static final long serialVersionUID = 1L;
 
-        public Object pop() {
+        @Override
+		public Object pop() {
             return isEmpty() ? new Integer(0) : remove(size() - 1);
         }
 
-        public void push(Object value) {
+        @Override
+		public void push(Object value) {
             add(value);
         }
     }
-    
+
     static class Register {
-        Register(String name) { 
-            fName = name; 
+        Register(String name) {
+            fName = name;
         }
         String fName;
         String fGroup = "<no_group>"; //$NON-NLS-1$
         boolean fIsWriteable = true;
-        Map fBitFields = new LinkedHashMap(0);
+		Map<String, BitField> fBitFields = new LinkedHashMap<String, BitField>(0);
         int fValue;
     }
 
     static class BitField {
-        BitField(String name) { 
-            fName = name; 
+        BitField(String name) {
+            fName = name;
         }
         String fName;
         int fBitOffset;
         int fBitCount;
-        Map fMnemonics = new LinkedHashMap(0);
+		Map<String, Integer> fMnemonics = new LinkedHashMap<String, Integer>(0);
     }
 
-    Map fRegisters = new LinkedHashMap(0);
-    
+	Map<String, Register> fRegisters = new LinkedHashMap<String, Register>(0);
+
     class Args {
         final String[] fArgs;
 
@@ -87,7 +90,7 @@ public class PDAVirtualMachine {
         boolean hasNextArg() {
             return fArgs.length > next;
         }
-        
+
         String getNextStringArg() {
             if (fArgs.length > next) {
                 return fArgs[next++];
@@ -124,7 +127,7 @@ public class PDAVirtualMachine {
 
         PDAThread getThreadArg() {
             int id = getNextIntArg();
-            return (PDAThread)fThreads.get( new Integer(id) );
+            return fThreads.get( new Integer(id) );
         }
     }
 
@@ -141,10 +144,10 @@ public class PDAVirtualMachine {
         String[] fThreadCode;
 
         /** PDAThread copy of the labels. */
-        Map fThreadLabels;
+		Map<String, Integer> fThreadLabels;
 
         /** The stack of stack frames (the control stack) */
-        final List fFrames = new LinkedList();
+		final List<Frame> fFrames = new LinkedList<Frame>();
 
         /** Current stack frame (not includced in fFrames) */
         Frame fCurrentFrame;
@@ -160,11 +163,11 @@ public class PDAVirtualMachine {
         boolean fStep = false;
 
         boolean fStepReturn = false;
-        
+
         int fSavedPC;
 
         boolean fPerformingEval = false;
-        
+
         PDAThread(int id, String function, int pc) {
             fID = id;
             fCurrentFrame = new Frame(function, pc);
@@ -173,7 +176,7 @@ public class PDAVirtualMachine {
         }
     }
 
-    final Map fThreads = new LinkedHashMap();
+	final Map<Integer, PDAThread> fThreads = new LinkedHashMap<Integer, PDAThread>();
 
     int fNextThreadId = 1;
 
@@ -185,12 +188,12 @@ public class PDAVirtualMachine {
     final String[] fCode;
 
     /** A mapping of labels to indicies in the code array */
-    final Map fLabels;
+	final Map<String, Integer> fLabels;
 
     /** Each stack frame is a mapping of variable names to values. */
     class Frame {
-        final Map fLocalVariables = new LinkedHashMap();
-        
+		final Map<String, Object> fLocalVariables = new LinkedHashMap<String, Object>();
+
         /**
          * The name of the function in this frame
          */
@@ -206,7 +209,7 @@ public class PDAVirtualMachine {
             fFunction = function;
             fPC = pc;
         }
-        
+
         void set(String name, Object value) {
             if (name.startsWith("$")) { //$NON-NLS-1$
                 setRegisterValue(name, value);
@@ -214,31 +217,35 @@ public class PDAVirtualMachine {
                 fLocalVariables.put(name, value);
             }
         }
-        
+
         Object get(String name) {
             if (name.startsWith("$")) { //$NON-NLS-1$
                 return getRegisterValue(name);
-            } else { 
+            } else {
                 return fLocalVariables.get(name);
             }
         }
     }
 
     void setRegisterValue(String name, Object value) {
-        Register reg = (Register)fRegisters.get(getRegisterPartOfName(name));
-        if (reg == null) return;
+        Register reg = fRegisters.get(getRegisterPartOfName(name));
+        if (reg == null) {
+			return;
+		}
         String bitFieldName = getBitFieldPartOfName(name);
         if (bitFieldName != null) {
-            BitField bitField = (BitField)reg.fBitFields.get(bitFieldName);
-            if (bitField == null) return;
+            BitField bitField = reg.fBitFields.get(bitFieldName);
+            if (bitField == null) {
+				return;
+			}
             Integer intValue = null;
             if (value instanceof Integer) {
                 intValue = (Integer)value;
             } else if (value instanceof String) {
-                intValue = (Integer)bitField.fMnemonics.get(value);
+                intValue = bitField.fMnemonics.get(value);
             }
             if (intValue != null) {
-                int bitFieldMask = 2^(bitField.fBitCount - 1);           
+                int bitFieldMask = 2^(bitField.fBitCount - 1);
                 int registerMask = ~(bitFieldMask << bitField.fBitOffset);
                 int bitFieldValue = intValue.intValue() & bitFieldMask;
                 reg.fValue = (reg.fValue & registerMask) | (bitFieldValue << bitField.fBitOffset);
@@ -249,25 +256,29 @@ public class PDAVirtualMachine {
     }
 
     Object getRegisterValue(String name) {
-        Register reg = (Register)fRegisters.get(getRegisterPartOfName(name));
-        if (reg == null) return null;
+        Register reg = fRegisters.get(getRegisterPartOfName(name));
+        if (reg == null) {
+			return null;
+		}
         String bitFieldName = getBitFieldPartOfName(name);
         if (bitFieldName != null) {
-            BitField bitField = (BitField)reg.fBitFields.get(bitFieldName);
-            if (bitField == null) return null;
-            int bitFieldMask = 2^(bitField.fBitCount - 1);           
+            BitField bitField = reg.fBitFields.get(bitFieldName);
+            if (bitField == null) {
+				return null;
+			}
+            int bitFieldMask = 2^(bitField.fBitCount - 1);
             int registerMask = bitFieldMask << bitField.fBitOffset;
             return new Integer( (reg.fValue & registerMask) >> bitField.fBitOffset );
         } else {
             return new Integer(reg.fValue);
         }
     }
-    
+
     /**
      * Breakpoints are stored per each each line of code.  The boolean indicates
      * whether the whole VM should suspend or just the triggering thread.
      */
-    final Map fBreakpoints = new HashMap();
+	final Map<Integer, Boolean> fBreakpoints = new HashMap<Integer, Boolean>();
 
     /**
      * The suspend flag is true if the VM should suspend running the program and
@@ -280,7 +291,7 @@ public class PDAVirtualMachine {
 
     /** Flag indicating whether the debugger is performing a step return */
     boolean fStepReturnVM = false;
-    
+
     int fSteppingThread = 0;
 
     /** Name of the pda program being debugged */
@@ -313,7 +324,7 @@ public class PDAVirtualMachine {
     OutputStream fEventStream;
 
     /** The eventstops table holds which events cause suspends and which do not. */
-    final Map fEventStops = new HashMap();
+	final Map<String, Boolean> fEventStops = new HashMap<String, Boolean>();
     {
         fEventStops.put("unimpinstr", Boolean.FALSE); //$NON-NLS-1$
         fEventStops.put("nosuchlabel", Boolean.FALSE); //$NON-NLS-1$
@@ -323,13 +334,13 @@ public class PDAVirtualMachine {
      * The watchpoints table holds watchpoint information.
      * <p/>
      * variablename_stackframedepth => N
-     * <ul> 
-     * <li>N = 0 is no watch</li> 
+     * <ul>
+     * <li>N = 0 is no watch</li>
      * <li>N = 1 is read watch</li>
      * <li>N = 2 is write watch</li>
      * <li>N = 3 is both, etc.</li>
      */
-    final Map fWatchpoints = new HashMap();
+	final Map<String, Integer> fWatchpoints = new HashMap<String, Integer>();
 
     public static void main(String[] args) {
         String programFile = args.length >= 1 ? args[0] : null;
@@ -378,7 +389,7 @@ public class PDAVirtualMachine {
         // Load all the code into memory
         FileReader fileReader = new FileReader(inputFile);
         StringWriter stringWriter = new StringWriter();
-        List code = new LinkedList();
+		List<String> code = new LinkedList<String>();
         try {
 	        int c = fileReader.read();
 	        while (c != -1) {
@@ -395,7 +406,7 @@ public class PDAVirtualMachine {
         	fileReader.close();
         }
         code.add(stringWriter.toString().trim());
-        fCode = (String[])code.toArray(new String[code.size()]);
+        fCode = code.toArray(new String[code.size()]);
 
         fLabels = mapLabels(fCode);
 
@@ -407,8 +418,8 @@ public class PDAVirtualMachine {
     /**
      * Initializes the labels map
      */
-    Map mapLabels(String[] code) {
-        Map labels = new HashMap();
+	Map<String, Integer> mapLabels(String[] code) {
+		Map<String, Integer> labels = new HashMap<String, Integer>();
         for (int i = 0; i < code.length; i++) {
             if (code[i].length() != 0 && code[i].charAt(0) == ':') {
                 labels.put(code[i].substring(1), new Integer(i));
@@ -460,7 +471,7 @@ public class PDAVirtualMachine {
 
         fSuspendVM = "client"; //$NON-NLS-1$
     }
-    
+
     void run() {
         int id = fNextThreadId++;
         sendDebugEvent("vmstarted", false); //$NON-NLS-1$
@@ -472,7 +483,7 @@ public class PDAVirtualMachine {
         boolean allThreadsSuspended = false;
         while (!fThreads.isEmpty()) {
             checkForBreakpoint();
-            
+
             if (fSuspendVM != null) {
                 debugUI();
             } else {
@@ -483,13 +494,13 @@ public class PDAVirtualMachine {
                 }
             }
 
-            PDAThread[] threadsCopy = (PDAThread[])fThreads.values().toArray(new PDAThread[fThreads.size()]);
+            PDAThread[] threadsCopy = fThreads.values().toArray(new PDAThread[fThreads.size()]);
             allThreadsSuspended = true;
             for (int i = 0; i < threadsCopy.length; i++) {
                 PDAThread thread = threadsCopy[i];
                 if (thread.fSuspend == null) {
                     allThreadsSuspended = false;
-                    
+
                     String instruction = thread.fThreadCode[thread.fCurrentFrame.fPC];
                     thread.fCurrentFrame.fPC++;
                     doOneInstruction(thread, instruction);
@@ -498,10 +509,10 @@ public class PDAVirtualMachine {
                         thread.fRun = false;
                     } else if (thread.fStepReturn) {
                         // If this thread is in a step-return operation, check
-                        // if we've returned from a call.  
+                        // if we've returned from a call.
                         instruction = thread.fThreadCode[thread.fCurrentFrame.fPC];
                         if ("return".equals(instruction)) { //$NON-NLS-1$
-                            // Note: this will only be triggered if the current 
+                            // Note: this will only be triggered if the current
                             // thread also has the fStepReturn flag set.
                             if (fStepReturnVM) {
                                 fSuspendVM = thread.fID + " step"; //$NON-NLS-1$
@@ -517,14 +528,14 @@ public class PDAVirtualMachine {
                         sendDebugEvent("suspended " + thread.fID + " " + thread.fSuspend, false); //$NON-NLS-1$ //$NON-NLS-2$
                         thread.fStep = thread.fStepReturn = thread.fPerformingEval = false;
                     }
-                } 
+                }
             }
-            
+
             // Force thread context switch to avoid starving out other
             // processes in the system.
             Thread.yield();
         }
-        
+
         sendDebugEvent("vmterminated", false); //$NON-NLS-1$
         if (fDebug) {
             try {
@@ -543,28 +554,42 @@ public class PDAVirtualMachine {
     void doOneInstruction(PDAThread thread, String instr) {
         StringTokenizer tokenizer = new StringTokenizer(instr);
         String op = tokenizer.nextToken();
-        List tokens = new LinkedList();
+		List<String> tokens = new LinkedList<String>();
         while (tokenizer.hasMoreTokens()) {
             tokens.add(tokenizer.nextToken());
         }
-        Args args = new Args( (String[])tokens.toArray(new String[tokens.size()]) );
+        Args args = new Args( tokens.toArray(new String[tokens.size()]) );
 
         boolean opValid = true;
-        if (op.equals("add")) iAdd(thread, args); //$NON-NLS-1$
-        else if (op.equals("branch_not_zero")) iBranchNotZero(thread, args); //$NON-NLS-1$
-        else if (op.equals("call")) iCall(thread, args); //$NON-NLS-1$
-        else if (op.equals("dec")) iDec(thread, args); //$NON-NLS-1$
-        else if (op.equals("def")) iDef(thread, args); //$NON-NLS-1$
-        else if (op.equals("dup")) iDup(thread, args); //$NON-NLS-1$
-        else if (op.equals("exec")) iExec(thread, args);             //$NON-NLS-1$
-        else if (op.equals("halt")) iHalt(thread, args); //$NON-NLS-1$
-        else if (op.equals("output")) iOutput(thread, args); //$NON-NLS-1$
-        else if (op.equals("pop")) iPop(thread, args); //$NON-NLS-1$
-        else if (op.equals("push")) iPush(thread, args); //$NON-NLS-1$
-        else if (op.equals("return")) iReturn(thread, args); //$NON-NLS-1$
-        else if (op.equals("var")) iVar(thread, args); //$NON-NLS-1$
-        else if (op.equals("xyzzy")) iInternalEndEval(thread, args); //$NON-NLS-1$
-        else if (op.startsWith(":")) {} // label //$NON-NLS-1$
+		if (op.equals("add")) { //$NON-NLS-1$
+			iAdd(thread, args);
+		} else if (op.equals("branch_not_zero")) { //$NON-NLS-1$
+			iBranchNotZero(thread, args);
+		} else if (op.equals("call")) { //$NON-NLS-1$
+			iCall(thread, args);
+		} else if (op.equals("dec")) { //$NON-NLS-1$
+			iDec(thread, args);
+		} else if (op.equals("def")) { //$NON-NLS-1$
+			iDef(thread, args);
+		} else if (op.equals("dup")) { //$NON-NLS-1$
+			iDup(thread, args);
+		} else if (op.equals("exec")) { //$NON-NLS-1$
+			iExec(thread, args);
+		} else if (op.equals("halt")) { //$NON-NLS-1$
+			iHalt(thread, args);
+		} else if (op.equals("output")) { //$NON-NLS-1$
+			iOutput(thread, args);
+		} else if (op.equals("pop")) { //$NON-NLS-1$
+			iPop(thread, args);
+		} else if (op.equals("push")) { //$NON-NLS-1$
+			iPush(thread, args);
+		} else if (op.equals("return")) { //$NON-NLS-1$
+			iReturn(thread, args);
+		} else if (op.equals("var")) { //$NON-NLS-1$
+			iVar(thread, args);
+		} else if (op.equals("xyzzy")) { //$NON-NLS-1$
+			iInternalEndEval(thread, args);
+		} else if (op.startsWith(":")) {} // label //$NON-NLS-1$
         else if (op.startsWith("#")) {} // comment //$NON-NLS-1$
         else {
             opValid = false;
@@ -572,7 +597,7 @@ public class PDAVirtualMachine {
 
         if (!opValid) {
             sendDebugEvent("unimplemented instruction " + op, true); //$NON-NLS-1$
-            if ( ((Boolean)fEventStops.get("unimpinstr")).booleanValue() ) { //$NON-NLS-1$
+            if ( fEventStops.get("unimpinstr").booleanValue() ) { //$NON-NLS-1$
                 fSuspendVM = thread.fID + " event unimpinstr"; //$NON-NLS-1$
                 thread.fCurrentFrame.fPC--;
             }
@@ -589,18 +614,18 @@ public class PDAVirtualMachine {
 
     void checkForBreakpoint() {
         if (fDebug) {
-            for (Iterator itr = fThreads.values().iterator(); itr.hasNext();) {
-                PDAThread thread = (PDAThread)itr.next();
+			for (Iterator<PDAThread> itr = fThreads.values().iterator(); itr.hasNext();) {
+                PDAThread thread = itr.next();
                 Integer pc = new Integer(thread.fCurrentFrame.fPC);
                 // Suspend for breakpoint if:
                 // - the VM is not yet set to suspend, for e.g. as a result of step end,
                 // - the thread is not yet suspended and is not performing an evaluation
                 // - the breakpoints table contains a breakpoint for the given line.
-                if (fSuspendVM == null && 
-                    thread.fSuspend == null && !thread.fPerformingEval && 
-                    fBreakpoints.containsKey(pc)) 
+                if (fSuspendVM == null &&
+                    thread.fSuspend == null && !thread.fPerformingEval &&
+                    fBreakpoints.containsKey(pc))
                 {
-                    if ( ((Boolean)fBreakpoints.get(pc)).booleanValue() ) {
+                    if ( fBreakpoints.get(pc).booleanValue() ) {
                         fSuspendVM = thread.fID + " breakpoint " + pc; //$NON-NLS-1$
                     } else {
                         thread.fSuspend = "breakpoint " + pc; //$NON-NLS-1$
@@ -644,12 +669,12 @@ public class PDAVirtualMachine {
         // Clear all stepping flags.  In case the VM suspended while
         // a step operation was being performed for the VM or some thread.
         fStepVM = fStepReturnVM = false;
-        for (Iterator itr = fThreads.values().iterator(); itr.hasNext();) {
-            PDAThread thread = (PDAThread)itr.next();
+		for (Iterator<PDAThread> itr = fThreads.values().iterator(); itr.hasNext();) {
+            PDAThread thread = itr.next();
             thread.fSuspend = null;
             thread.fStep = thread.fStepReturn = thread.fPerformingEval = false;
         }
-        
+
         while (fSuspendVM != null) {
             String line = ""; //$NON-NLS-1$
             try {
@@ -676,41 +701,69 @@ public class PDAVirtualMachine {
         }
 
         String command = tokenizer.nextToken();
-        List tokens = new LinkedList();
+		List<String> tokens = new LinkedList<String>();
         while (tokenizer.hasMoreTokens()) {
             tokens.add(tokenizer.nextToken());
         }
-        Args args = new Args( (String[])tokens.toArray(new String[tokens.size()]));
+        Args args = new Args( tokens.toArray(new String[tokens.size()]));
 
-        if ("children".equals(command)) debugChildren(args); //$NON-NLS-1$
-        else if ("clear".equals(command)) debugClearBreakpoint(args); //$NON-NLS-1$
-        else if ("data".equals(command)) debugData(args); //$NON-NLS-1$
-        else if ("drop".equals(command)) debugDropFrame(args); //$NON-NLS-1$
-        else if ("eval".equals(command)) debugEval(args); //$NON-NLS-1$
-        else if ("eventstop".equals(command)) debugEventStop(args); //$NON-NLS-1$
-        else if ("frame".equals(command)) debugFrame(args); //$NON-NLS-1$
-        else if ("groups".equals(command)) debugGroups(args); //$NON-NLS-1$
-        else if ("popdata".equals(command)) debugPopData(args); //$NON-NLS-1$
-        else if ("pushdata".equals(command)) debugPushData(args); //$NON-NLS-1$
-        else if ("registers".equals(command)) debugRegisters(args); //$NON-NLS-1$
-        else if ("restart".equals(command)) debugRestart(args); //$NON-NLS-1$
-        else if ("resume".equals(command)) debugResume(args); //$NON-NLS-1$
-        else if ("set".equals(command)) debugSetBreakpoint(args); //$NON-NLS-1$
-        else if ("setdata".equals(command)) debugSetData(args); //$NON-NLS-1$
-        else if ("setvar".equals(command)) debugSetVariable(args); //$NON-NLS-1$
-        else if ("stack".equals(command)) debugStack(args); //$NON-NLS-1$
-        else if ("stackdepth".equals(command)) debugStackDepth(args); //$NON-NLS-1$
-        else if ("state".equals(command)) debugState(args); //$NON-NLS-1$
-        else if ("step".equals(command)) debugStep(args); //$NON-NLS-1$
-        else if ("stepreturn".equals(command)) debugStepReturn(args); //$NON-NLS-1$
-        else if ("suspend".equals(command)) debugSuspend(args); //$NON-NLS-1$
-        else if ("terminate".equals(command)) debugTerminate(); //$NON-NLS-1$
-        else if ("threads".equals(command)) debugThreads(); //$NON-NLS-1$
-        else if ("var".equals(command)) debugVar(args); //$NON-NLS-1$
-        else if ("vmresume".equals(command)) debugVMResume(); //$NON-NLS-1$
-        else if ("vmsuspend".equals(command)) debugVMSuspend(); //$NON-NLS-1$
-        else if ("watch".equals(command)) debugWatch(args); //$NON-NLS-1$
-        else {
+		if ("children".equals(command)) { //$NON-NLS-1$
+			debugChildren(args);
+		} else if ("clear".equals(command)) { //$NON-NLS-1$
+			debugClearBreakpoint(args);
+		} else if ("data".equals(command)) { //$NON-NLS-1$
+			debugData(args);
+		} else if ("drop".equals(command)) { //$NON-NLS-1$
+			debugDropFrame(args);
+		} else if ("eval".equals(command)) { //$NON-NLS-1$
+			debugEval(args);
+		} else if ("eventstop".equals(command)) { //$NON-NLS-1$
+			debugEventStop(args);
+		} else if ("frame".equals(command)) { //$NON-NLS-1$
+			debugFrame(args);
+		} else if ("groups".equals(command)) { //$NON-NLS-1$
+			debugGroups(args);
+		} else if ("popdata".equals(command)) { //$NON-NLS-1$
+			debugPopData(args);
+		} else if ("pushdata".equals(command)) { //$NON-NLS-1$
+			debugPushData(args);
+		} else if ("registers".equals(command)) { //$NON-NLS-1$
+			debugRegisters(args);
+		} else if ("restart".equals(command)) { //$NON-NLS-1$
+			debugRestart(args);
+		} else if ("resume".equals(command)) { //$NON-NLS-1$
+			debugResume(args);
+		} else if ("set".equals(command)) { //$NON-NLS-1$
+			debugSetBreakpoint(args);
+		} else if ("setdata".equals(command)) { //$NON-NLS-1$
+			debugSetData(args);
+		} else if ("setvar".equals(command)) { //$NON-NLS-1$
+			debugSetVariable(args);
+		} else if ("stack".equals(command)) { //$NON-NLS-1$
+			debugStack(args);
+		} else if ("stackdepth".equals(command)) { //$NON-NLS-1$
+			debugStackDepth(args);
+		} else if ("state".equals(command)) { //$NON-NLS-1$
+			debugState(args);
+		} else if ("step".equals(command)) { //$NON-NLS-1$
+			debugStep(args);
+		} else if ("stepreturn".equals(command)) { //$NON-NLS-1$
+			debugStepReturn(args);
+		} else if ("suspend".equals(command)) { //$NON-NLS-1$
+			debugSuspend(args);
+		} else if ("terminate".equals(command)) { //$NON-NLS-1$
+			debugTerminate();
+		} else if ("threads".equals(command)) { //$NON-NLS-1$
+			debugThreads();
+		} else if ("var".equals(command)) { //$NON-NLS-1$
+			debugVar(args);
+		} else if ("vmresume".equals(command)) { //$NON-NLS-1$
+			debugVMResume();
+		} else if ("vmsuspend".equals(command)) { //$NON-NLS-1$
+			debugVMSuspend();
+		} else if ("watch".equals(command)) { //$NON-NLS-1$
+			debugWatch(args);
+		} else {
             sendCommandResponse("error: invalid command\n"); //$NON-NLS-1$
         }
     }
@@ -724,21 +777,21 @@ public class PDAVirtualMachine {
 
         int sfnumber = args.getNextIntArg();
         String var = args.getNextStringArg();
-        
-        Frame frame = sfnumber >= thread.fFrames.size()    
+
+        Frame frame = sfnumber >= thread.fFrames.size()
             ? thread.fCurrentFrame : (Frame)thread.fFrames.get(sfnumber);
 
         String varDot = var + "."; //$NON-NLS-1$
-        List children = new ArrayList();
-        for (Iterator itr = frame.fLocalVariables.keySet().iterator(); itr.hasNext();) {
-            String localVar = (String)itr.next();
+		List<String> children = new ArrayList<String>();
+		for (Iterator<String> itr = frame.fLocalVariables.keySet().iterator(); itr.hasNext();) {
+            String localVar = itr.next();
             if (localVar.startsWith(varDot) && localVar.indexOf('.', varDot.length() + 1) == -1) {
                 children.add(localVar);
             }
         }
 
         StringBuffer result = new StringBuffer();
-        for (Iterator itr = children.iterator(); itr.hasNext();) {
+		for (Iterator<String> itr = children.iterator(); itr.hasNext();) {
             result.append(itr.next());
             result.append('|');
         }
@@ -746,7 +799,7 @@ public class PDAVirtualMachine {
 
         sendCommandResponse(result.toString());
     }
-    
+
     void debugClearBreakpoint(Args args) {
         int line = args.getNextIntArg();
 
@@ -764,7 +817,7 @@ public class PDAVirtualMachine {
         }
 
         StringBuffer result = new StringBuffer();
-        for (Iterator itr = thread.fStack.iterator(); itr.hasNext();) {
+		for (Iterator<?> itr = thread.fStack.iterator(); itr.hasNext();) {
             result.append(itr.next());
             result.append('|');
         }
@@ -780,7 +833,7 @@ public class PDAVirtualMachine {
         }
 
         if (!thread.fFrames.isEmpty()) {
-            thread.fCurrentFrame = (Frame)thread.fFrames.remove(thread.fFrames.size() - 1);
+            thread.fCurrentFrame = thread.fFrames.remove(thread.fFrames.size() - 1);
         }
         thread.fCurrentFrame.fPC--;
         sendCommandResponse("ok\n"); //$NON-NLS-1$
@@ -798,18 +851,18 @@ public class PDAVirtualMachine {
             sendCommandResponse("error: cannot evaluate while vm is suspended\n");         //$NON-NLS-1$
             return;
         }
-        
+
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
             sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         }
-        
+
         if (thread.fSuspend == null) {
             sendCommandResponse("error: thread running\n"); //$NON-NLS-1$
             return;
         }
-        
+
         StringTokenizer tokenizer = new StringTokenizer(args.getNextStringArg(), "|"); //$NON-NLS-1$
         tokenizer.countTokens();
 
@@ -841,9 +894,9 @@ public class PDAVirtualMachine {
         thread.fSavedPC = thread.fCurrentFrame.fPC;
         thread.fCurrentFrame.fPC = fCode.length;
         thread.fPerformingEval = true;
-        
+
         thread.fSuspend = null;
-        
+
         sendCommandResponse("ok\n"); //$NON-NLS-1$
 
         sendDebugEvent("resumed " + thread.fID + " eval", false); //$NON-NLS-1$ //$NON-NLS-2$
@@ -874,7 +927,7 @@ public class PDAVirtualMachine {
         if (sfnumber >= thread.fFrames.size()) {
             frame = thread.fCurrentFrame;
         } else {
-            frame = (Frame)thread.fFrames.get(sfnumber);
+            frame = thread.fFrames.get(sfnumber);
         }
         sendCommandResponse(printFrame(frame) + "\n"); //$NON-NLS-1$
     }
@@ -883,13 +936,13 @@ public class PDAVirtualMachine {
      * @param args
      */
     void debugGroups(Args args) {
-        TreeSet groups = new TreeSet();
-        for (Iterator itr = fRegisters.values().iterator(); itr.hasNext();) {
-            Register reg = (Register)itr.next();
+		TreeSet<String> groups = new TreeSet<String>();
+		for (Iterator<Register> itr = fRegisters.values().iterator(); itr.hasNext();) {
+            Register reg = itr.next();
             groups.add(reg.fGroup);
         }
         StringBuffer response = new StringBuffer();
-        for (Iterator itr = groups.iterator(); itr.hasNext();) {
+		for (Iterator<String> itr = groups.iterator(); itr.hasNext();) {
             response.append(itr.next());
             response.append('|');
         }
@@ -914,7 +967,7 @@ public class PDAVirtualMachine {
             sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         }
-        
+
         Object val = args.getNextIntOrStringArg();
         thread.fStack.push(val);
         sendCommandResponse("ok\n"); //$NON-NLS-1$
@@ -922,16 +975,16 @@ public class PDAVirtualMachine {
 
     void debugRegisters(Args args) {
         String group = args.getNextStringArg();
-        
+
         StringBuffer response = new StringBuffer();
-        for (Iterator itr = fRegisters.values().iterator(); itr.hasNext();) {
-            Register reg = (Register)itr.next();
+		for (Iterator<Register> itr = fRegisters.values().iterator(); itr.hasNext();) {
+            Register reg = itr.next();
             if (group.equals(reg.fGroup)) {
                 response.append(reg.fName);
                 response.append(' ');
                 response.append(reg.fIsWriteable);
-                for (Iterator itr2 = reg.fBitFields.values().iterator(); itr2.hasNext();) {
-                    BitField bitField = (BitField)itr2.next();
+				for (Iterator<BitField> itr2 = reg.fBitFields.values().iterator(); itr2.hasNext();) {
+                    BitField bitField = itr2.next();
                     response.append('|');
                     response.append(bitField.fName);
                     response.append(' ');
@@ -939,15 +992,15 @@ public class PDAVirtualMachine {
                     response.append(' ');
                     response.append(bitField.fBitCount);
                     response.append(' ');
-                    for (Iterator itr3 = bitField.fMnemonics.entrySet().iterator(); itr3.hasNext();) {
-                        Map.Entry mnemonicEntry = (Map.Entry)itr3.next();
+					for (Iterator<Entry<String, Integer>> itr3 = bitField.fMnemonics.entrySet().iterator(); itr3.hasNext();) {
+						Entry<String, Integer> mnemonicEntry = itr3.next();
                         response.append(mnemonicEntry.getKey());
                         response.append(' ');
                         response.append(mnemonicEntry.getValue());
                         response.append(' ');
                     }
                 }
-                
+
                 response.append('#');
             }
         }
@@ -961,8 +1014,8 @@ public class PDAVirtualMachine {
     void debugRestart(Args args) {
         fSuspendVM = "restart"; //$NON-NLS-1$
 
-        for (Iterator itr = fThreads.keySet().iterator(); itr.hasNext();) {
-            Integer id = (Integer)itr.next();
+		for (Iterator<Integer> itr = fThreads.keySet().iterator(); itr.hasNext();) {
+            Integer id = itr.next();
             sendDebugEvent("exited " + id, false);             //$NON-NLS-1$
         }
         fThreads.clear();
@@ -970,9 +1023,9 @@ public class PDAVirtualMachine {
         int id = fNextThreadId++;
         fThreads.put(new Integer(id), new PDAThread(id, "main", 0)); //$NON-NLS-1$
         sendDebugEvent("started " + id, false);             //$NON-NLS-1$
-        
+
         fRegisters.clear();
-        
+
         sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
@@ -981,26 +1034,26 @@ public class PDAVirtualMachine {
         if (thread == null) {
             sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
-        } 
+        }
         if (fSuspendVM != null) {
             sendCommandResponse("error: cannot resume thread when vm is suspended\n"); //$NON-NLS-1$
             return;
-        } 
+        }
         if (thread.fSuspend == null) {
             sendCommandResponse("error: thread already running\n"); //$NON-NLS-1$
             return;
-        } 
-        
+        }
+
         thread.fSuspend = null;
         sendDebugEvent("resumed " + thread.fID + " client", false); //$NON-NLS-1$ //$NON-NLS-2$
-        
+
         sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
     void debugSetBreakpoint(Args args) {
         int line = args.getNextIntArg();
         int stopVM = args.getNextIntArg();
-        
+
         fBreakpoints.put(new Integer(line), new Boolean(stopVM != 0));
         sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
@@ -1011,7 +1064,7 @@ public class PDAVirtualMachine {
             sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         }
-        
+
         int offset = args.getNextIntArg();
         Object val = args.getNextIntOrStringArg();
 
@@ -1036,11 +1089,11 @@ public class PDAVirtualMachine {
         while (args.hasNextArg()) {
             val = val.toString() + " " + args.getNextStringArg(); //$NON-NLS-1$
         }
-        
+
         if (sfnumber >= thread.fFrames.size()) {
             thread.fCurrentFrame.set(var, val);
         } else {
-            ((Frame)thread.fFrames.get(sfnumber)).set(var, val);
+            thread.fFrames.get(sfnumber).set(var, val);
         }
         sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
@@ -1053,9 +1106,9 @@ public class PDAVirtualMachine {
         }
 
         StringBuffer result = new StringBuffer();
-        
-        for (Iterator itr = thread.fFrames.iterator(); itr.hasNext();) {
-            Frame frame = (Frame)itr.next();
+
+		for (Iterator<Frame> itr = thread.fFrames.iterator(); itr.hasNext();) {
+            Frame frame = itr.next();
             result.append(printFrame(frame));
             result.append('#');
         }
@@ -1085,8 +1138,8 @@ public class PDAVirtualMachine {
         buf.append(frame.fPC);
         buf.append('|');
         buf.append(frame.fFunction);
-        for (Iterator itr = frame.fLocalVariables.keySet().iterator(); itr.hasNext();) {
-            String var = (String)itr.next();
+		for (Iterator<String> itr = frame.fLocalVariables.keySet().iterator(); itr.hasNext();) {
+            String var = itr.next();
             if (var.indexOf('.') == -1) {
                 buf.append('|');
                 buf.append(var);
@@ -1107,21 +1160,21 @@ public class PDAVirtualMachine {
         }
         sendCommandResponse(response + "\n"); //$NON-NLS-1$
     }
-    
+
     void debugStep(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
             sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
-        } 
+        }
 
-        // Set suspend to null to allow the debug loop to exit back to the 
-        // instruction loop and thus run an instruction. However, we want to 
-        // come back to the debug loop right away, so the step flag is set to 
-        // true which will cause the suspend flag to get set to true when we 
+        // Set suspend to null to allow the debug loop to exit back to the
+        // instruction loop and thus run an instruction. However, we want to
+        // come back to the debug loop right away, so the step flag is set to
+        // true which will cause the suspend flag to get set to true when we
         // get to the next instruction.
         if (fSuspendVM != null) {
-            // All threads are suspended, so suspend all threads again when 
+            // All threads are suspended, so suspend all threads again when
             // step completes.
             fSuspendVM = null;
             fStepVM = true;
@@ -1145,8 +1198,8 @@ public class PDAVirtualMachine {
         if (thread == null) {
             sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
-        } 
-        
+        }
+
         if (fSuspendVM != null) {
             fSuspendVM = null;
             fStepReturnVM = true;
@@ -1168,7 +1221,7 @@ public class PDAVirtualMachine {
         if (thread == null) {
             sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
-        } 
+        }
         if (fSuspendVM != null) {
             sendCommandResponse("error: vm already suspended\n"); //$NON-NLS-1$
             return;
@@ -1176,8 +1229,8 @@ public class PDAVirtualMachine {
         if (thread.fSuspend != null) {
             sendCommandResponse("error: thread already suspended\n"); //$NON-NLS-1$
             return;
-        } 
-        
+        }
+
         thread.fSuspend = "client"; //$NON-NLS-1$
         sendDebugEvent("suspended " + thread.fID + " client", false); //$NON-NLS-1$ //$NON-NLS-2$
         sendCommandResponse("ok\n"); //$NON-NLS-1$
@@ -1185,7 +1238,7 @@ public class PDAVirtualMachine {
 
     void debugThreads() {
         StringBuffer response = new StringBuffer();
-        for (Iterator itr = fThreads.keySet().iterator(); itr.hasNext();) {
+		for (Iterator<Integer> itr = fThreads.keySet().iterator(); itr.hasNext();) {
             response.append(itr.next());
             response.append(' ');
         }
@@ -1202,9 +1255,9 @@ public class PDAVirtualMachine {
         int sfnumber = args.getNextIntArg();
         String var = args.getNextStringArg();
 
-        Frame frame = sfnumber >= thread.fFrames.size()    
+        Frame frame = sfnumber >= thread.fFrames.size()
             ? thread.fCurrentFrame : (Frame)thread.fFrames.get(sfnumber);
-        
+
         Object val = frame.get(var);
         if (val == null) {
             sendCommandResponse("error: variable undefined\n"); //$NON-NLS-1$
@@ -1217,7 +1270,7 @@ public class PDAVirtualMachine {
         if (fSuspendVM == null) {
             sendCommandResponse("error: vm already running\n"); //$NON-NLS-1$
             return;
-        } 
+        }
 
         fSuspendVM = null;
         sendCommandResponse("ok\n"); //$NON-NLS-1$
@@ -1261,10 +1314,10 @@ public class PDAVirtualMachine {
         if (val instanceof Integer && ((Integer) val).intValue() != 0) {
             String label = args.getNextStringArg();
             if (thread.fThreadLabels.containsKey(label)) {
-                thread.fCurrentFrame.fPC = ((Integer)thread.fThreadLabels.get(label)).intValue();
+                thread.fCurrentFrame.fPC = thread.fThreadLabels.get(label).intValue();
             } else {
                 sendDebugEvent("no such label " + label, true); //$NON-NLS-1$
-                if ( ((Boolean)fEventStops.get("nosuchlabel")).booleanValue() ) { //$NON-NLS-1$
+                if ( fEventStops.get("nosuchlabel").booleanValue() ) { //$NON-NLS-1$
                     fSuspendVM = thread.fID + " event nosuchlabel"; //$NON-NLS-1$
                     thread.fStack.push(val);
                     thread.fCurrentFrame.fPC--;
@@ -1277,10 +1330,10 @@ public class PDAVirtualMachine {
         String label = args.getNextStringArg();
         if (thread.fThreadLabels.containsKey(label)) {
             thread.fFrames.add(thread.fCurrentFrame);
-            thread.fCurrentFrame = new Frame(label, ((Integer)thread.fThreadLabels.get(label)).intValue());
+            thread.fCurrentFrame = new Frame(label, thread.fThreadLabels.get(label).intValue());
         } else {
             sendDebugEvent("no such label " + label, true); //$NON-NLS-1$
-            if ( ((Boolean)fEventStops.get("nosuchlabel")).booleanValue() ) { //$NON-NLS-1$
+            if ( fEventStops.get("nosuchlabel").booleanValue() ) { //$NON-NLS-1$
                 fSuspendVM = thread.fID + " event nosuchlabel"; //$NON-NLS-1$
                 thread.fCurrentFrame.fPC--;
             }
@@ -1311,22 +1364,28 @@ public class PDAVirtualMachine {
         String bitFieldName = getBitFieldPartOfName(name);
 
         if ("register".equals(type)) { //$NON-NLS-1$
-            Register reg = new Register(regName); 
+            Register reg = new Register(regName);
             reg.fGroup = args.getNextStringArg();
             fRegisters.put(regName, reg);
             reg.fIsWriteable = args.getNextBooleanArg();
         } else if ("bitfield".equals(type)) { //$NON-NLS-1$
-            Register reg = (Register)fRegisters.get(regName);
-            if (reg == null) return;
+            Register reg = fRegisters.get(regName);
+            if (reg == null) {
+				return;
+			}
             BitField bitField = new BitField(bitFieldName);
             bitField.fBitOffset = args.getNextIntArg();
             bitField.fBitCount = args.getNextIntArg();
             reg.fBitFields.put(bitFieldName, bitField);
         } else if ("mnemonic".equals(type)) { //$NON-NLS-1$
-            Register reg = (Register)fRegisters.get(regName);
-            if (reg == null) return;
-            BitField bitField = (BitField)reg.fBitFields.get(bitFieldName);
-            if (bitField == null) return;
+            Register reg = fRegisters.get(regName);
+            if (reg == null) {
+				return;
+			}
+            BitField bitField = reg.fBitFields.get(bitFieldName);
+            if (bitField == null) {
+				return;
+			}
             bitField.fMnemonics.put(args.getNextStringArg(), new Integer(args.getNextIntArg()));
         }
         sendDebugEvent("registers", false); //$NON-NLS-1$
@@ -1346,7 +1405,7 @@ public class PDAVirtualMachine {
         if (name.startsWith("$") && start != -1) { //$NON-NLS-1$
             return name.substring(start + 1, name.length());
         }
-        return null;        
+        return null;
     }
 
     /**
@@ -1358,16 +1417,16 @@ public class PDAVirtualMachine {
         thread.fStack.push(val);
         thread.fStack.push(val);
     }
-    
+
     void iExec(PDAThread thread, Args args) {
         String label = args.getNextStringArg();
         if (fLabels.containsKey(label)) {
             int id = fNextThreadId++;
-            fThreads.put( new Integer(id), new PDAThread(id, label, ((Integer)fLabels.get(label)).intValue()) );
+            fThreads.put( new Integer(id), new PDAThread(id, label, fLabels.get(label).intValue()) );
             sendDebugEvent("started " + id, false); //$NON-NLS-1$
         } else {
             sendDebugEvent("no such label " + label, true); //$NON-NLS-1$
-            if ( ((Boolean)fEventStops.get("nosuchlabel")).booleanValue() ) { //$NON-NLS-1$
+            if ( fEventStops.get("nosuchlabel").booleanValue() ) { //$NON-NLS-1$
                 thread.fSuspend = "event nosuchlabel"; //$NON-NLS-1$
                 thread.fCurrentFrame.fPC--;
             }
@@ -1396,7 +1455,7 @@ public class PDAVirtualMachine {
             String var = arg.substring(1);
             thread.fCurrentFrame.set(var, thread.fStack.pop());
             String key = thread.fCurrentFrame.fFunction + "::" + var; //$NON-NLS-1$
-            if ( fWatchpoints.containsKey(key) && (((Integer)fWatchpoints.get(key)).intValue() & 2) != 0 ) {
+            if ( fWatchpoints.containsKey(key) && (fWatchpoints.get(key).intValue() & 2) != 0 ) {
                 fSuspendVM = thread.fID + " watch write " + key; //$NON-NLS-1$
             }
         } else {
@@ -1410,10 +1469,13 @@ public class PDAVirtualMachine {
             if (arg.startsWith("$")) { //$NON-NLS-1$
                 String var = arg.substring(1);
                 Object val = thread.fCurrentFrame.get(var);
-                if (val == null) val = "<undefined>"; //$NON-NLS-1$
+                if (val == null)
+				 {
+					val = "<undefined>"; //$NON-NLS-1$
+				}
                 thread.fStack.push(val);
                 String key = thread.fCurrentFrame.fFunction + "::" + var; //$NON-NLS-1$
-                if (fWatchpoints.containsKey(key) && (((Integer)fWatchpoints.get(key)).intValue() & 1) != 0) {
+                if (fWatchpoints.containsKey(key) && (fWatchpoints.get(key).intValue() & 1) != 0) {
                     fSuspendVM = thread.fID + " watch read " + key; //$NON-NLS-1$
                 }
             } else {
@@ -1430,7 +1492,7 @@ public class PDAVirtualMachine {
                 }
                 thread.fStack.push(val);
             }
-            
+
             arg = args.getNextStringArg();
         }
     }
@@ -1441,7 +1503,7 @@ public class PDAVirtualMachine {
      */
     void iReturn(PDAThread thread, Args args) {
         if (!thread.fFrames.isEmpty()) {
-            thread.fCurrentFrame = (Frame)thread.fFrames.remove(thread.fFrames.size() - 1);
+            thread.fCurrentFrame = thread.fFrames.remove(thread.fFrames.size() - 1);
         } else {
             // Execution returned from the top frame, which means this thread
             // should exit.

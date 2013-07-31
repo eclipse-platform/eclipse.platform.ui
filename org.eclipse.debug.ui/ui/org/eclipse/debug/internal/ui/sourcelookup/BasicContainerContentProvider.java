@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,20 +34,23 @@ public class BasicContainerContentProvider implements ITreeContentProvider {
 	 * The visual part that is using this content provider is about
 	 * to be disposed. Deallocate all allocated SWT resources.
 	 */
+	@Override
 	public void dispose() {
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(Object element) {
 		if (element instanceof IWorkspaceRoot) {
 			// check if closed projects should be shown
 			IProject[] allProjects = ((IWorkspaceRoot) element).getProjects();
-			if (fShowClosedProjects)
+			if (fShowClosedProjects) {
 				return allProjects;
+			}
 			
-			ArrayList accessibleProjects = new ArrayList();
+			ArrayList<IProject> accessibleProjects = new ArrayList<IProject>();
 			for (int i = 0; i < allProjects.length; i++) {
 				if (allProjects[i].isOpen()) {
 					accessibleProjects.add(allProjects[i]);
@@ -58,6 +61,7 @@ public class BasicContainerContentProvider implements ITreeContentProvider {
 		return new Object[0];
 	}
 	
+	@Override
 	public Object[] getElements(Object element) {
 		return getChildren(element);
 	}
@@ -65,15 +69,18 @@ public class BasicContainerContentProvider implements ITreeContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
+	@Override
 	public Object getParent(Object element) {
-		if (element instanceof IResource)
+		if (element instanceof IResource) {
 			return ((IResource) element).getParent();
+		}
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		return getChildren(element).length > 0;
 	}
@@ -81,6 +88,7 @@ public class BasicContainerContentProvider implements ITreeContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		
 	}

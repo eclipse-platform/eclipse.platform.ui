@@ -43,6 +43,7 @@ public abstract class AbstractRemoveAllActionDelegate implements IViewActionDele
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fAction = null;
 	}
@@ -50,6 +51,7 @@ public abstract class AbstractRemoveAllActionDelegate implements IViewActionDele
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 		fAction = action;
 	}
@@ -66,6 +68,7 @@ public abstract class AbstractRemoveAllActionDelegate implements IViewActionDele
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
@@ -73,6 +76,7 @@ public abstract class AbstractRemoveAllActionDelegate implements IViewActionDele
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		initialize();
 		update();
@@ -81,6 +85,7 @@ public abstract class AbstractRemoveAllActionDelegate implements IViewActionDele
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		initialize();
 		update();
@@ -111,6 +116,7 @@ public abstract class AbstractRemoveAllActionDelegate implements IViewActionDele
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection s) {
 		// do nothing
 	}

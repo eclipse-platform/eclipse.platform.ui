@@ -38,14 +38,16 @@ public class BreakpointPersistableElementAdapter implements IPersistableElement 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPersistableElement#getFactoryId()
      */
-    public String getFactoryId() {
+    @Override
+	public String getFactoryId() {
         return "org.eclipse.debug.ui.elementFactory.breakpoints"; //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPersistableElement#saveState(org.eclipse.ui.IMemento)
      */
-    public void saveState(IMemento memento) {
+    @Override
+	public void saveState(IMemento memento) {
         IMarker marker = fBreakpoint.getMarker();
         if (marker != null) {
             IResource resource = marker.getResource();

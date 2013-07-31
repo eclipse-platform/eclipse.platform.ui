@@ -57,6 +57,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 		
@@ -81,6 +82,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 		fFileText.setLayoutData(gd);
 		fFileText.setFont(font);
 		fFileText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -88,6 +90,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 		
 		fFileButton = createPushButton(comp, "&Browse...", null); //$NON-NLS-1$
 		fFileButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				browseMidiFiles();
 			}
@@ -109,6 +112,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalSpan = 3;
 		fExceptions.setLayoutData(gd);
 		fExceptions.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fHandled.setEnabled(fExceptions.getSelection());
 				fUnhandled.setEnabled(fExceptions.getSelection());
@@ -118,6 +122,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 		fHandled = new Button(test, SWT.RADIO);
 		fHandled.setText("Throw a handled e&xception during launch to re-open launch dialog"); //$NON-NLS-1$
 		SelectionAdapter sa = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -145,11 +150,13 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			String file = null;
@@ -174,6 +181,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		String file = fFileText.getText().trim();
 		if (file.length() == 0) {
@@ -205,6 +213,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return "Main"; //$NON-NLS-1$
 	}
@@ -212,6 +221,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
@@ -231,6 +241,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return DebugUIPlugin.getDefault().getImageRegistry().get(DebugUIPlugin.IMG_OBJ_MIDI);
 	}

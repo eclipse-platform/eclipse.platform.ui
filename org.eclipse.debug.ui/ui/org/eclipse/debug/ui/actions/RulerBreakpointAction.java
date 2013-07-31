@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -59,11 +60,11 @@ public abstract class RulerBreakpointAction extends Action {
     	IAnnotationModel annotationModel = fEditor.getDocumentProvider().getAnnotationModel(fEditor.getEditorInput());
 		IDocument document = fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
 		if (annotationModel != null) {
-			Iterator iterator = annotationModel.getAnnotationIterator();
+			Iterator<Annotation> iterator = annotationModel.getAnnotationIterator();
 			while (iterator.hasNext()) {
-				Object object = iterator.next();
-				if (object instanceof SimpleMarkerAnnotation) {
-					SimpleMarkerAnnotation markerAnnotation = (SimpleMarkerAnnotation) object;
+				Annotation annot = iterator.next();
+				if (annot instanceof SimpleMarkerAnnotation) {
+					SimpleMarkerAnnotation markerAnnotation = (SimpleMarkerAnnotation) annot;
 					IMarker marker = markerAnnotation.getMarker();
 					try {
 						if (marker.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {

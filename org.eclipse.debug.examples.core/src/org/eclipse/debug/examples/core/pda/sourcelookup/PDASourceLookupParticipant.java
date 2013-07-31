@@ -24,6 +24,7 @@ public class PDASourceLookupParticipant extends AbstractSourceLookupParticipant 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#getSourceName(java.lang.Object)
 	 */
+	@Override
 	public String getSourceName(Object object) throws CoreException {
 		//#ifdef ex4
 //#		// TODO: Exercise 4 - return the name of the source file for the given stack frame

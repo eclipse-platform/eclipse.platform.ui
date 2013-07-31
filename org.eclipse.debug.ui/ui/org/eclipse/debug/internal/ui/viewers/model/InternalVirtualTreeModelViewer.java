@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Wind River Systems and others.
+ * Copyright (c) 2009, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     IBM - ongoing bug fixing
+ *     IBM Corporation - ongoing bug fixing
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
@@ -63,6 +63,7 @@ import org.eclipse.ui.IMemento;
  * A tree model viewer without a UI component.
  * @since 3.5
  */
+@SuppressWarnings("deprecation")
 public class InternalVirtualTreeModelViewer extends Viewer 
     implements IVirtualItemListener, 
                org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer, 
@@ -127,7 +128,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
      * tree may contain the same element in several places, so the map values
      * are lists.   
      */
-    private Map fItemsMap = new HashMap();
+	private Map<Object, List<VirtualItem>> fItemsMap = new HashMap<Object, List<VirtualItem>>();
     
     /**
      * Whether to notify the content provider when an element is unmapped.
@@ -172,14 +173,14 @@ public class InternalVirtualTreeModelViewer extends Viewer
      * Map of columns presentation id to its visible columns id's (String[])
      * When a columns presentation is not in the map, default settings are used.
      */
-    private Map fVisibleColumns = new HashMap();
+	private Map<String, String[]> fVisibleColumns = new HashMap<String, String[]>();
     
     /**
      * Map of column presentation id to whether columns should be displayed
      * for that presentation (the user can toggle columns on/off when a 
      * presentation is optional.
      */
-    private Map fShowColumns = new HashMap();    
+	private Map<String, Boolean> fShowColumns = new HashMap<String, Boolean>();
 
     /**
      * Runnable for validating the virtual tree.  It is scheduled to run in the 
@@ -201,21 +202,25 @@ public class InternalVirtualTreeModelViewer extends Viewer
         }
     }
 
-    public Object getInput() {
+    @Override
+	public Object getInput() {
         return fInput;
     }
 
-    public Control getControl() {
+    @Override
+	public Control getControl() {
         // The virtual viewer does not have an SWT control associated with it.
         // Fortunately this method is not used by the base Viewer class.
         return null;
     }
 
-    public Display getDisplay() {
+    @Override
+	public Display getDisplay() {
         return fDisplay;
     }
 
-    public void setInput(Object input) {
+    @Override
+	public void setInput(Object input) {
         Object oldInput = fInput;
         getContentProvider().inputChanged(this, oldInput, input);
         fItemsMap.clear();
@@ -229,7 +234,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
         refresh();
     }
 
-    public void replace(Object parentElementOrTreePath, final int index, Object element) {
+    @Override
+	public void replace(Object parentElementOrTreePath, final int index, Object element) {
         VirtualItem[] selectedItems = fTree.getSelection();
         TreeSelection selection = (TreeSelection) getSelection();
         VirtualItem[] itemsToDisassociate;
@@ -281,7 +287,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
         return fTree;
     }
     
-    public void insert(Object parentOrTreePath, Object element, int position) {
+    @Override
+	public void insert(Object parentOrTreePath, Object element, int position) {
         if (parentOrTreePath instanceof TreePath) {
             VirtualItem parentItem = findItem((TreePath) parentOrTreePath);
             if (parentItem != null) {
@@ -296,17 +303,19 @@ public class InternalVirtualTreeModelViewer extends Viewer
         validate();
     }
 
-    public void remove(final Object parentOrTreePath, final int index) {
-        final List oldSelection = new LinkedList(Arrays
-                .asList(((TreeSelection) getSelection()).getPaths()));
+    @Override
+	public void remove(final Object parentOrTreePath, final int index) {
+		final List<TreePath> oldSelection = new LinkedList<TreePath>(Arrays.asList(((TreeSelection) getSelection()).getPaths()));
         preservingSelection(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 TreePath removedPath = null;
                 VirtualItem[] parentItems = findItems(parentOrTreePath);
                 for (int i = 0; i < parentItems.length; i++) {
                     VirtualItem parentItem = parentItems[i];
-                    if (parentItem.isDisposed())
-                        continue;
+                    if (parentItem.isDisposed()) {
+						continue;
+					}
                     
                     // Parent item is not expanded so just update its contents so that 
                     // the plus sign gets refreshed.
@@ -329,8 +338,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
 
                 if (removedPath != null) {
                     boolean removed = false;
-                    for (Iterator it = oldSelection.iterator(); it.hasNext();) {
-                        TreePath path = (TreePath) it.next();
+					for (Iterator<TreePath> it = oldSelection.iterator(); it.hasNext();) {
+                        TreePath path = it.next();
                         if (path.startsWith(removedPath, null)) {
                             it.remove();
                             removed = true;
@@ -338,7 +347,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
                     }
                     if (removed) {
                         setSelection(
-                            new TreeSelection((TreePath[]) oldSelection.toArray(new TreePath[oldSelection.size()])), 
+                            new TreeSelection(oldSelection.toArray(new TreePath[oldSelection.size()])), 
                             false);
                     }
                 }
@@ -346,7 +355,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
         });
     }
 
-    public void remove(Object elementOrPath) {
+    @Override
+	public void remove(Object elementOrPath) {
         if (elementOrPath.equals(getInput()) || TreePath.EMPTY.equals(elementOrPath)) {
             setInput(null);
             return;
@@ -441,7 +451,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
 //    }
 
     
-    public void reveal(TreePath path, final int index) {
+    @Override
+	public void reveal(TreePath path, final int index) {
         VirtualItem parentItem = findItem(path);
         if (parentItem != null && parentItem.getItemCount() >= index) {
             VirtualItem revealItem = parentItem.getItem(new Index(index));
@@ -451,7 +462,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
         // TODO: implement reveal()
     }
 
-    public int findElementIndex(TreePath parentPath, Object element) {
+    @Override
+	public int findElementIndex(TreePath parentPath, Object element) {
         VirtualItem parentItem = findItem(parentPath);
         if (parentItem != null) {
             VirtualItem item = parentItem.findItem(element);
@@ -462,7 +474,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
         return -1;
     }
     
-    public boolean getElementChildrenRealized(TreePath parentPath) {
+    @Override
+	public boolean getElementChildrenRealized(TreePath parentPath) {
         VirtualItem parentItem = findItem(parentPath);
         if (parentItem != null) {
             return !parentItem.childrenNeedDataUpdate();
@@ -481,12 +494,14 @@ public class InternalVirtualTreeModelViewer extends Viewer
 
     public static int ALL_LEVELS = -1;
 
-    public void refresh() {
+    @Override
+	public void refresh() {
         refresh(fTree);
         validate();
     }
 
-    public void refresh(Object element) {
+    @Override
+	public void refresh(Object element) {
         VirtualItem[] items = findItems(element);
         for (int i = 0; i < items.length; i++) {
             refresh(items[i]);
@@ -537,7 +552,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
     private void validate() {
         if (fValidateRunnable == null) {
             fValidateRunnable = new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     if (!fTree.isDisposed()) {
                         fValidateRunnable = null;
                         fTree.validate();
@@ -548,15 +564,18 @@ public class InternalVirtualTreeModelViewer extends Viewer
         }
     }
     
-    protected void inputChanged(Object input, Object oldInput) {
+    @Override
+	protected void inputChanged(Object input, Object oldInput) {
         resetColumns(input);
     }
 
-    public int getAutoExpandLevel() {
+    @Override
+	public int getAutoExpandLevel() {
         return fAutoExpandToLevel;
     }
 
-    public void setAutoExpandLevel(int level) {
+    @Override
+	public void setAutoExpandLevel(int level) {
         fAutoExpandToLevel = level;
     }
     
@@ -565,11 +584,11 @@ public class InternalVirtualTreeModelViewer extends Viewer
             return fTree;
         }
 
-        List itemsList = (List)fItemsMap.get(path.getLastSegment());
+		List<VirtualItem> itemsList = fItemsMap.get(path.getLastSegment());
         if (itemsList != null) {
-	        for (int i = 0; i < itemsList.size(); i++) {
-	        	if ( path.equals(getTreePathFromItem((VirtualItem)itemsList.get(i))) ) {
-	        		return (VirtualItem)itemsList.get(i);
+			for (VirtualItem item : itemsList) {
+				if (path.equals(getTreePathFromItem(item))) {
+					return item;
 	        	}
 	        }
         }
@@ -588,15 +607,16 @@ public class InternalVirtualTreeModelViewer extends Viewer
     		}
     		element = path.getLastSegment();
     	}
-        List itemsList = (List) fItemsMap.get(element);
+		List<VirtualItem> itemsList = fItemsMap.get(element);
         if (itemsList == null) {
             return EMPTY_ITEMS_ARRAY;
         } else {
-            return (VirtualItem[]) itemsList.toArray(new VirtualItem[itemsList.size()]);
+            return itemsList.toArray(new VirtualItem[itemsList.size()]);
         }
     }
 
-    public void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] images,
+    @Override
+	public void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] images,
         FontData[] fontDatas, RGB[] foregrounds, RGB[] backgrounds) {
         VirtualItem item = findItem(path);
         if (item != null) {
@@ -608,9 +628,11 @@ public class InternalVirtualTreeModelViewer extends Viewer
         }
     }
     
-    public void setChildCount(final Object elementOrTreePath, final int count) {
+    @Override
+	public void setChildCount(final Object elementOrTreePath, final int count) {
         preservingSelection(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 VirtualItem[] items = findItems(elementOrTreePath);
                 for (int i = 0; i < items.length; i++) {
                     VirtualItem[] children = items[i].getItems();
@@ -627,9 +649,11 @@ public class InternalVirtualTreeModelViewer extends Viewer
         validate();
     }
 
-    public void setHasChildren(final Object elementOrTreePath, final boolean hasChildren) {
+    @Override
+	public void setHasChildren(final Object elementOrTreePath, final boolean hasChildren) {
         preservingSelection(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 VirtualItem[] items = findItems(elementOrTreePath);
                 for (int i = 0; i < items.length; i++) {
                     VirtualItem item = items[i];
@@ -656,7 +680,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
         });
     }
     
-    public boolean getHasChildren(Object elementOrTreePath) {
+    @Override
+	public boolean getHasChildren(Object elementOrTreePath) {
         VirtualItem[] items = findItems(elementOrTreePath);
         if (items.length > 0) {
             return items[0].hasItems();
@@ -691,7 +716,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     }
 
     private TreePath getTreePathFromItem(VirtualItem item) {
-        List segments = new LinkedList();
+		List<Object> segments = new LinkedList<Object>();
         while (item.getParent() != null) {
             segments.add(0, item.getData());
             item = item.getParent();
@@ -708,7 +733,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
             }
         }
 
-        List itemsList = (List) fItemsMap.get(element);
+		List<VirtualItem> itemsList = fItemsMap.get(element);
         if (itemsList != null) {
             itemsList.remove(item);
             if (itemsList.isEmpty()) {
@@ -723,9 +748,9 @@ public class InternalVirtualTreeModelViewer extends Viewer
         // re-inserted to make sure that the new instance of element is used
         // in case the element has changed but the elment is equal to the old
         // one.
-        List itemsList = (List) fItemsMap.remove(element);
+		List<VirtualItem> itemsList = fItemsMap.remove(element);
         if (itemsList == null) {
-            itemsList = new ArrayList(1);
+			itemsList = new ArrayList<VirtualItem>(1);
         }
 
         if (!itemsList.contains(item)) {
@@ -738,7 +763,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
         item.setData(TREE_PATH_KEY, getTreePathFromItem(item));
     }
 
-    public void revealed(VirtualItem item) {
+    @Override
+	public void revealed(VirtualItem item) {
         if (item.needsDataUpdate()) {
             virtualLazyUpdateData(item);
         } else if (item.getData() != null) {
@@ -751,7 +777,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
         } 
     }
 
-    public void disposed(VirtualItem item) {
+    @Override
+	public void disposed(VirtualItem item) {
         if (!fTree.isDisposed()) {
             Object data = item.getData();
             if (data != null) {
@@ -817,21 +844,24 @@ public class InternalVirtualTreeModelViewer extends Viewer
         }
     }
 
-    public void setSelection(ISelection selection, boolean reveal) {
+    @Override
+	public void setSelection(ISelection selection, boolean reveal) {
         setSelection(selection, reveal, false);
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean, boolean)
      */
-    public void setSelection(ISelection selection, boolean reveal, boolean force) {
+    @Override
+	public void setSelection(ISelection selection, boolean reveal, boolean force) {
         trySelection(selection, reveal, force);
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer#trySelection(org.eclipse.jface.viewers.ISelection, boolean, boolean)
      */
-    public boolean trySelection(ISelection selection, boolean reveal, boolean force) {
+    @Override
+	public boolean trySelection(ISelection selection, boolean reveal, boolean force) {
     	if (!force && !overrideSelection(getSelection(), selection)) {
             return false;
         }
@@ -849,7 +879,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     private void internalSetSelection(ISelection selection, boolean reveal) {
         if (selection instanceof ITreeSelection) {
             TreePath[] paths = ((ITreeSelection) selection).getPaths();
-            List newSelection = new ArrayList(paths.length);
+			List<VirtualItem> newSelection = new ArrayList<VirtualItem>(paths.length);
             for (int i = 0; i < paths.length; ++i) {
                 // Use internalExpand since item may not yet be created. See
                 // 1G6B1AR.
@@ -858,7 +888,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
                     newSelection.add(item);
                 }
             }
-            fTree.setSelection((VirtualItem[]) newSelection.toArray(new VirtualItem[newSelection.size()]));
+            fTree.setSelection(newSelection.toArray(new VirtualItem[newSelection.size()]));
 
             // Although setting the selection in the control should reveal it,
             // setSelection may be a no-op if the selection is unchanged,
@@ -868,7 +898,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
                 // Iterate backwards so the first item in the list
                 // is the one guaranteed to be visible
                 for (int i = (newSelection.size() - 1); i >= 0; i--) {
-                    fTree.showItem((VirtualItem) newSelection.get(i));
+                    fTree.showItem(newSelection.get(i));
                 }
             }
         } else {
@@ -879,7 +909,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
         validate();
     }
 
-    public void update(Object element) {
+    @Override
+	public void update(Object element) {
         VirtualItem[] items = findItems(element);
         for (int i = 0; i < items.length; i++) {
             doUpdate(items[i]);
@@ -891,25 +922,23 @@ public class InternalVirtualTreeModelViewer extends Viewer
         validate();
     }
 
-    public ISelection getSelection() {
+    @Override
+	public ISelection getSelection() {
         if (fTree.isDisposed()) {
             return TreeSelection.EMPTY;
         }
         VirtualItem[] items = fTree.getSelection();
-        ArrayList list = new ArrayList(items.length);
-        Map map = new LinkedHashMap(items.length * 4/3);
-
+		ArrayList<TreePath> list = new ArrayList<TreePath>(items.length);
+		Map<VirtualItem, TreePath> map = new LinkedHashMap<VirtualItem, TreePath>(items.length * 4 / 3);
         for (int i = 0; i < items.length; i++) {
             TreePath path = null;
-            
             if (items[i].getData() != null) {
                 path = getTreePathFromItem(items[i]);
                 list.add(path);
             }
             map.put(items[i], path);
         }
-        //return new VirtualTreeSelection(map, (TreePath[]) list.toArray(new TreePath[list.size()]));
-        return new TreeSelection((TreePath[]) list.toArray(new TreePath[list.size()]));
+        return new TreeSelection(list.toArray(new TreePath[list.size()]));
     }
     
     private void preservingSelection(Runnable updateCode) {
@@ -939,7 +968,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
         }
     }
 
-    public void expandToLevel(Object elementOrTreePath, int level) {
+    @Override
+	public void expandToLevel(Object elementOrTreePath, int level) {
         VirtualItem[] items = findItems(elementOrTreePath);
         if (items.length > 0) {
             expandToLevel(items[0], level);
@@ -947,7 +977,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
         validate();
     }
 
-    public void setExpandedState(Object elementOrTreePath, boolean expanded) {
+    @Override
+	public void setExpandedState(Object elementOrTreePath, boolean expanded) {
         VirtualItem[] items = findItems(elementOrTreePath);
         for (int i = 0; i < items.length; i++) {
             items[i].setExpanded(expanded);
@@ -955,7 +986,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
         validate();
     }
 
-    public boolean getExpandedState(Object elementOrTreePath) {
+    @Override
+	public boolean getExpandedState(Object elementOrTreePath) {
         VirtualItem[] items = findItems(elementOrTreePath);
         if (items.length > 0) {
             return items[0].getExpanded();
@@ -1017,7 +1049,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
      * @param candidate New potential selection requested by model.
      * @return true if candidate selection should be set to viewer.
      */
-    public boolean overrideSelection(ISelection current, ISelection candidate) {
+    @Override
+	public boolean overrideSelection(ISelection current, ISelection candidate) {
         IModelSelectionPolicy selectionPolicy = ViewerAdapterService.getSelectionPolicy(current, getPresentationContext());
         if (selectionPolicy == null) {
             return true;
@@ -1028,18 +1061,21 @@ public class InternalVirtualTreeModelViewer extends Viewer
         return !selectionPolicy.isSticky(current, getPresentationContext());
     }
 
-    public ViewerFilter[] getFilters() {
+    @Override
+	public ViewerFilter[] getFilters() {
     	return fFilters;
     }
     
-    public void addFilter(ViewerFilter filter) {
+    @Override
+	public void addFilter(ViewerFilter filter) {
     	ViewerFilter[] newFilters = new ViewerFilter[fFilters.length + 1];
     	System.arraycopy(fFilters, 0, newFilters, 0, fFilters.length);
     	newFilters[fFilters.length] = filter;
     	fFilters = newFilters;
     }
     
-    public void setFilters(ViewerFilter[] filters) {
+    @Override
+	public void setFilters(ViewerFilter[] filters) {
     	fFilters = filters;
     }
     
@@ -1066,7 +1102,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
      * 
      * @return presentation context
      */
-    public IPresentationContext getPresentationContext() {
+    @Override
+	public IPresentationContext getPresentationContext() {
         return fContext;
     }
 
@@ -1172,7 +1209,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     }
     
     protected boolean isShowColumns(String columnPresentationId) {
-        Boolean bool = (Boolean) fShowColumns.get(columnPresentationId);
+        Boolean bool = fShowColumns.get(columnPresentationId);
         if (bool == null) {
             return true;
         }
@@ -1199,11 +1236,12 @@ public class InternalVirtualTreeModelViewer extends Viewer
      *  
      * @return visible columns or <code>null</code>
      */
-    public String[] getVisibleColumns() {
+    @Override
+	public String[] getVisibleColumns() {
         if (isShowColumns()) {
             IColumnPresentation presentation = getColumnPresentation();
             if (presentation != null) {
-                String[] columns = (String[]) fVisibleColumns.get(presentation.getId());
+                String[] columns = fVisibleColumns.get(presentation.getId());
                 if (columns == null) {
                     return presentation.getInitialColumns();
                 }
@@ -1263,20 +1301,15 @@ public class InternalVirtualTreeModelViewer extends Viewer
      */
     public void saveState(IMemento memento) {
         if (!fShowColumns.isEmpty()) {
-            Iterator iterator = fShowColumns.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry entry = (Entry) iterator.next();
-                IMemento sizes = memento.createChild(SHOW_COLUMNS, (String)entry.getKey());
-                sizes.putString(SHOW_COLUMNS, ((Boolean)entry.getValue()).toString());
+			for (Entry<String, Boolean> entry : fShowColumns.entrySet()) {
+                IMemento sizes = memento.createChild(SHOW_COLUMNS, entry.getKey());
+                sizes.putString(SHOW_COLUMNS, entry.getValue().toString());
             }           
         }
         if (!fVisibleColumns.isEmpty()) {
-            Iterator iterator = fVisibleColumns.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry entry = (Entry) iterator.next();
-                String id = (String) entry.getKey();
-                IMemento visible = memento.createChild(VISIBLE_COLUMNS, id);
-                String[] columns = (String[]) entry.getValue();
+			for (Entry<String, String[]> entry : fVisibleColumns.entrySet()) {
+				IMemento visible = memento.createChild(VISIBLE_COLUMNS, entry.getKey());
+                String[] columns = entry.getValue();
                 visible.putInteger(SIZE, columns.length);
                 for (int i = 0; i < columns.length; i++) {
                     visible.putString(COLUMN+Integer.toString(i), columns[i]);
@@ -1330,44 +1363,52 @@ public class InternalVirtualTreeModelViewer extends Viewer
         }
     }
 
-    public void addViewerUpdateListener(IViewerUpdateListener listener) {
+    @Override
+	public void addViewerUpdateListener(IViewerUpdateListener listener) {
         getContentProvider().addViewerUpdateListener(listener);
     }
     
-    public void removeViewerUpdateListener(IViewerUpdateListener listener) {
+    @Override
+	public void removeViewerUpdateListener(IViewerUpdateListener listener) {
         ITreeModelContentProvider cp = getContentProvider();
         if (cp !=  null) {
             cp.removeViewerUpdateListener(listener);
         }
     }
     
-    public void addModelChangedListener(IModelChangedListener listener) {
+    @Override
+	public void addModelChangedListener(IModelChangedListener listener) {
         getContentProvider().addModelChangedListener(listener); 
     }
     
-    public void removeModelChangedListener(IModelChangedListener listener) {
+    @Override
+	public void removeModelChangedListener(IModelChangedListener listener) {
         ITreeModelContentProvider cp = getContentProvider();
         if (cp !=  null) {
             cp.removeModelChangedListener(listener);
         }
     }
     
-    public void addStateUpdateListener(IStateUpdateListener listener) {
+    @Override
+	public void addStateUpdateListener(IStateUpdateListener listener) {
         getContentProvider().addStateUpdateListener(listener);
     }
     
-    public void removeStateUpdateListener(IStateUpdateListener listener) {
+    @Override
+	public void removeStateUpdateListener(IStateUpdateListener listener) {
         ITreeModelContentProvider cp = getContentProvider();
         if (cp !=  null) {
             cp.removeStateUpdateListener(listener);
         }
     }
         
-    public void addLabelUpdateListener(ILabelUpdateListener listener) {
+	@Override
+	public void addLabelUpdateListener(ILabelUpdateListener listener) {
         getLabelProvider().addLabelUpdateListener(listener);
     }
     
-    public void removeLabelUpdateListener(ILabelUpdateListener listener) {
+    @Override
+	public void removeLabelUpdateListener(ILabelUpdateListener listener) {
         getLabelProvider().removeLabelUpdateListener(listener);
     }
     
@@ -1377,7 +1418,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
      * 
      * @param elementPath tree path to element to consider for expansion
      */
-    public void autoExpand(TreePath elementPath) {
+    @Override
+	public void autoExpand(TreePath elementPath) {
         int level = getAutoExpandLevel();
         if (level > 0 || level == org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer.ALL_LEVELS) {
             if (level == org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer.ALL_LEVELS || level > elementPath.getSegmentCount()) {
@@ -1386,7 +1428,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
         }
     }
     
-    public int getChildCount(TreePath path) {
+    @Override
+	public int getChildCount(TreePath path) {
         int childCount = -1;
         VirtualItem[] items = findItems(path);
         if (items.length > 0) {
@@ -1401,7 +1444,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
         return childCount;
     }
     
-    public Object getChildElement(TreePath path, int index) {
+    @Override
+	public Object getChildElement(TreePath path, int index) {
         VirtualItem[] items = findItems(path);
         if (items.length > 0) {
             if (index < items[0].getItemCount()) {
@@ -1411,14 +1455,16 @@ public class InternalVirtualTreeModelViewer extends Viewer
         return null;
     }
 
-    public TreePath getTopElementPath() {
+    @Override
+	public TreePath getTopElementPath() {
         return null;
     }
 
-    public boolean saveElementState(TreePath path, ModelDelta delta, int flagsToSave) {
+    @Override
+	public boolean saveElementState(TreePath path, ModelDelta delta, int flagsToSave) {
         VirtualTree tree = getTree();
         VirtualItem[] selection = tree.getSelection();
-        Set set = new HashSet();
+		Set<VirtualItem> set = new HashSet<VirtualItem>();
         for (int i = 0; i < selection.length; i++) {
             set.add(selection[i]);
         }
@@ -1450,7 +1496,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
         }
     }
     
-    private void doSaveElementState(TreePath parentPath, ModelDelta delta, VirtualItem item, Collection set, int flagsToSave) {
+	private void doSaveElementState(TreePath parentPath, ModelDelta delta, VirtualItem item, Collection<VirtualItem> set, int flagsToSave) {
         Object element = item.getData();
         if (element != null) {
             boolean expanded = item.getExpanded();
@@ -1480,11 +1526,13 @@ public class InternalVirtualTreeModelViewer extends Viewer
         }
     }
 
-    public void updateViewer(IModelDelta delta) {
+    @Override
+	public void updateViewer(IModelDelta delta) {
         getContentProvider().updateModel(delta, ITreeModelContentProvider.ALL_MODEL_DELTA_FLAGS);
     }
     
-    public ViewerLabel getElementLabel(TreePath path, String columnId) {
+    @Override
+	public ViewerLabel getElementLabel(TreePath path, String columnId) {
         if (path.getSegmentCount() == 0) {
             return null;
         }
@@ -1517,7 +1565,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
         return null;
     }
 
-    public TreePath[] getElementPaths(Object element) {
+    @Override
+	public TreePath[] getElementPaths(Object element) {
         VirtualItem[] items = findItems(element);
         TreePath[] paths = new TreePath[items.length];
         for (int i = 0; i < items.length; i++) {
@@ -1570,25 +1619,30 @@ public class InternalVirtualTreeModelViewer extends Viewer
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget#clearSelectionQuiet()
      */
-    public void clearSelectionQuiet() {
+    @Override
+	public void clearSelectionQuiet() {
     	getTree().setSelection(EMPTY_ITEMS_ARRAY);
     }
     
-    public boolean getElementChecked(TreePath path) {
+    @Override
+	public boolean getElementChecked(TreePath path) {
         // Not supported
         return false;
     }
     
-    public boolean getElementGrayed(TreePath path) {
+    @Override
+	public boolean getElementGrayed(TreePath path) {
         // Not supported
         return false;
     }
     
-    public void setElementChecked(TreePath path, boolean checked, boolean grayed) {
+    @Override
+	public void setElementChecked(TreePath path, boolean checked, boolean grayed) {
         // Not supported
     }
     
-    public String toString() {
+    @Override
+	public String toString() {
         return getTree().toString();
     }
 }

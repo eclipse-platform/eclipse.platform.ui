@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,9 +24,9 @@ import org.eclipse.ui.console.TextConsoleViewer;
 
 /**
  * A page for an IOConsole
- * 
+ *
  * @since 3.1
- *  
+ *
  */
 public class IOConsolePage extends TextConsolePage {
 
@@ -40,7 +40,8 @@ public class IOConsolePage extends TextConsolePage {
         super(console, view);
 
         fPropertyChangeListener = new IPropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent event) {
+            @Override
+			public void propertyChange(PropertyChangeEvent event) {
                 String property = event.getProperty();
                 if (property.equals(IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE)) {
                     setReadOnly();
@@ -52,10 +53,11 @@ public class IOConsolePage extends TextConsolePage {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         super.createControl(parent);
         if (fReadOnly) {
             IOConsoleViewer viewer = (IOConsoleViewer) getViewer();
@@ -65,11 +67,12 @@ public class IOConsolePage extends TextConsolePage {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.console.TextConsolePage#createViewer(org.eclipse.swt.widgets.Composite,
      *      org.eclipse.ui.console.TextConsole)
      */
-    protected TextConsoleViewer createViewer(Composite parent) {
+    @Override
+	protected TextConsoleViewer createViewer(Composite parent) {
         return new IOConsoleViewer(parent, (TextConsole)getConsole());
     }
 
@@ -95,7 +98,8 @@ public class IOConsolePage extends TextConsolePage {
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.TextConsolePage#createActions()
      */
-    protected void createActions() {
+    @Override
+	protected void createActions() {
         super.createActions();
         fScrollLockAction = new ScrollLockAction(getConsoleView());
         setAutoScroll(!fScrollLockAction.isChecked());
@@ -104,7 +108,8 @@ public class IOConsolePage extends TextConsolePage {
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.TextConsolePage#contextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
      */
-    protected void contextMenuAboutToShow(IMenuManager menuManager) {
+    @Override
+	protected void contextMenuAboutToShow(IMenuManager menuManager) {
         super.contextMenuAboutToShow(menuManager);
         menuManager.add(fScrollLockAction);
         IOConsoleViewer viewer = (IOConsoleViewer) getViewer();
@@ -116,20 +121,22 @@ public class IOConsolePage extends TextConsolePage {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.console.TextConsolePage#configureToolBar(org.eclipse.jface.action.IToolBarManager)
      */
-    protected void configureToolBar(IToolBarManager mgr) {
+	@Override
+	protected void configureToolBar(IToolBarManager mgr) {
         super.configureToolBar(mgr);
         mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fScrollLockAction);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.part.IPage#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         if (fScrollLockAction != null) {
             fScrollLockAction.dispose();
             fScrollLockAction = null;

@@ -1,16 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.core.model;
 
- 
+
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
@@ -35,7 +35,7 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * Abstract implementation of a breakpoint. This class is
  * intended to be sub-classed by implementations
  * of breakpoints.
- * 
+ *
  * @see IBreakpoint
  * @since 2.0
  */
@@ -44,7 +44,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 
 	/**
 	 * Creates a breakpoint.
-	 * 
+	 *
 	 * @since 3.8
 	 */
 	public Breakpoint() {
@@ -60,55 +60,62 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	/**
 	 * @see IBreakpoint#setMarker(IMarker)
 	 */
+	@Override
 	public void setMarker(IMarker marker) throws CoreException {
 		fMarker= marker;
 
 	}
-	
+
 	/**
 	 * @see Object#equals(Object)
 	 */
+	@Override
 	public boolean equals(Object item) {
 		if (item instanceof IBreakpoint) {
 			return getMarker().equals(((IBreakpoint)item).getMarker());
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @see Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getMarker().hashCode();
 	}
-		
+
 	/**
 	 * @see IBreakpoint#setEnabled(boolean)
 	 */
+	@Override
 	public void setEnabled(boolean enabled) throws CoreException {
 		if (enabled != isEnabled()) {
 			setAttribute(ENABLED, enabled);
 		}
 	}
-	
+
 	/**
 	 * @see IBreakpoint#isEnabled()
 	 */
+	@Override
 	public boolean isEnabled() throws CoreException {
 		return getMarker().getAttribute(ENABLED, false);
 	}
-	
+
 	/**
 	 * @see IBreakpoint#isRegistered()
 	 */
+	@Override
 	public boolean isRegistered() throws CoreException {
 			IMarker marker= getMarker();
 			return marker.exists() && marker.getAttribute(REGISTERED, true);
-	}	
-	
+	}
+
 	/**
 	 * @see IBreakpoint#setRegistered(boolean)
 	 */
+	@Override
 	public void setRegistered(boolean registered) throws CoreException {
 		if (isRegistered() != registered) {
 			setAttribute(REGISTERED, registered);
@@ -119,11 +126,12 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 				mgr.removeBreakpoint(this, false);
 			}
 		}
-	}	
+	}
 
 	/**
 	 * @see IBreakpoint#delete()
 	 */
+	@Override
 	public void delete() throws CoreException {
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(this, false);
 		getMarker().delete();
@@ -132,6 +140,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	/**
 	 * @see IBreakpoint#getMarker()
 	 */
+	@Override
 	public IMarker getMarker() {
 		return fMarker;
 	}
@@ -139,6 +148,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	/**
 	 * @see IBreakpoint#isPersisted()
 	 */
+	@Override
 	public boolean isPersisted() throws CoreException {
 		return getMarker().getAttribute(PERSISTED, true);
 	}
@@ -146,18 +156,19 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	/**
 	 * @see IBreakpoint#setPersisted(boolean)
 	 */
+	@Override
 	public void setPersisted(boolean persisted) throws CoreException {
 		if (isPersisted() != persisted) {
 			setAttributes(new String[] {PERSISTED, IMarker.TRANSIENT}, new Object[] {Boolean.valueOf(persisted), Boolean.valueOf(!persisted)});
 		}
 	}
-	
+
 	/**
 	 * Convenience method to set the given boolean attribute of
 	 * this breakpoint's underlying marker in a workspace
 	 * runnable. Setting marker attributes in a workspace runnable
 	 * prevents deadlock.
-	 * 
+	 *
 	 * @param attributeName attribute name
 	 * @param value attribute value
 	 * @exception CoreException is setting the attribute fails
@@ -166,20 +177,21 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	protected void setAttribute(final String attributeName, final boolean value) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					ensureMarker().setAttribute(attributeName, value);
 				}
 			};
-			
+
 		workspace.run(runnable, getMarkerRule(), 0, null);
 	}
-	
+
 	/**
 	 * Convenience method to set the given integer attribute of
 	 * this breakpoint's underlying marker in a workspace
 	 * runnable. Setting marker attributes in a workspace runnable
 	 * prevents deadlock.
-	 * 
+	 *
 	 * @param attributeName attribute name
 	 * @param value attribute value
 	 * @exception CoreException is setting the attribute fails
@@ -188,11 +200,12 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	protected void setAttribute(final String attributeName, final int value) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					ensureMarker().setAttribute(attributeName, value);
 				}
 			};
-			
+
 		workspace.run(runnable, getMarkerRule(), 0, null);
 	}
 
@@ -201,7 +214,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	 * this breakpoint's underlying marker in a workspace
 	 * runnable. Setting marker attributes in a workspace runnable
 	 * prevents deadlock.
-	 * 
+	 *
 	 * @param attributeName attribute name
 	 * @param value attribute value
 	 * @exception CoreException is setting the attribute fails
@@ -210,11 +223,12 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	protected void setAttribute(final String attributeName, final Object value) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					ensureMarker().setAttribute(attributeName, value);
 				}
 			};
-			
+
 		workspace.run(runnable, getMarkerRule(), 0, null);
 	}
 
@@ -223,7 +237,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	 * this breakpoint's underlying marker in a workspace
 	 * runnable. Setting marker attributes in a workspace runnable
 	 * prevents deadlock.
-	 * 
+	 *
 	 * @param attributeNames attribute names
 	 * @param values attribute values
 	 * @exception CoreException is setting the attributes fails
@@ -232,11 +246,12 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	protected void setAttributes(final String[] attributeNames, final Object[] values) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					ensureMarker().setAttributes(attributeNames, values);
 				}
 			};
-			
+
 		workspace.run(runnable, getMarkerRule(), IWorkspace.AVOID_UPDATE, null);
 	}
 
@@ -245,41 +260,42 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	 * this breakpoint's underlying marker in a workspace
 	 * runnable. Setting marker attributes in a workspace runnable
 	 * prevents deadlock.
-	 * 
+	 *
 	 * @param attributes attribute map
 	 * @exception CoreException is setting the attributes fails
 	 * @see IMarker#setAttributes(java.util.Map)
 	 */
-	protected void setAttributes(final Map attributes) throws CoreException{
+	protected void setAttributes(final Map<String, ? extends Object> attributes) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					ensureMarker().setAttributes(attributes);
 				}
 			};
-			
+
 		workspace.run(runnable, getMarkerRule(), IWorkspace.AVOID_UPDATE, null);
 	}
 
 	/**
 	 * Returns the marker associated with this breakpoint.
-	 * 
+	 *
 	 * @return breakpoint marker
-	 * @exception DebugException if no marker is associated with 
+	 * @exception DebugException if no marker is associated with
 	 *  this breakpoint or the associated marker does not exist
 	 */
 	protected IMarker ensureMarker() throws DebugException {
 		IMarker m = getMarker();
 		if (m == null || !m.exists()) {
 			throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED,
-				DebugCoreMessages.Breakpoint_no_associated_marker, null)); 
+				DebugCoreMessages.Breakpoint_no_associated_marker, null));
 		}
 		return m;
 	}
-	
+
 	/**
 	 * Returns whether this breakpoint has an associated marker that exists.
-	 * 
+	 *
 	 * @return returns whether this breakpoint has an associated marker that exists
 	 * @since 2.1
 	 */
@@ -291,7 +307,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	/**
 	 * Returns a scheduling rule to use when modifying markers on the given resource,
 	 * possibly <code>null</code>.
-	 * 
+	 *
 	 * @param resource a resource on which a marker will be created, modified, or deleted
 	 * @return a scheduling rule to use when modifying markers on the given resource
 	 * 	possibly <code>null</code>
@@ -305,13 +321,13 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
         }
         return rule;
     }
-    
+
 	/**
-	 * Returns a scheduling rule to use when modifying or deleting this breakpoint's marker, 
+	 * Returns a scheduling rule to use when modifying or deleting this breakpoint's marker,
 	 * possibly <code>null</code>. This method is only valid when this breakpoint's
 	 * marker has already been created. When creating a marker on a specific resource,
 	 * use <code>getMarkerRule(IResource)</code> instead.
-	 * 
+	 *
 	 * @return a scheduling rule to use when modifying or deleting this breakpoint's marker
 	 * @since 3.1
 	 */
@@ -327,10 +343,10 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
         }
         return rule;
     }
-    
+
     /**
 	 * Execute the given workspace runnable with the scheduling rule to use when running the operation.
-	 * 
+	 *
 	 * @param rule the rule to use when running the operation
      * @param wr the runnable operation
      * @throws DebugException If a core exception occurs performing the operation
@@ -341,7 +357,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
     		ResourcesPlugin.getWorkspace().run(wr, rule, 0, null);
     	} catch (CoreException e) {
     		throw new DebugException(e.getStatus());
-    	}			
-    }  
-    
+    	}
+    }
+
 }

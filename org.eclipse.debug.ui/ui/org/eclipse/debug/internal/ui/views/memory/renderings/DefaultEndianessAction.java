@@ -31,9 +31,11 @@ public class DefaultEndianessAction implements IObjectActionDelegate {
 		super();
 	}
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
+	@Override
 	public void run(IAction action) {
 		if (fRendering != null)
 		{
@@ -50,6 +52,7 @@ public class DefaultEndianessAction implements IObjectActionDelegate {
 
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (selection == null)
 			return;

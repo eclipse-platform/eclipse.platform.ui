@@ -26,7 +26,8 @@ public class ProjectBreakpointOrganizer extends AbstractBreakpointOrganizerDeleg
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories(org.eclipse.debug.core.model.IBreakpoint)
      */
-    public IAdaptable[] getCategories(IBreakpoint breakpoint) {
+    @Override
+	public IAdaptable[] getCategories(IBreakpoint breakpoint) {
         IMarker marker = breakpoint.getMarker();
         if (marker != null) {
             IProject project = marker.getResource().getProject();

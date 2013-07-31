@@ -65,7 +65,8 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
      */
-    public void handleDebugEvents(DebugEvent[] events) {
+    @Override
+	public void handleDebugEvents(DebugEvent[] events) {
         for (int i = 0; i < events.length; i++) {
             DebugEvent event= events[i];
             Object source= event.getSource();
@@ -91,7 +92,8 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.IBreakpointManagerListener#breakpointManagerEnablementChanged(boolean)
      */
-    public void breakpointManagerEnablementChanged(boolean enabled) {
+    @Override
+	public void breakpointManagerEnablementChanged(boolean enabled) {
         // if the user changes the breakpoint manager enablement, don't restore it
         fAutoSkip = false;
     }
@@ -123,7 +125,8 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
     /* (non-Javadoc)
      * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
      */
-    public void run(IProgressMonitor monitor) throws CoreException {
+    @Override
+	public void run(IProgressMonitor monitor) throws CoreException {
         getDebugPlugin().addDebugEventListener(this);
         IBreakpointManager breakpointManager = getBreakpointManager();
         fAutoSkip = DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE) && breakpointManager.isEnabled();
@@ -132,7 +135,8 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
             breakpointManager.addBreakpointManagerListener(this);
         }
         Job job = new Job(ActionMessages.RunToLineHandler_0) { 
-            protected IStatus run(IProgressMonitor jobMonitor) {
+            @Override
+			protected IStatus run(IProgressMonitor jobMonitor) {
                 if (!jobMonitor.isCanceled()) {
                     fTarget.breakpointAdded(fBreakpoint);
                     try {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,19 +27,20 @@ import org.eclipse.debug.ui.IBreakpointTypeCategory;
  */
 public class BreakpointTypeOrganizer extends AbstractBreakpointOrganizerDelegate {
 	
-	private Map fTypes = new HashMap();
+	private Map<String, IAdaptable[]> fTypes = new HashMap<String, IAdaptable[]>();
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories(org.eclipse.debug.core.model.IBreakpoint)
      */
-    public IAdaptable[] getCategories(IBreakpoint breakpoint) {
+    @Override
+	public IAdaptable[] getCategories(IBreakpoint breakpoint) {
         IBreakpointTypeCategory category = (IBreakpointTypeCategory) breakpoint.getAdapter(IBreakpointTypeCategory.class);
         if (category != null) {
             return new IAdaptable[]{category};
         }
     	String name = DebugPlugin.getDefault().getBreakpointManager().getTypeName(breakpoint);
     	if (name != null) {
-    		IAdaptable[] categories = (IAdaptable[]) fTypes.get(name);
+    		IAdaptable[] categories = fTypes.get(name);
     		if (categories == null) {
     			categories = new IAdaptable[]{new BreakpointTypeCategory(name)};
     			fTypes.put(name, categories);
@@ -52,8 +53,8 @@ public class BreakpointTypeOrganizer extends AbstractBreakpointOrganizerDelegate
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
     	fTypes.clear();
     }
-
 }

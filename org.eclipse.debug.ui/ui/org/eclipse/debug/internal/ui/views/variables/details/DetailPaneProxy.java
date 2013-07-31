@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -173,7 +173,7 @@ public class DetailPaneProxy implements ISaveablePart {
 	 * @param required the class to get the adapter for
 	 * @return the {@link IAdaptable} for the given class or <code>null</code>
 	 */
-	public Object getAdapter(Class required){
+	public Object getAdapter(Class<?> required) {
 		if (fCurrentPane != null && fCurrentPane instanceof IAdaptable){
 			return ((IAdaptable)fCurrentPane).getAdapter(required);
 		}
@@ -203,8 +203,12 @@ public class DetailPaneProxy implements ISaveablePart {
 	private void setupPane(String paneID, IStructuredSelection selection) {
 		try {
 			fParentContainer.getParentComposite().setRedraw(false);
-			if (fCurrentPane != null) fCurrentPane.dispose();
-			if (fCurrentControl != null && !fCurrentControl.isDisposed()) fCurrentControl.dispose();
+			if (fCurrentPane != null) {
+				fCurrentPane.dispose();
+			}
+			if (fCurrentControl != null && !fCurrentControl.isDisposed()) {
+				fCurrentControl.dispose();
+			}
 			fCurrentPane = null;
 			fCurrentPane = DetailPaneManager.getDefault().getDetailPaneFromID(paneID);
 			if (fCurrentPane != null){
@@ -223,9 +227,11 @@ public class DetailPaneProxy implements ISaveablePart {
 					fCurrentPane.display(selection);
 					if (fParentContainer instanceof IDetailPaneContainer2) {
 						fCurrentControl.addFocusListener(new FocusAdapter() {
+							@Override
 							public void focusGained(FocusEvent e) {
 								updateSelectionProvider(true);
 							}
+							@Override
 							public void focusLost(FocusEvent e) {
 								updateSelectionProvider(false);
 							}
@@ -233,11 +239,11 @@ public class DetailPaneProxy implements ISaveablePart {
 					}					
 				} else{
 					createErrorLabel(DetailMessages.DetailPaneProxy_0);
-					DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(DetailMessages.DetailPaneProxy_2, new String[]{fCurrentPane.getID()})))); 
+					DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(DetailMessages.DetailPaneProxy_2, new Object[] { fCurrentPane.getID() }))));
 				}
 			} else {
 				createErrorLabel(DetailMessages.DetailPaneProxy_0);
-				DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(DetailMessages.DetailPaneProxy_3, new String[]{paneID}))));
+				DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(DetailMessages.DetailPaneProxy_3, new Object[] { paneID }))));
 			}
 		} finally {
 			fParentContainer.getParentComposite().setRedraw(true);
@@ -272,8 +278,12 @@ public class DetailPaneProxy implements ISaveablePart {
 	 * @param message The message to display
 	 */
 	private void createErrorLabel(String message){
-		if (fCurrentPane != null) fCurrentPane.dispose();
-		if (fCurrentControl != null && !fCurrentControl.isDisposed()) fCurrentControl.dispose();
+		if (fCurrentPane != null) {
+			fCurrentPane.dispose();
+		}
+		if (fCurrentControl != null && !fCurrentControl.isDisposed()) {
+			fCurrentControl.dispose();
+		}
 		fCurrentControl = SWTFactory.createComposite(fParentContainer.getParentComposite(), 1, 1, GridData.FILL_HORIZONTAL);
 		SWTFactory.createLabel((Composite) fCurrentControl, message, 1);
 		fParentContainer.getParentComposite().layout();
@@ -282,6 +292,7 @@ public class DetailPaneProxy implements ISaveablePart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		ISaveablePart saveable = getSaveable();
 		if (saveable != null) {
@@ -292,6 +303,7 @@ public class DetailPaneProxy implements ISaveablePart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
 	 */
+	@Override
 	public void doSaveAs() {
 		ISaveablePart saveable = getSaveable();
 		if (saveable != null) {
@@ -302,6 +314,7 @@ public class DetailPaneProxy implements ISaveablePart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		ISaveablePart saveable = getSaveable();
 		if (saveable != null) {
@@ -313,6 +326,7 @@ public class DetailPaneProxy implements ISaveablePart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		ISaveablePart saveable = getSaveable();
 		if (saveable != null) {
@@ -324,6 +338,7 @@ public class DetailPaneProxy implements ISaveablePart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
 	 */
+	@Override
 	public boolean isSaveOnCloseNeeded() {
 		ISaveablePart saveable = getSaveable();
 		if (saveable != null) {

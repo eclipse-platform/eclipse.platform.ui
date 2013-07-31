@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ public class EmbeddedBreakpointsViewer {
 	private Tree fTree = null;
 	private BreakpointsViewer fViewer = null;
 	private ICheckStateListener fCheckListener = new ICheckStateListener() {
+		@Override
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			updateCheckedState(event.getElement(), event.getChecked());
 		}
@@ -111,7 +112,7 @@ public class EmbeddedBreakpointsViewer {
 		if(view != null) {
 			//if we have handle to the view try get the current attributes, that way the 
 			//presentation of the embedded viewer matches the current view
-            Map map = null;
+			Map<String, Object> map = null;
 		    IDebugModelPresentation current = (IDebugModelPresentation)view.getAdapter(IDebugModelPresentation.class);
 		    if (current instanceof DelegatingModelPresentation) {
 				map = ((DelegatingModelPresentation) current).getAttributes();
@@ -119,7 +120,7 @@ public class EmbeddedBreakpointsViewer {
 			if(map != null) {
 				Object key = null;
 				IDebugModelPresentation newpres = labelprovider.getPresentation();
-				for(Iterator iter = map.keySet().iterator(); iter.hasNext();) {
+				for (Iterator<String> iter = map.keySet().iterator(); iter.hasNext();) {
 					key = iter.next();
 					newpres.setAttribute((String) key, map.get(key));
 				}
@@ -145,7 +146,7 @@ public class EmbeddedBreakpointsViewer {
 		Object[] items = fSelection.toArray();
 		fViewer.setGrayedElements(new Object[] {});
 		fViewer.setCheckedElements(new Object[] {});
-		ArrayList list = new ArrayList();
+		ArrayList<IBreakpoint> list = new ArrayList<IBreakpoint>();
 		for(int i = 0; i < items.length; i++) {
 			Object item = items[i];
 			IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(item, IBreakpoint.class);
@@ -166,7 +167,7 @@ public class EmbeddedBreakpointsViewer {
 	 * @param container the container to get breakpoints from
 	 * @param list the list of breakpoints to update state for
 	 */
-	private void getBreakpointsFromContainers(IBreakpointContainer container, ArrayList list) {
+	private void getBreakpointsFromContainers(IBreakpointContainer container, ArrayList<IBreakpoint> list) {
         IBreakpoint[] bps = container.getBreakpoints();
         list.ensureCapacity(list.size() + bps.length);
         for (int j = 0; j < bps.length; j++) {
@@ -180,7 +181,7 @@ public class EmbeddedBreakpointsViewer {
 	 */
 	public IStructuredSelection getCheckedElements() {
 		Object[] list = fViewer.getCheckedElements();
-		Vector selected = new Vector();
+		Vector<Object> selected = new Vector<Object>();
 		for(int i = 0; i < list.length; i++) {
 			if(!selected.contains(list[i])) {
 				selected.addElement(list[i]);
@@ -203,12 +204,12 @@ public class EmbeddedBreakpointsViewer {
 	 * @return a list of widget occurrences to update or an empty list
 	 */
     private Widget[] searchItems(Object element) {
-        ArrayList list = new ArrayList();
+		ArrayList<TreeItem> list = new ArrayList<TreeItem>();
         TreeItem[] items = fTree.getItems();
         for (int i = 0; i < items.length; i++) {
         	findAllOccurrences(items[i], element, list);
         }
-        return (Widget[]) list.toArray(new Widget[0]);
+        return list.toArray(new Widget[0]);
     }
     
     /**
@@ -217,7 +218,7 @@ public class EmbeddedBreakpointsViewer {
      * @param item the item in the tree
      * @param element the element to compare
      */
-    private void findAllOccurrences(TreeItem item, Object element, ArrayList list) {
+	private void findAllOccurrences(TreeItem item, Object element, ArrayList<TreeItem> list) {
         if (element.equals(item.getData())) {
                 list.add(item);
         }
@@ -245,7 +246,7 @@ public class EmbeddedBreakpointsViewer {
         	}
         }
         else if (obj instanceof BreakpointContainer) {
-        	ArrayList bps = new ArrayList();
+			ArrayList<IBreakpoint> bps = new ArrayList<IBreakpoint>();
         	getBreakpointsFromContainers((BreakpointContainer)obj, bps);
         	for(int j = 0; j < bps.size(); j++) {
         		updateCheckedState(bps.get(j), enable);

@@ -15,7 +15,6 @@ package org.eclipse.debug.internal.ui.viewers.model;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -76,6 +75,7 @@ import org.eclipse.ui.IMemento;
  * 
  * @since 3.3
  */
+@SuppressWarnings("deprecation")
 public class InternalTreeModelViewer extends TreeViewer implements IInternalTreeModelViewer, org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer
 {
 	
@@ -90,25 +90,25 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
      * Map of columns presentation id to its visible columns id's (String[])
      * When a columns presentation is not in the map, default settings are used.
      */
-    private final Map fVisibleColumns = new HashMap();
+	private final Map<String, String[]> fVisibleColumns = new HashMap<String, String[]>();
     
     /**
      * Map of column id's to persisted sizes
      */
-    private final Map fColumnSizes = new HashMap();
+	private final Map<Object, Integer> fColumnSizes = new HashMap<Object, Integer>();
     
     /**
      * Map of column presentation id's to an array of integers representing the column order
      * for that presentation, or <code>null</code> if default.
      */
-    private final Map fColumnOrder = new HashMap();
+	private final Map<String, int[]> fColumnOrder = new HashMap<String, int[]>();
     
     /**
      * Map of column presentation id to whether columns should be displayed
      * for that presentation (the user can toggle columns on/off when a 
      * presentation is optional.
      */
-    private final Map fShowColumns = new HashMap();    
+	private final Map<String, Boolean> fShowColumns = new HashMap<String, Boolean>();
     
     /**
      * Item's tree path cache 
@@ -163,6 +163,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		/* (non-Javadoc)
 		 * @see org.eclipse.swt.events.ControlListener#controlMoved(org.eclipse.swt.events.ControlEvent)
 		 */
+		@Override
 		public void controlMoved(ControlEvent e) {
 			persistColumnOrder();
 		}
@@ -170,6 +171,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		/* (non-Javadoc)
 		 * @see org.eclipse.swt.events.ControlListener#controlResized(org.eclipse.swt.events.ControlEvent)
 		 */
+		@Override
 		public void controlResized(ControlEvent e) {
 			persistColumnSizes();
 		}
@@ -187,6 +189,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
 		 */
+		@Override
 		public boolean canModify(Object element, String property) {
 			IElementEditor editor = ViewerAdapterService.getElementEditor(element);
 			if (editor != null) {
@@ -213,6 +216,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object, java.lang.String)
 		 */
+		@Override
 		public Object getValue(Object element, String property) {
 			if (fModifier != null) {
 				return fModifier.getValue(element, property);
@@ -223,6 +227,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object, java.lang.String, java.lang.Object)
 		 */
+		@Override
 		public void modify(Object element, String property, Object value) {
 			if (fModifier != null) {
 				if (element instanceof Item) {
@@ -311,9 +316,11 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * 
 	 * @see org.eclipse.jface.viewers.TreeViewer#hookControl(org.eclipse.swt.widgets.Control)
 	 */
+	@Override
 	protected void hookControl(Control control) {
 		Tree treeControl = (Tree) control;
 		treeControl.addListener(SWT.SetData, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				// to avoid flash, reset previous label data
 				TreeItem item = (TreeItem) event.item;
@@ -375,6 +382,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
      * Override the default handler for invalid selection to allow model 
      * selection policy to select the new selection.
      */
+	@Override
 	protected void handleInvalidSelection(ISelection selection, ISelection newSelection) {
 	    IModelSelectionPolicy selectionPolicy = ViewerAdapterService.getSelectionPolicy(selection, getPresentationContext());
 	    if (selectionPolicy != null) {
@@ -399,6 +407,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ContentViewer#handleDispose(org.eclipse.swt.events.DisposeEvent)
 	 */
+	@Override
 	protected void handleDispose(DisposeEvent event) {
 		if (fColumnPresentation != null) {
 			fColumnPresentation.dispose();
@@ -413,10 +422,12 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * 
 	 * @return presentation context
 	 */
+	@Override
 	public IPresentationContext getPresentationContext() {
 		return fContext;
 	}
 	
+	@Override
 	protected void unmapElement(Object element, Widget widget) {
 		if (fNotifyUnmap) {
 			// TODO: should we update the filter with the "new non-identical element"?
@@ -425,6 +436,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		super.unmapElement(element, widget);
 	}
 	
+	@Override
 	protected void associate(Object element, Item item) {
 		// see AbstractTreeViewer.associate(...)
 		Object data = item.getData();
@@ -448,6 +460,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * 
 	 * @see org.eclipse.jface.viewers.TreeViewer#mapElement(java.lang.Object, org.eclipse.swt.widgets.Widget)
 	 */
+	@Override
 	protected void mapElement(Object element, Widget widget) {
 		super.mapElement(element, widget);
 		if (widget instanceof Item) {
@@ -463,6 +476,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * 
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#insert(java.lang.Object, java.lang.Object, int)
 	 */
+	@Override
 	public void insert(Object parentElementOrTreePath, Object element, int position) {
 		try {
 			fInserting = true;
@@ -478,6 +492,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#hasFilters()
 	 */
+	@Override
 	protected boolean hasFilters() {
 		if (fInserting) {
 			return false;
@@ -485,6 +500,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		return super.hasFilters();
 	}
 	
+	@Override
 	protected void unmapAllElements() {
 	    // Do nothing when called from StructuredViewer.setInput(), to avoid 
 	    // clearing elements before viewer state is saved.
@@ -497,6 +513,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#inputChanged(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	protected void inputChanged(Object input, Object oldInput) {
 	    fCellModifier.clear();
         // Clear items map now that ITreeModelContentProvider.inputChanged() was already called.
@@ -626,6 +643,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		}
 	}	
 
+	@Override
 	protected void internalRefresh(Object element, boolean updateLabels) {
 	    ITreeModelContentProvider contentProvider = (ITreeModelContentProvider)getContentProvider(); 
 	    
@@ -677,7 +695,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	}
 	
 	protected boolean isShowColumns(String columnPresentationId) {
-		Boolean bool = (Boolean) fShowColumns.get(columnPresentationId);
+		Boolean bool = fShowColumns.get(columnPresentationId);
 		if (bool == null) {
 			return true;
 		}
@@ -719,7 +737,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 				}
 				column.setData(id);
 			}
-	    	int[] order = (int[]) fColumnOrder.get(presentation.getId());
+	    	int[] order = fColumnOrder.get(presentation.getId());
 	    	if (order != null) {
 	    		tree.setColumnOrder(order);
 	    	}
@@ -744,7 +762,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
     	
         if (avg == 0) {
             tree.addPaintListener(new PaintListener() {
-                public void paintControl(PaintEvent e) {
+                @Override
+				public void paintControl(PaintEvent e) {
                     Tree tree2 = getTree();
                     String[] visibleColumns = getVisibleColumns();
                     if (visibleColumns != null) {
@@ -766,7 +785,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
             TreeColumn treeColumn = columns[i];
             Object colData = treeColumn.getData();
             String columnId = colData instanceof String ? (String) colData : null;            
-            Integer width = (Integer) fColumnSizes.get(colData);
+            Integer width = fColumnSizes.get(colData);
             if (width == null) {
             	int ans = getInitialColumnWidth(columnId, treeWidgetWidth, visibleColumnIds);
             	if (ans == -1) {
@@ -797,11 +816,12 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 *  
 	 * @return visible columns or <code>null</code>
 	 */
+	@Override
 	public String[] getVisibleColumns() {
 		if (isShowColumns()) {
 			IColumnPresentation presentation = getColumnPresentation();
 			if (presentation != null) {
-				String[] columns = (String[]) fVisibleColumns.get(presentation.getId());
+				String[] columns = fVisibleColumns.get(presentation.getId());
 				if (columns == null) {
 					return presentation.getInitialColumns();
 				} else {
@@ -892,28 +912,22 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 */
 	public void saveState(IMemento memento) {
 		if (!fColumnSizes.isEmpty()) {
-			Iterator iterator = fColumnSizes.entrySet().iterator();
-			while (iterator.hasNext()) {
-				Map.Entry entry = (Entry) iterator.next();
+			for (Entry<Object, Integer> entry : fColumnSizes.entrySet()) {
 				IMemento sizes = memento.createChild(COLUMN_SIZES, (String)entry.getKey());
-				sizes.putInteger(SIZE, ((Integer)entry.getValue()).intValue());
+				sizes.putInteger(SIZE, entry.getValue().intValue());
 			}
 		}
 		if (!fShowColumns.isEmpty()) {
-			Iterator iterator = fShowColumns.entrySet().iterator();
-			while (iterator.hasNext()) {
-				Map.Entry entry = (Entry) iterator.next();
-				IMemento sizes = memento.createChild(SHOW_COLUMNS, (String)entry.getKey());
-				sizes.putString(SHOW_COLUMNS, ((Boolean)entry.getValue()).toString());
+			for (Entry<String, Boolean> entry : fShowColumns.entrySet()) {
+				IMemento sizes = memento.createChild(SHOW_COLUMNS, entry.getKey());
+				sizes.putString(SHOW_COLUMNS, entry.getValue().toString());
 			}			
 		}
 		if (!fVisibleColumns.isEmpty()) {
-			Iterator iterator = fVisibleColumns.entrySet().iterator();
-			while (iterator.hasNext()) {
-				Map.Entry entry = (Entry) iterator.next();
-				String id = (String) entry.getKey();
+			for (Entry<String, String[]> entry : fVisibleColumns.entrySet()) {
+				String id = entry.getKey();
 				IMemento visible = memento.createChild(VISIBLE_COLUMNS, id);
-				String[] columns = (String[]) entry.getValue();
+				String[] columns = entry.getValue();
 				visible.putInteger(SIZE, columns.length);
 				for (int i = 0; i < columns.length; i++) {
 					visible.putString(COLUMN+Integer.toString(i), columns[i]);
@@ -921,12 +935,10 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			}
 		}
 		if (!fColumnOrder.isEmpty()) {
-			Iterator iterator = fColumnOrder.entrySet().iterator();
-			while (iterator.hasNext()) {
-				Map.Entry entry = (Entry) iterator.next();
-				String id = (String) entry.getKey();
+			for (Entry<String, int[]> entry : fColumnOrder.entrySet()) {
+				String id = entry.getKey();
 				IMemento orderMemento = memento.createChild(COLUMN_ORDER, id);
-				int[] order = (int[]) entry.getValue();
+				int[] order = entry.getValue();
 				orderMemento.putInteger(SIZE, order.length);
 				for (int i = 0; i < order.length; i++) {
 					orderMemento.putInteger(COLUMN+Integer.toString(i), order[i]);
@@ -1010,6 +1022,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * @param candidate the candidate for the new selection
 	 * @return if the current selection should be replaced with the candidate selection
 	 */
+	@Override
 	public boolean overrideSelection(ISelection current, ISelection candidate) {
 		IModelSelectionPolicy selectionPolicy = ViewerAdapterService.getSelectionPolicy(current, getPresentationContext());
 		if (selectionPolicy == null) {
@@ -1027,6 +1040,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean)
 	 */
+	@Override
 	public void setSelection(ISelection selection, boolean reveal) {
 		if (!overrideSelection(getSelection(), selection)) {
 			return;
@@ -1038,6 +1052,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean, boolean)
 	 */
+	@Override
 	public void setSelection(ISelection selection, boolean reveal, boolean force) {
 		trySelection(selection, reveal, force);
 	}
@@ -1045,6 +1060,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer#trySelection(org.eclipse.jface.viewers.ISelection, boolean, boolean)
 	 */
+	@Override
 	public boolean trySelection(ISelection selection, boolean reveal, boolean force) {
 		if (force || overrideSelection(getSelection(), selection)) {
 			super.setSelection(selection, reveal);
@@ -1057,6 +1073,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * 
 	 * @param listener listener
 	 */
+	@Override
 	public void addViewerUpdateListener(IViewerUpdateListener listener) {
 		((ITreeModelContentProvider)getContentProvider()).addViewerUpdateListener(listener);
 	}
@@ -1066,6 +1083,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * 
 	 * @param listener listener
 	 */
+	@Override
 	public void removeViewerUpdateListener(IViewerUpdateListener listener) {
 	    ITreeModelContentProvider cp = (ITreeModelContentProvider)getContentProvider();
 		if (cp !=  null) {
@@ -1078,6 +1096,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * 
 	 * @param listener model delta listener
 	 */
+	@Override
 	public void addModelChangedListener(IModelChangedListener listener) {
 		((ITreeModelContentProvider)getContentProvider()).addModelChangedListener(listener); 
 	}
@@ -1087,6 +1106,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * 
 	 * @param listener model delta listener
 	 */
+	@Override
 	public void removeModelChangedListener(IModelChangedListener listener) {
 	    ITreeModelContentProvider cp = (ITreeModelContentProvider)getContentProvider();
 		if (cp !=  null) {
@@ -1094,11 +1114,13 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		}
 	}
 
-    public void addStateUpdateListener(IStateUpdateListener listener) {
+    @Override
+	public void addStateUpdateListener(IStateUpdateListener listener) {
         ((ITreeModelContentProvider)getContentProvider()).addStateUpdateListener(listener);
     }
     
-    public void removeStateUpdateListener(IStateUpdateListener listener) {
+    @Override
+	public void removeStateUpdateListener(IStateUpdateListener listener) {
         ITreeModelContentProvider cp = (ITreeModelContentProvider)getContentProvider();
         if (cp !=  null) {
             cp.removeStateUpdateListener(listener);
@@ -1108,6 +1130,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	/*
 	 * (non-Javadoc) Method declared in AbstractTreeViewer.
 	 */
+	@Override
 	protected void doUpdateItem(final Item item, Object element) {
 		if (!(item instanceof TreeItem)) {
 			return;
@@ -1132,10 +1155,12 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		}
 	}
 	
+	@Override
 	public void addLabelUpdateListener(ILabelUpdateListener listener) {
 	    ((ITreeModelLabelProvider)getLabelProvider()).addLabelUpdateListener(listener);
 	}
 	
+	@Override
 	public void removeLabelUpdateListener(ILabelUpdateListener listener) {
 	    if (!getControl().isDisposed()) {
 	        ((ITreeModelLabelProvider)getLabelProvider()).removeLabelUpdateListener(listener);
@@ -1165,6 +1190,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		return null;
 	}
 	
+	@Override
 	public Item[] getChildren(Widget widget) {
 		return super.getChildren(widget);
 	}
@@ -1174,6 +1200,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * @param item the item to compute the {@link TreePath} for
 	 * @return {@link TreePath}
 	 */
+	@Override
 	protected TreePath getTreePathFromItem(Item item) {
 		return super.getTreePathFromItem(item);
 	}	
@@ -1190,6 +1217,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#internalRefreshStruct(org.eclipse.swt.widgets.Widget,
 	 *      java.lang.Object, boolean)
 	 */
+	@Override
 	protected void internalRefreshStruct(Widget widget, Object element,
 			boolean updateLabels) {
 		// clear all starting with the given widget
@@ -1298,7 +1326,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 //**************************************************************************    
 // Another couple of methods copied from TreeViewer to workaround the UI bug 266189.
 // 	
-    protected void createChildren(Widget widget) {
+    @Override
+	protected void createChildren(Widget widget) {
         Object element = widget.getData();
         if (element == null && widget instanceof TreeItem) {
             // parent has not been materialized
@@ -1349,6 +1378,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * 
 	 * @param elementPath tree path to element to consider for expansion
 	 */
+	@Override
 	public void autoExpand(TreePath elementPath) {
 		int level = getAutoExpandLevel();
 		if (level > 0 || level == ITreeModelViewer.ALL_LEVELS) {
@@ -1358,7 +1388,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		}
 	}
 
-    public int findElementIndex(TreePath parentPath, Object element) {
+    @Override
+	public int findElementIndex(TreePath parentPath, Object element) {
         Widget parentItem = findItem(parentPath);
         if (parentItem != null) {
             Item[] children = getChildren(parentItem);
@@ -1373,7 +1404,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         return -1;
     }
 
-    public boolean getElementChildrenRealized(TreePath parentPath) {
+    @Override
+	public boolean getElementChildrenRealized(TreePath parentPath) {
         Widget parentItem = findItem(parentPath);
         if (parentItem != null) {
             Item[] children = getChildren(parentItem);
@@ -1386,7 +1418,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         return true;
     }
     
-    public Display getDisplay() {
+    @Override
+	public Display getDisplay() {
         Control control = getControl();
         if (control != null) {
             return  control.getDisplay();
@@ -1396,7 +1429,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 
     protected static final String[] STATE_PROPERTIES = new String[]{ IBasicPropertyConstants.P_TEXT, IBasicPropertyConstants.P_IMAGE };
     
-    public void update(Object element) {
+    @Override
+	public void update(Object element) {
         update(element, STATE_PROPERTIES);
     }
     
@@ -1412,7 +1446,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
     static String PREV_CHECKED_KEY = "PREV_CHECKED_KEY"; //$NON-NLS-1$
     static String PREV_GRAYED_KEY = "PREV_GRAYED_KEY"; //$NON-NLS-1$
 
-    public void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] imageDescriptors,
+    @Override
+	public void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] imageDescriptors,
         FontData[] fontDatas, RGB[] _foregrounds, RGB[] _backgrounds) 
     {
         Widget widget = findItem(path);
@@ -1512,7 +1547,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         }
     }
     
-    public ViewerLabel getElementLabel(TreePath path, String columnId) {
+    @Override
+	public ViewerLabel getElementLabel(TreePath path, String columnId) {
         if (path.getSegmentCount() == 0) {
             return null;
         }
@@ -1545,7 +1581,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         return null;
     }
 
-    public void reveal(TreePath path, int index) {
+    @Override
+	public void reveal(TreePath path, int index) {
         Widget item = findItem(path);
         TreeItem[] children = null;
         if (item instanceof TreeItem) {
@@ -1558,7 +1595,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         }
     }
     
-    public int getChildCount(TreePath path) {
+    @Override
+	public int getChildCount(TreePath path) {
         if (path.getSegmentCount() == 0) {
             return ((Tree)getControl()).getItemCount();
         } else {
@@ -1572,7 +1610,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         return -1;
     }
     
-    public Object getChildElement(TreePath path, int index) {
+    @Override
+	public Object getChildElement(TreePath path, int index) {
         TreeItem childItem = null;
         if (path.getSegmentCount() == 0) {
             Tree tree = (Tree)getControl();
@@ -1595,7 +1634,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         return null;
     }
 
-    public TreePath getTopElementPath() {
+    @Override
+	public TreePath getTopElementPath() {
         TreeItem topItem = ((Tree)getControl()).getTopItem();
         if (topItem != null && topItem.getData() != null) {
             return getTreePathFromItem(topItem);
@@ -1603,10 +1643,11 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         return null;
     }
     
-    public boolean saveElementState(TreePath path, ModelDelta delta, int flagsToSave) {
+    @Override
+	public boolean saveElementState(TreePath path, ModelDelta delta, int flagsToSave) {
         Tree tree = (Tree) getControl();
         TreeItem[] selection = tree.getSelection();
-        Set set = new HashSet();
+		Set<TreeItem> set = new HashSet<TreeItem>();
         for (int i = 0; i < selection.length; i++) {
             set.add(selection[i]);
         }
@@ -1647,7 +1688,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         }
     }
     
-    private void doSaveElementState(TreePath parentPath, ModelDelta delta, TreeItem item, Collection set, int index, int flagsToSave) {
+	private void doSaveElementState(TreePath parentPath, ModelDelta delta, TreeItem item, Collection<TreeItem> set, int index, int flagsToSave) {
         Object element = item.getData();
         if (element != null) {
             boolean expanded = item.getExpanded();
@@ -1681,7 +1722,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         }
     }
     
-    public void updateViewer(IModelDelta delta) {
+    @Override
+	public void updateViewer(IModelDelta delta) {
         ((ITreeModelContentProvider)getContentProvider()).updateModel(delta, ITreeModelContentProvider.ALL_MODEL_DELTA_FLAGS);
     }
 
@@ -1689,6 +1731,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelCheckProvider#setElementChecked(org.eclipse.jface.viewers.TreePath, boolean, boolean)
      */
+	@Override
 	public void setElementChecked(TreePath path, boolean checked, boolean grayed) {
 	   	 Widget widget = findItem(path);
 		 
@@ -1703,7 +1746,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		 }
 	}
 	
-    public boolean getElementChecked(TreePath path) {
+    @Override
+	public boolean getElementChecked(TreePath path) {
         Widget widget = findItem(path);
         
         if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
@@ -1720,7 +1764,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
      * @param path the path of the element to set grayed
      * @return grayed
      */
-    public boolean getElementGrayed(TreePath path) {
+    @Override
+	public boolean getElementGrayed(TreePath path) {
         Widget widget = findItem(path);
         
         if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
@@ -1731,7 +1776,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         return false;
     }
 
-    public boolean getHasChildren(Object elementOrTreePath) {
+    @Override
+	public boolean getHasChildren(Object elementOrTreePath) {
         if (elementOrTreePath instanceof TreePath && 
             ((TreePath)elementOrTreePath).getSegmentCount() == 0) 
         {
@@ -1750,7 +1796,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         return false;
     }
     
-    public TreePath[] getElementPaths(Object element) {
+    @Override
+	public TreePath[] getElementPaths(Object element) {
         Widget[] items = internalFindItems(element);
         TreePath[] paths = new TreePath[items.length];
         for (int i = 0; i < items.length; i++) {
@@ -1767,6 +1814,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#handleSelect(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	protected void handleSelect(SelectionEvent event) {
         super.handleSelect(event);
 
@@ -1794,6 +1842,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         }
 	}
 	
+	@Override
 	protected void handleTreeExpand(TreeEvent event) {
         super.handleTreeExpand(event);
         IContentProvider contentProvider = getContentProvider();
@@ -1803,6 +1852,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         }
 	}
 	
+	@Override
 	protected void handleTreeCollapse(TreeEvent event) {
 	    super.handleTreeCollapse(event);
         IContentProvider contentProvider = getContentProvider();
@@ -1815,6 +1865,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget#clearSelectionQuiet()
 	 */
+	@Override
 	public void clearSelectionQuiet() {
 		getTree().setSelection(new TreeItem[0]);
 	}

@@ -42,6 +42,7 @@ public class FindElementDialog extends ElementListSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.ElementListSelectionDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Control comp = super.createDialogArea(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IDebugHelpContextIds.FIND_ELEMENT_DIALOG);

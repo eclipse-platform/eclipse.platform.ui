@@ -48,6 +48,7 @@ public class CreateLaunchConfigurationAction extends AbstractLaunchConfiguration
 	/**
 	 * @see AbstractLaunchConfigurationAction#performAction()
 	 */
+	@Override
 	protected void performAction() {
 		Object object = getStructuredSelection().getFirstElement();
 		//double click with Ctrl key mask results in empty selection: bug 156087
@@ -89,6 +90,7 @@ public class CreateLaunchConfigurationAction extends AbstractLaunchConfiguration
 	/**
 	 * @see org.eclipse.ui.actions.SelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return selection.size() == 1;
 	}
@@ -96,6 +98,7 @@ public class CreateLaunchConfigurationAction extends AbstractLaunchConfiguration
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getDisabledImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
 		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_NEW_CONFIG);
 	}
@@ -103,6 +106,7 @@ public class CreateLaunchConfigurationAction extends AbstractLaunchConfiguration
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_NEW_CONFIG);
 	}
@@ -110,6 +114,7 @@ public class CreateLaunchConfigurationAction extends AbstractLaunchConfiguration
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getToolTipText()
 	 */
+	@Override
 	public String getToolTipText() {
 		return LaunchConfigurationsMessages.LaunchConfigurationsDialog_0;
 	}

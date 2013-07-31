@@ -66,6 +66,7 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 	 * 
 	 * @since 3.2
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite parentc = (Composite)super.createDialogArea(parent);
 		fSubfoldersButton = new Button(parentc, SWT.CHECK);
@@ -86,6 +87,7 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 		setInput(ResourcesPlugin.getWorkspace().getRoot());
         setComparator(new ResourceComparator(ResourceComparator.NAME));
 		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
+			@Override
 			public IStatus validate(Object[] selection) {
 				for (int i= 0; i < selection.length; i++) {
 					if (!(selection[i] instanceof IFolder)) {
@@ -102,6 +104,7 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,  IDebugHelpContextIds.ADD_FOLDER_CONTAINER_DIALOG);
 		setSearchSubfolders(DebugUIPlugin.getDefault().getDialogSettings().getBoolean(LAST_SUBDIR_SETTING));
 		addFilter(new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if(!(element instanceof IFolder)) {
 					if(element instanceof IProject) {
@@ -137,6 +140,7 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		fSearchSubfolders = fSubfoldersButton.getSelection();
 		DebugUIPlugin.getDefault().getDialogSettings().put(LAST_SUBDIR_SETTING, fSearchSubfolders);

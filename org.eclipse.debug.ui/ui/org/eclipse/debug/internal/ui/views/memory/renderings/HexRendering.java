@@ -31,6 +31,7 @@ public class HexRendering extends AbstractAsyncTableRendering {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.memory.AbstractTableRendering#getString(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[], java.lang.String)
 	 */
+	@Override
 	public String getString(String dataType, BigInteger address,
 			MemoryByte[] data) {
 		StringBuffer strBuffer = new StringBuffer();
@@ -56,6 +57,7 @@ public class HexRendering extends AbstractAsyncTableRendering {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.memory.AbstractTableRendering#getBytes(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[], java.lang.String)
 	 */
+	@Override
 	public byte[] getBytes(String dataType, BigInteger address,
 			MemoryByte[] currentValues, String data) {
 		byte[] bytes = RenderingsUtil.convertHexStringToByteArray(data, currentValues.length, getNumCharsPerByte());
@@ -63,6 +65,7 @@ public class HexRendering extends AbstractAsyncTableRendering {
 		return bytes;
 	}
 	
+	@Override
 	public int getNumCharsPerByte()
 	{
 		return 2;

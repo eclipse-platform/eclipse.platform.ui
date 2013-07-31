@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class WorkspaceSourceContainer extends CompositeSourceContainer {
-	
+
 	/**
 	 * Unique identifier for the workspace source container type
 	 * (value <code>org.eclipse.debug.core.containerType.workspace</code>).
@@ -35,39 +35,44 @@ public class WorkspaceSourceContainer extends CompositeSourceContainer {
 	public static final String TYPE_ID = DebugPlugin.getUniqueIdentifier() + ".containerType.workspace"; //$NON-NLS-1$
 
 	public WorkspaceSourceContainer() {
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
+	@Override
 	public String getName() {
-		return SourceLookupMessages.WorkspaceSourceContainer_0; 
+		return SourceLookupMessages.WorkspaceSourceContainer_0;
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof WorkspaceSourceContainer;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
-	 */	
+	 */
+	@Override
 	public int hashCode() {
 		return ResourcesPlugin.getWorkspace().hashCode();
 	}
-			
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
+	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
+	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		ISourceContainer[] containers = new ISourceContainer[projects.length];

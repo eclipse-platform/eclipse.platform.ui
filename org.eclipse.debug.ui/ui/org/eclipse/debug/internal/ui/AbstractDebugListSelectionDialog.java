@@ -45,6 +45,7 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.AbstractDebugSelectionDialog#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected StructuredViewer createViewer(Composite parent){
 		//by default return a table viewer
 		fListViewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
@@ -57,13 +58,16 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
 	 */
+	@Override
 	protected void addViewerListeners(StructuredViewer viewer) {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				getButton(IDialogConstants.OK_ID).setEnabled(isValid());
 			}
 		});
 		viewer.addDoubleClickListener(new IDoubleClickListener(){
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (isValid()){
 					okPressed();
@@ -75,6 +79,7 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.AbstractDebugSelectionDialog#isValid()
 	 */
+	@Override
 	protected boolean isValid() {
 		if(fListViewer != null) {
 			ISelection sel = fListViewer.getSelection();
@@ -88,7 +93,8 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
-    protected void okPressed() {
+    @Override
+	protected void okPressed() {
 		ISelection selection = fViewer.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			setResult(((IStructuredSelection) selection).toList());

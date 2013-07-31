@@ -42,6 +42,7 @@ public class PDAMemoryBlock extends PDADebugElement implements IMemoryBlock {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#getStartAddress()
 	 */
+	@Override
 	public long getStartAddress() {
 		return fStart;
 	}
@@ -49,6 +50,7 @@ public class PDAMemoryBlock extends PDADebugElement implements IMemoryBlock {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#getLength()
 	 */
+	@Override
 	public long getLength() {
 		return fLength;
 	}
@@ -56,6 +58,7 @@ public class PDAMemoryBlock extends PDADebugElement implements IMemoryBlock {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#getBytes()
 	 */
+	@Override
 	public byte[] getBytes() throws DebugException {
 		return fBytes;
 	}
@@ -63,6 +66,7 @@ public class PDAMemoryBlock extends PDADebugElement implements IMemoryBlock {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#supportsValueModification()
 	 */
+	@Override
 	public boolean supportsValueModification() {
 		return true;
 	}
@@ -70,6 +74,7 @@ public class PDAMemoryBlock extends PDADebugElement implements IMemoryBlock {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#setValue(long, byte[])
 	 */
+	@Override
 	public void setValue(long offset, byte[] bytes) throws DebugException {
 		int i = 0;
 		long off = offset;

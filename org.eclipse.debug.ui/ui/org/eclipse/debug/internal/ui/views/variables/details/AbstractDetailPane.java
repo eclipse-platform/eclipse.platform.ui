@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.views.variables.details;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -41,16 +40,17 @@ public abstract class AbstractDetailPane implements IDetailPane {
 	 * Map of actions. Keys are strings, values
 	 * are <code>IAction</code>.
 	 */
-	private Map fActionMap = new HashMap();
+	private Map<String, IAction> fActionMap = new HashMap<String, IAction>();
 	
 	/**
 	 * Collection to track actions that should be updated when selection occurs.
 	 */
-	private List fSelectionActions = new ArrayList();
+	private List<String> fSelectionActions = new ArrayList<String>();
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#init(org.eclipse.ui.IWorkbenchPartSite)
 	 */
+	@Override
 	public void init(IWorkbenchPartSite workbench) {
 		fWorkbenchPartSite = workbench;
 
@@ -59,6 +59,7 @@ public abstract class AbstractDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fActionMap.clear();
 		fSelectionActions.clear();
@@ -98,7 +99,9 @@ public abstract class AbstractDetailPane implements IDetailPane {
 	 * @param actionID The ID of the action which should be updated
 	 */
 	protected void setSelectionDependantAction(String actionID){
-		if (actionID != null) fSelectionActions.add(actionID);
+		if (actionID != null) {
+			fSelectionActions.add(actionID);
+		}
 	}
 	
 	/**
@@ -108,7 +111,7 @@ public abstract class AbstractDetailPane implements IDetailPane {
 	 * @return The action associated with the ID or null if none is found.
 	 */
 	protected IAction getAction(String actionID) {
-		return (IAction) fActionMap.get(actionID);
+		return fActionMap.get(actionID);
 	}
 	
 	/**
@@ -133,9 +136,8 @@ public abstract class AbstractDetailPane implements IDetailPane {
 	 * before it can be updated by this method.
 	 */
 	protected void updateSelectionDependentActions() {
-		Iterator iterator= fSelectionActions.iterator();
-		while (iterator.hasNext()) {
-			updateAction((String)iterator.next());		
+		for (String string : fSelectionActions) {
+			updateAction(string);
 		}
 	}
 	

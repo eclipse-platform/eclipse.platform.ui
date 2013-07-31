@@ -87,6 +87,7 @@ public abstract class AbstractBaseTableRendering extends AbstractMemoryRendering
 	/**
 	 * @return the label of this rendering
 	 */
+	@Override
 	abstract public String getLabel();
 
 	/**
@@ -102,6 +103,7 @@ public abstract class AbstractBaseTableRendering extends AbstractMemoryRendering
 	 * @param address address to position cursor at
 	 * @throws DebugException if an exception occurrs
 	 */
+	@Override
 	abstract public void goToAddress(BigInteger address) throws DebugException;
 
 	/**
@@ -109,6 +111,7 @@ public abstract class AbstractBaseTableRendering extends AbstractMemoryRendering
 	 * 
 	 * @return the currently selected address in this rendering
 	 */
+	@Override
 	abstract public BigInteger getSelectedAddress();
 
 	/**
@@ -124,6 +127,7 @@ public abstract class AbstractBaseTableRendering extends AbstractMemoryRendering
 	 * @return the currently selected content in array of MemoryByte.  
 	 * Returns an empty array if the selected address is out of buffered range.
 	 */
+	@Override
 	abstract public MemoryByte[] getSelectedAsBytes();
 
 	/**

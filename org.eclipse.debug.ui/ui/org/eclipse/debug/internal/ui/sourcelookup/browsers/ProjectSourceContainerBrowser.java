@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.sourcelookup.browsers;
 
 import java.util.ArrayList;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
@@ -37,6 +38,7 @@ public class ProjectSourceContainerBrowser extends AbstractSourceContainerBrowse
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell,org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		Object input = ResourcesPlugin.getWorkspace().getRoot();
 		IStructuredContentProvider contentProvider=new BasicContainerContentProvider();
@@ -45,13 +47,14 @@ public class ProjectSourceContainerBrowser extends AbstractSourceContainerBrowse
 				SourceLookupUIMessages.projectSelection_chooseLabel); 
 		if(dialog.open() == Window.OK){		
 			Object[] elements= ((ListSelectionDialog)dialog).getResult();
-			ArrayList res= new ArrayList();
+			ArrayList<ISourceContainer> res = new ArrayList<ISourceContainer>();
 			for (int i= 0; i < elements.length; i++) {
-				if(!(elements[i] instanceof IProject))
-					continue;				
+				if(!(elements[i] instanceof IProject)) {
+					continue;
+				}				
 				res.add(new ProjectSourceContainer((IProject)elements[i], ((ProjectSourceContainerDialog)dialog).isAddRequiredProjects()));				
 			}
-			return (ISourceContainer[])res.toArray(new ISourceContainer[res.size()]);	
+			return res.toArray(new ISourceContainer[res.size()]);	
 		}	
 		return new ISourceContainer[0];
 	}

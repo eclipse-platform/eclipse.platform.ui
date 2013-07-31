@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,16 +21,16 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
  * Creates detail panes for sequencer controls.
- * 
+ *
  * @since 1.0
  */
 public class ControlDetailPaneFactory implements IDetailPaneFactory {
-	
+
 	/**
 	 * Identifier for the tempo slider detail pane
 	 */
 	public static final String ID_TEMPO_SLIDER = "TEMPO_SLIDER"; //$NON-NLS-1$
-	
+
 	/**
 	 * Identifier for the clock slider detail pane
 	 */
@@ -39,6 +39,7 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#createDetailPane(java.lang.String)
 	 */
+	@Override
 	public IDetailPane createDetailPane(String paneID) {
 		if (ID_TEMPO_SLIDER.equals(paneID)) {
 			return new TempoSliderDetailPane();
@@ -52,6 +53,7 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDefaultDetailPane(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public String getDefaultDetailPane(IStructuredSelection selection) {
 		if (selection.size() == 1) {
 			Object element = selection.getFirstElement();
@@ -68,6 +70,7 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDetailPaneDescription(java.lang.String)
 	 */
+	@Override
 	public String getDetailPaneDescription(String paneID) {
 		if (ID_TEMPO_SLIDER.equals(paneID)) {
 			return "Tempo Slider"; //$NON-NLS-1$
@@ -81,6 +84,7 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDetailPaneName(java.lang.String)
 	 */
+	@Override
 	public String getDetailPaneName(String paneID) {
 		if (ID_TEMPO_SLIDER.equals(paneID)) {
 			return "Tempo Slider"; //$NON-NLS-1$
@@ -94,8 +98,9 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDetailPaneTypes(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
-	public Set getDetailPaneTypes(IStructuredSelection selection) {
-		Set set = new HashSet();
+	@Override
+	public Set<String> getDetailPaneTypes(IStructuredSelection selection) {
+		Set<String> set = new HashSet<String>();
 		if (selection.size() == 1) {
 			Object element = selection.getFirstElement();
 			if (element instanceof TempoControl) {

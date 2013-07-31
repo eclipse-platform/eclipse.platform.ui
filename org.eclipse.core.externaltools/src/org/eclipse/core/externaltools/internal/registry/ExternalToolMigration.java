@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -38,31 +38,31 @@ public final class ExternalToolMigration {
 	public static final class VariableDefinition {
 		/**
 		 * Index in the source text where the variable started
-		 * or <code>-1</code> if no valid variable start tag 
+		 * or <code>-1</code> if no valid variable start tag
 		 * identifier found.
 		 */
 		public int start = -1;
-		
+
 		/**
 		 * Index in the source text of the character following
-		 * the end of the variable or <code>-1</code> if no 
+		 * the end of the variable or <code>-1</code> if no
 		 * valid variable end tag found.
 		 */
 		public int end = -1;
-		
+
 		/**
 		 * The variable's name found in the source text, or
 		 * <code>null</code> if no valid variable found.
 		 */
 		public String name = null;
-		
+
 		/**
 		 * The variable's argument found in the source text, or
 		 * <code>null</code> if no valid variable found or if
 		 * the variable did not specify an argument
 		 */
 		public String argument = null;
-		
+
 		/**
 		 * Create an initialized variable definition.
 		 */
@@ -70,14 +70,14 @@ public final class ExternalToolMigration {
 			super();
 		}
 	}
-	
+
 	/**
 	 * Variable tag indentifiers
 	 */
 	private static final String VAR_TAG_START = "${"; //$NON-NLS-1$
 	private static final String VAR_TAG_END = "}"; //$NON-NLS-1$
-	private static final String VAR_TAG_SEP = ":"; //$NON-NLS-1$	
-	
+	private static final String VAR_TAG_SEP = ":"; //$NON-NLS-1$
+
 	/**
 	 * External tool type for Ant build files (value <code>antBuildType</code>).
 	 */
@@ -87,7 +87,7 @@ public final class ExternalToolMigration {
 	 * are of this type.
 	 */
 	public static final String ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE = "org.eclipse.ant.AntBuilderLaunchConfigurationType"; //$NON-NLS-1$
-		
+
 	public static final String RUN_TARGETS_ATTRIBUTE = TOOL_TYPE_ANT_BUILD + ".runTargets"; //$NON-NLS-1$;
 
 	/**
@@ -99,7 +99,7 @@ public final class ExternalToolMigration {
 	 * 		for migration.
 	 */
 	public static final String ATTR_ANT_TARGETS = IExternalToolConstants.UI_PLUGIN_ID + ".ATTR_ANT_TARGETS"; //$NON-NLS-1$
-	
+
 	/*
 	 * 2.0 External Tool Tags
 	 */
@@ -155,46 +155,47 @@ public final class ExternalToolMigration {
 	 * branch external tool. The returned working copy will be unsaved and its
 	 * location will be set to the metadata area.
 	 */
-	public static ILaunchConfigurationWorkingCopy configFromArgumentMap(Map args) {
-		String version = (String) args.get(TAG_VERSION);
+	public static ILaunchConfigurationWorkingCopy configFromArgumentMap(Map<String, String> args) {
+		String version = args.get(TAG_VERSION);
 		if (VERSION_21.equals(version)) {
 			return configFrom21ArgumentMap(args);
 		}
 		return configFrom20ArgumentMap(args);
 	}
 
-	public static ILaunchConfigurationWorkingCopy configFrom21ArgumentMap(Map commandArgs) {
-		String name = (String) commandArgs.get(TAG_NAME);
-		String type = (String) commandArgs.get(TAG_TYPE);
-		
+	public static ILaunchConfigurationWorkingCopy configFrom21ArgumentMap(Map<String, String> commandArgs) {
+		String name = commandArgs.get(TAG_NAME);
+		String type = commandArgs.get(TAG_TYPE);
+
 		ILaunchConfigurationWorkingCopy config = newConfig(type, name);
 		if (config == null) {
 			return null;
 		}
-		
-		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, (String) commandArgs.get(TAG_LOCATION));
-		config.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String) commandArgs.get(TAG_WORK_DIR));
+
+		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, commandArgs.get(TAG_LOCATION));
+		config.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, commandArgs.get(TAG_WORK_DIR));
 		config.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, TRUE.equals(commandArgs.get(TAG_CAPTURE_OUTPUT)));
 		config.setAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, TRUE.equals(commandArgs.get(TAG_SHOW_CONSOLE)));
 		config.setAttribute(IExternalToolConstants.ATTR_LAUNCH_IN_BACKGROUND, TRUE.equals(commandArgs.get(TAG_RUN_BKGRND)));
 		config.setAttribute(IExternalToolConstants.ATTR_PROMPT_FOR_ARGUMENTS, TRUE.equals(commandArgs.get(TAG_PROMPT_ARGS)));
-		config.setAttribute(RefreshUtil.ATTR_REFRESH_SCOPE, (String) commandArgs.get(TAG_REFRESH_SCOPE));
+		config.setAttribute(RefreshUtil.ATTR_REFRESH_SCOPE, commandArgs.get(TAG_REFRESH_SCOPE));
 		config.setAttribute(RefreshUtil.ATTR_REFRESH_RECURSIVE, TRUE.equals(commandArgs.get(TAG_REFRESH_RECURSIVE)));
 
-		config.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, (String) commandArgs.get(TAG_RUN_BUILD_KINDS));
-		
-		String args = (String) commandArgs.get(TAG_ARGS);
+		config.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, commandArgs.get(TAG_RUN_BUILD_KINDS));
+
+		String args = commandArgs.get(TAG_ARGS);
 		if (args != null) {
 			config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, args);
 		}
 
-		String extraAttributes = (String) commandArgs.get(TAG_EXTRA_ATTR);
+		String extraAttributes = commandArgs.get(TAG_EXTRA_ATTR);
 		if (extraAttributes != null) {
 			StringTokenizer tokenizer = new StringTokenizer(extraAttributes, EXTRA_ATTR_SEPARATOR);
 			while (tokenizer.hasMoreTokens()) {
 				String key = tokenizer.nextToken();
-				if (!tokenizer.hasMoreTokens())
+				if (!tokenizer.hasMoreTokens()) {
 					break;
+				}
 				String value = tokenizer.nextToken();
 				if (key.equals(RUN_TARGETS_ATTRIBUTE)) {
 					// 2.1 implementation only defined 1 "extra attribute"
@@ -208,9 +209,9 @@ public final class ExternalToolMigration {
 	/**
 	 * Creates an external tool from the map.
 	 */
-	public static ILaunchConfigurationWorkingCopy configFrom20ArgumentMap(Map args) {
+	public static ILaunchConfigurationWorkingCopy configFrom20ArgumentMap(Map<String, String> args) {
 		// Update the type...
-		String type = (String) args.get(TAG_TOOL_TYPE);
+		String type = args.get(TAG_TOOL_TYPE);
 		if (TOOL_TYPE_ANT.equals(type)) {
 			type = TOOL_TYPE_ANT_BUILD;
 		} else if (TOOL_TYPE_PROGRAM.equals(type)){
@@ -219,19 +220,19 @@ public final class ExternalToolMigration {
 			return null;
 		}
 
-		String name = (String) args.get(TAG_TOOL_NAME);
-		
+		String name = args.get(TAG_TOOL_NAME);
+
 		ILaunchConfigurationWorkingCopy config = newConfig(type, name);
 		if (config == null) {
 			return null;
 		}
 
 		// Update the location...
-		String location = (String) args.get(TAG_TOOL_LOCATION);
+		String location = args.get(TAG_TOOL_LOCATION);
 		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, location);
 
 		// Update the refresh scope...
-		String refresh = (String) args.get(TAG_TOOL_REFRESH);
+		String refresh = args.get(TAG_TOOL_REFRESH);
 		if (refresh != null) {
 			VariableDefinition varDef = extractVariableDefinition(refresh, 0);
 			if ("none".equals(varDef.name)) { //$NON-NLS-1$
@@ -241,12 +242,12 @@ public final class ExternalToolMigration {
 		}
 
 		// Update the arguments
-		String arguments = (String) args.get(TAG_TOOL_ARGUMENTS);
+		String arguments = args.get(TAG_TOOL_ARGUMENTS);
 		if (type.equals(TOOL_TYPE_ANT_BUILD)) {
 			String targetNames = null;
 			if (arguments != null) {
 				int start = 0;
-				ArrayList targets = new ArrayList();
+				ArrayList<String> targets = new ArrayList<String>();
 				StringBuffer buffer = new StringBuffer();
 				VariableDefinition varDef = extractVariableDefinition(arguments, start);
 				while (varDef.end != -1) {
@@ -261,10 +262,10 @@ public final class ExternalToolMigration {
 				}
 				buffer.append(arguments.substring(start, arguments.length()));
 				arguments = buffer.toString();
-	
+
 				buffer.setLength(0);
 				for (int i = 0; i < targets.size(); i++) {
-					String target = (String) targets.get(i);
+					String target = targets.get(i);
 					if (target != null && target.length() > 0) {
 						buffer.append(target);
 						buffer.append(","); //$NON-NLS-1$
@@ -282,12 +283,12 @@ public final class ExternalToolMigration {
 		config.setAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, TRUE.equals(args.get(TAG_TOOL_SHOW_LOG)));
 		config.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, TRUE.equals(args.get(TAG_TOOL_SHOW_LOG)));
 		config.setAttribute(IExternalToolConstants.ATTR_LAUNCH_IN_BACKGROUND, FALSE.equals(args.get(TAG_TOOL_BLOCK)));
-		String buildKinds= (String) args.get(TAG_TOOL_BUILD_TYPES);
+		String buildKinds= args.get(TAG_TOOL_BUILD_TYPES);
 		if (buildKinds != null) {
 			buildKinds= buildKinds.replace(';', ','); // Replace the old separator with the new
 		}
 		config.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buildKinds);
-		config.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String) args.get(TAG_TOOL_DIRECTORY));
+		config.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, args.get(TAG_TOOL_DIRECTORY));
 		return config;
 	}
 
@@ -317,23 +318,23 @@ public final class ExternalToolMigration {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the tool name extracted from the given command argument map.
 	 * Extraction is attempted using 2.0 and 2.1 external tool formats.
 	 */
-	public static String getNameFromCommandArgs(Map commandArgs) {
-		String name= (String) commandArgs.get(TAG_NAME);
+	public static String getNameFromCommandArgs(Map<String, String> commandArgs) {
+		String name= commandArgs.get(TAG_NAME);
 		if (name == null) {
-			name= (String) commandArgs.get(TAG_TOOL_NAME);
+			name= commandArgs.get(TAG_TOOL_NAME);
 		}
 		return name;
 	}
-	
+
 	/**
 	 * Migrate the old RUN_IN_BACKGROUND launch config attribute to the new
 	 * LAUNCH_IN_BACKGROUND attribute provided by the debug ui plugin.
-	 * 
+	 *
 	 * @param config the config to migrate
 	 * @return the migrated config
 	 */
@@ -359,52 +360,52 @@ public final class ExternalToolMigration {
 			try {
 				ILaunchConfigurationWorkingCopy workingCopy= config.getWorkingCopy();
 				workingCopy.setAttribute(IExternalToolConstants.ATTR_LAUNCH_IN_BACKGROUND, runInBackground);
-				config= workingCopy.doSave();
+				return workingCopy.doSave();
 			} catch (CoreException e) {
 				ExternalToolsCore.log(ExternalToolsMigrationMessages.ExternalToolMigration_38, e);
 			}
 		}
 		return config;
 	}
-	
+
 	/**
 	 * Extracts a variable name and argument from the given string.
-	 * 
+	 *
 	 * @param text the source text to parse for a variable tag
 	 * @param start the index in the string to start the search
 	 * @return the variable definition
 	 */
 	public static VariableDefinition extractVariableDefinition(String text, int start) {
 		VariableDefinition varDef = new VariableDefinition();
-		
-		varDef.start = text.indexOf(VAR_TAG_START, start);
+		int strt = start;
+		varDef.start = text.indexOf(VAR_TAG_START, strt);
 		if (varDef.start < 0){
 			return varDef;
 		}
-		start = varDef.start + VAR_TAG_START.length();
-		
-		int end = text.indexOf(VAR_TAG_END, start);
+		strt = varDef.start + VAR_TAG_START.length();
+
+		int end = text.indexOf(VAR_TAG_END, strt);
 		if (end < 0) {
 			return varDef;
 		}
 		varDef.end = end + VAR_TAG_END.length();
-		if (end == start) {
+		if (end == strt) {
 			return varDef;
 		}
-	
-		int mid = text.indexOf(VAR_TAG_SEP, start);
+
+		int mid = text.indexOf(VAR_TAG_SEP, strt);
 		if (mid < 0 || mid > end) {
-			varDef.name = text.substring(start, end);
+			varDef.name = text.substring(strt, end);
 		} else {
-			if (mid > start) {
-				varDef.name = text.substring(start, mid);
+			if (mid > strt) {
+				varDef.name = text.substring(strt, mid);
 			}
 			mid = mid + VAR_TAG_SEP.length();
 			if (mid < end) {
 				varDef.argument = text.substring(mid, end);
 			}
 		}
-		
+
 		return varDef;
-	}	
+	}
 }

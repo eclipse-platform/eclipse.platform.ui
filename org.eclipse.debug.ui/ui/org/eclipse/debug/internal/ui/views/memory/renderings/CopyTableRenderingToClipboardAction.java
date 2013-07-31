@@ -158,6 +158,7 @@ public class CopyTableRenderingToClipboardAction extends Action
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		
 		if (fRendering == null)

@@ -21,6 +21,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 public class MemoryBlockLabelAdapter extends AsynchronousDebugLabelAdapter {
 	
+	@Override
 	protected ImageDescriptor[] getImageDescriptors(Object element, IPresentationContext context) throws CoreException {
 		if (element instanceof IMemoryBlock)
 			return new ImageDescriptor[]{DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_VARIABLE)};
@@ -52,6 +53,7 @@ public class MemoryBlockLabelAdapter extends AsynchronousDebugLabelAdapter {
 		return memoryBlockLabel;
 	}
 
+	@Override
 	protected String[] getLabels(Object element, IPresentationContext context) throws CoreException {
 		if (element instanceof IMemoryBlock)
 			return new String[]{getLabel((IMemoryBlock)element)};

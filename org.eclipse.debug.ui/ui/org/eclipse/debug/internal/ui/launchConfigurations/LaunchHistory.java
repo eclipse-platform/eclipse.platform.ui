@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -33,12 +32,13 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 /**
  * A history of launches and favorites for a launch group
  */
+@SuppressWarnings("deprecation")
 public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListener {
 
 	/**
 	 * Listing of the complete launch history, which includes favorites in the launched ordering
 	 */
-	private Vector fCompleteHistory = new Vector();
+	private Vector<ILaunchConfiguration> fCompleteHistory = new Vector<ILaunchConfiguration>();
 	
 	/**
 	 * The launch group this history is provided for
@@ -48,7 +48,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	/**
 	 * Ordered listing of the favorites of this history
 	 */
-	private Vector fFavorites = new Vector();
+	private Vector<ILaunchConfiguration> fFavorites = new Vector<ILaunchConfiguration>();
 	
 	/**
 	 * A new saved flag to prevent save participants from serializing unchanged launch histories.
@@ -59,7 +59,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	/**
 	 * List of instances of this launch history 
 	 */
-	private static List fgLaunchHistoryInstances = new ArrayList();
+	private static List<LaunchHistory> fgLaunchHistoryInstances = new ArrayList<LaunchHistory>();
 	
 	/**
 	 * Creates a new launch history for the given launch group
@@ -85,6 +85,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchAdded(ILaunch launch) {
 		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
 		if (configuration != null && !configuration.isWorkingCopy() && DebugUIPlugin.doLaunchConfigurationFiltering(configuration) && accepts(configuration)) {
@@ -168,11 +169,13 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchChanged(ILaunch launch) {}
 
 	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchRemoved(ILaunch launch) {}
 
 	/**
@@ -197,11 +200,9 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * @return launch history
 	 */
 	public synchronized ILaunchConfiguration[] getHistory() {
-		Vector history = new Vector();
+		Vector<ILaunchConfiguration> history = new Vector<ILaunchConfiguration>();
 		try {
-			ILaunchConfiguration config = null;
-			for(Iterator iter = fCompleteHistory.iterator(); iter.hasNext();) {
-				config = (ILaunchConfiguration) iter.next();
+			for (ILaunchConfiguration config : fCompleteHistory) {
 				if(config.exists() && !fFavorites.contains(config) && 
 						DebugUIPlugin.doLaunchConfigurationFiltering(config) && 
 						!WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(config.getType()))) {
@@ -214,7 +215,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 			}
 		}
 		catch(CoreException ce) {DebugUIPlugin.log(ce);}
-		return (ILaunchConfiguration[]) history.toArray(new ILaunchConfiguration[history.size()]);
+		return history.toArray(new ILaunchConfiguration[history.size()]);
 	}
 	
 	/**
@@ -226,11 +227,9 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * @since 3.3
 	 */
 	public synchronized ILaunchConfiguration[] getCompleteLaunchHistory() {
-		Vector history = new Vector();
+		Vector<ILaunchConfiguration> history = new Vector<ILaunchConfiguration>();
 		try {
-			ILaunchConfiguration config = null;
-			for(Iterator iter = fCompleteHistory.listIterator(); iter.hasNext();){
-				config = (ILaunchConfiguration) iter.next();
+			for (ILaunchConfiguration config : fCompleteHistory) {
 				if(config.exists() && DebugUIPlugin.doLaunchConfigurationFiltering(config) && 
 				!WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(config.getType()))) {
 					history.add(config);
@@ -238,7 +237,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 			}
 		}
 		catch (CoreException ce) {DebugUIPlugin.log(ce);}
-		return (ILaunchConfiguration[]) history.toArray(new ILaunchConfiguration[history.size()]);
+		return history.toArray(new ILaunchConfiguration[history.size()]);
 	}
 	
 	/**
@@ -248,7 +247,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * @return launch favorites
 	 */
 	public synchronized ILaunchConfiguration[] getFavorites() {
-		return (ILaunchConfiguration[])fFavorites.toArray(new ILaunchConfiguration[fFavorites.size()]);
+		return fFavorites.toArray(new ILaunchConfiguration[fFavorites.size()]);
 	}
 	
 	/**
@@ -257,7 +256,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * @param favorites
 	 */
 	public synchronized void setFavorites(ILaunchConfiguration[] favorites) {
-		fFavorites = new Vector(Arrays.asList(favorites));
+		fFavorites = new Vector<ILaunchConfiguration>(Arrays.asList(favorites));
 		setSaved(false);
 		fireLaunchHistoryChanged();
 	}	
@@ -315,8 +314,8 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * Notifies all launch histories that the launch history size has changed.
 	 */
 	public static void launchHistoryChanged() {
-		for(Iterator iter = fgLaunchHistoryInstances.iterator(); iter.hasNext();) {
-			((LaunchHistory) iter.next()).resizeHistory();		
+		for (LaunchHistory history : fgLaunchHistoryInstances) {
+			history.resizeHistory();
 		}
 	}
 	
@@ -343,6 +342,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
 		ILaunchConfiguration movedFrom = DebugPlugin.getDefault().getLaunchManager().getMovedFrom(configuration);
 		// if this is a move, the launchConfigurationRemoved(...) method will handle updates
@@ -363,7 +363,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 */
 	protected boolean isFavorite(ILaunchConfiguration configuration) throws CoreException {
 		String groupId = getLaunchGroup().getIdentifier();
-		List favoriteGroups = configuration.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
+		List<String> favoriteGroups = configuration.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List<String>) null);
 		if (favoriteGroups == null) {
 			// check deprecated attributes for backwards compatibility
 			if (groupId.equals(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP)) {
@@ -442,6 +442,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
 		checkFavorites(configuration);
 	}
@@ -449,6 +450,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
 		synchronized (this) {	
 			ILaunchConfiguration newConfig = DebugPlugin.getDefault().getLaunchManager().getMovedTo(configuration);

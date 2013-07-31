@@ -24,6 +24,7 @@ public class MemoryBlockProxy extends EventHandlerModelProxy  {
 	private IMemoryBlock fMemoryBlock;
 	private DebugEventHandler fDebugEventHandler = new DebugEventHandler(this)  {
 
+		@Override
 		protected boolean handlesEvent(DebugEvent event) {
 			if (event.getKind() == DebugEvent.CHANGE && event.getSource() == fMemoryBlock)
 				return true;
@@ -37,6 +38,7 @@ public class MemoryBlockProxy extends EventHandlerModelProxy  {
 			return false;
 		}
 
+		@Override
 		protected void handleChange(DebugEvent event) {
 			if (event.getDetail() == DebugEvent.STATE)
 			{	
@@ -50,11 +52,13 @@ public class MemoryBlockProxy extends EventHandlerModelProxy  {
 			}
 		}
 
+		@Override
 		protected void handleSuspend(DebugEvent event) {
 			ModelDelta delta = new ModelDelta(fMemoryBlock, IModelDelta.CONTENT);
 			fireModelChanged(delta);
 		}
 
+		@Override
 		public synchronized void dispose() {
 			super.dispose();
 		}};
@@ -64,10 +68,12 @@ public class MemoryBlockProxy extends EventHandlerModelProxy  {
 		fMemoryBlock = mb;
 	}
 
+	@Override
 	protected DebugEventHandler[] createEventHandlers() {
 		return new DebugEventHandler[]{fDebugEventHandler};
 	}
 
+	@Override
 	public void installed(Viewer viewer) {
 		super.installed(viewer);
 		setInstalled(true);

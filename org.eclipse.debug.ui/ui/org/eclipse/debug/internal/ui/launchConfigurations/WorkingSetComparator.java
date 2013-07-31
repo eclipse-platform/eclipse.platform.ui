@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,14 +19,15 @@ import org.eclipse.ui.IWorkingSet;
  * Comparator for refresh scope launch configuration attribute
  * <code>ATTR_REFRESH_SCOPE</code>.
  */
-public class WorkingSetComparator implements Comparator {
+public class WorkingSetComparator implements Comparator<String> {
 
 	/* (non-Javadoc)
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
-	public int compare(Object o1, Object o2) {
-		String one= (String)o1;
-		String two= (String)o2;
+	@Override
+	public int compare(String o1, String o2) {
+		String one= o1;
+		String two= o2;
 		if (one == null || two == null) {
 			if (one == two) {
 				return 0;

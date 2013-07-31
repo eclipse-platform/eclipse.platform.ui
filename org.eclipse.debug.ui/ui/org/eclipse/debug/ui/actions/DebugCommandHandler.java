@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,11 @@
  *
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 
 package org.eclipse.debug.ui.actions;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -77,7 +77,8 @@ public abstract class DebugCommandHandler extends AbstractHandler {
             getContextService(fWindow).addDebugContextListener(this);
         }
         
-        public void setEnabled(boolean enabled) {
+        @Override
+		public void setEnabled(boolean enabled) {
             boolean oldEnabled = fEnabled;
             fEnabled = enabled;
             if (fEnabled != oldEnabled && fCurrentEnabledTarget == this) {
@@ -85,7 +86,8 @@ public abstract class DebugCommandHandler extends AbstractHandler {
             }
         }
         
-        public void debugContextChanged(DebugContextEvent event) {
+        @Override
+		public void debugContextChanged(DebugContextEvent event) {
             DebugCommandService.getService(fWindow).postUpdateCommand(getCommandType(), this);
         }
         
@@ -108,21 +110,25 @@ public abstract class DebugCommandHandler extends AbstractHandler {
      */
     private IWindowListener fWindowListener =  new IWindowListener() {
         
-        public void windowOpened(IWorkbenchWindow w) {
+        @Override
+		public void windowOpened(IWorkbenchWindow w) {
         }
     
-        public void windowDeactivated(IWorkbenchWindow w) {
+        @Override
+		public void windowDeactivated(IWorkbenchWindow w) {
         }
     
-        public void windowClosed(IWorkbenchWindow w) {
-            EnabledTarget enabledTarget = (EnabledTarget)fEnabledTargetsMap.get(w);
+        @Override
+		public void windowClosed(IWorkbenchWindow w) {
+            EnabledTarget enabledTarget = fEnabledTargetsMap.get(w);
             if (enabledTarget != null) {
                 enabledTarget.dispose();
             }
         }
     
-        public void windowActivated(IWorkbenchWindow w) {
-            fCurrentEnabledTarget = (EnabledTarget)fEnabledTargetsMap.get(w);
+        @Override
+		public void windowActivated(IWorkbenchWindow w) {
+            fCurrentEnabledTarget = fEnabledTargetsMap.get(w);
             fireHandlerChanged(new HandlerEvent(DebugCommandHandler.this, true, false));
         }
     };
@@ -130,7 +136,7 @@ public abstract class DebugCommandHandler extends AbstractHandler {
     /**
      * Map of enabled targets keyed by workbench window.
      */
-    private Map fEnabledTargetsMap = new WeakHashMap();
+    private Map<IWorkbenchWindow, EnabledTarget> fEnabledTargetsMap = new WeakHashMap<IWorkbenchWindow, EnabledTarget>();
 
     /**
      * The current enabled target, based on the active
@@ -149,7 +155,8 @@ public abstract class DebugCommandHandler extends AbstractHandler {
     /* (non-Javadoc)
      * @see org.eclipse.core.commands.AbstractHandler#setEnabled(java.lang.Object)
      */
-    public void setEnabled(Object evaluationContext) {
+    @Override
+	public void setEnabled(Object evaluationContext) {
         // This method is called with the current evaluation context
         // just prior to the isEnabled() being called.  Check the active
         // window and update the current enabled target based on it 
@@ -169,7 +176,8 @@ public abstract class DebugCommandHandler extends AbstractHandler {
     /* (non-Javadoc)
      * @see org.eclipse.core.commands.AbstractHandler#isEnabled()
      */
-    public boolean isEnabled() {
+    @Override
+	public boolean isEnabled() {
         if (fCurrentEnabledTarget == null) {
             return false;
         }
@@ -177,7 +185,7 @@ public abstract class DebugCommandHandler extends AbstractHandler {
     }
     
     private EnabledTarget getEnabledTarget(IWorkbenchWindow window) {
-        EnabledTarget target = (EnabledTarget)fEnabledTargetsMap.get(window);
+        EnabledTarget target = fEnabledTargetsMap.get(window);
         if (target == null) {
             target = new EnabledTarget(window);
             fEnabledTargetsMap.put(window, target);
@@ -188,7 +196,8 @@ public abstract class DebugCommandHandler extends AbstractHandler {
     /* (non-Javadoc)
      * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
      */
-    public Object execute(ExecutionEvent event) throws ExecutionException {
+    @Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
         IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
         if (window == null) {
             throw new ExecutionException("No active workbench window."); //$NON-NLS-1$
@@ -222,7 +231,8 @@ public abstract class DebugCommandHandler extends AbstractHandler {
     	return service.executeCommand(
     	    getCommandType(), targets, 
             new ICommandParticipant() {
-                public void requestDone(org.eclipse.debug.core.IRequest request) {
+                @Override
+				public void requestDone(org.eclipse.debug.core.IRequest request) {
                     DebugCommandHandler.this.postExecute(request, targets);
                 }             
             });
@@ -249,7 +259,7 @@ public abstract class DebugCommandHandler extends AbstractHandler {
      * 
      * @see org.eclipse.debug.core.commands.IDebugCommandHandler
      */
-    abstract protected Class getCommandType();  
+	abstract protected Class<?> getCommandType();
 
     
     /**
@@ -266,10 +276,10 @@ public abstract class DebugCommandHandler extends AbstractHandler {
     /**
      * Clean up when removing
      */
-    public void dispose() {
-        PlatformUI.getWorkbench().removeWindowListener(fWindowListener);        
-        for (Iterator itr = fEnabledTargetsMap.values().iterator(); itr.hasNext();) {
-            EnabledTarget target = (EnabledTarget)itr.next();
+    @Override
+	public void dispose() {
+        PlatformUI.getWorkbench().removeWindowListener(fWindowListener);
+        for(EnabledTarget target : fEnabledTargetsMap.values()) {
             if (!target.isDisposed()) {
                 target.dispose();
             }

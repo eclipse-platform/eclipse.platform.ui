@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * Object representing a frame in the stack command results.
- * 
- * @see PDAStackCommand 
+ *
+ * @see PDAStackCommand
  */
 
 public class PDAFrameData {
@@ -30,18 +30,18 @@ public class PDAFrameData {
     final public int fPC;
     final public String fFunction;
     final public String[] fVariables;
-    
+
     PDAFrameData(String frameString) {
         StringTokenizer st = new StringTokenizer(frameString, "|"); //$NON-NLS-1$
-        
+
         fFilePath = new Path(st.nextToken());
         fPC = Integer.parseInt(st.nextToken());
         fFunction = st.nextToken();
-        
-        List variablesList = new ArrayList();
+
+		List<String> variablesList = new ArrayList<String>();
         while (st.hasMoreTokens()) {
             variablesList.add(st.nextToken());
         }
-        fVariables = (String[])variablesList.toArray(new String[variablesList.size()]);
+        fVariables = variablesList.toArray(new String[variablesList.size()]);
     }
 }

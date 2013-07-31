@@ -44,6 +44,7 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	 * 
 	 * @return presentation context
 	 */
+	@Override
 	public IPresentationContext getPresentationContext() {
 		return super.getPresentationContext();
 	}	
@@ -53,6 +54,7 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	 * 
 	 * @param listener model delta listener
 	 */
+	@Override
 	public void addModelChangedListener(IModelChangedListener listener) {
 		super.addModelChangedListener(listener); 
 	}
@@ -62,6 +64,7 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	 * 
 	 * @param listener model delta listener
 	 */
+	@Override
 	public void removeModelChangedListener(IModelChangedListener listener) {
 		super.removeModelChangedListener(listener);
 	}	
@@ -71,6 +74,7 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	 * 
 	 * @param listener listener
 	 */
+	@Override
 	public void addViewerUpdateListener(IViewerUpdateListener listener) {
 		super.addViewerUpdateListener(listener);
 	}
@@ -80,6 +84,7 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	 * 
 	 * @param listener listener
 	 */
+	@Override
 	public void removeViewerUpdateListener(IViewerUpdateListener listener) {
 		super.removeViewerUpdateListener(listener);
 	}
@@ -90,6 +95,7 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	 * 
 	 * @return whether columns can be toggled on/off
 	 */
+	@Override
 	public boolean canToggleColumns() {
 		return super.canToggleColumns();
 	}	
@@ -100,6 +106,7 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	 * 
 	 * @return column presentation or <code>null</code>
 	 */
+	@Override
 	public IColumnPresentation getColumnPresentation() {
 		return super.getColumnPresentation();
 	}	
@@ -110,6 +117,7 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	 *  
 	 * @return visible columns identifiers or <code>null</code>
 	 */
+	@Override
 	public String[] getVisibleColumns() {
 		return super.getVisibleColumns();
 	}  	
@@ -119,6 +127,7 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	 * 
      * @param memento the {@link IMemento} to read from
 	 */
+	@Override
 	public void initState(IMemento memento) {
 		super.initState(memento);
 	}
@@ -128,6 +137,7 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	 * 
      * @param memento the {@link IMemento} to save to
 	 */
+	@Override
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
 	}
@@ -135,6 +145,7 @@ public class TreeModelViewer extends InternalTreeModelViewer {
     /**
      * @return Returns true if columns are being displayed currently. 
      */
+	@Override
 	public boolean isShowColumns() {
 		return super.isShowColumns();
 	}	
@@ -144,6 +155,7 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	 * 
 	 * @param columnIds array of column identifiers
 	 */
+	@Override
 	public void resetColumnSizes(String[] columnIds) {
 		super.resetColumnSizes(columnIds);
 	}
@@ -154,6 +166,7 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	 * @param show whether to show columns if the current input supports
 	 * 	columns
 	 */
+	@Override
 	public void setShowColumns(boolean show) {
 		super.setShowColumns(show);
 	}	
@@ -166,11 +179,13 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	 * 
 	 * @param ids column identifiers or <code>null</code>
 	 */
+	@Override
 	public void setVisibleColumns(String[] ids) {
 		super.setVisibleColumns(ids);
 	}		
 	
-    public ViewerLabel getElementLabel(TreePath path, String columnId) {
+    @Override
+	public ViewerLabel getElementLabel(TreePath path, String columnId) {
         return super.getElementLabel(path, columnId);
     }
 }

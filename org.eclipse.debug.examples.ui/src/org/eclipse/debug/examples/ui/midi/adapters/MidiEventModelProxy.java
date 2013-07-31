@@ -20,12 +20,13 @@ import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.jface.viewers.TreePath;
 
 public class MidiEventModelProxy extends AbstractModelProxy implements ICheckboxModelProxy {
-	static Map gChecked = new HashMap(); 
-	
-	
+	static Map<TreePath, Boolean> gChecked = new HashMap<TreePath, Boolean>();
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckboxModelProxy#setChecked(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object, org.eclipse.jface.viewers.TreePath, boolean)
 	 */
+	@Override
 	public boolean setChecked(IPresentationContext context, Object viewerInput, TreePath path, boolean checked) {
 		System.out.println("TrackCheckListener.setChecked() element = " + path.getLastSegment() + " checked = " + checked); //$NON-NLS-1$ //$NON-NLS-2$
 		gChecked.put(path, Boolean.valueOf(checked));

@@ -29,7 +29,8 @@ public class PDAPopDataCommand extends PDACommand {
         super("popdata " + threadId); //$NON-NLS-1$
     }
     
-    public PDACommandResult createResult(String resultText) {
+    @Override
+	public PDACommandResult createResult(String resultText) {
         return new PDACommandResult(resultText);
     }
 }

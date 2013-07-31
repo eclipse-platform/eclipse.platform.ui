@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Wind River Systems and others.
+ * Copyright (c) 2010, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.elements.adapters;
 
@@ -20,11 +21,13 @@ import org.eclipse.jface.viewers.ICellModifier;
  * 
  * @since 3.6
  */
+@SuppressWarnings("deprecation")
 public class WatchExpressionCellModifier implements ICellModifier {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
 	 */
+	@Override
 	public boolean canModify(Object element, String property) {
         if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(property)) {
             return element instanceof IWatchExpression;
@@ -35,6 +38,7 @@ public class WatchExpressionCellModifier implements ICellModifier {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object, java.lang.String)
 	 */
+	@Override
 	public Object getValue(Object element, String property) {
         if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(property)) {
             return DefaultLabelProvider.escapeSpecialChars( ((IWatchExpression)element).getExpressionText() );
@@ -45,6 +49,7 @@ public class WatchExpressionCellModifier implements ICellModifier {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object, java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void modify(Object element, String property, Object value) {
 		Object oldValue = getValue(element, property);
         if (!value.equals(oldValue)) {

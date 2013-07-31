@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 /**
  * A folder in the workspace.
  * <p>
- * Clients may instantiate this class. 
+ * Clients may instantiate this class.
  * </p>
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
@@ -32,20 +32,21 @@ public class FolderSourceContainer extends ContainerSourceContainer {
 
 
 	/**
-	 * Constructs a source container on the given folder. 
-	 * 
+	 * Constructs a source container on the given folder.
+	 *
 	 * @param folder the folder to search for source in
 	 * @param subfolders whether to search nested folders
 	 */
 	public FolderSourceContainer(IContainer folder, boolean subfolders) {
 		super(folder, subfolders);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
+	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
-	
+
 }

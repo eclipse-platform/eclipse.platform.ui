@@ -47,6 +47,7 @@ public abstract class AbstractDebugContextProvider implements IDebugContextProvi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider#addDebugContextEventListener(org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextEventListener)
 	 */
+	@Override
 	public void addDebugContextListener(IDebugContextListener listener) {
 		fListeners.add(listener);
 	}
@@ -54,6 +55,7 @@ public abstract class AbstractDebugContextProvider implements IDebugContextProvi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider#getPart()
 	 */
+	@Override
 	public IWorkbenchPart getPart() {
 		return fPart;
 	}
@@ -61,6 +63,7 @@ public abstract class AbstractDebugContextProvider implements IDebugContextProvi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider#removeDebugContextEventListener(org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextEventListener)
 	 */
+	@Override
 	public void removeDebugContextListener(IDebugContextListener listener) {
 		fListeners.remove(listener);
 	}
@@ -75,9 +78,11 @@ public abstract class AbstractDebugContextProvider implements IDebugContextProvi
 		for (int i = 0; i < listeners.length; i++) {
 			final IDebugContextListener listener = (IDebugContextListener) listeners[i];
             SafeRunner.run(new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					listener.debugContextChanged(event);
 				}
+				@Override
 				public void handleException(Throwable exception) {
 					DebugUIPlugin.log(exception);
 				}

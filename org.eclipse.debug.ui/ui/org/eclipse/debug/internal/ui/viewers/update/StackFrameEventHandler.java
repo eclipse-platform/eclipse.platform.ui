@@ -36,6 +36,7 @@ public class StackFrameEventHandler extends DebugEventHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handlesEvent(org.eclipse.debug.core.DebugEvent)
 	 */
+	@Override
 	protected boolean handlesEvent(DebugEvent event) {
 		return event.getSource() instanceof IStackFrame;
 	}
@@ -43,6 +44,7 @@ public class StackFrameEventHandler extends DebugEventHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handleChange(org.eclipse.debug.core.DebugEvent)
 	 */
+	@Override
 	protected void handleChange(DebugEvent event) {
 		IStackFrame frame = (IStackFrame) event.getSource();
 		ModelDelta root = fThreadHandler.buildRootDelta();

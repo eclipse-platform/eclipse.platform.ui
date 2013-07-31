@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,14 +20,15 @@ import org.eclipse.debug.core.RefreshUtil;
  * Compares refresh scope attributes as the format has changed from a working
  * set memento to an XML memento of resource paths. Avoids migrating attribute
  * to new format until something else in the configuration changes.
- * 
+ *
  * @since 3.6
  */
-public class RefreshScopeComparator implements Comparator {
+public class RefreshScopeComparator implements Comparator<String> {
 
-	public int compare(Object o1, Object o2) {
-		String m1 = (String) o1;
-		String m2 = (String) o2;
+	@Override
+	public int compare(String o1, String o2) {
+		String m1 = o1;
+		String m2 = o2;
 		try {
 			IResource[] r1 = RefreshUtil.toResources(m1);
 			IResource[] r2 = RefreshUtil.toResources(m2);

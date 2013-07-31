@@ -35,8 +35,10 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter#retrieveChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.provisional.IChildrenRequestMonitor)
      */
-    public void retrieveChildren(final Object parent, final IPresentationContext context, final IChildrenRequestMonitor result) {
+    @Override
+	public void retrieveChildren(final Object parent, final IPresentationContext context, final IChildrenRequestMonitor result) {
 		Job job = new Job("Retrieving Children") { //$NON-NLS-1$
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				if (!monitor.isCanceled()) {
 					computeChildren(parent, context, result);
@@ -65,8 +67,10 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter#isContainer(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.provisional.IContainerRequestMonitor)
      */
-    public void isContainer(final Object element, final IPresentationContext context, final IContainerRequestMonitor result) {
+    @Override
+	public void isContainer(final Object element, final IPresentationContext context, final IContainerRequestMonitor result) {
 		Job job = new Job("Computing hasChildren") { //$NON-NLS-1$
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				if (!monitor.isCanceled()) {
 					computeIsContainer(element, context, result);

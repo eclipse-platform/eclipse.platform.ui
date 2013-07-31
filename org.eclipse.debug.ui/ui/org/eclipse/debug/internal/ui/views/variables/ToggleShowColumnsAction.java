@@ -43,11 +43,13 @@ public class ToggleShowColumnsAction extends Action implements IUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		if (fViewer.getControl().isDisposed()) {
 			return;
 		}
 		BusyIndicator.showWhile(fViewer.getControl().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				fViewer.setShowColumns(isChecked());				
 			}
@@ -57,6 +59,7 @@ public class ToggleShowColumnsAction extends Action implements IUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
+	@Override
 	public void update() {
 		setEnabled(fViewer.canToggleColumns());
 		setChecked(fViewer.isShowColumns());

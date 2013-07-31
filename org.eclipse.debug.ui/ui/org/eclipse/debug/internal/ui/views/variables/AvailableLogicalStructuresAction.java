@@ -50,6 +50,7 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 	}
 	
@@ -64,6 +65,7 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fMenu != null) {
 			fMenu.dispose();
@@ -76,6 +78,7 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
 	 */
+	@Override
 	public Menu getMenu(Control parent) {
 		return null;
 	}
@@ -88,6 +91,7 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
+	@Override
 	public Menu getMenu(Menu parent) {
 		if (fMenu != null) {
 			fMenu.dispose();

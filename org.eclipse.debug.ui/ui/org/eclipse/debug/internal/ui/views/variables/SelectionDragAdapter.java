@@ -46,14 +46,16 @@ public class SelectionDragAdapter extends DragSourceAdapter implements TransferD
     /* (non-Javadoc)
      * @see org.eclipse.jface.util.TransferDragSourceListener#getTransfer()
      */
-    public Transfer getTransfer() {
+    @Override
+	public Transfer getTransfer() {
         return LocalSelectionTransfer.getTransfer();
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.swt.dnd.DragSourceAdapter#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
      */
-    public void dragStart(DragSourceEvent event) {
+    @Override
+	public void dragStart(DragSourceEvent event) {
         ISelection selection = fViewer.getSelection();
         LocalSelectionTransfer.getTransfer().setSelection(selection);
         LocalSelectionTransfer.getTransfer().setSelectionSetTime(event.time & 0xFFFFFFFFL);
@@ -63,7 +65,8 @@ public class SelectionDragAdapter extends DragSourceAdapter implements TransferD
     /* (non-Javadoc)
      * @see org.eclipse.swt.dnd.DragSourceAdapter#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
      */
-    public void dragSetData(DragSourceEvent event) {
+    @Override
+	public void dragSetData(DragSourceEvent event) {
         // For consistency set the data to the selection even though
         // the selection is provided by the LocalSelectionTransfer
         // to the drop target adapter.
@@ -73,7 +76,8 @@ public class SelectionDragAdapter extends DragSourceAdapter implements TransferD
     /* (non-Javadoc)
      * @see org.eclipse.swt.dnd.DragSourceAdapter#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
      */
-    public void dragFinished(DragSourceEvent event) {
+    @Override
+	public void dragFinished(DragSourceEvent event) {
         LocalSelectionTransfer.getTransfer().setSelection(null);
         LocalSelectionTransfer.getTransfer().setSelectionSetTime(0);
     }   

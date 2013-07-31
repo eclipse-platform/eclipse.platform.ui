@@ -35,6 +35,7 @@ public class ShowStandardOutAction extends ShowWhenContentChangesAction {
 		setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STANDARD_OUT));
 	}
 
+	@Override
 	protected String getKey() {
 		return IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT;
 	}

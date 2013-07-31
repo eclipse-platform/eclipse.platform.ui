@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,24 +81,28 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
         fTableEditorImpl = createTableEditorImpl();
     }
 
-    protected void hookControl(Control control) {
+    @Override
+	protected void hookControl(Control control) {
         super.hookControl(control);
         control.addMouseListener(new MouseAdapter() {
-            public void mouseDown(MouseEvent e) {
+            @Override
+			public void mouseDown(MouseEvent e) {
                 fTableEditorImpl.handleMouseDown(e);
             }
         });      
     }
 
-    public synchronized void dispose() {
+    @Override
+	public synchronized void dispose() {
     	fTableEditor.dispose();
     	fTable.dispose();
         super.dispose();
     }  
 
-    protected ISelection doAttemptSelectionToWidget(ISelection selection, boolean reveal) {
+    @Override
+	protected ISelection doAttemptSelectionToWidget(ISelection selection, boolean reveal) {
         if (acceptsSelection(selection)) {
-            List list = ((IStructuredSelection) selection).toList();
+			List<?> list = ((IStructuredSelection) selection).toList();
             if (list == null) {
                 fTable.deselectAll();
                 return StructuredSelection.EMPTY;
@@ -128,11 +132,13 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
         return StructuredSelection.EMPTY;
     }
 
-    protected boolean acceptsSelection(ISelection selection) {
+    @Override
+	protected boolean acceptsSelection(ISelection selection) {
         return selection instanceof IStructuredSelection;
     }
 
-    protected ISelection getEmptySelection() {
+    @Override
+	protected ISelection getEmptySelection() {
         return StructuredSelection.EMPTY;
     }
 
@@ -143,16 +149,18 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
         return null;
     }
 
-    protected List getSelectionFromWidget() {
+    @Override
+	protected List getSelectionFromWidget() {
         TableItem[] selection = fTable.getSelection();
-        List datas = new ArrayList(selection.length);
+		List<Object> datas = new ArrayList<Object>(selection.length);
         for (int i = 0; i < selection.length; i++) {
             datas.add(selection[i].getData());
         }
         return datas;
     }
 
-    public Control getControl() {
+    @Override
+	public Control getControl() {
         return fTable;
     }
 
@@ -163,14 +171,16 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#internalRefresh(org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelNode)
      */
-    protected void internalRefresh(ModelNode node) {
+    @Override
+	protected void internalRefresh(ModelNode node) {
         super.internalRefresh(node);
         if (node.getElement().equals(getInput())) {
             updateChildren(node);
         }
     } 
 
-    protected void restoreLabels(Item item) {
+    @Override
+	protected void restoreLabels(Item item) {
     	TableItem tableItem = (TableItem) item;
     	String[] values = (String[]) tableItem.getData(OLD_LABEL);
     	Image[] images = (Image[]) tableItem.getData(OLD_IMAGE);
@@ -180,6 +190,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 		}
 	}
 
+	@Override
 	public void setLabels(Widget widget, String[] labels, ImageDescriptor[] imageDescriptors) {
         TableItem item = (TableItem) widget;
         item.setText(labels);
@@ -188,14 +199,16 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
         item.setData(OLD_IMAGE, images);
         if (imageDescriptors != null) {
             for (int i = 0; i < images.length; i++) {
-                if (i < imageDescriptors.length)
-                    images[i] = getImage(imageDescriptors[i]);
+                if (i < imageDescriptors.length) {
+					images[i] = getImage(imageDescriptors[i]);
+				}
             }
         }
         item.setImage(images);
     }
 
-    public void setColors(Widget widget, RGB[] foregrounds, RGB[] backgrounds) {
+    @Override
+	public void setColors(Widget widget, RGB[] foregrounds, RGB[] backgrounds) {
         TableItem item = (TableItem) widget;
         if (foregrounds == null) {
             foregrounds = new RGB[fTable.getColumnCount()];
@@ -214,7 +227,8 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
         }
     }
 
-    public void setFonts(Widget widget, FontData[] fontDatas) {
+    @Override
+	public void setFonts(Widget widget, FontData[] fontDatas) {
         TableItem item = (TableItem) widget;
         if (fontDatas != null) {
             for (int i = 0; i < fontDatas.length; i++) {
@@ -234,7 +248,8 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 
     public void showColumnHeader(final boolean showHeaders) {
         WorkbenchJob job = new WorkbenchJob("Set Header Visibility") { //$NON-NLS-1$
-            public IStatus runInUIThread(IProgressMonitor monitor) {
+            @Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
             	if (!fTable.isDisposed())
             	{
             		fTable.setHeaderVisible(showHeaders);
@@ -252,11 +267,13 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
      * 
      * @see org.eclipse.jface.viewers.StructuredViewer#reveal(java.lang.Object)
      */
-    public void reveal(Object element) {
+    @Override
+	public void reveal(Object element) {
         Assert.isNotNull(element);
         Widget w = findItem(element);
-        if (w instanceof TableItem)
-            getTable().showItem((TableItem) w);
+        if (w instanceof TableItem) {
+			getTable().showItem((TableItem) w);
+		}
     }
 
     /**
@@ -281,37 +298,45 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 
     protected TableEditorImpl createTableEditorImpl() {
         return new TableEditorImpl(this) {
-            Rectangle getBounds(Item item, int columnNumber) {
+            @Override
+			Rectangle getBounds(Item item, int columnNumber) {
                 return ((TableItem) item).getBounds(columnNumber);
             }
 
-            int getColumnCount() {
+            @Override
+			int getColumnCount() {
                 return getTable().getColumnCount();
             }
 
-            Item[] getSelection() {
+            @Override
+			Item[] getSelection() {
                 return getTable().getSelection();
             }
 
-            void setEditor(Control w, Item item, int columnNumber) {
+            @Override
+			void setEditor(Control w, Item item, int columnNumber) {
                 fTableEditor.setEditor(w, (TableItem) item, columnNumber);
             }
 
-            void setSelection(StructuredSelection selection, boolean b) {
+            @Override
+			void setSelection(StructuredSelection selection, boolean b) {
                 AsynchronousTableViewer.this.setSelection(selection, b);
             }
 
-            void showSelection() {
+            @Override
+			void showSelection() {
                 getTable().showSelection();
             }
 
-            void setLayoutData(CellEditor.LayoutData layoutData) {
+            @Override
+			void setLayoutData(CellEditor.LayoutData layoutData) {
                 fTableEditor.grabHorizontal = layoutData.grabHorizontal;
                 fTableEditor.horizontalAlignment = layoutData.horizontalAlignment;
                 fTableEditor.minimumWidth = layoutData.minimumWidth;
             }
 
-            void handleDoubleClickEvent() {
+            @Override
+			void handleDoubleClickEvent() {
                 Viewer viewer = getViewer();
                 fireDoubleClick(new DoubleClickEvent(viewer, viewer.getSelection()));
                 fireOpen(new OpenEvent(viewer, viewer.getSelection()));
@@ -319,12 +344,13 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
         };
     }
 
-    protected ISelection newSelectionFromWidget() {
+    @Override
+	protected ISelection newSelectionFromWidget() {
         Control control = getControl();
         if (control == null || control.isDisposed()) {
             return StructuredSelection.EMPTY;
         }
-        List list = getSelectionFromWidget();
+		List<?> list = getSelectionFromWidget();
         return new StructuredSelection(list);
     }
 
@@ -361,8 +387,9 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 
     protected int indexForElement(Object element) {
         ViewerSorter sorter = getSorter();
-        if (sorter == null)
-            return fTable.getItemCount();
+        if (sorter == null) {
+			return fTable.getItemCount();
+		}
         int count = fTable.getItemCount();
         int min = 0, max = count - 1;
         while (min <= max) {
@@ -381,56 +408,68 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
                 }
                 return mid;
             }
-            if (compare < 0)
-                min = mid + 1;
-            else
-                max = mid - 1;
+            if (compare < 0) {
+				min = mid + 1;
+			} else {
+				max = mid - 1;
+			}
         }
         return min;
     }
 
     public void add(Object element) {
-        if (element != null)
-            add(new Object[] { element });
+        if (element != null) {
+			add(new Object[] { element });
+		}
     }
 
     public void add(Object[] elements) {
         if (elements == null || elements.length == 0)
-            return; // done
+		 {
+			return; // done
+		}
         ((AsynchronousTableModel)getModel()).add(elements);
     }
 
     public void remove(Object element) {
-        if (element != null)
-            remove(new Object[] { element });
+        if (element != null) {
+			remove(new Object[] { element });
+		}
     }
 
     public void remove(final Object[] elements) {
         if (elements == null || elements.length == 0)
-            return; // done
+		 {
+			return; // done
+		}
         ((AsynchronousTableModel)getModel()).remove(elements);
     }
 
     public void insert(Object element, int position) {
-        if (element != null)
-            insert(new Object[] { element }, position);
+        if (element != null) {
+			insert(new Object[] { element }, position);
+		}
     }
 
     public void insert(Object[] elements, int position) {
-        if (elements == null || elements.length == 0)
-            return;
+        if (elements == null || elements.length == 0) {
+			return;
+		}
         ((AsynchronousTableModel)getModel()).insert(elements, position);
     }
 
     public void replace(Object element, Object replacement) {
         if (element == null || replacement == null)
-            throw new IllegalArgumentException("unexpected null parameter"); //$NON-NLS-1$
+		 {
+			throw new IllegalArgumentException("unexpected null parameter"); //$NON-NLS-1$
+		}
         ((AsynchronousTableModel)getModel()).replace(element, replacement);
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#createModel()
 	 */
+	@Override
 	protected AsynchronousModel createModel() {
 		return new AsynchronousTableModel(this);
 	}
@@ -438,7 +477,8 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#setItemCount(org.eclipse.swt.widgets.Widget, int)
      */
-    protected void setItemCount(Widget parent, int itemCount) {
+    @Override
+	protected void setItemCount(Widget parent, int itemCount) {
 		fTable.setItemCount(itemCount);
 	}  
 
@@ -450,6 +490,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
     /* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#createUpdatePolicy()
 	 */
+	@Override
 	public AbstractUpdatePolicy createUpdatePolicy() {
 		return new TableUpdatePolicy();
 	}
@@ -457,6 +498,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#getParentWidget(org.eclipse.swt.widgets.Widget)
 	 */
+	@Override
 	protected Widget getParentWidget(Widget widget) {
 		if (widget instanceof TableItem) {
 			return ((TableItem)widget).getParent();
@@ -467,6 +509,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#getChildWidget(org.eclipse.swt.widgets.Widget, int)
 	 */
+	@Override
 	protected Widget getChildWidget(Widget parent, int index) {
 		if (index < fTable.getItemCount()) {
 			return fTable.getItem(index);
@@ -477,6 +520,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#clear(org.eclipse.swt.widgets.Widget)
 	 */
+	@Override
 	protected void clear(Widget item) {
 		if (item instanceof TableItem) {
 			int i = fTable.indexOf((TableItem)item);
@@ -489,6 +533,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousViewer#clearChild(org.eclipse.swt.widgets.Widget, int)
 	 */
+	@Override
 	protected void clearChild(Widget parent, int childIndex) {
 		if (parent instanceof Table) {
 			fTable.clear(childIndex);
@@ -498,6 +543,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousViewer#clearChildren(org.eclipse.swt.widgets.Widget)
 	 */
+	@Override
 	protected void clearChildren(Widget item) {
 		if (item instanceof Table) {
 			fTable.clearAll();
@@ -507,6 +553,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousViewer#indexOf(org.eclipse.swt.widgets.Widget, org.eclipse.swt.widgets.Widget)
 	 */
+	@Override
 	protected int indexOf(Widget parent, Widget child) {
 		if (parent instanceof Table) {
 			return ((Table)parent).indexOf((TableItem)child);

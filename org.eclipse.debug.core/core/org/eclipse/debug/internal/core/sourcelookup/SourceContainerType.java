@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,57 +22,61 @@ import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 
 /**
  * Proxy to contributed source container type extension.
- * 
+ *
  * @see IConfigurationElementConstants
- * 
+ *
  * @since 3.0
  */
 public class SourceContainerType implements ISourceContainerType {
-	
+
 	// lazily instantiated delegate
 	private ISourceContainerTypeDelegate fDelegate = null;
-	
+
 	// extension definition
 	private IConfigurationElement fElement = null;
-	
+
 	/**
 	 * Constructs a source container type on the given extension.
-	 * 
+	 *
 	 * @param element extension definition
 	 */
 	public SourceContainerType(IConfigurationElement element) {
 		fElement = element;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#createSourceContainer(java.lang.String)
 	 */
+	@Override
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
 		return getDelegate().createSourceContainer(memento);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
 	 */
+	@Override
 	public String getMemento(ISourceContainer container) throws CoreException {
 		if (this.equals(container.getType())) {
 			return getDelegate().getMemento(container);
 		}
-		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, SourceLookupMessages.SourceContainerType_0, null); 
+		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, SourceLookupMessages.SourceContainerType_0, null);
 		throw new CoreException(status);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getName()
 	 */
+	@Override
 	public String getName() {
 		return fElement.getAttribute(IConfigurationElementConstants.NAME);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getId()
 	 */
+	@Override
 	public String getId() {
 		return fElement.getAttribute(IConfigurationElementConstants.ID);
 	}
-	
+
 	/**
 	 * Lazily instantiates and returns the underlying source container type.
 	 * @return the {@link ISourceContainerTypeDelegate}
@@ -87,6 +91,7 @@ public class SourceContainerType implements ISourceContainerType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return fElement.getAttribute(IConfigurationElementConstants.DESCRIPTION);
 	}

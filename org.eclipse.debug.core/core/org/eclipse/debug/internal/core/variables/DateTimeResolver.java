@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 EclipseSource Inc. and others.
+ * Copyright (c) 2012, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import org.eclipse.osgi.util.NLS;
 /**
  * Resolver for the <code>current_date</code> dynamic variable for launch configurations. The optional argument
  * must be a string pattern for {@link SimpleDateFormat}.  Default pattern is <code>yyyyMMdd_HHmm</code>.
- * 
+ *
  * @since 3.8
  */
 public class DateTimeResolver implements IDynamicVariableResolver {
@@ -32,6 +32,7 @@ public class DateTimeResolver implements IDynamicVariableResolver {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.variables.IDynamicVariableResolver#resolveValue(org.eclipse.core.variables.IDynamicVariable, java.lang.String)
 	 */
+	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		SimpleDateFormat format = null;
 		if (argument != null && argument.trim().length() > 0){
@@ -41,11 +42,11 @@ public class DateTimeResolver implements IDynamicVariableResolver {
 				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), NLS.bind(Messages.DateTimeResolver_ProblemWithDateArgument, argument), e));
 			}
 		}
-		
+
 		if (format == null){
 			format = new SimpleDateFormat("yyyyMMdd_HHmm"); //$NON-NLS-1$
 		}
-		
+
 		return format.format(new Date());
 	}
 

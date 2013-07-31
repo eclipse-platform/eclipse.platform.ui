@@ -146,7 +146,8 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
      */
-    public Object getAdapter(Object adaptableObject, Class adapterType) {
+    @Override
+	public Object getAdapter(Object adaptableObject, Class adapterType) {
         if (adapterType.isInstance(adaptableObject)) {
 			return adaptableObject;
 		}
@@ -322,7 +323,8 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
      */
-    public Class[] getAdapterList() {
+    @Override
+	public Class[] getAdapterList() {
         return new Class[] {
         		IAsynchronousLabelAdapter.class,
         		IAsynchronousContentAdapter.class,

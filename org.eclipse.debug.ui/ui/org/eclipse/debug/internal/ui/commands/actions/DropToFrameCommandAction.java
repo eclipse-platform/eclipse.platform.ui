@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,35 +28,43 @@ public class DropToFrameCommandAction extends DebugCommandAction {
         setActionDefinitionId("org.eclipse.debug.ui.commands.DropToFrame"); //$NON-NLS-1$
     }
     
-    public String getText() {
+    @Override
+	public String getText() {
         return ActionMessages.DropToFrameAction_0;
     }
 
-    public String getHelpContextId() {
+    @Override
+	public String getHelpContextId() {
         return "org.eclipse.debug.ui.drop_to_frame_action_context"; //$NON-NLS-1$
     }
 
-    public String getId() {
+    @Override
+	public String getId() {
         return "org.eclipse.debug.ui.debugview.toolbar.dropToFrame"; //$NON-NLS-1$
     }
 
-    public String getToolTipText() {
+    @Override
+	public String getToolTipText() {
         return ActionMessages.DropToFrameAction_3;
     }
 
-    public ImageDescriptor getHoverImageDescriptor() {
+    @Override
+	public ImageDescriptor getHoverImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DROP_TO_FRAME);
     }
 
-    public ImageDescriptor getImageDescriptor() {
+    @Override
+	public ImageDescriptor getImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DROP_TO_FRAME);
     }
 
+	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
 		return null;
 	}
 
-	protected Class getCommandType() {
+	@Override
+	protected Class<IDropToFrameHandler> getCommandType() {
 		return IDropToFrameHandler.class;
 	}
 }

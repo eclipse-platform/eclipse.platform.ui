@@ -33,6 +33,7 @@ public class PasswordPrompt extends PromptingResolver {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.stringsubstitution.PromptingResolver#prompt()
 	 */
+	@Override
 	public void prompt() {
 		Dialog dialog = new Dialog((Shell)null){
 			private Text text;
@@ -40,6 +41,7 @@ public class PasswordPrompt extends PromptingResolver {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 			 */
+			@Override
 			protected Control createDialogArea(Composite parent) {
 				 // create composite
 		        Composite composite = (Composite) super.createDialogArea(parent);
@@ -68,6 +70,7 @@ public class PasswordPrompt extends PromptingResolver {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 			 */
+			@Override
 			protected void buttonPressed(int buttonId) {
 				if (buttonId == IDialogConstants.OK_ID) {
 					returnValue = text.getText();
@@ -80,6 +83,7 @@ public class PasswordPrompt extends PromptingResolver {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 			 */
+			@Override
 			protected void configureShell(Shell newShell) {
 		        super.configureShell(newShell);
 		        newShell.setText(StringSubstitutionMessages.StringPromptExpander_0);

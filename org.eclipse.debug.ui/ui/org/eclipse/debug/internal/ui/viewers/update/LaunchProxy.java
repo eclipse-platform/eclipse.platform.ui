@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 	 * Set of launch's previous children. When a child is added,
 	 * its model proxy is installed.
 	 */
-	private Set fPrevChildren = new HashSet(); 
+	private Set<Object> fPrevChildren = new HashSet<Object>();
 
 	/**
 	 * Constructs a new model proxy for the given launch.
@@ -53,6 +53,7 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#init(org.eclipse.debug.internal.ui.viewers.IPresentationContext)
 	 */
+	@Override
 	public void init(IPresentationContext context) {
 		super.init(context);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
@@ -61,6 +62,7 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
 	 */
+	@Override
 	public void installed(Viewer viewer) {
 		// install model proxies for existing children
 		installModelProxies();
@@ -69,6 +71,7 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#dispose()
 	 */
+	@Override
 	public void dispose() {	
 		super.dispose();
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
@@ -79,6 +82,7 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesTerminated(ILaunch[] launches) {
 		for (int i = 0; i < launches.length; i++) {
 			if (launches[i] == fLaunch) {
@@ -91,6 +95,7 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 		for (int i = 0; i < launches.length; i++) {
 			if (launches[i] == fLaunch) {
@@ -103,12 +108,14 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesAdded(ILaunch[] launches) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesChanged(ILaunch[] launches) {
 		for (int i = 0; i < launches.length; i++) {
 			if (launches[i] == fLaunch) {
@@ -139,8 +146,8 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 					launchDelta.addNode(child, indexOf(child, children), IModelDelta.INSTALL, -1);
 				}
 			}
-			List childrenList = Arrays.asList(children);
-	        for (Iterator itr = fPrevChildren.iterator(); itr.hasNext();) {
+			List<Object> childrenList = Arrays.asList(children);
+			for (Iterator<Object> itr = fPrevChildren.iterator(); itr.hasNext();) {
 	            Object child = itr.next();
 	            if (!childrenList.contains(child)) {
 	                itr.remove();

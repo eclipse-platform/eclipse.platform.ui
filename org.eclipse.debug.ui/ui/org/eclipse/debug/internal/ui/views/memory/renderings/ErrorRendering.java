@@ -48,6 +48,7 @@ public class ErrorRendering extends AbstractMemoryRendering {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		fTextViewer = new TextViewer(parent, SWT.READ_ONLY);		
 		fTextViewer.setDocument(new Document());
@@ -80,6 +81,7 @@ public class ErrorRendering extends AbstractMemoryRendering {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.memory.AbstractMemoryRendering#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return fTextViewer.getControl();
 	}

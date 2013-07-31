@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -41,19 +41,29 @@ public class SelectLaunchModesDialog extends AbstractDebugListSelectionDialog{
 	 * Builds labels for list control
 	 */
 	class OptionsLabelProvider implements ILabelProvider {
+		@Override
 		public Image getImage(Object element) {return null;}
+		@Override
 		public String getText(Object element) {
-			Set modes = (Set) element;
-			List names = LaunchConfigurationPresentationManager.getDefault().getLaunchModeNames(modes);
+			Set<?> vals = (Set<?>) element;
+			Set<String> modes = new HashSet<String>(vals.size());
+			for (Object o : vals) {
+				modes.add((String) o);
+			}
+			List<String> names = LaunchConfigurationPresentationManager.getDefault().getLaunchModeNames(modes);
 			return names.toString();
 		}
+		@Override
 		public void addListener(ILabelProviderListener listener) {}
+		@Override
 		public void dispose() {}
+		@Override
 		public boolean isLabelProperty(Object element, String property) {return false;}
+		@Override
 		public void removeListener(ILabelProviderListener listener) {}
 	}
 	
-	private List fValidModes = null;
+	private List<Set<String>> fValidModes = null;
 	
 	/**
 	 * Constructor
@@ -67,11 +77,9 @@ public class SelectLaunchModesDialog extends AbstractDebugListSelectionDialog{
 		super(parentShell);
 		super.setTitle(LaunchConfigurationsMessages.SelectLaunchOptionsDialog_3);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		fValidModes = new ArrayList();
-		Set modes = configuration.getType().getSupportedModeCombinations();
-		Set modeset = null;
-		for(Iterator iter = modes.iterator(); iter.hasNext();) {
-			modeset = (Set) iter.next();
+		fValidModes = new ArrayList<Set<String>>();
+		Set<Set<String>> modes = configuration.getType().getSupportedModeCombinations();
+		for (Set<String> modeset : modes) {
 			if(modeset.contains(mode)) {
 				fValidModes.add(modeset);
 			}
@@ -81,6 +89,7 @@ public class SelectLaunchModesDialog extends AbstractDebugListSelectionDialog{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 	 */
+	@Override
 	protected String getDialogSettingsId() {
 		return IDebugUIConstants.PLUGIN_ID + ".SELECT_LAUNCH_MODES_DIALOG"; //$NON-NLS-1$
 	}
@@ -88,6 +97,7 @@ public class SelectLaunchModesDialog extends AbstractDebugListSelectionDialog{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
 	 */
+	@Override
 	protected IBaseLabelProvider getLabelProvider() {
 		return new OptionsLabelProvider();
 	}
@@ -95,6 +105,7 @@ public class SelectLaunchModesDialog extends AbstractDebugListSelectionDialog{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
 	 */
+	@Override
 	protected Object getViewerInput() {
 		return fValidModes.toArray();
 	}
@@ -102,6 +113,7 @@ public class SelectLaunchModesDialog extends AbstractDebugListSelectionDialog{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
 	 */
+	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.SELECT_LAUNCH_MODES_DIALOG;
 	}
@@ -109,6 +121,7 @@ public class SelectLaunchModesDialog extends AbstractDebugListSelectionDialog{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
 	 */
+	@Override
 	protected String getViewerLabel() {
 		return LaunchConfigurationsMessages.SelectLaunchOptionsDialog_4;
 	}

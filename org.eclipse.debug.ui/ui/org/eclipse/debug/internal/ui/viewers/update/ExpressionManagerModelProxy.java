@@ -35,6 +35,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#init(org.eclipse.debug.internal.ui.viewers.IPresentationContext)
 	 */
+	@Override
 	public void init(IPresentationContext context) {
 		super.init(context);
 		getExpressionManager().addExpressionListener(this);
@@ -44,6 +45,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
 	 */
+	@Override
 	public void installed(Viewer viewer) {
 		updateExpressions(getExpressionManager().getExpressions(), IModelDelta.INSTALL);
 	}
@@ -58,6 +60,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#dispose()
 	 */
+	@Override
 	public synchronized void dispose() {
         getPresentationContext().removePropertyChangeListener(this);
 		super.dispose();
@@ -67,6 +70,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.IExpressionsListener2#expressionsMoved(org.eclipse.debug.core.model.IExpression[], int)
 	 */
+	@Override
 	public void expressionsMoved(IExpression[] expressions, int index){
 		int count = getElementsCount();
         ModelDelta delta = new ModelDelta(getExpressionManager(), -1, IModelDelta.NO_CHANGE, count);
@@ -84,6 +88,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.IExpressionsListener2#expressionsInserted(org.eclipse.debug.core.model.IExpression[], int)
 	 */
+	@Override
 	public void expressionsInserted(IExpression[] expressions, int index){
 	    int count = getElementsCount();
         ModelDelta delta = new ModelDelta(getExpressionManager(), -1, IModelDelta.NO_CHANGE, count);
@@ -97,6 +102,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsAdded(org.eclipse.debug.core.model.IExpression[])
 	 */
+	@Override
 	public void expressionsAdded(IExpression[] expressions) {
 	    int index = getExpressionManager().getExpressions().length - expressions.length;
 	    int count = getElementsCount();
@@ -111,6 +117,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsRemoved(org.eclipse.debug.core.model.IExpression[])
 	 */
+	@Override
 	public void expressionsRemoved(IExpression[] expressions) {
 		updateExpressions(expressions, IModelDelta.REMOVED | IModelDelta.UNINSTALL);
 	}
@@ -118,6 +125,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsChanged(org.eclipse.debug.core.model.IExpression[])
 	 */
+	@Override
 	public void expressionsChanged(IExpression[] expressions) {
 		updateExpressions(expressions, IModelDelta.CONTENT | IModelDelta.STATE);		
 	}
@@ -138,7 +146,8 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
             (getPresentationContext().getColumns() != null ? 1 : 0);
     }
     
-    public void propertyChange(PropertyChangeEvent event) {
+    @Override
+	public void propertyChange(PropertyChangeEvent event) {
         // If columns are turned on/off, refresh the view to account for the 
         // "Add new expression" element.
         if (IPresentationContext.PROPERTY_COLUMNS.equals(event.getProperty())) {

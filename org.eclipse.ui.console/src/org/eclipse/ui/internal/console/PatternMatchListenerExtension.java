@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,10 +36,10 @@ public class PatternMatchListenerExtension implements IPluginContribution {
     private String fPattern;
     private String fQualifier;
     private int fFlags = -1;
-   
+
     public PatternMatchListenerExtension(IConfigurationElement extension) {
         fConfig = extension;
-    }    
+    }
 
     /*
      * returns the integer value of the flags defined in java.util.regex.Pattern.
@@ -51,12 +51,12 @@ public class PatternMatchListenerExtension implements IPluginContribution {
         if (flagsElement == null) {
             return val;
         }
-            
+
         try {
-            flagsElement = flagsElement.replaceAll("Pattern.", ""); //$NON-NLS-1$ //$NON-NLS-2$
-            String[] tokens = flagsElement.split("\\s\\|\\s"); //$NON-NLS-1$
-            Class clazz = Class.forName("java.util.regex.Pattern"); //$NON-NLS-1$
-            
+			String flags = flagsElement.replaceAll("Pattern.", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			String[] tokens = flags.split("\\s\\|\\s"); //$NON-NLS-1$
+			Class<?> clazz = Class.forName("java.util.regex.Pattern"); //$NON-NLS-1$
+
             for (int i = 0; i < tokens.length; i++) {
                 Field field = clazz.getDeclaredField(tokens[i]);
                 val |= field.getInt(null);
@@ -70,25 +70,25 @@ public class PatternMatchListenerExtension implements IPluginContribution {
         }
         return val;
     }
-    
+
     public boolean isEnabledFor(IConsole console) throws CoreException {
         EvaluationContext context = new EvaluationContext(null, console);
         EvaluationResult evaluationResult = getEnablementExpression().evaluate(context);
         return evaluationResult == EvaluationResult.TRUE;
     }
-    
+
     public IPatternMatchListenerDelegate createDelegate() throws CoreException {
         return (IPatternMatchListenerDelegate) fConfig.createExecutableExtension("class"); //$NON-NLS-1$
     }
-    
+
     public Expression getEnablementExpression() throws CoreException {
 		if (fEnablementExpression == null) {
 			IConfigurationElement[] elements = fConfig.getChildren(ExpressionTagNames.ENABLEMENT);
             if (elements.length == 0) {
-                String message = MessageFormat.format("{0} " +getLocalId() + " {1} " + getPluginId() + " {2}", new String[] {ConsoleMessages.PatternMatchListenerExtension_3,ConsoleMessages.PatternMatchListenerExtension_4,ConsoleMessages.PatternMatchListenerExtension_5}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				String message = MessageFormat.format("{0} " + getLocalId() + " {1} " + getPluginId() + " {2}", new Object[] { ConsoleMessages.PatternMatchListenerExtension_3, ConsoleMessages.PatternMatchListenerExtension_4, ConsoleMessages.PatternMatchListenerExtension_5 }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 ConsolePlugin.log(new Status(IStatus.WARNING, ConsolePlugin.getUniqueIdentifier(), IStatus.OK, message, null));
             }
-			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null; 
+			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null;
 
 			if (enablement != null) {
 			    fEnablementExpression = ExpressionConverter.getDefault().perform(enablement);
@@ -96,7 +96,7 @@ public class PatternMatchListenerExtension implements IPluginContribution {
 		}
 		return fEnablementExpression;
     }
-    
+
     /*
      * returns the regular expression to be matched.
      */
@@ -122,18 +122,20 @@ public class PatternMatchListenerExtension implements IPluginContribution {
         }
         return fFlags;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPluginContribution#getLocalId()
      */
-    public String getLocalId() {
+	@Override
+	public String getLocalId() {
         return fConfig.getAttribute("id"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPluginContribution#getPluginId()
      */
-    public String getPluginId() {
+    @Override
+	public String getPluginId() {
         return fConfig.getContributor().getName();
     }
 

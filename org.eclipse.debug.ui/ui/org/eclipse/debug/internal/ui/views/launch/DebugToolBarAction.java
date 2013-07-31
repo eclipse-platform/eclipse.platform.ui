@@ -46,6 +46,7 @@ class DebugToolBarAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		fLaunchView.setDebugToolbarInView(isChecked()); 
 	}	

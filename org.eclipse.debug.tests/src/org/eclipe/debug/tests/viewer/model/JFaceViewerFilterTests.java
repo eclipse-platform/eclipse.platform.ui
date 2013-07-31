@@ -27,7 +27,8 @@ public class JFaceViewerFilterTests extends FilterTests {
         super(name);
     }
 
-    protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
+    @Override
+	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
 		return new TreeModelViewer(fShell, SWT.VIRTUAL | SWT.MULTI, new PresentationContext("TestViewer")); //$NON-NLS-1$
     }
 }

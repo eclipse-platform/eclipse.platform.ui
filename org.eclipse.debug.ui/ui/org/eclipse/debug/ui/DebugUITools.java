@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -286,11 +286,13 @@ public class DebugUITools {
 		IMarker[] markers= new IMarker[breakpoints.length];
 		int markerCount;
 		for (markerCount= 0; markerCount < breakpoints.length; markerCount++) {
-			if (!breakpoints[markerCount].isRegistered())
+			if (!breakpoints[markerCount].isRegistered()) {
 				break;
+			}
 			markers[markerCount]= breakpoints[markerCount].getMarker();
-			if (markers[markerCount] == null)
+			if (markers[markerCount] == null) {
 				break;
+			}
 		}
 
 		// We only offer undo support if all breakpoints are registered and have associated markers
@@ -300,15 +302,18 @@ public class DebugUITools {
 
 		if (allowUndo) {
 
-			for (int i= 0; i < markers.length; i++)
+			for (int i= 0; i < markers.length; i++) {
 				markers[i].setAttribute(DebugPlugin.ATTR_BREAKPOINT_IS_DELETED, true);
+			}
 
 			IAdaptable context= null;
 			if (shell != null) {
 				context= new IAdaptable() {
+					@Override
 					public Object getAdapter(Class adapter) {
-						if (adapter == Shell.class)
+						if (adapter == Shell.class) {
 							return shell;
+						}
 						return null;
 					}
 				};
@@ -506,6 +511,7 @@ public class DebugUITools {
 	 *  to specify the launch group that the dialog should be opened on. This method will open
 	 *  on the launch group with the specified mode and a <code>null</code> category 
 	 */
+	@Deprecated
 	public static int openLaunchConfigurationDialog(Shell shell, IStructuredSelection selection, String mode) {
 		ILaunchGroup[] groups = getLaunchGroups();
 		for (int i = 0; i < groups.length; i++) {
@@ -585,6 +591,7 @@ public class DebugUITools {
 			/**
 			 * @see java.lang.Runnable#run()
 			 */
+			@Override
 			public void run() {
 				LaunchConfigurationsDialog dialog = (LaunchConfigurationsDialog) LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
 				if (dialog != null) {
@@ -711,6 +718,7 @@ public class DebugUITools {
 	 * @deprecated Saving has been moved to the launch delegate <code>LaunchConfigurationDelegate</code> to allow for scoped saving
 	 * of resources that are only involved in the current launch, no longer the entire workspace
 	 */
+	@Deprecated
 	public static boolean saveAndBuildBeforeLaunch() {
 		return DebugUIPlugin.saveAndBuild();
 	}
@@ -732,6 +740,7 @@ public class DebugUITools {
 	 * @deprecated Saving has been moved to the launch delegate <code>LaunchConfigurationDelegate</code> to allow for scoped saving
 	 * of resources that are only involved in the current launch, no longer the entire workspace
 	 */
+	@Deprecated
 	public static boolean saveBeforeLaunch() {
 		return DebugUIPlugin.preLaunchSave();
 	}	
@@ -811,7 +820,7 @@ public class DebugUITools {
 	 * 
 	 * @since 3.3
 	 */
-	public static String getLaunchPerspective(ILaunchConfigurationType type, ILaunchDelegate delegate, Set modes) {
+	public static String getLaunchPerspective(ILaunchConfigurationType type, ILaunchDelegate delegate, Set<String> modes) {
 		return DebugUIPlugin.getDefault().getPerspectiveManager().getLaunchPerspective(type, modes, delegate);
 	}
 	
@@ -849,7 +858,7 @@ public class DebugUITools {
 	 * 
 	 * @since 3.3
 	 */
-	public static void setLaunchPerspective(ILaunchConfigurationType type, ILaunchDelegate delegate, Set modes, String perspectiveid) {
+	public static void setLaunchPerspective(ILaunchConfigurationType type, ILaunchDelegate delegate, Set<String> modes, String perspectiveid) {
 		DebugUIPlugin.getDefault().getPerspectiveManager().setLaunchPerspective(type, modes, delegate, perspectiveid);
 	}
 	

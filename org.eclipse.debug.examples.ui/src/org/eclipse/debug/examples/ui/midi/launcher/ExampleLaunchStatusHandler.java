@@ -22,6 +22,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationDialog;
  */
 public class ExampleLaunchStatusHandler implements IStatusHandler {
 
+	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		if (source instanceof ILaunchConfigurationDialog) {
 			return null;

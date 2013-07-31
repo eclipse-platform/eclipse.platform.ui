@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.views.console;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +46,7 @@ public class ProcessConsoleManager implements ILaunchListener {
     /**
      * Console document content provider extensions, keyed by extension id
      */
-    private Map fColorProviders;
+	private Map<String, IConfigurationElement> fColorProviders;
     
     /**
      * The default color provider. Used if no color provider is contributed
@@ -58,19 +57,18 @@ public class ProcessConsoleManager implements ILaunchListener {
     /**
      * Console line trackers; keyed by process type to list of trackers (1:N) 
      */
-    private Map fLineTrackers;
+	private Map<String, List<IConfigurationElement>> fLineTrackers;
     
     /**
      * Map of processes for a launch to compute removed processes
      */
-    private Map fProcesses;
-    
-    
+	private Map<ILaunch, IProcess[]> fProcesses;
     
     /**
      * @see ILaunchListener#launchRemoved(ILaunch)
      */
-    public void launchRemoved(ILaunch launch) {
+    @Override
+	public void launchRemoved(ILaunch launch) {
         removeLaunch(launch);
     }
     
@@ -123,14 +121,16 @@ public class ProcessConsoleManager implements ILaunchListener {
     /**
      * @see ILaunchListener#launchAdded(ILaunch)
      */
-    public void launchAdded(ILaunch launch) {
+    @Override
+	public void launchAdded(ILaunch launch) {
         launchChanged(launch);
     }
     
     /**
      * @see ILaunchListener#launchChanged(ILaunch)
      */
-    public void launchChanged(final ILaunch launch) {
+    @Override
+	public void launchChanged(final ILaunch launch) {
         IProcess[] processes= launch.getProcesses();
         for (int i= 0; i < processes.length; i++) {
             if (getConsoleDocument(processes[i]) == null) {
@@ -149,11 +149,9 @@ public class ProcessConsoleManager implements ILaunchListener {
                 ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{pc});
             }
         }
-        List removed = getRemovedProcesses(launch);
+		List<IProcess> removed = getRemovedProcesses(launch);
         if (removed != null) {
-            Iterator iterator = removed.iterator();
-            while (iterator.hasNext()) {
-                IProcess p = (IProcess) iterator.next();
+			for (IProcess p : removed) {
                 removeProcess(p);
             }
         }
@@ -212,7 +210,7 @@ public class ProcessConsoleManager implements ILaunchListener {
      */
     public IConsoleColorProvider getColorProvider(String type) {
         if (fColorProviders == null) {
-            fColorProviders = new HashMap();
+			fColorProviders = new HashMap<String, IConfigurationElement>();
             IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_CONSOLE_COLOR_PROVIDERS);
             IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
             for (int i = 0; i < elements.length; i++) {
@@ -220,7 +218,7 @@ public class ProcessConsoleManager implements ILaunchListener {
                 fColorProviders.put(extension.getAttribute("processType"), extension); //$NON-NLS-1$
             }
         }
-        IConfigurationElement extension = (IConfigurationElement)fColorProviders.get(type);
+        IConfigurationElement extension = fColorProviders.get(type);
         if (extension != null) {
             try {
                 Object colorProvider = extension.createExecutableExtension("class"); //$NON-NLS-1$
@@ -229,7 +227,7 @@ public class ProcessConsoleManager implements ILaunchListener {
                 } 
                 DebugUIPlugin.logErrorMessage(MessageFormat.format(
                 		"Extension {0} must specify an instanceof IConsoleColorProvider for class attribute.", //$NON-NLS-1$
-                		new String[]{extension.getDeclaringExtension().getUniqueIdentifier()}));
+						new Object[] { extension.getDeclaringExtension().getUniqueIdentifier() }));
             } catch (CoreException e) {
                 DebugUIPlugin.log(e);
             }
@@ -250,36 +248,35 @@ public class ProcessConsoleManager implements ILaunchListener {
         String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
         
         if (fLineTrackers == null) {
-            fLineTrackers = new HashMap();
+			fLineTrackers = new HashMap<String, List<IConfigurationElement>>();
             IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_CONSOLE_LINE_TRACKERS);
             IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
             for (int i = 0; i < elements.length; i++) {
                 IConfigurationElement extension = elements[i];
                 String processType = extension.getAttribute("processType"); //$NON-NLS-1$
-                List list = (List)fLineTrackers.get(processType);
+				List<IConfigurationElement> list = fLineTrackers.get(processType);
                 if (list == null) {
-                    list = new ArrayList();
+					list = new ArrayList<IConfigurationElement>();
                     fLineTrackers.put(processType, list);
                 }
                 list.add(extension);
             }
         }
         
-        ArrayList trackers = new ArrayList();
+		ArrayList<IConsoleLineTracker> trackers = new ArrayList<IConsoleLineTracker>();
         if (type != null) {
-            List lineTrackerExtensions = (List) fLineTrackers.get(type);
+			List<IConfigurationElement> lineTrackerExtensions = fLineTrackers.get(type);
             if(lineTrackerExtensions != null) {   
-                for(Iterator i = lineTrackerExtensions.iterator(); i.hasNext(); ) {
-                    IConfigurationElement element = (IConfigurationElement) i.next();
+				for (IConfigurationElement element : lineTrackerExtensions) {
                     try {
-                        trackers.add(element.createExecutableExtension("class")); //$NON-NLS-1$
+						trackers.add((IConsoleLineTracker) element.createExecutableExtension("class")); //$NON-NLS-1$
                     } catch (CoreException e) {
                         DebugUIPlugin.log(e);
                     }
                 }
             }
         }
-        return (IConsoleLineTracker[]) trackers.toArray(new IConsoleLineTracker[0]);
+        return trackers.toArray(new IConsoleLineTracker[0]);
     }
     
     /**
@@ -289,19 +286,19 @@ public class ProcessConsoleManager implements ILaunchListener {
      * @param launch launch that has changed
      * @return removed processes or <code>null</code>
      */
-    private List getRemovedProcesses(ILaunch launch) {
-        List removed = null;
+	private List<IProcess> getRemovedProcesses(ILaunch launch) {
+		List<IProcess> removed = null;
         if (fProcesses == null) {
-            fProcesses = new HashMap();
+			fProcesses = new HashMap<ILaunch, IProcess[]>();
         }
-        IProcess[] old = (IProcess[]) fProcesses.get(launch);
+        IProcess[] old = fProcesses.get(launch);
         IProcess[] curr = launch.getProcesses();
         if (old != null) {
             for (int i = 0; i < old.length; i++) {
                 IProcess process = old[i];
                 if (!contains(curr, process)) {
                     if (removed == null) {
-                        removed = new ArrayList();
+						removed = new ArrayList<IProcess>();
                     }
                     removed.add(process);
                 }

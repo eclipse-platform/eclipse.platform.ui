@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2009, 2010 Texas Instruments and others
+ * Copyright (c) 2009, 2013 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Patrick Chuong (Texas Instruments) - Initial API and implementation (Bug 238956)
  *     Wind River Systems - ongoing enhancements and bug fixing
+ *     IBM Corporation - bug fixing
  *****************************************************************/
 package org.eclipse.debug.internal.ui.viewers.update;
 
@@ -67,7 +68,7 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
     /**
      * List of posted deltas ready to be fired.
      */
-    private List/*<DeltaInfo>*/ fPendingDeltas = new LinkedList();
+	private List<DeltaInfo> fPendingDeltas = new LinkedList<DeltaInfo>();
     
 
 	/**
@@ -98,6 +99,7 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
 	 */
+	@Override
 	public void installed(Viewer viewer) {
 		super.installed(viewer);
 		if (fProvider != null) {
@@ -109,6 +111,7 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#dispose()
 	 */
+	@Override
 	public void dispose() {
 	    fProvider.unregisterModelProxy(fInput, this);
 	    synchronized(this) {
@@ -148,8 +151,8 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
         
         // If we are processing a select delta, remove the previous select delta.
         if (select) {
-            for (Iterator itr = fPendingDeltas.iterator(); itr.hasNext(); ) {
-                if ( ((DeltaInfo)itr.next()).fSelect ) {
+			for (Iterator<DeltaInfo> itr = fPendingDeltas.iterator(); itr.hasNext();) {
+                if ( itr.next().fSelect ) {
                     itr.remove();
                 }
             }
@@ -162,7 +165,8 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
 	                setSystem(true);
 	            }
 	            
-	            public IStatus runInUIThread(IProgressMonitor monitor) {
+	            @Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
                     Object[] deltas; 
                     synchronized(BreakpointManagerProxy.this) {
                         deltas = fPendingDeltas.toArray();

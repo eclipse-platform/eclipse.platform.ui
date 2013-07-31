@@ -150,6 +150,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		
 		public int fValue;
 		
+		@Override
 		public String toString() {
 			return String.valueOf(fValue);
 		}
@@ -185,9 +186,10 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			fMonitor = monitor;
-			Iterator iterator = fElements.iterator();
+			Iterator<?> iterator = fElements.iterator();
 			String message = null;
 			while (iterator.hasNext()) {
 				if (monitor.isCanceled()) {
@@ -256,6 +258,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#canceling()
 		 */
+		@Override
 		protected void canceling() {
 			super.canceling();
 			synchronized (this) {
@@ -266,6 +269,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
 		 */
+		@Override
 		public void detailComputed(IValue value, final String result) {
 			synchronized (this) {
 				fComputed = true;
@@ -281,6 +285,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			final String detail = (valueString != null) ? valueString : DetailMessages.DefaultDetailPane_3;
 			if (!fMonitor.isCanceled()) {
 				WorkbenchJob append = new WorkbenchJob("append details") { //$NON-NLS-1$
+					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						if (!fMonitor.isCanceled()) {
 							String insert = detail;
@@ -371,6 +376,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		
 		fModelPresentation = new VariablesViewModelPresentation();
@@ -414,7 +420,9 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		
 		// Add a document listener so actions get updated when the document changes
 		getDetailDocument().addDocumentListener(new IDocumentListener() {
+			@Override
 			public void documentAboutToBeChanged(DocumentEvent event) {}
+			@Override
 			public void documentChanged(DocumentEvent event) {
 				updateSelectionDependentActions();
 			}
@@ -422,6 +430,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		
 		// Add the selection listener so selection dependent actions get updated.
 		fSourceViewer.getSelectionProvider().addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSelectionDependentActions();
 			}
@@ -429,6 +438,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		
 		// Add a focus listener to update actions when details area gains focus
 		fSourceViewer.getControl().addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				setGlobalAction(IDebugView.SELECT_ALL_ACTION, getAction(DETAIL_SELECT_ALL_ACTION));
 				setGlobalAction(IDebugView.CUT_ACTION, getAction(DETAIL_CUT_ACTION));
@@ -446,6 +456,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 				fHasFocus = true;
 			}
 			
+			@Override
 			public void focusLost(FocusEvent e) {
 				setGlobalAction(IDebugView.SELECT_ALL_ACTION, null);
 				setGlobalAction(IDebugView.CUT_ACTION, null);
@@ -463,6 +474,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		// disposed controls don't get a FocusOut event, make sure all actions
 		// have been deactivated
 		fSourceViewer.getControl().addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				if (fHasFocus) { 
 					setGlobalAction(IDebugView.SELECT_ALL_ACTION, null);
@@ -564,6 +576,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		MenuManager menuMgr= new MenuManager();
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager mgr) {
 				fillDetailContextMenu(mgr);
 			}
@@ -607,6 +620,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#display(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void display(IStructuredSelection selection) {
 		
 		if (selection == null){
@@ -650,6 +664,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#setFocus()
 	 */
+	@Override
 	public boolean setFocus(){
 		if (fSourceViewer != null){
 			fSourceViewer.getTextWidget().setFocus();
@@ -661,11 +676,18 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.details.AbstractDetailPane#dispose()
 	 */
+	@Override
 	public void dispose(){
-		if (fDetailJob != null) fDetailJob.cancel();
-		if (fModelPresentation != null) fModelPresentation.dispose();
+		if (fDetailJob != null) {
+			fDetailJob.cancel();
+		}
+		if (fModelPresentation != null) {
+			fModelPresentation.dispose();
+		}
 		fDebugModelIdentifier = null; // Setting this to null makes sure the source viewer is reconfigured with the model presentation after disposal
-		if (fSourceViewer != null && fSourceViewer.getControl() != null) fSourceViewer.getControl().dispose();
+		if (fSourceViewer != null && fSourceViewer.getControl() != null) {
+			fSourceViewer.getControl().dispose();
+		}
 		
 		if (isInView()){
 			IAction action = getAction(DETAIL_ASSIGN_VALUE_ACTION);
@@ -693,6 +715,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return DESCRIPTION;
 	}
@@ -700,6 +723,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#getID()
 	 */
+	@Override
 	public String getID() {
 		return ID;
 	}
@@ -707,6 +731,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#getName()
 	 */
+	@Override
 	public String getName() {
 		return NAME;
 	}
@@ -714,6 +739,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class required) {
 		if (IFindReplaceTarget.class.equals(required)) {
 			return fSourceViewer.getFindReplaceTarget();
@@ -804,12 +830,13 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			int lineOffset= document.getLineOffset(line);
 			int tabWidth= styledText.getTabs();
 			int column= 0;
-			for (int i= lineOffset; i < caret; i++)
+			for (int i= lineOffset; i < caret; i++) {
 				if ('\t' == document.getChar(i)) {
 					column += tabWidth - (tabWidth == 0 ? 0 : column % tabWidth);
 				} else {
 					column++;
 				}
+			}
 					
 			fLineLabel.fValue= line + 1;
 			fColumnLabel.fValue= column + 1;
@@ -831,19 +858,24 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		if (fCursorListener == null) {
 			fCursorListener= new ICursorListener() {
 				
+				@Override
 				public void keyPressed(KeyEvent e) {
 					fStatusLineItem.setText(getCursorPosition());
 				}
 				
+				@Override
 				public void keyReleased(KeyEvent e) {
 				}
 				
+				@Override
 				public void mouseDoubleClick(MouseEvent e) {
 				}
 				
+				@Override
 				public void mouseDown(MouseEvent e) {
 				}
 				
+				@Override
 				public void mouseUp(MouseEvent e) {
 					fStatusLineItem.setText(getCursorPosition());
 				}
@@ -929,14 +961,16 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	 */
 	private IUndoContext getUndoContext() {
 		IUndoManager undoManager= fSourceViewer.getUndoManager();
-		if (undoManager instanceof IUndoManagerExtension)
+		if (undoManager instanceof IUndoManagerExtension) {
 			return ((IUndoManagerExtension)undoManager).getUndoContext();
+		}
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		String propertyName= event.getProperty();
 		if (propertyName.equals(IDebugUIConstants.PREF_DETAIL_PANE_FONT)) {
@@ -972,6 +1006,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.IFindReplaceTarget#canPerformFind()
 		 */
+		@Override
 		public boolean canPerformFind() {
 			return fTarget.canPerformFind();
 		}
@@ -979,6 +1014,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.IFindReplaceTarget#findAndSelect(int, java.lang.String, boolean, boolean, boolean)
 		 */
+		@Override
 		public int findAndSelect(int widgetOffset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
 			int position = fTarget.findAndSelect(widgetOffset, findString, searchForward, caseSensitive, wholeWord);
 			// Explicitly tell the widget to show the selection because the viewer thinks the text is all on one line, even if wrapping is turned on.
@@ -994,6 +1030,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.IFindReplaceTarget#getSelection()
 		 */
+		@Override
 		public Point getSelection() {
 			return fTarget.getSelection();
 		}
@@ -1001,6 +1038,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.IFindReplaceTarget#getSelectionText()
 		 */
+		@Override
 		public String getSelectionText() {
 			return fTarget.getSelectionText();
 		}
@@ -1008,6 +1046,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.IFindReplaceTarget#isEditable()
 		 */
+		@Override
 		public boolean isEditable() {
 			return fTarget.isEditable();
 		}
@@ -1015,6 +1054,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.IFindReplaceTarget#replaceSelection(java.lang.String)
 		 */
+		@Override
 		public void replaceSelection(String text) {
 			fTarget.replaceSelection(text);
 		}
@@ -1023,6 +1063,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	/*
 	 * @see org.eclipse.debug.ui.IDetailPane2#getSelectionProvider()
 	 */
+	@Override
 	public ISelectionProvider getSelectionProvider() {
 		return fSourceViewer.getSelectionProvider();
 	}

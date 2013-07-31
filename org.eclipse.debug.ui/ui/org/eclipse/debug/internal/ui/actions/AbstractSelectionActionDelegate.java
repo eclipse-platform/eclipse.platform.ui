@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,6 +70,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fSelection = null;
 	}
@@ -77,6 +78,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection s) {
 		if (s instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) s;
@@ -115,6 +117,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 	 * 
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		setView(view);
 		fProgressService = (IWorkbenchSiteProgressService) view.getAdapter(IWorkbenchSiteProgressService.class);
@@ -184,7 +187,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 		if (selection.size() == 0) {
 			return false;
 		}
-		Iterator itr = selection.iterator();
+		Iterator<?> itr = selection.iterator();
 		while (itr.hasNext()) {
 			Object element = itr.next();
 			if (!isEnabledFor(element)) {
@@ -207,6 +210,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
@@ -214,6 +218,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 		setAction(action);
 	}

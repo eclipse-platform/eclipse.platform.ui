@@ -49,6 +49,7 @@ public class TableRenderingLabelProviderEx extends TableRenderingLabelProvider i
 	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fFontProvider != null) {
 			fFontProvider = null;
@@ -66,6 +67,7 @@ public class TableRenderingLabelProviderEx extends TableRenderingLabelProvider i
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object, int)
 	 */
+	@Override
 	public Color getBackground(Object element, int columnIndex) {
 		if (fColorProvider != null && columnIndex > 0) {
 			MemoryRenderingElement renderingElement = getMemoryRenderingElement(element, columnIndex);
@@ -81,6 +83,7 @@ public class TableRenderingLabelProviderEx extends TableRenderingLabelProvider i
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object, int)
 	 */
+	@Override
 	public Color getForeground(Object element, int columnIndex) {
 		if (fColorProvider != null && columnIndex > 0) {
 			MemoryRenderingElement renderingElement = getMemoryRenderingElement(element, columnIndex);
@@ -96,6 +99,7 @@ public class TableRenderingLabelProviderEx extends TableRenderingLabelProvider i
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 	 */
+	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		if (fLabelProvider != null && columnIndex > 0) {
 			MemoryRenderingElement renderingElement = getMemoryRenderingElement(element, columnIndex);
@@ -111,6 +115,7 @@ public class TableRenderingLabelProviderEx extends TableRenderingLabelProvider i
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object, int)
 	 */
+	@Override
 	public Font getFont(Object element, int columnIndex) {
 		if (fFontProvider != null && columnIndex > 0) {
 			MemoryRenderingElement renderingElement = getMemoryRenderingElement(element, columnIndex);

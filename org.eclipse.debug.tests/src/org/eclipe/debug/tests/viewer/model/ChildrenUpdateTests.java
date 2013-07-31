@@ -45,129 +45,184 @@ public class ChildrenUpdateTests extends TestCase {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.ModelContentProvider#getViewer()
 		 */
+		@Override
 		protected IInternalTreeModelViewer getViewer() {
 			return new IInternalTreeModelViewer(){
 			
+				@Override
 				public void setSelection(ISelection selection) {}
+				@Override
 				public void removeSelectionChangedListener(ISelectionChangedListener listener) {}
+				@Override
 				public void addSelectionChangedListener(ISelectionChangedListener listener) {}
+				@Override
 				public void updateViewer(IModelDelta delta) {}
+				@Override
 				public void setSelection(ISelection selection, boolean reveal, boolean force) {}
+				@Override
 				public void clearSelectionQuiet() {}
+				@Override
 				public boolean trySelection(ISelection selection, boolean reveal, boolean force) { return true; }
+				@Override
 				public void setInput(Object object) {}
+				@Override
 				public void setAutoExpandLevel(int level) {}
+				@Override
 				public boolean saveElementState(TreePath path, ModelDelta delta, int flags) { return true; }
+				@Override
 				public void removeStateUpdateListener(IStateUpdateListener listener) {}
+				@Override
 				public void removeViewerUpdateListener(IViewerUpdateListener listener) {}
+				@Override
 				public void removeModelChangedListener(IModelChangedListener listener) {}
+				@Override
 				public void removeLabelUpdateListener(ILabelUpdateListener listener) {}
-                public void addViewerUpdateListener(IViewerUpdateListener listener) {}
-                public void addStateUpdateListener(IStateUpdateListener listener) {}
-                public void addModelChangedListener(IModelChangedListener listener) {}
-                public void addLabelUpdateListener(ILabelUpdateListener listener) {}
-                public void update(Object element) {}
-                public void setHasChildren(Object elementOrTreePath, boolean hasChildren) {}
-                public void setExpandedState(Object elementOrTreePath, boolean expanded) {}
-                public void setChildCount(Object elementOrTreePath, int count) {}
-                public void reveal(TreePath path, int index) {}
-                public void replace(Object parentOrTreePath, int index, Object element) {}
-                public void remove(Object parentOrTreePath, int index) {}
-                public void remove(Object elementOrTreePath) {}
-                public void refresh() {}
-                public void refresh(Object element) {}
+                @Override
+				public void addViewerUpdateListener(IViewerUpdateListener listener) {}
+                @Override
+				public void addStateUpdateListener(IStateUpdateListener listener) {}
+                @Override
+				public void addModelChangedListener(IModelChangedListener listener) {}
+                @Override
+				public void addLabelUpdateListener(ILabelUpdateListener listener) {}
+                @Override
+				public void update(Object element) {}
+                @Override
+				public void setHasChildren(Object elementOrTreePath, boolean hasChildren) {}
+                @Override
+				public void setExpandedState(Object elementOrTreePath, boolean expanded) {}
+                @Override
+				public void setChildCount(Object elementOrTreePath, int count) {}
+                @Override
+				public void reveal(TreePath path, int index) {}
+                @Override
+				public void replace(Object parentOrTreePath, int index, Object element) {}
+                @Override
+				public void remove(Object parentOrTreePath, int index) {}
+                @Override
+				public void remove(Object elementOrTreePath) {}
+                @Override
+				public void refresh() {}
+                @Override
+				public void refresh(Object element) {}
 			
+				@Override
 				public ISelection getSelection() {
 					return null;
 				}
 			
+				@Override
 				public IPresentationContext getPresentationContext() {
 					return null;
 				}
 			
+				@Override
 				public Object getInput() {
 					return null;
 				}
 			
+				@Override
 				public ViewerLabel getElementLabel(TreePath path, String columnId) {
 					return null;
 				}
 			
+				@Override
 				public Display getDisplay() {
 					return DebugUIPlugin.getStandardDisplay();
 				}
 			
+				@Override
 				public int getAutoExpandLevel() {
 					return 0;
 				}
 			
 			
+				@Override
 				public boolean overrideSelection(ISelection current, ISelection candidate) {
 					return false;
 				}
 			
+				@Override
 				public void insert(Object parentOrTreePath, Object element, int position) {
 				}
 			
+				@Override
 				public TreePath getTopElementPath() {
 					return null;
 				}
 			
+				@Override
 				public ViewerFilter[] getFilters() {
 					return null;
 				}
 
+				@Override
 				public void addFilter(ViewerFilter filter) {}
+				@Override
 				public void setFilters(ViewerFilter[] filters) {}
 				
+				@Override
 				public boolean getExpandedState(Object elementOrTreePath) {
 					return false;
 				}
 			
+				@Override
 				public Object getChildElement(TreePath path, int index) {
 					return null;
 				}
 			
-                public boolean getHasChildren(Object elementOrTreePath) {
+                @Override
+				public boolean getHasChildren(Object elementOrTreePath) {
                     return false;
                 }
             
+				@Override
 				public int getChildCount(TreePath path) {
 					return 0;
 				}
 			
+				@Override
 				public int findElementIndex(TreePath parentPath, Object element) {
 					return 0;
 				}
 			
+				@Override
 				public void expandToLevel(Object elementOrTreePath, int level) {
 				}
 			
+				@Override
 				public void autoExpand(TreePath elementPath) {
 				}
 
-                public boolean getElementChildrenRealized(TreePath parentPath) {
+                @Override
+				public boolean getElementChildrenRealized(TreePath parentPath) {
                     return false;
                 }
                 
-                public boolean getElementChecked(TreePath path) {
+                @Override
+				public boolean getElementChecked(TreePath path) {
                     return false;
                 }
                 
-                public boolean getElementGrayed(TreePath path) {
+                @Override
+				public boolean getElementGrayed(TreePath path) {
                     return false;
                 }
                 
-                public void setElementChecked(TreePath path, boolean checked, boolean grayed) {
+                @Override
+				public void setElementChecked(TreePath path, boolean checked, boolean grayed) {
                 }
 
-                public TreePath[] getElementPaths(Object element) {
+                @Override
+				public TreePath[] getElementPaths(Object element) {
                     return null;
                 }
-                public void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] images,
+                @Override
+				public void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] images,
                     FontData[] fontDatas, RGB[] foregrounds, RGB[] backgrounds) {
                 }
-                public String[] getVisibleColumns() {
+                @Override
+				public String[] getVisibleColumns() {
                     return null;
                 }                
 			};

@@ -24,78 +24,72 @@ import org.eclipse.swt.events.SelectionListener;
  */
 public class ViewTabEnablementManager implements SelectionListener {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt
+	 * .events.SelectionEvent)
 	 */
+	@Override
 	public void widgetSelected(SelectionEvent e) {
-		if (e.getSource() instanceof CTabFolder)
-		{
+		if (e.getSource() instanceof CTabFolder) {
 			handleTabFolderSelection(e);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse
+	 * .swt.events.SelectionEvent)
 	 */
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
-		 
-		
+
 	}
-	
-	private void handleTabFolderSelection(SelectionEvent event)
-	{
-		CTabFolder folder = (CTabFolder)event.getSource();
-		
+
+	private void handleTabFolderSelection(SelectionEvent event) {
+		CTabFolder folder = (CTabFolder) event.getSource();
+
 		CTabItem selectedItem = folder.getSelection();
 		IMemoryViewTab selectedViewTab;
-		
+
 		// get selected view tab
-		if (selectedItem != null)
-		{			
+		if (selectedItem != null) {
 			Object obj = selectedItem.getData();
-			
-			if (obj instanceof IMemoryViewTab)
-			{
-				selectedViewTab = (IMemoryViewTab)obj;
-			}
-			else
-			{
+
+			if (obj instanceof IMemoryViewTab) {
+				selectedViewTab = (IMemoryViewTab) obj;
+			} else {
 				return;
 			}
-		}
-		else
-		{
+		} else {
 			return;
 		}
-		
+
 		// get all tabs
 		CTabItem[] allTabs = folder.getItems();
-		
+
 		// check all tabs to make sure they are enabled/disabled properly
-		for (int i=0; i<allTabs.length; i++)
-		{	
+		for (int i = 0; i < allTabs.length; i++) {
 			IMemoryViewTab viewTab;
 			Object obj = allTabs[i].getData();
-			
-			if (obj instanceof IMemoryViewTab)
-			{	
-				viewTab = (IMemoryViewTab)obj;
-				
+
+			if (obj instanceof IMemoryViewTab) {
+				viewTab = (IMemoryViewTab) obj;
+
 				// if view tab matches the selected item
-				if (viewTab == selectedViewTab && !viewTab.isEnabled() )
-				{
+				if (viewTab == selectedViewTab && !viewTab.isEnabled()) {
 					// if the item has been selected and this tab is not enabled
 					// enable it.
 					viewTab.setEnabled(true);
 					viewTab.getRendering().activated();
-					
-				}
-				else if (viewTab != selectedViewTab && viewTab.isEnabled())
-				{
+
+				} else if (viewTab != selectedViewTab && viewTab.isEnabled()) {
 					// if the tab is not selected, disable it
 					viewTab.setEnabled(false);
 					viewTab.getRendering().deactivated();
-				}	
+				}
 			}
 		}
 	}

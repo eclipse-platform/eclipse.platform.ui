@@ -25,6 +25,7 @@ public class DebugPerspectiveFactory implements IPerspectiveFactory {
 	/**
 	 * @see IPerspectiveFactory#createInitialLayout(IPageLayout)
 	 */
+	@Override
 	public void createInitialLayout(IPageLayout layout) {
 		
 		IFolderLayout consoleFolder = layout.createFolder(IInternalDebugUIConstants.ID_CONSOLE_FOLDER_VIEW, IPageLayout.BOTTOM, (float)0.75, layout.getEditorArea());

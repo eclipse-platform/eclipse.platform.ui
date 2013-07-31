@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,14 +46,16 @@ public class ConsoleFactoryExtension implements IPluginContribution {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPluginContribution#getLocalId()
      */
-    public String getLocalId() {
+	@Override
+	public String getLocalId() {
         return fConfig.getAttribute("id"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPluginContribution#getPluginId()
      */
-    public String getPluginId() {
+    @Override
+	public String getPluginId() {
         return fConfig.getContributor().getName();
     }
 
@@ -62,7 +64,7 @@ public class ConsoleFactoryExtension implements IPluginContribution {
             Expression enablementExpression = getEnablementExpression();
             if (enablementExpression == null) {
                 return true;
-            } 
+            }
             EvaluationContext context = new EvaluationContext(null, this);
             EvaluationResult evaluationResult = enablementExpression.evaluate(context);
             return evaluationResult != EvaluationResult.FALSE;
@@ -71,11 +73,11 @@ public class ConsoleFactoryExtension implements IPluginContribution {
             return false;
         }
     }
-    
+
     public Expression getEnablementExpression() throws CoreException {
 		if (fEnablementExpression == null) {
 			IConfigurationElement[] elements = fConfig.getChildren(ExpressionTagNames.ENABLEMENT);
-			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null; 
+			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null;
 
 			if (enablement != null) {
 			    fEnablementExpression = ExpressionConverter.getDefault().perform(enablement);

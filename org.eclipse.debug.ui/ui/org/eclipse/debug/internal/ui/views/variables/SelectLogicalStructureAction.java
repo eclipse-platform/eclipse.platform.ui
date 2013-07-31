@@ -45,6 +45,7 @@ public class SelectLogicalStructureAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		valueChanged();
 	}
@@ -54,6 +55,7 @@ public class SelectLogicalStructureAction extends Action {
 			return;
 		}
 		BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
                 // Checking this action sets the type to fType, unchecking it sets the type
                 // to null ("none selected")

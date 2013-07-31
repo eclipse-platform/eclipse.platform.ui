@@ -21,11 +21,13 @@ public class ClearDefaultBreakpointGroupAction extends BreakpointWorkingSetActio
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
-    public void run(IAction action) {
+    @Override
+	public void run(IAction action) {
         BreakpointSetOrganizer.setDefaultWorkingSet(null);
     }
 
-    protected void update() {
+    @Override
+	protected void update() {
         fAction.setEnabled(BreakpointSetOrganizer.getDefaultWorkingSet() != null);
     }
 }

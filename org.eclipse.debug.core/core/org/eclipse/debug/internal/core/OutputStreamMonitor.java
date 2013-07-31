@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,9 @@ import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IFlushableStreamMonitor;
 
 /**
- * Monitors the output stream of a system process and notifies 
+ * Monitors the output stream of a system process and notifies
  * listeners of additions to the stream.
- * 
+ *
  * The output stream monitor reads system out (or err) via
  * and input stream.
  */
@@ -39,7 +39,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 * A collection of listeners
 	 */
 	private ListenerList fListeners= new ListenerList();
-	
+
 	/**
 	 * Whether content is being buffered
 	 */
@@ -66,15 +66,15 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 * from the stream immediately.
 	 */
 	private boolean fKilled= false;
-	
+
     private long lastSleep;
 
 	private String fEncoding;
-    
+
 	/**
 	 * Creates an output stream monitor on the
 	 * given stream (connected to system out or err).
-	 * 
+	 *
 	 * @param stream input stream to read from
 	 * @param encoding stream encoding or <code>null</code> for system default
 	 */
@@ -87,6 +87,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStreamMonitor#addListener(org.eclipse.debug.core.IStreamListener)
 	 */
+	@Override
 	public synchronized void addListener(IStreamListener listener) {
 		fListeners.add(listener);
 	}
@@ -120,6 +121,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStreamMonitor#getContents()
 	 */
+	@Override
 	public synchronized String getContents() {
 		return fContents.toString();
 	}
@@ -170,14 +172,14 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 				}
 				return;
 			}
-            
+
             currentTime = System.currentTimeMillis();
             if (currentTime - lastSleep > 1000) {
                 lastSleep = currentTime;
                 try {
                     Thread.sleep(1); // just give up CPU to maintain UI responsiveness.
                 } catch (InterruptedException e) {
-                } 
+                }
             }
 		}
 		try {
@@ -186,7 +188,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 			DebugPlugin.log(e);
 		}
 	}
-	
+
 	protected void kill() {
 		fKilled= true;
 	}
@@ -194,6 +196,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStreamMonitor#removeListener(org.eclipse.debug.core.IStreamListener)
 	 */
+	@Override
 	public synchronized void removeListener(IStreamListener listener) {
 		fListeners.remove(listener);
 	}
@@ -204,19 +207,21 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	protected void startMonitoring() {
 		if (fThread == null) {
 			fThread= new Thread(new Runnable() {
+				@Override
 				public void run() {
 					read();
 				}
-			}, DebugCoreMessages.OutputStreamMonitor_label); 
+			}, DebugCoreMessages.OutputStreamMonitor_label);
             fThread.setDaemon(true);
             fThread.setPriority(Thread.MIN_PRIORITY);
 			fThread.start();
 		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.core.model.IFlushableStreamMonitor#setBuffered(boolean)
 	 */
+	@Override
 	public synchronized void setBuffered(boolean buffer) {
 		fBuffered = buffer;
 	}
@@ -224,13 +229,15 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	/**
 	 * @see org.eclipse.debug.core.model.IFlushableStreamMonitor#flushContents()
 	 */
+	@Override
 	public synchronized void flushContents() {
 		fContents.setLength(0);
 	}
-	
+
 	/**
 	 * @see IFlushableStreamMonitor#isBuffered()
 	 */
+	@Override
 	public synchronized boolean isBuffered() {
 		return fBuffered;
 	}
@@ -238,15 +245,16 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	private ContentNotifier getNotifier() {
 		return new ContentNotifier();
 	}
-	
+
 	class ContentNotifier implements ISafeRunnable {
-		
+
 		private IStreamListener fListener;
 		private String fText;
-		
+
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
+		@Override
 		public void handleException(Throwable exception) {
 			DebugPlugin.log(exception);
 		}
@@ -254,13 +262,15 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
+		@Override
 		public void run() throws Exception {
 			fListener.streamAppended(fText, OutputStreamMonitor.this);
 		}
 
 		public void notifyAppend(String text) {
-			if (text == null)
+			if (text == null) {
 				return;
+			}
 			fText = text;
 			Object[] copiedListeners= fListeners.getListeners();
 			for (int i= 0; i < copiedListeners.length; i++) {
@@ -268,7 +278,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
                 SafeRunner.run(this);
 			}
 			fListener = null;
-			fText = null;		
+			fText = null;
 		}
 	}
 }

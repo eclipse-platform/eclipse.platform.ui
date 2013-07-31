@@ -47,6 +47,7 @@ public class ImportLaunchConfigurationsWizard extends Wizard implements IImportW
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		return ((ImportLaunchConfigurationsWizardPage)getStartingPage()).finish();
 	}
@@ -54,6 +55,7 @@ public class ImportLaunchConfigurationsWizard extends Wizard implements IImportW
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		addPage(new ImportLaunchConfigurationsWizardPage());
 	}
@@ -61,6 +63,7 @@ public class ImportLaunchConfigurationsWizard extends Wizard implements IImportW
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle(WizardMessages.ImportLaunchConfigurationsWizard_0);
 		setNeedsProgressMonitor(true);

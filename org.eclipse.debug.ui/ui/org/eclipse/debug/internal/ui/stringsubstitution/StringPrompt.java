@@ -23,6 +23,7 @@ public class StringPrompt extends PromptingResolver {
 	 * Prompts the user to input a string.
 	 * @see PromptExpanderBase#prompt()
 	 */
+	@Override
 	public void prompt() {
 		InputDialog dialog = new InputDialog(null, StringSubstitutionMessages.StringPromptExpander_0, dialogMessage, defaultValue == null ? lastValue : defaultValue, null); 
 		int dialogResult = dialog.open();

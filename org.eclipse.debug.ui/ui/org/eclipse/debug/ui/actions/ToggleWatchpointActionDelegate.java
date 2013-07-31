@@ -31,6 +31,7 @@ public class ToggleWatchpointActionDelegate extends ToggleBreakpointObjectAction
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.ToggleBreakpointObjectActionDelegate#performAction(org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget, org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	protected void performAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection) throws CoreException {
 		target.toggleWatchpoints(part, selection);
 	}

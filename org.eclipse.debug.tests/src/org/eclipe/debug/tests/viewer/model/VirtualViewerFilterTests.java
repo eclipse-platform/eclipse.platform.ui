@@ -27,7 +27,8 @@ public class VirtualViewerFilterTests extends FilterTests {
         super(name);
     }
 
-    protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
+    @Override
+	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
 		return new VirtualTreeModelViewer(fDisplay, SWT.VIRTUAL, new PresentationContext("TestViewer"), new VisibleVirtualItemValidator(0, 100)); //$NON-NLS-1$
     }
 }

@@ -33,6 +33,7 @@ public final class DebugAction extends ExecutionAction {
 	/**
 	 * @see ExecutionAction#getMode()
 	 */
+	@Override
 	protected String getMode() {
 		return ILaunchManager.DEBUG_MODE;
 	}

@@ -4,14 +4,14 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sascha Radike - bug 56642
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
- 
+
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -39,10 +39,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -67,73 +67,73 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * Launch configuration handle.
- * 
+ *
  * @see ILaunchConfiguration
  */
 public class LaunchConfiguration extends PlatformObject implements ILaunchConfiguration {
-	
+
 	/**
 	 * Launch configuration attribute that specifies the resources paths mapped to it.
 	 * Not all launch configurations will have a mapped resource unless migrated.
 	 * Value is a list of resource paths stored as portable strings, or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final String ATTR_MAPPED_RESOURCE_PATHS = DebugPlugin.getUniqueIdentifier() + ".MAPPED_RESOURCE_PATHS"; //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute that specifies the resources types mapped to it.
 	 * Not all launch configurations will have a mapped resource unless migrated.
 	 * Value is a list of resource type integers, or <code>null</code> if none.
-	 * 
+	 *
 	 * @since 3.2
-	 */	
+	 */
 	public static final String ATTR_MAPPED_RESOURCE_TYPES = DebugPlugin.getUniqueIdentifier() + ".MAPPED_RESOURCE_TYPES"; //$NON-NLS-1$
-	
+
 	/**
 	 * The launch modes set on this configuration.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final String ATTR_LAUNCH_MODES = DebugPlugin.getUniqueIdentifier() + ".LAUNCH_MODES"; //$NON-NLS-1$
-	
+
 	/**
-	 * Launch configuration attribute storing a list 
+	 * Launch configuration attribute storing a list
 	 * of preferred launchers for associated mode sets.
 	 * This attribute is a list of launchers stored by mode set
 	 * and relating to the id of the preferred launcher, which happens to be an <code>ILaunchDelegate</code>
-	 * 
+	 *
 	 * @since 3.3
 	 */
-	public static final String ATTR_PREFERRED_LAUNCHERS = DebugPlugin.getUniqueIdentifier() + ".preferred_launchers"; //$NON-NLS-1$	
-	
+	public static final String ATTR_PREFERRED_LAUNCHERS = DebugPlugin.getUniqueIdentifier() + ".preferred_launchers"; //$NON-NLS-1$
+
 	/**
 	 * Status handler to prompt in the UI thread
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected static final IStatus promptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200, "", null);  //$NON-NLS-1$//$NON-NLS-2$
-	
+
 	/**
 	 * Status handler to prompt the user to resolve the missing launch delegate issue
 	 * @since 3.3
 	 */
 	protected static final IStatus delegateNotAvailable = new Status(IStatus.INFO, "org.eclipse.debug.core", 226, "", null); //$NON-NLS-1$ //$NON-NLS-2$
-	
+
 	/**
 	 * Status handle to prompt the user to resolve duplicate launch delegates being detected
-	 * 
+	 *
 	 *  @since 3.3
 	 */
 	protected static final IStatus duplicateDelegates = new Status(IStatus.INFO, "org.eclipse.debug.core", 227, "", null);  //$NON-NLS-1$//$NON-NLS-2$
-	
+
 	/**
 	 * This configuration's name
 	 * @since 3.5
 	 */
 	private String fName;
-	
+
 	/**
 	 * The container this configuration is stored in or <code>null</code> if stored locally
 	 * with workspace metadata.
@@ -145,7 +145,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * Constructs a launch configuration with the given name. The configuration
 	 * is stored in the given container or locally with workspace metadata if
 	 * the specified container is <code>null</code>.
-	 * 
+	 *
 	 * @param name launch configuration name
 	 * @param container parent container or <code>null</code>
 	 * @since 3.5
@@ -160,22 +160,22 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * Initialize any state variables - called first in the constructor.
 	 * Subclasses must override as appropriate.
 	 */
-	protected void initialize() {	
+	protected void initialize() {
 	}
-	
+
 	/**
 	 * Constructs a launch configuration on the given workspace file.
-	 * 
+	 *
 	 * @param file workspace .launch file
 	 * @since 3.5
 	 */
 	protected LaunchConfiguration(IFile file) {
 		this(getSimpleName(file.getName()), file.getParent());
 	}
-	
+
 	/**
 	 * Given a name that ends with .launch, return the simple name of the configuration.
-	 * 
+	 *
 	 * @param fileName the name to parse
 	 * @return simple name
 	 * @since 3.5
@@ -187,11 +187,11 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		}
 		return fileName;
 	}
-	
+
 	/**
 	 * Constructs a launch configuration from the given
 	 * memento.
-	 * 
+	 *
 	 * @param memento launch configuration memento
 	 * @exception CoreException if the memento is invalid or
 	 * 	an exception occurs reading the memento
@@ -205,21 +205,21 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();
-			
-			String localString = root.getAttribute(IConfigurationElementConstants.LOCAL); 
+
+			String localString = root.getAttribute(IConfigurationElementConstants.LOCAL);
 			String path = root.getAttribute(IConfigurationElementConstants.PATH);
 
-			String message = null;				
+			String message = null;
 			if (path == null || IInternalDebugCoreConstants.EMPTY_STRING.equals(path)) {
-				message = DebugCoreMessages.LaunchConfiguration_18;  
+				message = DebugCoreMessages.LaunchConfiguration_18;
 			} else if (localString == null || IInternalDebugCoreConstants.EMPTY_STRING.equals(localString)) {
-				message = DebugCoreMessages.LaunchConfiguration_19;  
+				message = DebugCoreMessages.LaunchConfiguration_19;
 			}
 			if (message != null) {
 				throw new CoreException(newStatus(message, DebugException.INTERNAL_ERROR, null));
 			}
-			
-			
+
+
 			boolean local = (Boolean.valueOf(localString)).booleanValue();
 			IPath iPath = new Path(path);
 			String name = getSimpleName(iPath.lastSegment());
@@ -231,19 +231,20 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			setContainer(container);
 			return;
 		} catch (ParserConfigurationException e) {
-			ex = e;			
+			ex = e;
 		} catch (SAXException e) {
 			ex = e;
 		} catch (IOException e) {
 			ex = e;
 		}
-		IStatus s = newStatus(DebugCoreMessages.LaunchConfiguration_17, DebugException.INTERNAL_ERROR, ex); 
+		IStatus s = newStatus(DebugCoreMessages.LaunchConfiguration_17, DebugException.INTERNAL_ERROR, ex);
 		throw new CoreException(s);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#contentsEqual(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean contentsEqual(ILaunchConfiguration object) {
 		try {
 			if (object instanceof LaunchConfiguration) {
@@ -262,14 +263,16 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#copy(java.lang.String)
 	 */
+	@Override
 	public ILaunchConfigurationWorkingCopy copy(String name) throws CoreException {
 		ILaunchConfigurationWorkingCopy copy = new LaunchConfigurationWorkingCopy(this, name);
 		return copy;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#delete()
 	 */
+	@Override
 	public void delete() throws CoreException {
 		if (exists()) {
 			IFile file = getFile();
@@ -280,7 +283,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 					if ((store.fetchInfo().exists())) {
 						throw new DebugException(
 							new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-							 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfiguration_Failed_to_delete_launch_configuration__1, null) 
+							 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfiguration_Failed_to_delete_launch_configuration__1, null)
 						);
 					}
 				}
@@ -306,16 +309,17 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * given configuration. Two configurations are equal if
 	 * they are stored in the same location (and neither one
 	 * is a working copy).
-	 * 
+	 *
 	 * @return whether this configuration is equal to the
 	 *  given configuration
 	 * @see Object#equals(Object)
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (object instanceof ILaunchConfiguration) {
 			if (isWorkingCopy()) {
 				return this == object;
-			} 
+			}
 			LaunchConfiguration config = (LaunchConfiguration) object;
 			if (!config.isWorkingCopy()) {
 				return getName().equals(config.getName()) &&
@@ -324,10 +328,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns whether the given objects are equal or both <code>null</code>.
-	 * 
+	 *
 	 * @param o1 the object
 	 * @param o2 the object to be compared to o1
 	 * @return whether the given objects are equal or both <code>null</code>
@@ -345,6 +349,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#exists()
 	 */
+	@Override
 	public boolean exists() {
 		IFile file = getFile();
 		if (file != null) {
@@ -363,6 +368,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, boolean)
 	 */
+	@Override
 	public boolean getAttribute(String attributeName, boolean defaultValue) throws CoreException {
 		return getInfo().getBooleanAttribute(attributeName, defaultValue);
 	}
@@ -370,6 +376,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, int)
 	 */
+	@Override
 	public int getAttribute(String attributeName, int defaultValue) throws CoreException {
 		return getInfo().getIntAttribute(attributeName, defaultValue);
 	}
@@ -377,27 +384,34 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, java.util.List)
 	 */
-	public List getAttribute(String attributeName, List defaultValue) throws CoreException {
+	@Override
+	public List<String> getAttribute(String attributeName, List<String> defaultValue) throws CoreException {
 		return getInfo().getListAttribute(attributeName, defaultValue);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, java.util.Set)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String
+	 * , java.util.Set)
 	 */
-	public Set getAttribute(String attributeName, Set defaultValue) throws CoreException {
+	@Override
+	public Set<String> getAttribute(String attributeName, Set<String> defaultValue) throws CoreException {
 		return getInfo().getSetAttribute(attributeName, defaultValue);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, java.util.Map)
 	 */
-	public Map getAttribute(String attributeName, Map defaultValue) throws CoreException {
+	@Override
+	public Map<String, String> getAttribute(String attributeName, Map<String, String> defaultValue) throws CoreException {
 		return getInfo().getMapAttribute(attributeName, defaultValue);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public String getAttribute(String attributeName, String defaultValue) throws CoreException {
 		return getInfo().getStringAttribute(attributeName, defaultValue);
 	}
@@ -405,7 +419,8 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttributes()
 	 */
-	public Map getAttributes() throws CoreException {
+	@Override
+	public Map<String, Object> getAttributes() throws CoreException {
 		LaunchConfigurationInfo info = getInfo();
 		return info.getAttributes();
 	}
@@ -413,6 +428,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getCategory()
 	 */
+	@Override
 	public String getCategory() throws CoreException {
 		return getType().getCategory();
 	}
@@ -420,6 +436,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getFile()
 	 */
+	@Override
 	public IFile getFile() {
 		IContainer container = getContainer();
 		if (container != null) {
@@ -427,10 +444,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the simple file name of this launch configuration.
-	 * 
+	 *
 	 * @return the simple file name of this launch configuration - for example
 	 *  	"Abc.launch"
 	 */
@@ -444,7 +461,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/**
 	 * Returns the info object containing the attributes
 	 * of this configuration
-	 * 
+	 *
 	 * @return info for this handle
 	 * @exception CoreException if unable to retrieve the
 	 *  info object
@@ -452,19 +469,20 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	protected LaunchConfigurationInfo getInfo() throws CoreException {
 		return getLaunchManager().getInfo(this);
 	}
-	
+
 	/**
 	 * Returns the launch manager
-	 * 
+	 *
 	 * @return launch manager
 	 */
 	protected LaunchManager getLaunchManager() {
 		return (LaunchManager)DebugPlugin.getDefault().getLaunchManager();
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getLocation()
 	 */
+	@Override
 	public IPath getLocation() {
 		try {
 			IFileStore store = getFileStore();
@@ -478,12 +496,12 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the file store this configuration is persisted in or <code>null</code> if
 	 * a file store cannot be derived. The file may or may not exist. If this configuration
 	 * is in a project that is closed or does not exist, <code>null</code> is returned.
-	 * 
+	 *
 	 * @return file store this configuration is persisted in or <code>null</code>
 	 * @throws CoreException if a problem is encountered
 	 * @since 3.5
@@ -503,25 +521,26 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getResource()
 	 */
+	@Override
 	public IResource[] getMappedResources() throws CoreException {
-		List paths = getAttribute(ATTR_MAPPED_RESOURCE_PATHS, (List)null);
+		List<String> paths = getAttribute(ATTR_MAPPED_RESOURCE_PATHS, (List<String>) null);
 		if (paths == null || paths.size() == 0) {
 			return null;
 		}
-		List types = getAttribute(ATTR_MAPPED_RESOURCE_TYPES, (List)null);
+		List<String> types = getAttribute(ATTR_MAPPED_RESOURCE_TYPES, (List<String>) null);
 		if (types == null || types.size() != paths.size()) {
-			throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_0, DebugPlugin.ERROR, null)); 
+			throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_0, DebugPlugin.ERROR, null));
 		}
-		ArrayList list = new ArrayList();
+		ArrayList<IResource> list = new ArrayList<IResource>();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		for(int i = 0; i < paths.size(); i++) {
-			String pathStr = (String) paths.get(i);
-			String typeStr= (String) types.get(i);
+			String pathStr = paths.get(i);
+			String typeStr= types.get(i);
 			int type = -1;
 			try {
 				type = Integer.decode(typeStr).intValue();
 			} catch (NumberFormatException e) {
-				throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_0, DebugPlugin.ERROR, e)); 
+				throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_0, DebugPlugin.ERROR, e));
 			}
 			IPath path = Path.fromPortableString(pathStr);
 			IResource res = null;
@@ -551,12 +570,13 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		if (list.isEmpty()) {
 			return null;
 		}
-		return (IResource[])list.toArray(new IResource[list.size()]);
+		return list.toArray(new IResource[list.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getMemento()
 	 */
+	@Override
 	public String getMemento() throws CoreException {
 		IPath relativePath = null;
 		IFile file = getFile();
@@ -582,37 +602,40 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		} catch (TransformerException te) {
 			e= te;
 		}
-		IStatus status = newStatus(DebugCoreMessages.LaunchConfiguration_16, DebugException.INTERNAL_ERROR,  e);  
+		IStatus status = newStatus(DebugCoreMessages.LaunchConfiguration_16, DebugException.INTERNAL_ERROR,  e);
 		throw new CoreException(status);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
-	
+
 	/**
 	 * Returns the container this configuration is stored in, or <code>null</code>
 	 * if this configuration is local.
-	 * 
+	 *
 	 * @return the container this configuration is stored in, or <code>null</code>
 	 * if this configuration is local
 	 * @since 3.5
 	 */
 	protected IContainer getContainer() {
 		return fContainer;
-	}		
-
-	public Set getModes() throws CoreException {
-		Set options = getAttribute(ATTR_LAUNCH_MODES, (Set)null); 
-		return (options != null ? new HashSet(options) : new HashSet(0));
 	}
-	
+
+	@Override
+	public Set<String> getModes() throws CoreException {
+		Set<String> options = getAttribute(ATTR_LAUNCH_MODES, (Set<String>) null);
+		return (options != null ? new HashSet<String>(options) : new HashSet<String>(0));
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getType()
 	 */
+	@Override
 	public ILaunchConfigurationType getType() throws CoreException {
 		return getInfo().getType();
 	}
@@ -620,6 +643,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getWorkingCopy()
 	 */
+	@Override
 	public ILaunchConfigurationWorkingCopy getWorkingCopy() throws CoreException {
 		return new LaunchConfigurationWorkingCopy(this);
 	}
@@ -627,6 +651,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		IContainer container = getContainer();
 		if (container == null) {
@@ -635,18 +660,19 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			return getName().hashCode() + container.hashCode();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#hasAttribute(java.lang.String)
 	 */
+	@Override
 	public boolean hasAttribute(String attributeName) throws CoreException {
 		return getInfo().hasAttribute(attributeName);
 	}
-	
+
 	/**
-	 * Set the source locator to use with the launch, if specified 
+	 * Set the source locator to use with the launch, if specified
 	 * by this configuration.
-	 * 
+	 *
 	 * @param launch the launch on which to set the source locator
 	 * @throws CoreException if a problem is encountered
 	 */
@@ -662,10 +688,11 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				if (memento == null) {
 					locator.initializeDefaults(this);
 				} else {
-					if(locator instanceof IPersistableSourceLocator2)
+					if(locator instanceof IPersistableSourceLocator2) {
 						((IPersistableSourceLocator2)locator).initializeFromMemento(memento, this);
-					else
+					} else {
 						locator.initializeFromMemento(memento);
+					}
 				}
 				launch.setSourceLocator(locator);
 			}
@@ -675,13 +702,15 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#isLocal()
 	 */
+	@Override
 	public boolean isLocal() {
 		return getContainer() == null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#isMigrationCandidate()
 	 */
+	@Override
 	public boolean isMigrationCandidate() throws CoreException {
 		return ((LaunchConfigurationType)getType()).isMigrationCandidate(this);
 	}
@@ -689,6 +718,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#isWorkingCopy()
 	 */
+	@Override
 	public boolean isWorkingCopy() {
 		return false;
 	}
@@ -696,6 +726,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#launch(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException {
 		return launch(mode, monitor, false);
 	}
@@ -703,6 +734,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#launch(java.lang.String, org.eclipse.core.runtime.IProgressMonitor, boolean)
 	 */
+	@Override
 	public ILaunch launch(String mode, IProgressMonitor monitor, boolean build) throws CoreException {
 	    return launch(mode, monitor, build, true);
 	}
@@ -710,10 +742,8 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/* (non-Javadoc)
      * @see org.eclipse.debug.core.ILaunchConfiguration#launch(java.lang.String, org.eclipse.core.runtime.IProgressMonitor, boolean, boolean)
      */
-    public ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException {
-    	if (monitor == null) {
-			monitor = new NullProgressMonitor();
-    	}
+    @Override
+	public ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException {
     	/* Setup progress monitor
     	 * - Prepare delegate (0)
     	 * - Pre-launch check (1)
@@ -722,16 +752,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
     	 * - Final launch validation (1)
     	 * - Initialize source locator (1)
     	 * - Launch delegate (10) */
-    	if (build) {
-    		monitor.beginTask("", 23); //$NON-NLS-1$
-    	}
-    	else {
-    		monitor.beginTask("", 13); //$NON-NLS-1$
-    	}
-		monitor.subTask(DebugCoreMessages.LaunchConfiguration_9);
+		SubMonitor lmonitor = SubMonitor.convert(monitor, DebugCoreMessages.LaunchConfiguration_9, build ? 23 : 13);
     	try {
 			// bug 28245 - force the delegate to load in case it is interested in launch notifications
-	    	Set modes = getModes();
+			Set<String> modes = getModes();
 	    	modes.add(mode);
 	    	ILaunchDelegate[] delegates = getType().getDelegates(modes);
 	    	ILaunchConfigurationDelegate delegate = null;
@@ -742,7 +766,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	    		if (handler != null) {
 	    			handler.handleStatus(delegateNotAvailable, new Object[] {this, mode});
 	    		}
-	    		IStatus status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LaunchConfiguration_11, null); 
+	    		IStatus status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LaunchConfiguration_11, null);
 	    		throw new CoreException(status);
 	    	} else {
 	    		ILaunchDelegate del = getPreferredDelegate(modes);
@@ -764,12 +788,12 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 							delegate = del.getDelegate();
 						}
 						else {
-							status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LaunchConfiguration_13, null); 
+							status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LaunchConfiguration_13, null);
 				    		throw new CoreException(status);
 						}
 					}
 					else {
-						status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LaunchConfiguration_13, null); 
+						status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LaunchConfiguration_13, null);
 			    		throw new CoreException(status);
 					}
 	    		}
@@ -777,7 +801,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	    			delegate = del.getDelegate();
 	    		}
 	    	}
-	    	
+
 			ILaunchConfigurationDelegate2 delegate2 = null;
 			if (delegate instanceof ILaunchConfigurationDelegate2) {
 				delegate2 = (ILaunchConfigurationDelegate2) delegate;
@@ -792,8 +816,9 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			} else {
 				// ensure the launch mode is valid
 				if (!mode.equals(launch.getLaunchMode())) {
-					IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, 
-							MessageFormat.format(DebugCoreMessages.LaunchConfiguration_14, new String[]{mode, launch.getLaunchMode()}), null); 
+					IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR,
+ MessageFormat.format(DebugCoreMessages.LaunchConfiguration_14, new Object[] {
+							mode, launch.getLaunchMode() }), null);
 					throw new CoreException(status);
 				}
 			}
@@ -805,57 +830,58 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			    launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, null);
 			}
 			launch.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, getLaunchManager().getEncoding(this));
-			
+
 		// perform initial pre-launch sanity checks
-			monitor.subTask(DebugCoreMessages.LaunchConfiguration_8);
-			
+			lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_8);
+
 			if (delegate2 != null) {
-				if (!(delegate2.preLaunchCheck(this, mode, new SubProgressMonitor(monitor, 1)))) {
+				if (!(delegate2.preLaunchCheck(this, mode, new SubProgressMonitor(lmonitor, 1)))) {
 					return launch;
 				}
 			}
 			else {
-				monitor.worked(1); /* No pre-launch-check */
+				lmonitor.worked(1); /* No pre-launch-check */
 			}
 		// perform pre-launch build
 			if (build) {
-				IProgressMonitor buildMonitor = new SubProgressMonitor(monitor, 10, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
-				buildMonitor.beginTask(DebugCoreMessages.LaunchConfiguration_7, 10);			
+				IProgressMonitor buildMonitor = new SubProgressMonitor(lmonitor, 10, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+				buildMonitor.beginTask(DebugCoreMessages.LaunchConfiguration_7, 10);
 				buildMonitor.subTask(DebugCoreMessages.LaunchConfiguration_6);
+				boolean tempbuild = build;
 				if (delegate2 != null) {
-					build = delegate2.buildForLaunch(this, mode, new SubProgressMonitor(buildMonitor, 7));
+					tempbuild = delegate2.buildForLaunch(this, mode, new SubProgressMonitor(buildMonitor, 7));
 				}
-				if (build) {
+				if (tempbuild) {
 					buildMonitor.subTask(DebugCoreMessages.LaunchConfiguration_5);
-					ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(buildMonitor, 3));				
+					ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(buildMonitor, 3));
 				}
 				else {
 					buildMonitor.worked(3); /* No incremental build required */
 				}
 			}
 		// final validation
-			monitor.subTask(DebugCoreMessages.LaunchConfiguration_4);
+			lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_4);
 			if (delegate2 != null) {
-				if (!(delegate2.finalLaunchCheck(this, mode, new SubProgressMonitor(monitor, 1)))) {
+				if (!(delegate2.finalLaunchCheck(this, mode, new SubProgressMonitor(lmonitor, 1)))) {
 					return launch;
 				}
 			}
 			else {
-				monitor.worked(1); /* No validation */
+				lmonitor.worked(1); /* No validation */
 			}
 			if (register) {
 			    getLaunchManager().addLaunch(launch);
 			}
-			
+
 			try {
 				//initialize the source locator
-				monitor.subTask(DebugCoreMessages.LaunchConfiguration_3);
+				lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_3);
 				initializeSourceLocator(launch);
-				monitor.worked(1);
+				lmonitor.worked(1);
 
 				/* Launch the delegate */
-				monitor.subTask(DebugCoreMessages.LaunchConfiguration_2);
-				delegate.launch(this, mode,	launch,	new SubProgressMonitor(monitor, 10));
+				lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_2);
+				delegate.launch(this, mode, launch, new SubProgressMonitor(lmonitor, 10));
 			} catch (CoreException e) {
 				// if there was an exception, and the launch is empty, remove it
 				if (!launch.hasChildren()) {
@@ -869,27 +895,28 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				}
 				throw e;
 			}
-			if (monitor.isCanceled()) {
+			if (lmonitor.isCanceled()) {
 				getLaunchManager().removeLaunch(launch);
 			}
 			return launch;
     	}
     	finally {
-   			monitor.done();
+			lmonitor.done();
     	}
     }
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.ILaunchConfiguration#migrate()
      */
-    public void migrate() throws CoreException {
+    @Override
+	public void migrate() throws CoreException {
 		((LaunchConfigurationType)getType()).migrate(this);
 	}
 
 	/**
-	 * Creates and returns a new error status based on 
+	 * Creates and returns a new error status based on
 	 * the given message, code, and exception.
-	 * 
+	 *
 	 * @param message error message
 	 * @param code error code
 	 * @param e exception or <code>null</code>
@@ -901,28 +928,29 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 
 	/**
 	 * Sets the new name for this configuration.
-	 * 
+	 *
 	 * @param name the new name for this configuration
 	 * @since 3.5
 	 */
 	protected void setName(String name) {
 		fName = name;
 	}
-	
+
 	/**
 	 * Sets this configurations container or <code>null</code> if stored in the
 	 * local metadata.
-	 * 
+	 *
 	 * @param container or <code>null</code>
 	 * @since 3.5
 	 */
 	protected void setContainer(IContainer container) {
 		fContainer = container;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#supportsMode(java.lang.String)
 	 */
+	@Override
 	public boolean supportsMode(String mode) throws CoreException {
 		return getType().supportsMode(mode);
 	}
@@ -930,6 +958,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#isReadOnly()
 	 */
+	@Override
 	public boolean isReadOnly() {
 		try {
 			IFileStore fileStore = getFileStore();
@@ -944,23 +973,25 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getPreferredDelegate(java.util.Set)
 	 */
-	public ILaunchDelegate getPreferredDelegate(Set modes) throws CoreException {
-		Map delegates = getAttribute(LaunchConfiguration.ATTR_PREFERRED_LAUNCHERS, (Map)null);
+	@Override
+	public ILaunchDelegate getPreferredDelegate(Set<String> modes) throws CoreException {
+		Map<String, String> delegates = getAttribute(LaunchConfiguration.ATTR_PREFERRED_LAUNCHERS, (Map<String, String>) null);
 		if(delegates != null) {
-			String id = (String) delegates.get(modes.toString());
+			String id = delegates.get(modes.toString());
 			if(id != null) {
 				return getLaunchManager().getLaunchDelegate(id);
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return getName();
 	}
-	
+
 }
 

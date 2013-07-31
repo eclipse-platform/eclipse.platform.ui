@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -45,14 +45,14 @@ import org.eclipse.swt.widgets.Display;
 import org.junit.Assert;
 
 /**
- * Test model for the use in unit tests.  This test model contains a set of 
- * elements in a tree structure.  It contains utility methods for modifying the 
+ * Test model for the use in unit tests.  This test model contains a set of
+ * elements in a tree structure.  It contains utility methods for modifying the
  * model and for verifying that the viewer content matches the model.
- * 
+ *
  * @since 3.6
  */
 public class TestModel implements IElementContentProvider, IElementLabelProvider, IModelProxyFactory2 , IElementMementoProvider, IModelSelectionPolicyFactory {
-    
+
     public static class TestElement extends PlatformObject {
         private final TestModel fModel;
         private final String fID;
@@ -61,7 +61,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         boolean fExpanded;
         boolean fChecked;
         boolean fGrayed;
-        
+
         public TestElement(TestModel model, String text, TestElement[] children) {
             this (model, text, false, false, children);
         }
@@ -73,42 +73,43 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
             fChecked = checked;
             fGrayed = grayed;
         }
-        
+
         public TestModel getModel() {
             return fModel;
         }
-        
-        public Object getAdapter(Class adapter) {
+
+        @Override
+		public Object getAdapter(Class adapter) {
             if (adapter.isInstance(fModel)) {
                 return fModel;
             }
             return null;
         }
-        
+
         public String getID() {
             return fID;
         }
-        
+
         public void setLabelAppendix(String appendix) {
             fLabelAppendix = appendix;
         }
-        
+
         public String getLabel() {
             return fID + fLabelAppendix;
         }
-        
+
         public TestElement[] getChildren() {
             return fChildren;
         }
-        
+
         public boolean isExpanded() {
             return fExpanded;
         }
-        
+
         public boolean getGrayed() {
             return fGrayed;
         }
-        
+
         public boolean getChecked() {
             return fChecked;
         }
@@ -117,32 +118,36 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
             fChecked = checked;
             fGrayed = grayed;
         }
-        
-        public boolean equals(Object obj) {
+
+        @Override
+		public boolean equals(Object obj) {
             return obj instanceof TestElement && fID.equals(((TestElement)obj).fID);
         }
-        
-        public int hashCode() {
+
+        @Override
+		public int hashCode() {
             return fID.hashCode();
         }
-        
-        public String toString() {
+
+        @Override
+		public String toString() {
             return getLabel();
         }
-        
+
         public int indexOf(TestElement child) {
             return Arrays.asList(fChildren).indexOf(child);
         }
     }
 
     private class ModelProxy extends AbstractModelProxy {
-        public void installed(Viewer viewer) {
+        @Override
+		public void installed(Viewer viewer) {
             super.installed(viewer);
             ModelDelta rootDelta = TestModel.this.getBaseDelta(new ModelDelta(fInput, IModelDelta.NO_CHANGE));
             installSubModelProxies(fRootPath, rootDelta);
             fireModelChanged(rootDelta);
         }
-        
+
         private void installSubModelProxies(TreePath path, ModelDelta delta) {
             TestElement element = getElement(path);
             if (element.fModel != TestModel.this) {
@@ -150,7 +155,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
                 delta.setFlags(delta.getFlags() | IModelDelta.INSTALL);
             } else {
                 TestElement[] children = element.getChildren();
-    
+
                 for (int i = 0; i < children.length; i++) {
                     installSubModelProxies(path.createChildPath(children[i]), delta.addNode(children[i], IModelDelta.NO_CHANGE));
                 }
@@ -165,25 +170,26 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     private IModelSelectionPolicy fModelSelectionPolicy;
     private boolean fQueueingUpdates = false;
     private boolean fDelayUpdates = false;
-    private List fQueuedUpdates = new LinkedList();
-    
+	private List<IViewerUpdate> fQueuedUpdates = new LinkedList<IViewerUpdate>();
+
     /**
-     * Constructor private.  Use static factory methods instead. 
+     * Constructor private.  Use static factory methods instead.
      */
     public TestModel() {}
-    
+
     public TestElement getRootElement() {
         return fRoot;
     }
-    
+
     public void setSelectionPolicy(IModelSelectionPolicy modelSelectionPolicy) {
         fModelSelectionPolicy = modelSelectionPolicy;
     }
-    
-    public IModelSelectionPolicy createModelSelectionPolicyAdapter(Object element, IPresentationContext context) {
+
+    @Override
+	public IModelSelectionPolicy createModelSelectionPolicyAdapter(Object element, IPresentationContext context) {
         return fModelSelectionPolicy;
     }
-    
+
     public ModelDelta getBaseDelta(ModelDelta rootDelta) {
         ModelDelta delta = rootDelta;
         for (int i = 0; i < fRootPath.getSegmentCount(); i++) {
@@ -200,9 +206,9 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     public int getModelDepth() {
         return getDepth(getRootElement(), 0);
     }
-    
+
     private int getDepth(TestElement element, int atDepth) {
-        TestElement[] children = element.getChildren(); 
+        TestElement[] children = element.getChildren();
         if (children.length == 0) {
             return atDepth;
         }
@@ -213,7 +219,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
 
         return depth;
     }
-    
+
     public void setQeueueingUpdate(boolean queueingUpdates) {
         fQueueingUpdates = queueingUpdates;
         if (!fQueueingUpdates) {
@@ -225,18 +231,18 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         fDelayUpdates = delayUpdates;
     }
 
-    public List getQueuedUpdates() {
+	public List<IViewerUpdate> getQueuedUpdates() {
         return fQueuedUpdates;
     }
-    
+
     public void processQueuedUpdates() {
-        List updates = new ArrayList(fQueuedUpdates);
+		List<IViewerUpdate> updates = new ArrayList<IViewerUpdate>(fQueuedUpdates);
         fQueuedUpdates.clear();
         for (int i = 0; i < updates.size(); i++) {
-            processUpdate((IViewerUpdate)updates.get(i));
+            processUpdate(updates.get(i));
         }
     }
-    
+
     public void processUpdate(IViewerUpdate update) {
         if (update instanceof IHasChildrenUpdate) {
             doHasChildrenUpdate((IHasChildrenUpdate)update);
@@ -256,24 +262,26 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     private void processUpdates(IViewerUpdate[] updates) {
         for (int i = 0; i < updates.length; i++) {
             processUpdate(updates[i]);
-        }    
+        }
     }
-    
+
     private void doUpdate(final IViewerUpdate[] updates) {
         if (fQueueingUpdates) {
             fQueuedUpdates.addAll(Arrays.asList(updates));
         } else if (fDelayUpdates) {
         	Display.getDefault().asyncExec(new Runnable() {
-        		public void run() {
+        		@Override
+				public void run() {
         			processUpdates(updates);
         		}
         	});
         } else {
 			processUpdates(updates);
-        }    	
+        }
     }
-    
-    public void update(IHasChildrenUpdate[] updates) {
+
+    @Override
+	public void update(IHasChildrenUpdate[] updates) {
     	doUpdate(updates);
     }
 
@@ -282,9 +290,10 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         update.setHasChilren(element.getChildren().length > 0);
         update.done();
     }
-    
-    
-    public void update(IChildrenCountUpdate[] updates) {
+
+
+    @Override
+	public void update(IChildrenCountUpdate[] updates) {
     	doUpdate(updates);
     }
 
@@ -293,8 +302,9 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         update.setChildCount(element.getChildren().length);
         update.done();
     }
-    
-    public void update(IChildrenUpdate[] updates) {
+
+    @Override
+	public void update(IChildrenUpdate[] updates) {
     	doUpdate(updates);
     }
 
@@ -308,25 +318,27 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         }
         update.done();
     }
-    
-    public void update(ILabelUpdate[] updates) {
+
+    @Override
+	public void update(ILabelUpdate[] updates) {
     	doUpdate(updates);
     }
 
     private void doLabelUpdate(ILabelUpdate update) {
         TestElement element = (TestElement)update.getElement();
         update.setLabel(element.getLabel(), 0);
-        if (update instanceof ICheckUpdate && 
-            Boolean.TRUE.equals(update.getPresentationContext().getProperty(ICheckUpdate.PROP_CHECK))) 
+        if (update instanceof ICheckUpdate &&
+            Boolean.TRUE.equals(update.getPresentationContext().getProperty(ICheckUpdate.PROP_CHECK)))
         {
             ((ICheckUpdate)update).setChecked(element.getChecked(), element.getGrayed());
         }
         update.done();
     }
-    
+
     public final static String ELEMENT_MEMENTO_ID = "id"; //$NON-NLS-1$
-    
-    public void compareElements(final IElementCompareRequest[] updates) {
+
+    @Override
+	public void compareElements(final IElementCompareRequest[] updates) {
     	doUpdate(updates);
     }
 
@@ -336,17 +348,18 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         update.setEqual( elementID.equals(mementoID) );
         update.done();
     }
-    
-    public void encodeElements(IElementMementoRequest[] updates) {
+
+    @Override
+	public void encodeElements(IElementMementoRequest[] updates) {
     	doUpdate(updates);
     }
-    
+
     private void doEncodeElements(IElementMementoRequest update) {
         String elementID = ((TestElement)update.getElement()).getID();
         update.getMemento().putString(ELEMENT_MEMENTO_ID, elementID);
-        update.done();    	
+        update.done();
     }
-    
+
     /**
      * @param context the context
      * @param viewerInput the input
@@ -354,22 +367,23 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
      * @param checked the checked state
      */
     public void elementChecked(IPresentationContext context, Object viewerInput, TreePath path, boolean checked) {
-        TestElement element = getElement(path); 
+        TestElement element = getElement(path);
         Assert.assertFalse(element.getGrayed());
         element.setChecked(checked, false);
     }
-    
-    public IModelProxy createTreeModelProxy(Object input, TreePath path, IPresentationContext context) {
+
+    @Override
+	public IModelProxy createTreeModelProxy(Object input, TreePath path, IPresentationContext context) {
         fModelProxy = new ModelProxy();
         fInput = input;
         fRootPath = path;
         return fModelProxy;
     }
-    
+
     public IModelProxy getModelProxy() {
         return fModelProxy;
     }
-    
+
     public TestElement getElement(TreePath path) {
         if (path.getSegmentCount() == 0) {
             return getRootElement();
@@ -381,7 +395,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     public void setAllExpanded() {
         doSetExpanded(fRoot);
     }
-    
+
     private void doSetExpanded(TestElement element) {
         element.fExpanded = true;
         for (int i = 0; i < element.fChildren.length; i++) {
@@ -392,7 +406,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     public void setAllAppendix(String appendix) {
         doSetAllAppendix(fRoot, appendix);
     }
-    
+
     private void doSetAllAppendix(TestElement element, String appendix) {
         element.setLabelAppendix(appendix);
         for (int i = 0; i < element.fChildren.length; i++) {
@@ -403,11 +417,11 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     public void validateData(ITreeModelViewer viewer, TreePath path) {
         validateData(viewer, path, false);
     }
-    
+
     public void validateData(ITreeModelViewer _viewer, TreePath path, boolean expandedElementsOnly) {
     	validateData(_viewer, path, expandedElementsOnly, TestModelUpdatesListener.EMPTY_FILTER_ARRAY);
     }
-    
+
     public void validateData(ITreeModelViewer _viewer, TreePath path, boolean expandedElementsOnly, ViewerFilter[] filters) {
         IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)_viewer;
         TestElement element = getElement(path);
@@ -415,7 +429,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
             Assert.assertTrue(element.getChecked() == viewer.getElementChecked(path));
             Assert.assertTrue(element.getGrayed() == viewer.getElementGrayed(path));
         }
-        
+
         if (!expandedElementsOnly || path.getSegmentCount() == 0 || viewer.getExpandedState(path) ) {
             TestElement[] children = element.getChildren();
 
@@ -428,7 +442,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
                 validateData(viewer, path.createChildPath(children[i]), expandedElementsOnly, filters);
             	viewerIndex++;
             }
-            Assert.assertEquals(viewerIndex, viewer.getChildCount(path));            
+            Assert.assertEquals(viewerIndex, viewer.getChildCount(path));
         } else if (!viewer.getExpandedState(path)) {
             // If element not expanded, verify the plus sign.
             Assert.assertTrue(viewer.getHasChildren(path) == element.getChildren().length > 0);
@@ -438,20 +452,20 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     public void setRoot(TestElement root) {
         fRoot = root;
     }
-    
+
     public void postDelta(IModelDelta delta) {
         fModelProxy.fireModelChanged(delta);
     }
-    
+
     /** Create or retrieve delta for given path
      * @param combine if then new deltas for the given path are created. If false existing ones are reused.
      */
     public ModelDelta getElementDelta(ModelDelta baseDelta, TreePath path, boolean combine) {
         TestElement element = getRootElement();
         ModelDelta delta = baseDelta;
-        
+
         for (int i = 0; i < path.getSegmentCount(); i++) {
-            TestElement[] children = element.getChildren(); 
+            TestElement[] children = element.getChildren();
             delta.setChildCount(children.length);
             Object segment = path.getSegment(i);
             int j;
@@ -474,9 +488,9 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
             }
         }
         return delta;
-        
+
     }
-    
+
     private TreePath getRelativePath(TreePath path) {
         Object[] segments = new Object[path.getSegmentCount() - fRootPath.getSegmentCount()];
         for (int i = fRootPath.getSegmentCount(), _i = 0; i < path.getSegmentCount(); i++, _i++) {
@@ -484,7 +498,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         }
         return new TreePath(segments);
     }
-    
+
     public ModelDelta appendElementLabel(TreePath path, String labelAppendix) {
         org.junit.Assert.assertTrue(path.startsWith(fRootPath, null));
         ModelDelta rootDelta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
@@ -520,31 +534,31 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         // Find the parent element and generate the delta node for it.
         TestElement element = getElement(relativePath);
         ModelDelta delta = getElementDelta(baseDelta, relativePath, false);
-        
+
         // Set the new children array
         element.fChildren = children;
-        
-        // Add the delta flag and update the child count in the parent delta.        
+
+        // Add the delta flag and update the child count in the parent delta.
         delta.setFlags(delta.getFlags() | IModelDelta.CONTENT);
         delta.setChildCount(children.length);
-        
+
         return rootDelta;
     }
-    
+
     public ModelDelta replaceElementChild(TreePath parentPath, int index, TestElement child) {
         ModelDelta rootDelta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
         ModelDelta baseDelta = getBaseDelta(rootDelta);
         TreePath relativePath = getRelativePath(parentPath);
-        
+
         TestElement element = getElement(relativePath);
         ModelDelta delta= getElementDelta(baseDelta, relativePath, false);
-        TestElement oldChild = element.fChildren[index]; 
+        TestElement oldChild = element.fChildren[index];
         element.fChildren[index] = child;
         delta.addNode(oldChild, child, IModelDelta.REPLACED);
         // TODO: set replacement index!?!
-        
+
         return rootDelta;
-    }    
+    }
 
     public ModelDelta addElementChild(TreePath parentPath, ModelDelta rootDelta, int index, TestElement newChild) {
         if (rootDelta == null) {
@@ -559,17 +573,17 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
 
         // Add the new element
         element.fChildren = doInsertElementInArray(element.fChildren, index, newChild);
-        
+
         // Add the delta flag and update the child count in the parent delta.
         delta.setChildCount(element.getChildren().length);
         delta.addNode(newChild, index, IModelDelta.ADDED);
-        
+
         return rootDelta;
-    }    
+    }
 
     public ModelDelta insertElementChild(TreePath parentPath, int index, TestElement newChild) {
         return insertElementChild(null, parentPath, index, newChild);
-    }    
+    }
 
     public ModelDelta insertElementChild(ModelDelta rootDelta, TreePath parentPath, int index, TestElement newChild) {
         if (rootDelta == null) {
@@ -581,19 +595,19 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         // Find the parent element and generate the delta node for it.
         TestElement element = getElement(relativePath);
         ModelDelta delta= getElementDelta(baseDelta, relativePath, false);
-        
+
         // Add the new element
         element.fChildren = doInsertElementInArray(element.fChildren, index, newChild);
-        
+
         // Add the delta flag and update the child count in the parent delta.
         delta.setChildCount(element.getChildren().length);
         delta.addNode(newChild, index, IModelDelta.INSERTED);
-        
+
         return rootDelta;
-    }    
-    
+    }
+
     private TestElement[] doInsertElementInArray(TestElement[] children, int index, TestElement newChild) {
-        // Create the new children array add the element to it and set it to 
+        // Create the new children array add the element to it and set it to
         // the parent.
         TestElement[] newChildren = new TestElement[children.length + 1];
         System.arraycopy(children, 0, newChildren, 0, index);
@@ -601,7 +615,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         System.arraycopy(children, index, newChildren, index + 1, children.length - index);
         return newChildren;
     }
-    
+
     public ModelDelta removeElementChild(TreePath parentPath, int index) {
         ModelDelta rootDelta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
         ModelDelta baseDelta = getBaseDelta(rootDelta);
@@ -609,7 +623,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         // Find the parent element and generate the delta node for it.
         TestElement element = getElement(parentPath);
         ModelDelta delta= getElementDelta(baseDelta, parentPath, false);
-        
+
         // Create a new child array with the element removed
         TestElement[] children = element.getChildren();
         TestElement childToRemove = children[index];
@@ -621,9 +635,9 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         // Add the delta flag and update the child count in the parent delta.
         delta.setChildCount(element.getChildren().length);
         delta.addNode(childToRemove, index, IModelDelta.REMOVED);
-        
+
         return rootDelta;
-    }        
+    }
 
     public ModelDelta makeElementDelta(TreePath path, int flags) {
         ModelDelta rootDelta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
@@ -631,10 +645,10 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
 
         // Find the element and generate the delta node for it.
         ModelDelta delta= getElementDelta(baseDelta, path, false);
-        
+
         delta.setFlags(flags);
         return rootDelta;
-    }        
+    }
 
     public TreePath findElement(String label) {
         return findElement(TreePath.EMPTY, label);
@@ -656,14 +670,15 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         }
         return null;
     }
-    
-    public String toString() {
+
+    @Override
+	public String toString() {
         return getElementString(fRoot, ""); //$NON-NLS-1$
     }
-    
+
     public String getElementString(TestElement element, String indent) {
         StringBuffer builder = new StringBuffer();
-        builder.append(indent); 
+        builder.append(indent);
         builder.append(element.toString());
         builder.append('\n');
         TestElement[] children = element.getChildren();
@@ -672,7 +687,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         }
         return builder.toString();
     }
-    
+
     public static TestModel simpleSingleLevel() {
         TestModel model = new TestModel();
         model.setRoot( new TestElement(model, "root", makeSingleLevelModelElements(model, 6, ""))); //$NON-NLS-1$ //$NON-NLS-2$
@@ -686,8 +701,8 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
             elements[i - 1] = new TestElement(model, name, new TestElement[0]);
         }
         return elements;
-    }    
-    
+    }
+
     public static TestElement[] makeMultiLevelElements(TestModel model, int depth, String prefix) {
         TestElement[] elements = new TestElement[depth];
         for (int i = 0; i < depth; i++) {
@@ -695,10 +710,12 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
             elements[i] = new TestElement(model, name, makeMultiLevelElements(model, i, name + ".")); //$NON-NLS-1$
         }
         return elements;
-    }    
+    }
 
     public static TestElement[] makeMultiLevelElements2(TestModel model, int[] levelCounts, String prefix) {
-    	if (levelCounts.length == 0) return new TestElement[0];
+    	if (levelCounts.length == 0) {
+			return new TestElement[0];
+		}
         int count = levelCounts[0];
     	int[] oldLevelCounts = levelCounts;
     	levelCounts = new int[levelCounts.length - 1];
@@ -709,7 +726,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
             elements[i] = new TestElement(model, name, makeMultiLevelElements2(model, levelCounts, name + ".")); //$NON-NLS-1$
         }
         return elements;
-    }    
+    }
 
     public static TestModel simpleMultiLevel() {
         TestModel model = new TestModel();
@@ -740,7 +757,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         }) );
         return model;
     }
-    
+
     public static TestModel compositeMultiLevel() {
         TestModel m2 = new TestModel();
         m2.setRoot( new TestElement(m2, "m2.root", new TestElement[] { //$NON-NLS-1$

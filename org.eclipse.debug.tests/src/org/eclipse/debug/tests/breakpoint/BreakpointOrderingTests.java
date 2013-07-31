@@ -65,6 +65,7 @@ public class BreakpointOrderingTests extends TestCase {
 			final IResource resource = ResourcesPlugin.getWorkspace().getRoot();
 			IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 
+				@Override
 				public void run( IProgressMonitor monitor ) throws CoreException {
 					// create the marker
 					setMarker(resource.createMarker(markerType));
@@ -88,51 +89,62 @@ public class BreakpointOrderingTests extends TestCase {
 			return fText;
 		}
 
+		@Override
 		public void delete() throws CoreException {
 			fMarker.delete();
 		}
 
+		@Override
 		public IMarker getMarker() {
 			return fMarker;
 		}
 
+		@Override
 		public String getModelIdentifier() {
 			return "Test"; //$NON-NLS-1$
 		}
 
+		@Override
 		public boolean isEnabled() throws CoreException {
 			fail("not implemented in test"); //$NON-NLS-1$
 			return false;
 		}
 
+		@Override
 		public boolean isPersisted() throws CoreException {
 			fail("not implemented in test"); //$NON-NLS-1$
 			return false;
 		}
 
+		@Override
 		public boolean isRegistered() throws CoreException {
 			fail("not implemented in test"); //$NON-NLS-1$
 			return false;
 		}
 
+		@Override
 		public void setEnabled(boolean enabled) throws CoreException {
 			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
+		@Override
 		public void setMarker(IMarker marker) throws CoreException {
 			assertTrue(fMarker == null && marker != null);
 			fMarker = marker;
 		}
 
+		@Override
 		public void setPersisted(boolean registered) throws CoreException {
 			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
+		@Override
 		public void setRegistered(boolean registered) throws CoreException {
 			fail("not implemented in test"); //$NON-NLS-1$
 			
 		}
 
+		@Override
 		public Object getAdapter(Class adapter) {
 			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
@@ -151,15 +163,18 @@ public class BreakpointOrderingTests extends TestCase {
 			fLineNum = lineNum;		
 		}
 
+		@Override
 		public int getLineNumber() throws CoreException {
 			return fLineNum;
 		}
 
+		@Override
 		public int getCharEnd() throws CoreException {
 			fail("not implemented in test"); //$NON-NLS-1$
 			return 0;
 		}
 
+		@Override
 		public int getCharStart() throws CoreException {
 			fail("not implemented in test"); //$NON-NLS-1$
 			return 0;
@@ -171,41 +186,50 @@ public class BreakpointOrderingTests extends TestCase {
 	 */
 	StructuredViewer fTestViewer = new StructuredViewer() {
 
+		@Override
 		public IBaseLabelProvider getLabelProvider() {
 			return fDebugModelPres;
 		}
 
+		@Override
 		protected Widget doFindInputItem(Object element) {
 			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
 		}
 
+		@Override
 		protected Widget doFindItem(Object element) {
 			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
 		}
 
+		@Override
 		protected void doUpdateItem(Widget item, Object element, boolean fullMap) {
 			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
+		@Override
 		protected List getSelectionFromWidget() {
 			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
 		}
 
+		@Override
 		protected void internalRefresh(Object element) {
 			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
+		@Override
 		public void reveal(Object element) {
 			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
+		@Override
 		protected void setSelectionToWidget(List l, boolean reveal) {
 			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
+		@Override
 		public Control getControl() {
 			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
@@ -214,46 +238,56 @@ public class BreakpointOrderingTests extends TestCase {
 	// Test debug model presentation for label text retrieval. 
 	IDebugModelPresentation fDebugModelPres = new IDebugModelPresentation() {
 
+		@Override
 		public void computeDetail(IValue value, IValueDetailListener listener) {
 			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
+		@Override
 		public Image getImage(Object element) {
 			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
 		}
 
+		@Override
 		public String getText(Object element) {
 			assertTrue("Unexpected element", element instanceof TestBreakpoint); //$NON-NLS-1$
 			return ((TestBreakpoint)element).getText();
 		}
 
+		@Override
 		public void setAttribute(String attribute, Object value) {			
 			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
+		@Override
 		public void addListener(ILabelProviderListener listener) {
 			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
+		@Override
 		public void dispose() {
 			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
+		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			fail("not implemented in test"); //$NON-NLS-1$
 			return false;
 		}
 
+		@Override
 		public void removeListener(ILabelProviderListener listener) {
 			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
+		@Override
 		public String getEditorId(IEditorInput input, Object element) {
 			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
 		}
 
+		@Override
 		public IEditorInput getEditorInput(Object element) {
 			fail("not implemented in test"); //$NON-NLS-1$
 			return null;

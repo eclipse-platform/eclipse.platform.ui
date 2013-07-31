@@ -33,6 +33,7 @@ public class RemoveAllExpressionsAction extends AbstractRemoveAllActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();		
 		if (window != null) {
@@ -60,6 +61,7 @@ public class RemoveAllExpressionsAction extends AbstractRemoveAllActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#isEnabled()
 	 */
+	@Override
 	protected boolean isEnabled() {
 		return DebugPlugin.getDefault().getExpressionManager().hasExpressions();
 	}
@@ -67,6 +69,7 @@ public class RemoveAllExpressionsAction extends AbstractRemoveAllActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#initialize()
 	 */
+	@Override
 	protected void initialize() {
 		DebugPlugin.getDefault().getExpressionManager().addExpressionListener(this);
 	}
@@ -74,6 +77,7 @@ public class RemoveAllExpressionsAction extends AbstractRemoveAllActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {
 		DebugPlugin.getDefault().getExpressionManager().removeExpressionListener(this);
 		super.dispose();
@@ -82,6 +86,7 @@ public class RemoveAllExpressionsAction extends AbstractRemoveAllActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsAdded(org.eclipse.debug.core.model.IExpression[])
 	 */
+	@Override
 	public void expressionsAdded(IExpression[] expressions) {
 		update();
 	}
@@ -89,6 +94,7 @@ public class RemoveAllExpressionsAction extends AbstractRemoveAllActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsRemoved(org.eclipse.debug.core.model.IExpression[])
 	 */
+	@Override
 	public void expressionsRemoved(IExpression[] expressions) {
 		update();
 	}
@@ -96,5 +102,6 @@ public class RemoveAllExpressionsAction extends AbstractRemoveAllActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsChanged(org.eclipse.debug.core.model.IExpression[])
 	 */
+	@Override
 	public void expressionsChanged(IExpression[] expressions) {}
 }

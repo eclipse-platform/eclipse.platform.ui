@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,6 +118,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	/**
 	 * @see ILaunchConfigurationTab#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return fControl;
 	}
@@ -134,6 +135,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	/**
 	 * @see ILaunchConfigurationTab#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		return fErrorMessage;
 	}
@@ -142,6 +144,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 * @see ILaunchConfigurationTab2#getWarningMessage()
 	 * @since 3.9
 	 */
+	@Override
 	public String getWarningMessage() {
 		return fWarningMessage;
 	}
@@ -149,6 +152,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	/**
 	 * @see ILaunchConfigurationTab#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		return fMessage;
 	}
@@ -162,12 +166,15 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 *  than the launch dialog, this method cannot be relied upon for launching
 	 *  functionality.
 	 */
+	@Deprecated
+	@Override
 	public void launched(ILaunch launch) {
 	}
 
 	/**
 	 * @see ILaunchConfigurationTab#setLaunchConfigurationDialog(ILaunchConfigurationDialog)
 	 */
+	@Override
 	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
 		fLaunchConfigurationDialog = dialog;
 	}
@@ -214,6 +221,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 * 
 	 * @see ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 	}
 	
@@ -273,6 +281,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	/**
 	 * @see ILaunchConfigurationTab#canSave()
 	 */
+	@Override
 	public boolean canSave() {
 		return true;
 	}
@@ -280,6 +289,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	/**
 	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		return true;
 	}
@@ -310,6 +320,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	/**
 	 * @see ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return null;
 	}
@@ -395,6 +406,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 * @since 3.0
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		initializeFrom(workingCopy);
 	}
@@ -415,6 +427,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 * @since 3.0
 	 */
+	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		performApply(workingCopy);
 	}
@@ -452,12 +465,14 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 */
 	protected Job createUpdateJob() {
 		return  new WorkbenchJob(getControl().getDisplay(), "Update LCD") { //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (!getControl().isDisposed()) {
 					updateLaunchConfigurationDialog();
 				}
 				return Status.OK_STATUS;
 			}
+			@Override
 			public boolean shouldRun() {
 				return !getControl().isDisposed();
 			}

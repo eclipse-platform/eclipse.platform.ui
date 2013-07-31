@@ -68,45 +68,43 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * Dialog allowing user to add a memory rendering
  */
 public class AddMemoryRenderingDialog extends SelectionDialog {
-	
+
 	private IMemoryBlock[] fMemoryBlocks;
 	private Combo memoryBlock;
 	private ListViewer fViewer;
 	private IMemoryBlock fSelectedMemoryBlock;
 	private Button addNew;
-	
+
 	private ISelectionChangedListener fSelectionChangedListener;
 	private SelectionListener fSelectionListener;
 	private SelectionAdapter fAddNewSelectionAdapter;
 	private IMemoryRenderingSite fSite;
-	
-	private IMemoryBlockListener fMemoryBlockListener = new IMemoryBlockListener(){
-		
-		public void memoryBlocksAdded(final IMemoryBlock[] memory)
-		{
-			if (memory.length > 0)
-			{
+
+	private IMemoryBlockListener fMemoryBlockListener = new IMemoryBlockListener() {
+
+		@Override
+		public void memoryBlocksAdded(final IMemoryBlock[] memory) {
+			if (memory.length > 0) {
 				IMemoryBlock currentBlock = getMemoryBlockToSelect(memory[0]);
-				if (currentBlock == null)
-				{
+				if (currentBlock == null) {
 					addNew();
-				}
-				else
-				{
+				} else {
 					populateDialog(currentBlock);
 				}
 			}
 		}
-		public void memoryBlocksRemoved(IMemoryBlock[] memory)
-		{
+
+		@Override
+		public void memoryBlocksRemoved(IMemoryBlock[] memory) {
 		}
 	};
-	
-	private IMemoryRenderingBindingsListener fBindingListener = new IMemoryRenderingBindingsListener()
-	{
+
+	private IMemoryRenderingBindingsListener fBindingListener = new IMemoryRenderingBindingsListener() {
+		@Override
 		public void memoryRenderingBindingsChanged() {
-			UIJob job = new UIJob("refresh"){ //$NON-NLS-1$
-			
+			UIJob job = new UIJob("refresh") { //$NON-NLS-1$
+
+				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					fViewer.refresh();
 					return Status.OK_STATUS;
@@ -115,145 +113,186 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 			job.setSystem(true);
 			job.schedule();
 		}
-		
+
 	};
 
-	class MemoryRenderingLabelProvider implements ILabelProvider
-	{
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+	class MemoryRenderingLabelProvider implements ILabelProvider {
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 		 */
+		@Override
 		public Image getImage(Object element) {
 			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 		 */
+		@Override
 		public String getText(Object element) {
-			if (element instanceof IMemoryRenderingType)
-			{	
-				String label = ((IMemoryRenderingType)element).getLabel();
+			if (element instanceof IMemoryRenderingType) {
+				String label = ((IMemoryRenderingType) element).getLabel();
 				return label;
 			}
-            return element.toString();
+			return element.toString();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse
+		 * .jface.viewers.ILabelProviderListener)
 		 */
+		@Override
 		public void addListener(ILabelProviderListener listener) {
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java
+		 * .lang.Object, java.lang.String)
 		 */
+		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse
+		 * .jface.viewers.ILabelProviderListener)
 		 */
+		@Override
 		public void removeListener(ILabelProviderListener listener) {
 		}
 
 	}
-	
-	class MemoryRenderingContentProvider implements IStructuredContentProvider
-	{
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+	class MemoryRenderingContentProvider implements IStructuredContentProvider {
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.jface.viewers.IStructuredContentProvider#getElements(
+		 * java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
-			IMemoryRenderingType[] renderings = DebugUITools.getMemoryRenderingManager().getRenderingTypes((IMemoryBlock)inputElement);
+			IMemoryRenderingType[] renderings = DebugUITools.getMemoryRenderingManager().getRenderingTypes((IMemoryBlock) inputElement);
 			return renderings;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse
+		 * .jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
-		
+
 	}
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
+	@Override
 	public boolean close() {
-		
+
 		fViewer.removeSelectionChangedListener(fSelectionChangedListener);
 		memoryBlock.removeSelectionListener(fSelectionListener);
 		addNew.removeSelectionListener(fAddNewSelectionAdapter);
 		DebugPlugin.getDefault().getMemoryBlockManager().removeListener(fMemoryBlockListener);
 		DebugUITools.getMemoryRenderingManager().removeListener(fBindingListener);
-		
+
 		return super.close();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse
+	 * .swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		getButton(IDialogConstants.OK_ID).setEnabled(false);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionDialog#getResult()
 	 */
+	@Override
 	public Object[] getResult() {
-		
+
 		Object[] results = super.getResult();
-		
-		if (results != null)
-		{	
-			Object[] renderings = ((IStructuredSelection)results[0]).toArray();
+
+		if (results != null) {
+			Object[] renderings = ((IStructuredSelection) results[0]).toArray();
 			return renderings;
 		}
-        return new Object[0];
+		return new Object[0];
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
 	 */
+	@Override
 	protected void cancelPressed() {
-		
+
 		setResult(null);
-		
+
 		super.cancelPressed();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
-		
+
 		ISelection select = fViewer.getSelection();
-		setSelectionResult(new Object[]{select});
-		
+		setSelectionResult(new Object[] { select });
+
 		super.okPressed();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
+	 * .Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, DebugUIPlugin.getUniqueIdentifier() + ".AddMemoryRenderingDialog_context"); //$NON-NLS-1$
@@ -262,268 +301,253 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		compositeLayout.numColumns = 3;
 		compositeLayout.makeColumnsEqualWidth = true;
 		composite.setLayout(compositeLayout);
-		
-		GridData comositeSpec= new GridData();
-		comositeSpec.grabExcessVerticalSpace= true;
-		comositeSpec.grabExcessHorizontalSpace= true;
-		comositeSpec.horizontalAlignment= GridData.FILL;
-		comositeSpec.verticalAlignment= GridData.CENTER;
+
+		GridData comositeSpec = new GridData();
+		comositeSpec.grabExcessVerticalSpace = true;
+		comositeSpec.grabExcessHorizontalSpace = true;
+		comositeSpec.horizontalAlignment = GridData.FILL;
+		comositeSpec.verticalAlignment = GridData.CENTER;
 		composite.setLayoutData(comositeSpec);
-		
+
 		Label textLabel = new Label(composite, SWT.NONE);
-		textLabel.setText(DebugUIMessages.AddMemoryRenderingDialog_Memory_Monitor); 
+		textLabel.setText(DebugUIMessages.AddMemoryRenderingDialog_Memory_Monitor);
 		GridData textLayout = new GridData();
-		textLayout.verticalAlignment=GridData.CENTER;
-		textLayout.horizontalAlignment=GridData.BEGINNING;
+		textLayout.verticalAlignment = GridData.CENTER;
+		textLayout.horizontalAlignment = GridData.BEGINNING;
 		textLabel.setLayoutData(textLayout);
-		
+
 		memoryBlock = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
-		GridData spec= new GridData(GridData.FILL_HORIZONTAL);
-		spec.grabExcessVerticalSpace= false;
-		spec.grabExcessHorizontalSpace= false;
-		spec.horizontalAlignment= GridData.FILL;
-		spec.verticalAlignment= GridData.FILL;
+		GridData spec = new GridData(GridData.FILL_HORIZONTAL);
+		spec.grabExcessVerticalSpace = false;
+		spec.grabExcessHorizontalSpace = false;
+		spec.horizontalAlignment = GridData.FILL;
+		spec.verticalAlignment = GridData.FILL;
 		spec.horizontalSpan = 4;
 		memoryBlock.setLayoutData(spec);
-		
+
 		Label filler = new Label(composite, SWT.NONE);
 		filler.setText(" "); //$NON-NLS-1$
 		GridData fillerData = new GridData(GridData.FILL_HORIZONTAL);
 		fillerData.horizontalSpan = 2;
 		filler.setLayoutData(fillerData);
-		
+
 		addNew = new Button(composite, SWT.NONE);
-		addNew.setText(DebugUIMessages.AddMemoryRenderingDialog_Add_New); 
-		GridData specButton= new GridData();
-		specButton.horizontalAlignment= GridData.END;
-		specButton.verticalAlignment= GridData.CENTER;
+		addNew.setText(DebugUIMessages.AddMemoryRenderingDialog_Add_New);
+		GridData specButton = new GridData();
+		specButton.horizontalAlignment = GridData.END;
+		specButton.verticalAlignment = GridData.CENTER;
 		addNew.setLayoutData(specButton);
-		
+
 		fAddNewSelectionAdapter = new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				RetargetAddMemoryBlockAction action = new RetargetAddMemoryBlockAction(fSite, false);
 				action.run();
 				action.dispose();
-			}};
-		
-		addNew.addSelectionListener(fAddNewSelectionAdapter);
-		
-		fSelectionListener = new SelectionListener(){
+			}
+		};
 
+		addNew.addSelectionListener(fAddNewSelectionAdapter);
+
+		fSelectionListener = new SelectionListener() {
+
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-				
+
 				int idx = memoryBlock.getSelectionIndex();
-				
+
 				// avoid null pointer exception
 				if (fMemoryBlocks == null)
 					return;
-				
+
 				fSelectedMemoryBlock = fMemoryBlocks[idx];
-				
-				fViewer.setInput(fSelectedMemoryBlock);			
-				
+
+				fViewer.setInput(fSelectedMemoryBlock);
+
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-			}};
-		
+			}
+		};
+
 		memoryBlock.addSelectionListener(fSelectionListener);
-		
+
 		Label renderingLabel = new Label(composite, SWT.NONE);
-		renderingLabel.setText(DebugUIMessages.AddMemoryRenderingDialog_Memory_renderings); 
+		renderingLabel.setText(DebugUIMessages.AddMemoryRenderingDialog_Memory_renderings);
 		GridData renderingLayout = new GridData();
 		renderingLayout.horizontalAlignment = GridData.BEGINNING;
 		renderingLayout.verticalAlignment = GridData.CENTER;
 		renderingLayout.horizontalSpan = 3;
 		renderingLabel.setLayoutData(renderingLayout);
-		
+
 		fViewer = new ListViewer(composite);
 		fViewer.setContentProvider(new MemoryRenderingContentProvider());
 		fViewer.setLabelProvider(new MemoryRenderingLabelProvider());
-		
+
 		GridData listLayout = new GridData(GridData.FILL_BOTH);
 		listLayout.horizontalSpan = 3;
-		listLayout.heightHint =140;
+		listLayout.heightHint = 140;
 		fViewer.getControl().setLayoutData(listLayout);
-		
-		fViewer.addDoubleClickListener(new IDoubleClickListener (){
 
+		fViewer.addDoubleClickListener(new IDoubleClickListener() {
+
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
-			}});
-		
+			}
+		});
+
 		IMemoryBlock currentBlock = getMemoryBlockToSelect(null);
-		if (currentBlock == null)
-		{
+		if (currentBlock == null) {
 			addNew();
-		}
-		else
-		{
+		} else {
 			populateDialog(currentBlock);
 		}
-		
-		
+
 		fSelectionChangedListener = new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				ISelection selection  = fViewer.getSelection();
-				
-				if (selection.isEmpty())
-				{	
+				ISelection selection = fViewer.getSelection();
+
+				if (selection.isEmpty()) {
 					getButton(IDialogConstants.OK_ID).setEnabled(false);
-				}
-				else
-				{	
+				} else {
 					getButton(IDialogConstants.OK_ID).setEnabled(true);
 				}
-			}};
-		
+			}
+		};
+
 		fViewer.addSelectionChangedListener(fSelectionChangedListener);
-		
+
 		DebugPlugin.getDefault().getMemoryBlockManager().addListener(fMemoryBlockListener);
 		DebugUITools.getMemoryRenderingManager().addListener(fBindingListener);
-		
+
 		return composite;
 	}
 
 	public AddMemoryRenderingDialog(Shell parent, IMemoryRenderingSite site) {
 		super(parent);
-		super.setTitle(DebugUIMessages.AddMemoryRenderingDialog_Add_memory_rendering); 
+		super.setTitle(DebugUIMessages.AddMemoryRenderingDialog_Add_memory_rendering);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fSite = site;
 	}
-	
-	
-	private void doPopulateDialog(Combo combo, ListViewer viewer, String[] labels, int selectionIdx, IMemoryBlock currentBlock)
-	{	
+
+	private void doPopulateDialog(Combo combo, ListViewer viewer, String[] labels, int selectionIdx, IMemoryBlock currentBlock) {
 		// clean up
 		combo.removeAll();
-		
-		for (int i=0; i<labels.length; i++)
-		{
+
+		for (int i = 0; i < labels.length; i++) {
 			combo.add(labels[i]);
 		}
 
 		combo.select(selectionIdx);
 		fSelectedMemoryBlock = currentBlock;
-		
+
 		viewer.setInput(currentBlock);
 	}
-	
-	private IMemoryBlock getMemoryBlockToSelect(IMemoryBlock lastAdded)
-	{
+
+	private IMemoryBlock getMemoryBlockToSelect(IMemoryBlock lastAdded) {
 		IMemoryBlock currentBlock = null;
-		
+
 		if (lastAdded != null)
 			currentBlock = lastAdded;
-		else
-		{
+		else {
 			// take Memory View's selection if possible
 			ISelectionProvider selectionProvider = fSite.getSite().getSelectionProvider();
 			ISelection selection = null;
-			
+
 			if (selectionProvider != null)
 				selection = selectionProvider.getSelection();
-			else // otherwise, take selection from selection service
-				selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_MEMORY_VIEW); 
-			
+			else
+				// otherwise, take selection from selection service
+				selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_MEMORY_VIEW);
+
 			IMemoryBlock element = getMemoryBlock(selection);
-			
-			if (element == null)
-			{
-				IAdaptable context = DebugUITools.getPartDebugContext(fSite.getSite());	
-				
-				if (context != null)
-				{
+
+			if (element == null) {
+				IAdaptable context = DebugUITools.getPartDebugContext(fSite.getSite());
+
+				if (context != null) {
 					IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
-					
+
 					if (retrieval == null)
 						return currentBlock;
-					
+
 					IMemoryBlock[] blocks = new IMemoryBlock[0];
-					
+
 					if (retrieval != null)
 						blocks = MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(retrieval);
-					
+
 					if (blocks.length > 0)
 						currentBlock = blocks[0];
 				}
-			}
-			else
-			{	
+			} else {
 				currentBlock = element;
 			}
 		}
 		return currentBlock;
 	}
-	
-	private String[] getLabels(IMemoryBlock[] memoryBlocks)
-	{
+
+	private String[] getLabels(IMemoryBlock[] memoryBlocks) {
 		String[] labels = new String[memoryBlocks.length];
-		for (int i=0; i<memoryBlocks.length; i++)
-		{	
+		for (int i = 0; i < memoryBlocks.length; i++) {
 			String text = IInternalDebugCoreConstants.EMPTY_STRING;
-			if (memoryBlocks[i] instanceof IMemoryBlockExtension)
-			{
+			if (memoryBlocks[i] instanceof IMemoryBlockExtension) {
 				try {
-					text = ((IMemoryBlockExtension)memoryBlocks[i]).getExpression();
-					
+					text = ((IMemoryBlockExtension) memoryBlocks[i]).getExpression();
+
 					if (text == null)
-						text = DebugUIMessages.AddMemoryRenderingDialog_Unknown; 
-					
-					if (((IMemoryBlockExtension)memoryBlocks[i]).getBigBaseAddress() != null)
-					{
+						text = DebugUIMessages.AddMemoryRenderingDialog_Unknown;
+
+					if (((IMemoryBlockExtension) memoryBlocks[i]).getBigBaseAddress() != null) {
 						text += " : 0x"; //$NON-NLS-1$
-						text += ((IMemoryBlockExtension)memoryBlocks[i]).getBigBaseAddress().toString(16);
-					}	
+						text += ((IMemoryBlockExtension) memoryBlocks[i]).getBigBaseAddress().toString(16);
+					}
 				} catch (DebugException e) {
 					long address = memoryBlocks[i].getStartAddress();
 					text = Long.toHexString(address);
 				}
-			}
-			else
-			{
+			} else {
 				long address = memoryBlocks[i].getStartAddress();
 				text = Long.toHexString(address);
 			}
-			
+
 			// ask decorator to decorate to ensure consistent label
-			ILabelDecorator decorator = (ILabelDecorator)fMemoryBlocks[i].getAdapter(ILabelDecorator.class);
+			ILabelDecorator decorator = (ILabelDecorator) fMemoryBlocks[i].getAdapter(ILabelDecorator.class);
 			if (decorator != null)
 				text = decorator.decorateText(text, fMemoryBlocks[i]);
-			
+
 			labels[i] = text;
 		}
 		return labels;
 	}
-	
-	private IMemoryBlock getMemoryBlock(ISelection selection)
-	{
+
+	private IMemoryBlock getMemoryBlock(ISelection selection) {
 		if (!(selection instanceof IStructuredSelection))
 			return null;
 
-		//only single selection of debug element is allowed for this action
-		if (selection.isEmpty() || ((IStructuredSelection)selection).size() > 1)
-		{
+		// only single selection of debug element is allowed for this action
+		if (selection.isEmpty() || ((IStructuredSelection) selection).size() > 1) {
 			return null;
 		}
 
-		Object elem = ((IStructuredSelection)selection).getFirstElement();
-		
+		Object elem = ((IStructuredSelection) selection).getFirstElement();
+
 		if (elem instanceof IMemoryBlock)
-			return (IMemoryBlock)elem;
+			return (IMemoryBlock) elem;
 		else if (elem instanceof IMemoryRendering)
-			return ((IMemoryRendering)elem).getMemoryBlock();
+			return ((IMemoryRendering) elem).getMemoryBlock();
 		else
 			return null;
 	}
-	
-	public IMemoryBlock getMemoryBlock()
-	{
+
+	public IMemoryBlock getMemoryBlock() {
 		return fSelectedMemoryBlock;
 	}
-	
+
 	/**
 	 * @param currentBlock the current memory block context
 	 */
@@ -531,40 +555,39 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		final IMemoryBlock selectMB = currentBlock;
 		Job job = new Job("Populate dialog") //$NON-NLS-1$
 		{
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-			    IMemoryBlockRetrieval mbRetrieval = MemoryViewUtil.getMemoryBlockRetrieval(selectMB);
-			    
-			    if (mbRetrieval != null)
-			    {			    
+				IMemoryBlockRetrieval mbRetrieval = MemoryViewUtil.getMemoryBlockRetrieval(selectMB);
+
+				if (mbRetrieval != null) {
 					fMemoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(mbRetrieval);
 					int selectionIdx = 0;
-					for (int i=0; i<fMemoryBlocks.length; i++)
-					{
-						if (fMemoryBlocks[i] == selectMB)
-						{
+					for (int i = 0; i < fMemoryBlocks.length; i++) {
+						if (fMemoryBlocks[i] == selectMB) {
 							selectionIdx = i;
 							break;
 						}
 					}
-					
+
 					final String[] labels = getLabels(fMemoryBlocks);
 					final int idx = selectionIdx;
 					final IMemoryBlock selectedBlk = selectMB;
-					WorkbenchJob wbJob = new WorkbenchJob("populate dialog"){ //$NON-NLS-1$
-	
+					WorkbenchJob wbJob = new WorkbenchJob("populate dialog") { //$NON-NLS-1$
+
+						@Override
 						public IStatus runInUIThread(IProgressMonitor wbMonitor) {
-							doPopulateDialog(memoryBlock, fViewer, labels, idx, selectedBlk);	
+							doPopulateDialog(memoryBlock, fViewer, labels, idx, selectedBlk);
 							return Status.OK_STATUS;
-						}};
-						wbJob.setSystem(true);
-						wbJob.schedule();		
-			    }
-			    else
-			    {
-			    	DebugUIPlugin.logErrorMessage("Unable to obtain memory block retrieval."); //$NON-NLS-1$
-			    }
+						}
+					};
+					wbJob.setSystem(true);
+					wbJob.schedule();
+				} else {
+					DebugUIPlugin.logErrorMessage("Unable to obtain memory block retrieval."); //$NON-NLS-1$
+				}
 				return Status.OK_STATUS;
-			}};
+			}
+		};
 		job.setSystem(true);
 		job.schedule();
 	}
@@ -573,13 +596,15 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 	 * 
 	 */
 	private void addNew() {
-		WorkbenchJob job = new WorkbenchJob("populate dialog"){ //$NON-NLS-1$
+		WorkbenchJob job = new WorkbenchJob("populate dialog") { //$NON-NLS-1$
 
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				memoryBlock.add(DebugUIMessages.AddMemoryRenderingDialog_Add_New);
 				memoryBlock.select(0);
 				return Status.OK_STATUS;
-			}};
+			}
+		};
 		job.setSystem(true);
 		job.schedule();
 	}

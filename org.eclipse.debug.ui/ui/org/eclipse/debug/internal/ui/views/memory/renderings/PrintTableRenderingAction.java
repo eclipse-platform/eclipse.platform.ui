@@ -171,6 +171,7 @@ public class PrintTableRenderingAction extends Action
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		
 		if (!(fViewer.getControl() instanceof Table))

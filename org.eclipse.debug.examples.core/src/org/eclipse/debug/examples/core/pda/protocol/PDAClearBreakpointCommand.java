@@ -26,7 +26,8 @@ public class PDAClearBreakpointCommand extends PDACommand {
         super("clear " + line); //$NON-NLS-1$
     }
     
-    public PDACommandResult createResult(String resultText) {
+    @Override
+	public PDACommandResult createResult(String resultText) {
         return new PDACommandResult(resultText);
     }
 }

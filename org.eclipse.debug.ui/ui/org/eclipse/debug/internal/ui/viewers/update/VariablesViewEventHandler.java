@@ -30,10 +30,12 @@ public class VariablesViewEventHandler extends DebugEventHandler {
 		fFrame = frame;
 	}
 
+	@Override
 	protected boolean handlesEvent(DebugEvent event) {
 		return true;
 	}
 
+	@Override
 	protected void refreshRoot(DebugEvent event) {
 		if (event.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
 			// Don't refresh everytime an implicit evaluation finishes

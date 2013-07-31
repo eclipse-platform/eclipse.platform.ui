@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2013 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -41,15 +41,15 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	private static DebugUIPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
-	
+
 	private final static String ICONS_PATH = "icons/full/";//$NON-NLS-1$
 	private final static String PATH_OBJECT = ICONS_PATH + "obj16/"; //Model object icons //$NON-NLS-1$
     private final static String PATH_ELOCALTOOL = ICONS_PATH + "elcl16/"; //Enabled local toolbar icons //$NON-NLS-1$
     private final static String PATH_DLOCALTOOL = ICONS_PATH + "dlcl16/"; //Disabled local toolbar icons //$NON-NLS-1$
-    
+
     /**
 	 * The id of the plugin
-	 * 
+	 *
 	 * @since 1.4.200
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.debug.examples.ui"; //$NON-NLS-1$
@@ -58,34 +58,34 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	 */
 	public final static String IMG_ELCL_POP = "IMG_ELCL_POP"; //$NON-NLS-1$
 	public final static String IMG_DLCL_POP = "IMG_DLCL_POP"; //$NON-NLS-1$
-    
+
     /**
      * Toolbar action to push onto data stack
      */
 	public final static String IMG_ELCL_PUSH = "IMG_ELCL_PUSH"; //$NON-NLS-1$
 	public final static String IMG_DLCL_PUSH = "IMG_DLCL_PUSH"; //$NON-NLS-1$
-    
+
     /**
      * PDA program image
      */
 	public final static String IMG_OBJ_PDA = "IMB_OBJ_PDA"; //$NON-NLS-1$
-    
+
     /**
      * MIDI file image
      */
 	public final static String IMG_OBJ_MIDI = "IMB_OBJ_MIDI"; //$NON-NLS-1$
-    
+
     /**
      * Keyword color
      */
     public final static RGB KEYWORD = new RGB(0,0,255);
     public final static RGB LABEL = new RGB(128, 128, 0);
-    
+
     /**
      * Managed colors
      */
-    private final Map fColors = new HashMap();
-    	
+	private final Map<RGB, Color> fColors = new HashMap<RGB, Color>();
+
 	/**
 	 * The constructor.
 	 */
@@ -97,6 +97,7 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	/**
 	 * This method is called upon plug-in activation
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 //		Toggles single threaded adapter example
@@ -108,14 +109,15 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	/**
 	 * This method is called when the plug-in is stopped
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 		plugin = null;
 		resourceBundle = null;
-        Iterator colors = fColors.entrySet().iterator();
+		Iterator<Entry<RGB, Color>> colors = fColors.entrySet().iterator();
         while (colors.hasNext()) {
-            Map.Entry entry = (Entry) colors.next();
-            ((Color)entry.getValue()).dispose();
+            Entry<RGB, Color> entry = colors.next();
+            entry.getValue().dispose();
         }
 	}
 
@@ -153,11 +155,12 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 		}
 		return resourceBundle;
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse.jface.resource.ImageRegistry)
 	 */
+	@Override
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		declareImage(IMG_OBJ_PDA, PATH_OBJECT + "pda.gif"); //$NON-NLS-1$
 		declareImage(IMG_OBJ_MIDI, PATH_OBJECT + "note.gif"); //$NON-NLS-1$
@@ -166,12 +169,12 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 		declareImage(IMG_ELCL_PUSH, PATH_ELOCALTOOL + "push.gif"); //$NON-NLS-1$
 		declareImage(IMG_DLCL_PUSH, PATH_DLOCALTOOL + "push.gif"); //$NON-NLS-1$
 	}
-	
+
     /**
      * Declares a workbench image given the path of the image file (relative to
      * the workbench plug-in). This is a helper method that creates the image
      * descriptor and passes it to the main <code>declareImage</code> method.
-     * 
+     *
      * @param symbolicName the symbolic name of the image
      * @param path the path of the image file relative to the base of the workbench
      * plug-ins install directory
@@ -189,34 +192,34 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 		}
         getImageRegistry().put(key, desc);
     }
-    
+
     /**
      * Returns the color described by the given RGB.
-     * 
+     *
      * @param rgb
      * @return color
      */
     public Color getColor(RGB rgb) {
-        Color color = (Color) fColors.get(rgb);
+        Color color = fColors.get(rgb);
         if (color == null) {
             color= new Color(Display.getCurrent(), rgb);
             fColors.put(rgb, color);
         }
         return color;
     }
-    
+
 	/**
 	 * Returns the active workbench window
-	 * 
+	 *
 	 * @return the active workbench window
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
-	
+
 	/**
 	 * Returns the active workbench shell or <code>null</code> if none
-	 * 
+	 *
 	 * @return the active workbench shell or <code>null</code> if none
 	 */
 	public static Shell getActiveWorkbenchShell() {
@@ -225,6 +228,6 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 			return window.getShell();
 		}
 		return null;
-	}    
-    
+	}
+
  }

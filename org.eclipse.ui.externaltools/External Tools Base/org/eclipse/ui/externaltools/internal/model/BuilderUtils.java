@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,28 +31,28 @@ import org.eclipse.swt.widgets.Shell;
  * Utility methods for working with external tool project builders.
  */
 public class BuilderUtils {
-	
+
 	// Extension point constants.
 	private static final String TAG_CONFIGURATION_MAP = "configurationMap"; //$NON-NLS-1$
 	private static final String TAG_SOURCE_TYPE = "sourceType"; //$NON-NLS-1$
-	private static final String TAG_BUILDER_TYPE = "builderType"; //$NON-NLS-1$	
+	private static final String TAG_BUILDER_TYPE = "builderType"; //$NON-NLS-1$
 
 	/**
 	 * Returns a launch configuration from the given ICommand arguments. If the
 	 * given arguments are from an old-style external tool, an unsaved working
 	 * copy will be created from the arguments and returned.
-	 * 
+	 *
 	 * @param commandArgs the builder ICommand arguments
 	 * @return a launch configuration, a launch configuration working copy, or
 	 * <code>null</code> if not possible.
 	 */
-	public static ILaunchConfiguration configFromBuildCommandArgs(IProject project, Map commandArgs, String[] version) {
+	public static ILaunchConfiguration configFromBuildCommandArgs(IProject project, Map<String, String> commandArgs, String[] version) {
 		return BuilderCoreUtils.configFromBuildCommandArgs(project, commandArgs, version);
 	}
 
 	/**
 	 * Returns an <code>ICommand</code> from the given launch configuration.
-	 * 
+	 *
 	 * @param project the project the ICommand is relevant to
 	 * @param config the launch configuration to create the command from
 	 * @return the new command. <code>null</code> can be returned if problems occur during
@@ -73,7 +73,7 @@ public class BuilderUtils {
 		}
 		return newCommand;
 	}
-	
+
 	public static void configureTriggers(ILaunchConfiguration config, ICommand newCommand) throws CoreException {
 		BuilderCoreUtils.configureTriggers(config, newCommand);
 	}
@@ -101,14 +101,14 @@ public class BuilderUtils {
 	public static ICommand toBuildCommand(IProject project, ILaunchConfiguration config, ICommand command) throws CoreException {
 		return BuilderCoreUtils.toBuildCommand(project, config, command);
 	}
-	
+
 	/**
 	 * Returns the type of launch configuration that should be created when
 	 * duplicating the given configuration as a project builder. Queries to see
 	 * if an extension has been specified to explicitly declare the mapping.
 	 */
 	public static ILaunchConfigurationType getConfigurationDuplicationType(ILaunchConfiguration config) throws CoreException {
-		IExtensionPoint ep= Platform.getExtensionRegistry().getExtensionPoint(ExternalToolsPlugin.PLUGIN_ID, IExternalToolConstants.EXTENSION_POINT_CONFIGURATION_DUPLICATION_MAPS); 
+		IExtensionPoint ep= Platform.getExtensionRegistry().getExtensionPoint(ExternalToolsPlugin.PLUGIN_ID, IExternalToolConstants.EXTENSION_POINT_CONFIGURATION_DUPLICATION_MAPS);
 		IConfigurationElement[] elements = ep.getConfigurationElements();
 		String sourceType= config.getType().getIdentifier();
 		String builderType= null;
@@ -143,7 +143,7 @@ public class BuilderUtils {
 	 * IExternalToolConstants.EXTENSION_POINT_CONFIGURATION_DUPLICATION_MAPS.
 	 */
 	public static ILaunchConfiguration duplicateConfiguration(IProject project, ILaunchConfiguration config) throws CoreException {
-		Map attributes= config.getAttributes();
+		Map<String, Object> attributes = config.getAttributes();
 		String newName= new StringBuffer(config.getName()).append(ExternalToolsModelMessages.BuilderUtils_7).toString();
 		newName= DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(newName);
 		ILaunchConfigurationType newType= getConfigurationDuplicationType(config);
@@ -160,7 +160,7 @@ public class BuilderUtils {
 	 * may be changed during the migration. The name of the configuration will
 	 * only be changed if the current name is not a valid name for a saved
 	 * config.
-	 * 
+	 *
 	 * @param workingCopy the launch configuration containing attributes from an
 	 * old-style project builder.
 	 * @return ILaunchConfiguration a new, saved launch configuration whose
@@ -171,7 +171,7 @@ public class BuilderUtils {
 	public static ILaunchConfiguration migrateBuilderConfiguration(IProject project, ILaunchConfigurationWorkingCopy workingCopy) throws CoreException {
 		return BuilderCoreUtils.migrateBuilderConfiguration(project, workingCopy);
 	}
-	
+
     /**
      * Converts the build types string into an array of
      * build kinds.
@@ -181,5 +181,5 @@ public class BuilderUtils {
      */
     public static int[] buildTypesToArray(String buildTypes) {
     	return BuilderCoreUtils.buildTypesToArray(buildTypes);
-    }	
+    }
 }

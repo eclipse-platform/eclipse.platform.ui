@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,15 +18,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
-
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
@@ -36,7 +27,13 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
@@ -63,55 +60,55 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * Page book console view.
- * 
+ *
  * @since 3.0
  */
 public class ConsoleView extends PageBookView implements IConsoleView, IConsoleListener, IPropertyChangeListener, IPartListener2 {
-	
+
 	/**
 	 * Whether this console is pinned.
 	 */
 	private boolean fPinned = false;
-	
+
 	/**
 	 * Stack of consoles in MRU order
 	 */
-	private List fStack = new ArrayList();
-	
+	private List<IConsole> fStack = new ArrayList<IConsole>();
+
 	/**
 	 * The console being displayed, or <code>null</code> if none
 	 */
 	private IConsole fActiveConsole = null;
-	
+
 	/**
 	 * Map of consoles to dummy console parts (used to close pages)
 	 */
-	private Map fConsoleToPart;
-	
+	private Map<IConsole, ConsoleWorkbenchPart> fConsoleToPart;
+
 	/**
 	 * Map of consoles to array of page participants
 	 */
-	private Map fConsoleToPageParticipants;
-	
+	private Map<IConsole, ListenerList> fConsoleToPageParticipants;
+
 	/**
 	 * Map of parts to consoles
 	 */
-	private Map fPartToConsole;
-	
+	private Map<ConsoleWorkbenchPart, IConsole> fPartToConsole;
+
 	/**
 	 * Whether this view is active
 	 */
 	private boolean fActive = false;
-	
+
 	/**
 	 * 'In Console View' context
 	 */
 	private IContextActivation fActivatedContext;
-	
+
 	// actions
-	private PinConsoleAction fPinAction = null; 
+	private PinConsoleAction fPinAction = null;
 	private ConsoleDropDownAction fDisplayConsoleAction = null;
-	
+
 	private OpenConsoleAction fOpenConsoleAction = null;
 
     private boolean fScrollLock;
@@ -123,6 +120,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		Object source = event.getSource();
 		if (source instanceof IConsole && event.getProperty().equals(IBasicPropertyConstants.P_TEXT)) {
@@ -136,6 +134,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	public void partClosed(IWorkbenchPart part) {
 		super.partClosed(part);
 		fPinAction.update();
@@ -144,6 +143,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.console.IConsoleView#getConsole()
 	 */
+	@Override
 	public IConsole getConsole() {
 		return fActiveConsole;
 	}
@@ -151,27 +151,28 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.PageBookView#showPageRec(org.eclipse.ui.part.PageBookView.PageRec)
 	 */
+	@Override
 	protected void showPageRec(PageRec pageRec) {
         // don't show the page when pinned, unless this is the first console to be added
         // or its the default page
         if (fActiveConsole != null && pageRec.page != getDefaultPage() && fPinned && fConsoleToPart.size() > 1) {
-            IConsole console = (IConsole)fPartToConsole.get(pageRec.part);
+            IConsole console = fPartToConsole.get(pageRec.part);
             if (!fStack.contains(console)) {
                 fStack.add(console);
             }
             return;
         }
-        
-        IConsole recConsole = (IConsole)fPartToConsole.get(pageRec.part);
+
+        IConsole recConsole = fPartToConsole.get(pageRec.part);
         if (recConsole!=null && recConsole.equals(fActiveConsole)) {
             return;
         }
-        
+
 	    super.showPageRec(pageRec);
 	    fActiveConsole = recConsole;
 	    IConsole tos = null;
 	    if (!fStack.isEmpty()) {
-	        tos = (IConsole) fStack.get(0);
+	        tos = fStack.get(0);
 	    }
 	    if (tos != null && !tos.equals(fActiveConsole) && fActive) {
 	        deactivateParticipants(tos);
@@ -181,7 +182,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	        fStack.add(0,fActiveConsole);
 	        activateParticipants(fActiveConsole);
 	    }
-	    updateTitle();	
+	    updateTitle();
 	    updateHelp();
 	    // update console actions
 	    if (fPinAction != null) {
@@ -192,10 +193,10 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	        ((IOConsolePage)page).setAutoScroll(!fScrollLock);
 	    }
 	}
-	
+
 	/**
 	 * Activates the participants for the given console, if any.
-	 * 
+	 *
 	 * @param console
 	 */
 	private void activateParticipants(IConsole console) {
@@ -207,9 +208,11 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 			    for (int i = 0; i < participants.length; i++) {
 			    	final IConsolePageParticipant participant = (IConsolePageParticipant) participants[i];
 			    	SafeRunner.run(new ISafeRunnable() {
+						@Override
 						public void run() throws Exception {
 							participant.activated();
 						}
+						@Override
 						public void handleException(Throwable exception) {
 							ConsolePlugin.log(exception);
 							listeners.remove(participant);
@@ -222,10 +225,10 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 
 	/**
 	 * Returns a stack of consoles in the view in MRU order.
-	 * 
+	 *
 	 * @return a stack of consoles in the view in MRU order
 	 */
-	protected List getConsoleStack() {
+	protected List<IConsole> getConsoleStack() {
 		return fStack;
 	}
 
@@ -235,16 +238,16 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
     protected void updateTitle() {
         IConsole console = getConsole();
         if (console == null) {
-            setContentDescription(ConsoleMessages.ConsoleView_0); 
+            setContentDescription(ConsoleMessages.ConsoleView_0);
         } else {
             String newName = console.getName();
             String oldName = getContentDescription();
             if (newName!=null && !(newName.equals(oldName))) {
-                setContentDescription(console.getName()); 
+                setContentDescription(console.getName());
             }
         }
     }
-    
+
     protected void updateHelp() {
     	IConsole console = getConsole();
     	String helpContextId = null;
@@ -261,19 +264,22 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.PageBookView#doDestroyPage(org.eclipse.ui.IWorkbenchPart, org.eclipse.ui.part.PageBookView.PageRec)
 	 */
+	@Override
 	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
-	    IConsole console = (IConsole)fPartToConsole.get(part);
-	    
+	    IConsole console = fPartToConsole.get(part);
+
 		// dispose page participants
-		ListenerList listeners = (ListenerList) fConsoleToPageParticipants.remove(console);
+		ListenerList listeners = fConsoleToPageParticipants.remove(console);
 		if (listeners != null) {
 			Object[] participants = listeners.getListeners();
 			for (int i = 0; i < participants.length; i++) {
 	            final IConsolePageParticipant participant = (IConsolePageParticipant) participants[i];
 	            SafeRunner.run(new ISafeRunnable() {
+					@Override
 					public void run() throws Exception {
 						participant.dispose();
 					}
+					@Override
 					public void handleException(Throwable exception) {
 						ConsolePlugin.log(exception);
 					}
@@ -285,31 +291,32 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		page.dispose();
 		pageRecord.dispose();
 		console.removePropertyChangeListener(this);
-						
+
 		// empty cross-reference cache
 		fPartToConsole.remove(part);
 		fConsoleToPart.remove(console);
         if (fPartToConsole.isEmpty()) {
             fActiveConsole = null;
         }
-		
+
 		// update console actions
-		fPinAction.update();		
+		fPinAction.update();
 	}
-	
+
 	/**
 	 * Returns the page participants registered for the given console, or <code>null</code>
-	 * 
+	 *
 	 * @param console
 	 * @return registered page participants or <code>null</code>
 	 */
 	private ListenerList getParticipants(IConsole console) {
-	    return (ListenerList) fConsoleToPageParticipants.get(console);
+	    return fConsoleToPageParticipants.get(console);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.PageBookView#doCreatePage(org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	protected PageRec doCreatePage(IWorkbenchPart dummyPart) {
 		ConsoleWorkbenchPart part = (ConsoleWorkbenchPart)dummyPart;
 		final IConsole console = part.getConsole();
@@ -317,7 +324,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		initPage(page);
 		page.createControl(getPageBook());
 		console.addPropertyChangeListener(this);
-		
+
 		// initialize page participants
 		IConsolePageParticipant[] consoleParticipants = ((ConsoleManager)getConsoleManager()).getPageParticipants(console);
 		final ListenerList participants = new ListenerList();
@@ -329,16 +336,18 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		for (int i = 0; i < listeners.length; i++) {
             final IConsolePageParticipant participant = (IConsolePageParticipant) listeners[i];
             SafeRunner.run(new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					participant.init(page, console);
 				}
+				@Override
 				public void handleException(Throwable exception) {
 					ConsolePlugin.log(exception);
 					participants.remove(participant);
 				}
 			});
         }
-		
+
 		PageRec rec = new PageRec(dummyPart, page);
 		return rec;
 	}
@@ -346,6 +355,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.PageBookView#isImportant(org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	protected boolean isImportant(IWorkbenchPart part) {
 		return part instanceof ConsoleWorkbenchPart;
 	}
@@ -353,6 +363,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IViewSite site = getViewSite();
 		if(site != null) {
@@ -360,13 +371,13 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		}
 		super.dispose();
         ConsoleManager consoleManager = (ConsoleManager) ConsolePlugin.getDefault().getConsoleManager();
-        consoleManager.removeConsoleListener(this);        
+        consoleManager.removeConsoleListener(this);
         consoleManager.unregisterConsoleView(this);
 	}
 
 	/**
 	 * Returns the console manager.
-	 * 
+	 *
      * @return the console manager
      */
     private IConsoleManager getConsoleManager() {
@@ -376,6 +387,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.part.PageBookView#createDefaultPage(org.eclipse.ui.part.PageBook)
 	 */
+	@Override
 	protected IPage createDefaultPage(PageBook book) {
 		MessagePage page = new MessagePage();
 		page.createControl(getPageBook());
@@ -386,9 +398,11 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsoleListener#consolesAdded(org.eclipse.ui.console.IConsole[])
 	 */
+	@Override
 	public void consolesAdded(final IConsole[] consoles) {
 		if (isAvailable()) {
 			Runnable r = new Runnable() {
+				@Override
 				public void run() {
 					for (int i = 0; i < consoles.length; i++) {
 						if (isAvailable()) {
@@ -417,15 +431,17 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsoleListener#consolesRemoved(org.eclipse.ui.console.IConsole[])
 	 */
+	@Override
 	public void consolesRemoved(final IConsole[] consoles) {
 		if (isAvailable()) {
 			Runnable r = new Runnable() {
+				@Override
 				public void run() {
 					for (int i = 0; i < consoles.length; i++) {
 						if (isAvailable()) {
 							IConsole console = consoles[i];
 							fStack.remove(console);
-							ConsoleWorkbenchPart part = (ConsoleWorkbenchPart)fConsoleToPart.get(console);
+							ConsoleWorkbenchPart part = fConsoleToPart.get(console);
 							if (part != null) {
 								partClosed(part);
 							}
@@ -448,14 +464,14 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 */
 	public ConsoleView() {
 		super();
-		fConsoleToPart = new HashMap();
-		fPartToConsole = new HashMap();
-		fConsoleToPageParticipants = new HashMap();
-        
+		fConsoleToPart = new HashMap<IConsole, ConsoleWorkbenchPart>();
+		fPartToConsole = new HashMap<ConsoleWorkbenchPart, IConsole>();
+		fConsoleToPageParticipants = new HashMap<IConsole, ListenerList>();
+
 		ConsoleManager consoleManager = (ConsoleManager) ConsolePlugin.getDefault().getConsoleManager();
 		consoleManager.registerConsoleView(this);
 	}
-	
+
 	protected void createActions() {
 		fPinAction = new PinConsoleAction(this);
 		fDisplayConsoleAction = new ConsoleDropDownAction(this);
@@ -477,6 +493,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		    	ToolBarManager tbm= (ToolBarManager) mgr;
 				final ToolBar tb= tbm.getControl();
 				tb.addMouseListener(new MouseAdapter() {
+					@Override
 					public void mouseDown(MouseEvent e) {
 						ToolItem ti= tb.getItem(new Point(e.x, e.y));
 						if (ti != null) {
@@ -501,6 +518,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsoleView#display(org.eclipse.ui.console.IConsole)
 	 */
+	@Override
 	public void display(IConsole console) {
 	    if (fPinned && fActiveConsole != null) {
             return;
@@ -508,7 +526,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
         if (console.equals(fActiveConsole)) {
             return;
         }
-	    ConsoleWorkbenchPart part = (ConsoleWorkbenchPart)fConsoleToPart.get(console);
+	    ConsoleWorkbenchPart part = fConsoleToPart.get(console);
 	    if (part != null) {
 	        partActivated(part);
 	    }
@@ -517,6 +535,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/*/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsoleView#pin(org.eclipse.ui.console.IConsole)
 	 */
+	@Override
 	public void setPinned(boolean pin) {
         fPinned = pin;
 	    if (fPinAction != null) {
@@ -527,6 +546,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsoleView#isPinned()
 	 */
+	@Override
 	public boolean isPinned() {
 		return fPinned;
 	}
@@ -534,14 +554,15 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.PageBookView#getBootstrapPart()
 	 */
+	@Override
 	protected IWorkbenchPart getBootstrapPart() {
 		return null;
 	}
-	
+
 	/**
 	 * Registers the given runnable with the display
 	 * associated with this view's control, if any.
-	 * 
+	 *
 	 * @see org.eclipse.swt.widgets.Display#asyncExec(java.lang.Runnable)
 	 */
 	public void asyncExec(Runnable r) {
@@ -549,7 +570,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 			getPageBook().getDisplay().asyncExec(r);
 		}
 	}
-	
+
 	/**
 	 * Creates this view's underlying viewer and actions.
 	 * Hooks a pop-up menu to the underlying viewer's control,
@@ -566,6 +587,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * </ul>
 	 * @see IWorkbenchPart#createPartControl(Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		createActions();
@@ -577,34 +599,40 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		getViewSite().getPage().addPartListener((IPartListener2)this);
 		initPageSwitcher();
 	}
-	
+
 	/**
 	 * Initialize the PageSwitcher.
 	 */
 	private void initPageSwitcher() {
 		new PageSwitcher(this) {
+			@Override
 			public void activatePage(Object page) {
 				ShowConsoleAction.showConsole((IConsole) page, ConsoleView.this);
 			}
 
+			@Override
 			public ImageDescriptor getImageDescriptor(Object page) {
 				return ((IConsole) page).getImageDescriptor();
 			}
 
+			@Override
 			public String getName(Object page) {
 				return ((IConsole) page).getName();
 			}
 
+			@Override
 			public Object[] getPages() {
 				return getConsoleManager().getConsoles();
 			}
-			
+
+			@Override
 			public int getCurrentPageIndex() {
 				IConsole currentConsole= getConsole();
 				IConsole[] consoles= getConsoleManager().getConsoles();
 				for (int i= 0; i < consoles.length; i++) {
-					if (consoles[i].equals(currentConsole))
+					if (consoles[i].equals(currentConsole)) {
 						return i;
+					}
 				}
 				return super.getCurrentPageIndex();
 			}
@@ -620,14 +648,15 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		IConsole[] consoles = manager.getConsoles();
 		consolesAdded(consoles);
 		// add as a listener
-		manager.addConsoleListener(this);		
-	}	
-	
+		manager.addConsoleListener(this);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsoleView#warnOfContentChange(org.eclipse.ui.console.IConsole)
 	 */
+	@Override
 	public void warnOfContentChange(IConsole console) {
-		IWorkbenchPart part = (IWorkbenchPart)fConsoleToPart.get(console);
+		IWorkbenchPart part = fConsoleToPart.get(console);
 		if (part != null) {
 			IWorkbenchSiteProgressService service = (IWorkbenchSiteProgressService) part.getSite().getAdapter(IWorkbenchSiteProgressService.class);
 			if (service != null) {
@@ -635,8 +664,9 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 			}
 		}
 	}
-	
-    public Object getAdapter(Class key) {
+
+    @Override
+	public Object getAdapter(Class key) {
         Object adpater = super.getAdapter(key);
         if (adpater == null) {
             IConsole console = getConsole();
@@ -661,6 +691,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
 	 */
+	@Override
 	public void partActivated(IWorkbenchPartReference partRef) {
 		if (isThisPart(partRef)) {
 			fActive = true;
@@ -675,18 +706,21 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
 	 */
+	@Override
 	public void partBroughtToTop(IWorkbenchPartReference partRef) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
 	 */
+	@Override
 	public void partClosed(IWorkbenchPartReference partRef) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
 	 */
+	@Override
 	public void partDeactivated(IWorkbenchPartReference partRef) {
         if (isThisPart(partRef)) {
 			fActive = false;
@@ -697,10 +731,10 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 			}
         }
 	}
-    
+
     /**
-     * Returns if the specified part reference is to this view part (if the part 
-     * reference is the console view or not)  
+     * Returns if the specified part reference is to this view part (if the part
+     * reference is the console view or not)
      * @param partRef
      * @return true if the specified part reference is the console view
      */
@@ -724,7 +758,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 
 	/**
 	 * Deactivates participants for the given console, if any.
-	 * 
+	 *
 	 * @param console console to deactivate
 	 */
 	private void deactivateParticipants(IConsole console) {
@@ -736,9 +770,11 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 			    for (int i = 0; i < participants.length; i++) {
 			    	final IConsolePageParticipant participant = (IConsolePageParticipant) participants[i];
 			    	SafeRunner.run(new ISafeRunnable() {
+						@Override
 						public void run() throws Exception {
 							participant.deactivated();
 						}
+						@Override
 						public void handleException(Throwable exception) {
 							ConsolePlugin.log(exception);
 							listeners.remove(participant);
@@ -752,31 +788,36 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
 	 */
+	@Override
 	public void partOpened(IWorkbenchPartReference partRef) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
 	 */
+	@Override
 	public void partHidden(IWorkbenchPartReference partRef) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
 	 */
+	@Override
 	public void partVisible(IWorkbenchPartReference partRef) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
 	 */
-	public void partInputChanged(IWorkbenchPartReference partRef) {		
+	@Override
+	public void partInputChanged(IWorkbenchPartReference partRef) {
 	}
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsoleView#setScrollLock(boolean)
      */
-    public void setScrollLock(boolean scrollLock) {
+    @Override
+	public void setScrollLock(boolean scrollLock) {
         fScrollLock = scrollLock;
 
         IPage page = getCurrentPage();
@@ -788,14 +829,16 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsoleView#getScrollLock()
      */
-    public boolean getScrollLock() {
+    @Override
+	public boolean getScrollLock() {
         return fScrollLock;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsoleView#pin(org.eclipse.ui.console.IConsole)
      */
-    public void pin(IConsole console) {
+    @Override
+	public void pin(IConsole console) {
         if (console == null) {
             setPinned(false);
         } else {

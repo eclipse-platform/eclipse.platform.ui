@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -25,11 +25,12 @@ import org.eclipse.jface.text.source.ISourceViewer;
  */
 public class AnnotationHover implements IAnnotationHover {
 
+	@Override
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		IAnnotationModel annotationModel = sourceViewer.getAnnotationModel();
-		Iterator iterator = annotationModel.getAnnotationIterator();
+		Iterator<Annotation> iterator = annotationModel.getAnnotationIterator();
 		while (iterator.hasNext()) {
-			Annotation annotation = (Annotation) iterator.next();
+			Annotation annotation = iterator.next();
 			Position position = annotationModel.getPosition(annotation);
 			try {
 				int lineOfAnnotation = sourceViewer.getDocument().getLineOfOffset(position.getOffset());

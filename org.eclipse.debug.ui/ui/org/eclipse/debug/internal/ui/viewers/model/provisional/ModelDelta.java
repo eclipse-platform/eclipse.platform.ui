@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -30,8 +30,9 @@ public class ModelDelta implements IModelDelta {
 	private Object fElement;
 	private int fFlags;
 	private ModelDelta[] fNodes = EMPTY_NODES;
-	private List fNodesList = null;
-	private Map fNodesMap;
+	private List<ModelDelta> fNodesList = null;
+	// TODO this is not good, we are mixing a delta with an array of deltas
+	private Map<Object, Object> fNodesMap;
 	private Object fReplacement;
 	private int fIndex = -1;
 	private int fChildCount = -1;
@@ -95,13 +96,15 @@ public class ModelDelta implements IModelDelta {
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getElement()
      */
-    public Object getElement() {
+    @Override
+	public Object getElement() {
 		return fElement;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getFlags()
 	 */
+	@Override
 	public int getFlags() {
 		return fFlags;
 	}
@@ -172,13 +175,13 @@ public class ModelDelta implements IModelDelta {
 
 	private void mapNodes() {
 	    if (fNodesList == null) {
-	        fNodesMap = new HashMap(1);
+			fNodesMap = new HashMap<Object, Object>(1);
 	        return;
 	    }
 	    // Create a map with capacity for all child nodes.
-	    fNodesMap = new HashMap(fNodesList.size()*4/3);
+		fNodesMap = new HashMap<Object, Object>(fNodesList.size() * 4 / 3);
 	    for (int i = 0; i < fNodesList.size(); i++) {
-	        mapNode( (ModelDelta)fNodesList.get(i) );
+	        mapNode( fNodesList.get(i) );
 	    }
 	}
 	
@@ -261,6 +264,7 @@ public class ModelDelta implements IModelDelta {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getParent()
 	 */
+	@Override
 	public IModelDelta getParentDelta() {
 		return fParent;
 	}
@@ -268,29 +272,34 @@ public class ModelDelta implements IModelDelta {
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getReplacementElement()
      */
-    public Object getReplacementElement() {
+    @Override
+	public Object getReplacementElement() {
         return fReplacement;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getIndex()
      */
-    public int getIndex() {
+    @Override
+	public int getIndex() {
         return fIndex;
     }
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getNodes()
 	 */
+	@Override
 	public IModelDelta[] getChildDeltas() {
 	    if (fNodes == null) {
-	        fNodes = (ModelDelta[])fNodesList.toArray(new ModelDelta[fNodesList.size()]);
+	        fNodes = fNodesList.toArray(new ModelDelta[fNodesList.size()]);
 	    }
 		return fNodes;
 	}
 	
 	private void addDelta(ModelDelta delta) {
-	    if (fNodesList == null) fNodesList = new ArrayList(4);
+		if (fNodesList == null) {
+			fNodesList = new ArrayList<ModelDelta>(4);
+		}
 	    fNodesList.add(delta);
 	    fNodes = null;
 	    if (fNodesMap != null) {
@@ -298,6 +307,7 @@ public class ModelDelta implements IModelDelta {
 	    }
 	}
 	
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append("Model Delta Start\n"); //$NON-NLS-1$
@@ -374,6 +384,7 @@ public class ModelDelta implements IModelDelta {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta#getChildCount()
 	 */
+	@Override
 	public int getChildCount() {
 		return fChildCount;
 	}
@@ -381,6 +392,7 @@ public class ModelDelta implements IModelDelta {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta#accept(org.eclipse.debug.internal.ui.viewers.provisional.IModelDeltaVisitor)
 	 */
+	@Override
 	public void accept(IModelDeltaVisitor visitor) {
 		doAccept(visitor, 0);
 	}

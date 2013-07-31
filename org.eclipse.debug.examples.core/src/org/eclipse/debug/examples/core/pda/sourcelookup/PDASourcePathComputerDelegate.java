@@ -39,6 +39,7 @@ public class PDASourcePathComputerDelegate implements ISourcePathComputerDelegat
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputerDelegate#computeSourceContainers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		String path = configuration.getAttribute(DebugCorePlugin.ATTR_PDA_PROGRAM, (String)null);
 		ISourceContainer sourceContainer = null;

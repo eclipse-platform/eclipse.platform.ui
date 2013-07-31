@@ -36,6 +36,7 @@ public abstract class ExecutionAction implements IActionDelegate2 {
 	/**
 	 * @see IActionDelegate2#runWithEvent(IAction, Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
@@ -63,18 +64,21 @@ public abstract class ExecutionAction implements IActionDelegate2 {
 	/**
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 	}
 
 	/**
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 	}
 
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		ILaunchConfiguration configuration = getLaunchConfigurationManager().getLastLaunch(fLaunchGroupIdentifier);
 		if (configuration == null) {
@@ -87,6 +91,7 @@ public abstract class ExecutionAction implements IActionDelegate2 {
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 

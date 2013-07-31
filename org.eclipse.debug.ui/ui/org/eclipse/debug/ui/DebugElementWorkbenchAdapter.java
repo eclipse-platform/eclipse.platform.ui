@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,40 +31,46 @@ import org.eclipse.ui.model.IWorkbenchAdapter2;
  * 	 {@link IWorkbenchAdapter}. Custom content is currently supported
  * 	 by a provisional internal viewer framework.
  */
+@Deprecated
 public abstract class DebugElementWorkbenchAdapter implements IWorkbenchAdapter, IWorkbenchAdapter2 {
     
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
      */
-    public ImageDescriptor getImageDescriptor(Object object) {
+    @Override
+	public ImageDescriptor getImageDescriptor(Object object) {
         return DebugElementHelper.getImageDescriptor(object);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
      */
-    public String getLabel(Object o) {
+    @Override
+	public String getLabel(Object o) {
         return DebugElementHelper.getLabel(o);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter2#getForeground(java.lang.Object)
      */
-    public RGB getForeground(Object element) {
+    @Override
+	public RGB getForeground(Object element) {
         return DebugElementHelper.getForeground(element);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter2#getBackground(java.lang.Object)
      */
-    public RGB getBackground(Object element) {
+    @Override
+	public RGB getBackground(Object element) {
         return DebugElementHelper.getBackground(element);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter2#getFont(java.lang.Object)
      */
-    public FontData getFont(Object element) {
+    @Override
+	public FontData getFont(Object element) {
         return DebugElementHelper.getFont(element);
     }
 

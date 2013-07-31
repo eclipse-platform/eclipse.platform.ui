@@ -26,6 +26,7 @@ public class WorkspaceSourceContainerBrowser extends AbstractSourceContainerBrow
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		ISourceContainer[] containers = new ISourceContainer[1];
 		

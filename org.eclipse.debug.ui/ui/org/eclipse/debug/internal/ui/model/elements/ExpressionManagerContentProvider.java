@@ -50,7 +50,8 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
      */
     private static class AddNewExpressionElement implements IElementLabelProvider, IElementEditor, ICellModifier {
         
-        public void update(ILabelUpdate[] updates) {
+        @Override
+		public void update(ILabelUpdate[] updates) {
             for (int i = 0; i < updates.length; i++) {
                 String[] columnIds = updates[i].getColumnIds();
                 if (columnIds == null) {
@@ -69,7 +70,8 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
             }
         }
         
-        private void updateLabel(ILabelUpdate update, int columnIndex) {
+		@SuppressWarnings("deprecation")
+		private void updateLabel(ILabelUpdate update, int columnIndex) {
             update.setLabel(DebugUIMessages.ExpressionManagerContentProvider_1, columnIndex);
             update.setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_MONITOR_EXPRESSION), columnIndex);
             
@@ -80,23 +82,28 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
             update.setFontData(fontData, columnIndex);
         }
         
-        public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
+        @Override
+		public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
             return new TextCellEditor(parent);
         }
         
-        public ICellModifier getCellModifier(IPresentationContext context, Object element) {
+        @Override
+		public ICellModifier getCellModifier(IPresentationContext context, Object element) {
             return this;
         }
         
-        public boolean canModify(Object element, String property) {
+        @Override
+		public boolean canModify(Object element, String property) {
             return (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(property));
         }
         
-        public Object getValue(Object element, String property) {
+        @Override
+		public Object getValue(Object element, String property) {
             return IInternalDebugCoreConstants.EMPTY_STRING;
         }
         
-        public void modify(Object element, String property, Object value) {
+        @Override
+		public void modify(Object element, String property, Object value) {
             // If an expression is entered, add a new watch expression to the 
             // manager. 
             if (value instanceof String && 
@@ -128,6 +135,7 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
+	@Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 	    // Add the "Add new expression" element only if columns are displayed.
 		return ((IExpressionManager) element).getExpressions().length + 
@@ -137,6 +145,7 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
+	@Override
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 	    if (context.getColumns() != null) {
 	        return getElements(((IExpressionManager) parent).getExpressions(), ADD_NEW_EXPRESSION_ELEMENT, index, length);
@@ -173,6 +182,7 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#supportsContextId(java.lang.String)
 	 */
+	@Override
 	protected boolean supportsContextId(String id) {
 		return id.equals(IDebugUIConstants.ID_EXPRESSION_VIEW);
 	}
@@ -180,6 +190,7 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
+	@Override
 	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 	    return true;
 	}

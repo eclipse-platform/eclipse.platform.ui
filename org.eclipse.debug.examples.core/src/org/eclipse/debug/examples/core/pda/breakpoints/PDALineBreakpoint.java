@@ -60,6 +60,7 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
 	 */
 	public PDALineBreakpoint(final IResource resource, final int lineNumber) throws CoreException {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IMarker marker = resource.createMarker("org.eclipse.debug.examples.core.pda.markerType.lineBreakpoint"); //$NON-NLS-1$
 				setMarker(marker);
@@ -75,6 +76,7 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IBreakpoint#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		return DebugCorePlugin.ID_PDA_DEBUG_MODEL;
 	}
@@ -174,6 +176,7 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
 	 * 
 	 * @see org.eclipse.debug.examples.core.pda.model.IPDAEventListener#handleEvent(java.lang.String)
 	 */
+	@Override
 	public void handleEvent(PDAEvent event) {
 		if (event instanceof PDASuspendedEvent || event instanceof PDAVMSuspendedEvent) {
 		    PDARunControlEvent rcEvent = (PDARunControlEvent)event;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class VariableContentProvider extends ElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
+	@Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return getAllChildren(element, context).length;
 	}
@@ -51,6 +52,7 @@ public class VariableContentProvider extends ElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
+	@Override
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return getElements(getAllChildren(parent, context), index, length);
 	}
@@ -58,6 +60,7 @@ public class VariableContentProvider extends ElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
+	@Override
 	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return ((IVariable)element).getValue().hasVariables();
 	}
@@ -65,6 +68,7 @@ public class VariableContentProvider extends ElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#supportsContextId(java.lang.String)
 	 */
+	@Override
 	protected boolean supportsContextId(String id) {
 		 return id.equals(IDebugUIConstants.ID_EXPRESSION_VIEW) || id.equals(IDebugUIConstants.ID_VARIABLE_VIEW) || id.equals(IDebugUIConstants.ID_REGISTER_VIEW);
 	}
@@ -117,7 +121,7 @@ public class VariableContentProvider extends ElementContentProvider {
      * @return logical value for the raw value
      */
     protected IValue getLogicalValue(IValue value, IPresentationContext context) throws CoreException {
-        return getLogicalValue(value, new ArrayList(), context);
+		return getLogicalValue(value, new ArrayList<String>(), context);
     }
     
     /**
@@ -212,7 +216,7 @@ public class VariableContentProvider extends ElementContentProvider {
      *            Callers should always pass in a new, empty list.
      * @return logical value if one is calculated, otherwise the raw value is returned
      */
-    protected IValue getLogicalValue(IValue value, List previousStructureIds, IPresentationContext context) throws CoreException {
+	protected IValue getLogicalValue(IValue value, List<String> previousStructureIds, IPresentationContext context) throws CoreException {
         if (isShowLogicalStructure(context)) {
             ILogicalStructureType[] types = DebugPlugin.getLogicalStructureTypes(value);
             if (types.length > 0) {
@@ -239,6 +243,7 @@ public class VariableContentProvider extends ElementContentProvider {
     		fgLogicalCache = new LogicalStructureCache();
     		// Add a listener to clear the cache when resuming, terminating, or suspending
     		DebugPlugin.getDefault().addDebugEventListener(new IDebugEventSetListener(){
+				@Override
 				public void handleDebugEvents(DebugEvent[] events) {
 					for (int i = 0; i < events.length; i++) {
 						if (events[i].getKind() == DebugEvent.TERMINATE){

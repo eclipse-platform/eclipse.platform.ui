@@ -29,7 +29,8 @@ public class ToggleStepFiltersCommandActionDelegate extends DebugCommandActionDe
         setAction(new ToggleStepFiltersAction());
     }
 
-    public void init(IAction action) {
+    @Override
+	public void init(IAction action) {
         super.init(action);
         action.setChecked(DebugUITools.isUseStepFilters());
     }

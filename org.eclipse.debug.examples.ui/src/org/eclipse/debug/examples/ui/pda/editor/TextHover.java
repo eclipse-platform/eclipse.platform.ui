@@ -33,7 +33,8 @@ public class TextHover implements ITextHover {
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
      */
-    public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
+    @Override
+	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
         String varName = null;
         try {
             varName = textViewer.getDocument().get(hoverRegion.getOffset(), hoverRegion.getLength());
@@ -84,7 +85,8 @@ public class TextHover implements ITextHover {
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
      */
-    public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
+    @Override
+	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
         return WordFinder.findWord(textViewer.getDocument(), offset);
     }
 

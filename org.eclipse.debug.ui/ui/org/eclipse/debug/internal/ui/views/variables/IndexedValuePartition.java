@@ -47,6 +47,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getSize()
 	 */
+	@Override
 	public int getSize() {
 		return fLength;
 	}
@@ -54,6 +55,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getVariable(int)
 	 */
+	@Override
 	public IVariable getVariable(int offset) throws DebugException {
 		return fValue.getVariable(offset);
 	}
@@ -61,6 +63,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		return fValue.getReferenceTypeName();
 	}
@@ -68,6 +71,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
+	@Override
 	public String getValueString() {
 		return IInternalDebugCoreConstants.EMPTY_STRING;
 	}
@@ -75,6 +79,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
+	@Override
 	public IVariable[] getVariables() throws DebugException {
 		return getVariables(fOffset, fLength);
 	}
@@ -82,6 +87,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
 	 */
+	@Override
 	public boolean hasVariables() {
 		return fLength > 0;
 	}
@@ -89,6 +95,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#isAllocated()
 	 */
+	@Override
 	public boolean isAllocated() throws DebugException {
 		return fValue.isAllocated();
 	}
@@ -96,6 +103,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return fValue.getDebugTarget();
 	}
@@ -103,6 +111,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return fValue.getLaunch();
 	}
@@ -110,6 +119,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		return fValue.getModelIdentifier();
 	}
@@ -117,6 +127,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		return fValue.getAdapter(adapter);
 	}
@@ -124,6 +135,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getVariables(int, int)
 	 */
+	@Override
 	public IVariable[] getVariables(int offset, int length) throws DebugException {
 		return fValue.getVariables(offset, length);
 	}
@@ -131,6 +143,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getInitialOffset()
 	 */
+	@Override
 	public int getInitialOffset() {
 		return fOffset;
 	}

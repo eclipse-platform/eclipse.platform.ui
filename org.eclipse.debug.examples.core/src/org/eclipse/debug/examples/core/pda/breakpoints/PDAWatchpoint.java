@@ -65,6 +65,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 	 */
 	public PDAWatchpoint(final IResource resource, final int lineNumber, final String functionName, final String varName, final boolean access, final boolean modification) throws CoreException {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IMarker marker = resource.createMarker("org.eclipse.debug.examples.core.pda.markerType.watchpoint"); //$NON-NLS-1$
 				setMarker(marker);
@@ -83,42 +84,48 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IWatchpoint#isAccess()
      */
-    public boolean isAccess() throws CoreException {
+    @Override
+	public boolean isAccess() throws CoreException {
         return getMarker().getAttribute(ACCESS, true);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IWatchpoint#setAccess(boolean)
      */
-    public void setAccess(boolean access) throws CoreException {
+    @Override
+	public void setAccess(boolean access) throws CoreException {
         setAttribute(ACCESS, access);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IWatchpoint#isModification()
      */
-    public boolean isModification() throws CoreException {
+    @Override
+	public boolean isModification() throws CoreException {
         return getMarker().getAttribute(MODIFICATION, true);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IWatchpoint#setModification(boolean)
      */
-    public void setModification(boolean modification) throws CoreException {
+    @Override
+	public void setModification(boolean modification) throws CoreException {
         setAttribute(MODIFICATION, modification); 
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IWatchpoint#supportsAccess()
      */
-    public boolean supportsAccess() {
+    @Override
+	public boolean supportsAccess() {
         return true;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IWatchpoint#supportsModification()
      */
-    public boolean supportsModification() {
+    @Override
+	public boolean supportsModification() {
         return true;
     }
     
@@ -175,6 +182,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.pda.breakpoints.PDALineBreakpoint#createRequest(org.eclipse.debug.examples.core.pda.model.PDADebugTarget)
 	 */
+	@Override
 	protected void createRequest(PDADebugTarget target) throws CoreException {
         int flag = 0;
         if (isAccess()) {
@@ -189,6 +197,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.pda.breakpoints.PDALineBreakpoint#clearRequest(org.eclipse.debug.examples.core.pda.model.PDADebugTarget)
 	 */
+	@Override
 	protected void clearRequest(PDADebugTarget target) throws CoreException {
 	    target.sendCommand(new PDAWatchCommand(getFunctionName(), getVariableName(), 0));
 	}
@@ -196,6 +205,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.pda.model.IPDAEventListener#handleEvent(java.lang.String)
 	 */
+	@Override
 	public void handleEvent(PDAEvent event) {
         if (event instanceof PDASuspendedEvent || event instanceof PDAVMSuspendedEvent) {
             PDARunControlEvent rcEvent = (PDARunControlEvent)event;

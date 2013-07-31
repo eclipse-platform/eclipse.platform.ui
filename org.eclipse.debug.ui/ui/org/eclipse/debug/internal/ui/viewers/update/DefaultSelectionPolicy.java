@@ -44,6 +44,7 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.IModelSelectionPolicy#contains(org.eclipse.jface.viewers.ISelection, org.eclipse.debug.ui.viewers.IPresentationContext)
 	 */
+	@Override
 	public boolean contains(ISelection selection, IPresentationContext context) {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			if (selection instanceof IStructuredSelection) {
@@ -61,6 +62,7 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.IModelSelectionPolicy#overrides(org.eclipse.jface.viewers.ISelection, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.ui.viewers.IPresentationContext)
 	 */
+	@Override
 	public boolean overrides(ISelection existing, ISelection candidate, IPresentationContext context) {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {	
 			if (existing instanceof IStructuredSelection && candidate instanceof IStructuredSelection) {
@@ -90,6 +92,7 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.IModelSelectionPolicy#isSticky(org.eclipse.jface.viewers.ISelection, org.eclipse.debug.ui.viewers.IPresentationContext)
 	 */
+	@Override
 	public boolean isSticky(ISelection selection, IPresentationContext context) {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {	
 			if (selection instanceof IStructuredSelection) {
@@ -123,7 +126,8 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
      * 
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy#replaceInvalidSelection(ISelection, ISelection)
      */
-    public ISelection replaceInvalidSelection(ISelection selection, ISelection newSelection) {
+    @Override
+	public ISelection replaceInvalidSelection(ISelection selection, ISelection newSelection) {
         if (selection instanceof ITreeSelection) {
             TreePath[] paths = ((ITreeSelection)selection).getPaths();
             if (paths.length > 0 && paths[0].getSegmentCount() > 1) {

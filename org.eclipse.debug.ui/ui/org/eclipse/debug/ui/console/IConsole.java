@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ public interface IConsole {
 	 * @param length the length of the associated hyperlink text
 	 * @deprecated replaced with addLink(IHyperlink link, int offset, int length)
 	 */
+	@Deprecated
 	public void addLink(IConsoleHyperlink link, int offset, int length);
 
 	/**
@@ -91,6 +92,7 @@ public interface IConsole {
 	 * @return region of text associated with the hyperlink, or <code>null</code>
 	 * @deprecated replaced with getRegion(IHyperlink link) instead
 	 */
+	@Deprecated
 	public IRegion getRegion(IConsoleHyperlink link);
 
 	/**

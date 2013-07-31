@@ -41,6 +41,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.DEBUG_PREFERENCE_PAGE);
@@ -49,6 +50,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	/**
 	 * @see FieldEditorPreferencePage#createFieldEditors
 	 */
+	@Override
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_REUSE_EDITOR, DebugPreferencesMessages.DebugPreferencePage_2, SWT.NONE, getFieldEditorParent())); 
 		
@@ -78,6 +80,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	/**
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {}
 				
 }

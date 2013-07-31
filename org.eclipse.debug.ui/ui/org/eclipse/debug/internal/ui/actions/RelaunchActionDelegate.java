@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	/**
 	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
+	@Override
 	protected void doAction(Object object) {
 		ILaunch launch= DebugUIPlugin.getLaunch(object);
         if (launch != null) {
@@ -45,6 +46,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	/**
 	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
 	 */
+	@Override
 	protected boolean isEnabledFor(Object element) {
 		ILaunch launch= DebugUIPlugin.getLaunch(element);
 		return launch != null && launch.getLaunchConfiguration() != null && LaunchConfigurationManager.isVisible(launch.getLaunchConfiguration());
@@ -53,12 +55,13 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#getTargetSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected IStructuredSelection getTargetSelection(IStructuredSelection s) {
 		if (s.isEmpty()) {
 			return s;
 		}
-		Set dups = new LinkedHashSet();
-		Iterator iterator = s.iterator();
+		Set<ILaunch> dups = new LinkedHashSet<ILaunch>();
+		Iterator<?> iterator = s.iterator();
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			ILaunch launch = DebugUIPlugin.getLaunch(object);
@@ -73,6 +76,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	/**
 	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
+	@Override
 	protected String getErrorDialogMessage() {
 		return ActionMessages.RelaunchActionDelegate_Launch_Failed_1; 
 	}
@@ -80,6 +84,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	/**
 	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
+	@Override
 	protected String getStatusMessage() {
 		return ActionMessages.RelaunchActionDelegate_An_exception_occurred_while_launching_2; 
 	}

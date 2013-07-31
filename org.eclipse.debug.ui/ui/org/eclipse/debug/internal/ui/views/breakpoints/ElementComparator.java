@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2009, 2010 Texas Instruments and others
+ * Copyright (c) 2009, 2013 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Patrick Chuong (Texas Instruments) - Initial API and implementation (Bug 238956)
  *     Pawel Piech (Windriver) - Ongoing bug fixes and enhancements (Bug 311457)
+ *     IBM Corporation - bug fixing
  *****************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
@@ -30,27 +31,29 @@ import org.eclipse.debug.internal.ui.views.DebugModelPresentationContext;
  * 
  * @since 3.6
  */
-public class ElementComparator implements Comparator {
+public class ElementComparator implements Comparator<Object> {
 	final private static String SPACE = " "; //$NON-NLS-1$
 	
 	protected DebugModelPresentationContext fContext;
 	
 	public ElementComparator(IPresentationContext context) {
-		if (context instanceof DebugModelPresentationContext)
+		if (context instanceof DebugModelPresentationContext) {
 			fContext = (DebugModelPresentationContext) context;
+		}
 	}
 	
 	
 	/* (non-Javadoc)
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public int compare(Object arg0, Object arg1) {
         IBreakpoint bp0 = (IBreakpoint)DebugPlugin.getAdapter(arg0, IBreakpoint.class);            
         IBreakpoint bp1 = (IBreakpoint)DebugPlugin.getAdapter(arg1, IBreakpoint.class);            
 	    if (bp0 != null && bp1 != null) {
-			return compare(bp0, bp1);
+			return doCompare(bp0, bp1);
 		} else if (arg0 instanceof IBreakpointContainer && arg1 instanceof IBreakpointContainer) {
-			return compare((IBreakpointContainer) arg0, (IBreakpointContainer) arg1);
+			return doCompare((IBreakpointContainer) arg0, (IBreakpointContainer) arg1);
 		} else {		
 			return -1; // just return -1 if the two objects are not IBreakpoint type
 		}
@@ -63,7 +66,7 @@ public class ElementComparator implements Comparator {
 	 * @param c2
 	 * @return
 	 */
-	private int compare(IBreakpointContainer c1, IBreakpointContainer c2) {
+	private int doCompare(IBreakpointContainer c1, IBreakpointContainer c2) {
 	    // The "Other" breakpoint category should be listed last.
 	    // (Bug 311457).
 	    if (c1.getCategory() instanceof OtherBreakpointCategory) {
@@ -93,7 +96,7 @@ public class ElementComparator implements Comparator {
 	 * @param b2
 	 * @return
 	 */
-	private int compare(IBreakpoint b1, IBreakpoint b2) {
+	private int doCompare(IBreakpoint b1, IBreakpoint b2) {
 		String text1 = IInternalDebugCoreConstants.EMPTY_STRING;
 		String text2 = IInternalDebugCoreConstants.EMPTY_STRING;
 		

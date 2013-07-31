@@ -75,6 +75,7 @@ public class LaunchGroupExtension implements ILaunchGroup {
 	 * 
 	 * @return the image for this launch group, or <code>null</code> if none
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		if (fImageDescriptor == null) {
 			fImageDescriptor = createImageDescriptor("image"); //$NON-NLS-1$
@@ -89,6 +90,7 @@ public class LaunchGroupExtension implements ILaunchGroup {
 	 * @return the banner image for this launch group, or <code>null</code> if
 	 * none
 	 */
+	@Override
 	public ImageDescriptor getBannerImageDescriptor() {
 		if (fBannerImageDescriptor == null) {
 			fBannerImageDescriptor = createImageDescriptor("bannerImage"); //$NON-NLS-1$
@@ -101,6 +103,7 @@ public class LaunchGroupExtension implements ILaunchGroup {
 	 * 
 	 * @return the label for this launch group
 	 */
+	@Override
 	public String getLabel() {
 		return getConfigurationElement().getAttribute("label"); //$NON-NLS-1$
 	}	
@@ -110,6 +113,7 @@ public class LaunchGroupExtension implements ILaunchGroup {
 	 * 
 	 * @return the id for this launch group
 	 */
+	@Override
 	public String getIdentifier() {
 		return getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
 	}	
@@ -119,6 +123,7 @@ public class LaunchGroupExtension implements ILaunchGroup {
 	 * 
 	 * @return the category for this launch group, possibly <code>null</code>
 	 */
+	@Override
 	public String getCategory() {
 		return getConfigurationElement().getAttribute("category"); //$NON-NLS-1$
 	}
@@ -128,6 +133,7 @@ public class LaunchGroupExtension implements ILaunchGroup {
 	 * 
 	 * @return the mode for this launch group
 	 */
+	@Override
 	public String getMode() {
 		return getConfigurationElement().getAttribute("mode"); //$NON-NLS-1$
 	}					
@@ -147,6 +153,7 @@ public class LaunchGroupExtension implements ILaunchGroup {
 	 *  
 	 * @return boolean
 	 */
+	@Override
 	public boolean isPublic() {
 		String string = getConfigurationElement().getAttribute("public"); //$NON-NLS-1$
 		if (string == null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,14 +27,14 @@ import org.osgi.framework.BundleContext;
 
 /**
  * The console plug-in class.
- * 
+ *
  * @since 3.0
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */
 
 public class ConsolePlugin extends AbstractUIPlugin {
-	
+
 	/**
 	 * Singleton console manager
 	 */
@@ -44,13 +44,13 @@ public class ConsolePlugin extends AbstractUIPlugin {
 	 * The singleton console plug-in instance
 	 */
 	private static ConsolePlugin fgPlugin= null;
-	
+
 	/**
 	 * Unique identifier constant (value <code>"org.eclipse.ui.console"</code>)
 	 * for the UI Console plug-in.
 	 */
 	private static final String PI_UI_CONSOLE = "org.eclipse.ui.console"; //$NON-NLS-1$
-		
+
 	/**
 	 * Returns the singleton instance of the console plug-in.
 	 */
@@ -62,7 +62,7 @@ public class ConsolePlugin extends AbstractUIPlugin {
 		super();
 		fgPlugin = this;
 	}
-	
+
 	/**
 	 * Convenience method which returns the unique identifier of this plug-in.
 	 */
@@ -72,7 +72,7 @@ public class ConsolePlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status status to log
 	 */
 	public static void log(IStatus status) {
@@ -81,8 +81,8 @@ public class ConsolePlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs the specified throwable with this plug-in's log.
-	 * 
-	 * @param t throwable to log 
+	 *
+	 * @param t throwable to log
 	 */
 	public static void log(Throwable t) {
 		if (t instanceof CoreException) {
@@ -91,7 +91,7 @@ public class ConsolePlugin extends AbstractUIPlugin {
 			log(newErrorStatus("Error logged from Console plug-in: ", t)); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Returns a new error status for this plug-in with the given message
 	 * @param message the message to be included in the status
@@ -101,11 +101,11 @@ public class ConsolePlugin extends AbstractUIPlugin {
 	public static IStatus newErrorStatus(String message, Throwable exception) {
 		return new Status(IStatus.ERROR, getUniqueIdentifier(), IConsoleConstants.INTERNAL_ERROR, message, exception);
 	}
-	
+
 	/**
-	 * Returns the console manager. The manager will be created lazily on 
+	 * Returns the console manager. The manager will be created lazily on
 	 * the first access.
-	 * 
+	 *
 	 * @return IConsoleManager
 	 */
 	public IConsoleManager getConsoleManager() {
@@ -119,9 +119,9 @@ public class ConsolePlugin extends AbstractUIPlugin {
 	 * Returns the workbench display.
 	 */
 	public static Display getStandardDisplay() {
-		return PlatformUI.getWorkbench().getDisplay();	
+		return PlatformUI.getWorkbench().getDisplay();
 	}
-	
+
 	/**
 	 * Utility method with conventions
 	 */
@@ -132,19 +132,20 @@ public class ConsolePlugin extends AbstractUIPlugin {
 			// if the 'message' resource string and the IStatus' message are the same,
 			// don't show both in the dialog
 			if (status != null && message.equals(status.getMessage())) {
-				message= null;
+				ErrorDialog.openError(shell, title, null, status);
+				return;
 			}
 		} else {
 			status= new Status(IStatus.ERROR, getUniqueIdentifier(), IConsoleConstants.INTERNAL_ERROR, "Error within Debug UI: ", t); //$NON-NLS-1$
-			log(status);	
+			log(status);
 		}
 		ErrorDialog.openError(shell, title, message, status);
 	}
-    
+
     /**
      * Returns the <code>Image</code> identified by the given key,
      * or <code>null</code> if it does not exist.
-     * 
+     *
      * @return the <code>Image</code> identified by the given key,
      * or <code>null</code> if it does not exist
      * @since 3.1
@@ -152,11 +153,11 @@ public class ConsolePlugin extends AbstractUIPlugin {
     public static Image getImage(String key) {
         return ConsolePluginImages.getImage(key);
     }
-    
+
     /**
      * Returns the <code>ImageDescriptor</code> identified by the given key,
      * or <code>null</code> if it does not exist.
-     * 
+     *
      * @return the <code>ImageDescriptor</code> identified by the given key,
      * or <code>null</code> if it does not exist
      * @since 3.1
@@ -164,11 +165,12 @@ public class ConsolePlugin extends AbstractUIPlugin {
     public static ImageDescriptor getImageDescriptor(String key) {
         return ConsolePluginImages.getImageDescriptor(key);
     }
-    
+
     /* (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
-    public void stop(BundleContext context) throws Exception {
+	@Override
+	public void stop(BundleContext context) throws Exception {
     	if (fConsoleManager != null) {
 	        IConsole[] consoles = fConsoleManager.getConsoles();
 	        if (consoles != null) {
@@ -176,7 +178,7 @@ public class ConsolePlugin extends AbstractUIPlugin {
 	        }
     	}
         super.stop(context);
-    }    
-    
-    
+    }
+
+
 }

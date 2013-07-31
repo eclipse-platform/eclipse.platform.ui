@@ -47,6 +47,7 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
 	 * 
 	 * @return image descriptor
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		if (fDescriptor == null) {
 			fDescriptor = DebugUIPlugin.getImageDescriptor(fElement, ATTR_ICON);
@@ -62,6 +63,7 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
 	 * 
 	 * @return this organizer's label
 	 */
+	@Override
 	public String getLabel() {
 		return fElement.getAttribute(ATTR_LABEL);
 	}
@@ -71,7 +73,8 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
      * 
      * @return this organizer's identifier
      */
-    public String getIdentifier() {
+    @Override
+	public String getIdentifier() {
         return fElement.getAttribute(ATTR_ID);
     }
 	
@@ -94,56 +97,64 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories(org.eclipse.debug.core.model.IBreakpoint)
      */
-    public IAdaptable[] getCategories(IBreakpoint breakpoint) {
+    @Override
+	public IAdaptable[] getCategories(IBreakpoint breakpoint) {
         return getOrganizer().getCategories(breakpoint);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
      */
-    public void addPropertyChangeListener(IPropertyChangeListener listener) {
+    @Override
+	public void addPropertyChangeListener(IPropertyChangeListener listener) {
         getOrganizer().addPropertyChangeListener(listener);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
      */
-    public void removePropertyChangeListener(IPropertyChangeListener listener) {
+    @Override
+	public void removePropertyChangeListener(IPropertyChangeListener listener) {
         getOrganizer().removePropertyChangeListener(listener);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#addBreakpoint(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
      */
-    public void addBreakpoint(IBreakpoint breakpoint, IAdaptable category) {
+    @Override
+	public void addBreakpoint(IBreakpoint breakpoint, IAdaptable category) {
         getOrganizer().addBreakpoint(breakpoint, category);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#removeBreakpoint(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
      */
-    public void removeBreakpoint(IBreakpoint breakpoint, IAdaptable category) {
+    @Override
+	public void removeBreakpoint(IBreakpoint breakpoint, IAdaptable category) {
         getOrganizer().removeBreakpoint(breakpoint, category);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#canAdd(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
      */
-    public boolean canAdd(IBreakpoint breakpoint, IAdaptable category) {
+    @Override
+	public boolean canAdd(IBreakpoint breakpoint, IAdaptable category) {
         return getOrganizer().canAdd(breakpoint, category);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#canRemove(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
      */
-    public boolean canRemove(IBreakpoint breakpoint, IAdaptable category) {
+    @Override
+	public boolean canRemove(IBreakpoint breakpoint, IAdaptable category) {
         return getOrganizer().canRemove(breakpoint, category);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
     	// don't instantiate the delegate if it has not been used
     	if (fDelegate != null) {
     		fDelegate.dispose();
@@ -153,7 +164,8 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer#getOthersLabel()
      */
-    public String getOthersLabel() {
+    @Override
+	public String getOthersLabel() {
         String attribute = fElement.getAttribute(ATTR_OTHERS_LABEL);
         if (attribute == null) {
             return DebugUIViewsMessages.OtherBreakpointOrganizer_0; 
@@ -164,13 +176,15 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories()
      */
-    public IAdaptable[] getCategories() {
+    @Override
+	public IAdaptable[] getCategories() {
         return getOrganizer().getCategories();
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegateExtension#addBreakpoints(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	public void addBreakpoints(IBreakpoint[] breakpoints, IAdaptable category) {
 		IBreakpointOrganizerDelegate organizer = getOrganizer();
 		if (organizer instanceof IBreakpointOrganizerDelegateExtension) {
@@ -185,6 +199,7 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegateExtension#removeBreakpoints(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	public void removeBreakpoints(IBreakpoint[] breakpoints, IAdaptable category) {
 		IBreakpointOrganizerDelegate organizer = getOrganizer();
 		if (organizer instanceof IBreakpointOrganizerDelegateExtension) {

@@ -40,7 +40,8 @@ public class VisibleVirtualItemValidator implements IVirtualItemValidator {
         return fEnd - fStart;
     }
     
-    public boolean isItemVisible(VirtualItem item) {
+    @Override
+	public boolean isItemVisible(VirtualItem item) {
         int position = 0;
         while (item.getParent() != null) {
             position += item.getIndex().intValue();
@@ -49,7 +50,8 @@ public class VisibleVirtualItemValidator implements IVirtualItemValidator {
         return position >= fStart && position < fEnd || isSelected(item);
     }
 
-    public void showItem(VirtualItem item) {
+    @Override
+	public void showItem(VirtualItem item) {
         int length = fEnd - fStart;
         fStart = calcPosition(item);
         fEnd = fStart + length;

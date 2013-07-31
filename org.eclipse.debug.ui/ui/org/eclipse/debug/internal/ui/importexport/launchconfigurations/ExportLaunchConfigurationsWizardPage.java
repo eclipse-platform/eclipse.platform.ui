@@ -81,6 +81,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 
 		ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
 		
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if(parentElement instanceof ILaunchConfigurationType) {
 				try {
@@ -92,6 +93,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 			}
 			return null;
 		}
+		@Override
 		public Object getParent(Object element) {
 			if(element instanceof ILaunchConfiguration) {
 				try {
@@ -102,13 +104,17 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 			}
 			return null;
 		}
+		@Override
 		public boolean hasChildren(Object element) {
 			return element instanceof ILaunchConfigurationType;
 		}
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return lm.getLaunchConfigurationTypes();
 		}
+		@Override
 		public void dispose() {lm = null;}
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 		
 	}
@@ -129,6 +135,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 	  //add the check table 
@@ -166,6 +173,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		fViewer.expandAll();
 		fViewer.collapseAll();
 		fViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				updateCheckedState(event.getElement());
 				setPageComplete(isComplete());
@@ -174,6 +182,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		Composite buttoncomp = SWTFactory.createComposite(parent, parent.getFont(), 2, 2, GridData.FILL_HORIZONTAL, 0, 0);
 		Button button = SWTFactory.createPushButton(buttoncomp, WizardMessages.ExportLaunchConfigurationsWizardPage_8, null); 
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Object[] items = fContentProvider.getElements(fViewer.getInput());
 				for (int i = 0; i < items.length; i++) {
@@ -184,6 +193,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		});
 		button = SWTFactory.createPushButton(buttoncomp, WizardMessages.ExportLaunchConfigurationsWizardPage_9, null); 
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Object[] items = fContentProvider.getElements(fViewer.getInput());
 				for (int i = 0; i < items.length; i++) {
@@ -236,12 +246,14 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		String opath = getDialogSettings().get(OLD_PATH);
 		fFilePath.setText((opath == null ? IInternalDebugCoreConstants.EMPTY_STRING : opath));
 		fFilePath.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				setPageComplete(isComplete());
 			}
 		});
 		Button button = SWTFactory.createPushButton(comp, WizardMessages.ExportLaunchConfigurationsWizardPage_0, null, GridData.END);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dd = new DirectoryDialog(getContainer().getShell());
 				dd.setText(WizardMessages.ExportLaunchConfigurationsWizard_0);
@@ -291,6 +303,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_WIZBAN_EXPORT_CONFIGS);
 	}
@@ -307,6 +320,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		final Object[] configs = fViewer.getCheckedElements();
 		final boolean overwrite = fOverwrite.getSelection();
 		UIJob exportjob = new UIJob(getContainer().getShell().getDisplay(), WizardMessages.ExportLaunchConfigurationsWizard_0) {
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if(monitor == null) {
 					monitor = new NullProgressMonitor();
@@ -318,7 +332,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 				}
 				monitor.beginTask(WizardMessages.ExportLaunchConfigurationsWizardPage_10, configs.length);
 				try {
-					List errors = null;
+					List<IStatus> errors = null;
 					IFileStore file = null;
 					File newfile = null;
 					boolean owall = false, nowall = false;
@@ -333,10 +347,10 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 								file = launchConfig.getFileStore();
 								if (file == null) {
 									if (errors == null) {
-										errors = new ArrayList(configs.length);
+										errors = new ArrayList<IStatus>(configs.length);
 									}
 									errors.add(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(),
-											MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_19, new String[]{launchConfig.getName()}), null));
+ MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_19, new Object[] { launchConfig.getName() }), null));
 								} else {
 									newfile = new File(destpath.append(file.getName()).toOSString());
 									if(newfile.exists() & !overwrite) {
@@ -346,7 +360,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 										dialog = new MessageDialog(DebugUIPlugin.getShell(), 
 												WizardMessages.ExportLaunchConfigurationsWizardPage_11, 
 												null, 
-												MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_12, new String[] {file.getName()}), 
+ MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_12, new Object[] { file.getName() }),
 												MessageDialog.QUESTION, new String[] {WizardMessages.ExportLaunchConfigurationsWizardPage_13, WizardMessages.ExportLaunchConfigurationsWizardPage_14, WizardMessages.ExportLaunchConfigurationsWizardPage_15, WizardMessages.ExportLaunchConfigurationsWizardPage_16, WizardMessages.ExportLaunchConfigurationsWizardPage_17}, 0);
 										if(!owall) {
 											int ret = dialog.open();
@@ -368,6 +382,8 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 													monitor.setCanceled(true);
 													break;
 												}
+												default:
+													break;
 											}
 										}
 										else if(!nowall) {
@@ -381,14 +397,14 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 							}
 							catch (IOException e ) {
 								if (errors == null) {
-									errors = new ArrayList(configs.length);
+									errors = new ArrayList<IStatus>(configs.length);
 								}
 								errors.add(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(),
 										e.getMessage(), e));
 							}
 							catch (CoreException e) {
 								if (errors == null) {
-									errors = new ArrayList(configs.length);
+									errors = new ArrayList<IStatus>(configs.length);
 								}
 								errors.add(e.getStatus());
 							}
@@ -401,10 +417,10 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 						return Status.OK_STATUS;
 					} else {
 						if (errors.size() == 1) {
-							return (IStatus)errors.get(0);
+							return errors.get(0);
 						} else {
 							return new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), 0,
-									(IStatus[])errors.toArray(new IStatus[errors.size()]),
+									errors.toArray(new IStatus[errors.size()]),
 									WizardMessages.ExportLaunchConfigurationsWizardPage_18, null);
 						}
 					}

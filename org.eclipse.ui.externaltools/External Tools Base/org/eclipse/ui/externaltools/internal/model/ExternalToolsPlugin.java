@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -42,14 +42,14 @@ import org.osgi.framework.BundleContext;
  */
 public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 		ILaunchListener {
-	
+
 	public static final String PLUGIN_ID = "org.eclipse.ui.externaltools"; //$NON-NLS-1$
-	
+
 	/**
 	 * Status representing no problems encountered during operation.
 	 */
 	public static final IStatus OK_STATUS = new Status(IStatus.OK, PLUGIN_ID, 0, IExternalToolConstants.EMPTY_STRING, null);
-		
+
 	private static ExternalToolsPlugin plugin;
 
 	private static IWindowListener fWindowListener;
@@ -61,12 +61,15 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 	 * workbench closes. Programs are killed when the VM exits.
 	 */
 	private class ProgramLaunchWindowListener implements IWindowListener {
+		@Override
 		public void windowActivated(IWorkbenchWindow window) {
 		}
 
+		@Override
 		public void windowDeactivated(IWorkbenchWindow window) {
 		}
 
+		@Override
 		public void windowClosed(IWorkbenchWindow window) {
 			IWorkbenchWindow windows[] = PlatformUI.getWorkbench()
 					.getWorkbenchWindows();
@@ -107,6 +110,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 			}
 		}
 
+		@Override
 		public void windowOpened(IWorkbenchWindow window) {
 		}
 	}
@@ -132,8 +136,8 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 	 */
 	public static IStatus newErrorStatus(String message, Throwable exception) {
 		if (message == null) {
-			return new Status(IStatus.ERROR, PLUGIN_ID, 0, IExternalToolConstants.EMPTY_STRING, exception); 
-		}		
+			return new Status(IStatus.ERROR, PLUGIN_ID, 0, IExternalToolConstants.EMPTY_STRING, exception);
+		}
 		return new Status(IStatus.ERROR, PLUGIN_ID, 0, message, exception);
 	}
 
@@ -146,14 +150,14 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 
 	/**
 	 * Writes the message to the plug-in's log
-	 * 
+	 *
 	 * @param message the text to write to the log
 	 */
 	public void log(String message, Throwable exception) {
 		IStatus status = newErrorStatus(message, exception);
 		getLog().log(status);
 	}
-	
+
 	public void log(Throwable exception) {
 		//this message is intentionally not internationalized, as an exception may
 		// be due to the resource bundle itself
@@ -162,7 +166,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 
 	/**
 	 * Returns the ImageDescriptor for the icon with the given path
-	 * 
+	 *
 	 * @return the ImageDescriptor object
 	 */
 	public ImageDescriptor getImageDescriptor(String path) {
@@ -182,7 +186,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
-	
+
 	/**
 	 * Returns the active workbench page or <code>null</code> if none.
 	 */
@@ -193,7 +197,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the active workbench shell or <code>null</code> if none.
 	 */
@@ -221,6 +225,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#createImageRegistry()
 	 */
+	@Override
 	protected ImageRegistry createImageRegistry() {
 		return ExternalToolsImages.initializeImageRegistry();
 	}
@@ -228,6 +233,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
 			ExternalToolsImages.disposeImageDescriptorRegistry();
@@ -236,6 +242,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 		}
 	}
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		// Listen to launches to lazily create "launch processors"
@@ -255,6 +262,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchAdded(ILaunch launch) {
 		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 		try {
@@ -275,12 +283,14 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchChanged(ILaunch launch) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchRemoved(ILaunch launch) {
 	}
 }

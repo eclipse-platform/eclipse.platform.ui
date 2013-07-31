@@ -6,9 +6,9 @@ Bundle-Version: 1.3.300.qualifier
 Bundle-Activator: org.eclipse.debug.examples.core.pda.DebugCorePlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
- org.eclipse.core.variables,
- org.eclipse.debug.core,
- org.apache.ant;bundle-version="1.7.0";resolution:=optional
+ org.eclipse.core.variables;bundle-version="3.2.800",
+ org.eclipse.debug.core;bundle-version="3.9.0",
+ org.apache.ant;bundle-version="1.9.2";resolution:=optional
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.debug.examples.ant.tasks;x-friends:="org.eclipse.debug.examples.ui",
  org.eclipse.debug.examples.core.midi.launcher;x-friends:="org.eclipse.debug.examples.ui",
@@ -19,5 +19,5 @@ Export-Package: org.eclipse.debug.examples.ant.tasks;x-friends:="org.eclipse.deb
  org.eclipse.debug.examples.core.pda.protocol;x-friends:="org.eclipse.debug.examples.ui",
  org.eclipse.debug.examples.core.pda.sourcelookup;x-friends:="org.eclipse.debug.examples.ui",
  org.eclipse.debug.examples.pdavm;x-friends:="org.eclipse.debug.examples.ui"
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

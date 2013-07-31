@@ -17,6 +17,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -83,6 +84,7 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, ImportExportMessages.ExportOperation_0, fBreakpoints.length);
 		XMLMemento memento = XMLMemento.createWriteRoot(IImportExportConstants.IE_NODE_BREAKPOINTS);
@@ -114,9 +116,9 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 				root.putString(IImportExportConstants.CHARSTART, (val != null) ? val.toString() : null);
 				String value = null;
 				boolean wsattrib = false;
-				for(java.util.Iterator iter = marker.getAttributes().keySet().iterator(); iter.hasNext();) {
-					String iterval = iter.next().toString();
-					value = marker.getAttribute(iterval).toString();
+				for (Entry<String, Object> entry : marker.getAttributes().entrySet()) {
+					String iterval = entry.getKey();
+					value = entry.getValue().toString();
 					if(!iterval.equals(IMarker.LINE_NUMBER)) {
 						child = root.createChild(IImportExportConstants.IE_NODE_ATTRIB);
 						if(iterval.equals(IInternalDebugUIConstants.WORKING_SET_NAME)) {
@@ -145,8 +147,7 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} catch (IOException e) {
-			throw new InvocationTargetException(e,
-					MessageFormat.format("There was a problem writing file: {0}", new String[] {fFileName})); //$NON-NLS-1$
+			throw new InvocationTargetException(e, MessageFormat.format("There was a problem writing file: {0}", new Object[] { fFileName })); //$NON-NLS-1$
 		}
 		finally {
 			localmonitor.done();

@@ -31,6 +31,7 @@ public class TableRenderingPropertiesPage extends PropertyPage implements
 		super();
 	}
 
+	@Override
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".TableRenderingPropertiesPage_context"); //$NON-NLS-1$
 		noDefaultAndApplyButton();

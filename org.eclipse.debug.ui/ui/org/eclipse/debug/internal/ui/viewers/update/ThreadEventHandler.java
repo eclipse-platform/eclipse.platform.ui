@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,12 +37,12 @@ public class ThreadEventHandler extends DebugEventHandler {
 	 * to select a thread when another is resumed. Threads
 	 * are added in the order they suspend.
 	 */
-	private Set fThreadQueue = new LinkedHashSet();
+	private Set<IThread> fThreadQueue = new LinkedHashSet<IThread>();
 	
 	/** 
 	 * Map of previous TOS per thread
 	 */
-	private Map fLastTopFrame = new HashMap();
+	private Map<IThread, IStackFrame> fLastTopFrame = new HashMap<IThread, IStackFrame>();
 	/**
 	 * Constructs and event handler for a threads in the given viewer.
 	 * 
@@ -55,12 +55,14 @@ public class ThreadEventHandler extends DebugEventHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#dispose()
 	 */
+	@Override
 	public synchronized void dispose() {
 		fLastTopFrame.clear();
 		fThreadQueue.clear();
 		super.dispose();
 	}
 
+	@Override
 	protected void handleSuspend(DebugEvent event) {
         IThread thread = (IThread) event.getSource();
 		if (event.isEvaluation()) {
@@ -94,6 +96,8 @@ public class ThreadEventHandler extends DebugEventHandler {
             case DebugEvent.CLIENT_REQUEST:
             	extras = IModelDelta.EXPAND;
             	break;
+				default:
+					break;
             }
         	fireDeltaUpdatingSelectedFrame(thread, IModelDelta.NO_CHANGE | extras, event);
         }
@@ -109,6 +113,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 		return o1.equals(o2);
 	}
 
+	@Override
 	protected void handleResume(DebugEvent event) {
 		IThread thread = removeSuspendedThread(event);
 		fireDeltaAndClearTopFrame(thread, IModelDelta.STATE | IModelDelta.CONTENT | IModelDelta.SELECT);
@@ -118,10 +123,12 @@ public class ThreadEventHandler extends DebugEventHandler {
 		}
 	}
 
+	@Override
 	protected void handleCreate(DebugEvent event) {
 		fireDeltaAndClearTopFrame((IThread) event.getSource(), IModelDelta.ADDED | IModelDelta.STATE);
 	}
 
+	@Override
 	protected void handleTerminate(DebugEvent event) {
 		IThread thread = (IThread) event.getSource();
 		IDebugTarget target = thread.getDebugTarget();
@@ -131,6 +138,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 		}
 	}
 
+	@Override
 	protected void handleChange(DebugEvent event) {
 		if (event.getDetail() == DebugEvent.STATE) {
 			fireDeltaUpdatingThread((IThread) event.getSource(), IModelDelta.STATE);
@@ -139,6 +147,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 		}
 	}
 
+	@Override
 	protected void handleLateSuspend(DebugEvent suspend, DebugEvent resume) {
 		IThread thread = queueSuspendedThread(suspend);
 		if (suspend.isEvaluation() && suspend.getDetail() == DebugEvent.EVALUATION_IMPLICIT) {
@@ -159,6 +168,7 @@ public class ThreadEventHandler extends DebugEventHandler {
         }
 	}
 
+	@Override
 	protected void handleSuspendTimeout(DebugEvent event) {
 		IThread thread = removeSuspendedThread(event);
 		// don't collapse thread when waiting for long step or evaluation to complete
@@ -213,7 +223,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 		ModelDelta node = addPathToThread(delta, thread);
     	IStackFrame prev = null;
     	synchronized (this) {
-    		 prev = (IStackFrame) fLastTopFrame.get(thread);
+    		 prev = fLastTopFrame.get(thread);
 		}
     	IStackFrame frame = null;
 		try {
@@ -318,6 +328,7 @@ public class ThreadEventHandler extends DebugEventHandler {
     	fireDelta(delta);
 	}	
 	
+	@Override
 	protected boolean handlesEvent(DebugEvent event) {
 		return event.getSource() instanceof IThread;
 	}
@@ -349,7 +360,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 	
 	protected synchronized IThread getNextSuspendedThread() {
 		if (!fThreadQueue.isEmpty()) {
-			return (IThread) fThreadQueue.iterator().next();
+			return fThreadQueue.iterator().next();
 		}
 		return null;
 	}

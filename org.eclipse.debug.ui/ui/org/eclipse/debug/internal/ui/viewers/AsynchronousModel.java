@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -44,8 +45,21 @@ import org.eclipse.jface.viewers.ViewerSorter;
 public abstract class AsynchronousModel {
 	
 	private ModelNode fRoot; // root node
-	private Map fElementToNodes = new HashMap(); // map of element to corresponding tree nodes (list)
-	private Map fModelProxies = new HashMap(); // map of installed model proxies, by element
+	private Map<Object, ModelNode[]> fElementToNodes = new HashMap<Object, ModelNode[]>(); // map
+																							// of
+																							// element
+																							// to
+																							// corresponding
+																							// tree
+																							// nodes
+																							// (list)
+	private Map<Object, IModelProxy> fModelProxies = new HashMap<Object, IModelProxy>(); // map
+																							// of
+																							// installed
+																							// model
+																							// proxies,
+																							// by
+																							// element
 	private AsynchronousViewer fViewer; // viewer this model works for
     private boolean fDisposed = false; // whether disposed
     
@@ -54,6 +68,7 @@ public abstract class AsynchronousModel {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 		 */
+		@Override
 		protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
 			return EMPTY;
 		}
@@ -61,6 +76,7 @@ public abstract class AsynchronousModel {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 		 */
+		@Override
 		protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
 			return false;
 		}
@@ -68,6 +84,7 @@ public abstract class AsynchronousModel {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#supportsPartId(java.lang.String)
 		 */
+		@Override
 		protected boolean supportsPartId(String id) {
 			return true;
 		}
@@ -78,12 +95,12 @@ public abstract class AsynchronousModel {
 	/**
 	 * List of requests currently being performed.
 	 */
-	private List fPendingUpdates = new ArrayList();
+	private List<IStatusMonitor> fPendingUpdates = new ArrayList<IStatusMonitor>();
 	
 	/**
-	 * List of pending viewer udpates
+	 * List of pending viewer updates
 	 */
-	private List fViewerUpdates = new ArrayList();
+	private List<IStatusMonitor> fViewerUpdates = new ArrayList<IStatusMonitor>();
 
 	/**
 	 * Constructs a new empty tree model
@@ -154,9 +171,9 @@ public abstract class AsynchronousModel {
      * Cancels all pending update requests.
      */
     protected synchronized void cancelPendingUpdates() {
-        Iterator updates = fPendingUpdates.iterator();
+		Iterator<IStatusMonitor> updates = fPendingUpdates.iterator();
         while (updates.hasNext()) {
-            IStatusMonitor update = (IStatusMonitor) updates.next();
+            IStatusMonitor update = updates.next();
             updates.remove();
             update.setCanceled(true);
         }
@@ -177,6 +194,7 @@ public abstract class AsynchronousModel {
 				if (proxy != null) {
 					fModelProxies.put(element, proxy);
 					Job job = new Job("Model Proxy installed notification job") {//$NON-NLS-1$
+						@Override
 						protected IStatus run(IProgressMonitor monitor) {
 							if (!monitor.isCanceled()) {
 								proxy.init(getPresentationContext());
@@ -199,7 +217,7 @@ public abstract class AsynchronousModel {
 	 * @param element the element context
 	 */
 	protected synchronized void disposeModelProxy(Object element) {
-		IModelProxy proxy = (IModelProxy) fModelProxies.remove(element);
+		IModelProxy proxy = fModelProxies.remove(element);
 		if (proxy != null) {
 			getViewer().modelProxyRemoved(proxy);
 			proxy.dispose();
@@ -211,13 +229,10 @@ public abstract class AsynchronousModel {
 	 */
 	private void disposeAllModelProxies() {
 	    synchronized(fModelProxies) {
-	        Iterator updatePolicies = fModelProxies.values().iterator();
-	        while (updatePolicies.hasNext()) {
-	            IModelProxy proxy = (IModelProxy)updatePolicies.next();
+			for (IModelProxy proxy : fModelProxies.values()) {
 	            getViewer().modelProxyRemoved(proxy);	            
 	            proxy.dispose();
 	        }
-	        
 	        fModelProxies.clear();
 	    }
 	}	
@@ -281,7 +296,7 @@ public abstract class AsynchronousModel {
      */
     protected synchronized void unmapNode(ModelNode node) {
         Object element = node.getElement();
-        ModelNode[] nodes = (ModelNode[]) fElementToNodes.get(element);
+        ModelNode[] nodes = fElementToNodes.get(element);
         if (nodes == null) {
             return;
         }
@@ -311,7 +326,7 @@ public abstract class AsynchronousModel {
 	 * @return associated nodes or <code>null</code>
 	 */
 	public synchronized ModelNode[] getNodes(Object element) {
-		return (ModelNode[]) fElementToNodes.get(element);
+		return fElementToNodes.get(element);
 	}
 	
 	/**
@@ -332,7 +347,7 @@ public abstract class AsynchronousModel {
 	protected void requestScheduled(IStatusMonitor update) {
 		AsynchronousRequestMonitor absUpdate = (AsynchronousRequestMonitor) update;
 		synchronized (fPendingUpdates) {
-			Iterator updates = fPendingUpdates.listIterator();
+			ListIterator<IStatusMonitor> updates = fPendingUpdates.listIterator();
 			while (updates.hasNext()) {
 				AsynchronousRequestMonitor pendingUpdate = (AsynchronousRequestMonitor) updates.next();
 				if (absUpdate.contains(pendingUpdate)) {
@@ -378,16 +393,18 @@ public abstract class AsynchronousModel {
 	protected Object[] filter(Object parent, Object[] elements) {
 		ViewerFilter[] filters = getViewer().getFilters();
 		if (filters != null) {
-			ArrayList filtered = new ArrayList(elements.length);
+			ArrayList<Object> filtered = new ArrayList<Object>(elements.length);
 			for (int i = 0; i < elements.length; i++) {
 				boolean add = true;
 				for (int j = 0; j < filters.length; j++) {
 					add = filters[j].select(getViewer(), parent, elements[i]);
-					if (!add)
+					if (!add) {
 						break;
+					}
 				}
-				if (add)
+				if (add) {
 					filtered.add(elements[i]);
+				}
 			}
 			return filtered.toArray();
 		}
@@ -526,8 +543,7 @@ public abstract class AsynchronousModel {
 	 * @param parentNode parent node
 	 * @param kids list of model elements
 	 */
-	protected void setChildren(final ModelNode parentNode, List kids) {
-		
+	protected void setChildren(final ModelNode parentNode, List<Object> kids) {
         final Object[] children = filter(parentNode.getElement(), kids.toArray());
         final AsynchronousViewer viewer = getViewer();
         ViewerSorter sorter = viewer.getSorter();
@@ -593,7 +609,8 @@ public abstract class AsynchronousModel {
         //update viewer outside the lock
     	final ModelNode[] finalUnmap = unmap; 
         preservingSelection(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
             	if (finalUnmap != null) {
 	            	for (int i = 0; i < finalUnmap.length; i++) {
 						viewer.unmapNode(finalUnmap[i]);
@@ -605,6 +622,7 @@ public abstract class AsynchronousModel {
 
 	}
 	
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		if (fRoot != null) {

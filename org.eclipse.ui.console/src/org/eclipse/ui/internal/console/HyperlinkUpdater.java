@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,10 @@ package org.eclipse.ui.internal.console;
 
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
-import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 
 /**
  * When any region of a hyperlink is replaced, the hyperlink needs to be deleted.
- * 
+ *
  * @since 3.3
  */
 public class HyperlinkUpdater extends DefaultPositionUpdater {
@@ -32,6 +31,7 @@ public class HyperlinkUpdater extends DefaultPositionUpdater {
 	 *
 	 * @return <code>true</code> if position has NOT been deleted
 	 */
+	@Override
 	protected boolean notDeleted() {
 
 		int positionEnd = fPosition.offset + fPosition.length - 1;

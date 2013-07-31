@@ -26,18 +26,21 @@ public class RetargetMethodBreakpointAction extends RetargetBreakpointAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetBreakpointAction#performAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	protected void performAction(Object target, ISelection selection, IWorkbenchPart part) throws CoreException {
 		((IToggleBreakpointsTarget)target).toggleMethodBreakpoints(part, selection);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetBreakpointAction#canPerformAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	protected boolean canPerformAction(Object target, ISelection selection, IWorkbenchPart part) {
 		return ((IToggleBreakpointsTarget)target).canToggleMethodBreakpoints(part, selection);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getOperationUnavailableMessage()
 	 */
+	@Override
 	protected String getOperationUnavailableMessage() {
 		return Messages.RetargetMethodBreakpointAction_0;
 	}

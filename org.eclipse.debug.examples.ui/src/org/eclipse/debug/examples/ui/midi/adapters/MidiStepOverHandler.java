@@ -26,6 +26,7 @@ public class MidiStepOverHandler implements IStepOverHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.commands.IDebugCommandHandler#canExecute(org.eclipse.debug.core.commands.IEnabledStateRequest)
 	 */
+	@Override
 	public void canExecute(IEnabledStateRequest request) {
 		// We could create a job here, schedule it, then return to be asynchronous
 		request.setEnabled(request.getElements().length > 0);
@@ -35,6 +36,7 @@ public class MidiStepOverHandler implements IStepOverHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.commands.IDebugCommandHandler#execute(org.eclipse.debug.core.commands.IDebugCommandRequest)
 	 */
+	@Override
 	public boolean execute(IDebugCommandRequest request) {
 		// We could create a job to do this work, schedule it, then return to be asynchronous
 		// If running asynchronously, remember to return the enablement you want the action to have while this action is run

@@ -55,6 +55,7 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fValue = Integer.toString(DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH));
 		fValidator = new IInputValidator() {
+					@Override
 					public String isValid(String newText) {
 						try {
 							int num = Integer.parseInt(newText);
@@ -73,6 +74,7 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionDialog#getDialogBoundsSettings()
 	 */
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings section = settings.getSection(SETTINGS_ID);
@@ -85,6 +87,7 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		getShell().setText(VariablesViewMessages.DetailPaneMaxLengthDialog_0);
 		Control contents = super.createContents(parent);
@@ -95,6 +98,7 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);
         Label label = new Label(composite, SWT.WRAP);
@@ -107,7 +111,8 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
         fTextWidget.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
         fTextWidget.setText(fValue);
         fTextWidget.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
+            @Override
+			public void modifyText(ModifyEvent e) {
                 validateInput();
                 fValue = fTextWidget.getText();
             }
@@ -124,6 +129,7 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		String text = getValue();
 		try {

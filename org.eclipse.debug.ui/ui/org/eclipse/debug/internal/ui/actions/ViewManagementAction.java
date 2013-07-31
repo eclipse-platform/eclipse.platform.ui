@@ -24,6 +24,7 @@ public class ViewManagementAction extends ActionDelegate implements IViewActionD
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		SWTFactory.showPreferencePage("org.eclipse.debug.ui.ViewManagementPreferencePage"); //$NON-NLS-1$
 	}
@@ -31,6 +32,7 @@ public class ViewManagementAction extends ActionDelegate implements IViewActionD
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 	}
 }

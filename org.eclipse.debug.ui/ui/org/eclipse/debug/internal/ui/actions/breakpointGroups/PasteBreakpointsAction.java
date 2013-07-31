@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class PasteBreakpointsAction extends BreakpointSelectionAction {
      * @return the actual target of the paste action
      */
     private Object getTarget() {
-        List selectedNonResources = getSelectedNonResources();
+		List<?> selectedNonResources = getSelectedNonResources();
         if (selectedNonResources.size() == 1) {
             Object target = selectedNonResources.get(0);
             if (target instanceof IBreakpointContainer) {
@@ -61,7 +61,8 @@ public class PasteBreakpointsAction extends BreakpointSelectionAction {
     /**
      * Implementation of method defined on <code>IAction</code>.
      */
-    public void run() {
+    @Override
+	public void run() {
 		if (getBreakpointsView().canPaste(getTarget(), LocalSelectionTransfer.getTransfer().getSelection())) {
 			getBreakpointsView().performPaste(getTarget(), LocalSelectionTransfer.getTransfer().getSelection());
 		}
@@ -71,7 +72,8 @@ public class PasteBreakpointsAction extends BreakpointSelectionAction {
      * Returns whether this action should be enabled based on the selection
      * in the clipboard. Only updates when the breakpoints view has focus. 
      */
-    protected boolean updateSelection(IStructuredSelection selection) {
+    @Override
+	protected boolean updateSelection(IStructuredSelection selection) {
         // can't paste into "Others" (only move)
         Object target = getTarget();
         if (target instanceof IBreakpointContainer) {

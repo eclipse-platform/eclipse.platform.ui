@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2013 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -25,7 +25,8 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 public class PDAContentAssistProcessor implements IContentAssistProcessor {
 
-    public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
+    @Override
+	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
         int index = offset - 1;
         StringBuffer prefix = new StringBuffer();
         IDocument document = viewer.getDocument();
@@ -40,8 +41,8 @@ public class PDAContentAssistProcessor implements IContentAssistProcessor {
             } catch (BadLocationException e) {
             }
         }
-        
-        List proposals = new ArrayList();
+
+		List<CompletionProposal> proposals = new ArrayList<CompletionProposal>();
         String[] keywords = PDAScanner.fgKeywords;
         if (prefix.length() > 0) {
             String word = prefix.toString();
@@ -59,7 +60,7 @@ public class PDAContentAssistProcessor implements IContentAssistProcessor {
             }
         }
         if (!proposals.isEmpty()) {
-            return (ICompletionProposal[]) proposals.toArray(new ICompletionProposal[proposals.size()]);
+            return proposals.toArray(new ICompletionProposal[proposals.size()]);
         }
         return null;
     }
@@ -67,35 +68,40 @@ public class PDAContentAssistProcessor implements IContentAssistProcessor {
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(org.eclipse.jface.text.ITextViewer, int)
      */
-    public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
+    @Override
+	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
         return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
      */
-    public char[] getCompletionProposalAutoActivationCharacters() {
+    @Override
+	public char[] getCompletionProposalAutoActivationCharacters() {
         return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationAutoActivationCharacters()
      */
-    public char[] getContextInformationAutoActivationCharacters() {
+    @Override
+	public char[] getContextInformationAutoActivationCharacters() {
         return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getErrorMessage()
      */
-    public String getErrorMessage() {
+    @Override
+	public String getErrorMessage() {
         return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
      */
-    public IContextInformationValidator getContextInformationValidator() {
+    @Override
+	public IContextInformationValidator getContextInformationValidator() {
         return null;
     }
 

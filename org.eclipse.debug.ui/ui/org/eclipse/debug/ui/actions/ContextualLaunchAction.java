@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -71,7 +70,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	// default launch group for this mode (null category)
 	private ILaunchGroup fGroup = null;
 	// map of launch groups by (non-null) categories, for this mode
-	private Map fGroupsByCategory = null;
+	private Map<String, ILaunchGroup> fGroupsByCategory = null;
 	// whether to re-fill the menu (reset on selection change)
 	private boolean fFillMenu = true;
 	
@@ -83,7 +82,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	public ContextualLaunchAction(String mode) {
 		fMode = mode;
 		ILaunchGroup[] groups = DebugUITools.getLaunchGroups();
-		fGroupsByCategory = new HashMap(3);
+		fGroupsByCategory = new HashMap<String, ILaunchGroup>(3);
 		for (int i = 0; i < groups.length; i++) {
 			ILaunchGroup group = groups[i];
 			if (group.getMode().equals(mode)) {
@@ -99,18 +98,21 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	/*
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		// We don't have a need for the active part.
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// nothing to do
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
 	 */
+	@Override
 	public Menu getMenu(Control parent) {
 		// never called
 		return null;
@@ -118,6 +120,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
+	@Override
 	public Menu getMenu(Menu parent) {
 		//Create the new menu. The menu will get filled when it is about to be shown. see fillMenu(Menu).
 		Menu menu = new Menu(parent);
@@ -127,6 +130,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		 * doesn't dispose pull-down ActionContribution items for each popup menu.
 		 */
 		menu.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuShown(MenuEvent e) {
 				if (fFillMenu) {
 					Menu m = (Menu)e.widget;
@@ -145,6 +149,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	/*
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		// Never called because we become a menu.
 	}
@@ -152,6 +157,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	/*
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// if the selection is an IResource, save it and enable our action
 		if (selection instanceof IStructuredSelection) {
@@ -195,16 +201,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 			}
 			catch (CoreException ce) {}
 		}
-		
-		List allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts();
-		Iterator iter = allShortCuts.iterator();
-		List filteredShortCuts = new ArrayList(10);
-	
-	//create a context
-		List selection = ss.toList();
-		//in 3.4 we are correctly passing the IEditorPart and ISelection, so we have to perform
-		//some sneekyness to make sure the IEditorInput is passed to the eval expressions
-		//for backwards compatibility
+		List<Object> selection = ss.toList();
 		Object o = ss.getFirstElement();
 		if(o instanceof IEditorPart) {
 			selection.set(0, ((IEditorPart)o).getEditorInput());
@@ -212,8 +209,11 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		IEvaluationContext context = DebugUIPlugin.createEvaluationContext(selection);
 		context.setAllowPluginActivation(true);
 		context.addVariable("selection", selection); //$NON-NLS-1$
+		List<LaunchShortcutExtension> allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts();
+		List<LaunchShortcutExtension> filteredShortCuts = new ArrayList<LaunchShortcutExtension>();
+		Iterator<LaunchShortcutExtension> iter = allShortCuts.iterator();
 		while (iter.hasNext()) {
-			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
+			LaunchShortcutExtension ext = iter.next();
 			try {
 				if (!WorkbenchActivityHelper.filterItem(ext) && isApplicable(ext, context)) {
 					filteredShortCuts.add(ext);
@@ -225,19 +225,14 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 				iter.remove();
 			}
 		}
-		iter = filteredShortCuts.iterator();
 	
 	//we need a separator iff the shared config entry has been added and there are following shortcuts
 		if(menu.getItemCount() > 0 && filteredShortCuts.size() > 0) {
 			 new MenuItem(menu, SWT.SEPARATOR);
 		}
-		List categories = new ArrayList();
-		while (iter.hasNext()) {
-			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
-			Set modes = ext.getModes(); // supported launch modes
-			Iterator modeIter = modes.iterator();
-			while (modeIter.hasNext()) {
-				String mode = (String) modeIter.next();
+		List<String> categories = new ArrayList<String>();
+		for(LaunchShortcutExtension ext : filteredShortCuts) {
+			for(String mode : ext.getModes()) {
 				if (mode.equals(fMode)) {
 					String category = ext.getCategory();
 					// NOTE: category can be null
@@ -259,13 +254,10 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		    item.fill(menu, -1);
 		} else {
 			boolean addedSep = false;
-			iter = categories.iterator();
-			while (iter.hasNext()) {
-				// NOTE: category can be null
-				String category = (String) iter.next();
+			for (String category : categories) {
 				ILaunchGroup group = fGroup;
 				if (category != null) {
-					group = (ILaunchGroup) fGroupsByCategory.get(category);
+					group = fGroupsByCategory.get(category);
 				}
 				if (group != null) {
 					if (accelerator > 1 && !addedSep) {

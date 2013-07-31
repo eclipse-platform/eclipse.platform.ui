@@ -65,6 +65,7 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 	 * 
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#performUpdate()
 	 */
+	@Override
 	protected void performUpdate() {
 		AsynchronousViewer viewer = getModel().getViewer();
 		Widget widget = viewer.findItem(getNode());
@@ -80,6 +81,7 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 	 * 
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#contains(org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor)
 	 */
+	@Override
 	protected boolean contains(AsynchronousRequestMonitor update) {
 		return update instanceof LabelRequestMonitor && update.getNode() == getNode();
 	}
@@ -89,6 +91,7 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 	 * 
 	 * @see org.eclipse.debug.ui.viewers.ILabelRequestMonitor#setLabel(java.lang.String)
 	 */
+	@Override
 	public void setLabels(String[] text) {
 		fLabels = text;
 	}
@@ -98,6 +101,7 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 	 * 
 	 * @see org.eclipse.debug.ui.viewers.ILabelRequestMonitor#setFontData(org.eclipse.swt.graphics.FontData)
 	 */
+	@Override
 	public void setFontDatas(FontData[] fontData) {
 		fFontDatas = fontData;
 	}
@@ -107,6 +111,7 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 	 * 
 	 * @see org.eclipse.debug.ui.viewers.ILabelRequestMonitor#setImageDescriptor(org.eclipse.jface.resource.ImageDescriptor)
 	 */
+	@Override
 	public void setImageDescriptors(ImageDescriptor[] image) {
 		fImageDescriptors = image;
 	}
@@ -116,6 +121,7 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 	 * 
 	 * @see org.eclipse.debug.ui.viewers.ILabelRequestMonitor#setForeground(org.eclipse.swt.graphics.RGB)
 	 */
+	@Override
 	public void setForegrounds(RGB[] foreground) {
 		fForegrounds = foreground;
 	}
@@ -125,6 +131,7 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 	 * 
 	 * @see org.eclipse.debug.ui.viewers.ILabelRequestMonitor#setBackground(org.eclipse.swt.graphics.RGB)
 	 */
+	@Override
 	public void setBackgrounds(RGB[] background) {
 		fBackgrounds = background;
 	}

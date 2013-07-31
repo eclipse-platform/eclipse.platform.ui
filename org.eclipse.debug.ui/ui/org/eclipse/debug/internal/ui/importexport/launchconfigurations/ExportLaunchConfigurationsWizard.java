@@ -44,6 +44,7 @@ public class ExportLaunchConfigurationsWizard extends Wizard implements IExportW
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		IWizardPage page = new ExportLaunchConfigurationsWizardPage();
 		addPage(page);
@@ -52,6 +53,7 @@ public class ExportLaunchConfigurationsWizard extends Wizard implements IExportW
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		return ((ExportLaunchConfigurationsWizardPage)getStartingPage()).finish();
 	}
@@ -59,6 +61,7 @@ public class ExportLaunchConfigurationsWizard extends Wizard implements IExportW
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle(WizardMessages.ExportLaunchConfigurationsWizard_0);
 		setNeedsProgressMonitor(true);

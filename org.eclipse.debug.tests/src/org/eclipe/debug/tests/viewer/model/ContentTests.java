@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - clean-up
@@ -25,6 +25,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.layout.FillLayout;
@@ -33,18 +34,18 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Tests that verify that the viewer property retrieves all the content 
+ * Tests that verify that the viewer property retrieves all the content
  * from the model.
- * 
+ *
  * @since 3.6
  */
 abstract public class ContentTests extends TestCase implements ITestModelUpdatesListenerConstants {
-    
+
     Display fDisplay;
     Shell fShell;
     ITreeModelViewer fViewer;
     TestModelUpdatesListener fListener;
-    
+
     public ContentTests(String name) {
         super(name);
     }
@@ -52,28 +53,30 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
     /**
      * @throws java.lang.Exception
      */
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         fDisplay = PlatformUI.getWorkbench().getDisplay();
         fShell = new Shell(fDisplay);
         fShell.setMaximized(true);
         fShell.setLayout(new FillLayout());
 
         fViewer = createViewer(fDisplay, fShell);
-        
+
         fListener = new TestModelUpdatesListener(fViewer, true, true);
 
         fShell.open ();
     }
 
     abstract protected IInternalTreeModelViewer createViewer(Display display, Shell shell);
-    
+
     /**
      * @throws java.lang.Exception
      */
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         fListener.dispose();
         fViewer.getPresentationContext().dispose();
-        
+
         // Close the shell and exit.
         fShell.close();
         while (!fShell.isDisposed()) {
@@ -83,50 +86,51 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
 		}
     }
 
-    protected void runTest() throws Throwable {
+    @Override
+	protected void runTest() throws Throwable {
         try {
             super.runTest();
         } catch (Throwable t) {
 			throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
-    
+
     public void testSimpleSingleLevel() throws InterruptedException {
         // Create the model with test data
         TestModel model = TestModel.simpleSingleLevel();
 
         // Make sure that all elements are expanded
         fViewer.setAutoExpandLevel(-1);
-        
+
         // Create the agent which forces the tree to populate
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
-        
+
         // Create the listener which determines when the view is finished updating.
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, true); 
-        
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, true);
+
         // Set the viewer input (and trigger updates).
         fViewer.setInput(model.getRootElement());
-        
+
         // Wait for the updates to complete.
         while (!fListener.isFinished()) {
 			if (!fDisplay.readAndDispatch ()) {
 				Thread.sleep(0);
 			}
 		}
-        
+
         model.validateData(fViewer, TreePath.EMPTY);
-        
+
         assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 6) );
     }
 
     public void testSimpleMultiLevel() throws InterruptedException {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
-        
+
         TestModel model = TestModel.simpleMultiLevel();
         fViewer.setAutoExpandLevel(-1);
-        
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, true); 
-        
+
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, true);
+
         fViewer.setInput(model.getRootElement());
 
         while (!fListener.isFinished()) {
@@ -136,22 +140,23 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
 		}
 
         model.validateData(fViewer, TreePath.EMPTY);
-        
+
         assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 3) );
     }
-    
+
     /**
-     * Modified test model that optionally captures (i.e. doesn't compete) 
-     * udpates after filling in their data.   
+     * Modified test model that optionally captures (i.e. doesn't compete)
+     * udpates after filling in their data.
      */
     class TestModelWithCapturedUpdates extends TestModel {
-        
+
         boolean fCaptureLabelUpdates = false;
         boolean fCaptureChildrenUpdates = false;
-        
-        List fCapturedUpdates = Collections.synchronizedList(new ArrayList());
-        
-        public void update(IChildrenUpdate[] updates) {
+
+		List<IViewerUpdate> fCapturedUpdates = Collections.synchronizedList(new ArrayList<IViewerUpdate>());
+
+        @Override
+		public void update(IChildrenUpdate[] updates) {
             for (int i = 0; i < updates.length; i++) {
                 TestElement element = (TestElement)updates[i].getElement();
                 int endOffset = updates[i].getOffset() + updates[i].getLength();
@@ -167,13 +172,14 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
                 }
             }
         }
-        
-        public void update(ILabelUpdate[] updates) {
+
+        @Override
+		public void update(ILabelUpdate[] updates) {
             for (int i = 0; i < updates.length; i++) {
                 TestElement element = (TestElement)updates[i].getElement();
                 updates[i].setLabel(element.getLabel(), 0);
-                if (updates[i] instanceof ICheckUpdate && 
-                    Boolean.TRUE.equals(updates[i].getPresentationContext().getProperty(ICheckUpdate.PROP_CHECK))) 
+                if (updates[i] instanceof ICheckUpdate &&
+                    Boolean.TRUE.equals(updates[i].getPresentationContext().getProperty(ICheckUpdate.PROP_CHECK)))
                 {
                     ((ICheckUpdate)updates[i]).setChecked(element.getChecked(), element.getGrayed());
                 }
@@ -182,19 +188,19 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
                 } else {
                     updates[i].done();
                 }
-            }        
-        } 
+            }
+        }
     }
-    
+
     /**
-     * Test to make sure that label provider cancels stale updates and doesn't 
+     * Test to make sure that label provider cancels stale updates and doesn't
      * use data from stale updates to populate the viewer.<br>
      * See bug 210027
      */
     public void testLabelUpdatesCompletedOutOfSequence1() throws InterruptedException {
         TestModelWithCapturedUpdates model = new TestModelWithCapturedUpdates();
         model.fCaptureLabelUpdates = true;
-        
+
 		model.setRoot(new TestElement(model, "root", new TestElement[] { //$NON-NLS-1$
 		new TestElement(model, "1", new TestElement[0]), //$NON-NLS-1$
 		new TestElement(model, "2", new TestElement[0]), //$NON-NLS-1$
@@ -208,28 +214,28 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
 				Thread.sleep(0);
 			}
         }
-        List firstUpdates = model.fCapturedUpdates;
-        model.fCapturedUpdates = new ArrayList(2);
-        
-//      // Change the model and run another update set. 
+		List<IViewerUpdate> firstUpdates = model.fCapturedUpdates;
+		model.fCapturedUpdates = new ArrayList<IViewerUpdate>(2);
+
+//      // Change the model and run another update set.
 		model.getElement(model.findElement("1")).setLabelAppendix(" - changed"); //$NON-NLS-1$ //$NON-NLS-2$
 		model.getElement(model.findElement("2")).setLabelAppendix(" - changed"); //$NON-NLS-1$ //$NON-NLS-2$
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false);
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
         while (model.fCapturedUpdates.size() < model.getRootElement().fChildren.length) {
             if (!fDisplay.readAndDispatch ()) {
 				Thread.sleep(0);
 			}
         }
-        
+
         // Complete the second set of children updates
         for (int i = 0; i < model.fCapturedUpdates.size(); i++) {
             ((ILabelUpdate)model.fCapturedUpdates.get(i)).done();
         }
-        
+
         // Then complete the first set.
         for (int i = 0; i < firstUpdates.size(); i++) {
-            ILabelUpdate capturedUpdate = (ILabelUpdate)firstUpdates.get(i); 
+            ILabelUpdate capturedUpdate = (ILabelUpdate)firstUpdates.get(i);
             assertTrue(capturedUpdate.isCanceled());
             capturedUpdate.done();
         }
@@ -239,23 +245,23 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
 				Thread.sleep(0);
 			}
 		}
-        
+
         // Check viewer data
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
     /**
-     * Test to make sure that label provider cancels stale updates and doesn't 
+     * Test to make sure that label provider cancels stale updates and doesn't
      * use data from stale updates to populate the viewer.<br>
-     * This version of the test changes the elements in the view, and not just 
-     * the elements' labels.  In this case, the view should still cancel stale 
-     * updates.<br> 
+     * This version of the test changes the elements in the view, and not just
+     * the elements' labels.  In this case, the view should still cancel stale
+     * updates.<br>
      * See bug 210027
      */
     public void testLabelUpdatesCompletedOutOfSequence2() throws InterruptedException {
         TestModelWithCapturedUpdates model = new TestModelWithCapturedUpdates();
         model.fCaptureLabelUpdates = true;
-        
+
 		model.setRoot(new TestElement(model, "root", new TestElement[] { //$NON-NLS-1$
 		new TestElement(model, "1", new TestElement[0]), //$NON-NLS-1$
 				new TestElement(model, "2", new TestElement[0]), //$NON-NLS-1$
@@ -269,30 +275,30 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
 				Thread.sleep(0);
 			}
         }
-        List firstUpdates = model.fCapturedUpdates;
-        model.fCapturedUpdates = new ArrayList(2);
-        
-        // Change the model and run another update set. 
+		List<IViewerUpdate> firstUpdates = model.fCapturedUpdates;
+		model.fCapturedUpdates = new ArrayList<IViewerUpdate>(2);
+
+        // Change the model and run another update set.
 		model.setElementChildren(TreePath.EMPTY, new TestElement[] {
 				new TestElement(model, "1-new", new TestElement[0]), //$NON-NLS-1$
 				new TestElement(model, "2-new", new TestElement[0]), //$NON-NLS-1$
         });
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false);
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
         while (model.fCapturedUpdates.size() < model.getRootElement().fChildren.length) {
             if (!fDisplay.readAndDispatch ()) {
 				Thread.sleep(0);
 			}
         }
-        
+
         // Complete the second set of children updates
         for (int i = 0; i < model.fCapturedUpdates.size(); i++) {
             ((ILabelUpdate)model.fCapturedUpdates.get(i)).done();
         }
-        
+
         // Then complete the first set.
         for (int i = 0; i < firstUpdates.size(); i++) {
-            ILabelUpdate capturedUpdate = (ILabelUpdate)firstUpdates.get(i); 
+            ILabelUpdate capturedUpdate = (ILabelUpdate)firstUpdates.get(i);
             assertTrue(capturedUpdate.isCanceled());
             capturedUpdate.done();
         }
@@ -302,24 +308,24 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
 				Thread.sleep(0);
 			}
 		}
-        
+
         // Check viewer data
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
     /**
-     * Test to make sure that content provider cancels stale updates and doesn't 
+     * Test to make sure that content provider cancels stale updates and doesn't
      * use data from stale updates to populate the viewer.<br>
-     * Note: this test is disabled because currently the viewer will not issue 
+     * Note: this test is disabled because currently the viewer will not issue
      * a new update for an until the previous update is completed.  This is even
-     * if the previous update is canceled.  If this behavior is changed at some 
+     * if the previous update is canceled.  If this behavior is changed at some
      * point, then this test should be re-enabled.<br>
      * See bug 210027
      */
     public void _x_testChildrenUpdatesCompletedOutOfSequence() throws InterruptedException {
         TestModelWithCapturedUpdates model = new TestModelWithCapturedUpdates();
         model.fCaptureChildrenUpdates = true;
-        
+
 		model.setRoot(new TestElement(model, "root", new TestElement[] { //$NON-NLS-1$
 		new TestElement(model, "1", new TestElement[0]), //$NON-NLS-1$
 		new TestElement(model, "2", new TestElement[0]), //$NON-NLS-1$
@@ -333,27 +339,27 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
 				Thread.sleep(0);
 			}
         }
-        IChildrenUpdate[] firstUpdates = (IChildrenUpdate[])model.fCapturedUpdates.toArray(new IChildrenUpdate[0]);
+        IChildrenUpdate[] firstUpdates = model.fCapturedUpdates.toArray(new IChildrenUpdate[0]);
         model.fCapturedUpdates.clear();
-        
-        // Change the model and run another update set. 
+
+        // Change the model and run another update set.
         model.setElementChildren(TreePath.EMPTY, new TestElement[] {
  new TestElement(model, "1-new", new TestElement[0]), //$NON-NLS-1$
 		new TestElement(model, "2-new", new TestElement[0]), //$NON-NLS-1$
         });
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false);
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
         while (!areCapturedChildrenUpdatesComplete(model.fCapturedUpdates, model.getRootElement().fChildren.length)) {
             if (!fDisplay.readAndDispatch ()) {
 				Thread.sleep(0);
 			}
         }
-        
+
         // Complete the second set of children updates
         for (int i = 0; i < model.fCapturedUpdates.size(); i++) {
             ((IChildrenUpdate)model.fCapturedUpdates.get(i)).done();
         }
-        
+
         // Then complete the first set.
         for (int i = 0; i < firstUpdates.length; i++) {
             firstUpdates[i].done();
@@ -364,17 +370,17 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
 				Thread.sleep(0);
 			}
 		}
-        
+
         // Check viewer data
         model.validateData(fViewer, TreePath.EMPTY);
     }
-    
-    private boolean areCapturedChildrenUpdatesComplete(List capturedUpdates, int childCount) {
-        List expectedChildren = new ArrayList();
+
+	private boolean areCapturedChildrenUpdatesComplete(List<IViewerUpdate> capturedUpdates, int childCount) {
+		List<Integer> expectedChildren = new ArrayList<Integer>();
         for (int i = 0; i < childCount; i++) {
             expectedChildren.add(new Integer(i));
         }
-        IChildrenUpdate[] updates = (IChildrenUpdate[])capturedUpdates.toArray(new IChildrenUpdate[0]);
+        IChildrenUpdate[] updates = capturedUpdates.toArray(new IChildrenUpdate[0]);
         for (int i = 0; i < updates.length; i++) {
             for (int j = 0; j < updates[i].getLength(); j++) {
                 expectedChildren.remove( new Integer(updates[i].getOffset() + j) );

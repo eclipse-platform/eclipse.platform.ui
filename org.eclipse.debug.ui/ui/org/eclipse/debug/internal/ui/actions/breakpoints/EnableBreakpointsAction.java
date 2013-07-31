@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 	/**
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		setView(view);
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
@@ -77,6 +78,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		IStructuredSelection selection= getSelection();
 		final int size= selection.size();
@@ -84,9 +86,10 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 			return;
 		}
 		
-		final Iterator itr= selection.iterator();
+		final Iterator<?> itr = selection.iterator();
 		final MultiStatus ms= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.EnableBreakpointAction_Enable_breakpoint_s__failed_2, null); 
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 				while (itr.hasNext()) {
 					Object element= itr.next();
@@ -137,6 +140,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		setAction(action);
 		if (!(selection instanceof IStructuredSelection)) {
@@ -144,7 +148,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		}
 		IStructuredSelection sel= (IStructuredSelection)selection;
 		
-		Iterator itr= sel.iterator();
+		Iterator<?> itr = sel.iterator();
 		boolean allEnabled= true;
 		boolean allDisabled= true;
 		while (itr.hasNext()) {
@@ -209,12 +213,14 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 	/**
 	 * @see IBreakpointsListener#breakpointsAdded(IBreakpoint[])
 	 */
+	@Override
 	public void breakpointsAdded(IBreakpoint[] breakpoints) {
 	}
 	
 	/**
 	 * @see IBreakpointsListener#breakpointsRemoved(IBreakpoint[], IMarkerDelta[])
 	 */
+	@Override
 	public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {	
 		asynchUpdate();
 	}
@@ -222,6 +228,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 	/**
 	 * @see IBreakpointsListener#breakpointsChanged(IBreakpoint[], IMarkerDelta[])
 	 */
+	@Override
 	public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 		asynchUpdate();
 	}
@@ -239,6 +246,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 			return;
 		}
 		Runnable r= new Runnable() {
+			@Override
 			public void run() {
 				IWorkbenchWindow ww= getView().getViewSite().getPage().getWorkbenchWindow();
 				if (ww == null) {
@@ -265,18 +273,21 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 	/**
 	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
+	@Override
 	public void partActivated(IWorkbenchPart part) {
 	}
 
 	/**
 	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
 	 */
+	@Override
 	public void partBroughtToTop(IWorkbenchPart part) {
 	}
 
 	/**
 	 * @see IPartListener#partClosed(IWorkbenchPart)
 	 */
+	@Override
 	public void partClosed(IWorkbenchPart part) {
 		if (part.equals(getView())) {
 			dispose();
@@ -286,12 +297,14 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 	/**
 	 * @see IPartListener#partDeactivated(IWorkbenchPart)
 	 */
+	@Override
 	public void partDeactivated(IWorkbenchPart part) {
 	}
 
 	/**
 	 * @see IPartListener#partOpened(IWorkbenchPart)
 	 */
+	@Override
 	public void partOpened(IWorkbenchPart part) {
 	}
 }

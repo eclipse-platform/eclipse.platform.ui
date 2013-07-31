@@ -44,6 +44,7 @@ public class CollapseAllLaunchConfigurationAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_COLLAPSE_ALL);
 	}
@@ -51,6 +52,7 @@ public class CollapseAllLaunchConfigurationAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getText()
 	 */
+	@Override
 	public String getText() {
 		return LaunchConfigurationsMessages.CollapseAllLaunchConfigurationAction_0;
 	}
@@ -58,6 +60,7 @@ public class CollapseAllLaunchConfigurationAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getToolTipText()
 	 */
+	@Override
 	public String getToolTipText() {
 		return LaunchConfigurationsMessages.CollapseAllLaunchConfigurationAction_1;
 	}
@@ -65,6 +68,7 @@ public class CollapseAllLaunchConfigurationAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getDisabledImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
 		return DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_COLLAPSE_ALL);
 	}
@@ -72,6 +76,7 @@ public class CollapseAllLaunchConfigurationAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		fViewer.collapseAll();
 	}
@@ -79,6 +84,7 @@ public class CollapseAllLaunchConfigurationAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return LaunchConfigurationsMessages.CollapseAllLaunchConfigurationAction_2;
 	}	

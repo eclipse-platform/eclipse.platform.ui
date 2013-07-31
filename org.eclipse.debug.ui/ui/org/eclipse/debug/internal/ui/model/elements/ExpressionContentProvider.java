@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Wind Rvier Systems - added support for columns (bug 235646)
+ *     Wind River Systems - added support for columns (bug 235646)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.model.elements;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +55,8 @@ public class ExpressionContentProvider extends VariableContentProvider {
         
         private final String fMessage;
         
-        public void update(ILabelUpdate[] updates) {
+        @Override
+		public void update(ILabelUpdate[] updates) {
             for (int i = 0; i < updates.length; i++) {
                 String[] columnIds = updates[i].getColumnIds();
                 if (columnIds == null) {
@@ -86,60 +86,60 @@ public class ExpressionContentProvider extends VariableContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate[])
 	 */
+	@Override
 	public void update(IChildrenCountUpdate[] updates) {
 		// See if we can delegate to a model specific content provider
-		Map delegateMap = new HashMap();
-		List notDelegated = new ArrayList();
+		Map<IElementContentProvider, List<IViewerUpdate>> delegateMap = new HashMap<IElementContentProvider, List<IViewerUpdate>>();
+		List<IViewerUpdate> notDelegated = new ArrayList<IViewerUpdate>();
 		findDelegates(delegateMap, notDelegated, updates);
 		
 		// Batch the updates and send them to the delegates
-		for (Iterator iterator = delegateMap.keySet().iterator(); iterator.hasNext();) {
-			IElementContentProvider delegate = (IElementContentProvider) iterator.next();
-			List updateList = (List)delegateMap.get(delegate);
-			delegate.update((IChildrenCountUpdate[])updateList.toArray(new IChildrenCountUpdate[updateList.size()]));
+		for (IElementContentProvider delegate : delegateMap.keySet()) {
+			List<IViewerUpdate> updateList = delegateMap.get(delegate);
+			delegate.update(updateList.toArray(new IChildrenCountUpdate[updateList.size()]));
 		}
 		if (notDelegated.size() > 0){
-			super.update((IChildrenCountUpdate[])notDelegated.toArray(new IChildrenCountUpdate[notDelegated.size()]));
+			super.update(notDelegated.toArray(new IChildrenCountUpdate[notDelegated.size()]));
 		}
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate[])
 	 */
+	@Override
 	public void update(IHasChildrenUpdate[] updates) {
 		// See if we can delegate to a model specific content provider
-		Map delegateMap = new HashMap();
-		List notDelegated = new ArrayList();
+		Map<IElementContentProvider, List<IViewerUpdate>> delegateMap = new HashMap<IElementContentProvider, List<IViewerUpdate>>();
+		List<IViewerUpdate> notDelegated = new ArrayList<IViewerUpdate>();
 		findDelegates(delegateMap, notDelegated, updates);
 		
 		// Batch the updates and send them to the delegates
-		for (Iterator iterator = delegateMap.keySet().iterator(); iterator.hasNext();) {
-			IElementContentProvider delegate = (IElementContentProvider) iterator.next();
-			List updateList = (List)delegateMap.get(delegate);
-			delegate.update((IHasChildrenUpdate[])updateList.toArray(new IHasChildrenUpdate[updateList.size()]));
+		for (IElementContentProvider delegate : delegateMap.keySet()) {
+			List<IViewerUpdate> updateList = delegateMap.get(delegate);
+			delegate.update(updateList.toArray(new IHasChildrenUpdate[updateList.size()]));
 		}
 		if (notDelegated.size() > 0){
-			super.update((IHasChildrenUpdate[])notDelegated.toArray(new IHasChildrenUpdate[notDelegated.size()]));
+			super.update(notDelegated.toArray(new IHasChildrenUpdate[notDelegated.size()]));
 		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate[])
 	 */
+	@Override
 	public void update(IChildrenUpdate[] updates) {
 		// See if we can delegate to a model specific content provider
-		Map delegateMap = new HashMap();
-		List notDelegated = new ArrayList();
+		Map<IElementContentProvider, List<IViewerUpdate>> delegateMap = new HashMap<IElementContentProvider, List<IViewerUpdate>>();
+		List<IViewerUpdate> notDelegated = new ArrayList<IViewerUpdate>();
 		findDelegates(delegateMap, notDelegated, updates);
 		
 		// Batch the updates and send them to the delegates
-		for (Iterator iterator = delegateMap.keySet().iterator(); iterator.hasNext();) {
-			IElementContentProvider delegate = (IElementContentProvider) iterator.next();
-			List updateList = (List)delegateMap.get(delegate);
-			delegate.update((IChildrenUpdate[])updateList.toArray(new IChildrenUpdate[updateList.size()]));
+		for (IElementContentProvider delegate : delegateMap.keySet()) {
+			List<IViewerUpdate> updateList = delegateMap.get(delegate);
+			delegate.update(updateList.toArray(new IChildrenUpdate[updateList.size()]));
 		}
 		if (notDelegated.size() > 0){
-			super.update((IChildrenUpdate[])notDelegated.toArray(new IChildrenUpdate[notDelegated.size()]));
+			super.update(notDelegated.toArray(new IChildrenUpdate[notDelegated.size()]));
 		}
 	}
 	
@@ -153,14 +153,14 @@ public class ExpressionContentProvider extends VariableContentProvider {
 	 * @param updates array of updates that can be handled by delegates
 	 * @since 3.4
 	 */
-	private void findDelegates(Map delegateMap, List notDelegated, IViewerUpdate[] updates){
+	private void findDelegates(Map<IElementContentProvider, List<IViewerUpdate>> delegateMap, List<IViewerUpdate> notDelegated, IViewerUpdate[] updates) {
 		for (int i = 0; i < updates.length; i++) {
 			if (updates[i] instanceof ViewerUpdateMonitor && !((ViewerUpdateMonitor)updates[i]).isDelegated() && updates[i].getElement() instanceof IExpression){
 				IElementContentProvider delegate = ViewerAdapterService.getContentProvider(((IExpression)updates[i].getElement()).getValue());
 				if (delegate != null){
-					List updateList = (List)delegateMap.get(delegate);
+					List<IViewerUpdate> updateList = delegateMap.get(delegate);
 					if (updateList == null){
-						updateList = new ArrayList();
+						updateList = new ArrayList<IViewerUpdate>();
 						delegateMap.put(delegate, updateList);
 					}
 					((ViewerUpdateMonitor)updates[i]).setDelegated(true);
@@ -173,12 +173,13 @@ public class ExpressionContentProvider extends VariableContentProvider {
 	}
 
 
+	@Override
 	protected Object[] getAllChildren(Object parent, IPresentationContext context) throws CoreException {
        if (parent instanceof IErrorReportingExpression) {
             IErrorReportingExpression expression = (IErrorReportingExpression) parent;
             if (expression.hasErrors()) {
                 String[] messages = expression.getErrorMessages();
-                LinkedHashSet set = new LinkedHashSet(messages.length);
+				LinkedHashSet<ErrorMessageElement> set = new LinkedHashSet<ErrorMessageElement>(messages.length);
                 for (int i = 0; i < messages.length; i++) {
 					set.add(new ErrorMessageElement(messages[i]));
 				}
@@ -195,6 +196,7 @@ public class ExpressionContentProvider extends VariableContentProvider {
         return EMPTY;	
 	}
 	
+	@Override
 	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		if (element instanceof IErrorReportingExpression) {
 			IErrorReportingExpression expression = (IErrorReportingExpression) element;

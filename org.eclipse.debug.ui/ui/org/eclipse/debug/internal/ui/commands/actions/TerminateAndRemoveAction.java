@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,39 +50,48 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
 	 */
 	private IWorkbenchPart fMyPart = null;
 
-    public String getText() {
+    @Override
+	public String getText() {
         return ActionMessages.TerminateAndRemoveAction_0;
     }
 
-    public String getHelpContextId() {
+    @Override
+	public String getHelpContextId() {
         return "org.eclipse.debug.ui.terminate_and_remove_action_context"; //$NON-NLS-1$
     }
 
-    public String getId() {
+    @Override
+	public String getId() {
         return "org.eclipse.debug.ui.debugview.popupMenu.terminateAndRemove"; //$NON-NLS-1$
     }
 
-    public String getToolTipText() {
+    @Override
+	public String getToolTipText() {
         return ActionMessages.TerminateAndRemoveAction_3;
     }
 
-    public ImageDescriptor getDisabledImageDescriptor() {
+    @Override
+	public ImageDescriptor getDisabledImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_AND_REMOVE);
     }
 
-    public ImageDescriptor getHoverImageDescriptor() {
+    @Override
+	public ImageDescriptor getHoverImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_AND_REMOVE);
     }
 
-    public ImageDescriptor getImageDescriptor() {
+    @Override
+	public ImageDescriptor getImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_AND_REMOVE);
     }
 
-    protected Class getCommandType() {
+    @Override
+	protected Class<ITerminateHandler> getCommandType() {
 		return ITerminateHandler.class;
 	}
 
-    public void debugContextChanged(DebugContextEvent event) {
+    @Override
+	public void debugContextChanged(DebugContextEvent event) {
         boolean isAllTerminated = true;
         ISelection context = event.getContext();
         if (context instanceof IStructuredSelection) {
@@ -113,13 +122,15 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
     }
 
     
-    protected void postExecute(IRequest request, Object[] targets) {
+    @Override
+	protected void postExecute(IRequest request, Object[] targets) {
         IStatus status = request.getStatus();
         if(status == null || status.isOK()) {
             for (int i = 0; i < targets.length; i++) {
                 ILaunch launch = DebugUIPlugin.getLaunch(targets[i]);
-                if (launch != null)
-                    DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);                   
+                if (launch != null) {
+					DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);
+				}                   
             }
         }
     }
@@ -127,7 +138,8 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.DebugCommandAction#runWithEvent(org.eclipse.swt.widgets.Event)
      */
-    public void runWithEvent(Event event) {
+    @Override
+	public void runWithEvent(Event event) {
     	if (fCanTerminate) {
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	    	if (window != null) {
@@ -155,7 +167,8 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.DebugCommandAction#init(org.eclipse.ui.IWorkbenchPart)
      */
-    public void init(IWorkbenchPart part) {
+    @Override
+	public void init(IWorkbenchPart part) {
     	super.init(part); // TODO: if #getContext() was API, this would not be needed
     	fMyPart = part;
     }

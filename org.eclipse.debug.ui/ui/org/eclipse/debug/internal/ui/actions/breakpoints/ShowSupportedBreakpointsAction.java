@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,7 +58,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 	/**
 	 * The list of identifiers for the current state
 	 */
-	private List fDebugTargets= new ArrayList(2);
+	private List<IDebugTarget> fDebugTargets= new ArrayList<IDebugTarget>(2);
 	
 	/**
 	 * A viewer filter that selects breakpoints that have
@@ -69,6 +69,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 		/**
 		 * @see ViewerFilter#select(Viewer, Object, Object)
 		 */
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof IBreakpointContainer) {
 				// Breakpoint containers are visible if any of their children are visible.
@@ -84,9 +85,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 			if (fDebugTargets.isEmpty()) {
 				return true;
 			}
-			Iterator iterator= fDebugTargets.iterator();
-			while (iterator.hasNext()) {
-				IDebugTarget target = (IDebugTarget) iterator.next();
+			for (IDebugTarget target : fDebugTargets) {
 				if (target.supportsBreakpoint(breakpoint)) {
 					return true;
 				}
@@ -125,10 +124,11 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 	/**
 	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
+	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss= (IStructuredSelection)selection;
-			List debugTargets= getDebugTargets(ss);
+			List<IDebugTarget> debugTargets= getDebugTargets(ss);
 			if (!isChecked()) {
 				fDebugTargets= debugTargets;
 				return;
@@ -146,13 +146,11 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 			}
 			
 			if (debugTargets.size() == fDebugTargets.size()) {
-				List copy= new ArrayList(debugTargets.size());
-				Iterator iter= fDebugTargets.iterator();
-				while (iter.hasNext()) {
-					IDebugTarget target = (IDebugTarget) iter.next();
-					Iterator newDebugTargets= debugTargets.iterator();
+				List<IDebugTarget> copy= new ArrayList<IDebugTarget>(debugTargets.size());
+				for (IDebugTarget target : fDebugTargets) {
+					Iterator<IDebugTarget> newDebugTargets= debugTargets.iterator();
 					while (newDebugTargets.hasNext()) {
-						IDebugTarget newTarget= (IDebugTarget)newDebugTargets.next();
+						IDebugTarget newTarget= newDebugTargets.next();
 						copy.add(newTarget);
 						if (target.equals(newTarget)) {
 							newDebugTargets.remove();
@@ -174,7 +172,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 	 * need to re-apply the filters.
 	 * @param debugTargets the new set of {@link IDebugTarget}s
 	 */
-	protected void reapplyFilters(List debugTargets) {
+	protected void reapplyFilters(List<IDebugTarget> debugTargets) {
 		fDebugTargets= debugTargets;		
 		getViewer().refresh();
 	}
@@ -187,9 +185,9 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 		fView = (AbstractDebugView) view;
 	}
 	
-	protected List getDebugTargets(IStructuredSelection ss) {
-		List debugTargets= new ArrayList(2);
-		Iterator i= ss.iterator();
+	protected List<IDebugTarget> getDebugTargets(IStructuredSelection ss) {
+		List<IDebugTarget> debugTargets= new ArrayList<IDebugTarget>(2);
+		Iterator<?> i= ss.iterator();
 		while (i.hasNext()) {
 			Object next= i.next();
 			if (next instanceof IDebugElement) {
@@ -214,6 +212,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 	 * on the value of the parameter.
 	 * @param on flag to indicate if viewer filtering should be added or removed 
 	 */
+	@Override
 	protected void valueChanged(boolean on) {
 		if (getViewer().getControl().isDisposed()) {
 			return;

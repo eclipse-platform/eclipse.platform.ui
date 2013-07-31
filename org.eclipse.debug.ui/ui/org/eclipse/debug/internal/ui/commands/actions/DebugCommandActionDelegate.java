@@ -39,6 +39,7 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
      * (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {
         fDebugAction.dispose();
 	}
@@ -47,7 +48,8 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
      * (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
      */
-    public void init(IAction action) {
+    @Override
+	public void init(IAction action) {
         fDebugAction.setActionProxy(action);
     }
     
@@ -55,7 +57,8 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
      * (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
      */
-    public void init(IWorkbenchWindow window) {
+    @Override
+	public void init(IWorkbenchWindow window) {
         fDebugAction.init(window);
 	}
     
@@ -63,6 +66,7 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
      * (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
+	@Override
 	public void run(IAction action) {
         fDebugAction.run();
 	}
@@ -72,6 +76,7 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
      * (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
      */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
         run(action);
     }
@@ -80,7 +85,8 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
      * (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */
-    public void selectionChanged(IAction action, ISelection s) {
+    @Override
+	public void selectionChanged(IAction action, ISelection s) {
 		// do nothing
 	}
 

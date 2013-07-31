@@ -33,6 +33,7 @@ public class ClockControl extends TimeControl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.midi.launcher.TimeControl#getTimeValue()
 	 */
+	@Override
 	protected long getTimeValue() {
 		return getSequencer().getMicrosecondPosition();
 	}
@@ -40,6 +41,7 @@ public class ClockControl extends TimeControl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#isEditable()
 	 */
+	@Override
 	public boolean isEditable() {
 		return true;
 	}
@@ -47,6 +49,7 @@ public class ClockControl extends TimeControl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#setValue(java.lang.String)
 	 */
+	@Override
 	public IStatus setValue(String newValue) {
 		try {
 			long value = getLong(newValue);
@@ -61,6 +64,7 @@ public class ClockControl extends TimeControl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#validateValue(java.lang.String)
 	 */
+	@Override
 	public IStatus validateValue(String value) {
 		try {
 			getLong(value);

@@ -80,6 +80,7 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.action.Action#run()
 		 */
+		@Override
 		public void run() {
 			if(fStore != null) {
 				fStore.setValue(fKey, isChecked());
@@ -103,6 +104,7 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fCreatedMenu = null;
 	}
@@ -110,6 +112,7 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
 	 */
+	@Override
 	public Menu getMenu(Control parent) {
 		if(fCreatedMenu != null) {
 			fCreatedMenu.dispose();
@@ -126,6 +129,7 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 	
 		//add pref action
 		IAction action = new Action(LaunchConfigurationsMessages.FilterDropDownMenuCreator_3) {
+			@Override
 			public void run() {
 				SWTFactory.showPreferencePage("org.eclipse.debug.ui.LaunchConfigurations"); //$NON-NLS-1$
 			}
@@ -137,6 +141,7 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
+	@Override
 	public Menu getMenu(Menu parent) {
 		return fCreatedMenu;
 	}

@@ -47,7 +47,8 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
     /**
      * @throws java.lang.Exception
      */
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         fDisplay = PlatformUI.getWorkbench().getDisplay();
         fShell = new Shell(fDisplay);
         fShell.setSize(300, 80);
@@ -63,7 +64,8 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
     /**
      * @throws java.lang.Exception
      */
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         fListener.dispose();
         fViewer.getPresentationContext().dispose();
         
@@ -76,7 +78,8 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
 		}
     }
 
-    protected void runTest() throws Throwable {
+    @Override
+	protected void runTest() throws Throwable {
         try {
             super.runTest();
         } catch (Throwable t) {
@@ -514,7 +517,8 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         ModelDelta revealDelta = model.makeElementDelta(pathToBeRevealed, IModelDelta.REVEAL);
         revealDelta.accept(new IModelDeltaVisitor() {
             
-            public boolean visit(IModelDelta delta, int depth) {
+            @Override
+			public boolean visit(IModelDelta delta, int depth) {
                 ((ModelDelta)delta).setFlags(delta.getFlags() | IModelDelta.EXPAND);
                 return true;
             }

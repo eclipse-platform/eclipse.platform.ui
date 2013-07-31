@@ -42,6 +42,7 @@ public class TableRenderingLabelProvider extends AbstractTableRenderingLabelProv
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fTablePresentation != null) {
 			fTablePresentation.dispose();
@@ -53,6 +54,7 @@ public class TableRenderingLabelProvider extends AbstractTableRenderingLabelProv
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
+	@Override
 	public Color getForeground(Object element) {
 		if (element instanceof TableRenderingLine)
 		{
@@ -69,6 +71,7 @@ public class TableRenderingLabelProvider extends AbstractTableRenderingLabelProv
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 	 */
+	@Override
 	public Color getBackground(Object element) {
 		
 		return null;
@@ -77,6 +80,7 @@ public class TableRenderingLabelProvider extends AbstractTableRenderingLabelProv
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 	 */
+	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		
 		String label = super.getColumnText(element, columnIndex);

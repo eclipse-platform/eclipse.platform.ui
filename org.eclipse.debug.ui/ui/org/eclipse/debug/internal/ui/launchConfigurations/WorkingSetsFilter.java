@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public class WorkingSetsFilter extends ViewerFilter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if(element instanceof ILaunchConfigurationType) {
 			return true;
@@ -60,7 +61,7 @@ public class WorkingSetsFilter extends ViewerFilter {
 					return true;
 				}
 				//remove breakpoint working sets
-				ArrayList ws = new ArrayList();
+				ArrayList<IWorkingSet> ws = new ArrayList<IWorkingSet>();
 				for (int i = 0; i < wsets.length; i++) {
 					if(!IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(wsets[i].getId())) {
 						ws.add(wsets[i]);
@@ -70,7 +71,7 @@ public class WorkingSetsFilter extends ViewerFilter {
 					return true;
 				}
 				for (int i = 0; i < resources.length; i++) {
-					if(workingSetContains((IWorkingSet[]) ws.toArray(new IWorkingSet[ws.size()]), resources[i])) {
+					if(workingSetContains(ws.toArray(new IWorkingSet[ws.size()]), resources[i])) {
 						return true;
 					}
 				}
@@ -88,7 +89,7 @@ public class WorkingSetsFilter extends ViewerFilter {
 	 * @since 3.2
 	 */
 	public static boolean workingSetContains(IWorkingSet[] wsets, IResource res) {
-		ArrayList parents = new ArrayList();
+		ArrayList<IResource> parents = new ArrayList<IResource>();
 		parents.add(res);
 		while(res != null) {
 			res = res.getParent();

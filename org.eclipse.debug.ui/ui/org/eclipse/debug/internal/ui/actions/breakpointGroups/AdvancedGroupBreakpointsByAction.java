@@ -33,6 +33,7 @@ public class AdvancedGroupBreakpointsByAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
         if (isChecked()) {
     	    GroupBreakpointsByDialog dialog = new GroupBreakpointsByDialog(fView);

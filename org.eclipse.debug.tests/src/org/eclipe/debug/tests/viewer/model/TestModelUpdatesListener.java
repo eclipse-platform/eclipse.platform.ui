@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Dorin Ciuca - Top index fix (Bug 324100)
@@ -43,42 +43,42 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.junit.Assert;
 
-public class TestModelUpdatesListener 
+public class TestModelUpdatesListener
     implements IViewerUpdateListener, ILabelUpdateListener, IModelChangedListener, ITestModelUpdatesListenerConstants,
-        IStateUpdateListener, IJobChangeListener 
+        IStateUpdateListener, IJobChangeListener
 {
-    public static final ViewerFilter[] EMPTY_FILTER_ARRAY = new ViewerFilter[0]; 
-	
+    public static final ViewerFilter[] EMPTY_FILTER_ARRAY = new ViewerFilter[0];
+
     private final ITreeModelViewer fViewer;
-    
+
     private IStatus fJobError;
-    
+
     private boolean fFailOnRedundantUpdates;
     private boolean fFailOnRedundantLabelUpdates;
-    private Set fRedundantUpdates = new HashSet();
-    private Set fRedundantLabelUpdates = new HashSet();
-    private Set fRedundantHasChildrenUpdateExceptions = new HashSet();
-    private Set fRedundantChildCountUpdateExceptions = new HashSet();
-    private Set fRedundantChildrenUpdateExceptions = new HashSet();
-    private Set fRedundantLabelUpdateExceptions = new HashSet();
-    
+	private Set<IViewerUpdate> fRedundantUpdates = new HashSet<IViewerUpdate>();
+	private Set<ILabelUpdate> fRedundantLabelUpdates = new HashSet<ILabelUpdate>();
+	private Set<TreePath> fRedundantHasChildrenUpdateExceptions = new HashSet<TreePath>();
+	private Set<TreePath> fRedundantChildCountUpdateExceptions = new HashSet<TreePath>();
+	private Set<TreePath> fRedundantChildrenUpdateExceptions = new HashSet<TreePath>();
+	private Set<TreePath> fRedundantLabelUpdateExceptions = new HashSet<TreePath>();
+
     private boolean fFailOnMultipleModelUpdateSequences;
     private boolean fFailOnMultipleLabelUpdateSequences;
-    
-    private Set fHasChildrenUpdatesScheduled = new HashSet();
-    private Set fHasChildrenUpdatesRunning = new HashSet();
-    private Set fHasChildrenUpdatesCompleted = new HashSet();
-    private Map fChildrenUpdatesScheduled = new HashMap();
-    private Set fChildrenUpdatesRunning = new HashSet();
-    private Set fChildrenUpdatesCompleted = new HashSet();
-    private Set fChildCountUpdatesScheduled = new HashSet();
-    private Set fChildCountUpdatesRunning = new HashSet();
-    private Set fChildCountUpdatesCompleted = new HashSet();
-    private Set fLabelUpdates = new HashSet();
-    private Set fLabelUpdatesRunning = new HashSet();
-    private Set fLabelUpdatesCompleted = new HashSet();
-    private Set fProxyModels = new HashSet();
-    private Set fStateUpdates = new HashSet();
+
+	private Set<TreePath> fHasChildrenUpdatesScheduled = new HashSet<TreePath>();
+	private Set<IViewerUpdate> fHasChildrenUpdatesRunning = new HashSet<IViewerUpdate>();
+	private Set<IViewerUpdate> fHasChildrenUpdatesCompleted = new HashSet<IViewerUpdate>();
+	private Map<TreePath, Set<Integer>> fChildrenUpdatesScheduled = new HashMap<TreePath, Set<Integer>>();
+	private Set<IViewerUpdate> fChildrenUpdatesRunning = new HashSet<IViewerUpdate>();
+	private Set<IViewerUpdate> fChildrenUpdatesCompleted = new HashSet<IViewerUpdate>();
+	private Set<TreePath> fChildCountUpdatesScheduled = new HashSet<TreePath>();
+	private Set<IViewerUpdate> fChildCountUpdatesRunning = new HashSet<IViewerUpdate>();
+	private Set<IViewerUpdate> fChildCountUpdatesCompleted = new HashSet<IViewerUpdate>();
+	private Set<TreePath> fLabelUpdates = new HashSet<TreePath>();
+	private Set<ILabelUpdate> fLabelUpdatesRunning = new HashSet<ILabelUpdate>();
+	private Set<ILabelUpdate> fLabelUpdatesCompleted = new HashSet<ILabelUpdate>();
+	private Set<TestModel> fProxyModels = new HashSet<TestModel>();
+	private Set<TreePath> fStateUpdates = new HashSet<TreePath>();
     private int fViewerUpdatesStarted = 0;
     private int fViewerUpdatesComplete = 0;
     private int fViewerUpdatesStartedAtReset;
@@ -100,8 +100,8 @@ public class TestModelUpdatesListener
 	private boolean fExpectRestoreAfterSaveComplete;
 
 	private RuntimeException fFailExpectation;
-	
-	
+
+
     public TestModelUpdatesListener(ITreeModelViewer viewer, boolean failOnRedundantUpdates, boolean failOnMultipleModelUpdateSequences) {
         this(viewer);
         setFailOnRedundantUpdates(failOnRedundantUpdates);
@@ -124,19 +124,33 @@ public class TestModelUpdatesListener
         fViewer.removeStateUpdateListener(this);
         fViewer.removeViewerUpdateListener(this);
 	}
-	
-    public void aboutToRun(IJobChangeEvent event) {}
-    public void awake(IJobChangeEvent event) {}
-    public void running(IJobChangeEvent event) {}
-    public void scheduled(IJobChangeEvent event) {}
-    public void sleeping(IJobChangeEvent event) {}
-    public void done(IJobChangeEvent event) {
-        IStatus result = event.getJob().getResult(); 
+
+    @Override
+	public void aboutToRun(IJobChangeEvent event) {}
+
+	@Override
+	public void awake(IJobChangeEvent event) {
+	}
+
+	@Override
+	public void running(IJobChangeEvent event) {
+	}
+
+	@Override
+	public void scheduled(IJobChangeEvent event) {
+	}
+
+	@Override
+	public void sleeping(IJobChangeEvent event) {
+	}
+    @Override
+	public void done(IJobChangeEvent event) {
+        IStatus result = event.getJob().getResult();
         if (result != null && result.getSeverity() == IStatus.ERROR) {
-            fJobError = result;   
+            fJobError = result;
         }
     }
-    
+
     public void setFailOnRedundantUpdates(boolean failOnRedundantUpdates) {
         fFailOnRedundantUpdates = failOnRedundantUpdates;
     }
@@ -152,19 +166,19 @@ public class TestModelUpdatesListener
     public void setFailOnMultipleLabelUpdateSequences(boolean failOnMultipleLabelUpdateSequences) {
         fFailOnMultipleLabelUpdateSequences = failOnMultipleLabelUpdateSequences;
     }
-    
+
     public void expectRestoreAfterSaveComplete() {
     	fExpectRestoreAfterSaveComplete = true;
     }
 
     /**
-     * Sets the the maximum amount of time (in milliseconds) that the update listener 
-     * is going to wait. If set to -1, the listener will wait indefinitely. 
+     * Sets the the maximum amount of time (in milliseconds) that the update listener
+     * is going to wait. If set to -1, the listener will wait indefinitely.
      */
     public void setTimeoutInterval(int milis) {
         fTimeoutInterval = milis;
     }
-    
+
     public void reset(TreePath path, TestElement element, int levels, boolean failOnRedundantUpdates, boolean failOnMultipleUpdateSequences) {
         reset(path, element, EMPTY_FILTER_ARRAY, levels, failOnRedundantUpdates, failOnMultipleUpdateSequences);
     }
@@ -220,11 +234,11 @@ public class TestModelUpdatesListener
         fTimeoutTime = System.currentTimeMillis() + fTimeoutInterval;
         resetModelChanged();
     }
-    
+
     public void resetModelChanged() {
         fModelChangedComplete = false;
     }
-    
+
     public void addHasChildrenUpdate(TreePath path) {
         fHasChildrenUpdatesScheduled.add(path);
     }
@@ -242,16 +256,16 @@ public class TestModelUpdatesListener
     }
 
     public void addChildreUpdate(TreePath path, int index) {
-        Set childrenIndexes = (Set)fChildrenUpdatesScheduled.get(path);
+		Set<Integer> childrenIndexes = fChildrenUpdatesScheduled.get(path);
         if (childrenIndexes == null) {
-            childrenIndexes = new TreeSet();
+			childrenIndexes = new TreeSet<Integer>();
             fChildrenUpdatesScheduled.put(path, childrenIndexes);
         }
         childrenIndexes.add(new Integer(index));
     }
 
     public void removeChildrenUpdate(TreePath path, int index) {
-        Set childrenIndexes = (Set)fChildrenUpdatesScheduled.get(path);
+		Set<?> childrenIndexes = fChildrenUpdatesScheduled.get(path);
         if (childrenIndexes != null) {
             childrenIndexes.remove(new Integer(index));
             if (childrenIndexes.isEmpty()) {
@@ -271,7 +285,7 @@ public class TestModelUpdatesListener
     public void addUpdates(TreePath path, TestElement element, int levels) {
         addUpdates(null, path, element, EMPTY_FILTER_ARRAY, levels, ALL_UPDATES_COMPLETE );
     }
-    
+
     public void addUpdates(TreePath path, TestElement element, ViewerFilter[] filters, int levels) {
         addUpdates(null, path, element, filters, levels, ALL_UPDATES_COMPLETE );
     }
@@ -279,7 +293,7 @@ public class TestModelUpdatesListener
     public void addStateUpdates(IInternalTreeModelViewer viewer, TreePath path, TestElement element) {
         addUpdates(viewer, path, element, -1, STATE_UPDATES);
     }
-    
+
     public void addStateUpdates(IInternalTreeModelViewer viewer, IModelDelta pendingDelta, int deltaFlags) {
     	TreePath treePath = getViewerTreePath(pendingDelta);
     	if ( !TreePath.EMPTY.equals(treePath) && (pendingDelta.getFlags() & deltaFlags) != 0 ) {
@@ -288,9 +302,9 @@ public class TestModelUpdatesListener
     	IModelDelta[] childDeltas = pendingDelta.getChildDeltas();
         for (int i = 0; i < childDeltas.length; i++) {
             addStateUpdates(viewer, childDeltas[i], deltaFlags);
-        }  
+        }
     }
-    
+
     public void addRedundantExceptionHasChildren(TreePath path) {
         fRedundantHasChildrenUpdateExceptions.add(path);
     }
@@ -306,43 +320,43 @@ public class TestModelUpdatesListener
     public void addRedundantExceptionLabel(TreePath path) {
         fRedundantLabelUpdateExceptions.add(path);
     }
-    
+
     public boolean checkCoalesced(TreePath path, int offset, int length) {
-        for (Iterator itr = fChildrenUpdatesCompleted.iterator(); itr.hasNext();) {
+		for (Iterator<IViewerUpdate> itr = fChildrenUpdatesCompleted.iterator(); itr.hasNext();) {
             IChildrenUpdate update = (IChildrenUpdate)itr.next();
             if (path.equals( update.getElementPath() ) &&
                 offset == update.getOffset() &&
-                length == update.getLength()) 
+                length == update.getLength())
             {
                 return true;
             }
         }
         return false;
     }
-    
 
-    
-    public Set getHasChildrenUpdatesCompleted() {
+
+
+	public Set<IViewerUpdate> getHasChildrenUpdatesCompleted() {
         return fHasChildrenUpdatesCompleted;
     }
-    
-    public Set getChildCountUpdatesCompleted() {
+
+	public Set<IViewerUpdate> getChildCountUpdatesCompleted() {
         return fChildCountUpdatesCompleted;
     }
-    
-    public Set getChildrenUpdatesCompleted() {
+
+	public Set<IViewerUpdate> getChildrenUpdatesCompleted() {
         return fChildrenUpdatesCompleted;
     }
-    
+
     /**
      * Returns a tree path for the node, *not* including the root element.
-     * 
+     *
      * @param node
      *            model delta
      * @return corresponding tree path
      */
     private TreePath getViewerTreePath(IModelDelta node) {
-        ArrayList list = new ArrayList();
+		ArrayList<Object> list = new ArrayList<Object>();
         IModelDelta parentDelta = node.getParentDelta();
         while (parentDelta != null) {
             list.add(0, node.getElement());
@@ -359,7 +373,7 @@ public class TestModelUpdatesListener
     public void addUpdates(IInternalTreeModelViewer viewer, TreePath path, TestElement element, int levels, int flags) {
     	addUpdates(viewer, path, element, EMPTY_FILTER_ARRAY,  levels, flags);
     }
-    
+
     public static boolean isFiltered(Object element, ViewerFilter[] filters) {
     	for (int i = 0; i < filters.length; i++) {
     		if (!filters[i].select(null, null, element)) {
@@ -368,12 +382,12 @@ public class TestModelUpdatesListener
     	}
     	return false;
     }
-    
+
     public void addUpdates(IInternalTreeModelViewer viewer, TreePath path, TestElement element, ViewerFilter[] filters, int levels, int flags) {
     	if (isFiltered(path.getLastSegment(), filters)) {
     		return;
     	}
-    	
+
         if (!path.equals(TreePath.EMPTY)) {
             if ((flags & LABEL_UPDATES) != 0) {
                 fLabelUpdates.add(path);
@@ -381,7 +395,7 @@ public class TestModelUpdatesListener
             if ((flags & HAS_CHILDREN_UPDATES) != 0) {
                 fHasChildrenUpdatesScheduled.add(path);
             }
-            
+
             if ((flags & STATE_UPDATES) != 0) {
                 fStateUpdates.add(path);
             }
@@ -394,7 +408,7 @@ public class TestModelUpdatesListener
                     fChildCountUpdatesScheduled.add(path);
                 }
                 if ((flags & CHILDREN_UPDATES) != 0) {
-                    Set childrenIndexes = new HashSet();
+					Set<Integer> childrenIndexes = new HashSet<Integer>();
                     for (int i = 0; i < children.length; i++) {
                     	if (!isFiltered(children[i], filters)) {
                     		childrenIndexes.add(new Integer(i));
@@ -407,7 +421,7 @@ public class TestModelUpdatesListener
                     addUpdates(viewer, path.createChildPath(children[i]), children[i], filters, levels, flags);
                 }
             }
-        
+
         }
     }
 
@@ -421,24 +435,24 @@ public class TestModelUpdatesListener
             addProxies(children[i]);
         }
     }
-    
+
     public boolean isFinished() {
         return isFinished(ALL_UPDATES_COMPLETE);
     }
-    
+
     public boolean isTimedOut() {
         return fTimeoutInterval > 0 && fTimeoutTime < System.currentTimeMillis();
     }
-    
+
     public boolean isFinished(int flags) {
         if (isTimedOut()) {
            throw new RuntimeException("Timed Out: " + toString(flags)); //$NON-NLS-1$
         }
-        
+
         if (fFailExpectation != null) {
         	throw fFailExpectation;
         }
-        
+
         if (fJobError != null) {
             throw new RuntimeException("Job Error: " + fJobError); //$NON-NLS-1$
         }
@@ -448,7 +462,7 @@ public class TestModelUpdatesListener
         }
         if (fFailOnRedundantLabelUpdates && !fRedundantLabelUpdates.isEmpty()) {
             Assert.fail("Redundant Label Updates: " + fRedundantLabelUpdates.toString()); //$NON-NLS-1$
-        }        
+        }
         if (fFailOnMultipleLabelUpdateSequences && fLabelUpdatesComplete > (fLabelUpdatesCompleteAtReset + 1)) {
             Assert.fail("Multiple label update sequences detected"); //$NON-NLS-1$
         }
@@ -458,57 +472,91 @@ public class TestModelUpdatesListener
 
         if ( (flags & LABEL_SEQUENCE_COMPLETE) != 0) {
             if (fLabelUpdatesComplete == fLabelUpdatesCompleteAtReset ||
-            	fLabelUpdatesComplete != fLabelUpdatesStarted) return false;
+            	fLabelUpdatesComplete != fLabelUpdatesStarted) {
+				return false;
+			}
         }
         if ( (flags & LABEL_SEQUENCE_STARTED) != 0) {
-            if (fLabelUpdatesStarted == fLabelUpdatesStartedAtReset) return false;
+            if (fLabelUpdatesStarted == fLabelUpdatesStartedAtReset) {
+				return false;
+			}
         }
         if ( (flags & LABEL_UPDATES) != 0) {
-            if (!fLabelUpdates.isEmpty()) return false;
+            if (!fLabelUpdates.isEmpty()) {
+				return false;
+			}
         }
         if ( (flags & CONTENT_SEQUENCE_STARTED) != 0) {
-            if (fViewerUpdatesStarted == fViewerUpdatesStartedAtReset) return false;
+            if (fViewerUpdatesStarted == fViewerUpdatesStartedAtReset) {
+				return false;
+			}
         }
         if ( (flags & CONTENT_SEQUENCE_COMPLETE) != 0) {
-            if (fViewerUpdatesComplete == fViewerUpdatesCompleteAtReset || 
-            	fViewerUpdatesStarted != fViewerUpdatesComplete) return false;
+            if (fViewerUpdatesComplete == fViewerUpdatesCompleteAtReset ||
+            	fViewerUpdatesStarted != fViewerUpdatesComplete) {
+				return false;
+			}
         }
         if ( (flags & HAS_CHILDREN_UPDATES_STARTED) != 0) {
-            if (fHasChildrenUpdatesRunning.isEmpty() && fHasChildrenUpdatesCompleted.isEmpty()) return false;
+            if (fHasChildrenUpdatesRunning.isEmpty() && fHasChildrenUpdatesCompleted.isEmpty()) {
+				return false;
+			}
         }
         if ( (flags & HAS_CHILDREN_UPDATES) != 0) {
-            if (!fHasChildrenUpdatesScheduled.isEmpty()) return false;
+            if (!fHasChildrenUpdatesScheduled.isEmpty()) {
+				return false;
+			}
         }
         if ( (flags & CHILD_COUNT_UPDATES_STARTED) != 0) {
-            if (fChildCountUpdatesRunning.isEmpty() && fChildCountUpdatesCompleted.isEmpty()) return false;
+            if (fChildCountUpdatesRunning.isEmpty() && fChildCountUpdatesCompleted.isEmpty()) {
+				return false;
+			}
         }
         if ( (flags & CHILD_COUNT_UPDATES) != 0) {
-            if (!fChildCountUpdatesScheduled.isEmpty()) return false;
+            if (!fChildCountUpdatesScheduled.isEmpty()) {
+				return false;
+			}
         }
         if ( (flags & CHILDREN_UPDATES_STARTED) != 0) {
         	// Some children updates have already been started or completed.
-            if (fChildrenUpdatesRunning.isEmpty() && fChildrenUpdatesCompleted.isEmpty()) return false;
+            if (fChildrenUpdatesRunning.isEmpty() && fChildrenUpdatesCompleted.isEmpty()) {
+				return false;
+			}
         }
         if ( (flags & CHILDREN_UPDATES_RUNNING) != 0) {
-        	if (!isFinishedChildrenRunning()) return false;
+        	if (!isFinishedChildrenRunning()) {
+				return false;
+			}
         }
         if ( (flags & CHILDREN_UPDATES) != 0) {
-            if (!fChildrenUpdatesScheduled.isEmpty()) return false;
+            if (!fChildrenUpdatesScheduled.isEmpty()) {
+				return false;
+			}
         }
         if ( (flags & MODEL_CHANGED_COMPLETE) != 0) {
-            if (!fModelChangedComplete) return false;
+            if (!fModelChangedComplete) {
+				return false;
+			}
         }
         if ( (flags & STATE_SAVE_COMPLETE) != 0) {
-            if (!fStateSaveComplete) return false;
+            if (!fStateSaveComplete) {
+				return false;
+			}
         }
         if ( (flags & STATE_SAVE_STARTED) != 0) {
-            if (!fStateSaveStarted) return false;
+            if (!fStateSaveStarted) {
+				return false;
+			}
         }
         if ( (flags & STATE_RESTORE_COMPLETE) != 0) {
-            if (!fStateRestoreComplete) return false;
+            if (!fStateRestoreComplete) {
+				return false;
+			}
         }
         if ( (flags & STATE_RESTORE_STARTED) != 0) {
-            if (!fStateRestoreStarted) return false;
+            if (!fStateRestoreStarted) {
+				return false;
+			}
         }
         if ( (flags & STATE_UPDATES) != 0) {
             if (!fStateUpdates.isEmpty()) {
@@ -516,7 +564,9 @@ public class TestModelUpdatesListener
             }
         }
         if ( (flags & MODEL_PROXIES_INSTALLED) != 0) {
-            if (fProxyModels.size() != 0) return false;
+            if (fProxyModels.size() != 0) {
+				return false;
+			}
         }
         if ( (flags & VIEWER_UPDATES_RUNNING) != 0) {
             if (fViewerUpdatesCounter != 0) {
@@ -528,43 +578,48 @@ public class TestModelUpdatesListener
             	return false;
             }
         }
-        
+
         return true;
     }
 
     /**
-     * Returns true if all children updates that were scheduled are either currently 
+     * Returns true if all children updates that were scheduled are either currently
      * running or have already completed.
-     * 
+     *
      * @see CHILDREN_UPDATES_RUNNING
      * @return
      */
     private boolean isFinishedChildrenRunning() {
     	// All children updates that have been scheduled are either running or completed.
     	int scheduledCount = 0;
-    	for (Iterator itr = fChildrenUpdatesScheduled.values().iterator(); itr.hasNext();) {
-    		scheduledCount += ((Set)itr.next()).size();
+		for (Iterator<Set<Integer>> itr = fChildrenUpdatesScheduled.values().iterator(); itr.hasNext();) {
+			scheduledCount += ((Set<?>) itr.next()).size();
     	}
-    	
+
     	int runningCount = 0;
-    	for (Iterator itr = fChildrenUpdatesRunning.iterator(); itr.hasNext();) {
+		for (Iterator<IViewerUpdate> itr = fChildrenUpdatesRunning.iterator(); itr.hasNext();) {
     		IChildrenUpdate update = ((IChildrenUpdate)itr.next());
-    		Set set = (Set)fChildrenUpdatesScheduled.get( update.getElementPath() );
+			Set<?> set = fChildrenUpdatesScheduled.get(update.getElementPath());
     		for (int i = update.getOffset(); set != null && i < update.getOffset() + update.getLength(); i++) {
-        		if (set.contains(new Integer(i))) runningCount++; 
+        		if (set.contains(new Integer(i))) {
+					runningCount++;
+				}
     		}
     	}
-    	for (Iterator itr = fChildrenUpdatesCompleted.iterator(); itr.hasNext();) {
+		for (Iterator<IViewerUpdate> itr = fChildrenUpdatesCompleted.iterator(); itr.hasNext();) {
     		IChildrenUpdate update = ((IChildrenUpdate)itr.next());
-    		Set set = (Set)fChildrenUpdatesScheduled.get( update.getElementPath() );
+			Set<?> set = fChildrenUpdatesScheduled.get(update.getElementPath());
     		for (int i = update.getOffset(); set != null && i < update.getOffset() + update.getLength(); i++) {
-        		if (set.contains(new Integer(i))) runningCount++; 
+        		if (set.contains(new Integer(i))) {
+					runningCount++;
+				}
     		}
     	}
     	return scheduledCount == runningCount;
     }
-    
-    public void updateStarted(IViewerUpdate update) {
+
+    @Override
+	public void updateStarted(IViewerUpdate update) {
         synchronized (this) {
         	fViewerUpdatesCounter++;
             if (update instanceof IHasChildrenUpdate) {
@@ -573,11 +628,12 @@ public class TestModelUpdatesListener
                 fChildCountUpdatesRunning.add(update);
             } else if (update instanceof IChildrenUpdate) {
                 fChildrenUpdatesRunning.add(update);
-            } 
+            }
         }
     }
-    
-    public void updateComplete(IViewerUpdate update) {
+
+    @Override
+	public void updateComplete(IViewerUpdate update) {
         synchronized (this) {
         	fViewerUpdatesCounter--;
         }
@@ -586,30 +642,30 @@ public class TestModelUpdatesListener
             TreePath updatePath = update.getElementPath();
             if (update instanceof IHasChildrenUpdate) {
                 fHasChildrenUpdatesRunning.remove(update);
-                fHasChildrenUpdatesCompleted.add(update);                
+                fHasChildrenUpdatesCompleted.add(update);
                 if (!fHasChildrenUpdatesScheduled.remove(updatePath) &&
-                    fFailOnRedundantUpdates && 
-                    fRedundantHasChildrenUpdateExceptions.contains(updatePath)) 
+                    fFailOnRedundantUpdates &&
+                    fRedundantHasChildrenUpdateExceptions.contains(updatePath))
                 {
                     fRedundantUpdates.add(update);
                 }
             } if (update instanceof IChildrenCountUpdate) {
                 fChildCountUpdatesRunning.remove(update);
-                fChildCountUpdatesCompleted.add(update);                
+                fChildCountUpdatesCompleted.add(update);
                 if (!fChildCountUpdatesScheduled.remove(updatePath) &&
                     fFailOnRedundantUpdates &&
-                    !fRedundantChildCountUpdateExceptions.contains(updatePath)) 
+                    !fRedundantChildCountUpdateExceptions.contains(updatePath))
                 {
                     fRedundantUpdates.add(update);
                 }
             } else if (update instanceof IChildrenUpdate) {
                 fChildrenUpdatesRunning.remove(update);
-                fChildrenUpdatesCompleted.add(update);                
-                
+                fChildrenUpdatesCompleted.add(update);
+
                 int start = ((IChildrenUpdate)update).getOffset();
                 int end = start + ((IChildrenUpdate)update).getLength();
-                
-                Set childrenIndexes = (Set)fChildrenUpdatesScheduled.get(updatePath);
+
+				Set<?> childrenIndexes = fChildrenUpdatesScheduled.get(updatePath);
                 if (childrenIndexes != null) {
                     for (int i = start; i < end; i++) {
                         childrenIndexes.remove(new Integer(i));
@@ -620,97 +676,110 @@ public class TestModelUpdatesListener
                 } else if (fFailOnRedundantUpdates && fRedundantChildrenUpdateExceptions.contains(updatePath)) {
                     fRedundantUpdates.add(update);
                 }
-            } 
+            }
         }
     }
-    
-    public void viewerUpdatesBegin() {
+
+    @Override
+	public void viewerUpdatesBegin() {
         if (fViewerUpdatesStarted > fViewerUpdatesComplete) {
             fFailExpectation = new RuntimeException("Unmatched updatesStarted/updateCompleted notifications observed."); //$NON-NLS-1$
         }
         fViewerUpdatesStarted++;
     }
-    
-    public void viewerUpdatesComplete() {
+
+    @Override
+	public void viewerUpdatesComplete() {
         if (fViewerUpdatesStarted <= fViewerUpdatesComplete) {
             fFailExpectation = new RuntimeException("Unmatched updatesStarted/updateCompleted notifications observed."); //$NON-NLS-1$
         }
         fViewerUpdatesComplete++;
     }
 
-    public void labelUpdateComplete(ILabelUpdate update) {
+    @Override
+	public void labelUpdateComplete(ILabelUpdate update) {
         fLabelUpdatesRunning.remove(update);
         fLabelUpdatesCompleted.add(update);
     	fLabelUpdatesCounter--;
-        if (!fLabelUpdates.remove(update.getElementPath()) && 
-            fFailOnRedundantLabelUpdates && 
-            !fRedundantLabelUpdateExceptions.contains(update.getElementPath())) 
+        if (!fLabelUpdates.remove(update.getElementPath()) &&
+            fFailOnRedundantLabelUpdates &&
+            !fRedundantLabelUpdateExceptions.contains(update.getElementPath()))
         {
         	fRedundantLabelUpdates.add(update);
             Assert.fail("Redundant update: " + update); //$NON-NLS-1$
         }
     }
 
-    public void labelUpdateStarted(ILabelUpdate update) {
+    @Override
+	public void labelUpdateStarted(ILabelUpdate update) {
         fLabelUpdatesRunning.add(update);
     	fLabelUpdatesCounter++;
     }
 
-    public void labelUpdatesBegin() {
+    @Override
+	public void labelUpdatesBegin() {
         if (fLabelUpdatesStarted > fLabelUpdatesComplete) {
             fFailExpectation = new RuntimeException("Unmatched labelUpdatesStarted/labelUpdateCompleted notifications observed."); //$NON-NLS-1$
         }
         fLabelUpdatesStarted++;
     }
 
-    public void labelUpdatesComplete() {
+    @Override
+	public void labelUpdatesComplete() {
         if (fLabelUpdatesStarted <= fLabelUpdatesComplete) {
             fFailExpectation = new RuntimeException("Unmatched labelUpdatesStarted/labelUpdateCompleted notifications observed."); //$NON-NLS-1$
         }
         fLabelUpdatesComplete++;
     }
-    
-    public void modelChanged(IModelDelta delta, IModelProxy proxy) {
+
+    @Override
+	public void modelChanged(IModelDelta delta, IModelProxy proxy) {
         fModelChangedComplete = true;
 
-        for (Iterator itr = fProxyModels.iterator(); itr.hasNext();) {
-            TestModel model = (TestModel)itr.next();
+		for (Iterator<TestModel> itr = fProxyModels.iterator(); itr.hasNext();) {
+            TestModel model = itr.next();
             if (model.getModelProxy() == proxy) {
                 itr.remove();
                 break;
             }
         }
     }
-    
-    public void stateRestoreUpdatesBegin(Object input) {
+
+    @Override
+	public void stateRestoreUpdatesBegin(Object input) {
     	if (fExpectRestoreAfterSaveComplete && !fStateSaveComplete) {
     		fFailExpectation = new RuntimeException("RESTORE should begin after SAVE completed!"); //$NON-NLS-1$
     	}
         fStateRestoreStarted = true;
     }
-    
-    public void stateRestoreUpdatesComplete(Object input) {
+
+    @Override
+	public void stateRestoreUpdatesComplete(Object input) {
     	Assert.assertFalse("RESTORE STATE already complete!", fStateRestoreComplete); //$NON-NLS-1$
         fStateRestoreComplete = true;
     }
-    
-    public void stateSaveUpdatesBegin(Object input) {
+
+    @Override
+	public void stateSaveUpdatesBegin(Object input) {
         fStateSaveStarted = true;
     }
 
-    public void stateSaveUpdatesComplete(Object input) {
+    @Override
+	public void stateSaveUpdatesComplete(Object input) {
         fStateSaveComplete = true;
     }
-    
-    public void stateUpdateComplete(Object input, IViewerUpdate update) {
+
+    @Override
+	public void stateUpdateComplete(Object input, IViewerUpdate update) {
         if ( !(update instanceof ElementCompareRequest) || ((ElementCompareRequest)update).isEqual()) {
             fStateUpdates.remove(update.getElementPath());
-        } 
+        }
     }
-    
-    public void stateUpdateStarted(Object input, IViewerUpdate update) {
+
+    @Override
+	public void stateUpdateStarted(Object input, IViewerUpdate update) {
     }
-    
+
     private String toString(int flags) {
         StringBuffer buf = new StringBuffer("Viewer Update Listener"); //$NON-NLS-1$
 
@@ -725,7 +794,7 @@ public class TestModelUpdatesListener
                 }
             }
         }
-       
+
         if (fFailOnRedundantUpdates) {
             buf.append("\n\t"); //$NON-NLS-1$
             buf.append("fRedundantUpdates = " + fRedundantUpdates); //$NON-NLS-1$
@@ -832,34 +901,34 @@ public class TestModelUpdatesListener
         return buf.toString();
     }
 
-    private String toString(Set set) {
+	private String toString(Set<TreePath> set) {
         if (set.isEmpty()) {
             return "(EMPTY)"; //$NON-NLS-1$
         }
         StringBuffer buf = new StringBuffer();
-        for (Iterator itr = set.iterator(); itr.hasNext(); ) {
+		for (Iterator<TreePath> itr = set.iterator(); itr.hasNext();) {
             buf.append("\n\t\t"); //$NON-NLS-1$
-            buf.append(toString((TreePath)itr.next()));
+            buf.append(toString(itr.next()));
         }
         return buf.toString();
     }
-    
-    private String toString(Map map) {
+
+	private String toString(Map<TreePath, Set<Integer>> map) {
         if (map.isEmpty()) {
             return "(EMPTY)"; //$NON-NLS-1$
         }
         StringBuffer buf = new StringBuffer();
-        for (Iterator itr = map.keySet().iterator(); itr.hasNext(); ) {
+		for (Iterator<TreePath> itr = map.keySet().iterator(); itr.hasNext();) {
             buf.append("\n\t\t"); //$NON-NLS-1$
-            TreePath path = (TreePath)itr.next();
+            TreePath path = itr.next();
             buf.append(toString(path));
-            Set updates = (Set)map.get(path);
+			Set<?> updates = map.get(path);
             buf.append(" = "); //$NON-NLS-1$
             buf.append(updates.toString());
         }
         return buf.toString();
     }
-    
+
     private String toString(TreePath path) {
         if (path.getSegmentCount() == 0) {
             return "/"; //$NON-NLS-1$
@@ -871,12 +940,13 @@ public class TestModelUpdatesListener
         }
         return buf.toString();
     }
-    
-    public String toString() {
+
+    @Override
+	public String toString() {
         return toString(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE | STATE_SAVE_COMPLETE | STATE_RESTORE_COMPLETE | ALL_VIEWER_UPDATES_STARTED | LABEL_SEQUENCE_STARTED | STATE_UPDATES);
     }
-    
-    
+
+
 }
 
 

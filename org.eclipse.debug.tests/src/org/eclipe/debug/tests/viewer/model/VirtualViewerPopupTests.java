@@ -26,7 +26,8 @@ public class VirtualViewerPopupTests extends PopupTests {
         super(name);
     }
 
-    protected ITreeModelViewer createViewer(Display display, Shell shell, int style) {
+    @Override
+	protected ITreeModelViewer createViewer(Display display, Shell shell, int style) {
 		return new VirtualTreeModelViewer(fDisplay, style, new PresentationContext("TestViewer")); //$NON-NLS-1$
     }
     

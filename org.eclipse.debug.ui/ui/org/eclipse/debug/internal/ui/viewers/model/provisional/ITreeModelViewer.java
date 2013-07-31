@@ -76,7 +76,8 @@ public interface ITreeModelViewer extends ISelectionProvider {
      * 
      * @return selection object
      */
-    public ISelection getSelection();
+    @Override
+	public ISelection getSelection();
 
     /**
      * Sets a new selection for this viewer and optionally makes it visible.

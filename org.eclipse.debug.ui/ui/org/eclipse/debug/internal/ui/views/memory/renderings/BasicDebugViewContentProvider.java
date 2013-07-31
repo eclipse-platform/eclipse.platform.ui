@@ -30,6 +30,7 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fDisposed= true;
 	}
@@ -46,6 +47,7 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		fViewer= (StructuredViewer) viewer;
 	}
@@ -100,6 +102,7 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 			return;
 		}
 		Runnable r= new Runnable() {
+			@Override
 			public void run() {
 				if (!isDisposed()) {
 					doHandleDebugEvent(event);
@@ -113,6 +116,7 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 	/* (non-Javadoc)
 	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i=0; i < events.length; i++)
 			handleDebugEvent(events[i]);

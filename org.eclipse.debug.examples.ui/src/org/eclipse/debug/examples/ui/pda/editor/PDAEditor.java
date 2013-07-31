@@ -36,7 +36,8 @@ public class PDAEditor extends AbstractDecoratedTextEditor {
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
      */
-    protected void createActions() {
+    @Override
+	protected void createActions() {
         super.createActions();
         ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.debug.examples.ui.pda.editor.PDAEditorMessages"); //$NON-NLS-1$
         IAction action = new ContentAssistAction(bundle, "ContentAssistProposal.", this); //$NON-NLS-1$

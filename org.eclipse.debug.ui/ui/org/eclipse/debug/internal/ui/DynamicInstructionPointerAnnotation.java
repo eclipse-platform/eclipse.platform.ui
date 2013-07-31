@@ -39,6 +39,7 @@ public class DynamicInstructionPointerAnnotation extends Annotation {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object other) {
 		if (other instanceof DynamicInstructionPointerAnnotation) {
 			return getStackFrame().equals(((DynamicInstructionPointerAnnotation)other).getStackFrame());			
@@ -49,6 +50,7 @@ public class DynamicInstructionPointerAnnotation extends Annotation {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getStackFrame().hashCode();
 	}

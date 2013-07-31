@@ -60,6 +60,7 @@ public class ElementCompareRequest extends MementoUpdate implements IElementComp
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest#setEqual(boolean)
 	 */
+	@Override
 	public void setEqual(boolean equal) {
 		fEqual = equal;
 	}
@@ -67,6 +68,7 @@ public class ElementCompareRequest extends MementoUpdate implements IElementComp
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 	 */
+	@Override
 	public void done() {
         ITreeModelViewer viewer = getContentProvider().getViewer();
         if (viewer == null) return;  // disposed
@@ -74,7 +76,8 @@ public class ElementCompareRequest extends MementoUpdate implements IElementComp
             fProvider.getStateTracker().compareFinished(ElementCompareRequest.this, fDelta);
         } else {
             viewer.getDisplay().asyncExec(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     if (getContentProvider().isDisposed()) return;
                     fProvider.getStateTracker().compareFinished(ElementCompareRequest.this, fDelta);
                 }
@@ -119,7 +122,8 @@ public class ElementCompareRequest extends MementoUpdate implements IElementComp
         return fCheckChildrenRealized;
     }
     
-    public String toString() {
+    @Override
+	public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("IElementCompareRequest: "); //$NON-NLS-1$
         buf.append(getElement());

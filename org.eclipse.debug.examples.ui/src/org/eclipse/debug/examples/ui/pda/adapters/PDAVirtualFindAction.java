@@ -57,46 +57,54 @@ import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Action which prompts user with a filtered list selection dialog to find an element in tree.
- * 
+ *
  * @since 3.3
  */
 public class PDAVirtualFindAction extends Action implements IUpdate {
-	
+
     private final TreeModelViewer fClientViewer;
-	
+
 	protected class VirtualViewerListener implements IViewerUpdateListener, ILabelUpdateListener {
-	    
+
 	    private boolean fViewerUpdatesComplete = false;
 	    private boolean fLabelUpdatesComplete = false;
 	    private IProgressMonitor fProgressMonitor;
-	    private int fRemainingUpdatesCount = 0; 
-	    
-        public void labelUpdateStarted(ILabelUpdate update) {}
-        public void labelUpdateComplete(ILabelUpdate update) {
-            incrementProgress(1);            
+	    private int fRemainingUpdatesCount = 0;
+
+        @Override
+		public void labelUpdateStarted(ILabelUpdate update) {}
+        @Override
+		public void labelUpdateComplete(ILabelUpdate update) {
+            incrementProgress(1);
         }
-	    public void labelUpdatesBegin() {
-            fLabelUpdatesComplete = false;	        
+	    @Override
+		public void labelUpdatesBegin() {
+            fLabelUpdatesComplete = false;
 	    }
-	    public void labelUpdatesComplete() {
+	    @Override
+		public void labelUpdatesComplete() {
             fLabelUpdatesComplete = true;
             completeProgress();
 	    }
-	    
-        public void updateStarted(IViewerUpdate update) {}
-	    public void updateComplete(IViewerUpdate update) {
+
+        @Override
+		public void updateStarted(IViewerUpdate update) {}
+	    @Override
+		public void updateComplete(IViewerUpdate update) {
 	        if (update instanceof IChildrenUpdate) {
 	            incrementProgress(((IChildrenUpdate)update).getLength());
 	        }
 	    }
-        public void viewerUpdatesBegin() {
-            fViewerUpdatesComplete = false;            
+        @Override
+		public void viewerUpdatesBegin() {
+            fViewerUpdatesComplete = false;
         }
-        public void viewerUpdatesComplete() {
+        @Override
+		public void viewerUpdatesComplete() {
             fViewerUpdatesComplete = true;
             completeProgress();
         }
-        
+
         private void completeProgress() {
             IProgressMonitor pm;
             synchronized (this) {
@@ -104,9 +112,9 @@ public class PDAVirtualFindAction extends Action implements IUpdate {
             }
             if (pm != null && fLabelUpdatesComplete && fViewerUpdatesComplete) {
                 pm.done();
-            }            
+            }
         }
-        
+
         private void incrementProgress(int count) {
             IProgressMonitor pm;
             synchronized (this) {
@@ -115,28 +123,31 @@ public class PDAVirtualFindAction extends Action implements IUpdate {
             }
             if (pm != null && fLabelUpdatesComplete && fViewerUpdatesComplete) {
                 pm.worked(count);
-            }                        
+            }
         }
 
 	}
-	
+
 	private static class FindLabelProvider extends LabelProvider {
 		private final VirtualTreeModelViewer fVirtualViewer;
-		private final Map fTextCache = new HashMap();
-		public FindLabelProvider(VirtualTreeModelViewer viewer, List items) {
+		private final Map<VirtualItem, String> fTextCache = new HashMap<VirtualItem, String>();
+
+		public FindLabelProvider(VirtualTreeModelViewer viewer, List<VirtualItem> items) {
 		    fVirtualViewer = viewer;
 		    for (int i = 0; i < items.size(); i++) {
-        		VirtualItem item = (VirtualItem)items.get(i);
+        		VirtualItem item = items.get(i);
 		        fTextCache.put(item, fVirtualViewer.getText(item, 0));
 		    }
 		}
-		
+
+		@Override
 		public Image getImage(Object element) {
 		    return fVirtualViewer.getImage((VirtualItem) element, 0);
 		}
 
+		@Override
 		public String getText(Object element) {
-		    return (String)fTextCache.get(element);
+		    return fTextCache.get(element);
 		}
 	}
 
@@ -154,8 +165,8 @@ public class PDAVirtualFindAction extends Action implements IUpdate {
         clientViewer.saveElementState(TreePath.EMPTY, stateDelta, IModelDelta.EXPAND);
         listener.fRemainingUpdatesCount = calcUpdatesCount(stateDelta);
         VirtualTreeModelViewer fVirtualViewer = new VirtualTreeModelViewer(
-            clientViewer.getDisplay(), 
-            SWT.NONE, 
+            clientViewer.getDisplay(),
+            SWT.NONE,
             makeVirtualPresentationContext(clientViewer.getPresentationContext()));
         fVirtualViewer.addViewerUpdateListener(listener);
         fVirtualViewer.addLabelUpdateListener(listener);
@@ -166,59 +177,62 @@ public class PDAVirtualFindAction extends Action implements IUpdate {
         fVirtualViewer.updateViewer(stateDelta);
         return fVirtualViewer;
 	}
-	
+
 	protected IPresentationContext makeVirtualPresentationContext(final IPresentationContext clientViewerContext) {
 	    return new PresentationContext(clientViewerContext.getId()) {
-	        
+
 	        {
 	            String[] clientProperties = clientViewerContext.getProperties();
 	            for (int i = 0; i < clientProperties.length; i++) {
 	                setProperty(clientProperties[i], clientViewerContext.getProperty(clientProperties[i]));
 	            }
-	                
+
 	        }
-	        
-	        public String[] getColumns() {
+
+	        @Override
+			public String[] getColumns() {
 	            String[] clientColumns = super.getColumns();
-	            
+
 	            if (clientColumns == null || clientColumns.length == 0) {
 	                // No columns are used.
 	                return null;
 	            }
-	            
+
 	            // Try to find the name column.
 	            for (int i = 0; i < clientColumns.length; i++) {
 	                if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(clientColumns[i])) {
-	                    return new String[] { IDebugUIConstants.COLUMN_ID_VARIABLE_NAME }; 
+	                    return new String[] { IDebugUIConstants.COLUMN_ID_VARIABLE_NAME };
 	                }
 	            }
-	            
+
 	            return new String[] { clientColumns[0] };
 	        }
 	    };
 	}
-	
+
+	@Override
 	public void run() {
 	    final VirtualViewerListener listener = new VirtualViewerListener();
 	    VirtualTreeModelViewer virtualViewer = initVirtualViewer(fClientViewer, listener);
-	    
+
 		ProgressMonitorDialog dialog = new TimeTriggeredProgressMonitorDialog(fClientViewer.getControl().getShell(), 500);
 		final IProgressMonitor monitor = dialog.getProgressMonitor();
 		dialog.setCancelable(true);
-				 
+
 		try {
 			dialog.run(
-			    true, true, 
+			    true, true,
 			    new IRunnableWithProgress() {
-    		        public void run(final IProgressMonitor m) throws InvocationTargetException, InterruptedException {
+    		        @Override
+					public void run(final IProgressMonitor m) throws InvocationTargetException, InterruptedException {
     		            synchronized(listener) {
     		                listener.fProgressMonitor = m;
     		                listener.fProgressMonitor.beginTask(DebugUIPlugin.removeAccelerators(getText()), listener.fRemainingUpdatesCount);
     		            }
-    		            
+
     		            while ((!listener.fLabelUpdatesComplete || !listener.fViewerUpdatesComplete) && !listener.fProgressMonitor.isCanceled()) {
     		                Thread.sleep(1);
-    		            } 
+    		            }
     		            synchronized(listener) {
     		                listener.fProgressMonitor = null;
     		            }
@@ -230,10 +244,10 @@ public class PDAVirtualFindAction extends Action implements IUpdate {
 		} catch (InterruptedException e) {
 			return;
 		}
-		
+
 		VirtualItem root = virtualViewer.getTree();
 		if (!monitor.isCanceled()) {
-			List list = new ArrayList();
+			List<VirtualItem> list = new ArrayList<VirtualItem>();
 			collectAllChildren(root, list);
 			FindLabelProvider labelProvider = new FindLabelProvider(virtualViewer, list);
 			VirtualItem result = performFind(list, labelProvider);
@@ -246,11 +260,12 @@ public class PDAVirtualFindAction extends Action implements IUpdate {
         virtualViewer.removeViewerUpdateListener(listener);
         virtualViewer.dispose();
 	}
-	
+
 	private int calcUpdatesCount(IModelDelta stateDelta) {
 	    final int[] count = new int[] {0};
 	    stateDelta.accept( new IModelDeltaVisitor() {
-            public boolean visit(IModelDelta delta, int depth) {
+            @Override
+			public boolean visit(IModelDelta delta, int depth) {
                 if ((delta.getFlags() & IModelDelta.EXPAND) != 0) {
                     count[0] += delta.getChildCount();
                     return true;
@@ -258,12 +273,12 @@ public class PDAVirtualFindAction extends Action implements IUpdate {
                 return false;
             }
         });
-	    
+
 	    // Double it to account for separate element and label update ticks.
 	    return count[0] * 2;
 	}
-	
-	private void collectAllChildren(VirtualItem element, List collect) {
+
+	private void collectAllChildren(VirtualItem element, List<VirtualItem> collect) {
 		VirtualItem[] children = element.getItems();
 		if (children != null) {
 			for (int i = 0; i < children.length; i++) {
@@ -274,11 +289,11 @@ public class PDAVirtualFindAction extends Action implements IUpdate {
 			}
 		}
 	}
-	
-	protected VirtualItem performFind(List items, FindLabelProvider labelProvider) {
+
+	protected VirtualItem performFind(List<VirtualItem> items, FindLabelProvider labelProvider) {
 		FindElementDialog dialog = new FindElementDialog(
-		    fClientViewer.getControl().getShell(), 
-		    labelProvider, 
+		    fClientViewer.getControl().getShell(),
+		    labelProvider,
 		    items.toArray());
 		dialog.setTitle("PDA Variables View Find"); //$NON-NLS-1$
 		dialog.setMessage("&Specify an element to select (? = any character, * = any String):"); //$NON-NLS-1$
@@ -290,28 +305,29 @@ public class PDAVirtualFindAction extends Action implements IUpdate {
 		}
 		return null;
 	}
-	
+
 	protected void setSelectionToClient(VirtualTreeModelViewer virtualViewer, ILabelProvider labelProvider, VirtualItem findItem) {
         virtualViewer.getTree().setSelection(new VirtualItem[] { findItem } );
         ModelDelta stateDelta = new ModelDelta(virtualViewer.getInput(), IModelDelta.NO_CHANGE);
         virtualViewer.saveElementState(TreePath.EMPTY, stateDelta, IModelDelta.SELECT);
         fClientViewer.updateViewer(stateDelta);
-        
+
         ISelection selection = fClientViewer.getSelection();
         if (!selection.isEmpty() &&
-            selection instanceof IStructuredSelection && 
+            selection instanceof IStructuredSelection &&
             ((IStructuredSelection)selection).getFirstElement().equals(findItem.getData()) ) {
         } else {
             DebugUIPlugin.errorDialog(
-                fClientViewer.getControl().getShell(), 
+                fClientViewer.getControl().getShell(),
  "Error", //$NON-NLS-1$
 					"Could not select item:" + labelProvider.getText(findItem), //$NON-NLS-1$
 					new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Element no longer in viewer.")); //$NON-NLS-1$
-        }	    
+        }
 	}
-	
+
+	@Override
 	public void update() {
 	    setEnabled( fClientViewer.getInput() != null && fClientViewer.getChildCount(TreePath.EMPTY) > 0 );
 	}
-	
+
 }

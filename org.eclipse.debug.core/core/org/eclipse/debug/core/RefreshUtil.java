@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,12 +19,13 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
@@ -37,7 +38,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Utilities for launch configurations that persist, restore, and refresh
  * collections of resources.
- * 
+ *
  * @since 3.6
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -60,82 +61,84 @@ public class RefreshUtil {
 	 * of one.
 	 */
 	public static final String ATTR_REFRESH_RECURSIVE = DebugPlugin.getUniqueIdentifier() + ".ATTR_REFRESH_RECURSIVE"; //$NON-NLS-1$
-	
+
 	/**
 	 * Resource memento referring to the selected resource's project.
 	 * Only works when the debug user interface is running.
-	 * 
+	 *
 	 * @see #toResources(String)
 	 */
 	public static final String MEMENTO_SELECTED_PROJECT = "${project}"; //$NON-NLS-1$
-	
+
 	/**
 	 * Resource memento referring to the selected resource's container.
 	 * Only works when the debug user interface is running.
-	 * 
+	 *
 	 * @see #toResources(String)
-	 */	
+	 */
 	public static final String MEMENTO_SELECTED_CONTAINER = "${container}"; //$NON-NLS-1$
-	
+
 	/**
 	 * Resource memento referring to the selected resource.
 	 * Only works when the debug user interface is running.
-	 * 
+	 *
 	 * @see #toResources(String)
-	 */	
+	 */
 	public static final String MEMENTO_SELECTED_RESOURCE = "${resource}"; //$NON-NLS-1$
-	
+
 	/**
 	 * Resource memento referring to the workspace root.
-	 * 
+	 *
 	 * @see #toResources(String)
-	 */	
+	 */
 	public static final String MEMENTO_WORKSPACE = "${workspace}"; //$NON-NLS-1$
-	
+
 	/**
 	 *  Indicates no working set has been selected (for backwards compatibility).
 	 *  The new format uses an empty working set
 	 */
-	
+
 	private static final String NO_WORKING_SET = "NONE"; //$NON-NLS-1$
 
 	/**
 	 * Refreshes the resources as specified by the given launch configuration.
-	 * 
+	 *
 	 * @param resources
 	 *            resources to refresh
 	 * @param depth one of {@link IResource#DEPTH_INFINITE}, {@link IResource#DEPTH_ONE},
-	 *  or {@link IResource#DEPTH_ZERO} 
+	 *  or {@link IResource#DEPTH_ZERO}
 	 * @param monitor
 	 *            progress monitor which may be <code>null</code>
 	 * @throws CoreException
 	 *             if an exception occurs while refreshing resources
 	 */
 	public static void refreshResources(IResource[] resources, int depth, IProgressMonitor monitor) throws CoreException {
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
 		if (resources == null || resources.length == 0) {
 			return;
 		}
-		if (monitor.isCanceled()) {
+		SubMonitor lmonitor = SubMonitor.convert(monitor, DebugCoreMessages.RefreshingResources, resources.length);
+		if (lmonitor.isCanceled()) {
 			return;
 		}
-		monitor.beginTask(DebugCoreMessages.RefreshingResources, resources.length);
 		MultiStatus status = new MultiStatus(DebugPlugin.getUniqueIdentifier(), 0, DebugCoreMessages.RefreshingResourcesError, null);
-		for (int i = 0; i < resources.length; i++) {
-			if (monitor.isCanceled())
-				break;
-			if (resources[i] != null && resources[i].isAccessible()) {
-				try {
-					resources[i].refreshLocal(depth, null);
-				} catch (CoreException e) {
-					status.merge(e.getStatus());
+		try {
+			for (int i = 0; i < resources.length; i++) {
+				if (lmonitor.isCanceled()) {
+					break;
 				}
+				if (resources[i] != null && resources[i].isAccessible()) {
+					try {
+						resources[i].refreshLocal(depth, null);
+					} catch (CoreException e) {
+						status.merge(e.getStatus());
+					}
+				}
+				lmonitor.worked(1);
 			}
-			monitor.worked(1);
 		}
-		monitor.done();
+ finally {
+			lmonitor.done();
+		}
 		if (!status.isOK()) {
 			throw new CoreException(status);
 		}
@@ -144,7 +147,7 @@ public class RefreshUtil {
 	/**
 	 * Returns a collection of resources referred to by the specified
 	 * memento generated via {@link #toMemento(IResource[])}.
-	 * 
+	 *
 	 * @param memento
 	 *            resource memento generated by this manager
 	 * @return collection of resources referred to by the memento
@@ -160,7 +163,7 @@ public class RefreshUtil {
 			if (resource == null) {
 				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
 						IStatus.ERROR, MessageFormat.format(DebugCoreMessages.RefreshUtil_1,
-								new String[] { pathString }), null));
+ new Object[] { pathString }), null));
 			}
 			return new IResource[] { resource };
 		} else if (memento.startsWith("${working_set:")) { //$NON-NLS-1$
@@ -191,13 +194,13 @@ public class RefreshUtil {
 				}
 			}
 		}
-		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), MessageFormat.format(DebugCoreMessages.RefreshUtil_0, new String[]{memento})));
+		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), MessageFormat.format(DebugCoreMessages.RefreshUtil_0, new Object[] { memento })));
 	}
-	
+
 	/**
 	 * Returns a memento for a collection of resources that can be restored
 	 * via {@link #toResources(String)}.
-	 * 
+	 *
 	 * @param resources resources to create a memento for
 	 * @return memento for the given resources
 	 */
@@ -219,11 +222,11 @@ public class RefreshUtil {
 		buf.append("}"); //$NON-NLS-1$
 		return buf.toString();
 	}
-	
+
 	/**
 	 * Restores a collection of resources from a working set memento, for backwards
 	 * compatibility.
-	 * 
+	 *
 	 * @param wsMemento working set memento
 	 * @return resource collection, possibly empty
 	 */
@@ -233,7 +236,7 @@ public class RefreshUtil {
 			return null;
 		}
 
-		List resourcesList = new ArrayList();
+		List<IAdaptable> resourcesList = new ArrayList<IAdaptable>();
 		StringReader reader = new StringReader(wsMemento);
 
 		XMLMemento memento = null;
@@ -244,20 +247,19 @@ public class RefreshUtil {
 			return null;
 		}
 
-		XMLMemento[] mementos = memento
-				.getChildren(IMementoConstants.MEMENTO_ITEM);
+		XMLMemento[] mementos = memento.getChildren(IMementoConstants.MEMENTO_ITEM);
 		for (int i = 0; i < mementos.length; i++) {
 			resourcesList.add(ResourceFactory.createElement(mementos[i]));
 		}
 
-		return (IResource[]) resourcesList.toArray(new IResource[resourcesList.size()]);
+		return resourcesList.toArray(new IResource[resourcesList.size()]);
 
-	}	
-	
+	}
+
 	/**
 	 * Returns whether the refresh scope specified by the given launch
 	 * configuration is recursive.
-	 * 
+	 *
 	 * @param configuration the {@link ILaunchConfiguration}
 	 * @return whether the refresh scope is recursive
 	 * @throws CoreException
@@ -265,12 +267,12 @@ public class RefreshUtil {
 	 */
 	public static  boolean isRefreshRecursive(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(ATTR_REFRESH_RECURSIVE, true);
-	}	
-	
+	}
+
 	/**
 	 * Refreshes the resources as specified by the given launch configuration via its
 	 * {@link RefreshUtil#ATTR_REFRESH_SCOPE} and {@link #ATTR_REFRESH_RECURSIVE} attributes.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @param monitor progress monitor which may be <code>null</code>
 	 * @throws CoreException
@@ -289,5 +291,5 @@ public class RefreshUtil {
 				refreshResources(resources, depth, monitor);
 			}
 		}
-	}	
+	}
 }

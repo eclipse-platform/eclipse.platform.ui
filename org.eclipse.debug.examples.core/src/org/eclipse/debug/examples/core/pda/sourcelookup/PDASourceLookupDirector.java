@@ -22,6 +22,7 @@ public class PDASourceLookupDirector extends AbstractSourceLookupDirector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#initializeParticipants()
 	 */
+	@Override
 	public void initializeParticipants() {
 		//#ifdef ex4
 //#		// TODO: Exercise 4 - add our participant to this director		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,6 +80,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElement()
 		 */
+		@Override
 		public Object getElement() {
 			return fFrame;
 		}
@@ -87,6 +88,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElementPath()
 		 */
+		@Override
 		public TreePath getElementPath() {
 			return TreePath.EMPTY;
 		}
@@ -94,6 +96,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getPresentationContext()
 		 */
+		@Override
 		public IPresentationContext getPresentationContext() {
 			return fViewerUpdate.getPresentationContext();
 		}
@@ -101,6 +104,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.core.commands.Request#done()
 		 */
+		@Override
 		public void done() {
 			fViewerUpdate.setStatus(getStatus());
 			fViewerUpdate.done();
@@ -109,6 +113,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getViewerInput()
 		 */
+		@Override
 		public Object getViewerInput() {
 			return fFrame;
 		}
@@ -127,6 +132,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate#setChildCount(int)
 		 */
+		@Override
 		public void setChildCount(int numChildren) {
 			fUpdate.setChildCount(numChildren);
 		}
@@ -145,6 +151,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate#setHasChilren(boolean)
 		 */
+		@Override
 		public void setHasChilren(boolean hasChildren) {
 			fUpdate.setHasChilren(hasChildren);
 		}
@@ -162,6 +169,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#getLength()
 		 */
+		@Override
 		public int getLength() {
 			return fUpdate.getLength();
 		}
@@ -169,6 +177,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#getOffset()
 		 */
+		@Override
 		public int getOffset() {
 			return fUpdate.getOffset();
 		}
@@ -176,6 +185,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#setChild(java.lang.Object, int)
 		 */
+		@Override
 		public void setChild(Object child, int offset) {
 			fUpdate.setChild(child, offset);
 		}
@@ -197,12 +207,15 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest#getMemento()
 		 */
+		@Override
 		public IMemento getMemento() {
 			return fUpdate.getMemento();
 		}
+		@Override
 		public Object getElement() {
 			return fUpdate.getElement();
 		}
+		@Override
 		public TreePath getElementPath() {
 			return fUpdate.getElementPath();
 		}
@@ -219,6 +232,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest#setEqual(boolean)
 		 */
+		@Override
 		public void setEqual(boolean equal) {
 			fRequest.setEqual(equal);
 		}
@@ -243,6 +257,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof RegisterGroupProxy) {
 			return Arrays.equals(fGroups, ((RegisterGroupProxy)obj).fGroups);
@@ -253,6 +268,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		int code = getClass().hashCode();
 		for (int i = 0; i < fGroups.length; i++) {
@@ -282,6 +298,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory#createModelProxy(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */
+	@Override
 	public IModelProxy createModelProxy(Object element, IPresentationContext context) {
 		IModelProxyFactory factory = ViewerAdapterService.getModelProxyFactory(fFrame);
 		if (factory != null) {
@@ -293,6 +310,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory#createColumnPresentation(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
 	 */
+	@Override
 	public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
 		IColumnPresentationFactory factory = ViewerAdapterService.getColumnPresentationFactory(fFrame);
 		if (factory != null) {
@@ -304,6 +322,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory#getColumnPresentationId(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
 	 */
+	@Override
 	public String getColumnPresentationId(IPresentationContext context, Object element) {
 		IColumnPresentationFactory factory = ViewerAdapterService.getColumnPresentationFactory(fFrame);
 		if (factory != null) {
@@ -315,6 +334,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate[])
 	 */
+	@Override
 	public void update(IChildrenCountUpdate[] updates) {
 		IElementContentProvider provider = ViewerAdapterService.getContentProvider(fFrame);
 		if (provider != null) {
@@ -331,6 +351,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate[])
 	 */
+	@Override
 	public void update(IChildrenUpdate[] updates) {
 		IElementContentProvider provider = ViewerAdapterService.getContentProvider(fFrame);
 		if (provider != null) {
@@ -348,6 +369,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate[])
 	 */
+	@Override
 	public void update(IHasChildrenUpdate[] updates) {
 		IElementContentProvider provider = ViewerAdapterService.getContentProvider(fFrame);
 		if (provider != null) {
@@ -376,10 +398,11 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
 	 */
+	@Override
 	public void compareElements(IElementCompareRequest[] requests) {
 		IElementMementoProvider provider = ViewerAdapterService.getMementoProvider(fFrame);
 		if (provider != null) {
-			List others = new ArrayList(requests.length);
+			List<IElementCompareRequest> others = new ArrayList<IElementCompareRequest>(requests.length);
 			for (int i = 0; i < requests.length; i++) {
 				IElementCompareRequest request = requests[i];
 				if (request.getElement().equals(this)) {
@@ -395,7 +418,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 				}
 			}
 			if (!others.isEmpty()) {
-				provider.compareElements((IElementCompareRequest[]) others.toArray(new IElementCompareRequest[others.size()]));
+				provider.compareElements(others.toArray(new IElementCompareRequest[others.size()]));
 			}
 		} else {
 			cancelUpdates(requests);
@@ -405,10 +428,11 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
 	 */
+	@Override
 	public void encodeElements(IElementMementoRequest[] requests) {
 		IElementMementoProvider provider = ViewerAdapterService.getMementoProvider(fFrame);
 		if (provider != null) {
-			List others = new ArrayList(requests.length);
+			List<IElementMementoRequest> others = new ArrayList<IElementMementoRequest>(requests.length);
 			for (int i = 0; i < requests.length; i++) {
 				IElementMementoRequest request = requests[i];
 				if (request.getElement().equals(this)) {
@@ -419,7 +443,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 				}
 			}
 			if (!others.isEmpty()) {
-				provider.encodeElements((IElementMementoRequest[]) others.toArray(new IElementMementoRequest[others.size()]));
+				provider.encodeElements(others.toArray(new IElementMementoRequest[others.size()]));
 			}
 		} else {
 			cancelUpdates(requests);

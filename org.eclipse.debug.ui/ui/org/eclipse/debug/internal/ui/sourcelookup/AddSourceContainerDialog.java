@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,6 +71,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {			
 		
 		getShell().setText(SourceLookupUIMessages.addSourceLocation_title); 
@@ -93,6 +94,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		table.setLayoutData(gd);
 
 		fViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
@@ -102,6 +104,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		fViewer.setContentProvider(new ArrayContentProvider());			
 		fViewer.setComparator(new ViewerComparator());
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
 				if (!selection.isEmpty()) {
@@ -126,6 +129,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		Table table = fViewer.getTable(); 
@@ -137,6 +141,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		ISourceContainerType type = (ISourceContainerType) ((IStructuredSelection) fViewer.getSelection()).getFirstElement();
 		if (type != null) {
@@ -161,7 +166,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	 * @return the list of source container types that have browsers
 	 */
 	private ISourceContainerType[] filterTypes(ISourceContainerType[] types){
-		ArrayList validTypes = new ArrayList();
+		ArrayList<ISourceContainerType> validTypes = new ArrayList<ISourceContainerType>();
 		for (int i=0; i< types.length; i++) {
 			ISourceContainerType type = types[i];
 			if (fDirector.supportsSourceContainerType(type)) {
@@ -171,7 +176,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 				}
 			}
 		}	
-		return (ISourceContainerType[]) validTypes.toArray(new ISourceContainerType[validTypes.size()]);
+		return validTypes.toArray(new ISourceContainerType[validTypes.size()]);
 		
 	}
 }

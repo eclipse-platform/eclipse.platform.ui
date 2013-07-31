@@ -27,11 +27,13 @@ public class VirtualViewerPerformanceTests extends PerformanceTests {
         super(name);
     }
 
-    protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
+    @Override
+	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
 		return new VirtualTreeModelViewer(fDisplay, SWT.VIRTUAL, new PresentationContext("TestViewer"), fVirtualItemValidator); //$NON-NLS-1$
     }
     
-    protected int getTestModelDepth() {
+    @Override
+	protected int getTestModelDepth() {
         return 7;
     }
 }

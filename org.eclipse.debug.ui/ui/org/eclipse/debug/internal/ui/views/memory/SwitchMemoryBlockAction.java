@@ -50,12 +50,13 @@ import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
- * The switch memory block action, used 
+ * The switch memory block action, used
  */
 public class SwitchMemoryBlockAction extends Action implements IViewActionDelegate, IActionDelegate2 {
 
 	/**
-	 * A job that updates the enablement of the of the backing action delegate in the UI thread
+	 * A job that updates the enablement of the of the backing action delegate
+	 * in the UI thread
 	 * 
 	 * @since 3.3.0
 	 */
@@ -69,24 +70,27 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 			setSystem(true);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime
+		 * .IProgressMonitor)
 		 */
+		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (fAction != null) {
 				IAdaptable context = getDebugContext();
 				if (context != null) {
 					IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
-					
+
 					if (retrieval != null) {
 						IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(retrieval);
 						fAction.setEnabled(memoryBlocks.length > 0);
 						return Status.OK_STATUS;
-					}
-					else if (getViewer() != null) {
+					} else if (getViewer() != null) {
 						Object input = getViewer().getInput();
 						if (input instanceof IMemoryBlockRetrieval) {
-							retrieval = (IMemoryBlockRetrieval)input;
+							retrieval = (IMemoryBlockRetrieval) input;
 							IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(retrieval);
 							fAction.setEnabled(memoryBlocks.length > 0);
 							return Status.OK_STATUS;
@@ -98,49 +102,54 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 			return Status.CANCEL_STATUS;
 		}
 	}
-	
+
 	private IViewPart fView;
 	private MenuCreator fMenuCreator;
 	private IAction fAction;
 	private UpdateActionEnablementJob fUpdateJob = new UpdateActionEnablementJob();
-	
+
 	/**
 	 * Memoryblock listener to update action delegate enablement
 	 */
 	private IMemoryBlockListener fListener = new IMemoryBlockListener() {
+		@Override
 		public void memoryBlocksAdded(IMemoryBlock[] memory) {
 			if (fAction != null) {
 				fUpdateJob.schedule();
 			}
 		}
 
+		@Override
 		public void memoryBlocksRemoved(IMemoryBlock[] memory) {
 			if (fAction != null) {
 				fUpdateJob.schedule();
 			}
 		}
 	};
-	
+
 	/**
 	 * Listens for debug context changes and updates action delegate enablement
 	 */
 	private IDebugContextListener fDebugContextListener = new IDebugContextListener() {
+		@Override
 		public void debugContextChanged(DebugContextEvent event) {
-			if (fAction != null) {		
+			if (fAction != null) {
 				fUpdateJob.schedule();
 			}
 		}
 	};
-	
+
 	/**
 	 * Switch tab folder for fMemoryBlock to the top in Memory Rendering View
 	 */
 	class SwitchToAction extends Action {
 		private IMemoryBlock fMemoryblock;
-		
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
+		@Override
 		public void run() {
 			if (fView == null) {
 				return;
@@ -153,89 +162,98 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 			super();
 			if (buildLabel) {
 				setText(DebugUIMessages.SwitchMemoryBlockAction_4);
-				Job job = new Job("SwtichToAction"){ //$NON-NLS-1$
+				Job job = new Job("SwtichToAction") { //$NON-NLS-1$
+					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						getLabels(memBlk);
 						return Status.OK_STATUS;
-					}}; 
+					}
+				};
 				job.setSystem(true);
 				job.schedule();
 			}
 			fMemoryblock = memBlk;
 		}
-		
+
 		public SwitchToAction(final IMemoryBlock memBlk, String label) {
 			super(label);
 			fMemoryblock = memBlk;
 		}
-		
+
 		private void getLabels(final IMemoryBlock memBlk) {
 			StringBuffer text = new StringBuffer(IInternalDebugCoreConstants.EMPTY_STRING);
 			String label = new String(IInternalDebugCoreConstants.EMPTY_STRING);
 			if (memBlk instanceof IMemoryBlockExtension) {
-				String expression = ((IMemoryBlockExtension)memBlk).getExpression();
+				String expression = ((IMemoryBlockExtension) memBlk).getExpression();
 				if (expression == null) {
 					expression = DebugUIMessages.SwitchMemoryBlockAction_0;
 				}
 				text.append(expression);
-			}
-			else {
+			} else {
 				long address = memBlk.getStartAddress();
 				text.append(Long.toHexString(address));
 			}
-			
+
 			label = text.toString();
 			label = decorateLabel(memBlk, label);
 
 			final String finalLabel = label;
 			WorkbenchJob job = new WorkbenchJob("SwtichToAction Update Label") { //$NON-NLS-1$
+				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					SwitchToAction.super.setText(finalLabel);
 					return Status.OK_STATUS;
-				}};
+				}
+			};
 			job.setSystem(true);
 			job.schedule();
 		}
 	}
-	
+
 	/**
 	 * Menu creator for the action
 	 */
 	class MenuCreator implements IMenuCreator {
 		Menu dropdown;
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see org.eclipse.jface.action.IMenuCreator#dispose()
 		 */
+		@Override
 		public void dispose() {
 			if (dropdown != null)
 				dropdown.dispose();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets
+		 * .Control)
 		 */
+		@Override
 		public Menu getMenu(Control parent) {
-			if (dropdown != null) {	
+			if (dropdown != null) {
 				dropdown.dispose();
 				dropdown = null;
 			}
-			if (dropdown == null) {	
-				dropdown =  new Menu(parent);
+			if (dropdown == null) {
+				dropdown = new Menu(parent);
 
 				// get all memory blocks from tree viewer
 				IMemoryBlock[] allMemoryBlocks = null;
-				
+
 				// get selection from memory view
 				IMemoryBlock memoryBlock = getCurrentMemoryBlock();
-			
+
 				Object context = getDebugContext();
-				IMemoryBlockRetrieval retrieval =  MemoryViewUtil.getMemoryBlockRetrieval(context);
+				IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
 				if (retrieval != null) {
 					allMemoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(retrieval);
 				}
 				if (allMemoryBlocks != null) {
-					for (int i=0; i<allMemoryBlocks.length; i++) {	
+					for (int i = 0; i < allMemoryBlocks.length; i++) {
 						SwitchToAction action = new SwitchToAction(allMemoryBlocks[i], true);
 						if (allMemoryBlocks[i] == memoryBlock) {
 							action.setChecked(true);
@@ -249,59 +267,70 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 			return dropdown;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets
+		 * .Menu)
 		 */
+		@Override
 		public Menu getMenu(Menu parent) {
 			return null;
 		}
-		
-	}	
-	
-	/* (non-Javadoc)
+
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		fView = view;
 		DebugUITools.getDebugContextManager().getContextService(fView.getViewSite().getWorkbenchWindow()).addDebugContextListener(fDebugContextListener);
 		DebugPlugin.getDefault().getMemoryBlockManager().addListener(fListener);
 		fUpdateJob.runInUIThread(new NullProgressMonitor());
 	}
-	
+
 	/**
 	 * Returns the current memory blocks tree viewer, or <code>null</code>
+	 * 
 	 * @return the memory blocks tree viewer or <code>null</code>
 	 */
 	private StructuredViewer getViewer() {
 		if (fView instanceof MemoryView) {
-			MemoryView memView = (MemoryView)fView;
+			MemoryView memView = (MemoryView) fView;
 			IMemoryViewPane pane = memView.getViewPane(MemoryBlocksTreeViewPane.PANE_ID);
 			if (pane instanceof MemoryBlocksTreeViewPane) {
-				 StructuredViewer viewer = ((MemoryBlocksTreeViewPane)pane).getViewer();
+				StructuredViewer viewer = ((MemoryBlocksTreeViewPane) pane).getViewer();
 				return viewer;
 			}
 		}
 		return null;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		switchToNext();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		switchToNext();
 	}
 
-	private void switchToNext() {		
+	private void switchToNext() {
 		IAdaptable context = getDebugContext();
 		if (context instanceof IDebugElement) {
-			IDebugElement debugContext = (IDebugElement)context;
+			IDebugElement debugContext = (IDebugElement) context;
 			IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(debugContext);
 
 			if (retrieval != null) {
@@ -320,13 +349,13 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 			IMemoryBlock current = getCurrentMemoryBlock();
 			int next = 0;
 			if (current != null) {
-				for (int i=0; i<memoryBlocks.length; i++) {
+				for (int i = 0; i < memoryBlocks.length; i++) {
 					if (memoryBlocks[i] == current) {
-						next = i+1;
+						next = i + 1;
 					}
 				}
 			}
-			if (next > memoryBlocks.length-1) {
+			if (next > memoryBlocks.length - 1) {
 				next = 0;
 			}
 			SwitchToAction switchAction = new SwitchToAction(memoryBlocks[next], false);
@@ -334,14 +363,22 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
+	 * .IAction, org.eclipse.jface.viewers.ISelection)
 	 */
-	public void selectionChanged(IAction action, ISelection selection) {}
+	@Override
+	public void selectionChanged(IAction action, ISelection selection) {
+	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 		fAction = action;
 		fUpdateJob.runInUIThread(new NullProgressMonitor());
@@ -349,9 +386,11 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 		action.setMenuCreator(fMenuCreator);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fAction = null;
 		DebugPlugin.getDefault().getMemoryBlockManager().removeListener(fListener);
@@ -361,15 +400,20 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action
+	 * .IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		switchToNext();
 	}
 
 	/**
 	 * Returns the current memory block
+	 * 
 	 * @return the current memory block or <code>null</code>
 	 */
 	private IMemoryBlock getCurrentMemoryBlock() {
@@ -378,15 +422,14 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 		}
 		ISelection memBlkSelection = fView.getSite().getSelectionProvider().getSelection();
 		IMemoryBlock memoryBlock = null;
-		
-		if (memBlkSelection != null) {	
-			if (!memBlkSelection.isEmpty() && memBlkSelection instanceof IStructuredSelection) {	
-				Object obj = ((IStructuredSelection)memBlkSelection).getFirstElement();
-				if (obj instanceof IMemoryBlock) {	
-					memoryBlock = (IMemoryBlock)obj;
-				}
-				else if (obj instanceof IMemoryRendering) {
-					memoryBlock = ((IMemoryRendering)obj).getMemoryBlock();
+
+		if (memBlkSelection != null) {
+			if (!memBlkSelection.isEmpty() && memBlkSelection instanceof IStructuredSelection) {
+				Object obj = ((IStructuredSelection) memBlkSelection).getFirstElement();
+				if (obj instanceof IMemoryBlock) {
+					memoryBlock = (IMemoryBlock) obj;
+				} else if (obj instanceof IMemoryRendering) {
+					memoryBlock = ((IMemoryRendering) obj).getMemoryBlock();
 				}
 			}
 		}
@@ -395,12 +438,13 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 
 	/**
 	 * Decorate the label for the specified <code>IMemoryBlock</code>
+	 * 
 	 * @param memBlk
 	 * @param label
 	 * @return the decorated label for the specified <code>IMemoryBlock</code>
 	 */
 	private String decorateLabel(final IMemoryBlock memBlk, String label) {
-		ILabelDecorator decorator = (ILabelDecorator)memBlk.getAdapter(ILabelDecorator.class);
+		ILabelDecorator decorator = (ILabelDecorator) memBlk.getAdapter(ILabelDecorator.class);
 		if (decorator != null) {
 			label = decorator.decorateText(label, memBlk);
 		}
@@ -408,10 +452,10 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 	}
 
 	private IAdaptable getDebugContext() {
-        if (fView != null) {
-            return DebugUITools.getPartDebugContext(fView.getSite());
-        } else {
-            return DebugUITools.getDebugContext();
-        }
+		if (fView != null) {
+			return DebugUITools.getPartDebugContext(fView.getSite());
+		} else {
+			return DebugUITools.getDebugContext();
+		}
 	}
 }

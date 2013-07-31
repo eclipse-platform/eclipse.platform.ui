@@ -95,22 +95,22 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	private static final String COMMAND_ENABLED= "CommandEnabled"; //$NON-NLS-1$
 
 	private Button upButton, downButton, newButton, importButton, editButton, removeButton;
-	
+
 	private boolean userHasMadeChanges= false;
-	
-	private List configsToBeDeleted= null;
-	private List commandsToBeDeleted= null;
-	
+
+	private List<ILaunchConfiguration> configsToBeDeleted = null;
+	private List<ICommand> commandsToBeDeleted = null;
+
 	private CheckboxTableViewer viewer= null;
-	
+
 	private boolean fWarned = false;
 	/**
 	 * Flag to know if we can perform an edit of the selected element(s)
 	 */
 	private boolean fCanEdit = false;
-	
+
 	private ILabelProvider labelProvider= new BuilderLabelProvider();
-	
+
 	/**
 	 * Error configs are objects representing entries pointing to
 	 * invalid launch configurations
@@ -124,23 +124,24 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			return command;
 		}
 	}
-	
+
 	/**
 	 * Collection of configurations created while the page is open.
 	 * Stored here so they can be deleted if the page is cancelled.
 	 */
-	private List newConfigList= new ArrayList();
-	
+	private List<ILaunchConfiguration> newConfigList = new ArrayList<ILaunchConfiguration>();
+
 	private SelectionListener buttonListener= new SelectionAdapter() {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			handleButtonPressed((Button) e.widget);
 		}
 	};
-	
+
 	/**
 	 * Launch configuration listener which is responsible for updating items in
 	 * the tree when the user renames configurations in the dialog.
-	 * 
+	 *
 	 * This is necessary because when we tell the configuration dialog to open
 	 * on a launch config and the user renames that config, the old config (the
 	 * one in the tree) is made obsolete and a new config is created. This
@@ -153,6 +154,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		 * movedFrom a configuration in the tree, replace the old config with
 		 * the new.
 		 */
+		@Override
 		public void launchConfigurationAdded(final ILaunchConfiguration configuration) {
 			ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 			final ILaunchConfiguration oldConfig= manager.getMovedFrom(configuration);
@@ -163,15 +165,16 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
             if (newConfigList.remove(oldConfig)) {
                 newConfigList.add(configuration);
             }
-			
-			Display.getDefault().asyncExec(new Runnable() {	
+
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					TableItem[] items= viewer.getTable().getItems();
 					for (int i = 0; i < items.length; i++) {
 						TableItem item = items[i];
 						Object data= item.getData();
 						if (data == oldConfig) {
-							// Found the movedFrom config in the tree. Replace it with the new config 
+							// Found the movedFrom config in the tree. Replace it with the new config
 							item.setData(configuration);
 							viewer.update(configuration, null);
 							break;
@@ -180,8 +183,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				}
 			});
 		}
+		@Override
 		public void launchConfigurationChanged(ILaunchConfiguration configuration) {
 		}
+		@Override
 		public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
 		}
 	};
@@ -210,7 +215,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			handleException(e);
             return;
 		}
-	
+
 		boolean projectNeedsMigration= false;
 		for (int i = 0; i < commands.length; i++) {
 			String[] version= new String[] {IExternalToolConstants.EMPTY_STRING};
@@ -290,14 +295,15 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		return button;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on PreferencePage.
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IExternalToolsHelpContextIds.EXTERNAL_TOOLS_BUILDER_PROPERTY_PAGE);
-		
+
 		Font font = parent.getFont();
 
 		Composite topLevel = new Composite(parent, SWT.NONE);
@@ -328,12 +334,14 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		builderTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 		builderTable.setFont(font);
 		builderTable.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleTableSelectionChanged();
 			}
 		});
-		
+
 		builderTable.addListener(SWT.MouseDoubleClick, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				//we must not allow editing of elements that cannot be edited via the selection changed logic
 				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=386820
@@ -342,7 +350,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				}
 			}
 		});
-		
+
 		//button area
 		Composite buttonArea = new Composite(tableAndButtons, SWT.NONE);
 		layout = new GridLayout();
@@ -362,12 +370,12 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		newButton.setEnabled(true);
 		importButton.setEnabled(true);
 
-		//populate widget contents	
+		//populate widget contents
 		addBuildersToTable();
 
 		return topLevel;
 	}
-	
+
 	/**
 	 * Turns auto-building on or off in the workspace.
 	 */
@@ -424,6 +432,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
 	 */
+	@Override
 	public void checkStateChanged(CheckStateChangedEvent event) {
 		Object element= event.getElement();
 		boolean checked = event.getChecked();
@@ -441,7 +450,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
             	if(MessageDialog.openConfirm(shell, ExternalToolsUIMessages.BuilderPropertyPage_6, ExternalToolsUIMessages.BuilderPropertyPage_7)) {
             		fWarned = true;
             	}
-			} 
+			}
             if(fWarned) {
             	enableCommand((ICommand)element, checked);
             }
@@ -450,7 +459,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
     			viewer.setChecked(element, true);
     			viewer.addCheckStateListener(this);
 			}
-            
+
 		}
 	}
 
@@ -478,11 +487,11 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		}
 		userHasMadeChanges= true;
 	}
-	
+
 	private void enableCommand(ICommand command, boolean enable) {
-		Map/*<String, String>*/ args= command.getArguments();
+		Map<String, String> args = command.getArguments();
 		if (args == null) {
-			args= new HashMap(1);
+			args = new HashMap<String, String>(1);
 		}
 		args.put(COMMAND_ENABLED, Boolean.toString(enable));
 		command.setArguments(args);
@@ -492,15 +501,14 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	/**
 	 * The user has pressed the import button. Prompt them to select a
 	 * configuration to import from the workspace.
-	 */	
+	 */
 	private void handleImportButtonPressed() {
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
-		List toolTypes= getConfigurationTypes(IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_CATEGORY);
-		List configurations= new ArrayList();
-		Iterator iter= toolTypes.iterator();
-		while (iter.hasNext()) {
+		List<ILaunchConfigurationType> toolTypes = getConfigurationTypes(IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_CATEGORY);
+		List<ILaunchConfiguration> configurations = new ArrayList<ILaunchConfiguration>();
+		for (ILaunchConfigurationType type : toolTypes) {
 			try {
-				ILaunchConfiguration[] configs= manager.getLaunchConfigurations((ILaunchConfigurationType) iter.next());
+				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
 				for (int i = 0; i < configs.length; i++) {
 					ILaunchConfiguration launchConfiguration = configs[i];
 					if (!DebugUITools.isPrivate(launchConfiguration)) {
@@ -547,7 +555,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			newConfigList.add(newConfig);
 		}
 	}
-	
+
 	/**
 	 * The user has pressed the remove button. Delete the selected builder.
 	 */
@@ -556,25 +564,25 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		if (selection != null) {
 			int numSelected= selection.size();
 			userHasMadeChanges= true;
-			Iterator iterator= selection.iterator();
+			Iterator<?> iterator = selection.iterator();
 			while (iterator.hasNext()) {
 				Object item= iterator.next();
 				if (item instanceof ILaunchConfiguration) {
 					if (configsToBeDeleted == null) {
-						configsToBeDeleted= new ArrayList(numSelected);
+						configsToBeDeleted = new ArrayList<ILaunchConfiguration>(numSelected);
 					}
-					configsToBeDeleted.add(item);
+					configsToBeDeleted.add((ILaunchConfiguration) item);
 				} else if (item instanceof ICommand) {
 					if (commandsToBeDeleted == null) {
-						commandsToBeDeleted= new ArrayList(numSelected);
+						commandsToBeDeleted = new ArrayList<ICommand>(numSelected);
 					}
-					commandsToBeDeleted.add(item);
+					commandsToBeDeleted.add((ICommand) item);
 				}
 				viewer.remove(item);
 			}
 		}
 	}
-	
+
 	/**
 	 * The user has pressed the new button. Create a new configuration and open
 	 * the launch configuration edit dialog on the new config.
@@ -588,8 +596,8 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		try {
 			ILaunchConfigurationWorkingCopy workingCopy = null;
 			String name= DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(ExternalToolsUIMessages.BuilderPropertyPage_New_Builder_7);
-			workingCopy = type.newInstance(BuilderUtils.getBuilderFolder(getInputProject(), true), name);		
-			
+			workingCopy = type.newInstance(BuilderUtils.getBuilderFolder(getInputProject(), true), name);
+
 			StringBuffer buffer= new StringBuffer(IExternalToolConstants.BUILD_TYPE_FULL);
 			buffer.append(',');
 			buffer.append(IExternalToolConstants.BUILD_TYPE_INCREMENTAL);
@@ -611,7 +619,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				userHasMadeChanges= true;
 				//retrieve the last "new" config
 				//may have been changed by the user pressing apply in the edit dialog
-				config= (ILaunchConfiguration)newConfigList.get(newConfigList.size() - 1);
+				config= newConfigList.get(newConfigList.size() - 1);
 				viewer.add(config);
 				viewer.setChecked(config, isEnabled(config));
 			}
@@ -625,7 +633,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			}
 		}
 	}
-	
+
 	/**
 	 * Prompts the user to edit the given launch configuration. Returns the
 	 * return code from opening the launch configuration dialog.
@@ -641,17 +649,17 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		manager.removeLaunchConfigurationListener(configurationListener);
 		return code;
 	}
-	
+
 	/**
 	 * Prompts the user to choose a launch configuration type to create and
 	 * returns the type the user selected or <code>null</code> if the user
 	 * cancelled.
-	 * 
+	 *
 	 * @return the configuration type selected by the user or <code>null</code>
 	 * if the user cancelled.
 	 */
 	private ILaunchConfigurationType promptForConfigurationType() {
-		List externalToolTypes= getConfigurationTypes(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY);
+		List<ILaunchConfigurationType> externalToolTypes = getConfigurationTypes(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY);
         Shell shell= getShell();
         if (shell == null) {
             return null;
@@ -668,13 +676,13 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		}
 		return (ILaunchConfigurationType) result[0];
 	}
-	
+
 	/**
 	 * Returns the launch configuration types of the given category
 	 */
-	private List getConfigurationTypes(String category) {
+	private List<ILaunchConfigurationType> getConfigurationTypes(String category) {
 		ILaunchConfigurationType types[] = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
-		List externalToolTypes = new ArrayList();
+		List<ILaunchConfigurationType> externalToolTypes = new ArrayList<ILaunchConfigurationType>();
 		for (int i = 0; i < types.length; i++) {
 			ILaunchConfigurationType configurationType = types[i];
 			if (category.equals(configurationType.getCategory())) {
@@ -683,7 +691,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		}
 		return externalToolTypes;
 	}
-	
+
 	/**
 	 * The user has pressed the edit button or double-clicked. Open the launch configuration edit
 	 * dialog on the selection after migrating the tool if necessary.
@@ -729,13 +737,13 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				ICommand command= (ICommand) data;
 				if (command.isConfigurable()) {
 					if (editCommand(command)) {
-						userHasMadeChanges= true;	
+						userHasMadeChanges= true;
 					}
 				}
 			}
 		}
 	}
-	
+
 	private boolean editCommand(ICommand data) {
 		EditCommandDialog dialog= new EditCommandDialog(getShell(), data);
 		return Window.OK == dialog.open();
@@ -745,7 +753,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	 * Prompts the user to proceed with the migration of a project builder from
 	 * the old format to the new, launch configuration-based, format and returns
 	 * whether or not the user wishes to proceed with the migration.
-	 * 
+	 *
 	 * @return boolean whether or not the user wishes to proceed with migration
 	 */
 	private boolean shouldProceedWithMigration() {
@@ -758,12 +766,12 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
             return false;
         }
 		// Warn the user that editing an old config will cause storage migration.
-		MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), 
+		MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(),
 			ExternalToolsUIMessages.BuilderPropertyPage_Migrate_project_builder_10,
 			ExternalToolsUIMessages.BuilderPropertyPage_Not_Support,
 			ExternalToolsUIMessages.BuilderPropertyPage_Prompt,
 			false,
-			ExternalToolsPlugin.getDefault().getPreferenceStore(), 
+			ExternalToolsPlugin.getDefault().getPreferenceStore(),
 			IPreferenceConstants.PROMPT_FOR_TOOL_MIGRATION);
 		return dialog.getReturnCode() == IDialogConstants.YES_ID;
 	}
@@ -779,7 +787,8 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			status[0] = new Status(IStatus.ERROR, ExternalToolsPlugin.PLUGIN_ID, 0, ExternalToolsUIMessages.BuilderPropertyPage_statusMessage, e);
 		}
 		Display.getDefault().asyncExec(new Runnable() {
-		    public void run() {
+		    @Override
+			public void run() {
 		        Shell shell= getShell();
 		        if (shell != null) {
 		            ErrorDialog.openError(shell, ExternalToolsUIMessages.BuilderPropertyPage_errorTitle,
@@ -851,18 +860,18 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		upButton.setEnabled(enableUp);
 		downButton.setEnabled(enableDown);
 	}
-	
+
 	/**
 	 * Returns whether the given element (command or launch config)
 	 * is enabled.
-	 * 
+	 *
 	 * @param element the element
 	 * @return whether the given element is enabled
 	 */
 	private boolean isEnabled(Object element) {
 		if (element instanceof ICommand) {
 			ICommand command = (ICommand) element;
-			String val = (String)command.getArguments().get(COMMAND_ENABLED);
+			String val = command.getArguments().get(COMMAND_ENABLED);
 			if(val != null) {
 				//null means enabled, see #doPerformOk
 				Boolean enabled = new Boolean(val);
@@ -931,6 +940,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		if (!userHasMadeChanges) {
 			return super.performOk();
@@ -943,6 +953,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			itemData[i]= builderTable.getItem(i).getData();
 		}
 		IRunnableWithProgress runnable= new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 				doPerformOk(monitor, itemData);
@@ -951,28 +962,28 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				}
 			}
 		};
-		
+
 		IProgressService service= PlatformUI.getWorkbench().getProgressService();
 		try {
 			service.busyCursorWhile(runnable);
 		} catch (InvocationTargetException e) {
 			return false;
 		} catch (InterruptedException e) {
-			return false;		
+			return false;
 		}
 		return super.performOk();
 	}
-	
+
 	private void doPerformOk(IProgressMonitor monitor, Object[] itemData) {
 		if (monitor.isCanceled()) {
 			return;
 		}
-		
+
 		IProject project = getInputProject();
 		//get all the build commands
 		int numCommands = itemData.length;
 		monitor.beginTask(ExternalToolsUIMessages.BuilderPropertyPage_3, numCommands + 1);
-		List possibleCommands= new ArrayList(numCommands);
+		List<ICommand> possibleCommands = new ArrayList<ICommand>(numCommands);
 		for (int i = 0; i < numCommands; i++) {
 			Object data = itemData[i];
 			if (data instanceof ICommand) {
@@ -982,8 +993,8 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 					continue;
 				}
 				ICommand command= (ICommand)data;
-				Map/*<String, String>*/ args = command.getArguments();
-				String val = (String)args.get(COMMAND_ENABLED);
+				Map<String, String> args = command.getArguments();
+				String val = args.get(COMMAND_ENABLED);
 				if(val != null) {
 					Boolean enabled = new Boolean(val);
 					if (!enabled.booleanValue()) {
@@ -1007,7 +1018,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 					}
 				} catch (CoreException e1) {
 				}
-				
+
 				if (!BuilderUtils.isUnmigratedConfig(config) && (config instanceof ILaunchConfigurationWorkingCopy)) {
 					ILaunchConfigurationWorkingCopy workingCopy= ((ILaunchConfigurationWorkingCopy) config);
 					// Save any changes to the config (such as enable/disable)
@@ -1026,8 +1037,8 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			} else if (data instanceof ErrorConfig) {
 				data= ((ErrorConfig) data).getCommand();
 			}
-			if (data != null) {
-				possibleCommands.add(data);
+			if (data instanceof ICommand) {
+				possibleCommands.add((ICommand) data);
 			}
 			monitor.worked(1);
 		}
@@ -1044,13 +1055,13 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
                 performCancel();
 			}
 		}
-		
+
 		if (configsToBeDeleted != null) {
 			deleteConfigurations();
 		}
 		monitor.done();
 	}
-	
+
 	private void checkBuilderFolder() {
 		try {
 			IFolder builderFolder= BuilderUtils.getBuilderFolder(getInputProject(), false);
@@ -1072,12 +1083,12 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		try {
 			ICommand newCommand = project.getDescription().newCommand();
 			String builderName= config.getAttribute(IExternalToolConstants.ATTR_DISABLED_BUILDER, (String)null);
-			Map args= config.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, new HashMap(0));
-			
+			Map<String, String> args = config.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, new HashMap<String, String>(0));
+
 			newCommand.setBuilderName(builderName);
 			newCommand.setArguments(args);
 			if (configsToBeDeleted == null) {
-				configsToBeDeleted= new ArrayList();
+				configsToBeDeleted = new ArrayList<ILaunchConfiguration>();
 			}
 			configsToBeDeleted.add(config);
 			return newCommand;
@@ -1089,21 +1100,22 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			return null;
 		}
 	}
-	
+
 	/**
-	 * Disables a builder by wrappering the builder command as a disabled external tool builder.
-	 * The details of the command is persisted in the launch configuration.
+	 * Disables a builder by wrapping the builder command as a disabled external
+	 * tool builder. The details of the command is persisted in the launch
+	 * configuration.
 	 */
 	private ILaunchConfiguration disableCommand(ICommand command) {
-		Map/*<String, String>*/ arguments= command.getArguments();
+		Map<String, String> arguments = command.getArguments();
 		if (arguments != null) {
 			arguments.remove(COMMAND_ENABLED);
 		}
-		List externalToolTypes= getConfigurationTypes(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY);
+		List<ILaunchConfigurationType> externalToolTypes = getConfigurationTypes(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY);
 		if (externalToolTypes.size() == 0) {
 			return null;
 		}
-		ILaunchConfigurationType type= (ILaunchConfigurationType)externalToolTypes.get(0);
+		ILaunchConfigurationType type= externalToolTypes.get(0);
 		if (type == null) {
 			return null;
 		}
@@ -1112,8 +1124,8 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			ILaunchConfigurationWorkingCopy workingCopy = null;
 			String builderName = command.getBuilderName();
 			String name= DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(builderName);
-			workingCopy = type.newInstance(BuilderUtils.getBuilderFolder(getInputProject(), true), name);		
-					
+			workingCopy = type.newInstance(BuilderUtils.getBuilderFolder(getInputProject(), true), name);
+
 			workingCopy.setAttribute(IExternalToolConstants.ATTR_DISABLED_BUILDER, builderName);
 			if (arguments != null) {
 				workingCopy.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
@@ -1134,18 +1146,14 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		}
 		return null;
 	}
-	
+
 	private void deleteConfigurations() {
 		boolean wasAutobuilding= ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
 		try {
 			setAutobuild(false);
-		
-			Iterator itr= configsToBeDeleted.iterator();
-			while (itr.hasNext()) {
-				ILaunchConfiguration element = (ILaunchConfiguration) itr.next();
-				element.delete();
+			for (ILaunchConfiguration config : configsToBeDeleted) {
+				config.delete();
 			}
-			
 			checkBuilderFolder();
 		} catch (CoreException e) {
 			handleException(e);
@@ -1157,7 +1165,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns whether any of the commands have changed.
 	 */
@@ -1176,12 +1184,12 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				if (oldName == null && newName != null) {
 					return true;
 				}
-				
+
 				if(oldName != null && !oldName.equals(newName)) {
 					return true;
 				}
-				Map/*<String, String>*/ oldArgs= oldCommand.getArguments();
-				Map/*<String, String>*/ newArgs= newCommand.getArguments();
+				Map<String, String> oldArgs = oldCommand.getArguments();
+				Map<String, String> newArgs = newCommand.getArguments();
 				if (oldArgs == null) {
 					if(newArgs != null) {
 						return true;
@@ -1191,20 +1199,11 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				if(oldArgs.size() != newArgs.size()) {
 					return true;
 				}
-				Iterator keySet= oldArgs.keySet().iterator();
-				while (keySet.hasNext()) {
-					Object key = keySet.next();
-					Object oldArg= oldArgs.get(key);
-					Object newArg= newArgs.get(key);
-					if (oldArg instanceof String && newArg instanceof String) {
-						if (comparator.compare(oldArg, newArg) != 0) {
-							return true;
-						}
-					} else if (!oldArg.equals(newArg)){
+				for (String key : oldArgs.keySet()) {
+					if (comparator.compare(oldArgs.get(key), newArgs.get(key)) != 0) {
 						return true;
 					}
 				}
-				
 				if (oldCommand.isBuilding(IncrementalProjectBuilder.AUTO_BUILD) != newCommand.isBuilding(IncrementalProjectBuilder.AUTO_BUILD)
 						|| oldCommand.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD) != newCommand.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD)
 						|| oldCommand.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD) != newCommand.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD)
@@ -1215,24 +1214,23 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		} catch (CoreException ce) {
 			return true;
 		}
-		return false;	
+		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performCancel()
 	 */
+	@Override
 	public boolean performCancel() {
-		Iterator iter= newConfigList.iterator();
-		while (iter.hasNext()) {
+		for (ILaunchConfiguration config : newConfigList) {
 			try {
-				((ILaunchConfiguration) iter.next()).delete();
+				config.delete();
 			} catch (CoreException e) {
 				handleException(e);
 			}
 		}
-		
 		checkBuilderFolder();
-		
+
 		//remove the local marking of the enabled state of the commands
 		Table builderTable= viewer.getTable();
 		int numCommands = builderTable.getItemCount();
@@ -1240,15 +1238,16 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			Object data = builderTable.getItem(i).getData();
 			if (data instanceof ICommand) {
 				ICommand command= (ICommand)data;
-				Map/*<String, String>*/ args= command.getArguments();
+				Map<String, String> args = command.getArguments();
 				args.remove(COMMAND_ENABLED);
 				command.setArguments(args);
 			}
 		}
 		return super.performCancel();
 	}
-    
-    public Shell getShell() {
+
+    @Override
+	public Shell getShell() {
         if (getControl().isDisposed()) {
 			return null;
         }

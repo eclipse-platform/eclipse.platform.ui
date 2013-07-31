@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public class OpenLaunchDialogAction extends Action implements IActionDelegate2, 
 		ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(fIdentifier);
 		if(group != null) {
 			String lbl = group.getLabel();
-			String actionLabel = MessageFormat.format(ActionMessages.OpenLaunchDialogAction_1, new String[] {lbl});
+			String actionLabel = MessageFormat.format(ActionMessages.OpenLaunchDialogAction_1, new Object[] { lbl });
 			setText(DebugUIPlugin.adjustDBCSAccelerator(actionLabel));
 		}
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.OPEN_LAUNCH_CONFIGURATION_ACTION);
@@ -69,6 +69,7 @@ public class OpenLaunchDialogAction extends Action implements IActionDelegate2, 
 	/**
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		LaunchHistory history = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchHistory(fIdentifier);
 		ILaunchConfiguration configuration = history.getRecentLaunch();
@@ -85,6 +86,7 @@ public class OpenLaunchDialogAction extends Action implements IActionDelegate2, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run();
 	}
@@ -92,6 +94,7 @@ public class OpenLaunchDialogAction extends Action implements IActionDelegate2, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		run();
 	}
@@ -99,11 +102,13 @@ public class OpenLaunchDialogAction extends Action implements IActionDelegate2, 
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 		if(action != null) {
 			action.setEnabled(existsConfigTypesForMode());
@@ -131,11 +136,13 @@ public class OpenLaunchDialogAction extends Action implements IActionDelegate2, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {}
 	
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {}
 	
 	/**

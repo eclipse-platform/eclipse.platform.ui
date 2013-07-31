@@ -29,14 +29,16 @@ public class ConsoleShowPreferencesAction extends Action implements IViewActionD
      * 
      * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
      */
-    public void init(IViewPart view) {}
+    @Override
+	public void init(IViewPart view) {}
 
     /*
      * (non-Javadoc)
      * 
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
-    public void run(IAction action) {
+    @Override
+	public void run(IAction action) {
     	SWTFactory.showPreferencePage("org.eclipse.debug.ui.ConsolePreferencePage"); //$NON-NLS-1$
     }
 
@@ -46,7 +48,8 @@ public class ConsoleShowPreferencesAction extends Action implements IViewActionD
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
      *      org.eclipse.jface.viewers.ISelection)
      */
-    public void selectionChanged(IAction action, ISelection selection) {
+    @Override
+	public void selectionChanged(IAction action, ISelection selection) {
         // do nothing
     }
 }

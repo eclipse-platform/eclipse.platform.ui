@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
@@ -119,7 +120,7 @@ class ViewerStateTracker {
     /**
      * LRU cache for viewer states
      */
-    class LRUMap extends LinkedHashMap {
+	class LRUMap<K, V> extends LinkedHashMap<K, V> {
         private static final long serialVersionUID = 1L;
 
         private int fMaxSize;
@@ -129,7 +130,8 @@ class ViewerStateTracker {
             fMaxSize = maxSize;
         }
 
-        protected boolean removeEldestEntry(Entry eldest) {
+        @Override
+		protected boolean removeEldestEntry(Entry<K, V> eldest) {
             return size() > fMaxSize;
         }
     }
@@ -146,7 +148,7 @@ class ViewerStateTracker {
     /**
      * Map of viewer states keyed by viewer input mementos
      */
-    private Map fViewerStates = new LRUMap(20);
+	private Map<String, ModelDelta> fViewerStates = new LRUMap<String, ModelDelta>(20);
 
     /**
      * Pending viewer state to be restored
@@ -173,7 +175,7 @@ class ViewerStateTracker {
     /**
      * Set of IMementoManager's that are currently saving state
      */
-    private Set fPendingStateSaves = new HashSet();
+	private Set<IElementMementoCollector> fPendingStateSaves = new HashSet<IElementMementoCollector>();
 
     /**
      * Used to queue a viewer input for state restore
@@ -193,7 +195,8 @@ class ViewerStateTracker {
         TreePath fPath;
         IModelDelta fDelta;
 
-        public boolean equals(Object obj) {
+        @Override
+		public boolean equals(Object obj) {
             if (obj instanceof CompareRequestKey) {
                 CompareRequestKey key = (CompareRequestKey) obj;
                 return key.fDelta.equals(fDelta) && key.fPath.equals(fPath);
@@ -201,7 +204,8 @@ class ViewerStateTracker {
             return false;
         }
 
-        public int hashCode() {
+        @Override
+		public int hashCode() {
             return fDelta.hashCode() + fPath.hashCode();
         }
     }
@@ -209,7 +213,7 @@ class ViewerStateTracker {
     /**
      * Compare requests that are currently running.
      */
-    private Map fCompareRequestsInProgress = new LinkedHashMap();
+	private Map<CompareRequestKey, ElementCompareRequest> fCompareRequestsInProgress = new LinkedHashMap<CompareRequestKey, ElementCompareRequest>();
     
     
     /**
@@ -217,14 +221,12 @@ class ViewerStateTracker {
      */
     void dispose() {
         Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
-
-        for (Iterator itr = fPendingStateSaves.iterator(); itr.hasNext(); ) {
-            ((IElementMementoCollector)itr.next()).cancel();
+		for (IElementMementoCollector emc : fPendingStateSaves) {
+			emc.cancel();
         }
         fStateUpdateListeners.clear();
-        
-        for (Iterator itr =  fCompareRequestsInProgress.values().iterator(); itr.hasNext();) {
-            ((ElementCompareRequest)itr.next()).cancel();
+		for (ElementCompareRequest ecr : fCompareRequestsInProgress.values()) {
+			ecr.cancel();
         }
         fCompareRequestsInProgress.clear();
         
@@ -261,8 +263,11 @@ class ViewerStateTracker {
                  * IMementoManager#requestComplete(org.eclipse.debug.internal.ui
                  * .viewers.model.provisional.IElementMementoRequest)
                  */
-                public void requestComplete(ElementMementoRequest request) {
-                    if (fContentProvider.isDisposed()) return;
+                @Override
+				public void requestComplete(ElementMementoRequest request) {
+                    if (fContentProvider.isDisposed()) {
+						return;
+					}
 
                     notifyStateUpdate(input, TreeModelContentProvider.UPDATE_COMPLETE, request);
 
@@ -272,7 +277,7 @@ class ViewerStateTracker {
                         try {
                             keyMemento.save(writer);
                             final String keyMementoString = writer.toString();
-                            ModelDelta stateDelta = (ModelDelta) fViewerStates.get(keyMementoString);
+                            ModelDelta stateDelta = fViewerStates.get(keyMementoString);
                             if (stateDelta != null) {
                                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
                                 	DebugUIPlugin.trace("STATE RESTORE INPUT COMARE ENDED : " + fRequest + " - MATCHING STATE FOUND"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -281,9 +286,10 @@ class ViewerStateTracker {
                                 // Process start of restore in an async cycle because we may still be inside inputChanged() 
                                 // call. I.e. the "input.equals(fContentProvider.getViewer().getInput())" test may fail.
                                 fContentProvider.getViewer().getDisplay().asyncExec(new Runnable() {
-                                    public void run() {
+                                    @Override
+									public void run() {
                                         if (!fContentProvider.isDisposed() && input.equals(fContentProvider.getViewer().getInput())) {
-                                            ModelDelta stateDelta2 = (ModelDelta) fViewerStates.remove(keyMementoString);
+                                            ModelDelta stateDelta2 = fViewerStates.remove(keyMementoString);
                                             if (stateDelta2 != null) {
                                                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
                                                 	DebugUIPlugin.trace("STATE RESTORE BEGINS"); //$NON-NLS-1$
@@ -321,7 +327,8 @@ class ViewerStateTracker {
                  * org.eclipse.debug.internal.ui.viewers.model.provisional.viewers
                  * .IMementoManager#processReqeusts()
                  */
-                public void processReqeusts() {
+                @Override
+				public void processReqeusts() {
                     notifyStateUpdate(input, STATE_RESTORE_SEQUENCE_BEGINS, null);
                     if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                     	DebugUIPlugin.trace("STATE RESTORE INPUT COMARE BEGIN : " + fRequest); //$NON-NLS-1$
@@ -339,11 +346,13 @@ class ViewerStateTracker {
                  * IMementoManager#addRequest(org.eclipse.debug.internal.ui.viewers
                  * .model.provisional.IElementMementoRequest)
                  */
-                public void addRequest(ElementMementoRequest req) {
+                @Override
+				public void addRequest(ElementMementoRequest req) {
                     fRequest = req;
                 }
                 
-                public void cancel() {
+                @Override
+				public void cancel() {
                     // not used
                 }
 
@@ -364,7 +373,10 @@ class ViewerStateTracker {
      * @param path Path to subtree to restore.
      */
     void appendToPendingStateDelta(final TreePath path) {
-        if (fContentProvider.getViewer() == null) return; // Not initialized yet.
+        if (fContentProvider.getViewer() == null)
+		 {
+			return; // Not initialized yet.
+		}
         
         if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
         	DebugUIPlugin.trace("STATE APPEND BEGIN: " + path.getLastSegment()); //$NON-NLS-1$
@@ -391,7 +403,8 @@ class ViewerStateTracker {
         // markers are used by the restore logic to know when a delta node can
         // be removed.
         delta.accept(new IModelDeltaVisitor() {
-            public boolean visit(IModelDelta d, int depth) {
+            @Override
+			public boolean visit(IModelDelta d, int depth) {
                 if ((d.getFlags() & IModelDelta.EXPAND) != 0) {
                     ((ModelDelta) d).setFlags(d.getFlags() | IModelDelta.CONTENT);
                 }
@@ -415,7 +428,8 @@ class ViewerStateTracker {
             // attributes into the pending delta.
             if (path.getSegmentCount() > 0) {
                 fPendingState.accept( new IModelDeltaVisitor() {
-                    public boolean visit(IModelDelta pendingDeltaNode, int depth) {
+                    @Override
+					public boolean visit(IModelDelta pendingDeltaNode, int depth) {
                         TreePath pendingDeltaPath = fContentProvider.getViewerTreePath(pendingDeltaNode);
                         if (path.startsWith(pendingDeltaPath, null)) 
                         {
@@ -432,7 +446,8 @@ class ViewerStateTracker {
 
             // Copy the pending state into the new appended state.
             fPendingState.accept( new IModelDeltaVisitor() {
-                public boolean visit(IModelDelta pendingDeltaNode, int depth) {
+                @Override
+				public boolean visit(IModelDelta pendingDeltaNode, int depth) {
                     // Skip the top element
                     if (pendingDeltaNode.getParentDelta() == null) {
                         return true;
@@ -495,8 +510,8 @@ class ViewerStateTracker {
      * @param input the {@link ModelDelta} input
      */
     protected void saveViewerState(Object input) {
-        for (Iterator itr = fCompareRequestsInProgress.values().iterator(); itr.hasNext();) {
-            ((ElementCompareRequest) itr.next()).cancel();
+		for (Iterator<ElementCompareRequest> itr = fCompareRequestsInProgress.values().iterator(); itr.hasNext();) {
+            itr.next().cancel();
             itr.remove();
         }
 
@@ -548,7 +563,8 @@ class ViewerStateTracker {
                 }
 
                 IModelDeltaVisitor pendingStateVisitor = new IModelDeltaVisitor() {
-                    public boolean visit(IModelDelta pendingDeltaNode, int depth) {
+                    @Override
+					public boolean visit(IModelDelta pendingDeltaNode, int depth) {
                         // Ignore the top element.
                         if (pendingDeltaNode.getParentDelta() == null) {
                             return true;
@@ -612,7 +628,8 @@ class ViewerStateTracker {
 
     private void clearRevealFlag(ModelDelta saveRootDelta) {
         IModelDeltaVisitor clearDeltaVisitor = new IModelDeltaVisitor() {
-            public boolean visit(IModelDelta delta, int depth) {
+            @Override
+			public boolean visit(IModelDelta delta, int depth) {
                 if ((delta.getFlags() & IModelDelta.REVEAL) != 0) {
                     ((ModelDelta) delta).setFlags(delta.getFlags() & ~IModelDelta.REVEAL);
                 }
@@ -624,7 +641,7 @@ class ViewerStateTracker {
 
     private ModelDelta findSubDeltaParent(ModelDelta destinationDeltaRoot, IModelDelta subDelta) {
         // Create a path of elements to the sub-delta.
-        LinkedList deltaPath = new LinkedList();
+		LinkedList<IModelDelta> deltaPath = new LinkedList<IModelDelta>();
         IModelDelta delta = subDelta;
         while (delta.getParentDelta() != null) {
             delta = delta.getParentDelta();
@@ -633,12 +650,12 @@ class ViewerStateTracker {
 
         // For each element in the path of the sub-delta, find the corresponding
         // element in the destination delta
-        Iterator itr = deltaPath.iterator();
+		Iterator<IModelDelta> itr = deltaPath.iterator();
         // Skip the root element
         itr.next();
         ModelDelta saveDelta = destinationDeltaRoot;
         while (saveDelta != null && itr.hasNext()) {
-            IModelDelta itrDelta = (IModelDelta) itr.next();
+            IModelDelta itrDelta = itr.next();
             saveDelta = saveDelta.getChildDelta(itrDelta.getElement(), itrDelta.getIndex());
         }
         return saveDelta;
@@ -682,7 +699,7 @@ class ViewerStateTracker {
             /**
              * list of memento fRequests
              */
-            private List fRequests = new ArrayList();
+			private List<IElementMementoRequest> fRequests = new ArrayList<IElementMementoRequest>();
 
             /**
              * Flag indicating whether the encoding of delta has been canceled.
@@ -698,7 +715,8 @@ class ViewerStateTracker {
              * #requestComplete(org.eclipse.debug.internal.ui.viewers
              * .model.provisional.IElementMementoRequest)
              */
-            public void requestComplete(ElementMementoRequest request) {
+            @Override
+			public void requestComplete(ElementMementoRequest request) {
                 Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
 
                 notifyStateUpdate(input, TreeModelContentProvider.UPDATE_COMPLETE, request);
@@ -731,7 +749,8 @@ class ViewerStateTracker {
                 }
             }
 
-            public void cancel() {
+            @Override
+			public void cancel() {
                 Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
 
                 if (fCanceled) {
@@ -739,9 +758,7 @@ class ViewerStateTracker {
                 }
                             
                 fCanceled = true;
-                Iterator iterator = fRequests.iterator();
-                while (iterator.hasNext()) {
-                    IElementMementoRequest req = (IElementMementoRequest) iterator.next();
+				for (IElementMementoRequest req : fRequests) {
                     req.cancel();
                 }
                 fRequests.clear();
@@ -758,32 +775,28 @@ class ViewerStateTracker {
              * org.eclipse.debug.internal.ui.viewers.model.provisional.viewers
              * .IMementoManager#processReqeusts()
              */
-            public void processReqeusts() {
+            @Override
+			public void processReqeusts() {
                 Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
                 
-                Map providers = new HashMap();
-                Iterator iterator = fRequests.iterator();
-                while (iterator.hasNext()) {
-                    IElementMementoRequest request = (IElementMementoRequest) iterator.next();
+				Map<IElementMementoProvider, List<IElementMementoRequest>> providers = new HashMap<IElementMementoProvider, List<IElementMementoRequest>>();
+				for (IElementMementoRequest request : fRequests) {
                     notifyStateUpdate(input, TreeModelContentProvider.UPDATE_BEGINS, request);
                     IElementMementoProvider provider = ViewerAdapterService.getMementoProvider(request.getElement());
                     if (provider == null) {
                         provider = defaultProvider;
                     }
-                    List reqs = (List) providers.get(provider);
+					List<IElementMementoRequest> reqs = providers.get(provider);
                     if (reqs == null) {
-                        reqs = new ArrayList();
+						reqs = new ArrayList<IElementMementoRequest>();
                         providers.put(provider, reqs);
                     }
                     reqs.add(request);
                 }
-                iterator = providers.entrySet().iterator();
-                while (iterator.hasNext()) {
-                    Entry entry = (Entry) iterator.next();
-                    IElementMementoProvider provider = (IElementMementoProvider) entry.getKey();
-                    List reqs = (List) entry.getValue();
-                    provider.encodeElements((IElementMementoRequest[]) reqs.toArray(new IElementMementoRequest[reqs
-                        .size()]));
+				for (Entry<IElementMementoProvider, List<IElementMementoRequest>> entry : providers.entrySet()) {
+                    IElementMementoProvider provider = entry.getKey();
+					List<IElementMementoRequest> reqs = entry.getValue();
+					provider.encodeElements(reqs.toArray(new IElementMementoRequest[reqs.size()]));
                 }
             }
 
@@ -796,7 +809,8 @@ class ViewerStateTracker {
              * #addRequest(org.eclipse.debug.internal.ui.viewers.
              * model.provisional.IElementMementoRequest)
              */
-            public void addRequest(ElementMementoRequest request) {
+            @Override
+			public void addRequest(ElementMementoRequest request) {
                 Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
                 
                 fRequests.add(request);
@@ -804,7 +818,8 @@ class ViewerStateTracker {
 
         };
         IModelDeltaVisitor visitor = new IModelDeltaVisitor() {
-            public boolean visit(IModelDelta delta, int depth) {
+            @Override
+			public boolean visit(IModelDelta delta, int depth) {
                 // Add the CONTENT flag to all nodes with an EXPAND flag. 
                 // During restoring, this flag is used as a marker indicating 
                 // whether all the content of a given element has been 
@@ -918,7 +933,8 @@ class ViewerStateTracker {
             // If we're canceling select or reveal, cancel it for all of pending deltas
             final int mask = flags & (IModelDelta.SELECT | IModelDelta.REVEAL);
             fPendingState.accept(new IModelDeltaVisitor() {
-                public boolean visit(IModelDelta delta, int depth) {
+                @Override
+				public boolean visit(IModelDelta delta, int depth) {
                     int deltaFlags = delta.getFlags();
                     int newFlags = deltaFlags & ~mask;
                     if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
@@ -935,7 +951,8 @@ class ViewerStateTracker {
             final int mask = flags & ~(IModelDelta.SELECT | IModelDelta.REVEAL);
             // For other flags (EXPAND/COLLAPSE), cancel only from the matching path.
             fPendingState.accept(new IModelDeltaVisitor() {
-                public boolean visit(IModelDelta delta, int depth) {
+                @Override
+				public boolean visit(IModelDelta delta, int depth) {
                     if (depth < path.getSegmentCount()) {
                         // Descend until we reach a matching depth.
                         TreePath deltaPath = fContentProvider.getViewerTreePath(delta);
@@ -1002,7 +1019,8 @@ class ViewerStateTracker {
         }
 
         IModelDeltaVisitor visitor = new IModelDeltaVisitor() {
-            public boolean visit(final IModelDelta delta, int depth) {
+            @Override
+			public boolean visit(final IModelDelta delta, int depth) {
 
                 Object element = delta.getElement();
                 Object potentialMatch = depth != 0 ? path.getSegment(depth - 1) : fContentProvider.getViewer().getInput();
@@ -1015,7 +1033,7 @@ class ViewerStateTracker {
                         }
                         if (provider != null) {
                             CompareRequestKey key = new CompareRequestKey(path, delta);
-                            ElementCompareRequest existingRequest = (ElementCompareRequest) fCompareRequestsInProgress
+                            ElementCompareRequest existingRequest = fCompareRequestsInProgress
                                 .get(key);
                             if (existingRequest != null) {
                                 // Check all the running compare updates for a
@@ -1085,7 +1103,8 @@ class ViewerStateTracker {
              * #visit(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta,
              * int)
              */
-            public boolean visit(IModelDelta delta, int depth) {
+            @Override
+			public boolean visit(IModelDelta delta, int depth) {
                 // Filter out the CONTENT flags from the delta flags, the content
                 // flag is only used as a marker indicating that all the sub-elements
                 // of a given delta have been retrieved.  
@@ -1121,8 +1140,7 @@ class ViewerStateTracker {
             }
 
             private boolean areMementoUpdatesPending(IModelDelta delta) {
-                for (Iterator itr = fCompareRequestsInProgress.keySet().iterator(); itr.hasNext();) {
-                    CompareRequestKey key = (CompareRequestKey) itr.next();
+				for (CompareRequestKey key : fCompareRequestsInProgress.keySet()) {
                     if (delta.getElement().equals(key.fDelta.getElement())) {
                         return true;
                     }
@@ -1136,7 +1154,8 @@ class ViewerStateTracker {
                 }
 
                 delta.accept(new IModelDeltaVisitor() {
-                    public boolean visit(IModelDelta _visitorDelta, int depth) {
+                    @Override
+					public boolean visit(IModelDelta _visitorDelta, int depth) {
                         ModelDelta visitorDelta = (ModelDelta) _visitorDelta;
                         visitorDelta.setElement(ELEMENT_REMOVED);
                         visitorDelta.setFlags(IModelDelta.NO_CHANGE);
@@ -1315,7 +1334,8 @@ class ViewerStateTracker {
         private int fCounter = 0;
         private Object fModelInput = fPendingState.getElement();
         
-        public void viewerUpdatesComplete() {
+        @Override
+		public void viewerUpdatesComplete() {
             Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
             
             IInternalTreeModelViewer viewer = fContentProvider.getViewer();
@@ -1345,9 +1365,12 @@ class ViewerStateTracker {
             }
         }
 
-        public void viewerUpdatesBegin() {}
-        public void updateStarted(IViewerUpdate update) {}
-        public void updateComplete(IViewerUpdate update) {}
+        @Override
+		public void viewerUpdatesBegin() {}
+        @Override
+		public void updateStarted(IViewerUpdate update) {}
+        @Override
+		public void updateComplete(IViewerUpdate update) {}
         
         /**
          * Returns delta that is used to reveal the item.
@@ -1365,7 +1388,9 @@ class ViewerStateTracker {
             fPendingSetTopItem = null;
             
             IInternalTreeModelViewer viewer = fContentProvider.getViewer();
-            if (viewer == null) return;
+            if (viewer == null) {
+				return;
+			}
             
             // remove myself as viewer update listener
             viewer.removeViewerUpdateListener(this);
@@ -1418,7 +1443,8 @@ class ViewerStateTracker {
     private ModelDelta markRevealDelta(ModelDelta rootDelta) {
         final ModelDelta[] revealDelta = new ModelDelta[1];
         IModelDeltaVisitor visitor = new IModelDeltaVisitor() {
-            public boolean visit(IModelDelta delta, int depth) {
+            @Override
+			public boolean visit(IModelDelta delta, int depth) {
                 if ( (delta.getFlags() & IModelDelta.REVEAL) != 0) {
                     revealDelta[0] = (ModelDelta)delta;
                 }
@@ -1475,10 +1501,10 @@ class ViewerStateTracker {
      * @param path Path of element to cancel updates for.
      */
     void cancelStateSubtreeUpdates(TreePath path) {
-        for (Iterator itr = fCompareRequestsInProgress.keySet().iterator(); itr.hasNext();) {
-            CompareRequestKey key = (CompareRequestKey) itr.next();
+		for (Iterator<CompareRequestKey> itr = fCompareRequestsInProgress.keySet().iterator(); itr.hasNext();) {
+			CompareRequestKey key = itr.next();
             if (key.fPath.startsWith(path, null)) {
-                ElementCompareRequest compareRequest = (ElementCompareRequest) fCompareRequestsInProgress.get(key);
+                ElementCompareRequest compareRequest = fCompareRequestsInProgress.get(key);
                 compareRequest.cancel();
                 itr.remove();
             }
@@ -1525,30 +1551,34 @@ class ViewerStateTracker {
             for (int i = 0; i < listeners.length; i++) {
                 final IStateUpdateListener listener = (IStateUpdateListener) listeners[i];
                 SafeRunner.run(new ISafeRunnable() {
-                    public void run() throws Exception {
+                    @Override
+					public void run() throws Exception {
                         switch (type) {
-                        case STATE_SAVE_SEQUENCE_BEGINS:
-                            listener.stateSaveUpdatesBegin(input);
-                            break;
-                        case STATE_SAVE_SEQUENCE_COMPLETE:
-                            listener.stateSaveUpdatesComplete(input);
-                            break;
-                        case STATE_RESTORE_SEQUENCE_BEGINS:
-                            listener.stateRestoreUpdatesBegin(input);
-                            break;
-                        case STATE_RESTORE_SEQUENCE_COMPLETE:
-                            listener.stateRestoreUpdatesComplete(input);
-                            break;
-                        case TreeModelContentProvider.UPDATE_BEGINS:
-                            listener.stateUpdateStarted(input, update);
-                            break;
-                        case TreeModelContentProvider.UPDATE_COMPLETE:
-                            listener.stateUpdateComplete(input, update);
-                            break;
+							case STATE_SAVE_SEQUENCE_BEGINS:
+								listener.stateSaveUpdatesBegin(input);
+								break;
+							case STATE_SAVE_SEQUENCE_COMPLETE:
+								listener.stateSaveUpdatesComplete(input);
+								break;
+							case STATE_RESTORE_SEQUENCE_BEGINS:
+								listener.stateRestoreUpdatesBegin(input);
+								break;
+							case STATE_RESTORE_SEQUENCE_COMPLETE:
+								listener.stateRestoreUpdatesComplete(input);
+								break;
+							case TreeModelContentProvider.UPDATE_BEGINS:
+								listener.stateUpdateStarted(input, update);
+								break;
+							case TreeModelContentProvider.UPDATE_COMPLETE:
+								listener.stateUpdateComplete(input, update);
+								break;
+							default:
+								break;
                         }
                     }
 
-                    public void handleException(Throwable exception) {
+                    @Override
+					public void handleException(Throwable exception) {
                         DebugUIPlugin.log(exception);
                     }
                 });

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,13 +22,13 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 /**
  * Test the launch history favorites get updated properly as configurations as
  * modified.
- * 
+ *
  * @since 3.6
  */
 public class LaunchFavoriteTests extends AbstractLaunchTest {
-	
+
 	/**
-	 * Configuration to use for the test. One is created for each test during 
+	 * Configuration to use for the test. One is created for each test during
 	 * setup and deleted during tear down.
 	 */
 	private ILaunchConfiguration fConfig;
@@ -40,7 +40,7 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 	public LaunchFavoriteTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Returns the run launch history
 	 * @return
@@ -48,7 +48,7 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 	private LaunchHistory getRunLaunchHistory() {
 		return getLaunchConfigurationManager().getLaunchHistory(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
 	}
-		
+
 	/**
 	 * Returns the debug launch history
 	 * @return
@@ -56,10 +56,11 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 	private LaunchHistory getDebugLaunchHistory() {
 		return getLaunchConfigurationManager().getLaunchHistory(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		// clear the favorites
@@ -67,10 +68,11 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 		getDebugLaunchHistory().setFavorites(new ILaunchConfiguration[0]);
 		fConfig = getLaunchConfiguration(getName());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		// delete the configuration used during this test
@@ -79,40 +81,40 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 			configuration.delete();
 		}
 	}
-	
+
 	/**
 	 * Returns the new/initial launch configuration to use for this test.
-	 * 
+	 *
 	 * @return
 	 */
 	private ILaunchConfiguration getLaunchConfiguration() {
 		return fConfig;
 	}
-	
+
 	/**
 	 * Makes the configuration a favorite in the specified group.
-	 * 
+	 *
 	 * @param config configuration to make a favorite - may be a working copy already
 	 * @param groupId group to add it to
 	 * @return working copy after making it a favorite
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	private ILaunchConfigurationWorkingCopy addFavorite(ILaunchConfiguration config, String groupId) throws CoreException {
 		ILaunchConfigurationWorkingCopy wc = getWorkingCopy(config);
-		List list = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
+		List<String> list = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List<String>) null);
 		if (list == null) {
-			list = new ArrayList();
+			list = new ArrayList<String>();
 		}
 		list.add(groupId);
 		wc.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, list);
 		return wc;
 	}
-	
+
 	/**
 	 * Removes the favorite group from the configuration's favorites attribute. Returns
 	 * the resulting working copy.
-	 * 
+	 *
 	 * @param config configuration to remove favorite attribute from, may already be a working copy
 	 * @param groupId group to remove
 	 * @return working copy after removing favorite
@@ -120,7 +122,7 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 	 */
 	private ILaunchConfigurationWorkingCopy removeFavorite(ILaunchConfiguration config, String groupId) throws CoreException {
 		ILaunchConfigurationWorkingCopy wc = getWorkingCopy(config);
-		List list = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
+		List<String> list = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List<String>) null);
 		if (list != null) {
 			if (list.remove(groupId)) {
 				if (list.isEmpty()) {
@@ -131,7 +133,7 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 		}
 		return wc;
 	}
-	
+
 	private ILaunchConfigurationWorkingCopy getWorkingCopy(ILaunchConfiguration config) throws CoreException {
 		ILaunchConfigurationWorkingCopy wc = null;
 		if (config.isWorkingCopy()) {
@@ -141,15 +143,15 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 		}
 		return wc;
 	}
-	
+
 	/**
-	 * Returns whether the launch history contains the given configuration as a favorite and is 
+	 * Returns whether the launch history contains the given configuration as a favorite and is
 	 * the expected size.
-	 * 
+	 *
 	 * @param history launch history
 	 * @param configuration launch configuration
 	 * @param size expected size of favorites or -1 if unknown
-	 * @return whether the launch history contains the given configuration as a favorite and is 
+	 * @return whether the launch history contains the given configuration as a favorite and is
 	 * 	the expected size
 	 */
 	private boolean containsFavorite(LaunchHistory history, ILaunchConfiguration configuration, int size) {
@@ -165,10 +167,10 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Tests that a configuration becoming a favorite appears in the favorites.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testBecomeFavorite() throws CoreException {
@@ -178,10 +180,10 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 		assertTrue("Missing from debug favorites", containsFavorite(getDebugLaunchHistory(), saved, 1)); //$NON-NLS-1$
 		assertTrue("Missing from run favorites", containsFavorite(getRunLaunchHistory(), saved, 1)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests that a when a favorite is no longer a favorite, it gets removed from the favorites.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testUnFavorite() throws CoreException {
@@ -192,10 +194,10 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 		assertFalse("Should not be a debug favorite", containsFavorite(getDebugLaunchHistory(), saved, 0)); //$NON-NLS-1$
 		assertFalse("Should not be a run favorite", containsFavorite(getRunLaunchHistory(), saved, 0)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * When a configuration is deleted, it should no longer be in the list.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testDeleteConfiguration() throws CoreException {
@@ -205,10 +207,10 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 		assertFalse("Should not be a debug favorite", containsFavorite(getDebugLaunchHistory(), configuration, 0)); //$NON-NLS-1$
 		assertFalse("Should not be a run favorite", containsFavorite(getRunLaunchHistory(), configuration, 0)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * When a favorite is renamed, it should still be in the list, with the new name.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testRenameFavorite() throws CoreException {
@@ -221,10 +223,10 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 		assertTrue("Missing from run favorites", containsFavorite(getRunLaunchHistory(), saved, 1)); //$NON-NLS-1$
 		saved.delete();
 	}
-	
+
 	/**
 	 * Renaming a configuration and making it a favorite at the same time - should appear in the list.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testRenameBecomeFavorite() throws CoreException {
@@ -238,10 +240,10 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 		assertTrue("Missing from run favorites", containsFavorite(getRunLaunchHistory(), saved, 1)); //$NON-NLS-1$
 		saved.delete();
 	}
-	
+
 	/**
 	 * Renaming a configuration and removing its favorite status should remove it from the list.
-	 *  
+	 *
 	 * @throws CoreException
 	 */
 	public void testRenameUnFavorite() throws CoreException {

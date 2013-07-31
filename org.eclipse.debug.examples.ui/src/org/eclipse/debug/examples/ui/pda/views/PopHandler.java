@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -28,14 +28,15 @@ import org.eclipse.jface.viewers.TreeViewer;
  */
 public class PopHandler extends AbstractDataStackViewHandler {
 
-    protected void doExecute(DataStackView view, PDAThread thread, ISelection selection) throws ExecutionException {
+    @Override
+	protected void doExecute(DataStackView view, PDAThread thread, ISelection selection) throws ExecutionException {
         TreeViewer viewer = (TreeViewer)view.getViewer();
-        Object popee = selection instanceof IStructuredSelection 
+        Object popee = selection instanceof IStructuredSelection
             ? ((IStructuredSelection)selection).getFirstElement() : null;
         if (popee != null) {
             try {
                 IValue[] stack = thread.getDataStack();
-                List restore = new ArrayList();
+				List<IValue> restore = new ArrayList<IValue>();
                 for (int i = 0; i < stack.length; i++) {
                     Object value = stack[i];
                     if (popee.equals(value)) {
@@ -48,7 +49,7 @@ public class PopHandler extends AbstractDataStackViewHandler {
                     }
                 }
                 while (!restore.isEmpty()) {
-                    IValue value = (IValue) restore.remove(restore.size() - 1);
+                    IValue value = restore.remove(restore.size() - 1);
                     thread.pushData(value.getValueString());
                 }
             } catch (DebugException e) {

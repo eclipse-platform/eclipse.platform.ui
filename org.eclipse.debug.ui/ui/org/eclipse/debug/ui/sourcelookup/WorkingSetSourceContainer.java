@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.debug.ui.sourcelookup;
 
 import java.util.ArrayList;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -53,6 +54,7 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
+	@Override
 	public String getName() {
 		return fWorkingSet.getName();
 	}
@@ -60,6 +62,7 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj != null && obj instanceof WorkingSetSourceContainer) {			
 			return ((WorkingSetSourceContainer)obj).fWorkingSet.equals(fWorkingSet);			
@@ -67,6 +70,7 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 		return false;
 	}		
 
+	@Override
 	public int hashCode() {
 		return fWorkingSet.hashCode();
 	}
@@ -74,6 +78,7 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
+	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
@@ -81,13 +86,15 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
+	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		IAdaptable[] elements = fWorkingSet.getElements();
 		
-		if(elements == null)
+		if(elements == null) {
 			return new ISourceContainer[0];
+		}
 		
-		ArrayList locationList = new ArrayList();
+		ArrayList<ISourceContainer> locationList = new ArrayList<ISourceContainer>();
 		for (int i = 0; i < elements.length; i++) {
 			IResource resource = (IResource) elements[i].getAdapter(IResource.class);
 			
@@ -100,10 +107,11 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 					locationList.add(new ProjectSourceContainer((IProject)resource, true));			
 					break;
 					//if the element corresponds to an IFile, do nothing
+					default:
+						break;
 				}
 			}
 		}
-		return (ISourceContainer[])locationList.toArray(new ISourceContainer[locationList.size()]);
+		return locationList.toArray(new ISourceContainer[locationList.size()]);
 	}
-
 }

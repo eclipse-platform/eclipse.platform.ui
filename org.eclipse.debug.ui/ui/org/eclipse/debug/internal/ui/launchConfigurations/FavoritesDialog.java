@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,7 @@ public class FavoritesDialog extends TrayDialog {
 	private LaunchHistory fHistory;
 	
 	// favorites collection under edit
-	private List fFavorites;
+	private List<ILaunchConfiguration> fFavorites;
 
 	// buttons
 	protected Button fAddFavoriteButton;
@@ -78,6 +78,7 @@ public class FavoritesDialog extends TrayDialog {
 	 * Listener that delegates when a button is pressed
 	 */
 	private SelectionAdapter fButtonListener= new SelectionAdapter() {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button button = (Button) e.widget;
 			if (button == fAddFavoriteButton) {
@@ -96,6 +97,7 @@ public class FavoritesDialog extends TrayDialog {
 	 * Listener that delegates when the selection changes in a table
 	 */
 	private ISelectionChangedListener fSelectionChangedListener= new ISelectionChangedListener() {
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			handleFavoriteSelectionChanged();
 		}
@@ -105,6 +107,7 @@ public class FavoritesDialog extends TrayDialog {
 	 * Listener that delegates when a key is pressed in a table
 	 */
 	private KeyListener fKeyListener= new KeyAdapter() {
+		@Override
 		public void keyPressed(KeyEvent event) {
 			if (event.character == SWT.DEL && event.stateMask == 0) {
 				removeSelectedFavorites(); 
@@ -116,11 +119,14 @@ public class FavoritesDialog extends TrayDialog {
 	 * Content provider for favorites table
 	 */
 	protected class FavoritesContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object inputElement) {
-			ILaunchConfiguration[] favorites= (ILaunchConfiguration[]) getFavorites().toArray(new ILaunchConfiguration[0]);
+			ILaunchConfiguration[] favorites= getFavorites().toArray(new ILaunchConfiguration[0]);
 			return LaunchConfigurationManager.filterConfigs(favorites);
 		}
+		@Override
 		public void dispose() {}
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 	}
 	
@@ -145,7 +151,7 @@ public class FavoritesDialog extends TrayDialog {
 		Object[] selection = sfd.getResult();
 		if (selection != null) {
 			for (int i = 0; i < selection.length; i++) {
-				getFavorites().add(selection[i]);
+				getFavorites().add((ILaunchConfiguration) selection[i]);
 			}
 			updateStatus();
 		}
@@ -156,7 +162,7 @@ public class FavoritesDialog extends TrayDialog {
 	 */
 	protected void removeSelectedFavorites() {
 		IStructuredSelection sel = (IStructuredSelection)getFavoritesTable().getSelection();
-		Iterator iter = sel.iterator();
+		Iterator<?> iter = sel.iterator();
 		while (iter.hasNext()) {
 			Object config = iter.next();
 			getFavorites().remove(config);
@@ -174,6 +180,7 @@ public class FavoritesDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
 	 */
+	@Override
 	protected Point getInitialSize() {
 		return new Point(350, 400);
 	}
@@ -191,10 +198,10 @@ public class FavoritesDialog extends TrayDialog {
 	 */
 	protected void handleMove(int direction) {
 		IStructuredSelection sel = (IStructuredSelection)getFavoritesTable().getSelection();
-		List selList= sel.toList();
+		List<?> selList = sel.toList();
 		Object[] movedFavs= new Object[getFavorites().size()];
 		int i;
-		for (Iterator favs = selList.iterator(); favs.hasNext();) {
+		for (Iterator<?> favs = selList.iterator(); favs.hasNext();) {
 			Object config = favs.next();
 			i= getFavorites().indexOf(config);
 			movedFavs[i + direction]= config;
@@ -205,7 +212,7 @@ public class FavoritesDialog extends TrayDialog {
 		for (int j = 0; j < movedFavs.length; j++) {
 			Object config = movedFavs[j];
 			if (config != null) {
-				getFavorites().add(j, config);		
+				getFavorites().add(j, (ILaunchConfiguration) config);
 			}
 		}
 		getFavoritesTable().refresh();	
@@ -225,9 +232,10 @@ public class FavoritesDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
-		getShell().setText(MessageFormat.format(LaunchConfigurationsMessages.FavoritesDialog_1, new String[]{getModeLabel()})); 
+		getShell().setText(MessageFormat.format(LaunchConfigurationsMessages.FavoritesDialog_1, new Object[] { getModeLabel() }));
 		createFavoritesArea(composite);
 		handleFavoriteSelectionChanged();
 		return composite;
@@ -236,6 +244,7 @@ public class FavoritesDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getDialogArea(), IDebugHelpContextIds.ORGANIZE_FAVORITES_DIALOG);
@@ -292,10 +301,10 @@ public class FavoritesDialog extends TrayDialog {
 	/**
 	 * Returns the current list of favorites.
 	 */
-	protected List getFavorites() {
+	protected List<ILaunchConfiguration> getFavorites() {
 		if (fFavorites == null) {
 			ILaunchConfiguration[] favs = getInitialFavorites();
-			fFavorites = new ArrayList(favs.length);
+			fFavorites = new ArrayList<ILaunchConfiguration>(favs.length);
 			addAll(favs, fFavorites);
 		}
 		return fFavorites;
@@ -322,7 +331,7 @@ public class FavoritesDialog extends TrayDialog {
 	/**
 	 * Copies the array into the list
 	 */
-	protected void addAll(Object[] array, List list) {
+	protected void addAll(ILaunchConfiguration[] array, List<ILaunchConfiguration> list) {
 		for (int i = 0; i < array.length; i++) {
 			list.add(array[i]);
 		}
@@ -341,9 +350,9 @@ public class FavoritesDialog extends TrayDialog {
 	 */
 	protected void handleFavoriteSelectionChanged() {
 		IStructuredSelection selection = (IStructuredSelection)getFavoritesTable().getSelection();
-		List favs = getFavorites();
+		List<ILaunchConfiguration> favs = getFavorites();
 		boolean notEmpty = !selection.isEmpty();
-		Iterator elements= selection.iterator();
+		Iterator<?> elements = selection.iterator();
 		boolean first= false;
 		boolean last= false;
 		int lastFav= favs.size() - 1;
@@ -369,9 +378,11 @@ public class FavoritesDialog extends TrayDialog {
 	public void saveFavorites() {
 		
 		final Job job = new Job(LaunchConfigurationsMessages.FavoritesDialog_8) {
+			@SuppressWarnings("deprecation")
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				ILaunchConfiguration[] initial = getInitialFavorites();
-				List current = getFavorites();
+				List<ILaunchConfiguration> current = getFavorites();
 				String groupId = getLaunchHistory().getLaunchGroup().getIdentifier();
 				
 				int taskSize = Math.abs(initial.length-current.size());//get task size
@@ -386,7 +397,7 @@ public class FavoritesDialog extends TrayDialog {
 							ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
 							workingCopy.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String)null);
 							workingCopy.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String)null);
-							List groups = workingCopy.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
+							List<String> groups = workingCopy.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List<String>) null);
 							if (groups != null) {
 								groups.remove(groupId);
 								if (groups.isEmpty()) {
@@ -404,13 +415,13 @@ public class FavoritesDialog extends TrayDialog {
 				}
 				
 				// update added favorites
-				Iterator favs = current.iterator();
+				Iterator<ILaunchConfiguration> favs = current.iterator();
 				while (favs.hasNext()) {
-					ILaunchConfiguration configuration = (ILaunchConfiguration)favs.next();
+					ILaunchConfiguration configuration = favs.next();
 					try {
-						List groups = configuration.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
+						List<String> groups = configuration.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List<String>) null);
 						if (groups == null) {
-							groups = new ArrayList();
+							groups = new ArrayList<String>();
 						}
 						if (!groups.contains(groupId)) {
 							groups.add(groupId);
@@ -436,13 +447,14 @@ public class FavoritesDialog extends TrayDialog {
 			
 	}	
 	
-	protected ILaunchConfiguration[] getArray(List list) {
-		return (ILaunchConfiguration[])list.toArray(new ILaunchConfiguration[list.size()]);
+	protected ILaunchConfiguration[] getArray(List<ILaunchConfiguration> list) {
+		return list.toArray(new ILaunchConfiguration[list.size()]);
 	} 
 		
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		saveFavorites();
 		super.okPressed();
@@ -451,7 +463,8 @@ public class FavoritesDialog extends TrayDialog {
 	 /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
-    protected IDialogSettings getDialogBoundsSettings() {
+    @Override
+	protected IDialogSettings getDialogBoundsSettings() {
     	 IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
          IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
          if (section == null) {

@@ -25,6 +25,7 @@ public class TrackModelProxy extends AbstractModelProxy {
 		fTrack = track;
 	}
 	
+	@Override
 	public void installed(Viewer viewer) {
 		super.installed(viewer);
 		
@@ -36,6 +37,7 @@ public class TrackModelProxy extends AbstractModelProxy {
 		fireModelChanged(delta);
 	}
 	
+	@Override
 	public synchronized void dispose() {
 		super.dispose();
 		MidiEventModelProxy.gChecked.clear();

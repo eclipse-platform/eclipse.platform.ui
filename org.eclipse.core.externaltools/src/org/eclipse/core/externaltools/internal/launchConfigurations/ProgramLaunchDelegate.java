@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ import org.eclipse.osgi.util.NLS;
  * Launch delegate for a program.
  */
 public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
-	
+
 	/**
 	 * Launch configuration attribute - a boolean value indicating whether a
 	 * configuration should be launched in the background. Default value is <code>true</code>.
@@ -51,6 +51,7 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 	 *      java.lang.String, org.eclipse.debug.core.ILaunch,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void launch(ILaunchConfiguration configuration, String mode,
 			ILaunch launch, IProgressMonitor monitor) throws CoreException {
 
@@ -110,7 +111,7 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 		IProcess process = null;
 
 		// add process type to process attributes
-		Map processAttributes = new HashMap();
+		Map<String, String> processAttributes = new HashMap<String, String>();
 		String programName = location.lastSegment();
 		String extension = location.getFileExtension();
 		if (extension != null) {
@@ -125,12 +126,12 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 					ExternalToolsProgramMessages.ProgramLaunchDelegate_3,
 					new String[] { configuration.getName() }),
 					IProgressMonitor.UNKNOWN);
-			process = DebugPlugin.newProcess(launch, p, location.toOSString(),
-					processAttributes);
+			process = DebugPlugin.newProcess(launch, p, location.toOSString(), processAttributes);
 		}
 		if (p == null || process == null) {
-			if (p != null)
+			if (p != null) {
 				p.destroy();
+			}
 			throw new CoreException(new Status(IStatus.ERROR,
 					IExternalToolConstants.PLUGIN_ID,
 					IExternalToolConstants.ERR_INTERNAL_ERROR,
@@ -165,8 +166,9 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 	}
 
 	private String generateCommandLine(String[] commandLine) {
-		if (commandLine.length < 1)
+		if (commandLine.length < 1) {
 			return IExternalToolConstants.EMPTY_STRING;
+		}
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < commandLine.length; i++) {
 			buf.append(' ');
@@ -195,11 +197,12 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder
 	 * (org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
+	@Override
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration,
 			String mode) throws CoreException {
 		IProject[] projects = ExternalToolsCoreUtil.getBuildProjects(
@@ -214,14 +217,15 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 		}
 		return computeBuildOrder(projects);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#saveBeforeLaunch
-	 * (org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, 
+	 * (org.eclipse.debug.core.ILaunchConfiguration, java.lang.String,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected boolean saveBeforeLaunch(ILaunchConfiguration configuration,
 			String mode, IProgressMonitor monitor) throws CoreException {
 		if (IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY

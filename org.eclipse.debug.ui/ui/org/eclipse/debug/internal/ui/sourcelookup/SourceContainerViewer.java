@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,8 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -46,13 +48,14 @@ public class SourceContainerViewer extends TreeViewer {
 	/**
 	 * The source container entries displayed in this viewer
 	 */
-	protected List fEntries = new ArrayList();
+	protected List<ISourceContainer> fEntries = new ArrayList<ISourceContainer>();
 	
 	class ContentProvider implements ITreeContentProvider {
 		
 		/**
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getEntries();
 		}
@@ -60,18 +63,21 @@ public class SourceContainerViewer extends TreeViewer {
 		/**
 		 * @see IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 		
 		/**
 		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 		
 		/** 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			try {
 				return ((ISourceContainer)parentElement).getSourceContainers();
@@ -83,6 +89,7 @@ public class SourceContainerViewer extends TreeViewer {
 		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
+		@Override
 		public Object getParent(Object element) {
 			return null;
 		}
@@ -90,6 +97,7 @@ public class SourceContainerViewer extends TreeViewer {
 		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
+		@Override
 		public boolean hasChildren(Object element) {
 			return ((ISourceContainer)element).isComposite();				
 		}
@@ -118,14 +126,16 @@ public class SourceContainerViewer extends TreeViewer {
 	public void setEntries(ISourceContainer[] entries) {
 		fEntries.clear();
 		for (int i = 0; i < entries.length; i++) {
-			if(entries[i] != null)
+			if(entries[i] != null) {
 				fEntries.add(entries[i]);
+			}
 		}
 		if (getInput() == null) {
 			setInput(fEntries);
 			//select first item in list
-			if(!fEntries.isEmpty() && fEntries.get(0)!=null)
-				setSelection(new StructuredSelection(fEntries.get(0)));			
+			if(!fEntries.isEmpty() && fEntries.get(0)!=null) {
+				setSelection(new StructuredSelection(fEntries.get(0)));
+			}			
 		} else {
 			refresh();
 		}
@@ -139,7 +149,7 @@ public class SourceContainerViewer extends TreeViewer {
 	 * @return the entries in this viewer
 	 */
 	public ISourceContainer[] getEntries() {
-		return (ISourceContainer[])fEntries.toArray(new ISourceContainer[fEntries.size()]);
+		return fEntries.toArray(new ISourceContainer[fEntries.size()]);
 	}
 	
 	/**
@@ -164,8 +174,9 @@ public class SourceContainerViewer extends TreeViewer {
 		}
 		
 		refresh();
-		if(entries.length > 0)
+		if(entries.length > 0) {
 			setSelection(new StructuredSelection(entries));
+		}
 		fPanel.setDirty(true);
 		fPanel.updateLaunchConfigurationDialog();
 	}	

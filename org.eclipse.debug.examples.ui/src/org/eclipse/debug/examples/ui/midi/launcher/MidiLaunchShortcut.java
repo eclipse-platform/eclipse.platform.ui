@@ -34,7 +34,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
  * Launch shortcut for a MIDI file.
- * 
+ *
  * @since 1.0
  */
 public class MidiLaunchShortcut implements ILaunchShortcut {
@@ -42,6 +42,7 @@ public class MidiLaunchShortcut implements ILaunchShortcut {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.jface.viewers.ISelection, java.lang.String)
 	 */
+	@Override
 	public void launch(ISelection selection, String mode) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
@@ -60,14 +61,14 @@ public class MidiLaunchShortcut implements ILaunchShortcut {
 
 	/**
 	 * Returns a MIDI configuration to use for the given file or
-	 * <code>null</code> to cancel. Creates a new configuration 
+	 * <code>null</code> to cancel. Creates a new configuration
 	 * if required.
-	 * 
+	 *
 	 * @param file file
 	 * @return associated launch configuration or <code>null</code>
 	 */
 	private ILaunchConfiguration getConfiguration(IFile file) {
-		List candiates = new ArrayList();
+		List<ILaunchConfiguration> candiates = new ArrayList<ILaunchConfiguration>();
 		try {
 			ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations(getLaunchType());
 			for (int i = 0; i < configurations.length; i++) {
@@ -88,7 +89,7 @@ public class MidiLaunchShortcut implements ILaunchShortcut {
 
 	/**
 	 * Returns the MIDI launch configuration type.
-	 * 
+	 *
 	 * @return the MIDI launch configuration type
 	 */
 	private ILaunchConfigurationType getLaunchType() {
@@ -99,24 +100,24 @@ public class MidiLaunchShortcut implements ILaunchShortcut {
 
 	/**
 	 * Returns the launch manager.
-	 * 
+	 *
 	 * @return launch manager
 	 */
 	private ILaunchManager getLaunchManager() {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		return manager;
 	}
-	
+
 	/**
 	 * Returns a configuration from the given collection of configurations that should be launched,
 	 * or <code>null</code> to cancel.
-	 * 
+	 *
 	 * @param configList list of configurations to choose from
 	 * @return configuration to launch or <code>null</code> to cancel
 	 */
-	private ILaunchConfiguration chooseConfiguration(List configList) {
+	private ILaunchConfiguration chooseConfiguration(List<ILaunchConfiguration> configList) {
 		if (configList.size() == 1) {
-			return (ILaunchConfiguration) configList.get(0);
+			return configList.get(0);
 		}
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(DebugUIPlugin.getActiveWorkbenchShell(), labelProvider);
@@ -129,13 +130,13 @@ public class MidiLaunchShortcut implements ILaunchShortcut {
 		if (result == Window.OK) {
 			return (ILaunchConfiguration) dialog.getFirstResult();
 		}
-		return null;		
+		return null;
 	}
-	
+
 	/**
 	 * Creates and returns a new MIDI launch configuration for the
 	 * given file.
-	 * 
+	 *
 	 * @param file MIDI file
 	 * @return new launch configuration
 	 */
@@ -157,6 +158,7 @@ public class MidiLaunchShortcut implements ILaunchShortcut {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.ui.IEditorPart, java.lang.String)
 	 */
+	@Override
 	public void launch(IEditorPart editor, String mode) {
 		// nothing - currently no editor
 	}

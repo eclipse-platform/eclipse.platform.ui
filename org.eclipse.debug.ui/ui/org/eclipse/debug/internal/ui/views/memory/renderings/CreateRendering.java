@@ -83,6 +83,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 		 */
+		@Override
 		public Image getImage(Object element) {
 			return DebugUIPlugin.getImageDescriptorRegistry().get(
 					DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_MONITOR_EXPRESSION));
@@ -91,6 +92,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 		 */
+		@Override
 		public String getText(Object element) {
 			if (element instanceof IMemoryRenderingType)
 			{	
@@ -103,18 +105,21 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 		 */
+		@Override
 		public void addListener(ILabelProviderListener listener) {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
 		 */
+		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}
@@ -122,6 +127,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 		 */
+		@Override
 		public void removeListener(ILabelProviderListener listener) {
 		}
 
@@ -133,6 +139,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			IMemoryRenderingType[] renderings = DebugUITools.getMemoryRenderingManager().getRenderingTypes((IMemoryBlock)inputElement);
 			return renderings;
@@ -141,6 +148,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 			
 		}
@@ -148,6 +156,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 		
@@ -156,6 +165,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		fCanvas = new Composite(parent, SWT.NONE);
 		GridLayout compositeLayout = new GridLayout();
@@ -205,12 +215,14 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		
 		fViewer.addDoubleClickListener(new IDoubleClickListener (){
 
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				addRenderings();
 			}});
 		
 		// listen for enter being pressed
 		fViewer.getList().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.character == SWT.CR)
 					addRenderings();
@@ -225,10 +237,12 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		
 		addButton.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				addRenderings();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				addRenderings();
 			}});
@@ -290,6 +304,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fViewer = null;
 		fCanvas = null;
@@ -301,14 +316,17 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.memory.AbstractMemoryRendering#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return fCanvas;
 	}
+	@Override
 	public void memoryRenderingBindingsChanged() {
 		if (fViewer != null)
 			fViewer.refresh();
 	}
 
+	@Override
 	public String getLabel() {
 		if (fTabLabel == null)
 		{
@@ -319,15 +337,18 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		return fTabLabel;
 	}
 	
+	@Override
 	public Image getImage() {
 		return DebugUIPlugin.getImageDescriptorRegistry().get(
 				DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_MONITOR_EXPRESSION));
 	}
 	
+	@Override
 	public void becomesVisible() {
 		// Do nothing, do not want to connect/disconnect from clients
 	}
 	
+	@Override
 	public void becomesHidden() {
 		// Do nothing, do not want to connect/disconnect from clients
 	}
@@ -336,6 +357,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 	{
 		Job job = new Job("Update Rendering Label"){ //$NON-NLS-1$
 
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				fLabel = CreateRendering.super.getLabel();
 				fTabLabel = DebugUIMessages.CreateRenderingTab_label ;
@@ -344,6 +366,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 				
 				WorkbenchJob wbJob = new WorkbenchJob("Create Rendering Update Label"){ //$NON-NLS-1$
 
+					@Override
 					public IStatus runInUIThread(IProgressMonitor wbMonitor) {
 						if (fMemoryBlockLabel != null)
 						{

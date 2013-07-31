@@ -81,6 +81,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 			fRenderingType = renderingType;
 		}
 
+		@Override
 		public void runWithEvent(Event event) {
 			if (fActionDelegate != null)
 			{
@@ -96,17 +97,21 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	private class AddMemoryRenderingMenuCreator implements IMenuCreator
 	{
 
+		@Override
 		public void dispose() {
 			
 		}
 
+		@Override
 		public Menu getMenu(Control parent) {
 			return null;
 		}
 
+		@Override
 		public Menu getMenu(Menu parent) {
 			Menu menu = new Menu(parent);
 			menu.addMenuListener(new MenuAdapter() {
+				@Override
 				public void menuShown(MenuEvent e) {
 					Menu m = (Menu)e.widget;
 					MenuItem[] items = m.getItems();
@@ -145,6 +150,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 				updateAction(fAction, fCurrentSelection);
 		}
 
+		@Override
 		public void debugContextChanged(DebugContextEvent event) {
 			contextActivated(event.getContext());
 		}
@@ -202,6 +208,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		bindPart(view);	
 	}
@@ -209,6 +216,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		// do nothing
 	}
@@ -216,6 +224,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fCurrentSelection = selection;
 		
@@ -271,6 +280,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		bindPart(targetEditor);
 		
@@ -283,6 +293,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		bindPart(targetPart);
 		
@@ -295,6 +306,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {		
 		if (action != null) {
 			bindAction(action);
@@ -309,6 +321,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// remove as debug context listener
 		fAction = null;
@@ -323,6 +336,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		// do nothing
 	}

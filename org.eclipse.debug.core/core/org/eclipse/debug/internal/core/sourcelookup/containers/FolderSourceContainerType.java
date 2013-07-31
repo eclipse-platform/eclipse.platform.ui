@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.w3c.dom.Node;
 
 /**
  * A folder in the workspace.
- * 
+ *
  * @since 3.0
  */
 public class FolderSourceContainerType extends AbstractSourceContainerTypeDelegate {
@@ -33,6 +33,7 @@ public class FolderSourceContainerType extends AbstractSourceContainerTypeDelega
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
 	 */
+	@Override
 	public String getMemento(ISourceContainer container) throws CoreException {
 		FolderSourceContainer folderSourceContainer = (FolderSourceContainer)container;
 		Document document = newDocument();
@@ -50,6 +51,7 @@ public class FolderSourceContainerType extends AbstractSourceContainerTypeDelega
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#createSourceContainer(java.lang.String)
 	 */
+	@Override
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
 		Node node = parseDocument(memento);
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -57,17 +59,17 @@ public class FolderSourceContainerType extends AbstractSourceContainerTypeDelega
 			if ("folder".equals(element.getNodeName())) { //$NON-NLS-1$
 				String string = element.getAttribute("path"); //$NON-NLS-1$
 				if (string == null || string.length() == 0) {
-					abort(SourceLookupMessages.FolderSourceContainerType_10, null); 
+					abort(SourceLookupMessages.FolderSourceContainerType_10, null);
 				}
 				String nest = element.getAttribute("nest"); //$NON-NLS-1$
 				boolean nested = "true".equals(nest); //$NON-NLS-1$
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				IFolder folder = workspace.getRoot().getFolder(new Path(string));
 				return new FolderSourceContainer(folder, nested);
-			} 
-			abort(SourceLookupMessages.FolderSourceContainerType_11, null); 
+			}
+			abort(SourceLookupMessages.FolderSourceContainerType_11, null);
 		}
-		abort(SourceLookupMessages.FolderSourceContainerType_12, null); 
+		abort(SourceLookupMessages.FolderSourceContainerType_12, null);
 		return null;
 	}
 }

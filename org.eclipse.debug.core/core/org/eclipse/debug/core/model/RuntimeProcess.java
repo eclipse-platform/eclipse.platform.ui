@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,8 @@ package org.eclipse.debug.core.model;
 
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
@@ -35,7 +35,7 @@ import org.eclipse.debug.internal.core.StreamsProxy;
  * Clients may subclass this class. Clients that need to replace the implementation
  * of a streams proxy associated with an <code>IProcess</code> should subclass this
  * class. Generally clients should not instantiate this class directly, but should
- * instead call <code>DebugPlugin.newProcess(...)</code>, which can delegate to an 
+ * instead call <code>DebugPlugin.newProcess(...)</code>, which can delegate to an
  * <code>IProcessFactory</code> if one is referenced by the associated launch configuration.
  * </p>
  * @see org.eclipse.debug.core.model.IProcess
@@ -46,28 +46,28 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 
 	private static final int MAX_WAIT_FOR_DEATH_ATTEMPTS = 10;
 	private static final int TIME_TO_WAIT_FOR_THREAD_DEATH = 500; // ms
-	
+
 	/**
 	 * The launch this process is contained in
 	 */
 	private ILaunch fLaunch;
-	
+
 	/**
 	 * The system process represented by this <code>IProcess</code>
 	 */
 	private Process fProcess;
-	
+
 	/**
 	 * This process's exit value
 	 */
 	private int fExitValue;
-	
+
 	/**
 	 * The monitor which listens for this runtime process' system process
 	 * to terminate.
 	 */
 	private ProcessMonitorThread fMonitor;
-	
+
 	/**
 	 * The streams proxy for this process
 	 */
@@ -82,12 +82,12 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * Whether this process has been terminated
 	 */
 	private boolean fTerminated;
-	
+
 	/**
 	 * Table of client defined attributes
 	 */
-	private Map fAttributes;
-	
+	private Map<String, String> fAttributes;
+
 	/**
 	 * Whether output from the process should be captured or swallowed
 	 */
@@ -97,14 +97,14 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * Constructs a RuntimeProcess on the given system process
 	 * with the given name, adding this process to the given
 	 * launch.
-	 * 
+	 *
 	 * @param launch the parent launch of this process
 	 * @param process underlying system process
 	 * @param name the label used for this process
 	 * @param attributes map of attributes used to initialize the attributes
 	 *   of this process, or <code>null</code> if none
 	 */
-	public RuntimeProcess(ILaunch launch, Process process, String name, Map attributes) {
+	public RuntimeProcess(ILaunch launch, Process process, String name, Map<String, String> attributes) {
 		setLaunch(launch);
 		initializeAttributes(attributes);
 		fProcess= process;
@@ -115,7 +115,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		} catch (IllegalThreadStateException e) {
 			fTerminated= false;
 		}
-		
+
 		String captureOutput = launch.getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT);
 		fCaptureOutput = !("false".equals(captureOutput)); //$NON-NLS-1$
 
@@ -128,22 +128,21 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 
 	/**
 	 * Initialize the attributes of this process to those in the given map.
-	 * 
+	 *
 	 * @param attributes attribute map or <code>null</code> if none
 	 */
-	private void initializeAttributes(Map attributes) {
+	private void initializeAttributes(Map<String, String> attributes) {
 		if (attributes != null) {
-			Iterator keys = attributes.keySet().iterator();
-			while (keys.hasNext()) {
-				String key = (String)keys.next();
-				setAttribute(key, (String)attributes.get(key));
-			}	
+			for (Entry<String, String> entry : attributes.entrySet()) {
+				setAttribute(entry.getKey(), entry.getValue());
+			}
 		}
 	}
 
 	/**
 	 * @see ITerminate#canTerminate()
 	 */
+	@Override
 	public synchronized boolean canTerminate() {
 		return !fTerminated;
 	}
@@ -151,13 +150,14 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	/**
 	 * @see IProcess#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return fName;
 	}
-	
+
 	/**
 	 * Sets the launch this process is contained in
-	 * 
+	 *
 	 * @param launch the launch this process is contained in
 	 */
 	protected void setLaunch(ILaunch launch) {
@@ -167,13 +167,14 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	/**
 	 * @see IProcess#getLaunch()
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return fLaunch;
 	}
 
 	/**
 	 * Returns the underlying system process associated with this process.
-	 * 
+	 *
 	 * @return system process
 	 */
 	protected Process getSystemProcess() {
@@ -183,6 +184,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	/**
 	 * @see ITerminate#isTerminated()
 	 */
+	@Override
 	public synchronized boolean isTerminated() {
 		return fTerminated;
 	}
@@ -190,8 +192,9 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	/**
 	 * @see ITerminate#terminate()
 	 */
+	@Override
 	public void terminate() throws DebugException {
-		if (!isTerminated()) {			
+		if (!isTerminated()) {
 			if (fStreamsProxy instanceof StreamsProxy) {
 				((StreamsProxy)fStreamsProxy).kill();
 			}
@@ -220,7 +223,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 				fMonitor.killThread();
 				fMonitor = null;
 			}
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.RuntimeProcess_terminate_failed, null);		 
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.RuntimeProcess_terminate_failed, null);
 			throw new DebugException(status);
 		}
 	}
@@ -234,7 +237,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
             ((StreamsProxy)fStreamsProxy).close();
         }
 
-        
+
         // Avoid calling IProcess.exitValue() inside a sync section (Bug 311813).
         int exitValue = -1;
         boolean running = false;
@@ -243,7 +246,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
         } catch (IllegalThreadStateException ie) {
             running = true;
         }
-        
+
 		synchronized (this) {
 			fTerminated= true;
 			if (!running) {
@@ -253,30 +256,31 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		}
 		fireTerminateEvent();
 	}
-		
+
 	/**
 	 * @see IProcess#getStreamsProxy()
 	 */
+	@Override
 	public IStreamsProxy getStreamsProxy() {
 	    if (!fCaptureOutput) {
 	        return null;
 	    }
 		return fStreamsProxy;
 	}
-	
+
 	/**
 	 * Creates and returns the streams proxy associated with this process.
-	 * 
+	 *
 	 * @return streams proxy
 	 */
 	protected IStreamsProxy createStreamsProxy() {
 	    if (!fCaptureOutput) {
 	        return new NullStreamsProxy(getSystemProcess());
 	    }
-		String encoding = getLaunch().getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING);	    
+		String encoding = getLaunch().getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING);
 		return new StreamsProxy(getSystemProcess(), encoding);
-	}	
-	
+	}
+
 	/**
 	 * Fires a creation event.
 	 */
@@ -286,7 +290,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 
 	/**
 	 * Fires the given debug event.
-	 * 
+	 *
 	 * @param event debug event to fire
 	 */
 	protected void fireEvent(DebugEvent event) {
@@ -305,7 +309,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 
 	/**
 	 * Fires a change event.
-	 */	
+	 */
 	protected void fireChangeEvent() {
 		fireEvent(new DebugEvent(this, DebugEvent.CHANGE));
 	}
@@ -313,32 +317,35 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	/**
 	 * @see IProcess#setAttribute(String, String)
 	 */
+	@Override
 	public void setAttribute(String key, String value) {
 		if (fAttributes == null) {
-			fAttributes = new HashMap(5);
+			fAttributes = new HashMap<String, String>(5);
 		}
 		Object origVal = fAttributes.get(key);
 		if (origVal != null && origVal.equals(value)) {
 			return; //nothing changed.
 		}
-		
+
 		fAttributes.put(key, value);
 		fireChangeEvent();
 	}
-	
+
 	/**
 	 * @see IProcess#getAttribute(String)
 	 */
+	@Override
 	public String getAttribute(String key) {
 		if (fAttributes == null) {
 			return null;
 		}
-		return (String)fAttributes.get(key);
+		return fAttributes.get(key);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IProcess.class)) {
 			return this;
@@ -365,19 +372,20 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	/**
 	 * @see IProcess#getExitValue()
 	 */
+	@Override
 	public synchronized int getExitValue() throws DebugException {
 		if (isTerminated()) {
 			return fExitValue;
-		} 
-		throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.RuntimeProcess_Exit_value_not_available_until_process_terminates__1, null)); 
+		}
+		throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.RuntimeProcess_Exit_value_not_available_until_process_terminates__1, null));
 	}
-	
+
 	/**
 	 * Monitors a system process, waiting for it to terminate, and
 	 * then notifies the associated runtime process.
 	 */
 	class ProcessMonitorThread extends Thread {
-		
+
 		/**
 		 * Whether the thread has been told to exit.
 		 */
@@ -385,7 +393,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		/**
 		 * The underlying <code>java.lang.Process</code> being monitored.
 		 */
-		protected Process fOSProcess;	
+		protected Process fOSProcess;
 		/**
 		 * The <code>IProcess</code> which will be informed when this
 		 * monitor detects that the underlying process has terminated.
@@ -396,7 +404,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		 * The <code>Thread</code> which is monitoring the underlying process.
 		 */
 		protected Thread fThread;
-		
+
 		/**
 		 * A lock protecting access to <code>fThread</code>.
 		 */
@@ -405,6 +413,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		/**
 		 * @see Thread#run()
 		 */
+		@Override
 		public void run() {
 			synchronized (fThreadLock) {
 				if (fExit) {
@@ -429,11 +438,11 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		/**
 		 * Creates a new process monitor and starts monitoring the process for
 		 * termination.
-		 * 
+		 *
 		 * @param process process to monitor for termination
 		 */
 		public ProcessMonitorThread(RuntimeProcess process) {
-			super(DebugCoreMessages.ProcessMonitorJob_0); 
+			super(DebugCoreMessages.ProcessMonitorJob_0);
 			setDaemon(true);
 			fRuntimeProcess= process;
 			fOSProcess= process.getSystemProcess();
@@ -441,7 +450,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 
 		/**
 		 * Kills the monitoring thread.
-		 * 
+		 *
 		 * This method is to be useful for dealing with the error
 		 * case of an underlying process which has not informed this
 		 * monitor of its termination.
@@ -455,5 +464,5 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 				}
 			}
 		}
-	}	
+	}
 }

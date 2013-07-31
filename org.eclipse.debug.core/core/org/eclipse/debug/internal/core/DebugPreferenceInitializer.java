@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ import org.eclipse.debug.core.DebugPlugin;
 
 /**
  * Initializes preferences for debug.core
- * 
+ *
  * @since 3.3
  */
 public class DebugPreferenceInitializer extends AbstractPreferenceInitializer {
@@ -23,6 +23,7 @@ public class DebugPreferenceInitializer extends AbstractPreferenceInitializer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
+	@Override
 	public void initializeDefaultPreferences() {
 		// Step filter preferences
 		Preferences.setDefaultBoolean(DebugPlugin.getUniqueIdentifier(), StepFilterManager.PREF_USE_STEP_FILTERS, false);

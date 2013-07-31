@@ -24,49 +24,56 @@ import org.eclipse.ui.IViewPart;
 /**
  * @since 3.1
  */
-abstract public class ToggleViewPaneAction  extends Action implements IViewActionDelegate, IActionDelegate2, IPropertyChangeListener {
+abstract public class ToggleViewPaneAction extends Action implements IViewActionDelegate, IActionDelegate2, IPropertyChangeListener {
 
 	MemoryView fView;
 	IAction fAction;
-	
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
-		if (view instanceof MemoryView)
-		{
-			fView = (MemoryView)view;
+		if (view instanceof MemoryView) {
+			fView = (MemoryView) view;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
-		
+
 		if (fView == null)
 			return;
-		
+
 		fView.showViewPane(!fView.isViewPaneVisible(getPaneId()), getPaneId());
-		
+
 		if (fView.isViewPaneVisible(getPaneId()))
 			action.setChecked(true);
 		else
 			action.setChecked(false);
-		
+
 	}
-	
+
+	@Override
 	public void run() {
 		if (fView == null)
 			return;
-		
+
 		fView.showViewPane(!fView.isViewPaneVisible(getPaneId()), getPaneId());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
+	 * .IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (fView.isViewPaneVisible(getPaneId()))
 			action.setChecked(true);
@@ -74,28 +81,31 @@ abstract public class ToggleViewPaneAction  extends Action implements IViewActio
 			action.setChecked(false);
 	}
 
+	@Override
 	public void dispose() {
 		DebugUITools.getPreferenceStore().removePropertyChangeListener(this);
 	}
 
+	@Override
 	public void init(IAction action) {
 		fAction = action;
 		DebugUITools.getPreferenceStore().addPropertyChangeListener(this);
 	}
 
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (fView != null && fAction != null)
-		{
+		if (fView != null && fAction != null) {
 			if (fView.isViewPaneVisible(getPaneId()))
 				fAction.setChecked(true);
 			else
 				fAction.setChecked(false);
 		}
 	}
-	
-	abstract public String getPaneId();	
+
+	abstract public String getPaneId();
 }

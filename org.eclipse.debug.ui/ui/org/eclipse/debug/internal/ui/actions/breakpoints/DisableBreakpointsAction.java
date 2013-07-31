@@ -17,6 +17,7 @@ public class DisableBreakpointsAction extends EnableBreakpointsAction {
 	 * If this action can enable breakpoints
 	 * @return always <code>false</code>
 	 */
+	@Override
 	protected boolean isEnableAction() {
 		return false;
 	}

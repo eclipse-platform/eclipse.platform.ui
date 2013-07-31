@@ -56,6 +56,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
@@ -80,6 +81,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		
 	}
@@ -87,6 +89,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fSourceLookupPanel.initializeFrom(configuration);
 	}
@@ -94,6 +97,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		fSourceLookupPanel.performApply(configuration);
 	}
@@ -101,6 +105,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 */
+	@Override
 	public String getId() {
 	    return "org.eclipse.debug.ui.sourceLookupTab"; //$NON-NLS-1$
 	}
@@ -108,6 +113,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return SourceLookupUIMessages.sourceTab_tabTitle; 
 	}
@@ -115,6 +121,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_SRC_LOOKUP_TAB);
 	}
@@ -122,6 +129,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		fSourceLookupPanel.activated(workingCopy);
 	}
@@ -129,6 +137,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fSourceLookupPanel != null) {
 			if (fSourceLookupPanel.getDirector() != null) {
@@ -143,6 +152,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		if (fSourceLookupPanel != null) {
 			return fSourceLookupPanel.getErrorMessage();
@@ -152,6 +162,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		if (fSourceLookupPanel != null) {
 			return fSourceLookupPanel.getMessage();

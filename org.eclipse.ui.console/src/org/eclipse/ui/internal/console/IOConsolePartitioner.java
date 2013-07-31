@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,15 +46,15 @@ import org.eclipse.ui.progress.WorkbenchJob;
 public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocumentPartitionerExtension {
 	private PendingPartition consoleClosedPartition;
 	private IDocument document;
-	private ArrayList partitions;
+	private ArrayList<IOConsolePartition> partitions;
 	/**
 	 * Blocks of data that have not yet been appended to the document.
 	 */
-	private ArrayList pendingPartitions;
+	private ArrayList<PendingPartition> pendingPartitions;
 	/**
 	 * A list of PendingPartitions to be appended by the updateJob
 	 */
-	private ArrayList updatePartitions;
+	private ArrayList<PendingPartition> updatePartitions;
 	/**
 	 * The last partition appended to the document
 	 */
@@ -62,7 +62,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	/**
 	 * Job that appends pending partitions to the document.
 	 */
-	private QueueProcessingJob queueJob;	    
+	private QueueProcessingJob queueJob;
 	/**
 	 * The input stream attached to this document.
 	 */
@@ -75,7 +75,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	 * A list of partitions containing input from the console, that have
 	 * not been appended to the input stream yet.
 	 */
-	private ArrayList inputPartitions;
+	private ArrayList<IOConsolePartition> inputPartitions;
 	/**
 	 * offset used by updateJob
 	 */
@@ -89,64 +89,66 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
     private boolean connected = false;
 
     private IOConsole console;
-	
+
 	private TrimJob trimJob = new TrimJob();
 	/**
 	 * Lock for appending to and removing from the document - used
 	 * to synchronize addition of new text/partitions in the update
-	 * job and handling buffer overflow/clearing of the console. 
+	 * job and handling buffer overflow/clearing of the console.
 	 */
 	private Object overflowLock = new Object();
-	
-    
-    private int fBuffer; 
-    
+
+
+    private int fBuffer;
+
 	public IOConsolePartitioner(IOConsoleInputStream inputStream, IOConsole console) {
 		this.inputStream = inputStream;
 		this.console = console;
 		trimJob.setRule(console.getSchedulingRule());
 	}
-	
+
 	public IDocument getDocument() {
 		return document;
 	}
-	
+
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#connect(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public void connect(IDocument doc) {
 		document = doc;
 		document.setDocumentPartitioner(this);
 		lld = document.getLegalLineDelimiters();
-		partitions = new ArrayList();
-		pendingPartitions = new ArrayList();
-		inputPartitions = new ArrayList();
+		partitions = new ArrayList<IOConsolePartition>();
+		pendingPartitions = new ArrayList<PendingPartition>();
+		inputPartitions = new ArrayList<IOConsolePartition>();
 		queueJob = new QueueProcessingJob();
 		queueJob.setSystem(true);
         queueJob.setPriority(Job.INTERACTIVE);
 		queueJob.setRule(console.getSchedulingRule());
 		connected = true;
 	}
-	
+
 	public int getHighWaterMark() {
 	    return highWaterMark;
 	}
-	
+
 	public int getLowWaterMark() {
 	    return lowWaterMark;
 	}
-	
+
 	public void setWaterMarks(int low, int high) {
 		lowWaterMark = low;
 		highWaterMark = high;
 		ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				checkBufferSize();
 			}
 		});
 	}
-	
+
 	/**
 	 * Notification from the console that all of its streams have been closed.
 	 */
@@ -157,13 +159,14 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
         }
         queueJob.schedule(); //ensure that all pending partitions are processed.
     }
-	
+
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#disconnect()
 	 */
+	@Override
 	public void disconnect() {
-		synchronized (overflowLock) {    
+		synchronized (overflowLock) {
 			document = null;
 			partitions.clear();
 			connected = false;
@@ -173,112 +176,120 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	        }
 		}
 	}
-	
+
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
 	}
-	
+
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#documentChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
+	@Override
 	public boolean documentChanged(DocumentEvent event) {
 		return documentChanged2(event) != null;
 	}
-	
+
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#getLegalContentTypes()
 	 */
+	@Override
 	public String[] getLegalContentTypes() {
 		return new String[] { IOConsolePartition.OUTPUT_PARTITION_TYPE, IOConsolePartition.INPUT_PARTITION_TYPE };
 	}
-	
+
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#getContentType(int)
 	 */
+	@Override
 	public String getContentType(int offset) {
 		return getPartition(offset).getType();
 	}
-	
+
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#computePartitioning(int, int)
 	 */
-	public ITypedRegion[] computePartitioning(int offset, int length) {					
+	@Override
+	public ITypedRegion[] computePartitioning(int offset, int length) {
 		int rangeEnd = offset + length;
 		int left= 0;
 		int right= partitions.size() - 1;
 		int mid= 0;
 		IOConsolePartition position= null;
-		
+
 		if (left == right) {
-		    return new IOConsolePartition[]{(IOConsolePartition) partitions.get(0)};
+		    return new IOConsolePartition[]{partitions.get(0)};
 		}
 		while (left < right) {
-			
+
 			mid= (left + right) / 2;
-				
-			position= (IOConsolePartition) partitions.get(mid);
+
+			position= partitions.get(mid);
 			if (rangeEnd < position.getOffset()) {
-				if (left == mid)
+				if (left == mid) {
 					right= left;
-				else
+				} else {
 					right= mid -1;
+				}
 			} else if (offset > (position.getOffset() + position.getLength() - 1)) {
-				if (right == mid)
+				if (right == mid) {
 					left= right;
-				else
+				} else {
 					left= mid  +1;
+				}
 			} else {
 				left= right= mid;
 			}
 		}
-		
-		
-		List list = new ArrayList();
+
+
+		List<IOConsolePartition> list = new ArrayList<IOConsolePartition>();
 		int index = left - 1;
 		if (index >= 0) {
-		    position= (IOConsolePartition) partitions.get(index);
+		    position= partitions.get(index);
 			while (index >= 0 && (position.getOffset() + position.getLength()) > offset) {
 				index--;
 				if (index >= 0) {
-					position= (IOConsolePartition) partitions.get(index);
+					position= partitions.get(index);
 				}
-			}		    
+			}
 		}
 		index++;
-		position= (IOConsolePartition) partitions.get(index);
+		position= partitions.get(index);
 		while (index < partitions.size() && (position.getOffset() < rangeEnd)) {
 			list.add(position);
 			index++;
 			if (index < partitions.size()) {
-				position= (IOConsolePartition) partitions.get(index);
+				position= partitions.get(index);
 			}
 		}
-		
-		return (ITypedRegion[]) list.toArray(new IOConsolePartition[list.size()]);
-	}    
 
-	
+		return list.toArray(new IOConsolePartition[list.size()]);
+	}
+
+
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#getPartition(int)
 	 */
+	@Override
 	public ITypedRegion getPartition(int offset) {
 		for (int i = 0; i < partitions.size(); i++) {
-			ITypedRegion partition = (ITypedRegion) partitions.get(i);
+			ITypedRegion partition = partitions.get(i);
 			int start = partition.getOffset();
 			int end = start + partition.getLength();
 			if (offset >= start && offset < end) {
 				return partition;
-			} 
+			}
 		}
-		
+
 		if (lastPartition == null)  {
 			synchronized(partitions) {
 				lastPartition = new IOConsolePartition(inputStream, ""); //$NON-NLS-1$
@@ -289,11 +300,11 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		}
 		return lastPartition;
 	}
-		
+
 	/**
 	 * Enforces the buffer size.
-	 * When the number of lines in the document exceeds the high water mark, the 
-	 * beginning of the document is trimmed until the number of lines equals the 
+	 * When the number of lines in the document exceeds the high water mark, the
+	 * beginning of the document is trimmed until the number of lines equals the
 	 * low water mark.
 	 */
 	private void checkBufferSize() {
@@ -307,7 +318,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 			}
 		}
 	}
-	
+
 	/**
 	 * Clears the console
 	 */
@@ -317,12 +328,13 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		    trimJob.schedule();
         }
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension#documentChanged2(org.eclipse.jface.text.DocumentEvent)
 	 */
+	@Override
 	public IRegion documentChanged2(DocumentEvent event) {
 	    if (document == null) {
 	        return null; //another thread disconnected the partitioner
@@ -337,52 +349,51 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 			lastPartition = null;
 			return new Region(0, 0);
 		}
-		
-		
+
+
 		if (updateInProgress) {
 			synchronized(partitions) {
 				if (updatePartitions != null) {
-				    for (Iterator i = updatePartitions.iterator(); i.hasNext(); ) {
-				        PendingPartition pp = (PendingPartition) i.next();
-				        if (pp == consoleClosedPartition) {
+					for (PendingPartition pp : updatePartitions) {
+						if (pp == consoleClosedPartition) {
 				            continue;
 				        }
-				        
+
 				        int ppLen = pp.text.length();
 				        if (lastPartition != null && lastPartition.getStream() == pp.stream) {
 				            int len = lastPartition.getLength();
 				            lastPartition.setLength(len + ppLen);
 				        } else {
 				            IOConsolePartition partition = new IOConsolePartition(pp.stream, ppLen);
-				            partition.setOffset(firstOffset);				        
+				            partition.setOffset(firstOffset);
 				            lastPartition = partition;
 				            partitions.add(partition);
 				        }
 				        firstOffset += ppLen;
-				    }
+					}
 				}
 			}
 		} else {// user input.
 			int amountDeleted = event.getLength() ;
-			
+
 			if (amountDeleted > 0) {
-				int offset = event.fOffset;    
+				int offset = event.fOffset;
 				IOConsolePartition partition = (IOConsolePartition) getPartition(offset);
 				if(partition == lastPartition) {
 					partition.delete(event.fOffset-partition.getOffset(), amountDeleted);
-				} 
+				}
 			}
-			
+
 			synchronized(partitions) {
 				if (lastPartition == null || lastPartition.isReadOnly()) {
-					lastPartition = new IOConsolePartition(inputStream, event.fText); 
+					lastPartition = new IOConsolePartition(inputStream, event.fText);
 					lastPartition.setOffset(event.fOffset);
 					partitions.add(lastPartition);
 					inputPartitions.add(lastPartition);
 				} else {
 					lastPartition.insert(event.fText, (event.fOffset-lastPartition.getOffset()));
 				}
-				
+
 				int lastLineDelimiter = -1;
 				String partitionText = lastPartition.getString();
 				for (int i = 0; i < lld.length; i++) {
@@ -397,9 +408,9 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 				}
 				if (lastLineDelimiter != -1) {
 					StringBuffer input = new StringBuffer();
-					Iterator it = inputPartitions.iterator();
+					Iterator<IOConsolePartition> it = inputPartitions.iterator();
 					while (it.hasNext()) {
-					    IOConsolePartition partition = (IOConsolePartition) it.next();
+					    IOConsolePartition partition = it.next();
 					    if (partition.getOffset() + partition.getLength() <= event.fOffset + lastLineDelimiter) {
 					        if (partition == lastPartition) {
 					            lastPartition = null;
@@ -431,19 +442,19 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 
 				}
 			}
-		}   
-		
+		}
+
 		return new Region(event.fOffset, event.fText.length());
 	}
-	
+
 	private void setUpdateInProgress(boolean b) {
 		updateInProgress = b;
 	}
-		
+
 	/**
 	 * A stream has been appended, add to pendingPartions list and schedule updateJob.
 	 * updateJob is scheduled with a slight delay, this allows the console to run the job
-	 * less frequently and update the document with a greater amount of data each time 
+	 * less frequently and update the document with a greater amount of data each time
 	 * the job is run
 	 * @param stream The stream that was written to.
 	 * @param s The string that should be appended to the document.
@@ -453,7 +464,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
             throw new IOException("Document is closed"); //$NON-NLS-1$
         }
 		synchronized(pendingPartitions) {
-			PendingPartition last = (PendingPartition) (pendingPartitions.size() > 0 ? pendingPartitions.get(pendingPartitions.size()-1) : null);
+			PendingPartition last = pendingPartitions.size() > 0 ? pendingPartitions.get(pendingPartitions.size()-1) : null;
 			if (last != null && last.stream == stream) {
 				last.append(s);
 			} else {
@@ -464,7 +475,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
                     queueJob.schedule(50);
                 }
 			}
-            
+
             if (fBuffer > 160000) {
             	if(Display.getCurrent() == null){
 					try {
@@ -481,29 +492,29 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
             }
 		}
 	}
-	
+
 	/**
 	 * Holds data until updateJob can be run and the document can be updated.
 	 */
 	private class PendingPartition {
 		StringBuffer text = new StringBuffer(8192);
 		IOConsoleOutputStream stream;
-		
+
 		PendingPartition(IOConsoleOutputStream stream, String text) {
 			this.stream = stream;
 			if (text != null) {
                 append(text);
             }
 		}
-		
+
 		void append(String moreText) {
 			text.append(moreText);
             fBuffer += moreText.length();
 		}
 	}
-	
+
 	/**
-	 * Updates the document. Will append everything that is available before 
+	 * Updates the document. Will append everything that is available before
 	 * finishing.
 	 */
 	private class QueueProcessingJob extends UIJob {
@@ -511,32 +522,34 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
         QueueProcessingJob() {
 			super("IOConsole Updater"); //$NON-NLS-1$
 		}
-		
+
         /*
          *  (non-Javadoc)
          * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
          */
-        public IStatus runInUIThread(IProgressMonitor monitor) {
+        @Override
+		public IStatus runInUIThread(IProgressMonitor monitor) {
         	processQueue();
         	return Status.OK_STATUS;
-        }        
-		
-        /* 
+        }
+
+        /*
          * Job will process as much as it can each time it's run, but it gets
          * scheduled everytime a PendingPartition is added to the list, meaning
          * that this job could get scheduled unnecessarily in cases of heavy output.
          * Note however, that schedule() will only reschedule a running/scheduled Job
          * once even if it's called many times.
          */
-        public boolean shouldRun() {
+        @Override
+		public boolean shouldRun() {
             boolean shouldRun = connected && pendingPartitions != null && pendingPartitions.size() > 0;
             return shouldRun;
         }
 	}
-	
+
 	void processQueue() {
     	synchronized (overflowLock) {
-    		ArrayList pendingCopy = new ArrayList();
+			ArrayList<PendingPartition> pendingCopy = new ArrayList<PendingPartition>();
     		StringBuffer buffer = null;
     		boolean consoleClosed = false;
 			synchronized(pendingPartitions) {
@@ -547,22 +560,19 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 			}
 			// determine buffer size
 			int size = 0;
-			for (Iterator i = pendingCopy.iterator(); i.hasNext(); ) {
-				PendingPartition pp = (PendingPartition) i.next();
-				if (pp != consoleClosedPartition) { 
+			for (PendingPartition pp : pendingCopy) {
+				if (pp != consoleClosedPartition) {
 					size+= pp.text.length();
-				} 
+				}
 			}
 			buffer = new StringBuffer(size);
-			for (Iterator i = pendingCopy.iterator(); i.hasNext(); ) {
-				PendingPartition pp = (PendingPartition) i.next();
-				if (pp != consoleClosedPartition) { 
+			for (PendingPartition pp : pendingCopy) {
+				if (pp != consoleClosedPartition) {
 					buffer.append(pp.text);
 				} else {
 					consoleClosed = true;
 				}
 			}
-
     		if (connected) {
     			setUpdateInProgress(true);
     			updatePartitions = pendingCopy;
@@ -583,18 +593,18 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
     	}
 
 	}
-	
+
     /**
      * Job to trim the console document, runs in the  UI thread.
      */
     private class TrimJob extends WorkbenchJob {
-        
+
         /**
          * trims output up to the line containing the given offset,
          * or all output if -1.
          */
         private int truncateOffset;
-        
+
         /**
          * Creates a new job to trim the buffer.
          */
@@ -602,10 +612,10 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
             super("Trim Job"); //$NON-NLS-1$
             setSystem(true);
         }
-        
+
         /**
          * Sets the trim offset.
-         * 
+         *
          * @param offset trims output up to the line containing the given offset
          */
         public void setOffset(int offset) {
@@ -615,7 +625,8 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
         /* (non-Javadoc)
          * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
          */
-        public IStatus runInUIThread(IProgressMonitor monitor) {
+        @Override
+		public IStatus runInUIThread(IProgressMonitor monitor) {
             IJobManager jobManager = Job.getJobManager();
             try {
                 jobManager.join(console, monitor);
@@ -627,7 +638,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
         	if (document == null) {
         		return Status.OK_STATUS;
         	}
-        	
+
         	int length = document.getLength();
         	if (truncateOffset < length) {
         		synchronized (overflowLock) {
@@ -637,7 +648,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
         				    setUpdateInProgress(true);
         					document.set(""); //$NON-NLS-1$
         					setUpdateInProgress(false);
-        					partitions.clear();        					
+        					partitions.clear();
         				} else {
         				    // overflow
         				    int cutoffLine = document.getLineOfOffset(truncateOffset);
@@ -647,20 +658,19 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
         					// set the new length of the first partition
         					IOConsolePartition partition = (IOConsolePartition) getPartition(cutOffset);
         					partition.setLength(partition.getOffset() + partition.getLength() - cutOffset);
-        					
+
         					setUpdateInProgress(true);
         					document.replace(0, cutOffset, ""); //$NON-NLS-1$
         					setUpdateInProgress(false);
-        					
+
         					//remove partitions and reset Partition offsets
         					int index = partitions.indexOf(partition);
         					for (int i = 0; i < index; i++) {
                                 partitions.remove(0);
                             }
-        					
+
         					int offset = 0;
-        					for (Iterator i = partitions.iterator(); i.hasNext(); ) {
-        						IOConsolePartition p = (IOConsolePartition) i.next();
+							for (IOConsolePartition p : partitions) {
         						p.setOffset(offset);
         						offset += p.getLength();
         					}
@@ -676,20 +686,22 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#isReadOnly(int)
      */
-    public boolean isReadOnly(int offset) {
+    @Override
+	public boolean isReadOnly(int offset) {
         return ((IOConsolePartition)getPartition(offset)).isReadOnly();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#computeStyleRange(int, int)
      */
-    public StyleRange[] getStyleRanges(int offset, int length) {
+    @Override
+	public StyleRange[] getStyleRanges(int offset, int length) {
     	if (!connected) {
     		return new StyleRange[0];
     	}
         IOConsolePartition[] computedPartitions = (IOConsolePartition[])computePartitioning(offset, length);
-        StyleRange[] styles = new StyleRange[computedPartitions.length];        
-        for (int i = 0; i < computedPartitions.length; i++) {                
+        StyleRange[] styles = new StyleRange[computedPartitions.length];
+        for (int i = 0; i < computedPartitions.length; i++) {
             int rangeStart = Math.max(computedPartitions[i].getOffset(), offset);
             int rangeLength = computedPartitions[i].getLength();
             styles[i] = computedPartitions[i].getStyleRange(rangeStart, rangeLength);

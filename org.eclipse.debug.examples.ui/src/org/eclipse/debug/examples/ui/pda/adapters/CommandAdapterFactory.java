@@ -24,7 +24,8 @@ public class CommandAdapterFactory implements IAdapterFactory {
 
     private static IRestartHandler fgRestartHandler = new PDARestartDebugCommand();
 
-    public Object getAdapter(Object adaptableObject, Class adapterType) {
+    @Override
+	public Object getAdapter(Object adaptableObject, Class adapterType) {
         if (IRestartHandler.class.equals(adapterType)) {
             if (adaptableObject instanceof PDADebugTarget) {
                 return fgRestartHandler;
@@ -33,7 +34,8 @@ public class CommandAdapterFactory implements IAdapterFactory {
         return null;
     }
 
-    public Class[] getAdapterList() {
+    @Override
+	public Class[] getAdapterList() {
         return new Class[]{IRestartHandler.class};
     }
 

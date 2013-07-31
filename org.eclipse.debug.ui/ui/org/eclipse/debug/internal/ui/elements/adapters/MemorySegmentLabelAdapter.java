@@ -42,6 +42,7 @@ import org.eclipse.swt.graphics.RGB;
 
 public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 
+	@Override
 	protected String[] getLabels(Object element, IPresentationContext context)
 			throws CoreException {
 		
@@ -136,6 +137,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 		return columnLabel;
 	}
 
+	@Override
 	protected ImageDescriptor[] getImageDescriptors(Object element,
 			IPresentationContext context) throws CoreException {
 		if (context instanceof MemoryViewPresentationContext)
@@ -209,6 +211,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_OBJECT_MEMORY);
 	}
 
+	@Override
 	protected FontData[] getFontDatas(Object element,
 			IPresentationContext context) throws CoreException {
 		if (context instanceof MemoryViewPresentationContext)
@@ -254,6 +257,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 		return null;
 	}
 
+	@Override
 	protected RGB[] getForegrounds(Object element, IPresentationContext context)
 			throws CoreException {
 		
@@ -356,6 +360,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 		return null;
 	}
 
+	@Override
 	protected RGB[] getBackgrounds(Object element, IPresentationContext context)
 			throws CoreException {
 		

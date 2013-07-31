@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
-import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
  * The action used to move source containers up in the list 
@@ -28,22 +30,21 @@ public class UpAction extends SourceContainerAction {
 	 * 
 	 * @see IAction#run()
 	 */
+	@Override
 	public void run() {
-		List targets = getOrderedSelection();
+		List<ISourceContainer> targets = getOrderedSelection();
 		if (targets.isEmpty()) {
 			return;
 		}
 		int top = 0;
 		int index = 0;
-		List list = getEntriesAsList();
-		Iterator entries = targets.iterator();
-		while (entries.hasNext()) {
-			Object target = entries.next();
-			index = list.indexOf(target);
+		List<ISourceContainer> list = getEntriesAsList();
+		for (ISourceContainer container : targets) {
+			index = list.indexOf(container);
 			if (index > top) {
 				top = index - 1;
-				Object temp = list.get(top);
-				list.set(top, target);
+				ISourceContainer temp = list.get(top);
+				list.set(top, container);
 				list.set(index, temp);
 			}
 			top = index;
@@ -54,6 +55,7 @@ public class UpAction extends SourceContainerAction {
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		//check that something is selected, it's not first in the list, and it is a root tree node.
 		return !selection.isEmpty() && !isIndexSelected(selection, 0) && getViewer().getTree().getSelection()[0].getParentItem()==null;

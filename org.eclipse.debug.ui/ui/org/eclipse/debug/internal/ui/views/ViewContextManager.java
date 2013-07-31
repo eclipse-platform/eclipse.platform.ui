@@ -1,5 +1,5 @@
 /*******************************************************************************
-  * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public class ViewContextManager implements IWindowListener {
 	/**
 	 * Map of services
 	 */
-	private Map fWindowToService = new HashMap();
+	private Map<IWorkbenchWindow, ViewContextService> fWindowToService = new HashMap<IWorkbenchWindow, ViewContextService>();
 	
 	// singleton manager
 	private static ViewContextManager fgManager;
@@ -60,20 +60,23 @@ public class ViewContextManager implements IWindowListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowActivated(IWorkbenchWindow window) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowDeactivated(IWorkbenchWindow window) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowClosed(IWorkbenchWindow window) {
-		ViewContextService service = (ViewContextService) fWindowToService.get(window);
+		ViewContextService service = fWindowToService.get(window);
 		if (service != null) {
 			fWindowToService.remove(window);
 			service.dispose();
@@ -83,8 +86,9 @@ public class ViewContextManager implements IWindowListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowOpened(IWorkbenchWindow window) {
-		ViewContextService service = (ViewContextService) fWindowToService.get(window);
+		ViewContextService service = fWindowToService.get(window);
 		if (service == null) {
 			service = new ViewContextService(window);
 			fWindowToService.put(window, service);
@@ -98,7 +102,7 @@ public class ViewContextManager implements IWindowListener {
 	 * @return view context service or <code>null</code>
 	 */
 	public ViewContextService getService(IWorkbenchWindow window) {
-		return (ViewContextService) fWindowToService.get(window);
+		return fWindowToService.get(window);
 	}
 
 }

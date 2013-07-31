@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public class BreakpointWorkingSetElementAdapter implements IWorkingSetElementAda
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkingSetElementAdapter#adaptElements(org.eclipse.ui.IWorkingSet, org.eclipse.core.runtime.IAdaptable[])
 	 */
+	@Override
 	public IAdaptable[] adaptElements(IWorkingSet ws, IAdaptable[] elements) {
 		for (int i = 0; i < elements.length; i++) {
 	        IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(elements[i], IBreakpoint.class);			
@@ -42,19 +43,20 @@ public class BreakpointWorkingSetElementAdapter implements IWorkingSetElementAda
 	}
 	
 	private IAdaptable[] selectBreakpoints(IAdaptable[] elements) {
-		List breakpoints = new ArrayList(elements.length);
+		List<IBreakpoint> breakpoints = new ArrayList<IBreakpoint>(elements.length);
 		for (int i = 0; i < elements.length; i++) {
             IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(elements[i], IBreakpoint.class);            
 			if (breakpoint != null) {
 				breakpoints.add(breakpoint);
 			}
 		}
-		return (IAdaptable[]) breakpoints.toArray(new IAdaptable[breakpoints.size()]);
+		return breakpoints.toArray(new IAdaptable[breakpoints.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkingSetElementAdapter#dispose()
 	 */
+	@Override
 	public void dispose() {
 	}
 

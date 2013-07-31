@@ -69,9 +69,9 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 	class DuplicateDelegate {
 		private ILaunchConfigurationType fType = null;
 		private ILaunchDelegate[] fDelegates = null;
-		private Set fModes = null;
+		private Set<String> fModes = null;
 		
-		public DuplicateDelegate(ILaunchConfigurationType type, ILaunchDelegate[] delegates, Set modes) {
+		public DuplicateDelegate(ILaunchConfigurationType type, ILaunchDelegate[] delegates, Set<String> modes) {
 			fModes = modes;
 			fType = type;
 			fDelegates = delegates;
@@ -83,7 +83,8 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		public ILaunchDelegate[] getDelegates() {
 			return fDelegates;
 		}
-		public Set getModeSet() {
+
+		public Set<String> getModeSet() {
 			return fModes;
 		}
 	}
@@ -92,6 +93,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 	 * label provider to extend the default one, provides labels to both the tree and table of this page
 	 */
 	class LabelProvider extends DefaultLabelProvider {
+		@Override
 		public String getText(Object element) {
 			if(element instanceof ILaunchConfigurationType) {
 				return super.getText(element);
@@ -111,10 +113,11 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 	 * This class is used to provide content to the tree
 	 */
 	class TreeProvider implements ITreeContentProvider {
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if(parentElement instanceof ILaunchConfigurationType) {
 				ILaunchConfigurationType type = (ILaunchConfigurationType) parentElement;
-				Set dupes = (Set) fDuplicates.get(type);
+				Set<DuplicateDelegate> dupes = fDuplicates.get(type);
 				if(dupes != null) {
 					return dupes.toArray();
 				}
@@ -122,24 +125,29 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 			}
 			return null;
 		}
+		@Override
 		public boolean hasChildren(Object element) {
 			return element instanceof ILaunchConfigurationType;
 		}
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if(inputElement instanceof Map) {
-				return ((Map)inputElement).keySet().toArray();
+				return ((Map<?, ?>) inputElement).keySet().toArray();
 			}
 			return null;
 		}
+		@Override
 		public Object getParent(Object element) {return null;}
+		@Override
 		public void dispose() {}
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 	}
 	
 	private TreeViewer fTreeViewer = null;
 	private CheckboxTableViewer fTableViewer = null;
-	private Map fDuplicates = null;
-	private Map fDupeSelections = null;
+	private Map<ILaunchConfigurationType, Set<DuplicateDelegate>> fDuplicates = null;
+	private Map<DuplicateDelegate, ILaunchDelegate> fDupeSelections = null;
 	private boolean fDirty = false;
 	private Text fDescription = null;
 	
@@ -153,6 +161,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.LAUNCH_DELEGATES_PREFERENCE_PAGE);
@@ -161,6 +170,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 		SWTFactory.createWrapLabel(comp, DebugPreferencesMessages.LaunchDelegatesPreferencePage_1, 2, 300);
@@ -188,6 +198,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		fTreeViewer.setInput(fDuplicates);
 		fTreeViewer.expandToLevel(2);
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				Object obj = ((IStructuredSelection) event.getSelection()).getFirstElement();
 				if(obj instanceof DuplicateDelegate) {
@@ -219,6 +230,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		fTableViewer.setLabelProvider(new LabelProvider());
 		fTableViewer.setContentProvider(new ArrayContentProvider());
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection ss = (IStructuredSelection) event.getSelection();
 				if(ss != null && !ss.isEmpty()) {
@@ -231,6 +243,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 			}
 		});
 		fTableViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				fDirty = true;
 				Object element = event.getElement();
@@ -247,7 +260,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 				if(obj instanceof DuplicateDelegate) {
 					fDupeSelections.remove(obj);
 					if(checked) {
-						fDupeSelections.put(obj, element);
+						fDupeSelections.put((DuplicateDelegate) obj, (ILaunchDelegate) element);
 					}
 				}
 			}
@@ -262,14 +275,15 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		if(fDirty && fDupeSelections != null && fDupeSelections.size() > 0) {
 			fDirty = false;
 			DuplicateDelegate dd = null;
 			ILaunchDelegate delegate = null;
-			for(Iterator iter = fDupeSelections.keySet().iterator(); iter.hasNext();) {
-				dd = (DuplicateDelegate) iter.next();
-				delegate = (ILaunchDelegate) fDupeSelections.get(dd);
+			for (Iterator<DuplicateDelegate> iter = fDupeSelections.keySet().iterator(); iter.hasNext();) {
+				dd = iter.next();
+				delegate = fDupeSelections.get(dd);
 				try {
 					dd.getType().setPreferredDelegate(dd.getModeSet(), delegate);
 				} 
@@ -282,29 +296,30 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 		//init a listing of duplicate delegates arranged by type
 		try {
 			setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 			LaunchManager lm = (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
 			ILaunchConfigurationType[] types = lm.getLaunchConfigurationTypes();
-			fDuplicates = new HashMap();
-			fDupeSelections = new HashMap();
-			Set modes = null;
+			fDuplicates = new HashMap<ILaunchConfigurationType, Set<DuplicateDelegate>>();
+			fDupeSelections = new HashMap<DuplicateDelegate, ILaunchDelegate>();
 			ILaunchDelegate[] delegates = null;
-			Set modeset = null;
-			Set tmp = null;
+			Set<Set<String>> modes = null;
+			Set<String> modeset = null;
+			Set<DuplicateDelegate> tmp = null;
 			ILaunchDelegate prefdelegate = null;
 			DuplicateDelegate dd = null;
 			for(int i = 0; i < types.length; i++) {
 				modes = types[i].getSupportedModeCombinations();
-				for(Iterator iter = modes.iterator(); iter.hasNext();) {
-					modeset = (Set) iter.next();
+				for (Iterator<Set<String>> iter = modes.iterator(); iter.hasNext();) {
+					modeset = iter.next();
 					delegates = types[i].getDelegates(modeset);
 					if(delegates.length > 1) {
-						tmp = (Set) fDuplicates.get(types[i]);
+						tmp = fDuplicates.get(types[i]);
 						if(tmp == null) {
-							tmp = new HashSet();
+							tmp = new HashSet<DuplicateDelegate>();
 						}
 						dd = new DuplicateDelegate(types[i], delegates, modeset);
 						tmp.add(dd);

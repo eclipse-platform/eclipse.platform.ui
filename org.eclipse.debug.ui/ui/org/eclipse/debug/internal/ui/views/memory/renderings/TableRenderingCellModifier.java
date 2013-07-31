@@ -44,7 +44,8 @@ public class TableRenderingCellModifier implements ICellModifier {
      * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object,
      *      java.lang.String)
      */
-    public boolean canModify(Object element, String property) {
+    @Override
+	public boolean canModify(Object element, String property) {
         boolean canModify = true;
         try {
             if (!(element instanceof TableRenderingLine))
@@ -104,7 +105,8 @@ public class TableRenderingCellModifier implements ICellModifier {
      * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object,
      *      java.lang.String)
      */
-    public Object getValue(Object element, String property) {
+    @Override
+	public Object getValue(Object element, String property) {
         // give back the value of the column
 
         if (!(element instanceof TableRenderingLine))
@@ -143,7 +145,8 @@ public class TableRenderingCellModifier implements ICellModifier {
      * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object,
      *      java.lang.String, java.lang.Object)
      */
-    public void modify(Object element, String property, Object value) {
+    @Override
+	public void modify(Object element, String property, Object value) {
         TableRenderingLine line = null;
         if (!(element instanceof TableRenderingLine)) {
             line = (TableRenderingLine) ((TableItem) element).getData();

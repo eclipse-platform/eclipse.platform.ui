@@ -35,6 +35,7 @@ public class RulerEnableDisableBreakpointAction extends RulerBreakpointAction im
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		if (fBreakpoint != null) {
 			try {
@@ -48,6 +49,7 @@ public class RulerEnableDisableBreakpointAction extends RulerBreakpointAction im
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
+	@Override
 	public void update() {
 		fBreakpoint = getBreakpoint();
 		setEnabled(fBreakpoint != null);

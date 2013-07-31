@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
  * @deprecated This class has been promoted to API as <code>org.eclipse.debug.ui.actions.RelaunchLastAction</code>. Clients
  * should discontinue use of this class and use the new API version.
  */
+@Deprecated
 public abstract class RelaunchLastAction extends org.eclipse.debug.ui.actions.RelaunchLastAction {
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.commands.actions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,7 +39,7 @@ public class DebugCommandService implements IDebugContextListener {
 	/**
 	 * Maps command types to actions to update
 	 */
-	private Map fCommandUpdates = new HashMap();
+	private Map<Class<?>, List<IEnabledTarget>> fCommandUpdates = new HashMap<Class<?>, List<IEnabledTarget>>();
 	
 	/**
 	 * Window this service is for.
@@ -55,7 +54,7 @@ public class DebugCommandService implements IDebugContextListener {
 	/**
 	 * Service per window
 	 */
-	private static Map fgServices = new HashMap();
+	private static Map<IWorkbenchWindow, DebugCommandService> fgServices = new HashMap<IWorkbenchWindow, DebugCommandService>();
 		
 	/**
 	 * Returns the service for a window.
@@ -64,7 +63,7 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @return service
 	 */
 	public synchronized static DebugCommandService getService(IWorkbenchWindow window) {
-		DebugCommandService service = (DebugCommandService) fgServices.get(window);
+		DebugCommandService service = fgServices.get(window);
 		if (service == null) {
 			service = new DebugCommandService(window);
 			fgServices.put(window, service);
@@ -78,18 +77,22 @@ public class DebugCommandService implements IDebugContextListener {
 		fContextService.addPostDebugContextListener(this);
 		PlatformUI.getWorkbench().addWindowListener(new IWindowListener() {
 		
+			@Override
 			public void windowOpened(IWorkbenchWindow w) {
 			}
 		
+			@Override
 			public void windowDeactivated(IWorkbenchWindow w) {
 			}
 		
+			@Override
 			public void windowClosed(IWorkbenchWindow w) {
 				if (fWindow == w) {
 					dispose();
 				}
 			}
 		
+			@Override
 			public void windowActivated(IWorkbenchWindow w) {
 			}
 		
@@ -109,12 +112,12 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param commandType the command class
 	 * @param action the action to add to the update list
 	 */
-	public void postUpdateCommand(Class commandType, IEnabledTarget action) {
+	public void postUpdateCommand(Class<?> commandType, IEnabledTarget action) {
 		synchronized (fCommandUpdates) {
 			Job.getJobManager().cancel(commandType);
-			List actions = (List) fCommandUpdates.get(commandType);
+			List<IEnabledTarget> actions = fCommandUpdates.get(commandType);
 			if (actions == null) {
-				actions = new ArrayList();
+				actions = new ArrayList<IEnabledTarget>();
 				fCommandUpdates.put(commandType, actions);
 			}
 			actions.add(action);					
@@ -127,7 +130,7 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param commandType the command class
 	 * @param action the action to update
 	 */
-	public void updateCommand(Class commandType, IEnabledTarget action) {
+	public void updateCommand(Class<?> commandType, IEnabledTarget action) {
 		ISelection context = fContextService.getActiveContext();
 		if (context instanceof IStructuredSelection && !context.isEmpty()) {
 			Object[] elements = ((IStructuredSelection)context).toArray();
@@ -138,27 +141,21 @@ public class DebugCommandService implements IDebugContextListener {
 	}	
 	
 	private void postUpdate(ISelection context) {
-		Map commands = null;
+		Map<Class<?>, List<IEnabledTarget>> commands = null;
 		synchronized (fCommandUpdates) {
 			commands = fCommandUpdates;
-			fCommandUpdates = new HashMap(commands.size());
+			fCommandUpdates = new HashMap<Class<?>, List<IEnabledTarget>>(commands.size());
 		}
 		if (context instanceof IStructuredSelection && !context.isEmpty()) {
 			Object[] elements = ((IStructuredSelection)context).toArray();
-			Iterator iterator = commands.entrySet().iterator();
-			while (iterator.hasNext()) {
-				Entry entry = (Entry) iterator.next();
-				Class commandType = (Class)entry.getKey();
-				List actions = (List) entry.getValue();
-				updateCommand(commandType, elements, (IEnabledTarget[]) actions.toArray(new IEnabledTarget[actions.size()]));
+			for (Entry<Class<?>, List<IEnabledTarget>> entry : commands.entrySet()) {
+				List<IEnabledTarget> actions = entry.getValue();
+				updateCommand(entry.getKey(), elements, actions.toArray(new IEnabledTarget[actions.size()]));
 			}
 		} else {
-			Iterator iterator = commands.values().iterator();
-			while (iterator.hasNext()) {
-				List actionList = (List) iterator.next();
-				Iterator actions = actionList.iterator();
-				while (actions.hasNext()) {
-					((IEnabledTarget)actions.next()).setEnabled(false);
+			for (List<IEnabledTarget> actionList : commands.values()) {
+				for (IEnabledTarget target : actionList) {
+					target.setEnabled(false);
 				}
 			}
 		}
@@ -171,7 +168,7 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param elements elements to update for
 	 * @param actions the actions to update
 	 */
-	private void updateCommand(Class handlerType, Object[] elements, IEnabledTarget[] actions) {
+	private void updateCommand(Class<?> handlerType, Object[] elements, IEnabledTarget[] actions) {
 		if (elements.length == 1) {
 			// usual case - one element
 			Object element = elements[0];
@@ -182,16 +179,12 @@ public class DebugCommandService implements IDebugContextListener {
 				return;
 			}
 		} else {
-			Map map = collate(elements, handlerType);
+			Map<IDebugCommandHandler, List<Object>> map = collate(elements, handlerType);
 			if (map != null) {
 				ActionsUpdater updater = new ActionsUpdater(actions, map.size());
-				Iterator entries = map.entrySet().iterator();
-				while (entries.hasNext()) {
-					Entry entry = (Entry) entries.next();
-					IDebugCommandHandler handler = (IDebugCommandHandler) entry.getKey();
-					List list = (List) entry.getValue();
-					UpdateHandlerRequest request = new UpdateHandlerRequest(list.toArray(), updater);
-					handler.canExecute(request);
+				for (Entry<IDebugCommandHandler, List<Object>> entry : map.entrySet()) {
+					UpdateHandlerRequest request = new UpdateHandlerRequest(entry.getValue().toArray(), updater);
+					entry.getKey().canExecute(request);
 				}
 				return;
 			}
@@ -209,7 +202,7 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param participant the participant
 	 * @return if the command stays enabled while the command executes
 	 */
-	public boolean executeCommand(Class handlerType, Object[] elements, ICommandParticipant participant) {
+	public boolean executeCommand(Class<?> handlerType, Object[] elements, ICommandParticipant participant) {
 		if (elements.length == 1) {
 			// usual case - one element
 			Object element = elements[0];
@@ -220,18 +213,14 @@ public class DebugCommandService implements IDebugContextListener {
 				return handler.execute(request);
 			}
 		} else {
-			Map map = collate(elements, handlerType);
+			Map<IDebugCommandHandler, List<Object>> map = collate(elements, handlerType);
 			if (map != null) {
 				boolean enabled = true;
-				Iterator entries = map.entrySet().iterator();
-				while (entries.hasNext()) {
-					Entry entry = (Entry) entries.next();
-					IDebugCommandHandler handler = (IDebugCommandHandler) entry.getKey();
-					List list = (List) entry.getValue();
-					ExecuteActionRequest request = new ExecuteActionRequest(list.toArray());
+				for (Entry<IDebugCommandHandler, List<Object>> entry : map.entrySet()) {
+					ExecuteActionRequest request = new ExecuteActionRequest(entry.getValue().toArray());
 					request.setCommandParticipant(participant);
 					// specifically use & so handler is executed
-					enabled = enabled & handler.execute(request);
+					enabled = enabled & entry.getKey().execute(request);
 				}
 				return enabled;
 			}
@@ -240,6 +229,7 @@ public class DebugCommandService implements IDebugContextListener {
 		return false;
 	}	
 
+	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		postUpdate(event.getContext());
 	}	
@@ -252,17 +242,17 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param handlerType the handler type class
 	 * @return map of command handlers to associated elements or <code>null</code>
 	 */
-	private Map collate(Object[] elements, Class handlerType) {
-		Map map = new HashMap();
+	private Map<IDebugCommandHandler, List<Object>> collate(Object[] elements, Class<?> handlerType) {
+		Map<IDebugCommandHandler, List<Object>> map = new HashMap<IDebugCommandHandler, List<Object>>();
  		for (int i = 0; i < elements.length; i++) {
  			Object element = elements[i];
  			IDebugCommandHandler handler = getHandler(element, handlerType);
 			if (handler == null) {
 				return null;
 			} else {
-				List list = (List) map.get(handler);
+				List<Object> list = map.get(handler);
 				if (list == null) {
-					list = new ArrayList();
+					list = new ArrayList<Object>();
 					map.put(handler, list);
 	 				}
 				list.add(element);
@@ -271,7 +261,7 @@ public class DebugCommandService implements IDebugContextListener {
 		return map;
 	}
 	
-	private IDebugCommandHandler getHandler(Object element, Class handlerType) {
+	private IDebugCommandHandler getHandler(Object element, Class<?> handlerType) {
 		return (IDebugCommandHandler)DebugPlugin.getAdapter(element, handlerType);
 	}
 

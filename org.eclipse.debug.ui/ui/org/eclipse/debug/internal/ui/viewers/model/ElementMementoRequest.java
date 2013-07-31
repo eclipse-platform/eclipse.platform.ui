@@ -45,6 +45,7 @@ class ElementMementoRequest extends MementoUpdate implements IElementMementoRequ
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 	 */
+	@Override
 	public void done() {
 		
 		ITreeModelViewer viewer = getContentProvider().getViewer();
@@ -53,7 +54,8 @@ class ElementMementoRequest extends MementoUpdate implements IElementMementoRequ
 		    doComplete();
 		} else {
 		    viewer.getDisplay().asyncExec(new Runnable() {
-		        public void run() {
+		        @Override
+				public void run() {
 		            doComplete();
 		        }
 		    });
@@ -71,6 +73,7 @@ class ElementMementoRequest extends MementoUpdate implements IElementMementoRequ
         fManager.requestComplete(ElementMementoRequest.this);
 	}
 
+	@Override
 	public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("IElementMementoRequest: "); //$NON-NLS-1$

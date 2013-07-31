@@ -46,38 +46,44 @@ public class PDAStackValue extends PDADebugElement implements IValue {
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IValue#getValueString()
      */
-    public String getValueString() throws DebugException {
+    @Override
+	public String getValueString() throws DebugException {
         return fValue;
     }
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IValue#isAllocated()
      */
-    public boolean isAllocated() throws DebugException {
+    @Override
+	public boolean isAllocated() throws DebugException {
         return true;
     }
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IValue#getVariables()
      */
-    public IVariable[] getVariables() throws DebugException {
+    @Override
+	public IVariable[] getVariables() throws DebugException {
         return new IVariable[0];
     }
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IValue#hasVariables()
      */
-    public boolean hasVariables() throws DebugException {
+    @Override
+	public boolean hasVariables() throws DebugException {
         return false;
     }
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
      */
-    public String getReferenceTypeName() throws DebugException {
+    @Override
+	public String getReferenceTypeName() throws DebugException {
         return null;
     }
 	/*
 	 *  (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         return obj instanceof PDAStackValue && 
             ((PDAStackValue)obj).fValue.equals(fValue) && 
             ((PDAStackValue)obj).fIndex == fIndex;
@@ -86,7 +92,8 @@ public class PDAStackValue extends PDADebugElement implements IValue {
      *  (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return super.hashCode() + fIndex;
     }
 }

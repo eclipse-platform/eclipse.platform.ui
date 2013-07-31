@@ -26,12 +26,14 @@ public class EditWatchExpressionAction extends WatchExpressionAction {
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		IWatchExpression watchExpression= getSelectedExpressions()[0];
 		// display the watch expression dialog for the currently selected watch expression
 		new WatchExpressionDialog(DebugUIPlugin.getShell(), watchExpression, true).open();
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
 	    action.setEnabled(getSelectedExpressions().length == 1);
 	}

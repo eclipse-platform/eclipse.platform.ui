@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * down order - that is, parents are created before children.
  * Termination events are guaranteed to occur in a bottom up order -
  * that is, children before parents. However, termination events are not guaranteed
- * for all  elements that are created. That is, terminate events can be coalesced - a 
+ * for all  elements that are created. That is, terminate events can be coalesced - a
  * terminate event for a parent signals that all children have been terminated.
  * </p>
  * <p>
@@ -135,15 +135,15 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * <li><code>IValue</code> - no events are specified for values.
  * </li>
  * </ul>
- * 
+ *
  */
 public final class DebugEvent extends EventObject {
-	
+
     /**
      * All objects that can be serialized should have a stable serialVersionUID
      */
     private static final long serialVersionUID = 1L;
-    
+
 	/**
 	 * Resume event kind.
 	 */
@@ -163,19 +163,19 @@ public final class DebugEvent extends EventObject {
 	 * Terminate event kind.
 	 */
 	public static final int TERMINATE= 0x0008;
-	
+
 	/**
 	 * Change event kind.
 	 */
 	public static final int CHANGE= 0x0010;
-	
+
 	/**
 	 * Model specific event kind. The detail codes
 	 * for a model specific event are client defined.
-	 * 
+	 *
 	 * @since 2.1.2
 	 */
-	public static final int MODEL_SPECIFIC= 0x0020;	
+	public static final int MODEL_SPECIFIC= 0x0020;
 
 	/**
 	 * Step start detail. Indicates a thread was resumed by a step
@@ -183,47 +183,47 @@ public final class DebugEvent extends EventObject {
 	 * @since 2.0
 	 */
 	public static final int STEP_INTO= 0x0001;
-	
+
 	/**
 	 * Step start detail. Indicates a thread was resumed by a step
 	 * over action.
 	 * @since 2.0
 	 */
 	public static final int STEP_OVER= 0x0002;
-	
+
 	/**
 	 * Step start detail. Indicates a thread was resumed by a step
 	 * return action.
 	 * @since 2.0
 	 */
-	public static final int STEP_RETURN= 0x0004;		
+	public static final int STEP_RETURN= 0x0004;
 
 	/**
 	 * Step end detail. Indicates a thread was suspended due
 	 * to the completion of a step action.
 	 */
 	public static final int STEP_END= 0x0008;
-	
+
 	/**
 	 * Breakpoint detail. Indicates a thread was suspended by
 	 * a breakpoint.
 	 */
 	public static final int BREAKPOINT= 0x0010;
-	
+
 	/**
 	 * Client request detail. Indicates a thread was suspended due
 	 * to a client request.
 	 */
 	public static final int CLIENT_REQUEST= 0x0020;
-	
+
 	/**
 	 * Evaluation detail. Indicates that a thread was resumed or
 	 * suspended to perform an expression evaluation.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static final int EVALUATION = 0x0040;
-	
+
 	/**
 	 * Evaluation detail. Indicates that a thread was resumed or
 	 * suspended to perform an implicit expression evaluation.
@@ -231,35 +231,35 @@ public final class DebugEvent extends EventObject {
 	 * as an indirect result of a user action.
 	 * Clients may use this detail event to decide whether or not
 	 * to alert the user that an evaluation is taking place..
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static final int EVALUATION_IMPLICIT = 0x0080;
 
 	/**
-	 * State change detail. Indicates the state of a single 
+	 * State change detail. Indicates the state of a single
 	 * debug element has changed. Only valid for <code>CHANGE</code>
 	 * events.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static final int STATE = 0x0100;
-	
+
 	/**
 	 * Content change detail. Indicates the content of a debug element
 	 * (and potentially its children) has changed. Only valid for
 	 * <code>CHANGE</code> events.
-	 * 
+	 *
 	 * @since 2.0
 	 */
-	public static final int CONTENT = 0x0200;	
-			
+	public static final int CONTENT = 0x0200;
+
 	/**
 	 * Constant indicating that the kind or detail of a debug
 	 * event is unspecified.
 	 */
 	public static final int UNSPECIFIED = 0;
-	
+
 	/**
 	 * The kind of event - one of the kind constants defined by
 	 * this class.
@@ -271,14 +271,14 @@ public final class DebugEvent extends EventObject {
 	 * this class.
 	 */
 	private int fDetail= UNSPECIFIED;
-	
+
 	/**
 	 * Client defined data field.
-	 * 
+	 *
 	 * @since 2.1.2
 	 */
 	private Object fData = null;
-	
+
 	/**
 	 * Constructs a new debug event of the given kind with a detail code of
 	 * <code>UNSPECIFIED</code>.
@@ -302,10 +302,12 @@ public final class DebugEvent extends EventObject {
 	 */
 	public DebugEvent(Object eventSource, int kind, int detail) {
 		super(eventSource);
-		if ((kind & (RESUME | SUSPEND | CREATE | TERMINATE | CHANGE | MODEL_SPECIFIC)) == 0)
-			throw new IllegalArgumentException(DebugCoreMessages.DebugEvent_illegal_kind); 
-		if (kind != MODEL_SPECIFIC && detail != UNSPECIFIED && (detail & (STEP_END | STEP_INTO | STEP_OVER | STEP_RETURN | BREAKPOINT | CLIENT_REQUEST |EVALUATION | EVALUATION_IMPLICIT | STATE | CONTENT)) == 0)
-			throw new IllegalArgumentException(DebugCoreMessages.DebugEvent_illegal_detail); 
+		if ((kind & (RESUME | SUSPEND | CREATE | TERMINATE | CHANGE | MODEL_SPECIFIC)) == 0) {
+			throw new IllegalArgumentException(DebugCoreMessages.DebugEvent_illegal_kind);
+		}
+		if (kind != MODEL_SPECIFIC && detail != UNSPECIFIED && (detail & (STEP_END | STEP_INTO | STEP_OVER | STEP_RETURN | BREAKPOINT | CLIENT_REQUEST |EVALUATION | EVALUATION_IMPLICIT | STATE | CONTENT)) == 0) {
+			throw new IllegalArgumentException(DebugCoreMessages.DebugEvent_illegal_detail);
+		}
 		fKind= kind;
 		fDetail= detail;
 	}
@@ -323,19 +325,19 @@ public final class DebugEvent extends EventObject {
 
 	/**
 	 * Returns this event's kind - one of the kind constants defined by this class.
-	 * 
+	 *
 	 * @return the kind code
 	 */
 	public int getKind() {
 		return fKind;
 	}
-	
+
 	/**
 	 * Returns whether this event's detail indicates the
 	 * beginning of a step event. This event's detail is one
 	 * of <code>STEP_INTO</code>, <code>STEP_OVER</code>, or
 	 * <code>STEP_RETURN</code>.
-	 * 
+	 *
 	 * @return whether this event's detail indicates the beginning
 	 *  of a step event.
 	 * @since 2.0
@@ -343,42 +345,43 @@ public final class DebugEvent extends EventObject {
 	public boolean isStepStart() {
 		return (getDetail() & (STEP_INTO | STEP_OVER | STEP_RETURN)) > 0;
 	}
-	
+
 	/**
 	 * Returns whether this event's detail indicates an
 	 * evaluation. This event's detail is one
 	 * of <code>EVALUATION</code>, or <code>EVALUATION_IMPLICIT</code>.
-	 * 
+	 *
 	 * @return whether this event's detail indicates an evaluation.
 	 * @since 2.0
 	 */
 	public boolean isEvaluation() {
 		return (getDetail() & (EVALUATION | EVALUATION_IMPLICIT)) > 0;
-	}	
-	
+	}
+
 	/**
 	 * Sets this event's application defined data.
-	 * 
+	 *
 	 * @param data application defined data
 	 * @since 2.1.2
 	 */
 	public void setData(Object data) {
 		fData = data;
 	}
-	
+
 	/**
 	 * Returns this event's application defined data, or <code>null</code> if none
-	 * 
+	 *
 	 * @return application defined data, or <code>null</code> if none
 	 * @since 2.1.2
 	 */
 	public Object getData() {
 		return fData;
 	}
-	
+
 	/**
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer("DebugEvent["); //$NON-NLS-1$
 		if (getSource() != null) {
@@ -399,7 +402,7 @@ public final class DebugEvent extends EventObject {
 				break;
 			case SUSPEND:
 				buf.append("SUSPEND"); //$NON-NLS-1$
-				break;				
+				break;
 			case CHANGE:
 				buf.append("CHANGE"); //$NON-NLS-1$
 				break;
@@ -408,6 +411,8 @@ public final class DebugEvent extends EventObject {
 				break;
 			case MODEL_SPECIFIC:
 				buf.append("MODEL_SPECIFIC"); //$NON-NLS-1$
+				break;
+			default:
 				break;
 		}
 		buf.append(", "); //$NON-NLS-1$
@@ -435,13 +440,13 @@ public final class DebugEvent extends EventObject {
 				break;
 			case EVALUATION_IMPLICIT:
 				buf.append("EVALUATION_IMPLICIT"); //$NON-NLS-1$
-				break;								
+				break;
 			case STATE:
 				buf.append("STATE"); //$NON-NLS-1$
-				break;			
+				break;
 			case CONTENT:
 				buf.append("CONTENT"); //$NON-NLS-1$
-				break;					
+				break;
 			case UNSPECIFIED:
 				buf.append("UNSPECIFIED"); //$NON-NLS-1$
 				break;

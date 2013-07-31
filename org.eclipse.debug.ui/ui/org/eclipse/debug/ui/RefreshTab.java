@@ -99,6 +99,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
@@ -112,6 +113,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		
 		fRefreshButton = createCheckButton(mainComposite, StringSubstitutionMessages.RefreshTab_31); 
 		fRefreshButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateEnabledState();
 				updateLaunchConfigurationDialog();
@@ -129,6 +131,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		fGroup.setLayoutData(gd);
 
 		SelectionAdapter adapter = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (((Button)e.getSource()).getSelection()) {
 					updateEnabledState();
@@ -171,6 +174,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		gd = (GridData)fSelectButton.getLayoutData();
 		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_END;
 		fSelectButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				selectResources();
 			}
@@ -212,6 +216,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		data.horizontalSpan = 2;
 		fRecursiveButton.setLayoutData(data);
 		fRecursiveButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -221,12 +226,14 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		updateRefresh(configuration);
 		updateRecursive(configuration);
@@ -307,6 +314,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (fRefreshButton.getSelection()) {
 			String scope = generateScopeMemento();
@@ -347,6 +355,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return StringSubstitutionMessages.RefreshTab_6; 
 	}
@@ -372,10 +381,12 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJS_REFRESH_TAB);
 	}
 
+	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
@@ -477,6 +488,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing on activation
 	}
@@ -484,6 +496,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing on deactivation
 	}
@@ -493,6 +506,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 * 
 	 * @since 3.5
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.debug.ui.refreshTab"; //$NON-NLS-1$
 	}

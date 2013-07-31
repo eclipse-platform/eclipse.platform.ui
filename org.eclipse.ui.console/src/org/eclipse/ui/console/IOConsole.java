@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,10 @@
 
 package org.eclipse.ui.console;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -36,27 +38,27 @@ public class IOConsole extends TextConsole {
 	 * The document partitioner
 	 */
     private IOConsolePartitioner partitioner;
-    
+
     /**
      * The stream from which user input may be read
      */
     private IOConsoleInputStream inputStream;
-        
+
     /**
      * A collection of open streams connected to this console.
      */
-    private List openStreams;
+	private List<Closeable> openStreams = Collections.synchronizedList(new ArrayList<Closeable>());
 
     /**
      * The encoding used to for displaying console output.
      */
     private String fEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
 
-    
+
     /**
      * Constructs a console with the given name, type, image, and lifecycle, with the
      * workbench's default encoding.
-     * 
+     *
      * @param name name to display for this console
      * @param consoleType console type identifier or <code>null</code>
      * @param imageDescriptor image to display for this console or <code>null</code>
@@ -69,7 +71,7 @@ public class IOConsole extends TextConsole {
 
     /**
      * Constructs a console with the given name, type, image, encoding and lifecycle.
-     * 
+     *
      * @param name name to display for this console
      * @param consoleType console type identifier or <code>null</code>
      * @param imageDescriptor image to display for this console or <code>null</code>
@@ -83,48 +85,48 @@ public class IOConsole extends TextConsole {
         if (encoding != null) {
             fEncoding = encoding;
         }
-        openStreams = new ArrayList();
-        inputStream = new IOConsoleInputStream(this);
         synchronized (openStreams) {
-        	openStreams.add(inputStream);	
+			inputStream = new IOConsoleInputStream(this);
+        	openStreams.add(inputStream);
 		}
-        
+
         partitioner = new IOConsolePartitioner(inputStream, this);
         partitioner.connect(getDocument());
     }
-    
+
     /**
      * Constructs a console with the given name, type, and image with the workbench's
      * default encoding. Lifecycle methods will be called when this console is
      * added/removed from the console manager.
-     * 
+     *
      * @param name name to display for this console
      * @param consoleType console type identifier or <code>null</code>
      * @param imageDescriptor image to display for this console or <code>null</code>
      */
     public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor) {
         this(name, consoleType, imageDescriptor, true);
-    }    
-    
+    }
+
     /**
      * Constructs a console with the given name and image. Lifecycle methods
      * will be called when this console is added/removed from the console manager.
      * This console will have an unspecified (<code>null</code>) type.
-     * 
+     *
      * @param name name to display for this console
      * @param imageDescriptor image to display for this console or <code>null</code>
      */
     public IOConsole(String name, ImageDescriptor imageDescriptor) {
         this(name, null, imageDescriptor);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
      */
-    public IPageBookViewPage createPage(IConsoleView view) {
+    @Override
+	public IPageBookViewPage createPage(IConsoleView view) {
         return new IOConsolePage(this, view);
     }
-    
+
     /**
      * Creates and returns a new output stream which may be used to write to this console.
      * A console may be connected to more than one output stream at once. Clients are
@@ -145,10 +147,10 @@ public class IOConsole extends TextConsole {
         }
         return outputStream;
     }
-    
+
     /**
      * Returns the input stream connected to the keyboard.
-     * 
+     *
      * @return the input stream connected to the keyboard.
      */
     public IOConsoleInputStream getInputStream() {
@@ -157,10 +159,11 @@ public class IOConsole extends TextConsole {
 
     /**
      * Returns this console's document partitioner.
-     * 
+     *
      * @return this console's document partitioner
      */
-    protected IConsoleDocumentPartitioner getPartitioner() {
+    @Override
+	protected IConsoleDocumentPartitioner getPartitioner() {
         return partitioner;
     }
 
@@ -168,30 +171,30 @@ public class IOConsole extends TextConsole {
 	 * Returns the maximum number of characters that the console will display at
 	 * once. This is analogous to the size of the text buffer this console
 	 * maintains.
-	 * 
+	 *
 	 * @return the maximum number of characters that the console will display
 	 */
 	public int getHighWaterMark() {
 	    return partitioner.getHighWaterMark();
 	}
-	
+
 	/**
 	 * Returns the number of characters that will remain in this console
 	 * when its high water mark is exceeded.
-	 *  
+	 *
 	 * @return the number of characters that will remain in this console
 	 *  when its high water mark is exceeded
 	 */
 	public int getLowWaterMark() {
 		return partitioner.getLowWaterMark();
 	}
-	
+
 	/**
 	 * Sets the text buffer size for this console. The high water mark indicates
 	 * the maximum number of characters stored in the buffer. The low water mark
 	 * indicates the number of characters remaining in the buffer when the high
 	 * water mark is exceeded.
-	 * 
+	 *
 	 * @param low the number of characters remaining in the buffer when the high
 	 *  water mark is exceeded (if -1 the console does not limit output)
 	 * @param high the maximum number of characters this console will cache in
@@ -209,17 +212,19 @@ public class IOConsole extends TextConsole {
 
     /**
      * Check if all streams connected to this console are closed. If so,
-     * notify the partitioner that this console is finished. 
+     * notify the partitioner that this console is finished.
      */
     private void checkFinished() {
-        if (openStreams.isEmpty()) {
-            partitioner.streamsClosed();
-        }
+		synchronized (openStreams) {
+			if (openStreams.isEmpty()) {
+				partitioner.streamsClosed();
+			}
+		}
     }
-    
+
     /**
      * Notification that an output stream connected to this console has been closed.
-     * 
+     *
      * @param stream stream that closed
      */
     void streamClosed(IOConsoleOutputStream stream) {
@@ -228,10 +233,10 @@ public class IOConsole extends TextConsole {
             checkFinished();
 		}
     }
-    
+
     /**
      * Notification that the input stream connected to this console has been closed.
-     * 
+     *
      * @param stream stream that closed
      */
     void streamClosed(IOConsoleInputStream stream) {
@@ -240,49 +245,44 @@ public class IOConsole extends TextConsole {
             checkFinished();
 		}
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.TextConsole#clearConsole()
      */
-    public void clearConsole() {
+    @Override
+	public void clearConsole() {
         if (partitioner != null) {
             partitioner.clearBuffer();
         }
     }
-    
+
     /**
      * Disposes this console.
      */
-    protected void dispose() {
+	@Override
+	protected void dispose() {
         super.dispose();
         partitioner.disconnect();
         //make a copy of the open streams and close them all
-        //a copy is needed as close the streams results in a callback that 
+        //a copy is needed as close the streams results in a callback that
         //removes the streams from the openStreams collection (bug 152794)
-        Object[] allStreams= openStreams.toArray();
-        for (int i = 0; i < allStreams.length; i++) {
-        	Object stream = allStreams[i];
-        	if (stream instanceof IOConsoleInputStream) {
-        		IOConsoleInputStream is = (IOConsoleInputStream) stream;
-        		try {
-        			is.close();
-        		} catch (IOException e) {
-        		}
-        	} else if (stream instanceof IOConsoleOutputStream) {
-        		IOConsoleOutputStream os = (IOConsoleOutputStream) stream;
-        		try {
-        			os.close();
-        		} catch (IOException e) {
-        		}					
-        	}
-        }
+		synchronized (openStreams) {
+			List<Closeable> list = new ArrayList<Closeable>(openStreams);
+			for (Closeable closable : list) {
+				try {
+					closable.close();
+				} catch (IOException e) {
+					// e.printStackTrace();
+				}
+			}
+		}
         inputStream = null;
     }
 
     /**
      * Returns the encoding for this console, or <code>null</code> to indicate
      * default encoding.
-     * 
+     *
      * @return the encoding set for this console, or <code>null</code> to indicate
      * 	default encoding
      * @since 3.3

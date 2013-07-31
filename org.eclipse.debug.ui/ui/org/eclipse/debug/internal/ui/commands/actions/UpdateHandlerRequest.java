@@ -34,6 +34,7 @@ public class UpdateHandlerRequest extends DebugCommandRequest implements IEnable
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor#setResult(boolean)
 	 */
+	@Override
 	public synchronized void setEnabled(boolean result) {
 		fEnabled = result;
 	}
@@ -41,6 +42,7 @@ public class UpdateHandlerRequest extends DebugCommandRequest implements IEnable
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 	 */
+	@Override
 	public synchronized void done() {
 		fUpdater.setEnabled(fEnabled);
 	}

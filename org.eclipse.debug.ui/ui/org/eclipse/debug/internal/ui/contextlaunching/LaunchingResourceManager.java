@@ -11,12 +11,12 @@
 package org.eclipse.debug.internal.ui.contextlaunching;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -54,6 +54,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWindowListener;
@@ -80,6 +81,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 3.3
  */
+@SuppressWarnings("restriction")
 public class LaunchingResourceManager implements IPropertyChangeListener, IWindowListener, ISelectionListener, ILaunchHistoryChangedListener, ILaunchesListener2 {
 	
 	/**
@@ -91,12 +93,12 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * The map of ToolBars that have mouse tracker listeners associated with them:
 	 * stored as Map<IWorkbenchWindow, ToolBar>
 	 */
-	private HashMap fToolbars = new HashMap();
+	private HashMap<IWorkbenchWindow, ToolBar> fToolbars = new HashMap<IWorkbenchWindow, ToolBar>();
 	
 	/**
 	 * the map of current labels
 	 */
-	private HashMap fCurrentLabels = new HashMap();
+	private HashMap<ILaunchGroup, String> fCurrentLabels = new HashMap<ILaunchGroup, String>();
 	
 	/**
 	 * The selection has changed and we need to update the labels
@@ -106,19 +108,19 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 * Set of windows that have been opened and that we have registered selection listeners with
 	 */
-	private HashSet fWindows = new HashSet();
+	private HashSet<IWorkbenchWindow> fWindows = new HashSet<IWorkbenchWindow>();
 	
 	/**
 	 * Cache of IResource -> ILaunchConfiguration[] used during a tooltip update job. 
 	 * The cache is cleared after each tooltip update job is complete.
 	 */
-	private HashMap fConfigCache = new HashMap();
+	private HashMap<IResource, ILaunchConfiguration[]> fConfigCache = new HashMap<IResource, ILaunchConfiguration[]>();
 	
 	/**
 	 * Cache of IResource -> LaunchShortcutExtension used during a tooltip update job.
 	 * The cache is cleared after each tooltip update job is complete.
 	 */
-	private HashMap fExtCache = new HashMap();
+	private HashMap<IResource, List<LaunchShortcutExtension>> fExtCache = new HashMap<IResource, List<LaunchShortcutExtension>>();
 	
 	/**
 	 * Constant denoting the empty string;
@@ -129,11 +131,13 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * Provides a mouse tracker listener for the launching main toolbar 
 	 */
 	private MouseTrackAdapter fMouseListener = new MouseTrackAdapter() {
+		@Override
 		public void mouseEnter(MouseEvent e) {
 			if(fUpdateLabel) {
 				fUpdateLabel = false;
 				fCurrentLabels.clear();
 				Job job = new Job("Compute launch button tooltip") { //$NON-NLS-1$
+					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						computeLabels();
 						fConfigCache.clear();
@@ -197,7 +201,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * @return the current resource label;
 	 */
 	public String getLaunchLabel(ILaunchGroup group) {
-		return (String) fCurrentLabels.get(group);
+		return fCurrentLabels.get(group);
 	}
 	
 	/**
@@ -227,7 +231,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		Object[] listeners = fLabelListeners.getListeners();
 		SelectedResourceManager srm = SelectedResourceManager.getDefault();
 		IStructuredSelection selection = srm.getCurrentSelection();
-		List shortcuts = null;
+		List<LaunchShortcutExtension> shortcuts = null;
 		IResource resource = srm.getSelectedResource();
 		for(int i = 0; i < listeners.length; i++) {
 			group = ((ILaunchLabelChangedListener)listeners[i]).getLaunchGroup();
@@ -282,7 +286,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			}
 		}
 		if(launched) {
-			return MessageFormat.format(ContextMessages.LaunchingResourceManager_0, new String[] {config.getName()});
+			return MessageFormat.format(ContextMessages.LaunchingResourceManager_0, new Object[] { config.getName() });
 		}
 		return config.getName();
 	}
@@ -310,19 +314,18 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * @param group the {@link ILaunchGroup} to launch using
 	 * @return the label for the resource or the empty string, never <code>null</code>
 	 */
-	protected String getLabel(IStructuredSelection selection, IResource resource, List shortcuts, ILaunchGroup group) {
-		List sc = pruneShortcuts(shortcuts, resource, group.getMode());
+	protected String getLabel(IStructuredSelection selection, IResource resource, List<LaunchShortcutExtension> shortcuts, ILaunchGroup group) {
+		List<LaunchShortcutExtension> sc = pruneShortcuts(shortcuts, resource, group.getMode());
 		LaunchConfigurationManager lcm = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 		//see if the context is a shared configuration
 		ILaunchConfiguration config = lcm.isSharedConfig(resource);
 		if(config != null) {
 			return appendLaunched(config);
 		}
-		//TODO cache the results ?
- 		List configs = getParticipatingLaunchConfigurations(selection, resource, sc, group.getMode());
+		List<ILaunchConfiguration> configs = getParticipatingLaunchConfigurations(selection, resource, sc, group.getMode());
 		int csize = configs.size();
 		if(csize == 1) {
-			return appendLaunched((ILaunchConfiguration)configs.get(0));
+			return appendLaunched(configs.get(0));
 		}
 		else if(csize > 1) {
 			config = lcm.getMRUConfiguration(configs, group, resource);
@@ -334,7 +337,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			}
 		}
 		else {
-			List exts = (List) fExtCache.get(resource);
+			List<LaunchShortcutExtension> exts = fExtCache.get(resource);
 			if(exts == null && resource != null) {
 				fExtCache.put(resource, sc);
 			}
@@ -358,7 +361,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 					return resource.getName();
 				}
 				else {
-					return MessageFormat.format(ContextMessages.LaunchingResourceManager_1, new String[] {((LaunchShortcutExtension) sc.get(0)).getLabel()});
+					return MessageFormat.format(ContextMessages.LaunchingResourceManager_1, new Object[] { sc.get(0).getLabel() });
 				}
 			}
 			else {
@@ -376,12 +379,12 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * 
 	 * @since 3.4
 	 */
-	protected List pruneShortcuts(List shortcuts, IResource resource, String mode) {
-		List list = new ArrayList(shortcuts);
+	protected List<LaunchShortcutExtension> pruneShortcuts(List<LaunchShortcutExtension> shortcuts, IResource resource, String mode) {
+		List<LaunchShortcutExtension> list = new ArrayList<LaunchShortcutExtension>(shortcuts);
 		if(resource == null) {
 			LaunchShortcutExtension ext = null;
-			for(ListIterator iter = list.listIterator(); iter.hasNext();) {
-				ext = (LaunchShortcutExtension) iter.next();
+			for (ListIterator<LaunchShortcutExtension> iter = list.listIterator(); iter.hasNext();) {
+				ext = iter.next();
 				if(!ext.isParticipant()) {
 					iter.remove();
 				}
@@ -402,14 +405,12 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * 
 	 * @since 3.4
 	 */
-	public IResource getLaunchableResource(List shortcuts, IStructuredSelection selection) {
+	public IResource getLaunchableResource(List<LaunchShortcutExtension> shortcuts, IStructuredSelection selection) {
 		if(selection != null && !selection.isEmpty()) {
-			ArrayList resources = new ArrayList();
+			ArrayList<IResource> resources = new ArrayList<IResource>();
 			IResource resource = null;
 			Object o = selection.getFirstElement();
-			LaunchShortcutExtension ext = null;
-			for(Iterator iter = shortcuts.iterator(); iter.hasNext();) {
-				ext = (LaunchShortcutExtension) iter.next();
+			for (LaunchShortcutExtension ext : shortcuts) {
 				if(o instanceof IEditorPart) {
 					resource = ext.getLaunchableResource((IEditorPart) o);
 				}
@@ -422,7 +423,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 				}
 			}
 			if(resources.size() > 0) {
-				return (IResource) resources.get(0);
+				return resources.get(0);
 			}
 		}
 		return null;
@@ -436,10 +437,10 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * 
 	 * @since 3.4
 	 */
-	public List getShortcutsForSelection(IStructuredSelection selection, String mode) {
-		ArrayList list = new ArrayList();
-		List sc = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchShortcuts();
-		List ctxt = new ArrayList();
+	public List<LaunchShortcutExtension> getShortcutsForSelection(IStructuredSelection selection, String mode) {
+		ArrayList<LaunchShortcutExtension> list = new ArrayList<LaunchShortcutExtension>();
+		List<LaunchShortcutExtension> sc = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchShortcuts();
+		List<IEditorInput> ctxt = new ArrayList<IEditorInput>();
 		// work around to bug in Structured Selection that returns actual underlying array in selection
 		// @see bug 211646 
 		ctxt.addAll(selection.toList());
@@ -449,9 +450,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		}
 		IEvaluationContext context = DebugUIPlugin.createEvaluationContext(ctxt);
 		context.addVariable("selection", ctxt); //$NON-NLS-1$
-		LaunchShortcutExtension ext = null;
-		for(Iterator iter = sc.iterator(); iter.hasNext();) {
-			ext = (LaunchShortcutExtension) iter.next();
+		for (LaunchShortcutExtension ext : sc) {
 			try {
 				if(ext.evalEnablementExpression(context, ext.getContextualLaunchEnablementExpression()) && 
 						ext.getModes().contains(mode) && !WorkbenchActivityHelper.filterItem(ext)) {
@@ -476,16 +475,15 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * 
 	 * @since 3.4
 	 */
-	public List getParticipatingLaunchConfigurations(IStructuredSelection selection, IResource resource, List shortcuts, String mode) {
-		HashSet configs = new HashSet();
+	public List<ILaunchConfiguration> getParticipatingLaunchConfigurations(IStructuredSelection selection, IResource resource, List<LaunchShortcutExtension> shortcuts, String mode) {
+		List<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>();
 		int voteDefault = 0;
 		if(selection != null) {
 			Object o = selection.getFirstElement();
 			LaunchShortcutExtension ext = null;
 			ILaunchConfiguration[] cfgs = null;
-			//TODO this falls victim to contributors code performance
 			for(int i = 0; i < shortcuts.size(); i++) {
-				ext = (LaunchShortcutExtension) shortcuts.get(i);
+				ext = shortcuts.get(i);
 				if(o instanceof IEditorPart) {
 					cfgs = ext.getLaunchConfigurations((IEditorPart)o);
 				}
@@ -493,8 +491,8 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 					 cfgs = ext.getLaunchConfigurations(selection);
 				}
 				if (cfgs == null) {
-					Set types = ext.getAssociatedConfigurationTypes();
-					addAllToList(configs, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations((String[]) types.toArray(new String[types.size()]), resource));
+					Set<String> types = ext.getAssociatedConfigurationTypes();
+					addAllToList(configs, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(types.toArray(new String[types.size()]), resource));
 					voteDefault++;
 				} else {
 					if(cfgs.length > 0) { 
@@ -509,11 +507,11 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			// consider default configurations if no configurations were contributed
 			addAllToList(configs, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(null, resource));
 		}
-		Iterator iterator = configs.iterator();
+		Iterator<ILaunchConfiguration> iterator = configs.iterator();
 		while (iterator.hasNext()) {
-			ILaunchConfiguration config = (ILaunchConfiguration) iterator.next();
+			ILaunchConfiguration config = iterator.next();
 			try {
-				Set modes = config.getModes();
+				Set<String> modes = config.getModes();
 				modes.add(mode);
 				if (!config.getType().supportsModeCombination(modes)) {
 					iterator.remove();
@@ -521,7 +519,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			} 
 			catch (CoreException e) {}
 		}
-		return new ArrayList(configs);
+		return configs;
 	}
 	
 	/**
@@ -530,12 +528,14 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * @param list the {@link List} to append to
 	 * @param values the array of {@link Object}s to add to the list
 	 */
-	private void addAllToList(Collection list, Object[] values) {
-		if(list == null || values == null) {
+	private void addAllToList(List<ILaunchConfiguration> list, ILaunchConfiguration[] configs) {
+		if (list == null || configs == null) {
 			return;
 		}
-		for(int i = 0; i < values.length; i++) {
-			list.add(values[i]);
+		for (int i = 0; i < configs.length; i++) {
+			if (!list.contains(configs[i])) {
+				list.add(configs[i]);
+			}
 		}
 	}
 	
@@ -570,19 +570,18 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		DebugUIPlugin.getDefault().getLaunchConfigurationManager().removeLaunchHistoryListener(this);
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
-		for(Iterator iter = fWindows.iterator(); iter.hasNext();) {
-			((IWorkbenchWindow)iter.next()).getSelectionService().removeSelectionListener(this);
+		for (IWorkbenchWindow window : fWindows) {
+			window.getSelectionService().removeSelectionListener(this);
 		}
-		IWorkbenchWindow window = null;
 		// set fUpdateLabel to false so that mouse track listener will do nothing if called
 		// before the asynchronous execution disposes them
 		fUpdateLabel = false;
-		for(Iterator iter = fToolbars.keySet().iterator(); iter.hasNext();) {
-			window = (IWorkbenchWindow) iter.next();
-			final ToolBar bar = (ToolBar) fToolbars.get(window);
+		for (Entry<IWorkbenchWindow, ToolBar> entry : fToolbars.entrySet()) {
+			final ToolBar bar = entry.getValue();
 			if(bar != null && !bar.isDisposed()) {
 				final MouseTrackAdapter listener = fMouseListener;
 				DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						bar.removeMouseTrackListener(listener);
 					}
@@ -599,6 +598,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowActivated(IWorkbenchWindow window) {
 		if(!fToolbars.containsKey(window)) {
 			addMouseListener(window);
@@ -608,8 +608,9 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowClosed(IWorkbenchWindow window) {
-		ToolBar bar = (ToolBar) fToolbars.remove(window);
+		ToolBar bar = fToolbars.remove(window);
 		if(bar != null && !bar.isDisposed()) {
 			bar.removeMouseTrackListener(fMouseListener);
 		}
@@ -621,11 +622,13 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowDeactivated(IWorkbenchWindow window) {}
 
 	/**
 	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowOpened(IWorkbenchWindow window) {
 		if(fWindows.add(window)) {
 			window.getSelectionService().addSelectionListener(this);
@@ -655,6 +658,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if(event.getProperty().equals(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH) ||
 				event.getProperty().equals(IInternalDebugUIConstants.PREF_LAUNCH_LAST_IF_NOT_LAUNCHABLE)) {
@@ -668,6 +672,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		if(isContextLaunchEnabled()) {
 			fUpdateLabel = true;
@@ -677,6 +682,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener#launchHistoryChanged()
 	 */
+	@Override
 	public void launchHistoryChanged() {
 		//this always must be set to true, because as the history is loaded these events are fired, and we need to
 		//update on workspace load.
@@ -686,6 +692,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesTerminated(ILaunch[] launches) {
 		fUpdateLabel = true;
 	}
@@ -693,6 +700,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesAdded(ILaunch[] launches) {
 		fUpdateLabel = true;
 	}
@@ -700,11 +708,13 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesChanged(ILaunch[] launches) {}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 		//we want to ensure that even if a launch is removed from the debug view 
 		//when it is not terminated we update the label just in case.

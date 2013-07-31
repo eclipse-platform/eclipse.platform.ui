@@ -31,6 +31,7 @@ public abstract class AbstractMemoryRenderingBindingsProvider implements IMemory
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#addListener(org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener)
 	 */
+	@Override
 	public void addListener(IMemoryRenderingBindingsListener listener) {
 		if (fListeners == null) {
 			fListeners = new ListenerList();
@@ -40,6 +41,7 @@ public abstract class AbstractMemoryRenderingBindingsProvider implements IMemory
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#removeListener(org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener)
 	 */
+	@Override
 	public void removeListener(IMemoryRenderingBindingsListener listener) {
 		if (fListeners != null) {
 			fListeners.remove(listener);
@@ -60,9 +62,11 @@ public abstract class AbstractMemoryRenderingBindingsProvider implements IMemory
 			if (listeners[i] instanceof IMemoryRenderingBindingsListener) {
 				final IMemoryRenderingBindingsListener listener = (IMemoryRenderingBindingsListener)listeners[i];
 				ISafeRunnable runnable = new ISafeRunnable () {
+					@Override
 					public void handleException(Throwable exception) {
 						DebugUIPlugin.log(exception);
 					}
+					@Override
 					public void run() throws Exception {
 						listener.memoryRenderingBindingsChanged();
 					}};

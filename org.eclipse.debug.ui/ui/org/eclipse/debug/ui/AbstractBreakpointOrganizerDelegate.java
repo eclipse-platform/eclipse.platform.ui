@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,14 +35,16 @@ public abstract class AbstractBreakpointOrganizerDelegate implements IBreakpoint
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#addBreakpoint(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
      */
-    public void addBreakpoint(IBreakpoint breakpoint, IAdaptable category) {
+    @Override
+	public void addBreakpoint(IBreakpoint breakpoint, IAdaptable category) {
         // do noting, not supported by default
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
      */
-    public void addPropertyChangeListener(IPropertyChangeListener listener) {
+    @Override
+	public void addPropertyChangeListener(IPropertyChangeListener listener) {
         fListeners.add(listener);
     }
     
@@ -53,7 +55,8 @@ public abstract class AbstractBreakpointOrganizerDelegate implements IBreakpoint
      * 
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#canAdd(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
      */
-    public boolean canAdd(IBreakpoint breakpoint, IAdaptable category) {
+    @Override
+	public boolean canAdd(IBreakpoint breakpoint, IAdaptable category) {
         return category instanceof OtherBreakpointCategory;
     }
     
@@ -64,28 +67,32 @@ public abstract class AbstractBreakpointOrganizerDelegate implements IBreakpoint
      * 
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#canRemove(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
      */
-    public boolean canRemove(IBreakpoint breakpoint, IAdaptable category) {
+    @Override
+	public boolean canRemove(IBreakpoint breakpoint, IAdaptable category) {
         return category instanceof OtherBreakpointCategory;
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         fListeners = new ListenerList();
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#removeBreakpoint(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
      */
-    public void removeBreakpoint(IBreakpoint breakpoint, IAdaptable category) {
+    @Override
+	public void removeBreakpoint(IBreakpoint breakpoint, IAdaptable category) {
         // do nothing, not supported by default
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
      */
-    public void removePropertyChangeListener(IPropertyChangeListener listener) {
+    @Override
+	public void removePropertyChangeListener(IPropertyChangeListener listener) {
         fListeners.remove(listener);
     }
     
@@ -103,10 +110,12 @@ public abstract class AbstractBreakpointOrganizerDelegate implements IBreakpoint
         for (int i = 0; i < listeners.length; i++) {
             final IPropertyChangeListener listener = (IPropertyChangeListener) listeners[i];
             ISafeRunnable runnable = new ISafeRunnable() {
-                public void handleException(Throwable exception) {
+                @Override
+				public void handleException(Throwable exception) {
                     DebugUIPlugin.log(exception);
                 }
-                public void run() throws Exception {
+                @Override
+				public void run() throws Exception {
                     listener.propertyChange(event);
                 }
             };
@@ -117,7 +126,8 @@ public abstract class AbstractBreakpointOrganizerDelegate implements IBreakpoint
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories()
      */
-    public IAdaptable[] getCategories() {
+    @Override
+	public IAdaptable[] getCategories() {
         return null;
     }
 }
