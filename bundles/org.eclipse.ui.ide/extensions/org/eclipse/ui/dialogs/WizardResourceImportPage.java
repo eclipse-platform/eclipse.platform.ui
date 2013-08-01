@@ -40,11 +40,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.ide.dialogs.IElementFilter;
+import org.eclipse.ui.ide.dialogs.ResourceTreeAndListGroup;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.dialogs.IElementFilter;
-import org.eclipse.ui.internal.ide.dialogs.ResourceTreeAndListGroup;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 
@@ -89,6 +89,8 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
     /**
 	 * The <code>selectionGroup</code> field should have been created with a
 	 * private modifier. Subclasses should not access this field directly.
+	 * 
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
     protected ResourceTreeAndListGroup selectionGroup;
 
@@ -323,10 +325,9 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
     /**
      * Returns this page's list of currently-specified resources to be 
      * imported filtered by the IElementFilter.
-     *
+     * @since 3.10
      */
-    protected void getSelectedResources(IElementFilter filter,
-            IProgressMonitor monitor) throws InterruptedException {
+    protected void getSelectedResources(IElementFilter filter, IProgressMonitor monitor) throws InterruptedException {
         this.selectionGroup.getAllCheckedListItems(filter, monitor);
     }
 

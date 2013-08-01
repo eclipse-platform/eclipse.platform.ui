@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.ide" version="2">
+    <resource path="extensions/org/eclipse/ui/dialogs/WizardResourceImportPage.java" type="org.eclipse.ui.dialogs.WizardResourceImportPage">
+        <filter comment="The type IElementFilter was moved to API" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.WizardResourceImportPage"/>
+                <message_argument value="getSelectedResources(IElementFilter, IProgressMonitor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The doc has always said this is not API" id="338940029">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.WizardResourceImportPage"/>
+                <message_argument value="selectionGroup"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
