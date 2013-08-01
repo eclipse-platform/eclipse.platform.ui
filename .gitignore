@@ -7,3 +7,6 @@ javacore.*
 heapdump.*
 core.*
 Snap.*
+
+# maven
+/*/target/
