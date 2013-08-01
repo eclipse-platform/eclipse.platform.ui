@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Christian Janz  - <christian.janz@gmail.com> Fix for Bug 385592
+ *     Marc-Andre Laperle (Ericsson) - Fix for Bug 413590
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -1377,7 +1378,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				IEditorReference ref = it.next();
 				// hide editors that haven't been instantiated first
 				if (ref.getPart(false) == null) {
-					if (!(hidePart(((EditorReference) ref).getModel(), false, confirm, false))) {
+					if (!(hidePart(((EditorReference) ref).getModel(), false, confirm, false, false))) {
 						return false;
 					}
 					// hidden successfully, remove it from the list
@@ -1392,7 +1393,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				MPart model = ((EditorReference) editorRef).getModel();
 				if (activePart == model) {
 					closeActivePart = true;
-				} else if (!(hidePart(model, false, confirm, false))) {
+				} else if (!(hidePart(model, false, confirm, false, false))) {
 					// saving should've been handled earlier above
 					return false;
 				}
