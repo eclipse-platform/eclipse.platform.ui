@@ -25,7 +25,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
@@ -115,7 +114,6 @@ public abstract class WatchExpressionAction implements IViewActionDelegate {
 			IViewSite viewSite = ((IViewPart) fPart).getViewSite();
 			IStatusLineManager manager = viewSite.getActionBars().getStatusLineManager();
 			manager.setErrorMessage(message);
-			Display.getCurrent().beep();
 		}
 	}
 }
