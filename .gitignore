@@ -9,3 +9,5 @@ heapdump.*
 core.*
 Snap.*
 
+# maven
+/*/target/
