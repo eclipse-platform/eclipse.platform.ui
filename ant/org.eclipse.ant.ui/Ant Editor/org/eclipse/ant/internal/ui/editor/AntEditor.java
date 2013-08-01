@@ -875,7 +875,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			errorMessage = AntEditorMessages.getString("AntEditor.3"); //$NON-NLS-1$
 		}
 		setStatusLineErrorMessage(errorMessage);
-		getSite().getShell().getDisplay().beep();
 	}
 
 	/**

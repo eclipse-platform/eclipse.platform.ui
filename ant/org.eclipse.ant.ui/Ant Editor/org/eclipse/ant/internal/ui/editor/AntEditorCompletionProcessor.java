@@ -427,7 +427,6 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 
 		String prefix = getCurrentPrefix();
 		if (prefix == null || cursorPosition == -1) {
-			AntUIPlugin.getStandardDisplay().beep();
 			return NO_PROPOSALS;
 		}
 

@@ -21,7 +21,6 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -44,7 +43,6 @@ public class ToggleLineBreakpointAction implements IToggleBreakpointsTarget {
 			resource = ((IFileEditorInput) editorInput).getFile();
 		}
 		if (resource == null) {
-			Display.getCurrent().beep();
 			return;
 		}
 
