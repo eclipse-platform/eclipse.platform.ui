@@ -17,6 +17,7 @@ import org.eclipse.swt.custom.StyledText;
 
 import org.eclipse.jface.text.source.ISourceViewer;
 
+
 /**
  * An action to handle emacs-like recenter.
  * This function scrolls the selected window to put the cursor at the middle/top/bottom of the screen.
@@ -24,10 +25,12 @@ import org.eclipse.jface.text.source.ISourceViewer;
  * @since 3.3
  */
 public class RecenterAction extends TextEditorAction {
+
 	private static final int RECENTER_MIDDLE= 0;
 	private static final int RECENTER_TOP= 1;
 	private static final int RECENTER_BOTTOM= 2;
 	private static final int RECENTER_POS_SIZE= 3;
+
 	private int fPrevOffset= -1;
 	private int fDestPos;
 
@@ -64,7 +67,7 @@ public class RecenterAction extends TextEditorAction {
 		// compute the number of lines displayed
 		int height= st.getClientArea().height;
 		int lineHeight= st.getLineHeight();
-		int rowPerScreen= height / lineHeight;
+		int rowsPerScreen= height / lineHeight;
 
 		int caretOffset= st.getCaretOffset();
 		int caretLine= st.getLineAtOffset(caretOffset);		
@@ -79,13 +82,13 @@ public class RecenterAction extends TextEditorAction {
 		int line= 0;
 		switch (fDestPos) {
 			case RECENTER_MIDDLE:
-				line= Math.max(0, (caretLine - rowPerScreen / 2));
+				line= Math.max(0, (caretLine - rowsPerScreen / 2));
 				break;
 			case RECENTER_TOP:
 				line= caretLine;
 				break;
 			case RECENTER_BOTTOM:
-				line= Math.max(0, caretLine - rowPerScreen + 1);
+				line= Math.max(0, caretLine - rowsPerScreen + 1);
 				break;
 			default:
 				break;
