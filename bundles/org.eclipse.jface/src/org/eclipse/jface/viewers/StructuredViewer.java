@@ -1673,7 +1673,7 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 * @param element
 	 *            the element to reveal
 	 */
-	public abstract void reveal(Object element);
+	public abstract void reveal(E element);
 
 	/*
 	 *  (non-Javadoc)
