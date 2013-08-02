@@ -19,21 +19,23 @@ import org.eclipse.swt.graphics.Image;
  * The ColumnLabelProvider is the label provider for viewers
  * that have column support such as {@link TreeViewer} and
  * {@link TableViewer}
- * 
+ *
  * <p><b>This classes is intended to be subclassed</b></p>
- * 
+ * @param <E> Type of an element of the model
+ * @param <I> Type of the input
+ *
  * @since 3.3
  *
  */
-public class ColumnLabelProvider extends CellLabelProvider implements
-		IFontProvider, IColorProvider, ILabelProvider {
+public class ColumnLabelProvider<E,I> extends CellLabelProvider<E,I> implements
+		IFontProvider<E>, IColorProvider<E>, ILabelProvider<E> {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.CellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
 	@Override
-	public void update(ViewerCell cell) {
-		Object element = cell.getElement();
+	public void update(ViewerCell<E> cell) {
+		E element = cell.getElement();
 		cell.setText(getText(element));
 		Image image = getImage(element);
 		cell.setImage(image);
@@ -46,21 +48,21 @@ public class ColumnLabelProvider extends CellLabelProvider implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 	 */
-	public Font getFont(Object element) {
+	public Font getFont(E element) {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 	 */
-	public Color getBackground(Object element) {
+	public Color getBackground(E element) {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
-	public Color getForeground(Object element) {
+	public Color getForeground(E element) {
 		return null;
 	}
 
@@ -68,14 +70,14 @@ public class ColumnLabelProvider extends CellLabelProvider implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
-	public Image getImage(Object element) {
+	public Image getImage(E element) {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
-	public String getText(Object element) {
+	public String getText(E element) {
 		return element == null ? "" : element.toString();//$NON-NLS-1$
 	}
 

@@ -23,10 +23,11 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * TableViewerRow is the Table specific implementation of ViewerRow
+ * @param <E> Type of an single element of the model
  * @since 3.3
  *
  */
-public class TableViewerRow extends ViewerRow {
+public class TableViewerRow<E> extends ViewerRow<E> {
 	private TableItem item;
 
 	/**
@@ -165,7 +166,7 @@ public class TableViewerRow extends ViewerRow {
 	}
 
 	@Override
-	public ViewerRow getNeighbor(int direction, boolean sameLevel) {
+	public ViewerRow<E> getNeighbor(int direction, boolean sameLevel) {
 		if( direction == ViewerRow.ABOVE ) {
 			return getRowAbove();
 		} else if( direction == ViewerRow.BELOW ) {
@@ -176,24 +177,24 @@ public class TableViewerRow extends ViewerRow {
 	}
 
 
-	private ViewerRow getRowAbove() {
+	private ViewerRow<E> getRowAbove() {
 		int index = item.getParent().indexOf(item) - 1;
 
 		if( index >= 0 ) {
-			return new TableViewerRow(item.getParent().getItem(index));
+			return new TableViewerRow<E>(item.getParent().getItem(index));
 		}
 
 		return null;
 	}
 
-	private ViewerRow getRowBelow() {
+	private ViewerRow<E> getRowBelow() {
 		int index = item.getParent().indexOf(item) + 1;
 
 		if( index < item.getParent().getItemCount() ) {
 			TableItem tmp = item.getParent().getItem(index);
 			//TODO NULL can happen in case of VIRTUAL => How do we deal with that
 			if( tmp != null ) {
-				return new TableViewerRow(tmp);
+				return new TableViewerRow<E>(tmp);
 			}
 		}
 
@@ -207,12 +208,14 @@ public class TableViewerRow extends ViewerRow {
 
 	@Override
 	public Object clone() {
-		return new TableViewerRow(item);
+		return new TableViewerRow<E>(item);
 	}
 
 	@Override
-	public Object getElement() {
-		return item.getData();
+	public E getElement() {
+		@SuppressWarnings("unchecked")
+		E element = (E)item.getData();
+		return element;
 	}
 
 	@Override
@@ -243,7 +246,7 @@ public class TableViewerRow extends ViewerRow {
 	public Rectangle getTextBounds(int index) {
 		return item.getTextBounds(index);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getImageBounds(int)
 	 */
@@ -259,19 +262,19 @@ public class TableViewerRow extends ViewerRow {
 	private boolean isValidOrderIndex(int currentIndex) {
 		return currentIndex < this.item.getParent().getColumnOrder().length;
 	}
-	
+
 	@Override
 	int getWidth(int columnIndex) {
 		return item.getParent().getColumn(columnIndex).getWidth();
 	}
-	
+
 	@Override
 	protected boolean scrollCellIntoView(int columnIndex) {
 		item.getParent().showItem(item);
 		if( hasColumns() ) {
-			item.getParent().showColumn(item.getParent().getColumn(columnIndex));	
+			item.getParent().showColumn(item.getParent().getColumn(columnIndex));
 		}
-		
+
 		return true;
 	}
 }
