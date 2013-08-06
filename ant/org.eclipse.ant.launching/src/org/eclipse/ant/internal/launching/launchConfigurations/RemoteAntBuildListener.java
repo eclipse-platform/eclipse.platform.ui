@@ -37,12 +37,12 @@ import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IProcess;
 
 /**
- * Parts adapted from org.eclipse.jdt.internal.junit.ui.RemoteTestRunnerClient
- * The client side of the RemoteAntBuildLogger. Handles the marshaling of the
- * different messages.
+ * Parts adapted from org.eclipse.jdt.internal.junit.ui.RemoteTestRunnerClient The client side of the RemoteAntBuildLogger. Handles the marshaling of
+ * the different messages.
  */
 public class RemoteAntBuildListener implements ILaunchesListener {
 	public abstract class ListenerSafeRunnable implements ISafeRunnable {
+		@Override
 		public void handleException(Throwable exception) {
 			AntLaunching.log(exception);
 		}
@@ -63,6 +63,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 	private boolean fBuildFailed = false;
 	/**
 	 * The encoding to use
+	 * 
 	 * @since 3.7
 	 */
 	private String fEncoding;
@@ -79,25 +80,32 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 			fServerPort = port;
 		}
 
+		@Override
 		public void run() {
 			try {
 				fServerSocket = new ServerSocket(fServerPort);
-				int socketTimeout = Platform.getPreferencesService().getInt(
-								AntLaunching.getUniqueIdentifier(),
-								IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT,
-								20000, null);
+				int socketTimeout = Platform.getPreferencesService().getInt(AntLaunching.getUniqueIdentifier(), IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT, 20000, null);
 				fServerSocket.setSoTimeout(socketTimeout);
 				fSocket = fServerSocket.accept();
 				fBufferedReader = new BufferedReader(new InputStreamReader(fSocket.getInputStream(), fEncoding));
-				String message;
-				while (fLaunch != null && fBufferedReader != null && (message = fBufferedReader.readLine()) != null) {
-					receiveMessage(message);
+				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=414516
+				// the launch can be terminated but we haven't been notified yet
+				while (fLaunch != null && !fLaunch.isTerminated() && fBufferedReader != null) {
+					if (fBufferedReader.ready()) {
+						String message = fBufferedReader.readLine();
+						if (message != null) {
+							receiveMessage(message);
+						}
+					}
 				}
-			} catch (SocketException e) {
+			}
+			catch (SocketException e) {
 				AntLaunching.log(e);
-			} catch (SocketTimeoutException e) {
+			}
+			catch (SocketTimeoutException e) {
 				AntLaunching.log(e);
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				AntLaunching.log(e);
 			}
 			shutDown();
@@ -107,8 +115,10 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 	/**
 	 * Constructor
 	 * 
-	 * @param launch the backing launch to listen to
-	 * @param encoding the encoding to use for communications
+	 * @param launch
+	 *            the backing launch to listen to
+	 * @param encoding
+	 *            the encoding to use for communications
 	 */
 	public RemoteAntBuildListener(ILaunch launch, String encoding) {
 		super();
@@ -116,7 +126,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 		fEncoding = encoding;
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
-	
+
 	/**
 	 * Returns the encoding set on the listener
 	 * 
@@ -126,10 +136,9 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 	protected String getEncoding() {
 		return fEncoding;
 	}
-	
+
 	/**
-	 * Start listening to an Ant build. Start a server connection that the
-	 * RemoteAntBuildLogger can connect to.
+	 * Start listening to an Ant build. Start a server connection that the RemoteAntBuildLogger can connect to.
 	 * 
 	 * @param eventPort
 	 *            The port number to create the server connection on
@@ -149,24 +158,27 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 				fBufferedReader.close();
 				fBufferedReader = null;
 			}
-		} catch (IOException e) {
-			//do nothing
+		}
+		catch (IOException e) {
+			AntLaunching.log(e);
 		}
 		try {
 			if (fSocket != null) {
 				fSocket.close();
 				fSocket = null;
 			}
-		} catch (IOException e) {
-			//do nothing
+		}
+		catch (IOException e) {
+			AntLaunching.log(e);
 		}
 		try {
 			if (fServerSocket != null) {
 				fServerSocket.close();
 				fServerSocket = null;
 			}
-		} catch (IOException e) {
-			//do nothing
+		}
+		catch (IOException e) {
+			AntLaunching.log(e);
 		}
 	}
 
@@ -245,7 +257,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 		} else {
 			finalIndex = msg.indexOf(',', locationIndex) + 1;
 			locationLength = Integer.parseInt(fileName);
-			fileName = msg.substring(finalIndex, finalIndex	+ locationLength);
+			fileName = msg.substring(finalIndex, finalIndex + locationLength);
 			locationLength += 1; // set past delimiter
 		}
 		fLastFileName = fileName;
@@ -262,8 +274,8 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 		writeMessage(fullMessage.append(System.getProperty("line.separator")).toString(), priority); //$NON-NLS-1$
 	}
 
-	private void generateLink(String line, String fileName, int lineNumber,	int offset, int length) {
-		if(fLaunch != null) {
+	private void generateLink(String line, String fileName, int lineNumber, int offset, int length) {
+		if (fLaunch != null) {
 			((AntLaunch) fLaunch).addLinkDescriptor(line, fileName, lineNumber, offset, length);
 		}
 	}
@@ -298,34 +310,36 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 		}
 		AntStreamMonitor monitor = null;
 		switch (priority) {
-		case Project.MSG_INFO:
-			monitor = (AntStreamMonitor) proxy.getOutputStreamMonitor();
-			break;
-		case Project.MSG_ERR:
-			monitor = (AntStreamMonitor) proxy.getErrorStreamMonitor();
-			break;
-		case Project.MSG_DEBUG:
-			monitor = (AntStreamMonitor) proxy.getDebugStreamMonitor();
-			break;
-		case Project.MSG_WARN:
-			monitor = (AntStreamMonitor) proxy.getWarningStreamMonitor();
-			break;
-		case Project.MSG_VERBOSE:
-			monitor = (AntStreamMonitor) proxy.getVerboseStreamMonitor();
-			break;
-		default:
-			break;
+			case Project.MSG_INFO:
+				monitor = (AntStreamMonitor) proxy.getOutputStreamMonitor();
+				break;
+			case Project.MSG_ERR:
+				monitor = (AntStreamMonitor) proxy.getErrorStreamMonitor();
+				break;
+			case Project.MSG_DEBUG:
+				monitor = (AntStreamMonitor) proxy.getDebugStreamMonitor();
+				break;
+			case Project.MSG_WARN:
+				monitor = (AntStreamMonitor) proxy.getWarningStreamMonitor();
+				break;
+			case Project.MSG_VERBOSE:
+				monitor = (AntStreamMonitor) proxy.getVerboseStreamMonitor();
+				break;
+			default:
+				break;
 		}
 		return monitor;
 	}
 
 	/**
-	 * Builds a right justified task prefix for the given build event, placing
-	 * it in the given string buffer.
+	 * Builds a right justified task prefix for the given build event, placing it in the given string buffer.
 	 * 
-	 * @param taskName the name of the task, can be <code>null</code>
-	 * @param line the line of text
-	 * @param fullMessage buffer to place task prefix in
+	 * @param taskName
+	 *            the name of the task, can be <code>null</code>
+	 * @param line
+	 *            the line of text
+	 * @param fullMessage
+	 *            buffer to place task prefix in
 	 */
 	private void adornMessage(String taskName, String line, StringBuffer fullMessage) {
 		String tname = taskName;
@@ -363,32 +377,29 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug
-	 * .core.ILaunch[])
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug .core.ILaunch[])
 	 */
+	@Override
 	public void launchesAdded(ILaunch[] launches) {
-		//do nothing
+		// do nothing
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.
-	 * debug.core.ILaunch[])
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse. debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesChanged(ILaunch[] launches) {
-		//do nothing
+		// do nothing
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.
-	 * debug.core.ILaunch[])
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse. debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 		for (int i = 0; i < launches.length; i++) {
 			ILaunch launch = launches[i];
