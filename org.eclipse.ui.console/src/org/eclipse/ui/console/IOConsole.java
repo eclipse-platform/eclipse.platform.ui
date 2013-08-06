@@ -215,10 +215,8 @@ public class IOConsole extends TextConsole {
      * notify the partitioner that this console is finished.
      */
     private void checkFinished() {
-		synchronized (openStreams) {
-			if (openStreams.isEmpty()) {
-				partitioner.streamsClosed();
-			}
+		if (openStreams.isEmpty()) {
+			partitioner.streamsClosed();
 		}
     }
 
@@ -266,14 +264,12 @@ public class IOConsole extends TextConsole {
         //make a copy of the open streams and close them all
         //a copy is needed as close the streams results in a callback that
         //removes the streams from the openStreams collection (bug 152794)
-		synchronized (openStreams) {
-			List<Closeable> list = new ArrayList<Closeable>(openStreams);
-			for (Closeable closable : list) {
-				try {
-					closable.close();
-				} catch (IOException e) {
-					// e.printStackTrace();
-				}
+		List<Closeable> list = new ArrayList<Closeable>(openStreams);
+		for (Closeable closable : list) {
+			try {
+				closable.close();
+			} catch (IOException e) {
+				// e.printStackTrace();
 			}
 		}
         inputStream = null;
