@@ -21,3 +21,4 @@ Export-Package: org.eclipse.debug.examples.ant.tasks;x-friends:="org.eclipse.deb
  org.eclipse.debug.examples.pdavm;x-friends:="org.eclipse.debug.examples.ui"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %Bundle-Vendor
