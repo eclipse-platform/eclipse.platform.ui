@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.debug.internal.ui.importexport.breakpoints.IImportExportConst
 import org.eclipse.debug.internal.ui.importexport.breakpoints.ImportExportMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
@@ -80,11 +81,12 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 		fBreakpoints = breakpoints;
 		fWriter = new StringWriter();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
+	@SuppressWarnings("resource")
 	public void run(IProgressMonitor monitor) throws InvocationTargetException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, ImportExportMessages.ExportOperation_0, fBreakpoints.length);
 		XMLMemento memento = XMLMemento.createWriteRoot(IImportExportConstants.IE_NODE_BREAKPOINTS);
@@ -160,7 +162,7 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 			}
 		}
 	}
-	
+
 	/**
 	 * Collects all of the breakpoint working sets that contain the given {@link IBreakpoint}
 	 * in the given list
