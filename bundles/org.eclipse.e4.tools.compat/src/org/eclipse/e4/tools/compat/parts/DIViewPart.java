@@ -12,7 +12,6 @@ package org.eclipse.e4.tools.compat.parts;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.tools.compat.internal.PartHelper;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.swt.widgets.Composite;
@@ -56,5 +55,12 @@ public abstract class DIViewPart<C> extends ViewPart {
 	@Override
 	public void setFocus() {
 		ContextInjectionFactory.invoke(component, Focus.class, context);
+	}
+	
+	@Override
+	public void dispose() {
+		PartHelper.disposeContextIfE3((IEclipseContext) getSite().getService(
+				IEclipseContext.class), context);
+		super.dispose();
 	}
 }

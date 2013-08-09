@@ -107,4 +107,16 @@ public class PartHelper {
 			listeners.add(listener);
 		}
 	}
+
+	public static void disposeContextIfE3(IEclipseContext parentContext,
+			IEclipseContext context) {
+			// Check if running in 3.x, otherwise there was no dedicated context
+			// created
+			if (parentContext
+					.get("org.eclipse.e4.ui.workbench.IPresentationEngine") == null) {
+				context.dispose();
+				context = null;
+		}
+		
+	}
 }

@@ -148,8 +148,12 @@ public abstract class DIEditorPart<C> extends EditorPart implements
 
 	@Override
 	public void dispose() {
-		IEclipseContext parentContext = (IEclipseContext) getSite().getService(
-				IEclipseContext.class);
+		disposeContextIfE3((IEclipseContext) getSite().getService(
+				IEclipseContext.class), context);
+		super.dispose();
+	}
+
+	public static void disposeContextIfE3(IEclipseContext parentContext, IEclipseContext context) {
 		// Check if running in 3.x, otherwise there was no dedicated context
 		// created
 		if (parentContext
@@ -157,6 +161,5 @@ public abstract class DIEditorPart<C> extends EditorPart implements
 			context.dispose();
 			context = null;
 		}
-		super.dispose();
 	}
 }
