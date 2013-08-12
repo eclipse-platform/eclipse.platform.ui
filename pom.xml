@@ -46,6 +46,8 @@
     <module>org.eclipse.core.variables</module>
     <module>org.eclipse.debug.core</module>
     <module>org.eclipse.debug.examples.core</module>
+    <module>org.eclipse.debug.examples.memory</module>
+    <module>org.eclipse.debug.examples.mixedmode</module>
     <module>org.eclipse.debug.examples.ui</module>
     <module>org.eclipse.debug.tests</module>
     <module>org.eclipse.debug.ui</module>
