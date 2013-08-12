@@ -27,8 +27,7 @@
         <artifactId>tycho-compiler-plugin</artifactId>
         <version>${tycho.version}</version>
         <configuration>
-          <compilerArgument>-warn:+resource</compilerArgument>
-          <compilerArgument>-warn:-deprecation,raw,unchecked</compilerArgument>
+          <compilerArgument>-warn:-deprecation,raw,unchecked -warn:+resource</compilerArgument>
         </configuration>
       </plugin>
     </plugins>
