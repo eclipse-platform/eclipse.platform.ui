@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.core.launchDelegates">
+         <launchDelegate
+               delegate="org.eclipse.jdt.internal.launching.JavaAppletLaunchConfigurationDelegate"
+               delegateDescription="This launch tooling redirects the default java launch delegate to a java applet launch delegate instead"
+               id="org.foo.testing"
+               modes="run, debug"
+               name="%launchDelegate.name"
+               type="org.eclipse.jdt.launching.localJavaApplication">
+      </launchDelegate>
+         <launchDelegate
+               delegate="org.eclipse.debug.internal.examples.mixedmode.LaunchConfigurationDelegate1"
+               delegateDescription="This delegate performs profiling in debug, profile mode"
+               id="test.launch.options.profileLaunchDelegate"
+               modes="run, debug"
+               name="%launchDelegate.name.0"
+               type="org.eclipse.jdt.launching.localJavaApplication">
+            <modeCombination
+                  modes="debug, profile">
+            </modeCombination>
+         </launchDelegate>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabs">
+    <tab
+          class="org.eclipse.debug.internal.examples.mixedmode.FooTab"
+          group="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication"
+          id="org.eclipse.jdt.debug.ui.fooTab"
+          name="Foo Tab">
+       <placement
+             after="org.eclipse.jdt.debug.ui.javaMainTab"></placement>
+       <associatedDelegate
+             delegate="org.foo.testing">
+       </associatedDelegate>
+    </tab>
+    <tab
+          class="org.eclipse.debug.internal.examples.mixedmode.FooPiggyBackTab"
+          group="org.eclipse.ant.ui.launchConfigurationTabGroup.ant"
+          id="test.launching.options.ant.footab"
+          name="Foo Ant Piggyback">
+    </tab>
+    <tab
+          class="org.eclipse.debug.internal.examples.mixedmode.FooDuplicateTab"
+          group="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication"
+          id="test.launch.options.profileFooTab"
+          name="Profile">
+       <placement
+             after="org.eclipse.jdt.debug.ui.javaMainTab">
+       </placement>
+       <associatedDelegate
+             delegate="test.launch.options.profileLaunchDelegate">
+       </associatedDelegate>
+    </tab>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchModes">
+      <launchMode
+            label="%launchMode.label"
+            launchAsLabel="%launchMode.launchAsLabel"
+            mode="test.launch.options.fooApplet">
+      </launchMode>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="test.launch.options.actionSet.clearDebugPrefs"
+            label="%actionSet.label"
+            visible="true">
+         <menu
+               id="test.launch.options.pdi"
+               label="%menu.label"
+               path="additions">
+            <groupMarker
+                  name="tlordi">
+            </groupMarker>
+         </menu>
+         <action
+               class="org.eclipse.debug.internal.examples.mixedmode.ClearAllDelegateInformationAction"
+               id="test.launch.options.action1"
+               label="%action.label"
+               menubarPath="test.launch.options.pdi/tlordi"
+               style="push"
+               tooltip="%action.tooltip">
+         </action>
+      </actionSet>
+   </extension>
+
+</plugin>
