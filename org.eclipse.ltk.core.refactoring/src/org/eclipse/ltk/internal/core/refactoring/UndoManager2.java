@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,8 +107,34 @@ public class UndoManager2 implements IUndoManager {
 
 	private ListenerList fListeners;
 
+	/*private IOperationHistoryListener fLocalOperationHistoryListener;
+
+	private boolean doneEventReceived= false;*/
+
 	public UndoManager2() {
 		fOperationHistory= OperationHistoryFactory.getOperationHistory();
+		/*fLocalOperationHistoryListener= new IOperationHistoryListener() {
+
+			public void historyNotification(OperationHistoryEvent event) {
+				// TODO Auto-generated method stub
+				IUndoableOperation op= event.getOperation();
+				if (op instanceof TriggeredOperations) {
+					op= ((TriggeredOperations)op).getTriggeringOperation();
+				}
+				UndoableOperation2ChangeAdapter changeOperation= null;
+				if (op instanceof UndoableOperation2ChangeAdapter) {
+					changeOperation= (UndoableOperation2ChangeAdapter)op;
+				}
+				if (changeOperation == null)
+					return;
+				Change change= changeOperation.getChange();
+				switch (event.getEventType()) {
+					case OperationHistoryEvent.OPERATION_ADDED:
+						doneEventReceived= true;
+				}
+			}
+		};
+		fOperationHistory.addOperationHistoryListener(fLocalOperationHistoryListener);*/
 	}
 
 	public void addListener(IUndoManagerListener listener) {
@@ -138,6 +164,7 @@ public class UndoManager2 implements IUndoManager {
 		fActiveOperation.addContext(RefactoringCorePlugin.getUndoContext());
     	fOperationHistory.openOperation(fActiveOperation, IOperationHistory.EXECUTE);
     	fIsOpen= true;
+		//doneEventReceived= false;
 	}
 
 	/**
@@ -150,6 +177,21 @@ public class UndoManager2 implements IUndoManager {
 
 	public void changePerformed(Change change, boolean successful) {
 		if (fIsOpen && fActiveOperation != null) {
+			/*try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
+			/*while (!doneEventReceived) {
+				try {
+					Thread.sleep(0);
+					System.out.println(doneEventReceived);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}*/
 			fOperationHistory.closeOperation(successful, false, IOperationHistory.EXECUTE);
 	        fIsOpen= false;
 		}
