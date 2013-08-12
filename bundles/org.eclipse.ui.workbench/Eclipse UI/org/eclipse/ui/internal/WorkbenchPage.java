@@ -211,7 +211,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				((PartSite) site).deactivateActionBars(site instanceof ViewSite);
 			}
 
-			((WorkbenchWindow) getWorkbenchWindow()).getStatusLineManager().update(false);
+			WorkbenchWindow wwindow = (WorkbenchWindow) getWorkbenchWindow();
+			if (!wwindow.isClosing()) {
+				wwindow.getStatusLineManager().update(false);
+			}
 		}
 
 		public void partHidden(MPart part) {
