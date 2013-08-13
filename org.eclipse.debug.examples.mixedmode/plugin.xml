@@ -12,7 +12,7 @@
                type="org.eclipse.jdt.launching.localJavaApplication">
       </launchDelegate>
          <launchDelegate
-               delegate="org.eclipse.debug.internal.examples.mixedmode.LaunchConfigurationDelegate1"
+               delegate="org.eclipse.debug.internal.examples.mixedmode.ProfileLaunchConfigurationDelegate"
                delegateDescription="This delegate performs profiling in debug, profile mode"
                id="test.launch.options.profileLaunchDelegate"
                modes="run, debug"
