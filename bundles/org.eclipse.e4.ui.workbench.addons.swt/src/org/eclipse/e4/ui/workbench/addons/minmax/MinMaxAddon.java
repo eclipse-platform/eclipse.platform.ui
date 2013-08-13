@@ -50,6 +50,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
+/**
+ * Workbench addon that provides methods to minimize, maximize and restore parts in the window
+ */
 public class MinMaxAddon {
 
 	/**
@@ -58,7 +61,7 @@ public class MinMaxAddon {
 	 */
 	private static final String ID_EDITOR_AREA = "org.eclipse.ui.editorss"; //$NON-NLS-1$
 
-	private static final String GLOBAL_CACHE_ID = "Global";
+	private static final String GLOBAL_CACHE_ID = "Global"; //$NON-NLS-1$
 
 	static String ID_SUFFIX = "(minimized)"; //$NON-NLS-1$
 
