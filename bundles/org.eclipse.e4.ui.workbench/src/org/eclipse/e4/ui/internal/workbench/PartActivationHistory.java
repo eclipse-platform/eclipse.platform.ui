@@ -332,7 +332,7 @@ class PartActivationHistory {
 	private MUIElement getSiblingSelectionCandidate(MPart part, MUIElement element) {
 		List<MUIElement> siblings = element.getParent().getChildren();
 		for (MPart previouslyActivatedPart : generalActivationHistory) {
-			if (previouslyActivatedPart != part && previouslyActivatedPart.isToBeRendered()) {
+			if (previouslyActivatedPart != part && isValid(previouslyActivatedPart)) {
 				if (siblings.contains(previouslyActivatedPart)) {
 					return previouslyActivatedPart;
 				}
