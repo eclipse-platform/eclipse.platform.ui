@@ -42,7 +42,7 @@ public class HandlerServiceHandler extends AbstractHandler {
 	public boolean isEnabled() {
 		ExecutionContexts contexts = HandlerServiceImpl.peek();
 		// setEnabled(contexts);
-		IEclipseContext executionContext = contexts.context; // getExecutionContext(contexts);
+		IEclipseContext executionContext = contexts != null ? contexts.context : null; // getExecutionContext(contexts);
 		if (executionContext == null) {
 			return super.isEnabled();
 		}
