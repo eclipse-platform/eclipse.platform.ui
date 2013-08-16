@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -47,6 +48,9 @@ import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -65,6 +69,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -89,6 +94,10 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 public class PerspectiveSwitcher {
+	/**
+	 * 
+	 */
+	private static final int DRAG_TOLERANCE = 5;
 	public static final String PERSPECTIVE_SWITCHER_ID = "org.eclipse.e4.ui.PerspectiveSwitcher"; //$NON-NLS-1$
 	@Inject
 	protected IEventBroker eventBroker;
@@ -360,6 +369,8 @@ public class PerspectiveSwitcher {
 			}
 		});
 
+		hookupDnD(psTB);
+
 		final ToolItem createItem = new ToolItem(psTB, SWT.PUSH);
 		createItem.setImage(getOpenPerspectiveImage());
 		createItem.setToolTipText(WorkbenchMessages.OpenPerspectiveDialogAction_tooltip);
@@ -385,6 +396,123 @@ public class PerspectiveSwitcher {
 		}
 	}
 
+	protected Point downPos = null;
+	protected ToolItem dragItem = null;
+	protected boolean dragging = false;
+	protected Shell dragShell = null;
+
+	private void track(MouseEvent e) {
+		// Create and track the feedback overlay
+		if (dragShell == null)
+			createFeedback();
+
+		// Move the drag shell
+		Rectangle b = dragItem.getBounds();
+		Point p = new Point(e.x, e.y);
+		p = dragShell.getDisplay().map(dragItem.getParent(), null, p);
+		dragShell.setLocation(p.x - (b.width / 2), p.y - (b.height / 2));
+
+		// Set the cursor feedback
+		ToolBar bar = (ToolBar) e.widget;
+		ToolItem curItem = bar.getItem(new Point(e.x, e.y));
+		if (curItem != null && curItem.getData() instanceof MPerspective) {
+			psTB.setCursor(psTB.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+		} else {
+			psTB.setCursor(psTB.getDisplay().getSystemCursor(SWT.CURSOR_NO));
+		}
+	}
+
+	private void createFeedback() {
+		dragShell = new Shell(SWT.NO_TRIM | SWT.NO_BACKGROUND);
+		dragShell.setAlpha(175);
+		ToolBar dragTB = new ToolBar(dragShell, SWT.NONE);
+		ToolItem newTI = new ToolItem(dragTB, SWT.RADIO);
+		newTI.setText(dragItem.getText());
+		newTI.setImage(dragItem.getImage());
+		dragTB.pack();
+		dragShell.pack();
+		dragShell.setVisible(true);
+	}
+
+	private void hookupDnD(ToolBar bar) {
+		bar.addMouseListener(new MouseListener() {
+			public void mouseUp(MouseEvent e) {
+				ToolBar bar = (ToolBar) e.widget;
+				ToolItem curItem = bar.getItem(new Point(e.x, e.y));
+				if (curItem != null && curItem.getData() instanceof MPerspective) {
+					Rectangle bounds = curItem.getBounds();
+					Point center = new Point(bounds.x + (bounds.width / 2), bounds.y
+							+ (bounds.height / 2));
+					boolean atStart = (psTB.getStyle() & SWT.HORIZONTAL) != 0 ? e.x < center.x
+							: e.y < center.y;
+
+					// OK, Calculate the correct drop index
+					MPerspective dragPersp = (MPerspective) dragItem.getData();
+					int dragPerspIndex = dragPersp.getParent().getChildren().indexOf(dragPersp);
+					MPerspective dropPersp = (MPerspective) curItem.getData();
+					int dropPerspIndex = dropPersp.getParent().getChildren().indexOf(dropPersp);
+					if (!atStart)
+						dropPerspIndex++; // We're 'after' the item we're over
+
+					if (dropPerspIndex > dragPerspIndex)
+						dropPerspIndex--; // Need to account for the removal of
+											// the drag item itself
+
+					// If it's not a no-op move the perspective
+					if (dropPerspIndex != dragPerspIndex) {
+						MElementContainer<MUIElement> parent = dragPersp.getParent();
+						boolean selected = dragPersp == parent.getSelectedElement();
+						parent.getChildren().remove(dragPersp);
+						parent.getChildren().add(dropPerspIndex, dragPersp);
+						if (selected)
+							parent.setSelectedElement(dragPersp);
+					}
+				}
+
+				// Reset to the initial state
+				dragItem = null;
+				downPos = null;
+				dragging = false;
+				psTB.setCursor(null);
+				if (dragShell != null && !dragShell.isDisposed())
+					dragShell.dispose();
+				dragShell = null;
+			}
+
+			public void mouseDown(MouseEvent e) {
+				ToolBar bar = (ToolBar) e.widget;
+				downPos = new Point(e.x, e.y);
+				ToolItem downItem = bar.getItem(downPos);
+
+				// We're only interested if the button went down over a
+				// perspective item
+				if (downItem != null && downItem.getData() instanceof MPerspective)
+					dragItem = downItem;
+			}
+
+			public void mouseDoubleClick(MouseEvent e) {
+			}
+		});
+
+		bar.addMouseMoveListener(new MouseMoveListener() {
+			public void mouseMove(MouseEvent e) {
+				if (dragItem == null)
+					return;
+
+				if (dragging) {
+					track(e);
+				} else {
+					Point curPos = new Point(e.x, e.y);
+					if (Math.abs(curPos.x - downPos.x) > DRAG_TOLERANCE
+							|| Math.abs(curPos.y - downPos.y) > DRAG_TOLERANCE) {
+						dragging = true;
+						track(e);
+					}
+				}
+			}
+		});
+	}
+
 	private Image getOpenPerspectiveImage() {
 		if (perspectiveImage == null || perspectiveImage.isDisposed()) {
 			ImageDescriptor desc = WorkbenchImages
@@ -403,7 +531,12 @@ public class PerspectiveSwitcher {
 	}
 
 	private ToolItem addPerspectiveItem(MPerspective persp) {
-		final ToolItem psItem = new ToolItem(psTB, SWT.RADIO);
+		int perspIndex = persp.getParent().getChildren().indexOf(persp);
+
+		int index = perspIndex + 2; // HACK !! accounts for the 'open' and the
+									// separator
+		final ToolItem psItem = index < psTB.getItemCount() ? new ToolItem(psTB, SWT.RADIO, index)
+				: new ToolItem(psTB, SWT.RADIO);
 		psItem.setData(persp);
 		IPerspectiveDescriptor descriptor = getDescriptorFor(persp.getElementId());
 		boolean foundImage = false;
@@ -661,6 +794,7 @@ public class PerspectiveSwitcher {
 	}
 
 	private void fixSize() {
+		psTB.pack();
 		psTB.getParent().pack();
 		psTB.getShell().layout(new Control[] { psTB }, SWT.DEFER);
 	}
