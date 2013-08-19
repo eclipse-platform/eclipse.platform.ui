@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.internal.core.LaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
@@ -27,18 +26,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-public class FooDuplicateTab extends AbstractLaunchConfigurationTab implements ILaunchConfigurationListener {
+/**
+ *
+ */
+public class DoNothingMainTab extends AbstractLaunchConfigurationTab implements ILaunchConfigurationListener {
 
-	protected Button fButt = null;
+	protected Button fButton = null;
 	protected Set<String> fOptions = null;
-
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
-	@Override
-	public String getName() {
-		return Messages.FooDuplicateTab_0;
-	}
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -46,9 +40,8 @@ public class FooDuplicateTab extends AbstractLaunchConfigurationTab implements I
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH);
-		fButt = SWTFactory.createCheckButton(comp, Messages.FooDuplicateTab_1, null, false, 1);
-		fButt.addSelectionListener(new SelectionListener() {
-
+		fButton = SWTFactory.createCheckButton(comp, Messages.DoNothingMainTab_0, null, false, 1);
+		fButton.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
@@ -64,33 +57,20 @@ public class FooDuplicateTab extends AbstractLaunchConfigurationTab implements I
 	}
 
 	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	@Override
-	public void initializeFrom(ILaunchConfiguration configuration) {
-		try {
-			Set<?> options = configuration.getAttribute(LaunchConfiguration.ATTR_LAUNCH_MODES, (Set<String>) null);
-			if (options != null) {
-				fButt.setSelection(options.containsAll(getModes()));
-			} else {
-				fButt.setSelection(false);
-			}
-		} catch (CoreException ce) {
-		}
+	public String getName() {
+		return Messages.DoNothingMainTab_1;
 	}
 
 	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 * @return the set of modes this tab works with
 	 */
-	@Override
-	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		if (isDirty()) {
-			if (fButt.getSelection()) {
-				configuration.addModes(getModes());
-			} else {
-				configuration.removeModes(getModes());
-			}
-		}
+	protected Set<String> getModes() {
+		Set<String> set = new HashSet<String>();
+		set.add("profile"); //$NON-NLS-1$
+		return set;
 	}
 
 	/**
@@ -103,6 +83,35 @@ public class FooDuplicateTab extends AbstractLaunchConfigurationTab implements I
 	}
 
 	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	@Override
+	public void initializeFrom(ILaunchConfiguration configuration) {
+		try {
+			Set<String> modes = configuration.getModes();
+			if (modes != null) {
+				modes.add(getLaunchConfigurationDialog().getMode());
+				fButton.setSelection(getModes().containsAll(modes));
+			} else {
+				fButton.setSelection(false);
+			}
+		} catch (CoreException ce) {
+		}
+	}
+
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	@Override
+	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		if (fButton.getSelection()) {
+			configuration.addModes(getModes());
+		} else {
+			configuration.removeModes(getModes());
+		}
+	}
+
+	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	@Override
@@ -110,22 +119,11 @@ public class FooDuplicateTab extends AbstractLaunchConfigurationTab implements I
 	}
 
 	/**
-	 * @return the set modes this tab works with
-	 */
-	protected Set<String> getModes() {
-		if (fOptions == null) {
-			fOptions = new HashSet<String>();
-			fOptions.add(Messages.FooDuplicateTab_2);
-		}
-		return fOptions;
-	}
-
-	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 */
 	@Override
 	public String getId() {
-		return Messages.FooDuplicateTab_3;
+		return "org.eclipse.debug.examples.mixedmode.main.tab"; //$NON-NLS-1$
 	}
 
 	/**
@@ -134,13 +132,14 @@ public class FooDuplicateTab extends AbstractLaunchConfigurationTab implements I
 	@Override
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
 		try {
-			Set<?> modes = configuration.getModes();
-			if (!fButt.isDisposed()) {
-				boolean sel = fButt.getSelection();
-				if (sel & !modes.containsAll(getModes())) {
-					fButt.setSelection(false);
-				} else if (!sel & modes.containsAll(getModes())) {
-					fButt.setSelection(true);
+			Set<String> modes = configuration.getModes();
+			modes.add(getLaunchConfigurationDialog().getMode());
+			if (!fButton.isDisposed()) {
+				boolean sel = fButton.getSelection();
+				if (!sel & modes.containsAll(getModes())) {
+					fButton.setSelection(true);
+				} else if (sel & !modes.containsAll(getModes())) {
+					fButton.setSelection(false);
 				}
 			}
 		} catch (CoreException ce) {
@@ -149,14 +148,14 @@ public class FooDuplicateTab extends AbstractLaunchConfigurationTab implements I
 	}
 
 	/**
-	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
+	 * @param configuration
 	 */
 	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
 	}
 
 	/**
-	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
+	 * @param configuration
 	 */
 	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {

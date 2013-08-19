@@ -4,17 +4,17 @@
    <extension
          point="org.eclipse.debug.core.launchDelegates">
          <launchDelegate
-               delegate="org.eclipse.jdt.internal.launching.JavaAppletLaunchConfigurationDelegate"
-               delegateDescription="This launch tooling redirects the default java launch delegate to a java applet launch delegate instead"
-               id="org.foo.testing"
+               delegate="org.eclipse.debug.internal.examples.mixedmode.DoNothingLaunchConfigurationDelegate"
+               delegateDescription="This launch tooling redirects the default Java launch delegate to a DoNothing delegate"
+               id="org.eclipse.debug.examples.mixedmode.donothing.redirect"
                modes="run, debug"
                name="%launchDelegate.name"
                type="org.eclipse.jdt.launching.localJavaApplication">
       </launchDelegate>
          <launchDelegate
-               delegate="org.eclipse.debug.internal.examples.mixedmode.ProfileLaunchConfigurationDelegate"
-               delegateDescription="This delegate performs profiling in debug, profile mode"
-               id="test.launch.options.profileLaunchDelegate"
+               delegate="org.eclipse.debug.internal.examples.mixedmode.DoNothingLaunchConfigurationDelegate"
+               delegateDescription="This delegate redirects a profile launch in run, debug, profile mode to a DoNothing delegate"
+               id="org.eclipse.debug.examples.mixedmode.profile"
                modes="run, debug"
                name="%launchDelegate.name.0"
                type="org.eclipse.jdt.launching.localJavaApplication">
@@ -26,32 +26,32 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabs">
     <tab
-          class="org.eclipse.debug.internal.examples.mixedmode.FooTab"
+          class="org.eclipse.debug.internal.examples.mixedmode.DoNothingMainTab"
           group="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication"
-          id="org.eclipse.jdt.debug.ui.fooTab"
-          name="Foo Tab">
+          id="org.eclipse.debug.examples.mixedmode.main.tab"
+          name="%doNothingMainTab.name">
        <placement
              after="org.eclipse.jdt.debug.ui.javaMainTab"></placement>
        <associatedDelegate
-             delegate="org.foo.testing">
+             delegate="org.eclipse.debug.examples.mixedmode.donothing.redirect">
        </associatedDelegate>
     </tab>
     <tab
-          class="org.eclipse.debug.internal.examples.mixedmode.FooPiggyBackTab"
+          class="org.eclipse.debug.internal.examples.mixedmode.AntExtraTab"
           group="org.eclipse.ant.ui.launchConfigurationTabGroup.ant"
-          id="test.launching.options.ant.footab"
-          name="Foo Ant Piggyback">
+          id="org.eclipse.debug.examples.mixedmode.ant.tab"
+          name="%antExtraTab.name">
     </tab>
     <tab
-          class="org.eclipse.debug.internal.examples.mixedmode.FooDuplicateTab"
+          class="org.eclipse.debug.internal.examples.mixedmode.DoNothingMainTab"
           group="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication"
-          id="test.launch.options.profileFooTab"
-          name="Profile">
+          id="org.eclipse.debug.examples.mixedmode.profile.tab"
+          name="%doNothingProfileTab.name">
        <placement
              after="org.eclipse.jdt.debug.ui.javaMainTab">
        </placement>
        <associatedDelegate
-             delegate="test.launch.options.profileLaunchDelegate">
+             delegate="org.eclipse.debug.examples.mixedmode.profile">
        </associatedDelegate>
     </tab>
    </extension>
@@ -60,32 +60,31 @@
       <launchMode
             label="%launchMode.label"
             launchAsLabel="%launchMode.launchAsLabel"
-            mode="test.launch.options.fooApplet">
+            mode="org.eclipse.debug.examples.mixedmode.launchmode">
       </launchMode>
    </extension>
    <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            id="test.launch.options.actionSet.clearDebugPrefs"
-            label="%actionSet.label"
-            visible="true">
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu?after=org.eclipse.ui.run">
          <menu
-               id="test.launch.options.pdi"
-               label="%menu.label"
-               path="additions">
-            <groupMarker
-                  name="tlordi">
-            </groupMarker>
+               label="%menu.label.0">
+            <command
+                  commandId="org.eclipse.debug.examples.mixedmode.clear.delegates"
+                  style="push">
+            </command>
          </menu>
-         <action
-               class="org.eclipse.debug.internal.examples.mixedmode.ClearAllDelegateInformationAction"
-               id="test.launch.options.action1"
-               label="%action.label"
-               menubarPath="test.launch.options.pdi/tlordi"
-               style="push"
-               tooltip="%action.tooltip">
-         </action>
-      </actionSet>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.eclipse.debug.internal.examples.mixedmode.ClearPreferredDelegatesHandler"
+            description="%action.tooltip"
+            id="org.eclipse.debug.examples.mixedmode.clear.delegates"
+            name="%action.label">
+      </command>
    </extension>
 
 </plugin>

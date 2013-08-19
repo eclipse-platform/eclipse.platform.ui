@@ -13,22 +13,22 @@ package org.eclipse.debug.internal.examples.mixedmode;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FooPiggyBackTab extends FooTab {
+public class AntExtraTab extends DoNothingMainTab {
 
 	/**
-	 * @see org.eclipse.debug.internal.examples.mixedmode.FooTab#getName()
+	 * @see org.eclipse.debug.internal.examples.mixedmode.DoNothingMainTab#getName()
 	 */
 	@Override
 	public String getName() {
-		return Messages.FooPiggyBackTab_0;
+		return Messages.AntExtraTab_0;
 	}
 
 	/**
-	 * @see org.eclipse.debug.internal.examples.mixedmode.FooTab#getId()
+	 * @see org.eclipse.debug.internal.examples.mixedmode.DoNothingMainTab#getId()
 	 */
 	@Override
 	public String getId() {
-		return Messages.FooPiggyBackTab_1;
+		return "org.eclipse.debug.examples.mixedmode.ant.tab"; //$NON-NLS-1$
 	}
 
 	/**
@@ -38,8 +38,8 @@ public class FooPiggyBackTab extends FooTab {
 	public Set<String> getModes() {
 		if (fOptions == null) {
 			fOptions = new HashSet<String>();
-			fOptions.add(Messages.FooPiggyBackTab_2);
-			fOptions.add(Messages.FooPiggyBackTab_3);
+			fOptions.add("ant"); //$NON-NLS-1$
+			fOptions.add("test"); //$NON-NLS-1$
 		}
 		return fOptions;
 	}

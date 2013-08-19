@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) Aug 13, 2013 IBM Corporation and others.
+ * Copyright (c) Aug 19, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,14 +17,14 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 
 /**
- *
+ * A launch delegate that does nothing
  */
-public class ProfileLaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
+public class DoNothingLaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
 
 	/**
 	 * 
 	 */
-	public ProfileLaunchConfigurationDelegate() {
+	public DoNothingLaunchConfigurationDelegate() {
 	}
 
 	/* (non-Javadoc)
@@ -33,6 +33,7 @@ public class ProfileLaunchConfigurationDelegate implements ILaunchConfigurationD
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		// do nothing
+		System.out.println("The 'DoNothing' delegate launched successfully"); //$NON-NLS-1$
 	}
 
 }
