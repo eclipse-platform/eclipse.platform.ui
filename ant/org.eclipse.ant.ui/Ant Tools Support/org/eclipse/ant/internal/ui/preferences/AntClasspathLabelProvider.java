@@ -29,7 +29,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Label provider for classpath elements
  */
-public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider {
+public class AntClasspathLabelProvider implements ILabelProvider<Object>, IColorProvider {
 
 	private AntClasspathBlock fBlock;
 

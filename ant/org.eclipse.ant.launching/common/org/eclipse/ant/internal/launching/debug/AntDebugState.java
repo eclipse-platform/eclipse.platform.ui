@@ -546,7 +546,6 @@ public class AntDebugState {
 
 	private Target initializeBuildSequenceInformation(BuildEvent event, Map<Target, Vector<Target>> targetToBuildSequence) {
 		Project antProject = event.getProject();
-		@SuppressWarnings("unchecked")
 		Vector<String> targets = (Vector<String>) antProject.getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
 		if (targets == null) {
 			return null;

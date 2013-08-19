@@ -97,7 +97,6 @@ public class XMLAnnotationHover implements IAnnotationHover {
 				return true;
 
 			if (messagesAtPosition.get(position) instanceof List) {
-				@SuppressWarnings("unchecked")
 				List<String> messages = ((List<String>) messagesAtPosition.get(position));
 				if (messages.contains(message)) {
 					return true;
