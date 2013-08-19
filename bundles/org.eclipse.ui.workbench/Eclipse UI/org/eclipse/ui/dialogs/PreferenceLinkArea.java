@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,7 @@ public class PreferenceLinkArea extends Object {
 			result = NLS.bind(
                     WorkbenchMessages.PreferenceNode_NotFound, pageId);
 		} else {
-            result = MessageFormat.format(message, new String[] { node
+            result = MessageFormat.format(message, (Object[]) new String[] { node
                     .getLabelText() });
             
             //Only add the selection listener if the node is found
