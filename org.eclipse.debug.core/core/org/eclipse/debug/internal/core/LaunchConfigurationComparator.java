@@ -42,7 +42,6 @@ public class LaunchConfigurationComparator implements Comparator<Object> {
 	 *
 	 * @return the {@link Comparator}
 	 */
-	@SuppressWarnings("unchecked")
 	protected Comparator<Object> getComparator() {
 		if (fDelegate == null) {
 			try {

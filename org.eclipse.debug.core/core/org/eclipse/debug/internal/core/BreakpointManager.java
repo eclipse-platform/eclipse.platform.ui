@@ -891,7 +891,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 * that project
 		 * @param project the {@link IProject} that was changed
 		 */
-		@SuppressWarnings("unchecked")
 		private void handleProjectResourceOpenStateChange(final IResource project) {
 			if (!project.isAccessible()) {
 				//closed

@@ -218,7 +218,6 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object o = e.getSource();
