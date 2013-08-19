@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,16 +11,23 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator.jst;
 
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.swt.widgets.TreeItem;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
+
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.widgets.TreeItem;
+
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.NavigatorTestBase;
 
 public class JstPipelineTest extends NavigatorTestBase {
+
+	private static final boolean SLEEP_LONG = false;
+
 
 	public JstPipelineTest() {
 		_navigatorInstanceId = TEST_VIEWER_PIPELINE;
@@ -79,7 +86,7 @@ public class JstPipelineTest extends NavigatorTestBase {
 
 		TreeItem[] projectChildren = rootItems[_projectInd].getItems();
 
-		if (!true)
+		if (SLEEP_LONG)
 			DisplayHelper.sleep(1000000);
 
 		boolean foundJava = false;

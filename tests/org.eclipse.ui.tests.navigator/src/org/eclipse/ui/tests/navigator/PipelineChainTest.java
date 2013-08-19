@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Fair Isaac Corporation.
+ * Copyright (c) 2009, 2013 Fair Isaac Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,17 @@
 
 package org.eclipse.ui.tests.navigator;
 
+import org.eclipse.swt.widgets.TreeItem;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.swt.widgets.TreeItem;
+
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.extension.TestPipelineProvider;
 
@@ -27,6 +30,9 @@ import org.eclipse.ui.tests.navigator.extension.TestPipelineProvider;
  *
  */
 public class PipelineChainTest extends NavigatorTestBase {
+
+	private static final boolean SLEEP_LONG = false;
+
 
 	public PipelineChainTest() {
 		_navigatorInstanceId = TEST_VIEWER_PIPELINE;
@@ -86,7 +92,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 		
 		_expand(rootItems);
 		
-		if (false)
+		if (SLEEP_LONG)
 			DisplayHelper.sleep(10000000);
 		_viewer.refresh(rootItems[_p1Ind]);
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Fair Isaac Corporation.
+ * Copyright (c) 2009, 2013 Fair Isaac Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,19 +8,22 @@
  *     Fair Isaac Corporation - initial API and implementation
  ******************************************************************************/
 package org.eclipse.ui.tests.navigator;
+import org.eclipse.swt.widgets.TreeItem;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.m12.M1ContentProvider;
 import org.eclipse.ui.tests.navigator.m12.M2ContentProvider;
 import org.eclipse.ui.tests.navigator.m12.model.M1Project;
 import org.eclipse.ui.tests.navigator.m12.model.M2File;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * M1/M2 tests. Those tests configure the M1 content provider override policy as
@@ -28,8 +31,8 @@ import org.eclipse.swt.widgets.TreeItem;
  */
 public class M12Tests extends NavigatorTestBase {
 
-	
-	
+	private static final boolean SLEEP_LONG = false;
+
 	public M12Tests() {
 		_navigatorInstanceId = TEST_CONTENT_M12_VIEW;
 	}
@@ -106,7 +109,7 @@ public class M12Tests extends NavigatorTestBase {
 		TreeItem[] p2Children = p2Item.getItems();
 		_expand(p2Children);
 
-		if (false)
+		if (SLEEP_LONG)
 			DisplayHelper.sleep(10000000);
 
 		TreeItem file2Child = _findChild("file2.txt", p2Children);

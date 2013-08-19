@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2013 Oakland Software Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,13 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator.cdt;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.swt.widgets.TreeItem;
+
 import org.eclipse.core.runtime.Path;
 
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.NavigatorTestBase;
@@ -31,6 +33,8 @@ import org.eclipse.ui.tests.navigator.util.TestWorkspace;
 public class CdtTest extends NavigatorTestBase {
 
 	private static final String CPROJECT_NAME = "Chello";
+	private static final boolean SLEEP_LONG = false;
+	private static final boolean IS_JDT_DISABLED = false;
 
 	public CdtTest() {
 		_navigatorInstanceId = ProjectExplorer.VIEW_ID;
@@ -51,7 +55,7 @@ public class CdtTest extends NavigatorTestBase {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(
 				CPROJECT_NAME);
 
-		if (false)
+		if (SLEEP_LONG)
 			DisplayHelper.sleep(1000000000);
 
 		_viewer.setExpandedState(project, true);
@@ -63,7 +67,7 @@ public class CdtTest extends NavigatorTestBase {
 				assertEquals("CL: CElement: Debug", items[0].getText());
 				assertEquals("CL: CElement: src", items[1].getText());
 
-				if (false) {
+				if (IS_JDT_DISABLED) {
 					// This is how it appears if you disable the JDT NCE, it
 					// uses the CDT label provider
 					assertEquals("CL: chello/test.c", items[2].getText());

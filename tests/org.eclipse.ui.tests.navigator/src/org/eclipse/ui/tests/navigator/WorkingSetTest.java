@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2013 Oakland Software Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,13 +12,17 @@ package org.eclipse.ui.tests.navigator;
 
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.TreeItem;
+
 import org.eclipse.core.runtime.IAdaptable;
+
+import org.eclipse.core.resources.IFile;
+
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.TreeItem;
+
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
@@ -37,6 +41,9 @@ import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 public class WorkingSetTest extends NavigatorTestBase {
+
+	private static final boolean SLEEP_LONG = false;
+
 
 	public static TestSuite suite() {
 		TestSuite suite = new TestSuite("org.eclipse.ui.tests.navigator.WorkingSetTest");
@@ -317,7 +324,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 		items = _viewer.getTree().getItems();
 		assertTrue(items[0].getData().equals(_p2));
 
-		if (false)
+		if (SLEEP_LONG)
 			DisplayHelper.sleep(Display.getCurrent(), 10000000);
 
 	}
