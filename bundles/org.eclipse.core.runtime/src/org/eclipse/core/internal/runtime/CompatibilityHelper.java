@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,8 +80,8 @@ public class CompatibilityHelper {
 			throw new IllegalStateException();
 
 		try {
-			Method setPlugin = descriptor.getClass().getMethod("setActive", null); //$NON-NLS-1$
-			setPlugin.invoke(descriptor, null);
+			Method setPlugin = descriptor.getClass().getMethod("setActive", (Class[]) null); //$NON-NLS-1$
+			setPlugin.invoke(descriptor, (Object[]) null);
 		} catch (Exception e) {
 			//Ignore the exceptions
 		}
@@ -94,8 +94,8 @@ public class CompatibilityHelper {
 
 		Boolean result = Boolean.FALSE;
 		try {
-			Method setPlugin = descriptor.getClass().getMethod("hasPluginObject", null); //$NON-NLS-1$
-			result = (Boolean) setPlugin.invoke(descriptor, null);
+			Method setPlugin = descriptor.getClass().getMethod("hasPluginObject", (Class[]) null); //$NON-NLS-1$
+			result = (Boolean) setPlugin.invoke(descriptor, (Object[]) null);
 		} catch (Exception e) {
 			//Ignore the exceptions			
 		}

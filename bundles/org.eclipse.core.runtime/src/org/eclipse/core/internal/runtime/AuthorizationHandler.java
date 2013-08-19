@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.runtime;
 
 import java.lang.reflect.InvocationTargetException;
-
 import java.io.File;
 import java.lang.reflect.*;
 import java.net.URL;
@@ -132,7 +131,7 @@ public class AuthorizationHandler {
 	private static void saveKeyring() throws CoreException {
 		try {
 			Method method = authClass.getMethod("save", new Class[0]); //$NON-NLS-1$
-			method.invoke(keyring, null);
+			method.invoke(keyring, (Object[]) null);
 		} catch (Exception e) {
 			log(e);
 		}

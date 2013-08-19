@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -756,8 +756,8 @@ public final class Platform {
 		Class oldInternalPlatform = null;
 		try {
 			oldInternalPlatform = compatibility.loadClass("org.eclipse.core.internal.plugins.InternalPlatform"); //$NON-NLS-1$
-			Method getPluginRegistry = oldInternalPlatform.getMethod("getPluginRegistry", null); //$NON-NLS-1$
-			return (IPluginRegistry) getPluginRegistry.invoke(oldInternalPlatform, null);
+			Method getPluginRegistry = oldInternalPlatform.getMethod("getPluginRegistry", (Class[]) null); //$NON-NLS-1$
+			return (IPluginRegistry) getPluginRegistry.invoke(oldInternalPlatform, (Object[]) null);
 		} catch (Exception e) {
 			//Ignore the exceptions, return null
 		}
