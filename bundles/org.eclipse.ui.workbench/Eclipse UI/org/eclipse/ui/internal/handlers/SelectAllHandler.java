@@ -76,8 +76,7 @@ public class SelectAllHandler extends WidgetMethodHandler {
 							Runnable methodRunnable = new Runnable() {
 								public void run() {
 									try {
-										methodToExecute.invoke(focusComponent,
-												(Object[]) null);
+										methodToExecute.invoke(focusComponent);
 										// and back to the UI thread :-)
 										focusControl.getDisplay().asyncExec(
 												new Runnable() {
@@ -131,7 +130,7 @@ public class SelectAllHandler extends WidgetMethodHandler {
 					}
 				} else if (numParams == 0) {
 					// This is a no-argument selectAll method.
-					methodToExecute.invoke(focusControl, (Object[]) null);
+					methodToExecute.invoke(focusControl);
 					focusControl.notifyListeners(SWT.Selection, null);
 
 				} else if (numParams == 1) {
@@ -139,7 +138,7 @@ public class SelectAllHandler extends WidgetMethodHandler {
 					final Method textLimitAccessor = focusControl.getClass()
 							.getMethod("getTextLimit", NO_PARAMETERS); //$NON-NLS-1$
 					final Integer textLimit = (Integer) textLimitAccessor
-							.invoke(focusControl, (Object[]) null);
+							.invoke(focusControl);
 					final Object[] parameters = { new Point(0, textLimit
 							.intValue()) };
 					methodToExecute.invoke(focusControl, parameters);

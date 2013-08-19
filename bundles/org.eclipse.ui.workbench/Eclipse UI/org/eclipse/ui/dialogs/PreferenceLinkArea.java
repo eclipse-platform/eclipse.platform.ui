@@ -65,8 +65,7 @@ public class PreferenceLinkArea extends Object {
 			result = NLS.bind(
                     WorkbenchMessages.PreferenceNode_NotFound, pageId);
 		} else {
-            result = MessageFormat.format(message, (Object[]) new String[] { node
-                    .getLabelText() });
+			result = MessageFormat.format(message, node.getLabelText());
             
             //Only add the selection listener if the node is found
             pageLink.addSelectionListener(new SelectionAdapter() {
