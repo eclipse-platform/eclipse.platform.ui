@@ -80,8 +80,8 @@ public class CompatibilityHelper {
 			throw new IllegalStateException();
 
 		try {
-			Method setPlugin = descriptor.getClass().getMethod("setActive", (Class[]) null); //$NON-NLS-1$
-			setPlugin.invoke(descriptor, (Object[]) null);
+			Method setPlugin = descriptor.getClass().getMethod("setActive"); //$NON-NLS-1$
+			setPlugin.invoke(descriptor);
 		} catch (Exception e) {
 			//Ignore the exceptions
 		}
@@ -94,8 +94,8 @@ public class CompatibilityHelper {
 
 		Boolean result = Boolean.FALSE;
 		try {
-			Method setPlugin = descriptor.getClass().getMethod("hasPluginObject", (Class[]) null); //$NON-NLS-1$
-			result = (Boolean) setPlugin.invoke(descriptor, (Object[]) null);
+			Method setPlugin = descriptor.getClass().getMethod("hasPluginObject"); //$NON-NLS-1$
+			result = (Boolean) setPlugin.invoke(descriptor);
 		} catch (Exception e) {
 			//Ignore the exceptions			
 		}

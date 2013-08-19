@@ -628,7 +628,7 @@ public abstract class Plugin implements BundleActivator {
 		Method m;
 		try {
 			m = descriptor.getClass().getMethod("doPluginDeactivation", new Class[0]); //$NON-NLS-1$
-			m.invoke(descriptor, (Object[]) null);
+			m.invoke(descriptor);
 		} catch (SecurityException e) {
 			exception = e;
 		} catch (NoSuchMethodException e) {

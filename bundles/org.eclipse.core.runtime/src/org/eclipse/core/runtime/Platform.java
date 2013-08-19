@@ -756,8 +756,8 @@ public final class Platform {
 		Class oldInternalPlatform = null;
 		try {
 			oldInternalPlatform = compatibility.loadClass("org.eclipse.core.internal.plugins.InternalPlatform"); //$NON-NLS-1$
-			Method getPluginRegistry = oldInternalPlatform.getMethod("getPluginRegistry", (Class[]) null); //$NON-NLS-1$
-			return (IPluginRegistry) getPluginRegistry.invoke(oldInternalPlatform, (Object[]) null);
+			Method getPluginRegistry = oldInternalPlatform.getMethod("getPluginRegistry"); //$NON-NLS-1$
+			return (IPluginRegistry) getPluginRegistry.invoke(oldInternalPlatform);
 		} catch (Exception e) {
 			//Ignore the exceptions, return null
 		}

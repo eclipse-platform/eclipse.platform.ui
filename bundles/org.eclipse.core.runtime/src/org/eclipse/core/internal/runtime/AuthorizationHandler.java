@@ -131,7 +131,7 @@ public class AuthorizationHandler {
 	private static void saveKeyring() throws CoreException {
 		try {
 			Method method = authClass.getMethod("save", new Class[0]); //$NON-NLS-1$
-			method.invoke(keyring, (Object[]) null);
+			method.invoke(keyring);
 		} catch (Exception e) {
 			log(e);
 		}
