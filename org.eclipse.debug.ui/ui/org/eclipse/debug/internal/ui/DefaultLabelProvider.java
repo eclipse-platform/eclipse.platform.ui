@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
+ *     Valentin Ciocoi - Bug 414994 Guard against out of bounds exception when handling escaped characters in DefaultLabelProvider 
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -564,7 +565,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 		}
 		for (int i = 0; i < string.length(); i++) {
 			char c = string.charAt(i);
-			if (c == '\\') {
+			if (c == '\\' && (i + 1 < string.length())) {
 				switch (string.charAt(i+1)) {
 					case 'b':
 						c= '\b';
