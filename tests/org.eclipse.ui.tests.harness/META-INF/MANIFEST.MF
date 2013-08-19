@@ -5,7 +5,6 @@ Bundle-SymbolicName: org.eclipse.ui.tests.harness;singleton:=true
 Bundle-Version: 1.2.0.qualifier
 Eclipse-BundleShape: dir
 Bundle-Activator: org.eclipse.ui.tests.harness.UITestHarnessPlugin
-Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.junit,
@@ -15,3 +14,4 @@ Export-Package: org.eclipse.ui.tests.harness,
  org.eclipse.ui.tests.harness.tests,
  org.eclipse.ui.tests.harness.util,
  org.eclipse.ui.tests.internal.util;x-internal:=true
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
