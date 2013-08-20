@@ -64,7 +64,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
-import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -2608,13 +2607,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		MPerspectiveStack perspectiveStack = getPerspectiveStack();
 		if (perspectiveStack != null) {
 			extendPerspectives(perspectiveStack);
-
-			MPerspective persp = perspectiveStack.getSelectedElement();
-			List<String> newIds = ModeledPageLayout.getIds(persp, ModeledPageLayout.ACTION_SET_TAG);
-			EContextService contextService = window.getContext().get(EContextService.class);
-			for (String id : newIds) {
-				contextService.activateContext(id);
-			}
 		}
 
 		IPerspectiveRegistry registry = getWorkbenchWindow().getWorkbench()
