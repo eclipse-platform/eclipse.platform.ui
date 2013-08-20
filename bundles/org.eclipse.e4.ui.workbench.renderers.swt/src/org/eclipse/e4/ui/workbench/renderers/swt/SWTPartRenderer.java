@@ -18,6 +18,7 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
@@ -61,6 +62,16 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 				renderer.createGui(childME);
 			}
 		}
+	}
+
+	public void styleElement(MUIElement element, boolean active) {
+		if (!active)
+			element.getTags().remove(CSSConstants.CSS_ACTIVE_CLASS);
+		else
+			element.getTags().add(CSSConstants.CSS_ACTIVE_CLASS);
+
+		if (element.getWidget() != null)
+			setCSSInfo(element, element.getWidget());
 	}
 
 	public void setCSSInfo(MUIElement me, Object widget) {
