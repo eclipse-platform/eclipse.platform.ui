@@ -21,6 +21,7 @@ import org.atinject.tck.auto.Tire;
 
 import javax.inject.Inject;
 
+@SuppressWarnings("all")
 public class SpareTire extends Tire {
 
     FuelTank constructorInjection = NEVER_INJECTED;
