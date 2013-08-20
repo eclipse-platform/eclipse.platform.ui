@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Angelo Zerr and others.
+ * Copyright (c) 2008, 2013 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,8 +59,7 @@ public class GradientBackgroundListener implements Listener {
 		// java.awt.RadialGradientPaint that is only available in Java 6 and
 		// higher. Since the BREE is set to J2SE-1.5, reflection is used.
 		try {
-			Class<?> radialGradientPaintClass = Class
-					.forName("java.awt.RadialGradientPaint"); //$NON-NLS-1$
+			Class.forName("java.awt.RadialGradientPaint"); //$NON-NLS-1$
 			isRadialSupported = true;
 		} catch (Exception e) {
 //			System.err

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009, 2010 IBM Corporation and others.
+ *  Copyright (c) 2009, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
@@ -23,7 +22,10 @@ public class CSSPropertyWebbyStyleHandler extends AbstractCSSPropertySWTHandler 
 	
 	public void applyCSSProperty(Control control, String property,
 		    CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		boolean bool = (Boolean)engine.convert(value, Boolean.class, null);
+
+		// FIXME: Commented out since it only causes a compile warning. Filed https://bugs.eclipse.org/415436 to track this.
+//		boolean bool = (Boolean)engine.convert(value, Boolean.class, null);
+
 	}
 
 	public String retrieveCSSProperty(Control control, String property,
