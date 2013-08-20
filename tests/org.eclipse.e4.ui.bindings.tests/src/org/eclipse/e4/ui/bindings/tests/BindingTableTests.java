@@ -172,7 +172,6 @@ public class BindingTableTests extends TestCase {
 
 	public void testPartialMatch() throws Exception {
 		BindingTable table = loadTable(ID_DIALOG_AND_WINDOW);
-		Binding about = getTestBinding(ABOUT_ID);
 		KeySequence ctrl5 = KeySequence.getInstance("CTRL+5");
 		KeySequence ctrl8 = KeySequence.getInstance("CTRL+8");
 		assertTrue(table.isPartialMatch(ctrl5));

@@ -36,7 +36,7 @@ public class BindingCreateTest extends TestCase {
 	private EBindingService bs;
 	private ParameterizedCommand cmd;
 	private TriggerSequence seq, emptySeq;
-	private Map<String,String> emptyAttrs, schemeOnly, schemeAndTypeAttrs, fullAttrs;
+	private Map<String,String> emptyAttrs, schemeOnly, schemeAndTypeAttrs;
 	
 	@Override
 	protected void setUp() throws Exception {
