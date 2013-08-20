@@ -166,6 +166,8 @@ public class ContextTreeProvider implements IEclipseContextDebugger, ITreeConten
 				if (view != null && refreshJob != null)
 					refreshJob.schedule(REFRESH_DELAY);
 				break;
+			case LISTENER_ADDED :
+				break;
 		}
 	}
 

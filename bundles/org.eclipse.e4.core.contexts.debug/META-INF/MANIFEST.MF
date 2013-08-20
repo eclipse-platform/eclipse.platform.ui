@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.e4.core.contexts.debug;singleton:=true
-Bundle-Version: 0.1.1.qualifier
+Bundle-Version: 0.1.100.qualifier
 Bundle-Vendor: %providerName
 Bundle-Activator: org.eclipse.e4.core.internal.contexts.debug.ui.Activator
 Bundle-Localization: plugin
