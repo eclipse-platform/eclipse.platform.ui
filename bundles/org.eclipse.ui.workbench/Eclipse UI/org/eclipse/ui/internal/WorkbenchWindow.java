@@ -566,11 +566,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		cs.activateContext(IContextService.CONTEXT_ID_WINDOW);
 		cs.getActiveContextIds();
 
-		String title = getWindowConfigurer().basicGetTitle();
-		if (title != null) {
-			getShell().setText(TextProcessor.process(title, TEXT_DELIMITERS));
-		}
-		workbench.getHelpSystem().setHelp(getShell(), IWorkbenchHelpContextIds.WORKBENCH_WINDOW);
+		configureShell(getShell(), windowContext);
 
 		initializeDefaultServices();
 
@@ -705,6 +701,17 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		trackShellActivation();
 	}
 
+	private void configureShell(Shell shell, IEclipseContext context) {
+		String title = getWindowConfigurer().basicGetTitle();
+		if (title != null) {
+			shell.setText(TextProcessor.process(title, TEXT_DELIMITERS));
+		}
+		workbench.getHelpSystem().setHelp(shell, IWorkbenchHelpContextIds.WORKBENCH_WINDOW);
+
+		IContextService contextService = context.get(IContextService.class);
+		contextService.registerShell(shell, IContextService.TYPE_WINDOW);
+	}
+	
 	private boolean manageChanges = true;
 	private boolean canUpdateMenus = true;
 
