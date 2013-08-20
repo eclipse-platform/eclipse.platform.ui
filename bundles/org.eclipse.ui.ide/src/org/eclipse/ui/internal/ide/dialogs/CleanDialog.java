@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -290,6 +290,11 @@ public class CleanDialog extends MessageDialog {
         data.heightHint = IDialogConstants.ENTRY_FIELD_WIDTH;
         projectNames.getTable().setLayoutData(data);
         projectNames.setCheckedElements(selection);
+        Object[] checked = projectNames.getCheckedElements();
+        // reveal first checked project unless in "all projects" mode
+        if (checked.length > 0 && !allButton.getSelection()) {
+            projectNames.reveal(checked[0]);
+        }
         //table is disabled to start because all button is selected
         projectNames.getTable().setEnabled(selectedButton.getSelection());
         projectNames.addCheckStateListener(new ICheckStateListener() {
