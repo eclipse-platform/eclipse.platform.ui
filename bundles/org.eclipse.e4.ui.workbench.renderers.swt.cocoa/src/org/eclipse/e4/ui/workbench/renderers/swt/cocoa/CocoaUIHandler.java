@@ -163,7 +163,7 @@ public class CocoaUIHandler {
 		// call getAddress
 		Method getAddress = Callback.class
 				.getMethod("getAddress", new Class[0]); //$NON-NLS-1$
-		Object object = getAddress.invoke(proc3Args, null);
+		Object object = getAddress.invoke(proc3Args);
 		long proc3 = convertToLong(object);
 		if (proc3 == 0)
 			SWT.error(SWT.ERROR_NO_MORE_CALLBACKS);
