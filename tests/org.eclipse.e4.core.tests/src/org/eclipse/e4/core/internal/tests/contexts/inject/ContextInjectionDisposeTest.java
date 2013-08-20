@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,6 @@ public class ContextInjectionDisposeTest extends TestCase {
 				disposeInvoked = true;
 			}
 
-			@SuppressWarnings("unused")
 			@Inject
 			public void InjectedMethod(String arg) {
 				methodValue = arg;
@@ -111,7 +110,6 @@ public class ContextInjectionDisposeTest extends TestCase {
 				disposeInvoked = true;
 			}
 
-			@SuppressWarnings("unused")
 			@Inject
 			public void InjectedMethod(@Optional String arg) {
 				methodValue = arg;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,13 +53,11 @@ public class AnnotationsInjectionTest extends TestCase {
 
 			public TestData value;
 
-			@SuppressWarnings("unused")
 			@Inject
 			public void settings(IEclipseContext context) {
 				contextSetCalled++;
 			}
 
-			@SuppressWarnings("unused")
 			@Inject
 			public void injectedMethod(@Named("testing123") TestData arg) {
 				setMethodCalled++;
@@ -95,7 +93,6 @@ public class AnnotationsInjectionTest extends TestCase {
 				postConstructCalled++;
 			}
 
-			@SuppressWarnings("unused")
 			@Inject
 			public void setData(TestData arg) {
 				setMethodCalled++;
@@ -167,7 +164,6 @@ public class AnnotationsInjectionTest extends TestCase {
 			Object injectedField;
 			Object methodValue;
 
-			@SuppressWarnings("unused")
 			@Inject
 			public void injectedMethod(@Optional @Named("valueMethod") Object arg) {
 				try {
@@ -238,7 +234,6 @@ public class AnnotationsInjectionTest extends TestCase {
 		class TestObject {
 			public int called = 0;
 
-		    @SuppressWarnings("unused")
 		    @Execute
 			public String something(@Optional String param) {
 		    	called++;
@@ -307,7 +302,6 @@ public class AnnotationsInjectionTest extends TestCase {
 				// placeholder
 			}
 
-			@SuppressWarnings("unused")
 			@Execute
 			public String something(@Named("testing123") TestData data) {
 				myString = data.value;
@@ -343,7 +337,6 @@ public class AnnotationsInjectionTest extends TestCase {
 				assertNotNull(directFieldInjection);
 			}
 
-			@SuppressWarnings("unused")
 			@Inject
 			public void setData(TestData arg) {
 				value = arg;
