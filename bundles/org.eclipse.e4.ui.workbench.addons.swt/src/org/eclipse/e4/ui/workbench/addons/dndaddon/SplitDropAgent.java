@@ -21,6 +21,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -354,6 +355,12 @@ public class SplitDropAgent extends DropAgent {
 
 		if (dragElement instanceof MPartStack) {
 			toInsert = (MPartStack) dragElement;
+
+			// Ensure we restore the stack to the presentation first
+			if (toInsert.getTags().contains(IPresentationEngine.MINIMIZED)) {
+				toInsert.getTags().remove(IPresentationEngine.MINIMIZED);
+			}
+
 			toInsert.getParent().getChildren().remove(toInsert);
 		} else {
 			// wrap it in a stack if it's a part
