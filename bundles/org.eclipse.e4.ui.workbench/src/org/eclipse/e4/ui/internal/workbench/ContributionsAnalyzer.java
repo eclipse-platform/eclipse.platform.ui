@@ -20,8 +20,6 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.internal.expressions.ReferenceExpression;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -245,18 +243,13 @@ public final class ContributionsAnalyzer {
 		for (String name : names) {
 			eContext.getVariable(name + ".evaluationServiceLink"); //$NON-NLS-1$
 		}
-		final boolean[] ret = new boolean[1];
-		ret[0] = false;
-		SafeRunner.run(new ISafeRunnable() {
-			public void run() throws Exception {
-				ret[0] = ref.evaluate(eContext) != EvaluationResult.FALSE;
-			}
-
-			public void handleException(Throwable exception) {
-				trace("isVisible exception", exception); //$NON-NLS-1$
-			}
-		});
-		return ret[0];
+		boolean ret = false;
+		try {
+			ret = ref.evaluate(eContext) != EvaluationResult.FALSE;
+		} catch (Exception e) {
+			trace("isVisible exception", e); //$NON-NLS-1$
+		}
+		return ret;
 	}
 
 	public static void addMenuContributions(final MMenu menuModel,
