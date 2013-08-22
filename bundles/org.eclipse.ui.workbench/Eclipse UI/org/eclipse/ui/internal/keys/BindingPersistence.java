@@ -492,7 +492,6 @@ public class BindingPersistence extends PreferencePersistence {
 				if (commandId == null) {
 					commandId = readOptional(memento, ATT_COMMAND);
 				}
-				String viewParameter = null;
 				final Command command;
 				if (commandId != null) {
 					command = commandService.getCommand(commandId);
@@ -563,17 +562,8 @@ public class BindingPersistence extends PreferencePersistence {
 				final String platform = readOptional(memento, ATT_PLATFORM);
 
 				// Read out the parameters
-				final ParameterizedCommand parameterizedCommand;
-				if (command == null) {
-					parameterizedCommand = null;
-				} else if (viewParameter != null) { 
-					HashMap parms = new HashMap();
-					parms.put(ShowViewMenu.VIEW_ID_PARM, viewParameter);
-					parameterizedCommand = ParameterizedCommand.generateCommand(command, parms);
-				} else {
-					parameterizedCommand = readParameters(memento,
-							warningsToLog, command);
-				}
+				final ParameterizedCommand parameterizedCommand = command != null ? readParameters(
+						memento, warningsToLog, command) : null;
 
 				final Binding binding = new KeyBinding(keySequence,
 						parameterizedCommand, schemeId, contextId, locale,
