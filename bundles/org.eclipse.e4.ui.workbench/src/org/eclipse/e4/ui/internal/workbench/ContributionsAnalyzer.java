@@ -11,8 +11,6 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
-import org.eclipse.e4.core.commands.ExpressionContext;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,7 +20,7 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.internal.expressions.ReferenceExpression;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
@@ -247,7 +245,7 @@ public final class ContributionsAnalyzer {
 				eContext.getVariable(name + ".evaluationServiceLink"); //$NON-NLS-1$
 			}
 			return ref.evaluate(eContext) != EvaluationResult.FALSE;
-		} catch (CoreException e) {
+		} catch (Exception e) {
 			trace("isVisible exception", e); //$NON-NLS-1$
 		}
 		return false;
