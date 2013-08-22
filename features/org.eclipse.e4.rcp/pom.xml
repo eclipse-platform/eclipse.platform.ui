@@ -36,8 +36,6 @@
             <configuration>
               <excludes>
                 <plugin id="javax.xml"/>
-                <plugin id="javax.annotation"/>
-                <plugin id="javax.inject"/>
                 <plugin id="org.apache.batik.css"/>
                 <plugin id="org.apache.batik.util"/>
                 <plugin id="org.apache.batik.util.gui"/>
