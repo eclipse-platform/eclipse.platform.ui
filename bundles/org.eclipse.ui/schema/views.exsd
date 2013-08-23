@@ -60,6 +60,11 @@ In order to reduce the visual clutter in the Show View Dialog, views should be g
    </element>
 
    <element name="category">
+      <annotation>
+         <documentation>
+            A category to group views in the UI.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -95,7 +100,7 @@ allows the creation of a hierarchy of categories.
    <element name="view">
       <annotation>
          <documentation>
-            Defines a view.
+            A view.
          </documentation>
       </annotation>
       <complexType>
@@ -184,7 +189,7 @@ If no value is supplied, a default ratio will be used.
    <element name="e4view">
       <annotation>
          <documentation>
-            Defines an e4-style view.
+            An e4-style view.
 &lt;p&gt;&lt;em&gt;Since: 3.105&lt;/em&gt;&lt;/p&gt;
          </documentation>
       </annotation>
@@ -273,7 +278,7 @@ If no value is supplied, a default ratio will be used.
             <meta.element translatable="true"/>
          </appInfo>
          <documentation>
-            an optional subelement whose body should contain text providing a short description of the view.
+            An optional subelement whose body should contain text providing a short description of the view.
          </documentation>
       </annotation>
    </element>
@@ -372,7 +377,7 @@ The following is an example of a sticky view declaration:
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must be a 
+         The value of the &lt;samp&gt;view&lt;/samp&gt; element&apos;s &lt;samp&gt;class&lt;/samp&gt; attribute must be a 
 fully qualified name of the class that implements 
 &lt;samp&gt;org.eclipse.ui.IViewPart&lt;/samp&gt;.  It is common 
 practice to subclass &lt;samp&gt;org.eclipse.ui.part.ViewPart&lt;/samp&gt;
