@@ -238,7 +238,9 @@ public class EclipseContext implements IEclipseContext {
 				result = valueComputation.get();
 				originatingContext.localValueComputations.put(name, valueComputation);
 			}
-			return result;
+			if (result != IInjector.NOT_A_VALUE) {
+				return result;
+			}
 		}
 		// 3. delegate to parent
 		if (!local) {

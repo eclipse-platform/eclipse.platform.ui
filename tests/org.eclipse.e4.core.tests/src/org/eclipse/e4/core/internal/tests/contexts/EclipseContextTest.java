@@ -16,6 +16,7 @@ import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
+import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 
 public class EclipseContextTest extends TestCase {
@@ -310,6 +311,50 @@ public class EclipseContextTest extends TestCase {
 		parent.set("x", new Integer(1));
 		child.set("x", null);
 		assertNull(child.get("x"));
+	}
+
+	public void testGetCFNotAValue() {
+		IEclipseContext context = EclipseContextFactory.create("ParentContext");
+		context.set("x", new ContextFunction() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.e4.core.contexts.ContextFunction#compute(org.eclipse
+			 * .e4.core.contexts.IEclipseContext, java.lang.String)
+			 */
+			@Override
+			public Object compute(IEclipseContext context, String contextKey) {
+				return IInjector.NOT_A_VALUE;
+			}
+		});
+
+		assertNull(context.get("x"));
+		context.dispose();
+	}
+
+	public void testGetCFNotAValueToParent() {
+		IEclipseContext parent = EclipseContextFactory.create("ParentContext");
+		IEclipseContext child = parent.createChild();
+		parent.set("x", new Integer(1));
+		child.set("x", new ContextFunction() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.e4.core.contexts.ContextFunction#compute(org.eclipse
+			 * .e4.core.contexts.IEclipseContext, java.lang.String)
+			 */
+			@Override
+			public Object compute(IEclipseContext context, String contextKey) {
+				return IInjector.NOT_A_VALUE;
+			}
+		});
+
+		assertEquals(1, child.get("x"));
+		parent.dispose();
 	}
 
 	private int listenersCount(IEclipseContext context) {
