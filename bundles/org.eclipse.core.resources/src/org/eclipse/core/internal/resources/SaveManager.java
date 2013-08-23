@@ -128,6 +128,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 	public SaveManager(Workspace workspace) {
 		this.workspace = workspace;
+		this.masterTable = new MasterTable();
 		this.snapshotJob = new DelayedSnapshotJob(this);
 		snapshotRequested = false;
 		saveParticipants = Collections.synchronizedMap(new HashMap<String, ISaveParticipant>(10));
@@ -815,7 +816,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 	protected void restoreMasterTable() throws CoreException {
 		long start = System.currentTimeMillis();
-		masterTable = new MasterTable();
+		masterTable.clear();
 		IPath location = workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES);
 		java.io.File target = location.toFile();
 		if (!target.exists()) {
