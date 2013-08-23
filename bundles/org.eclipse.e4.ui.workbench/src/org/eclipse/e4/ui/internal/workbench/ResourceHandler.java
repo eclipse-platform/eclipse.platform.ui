@@ -218,6 +218,12 @@ public class ResourceHandler implements IModelResourceHandler {
 				context);
 		contribProcessor.processModel();
 
+		if (!clearPersistedState) {
+			CommandLineOptionModelProcessor processor = ContextInjectionFactory.make(
+					CommandLineOptionModelProcessor.class, context);
+			processor.process();
+		}
+
 		return resource;
 	}
 

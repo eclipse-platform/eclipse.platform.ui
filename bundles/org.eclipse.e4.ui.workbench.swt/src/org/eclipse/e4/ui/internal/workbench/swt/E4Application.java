@@ -238,6 +238,14 @@ public class E4Application implements IApplication {
 						PostContextCreate.class, appContext, null);
 			}
 		}
+
+		String forcedPerspectiveId = getArgValue("perspective",
+				applicationContext, false);
+		if (forcedPerspectiveId != null) {
+			appContext.set(E4Workbench.FORCED_PERSPECTIVE_ID,
+					forcedPerspectiveId);
+		}
+
 		// Create the app model and its context
 		MApplication appModel = loadApplicationModel(applicationContext,
 				appContext);
