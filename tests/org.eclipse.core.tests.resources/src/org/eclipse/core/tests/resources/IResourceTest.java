@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -1809,6 +1809,37 @@ public class IResourceTest extends ResourceTest {
 
 		assertEquals(true, b.isConflicting(multi));
 		assertEquals(true, multi.isConflicting(b));
+
+		project.delete(true, getMonitor());
+	}
+
+	public void testIsConflicting2() throws CoreException {
+		final IProject project = getWorkspace().getRoot().getProject("Project");
+		ensureExistsInWorkspace(project, true);
+
+		ISchedulingRule wrapper = new ISchedulingRule() {
+			public boolean isConflicting(ISchedulingRule rule) {
+				return this == rule || project.isConflicting(rule);
+			}
+
+			public boolean contains(ISchedulingRule rule) {
+				return this == rule || project.contains(rule);
+			}
+		};
+		ISchedulingRule multi = MultiRule.combine(wrapper, new ISchedulingRule() {
+			public boolean isConflicting(ISchedulingRule rule) {
+				return this == rule;
+			}
+
+			public boolean contains(ISchedulingRule rule) {
+				return this == rule;
+			}
+		});
+
+		assertEquals(false, project.isConflicting(wrapper));
+		assertEquals(false, project.isConflicting(multi));
+		assertEquals(true, wrapper.isConflicting(project));
+		assertEquals(true, multi.isConflicting(project));
 
 		project.delete(true, getMonitor());
 	}

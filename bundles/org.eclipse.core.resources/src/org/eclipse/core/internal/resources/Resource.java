@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1360,8 +1360,14 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		//must not schedule at same time as notification
 		if (rule.getClass().equals(WorkManager.NotifyRule.class))
 			return true;
-		if (rule instanceof MultiRule)
-			return rule.isConflicting(this);
+		if (rule instanceof MultiRule) {
+			MultiRule multi = (MultiRule) rule;
+			ISchedulingRule[] children = multi.getChildren();
+			for (int i = 0; i < children.length; i++)
+				if (isConflicting(children[i]))
+					return true;
+			return false;
+		}
 		if (!(rule instanceof IResource))
 			return false;
 		IResource resource = (IResource) rule;
