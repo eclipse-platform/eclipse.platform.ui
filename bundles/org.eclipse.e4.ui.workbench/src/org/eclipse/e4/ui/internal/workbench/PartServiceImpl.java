@@ -17,7 +17,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import javax.inject.Named;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
@@ -46,7 +45,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.services.EContextService;
-import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -149,13 +147,6 @@ public class PartServiceImpl implements EPartService {
 			logger.error(e, unidentifiedMessage);
 		} else {
 			logger.error(e, NLS.bind(identifiedMessage, id));
-		}
-	}
-
-	@Inject
-	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
-		if (activePart != p) {
-			activate(p, true, true);
 		}
 	}
 
@@ -478,42 +469,34 @@ public class PartServiceImpl implements EPartService {
 	public void switchPerspective(MPerspective perspective) {
 		Assert.isNotNull(perspective);
 		MWindow window = getWindow();
-		if (window != null && isInContainer(window, perspective)) {
-			perspective.getParent().setSelectedElement(perspective);
-			List<MPart> newPerspectiveParts = modelService.findElements(perspective, null,
-					MPart.class, null);
-			// if possible, keep the same active part across perspective switches
-			if (newPerspectiveParts.contains(activePart)
-					&& partActivationHistory.isValid(perspective, activePart)) {
-				MPart target = activePart;
-				IEclipseContext activeChild = activePart.getContext().getParent().getActiveChild();
-				if (activeChild != null) {
-					activeChild.deactivate();
-				}
-				perspective.getContext().activate();
-				modelService.bringToTop(target);
-				activate(target, true, false);
-				return;
-			}
+		if (window == null || !isInContainer(window, perspective))
+			return;
 
-			MPart newActivePart = perspective.getContext().getActiveLeaf().get(MPart.class);
-			if (newActivePart == null) {
-				// whatever part was previously active can no longer be found, find another one
-				MPart candidate = partActivationHistory.getActivationCandidate(perspective);
-				if (candidate != null) {
-					modelService.bringToTop(candidate);
-					activate(candidate, true, false);
-					return;
-				}
-			}
+		perspective.getParent().setSelectedElement(perspective);
 
-			// there seems to be no parts in this perspective, just activate it as is then
-			if (newActivePart == null) {
-				modelService.bringToTop(perspective);
-				perspective.getContext().activate();
-			} else {
-				activate(newActivePart, true, false);
+		MPart newActivePart = null;
+
+		// if possible, keep the same active part across perspective switches
+		List<MPart> newPerspectiveParts = modelService.findElements(perspective, null, MPart.class,
+				null);
+		if (newPerspectiveParts.contains(activePart)
+				&& partActivationHistory.isValid(perspective, activePart)) {
+			newActivePart = activePart;
+		} else if (newActivePart == null) {
+			// Use the previously active part
+			newActivePart = perspective.getContext().getActiveLeaf().get(MPart.class);
+		}
+
+		// there seems to be no parts in this perspective, just activate it as is then
+		if (newActivePart == null) {
+			modelService.bringToTop(perspective);
+			perspective.getContext().activate();
+		} else {
+			if ((modelService.getElementLocation(newActivePart) & EModelService.IN_SHARED_AREA) != 0) {
+				if (newActivePart.getParent().getSelectedElement() != newActivePart)
+					newActivePart = (MPart) newActivePart.getParent().getSelectedElement();
 			}
+			activate(newActivePart);
 		}
 	}
 
