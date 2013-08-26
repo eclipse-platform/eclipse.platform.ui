@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Tom Schindl and others.
+ * Copyright (c) 2006, 2013 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
+ *     Henrik Still<hendrik.still@gammas.de> - bug 415875
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -20,7 +21,9 @@ import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.FocusCellOwnerDrawHighlighter;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -189,7 +192,11 @@ public class Snippet055HideShowColumn {
 		b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				column_2.getColumn().setWidth(0);
+				if(column_2.getColumn().getWidth() == 0){
+					column_2.getColumn().setWidth(200);
+				}else{
+					column_2.getColumn().setWidth(0);
+				}
 			}
 		});
 	}
