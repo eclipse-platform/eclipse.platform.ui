@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,9 @@ public final class ViewUtils {
         return false;
     }
 
-    @SuppressWarnings("unused")
+	/**
+	 * @param part the view part
+	 */
 	public static boolean isCloseable(IViewPart part) {
 //        IWorkbenchPartSite viewSite = part.getSite();
 //        IViewReference ref = (IViewReference) viewSite.getPage().getReference(part);
@@ -37,7 +39,9 @@ public final class ViewUtils {
         return false;
     }
 
-    @SuppressWarnings("unused")
+	/**
+	 * @param part the view part
+	 */
 	public static boolean isMoveable(IViewPart part) {
 //    	IWorkbenchPartSite viewSite = part.getSite();
 //        IViewReference ref = (IViewReference) viewSite.getPage().getReference(part);

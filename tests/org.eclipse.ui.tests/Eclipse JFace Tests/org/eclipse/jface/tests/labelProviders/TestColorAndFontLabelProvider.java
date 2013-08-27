@@ -13,10 +13,8 @@ package org.eclipse.jface.tests.labelProviders;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -41,9 +39,5 @@ public class TestColorAndFontLabelProvider extends LabelProvider implements
 
 	public Color getForeground(Object element) {
 		return fDisplay.getSystemColor(SWT.COLOR_BLUE);
-	}
-	
-	public Font getFont(@SuppressWarnings("unused") Object element) {
-		return JFaceResources.getFontRegistry().getItalic(JFaceResources.BANNER_FONT);
 	}
 }
