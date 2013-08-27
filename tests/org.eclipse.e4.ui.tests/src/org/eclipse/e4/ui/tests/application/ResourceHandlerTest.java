@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,10 +27,6 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.util.tracker.ServiceTracker;
 
-/**
- *
- */
-@SuppressWarnings("restriction")
 public class ResourceHandlerTest extends HeadlessStartupTest {
 	private ServiceTracker locationTracker;
 
@@ -66,7 +62,7 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 	}
 
 	// TBD the test is not valid - resource handler does not know how to create
-	// a "default" model. My be we could add a "default default" model? 
+	// a "default" model. My be we could add a "default default" model?
 	// public void testLoadMostRecent() {
 	// URI uri = URI.createPlatformPluginURI(
 	// "org.eclipse.e4.ui.tests/xmi/InvalidContainment.e4xmi", true);
