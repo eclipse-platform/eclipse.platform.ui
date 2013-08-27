@@ -512,6 +512,11 @@ public class PartServiceImpl implements EPartService {
 				modelService.bringToTop(perspective);
 				perspective.getContext().activate();
 			} else {
+				if ((modelService.getElementLocation(newActivePart) & EModelService.IN_SHARED_AREA) != 0) {
+					if (newActivePart.getParent().getSelectedElement() != newActivePart) {
+						newActivePart = (MPart) newActivePart.getParent().getSelectedElement();
+					}
+				}
 				activate(newActivePart, true, false);
 			}
 		}
