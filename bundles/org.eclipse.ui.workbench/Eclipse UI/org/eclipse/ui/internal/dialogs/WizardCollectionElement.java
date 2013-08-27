@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,14 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -36,8 +37,8 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * thereby facilitating the definition of tree structures composed of these
  * elements. Instances also store a list of wizards.
  */
-public class WizardCollectionElement extends AdaptableList implements 
-		IPluginContribution, IWizardCategory {
+public class WizardCollectionElement extends AdaptableList implements IPluginContribution,
+		IWizardCategory {
     private String id;
 
     private String pluginId;
@@ -78,6 +79,17 @@ public class WizardCollectionElement extends AdaptableList implements
 		configElement = element;
 		id = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID); 
 		this.parent = parent;
+	}
+
+	@SuppressWarnings("unchecked")
+	private WizardCollectionElement(WizardCollectionElement input, AdaptableList wizards) {
+		this(input.id, input.pluginId, input.name, input.parent);
+		this.configElement = input.configElement;
+		this.wizards = wizards;
+
+		for (Object child : input.children) {
+			children.add(child);
+		}
 	}
 
 	/**
@@ -412,5 +424,47 @@ public class WizardCollectionElement extends AdaptableList implements
 	 */
 	public IWizardCategory findCategory(IPath path) {
 		return findChildCollection(path);
+	}
+
+	/**
+	 * The helper method used to filter <code>WizardCollectionElement</code>
+	 * using <code>ViewerFilter</code>.<br>
+	 * It returns the result in the following way:<br>
+	 * - if some of the wizards from the input collection is skipped by the
+	 * viewerFilter then the modified copy of the collection (without skipped
+	 * wizards) is returned<br>
+	 * - when all wizards are skipped then null will be returned<br>
+	 * - if none of the wizards is skipped during filtering then the original
+	 * input collection is returned
+	 * 
+	 * @param viewer
+	 *            the Viewer used by <code>ViewerFilter.select</code> method
+	 * @param viewerFilter
+	 *            the ViewerFilter
+	 * @param inputCollection
+	 *            collection to filter
+	 * @return inputCollection, modified copy of inputCollection or null
+	 * 
+	 */
+	public static WizardCollectionElement filter(Viewer viewer, ViewerFilter viewerFilter,
+			WizardCollectionElement inputCollection) {
+		AdaptableList wizards = null;
+
+		for (Object child : inputCollection.getWizardAdaptableList().getChildren()) {
+			if (viewerFilter.select(viewer, inputCollection, child)) {
+				if (wizards == null) {
+					wizards = new AdaptableList();
+				}
+				wizards.add((IAdaptable) child);
+			}
+		}
+
+		if (wizards == null) {
+			return null;
+		}
+		if (inputCollection.getWizardAdaptableList().size() == wizards.size()) {
+			return inputCollection;
+		}
+		return new WizardCollectionElement(inputCollection, wizards);
 	}
 }

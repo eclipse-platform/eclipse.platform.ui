@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.ITreeContentProvider;
+import java.util.ArrayList;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -24,17 +23,10 @@ import org.eclipse.ui.model.AdaptableList;
  * @since 3.0
  */
 public class WizardActivityFilter extends ViewerFilter {
-
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
      */
     public boolean select(Viewer viewer, Object parentElement, Object element) {
-        Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer)
-                .getContentProvider()).getChildren(element);
-        if (children.length > 0) {
-			return filter(viewer, element, children).length > 0;
-		}
-
         if (parentElement.getClass().equals(AdaptableList.class)) {
 			return true; //top-level ("primary") wizards should always be returned
 		}
@@ -45,4 +37,24 @@ public class WizardActivityFilter extends ViewerFilter {
 
         return true;
     }
+
+	@Override
+	public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
+		int size = elements.length;
+		ArrayList<Object> out = new ArrayList<Object>(size);
+
+		for (int i = 0; i < size; ++i) {
+			Object element = elements[i];
+			if (element instanceof WizardCollectionElement) {
+				Object wizardCollection = WizardCollectionElement.filter(viewer, this,
+						(WizardCollectionElement) element);
+				if (wizardCollection != null) {
+					out.add(wizardCollection);
+				}
+			} else if (select(viewer, parent, element)) {
+				out.add(element);
+			}
+		}
+		return out.toArray();
+	}
 }
