@@ -83,7 +83,7 @@ public class TrimDropAgent extends DropAgent {
 
 		TrimBarLayout tbl = (TrimBarLayout) trimComp.getLayout();
 		Point trimPos = trimComp.getDisplay().map(null, trimComp, info.cursorPos);
-		Control trimCtrl = tbl.ctrlFromPoint(trimPos);
+		Control trimCtrl = tbl.ctrlFromPoint(trimComp, trimPos);
 
 		if (trimCtrl == null)
 			return null;

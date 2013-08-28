@@ -312,12 +312,15 @@ public class TrimBarLayout extends Layout {
 	 * @param trimPos
 	 * @return
 	 */
-	public Control ctrlFromPoint(Point trimPos) {
-		if (lines == null || lines.size() == 0)
+	public Control ctrlFromPoint(Composite trimComp, Point trimPos) {
+		if (trimComp == null || trimComp.isDisposed() || lines == null
+				|| lines.size() == 0)
 			return null;
 
-		Control[] kids = lines.get(0).ctrls.get(0).getParent().getChildren();
+		Control[] kids = trimComp.getChildren();
 		for (int i = 0; i < kids.length; i++) {
+			if (kids[i].isDisposed())
+				continue;
 			if (kids[i].getBounds().contains(trimPos))
 				return kids[i];
 		}
