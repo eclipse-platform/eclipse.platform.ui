@@ -67,7 +67,8 @@ public interface IContextFunction {
 	 * @param contextKey
 	 *            The context key used to find this function; may be {@code null} such
 	 *            as if invoked directly.
-	 * @return The concrete value.
+	 * @return The concrete value. Implementations may return {@link org.eclipse.e4.core.di.IInjector#NOT_A_VALUE}
+	 * 		to cause lookup to continue up the context hierarchy.
 	 */
 	public Object compute(IEclipseContext context, String contextKey);
 

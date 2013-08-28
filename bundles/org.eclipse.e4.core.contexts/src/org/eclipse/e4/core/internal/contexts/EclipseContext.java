@@ -217,8 +217,12 @@ public class EclipseContext implements IEclipseContext {
 	public Object internalGet(EclipseContext originatingContext, String name, boolean local) {
 		if (this == originatingContext) {
 			ValueComputation valueComputation = localValueComputations.get(name);
-			if (valueComputation != null)
-				return valueComputation.get();
+			if (valueComputation != null) {
+				Object result = valueComputation.get();
+				if (result != IInjector.NOT_A_VALUE) {
+					return result;
+				}
+			}
 		}
 
 		Object result = null;
@@ -670,8 +674,12 @@ public class EclipseContext implements IEclipseContext {
 		Map<String, Object> result = new HashMap<String, Object>(localValueComputations.size());
 		for (String string : localValueComputations.keySet()) {
 			ValueComputation vc = localValueComputations.get(string);
-			if (vc != null)
-				result.put(string, vc.get());
+			if (vc != null) {
+				Object r = vc.get();
+				if (r != IInjector.NOT_A_VALUE) {
+					result.put(string, vc.get());
+				}
+			}
 		}
 		return result;
 	}

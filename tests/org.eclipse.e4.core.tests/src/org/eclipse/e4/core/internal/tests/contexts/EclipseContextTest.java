@@ -330,6 +330,10 @@ public class EclipseContextTest extends TestCase {
 			}
 		});
 
+		// must call several times as the underlying ValueComputation wrapper is
+		// created on the first time, but re-used for subsequent calls.
+		assertNull(context.get("x"));
+		assertNull(context.get("x"));
 		assertNull(context.get("x"));
 		context.dispose();
 	}
