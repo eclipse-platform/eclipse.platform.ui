@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -268,6 +268,10 @@ public class SessionTestRunner {
 		IStatus outcome = Status.OK_STATUS;
 		try {
 			int returnCode = setup.run();
+			if (returnCode == 23) {
+				// asked to restart; for now just do this once
+				returnCode = setup.run();
+			}
 			if (returnCode != 0)
 				outcome = new Status(IStatus.WARNING, Platform.PI_RUNTIME, returnCode, "Process returned non-zero code: " + returnCode + "\n\tCommand: " + setup, null);
 		} catch (Exception e) {
