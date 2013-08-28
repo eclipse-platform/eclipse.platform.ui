@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (c) 2009, 2013 EclipseSource and others. All rights reserved.
  * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0 which accompanies this distribution, 
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
@@ -20,9 +20,9 @@ import org.w3c.dom.css.CSSStyleDeclaration;
  */
 final class StyleWrapper {
 
-	private static class StyleWrapperComparator implements Comparator {
-	
-		public int compare(final Object object1, final Object object2) {
+	private static class StyleWrapperComparator implements Comparator<StyleWrapper> {
+
+		public int compare(final StyleWrapper object1, final StyleWrapper object2) {
 			int result = 0;
 			StyleWrapper wrapper1 = (StyleWrapper) object1;
 			StyleWrapper wrapper2 = (StyleWrapper) object2;

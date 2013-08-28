@@ -13,9 +13,7 @@ package org.eclipse.e4.ui.css.core.serializers;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -37,15 +35,14 @@ public class CSSSerializer {
 	 * stored into the <code>writer</code>. If
 	 * <code>serializeChildNodes</code> is true, the method will serialize too
 	 * the child nodes of the <code>element</code>.
-	 * 
+	 *
 	 * @param writer
 	 * @param engine
 	 * @param element
 	 * @param serializeChildNodes
 	 * @throws IOException
 	 */
-	public void serialize(Writer writer, CSSEngine engine, Object element,
-			boolean serializeChildNodes) throws IOException {
+	public void serialize(Writer writer, CSSEngine engine, Object element, boolean serializeChildNodes) throws IOException {
 		serialize(writer, engine, element, serializeChildNodes, null);
 	}
 
@@ -57,7 +54,7 @@ public class CSSSerializer {
 	 * the child nodes of the <code>element</code>. The
 	 * {@link CSSSerializerConfiguration} <code>configuration</code> is used
 	 * to generate selector with condition like Text[style='SWT.MULTI'].
-	 * 
+	 *
 	 * @param writer
 	 * @param engine
 	 * @param element
@@ -65,19 +62,13 @@ public class CSSSerializer {
 	 * @param configuration
 	 * @throws IOException
 	 */
-	public void serialize(Writer writer, CSSEngine engine, Object element,
-			boolean serializeChildNodes,
-			CSSSerializerConfiguration configuration) throws IOException {
-		Map selectors = new HashMap();
-		serialize(writer, engine, element, serializeChildNodes, selectors,
-				configuration);
+	public void serialize(Writer writer, CSSEngine engine, Object element, boolean serializeChildNodes, CSSSerializerConfiguration configuration) throws IOException {
+		Map<String, CSSStyleDeclaration> selectors = new HashMap<String, CSSStyleDeclaration>();
+		serialize(writer, engine, element, serializeChildNodes, selectors, configuration);
 		boolean firstSelector = true;
-		for (Iterator iterator = selectors.entrySet().iterator(); iterator
-				.hasNext();) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			String selectorName = (String) entry.getKey();
-			CSSStyleDeclaration styleDeclaration = (CSSStyleDeclaration) entry
-					.getValue();
+		for (Map.Entry<String, CSSStyleDeclaration> entry : selectors.entrySet()) {
+			String selectorName = entry.getKey();
+			CSSStyleDeclaration styleDeclaration = entry.getValue();
 			if (styleDeclaration != null) {
 				int length = styleDeclaration.getLength();
 				// Start selector
@@ -85,8 +76,7 @@ public class CSSSerializer {
 				firstSelector = false;
 				for (int i = 0; i < length; i++) {
 					String propertyName = styleDeclaration.item(i);
-					String propertyValue = styleDeclaration
-							.getPropertyValue(propertyName);
+					String propertyValue = styleDeclaration.getPropertyValue(propertyName);
 					property(writer, propertyName, propertyValue);
 				}
 				// End selector
@@ -103,9 +93,9 @@ public class CSSSerializer {
 	 * the child nodes of the <code>element</code>. The
 	 * {@link CSSSerializerConfiguration} <code>configuration</code> is used
 	 * to generate selector with condition like Text[style='SWT.MULTI'].
-	 * 
+	 *
 	 * Map of <code>selectors</code> contains the selector already built.
-	 * 
+	 *
 	 * @param writer
 	 * @param engine
 	 * @param element
@@ -114,14 +104,12 @@ public class CSSSerializer {
 	 * @param configuration
 	 * @throws IOException
 	 */
-	protected void serialize(Writer writer, CSSEngine engine, Object element,
-			boolean serializeChildNodes, Map selectors,
+	protected void serialize(Writer writer, CSSEngine engine, Object element, boolean serializeChildNodes, Map<String, CSSStyleDeclaration> selectors,
 			CSSSerializerConfiguration configuration) throws IOException {
 		Element elt = engine.getElement(element);
 		if (elt != null) {
-			String selectorName = elt.getLocalName();
-			CSSStyleDeclaration styleDeclaration = engine
-					.getDefaultStyleDeclaration(element, null);
+			StringBuilder selectorName = new StringBuilder(elt.getLocalName());
+			CSSStyleDeclaration styleDeclaration = engine.getDefaultStyleDeclaration(element, null);
 
 			if (configuration != null) {
 				String[] attributesFilter = configuration.getAttributesFilter();
@@ -129,17 +117,20 @@ public class CSSSerializer {
 					String attributeFilter = attributesFilter[i];
 					String value = elt.getAttribute(attributeFilter);
 					if (value != null && value.length() > 0) {
+						selectorName.append("[");
+						selectorName.append(attributeFilter);
+						selectorName.append("=");
 						if (value.indexOf(".") != -1) {
 							value = "'" + value + "'";
 						}
-						selectorName += "[" + attributeFilter + "=" + value
-								+ "]";
+						selectorName.append(value);
+						selectorName.append("]");
 						break;
 					}
 				}
 			}
 
-			selectors.put(selectorName, styleDeclaration);
+			selectors.put(selectorName.toString(), styleDeclaration);
 			if (serializeChildNodes) {
 				NodeList nodes = elt.getChildNodes();
 				if (nodes != null) {
@@ -154,41 +145,39 @@ public class CSSSerializer {
 
 	/**
 	 * Generate start selector.
-	 * 
+	 *
 	 * @param writer
 	 * @param selectorName
 	 * @param firstSelector
 	 * @throws IOException
 	 */
-	protected void startSelector(Writer writer, String selectorName,
-			boolean firstSelector) throws IOException {
-		if (firstSelector == false)
+	protected void startSelector(Writer writer, String selectorName, boolean firstSelector) throws IOException {
+		if (firstSelector == false) {
 			writer.write("\n\n");
+		}
 		writer.write(selectorName + " {");
 	}
 
 	/**
 	 * Generate end selector.
-	 * 
+	 *
 	 * @param writer
 	 * @param selectorName
 	 * @throws IOException
 	 */
-	protected void endSelector(Writer writer, String selectorName)
-			throws IOException {
+	protected void endSelector(Writer writer, String selectorName) throws IOException {
 		writer.write("\n}");
 	}
 
 	/**
 	 * Generate CSS Property.
-	 * 
+	 *
 	 * @param writer
 	 * @param propertyName
 	 * @param propertyValue
 	 * @throws IOException
 	 */
-	private void property(Writer writer, String propertyName,
-			String propertyValue) throws IOException {
+	private void property(Writer writer, String propertyName, String propertyValue) throws IOException {
 		writer.write("\n\t" + propertyName + ":" + propertyValue + ";");
 	}
 }

@@ -69,8 +69,7 @@ public class ViewCSSImpl implements ViewCSS {
 		return null;
 	}
 
-	public CSSStyleDeclaration getComputedStyle(CSSStyleSheet styleSheet,
-			Element elt, String pseudoElt) {
+	public CSSStyleDeclaration getComputedStyle(CSSStyleSheet styleSheet, Element elt, String pseudoElt) {
 		List styleDeclarations = null;
 		StyleWrapper firstStyleDeclaration = null;
 		CSSRuleList ruleList = styleSheet.getCssRules();
@@ -78,8 +77,7 @@ public class ViewCSSImpl implements ViewCSS {
 		int position = 0;
 		for (int i = 0; i < length; i++) {
 			CSSRule rule = ruleList.item(i);
-			switch (rule.getType()) {
-			case CSSRule.STYLE_RULE: {
+			if (rule.getType() == CSSRule.STYLE_RULE) {
 				CSSStyleRule styleRule = (CSSStyleRule) rule;
 				if (rule instanceof ExtendedCSSRule) {
 					ExtendedCSSRule r = (ExtendedCSSRule) rule;
@@ -104,8 +102,7 @@ public class ViewCSSImpl implements ViewCSS {
 									// match the current element
 									if (styleDeclarations == null) {
 										styleDeclarations = new ArrayList();
-										styleDeclarations
-												.add(firstStyleDeclaration);
+										styleDeclarations.add(firstStyleDeclaration);
 									}
 									styleDeclarations.add(wrapper);
 								}
@@ -119,7 +116,6 @@ public class ViewCSSImpl implements ViewCSS {
 					// TODO : CSS rule is not ExtendedCSSRule,
 					// Manage this case...
 				}
-			}
 			}
 		}
 		if (styleDeclarations != null) {

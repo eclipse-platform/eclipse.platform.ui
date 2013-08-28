@@ -92,15 +92,13 @@ public class DocumentCSSImpl implements ExtendedDocumentCSS {
 		return list;
 	}
 
-	protected List querySelector(CSSRuleList ruleList, int selectorType,
-			int selectorConditionType) {
-		List list = new ArrayList();
-		int length = ruleList.getLength();
-		for (int i = 0; i < length; i++) {
-			CSSRule rule = ruleList.item(i);
-			switch (rule.getType()) {
-			case CSSRule.STYLE_RULE: {
-				if (rule instanceof ExtendedCSSRule) {
+	protected List<Selector> querySelector(CSSRuleList ruleList, int selectorType, int selectorConditionType) {
+		List<Selector> list = new ArrayList<Selector>();
+		if (selectorType == Selector.SAC_CONDITIONAL_SELECTOR) {
+			int length = ruleList.getLength();
+			for (int i = 0; i < length; i++) {
+				CSSRule rule = ruleList.item(i);
+				if (rule.getType() == CSSRule.STYLE_RULE && rule instanceof ExtendedCSSRule) {
 					ExtendedCSSRule r = (ExtendedCSSRule) rule;
 					SelectorList selectorList = r.getSelectorList();
 					// Loop for SelectorList
@@ -108,25 +106,19 @@ public class DocumentCSSImpl implements ExtendedDocumentCSS {
 					for (int j = 0; j < l; j++) {
 						Selector selector = (Selector) selectorList.item(j);
 						if (selector.getSelectorType() == selectorType) {
-							switch (selectorType) {
-							case Selector.SAC_CONDITIONAL_SELECTOR:
-								// It's conditional selector
-								ConditionalSelector conditionalSelector = (ConditionalSelector) selector;
-								short conditionType = conditionalSelector
-										.getCondition().getConditionType();
-								if (selectorConditionType == conditionType) {
-									// current selector match the current CSS
-									// Rule
-									// CSSStyleRule styleRule = (CSSStyleRule)
-									// rule;
-									list.add(selector);
-								}
+							// It's conditional selector
+							ConditionalSelector conditionalSelector = (ConditionalSelector) selector;
+							short conditionType = conditionalSelector.getCondition().getConditionType();
+							if (selectorConditionType == conditionType) {
+								// current selector match the current CSS
+								// Rule
+								// CSSStyleRule styleRule = (CSSStyleRule)
+								// rule;
+								list.add(selector);
 							}
 						}
-
 					}
 				}
-			}
 			}
 		}
 		return list;

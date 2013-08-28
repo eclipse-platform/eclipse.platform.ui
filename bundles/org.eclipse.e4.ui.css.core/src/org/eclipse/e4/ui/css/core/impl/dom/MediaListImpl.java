@@ -21,13 +21,13 @@ import org.w3c.dom.stylesheets.MediaList;
 public class MediaListImpl implements MediaList {
 
 	private List mediaList = null;
-	
+
 	public MediaListImpl(SACMediaList media) {
 		mediaList = new ArrayList();
 		for (int i = 0; i < media.getLength(); i++) {
 			mediaList.add(media.item(i));
 		}
-		
+
 	}
 
 	public void appendMedium(String newMedium) throws DOMException {
@@ -44,15 +44,16 @@ public class MediaListImpl implements MediaList {
 	}
 
 	public String getMediaText() {
-		String media = "";
+		StringBuilder media = new StringBuilder();
 		int size = mediaList.size();
 		if (size > 0) {
-			media += mediaList.get(0);
+			media.append(mediaList.get(0));
 			for (int i = 1; i < mediaList.size(); i++) {
-					media += ", " + mediaList.get(i);
+				media.append(", ");
+				media.append(mediaList.get(i));
 			}
 		}
-		return media;
+		return media.toString();
 	}
 
 	public String item(int index) {
