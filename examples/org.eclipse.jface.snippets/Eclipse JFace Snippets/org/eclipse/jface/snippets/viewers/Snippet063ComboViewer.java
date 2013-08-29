@@ -30,18 +30,37 @@ import org.eclipse.swt.widgets.Shell;
  * 
  */
 public class Snippet063ComboViewer {
-	private class MyContentProvider implements IStructuredContentProvider<MyModel,MyModel[]> {
+	private class MyContentProvider implements IStructuredContentProvider {
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jface.viewers.IStructuredContentProvider#getElements(
+		 * java.lang.Object)
+		 */
+		public Object[] getElements(Object inputElement) {
+			return (MyModel[]) inputElement;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+		 */
 		public void dispose() {
 
 		}
 
-		public void inputChanged(Viewer<MyModel[]> viewer, MyModel[] oldInput,
-				MyModel[] newInput) {
-		}
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse
+		 * .jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
-		public MyModel[] getElements(MyModel[] inputElement) {
-			return inputElement;
 		}
 
 	}
@@ -53,7 +72,6 @@ public class Snippet063ComboViewer {
 			this.counter = counter;
 		}
 
-		@Override
 		public String toString() {
 			return "Item " + this.counter;
 		}
@@ -66,8 +84,8 @@ public class Snippet063ComboViewer {
 
 		final Label l = new Label(shell, SWT.None);
 		l.setText("Choose Item:");
-		final ComboViewer<MyModel,MyModel[]> v = new ComboViewer<MyModel,MyModel[]>(shell);
-		v.setLabelProvider(new LabelProvider<MyModel>());
+		final ComboViewer v = new ComboViewer(shell);
+		v.setLabelProvider(new LabelProvider());
 		v.setContentProvider(new MyContentProvider());
 
 		MyModel[] model = createModel();
