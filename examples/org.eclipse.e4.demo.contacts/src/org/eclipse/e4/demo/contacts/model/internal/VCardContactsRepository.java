@@ -35,9 +35,7 @@ import org.eclipse.e4.demo.contacts.BundleActivatorImpl;
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.demo.contacts.model.IContactsRepository;
 import org.eclipse.osgi.internal.signedcontent.Base64;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 
 @SuppressWarnings("restriction")

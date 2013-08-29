@@ -14,7 +14,6 @@ package org.eclipse.e4.demo.contacts.views;
 
 import org.eclipse.e4.ui.workbench.swt.modeling.EMenuService;
 
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -33,7 +32,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 

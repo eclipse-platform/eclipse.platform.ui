@@ -17,7 +17,7 @@
          </property>
          <property
                name="cssTheme"
-               value="org.eclipse.e4.demo.contacts.themes.darkgradient">
+               value="org.eclipse.e4.demo.contacts.themes.blue">
          </property>
          <property
                name="startupForegroundColor"
