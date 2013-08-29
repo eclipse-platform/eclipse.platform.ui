@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Hendrik Still <hendrik.still@gammas.de> - bug 412273
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
@@ -45,9 +44,8 @@ import org.eclipse.jface.util.SafeRunnable;
  * </li>
  * </ul>
  * </p>
- * @param <I> Type of the input for the view
  */
-public abstract class Viewer<I> implements IInputSelectionProvider<I> {
+public abstract class Viewer implements IInputSelectionProvider {
 
     /**
      * List of selection change listeners (element type: <code>ISelectionChangedListener</code>).
@@ -207,7 +205,7 @@ public abstract class Viewer<I> implements IInputSelectionProvider<I> {
     /* (non-Javadoc)
      * Copy-down of method declared on <code>IInputProvider</code>.
      */
-    public abstract I getInput();
+    public abstract Object getInput();
 
     /* (non-Javadoc)
      * Copy-down of method declared on <code>ISelectionProvider</code>.
@@ -241,7 +239,7 @@ public abstract class Viewer<I> implements IInputSelectionProvider<I> {
      * @param oldInput the old input element or <code>null</code> if there
      *   was previously no input
      */
-    protected void inputChanged(I input, I oldInput) {
+    protected void inputChanged(Object input, Object oldInput) {
     }
 
     /**
@@ -379,7 +377,7 @@ public abstract class Viewer<I> implements IInputSelectionProvider<I> {
      *
      * @param input the input of this viewer, or <code>null</code> if none
      */
-    public abstract void setInput(I input);
+    public abstract void setInput(Object input);
 
     /**
 	 * The viewer implementation of this <code>ISelectionProvider</code>

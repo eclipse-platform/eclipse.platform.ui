@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,18 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Hendrik Still <hendrik.still@gammas.de> - bug 412273
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
 /**
  * An interface to content providers for structured viewers.
- * @param <E> Type of an element of the model
- * @param <I> Type of the input
  *
  * @see StructuredViewer
  */
-public interface IStructuredContentProvider<E,I> extends IContentProvider<I> {
+public interface IStructuredContentProvider extends IContentProvider {
     /**
      * Returns the elements to display in the viewer 
      * when its input is set to the given element. 
@@ -28,5 +25,5 @@ public interface IStructuredContentProvider<E,I> extends IContentProvider<I> {
      * @param inputElement the input element
      * @return the array of elements to display in the viewer
      */
-    public E[] getElements(I inputElement);
+    public Object[] getElements(Object inputElement);
 }

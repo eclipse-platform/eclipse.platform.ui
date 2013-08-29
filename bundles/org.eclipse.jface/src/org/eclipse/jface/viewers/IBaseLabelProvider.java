@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Hendrik Still <hendrik.still@gammas.de> - bug 412273
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
@@ -35,12 +34,11 @@ package org.eclipse.jface.viewers;
  * it is the responsibility of the user to ensure <code>dispose</code>
  * is called when the provider is no longer needed.
  * </p>
- * @param <E> Type of an element of the model
  *
  * @see ILabelProvider
  * @see ITableLabelProvider
  */
-public interface IBaseLabelProvider<E> {
+public interface IBaseLabelProvider {
     /**
      * Adds a listener to this label provider.
      * Has no effect if an identical listener is already registered.
@@ -75,7 +73,7 @@ public interface IBaseLabelProvider<E> {
      * @return <code>true</code> if the label would be affected,
      *    and <code>false</code> if it would be unaffected
      */
-    public boolean isLabelProperty(E element, String property);
+    public boolean isLabelProperty(Object element, String property);
 
     /**
      * Removes a listener to this label provider.
