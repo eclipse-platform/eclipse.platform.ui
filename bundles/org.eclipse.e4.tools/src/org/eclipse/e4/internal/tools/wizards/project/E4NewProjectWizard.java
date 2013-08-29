@@ -121,6 +121,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 		fPluginData = new PluginFieldData();
 	}
 
+	@Override
 	public void addPages() {
 		fMainPage = new E4NewProjectWizardPage(
 				"main", fPluginData, false, getSelection()); //$NON-NLS-1$
@@ -155,6 +156,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 		addPage(fApplicationPage);
 	}
 
+	@Override
 	@SuppressWarnings("restriction")
 	public boolean performFinish() {
 		try {
@@ -703,7 +705,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			throws CoreException {
 		IContainer parent = container.getParent();
 		if (parent instanceof IFolder) {
-			prepareFolder((IFolder) parent, monitor);
+			prepareFolder(parent, monitor);
 		}
 		if (!container.exists() && container instanceof IFolder) {
 			IFolder folder = (IFolder) container;
@@ -711,10 +713,12 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 		}
 	}
 
+	@Override
 	public String getPluginId() {
 		return fPluginData.getId();
 	}
 
+	@Override
 	public String getPluginVersion() {
 		return fPluginData.getVersion();
 	}

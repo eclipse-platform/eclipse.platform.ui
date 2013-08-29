@@ -170,6 +170,7 @@ public class PluginContentPage extends ContentPage {
 		// Set data 
 		fEEChoice.setItems((String[]) availableEEs.toArray(new String[availableEEs.size() - 1]));
 		fEEChoice.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				validatePage();
 			}
@@ -210,6 +211,7 @@ public class PluginContentPage extends ContentPage {
 
 		fGenerateActivator = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_generate, null, false, 2);
 		fGenerateActivator.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fClassLabel.setEnabled(fGenerateActivator.getSelection());
 				fClassText.setEnabled(fGenerateActivator.getSelection());
@@ -227,6 +229,7 @@ public class PluginContentPage extends ContentPage {
 
 		fUIPlugin = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_uicontribution, null, (settings != null) ? !settings.getBoolean(S_UI_PLUGIN) : true, 2);
 		fUIPlugin.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateData();
 				validatePage();
@@ -236,6 +239,7 @@ public class PluginContentPage extends ContentPage {
 		fApiAnalysisButton = SWTFactory.createCheckButton(classGroup, PDEUIMessages.PluginContentPage_enable_api_analysis, null, false, 2);
 		fApiAnalysisButton.setSelection((settings != null) ? settings.getBoolean(S_API_ANALYSIS) : false);
 		fApiAnalysisButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateData();
 				validatePage();
@@ -246,6 +250,7 @@ public class PluginContentPage extends ContentPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#updateData()
 	 */
+	@Override
 	public void updateData() {
 		super.updateData();
 		PluginFieldData data = (PluginFieldData) fData;
@@ -264,6 +269,7 @@ public class PluginContentPage extends ContentPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#setVisible(boolean)
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
 			fMainPage.updateData();
@@ -323,6 +329,7 @@ public class PluginContentPage extends ContentPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#validatePage()
 	 */
+	@Override
 	protected void validatePage() {
 		String errorMessage = validateProperties();
 		if (errorMessage == null && fGenerateActivator.getSelection()) {
@@ -350,6 +357,7 @@ public class PluginContentPage extends ContentPage {
 	 * Saves the current state of widgets of interest in the dialog settings for the wizard
 	 * @param settings
 	 */
+	@Override
 	public void saveSettings(IDialogSettings settings) {
 		if (fGenerateActivator.isEnabled()) {
 			settings.put(S_GENERATE_ACTIVATOR, !fGenerateActivator.getSelection());
@@ -366,6 +374,7 @@ public class PluginContentPage extends ContentPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
 	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		if (getNextPage() instanceof TemplateListSelectionPage) {
 			TemplateListSelectionPage templatePage = (TemplateListSelectionPage) getNextPage();
@@ -377,6 +386,7 @@ public class PluginContentPage extends ContentPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#computeId()
 	 */
+	@Override
 	protected String computeId() {
 		String id = super.computeId();
 		// In addition to removed illegal characters, the xmi model does not recognize plug-in uris if they end in a version number

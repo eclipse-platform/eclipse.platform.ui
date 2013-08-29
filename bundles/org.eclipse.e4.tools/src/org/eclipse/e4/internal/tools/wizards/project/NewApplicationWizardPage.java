@@ -120,6 +120,7 @@ public class NewApplicationWizardPage extends WizardPage {
 		
 		richSampleCheckbox.setSelection(false);
 		richSampleCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				data.put(richSample, richSampleCheckbox.getSelection() ? "TRUE"
 						: "FALSE");
@@ -200,6 +201,7 @@ public class NewApplicationWizardPage extends WizardPage {
 			final Button button = new Button(parent, SWT.CHECK);
 			button.setSelection("true".equalsIgnoreCase(property.getValue()));
 			button.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					handleCheckBoxEvent(property.getName(),
 							button.getSelection());
@@ -227,6 +229,7 @@ public class NewApplicationWizardPage extends WizardPage {
 				Button button = new Button(parent, SWT.PUSH);
 				button.setText("...");
 				button.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						handleLinkEvent(property, valueText, parent.getShell());
 					}

@@ -24,7 +24,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.e4.internal.tools.wizards.classes.AbstractNewClassPage.JavaClass;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -208,7 +207,7 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 							true, null);
 				} else {
 					file.setContents(new ByteArrayInputStream(content.getBytes()),
-							IFile.FORCE | IFile.KEEP_HISTORY, null);
+							IResource.FORCE | IResource.KEEP_HISTORY, null);
 				}
 				IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), file);
 //				unit.open(null);
@@ -226,7 +225,7 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 							true, null);
 				} else {
 					file.setContents(new ByteArrayInputStream(content.getBytes()),
-							IFile.FORCE | IFile.KEEP_HISTORY, null);
+							IResource.FORCE | IResource.KEEP_HISTORY, null);
 				}
 				IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), file);
 			} catch (CoreException e) {

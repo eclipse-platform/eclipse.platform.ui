@@ -274,6 +274,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		IJavaElement initElement= clazz.getFragmentRoot();
 		Class[] acceptedClasses= new Class[] { IPackageFragmentRoot.class, IJavaProject.class };
 		TypedElementSelectionValidator validator= new TypedElementSelectionValidator(acceptedClasses, false) {
+			@Override
 			public boolean isSelectedValid(Object element) {
 				try {
 					if (element instanceof IJavaProject) {
@@ -293,6 +294,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 
 		acceptedClasses= new Class[] { IJavaModel.class, IPackageFragmentRoot.class, IJavaProject.class };
 		ViewerFilter filter= new TypedViewerFilter(acceptedClasses) {
+			@Override
 			public boolean select(Viewer viewer, Object parent, Object element) {
 				if (element instanceof IPackageFragmentRoot) {
 					try {

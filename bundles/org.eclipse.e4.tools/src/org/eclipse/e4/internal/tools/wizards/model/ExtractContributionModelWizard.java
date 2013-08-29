@@ -21,9 +21,7 @@ import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
 
@@ -49,6 +47,7 @@ public class ExtractContributionModelWizard extends BaseApplicationModelWizard {
 		return "fragment.e4xmi";
 	}
 	
+	@Override
 	protected EObject createInitialModel() {
 		MModelFragments createModelFragments = MFragmentFactory.INSTANCE.createModelFragments();
 		MStringModelFragment createStringModelFragment = MFragmentFactory.INSTANCE.createStringModelFragment();

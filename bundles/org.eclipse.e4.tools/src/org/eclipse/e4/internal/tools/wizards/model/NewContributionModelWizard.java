@@ -22,6 +22,7 @@ public class NewContributionModelWizard extends BaseApplicationModelWizard {
 		return "fragment.e4xmi";
 	}
 	
+	@Override
 	protected EObject createInitialModel() {
 		return (EObject) MFragmentFactory.INSTANCE.createModelFragments();
 	}

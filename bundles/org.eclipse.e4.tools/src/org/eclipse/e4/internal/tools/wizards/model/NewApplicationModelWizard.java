@@ -29,6 +29,7 @@ public class NewApplicationModelWizard extends BaseApplicationModelWizard {
 		return "Application.e4xmi";
 	}
 	
+	@Override
 	protected EObject createInitialModel() {
 		MApplication application = MApplicationFactory.INSTANCE.createApplication();
 		try {

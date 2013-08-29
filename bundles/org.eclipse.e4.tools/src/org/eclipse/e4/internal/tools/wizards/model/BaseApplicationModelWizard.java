@@ -37,7 +37,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -67,6 +66,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 	 * Adding the page to the wizard.
 	 */
 
+	@Override
 	public void addPages() {
 		page = createWizardPage(selection);
 		addPage(page);

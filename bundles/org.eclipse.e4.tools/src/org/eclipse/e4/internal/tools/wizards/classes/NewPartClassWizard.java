@@ -185,10 +185,12 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 			super(fragmentRoot);
 		}
 		
+		@Override
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			support.addPropertyChangeListener(listener);
 		}
 
+		@Override
 		public void removePropertyChangeListener(PropertyChangeListener listener) {
 			support.removePropertyChangeListener(listener);
 		}
