@@ -56,15 +56,13 @@ import org.eclipse.swt.widgets.Widget;
  * Users setting up an editable table with more than 1 column <b>have</b> to pass the
  * SWT.FULL_SELECTION style bit
  * </p>
- * @param <E> Type of an single element of the model
- * @param <I> Type of the input
- *
+ * 
  * @see SWT#VIRTUAL
  * @see #doFindItem(Object)
  * @see #internalRefresh(Object, boolean)
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
+public class TableViewer extends AbstractTableViewer {
 	/**
 	 * This viewer's table control.
 	 */
@@ -73,7 +71,7 @@ public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 	/**
 	 * The cached row which is reused all over
 	 */
-	private TableViewerRow<E> cachedRow;
+	private TableViewerRow cachedRow;
 
 	/**
 	 * Creates a table viewer on a newly-created table control under the given
@@ -81,7 +79,7 @@ public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 	 * <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>. The
 	 * viewer has no input, no content provider, a default label provider, no
 	 * sorter, and no filters. The table has no columns.
-	 *
+	 * 
 	 * @param parent
 	 * 		the parent control
 	 */
@@ -94,7 +92,7 @@ public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 	 * parent. The table control is created using the given style bits. The
 	 * viewer has no input, no content provider, a default label provider, no
 	 * sorter, and no filters. The table has no columns.
-	 *
+	 * 
 	 * @param parent
 	 * 		the parent control
 	 * @param style
@@ -108,7 +106,7 @@ public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 	 * Creates a table viewer on the given table control. The viewer has no
 	 * input, no content provider, a default label provider, no sorter, and no
 	 * filters.
-	 *
+	 * 
 	 * @param table
 	 * 		the table control
 	 */
@@ -124,7 +122,7 @@ public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 
 	/**
 	 * Returns this table viewer's table control.
-	 *
+	 * 
 	 * @return the table control
 	 */
 	public Table getTable() {
@@ -149,7 +147,7 @@ public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 	 * Use Table#setSelection(int[] indices) and Table#showSelection() if you
 	 * wish to set selection more efficiently when using a ILazyContentProvider.
 	 * </p>
-	 *
+	 * 
 	 * @param selection
 	 * 		the new selection
 	 * @param reveal
@@ -164,9 +162,9 @@ public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 	}
 
 	@Override
-	protected ViewerRow<E> getViewerRowFromItem(Widget item) {
+	protected ViewerRow getViewerRowFromItem(Widget item) {
 		if (cachedRow == null) {
-			cachedRow = new TableViewerRow<E>((TableItem) item);
+			cachedRow = new TableViewerRow((TableItem) item);
 		} else {
 			cachedRow.setItem((TableItem) item);
 		}
@@ -176,14 +174,14 @@ public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 
 	/**
 	 * Create a new row with style at index
-	 *
+	 * 
 	 * @param style
 	 * @param rowIndex
 	 * @return ViewerRow
 	 * @since 3.3
 	 */
 	@Override
-	protected ViewerRow<E> internalCreateNewRowPart(int style, int rowIndex) {
+	protected ViewerRow internalCreateNewRowPart(int style, int rowIndex) {
 		TableItem item;
 
 		if (rowIndex >= 0) {
@@ -341,12 +339,12 @@ public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 	 * given element needs updating, it is more efficient to use the
 	 * <code>update</code> methods.
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * Subclasses who can provide this feature can open this method for the
 	 * public
 	 * </p>
-	 *
+	 * 
 	 * @param element
 	 * 		the element
 	 * @param updateLabels
@@ -355,7 +353,7 @@ public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 	 * 		for existing elements are unchanged.
 	 * @param reveal
 	 * 		<code>true</code> to make the preserved selection visible afterwards
-	 *
+	 * 
 	 * @since 3.3
 	 */
 	public void refresh(final Object element, final boolean updateLabels,
@@ -387,25 +385,25 @@ public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 	 * Note that the implementation may still obtain labels for existing
 	 * elements even if <code>updateLabels</code> is false. The intent is simply
 	 * to allow optimization where possible.
-	 *
+	 * 
 	 * @param updateLabels
 	 * 		<code>true</code> to update labels for existing elements,
 	 * 		<code>false</code> to only update labels as needed, assuming that labels
 	 * 		for existing elements are unchanged.
 	 * @param reveal
 	 * 		<code>true</code> to make the preserved selection visible afterwards
-	 *
+	 * 
 	 * @since 3.3
 	 */
 	public void refresh(boolean updateLabels, boolean reveal) {
 		refresh(getRoot(), updateLabels, reveal);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.AbstractTableViewer#remove(java.lang.Object[])
 	 */
 	@Override
-	public void remove(E[] elements) {
+	public void remove(Object[] elements) {
 		assertElementsNotNull(elements);
 		if (checkBusy())
 			return;
@@ -416,13 +414,13 @@ public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 		// deselect any items that are being removed, see bug 97786
 		boolean deselectedItems = false;
 		Object elementToBeRemoved = null;
-		CustomHashtable<E,E> elementsToBeRemoved = null;
+		CustomHashtable elementsToBeRemoved = null;
 		if (elements.length == 1) {
 			elementToBeRemoved = elements[0];
 		} else {
-			elementsToBeRemoved = new CustomHashtable<E,E>(getComparer());
+			elementsToBeRemoved = new CustomHashtable(getComparer());
 			for (int i = 0; i < elements.length; i++) {
-				E element = elements[i];
+				Object element = elements[i];
 				elementsToBeRemoved.put(element, element);
 			}
 		}
@@ -430,8 +428,7 @@ public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 		for (int i = 0; i < selectionIndices.length; i++) {
 			int index = selectionIndices[i];
 			Item item = doGetItem(index);
-			@SuppressWarnings("unchecked")
-			E data = (E) item.getData();
+			Object data = item.getData();
 			if (data != null) {
 				if ((elementsToBeRemoved != null && elementsToBeRemoved
 						.containsKey(data))
@@ -449,10 +446,10 @@ public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 			firePostSelectionChanged(new SelectionChangedEvent(this, sel));
 		}
 	}
-
+	
 	@Override
-	protected Widget doFindItem(E element) {
-		IContentProvider<I> contentProvider = getContentProvider();
+	protected Widget doFindItem(Object element) {
+		IContentProvider contentProvider = getContentProvider();
 		if (contentProvider instanceof IIndexableLazyContentProvider) {
 			IIndexableLazyContentProvider indexable = (IIndexableLazyContentProvider) contentProvider;
 			int idx = indexable.findElement(element);

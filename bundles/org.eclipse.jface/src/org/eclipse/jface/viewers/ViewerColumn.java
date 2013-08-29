@@ -25,15 +25,13 @@ import org.eclipse.swt.widgets.Widget;
  * providers and editing support can be configured for each column separately.
  * Concrete subclasses of {@link ColumnViewer} should implement a matching
  * concrete subclass of {@link ViewerColumn}.
- * @param <E> Type of an element of the model
- * @param <I> Type of the input
- *
+ * 
  * @since 3.3
- *
+ * 
  */
-public abstract class ViewerColumn<E,I> {
+public abstract class ViewerColumn {
 
-	private CellLabelProvider<E,I> labelProvider;
+	private CellLabelProvider labelProvider;
 
 	static String COLUMN_VIEWER_KEY = Policy.JFACE + ".columnViewer";//$NON-NLS-1$
 
@@ -43,18 +41,18 @@ public abstract class ViewerColumn<E,I> {
 
 	private boolean listenerRegistered = false;
 
-	private ColumnViewer<E,I> viewer;
+	private ColumnViewer viewer;
 
 	/**
 	 * Create a new instance of the receiver at columnIndex.
-	 *
+	 * 
 	 * @param viewer
 	 *            the viewer the column is part of
 	 * @param columnOwner
 	 *            the widget owning the viewer in case the widget has no columns
 	 *            this could be the widget itself
 	 */
-	protected ViewerColumn(final ColumnViewer<E,I> viewer, Widget columnOwner) {
+	protected ViewerColumn(final ColumnViewer viewer, Widget columnOwner) {
 		this.viewer = viewer;
 		columnOwner.setData(ViewerColumn.COLUMN_VIEWER_KEY, this);
 		this.listener = new ILabelProviderListener() {
@@ -73,21 +71,21 @@ public abstract class ViewerColumn<E,I> {
 
 	/**
 	 * Return the label provider for the receiver.
-	 *
+	 * 
 	 * @return ViewerLabelProvider
 	 */
-	/* package */CellLabelProvider<E,I> getLabelProvider() {
+	/* package */CellLabelProvider getLabelProvider() {
 		return labelProvider;
 	}
 
 	/**
 	 * Set the label provider for the column. Subclasses may extend but must
 	 * call the super implementation.
-	 *
+	 * 
 	 * @param labelProvider
 	 *            the new {@link CellLabelProvider}
 	 */
-	public void setLabelProvider(CellLabelProvider<E,I> labelProvider) {
+	public void setLabelProvider(CellLabelProvider labelProvider) {
 		setLabelProvider(labelProvider, true);
 	}
 
@@ -95,7 +93,7 @@ public abstract class ViewerColumn<E,I> {
 	 * @param labelProvider
 	 * @param registerListener
 	 */
-	/* package */void setLabelProvider(CellLabelProvider<E,I> labelProvider,
+	/* package */void setLabelProvider(CellLabelProvider labelProvider,
 			boolean registerListener) {
 		if (listenerRegistered && this.labelProvider != null) {
 			this.labelProvider.removeListener(listener);
@@ -116,7 +114,7 @@ public abstract class ViewerColumn<E,I> {
 
 	/**
 	 * Return the editing support for the receiver.
-	 *
+	 * 
 	 * @return {@link EditingSupport}
 	 */
 	/* package */EditingSupport getEditingSupport() {
@@ -141,12 +139,12 @@ public abstract class ViewerColumn<E,I> {
 	 * Refresh the cell for the given columnIndex. <strong>NOTE:</strong>the
 	 * {@link ViewerCell} provided to this method is no longer valid after this
 	 * method returns. Do not cache the cell for future use.
-	 *
+	 * 
 	 * @param cell
 	 *            {@link ViewerCell}
 	 */
-	/* package */void refresh(ViewerCell<E> cell) {
-		CellLabelProvider<E,I> labelProvider = getLabelProvider();
+	/* package */void refresh(ViewerCell cell) {
+		CellLabelProvider labelProvider = getLabelProvider();
 		if (labelProvider == null) {
 			Assert.isTrue(false, "Column " + cell.getColumnIndex() + //$NON-NLS-1$
 			" has no label provider."); //$NON-NLS-1$
@@ -162,7 +160,7 @@ public abstract class ViewerColumn<E,I> {
 	 */
 	protected void handleDispose() {
 		boolean disposeLabelProvider = listenerRegistered;
-		CellLabelProvider<E,I> cellLabelProvider = labelProvider;
+		CellLabelProvider cellLabelProvider = labelProvider;
 		setLabelProvider(null, false);
 		if (disposeLabelProvider) {
 			cellLabelProvider.dispose(viewer, this);
@@ -172,19 +170,19 @@ public abstract class ViewerColumn<E,I> {
 		viewer = null;
 	}
 
-	private void handleDispose(ColumnViewer<E,I> viewer) {
+	private void handleDispose(ColumnViewer viewer) {
 		handleDispose();
 		viewer.clearLegacyEditingSetup();
 	}
 
 	/**
 	 * Returns the viewer of this viewer column.
-	 *
+	 * 
 	 * @return Returns the viewer.
-	 *
+	 * 
 	 * @since 3.4
 	 */
-	public ColumnViewer<E,I> getViewer() {
+	public ColumnViewer getViewer() {
 		return viewer;
 	}
 }

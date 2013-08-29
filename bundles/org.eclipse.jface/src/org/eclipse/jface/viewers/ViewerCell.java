@@ -24,17 +24,16 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * The ViewerCell is the JFace representation of a cell entry in a ViewerRow.
- * @param <E> Type of an element of the model
- *
+ * 
  * @since 3.3
- *
+ * 
  */
-public class ViewerCell<E> {
+public class ViewerCell {
 	private int columnIndex;
 
-	private ViewerRow<E> row;
+	private ViewerRow row;
 
-	private E element;
+	private Object element;
 
 	/**
 	 * Constant denoting the cell above current one (value is 1).
@@ -58,11 +57,11 @@ public class ViewerCell<E> {
 
 	/**
 	 * Create a new instance of the receiver on the row.
-	 *
+	 * 
 	 * @param row
 	 * @param columnIndex
 	 */
-	ViewerCell(ViewerRow<E> row, int columnIndex, E element) {
+	ViewerCell(ViewerRow row, int columnIndex, Object element) {
 		this.row = row;
 		this.columnIndex = columnIndex;
 		this.element = element;
@@ -70,7 +69,7 @@ public class ViewerCell<E> {
 
 	/**
 	 * Get the index of the cell.
-	 *
+	 * 
 	 * @return the index
 	 */
 	public int getColumnIndex() {
@@ -79,7 +78,7 @@ public class ViewerCell<E> {
 
 	/**
 	 * Get the bounds of the cell.
-	 *
+	 * 
 	 * @return {@link Rectangle}
 	 */
 	public Rectangle getBounds() {
@@ -88,10 +87,10 @@ public class ViewerCell<E> {
 
 	/**
 	 * Get the element this row represents.
-	 *
+	 * 
 	 * @return {@link Object}
 	 */
-	public E getElement() {
+	public Object getElement() {
 		if (element != null) {
 			return element;
 		}
@@ -105,7 +104,7 @@ public class ViewerCell<E> {
 
 	/**
 	 * Return the text for the cell.
-	 *
+	 * 
 	 * @return {@link String}
 	 */
 	public String getText() {
@@ -114,7 +113,7 @@ public class ViewerCell<E> {
 
 	/**
 	 * Return the Image for the cell.
-	 *
+	 * 
 	 * @return {@link Image} or <code>null</code>
 	 */
 	public Image getImage() {
@@ -123,7 +122,7 @@ public class ViewerCell<E> {
 
 	/**
 	 * Set the background color of the cell.
-	 *
+	 * 
 	 * @param background
 	 */
 	public void setBackground(Color background) {
@@ -133,7 +132,7 @@ public class ViewerCell<E> {
 
 	/**
 	 * Set the foreground color of the cell.
-	 *
+	 * 
 	 * @param foreground
 	 */
 	public void setForeground(Color foreground) {
@@ -143,7 +142,7 @@ public class ViewerCell<E> {
 
 	/**
 	 * Set the font of the cell.
-	 *
+	 * 
 	 * @param font
 	 */
 	public void setFont(Font font) {
@@ -153,7 +152,7 @@ public class ViewerCell<E> {
 
 	/**
 	 * Set the text for the cell.
-	 *
+	 * 
 	 * @param text
 	 */
 	public void setText(String text) {
@@ -163,7 +162,7 @@ public class ViewerCell<E> {
 
 	/**
 	 * Set the Image for the cell.
-	 *
+	 * 
 	 * @param image
 	 */
 	public void setImage(Image image) {
@@ -174,10 +173,10 @@ public class ViewerCell<E> {
 	/**
 	 * Set the style ranges to be applied on the text label Note: Requires
 	 * {@link StyledCellLabelProvider} with owner draw enabled.
-	 *
+	 * 
 	 * @param styleRanges
 	 *            the styled ranges
-	 *
+	 * 
 	 * @since 3.4
 	 */
 	public void setStyleRanges(StyleRange[] styleRanges) {
@@ -187,9 +186,9 @@ public class ViewerCell<E> {
 	/**
 	 * Returns the style ranges to be applied on the text label or
 	 * <code>null</code> if no style ranges have been set.
-	 *
+	 * 
 	 * @return styleRanges the styled ranges
-	 *
+	 * 
 	 * @since 3.4
 	 */
 	public StyleRange[] getStyleRanges() {
@@ -198,7 +197,7 @@ public class ViewerCell<E> {
 
 	/**
 	 * Set the columnIndex.
-	 *
+	 * 
 	 * @param column
 	 */
 	void setColumn(int column) {
@@ -208,11 +207,11 @@ public class ViewerCell<E> {
 
 	/**
 	 * Set the row to rowItem and the columnIndex to column.
-	 *
+	 * 
 	 * @param rowItem
 	 * @param column
 	 */
-	void update(ViewerRow<E> rowItem, int column, E element) {
+	void update(ViewerRow rowItem, int column, Object element) {
 		row = rowItem;
 		columnIndex = column;
 		this.element = element;
@@ -220,7 +219,7 @@ public class ViewerCell<E> {
 
 	/**
 	 * Return the item for the receiver.
-	 *
+	 * 
 	 * @return {@link Item}
 	 */
 	public Widget getItem() {
@@ -229,7 +228,7 @@ public class ViewerCell<E> {
 
 	/**
 	 * Get the control for this cell.
-	 *
+	 * 
 	 * @return {@link Control}
 	 */
 	public Control getControl() {
@@ -239,7 +238,7 @@ public class ViewerCell<E> {
 	/**
 	 * Get the current index. This can be different from the original index when
 	 * columns are reordered
-	 *
+	 * 
 	 * @return the current index (as shown in the UI)
 	 * @since 3.4
 	 */
@@ -254,7 +253,7 @@ public class ViewerCell<E> {
 	 * the upper-left of the current cell by passing {@link #ABOVE} |
 	 * {@link #LEFT}. If <code>sameLevel</code> is <code>true</code>, only cells
 	 * in sibling rows (under the same parent) will be considered.
-	 *
+	 * 
 	 * @param directionMask
 	 *            the direction mask used to identify the requested neighbor
 	 *            cell
@@ -262,8 +261,8 @@ public class ViewerCell<E> {
 	 *            if <code>true</code>, only consider cells from sibling rows
 	 * @return the requested neighbor cell, or <code>null</code> if not found
 	 */
-	public ViewerCell<E> getNeighbor(int directionMask, boolean sameLevel) {
-		ViewerRow<E> row;
+	public ViewerCell getNeighbor(int directionMask, boolean sameLevel) {
+		ViewerRow row;
 
 		if ((directionMask & ABOVE) == ABOVE) {
 			row = this.row.getNeighbor(ViewerRow.ABOVE, sameLevel);
@@ -288,17 +287,20 @@ public class ViewerCell<E> {
 			columnIndex += modifier;
 
 			if (columnIndex >= 0 && columnIndex < row.getColumnCount()) {
-				ViewerCell<E> cell = row.getCellAtVisualIndex(columnIndex);
-				while (cell != null && columnIndex < row.getColumnCount() - 1
-						&& columnIndex > 0) {
-					if (cell.isVisible()) {
-						break;
-					}
+				ViewerCell cell = row.getCellAtVisualIndex(columnIndex);
+				if (cell != null) {
+					while (cell != null
+							&& columnIndex < row.getColumnCount() - 1
+							&& columnIndex > 0) {
+						if (cell.isVisible()) {
+							break;
+						}
 
-					columnIndex += modifier;
-					cell = row.getCellAtVisualIndex(columnIndex);
-					if (cell == null) {
-						break;
+						columnIndex += modifier;
+						cell = row.getCellAtVisualIndex(columnIndex);
+						if (cell == null) {
+							break;
+						}
 					}
 				}
 
@@ -312,14 +314,14 @@ public class ViewerCell<E> {
 	/**
 	 * @return the row
 	 */
-	public ViewerRow<E> getViewerRow() {
+	public ViewerRow getViewerRow() {
 		return row;
 	}
 
 	/**
 	 * The location and bounds of the area where the text is drawn depends on
 	 * various things (image displayed, control with SWT.CHECK)
-	 *
+	 * 
 	 * @return The bounds of the of the text area. May return <code>null</code>
 	 *         if the underlying widget implementation doesn't provide this
 	 *         information
@@ -331,7 +333,7 @@ public class ViewerCell<E> {
 
 	/**
 	 * Returns the location and bounds of the area where the image is drawn
-	 *
+	 * 
 	 * @return The bounds of the of the image area. May return <code>null</code>
 	 *         if the underlying widget implementation doesn't provide this
 	 *         information
@@ -343,10 +345,10 @@ public class ViewerCell<E> {
 
 	/**
 	 * Gets the foreground color of the cell.
-	 *
+	 * 
 	 * @return the foreground of the cell or <code>null</code> for the default
 	 *         foreground
-	 *
+	 * 
 	 * @since 3.4
 	 */
 	public Color getForeground() {
@@ -355,10 +357,10 @@ public class ViewerCell<E> {
 
 	/**
 	 * Gets the background color of the cell.
-	 *
+	 * 
 	 * @return the background of the cell or <code>null</code> for the default
 	 *         background
-	 *
+	 * 
 	 * @since 3.4
 	 */
 	public Color getBackground() {
@@ -367,9 +369,9 @@ public class ViewerCell<E> {
 
 	/**
 	 * Gets the font of the cell.
-	 *
+	 * 
 	 * @return the font of the cell or <code>null</code> for the default font
-	 *
+	 * 
 	 * @since 3.4
 	 */
 	public Font getFont() {
@@ -378,7 +380,7 @@ public class ViewerCell<E> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -392,7 +394,7 @@ public class ViewerCell<E> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -403,8 +405,7 @@ public class ViewerCell<E> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		@SuppressWarnings("unchecked")
-		final ViewerCell<E> other = (ViewerCell<E>) obj;
+		final ViewerCell other = (ViewerCell) obj;
 		if (columnIndex != other.columnIndex)
 			return false;
 		if (row == null) {
@@ -421,7 +422,7 @@ public class ViewerCell<E> {
 
 	/**
 	 * Scroll the cell into view
-	 *
+	 * 
 	 * @return true if the cell was scrolled into view
 	 * @since 3.5
 	 */

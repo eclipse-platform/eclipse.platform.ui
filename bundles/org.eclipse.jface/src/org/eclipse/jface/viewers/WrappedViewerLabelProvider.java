@@ -20,41 +20,37 @@ import org.eclipse.swt.graphics.Image;
  * The WrappedViewerLabelProvider is a label provider that allows
  * {@link ILabelProvider}, {@link IColorProvider} and {@link IFontProvider} to
  * be mapped to a ColumnLabelProvider.
- * @param <E> Type of an element of the model
- * @param <I> Type of the input
- *
+ * 
  * @since 3.3
- *
+ * 
  */
-class WrappedViewerLabelProvider<E,I> extends ColumnLabelProvider<E,I> {
+class WrappedViewerLabelProvider extends ColumnLabelProvider {
 
-	@SuppressWarnings("rawtypes")
 	private static ILabelProvider defaultLabelProvider = new LabelProvider();
 
-	@SuppressWarnings("unchecked")
-	private ILabelProvider<E> labelProvider = defaultLabelProvider;
+	private ILabelProvider labelProvider = defaultLabelProvider;
 
-	private IColorProvider<E> colorProvider;
+	private IColorProvider colorProvider;
 
-	private IFontProvider<E> fontProvider;
+	private IFontProvider fontProvider;
 
-	private IViewerLabelProvider<E> viewerLabelProvider;
+	private IViewerLabelProvider viewerLabelProvider;
 
 	private ITreePathLabelProvider treePathLabelProvider;
 
 	/**
 	 * Create a new instance of the receiver based on labelProvider.
-	 *
+	 * 
 	 * @param labelProvider
 	 */
-	public WrappedViewerLabelProvider(IBaseLabelProvider<E> labelProvider) {
+	public WrappedViewerLabelProvider(IBaseLabelProvider labelProvider) {
 		super();
 		setProviders(labelProvider);
 	}
 
 	/**
 	 * Set the any providers for the receiver that can be adapted from provider.
-	 *
+	 * 
 	 * @param provider
 	 *            {@link Object}
 	 */
@@ -62,39 +58,27 @@ class WrappedViewerLabelProvider<E,I> extends ColumnLabelProvider<E,I> {
 		if (provider instanceof ITreePathLabelProvider)
 			treePathLabelProvider = ((ITreePathLabelProvider) provider);
 
-		if (provider instanceof IViewerLabelProvider){
-			@SuppressWarnings("unchecked")
-			IViewerLabelProvider<E> iViewerLabelProvider = ((IViewerLabelProvider<E>) provider);
-			viewerLabelProvider = iViewerLabelProvider;
-		}
+		if (provider instanceof IViewerLabelProvider)
+			viewerLabelProvider = ((IViewerLabelProvider) provider);
 
-		if (provider instanceof ILabelProvider){
-			@SuppressWarnings("unchecked")
-			ILabelProvider<E> iLabelProvider = (ILabelProvider<E>) provider;
-			labelProvider = iLabelProvider;
-		}
+		if (provider instanceof ILabelProvider)
+			labelProvider = ((ILabelProvider) provider);
 
-		if (provider instanceof IColorProvider){
-			@SuppressWarnings("unchecked")
-			IColorProvider<E> iColorProvider = (IColorProvider<E>) provider;
-			colorProvider = iColorProvider;
-		}
+		if (provider instanceof IColorProvider)
+			colorProvider = (IColorProvider) provider;
 
-		if (provider instanceof IFontProvider){
-			@SuppressWarnings("unchecked")
-			IFontProvider<E> iFontProvider = (IFontProvider<E>) provider;
-			fontProvider = iFontProvider;
-		}
+		if (provider instanceof IFontProvider)
+			fontProvider = (IFontProvider) provider;
 
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 	 */
 	@Override
-	public Font getFont(E element) {
+	public Font getFont(Object element) {
 		if (fontProvider == null) {
 			return null;
 		}
@@ -105,11 +89,11 @@ class WrappedViewerLabelProvider<E,I> extends ColumnLabelProvider<E,I> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 	 */
 	@Override
-	public Color getBackground(E element) {
+	public Color getBackground(Object element) {
 		if (colorProvider == null) {
 			return null;
 		}
@@ -119,31 +103,31 @@ class WrappedViewerLabelProvider<E,I> extends ColumnLabelProvider<E,I> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	@Override
-	public String getText(E element) {
+	public String getText(Object element) {
 		return getLabelProvider().getText(element);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	@Override
-	public Image getImage(E element) {
+	public Image getImage(Object element) {
 		return getLabelProvider().getImage(element);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
 	@Override
-	public Color getForeground(E element) {
+	public Color getForeground(Object element) {
 		if (colorProvider == null) {
 			return null;
 		}
@@ -153,34 +137,34 @@ class WrappedViewerLabelProvider<E,I> extends ColumnLabelProvider<E,I> {
 
 	/**
 	 * Get the label provider
-	 *
+	 * 
 	 * @return {@link ILabelProvider}
 	 */
-	ILabelProvider<E> getLabelProvider() {
+	ILabelProvider getLabelProvider() {
 		return labelProvider;
 	}
 
 	/**
 	 * Get the color provider
-	 *
+	 * 
 	 * @return {@link IColorProvider}
 	 */
-	IColorProvider<E> getColorProvider() {
+	IColorProvider getColorProvider() {
 		return colorProvider;
 	}
 
 	/**
 	 * Get the font provider
-	 *
+	 * 
 	 * @return {@link IFontProvider}.
 	 */
-	IFontProvider<E> getFontProvider() {
+	IFontProvider getFontProvider() {
 		return fontProvider;
 	}
 
 	@Override
-	public void update(ViewerCell<E> cell) {
-		E element = cell.getElement();
+	public void update(ViewerCell cell) {
+		Object element = cell.getElement();
 		if(viewerLabelProvider == null && treePathLabelProvider == null){
 			// inlined super implementation with performance optimizations
 			cell.setText(getText(element));
@@ -195,9 +179,9 @@ class WrappedViewerLabelProvider<E,I> extends ColumnLabelProvider<E,I> {
 			}
 			return;
 		}
-
+		
 		ViewerLabel label = new ViewerLabel(cell.getText(), cell.getImage());
-
+		
 		if (treePathLabelProvider != null) {
 			TreePath treePath = cell.getViewerRow().getTreePath();
 
@@ -205,20 +189,20 @@ class WrappedViewerLabelProvider<E,I> extends ColumnLabelProvider<E,I> {
 			treePathLabelProvider.updateLabel(label, treePath);
 		} else if (viewerLabelProvider != null) {
 			viewerLabelProvider.updateLabel(label, element);
-		}
-		if (!label.hasNewForeground() && colorProvider != null)
+		} 
+		if (!label.hasNewForeground() && colorProvider != null) 
 			label.setForeground(getForeground(element));
-
-		if (!label.hasNewBackground() && colorProvider != null)
+		
+		if (!label.hasNewBackground() && colorProvider != null) 
 			label.setBackground(getBackground(element));
-
-		if (!label.hasNewFont() && fontProvider != null)
+		
+		if (!label.hasNewFont() && fontProvider != null) 
 			label.setFont(getFont(element));
-
+		
 		applyViewerLabel(cell, label);
 	}
 
-	private void applyViewerLabel(ViewerCell<E> cell, ViewerLabel label) {
+	private void applyViewerLabel(ViewerCell cell, ViewerLabel label) {
 		if (label.hasNewText()) {
 			cell.setText(label.getText());
 		}
