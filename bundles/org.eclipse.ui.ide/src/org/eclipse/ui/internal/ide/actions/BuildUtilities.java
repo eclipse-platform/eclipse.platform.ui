@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,14 +57,17 @@ public class BuildUtilities {
 			} else {
 				ResourceMapping mapping = ResourceUtil.getResourceMapping(element);
 				if (mapping != null) {
-					IProject[] theProjects = mapping.getProjects();					
+					IProject[] theProjects = mapping.getProjects();
 					for (int j = 0; j < theProjects.length; j++) {
 						projects.add(theProjects[j]);
 					}
 				} else {
 					Object marker = ResourceUtil.getAdapter(element, IMarker.class, false);
 					if (marker instanceof IMarker) {
-						projects.add(((IMarker) marker).getResource().getProject());
+						IProject project = ((IMarker) marker).getResource().getProject();
+						if (project != null) {
+							projects.add(project);
+						}
 					}
 				}
 			}
