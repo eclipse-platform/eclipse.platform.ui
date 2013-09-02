@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2277,7 +2277,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public void prepareOperation(ISchedulingRule rule, IProgressMonitor monitor) throws CoreException {
 		try {
 			//make sure autobuild is not running if it conflicts with this operation
-			if (rule != null && rule.isConflicting(getRuleFactory().buildRule()))
+			ISchedulingRule buildRule = getRuleFactory().buildRule();
+			if (rule != null && (rule.isConflicting(buildRule) || buildRule.isConflicting(rule)))
 				buildManager.interrupt();
 		} finally {
 			getWorkManager().checkIn(rule, monitor);
