@@ -14,6 +14,7 @@ package org.eclipse.ant.tests.ui.separateVM;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Test;
@@ -49,54 +50,71 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	}
 
 	/**
-	 * Tests launching Ant in a separate vm and getting messages logged to the console.
+	 * Checks that the expected line count has been reached and if not dump out what was tracked to System.err
+	 * 
+	 * @param expectedLines
+	 * @since 3.8.200
+	 */
+	void assertLines(int expectedLines) {
+		if (ConsoleLineTracker.getNumberOfMessages() != expectedLines) {
+			List<String> lines = ConsoleLineTracker.getAllMessages();
+			System.err.println("Failed line count from " + getName() + ", tracked lines: "); //$NON-NLS-1$ //$NON-NLS-2$
+			for (String string : lines) {
+				System.err.println('\t' + string);
+			}
+			fail("Incorrect number of messages logged for build - should be " + expectedLines + " but was " + ConsoleLineTracker.getNumberOfMessages()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
+	/**
+	 * Tests launching Ant in a separate VM and getting messages logged to the console.
 	 */
 	public void testBuild() throws CoreException {
 		launch("echoingSepVM"); //$NON-NLS-1$
-		assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6); //$NON-NLS-1$
+		assertLines(6);
 		assertTrue("Incorrect last message. Should start with Total time:. Message: " + ConsoleLineTracker.getMessage(4), ConsoleLineTracker.getMessage(4).startsWith("Total time:")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
-	 * Tests launching Ant in a separate vm and having an extra classpath entry designated to be available.
+	 * Tests launching Ant in a separate VM and having an extra classpath entry designated to be available.
 	 */
 	public void testExtraClasspathEntries() throws CoreException {
 		launch("extensionPointSepVM"); //$NON-NLS-1$
-		assertTrue("Incorrect number of messages logged for build. Should be 8. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 8); //$NON-NLS-1$
+		assertLines(8);
 		assertTrue("Incorrect last message. Should start with Total time:. Message: " + ConsoleLineTracker.getMessage(6), ConsoleLineTracker.getMessage(6).startsWith("Total time:")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
-	 * Tests launching Ant in a separate vm and having a property designated to be available.
+	 * Tests launching Ant in a separate VM and having a property designated to be available.
 	 */
 	public void testProperties() throws CoreException {
 		launch("extensionPointSepVM"); //$NON-NLS-1$
-		assertTrue("Incorrect number of messages logged for build. Should be 8. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 8); //$NON-NLS-1$
+		assertLines(8);
 		assertTrue("Incorrect last message. Should start with [echo] ${property.ui.testing. Message: " + ConsoleLineTracker.getMessage(3), ConsoleLineTracker.getMessage(3).trim().startsWith("[echo] ${property.ui.testing")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("Incorrect last message. Should start with [echo] hey. Message: " + ConsoleLineTracker.getMessage(4), ConsoleLineTracker.getMessage(4).trim().startsWith("[echo] hey")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
-	 * Tests launching Ant in a separate vm and having an task designated to be available.
+	 * Tests launching Ant in a separate VM and having an task designated to be available.
 	 */
 	public void testExtensionPointTask() throws CoreException {
 		launch("extensionPointTaskSepVM"); //$NON-NLS-1$
-		assertTrue("Incorrect number of messages logged for build. Should be 7. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 7); //$NON-NLS-1$
+		assertLines(7);
 		assertTrue("Incorrect message. Should start with [null] Testing Ant in Eclipse with a custom task2. Message: " + ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).trim().startsWith("[null] Testing Ant in Eclipse with a custom task2")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("Incorrect message. Should start with [null] Testing Ant in Eclipse with a custom task2. Message: " + ConsoleLineTracker.getMessage(3), ConsoleLineTracker.getMessage(3).trim().startsWith("[null] Testing Ant in Eclipse with a custom task2")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
-	 * Tests launching Ant in a separate vm and having a type designated to be available.
+	 * Tests launching Ant in a separate VM and having a type designated to be available.
 	 */
 	public void testExtensionPointType() throws CoreException {
 		launch("extensionPointTypeSepVM"); //$NON-NLS-1$
-		assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6); //$NON-NLS-1$
+		assertLines(6);
 		assertTrue("Incorrect message. Should start with [echo] Ensure that an extension point defined type. Message: " + ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).trim().startsWith("[echo] Ensure that an extension point defined type")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
-	 * Tests launching Ant in a separate vm and that the correct links are in the console doc
+	 * Tests launching Ant in a separate VM and that the correct links are in the console doc
 	 */
 	public void testLinks() throws CoreException {
 		launch("echoingSepVM"); //$NON-NLS-1$
@@ -131,7 +149,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	}
 
 	/**
-	 * Tests launching Ant in a separate vm and that the correct colors are in the console doc
+	 * Tests launching Ant in a separate VM and that the correct colors are in the console doc
 	 */
 	public void testColor() throws BadLocationException, CoreException {
 		launch("echoingSepVM"); //$NON-NLS-1$
@@ -151,7 +169,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	}
 
 	/**
-	 * Tests launching Ant in a separate vm and that the correct working directory is set
+	 * Tests launching Ant in a separate VM and that the correct working directory is set
 	 */
 	public void testWorkingDirectory() throws CoreException {
 		ILaunchConfiguration config = getLaunchConfiguration("echoingSepVM"); //$NON-NLS-1$
@@ -161,12 +179,12 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		copy.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, "Bug42984"); //$NON-NLS-1$
 		launchAndTerminate(copy, 20000);
 		ConsoleLineTracker.waitForConsole();
-		assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6); //$NON-NLS-1$
+		assertLines(6);
 		assertTrue("Incorrect last message. Should end with " + ProjectHelper.PROJECT_NAME + ". Message: " + ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).endsWith(ProjectHelper.PROJECT_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
-	 * Tests launching Ant in a separate vm and that the correct property substitutions occur
+	 * Tests launching Ant in a separate VM and that the correct property substitutions occur
 	 */
 	public void testPropertySubstitution() throws CoreException {
 		ILaunchConfiguration config = getLaunchConfiguration("74840SepVM"); //$NON-NLS-1$
@@ -177,16 +195,16 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		copy.setAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTIES, properties);
 		launchAndTerminate(copy, 20000);
 		ConsoleLineTracker.waitForConsole();
-		assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6); //$NON-NLS-1$
+		assertLines(6);
 		assertTrue("Incorrect echo message. Should not include unsubstituted property ", !ConsoleLineTracker.getMessage(2).trim().startsWith("[echo] ${workspace_loc}")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
-	 * Tests launching Ant in a separate vm and getting messages logged to the console for project help.
+	 * Tests launching Ant in a separate VM and getting messages logged to the console for project help.
 	 */
 	public void testProjectHelp() throws CoreException {
 		launch("echoingSepVM", "-p"); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Incorrect number of messages logged for build. Should be 14. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 14); //$NON-NLS-1$
+		assertLines(14);
 		assertTrue("Incorrect last message. Should start with echo2:. Message: " + ConsoleLineTracker.getMessage(12), ConsoleLineTracker.getMessage(12).trim().startsWith("echo2")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
@@ -197,10 +215,10 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	 */
 	public void testXmlLoggerListener() throws CoreException, FileNotFoundException {
 		launch("echoingSepVM", "-listener org.apache.tools.ant.XmlLogger"); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6); //$NON-NLS-1$
+		assertLines(6);
 		assertTrue("Incorrect last message. Should start with Total time:. Message: " + ConsoleLineTracker.getMessage(4), ConsoleLineTracker.getMessage(4).startsWith("Total time:")); //$NON-NLS-1$ //$NON-NLS-2$
 
-		// find the log file generated by the xml logger
+		// find the log file generated by the XML logger
 		getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
 		IFile iFile = getProject().getFolder("buildfiles").getFile("log.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("Could not find log file named: log.xml", iFile.exists()); //$NON-NLS-1$
@@ -210,12 +228,12 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	}
 
 	/**
-	 * Tests launching Ant in a separate vm and that the Environment variable ANT_HOME is set from the Ant home set for the build and ant.home is set
+	 * Tests launching Ant in a separate VM and that the Environment variable ANT_HOME is set from the Ant home set for the build and ant.home is set
 	 * as a property. Bug 75729
 	 */
 	public void testAntHome() throws CoreException {
 		launch("environmentVar"); //$NON-NLS-1$
-		assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6); //$NON-NLS-1$
+		assertLines(6);
 		String message = ConsoleLineTracker.getMessage(1);
 		assertTrue("Incorrect message. Should end with org.apache.ant [" + message + "]", checkAntHomeMessage(message)); //$NON-NLS-1$ //$NON-NLS-2$
 		message = ConsoleLineTracker.getMessage(2);
