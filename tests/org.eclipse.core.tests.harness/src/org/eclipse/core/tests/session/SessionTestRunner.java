@@ -269,7 +269,9 @@ public class SessionTestRunner {
 		try {
 			int returnCode = setup.run();
 			if (returnCode == 23) {
-				// asked to restart; for now just do this once
+				// asked to restart; for now just do this once.
+				// Note that 23 is our magic return code indicating that a restart is required.
+				// This can happen for tests that update framework extensions which requires a restart.
 				returnCode = setup.run();
 			}
 			if (returnCode != 0)
