@@ -698,7 +698,7 @@ public class InternalAntRunner {
 				targets.add(dtarget);
 			}
 			if (!isVersionCompatible("1.6.3")) { //$NON-NLS-1$
-				getCurrentProject().addReference("eclipse.ant.targetVector", targets); //$NON-NLS-1$
+				getCurrentProject().addReference(IAntCoreConstants.TARGET_VECTOR_NAME, targets);
 			}
 			getCurrentProject().executeTargets(targets);
 		}

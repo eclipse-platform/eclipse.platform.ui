@@ -17,25 +17,32 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Executor;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.helper.DefaultExecutor;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 
 public class EclipseDefaultExecutor extends DefaultExecutor {
 
-    private static final EclipseSingleCheckExecutor SUB_EXECUTOR = new EclipseSingleCheckExecutor();
-    
-    /* (non-Javadoc)
-     * @see org.apache.tools.ant.Executor#executeTargets(org.apache.tools.ant.Project, java.lang.String[])
-     */
-    public void executeTargets(Project project, String[] targetNames) throws BuildException {
-        Vector<String> v = new Vector<String>();
-        v.addAll(Arrays.asList(targetNames));
-        project.addReference("eclipse.ant.targetVector", v); //$NON-NLS-1$
-        super.executeTargets(project, targetNames);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.apache.tools.ant.Executor#getSubProjectExecutor()
-     */
-    public Executor getSubProjectExecutor() {
-       return SUB_EXECUTOR;
-    }
+	private static final EclipseSingleCheckExecutor SUB_EXECUTOR = new EclipseSingleCheckExecutor();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.tools.ant.Executor#executeTargets(org.apache.tools.ant.Project, java.lang.String[])
+	 */
+	@Override
+	public void executeTargets(Project project, String[] targetNames) throws BuildException {
+		Vector<String> v = new Vector<String>();
+		v.addAll(Arrays.asList(targetNames));
+		project.addReference(IAntCoreConstants.TARGET_VECTOR_NAME, v);
+		super.executeTargets(project, targetNames);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.tools.ant.Executor#getSubProjectExecutor()
+	 */
+	@Override
+	public Executor getSubProjectExecutor() {
+		return SUB_EXECUTOR;
+	}
 }

@@ -153,7 +153,9 @@ public class AntDebugState {
 
 	public void setTargetToExecute(Target target) {
 		if (target == null) {
-			fTargetsToExecute.pop();
+			if (!fTargetsToExecute.isEmpty()) {
+				fTargetsToExecute.pop();
+			}
 		} else {
 			fTargetsToExecute.push(target);
 		}
@@ -294,7 +296,7 @@ public class AntDebugState {
 			fInitialProperties = eventProject.getProperties();
 		}
 		if (fProjectToTargetNames.get(eventProject) == null) {
-			Object ref = eventProject.getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
+			Object ref = eventProject.getReference(IAntCoreConstants.TARGET_VECTOR_NAME);
 			if (ref != null) {
 				fProjectToTargetNames.put(eventProject, (Vector<?>) ref);
 				HashMap<Target, Vector<Target>> targetToBuildSequence = new HashMap<Target, Vector<Target>>();
@@ -546,8 +548,8 @@ public class AntDebugState {
 
 	private Target initializeBuildSequenceInformation(BuildEvent event, Map<Target, Vector<Target>> targetToBuildSequence) {
 		Project antProject = event.getProject();
-		Vector<String> targets = (Vector<String>) antProject.getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
-		if (targets == null) {
+		Vector<String> targets = (Vector<String>) antProject.getReference(IAntCoreConstants.TARGET_VECTOR_NAME);
+		if (targets == null || targets.size() < 1) {
 			return null;
 		}
 		Hashtable<String, Target> allTargets = antProject.getTargets();
