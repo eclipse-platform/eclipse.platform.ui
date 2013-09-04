@@ -14,7 +14,6 @@
  -->
 
 <plugin>
-
     
 <!-- Extension points -->
    <extension-point id="consoleColorProviders" name="%ConsoleColorProvidersExtensionName" schema="schema/consoleColorProviders.exsd"/>
