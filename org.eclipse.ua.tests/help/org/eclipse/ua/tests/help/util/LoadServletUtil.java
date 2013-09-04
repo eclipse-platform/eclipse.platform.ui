@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,10 +15,11 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-import junit.framework.Assert;
+import org.junit.Assert;
+
+import org.eclipse.help.internal.server.WebappManager;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.help.internal.server.WebappManager;
 
 public class LoadServletUtil {
 	

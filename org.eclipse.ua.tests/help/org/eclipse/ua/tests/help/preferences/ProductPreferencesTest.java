@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2011 IBM Corporation and others.
+ *  Copyright (c) 2006, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -16,10 +16,11 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.junit.Assert;
 
 import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;

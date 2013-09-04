@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2007 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,21 +14,24 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
+import org.junit.Assert;
+import org.osgi.framework.Bundle;
+
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.ua.tests.intro.util.IntroModelSerializer;
 import org.eclipse.ua.tests.intro.util.IntroModelSerializerTest;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.FileUtil;
+
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
-import org.osgi.framework.Bundle;
 
 /*
  * Tests the intro parser on valid intro content.
