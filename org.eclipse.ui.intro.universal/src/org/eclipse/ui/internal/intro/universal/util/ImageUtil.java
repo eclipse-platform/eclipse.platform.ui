@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,18 +12,22 @@ package org.eclipse.ui.internal.intro.universal.util;
 
 import java.net.URL;
 
+import org.osgi.framework.Bundle;
+
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.universal.IUniversalIntroConstants;
 import org.eclipse.ui.internal.intro.universal.UniversalIntroPlugin;
-import org.osgi.framework.Bundle;
 
 /**
  * Convenience class for Images.
@@ -102,10 +106,8 @@ public final class ImageUtil {
 			String imageName) {
 		try {
 			URL imageUrl = new URL(base.append(imageName).toOSString());
-			if (imageUrl != null) {
-				ImageDescriptor desc = ImageDescriptor.createFromURL(imageUrl);
-				return desc;
-			}
+			ImageDescriptor desc= ImageDescriptor.createFromURL(imageUrl);
+			return desc;
 		} catch (Exception e) {
 			// Should never be here.
 			Log.error("could not create Image Descriptor", e); //$NON-NLS-1$
