@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,11 +14,12 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 public class PageData {
 	public static final String P_TOP_LEFT = "page-content/top-left"; //$NON-NLS-1$
@@ -129,7 +130,8 @@ public class PageData {
 			groups.add(gd);
 			groups.add(new GroupData(P_BOTTOM_RIGHT, true));
 		}
-		gd.addImplicitExtension(extensionId, name);
+		if (gd != null)
+			gd.addImplicitExtension(extensionId, name);
 	}
 
 	private GroupData findDefaultGroup() {
