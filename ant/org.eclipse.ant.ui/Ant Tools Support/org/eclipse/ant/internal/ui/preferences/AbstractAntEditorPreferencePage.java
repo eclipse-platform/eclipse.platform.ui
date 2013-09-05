@@ -18,11 +18,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.ant.internal.ui.AntUIPlugin;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.DialogPage;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.preference.PreferencePage;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -35,11 +34,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.preference.PreferencePage;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 public abstract class AbstractAntEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -280,7 +284,7 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 	}
 
 	/**
-	 * Finds the most severe status from an array of status. An error is more severe than a warning, and a warning is more severe than ok.
+	 * Finds the most severe status from an array of status. An error is more severe than a warning, and a warning is more severe than OK.
 	 */
 	private IStatus getMostSevere(List<IStatus> statusList) {
 		IStatus max = null;
