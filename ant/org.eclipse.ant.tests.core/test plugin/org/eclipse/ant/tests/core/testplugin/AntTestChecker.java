@@ -46,7 +46,7 @@ public class AntTestChecker {
 	}
 
 	/**
-	 * Returns the singleton AntTestChecker
+	 * Returns the singleton AntTestChecker.
 	 */
 	public static AntTestChecker getDefault() {
 		if (deflt == null) {
