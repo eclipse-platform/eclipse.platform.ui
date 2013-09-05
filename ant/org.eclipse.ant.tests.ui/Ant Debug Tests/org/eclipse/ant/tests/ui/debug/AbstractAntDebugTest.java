@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -181,7 +181,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * suspend event in that program. Returns the thread in which the suspend
 	 * event occurred.
 	 * 
-	 * @param buildFileName the buildfile to launch
+	 * @param buildFileName the build file to launch
 	 * @return thread in which the first suspend event occurred
 	 */
 	protected AntThread launchAndSuspend(String buildFileName) throws Exception {
@@ -206,11 +206,11 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	}
 	
 	/**
-	 * Launches the buildfile with the given name, and waits for a breakpoint-caused 
+	 * Launches the build file with the given name, and waits for a breakpoint-caused 
 	 * suspend event in that program. Returns the thread in which the suspend
 	 * event occurred.
 	 * 
-	 * @param buildFileName the buildfile to launch
+	 * @param buildFileName the build file to launch
 	 * @return thread in which the first suspend event occurred
 	 */
 	protected AntThread launchToBreakpoint(String buildFileName) throws Exception {
@@ -218,11 +218,11 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	}
 	
 	/**
-	 * Launches the buildfile with the given name in a separate VM, and waits for a breakpoint-caused 
+	 * Launches the build file with the given name in a separate VM, and waits for a breakpoint-caused 
 	 * suspend event in that program. Returns the thread in which the suspend
 	 * event occurred.
 	 * 
-	 * @param buildFileName the buildfile to launch
+	 * @param buildFileName the build file to launch
 	 * @return thread in which the first suspend event occurred
 	 */
 	protected AntThread launchToBreakpointSepVM(String buildFileName) throws Exception {
@@ -230,11 +230,11 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	}
 	
 	/**
-	 * Launches the buildfile with the given name, and waits for a breakpoint-caused 
+	 * Launches the build file with the given name, and waits for a breakpoint-caused 
 	 * suspend event in that program. Returns the thread in which the suspend
 	 * event occurred.
 	 * 
-	 * @param buildFileName the buildfile to launch
+	 * @param buildFileName the build file to launch
 	 * @param register whether to register the launch
 	 * @return thread in which the first suspend event occurred
 	 */
@@ -278,11 +278,11 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	}	
 	
 	/**
-	 * Launches the buildfile with the given name, and waits for a terminate
+	 * Launches the build file with the given name, and waits for a terminate
 	 * event in that program. Returns the debug target in which the suspend
 	 * event occurred.
 	 * 
-	 * @param buildFileName the buildfile to execute
+	 * @param buildFileName the build file to execute
 	 * @return debug target in which the terminate event occurred
 	 */
 	protected AntDebugTarget launchAndTerminate(String buildFileName) throws Exception {
@@ -320,11 +320,11 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	}
 	
 	/**
-	 * Launches the buildfile with the given name, and waits for a line breakpoint suspend
+	 * Launches the build file with the given name, and waits for a line breakpoint suspend
 	 * event in that program. Returns the thread in which the suspend
 	 * event occurred.
 	 * 
-	 * @param buildFileName the buildfile to execute
+	 * @param buildFileName the build file to execute
 	 * @param bp the breakpoint that should cause a suspend event
 	 * @return thread in which the first suspend event occurred
 	 * @throws CoreException 
@@ -480,10 +480,10 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	}
 	
 	/**
-	 * Creates and returns a line breakpoint at the given line number in the given buildfile
+	 * Creates and returns a line breakpoint at the given line number in the given build file
 	 * 
 	 * @param lineNumber line number
-	 * @param file the buildfile
+	 * @param file the build file
 	 * @throws CoreException 
 	 */
 	protected AntLineBreakpoint createLineBreakpoint(int lineNumber, IFile file) throws CoreException {
@@ -491,10 +491,10 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	}
 	
 	/**
-	 * Creates and returns a line breakpoint at the given line number in the given buildfile
+	 * Creates and returns a line breakpoint at the given line number in the given build file.
 	 * 
 	 * @param lineNumber line number
-	 * @param file the buildfile
+	 * @param file the build file
 	 */
 	protected AntLineBreakpoint createLineBreakpoint(int lineNumber, String buildFileName) throws CoreException {
 		return new AntLineBreakpoint(getIFile(buildFileName), lineNumber);
