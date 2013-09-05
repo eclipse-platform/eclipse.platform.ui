@@ -21,4 +21,8 @@
   <artifactId>org.eclipse.ant.launching</artifactId>
   <version>1.0.400-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+  <properties>
+    <defaultSigning-excludeInnerJars>true</defaultSigning-excludeInnerJars>
+  </properties>
+ 
 </project>
