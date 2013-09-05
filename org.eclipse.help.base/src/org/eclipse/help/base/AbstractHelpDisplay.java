@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,11 @@
 package org.eclipse.help.base;
 
 /**
+ * Abstract class representing a help display which can be used to override the Eclipse help system
+ * UI using the extension point org.eclipse.help.base.display. Classes extending this abstract class
+ * must be capable of returning the help home page and other help related URLs.
+ * 
  * @since 3.6
- * Abstract class representing a help display which can be used to override the Eclipse help
- * system UI using the extension point org.eclipse.help.base.display. Classes extending this
- * abstract class must be capable of returning the help home page and other help related URLs 
  */
 
 public abstract class AbstractHelpDisplay {
