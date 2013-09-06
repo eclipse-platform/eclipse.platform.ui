@@ -36,13 +36,36 @@ public class LineBreakingReader {
 
 	/**
 	 * Creates a reader that breaks an input text to fit in a given width.
-	 *
-	 * @param reader Reader of the input text
+	 * 
+	 * @param reader reader for the input text
 	 * @param gc The graphic context that defines the currently used font sizes
 	 * @param maxLineWidth The max width (pixels) where the text has to fit in
 	 */
 	public LineBreakingReader(Reader reader, GC gc, int maxLineWidth) {
-		fReader= new BufferedReader(reader);
+		this(new BufferedReader(reader), gc, maxLineWidth);
+	}
+
+	/**
+	 * Creates a reader that breaks an input text to fit in a given width.
+	 * 
+	 * @param reader the reader for the input text
+	 * @param bufferSize the buffer size
+	 * @param gc The graphic context that defines the currently used font sizes
+	 * @param maxLineWidth The max width (pixels) where the text has to fit in
+	 */
+	public LineBreakingReader(Reader reader, int bufferSize, GC gc, int maxLineWidth) {
+		this(new BufferedReader(reader, bufferSize), gc, maxLineWidth);
+	}
+
+	/**
+	 * Creates a reader that breaks an input text to fit in a given width.
+	 * 
+	 * @param reader the buffered reader for the input text
+	 * @param gc The graphic context that defines the currently used font sizes
+	 * @param maxLineWidth The max width (pixels) where the text has to fit in
+	 */
+	private LineBreakingReader(BufferedReader reader, GC gc, int maxLineWidth) {
+		fReader= reader;
 		fGC= gc;
 		fMaxWidth= maxLineWidth;
 		fOffset= 0;

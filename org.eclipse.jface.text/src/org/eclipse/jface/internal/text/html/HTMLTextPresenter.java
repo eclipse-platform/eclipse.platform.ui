@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,7 +124,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 			int maxNumberOfLines= Math.round(maxHeight / gc.getFontMetrics().getHeight());
 
 			fCounter= 0;
-			LineBreakingReader reader= new LineBreakingReader(createReader(hoverInfo, presentation), gc, maxWidth);
+			LineBreakingReader reader= new LineBreakingReader(createReader(hoverInfo, presentation), hoverInfo.length(), gc, maxWidth);
 
 			boolean lastLineFormatted= false;
 			String lastLineIndent= null;
