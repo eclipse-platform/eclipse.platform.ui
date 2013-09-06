@@ -265,18 +265,19 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 	@Override
 	public void launchAdded(ILaunch launch) {
 		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
-		try {
-			ILaunchConfigurationType launchConfigurationType = launchConfiguration.getType();
-			if (launchConfigurationType.getIdentifier().equals(
-							IExternalToolConstants.ID_PROGRAM_LAUNCH_CONFIGURATION_TYPE)) {
-				if (fWindowListener == null) {
-					fWindowListener = new ProgramLaunchWindowListener();
-					PlatformUI.getWorkbench().addWindowListener(fWindowListener);
-					launchManager.removeLaunchListener(this);
+		if (launchConfiguration != null) {
+			try {
+				ILaunchConfigurationType launchConfigurationType = launchConfiguration.getType();
+				if (launchConfigurationType.getIdentifier().equals(IExternalToolConstants.ID_PROGRAM_LAUNCH_CONFIGURATION_TYPE)) {
+					if (fWindowListener == null) {
+						fWindowListener = new ProgramLaunchWindowListener();
+						PlatformUI.getWorkbench().addWindowListener(fWindowListener);
+						launchManager.removeLaunchListener(this);
+					}
 				}
+			} catch (CoreException e) {
+				log(e);
 			}
-		} catch (CoreException e) {
-			log(e);
 		}
 	}
 

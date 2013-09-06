@@ -50,6 +50,7 @@ import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.internal.core.LaunchConfiguration;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.tests.TestsPlugin;
@@ -57,6 +58,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.Bundle;
 
 /**
  * Tests for launch configurations
@@ -1517,7 +1519,29 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	}
 
 	/**
+	 * Tests that a launch created without a backing
+	 * {@link ILaunchConfiguration} does not cause {@link NullPointerException}s
+	 *
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=416691
+	 * @throws Exception
+	 * @since 3.9.0
+	 */
+	public void testNullLaunchConfigurationInLaunch() throws Exception {
+		Launch l = new Launch(null, ILaunchManager.RUN_MODE, null);
+		LaunchManager lm = (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
+		// find the external tools UI bundle and make sure it is started
+		Bundle b = Platform.getBundle("org.eclipse.ui.externaltools"); //$NON-NLS-1$
+		assertNotNull("Must have found the external tools bundle", b); //$NON-NLS-1$
+		if (b.getState() != Bundle.ACTIVE) {
+			b.start();
+		}
+		// no NPE should be logged
+		lm.addLaunch(l);
+	}
+
+	/**
 	 * Proxy to set resource paths, allowing invalid resource paths to be set
+	 *
 	 * @param resources
 	 * @since 3.9.0
 	 */
