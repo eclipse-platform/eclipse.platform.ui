@@ -174,11 +174,12 @@
 			<enablement>
 				<and>
 					<or>
-						<and>
-							<adapt type="org.eclipse.core.resources.IProject" />
-							<test property="org.eclipse.core.resources.open" 
-                            	value="true"/>
-						</and>
+						<adapt
+							type="org.eclipse.core.resources.IProject">
+							<test
+								property="org.eclipse.core.resources.open">
+							</test>
+						</adapt>
 						<adapt type="org.eclipse.core.resources.IFolder" /> 	
 						<adapt type="org.eclipse.ui.IWorkingSet" /> 	
 					</or>
@@ -283,10 +284,13 @@
             activeByDefault="false"
            >
          <filterExpression>
-         	<and>
-	            <instanceof value="org.eclipse.core.resources.IProject"/>
-            	<test property="org.eclipse.core.resources.open" value="false"/>	            
-	        </and>
+            <adapt
+               type="org.eclipse.core.resources.IProject">
+               <test
+                  property="org.eclipse.core.resources.open"
+                  value="false">
+               </test>
+            </adapt>
          </filterExpression>
       </commonFilter>
       <commonFilter
