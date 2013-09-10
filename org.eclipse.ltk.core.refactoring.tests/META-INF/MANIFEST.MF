@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ltk.core.refactoring.tests; singleton:=true
 Bundle-Version: 3.6.200.qualifier
-Bundle-ClassPath: refcoretests.jar
 Bundle-Activator: org.eclipse.ltk.core.refactoring.tests.RefactoringCoreTestPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
