@@ -56,6 +56,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	 * @since 3.8.200
 	 */
 	void assertLines(int expectedLines) {
+		ConsoleLineTracker.waitForConsole();
 		if (ConsoleLineTracker.getNumberOfMessages() != expectedLines) {
 			List<String> lines = ConsoleLineTracker.getAllMessages();
 			System.err.println("Failed line count from " + getName() + ", tracked lines: "); //$NON-NLS-1$ //$NON-NLS-2$
