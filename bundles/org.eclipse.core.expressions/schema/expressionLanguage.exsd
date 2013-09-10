@@ -166,7 +166,7 @@
             <annotation>
                <documentation>
                   the expected value of the property. Can be omitted if the property 
-                  is a boolean property. The test expression is supposed to return 
+                  is a boolean property (value will be Boolean.TRUE). The test expression is supposed to return
 EvaluationResult.TRUE if the property matches the value and EvaluationResult.FALSE
 otherwise. The value attribute is converted into a Java base type using the following
 rules:
@@ -506,7 +506,7 @@ rules:
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2001, 2011 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2001, 2013 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
