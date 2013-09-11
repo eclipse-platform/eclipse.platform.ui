@@ -106,6 +106,7 @@ public class ProjectInfo extends ResourceInfo {
 		this.matcher = matcher;
 	}
 
+	@SuppressWarnings({"unchecked"})
 	public synchronized void setNature(String natureId, IProjectNature value) {
 		// thread safety: (Concurrency001)
 		if (value == null) {

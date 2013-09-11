@@ -702,6 +702,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	 * @param depth whether to search for aliases on all children of the given
 	 * resource.  Only depth ZERO and INFINITE are used.
 	 */
+	@SuppressWarnings({"unchecked"})
 	public void updateAliases(IResource resource, IFileStore location, int depth, IProgressMonitor monitor) throws CoreException {
 		if (hasNoAliases(resource))
 			return;

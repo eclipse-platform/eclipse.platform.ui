@@ -359,6 +359,7 @@ class ComputeProjectOrder {
 		 * info with each vertex, including DFS finish time. Does not employ
 		 * recursion.
 		 */
+		@SuppressWarnings({"unchecked"})
 		private void DFS() {
 			// state machine rendition of the standard recursive DFS algorithm
 			int state;
@@ -614,7 +615,6 @@ class ComputeProjectOrder {
 			}
 		}
 
-		return new VertexOrder(reducedVertexes, reducedKnots.size() > 0,
-						reducedKnots.toArray(new Object[reducedKnots.size()][]));
+		return new VertexOrder(reducedVertexes, reducedKnots.size() > 0, reducedKnots.toArray(new Object[reducedKnots.size()][]));
 	}
 }

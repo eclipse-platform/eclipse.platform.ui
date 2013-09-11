@@ -163,6 +163,7 @@ public class ProjectContentTypes {
 		return Platform.getContentTypeManager().getMatcher(projectContentTypeSelectionPolicy, projectContentTypeSelectionPolicy);
 	}
 
+	@SuppressWarnings({"unchecked"})
 	private Set<String> getAssociatedContentTypes(Project project) {
 		final ResourceInfo info = project.getResourceInfo(false, false);
 		if (info == null)

@@ -195,6 +195,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * Returns a copy of the map of this resource session properties.
 	 * An empty map is returned if there are none.
 	 */
+	@SuppressWarnings({"unchecked"})
 	public Map<QualifiedName, Object> getSessionProperties() {
 		// thread safety: (Concurrency001)
 		ObjectMap<QualifiedName, Object> temp = sessionProperties;
@@ -221,6 +222,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * interface so we ensure that we get it right since we are making certain
 	 * assumptions about the object type w.r.t. casting.
 	 */
+	@SuppressWarnings({"unchecked"})
 	public synchronized ObjectMap<QualifiedName, Object> getSyncInfo(boolean makeCopy) {
 		if (syncInfo == null)
 			return null;
@@ -389,6 +391,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * Sets the identified session property to the given value.  If
 	 * the value is null, the property is removed.
 	 */
+	@SuppressWarnings({"unchecked"})
 	public synchronized void setSessionProperty(QualifiedName name, Object value) {
 		// thread safety: (Concurrency001)
 		if (value == null) {

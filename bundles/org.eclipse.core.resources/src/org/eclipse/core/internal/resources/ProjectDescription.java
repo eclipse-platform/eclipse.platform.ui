@@ -90,6 +90,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		super();
 	}
 
+	@SuppressWarnings({"unchecked"})
 	public Object clone() {
 		ProjectDescription clone = (ProjectDescription) super.clone();
 		//don't want the clone to have access to our internal link locations table or builders
@@ -276,6 +277,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * Returns the build configuration references map
 	 * @param makeCopy
 	 */
+	@SuppressWarnings({"unchecked"})
 	public Map<String, IBuildConfiguration[]> getBuildConfigReferences(boolean makeCopy) {
 		return makeCopy ? (Map<String, IBuildConfiguration[]>) dynamicConfigRefs.clone() : dynamicConfigRefs;
 	}
@@ -674,6 +676,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 *     <code>false</code> otherwise.
 	 * @since 3.5 returns boolean (was void before)
 	 */
+	@SuppressWarnings({"unchecked"})
 	public boolean setLinkLocation(IPath path, LinkDescription description) {
 		HashMap<IPath, LinkDescription> tempMap = linkDescriptions;
 		if (description != null) {
@@ -746,6 +749,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 *     <code>false</code> otherwise.
 	 * @since 3.5
 	 */
+	@SuppressWarnings({"unchecked"})
 	public boolean setVariableDescription(String name, VariableDescription description) {
 		HashMap<String, VariableDescription> tempMap = variableDescriptions;
 		if (description != null) {

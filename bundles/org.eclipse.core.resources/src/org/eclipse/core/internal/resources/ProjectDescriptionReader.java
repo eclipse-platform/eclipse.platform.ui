@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,12 @@ import org.eclipse.osgi.util.NLS;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * Reads serialized project descriptions.
+ * 
+ * Note: Suppress warnings on whole class because of unusual use of objectStack.
+ */
+@SuppressWarnings({"unchecked"})
 public class ProjectDescriptionReader extends DefaultHandler implements IModelObjectConstants {
 
 	//states

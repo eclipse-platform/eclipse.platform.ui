@@ -140,6 +140,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 		return getArguments(true);
 	}
 
+	@SuppressWarnings({"unchecked"})
 	public Map<String, String> getArguments(boolean makeCopy) {
 		return arguments == null ? null : (makeCopy ? (Map<String, String>) arguments.clone() : arguments);
 	}

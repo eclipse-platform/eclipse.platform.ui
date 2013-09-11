@@ -165,6 +165,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 * new description are removed.  Updates the old description so that it reflects
 	 * the new set of the natures.  Errors are added to the given multi-status.
 	 */
+	@SuppressWarnings({"unchecked"})
 	public void configureNatures(Project project, ProjectDescription oldDescription, ProjectDescription newDescription, MultiStatus status) {
 		// Be careful not to rely on much state because (de)configuring a nature
 		// may well result in recursive calls to this method.
