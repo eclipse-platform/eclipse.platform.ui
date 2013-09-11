@@ -5,7 +5,7 @@
   are made available under the terms of the Eclipse Distribution License v1.0
   which accompanies this distribution, and is available at
   http://www.eclipse.org/org/documents/edl-v10.php
- 
+
   Contributors:
      Igor Fedorenko - initial implementation
 -->
@@ -19,5 +19,10 @@
   <groupId>org.eclipse.core</groupId>
   <artifactId>org.eclipse.core.tests.resources</artifactId>
   <version>3.8.100-SNAPSHOT</version>
-  <packaging>eclipse-plugin</packaging>
+  <packaging>eclipse-test-plugin</packaging>
+
+  <properties>
+  	<testSuite>${project.artifactId}</testSuite>
+  	<testClass>org.eclipse.core.tests.resources.AutomatedTests</testClass>
+  </properties>
 </project>
