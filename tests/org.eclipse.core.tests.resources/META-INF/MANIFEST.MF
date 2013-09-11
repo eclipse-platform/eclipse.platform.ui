@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Eclipse Core Tests Resources
 Bundle-SymbolicName: org.eclipse.core.tests.resources; singleton:=true
 Bundle-Version: 3.8.100.qualifier
-Bundle-ClassPath: resourcestests.jar
 Bundle-Vendor: Eclipse.org
 Bundle-Localization: plugin
 Export-Package: org.eclipse.core.tests.filesystem,
