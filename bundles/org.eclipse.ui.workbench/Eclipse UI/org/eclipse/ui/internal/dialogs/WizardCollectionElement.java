@@ -81,7 +81,6 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 		this.parent = parent;
 	}
 
-	@SuppressWarnings("unchecked")
 	private WizardCollectionElement(WizardCollectionElement input, AdaptableList wizards) {
 		this(input.id, input.pluginId, input.name, input.parent);
 		this.configElement = input.configElement;
@@ -446,7 +445,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 	 * @return inputCollection, modified copy of inputCollection or null
 	 * 
 	 */
-	public static WizardCollectionElement filter(Viewer viewer, ViewerFilter viewerFilter,
+	static WizardCollectionElement filter(Viewer viewer, ViewerFilter viewerFilter,
 			WizardCollectionElement inputCollection) {
 		AdaptableList wizards = null;
 
