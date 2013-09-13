@@ -123,11 +123,13 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 		noEntryArea = new Composite(scrolled, SWT.NONE);
 		noEntryArea.setLayout(new GridLayout());
+		noEntryArea.setBackground(noEntryArea.getDisplay()
+				.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		Text noEntryLabel = new Text(noEntryArea, SWT.SINGLE);
 		noEntryLabel.setText(ProgressMessages.ProgressView_NoOperations);
 		noEntryLabel.setBackground(noEntryArea.getDisplay().getSystemColor(
-				SWT.COLOR_WIDGET_BACKGROUND));
+				SWT.COLOR_LIST_BACKGROUND));
 		GridData textData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		noEntryLabel.setLayoutData(textData);
 		noEntryLabel.setEditable(false);
