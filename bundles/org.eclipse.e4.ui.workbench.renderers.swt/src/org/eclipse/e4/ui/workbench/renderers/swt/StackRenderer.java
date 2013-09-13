@@ -625,7 +625,8 @@ public class StackRenderer extends LazyStackRenderer {
 			part.getToolbar().setVisible(true);
 			Object tbObj = renderer.createGui(part.getToolbar(),
 					getTRComposite(ctf), part.getContext());
-			// The TB renderer actually wraps the TB in a Composite
+			// The TB renderer actually wraps the TB in a Composite, if the TB
+			// changes size we need to re-pack the composite
 			if (tbObj instanceof Composite) {
 				Control[] kids = ((Composite) tbObj).getChildren();
 				for (Control kid : kids) {
@@ -636,8 +637,7 @@ public class StackRenderer extends LazyStackRenderer {
 								if (!ctf.isDisposed()) {
 									Control tr = ctf.getTopRight();
 									if (tr != null && !tr.isDisposed())
-										ctf.getTopRight().pack();
-									ctf.layout(true, true);
+										tr.pack();
 								}
 							}
 
@@ -670,7 +670,6 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 
 		trComp.pack();
-		ctf.layout(true, true);
 	}
 
 	private MToolBar getViewTB(CTabFolder ctf) {
