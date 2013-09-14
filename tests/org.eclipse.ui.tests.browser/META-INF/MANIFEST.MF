@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.tests.browser;singleton:=true
 Bundle-Version: 3.1.0
-Bundle-ClassPath: browser.jar
 Bundle-Activator: org.eclipse.ui.tests.browser.internal.WebBrowserTestsPlugin
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
