@@ -5,7 +5,7 @@
   are made available under the terms of the Eclipse Distribution License v1.0
   which accompanies this distribution, and is available at
   http://www.eclipse.org/org/documents/edl-v10.php
- 
+
   Contributors:
      Paul Webster - initial implementation
 -->
@@ -34,11 +34,6 @@
     <module>org.eclipse.e4.ui.menu.tests.p4</module>
     <module>org.eclipse.ui.tests.browser</module>
     -->
-    <module>org.eclipse.e4.ui.bindings.tests</module>
-    <module>org.eclipse.e4.core.commands.tests</module>
-    <module>org.eclipse.e4.ui.tests</module>
-    <module>org.eclipse.e4.ui.tests.css.core</module>
-    <module>org.eclipse.e4.ui.tests.css.swt</module>
     <module>org.eclipse.jface.tests.databinding</module>
     <module>org.eclipse.jface.tests.databinding.conformance</module>
     <module>org.eclipse.ui.tests</module>
@@ -48,8 +43,41 @@
     <module>org.eclipse.ui.tests.performance</module>
     <module>org.eclipse.ui.tests.rcp</module>
     <module>org.eclipse.ui.tests.views.properties.tabbed</module>
+    <module>org.eclipse.e4.ui.bindings.tests</module>
+    <module>org.eclipse.e4.core.commands.tests</module>
+    <module>org.eclipse.e4.ui.tests</module>
+    <module>org.eclipse.e4.ui.tests.css.core</module>
+    <module>org.eclipse.e4.ui.tests.css.swt</module>
   </modules>
   <properties>
     <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
   </properties>
+
+   <build>
+  	<pluginManagement>
+  		<plugins>
+  			<plugin>
+	  			<groupId>org.eclipse.tycho</groupId>
+	  			<artifactId>tycho-surefire-plugin</artifactId>
+	  			<version>${tycho.version}</version>
+	  			<configuration>
+	  				<useUIHarness>true</useUIHarness>
+	  				<useUIThread>true</useUIThread>
+	  				<dependencies>
+	  					<dependency>
+	  						<type>eclipse-plugin</type>
+	  						<artifactId>org.eclipse.equinox.event</artifactId>
+	  						<version>0.0.0</version>
+	  					</dependency>
+	  					<dependency>
+	  						<type>eclipse-plugin</type>
+	  						<artifactId>org.eclipse.osgi.compatibility.state</artifactId>
+	  						<version>0.0.0</version>
+	  					</dependency>
+	  				</dependencies>
+  				</configuration>
+  			</plugin>
+  		</plugins>
+  	</pluginManagement>
+  </build>
 </project>

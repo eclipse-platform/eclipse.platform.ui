@@ -5,7 +5,7 @@
   are made available under the terms of the Eclipse Distribution License v1.0
   which accompanies this distribution, and is available at
   http://www.eclipse.org/org/documents/edl-v10.php
- 
+
   Contributors:
      Igor Fedorenko - initial implementation
 -->
@@ -40,7 +40,7 @@
       <url>https://repo.eclipse.org/content/repositories/eclipse/</url>
     </repository>
   </repositories>
- 
+
   <modules>
     <!--
     requires org.eclipse.ui.presentations.PresentationUtil which is not available from anywhere
@@ -56,7 +56,7 @@
     <module>examples/org.eclipse.ui.examples.readmetool</module>
     <module>examples/org.eclipse.ui.examples.undo</module>
     <module>examples/org.eclipse.ui.examples.views.properties.tabbed.article</module>
-    <!-- 
+    <!--
     <module>examples/org.eclipse.e4.demo.contacts</module>
     <module>examples/org.eclipse.e4.demo.e4photo</module>
     <module>examples/org.eclipse.e4.examples.services</module>
@@ -70,7 +70,6 @@
     <module>examples/org.eclipse.ui.examples.views.properties.tabbed.logic</module>
     <module>examples/org.eclipse.ui.forms.examples</module>
      -->
-    <module>tests</module>
 
     <module>bundles/org.eclipse.core.commands</module>
     <module>bundles/org.eclipse.core.databinding</module>
@@ -112,6 +111,8 @@
     <module>bundles/org.eclipse.ui.win32</module>
     <module>bundles/org.eclipse.ui.navigator.resources</module>
     <module>bundles/org.eclipse.ui.workbench.compatibility</module>
+
+    <module>tests</module>
 
   </modules>
 
