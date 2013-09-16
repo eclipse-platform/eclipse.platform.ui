@@ -44,6 +44,8 @@ import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.DragDetectEvent;
+import org.eclipse.swt.events.DragDetectListener;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.MenuEvent;
@@ -97,7 +99,6 @@ public class PerspectiveSwitcher {
 	/**
 	 * 
 	 */
-	private static final int DRAG_TOLERANCE = 5;
 	public static final String PERSPECTIVE_SWITCHER_ID = "org.eclipse.e4.ui.PerspectiveSwitcher"; //$NON-NLS-1$
 	@Inject
 	protected IEventBroker eventBroker;
@@ -425,7 +426,7 @@ public class PerspectiveSwitcher {
 	private void createFeedback() {
 		dragShell = new Shell(SWT.NO_TRIM | SWT.NO_BACKGROUND);
 		dragShell.setAlpha(175);
-		ToolBar dragTB = new ToolBar(dragShell, SWT.NONE);
+		ToolBar dragTB = new ToolBar(dragShell, SWT.RIGHT);
 		ToolItem newTI = new ToolItem(dragTB, SWT.RADIO);
 		newTI.setText(dragItem.getText());
 		newTI.setImage(dragItem.getImage());
@@ -494,20 +495,19 @@ public class PerspectiveSwitcher {
 			}
 		});
 
+		bar.addDragDetectListener(new DragDetectListener() {
+			public void dragDetected(DragDetectEvent e) {
+				if (dragItem != null) {
+					dragging = true;
+					track(e);
+				}
+			}
+		});
+
 		bar.addMouseMoveListener(new MouseMoveListener() {
 			public void mouseMove(MouseEvent e) {
-				if (dragItem == null)
-					return;
-
 				if (dragging) {
 					track(e);
-				} else {
-					Point curPos = new Point(e.x, e.y);
-					if (Math.abs(curPos.x - downPos.x) > DRAG_TOLERANCE
-							|| Math.abs(curPos.y - downPos.y) > DRAG_TOLERANCE) {
-						dragging = true;
-						track(e);
-					}
 				}
 			}
 		});
