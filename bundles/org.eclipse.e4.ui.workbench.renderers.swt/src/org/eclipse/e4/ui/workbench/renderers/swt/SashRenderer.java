@@ -24,7 +24,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -93,7 +92,7 @@ public class SashRenderer extends SWTPartRenderer {
 				return;
 			}
 		}
-		s.getParent().layout(new Control[] { s });
+		s.layout(true, true);
 	}
 
 	@PreDestroy
