@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -307,9 +307,10 @@ public class ActionSet {
 			ArrayList<MTrimContribution> trimContributions, IConfigurationElement element,
 			String parentId) {
 		String tpath = MenuHelper.getToolBarPath(element);
-		if (tpath == null) {
+		if (tpath == null || isEditorAction(element)) {
 			return;
 		}
+
 		if (tpath.endsWith("/")) { //$NON-NLS-1$
 			tpath += IWorkbenchActionConstants.MB_ADDITIONS;
 		}
@@ -319,6 +320,7 @@ public class ActionSet {
 		if (action == null) {
 			return;
 		}
+
 		action.getTransientData().put("Name", MenuHelper.getLabel(element)); //$NON-NLS-1$
 		action.getTransientData().put("ActionSet", id); //$NON-NLS-1$
 
@@ -368,9 +370,14 @@ public class ActionSet {
 
 		toolBarContribution.setPositionInParent(positionInParent);
 		toolBarContribution.setVisibleWhen(createVisibleWhen());
-
 		toolBarContribution.getChildren().add(action);
+
 		contributions.add(toolBarContribution);
+	}
+
+	private boolean isEditorAction(IConfigurationElement element) {
+		return IWorkbenchRegistryConstants.EXTENSION_EDITOR_ACTIONS.equals(element
+				.getDeclaringExtension().getExtensionPointUniqueIdentifier());
 	}
 
 	private void addTrimContribution(String idContrib,
