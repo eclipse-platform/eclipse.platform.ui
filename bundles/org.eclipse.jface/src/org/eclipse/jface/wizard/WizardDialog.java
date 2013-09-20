@@ -635,16 +635,20 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 		gd.heightHint = pageHeight;
 		pageContainer.setLayoutData(gd);
 		pageContainer.setFont(parent.getFont());
-		// Insert a progress monitor
-		progressMonitorPart= createProgressMonitorPart(composite, new GridLayout());
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		progressMonitorPart.setLayoutData(gridData);
-		progressMonitorPart.setVisible(false);
+		if (wizard.needsProgressMonitor()) {
+			// Insert a progress monitor
+			GridLayout layout = new GridLayout();
+			layout.marginHeight = 0;
+			progressMonitorPart= createProgressMonitorPart(composite, layout);
+			GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+			progressMonitorPart.setLayoutData(gridData);
+			progressMonitorPart.setVisible(false);
+			applyDialogFont(progressMonitorPart);
+		}
 		// Build the separator line
 		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		applyDialogFont(progressMonitorPart);
 		return composite;
 	}
 
