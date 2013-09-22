@@ -14,28 +14,16 @@ package org.eclipse.e4.ui.internal.workbench;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.commands.MBindingContext;
-import org.eclipse.e4.ui.model.application.commands.MBindingTable;
-import org.eclipse.e4.ui.model.application.commands.MCategory;
-import org.eclipse.e4.ui.model.application.commands.MCommand;
-import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
-import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
-import org.eclipse.e4.ui.model.application.commands.MHandler;
-import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
-import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
-import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.MUiFactory;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
@@ -43,8 +31,6 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
-import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
-import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
@@ -54,21 +40,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
-import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
-import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
-import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -88,6 +60,9 @@ public class ModelServiceImpl implements EModelService {
 	private static String HOSTED_ELEMENT = "HostedElement"; //$NON-NLS-1$
 
 	private IEclipseContext appContext;
+
+	/** Factory which is able to create {@link MApplicationElement}s in a generic way. */
+	private GenericMApplicationElementFactoryImpl mApplicationElementFactory;
 
 	// Cleans up after a hosted element is disposed
 	private EventHandler hostedElementHandler = new EventHandler() {
@@ -114,15 +89,20 @@ public class ModelServiceImpl implements EModelService {
 	 * This is a singleton service. One instance is used throughout the running application
 	 * 
 	 * @param appContext
-	 *            The applicationContext to get teh eventBroker from
+	 *            The applicationContext to get the eventBroker from
+	 * 
+	 * @throws NullPointerException
+	 *             if the given appContext is <code>null</code>
 	 */
 	public ModelServiceImpl(IEclipseContext appContext) {
 		if (appContext == null)
-			return;
+			throw new NullPointerException("No application context given!"); //$NON-NLS-1$
 
 		this.appContext = appContext;
 		IEventBroker eventBroker = appContext.get(IEventBroker.class);
 		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, hostedElementHandler);
+
+		mApplicationElementFactory = new GenericMApplicationElementFactoryImpl(appContext.get(IExtensionRegistry.class));
 	}
 
 	/**
@@ -131,125 +111,23 @@ public class ModelServiceImpl implements EModelService {
 	 */
 	@SuppressWarnings("unchecked")
 	public final <T extends MApplicationElement> T createModelElement(Class<T> elementType) {
-		// WARNING: This method is automatically generated. Do not hand modify
 		if (elementType == null) {
 			throw new NullPointerException("Argument cannot be null."); //$NON-NLS-1$
 		}
-		if (MAddon.class.equals(elementType)) {
-			return (T) MApplicationFactory.INSTANCE.createAddon();
+
+		/*
+		 * TODO: We can even tune the performance of this method if we add the previous generated
+		 * if-else-if-else... block. The eObjectFactory#createEObject(Class) could afterwards be the
+		 * fallback if a user specific model element should be created. But for this we need to
+		 * adapt the generator of Paul Elder and to be honest I wasn't able to find it (either its
+		 * call during the build nor its template) ;-( .
+		 */
+
+		T back = (T) mApplicationElementFactory.createEObject(elementType);
+		if (back != null) {
+			return back;
 		}
-		if (MApplication.class.equals(elementType)) {
-			return (T) MApplicationFactory.INSTANCE.createApplication();
-		}
-		if (MArea.class.equals(elementType)) {
-			return (T) MAdvancedFactory.INSTANCE.createArea();
-		}
-		if (MBindingContext.class.equals(elementType)) {
-			return (T) MCommandsFactory.INSTANCE.createBindingContext();
-		}
-		if (MBindingTable.class.equals(elementType)) {
-			return (T) MCommandsFactory.INSTANCE.createBindingTable();
-		}
-		if (MCategory.class.equals(elementType)) {
-			return (T) MCommandsFactory.INSTANCE.createCategory();
-		}
-		if (MCommand.class.equals(elementType)) {
-			return (T) MCommandsFactory.INSTANCE.createCommand();
-		}
-		if (MCommandParameter.class.equals(elementType)) {
-			return (T) MCommandsFactory.INSTANCE.createCommandParameter();
-		}
-		if (MCompositePart.class.equals(elementType)) {
-			return (T) MBasicFactory.INSTANCE.createCompositePart();
-		}
-		if (MCoreExpression.class.equals(elementType)) {
-			return (T) MUiFactory.INSTANCE.createCoreExpression();
-		}
-		if (MDirectMenuItem.class.equals(elementType)) {
-			return (T) MMenuFactory.INSTANCE.createDirectMenuItem();
-		}
-		if (MDirectToolItem.class.equals(elementType)) {
-			return (T) MMenuFactory.INSTANCE.createDirectToolItem();
-		}
-		if (MDynamicMenuContribution.class.equals(elementType)) {
-			return (T) MMenuFactory.INSTANCE.createDynamicMenuContribution();
-		}
-		if (MHandledMenuItem.class.equals(elementType)) {
-			return (T) MMenuFactory.INSTANCE.createHandledMenuItem();
-		}
-		if (MHandledToolItem.class.equals(elementType)) {
-			return (T) MMenuFactory.INSTANCE.createHandledToolItem();
-		}
-		if (MHandler.class.equals(elementType)) {
-			return (T) MCommandsFactory.INSTANCE.createHandler();
-		}
-		if (MInputPart.class.equals(elementType)) {
-			return (T) MBasicFactory.INSTANCE.createInputPart();
-		}
-		if (MKeyBinding.class.equals(elementType)) {
-			return (T) MCommandsFactory.INSTANCE.createKeyBinding();
-		}
-		if (MMenu.class.equals(elementType)) {
-			return (T) MMenuFactory.INSTANCE.createMenu();
-		}
-		if (MMenuContribution.class.equals(elementType)) {
-			return (T) MMenuFactory.INSTANCE.createMenuContribution();
-		}
-		if (MMenuSeparator.class.equals(elementType)) {
-			return (T) MMenuFactory.INSTANCE.createMenuSeparator();
-		}
-		if (MParameter.class.equals(elementType)) {
-			return (T) MCommandsFactory.INSTANCE.createParameter();
-		}
-		if (MPart.class.equals(elementType)) {
-			return (T) MBasicFactory.INSTANCE.createPart();
-		}
-		if (MPartDescriptor.class.equals(elementType)) {
-			return (T) org.eclipse.e4.ui.model.application.descriptor.basic.MBasicFactory.INSTANCE
-					.createPartDescriptor();
-		}
-		if (MPartSashContainer.class.equals(elementType)) {
-			return (T) MBasicFactory.INSTANCE.createPartSashContainer();
-		}
-		if (MPartStack.class.equals(elementType)) {
-			return (T) MBasicFactory.INSTANCE.createPartStack();
-		}
-		if (MPerspective.class.equals(elementType)) {
-			return (T) MAdvancedFactory.INSTANCE.createPerspective();
-		}
-		if (MPerspectiveStack.class.equals(elementType)) {
-			return (T) MAdvancedFactory.INSTANCE.createPerspectiveStack();
-		}
-		if (MPlaceholder.class.equals(elementType)) {
-			return (T) MAdvancedFactory.INSTANCE.createPlaceholder();
-		}
-		if (MPopupMenu.class.equals(elementType)) {
-			return (T) MMenuFactory.INSTANCE.createPopupMenu();
-		}
-		if (MToolBar.class.equals(elementType)) {
-			return (T) MMenuFactory.INSTANCE.createToolBar();
-		}
-		if (MToolBarContribution.class.equals(elementType)) {
-			return (T) MMenuFactory.INSTANCE.createToolBarContribution();
-		}
-		if (MToolBarSeparator.class.equals(elementType)) {
-			return (T) MMenuFactory.INSTANCE.createToolBarSeparator();
-		}
-		if (MToolControl.class.equals(elementType)) {
-			return (T) MMenuFactory.INSTANCE.createToolControl();
-		}
-		if (MTrimBar.class.equals(elementType)) {
-			return (T) MBasicFactory.INSTANCE.createTrimBar();
-		}
-		if (MTrimContribution.class.equals(elementType)) {
-			return (T) MMenuFactory.INSTANCE.createTrimContribution();
-		}
-		if (MTrimmedWindow.class.equals(elementType)) {
-			return (T) MBasicFactory.INSTANCE.createTrimmedWindow();
-		}
-		if (MWindow.class.equals(elementType)) {
-			return (T) MBasicFactory.INSTANCE.createWindow();
-		}
+
 		throw new IllegalArgumentException(
 				"Unsupported model object type: " + elementType.getCanonicalName()); //$NON-NLS-1$
 	}
@@ -755,10 +633,10 @@ public class ModelServiceImpl implements EModelService {
 		} else {
 			MPartSashContainer newSash = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
 			newSash.setHorizontal(horizontal);
-			
+
 			// Maintain the existing weight in the new sash
 			newSash.setContainerData(relTo.getContainerData());
-			
+
 			combine(toInsert, relTo, newSash, insertBefore, ratio);
 		}
 
