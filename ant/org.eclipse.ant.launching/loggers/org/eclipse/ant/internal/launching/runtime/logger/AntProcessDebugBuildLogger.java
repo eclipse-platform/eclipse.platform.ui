@@ -43,6 +43,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void buildStarted(BuildEvent event) {
 		fDebugState= new AntDebugState(this);
 		super.buildStarted(event);
@@ -58,6 +59,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.launching.runtime.logger.AntProcessBuildLogger#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void buildFinished(BuildEvent event) {
 		super.buildFinished(event);
 		cleanup();
@@ -88,6 +90,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void taskFinished(BuildEvent event) {
 		super.taskFinished(event);
 		fDebugState.taskFinished();
@@ -96,6 +99,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void taskStarted(BuildEvent event) {
         super.taskStarted(event);
 		fDebugState.taskStarted(event);
@@ -104,6 +108,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.antsupport.logger.util.IDebugBuildLogger#waitIfSuspended()
 	 */
+	@Override
 	public synchronized void waitIfSuspended() {
 		fResumed= false;
 		IBreakpoint breakpoint= breakpointAtLineNumber(fDebugState.getBreakpointLocation());
@@ -157,6 +162,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#resume()
 	 */
+	@Override
 	public synchronized void resume() {
 		fResumed= true;
         notifyAll();
@@ -165,6 +171,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#suspend()
 	 */
+	@Override
 	public synchronized void suspend() {
 		fDebugState.setClientSuspend(true);
 	}
@@ -172,6 +179,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#stepInto()
 	 */
+	@Override
 	public synchronized void stepInto() {
 		fDebugState.setStepIntoSuspend(true);
 		fResumed= true;
@@ -181,6 +189,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.launching.debug.IAntDebugController#terminate()
 	 */
+	@Override
 	public void terminate() {
 		cleanup();
 	}
@@ -188,6 +197,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#stepOver()
 	 */
+	@Override
 	public synchronized void stepOver() {
 		fResumed= true;
 		fDebugState.stepOver();
@@ -196,6 +206,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#handleBreakpoint(org.eclipse.debug.core.model.IBreakpoint, boolean)
 	 */
+	@Override
 	public void handleBreakpoint(IBreakpoint breakpoint, boolean added) {
 		if (added) {
 			if (fBreakpoints == null) {
@@ -214,6 +225,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#getProperties()
 	 */
+	@Override
 	public void getProperties() {
 		if (fAntDebugTarget == null || !fAntDebugTarget.isSuspended()) {
 			return;
@@ -228,6 +240,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#getStackFrames()
 	 */
+	@Override
 	public void getStackFrames() {
 		StringBuffer stackRepresentation= new StringBuffer();
 		fDebugState.marshalStack(stackRepresentation);
@@ -262,7 +275,8 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
     /* (non-Javadoc)
      * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
      */
-    public void targetStarted(BuildEvent event) {
+    @Override
+	public void targetStarted(BuildEvent event) {
 		fDebugState.targetStarted(event);
 		waitIfSuspended();
 		super.targetStarted(event);
@@ -271,6 +285,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void targetFinished(BuildEvent event) {
 		super.targetFinished(event);
 		if(fDebugState != null) {
@@ -281,6 +296,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#unescapeString(java.lang.StringBuffer)
 	 */
+	@Override
 	public StringBuffer unescapeString(StringBuffer propertyValue) {
 		return propertyValue;
 	}

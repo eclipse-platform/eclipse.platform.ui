@@ -38,6 +38,7 @@ public class AntProjectNode extends AntElementNode {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 	    if (fLabel == null) {
 	        if (fProject != null) {
@@ -55,6 +56,7 @@ public class AntProjectNode extends AntElementNode {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#getBaseImageDescriptor()
 	 */
+	@Override
 	protected ImageDescriptor getBaseImageDescriptor() {
 		return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_PROJECT);
 	}
@@ -67,6 +69,7 @@ public class AntProjectNode extends AntElementNode {
 		return fProject;
 	}
 	
+	@Override
 	protected IAntModel getAntModel() {
 		return fModel;
 	}
@@ -74,6 +77,7 @@ public class AntProjectNode extends AntElementNode {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#reset()
 	 */
+	@Override
 	public void reset() {
 		super.reset();
 		fProject.reset();
@@ -113,18 +117,21 @@ public class AntProjectNode extends AntElementNode {
     /* (non-Javadoc)
      * @see org.eclipse.ant.internal.ui.model.AntElementNode#getProjectNode()
      */
-    public AntProjectNode getProjectNode() {
+    @Override
+	public AntProjectNode getProjectNode() {
         return this;
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#containsOccurrence(java.lang.String)
 	 */
+	@Override
 	public boolean containsOccurrence(String identifier) {
 		return identifier.equals(getDefaultTargetName());
 	}
     
-    public List<Integer> computeIdentifierOffsets(String identifier) {
+    @Override
+	public List<Integer> computeIdentifierOffsets(String identifier) {
         String textToSearch= getAntModel().getText(getOffset(), getLength());
         if (textToSearch == null || textToSearch.length() == 0 || identifier.length() == 0) {
         	return null;
@@ -140,6 +147,7 @@ public class AntProjectNode extends AntElementNode {
     /* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#isRegionPotentialReference(org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public boolean isRegionPotentialReference(IRegion region) {
 		if (!super.isRegionPotentialReference(region)) {
     		return false;

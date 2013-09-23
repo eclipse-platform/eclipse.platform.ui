@@ -44,6 +44,7 @@ public abstract class ColumnSorter extends ViewerComparator {
 		this.column = column;
 		this.columnidx = getColumnIndex();
 		this.column.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(ColumnSorter.this.cviewer.getComparator() != ColumnSorter.this) {
 					setDirection(SWT.DOWN);
@@ -90,6 +91,7 @@ public abstract class ColumnSorter extends ViewerComparator {
 	/**
 	 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		String text1 = getCompareText(e1, this.columnidx);
 		if(text1 == null) {

@@ -29,6 +29,7 @@ public class Schema implements ISchema {
 	/**
 	 * @see org.eclipse.ant.internal.ui.dtd.ISchema#getElement(java.lang.String)
 	 */
+	@Override
 	public IElement getElement(String qname) {
 		return fElementMap.get(qname);
 	}
@@ -36,6 +37,7 @@ public class Schema implements ISchema {
 	/**
 	 * @see org.eclipse.ant.internal.ui.dtd.ISchema#getElements()
 	 */
+	@Override
 	public IElement[] getElements() {
 		return fElementMap.entrySet().toArray(new IElement[fElementMap.entrySet().size()]);
 	}
@@ -61,6 +63,7 @@ public class Schema implements ISchema {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.dtd.ISchema#getErrorException()
 	 */
+	@Override
 	public Exception getErrorException() {
 		return fErrorException;
 	}

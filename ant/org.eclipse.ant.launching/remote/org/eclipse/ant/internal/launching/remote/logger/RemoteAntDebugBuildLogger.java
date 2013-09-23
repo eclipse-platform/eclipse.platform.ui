@@ -66,6 +66,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 			setDaemon(true);
 		}
 
+		@Override
 		public void run(){
 			try { 
 				String message= null; 
@@ -152,6 +153,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger#shutDown()
 	 */
+	@Override
 	protected synchronized void shutDown() {
 		if (fRequestWriter != null) {
 			fRequestWriter.close();
@@ -182,6 +184,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public synchronized void buildStarted(BuildEvent event) {
 		fDebugState= new AntDebugState(this);
 		super.buildStarted(event);
@@ -204,6 +207,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.launching.remote.logger.RemoteAntBuildLogger#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public synchronized void buildFinished(BuildEvent event) {
 		super.buildFinished(event);
 		fDebugState.buildFinished();
@@ -226,6 +230,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public synchronized void taskStarted(BuildEvent event) {
         super.taskStarted(event);
 		fDebugState.taskStarted(event);
@@ -234,6 +239,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public synchronized void taskFinished(BuildEvent event) {
 		super.taskFinished(event);
 		fDebugState.taskFinished();
@@ -242,6 +248,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.antsupport.logger.util.IDebugBuildLogger#waitIfSuspended()
 	 */
+	@Override
 	public synchronized void waitIfSuspended() {
 		String detail= null;
 		boolean shouldSuspend= true;
@@ -360,6 +367,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public synchronized void targetStarted(BuildEvent event) {
 		fDebugState.targetStarted(event);
 		if (!fSentProcessId) {
@@ -372,7 +380,8 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
     /* (non-Javadoc)
      * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
      */
-    public synchronized void targetFinished(BuildEvent event) {
+    @Override
+	public synchronized void targetFinished(BuildEvent event) {
         super.targetFinished(event);
 		fDebugState.setTargetExecuting(null);
     }   
@@ -380,7 +389,8 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
     /* (non-Javadoc)
      * @see org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger#configure(java.util.Map)
      */
-    public synchronized void configure(Map<String, String> userProperties) {
+    @Override
+	public synchronized void configure(Map<String, String> userProperties) {
        super.configure(userProperties);
        String requestPortProperty= userProperties.remove("eclipse.connect.request_port"); //$NON-NLS-1$
         if (requestPortProperty != null) {

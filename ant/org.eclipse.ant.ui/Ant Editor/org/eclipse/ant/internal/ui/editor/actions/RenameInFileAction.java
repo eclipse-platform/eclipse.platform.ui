@@ -45,6 +45,7 @@ public class RenameInFileAction extends SelectionDispatchAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		if (fEditor == null) {
 			return;
@@ -109,6 +110,7 @@ public class RenameInFileAction extends SelectionDispatchAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.actions.SelectionDispatchAction#selectionChanged(org.eclipse.jface.text.ITextSelection)
 	 */
+	@Override
 	public void selectionChanged(ITextSelection selection) {
 		setEnabled(fEditor != null);
 	}

@@ -31,6 +31,7 @@ public class RemoteAntRuntimeProcess extends RuntimeProcess {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.RuntimeProcess#createStreamsProxy()
 	 */
+	@Override
 	protected IStreamsProxy createStreamsProxy() {
 		return new AntStreamsProxy();
 	}

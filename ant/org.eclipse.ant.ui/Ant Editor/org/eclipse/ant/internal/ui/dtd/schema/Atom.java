@@ -29,6 +29,7 @@ public class Atom implements IAtom {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.dtd.IAtom#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -36,6 +37,7 @@ public class Atom implements IAtom {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return fName;
 	}

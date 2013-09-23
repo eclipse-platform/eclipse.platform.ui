@@ -70,6 +70,7 @@ public class Element extends Atom implements IElement {
 	/**
 	 * @see org.eclipse.ant.internal.ui.dtd.IElement#getAttributes()
 	 */
+	@Override
 	public Map<String, IAttribute> getAttributes() {
 		return fMap;
 	}
@@ -78,6 +79,7 @@ public class Element extends Atom implements IElement {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.dtd.IElement#isMixed()
 	 */
+	@Override
 	public IModel getContentModel() {
 		return fModel;
 	}
@@ -85,6 +87,7 @@ public class Element extends Atom implements IElement {
 	/**
 	 * @see org.eclipse.ant.internal.ui.dtd.IElement#isText()
 	 */
+	@Override
 	public boolean isText() {
 		return fText;
 	}
@@ -92,6 +95,7 @@ public class Element extends Atom implements IElement {
 	/**
 	 * @see org.eclipse.ant.internal.ui.dtd.IElement#isUndefined()
 	 */
+	@Override
 	public boolean isUndefined() {
 		return fUndefined;
 	}
@@ -99,6 +103,7 @@ public class Element extends Atom implements IElement {
 	/**
 	 * @see org.eclipse.ant.internal.ui.dtd.IElement#getDfm()
 	 */
+	@Override
 	public IDfm getDfm() {
 		Dfm dfm = fElementDfm;
 		if (dfm == null) {
@@ -148,6 +153,7 @@ public class Element extends Atom implements IElement {
 	/**
 	 * @see org.eclipse.ant.internal.ui.dtd.IElement#isAny()
 	 */
+	@Override
 	public boolean isAny() {
 		return fAny;
 	}
@@ -155,6 +161,7 @@ public class Element extends Atom implements IElement {
 	/**
 	 * @see org.eclipse.ant.internal.ui.dtd.IElement#isEmpty()
 	 */
+	@Override
 	public boolean isEmpty() {
 		return fEmpty;
 	}

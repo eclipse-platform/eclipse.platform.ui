@@ -26,6 +26,7 @@ public class AntTestTask extends Task {
 	/**
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
+	@Override
 	public void execute() throws BuildException {
 		Echo echo= new Echo();
 		echo.setProject(getProject());

@@ -48,6 +48,7 @@ public class EditAntHomeEntryAction extends RuntimeClasspathAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		IDialogSettings dialogSettings = AntUIPlugin.getDefault().getDialogSettings();
 		String lastUsedPath= dialogSettings.get(IAntUIConstants.DIALOGSTORE_LASTANTHOME);
@@ -89,6 +90,7 @@ public class EditAntHomeEntryAction extends RuntimeClasspathAction {
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return true;
 	}	

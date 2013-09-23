@@ -88,6 +88,7 @@ public class MessageLine extends CLabel {
 	/*
 	 * @see Widget#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fErrorMsgAreaBackground != null) {
 			fErrorMsgAreaBackground.dispose();

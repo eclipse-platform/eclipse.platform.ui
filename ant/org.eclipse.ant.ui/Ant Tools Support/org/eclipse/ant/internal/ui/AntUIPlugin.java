@@ -78,6 +78,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
 			AntUIImages.disposeImageDescriptorRegistry();
@@ -159,6 +160,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#createImageRegistry()
 	 */
+	@Override
 	protected ImageRegistry createImageRegistry() {
 		return AntUIImages.initializeImageRegistry();
 	}

@@ -41,6 +41,7 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		//create the external tool builder dir

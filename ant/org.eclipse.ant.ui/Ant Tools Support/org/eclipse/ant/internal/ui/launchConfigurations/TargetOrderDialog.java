@@ -226,6 +226,7 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		updateButtons();
 	}

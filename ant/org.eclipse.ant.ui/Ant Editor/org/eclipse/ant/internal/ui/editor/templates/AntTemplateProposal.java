@@ -29,7 +29,8 @@ public class AntTemplateProposal extends TemplateProposal {
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate(org.eclipse.jface.text.IDocument, int, org.eclipse.jface.text.DocumentEvent)
      */
-    public boolean validate(IDocument document, int offset, DocumentEvent event) {
+    @Override
+	public boolean validate(IDocument document, int offset, DocumentEvent event) {
         try {
 			int replaceOffset= getReplaceOffset();
 			if (offset >= replaceOffset) {

@@ -66,6 +66,7 @@ public class AntLineBreakpoint extends LineBreakpoint {
 	 */
 	public AntLineBreakpoint(final IResource resource, final int lineNumber, final Map<String, Object> attributes, final boolean register) throws CoreException {
 	    IWorkspaceRunnable wr= new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 			    IMarker marker = resource.createMarker(IAntDebugConstants.ID_ANT_LINE_BREAKPOINT_MARKER);
 			    setMarker(marker);
@@ -84,6 +85,7 @@ public class AntLineBreakpoint extends LineBreakpoint {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IBreakpoint#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		return IAntDebugConstants.ID_ANT_DEBUG_MODEL;
 	}

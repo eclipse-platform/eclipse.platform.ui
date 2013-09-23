@@ -23,6 +23,7 @@ public class AntModelLabelProvider extends LabelProvider implements IColorProvid
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(Object)
 	 */
+	@Override
 	public Image getImage(Object anElement) {
 		AntElementNode node = (AntElementNode)anElement;
 		return node.getImage();
@@ -31,11 +32,13 @@ public class AntModelLabelProvider extends LabelProvider implements IColorProvid
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(Object)
 	 */
+	@Override
 	public String getText(Object node) {
 		AntElementNode element= (AntElementNode) node;
 		return element.getLabel();
 	}
 
+	@Override
 	public Color getForeground(Object node) {
 		if (node instanceof AntTargetNode && ((AntTargetNode)node).isDefaultTarget() ) {
 			return Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
@@ -44,6 +47,7 @@ public class AntModelLabelProvider extends LabelProvider implements IColorProvid
 		return null;
 	}
 
+	@Override
 	public Color getBackground(Object element) {
 		return null;
 	}

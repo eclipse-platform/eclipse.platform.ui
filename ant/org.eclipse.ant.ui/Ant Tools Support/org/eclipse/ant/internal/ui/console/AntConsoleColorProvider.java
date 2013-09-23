@@ -30,6 +30,7 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#getColor(java.lang.String)
 	 */
+	@Override
 	public Color getColor(String streamIdentifer) {
 		if (streamIdentifer.equals(IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM)) {
 			return AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_INFO_COLOR);
@@ -52,6 +53,7 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#connect(org.eclipse.debug.core.model.IProcess, org.eclipse.debug.ui.console.IConsole)
 	 */
+	@Override
 	public void connect(IProcess process, IConsole console) {
 		//Both remote and local Ant builds are guaranteed to have
 		//an AntStreamsProxy. The remote Ant builds make use of the
@@ -70,6 +72,7 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#isReadOnly()
 	 */
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}
@@ -77,10 +80,12 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 	    final String streamId = getStreamId(event.getProperty());
 		if (streamId != null) {
 			AntUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 				    IOConsoleOutputStream stream = getConsole().getStream(streamId);
 				    if (stream != null) {
@@ -109,6 +114,7 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#disconnect()
 	 */
+	@Override
 	public void disconnect() {
 		AntUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		super.disconnect();

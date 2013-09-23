@@ -40,6 +40,7 @@ public class RemoveProjectAction extends Action implements IUpdate {
 	/**
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		IStructuredSelection selection= (IStructuredSelection) view.getViewer().getSelection();
 		Iterator<?> iter= selection.iterator();
@@ -57,6 +58,7 @@ public class RemoveProjectAction extends Action implements IUpdate {
 	/**
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
+	@Override
 	public void update() {
 		IStructuredSelection selection= (IStructuredSelection) view.getViewer().getSelection();
 		if (selection.isEmpty()) {

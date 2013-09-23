@@ -36,6 +36,7 @@ public abstract class AntDebugElement extends DebugElement {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		return IAntDebugConstants.ID_ANT_DEBUG_MODEL;
 	}

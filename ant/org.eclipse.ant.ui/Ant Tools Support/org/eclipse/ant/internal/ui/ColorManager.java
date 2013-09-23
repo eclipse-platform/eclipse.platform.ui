@@ -37,6 +37,7 @@ public class ColorManager implements ISharedTextColors {
 	
 	protected Map<RGB, Color> fColorTable= new HashMap<RGB, Color>(10);
 	
+	@Override
 	public Color getColor(RGB rgb) {
 		Color color= fColorTable.get(rgb);
 		if (color == null) {
@@ -46,6 +47,7 @@ public class ColorManager implements ISharedTextColors {
 		return color;
 	}
 	
+	@Override
 	public void dispose() {
 		for (Color color : fColorTable.values()) {
 			color.dispose();

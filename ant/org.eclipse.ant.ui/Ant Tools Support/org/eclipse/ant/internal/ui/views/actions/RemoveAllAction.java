@@ -31,6 +31,7 @@ public class RemoveAllAction extends Action implements IUpdate {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAntUIHelpContextIds.REMOVE_ALL_ACTION);
 	}
 	
+	@Override
 	public void run() {
 		boolean proceed = MessageDialog.openQuestion(view.getViewSite().getShell(), AntViewActionMessages.RemoveAllAction_0, AntViewActionMessages.RemoveAllAction_1);
 		if (proceed) {
@@ -41,6 +42,7 @@ public class RemoveAllAction extends Action implements IUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
+	@Override
 	public void update() {
 		setEnabled(view.getViewer().getTree().getItemCount() != 0);
 	}

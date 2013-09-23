@@ -25,6 +25,7 @@ public class DebugElementKindEventDetailWaiter extends DebugElementKindEventWait
 		fDetail = detail;
 	}
 	
+	@Override
 	public boolean accept(DebugEvent event) {
 		return super.accept(event) && fDetail == event.getDetail();
 	}

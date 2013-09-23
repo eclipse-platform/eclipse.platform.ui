@@ -99,6 +99,7 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	 * @see IDebugEventListener
 	 * @see #accept(DebugEvent)
 	 */
+	@Override
 	public synchronized void handleDebugEvents(DebugEvent[] events) {
 		//printReceived(events);
 		for (int i = 0; i < events.length; i++) {

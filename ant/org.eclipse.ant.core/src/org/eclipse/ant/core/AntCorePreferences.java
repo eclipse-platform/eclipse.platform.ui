@@ -80,12 +80,14 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		/* (non-Javadoc)
 		 * @see java.lang.ClassLoader#findClass(java.lang.String)
 		 */
+		@Override
 		public Class<?> findClass(String name) throws ClassNotFoundException {
 			return bundle.loadClass(name);
 		}
 		/* (non-Javadoc)
 		 * @see java.lang.ClassLoader#findResource(java.lang.String)
 		 */
+		@Override
 		public URL findResource(String name) {
 			return bundle.getResource(name);
 		}
@@ -93,12 +95,14 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		/* (non-Javadoc)
 		 * @see java.lang.ClassLoader#findResources(java.lang.String)
 		 */
+		@Override
 		protected Enumeration<URL> findResources(String name) throws IOException {
 			return bundle.getResources(name);
 		}
 		/* (non-Javadoc)
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
+		@Override
 		public boolean equals(Object obj) {
 			if (!(obj instanceof WrappedClassLoader)) {
 				return false;
@@ -108,9 +112,11 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		/* (non-Javadoc)
 		 * @see java.lang.Object#hashCode()
 		 */
+		@Override
 		public int hashCode() {
 			return bundle.hashCode();
 		}
+		@Override
 		public String toString() {
 			return "WrappedClassLoader(" + bundle.toString() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -125,12 +131,14 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			this.to = to;
 		}
 
+		@Override
 		public String toString() {
 			return from.toString() + "->" + (to == null ? IAntCoreConstants.EMPTY_STRING : to.toString()); //$NON-NLS-1$
 		}
 	}
 	
 	private IPreferenceChangeListener prefListener = new IPreferenceChangeListener() {
+		@Override
 		public void preferenceChange(PreferenceChangeEvent event) {
 			String property = event.getKey();
 			if (property.equals(IAntCoreConstants.PREFERENCE_TASKS) || property.startsWith(IAntCoreConstants.PREFIX_TASK)) {
@@ -203,6 +211,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @param event The property change event that has occurred.
 	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(Preferences.PropertyChangeEvent event) {
 		//does nothing any longer, see the IPreferenceChangedListener field 
 	}
@@ -478,6 +487,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @return the default set of URLs defining the Ant classpath
 	 * @deprecated use {@link #getDefaultAntHomeEntries()} instead
 	 */
+	@Deprecated
 	public URL[] getDefaultAntURLs() {
 		IAntClasspathEntry[] entries= getDefaultAntHomeEntries();
 		List<URL> result= new ArrayList<URL>(3);
@@ -593,6 +603,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @return the set of URLs defining the Ant classpath
 	 * @deprecated use getAntHomeClasspathEntries and getToolsJarEntry
 	 */
+	@Deprecated
 	public URL[] getAntURLs() {
 		int extra= 0;
 		IAntClasspathEntry entry= getToolsJarEntry();
@@ -878,6 +889,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @return URL tools.jar URL or <code>null</code>
 	 * @deprecated use getToolsJarEntry()
 	 */
+	@Deprecated
 	public URL getToolsJarURL() {
 		IPath path = new Path(System.getProperty("java.home")); //$NON-NLS-1$
 		IAntClasspathEntry entry= getToolsJarEntry(path);
@@ -979,7 +991,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		 
 		 File[] matches= location.listFiles(
 			 new FilenameFilter() {
-				 public boolean accept(File dir, String name) {
+				 @Override
+				public boolean accept(File dir, String name) {
 					 return name.toLowerCase().endsWith(extension);
 				 }
 			 });
@@ -1440,6 +1453,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @return the URLs defining the Ant classpath
 	 * @deprecated
 	 */
+	@Deprecated
 	public URL[] getCustomURLs() {
 		URL[] urls= new URL[additionalEntries.length];
 		int i;
@@ -1483,6 +1497,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @param urls the URLs defining the Ant classpath
 	 * @deprecated use setAdditionalEntries(IAntClasspathEntry)[]
 	 */
+	@Deprecated
 	public void setCustomURLs(URL[] urls) {
 		additionalEntries= new IAntClasspathEntry[urls.length];
 		for (int i = 0; i < urls.length; i++) {
@@ -1499,6 +1514,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @param urls the URLs defining the Ant classpath
 	 * @deprecated use setAntHomeEntires(IAntClasspathEntry[])
 	 */
+	@Deprecated
 	public void setAntURLs(URL[] urls) {
 		antHomeEntries= new IAntClasspathEntry[urls.length];
 		for (int i = 0; i < urls.length; i++) {

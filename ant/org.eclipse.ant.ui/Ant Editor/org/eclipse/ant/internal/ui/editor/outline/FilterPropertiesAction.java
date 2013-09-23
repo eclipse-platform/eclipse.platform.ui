@@ -34,8 +34,10 @@ public class FilterPropertiesAction extends Action {
 	 * Toggles the filtering of properties from the Ant outline
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		BusyIndicator.showWhile(fPage.getControl().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				fPage.setFilterProperties(isChecked());
 			}

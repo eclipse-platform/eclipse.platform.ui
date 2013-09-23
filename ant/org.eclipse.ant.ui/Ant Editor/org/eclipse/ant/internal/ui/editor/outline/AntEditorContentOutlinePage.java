@@ -95,6 +95,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	 */
 	private class AntOutlineFilter extends ViewerFilter {
 		
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
             if (element instanceof AntElementNode) {
                 AntElementNode node = (AntElementNode) element;
@@ -125,6 +126,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (!(e1 instanceof AntElementNode && e2 instanceof AntElementNode)) {
 				return super.compare(viewer, e1, e2);
@@ -270,6 +272,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.IPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fMenu != null) {
 			fMenu.dispose();
@@ -289,6 +292,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	/**  
 	 * Creates the control (outline view) for this page
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
     
@@ -306,6 +310,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		MenuManager manager= new MenuManager("#PopUp"); //$NON-NLS-1$
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager menuManager) {
 				contextMenuAboutToShow(menuManager);
 			}
@@ -329,6 +334,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		fOpenWithMenu= new AntOpenWithMenu(this.getSite().getPage());
 		
 		viewer.addPostSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				firePostSelectionChanged(event.getSelection());
 			}
@@ -371,9 +377,11 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		
 	private IAntModelListener createAntModelChangeListener() {
 		return new IAntModelListener() {
+			@Override
 			public void antModelChanged(final AntModelChangeEvent event) {
 				if (event.getModel() == fModel && !getControl().isDisposed()) {
 					getControl().getDisplay().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							Control ctrl= getControl();
 							if (ctrl != null && !ctrl.isDisposed()) {
@@ -467,6 +475,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class key) {
 		if (key == IShowInSource.class) {
 			return this;
@@ -477,6 +486,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
 	 */
+	@Override
 	public ShowInContext getShowInContext() {
 		IFile file= null;
 		if (fModel != null) {

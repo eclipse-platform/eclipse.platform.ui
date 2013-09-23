@@ -47,7 +47,8 @@ public abstract class AbstractJavacPatternMatcher implements IPatternMatchListen
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.TextConsole)
      */
-    public void connect(TextConsole console) {
+    @Override
+	public void connect(TextConsole console) {
         fConsole= console;
         IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
 		if (store.getBoolean(IAntUIPreferenceConstants.ANT_CREATE_MARKERS)) {
@@ -59,7 +60,8 @@ public abstract class AbstractJavacPatternMatcher implements IPatternMatchListen
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#disconnect()
      */
-    public void disconnect() {
+    @Override
+	public void disconnect() {
         fConsole = null;
         fFileNameToIFile.clear();
     }

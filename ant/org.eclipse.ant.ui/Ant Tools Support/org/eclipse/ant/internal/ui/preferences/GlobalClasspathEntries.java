@@ -39,6 +39,7 @@ public class GlobalClasspathEntries extends AbstractClasspathEntry {
 		return fChildEntries.contains(entry);
 	}
 	
+	@Override
 	public String toString() {
 		return fName;
 	}

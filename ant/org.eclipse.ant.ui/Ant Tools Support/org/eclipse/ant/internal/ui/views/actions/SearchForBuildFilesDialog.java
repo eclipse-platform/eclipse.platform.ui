@@ -108,6 +108,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	public SearchForBuildFilesDialog() {
 		super(Display.getCurrent().getActiveShell(), AntViewActionMessages.SearchForBuildFilesDialog_Search_for_Build_Files_1, AntViewActionMessages.SearchForBuildFilesDialog__Input,
 				settings.get(IAntUIPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING), new IInputValidator() {
+			@Override
 			public String isValid(String newText) {
 				String trimmedText = newText.trim();
 				if (trimmedText.length() == 0) {
@@ -121,6 +122,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	/**
 	 * Change the label on the "Ok" button and initialize the enabled state
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		getOkButton().setText(AntViewActionMessages.SearchForBuildFilesDialog__Search_4);
@@ -138,6 +140,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	/**
 	 * Add the scope selection widgets to the dialog area
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
 		
@@ -163,6 +166,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		radioComposite.setLayout(radioLayout);
 
 		SelectionAdapter selectionListener= new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleRadioButtonPressed();
 			}
@@ -192,6 +196,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		chooseButton.setFont(font);
 		chooseButton.setText(AntViewActionMessages.SearchForBuildFilesDialog__Choose____8);
 		chooseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleChooseButtonPressed();
 			}
@@ -356,6 +361,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 * When the user presses the search button (tied to the OK id), search the
 	 * workspace for files matching the regular expression in the input field.
 	 */
+	@Override
 	protected void okPressed() {
 		String input = getInput();
 		settings.put(IAntUIPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING, input);
@@ -405,6 +411,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		/**
 		 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
 		 */
+		@Override
 		public boolean visit(IResourceProxy proxy) {
 			if (proxy.getType() == IResource.FILE) {
                 Matcher matcher = pattern.matcher(proxy.getName());
@@ -419,6 +426,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IAntUIHelpContextIds.SEARCH_FOR_BUILDFILES_DIALOG);
@@ -427,6 +435,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.InputDialog#validateInput()
 	 */
+	@Override
 	protected void validateInput() {
 		String errorMessage = null;
 		if (getValidator() != null) {

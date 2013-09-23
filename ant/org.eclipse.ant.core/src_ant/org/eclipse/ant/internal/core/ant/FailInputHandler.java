@@ -18,9 +18,11 @@ import org.apache.tools.ant.input.DefaultInputHandler;
 
 public class FailInputHandler extends DefaultInputHandler {
 	
+	@Override
 	protected InputStream getInputStream() {
 		//ensure any attempts to read input fail
 		return new InputStream(){
+			@Override
 			public int read() throws IOException {
 				throw new IOException();
 			}

@@ -32,7 +32,8 @@ public class TagRule extends MultiLineRule {
         super("<", ">", token); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    protected boolean sequenceDetected(ICharacterScanner scanner, char[] sequence, boolean eofAllowed) {
+    @Override
+	protected boolean sequenceDetected(ICharacterScanner scanner, char[] sequence, boolean eofAllowed) {
         int c = scanner.read();
         if (sequence[0] == '<') {
             if (c == '?') {
@@ -57,7 +58,8 @@ public class TagRule extends MultiLineRule {
      * 
      * @see org.eclipse.jface.text.rules.PatternRule#endSequenceDetected(org.eclipse.jface.text.rules.ICharacterScanner)
      */
-    protected boolean endSequenceDetected(ICharacterScanner scanner) {
+    @Override
+	protected boolean endSequenceDetected(ICharacterScanner scanner) {
         int c;
         while ((c = scanner.read()) != ICharacterScanner.EOF) {
             if (c == fEscapeCharacter) {

@@ -85,7 +85,8 @@ public class OpenLaunchConfigurationDialogTests extends PerformanceTestCase {
     /* (non-Javadoc)
      * @see org.eclipse.test.performance.PerformanceTestCase#setUp()
      */
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
        super.setUp();
        IPreferenceStore debugPreferenceStore = DebugUIPlugin.getDefault().getPreferenceStore();
        debugPreferenceStore.setValue(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED, false);
@@ -98,7 +99,8 @@ public class OpenLaunchConfigurationDialogTests extends PerformanceTestCase {
     /* (non-Javadoc)
      * @see org.eclipse.test.performance.PerformanceTestCase#tearDown()
      */
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         super.tearDown();
         IPreferenceStore debugPreferenceStore = DebugUIPlugin.getDefault().getPreferenceStore();
         debugPreferenceStore.setToDefault(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED);

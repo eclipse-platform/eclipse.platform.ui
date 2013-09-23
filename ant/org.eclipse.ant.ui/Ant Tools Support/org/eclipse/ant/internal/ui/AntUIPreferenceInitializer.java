@@ -29,6 +29,7 @@ public class AntUIPreferenceInitializer extends AbstractPreferenceInitializer {
 	 * 
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
+	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore prefs = AntUIPlugin.getDefault().getPreferenceStore();
 		prefs.setDefault(IAntUIPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, "build.xml"); //$NON-NLS-1$

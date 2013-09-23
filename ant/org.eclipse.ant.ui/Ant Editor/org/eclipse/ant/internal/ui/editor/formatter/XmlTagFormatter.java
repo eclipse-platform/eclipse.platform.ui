@@ -109,7 +109,8 @@ public class XmlTagFormatter {
             fElementName = elementName;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             StringBuffer sb = new StringBuffer(500);
             sb.append('<');
             sb.append(this.getElementName());

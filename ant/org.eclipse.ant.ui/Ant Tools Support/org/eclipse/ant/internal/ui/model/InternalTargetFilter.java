@@ -24,6 +24,7 @@ public class InternalTargetFilter extends ViewerFilter {
 	 * targets are targets which have no description. The default target
 	 * is never considered internal.
 	 */
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		boolean result= true;
 		if (viewer instanceof CheckboxTableViewer) {
@@ -43,6 +44,7 @@ public class InternalTargetFilter extends ViewerFilter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerFilter#filter(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object[])
 	 */
+	@Override
 	public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
 		fFiltered= 0;
 		return super.filter(viewer, parent, elements);

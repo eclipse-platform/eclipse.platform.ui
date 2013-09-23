@@ -28,6 +28,7 @@ public class AntPropertiesValue extends AntDebugElement implements IValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() {
 		return ""; //$NON-NLS-1$
 	}
@@ -35,6 +36,7 @@ public class AntPropertiesValue extends AntDebugElement implements IValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
+	@Override
 	public String getValueString() {
 		return ""; //$NON-NLS-1$
 	}
@@ -42,6 +44,7 @@ public class AntPropertiesValue extends AntDebugElement implements IValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#isAllocated()
 	 */
+	@Override
 	public boolean isAllocated() {
 		return true;
 	}
@@ -49,6 +52,7 @@ public class AntPropertiesValue extends AntDebugElement implements IValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
+	@Override
 	public IVariable[] getVariables() {
 		Collections.sort(fProperties);
 		return fProperties.toArray(new IVariable[fProperties.size()]);
@@ -57,6 +61,7 @@ public class AntPropertiesValue extends AntDebugElement implements IValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
 	 */
+	@Override
 	public boolean hasVariables() {
 		return true;
 	}

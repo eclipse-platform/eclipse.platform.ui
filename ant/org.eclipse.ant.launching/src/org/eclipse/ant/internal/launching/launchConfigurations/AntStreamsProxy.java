@@ -34,6 +34,7 @@ public class AntStreamsProxy implements IStreamsProxy {
 	/**
 	 * @see org.eclipse.debug.core.model.IStreamsProxy#getErrorStreamMonitor()
 	 */
+	@Override
 	public IStreamMonitor getErrorStreamMonitor() {
 		return fErrorMonitor;
 	}
@@ -41,6 +42,7 @@ public class AntStreamsProxy implements IStreamsProxy {
 	/**
 	 * @see org.eclipse.debug.core.model.IStreamsProxy#getOutputStreamMonitor()
 	 */
+	@Override
 	public IStreamMonitor getOutputStreamMonitor() {
 		return fOutputMonitor;
 	}
@@ -48,6 +50,7 @@ public class AntStreamsProxy implements IStreamsProxy {
 	/**
 	 * @see org.eclipse.debug.core.model.IStreamsProxy#write(java.lang.String)
 	 */
+	@Override
 	public void write(String input) {
 		//do nothing
 	}

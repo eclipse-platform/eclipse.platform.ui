@@ -63,7 +63,8 @@ public class AntAntNode extends AntTaskNode {
     /* (non-Javadoc)
      * @see org.eclipse.ant.internal.ui.model.AntElementNode#getReferencedElement(int)
      */
-    public String getReferencedElement(int offset) {
+    @Override
+	public String getReferencedElement(int offset) {
         if (fFile != null) {
             String textToSearch= getAntModel().getText(getOffset(), offset - getOffset());
             if (textToSearch != null && textToSearch.length() != 0) {

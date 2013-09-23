@@ -45,31 +45,38 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	public TestTextCompletionProcessor(AntModel model) {
 		super(model);
         fContentAssistant= new IContentAssistantExtension2() {
-            public void setEmptyMessage(String message) {
+            @Override
+			public void setEmptyMessage(String message) {
             	//do nothing
             }
         
-            public void setStatusMessage(String message) {
+            @Override
+			public void setStatusMessage(String message) {
             	//do nothing
             }
         
-            public void setStatusLineVisible(boolean show) {
+            @Override
+			public void setStatusLineVisible(boolean show) {
             	//do nothing
             }
         
-            public void setShowEmptyList(boolean showEmpty) {
+            @Override
+			public void setShowEmptyList(boolean showEmpty) {
             	//do nothing
             }
         
-            public void setRepeatedInvocationMode(boolean cycling) {
+            @Override
+			public void setRepeatedInvocationMode(boolean cycling) {
             	//do nothing
             }
         
-            public void removeCompletionListener(ICompletionListener listener) {
+            @Override
+			public void removeCompletionListener(ICompletionListener listener) {
             	//do nothing
             }
         
-            public void addCompletionListener(ICompletionListener listener) {
+            @Override
+			public void addCompletionListener(ICompletionListener listener) {
             	//do nothing
             }        
         };
@@ -85,14 +92,16 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 		this((AntModel)null);
 	}
 	
-    public ICompletionProposal[] getAttributeProposals(String taskName, String prefix) {
+    @Override
+	public ICompletionProposal[] getAttributeProposals(String taskName, String prefix) {
     	if (cursorPosition == -1) {
     		cursorPosition= taskName.length();
     	}
         return super.getAttributeProposals(taskName, prefix);
     }
 
-    public Element findChildElementNamedOf(Element anElement, String childElementName) {
+    @Override
+	public Element findChildElementNamedOf(Element anElement, String childElementName) {
         return super.findChildElementNamedOf(anElement, childElementName);
     }
 
@@ -101,7 +110,8 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
         return super.getTaskProposals(new Document(text), parentName, prefix);
     }
     
-    public ICompletionProposal[] getTaskProposals(IDocument document, String parentName, String aPrefix) {
+    @Override
+	public ICompletionProposal[] getTaskProposals(IDocument document, String parentName, String aPrefix) {
     	cursorPosition= Math.max(0, document.getLength() - 1);
     	return super.getTaskProposals(document, parentName, aPrefix);
     }
@@ -114,17 +124,20 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
         return super.getParentName(new Document(text), aLineNumber, aColumnNumber);
     }
     
-    public String getParentName(IDocument doc, int aLineNumber, int aColumnNumber) {
+    @Override
+	public String getParentName(IDocument doc, int aLineNumber, int aColumnNumber) {
     	return super.getParentName(doc, aLineNumber, aColumnNumber);
     }
 
-    public String getPrefixFromDocument(String aDocumentText, int anOffset) {
+    @Override
+	public String getPrefixFromDocument(String aDocumentText, int anOffset) {
         String prefix= super.getPrefixFromDocument(aDocumentText, anOffset);
         currentPrefix= null;
         return prefix;
     }
 
-    public ICompletionProposal[] getPropertyProposals(IDocument document, String prefix, int cursorPos) {
+    @Override
+	public ICompletionProposal[] getPropertyProposals(IDocument document, String prefix, int cursorPos) {
         return super.getPropertyProposals(document, prefix, cursorPos);
     }
 
@@ -133,6 +146,7 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
      * file, which only serves as a dummy.
      * @see org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor#getEditedFile()
      */
+	@Override
 	public File getEditedFile() {
 		if (fEditedFile != null){
 			return fEditedFile;
@@ -166,6 +180,7 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor#getTargetAttributeValueProposals(org.eclipse.jface.text.IDocument, java.lang.String, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public ICompletionProposal[] getTargetAttributeValueProposals(IDocument document, String textToSearch, String prefix, String attributeName) {
 		return super.getTargetAttributeValueProposals(document, textToSearch, prefix, attributeName);
 	}
@@ -173,13 +188,15 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
     /* (non-Javadoc)
      * @see org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor#getAntCallAttributeValueProposals(org.eclipse.jface.text.IDocument, java.lang.String, java.lang.String)
      */
-    public ICompletionProposal[] getAntCallAttributeValueProposals(IDocument document, String prefix, String attributeName) {
+    @Override
+	public ICompletionProposal[] getAntCallAttributeValueProposals(IDocument document, String prefix, String attributeName) {
         return super.getAntCallAttributeValueProposals(document, prefix, attributeName);
     }
 	/**
 	 * Since the testing occurs without necessarily having an associated viewer, return
 	 * a dummy value.
 	 */
+	@Override
 	protected char getPreviousChar() {
 		return '?';
 	}
@@ -187,7 +204,8 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	 /**
      * Returns whether the specified task name is known.
      */
-    protected boolean isKnownElement(String elementName) {
+    @Override
+	protected boolean isKnownElement(String elementName) {
     	if (antModel != null) {
     		return super.isKnownElement(elementName);
     	} 
@@ -197,6 +215,7 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor#getProposalsFromDocument(org.eclipse.jface.text.IDocument, java.lang.String)
 	 */
+	@Override
 	public ICompletionProposal[] getProposalsFromDocument(IDocument document, String prefix) {
 		return super.getProposalsFromDocument(document, prefix);
 	}

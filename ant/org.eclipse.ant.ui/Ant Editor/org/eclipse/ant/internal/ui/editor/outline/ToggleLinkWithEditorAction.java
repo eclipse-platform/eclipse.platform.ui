@@ -38,6 +38,7 @@ public class ToggleLinkWithEditorAction extends Action {
 		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_LINK_WITH_EDITOR));
 	}
 	
+	@Override
 	public void run() {
 		AntUIPlugin.getDefault().getPreferenceStore().setValue(IAntUIPreferenceConstants.OUTLINE_LINK_WITH_EDITOR, isChecked());
 		if (isChecked())

@@ -19,6 +19,7 @@ public class TestProblemRequestor implements IProblemRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ant.internal.ui.editor.outline.IProblem)
 	 */
+	@Override
 	public void acceptProblem(IProblem problem) {
 		//do nothing
 
@@ -27,6 +28,7 @@ public class TestProblemRequestor implements IProblemRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor#beginReporting()
 	 */
+	@Override
 	public void beginReporting() {
 		//do nothing
 
@@ -35,6 +37,7 @@ public class TestProblemRequestor implements IProblemRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor#endReporting()
 	 */
+	@Override
 	public void endReporting() {
 		//do nothing
 	}

@@ -25,6 +25,7 @@ public class LaunchConfigurationBuildfileRenameParticipant extends RenamePartici
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
 	 */
+	@Override
 	protected boolean initialize(Object element) {
 		fFile= (IFile) element;
 		return true;
@@ -33,6 +34,7 @@ public class LaunchConfigurationBuildfileRenameParticipant extends RenamePartici
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
 	 */
+	@Override
 	public String getName() {
 		return RefactoringMessages.LaunchConfigurationParticipant_0; 
 	}
@@ -40,6 +42,7 @@ public class LaunchConfigurationBuildfileRenameParticipant extends RenamePartici
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
 	 */
+	@Override
 	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) {
 		return new RefactoringStatus();
 	}
@@ -47,6 +50,7 @@ public class LaunchConfigurationBuildfileRenameParticipant extends RenamePartici
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException {
         return LaunchConfigurationBuildfileChange.createChangesForBuildfileRename(fFile, getArguments().getNewName());
 	}

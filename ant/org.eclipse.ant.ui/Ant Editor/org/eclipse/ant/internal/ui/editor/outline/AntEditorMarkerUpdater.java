@@ -50,6 +50,7 @@ public class AntEditorMarkerUpdater {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.internal.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public IStatus runInWorkspace(IProgressMonitor monitor) {
 			updateMarkers0(fProblems);
 			return new Status(IStatus.OK, AntUIPlugin.getUniqueIdentifier(), IStatus.OK, IAntCoreConstants.EMPTY_STRING, null);

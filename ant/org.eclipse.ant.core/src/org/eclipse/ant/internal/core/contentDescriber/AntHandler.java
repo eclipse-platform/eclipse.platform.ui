@@ -140,7 +140,8 @@ public final class AntHandler extends DefaultHandler {
      * of the DTD is ok, as only the System ID of the DTD declaration is used.
      * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
      */
-    public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
+    @Override
+	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
         return new InputSource(new StringReader(IAntCoreConstants.EMPTY_STRING));
     }
 
@@ -150,7 +151,8 @@ public final class AntHandler extends DefaultHandler {
      * @see org.xml.sax.ContentHandler#startElement(java.lang.String,
      *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */
-    public final void startElement(final String uri, final String elementName, final String qualifiedName, final Attributes attributes) throws SAXException {
+    @Override
+	public final void startElement(final String uri, final String elementName, final String qualifiedName, final Attributes attributes) throws SAXException {
     	fLevel++;
         if (fTopElementFound == null) {
             fTopElementFound = elementName;
@@ -182,7 +184,8 @@ public final class AntHandler extends DefaultHandler {
     /* (non-Javadoc)
      * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
      */
-    public void endElement(String uri, String localName, String qName) throws SAXException {
+    @Override
+	public void endElement(String uri, String localName, String qName) throws SAXException {
     	super.endElement(uri, localName, qName);
     	fLevel--;
     }

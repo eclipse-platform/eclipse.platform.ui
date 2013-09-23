@@ -38,7 +38,8 @@ public class AntClassLoader extends URLClassLoader {
     /*
      * @see java.net.URLClassLoader#findClass(java.lang.String)
      */
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
+    @Override
+	protected Class<?> findClass(String name) throws ClassNotFoundException {
         Class<?> result = null;
         //check whether to load the Apache Ant classes from the plug-in class loaders 
         //or to only load from the URLs specified from the Ant runtime classpath preferences setting
@@ -81,7 +82,8 @@ public class AntClassLoader extends URLClassLoader {
     /*
      * @see java.net.URLClassLoader#findResource(java.lang.String)
      */
-    public URL findResource(String name) {
+    @Override
+	public URL findResource(String name) {
     	 if (fAllowPluginLoading || !(name.startsWith(ANT_URL_PREFIX))) {
              URL result = findResourcePlugins(name);
              if (result != null) {
@@ -118,7 +120,8 @@ public class AntClassLoader extends URLClassLoader {
     /*
      * @see java.net.URLClassLoader#findResources(java.lang.String)
      */
-    public Enumeration<URL> findResources(String name) throws IOException {
+    @Override
+	public Enumeration<URL> findResources(String name) throws IOException {
     	ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
     	if (fContextClassloader != null) {
     		Thread.currentThread().setContextClassLoader(fContextClassloader);

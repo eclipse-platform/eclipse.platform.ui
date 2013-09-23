@@ -24,6 +24,7 @@ public class TargetTableLabelProvider extends AntModelLabelProvider implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 	 */
+	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		if (columnIndex == 0) {
 			return getImage(element);
@@ -34,6 +35,7 @@ public class TargetTableLabelProvider extends AntModelLabelProvider implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 	 */
+	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		if (columnIndex == 0){
 			return getText(element);

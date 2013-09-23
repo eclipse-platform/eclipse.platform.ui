@@ -37,6 +37,7 @@ public class Attribute extends Atom implements IAttribute {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#getType()
 	 */
+	@Override
 	public String getType() {
 		return fType;
 	}
@@ -44,6 +45,7 @@ public class Attribute extends Atom implements IAttribute {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#getEnum()
 	 */
+	@Override
 	public String[] getEnum() {
 		return fEnum;
 	}
@@ -51,6 +53,7 @@ public class Attribute extends Atom implements IAttribute {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#getElement()
 	 */
+	@Override
 	public IElement getElement() {
 		return fElement;
 	}
@@ -58,6 +61,7 @@ public class Attribute extends Atom implements IAttribute {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#getDefault()
 	 */
+	@Override
 	public String getDefault() {
 		return fDefault;
 	}
@@ -65,6 +69,7 @@ public class Attribute extends Atom implements IAttribute {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#isFixed()
 	 */
+	@Override
 	public boolean isFixed() {
 		return fFixed;
 	}
@@ -72,6 +77,7 @@ public class Attribute extends Atom implements IAttribute {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#isRequired()
 	 */
+	@Override
 	public boolean isRequired() {
 		return fRequired;
 	}

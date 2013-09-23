@@ -59,6 +59,7 @@ public class AntLaunching extends Plugin {
 	 *             {@link IJavaLaunchConfigurationConstants#ATTR_CLASSPATH_PROVIDER}
 	 * @see IJavaLaunchConfigurationConstants#ATTR_DEFAULT_CLASSPATH
 	 */
+	@Deprecated
 	public static final String ATTR_ANT_CUSTOM_CLASSPATH = IExternalToolConstants.UI_PLUGIN_ID
 			+ ".ATTR_ANT_CUSTOM_CLASSPATH"; //$NON-NLS-1$
 	/**
@@ -70,6 +71,7 @@ public class AntLaunching extends Plugin {
 	 *             {@link IJavaLaunchConfigurationConstants#ATTR_CLASSPATH_PROVIDER}
 	 * @see IJavaLaunchConfigurationConstants#ATTR_DEFAULT_CLASSPATH
 	 */
+	@Deprecated
 	public static final String ATTR_ANT_HOME = IExternalToolConstants.UI_PLUGIN_ID
 			+ ".ATTR_ANT_HOME"; //$NON-NLS-1$
 	
@@ -93,6 +95,7 @@ public class AntLaunching extends Plugin {
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -102,6 +105,7 @@ public class AntLaunching extends Plugin {
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);

@@ -48,6 +48,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkExit(int)
 	 */
+	@Override
 	public void checkExit(int status) {
 		//no exit allowed from the restricted thread...System.exit is being called
 		//by some ant task...do not want Eclipse to exit if
@@ -62,6 +63,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkAccept(java.lang.String, int)
 	 */
+	@Override
 	public void checkAccept(String host, int port) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkAccept(host, port);
@@ -71,6 +73,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkAccess(java.lang.Thread)
 	 */
+	@Override
 	public void checkAccess(Thread t) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkAccess(t);
@@ -80,6 +83,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkAccess(java.lang.ThreadGroup)
 	 */
+	@Override
 	public void checkAccess(ThreadGroup g) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkAccess(g);
@@ -89,6 +93,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkAwtEventQueueAccess()
 	 */
+	@Override
 	public void checkAwtEventQueueAccess() {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkAwtEventQueueAccess();
@@ -98,6 +103,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkConnect(java.lang.String, int, java.lang.Object)
 	 */
+	@Override
 	public void checkConnect(String host, int port, Object context) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkConnect(host, port, context);
@@ -107,6 +113,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkConnect(java.lang.String, int)
 	 */
+	@Override
 	public void checkConnect(String host, int port) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkConnect(host, port);
@@ -116,6 +123,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkCreateClassLoader()
 	 */
+	@Override
 	public void checkCreateClassLoader() {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkCreateClassLoader();
@@ -125,6 +133,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkDelete(java.lang.String)
 	 */
+	@Override
 	public void checkDelete(String file) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkDelete(file);
@@ -134,6 +143,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkExec(java.lang.String)
 	 */
+	@Override
 	public void checkExec(String cmd) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkExec(cmd);
@@ -143,6 +153,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkLink(java.lang.String)
 	 */
+	@Override
 	public void checkLink(String lib) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkLink(lib);
@@ -152,6 +163,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkListen(int)
 	 */
+	@Override
 	public void checkListen(int port) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkListen(port);
@@ -161,6 +173,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkMemberAccess(java.lang.Class, int)
 	 */
+	@Override
 	public void checkMemberAccess(Class<?> clazz, int which) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkMemberAccess(clazz, which);
@@ -171,6 +184,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkMulticast(java.net.InetAddress, byte)
 	 * @deprecated
 	 */
+	@Deprecated
+	@Override
 	public void checkMulticast(InetAddress maddr, byte ttl) {
 		if (fSecurityManager != null) {
 			String host = maddr.getHostAddress();
@@ -184,6 +199,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkMulticast(java.net.InetAddress)
 	 */
+	@Override
 	public void checkMulticast(InetAddress maddr) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkMulticast(maddr);
@@ -193,6 +209,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkPackageAccess(java.lang.String)
 	 */
+	@Override
 	public void checkPackageAccess(String pkg) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkPackageAccess(pkg);
@@ -202,6 +219,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkPackageDefinition(java.lang.String)
 	 */
+	@Override
 	public void checkPackageDefinition(String pkg) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkPackageDefinition(pkg);
@@ -211,6 +229,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkPermission(java.security.Permission, java.lang.Object)
 	 */
+	@Override
 	public void checkPermission(Permission perm, Object context) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkPermission(perm, context);
@@ -220,6 +239,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkPermission(java.security.Permission)
 	 */
+	@Override
 	public void checkPermission(Permission perm) {
 		if (!fAllowSettingSystemProperties && fgPropertyPermission.implies(perm) && fRestrictedThread == Thread.currentThread()) {
 			//attempting to write a system property
@@ -233,6 +253,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkPrintJobAccess()
 	 */
+	@Override
 	public void checkPrintJobAccess() {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkPrintJobAccess();
@@ -242,6 +263,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkPropertiesAccess()
 	 */
+	@Override
 	public void checkPropertiesAccess() {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkPropertiesAccess();
@@ -252,6 +274,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkPropertyAccess(java.lang.String)
 	 */
+	@Override
 	public void checkPropertyAccess(String key) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkPropertyAccess(key);
@@ -261,6 +284,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkRead(java.io.FileDescriptor)
 	 */
+	@Override
 	public void checkRead(FileDescriptor fd) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkRead(fd);
@@ -270,6 +294,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkRead(java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void checkRead(String file, Object context) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkRead(file, context);
@@ -279,6 +304,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkRead(java.lang.String)
 	 */
+	@Override
 	public void checkRead(String file) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkRead(file);
@@ -288,6 +314,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkSecurityAccess(java.lang.String)
 	 */
+	@Override
 	public void checkSecurityAccess(String target) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkSecurityAccess(target);
@@ -297,6 +324,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkSetFactory()
 	 */
+	@Override
 	public void checkSetFactory() {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkSetFactory();
@@ -306,6 +334,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkSystemClipboardAccess()
 	 */
+	@Override
 	public void checkSystemClipboardAccess() {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkSystemClipboardAccess();
@@ -315,6 +344,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkTopLevelWindow(java.lang.Object)
 	 */
+	@Override
 	public boolean checkTopLevelWindow(Object window) {
 		if (fSecurityManager != null) {
 			return fSecurityManager.checkTopLevelWindow(window);
@@ -325,6 +355,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkWrite(java.io.FileDescriptor)
 	 */
+	@Override
 	public void checkWrite(FileDescriptor fd) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkWrite(fd);
@@ -334,6 +365,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkWrite(java.lang.String)
 	 */
+	@Override
 	public void checkWrite(String file) {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkWrite(file);
@@ -344,6 +376,8 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#getInCheck()
 	 * @deprecated
 	 */
+	@Deprecated
+	@Override
 	public boolean getInCheck() {
 		if (fSecurityManager != null) {
 			return fSecurityManager.getInCheck();
@@ -354,6 +388,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#getSecurityContext()
 	 */
+	@Override
 	public Object getSecurityContext() {
 		if (fSecurityManager != null) {
 			return fSecurityManager.getSecurityContext();
@@ -364,6 +399,7 @@ public class AntSecurityManager extends SecurityManager {
 	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#getThreadGroup()
 	 */
+	@Override
 	public ThreadGroup getThreadGroup() {
 		if (fSecurityManager != null) {
 			fSecurityManager.getThreadGroup();

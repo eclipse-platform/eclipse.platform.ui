@@ -40,10 +40,12 @@ public class AntImportNode extends AntTaskNode {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#getBaseImageDescriptor()
 	 */
+	@Override
 	protected ImageDescriptor getBaseImageDescriptor() {
 		return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_IMPORT);
 	}
 	
+	@Override
 	public String getLabel() {
 	    if (fLabel == null) {
 	        StringBuffer label= new StringBuffer(getTask().getTaskName());
@@ -62,6 +64,7 @@ public class AntImportNode extends AntTaskNode {
 	 * Execute the import.
 	 * Returns <code>true</code> as the import adds to the Ant model
 	 */
+	@Override
 	public boolean configure(boolean validateFully) {
 		if (fConfigured) {
 			return false;
@@ -80,6 +83,7 @@ public class AntImportNode extends AntTaskNode {
 		return false;
 	}
 	
+	@Override
 	public IFile getIFile() {
 		IFile file;
 		if (isExternal()) {
@@ -94,6 +98,7 @@ public class AntImportNode extends AntTaskNode {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getReferencedElement(int)
 	 */
+	@Override
 	public String getReferencedElement(int offset) {
 		if (fFile != null) {
 			String textToSearch= getAntModel().getText(getOffset(), offset - getOffset());

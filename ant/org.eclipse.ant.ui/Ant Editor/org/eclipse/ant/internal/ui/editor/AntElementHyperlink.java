@@ -29,28 +29,32 @@ public class AntElementHyperlink implements IHyperlink {
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkRegion()
      */
-    public IRegion getHyperlinkRegion() {
+    @Override
+	public IRegion getHyperlinkRegion() {
         return fRegion;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.hyperlink.IHyperlink#getTypeLabel()
      */
-    public String getTypeLabel() {
+    @Override
+	public String getTypeLabel() {
         return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkText()
      */
-    public String getHyperlinkText() {
+    @Override
+	public String getHyperlinkText() {
         return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.hyperlink.IHyperlink#open()
      */
-    public void open() {
+    @Override
+	public void open() {
         fEditor.openTarget(fLinkTarget);
     }
 }

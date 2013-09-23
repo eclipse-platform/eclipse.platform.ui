@@ -35,6 +35,7 @@ public class NotifyingReconciler extends MonoReconciler {
 	/*
 	 * @see org.eclipse.jface.text.reconciler.AbstractReconciler#process(org.eclipse.jface.text.reconciler.DirtyRegion)
 	 */
+	@Override
 	protected void process(DirtyRegion dirtyRegion) {
 		super.process(dirtyRegion);
 		notifyReconcilingParticipants();
@@ -57,6 +58,7 @@ public class NotifyingReconciler extends MonoReconciler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.reconciler.AbstractReconciler#initialProcess()
 	 */
+	@Override
 	protected void initialProcess() {
 		super.initialProcess();
 		notifyReconcilingParticipants();

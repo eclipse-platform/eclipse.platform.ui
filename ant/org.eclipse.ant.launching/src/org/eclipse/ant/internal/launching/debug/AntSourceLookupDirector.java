@@ -23,6 +23,7 @@ public class AntSourceLookupDirector extends AbstractSourceLookupDirector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#initializeParticipants()
 	 */
+	@Override
 	public void initializeParticipants() {
 		addParticipants(new ISourceLookupParticipant[]{new AntSourceLookupParticipant()});
 	}
@@ -30,7 +31,8 @@ public class AntSourceLookupDirector extends AbstractSourceLookupDirector {
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
      */
-    public String getMemento() throws CoreException {
+    @Override
+	public String getMemento() throws CoreException {
         return null;
     }
 }

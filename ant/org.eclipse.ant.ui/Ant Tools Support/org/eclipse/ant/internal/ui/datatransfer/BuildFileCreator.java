@@ -309,7 +309,8 @@ public class BuildFileCreator
         File dir = new File(projectRoot);
         FilenameFilter filter = new FilenameFilter()
         {
-            public boolean accept(File acceptDir, String name)
+            @Override
+			public boolean accept(File acceptDir, String name)
             {
                 return name.endsWith(".xml"); //$NON-NLS-1$
             }

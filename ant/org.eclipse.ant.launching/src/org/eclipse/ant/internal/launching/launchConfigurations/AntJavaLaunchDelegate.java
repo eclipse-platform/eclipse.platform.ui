@@ -24,6 +24,7 @@ public class AntJavaLaunchDelegate extends JavaLaunchDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean preLaunchCheck(ILaunchConfiguration configuration,String mode, IProgressMonitor monitor) throws CoreException {
 		try {
 			return super.preLaunchCheck(configuration, mode, monitor);
@@ -37,6 +38,7 @@ public class AntJavaLaunchDelegate extends JavaLaunchDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		try {
 			return super.getProgramArguments(configuration);

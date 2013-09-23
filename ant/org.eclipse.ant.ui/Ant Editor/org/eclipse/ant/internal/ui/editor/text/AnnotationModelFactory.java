@@ -21,7 +21,8 @@ public class AnnotationModelFactory implements IAnnotationModelFactory {
     /* (non-Javadoc)
      * @see org.eclipse.core.filebuffers.IAnnotationModelFactory#createAnnotationModel(org.eclipse.core.runtime.IPath)
      */
-    public IAnnotationModel createAnnotationModel(IPath location) {
+    @Override
+	public IAnnotationModel createAnnotationModel(IPath location) {
         IFile file = FileBuffers.getWorkspaceFileAtLocation(location);
         if (file == null) {
             return new AntExternalAnnotationModel();

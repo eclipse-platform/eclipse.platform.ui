@@ -68,10 +68,12 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 		factory.setFree(dfm);
 	}
 	
+	@Override
 	public boolean isAccepting() {
 		return accepting;
 	}
 	
+	@Override
 	public IDfm advance(String name) {
 		if (any)
 			return this;
@@ -85,6 +87,7 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 		return dfm;
 	}
 	
+	@Override
 	public String[] getAccepts() {
 		if (keys == null)
 			return new String[0];
@@ -119,6 +122,7 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next()
 	 */
+	@Override
 	public FactoryObject next() {
 		return fNext;
 	}
@@ -126,6 +130,7 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next(org.eclipse.ant.internal.ui.dtd.util.FactoryObject)
 	 */
+	@Override
 	public void next(FactoryObject obj) {
 		fNext = (Dfm) obj;
 	}
@@ -133,6 +138,7 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.dtd.IDfm#isAny()
 	 */
+	@Override
 	public boolean isAny() {
 		return any;
 	}
@@ -140,6 +146,7 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.dtd.IDfm#isEmpty()
 	 */
+	@Override
 	public boolean isEmpty() {
 		return empty;
 	}
@@ -147,6 +154,7 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.dtd.IDfm#getAtom(java.lang.String)
 	 */
+	@Override
 	public IAtom getAtom(String name) {
 		Object[] allKeys = getKeys();
 		if (empty || allKeys == null){
@@ -163,6 +171,7 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.dtd.IDfm#advance(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public IDfm advance(String namespace, String localname) {
 		// no namespace support here
 		return advance(localname);

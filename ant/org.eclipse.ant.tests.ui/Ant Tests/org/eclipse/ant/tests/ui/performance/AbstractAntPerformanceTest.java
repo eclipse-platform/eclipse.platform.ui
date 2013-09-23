@@ -24,6 +24,7 @@ public abstract class AbstractAntPerformanceTest extends PerformanceTestCase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.test.performance.PerformanceTestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		AbstractAntUITest.assertProject();

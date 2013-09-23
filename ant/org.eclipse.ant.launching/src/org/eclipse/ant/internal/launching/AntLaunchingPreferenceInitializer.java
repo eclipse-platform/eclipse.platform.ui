@@ -28,6 +28,7 @@ public class AntLaunchingPreferenceInitializer extends
 	 * @seeorg.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#
 	 * initializeDefaultPreferences()
 	 */
+	@Override
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences node = DefaultScope.INSTANCE.getNode(AntLaunching.getUniqueIdentifier());
 		if(node != null) {

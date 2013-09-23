@@ -18,7 +18,8 @@ public class JavacPatternMatcher extends AbstractJavacPatternMatcher {
     /*
      *     [javac] /Users/kevinbarnes/Eclipse/runtime-workspace/Foo/src/CarriageReturn.java:4: ';' expected
      */
-    public void matchFound(PatternMatchEvent event) {
+    @Override
+	public void matchFound(PatternMatchEvent event) {
         String matchedText= getMatchedText(event);
         if (matchedText == null) {
             return;

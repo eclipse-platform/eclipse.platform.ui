@@ -58,6 +58,7 @@ class AntPreviewerUpdater {
 			/*
 			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 			 */
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals(JFaceResources.TEXT_FONT)) {
 					Font font= JFaceResources.getFont(JFaceResources.TEXT_FONT);
@@ -69,6 +70,7 @@ class AntPreviewerUpdater {
 			/*
 			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 			 */
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				
 				String property= event.getProperty();
@@ -107,6 +109,7 @@ class AntPreviewerUpdater {
 			/*
 			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
 			 */
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				preferenceStore.removePropertyChangeListener(propertyChangeListener);
 				JFaceResources.getFontRegistry().removeListener(fontChangeListener);

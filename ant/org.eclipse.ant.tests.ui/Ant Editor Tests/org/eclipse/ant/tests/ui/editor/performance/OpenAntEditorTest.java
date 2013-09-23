@@ -26,6 +26,7 @@ import org.eclipse.ui.PartInitException;
 
 public class OpenAntEditorTest extends AbstractAntPerformanceTest {
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		EditorTestHelper.runEventQueue();

@@ -36,6 +36,7 @@ public class EditorImageDescriptor extends ImageDescriptor {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof EditorImageDescriptor)) {
 			return false;
@@ -60,6 +61,7 @@ public class EditorImageDescriptor extends ImageDescriptor {
 	/**
 	 * @see org.eclipse.jface.resource.ImageDescriptor#getImageData()
 	 */
+	@Override
 	public ImageData getImageData() {
 		
 		ImageData defaultImage = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE).getImageData();
@@ -82,6 +84,7 @@ public class EditorImageDescriptor extends ImageDescriptor {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		String programName = program.getName();
 		if (programName == null) {

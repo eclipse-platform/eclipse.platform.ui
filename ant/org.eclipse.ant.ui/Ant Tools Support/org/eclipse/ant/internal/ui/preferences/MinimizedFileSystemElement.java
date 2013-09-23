@@ -51,6 +51,7 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	/**
 	 * Returns the adapter
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == IWorkbenchAdapter.class) {
 			return this;
@@ -184,6 +185,7 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	/**
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(Object o) {
 		return getFolders().toArray();
 	}
@@ -191,6 +193,7 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	/**
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		if (isDirectory()) {
 			return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
@@ -201,6 +204,7 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	/**
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 	 */
+	@Override
 	public String getLabel(Object o) {
 		return name;
 	}
@@ -208,6 +212,7 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	/**
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
 	 */
+	@Override
 	public Object getParent(Object o) {
 		return parent;
 	}

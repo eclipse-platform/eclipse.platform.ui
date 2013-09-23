@@ -58,6 +58,7 @@ public class AntMigrationDelegate implements ILaunchConfigurationMigrationDelega
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate#isCandidate()
 	 */
+	@Override
 	public boolean isCandidate(ILaunchConfiguration candidate) throws CoreException {
 		IResource[] mappedResources = candidate.getMappedResources();
 		if (mappedResources != null && mappedResources.length > 0) {
@@ -69,6 +70,7 @@ public class AntMigrationDelegate implements ILaunchConfigurationMigrationDelega
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate#migrate(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void migrate(ILaunchConfiguration candidate) throws CoreException {
 		IFile file = getFileForCandidate(candidate);
 		ILaunchConfigurationWorkingCopy wc = candidate.getWorkingCopy();

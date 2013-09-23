@@ -85,6 +85,7 @@ public final class AntBuildfileContentDescriber extends XMLContentDescriber impl
 	/* (Intentionally not included in javadoc)
 	 * @see IContentDescriber#describe(InputStream, IContentDescription)
 	 */
+	@Override
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
 		// call the basic XML describer to do basic recognition
 		if (super.describe(contents, description) == INVALID) {
@@ -99,6 +100,7 @@ public final class AntBuildfileContentDescriber extends XMLContentDescriber impl
 	/* (Intentionally not included in javadoc)
 	 * @see IContentDescriber#describe(Reader, IContentDescription)
 	 */
+	@Override
 	public int describe(Reader contents, IContentDescription description) throws IOException {
 		// call the basic XML describer to do basic recognition
 		if (super.describe(contents, description) == INVALID) {
@@ -113,7 +115,8 @@ public final class AntBuildfileContentDescriber extends XMLContentDescriber impl
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
      */
-    public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
+    @Override
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
     	//do nothing
     }
 }

@@ -26,6 +26,7 @@ public class DebugElementEventWaiter extends DebugEventWaiter {
 		fElement = element;
 	}
 	
+	@Override
 	public boolean accept(DebugEvent event) {
 		return super.accept(event) && fElement == event.getSource();
 	}

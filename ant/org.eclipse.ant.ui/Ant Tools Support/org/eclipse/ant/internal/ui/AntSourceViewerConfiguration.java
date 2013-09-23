@@ -62,6 +62,7 @@ public class AntSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 	    PresentationReconciler reconciler = new PresentationReconciler();
 	    reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
@@ -168,6 +169,7 @@ public class AntSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredContentTypes(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 	    return new String[] {
 	        IDocument.DEFAULT_CONTENT_TYPE,
@@ -180,6 +182,7 @@ public class AntSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTabWidth(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	public int getTabWidth(ISourceViewer sourceViewer) {
 		return fPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
 	}
@@ -197,6 +200,7 @@ public class AntSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		return AntDocumentSetupParticipant.ANT_PARTITIONING;
 	}
@@ -204,6 +208,7 @@ public class AntSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getDoubleClickStrategy(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
 	 */
+	@Override
 	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
 		if (AntEditorPartitionScanner.XML_TAG.equals(contentType)) {
 			return new AntDoubleClickStrategy();

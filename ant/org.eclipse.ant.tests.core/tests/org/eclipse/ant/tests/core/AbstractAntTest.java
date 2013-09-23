@@ -60,6 +60,7 @@ public abstract class AbstractAntTest extends TestCase {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		assertProject();
@@ -77,6 +78,7 @@ public abstract class AbstractAntTest extends TestCase {
 			final IWorkbench wb = PlatformUI.getWorkbench();
 			if(wb != null) {
 				UIJob job = new UIJob("close welcome screen for Ant test suite") { //$NON-NLS-1$
+					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
 						if(window != null) {

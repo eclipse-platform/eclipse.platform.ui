@@ -79,7 +79,8 @@ public class RemoteAntBuildLogger extends DefaultLogger {
     /* (non-Javadoc)
      * @see org.apache.tools.ant.DefaultLogger#printMessage(java.lang.String, java.io.PrintStream, int)
      */
-    protected void printMessage(String message, PrintStream stream, int priority) {
+    @Override
+	protected void printMessage(String message, PrintStream stream, int priority) {
         marshalMessage(priority, message);
     }
     
@@ -141,7 +142,8 @@ public class RemoteAntBuildLogger extends DefaultLogger {
     /* (non-Javadoc)
      * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
      */
-    public void buildFinished(BuildEvent event) {
+    @Override
+	public void buildFinished(BuildEvent event) {
         if (!fSentProcessId) {
             establishConnection();
         }
@@ -210,7 +212,8 @@ public class RemoteAntBuildLogger extends DefaultLogger {
     /* (non-Javadoc)
      * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
      */
-    public void targetStarted(BuildEvent event) {
+    @Override
+	public void targetStarted(BuildEvent event) {
         if (!fSentProcessId) {
             establishConnection();
         }
@@ -243,7 +246,8 @@ public class RemoteAntBuildLogger extends DefaultLogger {
     /* (non-Javadoc)
      * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
      */
-    public void messageLogged(BuildEvent event) {
+    @Override
+	public void messageLogged(BuildEvent event) {
         if (event.getPriority() > msgOutputLevel && event.getPriority() != InternalAntRunner.MSG_PROJECT_HELP) {
             return;
         }
@@ -385,7 +389,8 @@ public class RemoteAntBuildLogger extends DefaultLogger {
     /* (non-Javadoc)
      * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
      */
-    public void buildStarted(BuildEvent event) {
+    @Override
+	public void buildStarted(BuildEvent event) {
         establishConnection();
         super.buildStarted(event);
     }

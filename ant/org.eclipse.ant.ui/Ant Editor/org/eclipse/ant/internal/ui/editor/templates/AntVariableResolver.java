@@ -24,6 +24,7 @@ public class AntVariableResolver extends TemplateVariableResolver {
 	
 	Comparator<String> comparator = new Comparator<String>() {
 
+		@Override
 		public int compare(String o1, String o2) {
 			return getCommonPrefixLength(getType(), o2) - getCommonPrefixLength(getType(), o1);
 		}
@@ -43,6 +44,7 @@ public class AntVariableResolver extends TemplateVariableResolver {
 	/*
 	 * @see org.eclipse.jface.text.templates.TemplateVariableResolver#resolveAll(org.eclipse.jface.text.templates.TemplateContext)
 	 */
+	@Override
 	protected String[] resolveAll(TemplateContext context) {
 		String[] proposals= new String[] { "${srcDir}", "${dstDir}" }; //$NON-NLS-1$ //$NON-NLS-2$
 		Arrays.sort(proposals, comparator);

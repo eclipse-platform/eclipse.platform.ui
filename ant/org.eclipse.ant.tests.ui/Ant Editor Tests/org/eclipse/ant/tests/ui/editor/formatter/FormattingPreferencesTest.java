@@ -25,10 +25,12 @@ public class FormattingPreferencesTest extends AbstractAntUITest {
         
         // test spaces 
         prefs = new FormattingPreferences(){
-            public int getTabWidth() {                
+            @Override
+			public int getTabWidth() {                
                 return 3;
             }
-            public boolean useSpacesInsteadOfTabs() {
+            @Override
+			public boolean useSpacesInsteadOfTabs() {
                 return true;
             }
         };        
@@ -36,10 +38,12 @@ public class FormattingPreferencesTest extends AbstractAntUITest {
         
         // ensure the value is not hard coded
         prefs = new FormattingPreferences(){
-            public int getTabWidth() {                
+            @Override
+			public int getTabWidth() {                
                 return 7;
             }
-            public boolean useSpacesInsteadOfTabs() {
+            @Override
+			public boolean useSpacesInsteadOfTabs() {
                 return true;
             }
         };        
@@ -47,10 +51,12 @@ public class FormattingPreferencesTest extends AbstractAntUITest {
         
         // use tab character
         prefs = new FormattingPreferences(){
-            public int getTabWidth() {                
+            @Override
+			public int getTabWidth() {                
                 return 7;
             }
-            public boolean useSpacesInsteadOfTabs() {
+            @Override
+			public boolean useSpacesInsteadOfTabs() {
                 return false;
             }
         };        

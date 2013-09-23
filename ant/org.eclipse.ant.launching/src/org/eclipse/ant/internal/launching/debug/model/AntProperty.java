@@ -40,6 +40,7 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 	/*
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
+	@Override
 	public IValue getValue() {
 		return fValue;
 	}
@@ -47,6 +48,7 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 	/*
 	 * @see org.eclipse.debug.core.model.IVariable#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -54,6 +56,7 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 	/*
 	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() {
 		return ""; //$NON-NLS-1$
 	}
@@ -61,6 +64,7 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 	/*
 	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
 	 */
+	@Override
 	public boolean hasValueChanged() {
 		return false;
 	}
@@ -68,6 +72,7 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 	/*
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
 	 */
+	@Override
 	public void setValue(String expression) {
 		//do nothing
 	}
@@ -75,6 +80,7 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 	/*
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	public void setValue(IValue value) {
 		//do nothing
 	}
@@ -82,6 +88,7 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 	/*
 	 * @see org.eclipse.debug.core.model.IValueModification#supportsValueModification()
 	 */
+	@Override
 	public boolean supportsValueModification() {
 		return false;
 	}
@@ -89,6 +96,7 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 	/*
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang.String)
 	 */
+	@Override
 	public boolean verifyValue(String expression) {
 		return false;
 	}
@@ -96,6 +104,7 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 	/*
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	public boolean verifyValue(IValue value) {
 		return false;
 	}
@@ -116,7 +125,8 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
     /* (non-Javadoc)
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
-    public int compareTo(AntProperty other) {
+    @Override
+	public int compareTo(AntProperty other) {
     	return fName.compareToIgnoreCase(other.getName());
     }
 }

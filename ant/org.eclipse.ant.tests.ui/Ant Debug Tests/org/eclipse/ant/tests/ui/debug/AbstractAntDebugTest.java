@@ -114,6 +114,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		return project.getPackageFragmentRoot(p.getFolder(name));
 	}
 	
+	@Override
 	protected IHyperlink getHyperlink(int offset, IDocument doc) {
 		if (offset >= 0 && doc != null) {
 			Position[] positions = null;
@@ -143,6 +144,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * @return Object the source of the event
 	 * @exception Exception if the event is never received.
 	 */
+	@Override
 	protected Object launchAndWait(ILaunchConfiguration configuration, DebugEventWaiter waiter) throws CoreException {
 	    return launchAndWait(configuration, waiter, true);
 	}
@@ -767,6 +769,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * When a test throws the 'try again' exception, try it again.
 	 * @see junit.framework.TestCase#runBare()
 	 */
+	@Override
 	public void runBare() throws Throwable {
 		boolean tryAgain = true;
 		int attempts = 0;
@@ -788,6 +791,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		if(fEventSet != null) {
 			fEventSet = null;
@@ -804,11 +808,13 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
     /* (non-Javadoc)
      * @see junit.framework.TestCase#setUp()
      */
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
     	super.setUp();
     	setPreferences();
         DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 IWorkbench workbench = PlatformUI.getWorkbench();
                 IPerspectiveDescriptor descriptor = workbench.getPerspectiveRegistry().findPerspectiveWithId(IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
                 workbench.getActiveWorkbenchWindow().getActivePage().setPerspective(descriptor);

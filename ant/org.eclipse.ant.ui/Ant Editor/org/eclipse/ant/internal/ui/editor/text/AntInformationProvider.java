@@ -25,6 +25,7 @@ public class AntInformationProvider implements IInformationProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.information.IInformationProvider#getSubject(org.eclipse.jface.text.ITextViewer, int)
 	 */
+	@Override
 	public IRegion getSubject(ITextViewer textViewer, int offset) {
 		return fTextHover.getHoverRegion(textViewer, offset);
 	}
@@ -32,6 +33,7 @@ public class AntInformationProvider implements IInformationProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.information.IInformationProvider#getInformation(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
 		return fTextHover.getHoverInfo(textViewer, subject);
 	}

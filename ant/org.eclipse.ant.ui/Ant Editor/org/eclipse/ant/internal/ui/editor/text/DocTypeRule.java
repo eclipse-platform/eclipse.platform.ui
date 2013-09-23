@@ -28,7 +28,8 @@ public class DocTypeRule extends MultiLineRule {
      * 
      * @see org.eclipse.jface.text.rules.PatternRule#endSequenceDetected(org.eclipse.jface.text.rules.ICharacterScanner)
      */
-    protected boolean endSequenceDetected(ICharacterScanner scanner) {
+    @Override
+	protected boolean endSequenceDetected(ICharacterScanner scanner) {
         int c;
         while ((c = scanner.read()) != ICharacterScanner.EOF) {
             if (c == fEscapeCharacter) {

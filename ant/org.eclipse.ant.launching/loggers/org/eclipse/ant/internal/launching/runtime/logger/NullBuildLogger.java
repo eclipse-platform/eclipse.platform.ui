@@ -37,6 +37,7 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 	/**
 	 * @see org.apache.tools.ant.BuildLogger#setMessageOutputLevel(int)
 	 */
+	@Override
 	public void setMessageOutputLevel(int level) {
 		fMessageOutputLevel= level;
 	}
@@ -48,6 +49,7 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 	/**
 	 * @see org.apache.tools.ant.BuildLogger#setEmacsMode(boolean)
 	 */
+	@Override
 	public void setEmacsMode(boolean emacsMode) {
 		fEmacsMode= emacsMode;
 	}
@@ -55,6 +57,7 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 	/**
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void buildStarted(BuildEvent event) {
 		//do nothing
 	}
@@ -62,6 +65,7 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 	/**
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void buildFinished(BuildEvent event) {
 		String message= handleException(event);
         if (message != null) {
@@ -73,6 +77,7 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 	/**
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void targetStarted(BuildEvent event) {
 		//do nothing
 	}
@@ -80,6 +85,7 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 	/**
 	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void targetFinished(BuildEvent event) {
 		//do nothing
 	}
@@ -87,6 +93,7 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 	/**
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void taskStarted(BuildEvent event) {
 		//do nothing
 	}
@@ -94,6 +101,7 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 	/**
 	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void taskFinished(BuildEvent event) {
 		//do nothing
 	}
@@ -101,6 +109,7 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void messageLogged(BuildEvent event) {
 		logMessage(event.getMessage(), event.getPriority());
 	}
@@ -116,6 +125,7 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 	/**
 	 * @see org.apache.tools.ant.BuildLogger#setErrorPrintStream(java.io.PrintStream)
 	 */
+	@Override
 	public void setErrorPrintStream(PrintStream err) {
 		//this build logger logs to "null" unless
 		//the user has explicitly set a logfile to use
@@ -129,6 +139,7 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 	/**
 	 * @see org.apache.tools.ant.BuildLogger#setOutputPrintStream(java.io.PrintStream)
 	 */
+	@Override
 	public void setOutputPrintStream(PrintStream output) {
 		//this build logger logs to "null" unless
 		//the user has explicitly set a logfile to use

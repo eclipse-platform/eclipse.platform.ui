@@ -52,6 +52,7 @@ public class AddPropertyDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite comp= (Composite) super.createDialogArea(parent);
 		((GridLayout) comp.getLayout()).numColumns = 2;
@@ -67,6 +68,7 @@ public class AddPropertyDialog extends Dialog {
 		fNameText.setLayoutData(gd);
 		fNameText.setFont(comp.getFont());
 		fNameText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateButtons();
 			}
@@ -83,6 +85,7 @@ public class AddPropertyDialog extends Dialog {
 		fValueText.setLayoutData(gd);
 		fValueText.setFont(comp.getFont());
 		fValueText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateButtons();
 			}
@@ -98,6 +101,7 @@ public class AddPropertyDialog extends Dialog {
 		variablesButton.setFont(comp.getFont());
 		
 		variablesButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent se) {
 				getVariable();
 			}
@@ -128,6 +132,7 @@ public class AddPropertyDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
 			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=248316
@@ -143,6 +148,7 @@ public class AddPropertyDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (fTitle != null) {
@@ -168,6 +174,7 @@ public class AddPropertyDialog extends Dialog {
 	 * Enable the buttons on creation.
 	 * @see org.eclipse.jface.window.Window#create()
 	 */
+	@Override
 	public void create() {
 		super.create();
 		updateButtons();

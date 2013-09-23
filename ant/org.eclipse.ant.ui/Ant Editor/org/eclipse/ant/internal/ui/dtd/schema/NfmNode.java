@@ -82,6 +82,7 @@ public class NfmNode implements FactoryObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next()
 	 */
+	@Override
 	public FactoryObject next() {
 		return next;
 	}
@@ -89,6 +90,7 @@ public class NfmNode implements FactoryObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next(org.eclipse.ant.internal.ui.dtd.util.FactoryObject)
 	 */
+	@Override
 	public void next(FactoryObject obj) {
 		next = (NfmNode) obj;
 	}

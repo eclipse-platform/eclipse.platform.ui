@@ -18,7 +18,8 @@ public class JikesJavacPatternMatcher extends AbstractJavacPatternMatcher {
      *     [javac] Found 1 semantic error compiling "/Users/kevinbarnes/Eclipse/runtime-workspace/Foo/src/CarriageReturn.java":
      *     [javac] 3.         System.out.printer("\r");
      */
-    public void matchFound(PatternMatchEvent event) {
+    @Override
+	public void matchFound(PatternMatchEvent event) {
         String matchedText= getMatchedText(event);
         if (matchedText == null) {
             return;

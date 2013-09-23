@@ -35,11 +35,13 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 	 * Runs the test and collects the result in a TestResult without blocking
 	 * the UI thread.
 	 */
+	@Override
 	public void run(final TestResult result) {
 		final Display display = Display.getCurrent();
 		Thread thread = null;
 		try {
 			Runnable r = new Runnable() {
+				@Override
 				public void run() {
 					AbstractAntUIBuildTest.super.run(result);		
 					testing = false;
@@ -69,6 +71,7 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 	 * @param buildFileName the buildfile to execute
 	 * @return thread in which the first suspend event occurred
 	 */
+	@Override
 	protected void launch(String buildFileName) throws CoreException {
 		super.launch(buildFileName);
 	}
@@ -86,6 +89,7 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 	
 	protected void activateLink(final IHyperlink link) {
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				link.linkActivated();
 			}
@@ -94,6 +98,7 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest#launch(java.lang.String, java.lang.String)
 	 */
+	@Override
 	protected void launch(String buildFileName, String arguments) throws CoreException {
 		super.launch(buildFileName, arguments);
 	}

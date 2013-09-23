@@ -24,6 +24,7 @@ public class AddVariableStringAction extends RuntimeClasspathAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction#getActionType()
 	 */
+	@Override
 	protected int getActionType() {
 		return ADD;
 	}
@@ -31,6 +32,7 @@ public class AddVariableStringAction extends RuntimeClasspathAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		VariableInputDialog inputDialog = new VariableInputDialog(getShell());
 		inputDialog.open();

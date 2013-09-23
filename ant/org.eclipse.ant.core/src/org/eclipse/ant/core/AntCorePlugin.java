@@ -179,6 +179,7 @@ public class AntCorePlugin extends Plugin {
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 * @since 3.1
 	 */
+	@Override
 	@SuppressWarnings("deprecation")
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
@@ -192,7 +193,8 @@ public class AntCorePlugin extends Plugin {
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      * @since 3.1
      */
-    public void start(BundleContext context) throws Exception {
+    @Override
+	public void start(BundleContext context) throws Exception {
         super.start(context);
         AntCoreUtil.setBundleContext(context);
     }

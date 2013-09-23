@@ -38,6 +38,7 @@ public class SetTargetsDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		
 		getShell().setText(AntLaunchConfigurationMessages.SetTargetsDialog_0);
@@ -53,6 +54,7 @@ public class SetTargetsDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		fTargetsTab.performApply(fConfiguration);
         
@@ -74,7 +76,8 @@ public class SetTargetsDialog extends Dialog {
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
-    protected IDialogSettings getDialogBoundsSettings() {
+    @Override
+	protected IDialogSettings getDialogBoundsSettings() {
     	 IDialogSettings settings = AntUIPlugin.getDefault().getDialogSettings();
          IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
          if (section == null) {

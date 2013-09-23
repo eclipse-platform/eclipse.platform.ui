@@ -585,6 +585,7 @@ public class AntRunner implements IApplication {
 	 * @return an exit object (<code>EXIT_OK</code>) indicating normal termination if no exception occurs
 	 * @see org.eclipse.equinox.app.IApplication#start(IApplicationContext)
 	 */
+	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		Map<String, Object> contextArguments = context.getArguments();
 		return run(contextArguments.get(IApplicationContext.APPLICATION_ARGS));
@@ -593,6 +594,7 @@ public class AntRunner implements IApplication {
 	/*
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
+	@Override
 	public void stop() {
 		if (progressMonitor != null) {
 			progressMonitor.setCanceled(true);

@@ -330,6 +330,7 @@ public class AntEditorTests extends AbstractAntUITest {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		EditorTestHelper.closeAllEditors();
 		super.tearDown();

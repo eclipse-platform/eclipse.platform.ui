@@ -145,6 +145,7 @@ public class SortedMap implements FactoryObject {
 		/**
 		 * @see java.util.Iterator#hasNext()
 		 */
+		@Override
 		public boolean hasNext() {
 			Object[] array = SortedMap.this.fHolder.getKeys();
 			if (array == null)
@@ -155,6 +156,7 @@ public class SortedMap implements FactoryObject {
 		/**
 		 * @see java.util.Iterator#next()
 		 */
+		@Override
 		public Object next() {
 			Object[] array = SortedMap.this.fHolder.getKeys();
 			if (array == null)
@@ -165,6 +167,7 @@ public class SortedMap implements FactoryObject {
 		/**
 		 * @see java.util.Iterator#remove()
 		 */
+		@Override
 		public void remove() {
 			SortedMap.this.remove(fIndex);
 			--fIndex;
@@ -258,10 +261,12 @@ public class SortedMap implements FactoryObject {
 		fHolder.setValues(vtmp);
 	}
 	
+	@Override
 	public FactoryObject next() {
 		return fNext;
 	}
 	
+	@Override
 	public void next(FactoryObject next) {
 		fNext = (SortedMap) next;
 	}

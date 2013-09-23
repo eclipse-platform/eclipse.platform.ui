@@ -26,6 +26,7 @@ public class DebugElementKindEventWaiter extends DebugEventWaiter {
 		fElementClass = elementClass;
 	}
 	
+	@Override
 	public boolean accept(DebugEvent event) {
 		Object o = event.getSource();
 		return super.accept(event) && fElementClass.isInstance(o);

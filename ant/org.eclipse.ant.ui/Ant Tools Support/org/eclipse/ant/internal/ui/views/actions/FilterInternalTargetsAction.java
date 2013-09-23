@@ -34,6 +34,7 @@ public class FilterInternalTargetsAction extends Action {
 	 * Toggles the filtering of internal targets from the Ant view
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		fView.setFilterInternalTargets(isChecked());
 	}

@@ -54,6 +54,7 @@ public class FileSelectionDialog extends ElementTreeSelectionDialog {
 		setComparator(new ResourceComparator(ResourceComparator.NAME));
 
 		ISelectionStatusValidator validator = new ISelectionStatusValidator() {
+			@Override
 			public IStatus validate(Object[] selection) {
 				if (selection.length == 0) {
 					return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, IAntCoreConstants.EMPTY_STRING, null);

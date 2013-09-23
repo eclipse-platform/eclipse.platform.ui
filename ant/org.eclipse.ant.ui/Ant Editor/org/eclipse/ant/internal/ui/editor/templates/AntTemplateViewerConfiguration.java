@@ -20,6 +20,7 @@ public class AntTemplateViewerConfiguration extends AntSourceViewerConfiguration
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTextHover(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
 	 */
+	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		return new AntTemplateVariableTextHover();
 	}

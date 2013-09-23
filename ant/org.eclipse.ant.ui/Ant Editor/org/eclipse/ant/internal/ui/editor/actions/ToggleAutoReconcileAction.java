@@ -45,6 +45,7 @@ public class ToggleAutoReconcileAction extends TextEditorAction implements IProp
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		ITextEditor editor= getTextEditor();
         if (editor instanceof AntEditor) {
@@ -57,6 +58,7 @@ public class ToggleAutoReconcileAction extends TextEditorAction implements IProp
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
+	@Override
 	public void update() {
 		ITextEditor editor= getTextEditor();
 		
@@ -78,6 +80,7 @@ public class ToggleAutoReconcileAction extends TextEditorAction implements IProp
 	/*
 	 * @see TextEditorAction#setEditor(ITextEditor)
 	 */
+	@Override
 	public void setEditor(ITextEditor editor) {
 		
 		super.setEditor(editor);
@@ -98,6 +101,7 @@ public class ToggleAutoReconcileAction extends TextEditorAction implements IProp
 	/*
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(AntEditorPreferenceConstants.EDITOR_RECONCILE)) {
 			setChecked(Boolean.valueOf(event.getNewValue().toString()).booleanValue());

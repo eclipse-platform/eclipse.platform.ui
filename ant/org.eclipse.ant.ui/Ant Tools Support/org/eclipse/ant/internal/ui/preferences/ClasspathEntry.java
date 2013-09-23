@@ -39,6 +39,7 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IAntClasspathEntry) {
 			IAntClasspathEntry other= (IAntClasspathEntry)obj;
@@ -51,6 +52,7 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getLabel().hashCode();
 	}
@@ -58,6 +60,7 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		if (fEntry != null) {
 			return fEntry.getLabel();
@@ -80,6 +83,7 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.core.IAntClasspathEntry#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		if (fEntry == null) {
 			return toString();
@@ -90,6 +94,7 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.core.IAntClasspathEntry#getEntryURL()
 	 */
+	@Override
 	public URL getEntryURL() {
 		if (fEntry != null) {
 			return fEntry.getEntryURL();
@@ -112,7 +117,8 @@ public class ClasspathEntry extends AbstractClasspathEntry {
     /* (non-Javadoc)
      * @see org.eclipse.ant.core.IAntClasspathEntry#isEclipseRuntimeRequired()
      */
-    public boolean isEclipseRuntimeRequired() {
+    @Override
+	public boolean isEclipseRuntimeRequired() {
         if (fEntry == null) {
             return super.isEclipseRuntimeRequired();
         } 

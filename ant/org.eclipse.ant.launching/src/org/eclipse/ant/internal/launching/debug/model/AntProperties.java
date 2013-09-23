@@ -28,6 +28,7 @@ public class AntProperties extends AntDebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
+	@Override
 	public synchronized IValue getValue() throws DebugException {
         int attempts= 0;
         while (!fValid && !getDebugTarget().isTerminated()) {
@@ -51,6 +52,7 @@ public class AntProperties extends AntDebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -58,6 +60,7 @@ public class AntProperties extends AntDebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() {
 		return ""; //$NON-NLS-1$
 	}
@@ -65,6 +68,7 @@ public class AntProperties extends AntDebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
 	 */
+	@Override
 	public boolean hasValueChanged() {
 		return false;
 	}
@@ -72,6 +76,7 @@ public class AntProperties extends AntDebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
 	 */
+	@Override
 	public void setValue(String expression) {
 		//do nothing
 	}
@@ -79,6 +84,7 @@ public class AntProperties extends AntDebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	public void setValue(IValue value) {
 		fValue= value;
 	}
@@ -86,6 +92,7 @@ public class AntProperties extends AntDebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#supportsValueModification()
 	 */
+	@Override
 	public boolean supportsValueModification() {
 		return false;
 	}
@@ -93,6 +100,7 @@ public class AntProperties extends AntDebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang.String)
 	 */
+	@Override
 	public boolean verifyValue(String expression) {
 		return false;
 	}
@@ -100,6 +108,7 @@ public class AntProperties extends AntDebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	public boolean verifyValue(IValue value) {
 		return false;
 	}

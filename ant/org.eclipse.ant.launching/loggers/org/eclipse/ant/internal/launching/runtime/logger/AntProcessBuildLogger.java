@@ -197,6 +197,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	 * 
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void buildStarted(BuildEvent event) {
 		fStartTime= System.currentTimeMillis();
 	}
@@ -204,6 +205,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void buildFinished(BuildEvent event) {
         String message= handleException(event);
         if (message != null) {
@@ -271,6 +273,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void messageLogged(BuildEvent event) {
 		if (event.getPriority() > getMessageOutputLevel()) {
 			return;
@@ -283,6 +286,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
+	@Override
 	public void targetStarted(BuildEvent event) {
 		if (Project.MSG_INFO > getMessageOutputLevel()) {
 			return;

@@ -135,6 +135,7 @@ public class dumper {
 		/**
 		 * @see java.lang.Comparable#compareTo(java.lang.Object)
 		 */
+		@Override
 		public int compareTo(State other) {
 			return n.intValue() < other.n.intValue()
 				? -1 

@@ -28,6 +28,7 @@ public class OpenAntDeclarationHander extends AbstractHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IEditorPart part = HandlerUtil.getActiveEditor(event);
 		if(part instanceof AntEditor) {

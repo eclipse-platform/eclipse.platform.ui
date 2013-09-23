@@ -25,10 +25,12 @@ public class XmlDocumentFormatterTest extends AbstractAntUITest {
      */
     public final void testGeneralFormat() throws Exception {
         FormattingPreferences prefs = new FormattingPreferences(){
-            public int getTabWidth() {                
+            @Override
+			public int getTabWidth() {                
                 return 3;
             }
-            public boolean useSpacesInsteadOfTabs() {
+            @Override
+			public boolean useSpacesInsteadOfTabs() {
                 return true;
             }
         };
@@ -40,10 +42,12 @@ public class XmlDocumentFormatterTest extends AbstractAntUITest {
      */
     public final void testTabWidth() throws Exception {
         FormattingPreferences prefs = new FormattingPreferences(){
-            public int getTabWidth() {                
+            @Override
+			public int getTabWidth() {                
                 return 7;
             }
-            public boolean useSpacesInsteadOfTabs() {
+            @Override
+			public boolean useSpacesInsteadOfTabs() {
                 return true;
             }
         };
@@ -56,10 +60,12 @@ public class XmlDocumentFormatterTest extends AbstractAntUITest {
      */
     public final void testTabsInsteadOfSpaces() throws Exception {
         FormattingPreferences prefs = new FormattingPreferences(){
-            public int getTabWidth() {                
+            @Override
+			public int getTabWidth() {                
                 return 3;
             }
-            public boolean useSpacesInsteadOfTabs() {
+            @Override
+			public boolean useSpacesInsteadOfTabs() {
                 return false;
             }
         };

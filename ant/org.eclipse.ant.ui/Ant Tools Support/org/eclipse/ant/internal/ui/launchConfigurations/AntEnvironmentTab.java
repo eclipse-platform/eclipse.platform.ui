@@ -35,6 +35,7 @@ public class AntEnvironmentTab extends EnvironmentTab {
 	protected Composite wrappingComposite;
 	protected Label warningLabel;
 	
+	@Override
 	public void createControl(Composite parent) {
 		wrappingComposite= new Composite(parent, SWT.NONE);
 		wrappingComposite.setLayout(new GridLayout());
@@ -52,6 +53,7 @@ public class AntEnvironmentTab extends EnvironmentTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		updateWidgetsEnabled(workingCopy);
 	}

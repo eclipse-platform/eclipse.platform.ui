@@ -23,6 +23,7 @@ public class FoldingExpandAllRulerAction extends AbstractRulerActionDelegate {
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate#createAction(org.eclipse.ui.texteditor.ITextEditor, org.eclipse.jface.text.source.IVerticalRulerInfo)
 	 */
+	@Override
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
 		TextOperationAction action= new TextOperationAction(AntEditorActionMessages.getResourceBundle(), "Projection.ExpandAll.", editor, ProjectionViewer.EXPAND_ALL, true); //$NON-NLS-1$
 		action.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND_ALL);

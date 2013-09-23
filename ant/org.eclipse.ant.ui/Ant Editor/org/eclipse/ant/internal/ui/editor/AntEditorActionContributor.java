@@ -93,7 +93,8 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
     /* (non-Javadoc)
      * @see org.eclipse.ui.part.EditorActionBarContributor#init(org.eclipse.ui.IActionBars)
      */
-    public void init(IActionBars bars) {
+    @Override
+	public void init(IActionBars bars) {
         super.init(bars);
         
         IMenuManager menuManager= bars.getMenuManager();
@@ -108,6 +109,7 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionBarContributor#setActiveEditor(org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public void setActiveEditor(IEditorPart part) {
 		doSetActiveEditor(part);
 	}
@@ -115,6 +117,7 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionBarContributor#dispose()
 	 */
+	@Override
 	public void dispose() {
 		doSetActiveEditor(null);
 		super.dispose();
@@ -123,7 +126,8 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorActionBarContributor#init(org.eclipse.ui.IActionBars, org.eclipse.ui.IWorkbenchPage)
      */
-    public void init(IActionBars bars, IWorkbenchPage page) {
+    @Override
+	public void init(IActionBars bars, IWorkbenchPage page) {
         super.init(bars, page);
         bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
 		bars.setGlobalActionHandler(TOGGLE_MARK_OCCURRENCES_ID, fToggleMarkOccurrencesAction);

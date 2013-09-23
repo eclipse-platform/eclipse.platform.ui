@@ -337,9 +337,11 @@ public class NfmParser {
 			this.dfm1 = dfm1;
 			this.dfm2 = dfm2;
 		}
+		@Override
 		public int hashCode() {
 			return dfm1.hashCode() + dfm2.hashCode();
 		}
+		@Override
 		public boolean equals(Object o) {
 			if (o == this)
 				return true;

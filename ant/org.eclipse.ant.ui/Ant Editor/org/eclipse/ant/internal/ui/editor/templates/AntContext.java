@@ -38,6 +38,7 @@ public class AntContext extends DocumentTemplateContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.templates.TemplateContext#evaluate(org.eclipse.jface.text.templates.Template)
 	 */
+	@Override
 	public TemplateBuffer evaluate(Template template) throws BadLocationException, TemplateException {
 		if (!canEvaluate(template))
 			return null;
@@ -89,6 +90,7 @@ public class AntContext extends DocumentTemplateContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.templates.DocumentTemplateContext#getEnd()
 	 */
+	@Override
 	public int getEnd() {
 		int start= getCompletionOffset();
 		int length= getCompletionLength();
@@ -113,6 +115,7 @@ public class AntContext extends DocumentTemplateContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.templates.DocumentTemplateContext#getStart()
 	 */
+	@Override
 	public int getStart() {
 		int replacementOffset= getCompletionOffset();
 		if (replacementOffset > 0 && getDocument().get().charAt(replacementOffset - 1) == '<') {

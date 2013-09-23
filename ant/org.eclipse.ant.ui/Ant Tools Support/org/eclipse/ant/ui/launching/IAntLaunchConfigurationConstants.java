@@ -20,6 +20,7 @@ import org.eclipse.ant.launching.IAntLaunchConstants;
  * @noimplement This interface is not intended to be implemented by clients.
  * @deprecated use {@link IAntLaunchConstants}
  */
+@Deprecated
 public interface IAntLaunchConfigurationConstants {
 
 	/**
@@ -27,6 +28,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * 
 	 * @deprecated use {@link IAntLaunchConstants#ID_ANT_LAUNCH_CONFIGURATION_TYPE}
 	 */
+	@Deprecated
 	public static final String ID_ANT_LAUNCH_CONFIGURATION_TYPE = IAntLaunchConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE;
 
 	/**
@@ -35,6 +37,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * 
 	 * @deprecated use {@link IAntLaunchConstants#ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE}
 	 */
+	@Deprecated
 	public static final String ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE = IAntLaunchConstants.ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE;
 	
 	/**
@@ -44,6 +47,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * 
 	 * @deprecated use {@link IAntLaunchConstants#ATTR_ANT_TARGETS}
 	 */
+	@Deprecated
 	public static final String ATTR_ANT_TARGETS = IAntLaunchConstants.ATTR_ANT_TARGETS;
 	
 	/**
@@ -53,6 +57,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * 
 	 * @deprecated use {@link IAntLaunchConstants#ATTR_ANT_AFTER_CLEAN_TARGETS}
 	 */
+	@Deprecated
 	public static final String ATTR_ANT_AFTER_CLEAN_TARGETS = IAntLaunchConstants.ATTR_ANT_AFTER_CLEAN_TARGETS;
 	
 	/**
@@ -62,6 +67,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * 
 	 * @deprecated use {@link IAntLaunchConstants#ATTR_ANT_MANUAL_TARGETS}
 	 */
+	@Deprecated
 	public static final String ATTR_ANT_MANUAL_TARGETS = IAntLaunchConstants.ATTR_ANT_MANUAL_TARGETS;
 	
 	/**
@@ -71,6 +77,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * 
 	 * @deprecated use {@link IAntLaunchConstants#ATTR_ANT_AUTO_TARGETS}
 	 */
+	@Deprecated
 	public static final String ATTR_ANT_AUTO_TARGETS = IAntLaunchConstants.ATTR_ANT_AUTO_TARGETS;
 	
 	/**
@@ -80,6 +87,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * 
 	 * @deprecated use {@link IAntLaunchConstants#ATTR_ANT_CLEAN_TARGETS}
 	 */
+	@Deprecated
 	public static final String ATTR_ANT_CLEAN_TARGETS = IAntLaunchConstants.ATTR_ANT_CLEAN_TARGETS;
 	
 	/**
@@ -88,6 +96,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * 
 	 * @deprecated use {@link IAntLaunchConstants#ATTR_TARGETS_UPDATED}
 	 */
+	@Deprecated
 	public static final String ATTR_TARGETS_UPDATED = IAntLaunchConstants.ATTR_TARGETS_UPDATED;
 	
 	/**
@@ -97,6 +106,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * 
 	 * @deprecated use {@link IAntLaunchConstants#ATTR_ANT_PROPERTIES}
 	 */
+	@Deprecated
 	public static final String ATTR_ANT_PROPERTIES = IAntLaunchConstants.ATTR_ANT_PROPERTIES;					
 	
 	/**
@@ -106,6 +116,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * 
 	 * @deprecated use {@link IAntLaunchConstants#ATTR_ANT_PROPERTY_FILES}
 	 */
+	@Deprecated
 	public static final String ATTR_ANT_PROPERTY_FILES = IAntLaunchConstants.ATTR_ANT_PROPERTY_FILES;
 	
 	/**
@@ -116,6 +127,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * 
 	 * @deprecated use {@link IAntLaunchConstants#ATTR_HIDE_INTERNAL_TARGETS}
 	 */
+	@Deprecated
 	public static final String ATTR_HIDE_INTERNAL_TARGETS = IAntLaunchConstants.ATTR_HIDE_INTERNAL_TARGETS;
 	
 	/**
@@ -125,6 +137,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * 
 	 * @deprecated use {@link IAntLaunchConstants#ATTR_SORT_TARGETS}
 	 */
+	@Deprecated
 	public static final String ATTR_SORT_TARGETS = IAntLaunchConstants.ATTR_SORT_TARGETS;
 
 	/**
@@ -133,6 +146,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * 
 	 * @deprecated use {@link IAntLaunchConstants#ATTR_DEFAULT_VM_INSTALL}
 	 */
+	@Deprecated
 	public static final String ATTR_DEFAULT_VM_INSTALL = IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL;
 
 	/**
@@ -142,5 +156,6 @@ public interface IAntLaunchConfigurationConstants {
 	 * 
 	 * @deprecated use {@link IAntLaunchConstants#ID_ANT_PROCESS_TYPE}
 	 */
+	@Deprecated
 	public static final String ID_ANT_PROCESS_TYPE = IAntLaunchConstants.ID_ANT_PROCESS_TYPE;
 }

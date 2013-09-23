@@ -69,6 +69,7 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.AbstractRuntimeClasspathEntry#buildMemento(org.w3c.dom.Document, org.w3c.dom.Element)
 	 */
+	@Override
 	protected void buildMemento(Document document, Element memento) throws CoreException {
 		if (antHomeLocation == null) {
 			memento.setAttribute("default", "true");  //$NON-NLS-1$//$NON-NLS-2$
@@ -79,6 +80,7 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#initializeFrom(org.w3c.dom.Element)
 	 */
+	@Override
 	public void initializeFrom(Element memento) throws CoreException {
 		String antHome = memento.getAttribute("antHome"); //$NON-NLS-1$
 		if (antHome != null && (antHome.length() > 0)) {
@@ -91,12 +93,14 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getTypeId()
 	 */
+	@Override
 	public String getTypeId() {
 		return TYPE_ID;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(ILaunchConfiguration configuration) throws CoreException {
 		ArrayList<IRuntimeClasspathEntry> libs = new ArrayList<IRuntimeClasspathEntry>(40);
 		AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
@@ -147,6 +151,7 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getName()
 	 */
+	@Override
 	public String getName() {
 		if (antHomeLocation == null) {
 			return AntLaunchConfigurationMessages.AntHomeClasspathEntry_8;
@@ -157,6 +162,7 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getType()
 	 */
+	@Override
 	public int getType() {
 		return IRuntimeClasspathEntry.OTHER;
 	}
@@ -164,6 +170,7 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#isComposite()
 	 */
+	@Override
 	public boolean isComposite() {
 		return true;
 	}
@@ -171,6 +178,7 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof AntHomeClasspathEntry &&
 		  equalsOrNull(antHomeLocation, ((AntHomeClasspathEntry)obj).antHomeLocation);
@@ -193,6 +201,7 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getClass().hashCode();
 	}	

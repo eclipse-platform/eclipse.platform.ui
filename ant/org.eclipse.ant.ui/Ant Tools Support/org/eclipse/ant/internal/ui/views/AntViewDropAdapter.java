@@ -38,11 +38,13 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 	 * @see
 	 * org.eclipse.swt.dnd.DropTargetListener#drop(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
+	@Override
 	public void drop(DropTargetEvent event) {
 		Object data = event.data;
 		if (data instanceof String[]) {
 			final String[] strings = (String[]) data;
 			BusyIndicator.showWhile(null, new Runnable() {
+				@Override
 				public void run() {
 					for (int i = 0; i < strings.length; i++) {
 						processString(strings[i]);
@@ -80,6 +82,7 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.dnd.DropTargetListener#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
+	@Override
 	public void dragEnter(DropTargetEvent event) {
 		event.detail= DND.DROP_COPY;
 		super.dragEnter(event);
@@ -88,6 +91,7 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.dnd.DropTargetListener#dragOperationChanged(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
+	@Override
 	public void dragOperationChanged(DropTargetEvent event) {
 		event.detail= DND.DROP_COPY;
 		super.dragOperationChanged(event);

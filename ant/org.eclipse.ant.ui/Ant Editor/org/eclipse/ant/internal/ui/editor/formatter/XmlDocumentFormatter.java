@@ -31,15 +31,18 @@ public class XmlDocumentFormatter {
 
         private boolean complete = false;
 
-        protected void clear() {
+        @Override
+		protected void clear() {
             this.complete = false;
         }
 
-        public String getStartOfTag() {
+        @Override
+		public String getStartOfTag() {
             return "<!--"; //$NON-NLS-1$
         }
 
-        protected String readTag() throws IOException {
+        @Override
+		protected String readTag() throws IOException {
             int intChar;
             char c;
             StringBuffer node = new StringBuffer();
@@ -61,15 +64,18 @@ public class XmlDocumentFormatter {
 
         private boolean complete = false;
 
-        protected void clear() {
+        @Override
+		protected void clear() {
             this.complete = false;
         }
 
-        public String getStartOfTag() {
+        @Override
+		public String getStartOfTag() {
             return "<!"; //$NON-NLS-1$
         }
 
-        protected String readTag() throws IOException {
+        @Override
+		protected String readTag() throws IOException {
             int intChar;
             char c;
             StringBuffer node = new StringBuffer();
@@ -92,15 +98,18 @@ public class XmlDocumentFormatter {
 
         private boolean complete = false;
 
-        protected void clear() {
+        @Override
+		protected void clear() {
             this.complete = false;
         }
 
-        public String getStartOfTag() {
+        @Override
+		public String getStartOfTag() {
             return "<?"; //$NON-NLS-1$
         }
 
-        protected String readTag() throws IOException {
+        @Override
+		protected String readTag() throws IOException {
             int intChar;
             char c;
             StringBuffer node = new StringBuffer();
@@ -199,25 +208,29 @@ public class XmlDocumentFormatter {
 
         private boolean isTextNode;
 
-        protected void clear() {
+        @Override
+		protected void clear() {
             this.complete = false;
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter.TagReader#getStartOfTag()
          */
-        public String getStartOfTag() {
+        @Override
+		public String getStartOfTag() {
             return IAntCoreConstants.EMPTY_STRING;
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter.TagReader#isTextNode()
          */
-        public boolean isTextNode() {
+        @Override
+		public boolean isTextNode() {
             return this.isTextNode;
         }
 
-        protected String readTag() throws IOException {
+        @Override
+		protected String readTag() throws IOException {
 
             StringBuffer node = new StringBuffer();
 
@@ -261,14 +274,16 @@ public class XmlDocumentFormatter {
         /* (non-Javadoc)
          * @see org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter.TagReader#requiresInitialIndent()
          */
-        public boolean requiresInitialIndent() {
+        @Override
+		public boolean requiresInitialIndent() {
             return false;
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter.TagReader#startsOnNewline()
          */
-        public boolean startsOnNewline() {
+        @Override
+		public boolean startsOnNewline() {
             return false;
         }
     }
@@ -277,11 +292,13 @@ public class XmlDocumentFormatter {
 
         private boolean complete = false;
 
-        protected void clear() {
+        @Override
+		protected void clear() {
             this.complete = false;
         }
 
-        public int getPostTagDepthModifier() {
+        @Override
+		public int getPostTagDepthModifier() {
             if (getTagText().endsWith("/>") || getTagText().endsWith("/ >")) { //$NON-NLS-1$ //$NON-NLS-2$
                 return 0;
             } else if (getTagText().startsWith("</")) { //$NON-NLS-1$
@@ -291,18 +308,21 @@ public class XmlDocumentFormatter {
             }
         }
 
-        public int getPreTagDepthModifier() {
+        @Override
+		public int getPreTagDepthModifier() {
             if (getTagText().startsWith("</")) { //$NON-NLS-1$
                 return -1;
             } 
             return 0;
         }
 
-        public String getStartOfTag() {
+        @Override
+		public String getStartOfTag() {
             return "<"; //$NON-NLS-1$
         }
 
-        protected String readTag() throws IOException {
+        @Override
+		protected String readTag() throws IOException {
 
             StringBuffer node = new StringBuffer();
 

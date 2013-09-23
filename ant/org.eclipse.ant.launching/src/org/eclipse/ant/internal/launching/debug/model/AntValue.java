@@ -30,42 +30,48 @@ public class AntValue extends AntDebugElement implements IValue  {
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
      */
-    public String getReferenceTypeName() {
+    @Override
+	public String getReferenceTypeName() {
         return ""; //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IValue#getValueString()
      */
-    public String getValueString() {
+    @Override
+	public String getValueString() {
         return fValueString;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IValue#isAllocated()
      */
-    public boolean isAllocated() {
+    @Override
+	public boolean isAllocated() {
         return true;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IValue#getVariables()
      */
-    public IVariable[] getVariables() {
+    @Override
+	public IVariable[] getVariables() {
         return EMPTY;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IValue#hasVariables()
      */
-    public boolean hasVariables() {
+    @Override
+	public boolean hasVariables() {
         return false;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
      */
-    public String getModelIdentifier() {
+    @Override
+	public String getModelIdentifier() {
         return IAntDebugConstants.ID_ANT_DEBUG_MODEL;
     }
 }

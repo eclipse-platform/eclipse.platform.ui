@@ -42,6 +42,7 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		
 		ITextEditor editor= getTextEditor();
@@ -68,6 +69,7 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
+	@Override
 	public void update() {
 		ITextEditor editor= getTextEditor();
 		boolean checked= (editor != null && editor.showsHighlightRangeOnly());
@@ -78,6 +80,7 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.TextEditorAction#setEditor(org.eclipse.ui.texteditor.ITextEditor)
 	 */
+	@Override
 	public void setEditor(ITextEditor editor) {
 		
 		super.setEditor(editor);
@@ -125,6 +128,7 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(AntEditorPreferenceConstants.EDITOR_SHOW_SEGMENTS)) {
             synchronizeWithPreference(getTextEditor());

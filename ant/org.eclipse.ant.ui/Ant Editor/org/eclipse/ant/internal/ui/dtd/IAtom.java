@@ -27,5 +27,6 @@ public interface IAtom {
 	/**
 	 * Return the atom name.
 	 */
+	@Override
 	public String toString();
 }

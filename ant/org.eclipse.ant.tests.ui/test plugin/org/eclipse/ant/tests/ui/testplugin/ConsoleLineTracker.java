@@ -33,6 +33,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
 	 */
+	@Override
 	public void dispose() {
 		//do nothing
 	}
@@ -40,6 +41,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#init(org.eclipse.debug.ui.console.IConsole)
 	 */
+	@Override
 	public void init(IConsole c) {
 	    synchronized(lines) {
 	        ConsoleLineTracker.console= c;
@@ -51,6 +53,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#lineAppended(org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public void lineAppended(IRegion line) {
 		lines.add(line);
 	}
@@ -104,6 +107,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTrackerExtension#consoleClosed()
 	 */
+	@Override
 	public void consoleClosed() {
 		synchronized (lines) {
 			consoleClosed= true;

@@ -21,6 +21,7 @@ public class AntElementAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adaptableObject instanceof AntElementNode) {
 			AntElementNode node = (AntElementNode) adaptableObject;
@@ -34,6 +35,7 @@ public class AntElementAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	public Class[] getAdapterList() {
 		return new Class[] {IResource.class};
 	}

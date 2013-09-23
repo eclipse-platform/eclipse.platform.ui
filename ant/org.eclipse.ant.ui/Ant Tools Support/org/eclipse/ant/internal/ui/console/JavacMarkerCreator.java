@@ -103,6 +103,7 @@ public class JavacMarkerCreator {
 	
 	private void createMarkers(final IFile file, final List<MarkerInfo>infos) {
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				
 				try {

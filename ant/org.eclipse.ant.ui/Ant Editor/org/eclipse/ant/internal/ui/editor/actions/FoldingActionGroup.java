@@ -48,10 +48,12 @@ public class FoldingActionGroup extends ActionGroup {
 			
 			fProjectionListener= new IProjectionListener() {
 
+				@Override
 				public void projectionEnabled() {
 					update();
 				}
 
+				@Override
 				public void projectionDisabled() {
 					update();
 				}
@@ -93,6 +95,7 @@ public class FoldingActionGroup extends ActionGroup {
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (isEnabled()) {
 			fViewer.removeProjectionListener(fProjectionListener);
@@ -117,6 +120,7 @@ public class FoldingActionGroup extends ActionGroup {
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#updateActionBars()
 	 */
+	@Override
 	public void updateActionBars() {
 		update();
 	}

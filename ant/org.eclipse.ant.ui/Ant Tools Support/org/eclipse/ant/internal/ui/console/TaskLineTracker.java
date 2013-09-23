@@ -32,6 +32,7 @@ public class TaskLineTracker implements IConsoleLineTrackerExtension {
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#init(org.eclipse.debug.ui.console.IConsole)
 	 */
+	@Override
 	public void init(IConsole console) {
 		fConsole = console;
 	}
@@ -39,6 +40,7 @@ public class TaskLineTracker implements IConsoleLineTrackerExtension {
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#lineAppended(org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public void lineAppended(IRegion line) {
 		TaskLinkManager.processNewLine(fConsole, line);
 	}
@@ -46,6 +48,7 @@ public class TaskLineTracker implements IConsoleLineTrackerExtension {
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fConsole = null;
 	}
@@ -53,6 +56,7 @@ public class TaskLineTracker implements IConsoleLineTrackerExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTrackerExtension#consoleClosed()
 	 */
+	@Override
 	public void consoleClosed() {
 		TaskLinkManager.dispose(fConsole.getProcess());
 		AbstractJavacPatternMatcher.consoleClosed(fConsole.getProcess());

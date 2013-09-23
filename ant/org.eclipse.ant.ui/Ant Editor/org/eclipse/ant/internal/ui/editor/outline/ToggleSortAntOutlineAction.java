@@ -33,6 +33,7 @@ public class ToggleSortAntOutlineAction extends Action {
 	 * Toggles the sorting of targets in the Ant outline
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		fPage.setSort(isChecked());
 	}

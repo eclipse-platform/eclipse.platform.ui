@@ -142,6 +142,7 @@ public class ProjectHelper {
 	}
 	
 	private static class ImportOverwriteQuery implements IOverwriteQuery {
+		@Override
 		public String queryOverwrite(String file) {
 			return ALL;
 		}	

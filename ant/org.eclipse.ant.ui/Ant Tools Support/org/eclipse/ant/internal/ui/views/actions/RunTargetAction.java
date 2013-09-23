@@ -57,6 +57,7 @@ public class RunTargetAction extends Action implements IUpdate {
 	/**
 	 * Executes the appropriate target based on the selection in the Ant view.
 	 */
+	@Override
 	public void run() {
 		run(getSelectedElement());
 	}
@@ -66,6 +67,7 @@ public class RunTargetAction extends Action implements IUpdate {
      */
     public void run(final AntElementNode selectedElement) {
         UIJob job= new UIJob(AntViewActionMessages.RunTargetAction_2) {
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				launch(selectedElement);
 				return Status.OK_STATUS;
@@ -88,6 +90,7 @@ public class RunTargetAction extends Action implements IUpdate {
 	/**
 	 * Updates the enablement of this action based on the user's selection
 	 */
+	@Override
 	public void update() {
 		AntElementNode selection= getSelectedElement();
 		boolean enabled= false;

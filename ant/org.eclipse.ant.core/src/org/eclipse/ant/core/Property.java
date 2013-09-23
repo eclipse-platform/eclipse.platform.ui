@@ -57,6 +57,7 @@ public class Property {
 	/*
 	 * @see Object#equals()
 	 */	
+	@Override
 	public boolean equals(Object other) {
 		if (other != null && other.getClass().equals(getClass())) {
 			Property elem= (Property)other;
@@ -68,6 +69,7 @@ public class Property {
 	/*
 	 * @see Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return name.hashCode();
 	}
@@ -185,6 +187,7 @@ public class Property {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buff= new StringBuffer("\""); //$NON-NLS-1$
 		buff.append(getName());

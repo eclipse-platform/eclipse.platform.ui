@@ -42,6 +42,7 @@ public class VariableInputDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
         Composite inner= (Composite) super.createDialogArea(parent);
 		((GridLayout)inner.getLayout()).numColumns= 2;
@@ -61,6 +62,7 @@ public class VariableInputDialog extends Dialog {
 		Button button = new Button(inner, SWT.PUSH); 
 		button.setText(AntLaunchConfigurationMessages.AddVariableStringAction_3);		
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public  void widgetSelected(SelectionEvent se) {
 				getVariable();
 			}
@@ -70,6 +72,7 @@ public class VariableInputDialog extends Dialog {
 		return inner;
 	}
 	
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
@@ -78,6 +81,7 @@ public class VariableInputDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(AntLaunchConfigurationMessages.AddVariableStringAction_4);
@@ -97,6 +101,7 @@ public class VariableInputDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		String variableString = fText.getText();
 		if (variableString != null && variableString.trim().length() > 0) {
@@ -114,7 +119,8 @@ public class VariableInputDialog extends Dialog {
 	 /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
-    protected IDialogSettings getDialogBoundsSettings() {
+    @Override
+	protected IDialogSettings getDialogBoundsSettings() {
     	 IDialogSettings settings = AntUIPlugin.getDefault().getDialogSettings();
          IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
          if (section == null) {

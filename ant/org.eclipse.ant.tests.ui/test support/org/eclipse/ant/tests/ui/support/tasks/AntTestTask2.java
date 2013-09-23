@@ -29,6 +29,7 @@ public class AntTestTask2 extends Task {
 	/**
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
+	@Override
 	public void execute() throws BuildException {
 		Echo echo= new Echo();
 		echo.setProject(getProject());
@@ -48,7 +49,8 @@ public class AntTestTask2 extends Task {
      * Enumerated attribute with the values "cool", "chillin" and "awesome".
      */
     public static class Cool extends EnumeratedAttribute {
-        public String[] getValues() {
+        @Override
+		public String[] getValues() {
             return new String[] {"cool", "chillin", "awesome"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
     }

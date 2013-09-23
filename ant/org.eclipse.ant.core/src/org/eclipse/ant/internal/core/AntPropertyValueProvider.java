@@ -40,6 +40,7 @@ public class AntPropertyValueProvider implements IAntPropertyValueProvider {
 	 * @return The resolved value for the property
 	 * @see org.eclipse.ant.core.IAntPropertyValueProvider#getAntPropertyValue(String)
 	 */
+	@Override
 	public String getAntPropertyValue(String propertyName) {
 		String value = null;
 		if ("eclipse.running".equals(propertyName)){ //$NON-NLS-1$

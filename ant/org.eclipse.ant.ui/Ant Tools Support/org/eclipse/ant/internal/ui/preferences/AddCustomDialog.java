@@ -144,6 +144,7 @@ public class AddCustomDialog extends StatusDialog {
 		nameField.setFont(topComposite.getFont());
 		nameField.setText(name);
 		nameField.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateStatus();
 			}
@@ -309,6 +310,7 @@ public class AddCustomDialog extends StatusDialog {
 		this.selectionGroup = new TreeAndListGroup(parent, dummyRoot, getFolderProvider(), new WorkbenchLabelProvider(), getFileProvider(), new WorkbenchLabelProvider(), SWT.NONE, 400, 150, false);
 
 		ISelectionChangedListener listener = new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateStatus();
 			}
@@ -319,6 +321,7 @@ public class AddCustomDialog extends StatusDialog {
 		this.selectionGroup.setListSorter(comparator);
 		this.selectionGroup.addSelectionChangedListener(listener);
 		selectionGroup.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (getButton(IDialogConstants.OK_ID).isEnabled()) {
 					buttonPressed(IDialogConstants.OK_ID);
@@ -372,6 +375,7 @@ public class AddCustomDialog extends StatusDialog {
 		final MinimizedFileSystemElement[] results = new MinimizedFileSystemElement[1];
 
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				// Create the root element from the supplied file system object
 				results[0] = createRootElement(rootFileSystemObject, structureProvider);

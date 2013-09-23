@@ -41,11 +41,16 @@ public class XmlFormatterTest extends TestCase {
 
     public final void testFormatWithPreferenceParameter() {
         FormattingPreferences prefs = new FormattingPreferences() {
-            public boolean wrapLongTags() { return true;}
-            public int getMaximumLineWidth() { return 40;}
-            public boolean alignElementCloseChar() { return false;}
-            public boolean useSpacesInsteadOfTabs() { return true;}
-            public int getTabWidth() { return 6;}
+            @Override
+			public boolean wrapLongTags() { return true;}
+            @Override
+			public int getMaximumLineWidth() { return 40;}
+            @Override
+			public boolean alignElementCloseChar() { return false;}
+            @Override
+			public boolean useSpacesInsteadOfTabs() { return true;}
+            @Override
+			public int getTabWidth() { return 6;}
         };
         String lineSep= System.getProperty("line.separator"); //$NON-NLS-1$
         String xmlDoc = "<project default=\"go\"><target name=\"go\" description=\"Demonstrate the wrapping of long tags.\"><echo>hi</echo></target></project>"; //$NON-NLS-1$
@@ -59,11 +64,16 @@ public class XmlFormatterTest extends TestCase {
      */
     public final void testFormatMaintainingLineSeparators() {
         FormattingPreferences prefs = new FormattingPreferences() {
-            public boolean wrapLongTags() { return true;}
-            public int getMaximumLineWidth() { return 40;}
-            public boolean alignElementCloseChar() { return false;}
-            public boolean useSpacesInsteadOfTabs() { return true;}
-            public int getTabWidth() { return 6;}
+            @Override
+			public boolean wrapLongTags() { return true;}
+            @Override
+			public int getMaximumLineWidth() { return 40;}
+            @Override
+			public boolean alignElementCloseChar() { return false;}
+            @Override
+			public boolean useSpacesInsteadOfTabs() { return true;}
+            @Override
+			public int getTabWidth() { return 6;}
         };
         String lineSep= System.getProperty("line.separator"); //$NON-NLS-1$
         String xmlDoc = "<project default=\"go\"><target name=\"go\" description=\"Demonstrate the wrapping of long tags.\"><echo>hi</echo></target>" + lineSep + lineSep + "</project>"; //$NON-NLS-1$ //$NON-NLS-2$

@@ -51,6 +51,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	/**
 	 * @see org.eclipse.debug.core.model.IProcess#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return fLabel;
 	}
@@ -58,6 +59,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	/**
 	 * @see org.eclipse.debug.core.model.IProcess#getLaunch()
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return fLaunch;
 	}
@@ -65,6 +67,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	/**
 	 * @see org.eclipse.debug.core.model.IProcess#getStreamsProxy()
 	 */
+	@Override
 	public IStreamsProxy getStreamsProxy() {
 		return fProxy;
 	}
@@ -72,6 +75,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	/**
 	 * @see org.eclipse.debug.core.model.IProcess#setAttribute(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void setAttribute(String key, String value) {
 		fAttributes.put(key, value);
 	}
@@ -79,6 +83,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	/**
 	 * @see org.eclipse.debug.core.model.IProcess#getAttribute(java.lang.String)
 	 */
+	@Override
 	public String getAttribute(String key) {
 		return fAttributes.get(key);
 	}
@@ -86,6 +91,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	/**
 	 * @see org.eclipse.debug.core.model.IProcess#getExitValue()
 	 */
+	@Override
 	public int getExitValue() {
 		return 0;
 	}
@@ -93,6 +99,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
+	@Override
 	public boolean canTerminate() {
 		return !isCanceled() && !isTerminated();
 	}
@@ -100,6 +107,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
+	@Override
 	public boolean isTerminated() {
 		return fTerminated;
 	}
@@ -116,6 +124,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
+	@Override
 	public void terminate() {
 		setCanceled(true);
 	}
@@ -125,6 +134,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	/**
 	 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
 	 */
+	@Override
 	public void beginTask(String name, int totalWork) {
 		if (fMonitor != null) {
 			fMonitor.beginTask(name, totalWork);
@@ -134,6 +144,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	/**
 	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 	 */
+	@Override
 	public void done() {
 		if (fMonitor != null) {
 			fMonitor.done();
@@ -143,6 +154,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	/**
 	 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
 	 */
+	@Override
 	public void internalWorked(double work) {
 		if (fMonitor != null) {
 			fMonitor.internalWorked(work);
@@ -152,6 +164,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	/**
 	 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
 	 */
+	@Override
 	public boolean isCanceled() {
 		return fCancelled;
 	}
@@ -159,6 +172,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	/**
 	 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
 	 */
+	@Override
 	public void setCanceled(boolean value) {
 		fCancelled = value;
 		if (fMonitor != null) {
@@ -169,6 +183,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	/**
 	 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
 	 */
+	@Override
 	public void setTaskName(String name) {
 		if (fMonitor != null) {
 			fMonitor.setTaskName(name);
@@ -178,6 +193,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	/**
 	 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
 	 */
+	@Override
 	public void subTask(String name) {
 		if (fMonitor != null) {
 			fMonitor.subTask(name);
@@ -187,6 +203,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	/**
 	 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
 	 */
+	@Override
 	public void worked(int work) {
 		if (fMonitor != null) {
 			fMonitor.worked(work);

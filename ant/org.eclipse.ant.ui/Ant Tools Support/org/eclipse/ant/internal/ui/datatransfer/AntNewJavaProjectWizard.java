@@ -28,6 +28,7 @@ public class AntNewJavaProjectWizard extends Wizard implements INewWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		super.addPages();
 		fMainPage = new AntNewJavaProjectPage();
@@ -37,6 +38,7 @@ public class AntNewJavaProjectWizard extends Wizard implements INewWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		setWindowTitle(DataTransferMessages.AntNewJavaProjectWizard_0);
 		setDefaultPageImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_WIZARD_BANNER));
@@ -45,6 +47,7 @@ public class AntNewJavaProjectWizard extends Wizard implements INewWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#performCancel()
 	 */
+	@Override
 	public boolean performCancel() {
 		return true;
 	}
@@ -52,6 +55,7 @@ public class AntNewJavaProjectWizard extends Wizard implements INewWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		return (fMainPage.createProject() != null);
 	}

@@ -158,7 +158,8 @@ public class AntClasspathPage implements IAntBlockContainer {
 		 
 		 File[] matches = location.listFiles(
 			 new FilenameFilter() {
-				 public boolean accept(File dir, String name) {
+				 @Override
+				public boolean accept(File dir, String name) {
 					return name.toLowerCase().endsWith(extension);
 				 }
 			 });
@@ -209,6 +210,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#update()
 	 */
+	@Override
 	public void update() {
 		if (fAntClasspathBlock.isValidated()){
 			return;
@@ -227,6 +229,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#setMessage(java.lang.String)
 	 */
+	@Override
 	public void setMessage(String message) {
 		fPreferencePage.setMessage(message);
 	}
@@ -234,6 +237,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#setErrorMessage(java.lang.String)
 	 */
+	@Override
 	public void setErrorMessage(String message) {
 		fPreferencePage.setErrorMessage(message);
 	}
@@ -241,6 +245,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
 	 */
+	@Override
 	public Button createPushButton(Composite parent, String buttonText) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setFont(parent.getFont());
