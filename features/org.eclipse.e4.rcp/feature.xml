@@ -99,7 +99,7 @@
          id="org.apache.batik.css"
          download-size="0"
          install-size="0"
-         version="1.6.0.qualifier"
+         version="1.7.0.qualifier"
          unpack="false"/>
 
    <plugin
@@ -113,7 +113,7 @@
          id="org.apache.batik.util"
          download-size="0"
          install-size="0"
-         version="1.6.0.qualifier"
+         version="1.7.0.qualifier"
          unpack="false"/>
 
    <plugin
@@ -128,6 +128,13 @@
          download-size="0"
          install-size="0"
          version="1.0.0.qualifier"
+         unpack="false"/>
+
+   <plugin
+         id="org.w3c.dom.events"
+         download-size="0"
+         install-size="0"
+         version="3.0.0.qualifier"
          unpack="false"/>
 
    <plugin
@@ -162,7 +169,7 @@
          id="org.apache.batik.util.gui"
          download-size="0"
          install-size="0"
-         version="1.6.0.qualifier"
+         version="1.7.0.qualifier"
          unpack="false"/>
 
    <plugin
