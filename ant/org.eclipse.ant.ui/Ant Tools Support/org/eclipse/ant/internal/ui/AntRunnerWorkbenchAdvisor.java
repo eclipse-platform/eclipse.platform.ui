@@ -16,20 +16,21 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 
 /**
- * Workbench advisor to run an ant script after starting the workbench and
- * then exit the workbench. Used with {@link WorkbenchAntRunner}.
+ * Workbench advisor to run an ant script after starting the workbench and then exit the workbench. Used with {@link WorkbenchAntRunner}.
  * 
  * @since 3.4
  */
 public class AntRunnerWorkbenchAdvisor extends WorkbenchAdvisor {
-	
+
 	private Object fContext;
 
 	protected AntRunnerWorkbenchAdvisor(Object context) {
 		fContext = context;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#getInitialWindowPerspectiveId()
 	 */
 	@Override
@@ -37,29 +38,35 @@ public class AntRunnerWorkbenchAdvisor extends WorkbenchAdvisor {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#preStartup()
 	 */
 	@Override
 	public void preStartup() {
 		try {
 			new AntRunner().run(fContext);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			AntUIPlugin.log(e);
 		}
 		try {
 			ResourcesPlugin.getWorkspace().save(true, null);
-		} catch (CoreException e) {
+		}
+		catch (CoreException e) {
 			AntUIPlugin.log(e.getStatus());
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#openWindows()
 	 */
 	@Override
 	public boolean openWindows() {
 		return false;
-	}	
+	}
 
 }

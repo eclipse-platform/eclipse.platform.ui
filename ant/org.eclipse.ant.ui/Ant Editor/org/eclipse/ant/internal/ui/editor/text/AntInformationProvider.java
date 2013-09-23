@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
- 
+
 package org.eclipse.ant.internal.ui.editor.text;
 
 import org.eclipse.jface.text.IRegion;
@@ -18,11 +18,14 @@ import org.eclipse.jface.text.information.IInformationProvider;
 public class AntInformationProvider implements IInformationProvider {
 
 	XMLTextHover fTextHover;
-	
+
 	public AntInformationProvider(XMLTextHover hover) {
-		fTextHover= hover;
+		fTextHover = hover;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.text.information.IInformationProvider#getSubject(org.eclipse.jface.text.ITextViewer, int)
 	 */
 	@Override
@@ -30,7 +33,9 @@ public class AntInformationProvider implements IInformationProvider {
 		return fTextHover.getHoverRegion(textViewer, offset);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.text.information.IInformationProvider#getInformation(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
 	@Override

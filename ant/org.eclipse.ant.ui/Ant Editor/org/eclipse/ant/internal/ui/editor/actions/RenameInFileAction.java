@@ -31,18 +31,20 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
 
 public class RenameInFileAction extends SelectionDispatchAction {
-	
+
 	private AntEditor fEditor;
-	
+
 	public RenameInFileAction(AntEditor antEditor) {
 		super(antEditor.getSite());
-		fEditor= antEditor;
+		fEditor = antEditor;
 		setText(AntEditorActionMessages.getString("RenameInFileAction.0")); //$NON-NLS-1$
 		setDescription(AntEditorActionMessages.getString("RenameInFileAction.1")); //$NON-NLS-1$
 		setToolTipText(AntEditorActionMessages.getString("RenameInFileAction.2")); //$NON-NLS-1$
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override
@@ -50,64 +52,68 @@ public class RenameInFileAction extends SelectionDispatchAction {
 		if (fEditor == null) {
 			return;
 		}
-		
-		ISourceViewer viewer= fEditor.getViewer();
-		IDocument document= viewer.getDocument();
-		int offset= ((ITextSelection)getSelection()).getOffset();
-		LinkedPositionGroup group= new LinkedPositionGroup();
-		OccurrencesFinder finder= new OccurrencesFinder(fEditor, fEditor.getAntModel(), document, offset);
-		List<Position> positions= finder.perform();
+
+		ISourceViewer viewer = fEditor.getViewer();
+		IDocument document = viewer.getDocument();
+		int offset = ((ITextSelection) getSelection()).getOffset();
+		LinkedPositionGroup group = new LinkedPositionGroup();
+		OccurrencesFinder finder = new OccurrencesFinder(fEditor, fEditor.getAntModel(), document, offset);
+		List<Position> positions = finder.perform();
 		if (positions == null) {
 			return;
 		}
-	
+
 		addPositionsToGroup(offset, positions, document, group);
 		if (group.isEmpty()) {
-		    return;         
-        }
+			return;
+		}
 		try {
-			LinkedModeModel model= new LinkedModeModel();
+			LinkedModeModel model = new LinkedModeModel();
 			model.addGroup(group);
 			model.forceInstall();
-            model.addLinkingListener(new EditorSynchronizer(fEditor));
-			LinkedModeUI ui= new EditorLinkedModeUI(model, viewer);
+			model.addLinkingListener(new EditorSynchronizer(fEditor));
+			LinkedModeUI ui = new EditorLinkedModeUI(model, viewer);
 			ui.setExitPosition(viewer, offset, 0, Integer.MAX_VALUE);
 			ui.enter();
 			viewer.setSelectedRange(offset, 0);
-		} catch (BadLocationException e) {
+		}
+		catch (BadLocationException e) {
 			AntUIPlugin.log(e);
 		}
 	}
-	
-    
-    private void addPositionsToGroup(int offset, List<Position> positions, IDocument document, LinkedPositionGroup group) {
-        Iterator<Position> iter= positions.iterator();
-        int i= 0;
-        int j= 0;
-        int firstPosition= -1;
-        try {
-            while (iter.hasNext()) {
-                Position position = iter.next();
-                if (firstPosition == -1) {
-                    if (position.overlapsWith(offset, 0)) {
-                        firstPosition= i;
-                        group.addPosition(new LinkedPosition(document, position.getOffset(), position.getLength(), j++));
-                    }
-                } else {
-                    group.addPosition(new LinkedPosition(document, position.getOffset(), position.getLength(), j++));
-                }
-                i++;
-            }
-            
-            for (i = 0; i < firstPosition; i++) {
-                Position position= positions.get(i);
-                group.addPosition(new LinkedPosition(document, position.getOffset(), position.getLength(), j++));
-            }
-        } catch (BadLocationException be) {
-            AntUIPlugin.log(be);
-        }
-    }
-	/* (non-Javadoc)
+
+	private void addPositionsToGroup(int offset, List<Position> positions, IDocument document, LinkedPositionGroup group) {
+		Iterator<Position> iter = positions.iterator();
+		int i = 0;
+		int j = 0;
+		int firstPosition = -1;
+		try {
+			while (iter.hasNext()) {
+				Position position = iter.next();
+				if (firstPosition == -1) {
+					if (position.overlapsWith(offset, 0)) {
+						firstPosition = i;
+						group.addPosition(new LinkedPosition(document, position.getOffset(), position.getLength(), j++));
+					}
+				} else {
+					group.addPosition(new LinkedPosition(document, position.getOffset(), position.getLength(), j++));
+				}
+				i++;
+			}
+
+			for (i = 0; i < firstPosition; i++) {
+				Position position = positions.get(i);
+				group.addPosition(new LinkedPosition(document, position.getOffset(), position.getLength(), j++));
+			}
+		}
+		catch (BadLocationException be) {
+			AntUIPlugin.log(be);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.ui.actions.SelectionDispatchAction#selectionChanged(org.eclipse.jface.text.ITextSelection)
 	 */
 	@Override
@@ -117,9 +123,11 @@ public class RenameInFileAction extends SelectionDispatchAction {
 
 	/**
 	 * Set the Ant editor associated with the action
-	 * @param editor the ant editor to do the renames
+	 * 
+	 * @param editor
+	 *            the ant editor to do the renames
 	 */
 	public void setEditor(AntEditor editor) {
-		fEditor= editor;
+		fEditor = editor;
 	}
 }

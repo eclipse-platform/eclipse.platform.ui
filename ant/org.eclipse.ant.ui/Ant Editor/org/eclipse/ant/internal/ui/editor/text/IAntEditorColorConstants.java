@@ -20,13 +20,13 @@ import org.eclipse.swt.graphics.RGB;
  * The color constants used by the Ant Editor.
  */
 public interface IAntEditorColorConstants {
-	RGB XML_COMMENT =       new RGB(128,   0,   0);
-	RGB PROC_INSTR =        new RGB(128, 128, 128);
-	RGB STRING=             new RGB(  0, 128,   0);
-	RGB DEFAULT=            new RGB(  0,   0,   0);
-	RGB TAG=                new RGB(  0,   0, 128);
-	RGB XML_DTD =       	new RGB(128,   0,   0);
-	
+	RGB XML_COMMENT = new RGB(128, 0, 0);
+	RGB PROC_INSTR = new RGB(128, 128, 128);
+	RGB STRING = new RGB(0, 128, 0);
+	RGB DEFAULT = new RGB(0, 0, 0);
+	RGB TAG = new RGB(0, 0, 128);
+	RGB XML_DTD = new RGB(128, 0, 0);
+
 	/**
 	 * The symbolic names for colors used for the various text tokens in the Ant editor
 	 */

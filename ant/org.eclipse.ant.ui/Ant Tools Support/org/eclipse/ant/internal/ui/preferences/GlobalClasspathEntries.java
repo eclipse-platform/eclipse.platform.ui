@@ -18,27 +18,27 @@ import org.eclipse.ant.core.IAntClasspathEntry;
 public class GlobalClasspathEntries extends AbstractClasspathEntry {
 	private String fName;
 	private int fType;
-	private boolean fCanBeRemoved= true;
-	
+	private boolean fCanBeRemoved = true;
+
 	public GlobalClasspathEntries(String name, IClasspathEntry parent, boolean canBeRemoved, int type) {
-		fParent= parent;
-		fName= name;
-		fCanBeRemoved= canBeRemoved;
-		fType= type;
+		fParent = parent;
+		fName = name;
+		fCanBeRemoved = canBeRemoved;
+		fType = type;
 	}
-		
+
 	public void addEntry(ClasspathEntry entry) {
 		fChildEntries.add(entry);
 	}
-	
+
 	public void removeEntry(ClasspathEntry entry) {
 		fChildEntries.remove(entry);
 	}
-	
+
 	public boolean contains(ClasspathEntry entry) {
 		return fChildEntries.contains(entry);
 	}
-	
+
 	@Override
 	public String toString() {
 		return fName;
@@ -47,18 +47,21 @@ public class GlobalClasspathEntries extends AbstractClasspathEntry {
 	public void removeAll() {
 		fChildEntries.clear();
 	}
-	
+
 	public boolean canBeRemoved() {
 		return fCanBeRemoved;
 	}
 
 	/**
-     * Set the child entries of this classpath entry.
-	 * @param entries The child entries.
+	 * Set the child entries of this classpath entry.
+	 * 
+	 * @param entries
+	 *            The child entries.
 	 */
 	public void setEntries(List<IAntClasspathEntry> entries) {
-		fChildEntries= entries;
+		fChildEntries = entries;
 	}
+
 	/**
 	 * @return Returns the type of this global classpath entry.
 	 * @see ClasspathModel#ANT_HOME

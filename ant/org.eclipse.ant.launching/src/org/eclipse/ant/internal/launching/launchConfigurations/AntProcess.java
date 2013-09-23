@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.launching.launchConfigurations;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +22,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
 
 public class AntProcess extends PlatformObject implements IProcess, IProgressMonitor {
-	
+
 	private AntStreamsProxy fProxy;
 	private String fLabel = null;
 	private ILaunch fLaunch = null;
@@ -32,7 +31,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	private boolean fCancelled = false;
 	// progress monitor to delegate or null if none
 	private IProgressMonitor fMonitor;
-	
+
 	public AntProcess(String label, ILaunch launch, Map<String, String> attributes) {
 		fLabel = label;
 		fLaunch = launch;
@@ -41,9 +40,9 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 		} else {
 			fAttributes = attributes;
 		}
-		String captureOutput= launch.getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT);
-		if(!("false".equals(captureOutput))) { //$NON-NLS-1$
-			fProxy= new AntStreamsProxy();
+		String captureOutput = launch.getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT);
+		if (!("false".equals(captureOutput))) { //$NON-NLS-1$
+			fProxy = new AntStreamsProxy();
 		}
 		launch.addProcess(this);
 	}
@@ -111,12 +110,12 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	public boolean isTerminated() {
 		return fTerminated;
 	}
-	
+
 	protected void terminated() {
 		if (!fTerminated) {
 			fTerminated = true;
 			if (DebugPlugin.getDefault() != null) {
-				DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {new DebugEvent(this, DebugEvent.TERMINATE)});
+				DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] { new DebugEvent(this, DebugEvent.TERMINATE) });
 			}
 		}
 	}
@@ -128,9 +127,9 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	public void terminate() {
 		setCanceled(true);
 	}
-	
+
 	// IProgressMonitor implemented to support termination.
-	
+
 	/**
 	 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
 	 */
@@ -209,11 +208,12 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 			fMonitor.worked(work);
 		}
 	}
-	
+
 	/**
 	 * Sets a progress monitor to delegate to or <code>null</code> if none.
 	 * 
-	 * @param monitor delegate monitor or <code>null</code>
+	 * @param monitor
+	 *            delegate monitor or <code>null</code>
 	 */
 	public void setProgressMonitor(IProgressMonitor monitor) {
 		fMonitor = monitor;

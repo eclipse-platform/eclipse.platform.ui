@@ -14,21 +14,21 @@ public interface IProblemRequestor {
 
 	/**
 	 * Notification of a Ant buildfile problem.
-	 *
-	 * @param problem IProblem - The discovered Ant buildfile problem.
+	 * 
+	 * @param problem
+	 *            IProblem - The discovered Ant buildfile problem.
 	 */
 	void acceptProblem(IProblem problem);
 
 	/**
-	 * Notification sent before starting the problem detection process.
-	 * Typically, this would tell a problem collector to clear previously recorded problems.
+	 * Notification sent before starting the problem detection process. Typically, this would tell a problem collector to clear previously recorded
+	 * problems.
 	 */
 	void beginReporting();
 
 	/**
-	 * Notification sent after having completed problem detection process.
-	 * Typically, this would tell a problem collector that no more problems should be expected in this
-	 * iteration.
+	 * Notification sent after having completed problem detection process. Typically, this would tell a problem collector that no more problems should
+	 * be expected in this iteration.
 	 */
 	void endReporting();
 

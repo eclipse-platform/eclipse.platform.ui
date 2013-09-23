@@ -21,7 +21,9 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 	protected List<IAntClasspathEntry> fChildEntries = new ArrayList<IAntClasspathEntry>();
 	protected IClasspathEntry fParent = null;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.preferences.IClasspathEntry#getEntries()
 	 */
 	@Override
@@ -29,7 +31,9 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 		return fChildEntries.toArray(new IAntClasspathEntry[fChildEntries.size()]);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.preferences.IClasspathEntry#hasEntries()
 	 */
 	@Override
@@ -37,22 +41,27 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 		return !fChildEntries.isEmpty();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.preferences.IClasspathEntry#getParent()
 	 */
 	@Override
 	public IClasspathEntry getParent() {
 		return fParent;
 	}
-	
+
 	/**
-	 * @param parent The parent to set.
+	 * @param parent
+	 *            The parent to set.
 	 */
 	public void setParent(IClasspathEntry parent) {
 		fParent = parent;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.core.IAntClasspathEntry#getEntryURL()
 	 */
 	@Override
@@ -60,7 +69,9 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.core.IAntClasspathEntry#getLabel()
 	 */
 	@Override
@@ -68,7 +79,9 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 		return toString();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.core.IAntClasspathEntry#isEclipseRuntimeRequired()
 	 */
 	@Override

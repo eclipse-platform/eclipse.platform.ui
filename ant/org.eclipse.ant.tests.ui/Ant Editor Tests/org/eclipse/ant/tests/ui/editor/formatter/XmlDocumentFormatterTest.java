@@ -16,75 +16,80 @@ import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 
 public class XmlDocumentFormatterTest extends AbstractAntUITest {
 
-    public XmlDocumentFormatterTest(String name) {
-        super(name);
-    }
+	public XmlDocumentFormatterTest(String name) {
+		super(name);
+	}
 
-    /**
-     * General Test 
-     */
-    public final void testGeneralFormat() throws Exception {
-        FormattingPreferences prefs = new FormattingPreferences(){
-            @Override
-			public int getTabWidth() {                
-                return 3;
-            }
-            @Override
-			public boolean useSpacesInsteadOfTabs() {
-                return true;
-            }
-        };
-        simpleTest("formatTest_source01.xml","formatTest_target01.xml",prefs);         //$NON-NLS-1$ //$NON-NLS-2$
-    }
+	/**
+	 * General Test
+	 */
+	public final void testGeneralFormat() throws Exception {
+		FormattingPreferences prefs = new FormattingPreferences() {
+			@Override
+			public int getTabWidth() {
+				return 3;
+			}
 
-    /**
-     * Insure that tab width is not hard coded
-     */
-    public final void testTabWidth() throws Exception {
-        FormattingPreferences prefs = new FormattingPreferences(){
-            @Override
-			public int getTabWidth() {                
-                return 7;
-            }
-            @Override
+			@Override
 			public boolean useSpacesInsteadOfTabs() {
-                return true;
-            }
-        };
-        simpleTest("formatTest_source01.xml","formatTest_target02.xml",prefs);         //$NON-NLS-1$ //$NON-NLS-2$
-    }
+				return true;
+			}
+		};
+		simpleTest("formatTest_source01.xml", "formatTest_target01.xml", prefs); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
-    
-    /**
-     * Test with tab characters instead of spaces.
-     */
-    public final void testTabsInsteadOfSpaces() throws Exception {
-        FormattingPreferences prefs = new FormattingPreferences(){
-            @Override
-			public int getTabWidth() {                
-                return 3;
-            }
-            @Override
+	/**
+	 * Insure that tab width is not hard coded
+	 */
+	public final void testTabWidth() throws Exception {
+		FormattingPreferences prefs = new FormattingPreferences() {
+			@Override
+			public int getTabWidth() {
+				return 7;
+			}
+
+			@Override
 			public boolean useSpacesInsteadOfTabs() {
-                return false;
-            }
-        };
-        simpleTest("formatTest_source01.xml","formatTest_target03.xml",prefs);         //$NON-NLS-1$ //$NON-NLS-2$
-    }
-    
-    /**
-     * @param sourceFileName - file to format
-     * @param targetFileName - the source file after a properly executed format
-     * @param prefs - given the included preference instructions
-     * @throws Exception
-     */
-    private void simpleTest(String sourceFileName, String targetFileName, FormattingPreferences prefs) throws Exception {
-        
-        XmlDocumentFormatter xmlFormatter = new XmlDocumentFormatter();
-        xmlFormatter.setDefaultLineDelimiter(System.getProperty("line.separator")); //$NON-NLS-1$
-        String result = xmlFormatter.format(getFileContentAsString(getBuildFile(sourceFileName)),prefs);
-        String expectedResult = getFileContentAsString(getBuildFile(targetFileName));
-        
-        assertEquals(expectedResult, result);
-    }
+				return true;
+			}
+		};
+		simpleTest("formatTest_source01.xml", "formatTest_target02.xml", prefs); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/**
+	 * Test with tab characters instead of spaces.
+	 */
+	public final void testTabsInsteadOfSpaces() throws Exception {
+		FormattingPreferences prefs = new FormattingPreferences() {
+			@Override
+			public int getTabWidth() {
+				return 3;
+			}
+
+			@Override
+			public boolean useSpacesInsteadOfTabs() {
+				return false;
+			}
+		};
+		simpleTest("formatTest_source01.xml", "formatTest_target03.xml", prefs); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/**
+	 * @param sourceFileName
+	 *            - file to format
+	 * @param targetFileName
+	 *            - the source file after a properly executed format
+	 * @param prefs
+	 *            - given the included preference instructions
+	 * @throws Exception
+	 */
+	private void simpleTest(String sourceFileName, String targetFileName, FormattingPreferences prefs) throws Exception {
+
+		XmlDocumentFormatter xmlFormatter = new XmlDocumentFormatter();
+		xmlFormatter.setDefaultLineDelimiter(System.getProperty("line.separator")); //$NON-NLS-1$
+		String result = xmlFormatter.format(getFileContentAsString(getBuildFile(sourceFileName)), prefs);
+		String expectedResult = getFileContentAsString(getBuildFile(targetFileName));
+
+		assertEquals(expectedResult, result);
+	}
 }

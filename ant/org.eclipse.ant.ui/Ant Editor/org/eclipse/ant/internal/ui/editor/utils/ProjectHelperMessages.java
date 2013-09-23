@@ -13,7 +13,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class ProjectHelperMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.ui.editor.utils.ProjectHelperMessages";//$NON-NLS-1$
-	
+
 	public static String ProjectHelper_0;
 
 	static {

@@ -32,28 +32,31 @@ import org.eclipse.swt.widgets.DirectoryDialog;
  * @since 3.0
  */
 public class EditAntHomeEntryAction extends RuntimeClasspathAction {
-	
+
 	private AntClasspathTab fTab;
+
 	/**
 	 * Constructs an action to edit the Ant Home setting for a launch config.
 	 * 
-	 * @param viewer classpath viewer
+	 * @param viewer
+	 *            classpath viewer
 	 */
 	public EditAntHomeEntryAction(IClasspathViewer viewer, AntClasspathTab tab) {
 		super(AntLaunchConfigurationMessages.EditAntHomeEntryAction_1, viewer);
 		fTab = tab;
 	}
-	
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override
 	public void run() {
 		IDialogSettings dialogSettings = AntUIPlugin.getDefault().getDialogSettings();
-		String lastUsedPath= dialogSettings.get(IAntUIConstants.DIALOGSTORE_LASTANTHOME);
+		String lastUsedPath = dialogSettings.get(IAntUIConstants.DIALOGSTORE_LASTANTHOME);
 		if (lastUsedPath == null) {
-			lastUsedPath= ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
+			lastUsedPath = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 		}
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setMessage(AntPreferencesMessages.AntClasspathBlock_3);
@@ -74,24 +77,24 @@ public class EditAntHomeEntryAction extends RuntimeClasspathAction {
 		for (int i = 0; i < entries.length; i++) {
 			IRuntimeClasspathEntry entry = entries[i];
 			if (entry.getType() == IRuntimeClasspathEntry.OTHER) {
-				IRuntimeClasspathEntry2 entry2 = (IRuntimeClasspathEntry2)((ClasspathEntry)entry).getDelegate();
+				IRuntimeClasspathEntry2 entry2 = (IRuntimeClasspathEntry2) ((ClasspathEntry) entry).getDelegate();
 				if (entry2.getTypeId().equals(AntHomeClasspathEntry.TYPE_ID)) {
-					((AntHomeClasspathEntry)entry2).setAntHome(path);
+					((AntHomeClasspathEntry) entry2).setAntHome(path);
 					getViewer().refresh(entry);
 					getViewer().notifyChanged();
 					return;
 				}
 			}
-		}				
+		}
 		// no entry found - add a new one
-		getViewer().addEntries(new IRuntimeClasspathEntry[]{new AntHomeClasspathEntry(path)});		
+		getViewer().addEntries(new IRuntimeClasspathEntry[] { new AntHomeClasspathEntry(path) });
 	}
-	
+
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
 	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return true;
-	}	
+	}
 }

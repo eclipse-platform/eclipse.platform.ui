@@ -18,24 +18,23 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Shell;
 
-
 public class AntTemplateInformationControlCreator implements IInformationControlCreator, IInformationControlCreatorExtension {
-	
+
 	private AntSourceViewerInformationControl fControl;
-	
-	public AntTemplateInformationControlCreator()  {
+
+	public AntTemplateInformationControlCreator() {
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
 	 */
 	@Override
 	public IInformationControl createInformationControl(Shell parent) {
-		fControl= new AntSourceViewerInformationControl(parent);
+		fControl = new AntSourceViewerInformationControl(parent);
 		fControl.addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
-				fControl= null;
+				fControl = null;
 			}
 		});
 		return fControl;

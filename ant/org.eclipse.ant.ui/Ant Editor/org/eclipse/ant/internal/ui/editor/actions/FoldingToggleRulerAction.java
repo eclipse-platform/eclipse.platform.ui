@@ -28,27 +28,34 @@ public class FoldingToggleRulerAction extends AbstractRulerActionDelegate {
 	private TextOperationAction fAction;
 	private ITextEditor fTextEditor;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate#createAction(org.eclipse.ui.texteditor.ITextEditor, org.eclipse.jface.text.source.IVerticalRulerInfo)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate#createAction(org.eclipse.ui.texteditor.ITextEditor,
+	 * org.eclipse.jface.text.source.IVerticalRulerInfo)
 	 */
 	@Override
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
-		fTextEditor= editor;
-		fAction= new TextOperationAction(AntEditorActionMessages.getResourceBundle(), "Projection.Toggle.", editor, ProjectionViewer.TOGGLE, true); //$NON-NLS-1$
+		fTextEditor = editor;
+		fAction = new TextOperationAction(AntEditorActionMessages.getResourceBundle(), "Projection.Toggle.", editor, ProjectionViewer.TOGGLE, true); //$NON-NLS-1$
 		fAction.setActionDefinitionId(IFoldingCommandIds.FOLDING_TOGGLE);
 		return fAction;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
 	@Override
 	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
-		fUIAction= callerAction;
+		fUIAction = callerAction;
 		super.setActiveEditor(callerAction, targetEditor);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.action.IMenuListener#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
 	@Override
@@ -56,12 +63,12 @@ public class FoldingToggleRulerAction extends AbstractRulerActionDelegate {
 		update();
 		super.menuAboutToShow(manager);
 	}
-	
+
 	private void update() {
 		if (fTextEditor instanceof AntEditor) {
-			ISourceViewer viewer= ((AntEditor) fTextEditor).getViewer();
+			ISourceViewer viewer = ((AntEditor) fTextEditor).getViewer();
 			if (viewer instanceof ProjectionViewer) {
-				boolean enabled= ((ProjectionViewer) viewer).getProjectionAnnotationModel() != null;
+				boolean enabled = ((ProjectionViewer) viewer).getProjectionAnnotationModel() != null;
 				fUIAction.setChecked(enabled);
 			}
 		}

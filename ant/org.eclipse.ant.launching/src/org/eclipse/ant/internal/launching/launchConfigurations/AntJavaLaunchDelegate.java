@@ -17,33 +17,39 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaLaunchDelegate;
 
 /**
- * Used by the AntLaunchDelegate for Ant builds in a separate VM
- * The subclassing is needed to be able to launch an Ant build from a non-Java project
+ * Used by the AntLaunchDelegate for Ant builds in a separate VM The subclassing is needed to be able to launch an Ant build from a non-Java project
  */
 public class AntJavaLaunchDelegate extends JavaLaunchDelegate {
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public boolean preLaunchCheck(ILaunchConfiguration configuration,String mode, IProgressMonitor monitor) throws CoreException {
+	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		try {
 			return super.preLaunchCheck(configuration, mode, monitor);
-		} catch (CoreException ce) {
-			//likely dealing with a non-Java project
 		}
-		//no need to check for breakpoints as always in run mode
+		catch (CoreException ce) {
+			// likely dealing with a non-Java project
+		}
+		// no need to check for breakpoints as always in run mode
 		return true;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	@Override
 	public String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		try {
 			return super.getProgramArguments(configuration);
-		} catch (CoreException ce) {
-			//do nothing
+		}
+		catch (CoreException ce) {
+			// do nothing
 		}
 		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
 	}

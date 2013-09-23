@@ -19,7 +19,9 @@ import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsB
 
 public class AntBuilderTabGroup extends AbstractLaunchConfigurationTabGroup {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
 	 */
 	@Override
@@ -34,16 +36,8 @@ public class AntBuilderTabGroup extends AbstractLaunchConfigurationTabGroup {
 		env.setHelpContextId(IAntUIHelpContextIds.ANT_ENVIRONMENT_TAB);
 		ExternalToolsBuilderTab builder = new ExternalToolsBuilderTab(false);
 		builder.setHelpContextId(IAntUIHelpContextIds.ANT_BUILD_OPTIONS_TAB);
-		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
-			new AntMainTab(),
-			refresh,	
-            new AntBuilderTargetsTab(),
-			classpath,
-			new AntPropertiesTab(),
-			jre,
-			env,
-			builder
-		};
+		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] { new AntMainTab(), refresh, new AntBuilderTargetsTab(), classpath,
+				new AntPropertiesTab(), jre, env, builder };
 		setTabs(tabs);
 	}
 }

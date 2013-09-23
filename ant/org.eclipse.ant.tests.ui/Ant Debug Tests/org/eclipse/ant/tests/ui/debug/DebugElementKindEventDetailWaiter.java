@@ -24,10 +24,10 @@ public class DebugElementKindEventDetailWaiter extends DebugElementKindEventWait
 		super(eventKind, elementClass);
 		fDetail = detail;
 	}
-	
+
 	@Override
 	public boolean accept(DebugEvent event) {
 		return super.accept(event) && fDetail == event.getDetail();
 	}
-	
+
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.launching.debug.model;
 
-
 import org.eclipse.ant.internal.launching.AntLaunching;
 import org.eclipse.ant.internal.launching.debug.IAntDebugConstants;
 import org.eclipse.core.runtime.IStatus;
@@ -22,35 +21,35 @@ import org.eclipse.debug.core.model.DebugElement;
  * Common function of Ant debug model elements
  */
 public abstract class AntDebugElement extends DebugElement {
-	
+
 	/**
-	 * Constructs a new debug element contained in the given
-	 * debug target.
+	 * Constructs a new debug element contained in the given debug target.
 	 * 
-	 * @param target debug target
+	 * @param target
+	 *            debug target
 	 */
 	public AntDebugElement(AntDebugTarget target) {
 		super(target);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
 	@Override
 	public String getModelIdentifier() {
 		return IAntDebugConstants.ID_ANT_DEBUG_MODEL;
 	}
-    
+
 	/**
-     * Throws a debug exception with the given message, error code, and underlying
-     * exception.
-     */
-    protected void throwDebugException(String message) throws DebugException {
-        throw new DebugException(new Status(IStatus.ERROR, AntLaunching.getUniqueIdentifier(),
-            DebugException.TARGET_REQUEST_FAILED, message, null));
-    }
-    
-    protected AntDebugTarget getAntDebugTarget() {
-        return (AntDebugTarget)super.getDebugTarget();
-    }
+	 * Throws a debug exception with the given message, error code, and underlying exception.
+	 */
+	protected void throwDebugException(String message) throws DebugException {
+		throw new DebugException(new Status(IStatus.ERROR, AntLaunching.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, message, null));
+	}
+
+	protected AntDebugTarget getAntDebugTarget() {
+		return (AntDebugTarget) super.getDebugTarget();
+	}
 }

@@ -31,16 +31,15 @@ public class AntViewTests extends AbstractAntUITest {
 	public AntViewTests(String name) {
 		super(name);
 	}
-	
+
 	public void testAddBuildFilesAction() throws CoreException {
 		// Ensure that AddBuildFilesAction is present!
 		String viewId = "org.eclipse.ant.ui.views.AntView"; //$NON-NLS-1$
-		IViewPart view = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage().showView(viewId);
+		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(viewId);
 		assertNotNull("Failed to obtain the AntView", view); //$NON-NLS-1$
 		IViewSite viewSite = view.getViewSite();
 		assertNotNull("Failed to obtain view site", viewSite); //$NON-NLS-1$
-		IToolBarManager toolBarMgr= viewSite.getActionBars().getToolBarManager();
+		IToolBarManager toolBarMgr = viewSite.getActionBars().getToolBarManager();
 		assertNotNull("Failed to obtain the AntView ToolBar", toolBarMgr); //$NON-NLS-1$
 		AddBuildFilesAction action = getAddBuildFilesAction(toolBarMgr);
 		assertNotNull("Failed to obtain the AddBuildFilesAction", action); //$NON-NLS-1$
@@ -60,18 +59,18 @@ public class AntViewTests extends AbstractAntUITest {
 		}
 		return null;
 	}
-	
+
 	public void testAntBuildFilesExtensionFilter() {
-		// Ensure coverage for the extension filter used by AddBuildFilesAction 
+		// Ensure coverage for the extension filter used by AddBuildFilesAction
 		// Create blocks to scope the vars to catch typos!
-		
+
 		{// Accept only a single extension
 			String extnFilter1 = "xml"; //$NON-NLS-1$
 			FileFilterProxy ff1 = new FileFilterProxy(extnFilter1);
 			assertTrue("xml is not accepted as a build file extension", ff1.canAccept("xml")); //$NON-NLS-1$ //$NON-NLS-2$
 			assertFalse("ent is accepted as a build file extension", ff1.canAccept("ent")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		{// Accept multiple extensions
 			String extnFilter2 = AntUtil.getKnownBuildFileExtensionsAsPattern();
 			FileFilterProxy ff2 = new FileFilterProxy(extnFilter2);
@@ -84,22 +83,22 @@ public class AntViewTests extends AbstractAntUITest {
 			assertFalse("macro is accepted as a build file extension", ff2.canAccept("macro")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	
+
 	private static class FileFilterProxy extends TypeProxy {
-		
+
 		Method canAcceptMethod = null;
-		
+
 		FileFilterProxy(String extnFilter) {
 			super(new FileFilter(Collections.EMPTY_LIST, extnFilter));
 		}
-		
+
 		boolean canAccept(String extn) {
 			if (canAcceptMethod == null) {
 				canAcceptMethod = get("canAccept", new Class[] { String.class }); //$NON-NLS-1$
 			}
-			Object result = invoke(canAcceptMethod, new String[] {extn});			
+			Object result = invoke(canAcceptMethod, new String[] { extn });
 			assertNotNull("Failed to invoke 'canAccept()'", result); //$NON-NLS-1$
-			return ((Boolean)result).booleanValue();
+			return ((Boolean) result).booleanValue();
 		}
 	}
 

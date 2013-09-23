@@ -28,30 +28,22 @@ import org.xml.sax.SAXException;
 /**
  * A content describer for Ant buildfiles.
  * <p>
- * If project top level element is found 
- *      then if:
- *          target sub-elements are found returns VALID
- *          default attribute is found returns VALID
- *          some other likely Ant element is found (classpath, import, macrodef, path, property, taskdef, typedef) returns VALID
- *      else:
- *          returns INDETERMINATE
- * else
- *      returns INDETERMINATE
+ * If project top level element is found then if: target sub-elements are found returns VALID default attribute is found returns VALID some other
+ * likely Ant element is found (classpath, import, macrodef, path, property, taskdef, typedef) returns VALID else: returns INDETERMINATE else returns
+ * INDETERMINATE
  * </p>
  * 
  * @since 3.1
  */
 public final class AntBuildfileContentDescriber extends XMLContentDescriber implements IExecutableExtension {
 
-	/* (Intentionally not included in javadoc)
-	 * Determines the validation status for the given contents.
+	/*
+	 * (Intentionally not included in javadoc) Determines the validation status for the given contents.
 	 * 
 	 * @param contents the contents to be evaluated
-	 * @return one of the following:<ul>
-	 * <li><code>VALID</code></li>,
-	 * <li><code>INVALID</code></li>,
-	 * <li><code>INDETERMINATE</code></li>
-	 * </ul>
+	 * 
+	 * @return one of the following:<ul> <li><code>VALID</code></li>, <li><code>INVALID</code></li>, <li><code>INDETERMINATE</code></li> </ul>
+	 * 
 	 * @throws IOException
 	 */
 	private int checkCriteria(InputSource contents) throws IOException {
@@ -59,11 +51,13 @@ public final class AntBuildfileContentDescriber extends XMLContentDescriber impl
 		try {
 			if (!antHandler.parseContents(contents)) {
 				return INDETERMINATE;
-            }
-		} catch (SAXException e) {
+			}
+		}
+		catch (SAXException e) {
 			// we may be handed any kind of contents... it is normal we fail to parse
 			return INDETERMINATE;
-		} catch (ParserConfigurationException e) {
+		}
+		catch (ParserConfigurationException e) {
 			// some bad thing happened - force this describer to be disabled
 			String message = "Internal Error: XML parser configuration error during content description for Ant buildfiles"; //$NON-NLS-1$
 			throw new RuntimeException(message);
@@ -71,18 +65,20 @@ public final class AntBuildfileContentDescriber extends XMLContentDescriber impl
 		// Check to see if we matched our criteria.
 		if (antHandler.hasRootProjectElement()) {
 			if (antHandler.hasProjectDefaultAttribute() || antHandler.hasTargetElement() || antHandler.hasAntElement()) {
-                //project and default attribute or project and target element(s) 
-				//or project and top level ant element(s) (classpath, import, macrodef, path, property, taskdef, typedef)
-                return VALID;
-            }
-            //only a top level project element...maybe an Ant buildfile
-            return INDETERMINATE;
-        } 
-			
+				// project and default attribute or project and target element(s)
+				// or project and top level ant element(s) (classpath, import, macrodef, path, property, taskdef, typedef)
+				return VALID;
+			}
+			// only a top level project element...maybe an Ant buildfile
+			return INDETERMINATE;
+		}
+
 		return INDETERMINATE;
 	}
 
-	/* (Intentionally not included in javadoc)
+	/*
+	 * (Intentionally not included in javadoc)
+	 * 
 	 * @see IContentDescriber#describe(InputStream, IContentDescription)
 	 */
 	@Override
@@ -91,13 +87,15 @@ public final class AntBuildfileContentDescriber extends XMLContentDescriber impl
 		if (super.describe(contents, description) == INVALID) {
 			return INVALID;
 		}
-		// super.describe will have consumed some chars, need to rewind		
+		// super.describe will have consumed some chars, need to rewind
 		contents.reset();
-		// Check to see if we matched our criteria.		
+		// Check to see if we matched our criteria.
 		return checkCriteria(new InputSource(contents));
 	}
 
-	/* (Intentionally not included in javadoc)
+	/*
+	 * (Intentionally not included in javadoc)
+	 * 
 	 * @see IContentDescriber#describe(Reader, IContentDescription)
 	 */
 	@Override
@@ -112,11 +110,14 @@ public final class AntBuildfileContentDescriber extends XMLContentDescriber impl
 		return checkCriteria(new InputSource(contents));
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String,
+	 * java.lang.Object)
+	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
-    	//do nothing
-    }
+		// do nothing
+	}
 }

@@ -17,20 +17,20 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 
 /**
- * A image descriptor consisting of a main icon and several adornments. The adornments
- * are computed according to flags set on creation of the descriptor.
+ * A image descriptor consisting of a main icon and several adornments. The adornments are computed according to flags set on creation of the
+ * descriptor.
  */
 public class AntImageDescriptor extends CompositeImageDescriptor {
-	
+
 	/** Flag to render an error adornment */
-	public final static int HAS_ERRORS= 0x0001;
+	public final static int HAS_ERRORS = 0x0001;
 
 	/** Flag to render an imported adornment */
-	public final static int IMPORTED= 0x0002;
-	
+	public final static int IMPORTED = 0x0002;
+
 	/** Flag to render an warning adornment */
-	public final static int HAS_WARNINGS= 0x0004;
-	
+	public final static int HAS_WARNINGS = 0x0004;
+
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
 	private Point fSize;
@@ -38,40 +38,42 @@ public class AntImageDescriptor extends CompositeImageDescriptor {
 	/**
 	 * Create a new AntImageDescriptor.
 	 * 
-	 * @param baseImage an image descriptor used as the base image
-	 * @param flags flags indicating which adornments are to be rendered
+	 * @param baseImage
+	 *            an image descriptor used as the base image
+	 * @param flags
+	 *            flags indicating which adornments are to be rendered
 	 * 
 	 */
 	public AntImageDescriptor(ImageDescriptor baseImage, int flags) {
 		setBaseImage(baseImage);
 		setFlags(flags);
 	}
-	
+
 	/**
 	 * @see CompositeImageDescriptor#getSize()
 	 */
 	@Override
 	protected Point getSize() {
 		if (fSize == null) {
-			ImageData data= getBaseImage().getImageData();
+			ImageData data = getBaseImage().getImageData();
 			setSize(new Point(data.width, data.height));
 		}
 		return fSize;
 	}
-	
+
 	/**
 	 * @see Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof AntImageDescriptor)){
+		if (!(object instanceof AntImageDescriptor)) {
 			return false;
 		}
-			
-		AntImageDescriptor other= (AntImageDescriptor)object;
+
+		AntImageDescriptor other = (AntImageDescriptor) object;
 		return (getBaseImage().equals(other.getBaseImage()) && getFlags() == other.getFlags());
 	}
-	
+
 	/**
 	 * @see Object#hashCode()
 	 */
@@ -79,15 +81,15 @@ public class AntImageDescriptor extends CompositeImageDescriptor {
 	public int hashCode() {
 		return getBaseImage().hashCode() | getFlags();
 	}
-	
+
 	/**
 	 * @see CompositeImageDescriptor#drawCompositeImage(int, int)
 	 */
 	@Override
 	protected void drawCompositeImage(int width, int height) {
-		ImageData bg= getBaseImage().getImageData();
+		ImageData bg = getBaseImage().getImageData();
 		if (bg == null) {
-			bg= DEFAULT_IMAGE_DATA;
+			bg = DEFAULT_IMAGE_DATA;
 		}
 		drawImage(bg, 0, 0);
 		drawOverlays();
@@ -97,26 +99,26 @@ public class AntImageDescriptor extends CompositeImageDescriptor {
 	 * Add any overlays to the image as specified in the flags.
 	 */
 	protected void drawOverlays() {
-		int flags= getFlags();
-		int y= 0;
-		ImageData data= null;
+		int flags = getFlags();
+		int y = 0;
+		ImageData data = null;
 		if ((flags & IMPORTED) != 0) {
-			data= AntUIImages.getImageDescriptor(IAntUIConstants.IMG_OVR_IMPORT).getImageData();
+			data = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_OVR_IMPORT).getImageData();
 			drawImage(data, 0, 0);
 		}
 		if ((flags & HAS_ERRORS) != 0) {
-			y= getSize().y;
-			data= AntUIImages.getImageDescriptor(IAntUIConstants.IMG_OVR_ERROR).getImageData();
+			y = getSize().y;
+			data = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_OVR_ERROR).getImageData();
 			y -= data.height;
 			drawImage(data, 0, y);
 		} else if ((flags & HAS_WARNINGS) != 0) {
-			y= getSize().y;
-			data= AntUIImages.getImageDescriptor(IAntUIConstants.IMG_OVR_WARNING).getImageData();
+			y = getSize().y;
+			data = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_OVR_WARNING).getImageData();
 			y -= data.height;
 			drawImage(data, 0, y);
 		}
 	}
-	
+
 	protected ImageDescriptor getBaseImage() {
 		return fBaseImage;
 	}

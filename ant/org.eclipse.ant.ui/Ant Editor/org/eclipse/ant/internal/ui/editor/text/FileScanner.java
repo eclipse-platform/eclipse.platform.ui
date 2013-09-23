@@ -8,18 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
- 
+
 package org.eclipse.ant.internal.ui.editor.text;
 
 import org.apache.tools.ant.DirectoryScanner;
 
-
 public class FileScanner extends DirectoryScanner {
-	
+
 	public String[] getExcludesPatterns() {
 		return excludes;
 	}
-	
+
 	public String[] getIncludePatterns() {
 		return includes;
 	}

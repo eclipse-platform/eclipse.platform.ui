@@ -18,20 +18,19 @@ import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
 import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
 
-
 public class AntTemplateAccess {
 	/** Key to store custom templates. */
-	private static final String CUSTOM_TEMPLATES_KEY= "org.eclipse.ant.ui.customtemplates"; //$NON-NLS-1$
-	
+	private static final String CUSTOM_TEMPLATES_KEY = "org.eclipse.ant.ui.customtemplates"; //$NON-NLS-1$
+
 	/** The shared instance. */
 	private static AntTemplateAccess fgInstance;
-	
+
 	/** The template store. */
 	private TemplateStore fStore;
-	
+
 	/** The context type registry. */
 	private ContributionContextTypeRegistry fRegistry;
-	
+
 	private AntTemplateAccess() {
 	}
 
@@ -42,7 +41,7 @@ public class AntTemplateAccess {
 	 */
 	public static AntTemplateAccess getDefault() {
 		if (fgInstance == null) {
-			fgInstance= new AntTemplateAccess();
+			fgInstance = new AntTemplateAccess();
 		}
 		return fgInstance;
 	}
@@ -54,10 +53,11 @@ public class AntTemplateAccess {
 	 */
 	public TemplateStore getTemplateStore() {
 		if (fStore == null) {
-			fStore= new ContributionTemplateStore(getContextTypeRegistry(),AntUIPlugin.getDefault().getPreferenceStore(), CUSTOM_TEMPLATES_KEY);
+			fStore = new ContributionTemplateStore(getContextTypeRegistry(), AntUIPlugin.getDefault().getPreferenceStore(), CUSTOM_TEMPLATES_KEY);
 			try {
 				fStore.load();
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				AntUIPlugin.log(e);
 			}
 		}
@@ -72,7 +72,7 @@ public class AntTemplateAccess {
 	public ContextTypeRegistry getContextTypeRegistry() {
 		if (fRegistry == null) {
 			// create and configure the contexts available in the template editor
-			fRegistry= new ContributionContextTypeRegistry();
+			fRegistry = new ContributionContextTypeRegistry();
 			fRegistry.addContextType(BuildFileContextType.BUILDFILE_CONTEXT_TYPE);
 			fRegistry.addContextType(TargetContextType.TARGET_CONTEXT_TYPE);
 			fRegistry.addContextType(TaskContextType.TASK_CONTEXT_TYPE);

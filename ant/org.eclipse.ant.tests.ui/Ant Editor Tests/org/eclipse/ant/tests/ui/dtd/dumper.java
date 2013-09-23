@@ -27,8 +27,8 @@ import org.eclipse.ant.internal.ui.dtd.ParseError;
 import org.eclipse.ant.internal.ui.dtd.Parser;
 
 /**
- * This class is intended to be used from the command line (hence the
- * uncapitalized class name).
+ * This class is intended to be used from the command line (hence the uncapitalized class name).
+ * 
  * @author Bob Foster
  */
 public class dumper {
@@ -42,15 +42,17 @@ public class dumper {
 		String document = args[0];
 
 		Parser parser = new Parser();
-		
+
 		ISchema schema;
 		try {
 			schema = parser.parse(document);
-		} catch (ParseError e) {
+		}
+		catch (ParseError e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 			return 1;
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 			return 1;
 		}
@@ -58,31 +60,35 @@ public class dumper {
 		dumpSchema(schema);
 		return 0;
 	}
-	
+
 	/**
 	 * Write schema contents to standard output.
 	 */
 	private static void dumpSchema(ISchema schema) {
 		IElement[] elements = schema.getElements();
-		System.out.println(""+elements.length+" elements defined"); //$NON-NLS-1$ //$NON-NLS-2$
+		System.out.println("" + elements.length + " elements defined"); //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = 0; i < elements.length; i++) {
 			IElement element = elements[i];
 			IModel model = element.getContentModel();
-			System.out.println("ELEMENT "+element.getName() //$NON-NLS-1$
-				+'"'+model.stringRep()+'"');
+			System.out.println("ELEMENT " + element.getName() //$NON-NLS-1$
+					+ '"' + model.stringRep() + '"');
 			dumpDfm(element.getDfm());
 		}
 	}
 
 	/**
 	 * Dump dfm as a series of states.
+	 * 
 	 * <pre>
 	 * S0  a=>S1 b=>S2 
 	 * S1  c=>S2
 	 * S2* d=>S2
 	 * </pre>
+	 * 
 	 * Where * indicates accepting state.
-	 * @param dfm to dump
+	 * 
+	 * @param dfm
+	 *            to dump
 	 */
 	private static void dumpDfm(IDfm dfm) {
 		HashMap<IDfm, Integer> map = new HashMap<IDfm, Integer>();
@@ -101,18 +107,18 @@ public class dumper {
 	}
 
 	private static void print(State state, HashMap<IDfm, Integer> map) {
-		System.out.print("  S"+state.n.intValue() //$NON-NLS-1$
-			+(state.dfm.isAccepting() ? "*  " : "  ")); //$NON-NLS-1$ //$NON-NLS-2$
+		System.out.print("  S" + state.n.intValue() //$NON-NLS-1$
+				+ (state.dfm.isAccepting() ? "*  " : "  ")); //$NON-NLS-1$ //$NON-NLS-2$
 		String[] accepts = state.dfm.getAccepts();
 		for (int i = 0; i < accepts.length; i++) {
 			String accept = accepts[i];
 			IDfm next = state.dfm.advance(accept);
 			int n = map.get(next).intValue();
-			System.out.print(" "+accept+"=>S"+n); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.print(" " + accept + "=>S" + n); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		System.out.println();
 	}
-	
+
 	private static int dumpDfm(IDfm dfm, HashMap<IDfm, Integer> map, int num) {
 		if (!map.containsKey(dfm)) {
 			map.put(dfm, new Integer(num++));
@@ -124,24 +130,22 @@ public class dumper {
 		}
 		return num;
 	}
-	
+
 	private static class State implements Comparable<State> {
 		public IDfm dfm;
 		public Integer n;
+
 		public State(IDfm dfm, Integer n) {
 			this.dfm = dfm;
 			this.n = n;
 		}
+
 		/**
 		 * @see java.lang.Comparable#compareTo(java.lang.Object)
 		 */
 		@Override
 		public int compareTo(State other) {
-			return n.intValue() < other.n.intValue()
-				? -1 
-				: (n.intValue() == other.n.intValue() 
-					? 0 
-					: 1);
+			return n.intValue() < other.n.intValue() ? -1 : (n.intValue() == other.n.intValue() ? 0 : 1);
 		}
 
 	}

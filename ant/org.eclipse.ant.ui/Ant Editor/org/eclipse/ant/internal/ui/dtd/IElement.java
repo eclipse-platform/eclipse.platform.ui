@@ -15,50 +15,45 @@ import java.util.Map;
 
 /**
  * IElement interface.
+ * 
  * @author Bob Foster
  */
 public interface IElement extends IAtom {
 
 	/**
-	 * @return true if the element has been referenced in a schema but is not
-	 * yet defined.
+	 * @return true if the element has been referenced in a schema but is not yet defined.
 	 */
 	public boolean isUndefined();
-	
+
 	/**
 	 * @return true if element model is <code>"(#PCDATA)"</code>.
 	 */
 	public boolean isText();
-	
+
 	/**
 	 * @return true if element model is EMPTY.
 	 */
 	public boolean isEmpty();
-	
+
 	/**
 	 * @return true if element model is ANY.
 	 */
 	public boolean isAny();
-	
+
 	/**
-	 * @return the element's content model. The content model will be empty
-	 * if <code>isText()</code>, <code>isAny()</code> or <code>isEmpty()</code>.
-	 * Note that the content model deals with child elements only; use
-	 * <code>isMixed()</code> to see if text is also allowed.
+	 * @return the element's content model. The content model will be empty if <code>isText()</code>, <code>isAny()</code> or <code>isEmpty()</code>.
+	 *         Note that the content model deals with child elements only; use <code>isMixed()</code> to see if text is also allowed.
 	 */
 	public IModel getContentModel();
-	
+
 	/**
-	 * @return the DFM corresponding to the content model. Every element
-	 * has a DFM.
+	 * @return the DFM corresponding to the content model. Every element has a DFM.
 	 */
 	public IDfm getDfm();
-	
+
 	/**
-	 * @return Map with attribute qname keys and IAttr values.
-	 * If element has no attributes, the map is empty.
-	 * Map must not be modified by caller; for performance reasons,
-	 * it is not a copy.
+	 * @return Map with attribute qname keys and IAttr values. If element has no attributes, the map is empty. Map must not be modified by caller; for
+	 *         performance reasons, it is not a copy.
 	 */
 	public Map<String, IAttribute> getAttributes();
 }

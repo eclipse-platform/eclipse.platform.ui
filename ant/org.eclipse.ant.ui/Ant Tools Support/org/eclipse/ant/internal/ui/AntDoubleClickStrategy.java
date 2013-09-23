@@ -18,17 +18,19 @@ import org.eclipse.jface.text.ITextViewer;
 
 public class AntDoubleClickStrategy implements ITextDoubleClickStrategy {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.text.ITextDoubleClickStrategy#doubleClicked(org.eclipse.jface.text.ITextViewer)
 	 */
 	@Override
 	public void doubleClicked(ITextViewer textViewer) {
-		int offset= textViewer.getSelectedRange().x;
+		int offset = textViewer.getSelectedRange().x;
 
 		if (offset < 0) {
 			return;
 		}
-		IRegion region= XMLTextHover.getRegion(textViewer, offset);
+		IRegion region = XMLTextHover.getRegion(textViewer, offset);
 		if (region != null) {
 			textViewer.setSelectedRange(region.getOffset(), region.getLength());
 		}

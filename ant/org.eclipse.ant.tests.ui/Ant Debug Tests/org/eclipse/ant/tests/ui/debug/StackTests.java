@@ -18,38 +18,38 @@ import org.eclipse.debug.core.model.IStackFrame;
 
 public class StackTests extends AbstractAntDebugTest {
 
-    public StackTests(String name) {
-        super(name);
-    }
+	public StackTests(String name) {
+		super(name);
+	}
 
-    public void testStackForAntCall() throws Exception {
-        antCallStack(false);
-    }
-    
-    public void testStackForAntCallVM() throws Exception {
-        antCallStack(true);
-    }
-    
-    private void antCallStack(boolean sepVM) throws CoreException {
-        String fileName = "85769"; //$NON-NLS-1$
-        IFile file= getIFile(fileName + ".xml"); //$NON-NLS-1$
-        ILineBreakpoint bp = createLineBreakpoint(18, file);
-        AntThread thread = null;
-        try {
-            if (sepVM) {
-                fileName+= "SepVM"; //$NON-NLS-1$
-            }
-            thread= launchToLineBreakpoint(fileName, bp);
-            
-            
-            IStackFrame[] frames= thread.getStackFrames();
-           
-            assertTrue(frames.length == 3);
-            IStackFrame frame = frames[0];
-            frame.getName().equals(""); //$NON-NLS-1$
-        } finally {
-            terminateAndRemove(thread);
-            removeAllBreakpoints();
-        }
-    }
+	public void testStackForAntCall() throws Exception {
+		antCallStack(false);
+	}
+
+	public void testStackForAntCallVM() throws Exception {
+		antCallStack(true);
+	}
+
+	private void antCallStack(boolean sepVM) throws CoreException {
+		String fileName = "85769"; //$NON-NLS-1$
+		IFile file = getIFile(fileName + ".xml"); //$NON-NLS-1$
+		ILineBreakpoint bp = createLineBreakpoint(18, file);
+		AntThread thread = null;
+		try {
+			if (sepVM) {
+				fileName += "SepVM"; //$NON-NLS-1$
+			}
+			thread = launchToLineBreakpoint(fileName, bp);
+
+			IStackFrame[] frames = thread.getStackFrames();
+
+			assertTrue(frames.length == 3);
+			IStackFrame frame = frames[0];
+			frame.getName().equals(""); //$NON-NLS-1$
+		}
+		finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
 }

@@ -29,18 +29,18 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.osgi.framework.BundleContext;
 
 public class AntCoreUtil {
-    
-    private static BundleContext fgContext= null;
-    
-    public static void setBundleContext(BundleContext context) {
-        fgContext= context;
-    }
-    
-    public static BundleContext getBundleContext() {
-        return fgContext;
-    }
-    
-    /*
+
+	private static BundleContext fgContext = null;
+
+	public static void setBundleContext(BundleContext context) {
+		fgContext = context;
+	}
+
+	public static BundleContext getBundleContext() {
+		return fgContext;
+	}
+
+	/*
 	 * Helper method to ensure an array is converted into an ArrayList.
 	 */
 	public static ArrayList<String> getArrayList(String[] args) {
@@ -56,13 +56,11 @@ public class AntCoreUtil {
 		}
 		return result;
 	}
-	
+
 	/*
-	 * From a command line list, get the argument for the given parameter.
-	 * The parameter and its argument are removed from the list.
+	 * From a command line list, get the argument for the given parameter. The parameter and its argument are removed from the list.
 	 * 
-	 * @return <code>null</code> if the parameter is not found 
-	 * 			or an empty String if no arguments are found
+	 * @return <code>null</code> if the parameter is not found or an empty String if no arguments are found
 	 */
 	public static String getArgument(List<String> commands, String param) {
 		if (commands == null) {
@@ -76,7 +74,7 @@ public class AntCoreUtil {
 		if (index == commands.size()) {// if this is the last command
 			return IAntCoreConstants.EMPTY_STRING;
 		}
-		
+
 		String command = commands.get(index);
 		if (command.startsWith("-")) { //new parameter //$NON-NLS-1$
 			return IAntCoreConstants.EMPTY_STRING;
@@ -84,96 +82,102 @@ public class AntCoreUtil {
 		commands.remove(index);
 		return command;
 	}
-	
+
 	public static void processMinusDProperties(List<String> commands, Map<String, String> userProperties) {
-	    Iterator<String> iter= commands.iterator();
-	    while (iter.hasNext()) {
-            String arg = iter.next();
+		Iterator<String> iter = commands.iterator();
+		while (iter.hasNext()) {
+			String arg = iter.next();
 			if (arg.startsWith("-D")) { //$NON-NLS-1$
 				String name = arg.substring(2, arg.length());
 				String value = null;
 				int posEq = name.indexOf("="); //$NON-NLS-1$
 				if (posEq == 0) {
-					value= name.substring(1);
-					name= IAntCoreConstants.EMPTY_STRING;
+					value = name.substring(1);
+					name = IAntCoreConstants.EMPTY_STRING;
 				} else if (posEq > 0 && posEq != name.length() - 1) {
 					value = name.substring(posEq + 1).trim();
 					name = name.substring(0, posEq);
 				}
-				
+
 				if (value == null) {
-					//the user has specified something like "-Debug"
+					// the user has specified something like "-Debug"
 					continue;
 				}
-	
+
 				userProperties.put(name, value);
 				iter.remove();
 			}
 		}
 	}
-	
+
 	public static File getFileRelativeToBaseDir(String fileName, String base, String buildFileLocation) {
-		IPath path= new Path(fileName);
+		IPath path = new Path(fileName);
 		if (!path.isAbsolute()) {
 			if (base != null) {
-				File baseDir= new File(base);
-				//relative to the base dir
-				path= new Path(baseDir.getAbsolutePath()); 
+				File baseDir = new File(base);
+				// relative to the base dir
+				path = new Path(baseDir.getAbsolutePath());
 			} else {
-				//relative to the build file location
-				path= new Path(buildFileLocation);
-				path= path.removeLastSegments(1);
+				// relative to the build file location
+				path = new Path(buildFileLocation);
+				path = path.removeLastSegments(1);
 			}
-			path= path.addTrailingSeparator();
-			path= path.append(fileName);
+			path = path.addTrailingSeparator();
+			path = path.append(fileName);
 		}
-		
+
 		return path.toFile();
 	}
-	
+
 	/**
 	 * Returns a list of Properties contained in the list of fileNames.
-	 * @param fileNames the names of the properties files to load from
-	 * @param base the base directory name
-	 * @param buildFileLocation 
-	 * @return a list of {@link Properties} objects for each filename 
-	 * @throws IOException 
+	 * 
+	 * @param fileNames
+	 *            the names of the properties files to load from
+	 * @param base
+	 *            the base directory name
+	 * @param buildFileLocation
+	 * @return a list of {@link Properties} objects for each filename
+	 * @throws IOException
 	 */
 	public static List<Properties> loadPropertyFiles(List<String> fileNames, String base, String buildFileLocation) throws IOException {
-	    ArrayList<Properties> allProperties= new ArrayList<Properties>(fileNames.size());
+		ArrayList<Properties> allProperties = new ArrayList<Properties>(fileNames.size());
 		for (int i = 0; i < fileNames.size(); i++) {
 			String filename = fileNames.get(i);
-           	File file = getFileRelativeToBaseDir(filename, base, buildFileLocation);
-            Properties props = new Properties();
-            FileInputStream fis = null;
-            try {
-                fis = new FileInputStream(file);
-                props.load(fis);
-            } finally {
-                if (fis != null) {
-                    try {
-                        fis.close();
-                    } catch (IOException e){
-                    	//do nothing
-                    }
-                }
-            }
-            Enumeration<?> propertyNames = props.propertyNames();
-            while (propertyNames.hasMoreElements()) {
-                String name = (String) propertyNames.nextElement();
-                String value = props.getProperty(name);
-                props.remove(name);
-                IStringVariableManager stringVariableManager = VariablesPlugin.getDefault().getStringVariableManager();
+			File file = getFileRelativeToBaseDir(filename, base, buildFileLocation);
+			Properties props = new Properties();
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(file);
+				props.load(fis);
+			}
+			finally {
+				if (fis != null) {
+					try {
+						fis.close();
+					}
+					catch (IOException e) {
+						// do nothing
+					}
+				}
+			}
+			Enumeration<?> propertyNames = props.propertyNames();
+			while (propertyNames.hasMoreElements()) {
+				String name = (String) propertyNames.nextElement();
+				String value = props.getProperty(name);
+				props.remove(name);
+				IStringVariableManager stringVariableManager = VariablesPlugin.getDefault().getStringVariableManager();
 				try {
 					name = stringVariableManager.performStringSubstitution(name);
 					value = stringVariableManager.performStringSubstitution(value);
-				} catch (CoreException e) {
+				}
+				catch (CoreException e) {
 					AntCorePlugin.log(e);
 				}
-                props.setProperty(name, value);
-            }
-            allProperties.add(props);
-        }
+				props.setProperty(name, value);
+			}
+			allProperties.add(props);
+		}
 		return allProperties;
 	}
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.launching.launchConfigurations;
 
-
 import org.eclipse.ant.internal.launching.AntLaunching;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
@@ -19,14 +18,14 @@ import org.eclipse.debug.core.model.IStreamsProxy;
  * 
  */
 public class AntStreamsProxy implements IStreamsProxy {
-	
+
 	private AntStreamMonitor fErrorMonitor = new AntStreamMonitor();
 	private AntStreamMonitor fOutputMonitor = new AntStreamMonitor();
-	
+
 	public static final String ANT_DEBUG_STREAM = AntLaunching.PLUGIN_ID + ".ANT_DEBUG_STREAM"; //$NON-NLS-1$
 	public static final String ANT_VERBOSE_STREAM = AntLaunching.PLUGIN_ID + ".ANT_VERBOSE_STREAM"; //$NON-NLS-1$
 	public static final String ANT_WARNING_STREAM = AntLaunching.PLUGIN_ID + ".ANT_WARNING_STREAM"; //$NON-NLS-1$
-	
+
 	private AntStreamMonitor fDebugMonitor = new AntStreamMonitor();
 	private AntStreamMonitor fVerboseMonitor = new AntStreamMonitor();
 	private AntStreamMonitor fWarningMonitor = new AntStreamMonitor();
@@ -52,18 +51,18 @@ public class AntStreamsProxy implements IStreamsProxy {
 	 */
 	@Override
 	public void write(String input) {
-		//do nothing
+		// do nothing
 	}
 
 	public IStreamMonitor getWarningStreamMonitor() {
 		return fWarningMonitor;
 	}
-	
+
 	public IStreamMonitor getDebugStreamMonitor() {
 		return fDebugMonitor;
-	}	
-	
+	}
+
 	public IStreamMonitor getVerboseStreamMonitor() {
 		return fVerboseMonitor;
-	}	
+	}
 }

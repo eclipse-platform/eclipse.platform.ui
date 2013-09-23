@@ -31,17 +31,17 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IProcess;
 
 public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implements IAntDebugController {
-	
+
 	// sockets to communicate with the remote Ant debug build logger
 	private Socket fRequestSocket;
 	private PrintWriter fRequestWriter;
 	private BufferedReader fResponseReader;
-	
-	private int fRequestPort= -1;
+
+	private int fRequestPort = -1;
 	private Thread fReaderThread;
-	
+
 	private AntDebugTarget fTarget;
-	
+
 	/**
 	 * Reader thread that processes request responses from the remote Ant debug build logger
 	 */
@@ -52,135 +52,146 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		}
 
 		@Override
-		public void run(){
-			try { 
-				String message= null; 
-				while (fResponseReader != null) { 
-				    synchronized (RemoteAntDebugBuildListener.this) {
-				        if (fResponseReader != null && (message= fResponseReader.readLine()) != null) {
-				            receiveMessage(message);
-				        }
-				    }
-				} 
-			} catch (IOException ie) { //the other end has shutdown
+		public void run() {
+			try {
+				String message = null;
+				while (fResponseReader != null) {
+					synchronized (RemoteAntDebugBuildListener.this) {
+						if (fResponseReader != null && (message = fResponseReader.readLine()) != null) {
+							receiveMessage(message);
+						}
+					}
+				}
+			}
+			catch (IOException ie) { // the other end has shutdown
 				RemoteAntDebugBuildListener.this.shutDown();
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				AntLaunching.log("Internal error processing remote response", e); //$NON-NLS-1$
 				RemoteAntDebugBuildListener.this.shutDown();
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * Constructor
 	 * 
-	 * @param launch the backing launch to listen to
-	 * @param encoding the encoding to use for communications
+	 * @param launch
+	 *            the backing launch to listen to
+	 * @param encoding
+	 *            the encoding to use for communications
 	 */
 	public RemoteAntDebugBuildListener(ILaunch launch, String encoding) {
 		super(launch, encoding);
-		//fDebug= true;
+		// fDebug= true;
 	}
-	
+
 	@Override
 	protected void receiveMessage(String message) {
 		if (message.startsWith(DebugMessageIds.BUILD_STARTED)) {
 			buildStarted();
-		} else if (message.startsWith(DebugMessageIds.SUSPENDED)){
+		} else if (message.startsWith(DebugMessageIds.SUSPENDED)) {
 			handleSuspendMessage(message);
-		} else if (message.startsWith(DebugMessageIds.TERMINATED)){
+		} else if (message.startsWith(DebugMessageIds.TERMINATED)) {
 			try {
 				fTarget.terminate();
-			} catch (DebugException e) {
-				//do nothing
 			}
-		} else if (message.startsWith(DebugMessageIds.STACK)){
-			AntThread thread= (AntThread) fTarget.getThreads()[0];
+			catch (DebugException e) {
+				// do nothing
+			}
+		} else if (message.startsWith(DebugMessageIds.STACK)) {
+			AntThread thread = (AntThread) fTarget.getThreads()[0];
 			thread.buildStack(message);
-		} else if (message.startsWith(DebugMessageIds.PROPERTIES)){
-		    AntThread thread= (AntThread) fTarget.getThreads()[0];
-		    thread.newProperties(message);
+		} else if (message.startsWith(DebugMessageIds.PROPERTIES)) {
+			AntThread thread = (AntThread) fTarget.getThreads()[0];
+			thread.newProperties(message);
 		} else {
 			super.receiveMessage(message);
 		}
 	}
 
-    private void handleSuspendMessage(String message) {
-        if (message.endsWith(DebugMessageIds.CLIENT_REQUEST)) {
-        	fTarget.suspended(DebugEvent.CLIENT_REQUEST);
-        } else if (message.endsWith(DebugMessageIds.STEP)) {
-        	fTarget.suspended(DebugEvent.STEP_END);
-        } else if (message.indexOf(DebugMessageIds.BREAKPOINT) >= 0) {
-        	fTarget.breakpointHit(message);
-        }
-    }
+	private void handleSuspendMessage(String message) {
+		if (message.endsWith(DebugMessageIds.CLIENT_REQUEST)) {
+			fTarget.suspended(DebugEvent.CLIENT_REQUEST);
+		} else if (message.endsWith(DebugMessageIds.STEP)) {
+			fTarget.suspended(DebugEvent.STEP_END);
+		} else if (message.indexOf(DebugMessageIds.BREAKPOINT) >= 0) {
+			fTarget.breakpointHit(message);
+		}
+	}
 
-    private void buildStarted() {
-        IProcess process= getProcess();
-        while(process == null) {
-        	try {
-        		synchronized (this) {
-        			wait(400);
-        		}
-        		process= getProcess();
-        	} catch (InterruptedException ie) {
-        		//do nothing
-        	}
-        }
-        fTarget= new AntDebugTarget(fLaunch, process, this);
-        fLaunch.addDebugTarget(fTarget);
-        
-        if (!connectRequest()) {
+	private void buildStarted() {
+		IProcess process = getProcess();
+		while (process == null) {
+			try {
+				synchronized (this) {
+					wait(400);
+				}
+				process = getProcess();
+			}
+			catch (InterruptedException ie) {
+				// do nothing
+			}
+		}
+		fTarget = new AntDebugTarget(fLaunch, process, this);
+		fLaunch.addDebugTarget(fTarget);
+
+		if (!connectRequest()) {
 			RemoteAntDebugBuildListener.this.shutDown();
 			return;
-        }
-        
-        fTarget.buildStarted();
-    }
+		}
 
-    private boolean connectRequest() {
-    	Exception exception= null;
-    	for (int i= 1; i < 20; i++) {
-    		try {
-    			fRequestSocket = new Socket("localhost", fRequestPort); //$NON-NLS-1$
-    			fRequestWriter = new PrintWriter(fRequestSocket.getOutputStream(), true);
-    			fResponseReader = new BufferedReader(new InputStreamReader(fRequestSocket.getInputStream(), getEncoding()));
-    			
-    			fReaderThread= new ReaderThread();
-    			fReaderThread.start();
-    			return true;
-    		} catch (UnknownHostException e) {
-    			exception= e;
-    			break;
-    		} catch (IOException e) {
-    			exception= e;
-    		}
-    		try {
-				Thread.sleep(500);
-			} catch(InterruptedException e) {
-				//do nothing
+		fTarget.buildStarted();
+	}
+
+	private boolean connectRequest() {
+		Exception exception = null;
+		for (int i = 1; i < 20; i++) {
+			try {
+				fRequestSocket = new Socket("localhost", fRequestPort); //$NON-NLS-1$
+				fRequestWriter = new PrintWriter(fRequestSocket.getOutputStream(), true);
+				fResponseReader = new BufferedReader(new InputStreamReader(fRequestSocket.getInputStream(), getEncoding()));
+
+				fReaderThread = new ReaderThread();
+				fReaderThread.start();
+				return true;
 			}
-    	}
-    	AntLaunching.log("Internal error attempting to connect to debug target", exception); //$NON-NLS-1$
-    	return false;
+			catch (UnknownHostException e) {
+				exception = e;
+				break;
+			}
+			catch (IOException e) {
+				exception = e;
+			}
+			try {
+				Thread.sleep(500);
+			}
+			catch (InterruptedException e) {
+				// do nothing
+			}
+		}
+		AntLaunching.log("Internal error attempting to connect to debug target", exception); //$NON-NLS-1$
+		return false;
 	}
 
 	/**
-	 * Start listening to an Ant build. Start a server connection that
-	 * the RemoteAntDebugBuildLogger can connect to.
+	 * Start listening to an Ant build. Start a server connection that the RemoteAntDebugBuildLogger can connect to.
 	 * 
-	 * @param eventPort The port number to create the server connection on
-     * @param requestPort The port number to use for sending requests to the remote logger
+	 * @param eventPort
+	 *            The port number to create the server connection on
+	 * @param requestPort
+	 *            The port number to use for sending requests to the remote logger
 	 */
 	public synchronized void startListening(int eventPort, int requestPort) {
 		super.startListening(eventPort);
-		fRequestPort= requestPort;
+		fRequestPort = requestPort;
 	}
-	
+
 	/**
 	 * Sends a request to the Ant build
 	 * 
-	 * @param request debug command
+	 * @param request
+	 *            debug command
 	 */
 	protected void sendRequest(String request) {
 		if (fRequestWriter == null) {
@@ -188,25 +199,26 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		}
 		synchronized (fRequestWriter) {
 			fRequestWriter.println(request);
-		}		
+		}
 	}
-	
+
 	@Override
 	protected synchronized void shutDown() {
-        if (fTarget != null) {
-            try {
+		if (fTarget != null) {
+			try {
 				fTarget.terminate();
-				fTarget= null;
-			} catch (DebugException e) {
-				//do nothing
+				fTarget = null;
 			}
-        }
-		fLaunch= null;
+			catch (DebugException e) {
+				// do nothing
+			}
+		}
+		fLaunch = null;
 		if (DebugPlugin.getDefault() != null) {
 			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		}
 		try {
-			if (fReaderThread != null)   {
+			if (fReaderThread != null) {
 				// interrupt reader thread so that we don't block on close
 				// on a lock held by the BufferedReader
 				// see bug: 38955
@@ -214,27 +226,31 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 			}
 			if (fResponseReader != null) {
 				fResponseReader.close();
-				fResponseReader= null;
+				fResponseReader = null;
 			}
-		} catch(IOException e) {
-			//do nothing
-		}	
+		}
+		catch (IOException e) {
+			// do nothing
+		}
 		if (fRequestWriter != null) {
 			fRequestWriter.close();
-			fRequestWriter= null;
+			fRequestWriter = null;
 		}
-		try{
-			if(fRequestSocket != null) {
+		try {
+			if (fRequestSocket != null) {
 				fRequestSocket.close();
-				fRequestSocket= null;
+				fRequestSocket = null;
 			}
-		} catch(IOException e) {
-			//do nothing
+		}
+		catch (IOException e) {
+			// do nothing
 		}
 		super.shutDown();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#resume()
 	 */
 	@Override
@@ -242,15 +258,19 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		sendRequest(DebugMessageIds.RESUME);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.launching.debug.IAntDebugController#terminate()
 	 */
 	@Override
 	public void terminate() {
-		//do nothing
+		// do nothing
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#suspend()
 	 */
 	@Override
@@ -258,7 +278,9 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		sendRequest(DebugMessageIds.SUSPEND);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#stepInto()
 	 */
 	@Override
@@ -266,7 +288,9 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		sendRequest(DebugMessageIds.STEP_INTO);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#stepOver()
 	 */
 	@Override
@@ -274,7 +298,9 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		sendRequest(DebugMessageIds.STEP_OVER);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#handleBreakpoint(IBreakpoint, boolean)
 	 */
 	@Override
@@ -282,13 +308,14 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		if (fTarget == null || !fTarget.supportsBreakpoint(breakpoint)) {
 			return;
 		}
-		StringBuffer message= new StringBuffer();
+		StringBuffer message = new StringBuffer();
 		if (add) {
 			try {
 				if (!breakpoint.isEnabled()) {
 					return;
 				}
-			} catch (CoreException e) {
+			}
+			catch (CoreException e) {
 				AntLaunching.log(e);
 				return;
 			}
@@ -300,14 +327,17 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		message.append(breakpoint.getMarker().getResource().getLocation().toOSString());
 		message.append(DebugMessageIds.MESSAGE_DELIMITER);
 		try {
-			message.append(((ILineBreakpoint)breakpoint).getLineNumber());
+			message.append(((ILineBreakpoint) breakpoint).getLineNumber());
 			sendRequest(message.toString());
-		} catch (CoreException ce) {
+		}
+		catch (CoreException ce) {
 			AntLaunching.log(ce);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#getProperties()
 	 */
 	@Override
@@ -315,7 +345,9 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		sendRequest(DebugMessageIds.PROPERTIES);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#getStackFrames()
 	 */
 	@Override
@@ -323,7 +355,9 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		sendRequest(DebugMessageIds.STACK);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#unescapeString(java.lang.StringBuffer)
 	 */
 	@Override
@@ -331,22 +365,22 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		if (property.indexOf("\\r") == -1 && property.indexOf("\\n") == -1) { //$NON-NLS-1$ //$NON-NLS-2$
 			return property;
 		}
-		for (int i= 0; i < property.length(); i++) {
+		for (int i = 0; i < property.length(); i++) {
 			if ('\\' == property.charAt(i)) {
-				String newString= ""; //$NON-NLS-1$
+				String newString = ""; //$NON-NLS-1$
 				if ('r' == property.charAt(i + 1)) {
-					if (i-1 > - 1 && '\\' == property.charAt(i-1)) {
-						newString= "r"; //$NON-NLS-1$
+					if (i - 1 > -1 && '\\' == property.charAt(i - 1)) {
+						newString = "r"; //$NON-NLS-1$
 					} else {
-						newString+= '\r';
+						newString += '\r';
 					}
 				} else if ('n' == property.charAt(i + 1)) {
-					if (i-1 > - 1 && '\\' == property.charAt(i-1)) {
-						newString= "n"; //$NON-NLS-1$
+					if (i - 1 > -1 && '\\' == property.charAt(i - 1)) {
+						newString = "n"; //$NON-NLS-1$
 					} else {
-						newString+= '\n';
+						newString += '\n';
 					}
-					
+
 				}
 				if (newString.length() > 0) {
 					property.replace(i, i + 2, newString);

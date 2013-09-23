@@ -24,12 +24,14 @@ public class Element extends Atom implements IElement {
 	private boolean fUndefined = true;
 	private boolean fText;
 	private IModel fModel;
-	private Map<String, IAttribute> fMap = new HashMap<String, IAttribute>(4); 
+	private Map<String, IAttribute> fMap = new HashMap<String, IAttribute>(4);
 	private Dfm fElementDfm;
 
 	/**
 	 * Constructor
-	 * @param name QName of element.
+	 * 
+	 * @param name
+	 *            QName of element.
 	 */
 	public Element(String name) {
 		super(ELEMENT, name);
@@ -37,36 +39,44 @@ public class Element extends Atom implements IElement {
 
 	/**
 	 * Set undefined property.
-	 * @param undefined False if defined; otherwise true (default).
+	 * 
+	 * @param undefined
+	 *            False if defined; otherwise true (default).
 	 */
 	public void setUndefined(boolean undefined) {
 		fUndefined = undefined;
 	}
-	
+
 	/**
 	 * Set text property.
-	 * @param text True if text only; otherwise false (default).
+	 * 
+	 * @param text
+	 *            True if text only; otherwise false (default).
 	 */
 	public void setText(boolean text) {
 		fText = text;
 	}
-	
+
 	/**
 	 * Set model property.
-	 * @param model Dfm describing content model.
+	 * 
+	 * @param model
+	 *            Dfm describing content model.
 	 */
 	public void setContentModel(IModel model) {
 		fModel = model;
 	}
-	
+
 	/**
 	 * Add an attribute to the attribute map.
-	 * @param attribute Attribute to add.
+	 * 
+	 * @param attribute
+	 *            Attribute to add.
 	 */
 	public void addAttribute(IAttribute attribute) {
 		fMap.put(attribute.getName(), attribute);
 	}
-	
+
 	/**
 	 * @see org.eclipse.ant.internal.ui.dtd.IElement#getAttributes()
 	 */
@@ -75,8 +85,9 @@ public class Element extends Atom implements IElement {
 		return fMap;
 	}
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.IElement#isMixed()
 	 */
 	@Override
@@ -112,40 +123,38 @@ public class Element extends Atom implements IElement {
 		}
 		return dfm;
 	}
-	
+
 	private Dfm parseElementDfm() {
 		Dfm dfm;
 		if (fAny) {
 			dfm = Dfm.dfm(true);
 			dfm.any = true;
-		}
-		else if (fEmpty || fText) {
+		} else if (fEmpty || fText) {
 			dfm = Dfm.dfm(true);
 			dfm.empty = true;
-		}
-		else {
+		} else {
 			dfm = parseModel(fModel);
 		}
 		return dfm;
 	}
-	
+
 	private Dfm parseModel(IModel model) {
 		Dfm dfm;
 		Nfm nfm = model.toNfm();
 		if (nfm != null) {
 			try {
 				dfm = fNfmParser.parse(nfm);
-			} catch (ParseError e) {
-				//??? this would be the place to log the error
+			}
+			catch (ParseError e) {
+				// ??? this would be the place to log the error
 				dfm = Dfm.dfm(false);
 			}
-		}
-		else {
+		} else {
 			dfm = Dfm.dfm(false);
 		}
 		return dfm;
 	}
-	
+
 	private static final NfmParser fNfmParser = new NfmParser();
 	private boolean fAny;
 	private boolean fEmpty;
@@ -168,7 +177,9 @@ public class Element extends Atom implements IElement {
 
 	/**
 	 * Sets the any.
-	 * @param any The any to set
+	 * 
+	 * @param any
+	 *            The any to set
 	 */
 	public void setAny(boolean any) {
 		fAny = any;
@@ -176,11 +187,12 @@ public class Element extends Atom implements IElement {
 
 	/**
 	 * Sets the empty.
-	 * @param empty The empty to set
+	 * 
+	 * @param empty
+	 *            The empty to set
 	 */
 	public void setEmpty(boolean empty) {
 		fEmpty = empty;
 	}
 
 }
-

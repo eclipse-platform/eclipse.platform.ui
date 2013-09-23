@@ -12,18 +12,19 @@ package org.eclipse.ant.internal.ui.dtd;
 
 /**
  * Schema atom interface.
+ * 
  * @author Bob Foster
  */
 public interface IAtom {
 
 	public static final int ELEMENT = 0;
 	public static final int ATTRIBUTE = 1;
-	
+
 	/**
 	 * Return the atom name.
 	 */
 	public String getName();
-	
+
 	/**
 	 * Return the atom name.
 	 */

@@ -17,13 +17,11 @@ import org.eclipse.ant.internal.ui.dtd.util.FactoryObject;
 import org.eclipse.ant.internal.ui.dtd.util.MapHolder;
 import org.eclipse.ant.internal.ui.dtd.util.SortedMap;
 
-
 /**
- * Deterministic finite state machine.
- * Once constructed DFM is immutable and can be used by multiple threads.
- * A Dfm node is essentially an accepting flag and a hashtable mapping atoms to
- * Dfm nodes. (Almost of org.eclipse.ant.internal.ui.dtd.util is aimed at reducing the storage
- * overhead of hundreds of little hashtables.)
+ * Deterministic finite state machine. Once constructed DFM is immutable and can be used by multiple threads. A Dfm node is essentially an accepting
+ * flag and a hashtable mapping atoms to Dfm nodes. (Almost of org.eclipse.ant.internal.ui.dtd.util is aimed at reducing the storage overhead of
+ * hundreds of little hashtables.)
+ * 
  * @author Bob Foster
  */
 public class Dfm extends MapHolder implements IDfm, FactoryObject {
@@ -34,7 +32,7 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 	private static int unique = 0;
 	private static Factory factory = new Factory();
 	private Dfm fNext;
-	
+
 	public static Dfm dfm(boolean accepting) {
 		Dfm dfm = free();
 		dfm.accepting = accepting;
@@ -43,7 +41,7 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 
 	protected Dfm() {
 	}
-	
+
 	private static Dfm free() {
 		Dfm dfm = (Dfm) factory.getFree();
 		if (dfm == null)
@@ -61,18 +59,18 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 		dfm.values[0] = follow;
 		return dfm;
 	}
-	
+
 	public static void free(Dfm dfm) {
 		dfm.setKeys(null);
 		dfm.setValues(null);
 		factory.setFree(dfm);
 	}
-	
+
 	@Override
 	public boolean isAccepting() {
 		return accepting;
 	}
-	
+
 	@Override
 	public IDfm advance(String name) {
 		if (any)
@@ -86,7 +84,7 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 		freeMap(map);
 		return dfm;
 	}
-	
+
 	@Override
 	public String[] getAccepts() {
 		if (keys == null)
@@ -102,7 +100,7 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 		if (values == null)
 			return new Dfm[0];
 		Dfm[] s = new Dfm[values.length];
-		System.arraycopy(values,0,s,0,values.length);
+		System.arraycopy(values, 0, s, 0, values.length);
 		return s;
 	}
 
@@ -114,12 +112,14 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 		freeMap(map);
 		freeMap(othermap);
 	}
-	
+
 	public SortedMap getMap() {
 		return getIndirectStringMap(this);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next()
 	 */
 	@Override
@@ -127,7 +127,9 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 		return fNext;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next(org.eclipse.ant.internal.ui.dtd.util.FactoryObject)
 	 */
 	@Override
@@ -135,7 +137,9 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 		fNext = (Dfm) obj;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.IDfm#isAny()
 	 */
 	@Override
@@ -143,7 +147,9 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 		return any;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.IDfm#isEmpty()
 	 */
 	@Override
@@ -151,13 +157,15 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 		return empty;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.IDfm#getAtom(java.lang.String)
 	 */
 	@Override
 	public IAtom getAtom(String name) {
 		Object[] allKeys = getKeys();
-		if (empty || allKeys == null){
+		if (empty || allKeys == null) {
 			return null;
 		}
 		SortedMap map = getIndirectStringMap(this);
@@ -168,7 +176,9 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 		return (IAtom) allKeys[index];
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.IDfm#advance(java.lang.String, java.lang.String)
 	 */
 	@Override

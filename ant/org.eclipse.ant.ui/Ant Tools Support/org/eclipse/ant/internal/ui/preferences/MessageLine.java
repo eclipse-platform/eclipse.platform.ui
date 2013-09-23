@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
-
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.core.runtime.IStatus;
 
@@ -45,10 +44,9 @@ public class MessageLine extends CLabel {
 	 */
 	public MessageLine(Composite parent, int style) {
 		super(parent, style);
-		fNormalMsgAreaBackground= getBackground();
-		fErrorMsgAreaBackground= null;
+		fNormalMsgAreaBackground = getBackground();
+		fErrorMsgAreaBackground = null;
 	}
-
 
 	private Image findImage(IStatus status) {
 		if (status.isOK()) {
@@ -64,17 +62,16 @@ public class MessageLine extends CLabel {
 	}
 
 	/**
-	 * Sets the message and image to the given status.
-	 * <code>null</code> is a valid argument and will set the empty text and no image
+	 * Sets the message and image to the given status. <code>null</code> is a valid argument and will set the empty text and no image
 	 */
 	public void setErrorStatus(IStatus status) {
 		if (status != null) {
-			String message= status.getMessage();
+			String message = status.getMessage();
 			if (message != null && message.length() > 0) {
 				setText(message);
 				setImage(findImage(status));
 				if (fErrorMsgAreaBackground == null) {
-					fErrorMsgAreaBackground= new Color(getDisplay(), ERROR_BACKGROUND_RGB);
+					fErrorMsgAreaBackground = new Color(getDisplay(), ERROR_BACKGROUND_RGB);
 				}
 				setBackground(fErrorMsgAreaBackground);
 				return;
@@ -92,7 +89,7 @@ public class MessageLine extends CLabel {
 	public void dispose() {
 		if (fErrorMsgAreaBackground != null) {
 			fErrorMsgAreaBackground.dispose();
-			fErrorMsgAreaBackground= null;
+			fErrorMsgAreaBackground = null;
 		}
 		super.dispose();
 	}

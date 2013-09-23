@@ -18,7 +18,6 @@ public class AntViewMessages extends NLS {
 	public static String AntView_3;
 	public static String AntView_4;
 
-
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, AntViewMessages.class);

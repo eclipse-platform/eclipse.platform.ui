@@ -36,18 +36,20 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 
 public class AntEditorMarkerUpdater {
-	
+
 	class AntEditorMarkerUpdaterJob extends WorkspaceJob {
-		
+
 		private final List<IProblem> fProblems;
 
-		public AntEditorMarkerUpdaterJob (List<IProblem> problems) {
+		public AntEditorMarkerUpdaterJob(List<IProblem> problems) {
 			super("Ant editor marker updater job"); //$NON-NLS-1$
-			fProblems= problems;
+			fProblems = problems;
 			setSystem(true);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.core.internal.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		@Override
@@ -56,13 +58,15 @@ public class AntEditorMarkerUpdater {
 			return new Status(IStatus.OK, AntUIPlugin.getUniqueIdentifier(), IStatus.OK, IAntCoreConstants.EMPTY_STRING, null);
 		}
 	}
-	
-	private IAntModel fModel= null;
-	private List<IProblem> fCollectedProblems= new ArrayList<IProblem>();
+
+	private IAntModel fModel = null;
+	private List<IProblem> fCollectedProblems = new ArrayList<IProblem>();
 	public static final String BUILDFILE_PROBLEM_MARKER = AntUIPlugin.PI_ANTUI + ".buildFileProblem"; //$NON-NLS-1$
-	private IFile fFile= null;
-	
-	/* (non-Javadoc)
+	private IFile fFile = null;
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ant.internal.ui.editor.outline.IProblem)
 	 */
 	public synchronized void acceptProblem(IProblem problem) {
@@ -71,42 +75,44 @@ public class AntEditorMarkerUpdater {
 		}
 		fCollectedProblems.add(problem);
 	}
-	
+
 	public synchronized void beginReporting() {
 		fCollectedProblems.clear();
 	}
-	
+
 	private void removeProblems() {
-		IFile file= getFile();
+		IFile file = getFile();
 		if (file == null || !file.exists()) {
 			return;
 		}
 		try {
 			file.deleteMarkers(BUILDFILE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-		} catch (CoreException e) {
+		}
+		catch (CoreException e) {
 			AntUIPlugin.log(e);
 		}
 	}
-	
+
 	private void createMarker(IProblem problem) {
 		IFile file = getFile();
-		Map<String, Integer> attributes= getMarkerAttributes(problem);
+		Map<String, Integer> attributes = getMarkerAttributes(problem);
 		try {
 			MarkerUtilities.createMarker(file, attributes, BUILDFILE_PROBLEM_MARKER);
-		} catch (CoreException e) {
+		}
+		catch (CoreException e) {
 			AntUIPlugin.log(e);
-		} 
+		}
 	}
-	
+
 	public void setModel(IAntModel model) {
-		fModel= model;
+		fModel = model;
 	}
-	
+
 	public synchronized void updateMarkers() {
 		IFile file = getFile();
 		if (file != null) {
 			List<IProblem> problems = new ArrayList<IProblem>(fCollectedProblems.size());
-			Iterator<IProblem> e= fCollectedProblems.iterator();
+			Iterator<IProblem> e = fCollectedProblems.iterator();
 			while (e.hasNext()) {
 				problems.add(e.next());
 			}
@@ -116,7 +122,7 @@ public class AntEditorMarkerUpdater {
 			job.schedule();
 		}
 	}
-	
+
 	private void updateMarkers0(List<IProblem> problems) {
 		removeProblems();
 		if (!shouldAddMarkers()) {
@@ -124,33 +130,32 @@ public class AntEditorMarkerUpdater {
 		}
 
 		if (problems.size() > 0) {
-			Iterator<IProblem> e= problems.iterator();
+			Iterator<IProblem> e = problems.iterator();
 			while (e.hasNext()) {
-				IProblem problem= e.next();
+				IProblem problem = e.next();
 				createMarker(problem);
 			}
 		}
 	}
-	
+
 	private IFile getFile() {
 		if (fFile == null) {
-			fFile= fModel.getFile();
+			fFile = fModel.getFile();
 		}
 		return fFile;
 	}
-	
+
 	/**
-	 * Returns the attributes with which a newly created marker will be
-	 * initialized.
-	 *
+	 * Returns the attributes with which a newly created marker will be initialized.
+	 * 
 	 * @return the initial marker attributes
 	 */
 	private Map<String, Integer> getMarkerAttributes(IProblem problem) {
-		
-		Map<String, Integer> attributes= new HashMap<String, Integer>(11);
-		int severity= IMarker.SEVERITY_ERROR;
+
+		Map<String, Integer> attributes = new HashMap<String, Integer>(11);
+		int severity = IMarker.SEVERITY_ERROR;
 		if (problem.isWarning()) {
-			severity= IMarker.SEVERITY_WARNING;
+			severity = IMarker.SEVERITY_WARNING;
 		}
 		// marker line numbers are 1-based
 		MarkerUtilities.setMessage(attributes, problem.getUnmodifiedMessage());
@@ -160,26 +165,27 @@ public class AntEditorMarkerUpdater {
 		attributes.put(IMarker.SEVERITY, new Integer(severity));
 		return attributes;
 	}
-	
+
 	/**
-	 * Returns whether or not to add markers to the file based on the file's content type.
-	 * The content type is considered an Ant buildfile if the XML has a root &quot;project&quot; element.
-	 * Content type is defined in the org.eclipse.ant.core plugin.xml.
+	 * Returns whether or not to add markers to the file based on the file's content type. The content type is considered an Ant buildfile if the XML
+	 * has a root &quot;project&quot; element. Content type is defined in the org.eclipse.ant.core plugin.xml.
+	 * 
 	 * @return whether or not to add markers to the file based on the files content type
 	 */
 	private boolean shouldAddMarkers() {
-		IFile file= getFile();
+		IFile file = getFile();
 		if (file == null || !file.exists()) {
 			return false;
 		}
 		IContentDescription description;
 		try {
 			description = file.getContentDescription();
-		} catch (CoreException e) {
+		}
+		catch (CoreException e) {
 			return false;
 		}
 		if (description != null) {
-			IContentType type= description.getContentType();
+			IContentType type = description.getContentType();
 			return type != null && AntCorePlugin.ANT_BUILDFILE_CONTENT_TYPE.equals(type.getId());
 		}
 		return false;

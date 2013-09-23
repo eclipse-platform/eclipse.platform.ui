@@ -29,49 +29,47 @@ import org.eclipse.swt.SWT;
 public class AntEditorTagScanner extends AbstractAntEditorScanner {
 
 	private Token fStringToken;
-	
-    public AntEditorTagScanner() {
-    	fStringToken= new Token(
-    			createTextAttribute(IAntEditorColorConstants.STRING_COLOR, 
-    					IAntEditorColorConstants.STRING_COLOR + AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX,
-						IAntEditorColorConstants.STRING_COLOR + AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX));
-                    
-		IRule[] rules= new IRule[3];
 
-        // Add rule for single and double quotes
-        rules[0]= new MultiLineRule("\"", "\"", fStringToken, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
-        rules[1]= new SingleLineRule("'", "'", fStringToken, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
+	public AntEditorTagScanner() {
+		fStringToken = new Token(createTextAttribute(IAntEditorColorConstants.STRING_COLOR, IAntEditorColorConstants.STRING_COLOR
+				+ AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX, IAntEditorColorConstants.STRING_COLOR
+				+ AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX));
 
-        // Add generic whitespace rule.
-        rules[2]= new WhitespaceRule(new AntEditorWhitespaceDetector());
+		IRule[] rules = new IRule[3];
 
-        setRules(rules);
-        
-        setDefaultReturnToken(
-        		new Token(createTextAttribute(IAntEditorColorConstants.TAG_COLOR, 
-    					IAntEditorColorConstants.TAG_COLOR + AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX,
-						IAntEditorColorConstants.TAG_COLOR + AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)));
-    }
-    
-    public void adaptToPreferenceChange(PropertyChangeEvent event) {
-    	String property= event.getProperty();
-    	if (property.startsWith(IAntEditorColorConstants.TAG_COLOR) || property.startsWith(IAntEditorColorConstants.STRING_COLOR)) {
-    		if (property.endsWith(AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX)) {
-    			adaptToStyleChange(event, getTokenAffected(event), SWT.BOLD);
-    		} else if (property.endsWith(AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)) {
-    			adaptToStyleChange(event, getTokenAffected(event), SWT.ITALIC);
-    		} else {
-    			adaptToColorChange(event, getTokenAffected(event));
-    		}
-    	}
-    }
-    
-    private Token getTokenAffected(PropertyChangeEvent event) {
-    	String property= event.getProperty();
-    	if (property.startsWith(IAntEditorColorConstants.STRING_COLOR)) {
-    		return fStringToken;
-    	}// else if (property.startsWith(IAntEditorColorConstants.TAG_COLOR)) {
-    		return (Token)fDefaultReturnToken;
-    	//}
-    }
+		// Add rule for single and double quotes
+		rules[0] = new MultiLineRule("\"", "\"", fStringToken, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
+		rules[1] = new SingleLineRule("'", "'", fStringToken, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
+
+		// Add generic whitespace rule.
+		rules[2] = new WhitespaceRule(new AntEditorWhitespaceDetector());
+
+		setRules(rules);
+
+		setDefaultReturnToken(new Token(createTextAttribute(IAntEditorColorConstants.TAG_COLOR, IAntEditorColorConstants.TAG_COLOR
+				+ AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX, IAntEditorColorConstants.TAG_COLOR
+				+ AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)));
+	}
+
+	public void adaptToPreferenceChange(PropertyChangeEvent event) {
+		String property = event.getProperty();
+		if (property.startsWith(IAntEditorColorConstants.TAG_COLOR) || property.startsWith(IAntEditorColorConstants.STRING_COLOR)) {
+			if (property.endsWith(AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX)) {
+				adaptToStyleChange(event, getTokenAffected(event), SWT.BOLD);
+			} else if (property.endsWith(AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)) {
+				adaptToStyleChange(event, getTokenAffected(event), SWT.ITALIC);
+			} else {
+				adaptToColorChange(event, getTokenAffected(event));
+			}
+		}
+	}
+
+	private Token getTokenAffected(PropertyChangeEvent event) {
+		String property = event.getProperty();
+		if (property.startsWith(IAntEditorColorConstants.STRING_COLOR)) {
+			return fStringToken;
+		}// else if (property.startsWith(IAntEditorColorConstants.TAG_COLOR)) {
+		return (Token) fDefaultReturnToken;
+		// }
+	}
 }

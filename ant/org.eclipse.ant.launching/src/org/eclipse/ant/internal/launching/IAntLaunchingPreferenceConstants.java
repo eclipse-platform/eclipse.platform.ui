@@ -15,9 +15,9 @@ package org.eclipse.ant.internal.launching;
  */
 public interface IAntLaunchingPreferenceConstants {
 
-	 /**
-     * int preference identifier constant which specifies the length of time to wait
-     * to connect with the socket that communicates with the separate JRE to capture the output
-     */
-    public static final String ANT_COMMUNICATION_TIMEOUT= "timeout"; //$NON-NLS-1$
+	/**
+	 * int preference identifier constant which specifies the length of time to wait to connect with the socket that communicates with the separate
+	 * JRE to capture the output
+	 */
+	public static final String ANT_COMMUNICATION_TIMEOUT = "timeout"; //$NON-NLS-1$
 }

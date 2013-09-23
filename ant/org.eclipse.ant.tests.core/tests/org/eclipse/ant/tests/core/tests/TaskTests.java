@@ -26,126 +26,132 @@ import org.eclipse.core.runtime.CoreException;
 
 public class TaskTests extends AbstractAntTest {
 
-	
 	public TaskTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Testing the old deprecated API
+	 * 
 	 * @throws CoreException
 	 */
 	@SuppressWarnings("deprecation")
 	public void testAddTaskSettingLibrary() throws CoreException {
-		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
-		URL[] urls= prefs.getExtraClasspathURLs();
-		Task newTask= new Task();
+		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
+		URL[] urls = prefs.getExtraClasspathURLs();
+		Task newTask = new Task();
 		newTask.setLibrary(urls[0]);
 		newTask.setTaskName("AntTestTask"); //$NON-NLS-1$
 		newTask.setClassName("org.eclipse.ant.tests.core.support.tasks.AntTestTask"); //$NON-NLS-1$
-		prefs.setCustomTasks(new Task[]{newTask});
-		
+		prefs.setCustomTasks(new Task[] { newTask });
+
 		prefs.updatePluginPreferences();
-		
+
 		run("CustomTask.xml", new String[0], false); //$NON-NLS-1$
-		String msg= AntTestChecker.getDefault().getMessages().get(1);
+		String msg = AntTestChecker.getDefault().getMessages().get(1);
 		assertEquals("Message incorrect: " + msg, "Testing Ant in Eclipse with a custom task", msg); //$NON-NLS-1$ //$NON-NLS-2$
 		assertSuccessful();
 	}
-	
+
 	public void testAddTaskSettingLibraryEntry() throws CoreException {
-		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
-		URL[] urls= prefs.getExtraClasspathURLs();
-		Task newTask= new Task();
+		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
+		URL[] urls = prefs.getExtraClasspathURLs();
+		Task newTask = new Task();
 		newTask.setLibraryEntry(new AntClasspathEntry(urls[0]));
 		newTask.setTaskName("AntTestTask2"); //$NON-NLS-1$
 		newTask.setClassName("org.eclipse.ant.tests.core.support.tasks.AntTestTask"); //$NON-NLS-1$
-		prefs.setCustomTasks(new Task[]{newTask});
-		
+		prefs.setCustomTasks(new Task[] { newTask });
+
 		prefs.updatePluginPreferences();
-		
-		run("CustomTask.xml", new String[] {"Custom Task from Entry"}, false); //$NON-NLS-1$ //$NON-NLS-2$
-		String msg= AntTestChecker.getDefault().getMessages().get(1);
+
+		run("CustomTask.xml", new String[] { "Custom Task from Entry" }, false); //$NON-NLS-1$ //$NON-NLS-2$
+		String msg = AntTestChecker.getDefault().getMessages().get(1);
 		assertEquals("Message incorrect: " + msg, "Testing Ant in Eclipse with a custom task", msg); //$NON-NLS-1$ //$NON-NLS-2$
 		assertSuccessful();
 	}
-	
+
 	public void testRemoveTask() {
-		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
-		prefs.setCustomTasks(new Task[]{});
+		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
+		prefs.setCustomTasks(new Task[] {});
 		try {
 			run("CustomTask.xml"); //$NON-NLS-1$
-		} catch (CoreException ce) {
+		}
+		catch (CoreException ce) {
 			assertTrue("Exception from undefined task is incorrect", ce.getMessage().trim().endsWith("Action: Check that any <presetdef>/<macrodef> declarations have taken place.")); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
-		} finally {
-			restorePreferenceDefaults();	
+		}
+		finally {
+			restorePreferenceDefaults();
 		}
 		assertTrue("Build should have failed as task no longer defined", false); //$NON-NLS-1$
 	}
-	
+
 	public void testAddTaskFromFolder() throws CoreException {
 		try {
-			AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
-			Task newTask= new Task();
-			String path= getProject().getFolder(ProjectHelper.LIB_FOLDER).getFile("taskFolder").getLocation().toFile().getAbsolutePath(); //$NON-NLS-1$
-			IAntClasspathEntry entry= new AntClasspathEntry(path + File.separatorChar);
+			AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
+			Task newTask = new Task();
+			String path = getProject().getFolder(ProjectHelper.LIB_FOLDER).getFile("taskFolder").getLocation().toFile().getAbsolutePath(); //$NON-NLS-1$
+			IAntClasspathEntry entry = new AntClasspathEntry(path + File.separatorChar);
 			IAntClasspathEntry entries[] = prefs.getAdditionalClasspathEntries();
 			IAntClasspathEntry newEntries[] = new IAntClasspathEntry[entries.length + 1];
 			System.arraycopy(entries, 0, newEntries, 0, entries.length);
 			newEntries[entries.length] = entry;
 			prefs.setAdditionalClasspathEntries(newEntries);
-		
+
 			newTask.setLibraryEntry(entry);
 			newTask.setTaskName("AntTestTask"); //$NON-NLS-1$
 			newTask.setClassName("org.eclipse.ant.tests.core.support.tasks.AntTestTask2"); //$NON-NLS-1$
-			prefs.setCustomTasks(new Task[]{newTask});
-		
+			prefs.setCustomTasks(new Task[] { newTask });
+
 			prefs.updatePluginPreferences();
-		
+
 			run("CustomTask.xml", new String[0], false); //$NON-NLS-1$
-			String msg= AntTestChecker.getDefault().getMessages().get(1);
+			String msg = AntTestChecker.getDefault().getMessages().get(1);
 			assertEquals("Message incorrect: " + msg, "Testing Ant in Eclipse with a custom task", msg); //$NON-NLS-1$ //$NON-NLS-2$
 			assertSuccessful();
-		} finally {
+		}
+		finally {
 			restorePreferenceDefaults();
 		}
 	}
-		
+
 	public void testTasksDefinedInPropertyFile() throws CoreException {
 		try {
-			AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
-			Property newProp= new Property("ROOTDIR", "..//resources"); //$NON-NLS-1$ //$NON-NLS-2$
-			prefs.setCustomProperties(new Property[]{newProp});
+			AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
+			Property newProp = new Property("ROOTDIR", "..//resources"); //$NON-NLS-1$ //$NON-NLS-2$
+			prefs.setCustomProperties(new Property[] { newProp });
 			run("Bug34663.xml"); //$NON-NLS-1$
-		} finally {
+		}
+		finally {
 			restorePreferenceDefaults();
 		}
 	}
-	
+
 	public void testTaskDefinedInExtensionPoint() throws CoreException {
 		run("ExtensionPointTask.xml"); //$NON-NLS-1$
-		String msg= AntTestChecker.getDefault().getMessages().get(1);
+		String msg = AntTestChecker.getDefault().getMessages().get(1);
 		assertEquals("Message incorrect: " + msg, "Testing Ant in Eclipse with a custom task", msg); //$NON-NLS-1$ //$NON-NLS-2$
 		assertSuccessful();
 	}
-		
+
 	public void testTaskDefinedInExtensionPointHeadless() {
 		AntCorePlugin.getPlugin().setRunningHeadless(true);
 		try {
 			run("ExtensionPointTask.xml"); //$NON-NLS-1$
-		} catch (CoreException ce) {
+		}
+		catch (CoreException ce) {
 			assertTrue("Exception from undefined task is incorrect", ce.getMessage().trim().endsWith("Action: Check that any <presetdef>/<macrodef> declarations have taken place.")); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
-		} finally {
+		}
+		finally {
 			AntCorePlugin.getPlugin().setRunningHeadless(false);
 		}
 		assertTrue("Build should have failed as task was not defined to run in headless", false); //$NON-NLS-1$
 	}
-	
+
 	public void testTaskDefinedInExtensionPointWithURI() throws CoreException {
 		run("ExtensionPointTask.xml"); //$NON-NLS-1$
-		String msg= AntTestChecker.getDefault().getMessages().get(2);
+		String msg = AntTestChecker.getDefault().getMessages().get(2);
 		assertEquals("Message incorrect: " + msg, "Testing Ant in Eclipse with a custom task", msg); //$NON-NLS-1$ //$NON-NLS-2$
 		assertSuccessful();
 	}

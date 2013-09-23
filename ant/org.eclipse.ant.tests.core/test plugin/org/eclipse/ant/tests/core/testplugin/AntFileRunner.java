@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.core.testplugin;
 
-
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.core.resources.IFile;
@@ -20,11 +19,11 @@ import org.eclipse.core.runtime.CoreException;
  * Responsible for running test ant build files.
  */
 public class AntFileRunner {
-	
+
 	private static final String BASE_DIR_PREFIX = "-Dbasedir="; //$NON-NLS-1$
 
 	public void run(IFile buildFile, String[] targets, String[] args, String baseDir, boolean captureOutput) throws CoreException {
-	
+
 		AntRunner runner = new AntRunner();
 
 		String[] runnerArgs = args;
@@ -35,8 +34,8 @@ public class AntFileRunner {
 			int length = 1;
 			if (args != null) {
 				length = args.length + 1;
-			} 
-			
+			}
+
 			runnerArgs = new String[length];
 			if (args != null) {
 				System.arraycopy(args, 0, runnerArgs, 0, args.length);
@@ -57,9 +56,9 @@ public class AntFileRunner {
 
 		runner.run(null);
 	}
-	
+
 	public void run(String[] args, String baseDir) throws Exception {
-	
+
 		AntRunner runner = new AntRunner();
 
 		String[] runnerArgs = args;

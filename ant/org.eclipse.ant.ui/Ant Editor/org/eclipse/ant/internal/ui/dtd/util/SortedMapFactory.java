@@ -15,6 +15,7 @@ import java.util.Comparator;
 
 /**
  * Can be inherited or used statically.
+ * 
  * @author Bob Foster
  */
 public class SortedMapFactory {
@@ -28,7 +29,7 @@ public class SortedMapFactory {
 			return o1.toString().compareTo(o2.toString());
 		}
 	}
-    
+
 	private static final IndirectStringComparator fIndirectStringComp = new IndirectStringComparator();
 	private static final Factory fFactory = new Factory();
 
@@ -40,11 +41,11 @@ public class SortedMapFactory {
 		map.setComparator(comp);
 		return map;
 	}
-	
+
 	public static SortedMap getIndirectStringMap(IMapHolder holder) {
 		return getMap(holder, fIndirectStringComp);
 	}
-	
+
 	public static void freeMap(SortedMap map) {
 		map.setComparator(null);
 		map.setMapHolder(null);

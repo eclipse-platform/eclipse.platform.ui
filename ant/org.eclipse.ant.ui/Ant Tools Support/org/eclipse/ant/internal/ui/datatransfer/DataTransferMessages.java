@@ -13,7 +13,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class DataTransferMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.ui.datatransfer.DataTransferMessages";//$NON-NLS-1$
-    
+
 	public static String AntNewJavaProjectPage_23;
 
 	public static String AntNewJavaProjectPage_24;
@@ -21,15 +21,15 @@ public class DataTransferMessages extends NLS {
 	public static String AntNewJavaProjectWizard_0;
 	public static String AntBuildfileExportWizard_0;
 	public static String AntBuildfileExportPage_0;
-    public static String AntBuildfileExportPage_10;
-    public static String AntBuildfileExportPage_11;
-    public static String AntBuildfileExportPage_12;
-    public static String AntBuildfileExportPage_13;
-    public static String AntBuildfileExportPage_14;
-    public static String AntBuildfileExportPage_15;
-    public static String AntBuildfileExportPage_16;
-    public static String AntBuildfileExportPage_17;
-    public static String AntBuildfileExportPage_1;
+	public static String AntBuildfileExportPage_10;
+	public static String AntBuildfileExportPage_11;
+	public static String AntBuildfileExportPage_12;
+	public static String AntBuildfileExportPage_13;
+	public static String AntBuildfileExportPage_14;
+	public static String AntBuildfileExportPage_15;
+	public static String AntBuildfileExportPage_16;
+	public static String AntBuildfileExportPage_17;
+	public static String AntBuildfileExportPage_1;
 	public static String AntBuildfileExportPage_2;
 	public static String AntBuildfileExportPage_3;
 	public static String AntBuildfileExportPage_4;
@@ -49,13 +49,13 @@ public class DataTransferMessages extends NLS {
 	public static String AntNewJavaProjectPage_21;
 	public static String AntNewJavaProjectPage_22;
 	public static String AntNewJavaProjectPage_2;
-    public static String AntNewJavaProjectPage_3;
+	public static String AntNewJavaProjectPage_3;
 	public static String ProjectCreator_0;
-    public static String JavacTableLabelProvider_0;
-    public static String SourceAnalyzer_0;
-    public static String SourceAnalyzer_1;
-    public static String SourceAnalyzer_2;
-    public static String SourceAnalyzer_3;
+	public static String JavacTableLabelProvider_0;
+	public static String SourceAnalyzer_0;
+	public static String SourceAnalyzer_1;
+	public static String SourceAnalyzer_2;
+	public static String SourceAnalyzer_3;
 
 	static {
 		// load message values from bundle file

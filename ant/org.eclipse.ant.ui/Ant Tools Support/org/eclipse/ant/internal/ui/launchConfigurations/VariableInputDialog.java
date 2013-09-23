@@ -27,58 +27,61 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-
 public class VariableInputDialog extends Dialog {
-	
+
 	private static String DIALOG_SETTINGS_SECTION = "RuntimeClasspathAction.VariableInputDialog"; //$NON-NLS-1$
 	private Text fText;
 	private String fVariableString;
-	
+
 	public VariableInputDialog(Shell shell) {
 		super(shell);
 		setShellStyle(SWT.RESIZE | getShellStyle());
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-        Composite inner= (Composite) super.createDialogArea(parent);
-		((GridLayout)inner.getLayout()).numColumns= 2;
-		
+		Composite inner = (Composite) super.createDialogArea(parent);
+		((GridLayout) inner.getLayout()).numColumns = 2;
+
 		Label label = new Label(inner, SWT.NONE);
 		label.setText(AntLaunchConfigurationMessages.AddVariableStringAction_2);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-        gd.horizontalSpan= 2;
+		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
-		
+
 		fText = new Text(inner, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.grabExcessHorizontalSpace = true;
 		gd.widthHint = 200;
 		fText.setLayoutData(gd);
-		
-		Button button = new Button(inner, SWT.PUSH); 
-		button.setText(AntLaunchConfigurationMessages.AddVariableStringAction_3);		
+
+		Button button = new Button(inner, SWT.PUSH);
+		button.setText(AntLaunchConfigurationMessages.AddVariableStringAction_3);
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public  void widgetSelected(SelectionEvent se) {
+			public void widgetSelected(SelectionEvent se) {
 				getVariable();
 			}
 		});
-		
+
 		applyDialogFont(parent);
 		return inner;
 	}
-	
+
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
-    
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	@Override
@@ -86,7 +89,7 @@ public class VariableInputDialog extends Dialog {
 		super.configureShell(newShell);
 		newShell.setText(AntLaunchConfigurationMessages.AddVariableStringAction_4);
 	}
-	
+
 	private void getVariable() {
 		StringVariableSelectionDialog variableDialog = new StringVariableSelectionDialog(getShell());
 		int returnCode = variableDialog.open();
@@ -95,37 +98,41 @@ public class VariableInputDialog extends Dialog {
 			if (variable != null) {
 				fText.insert(variable);
 			}
-		}			
+		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	@Override
 	protected void okPressed() {
 		String variableString = fText.getText();
 		if (variableString != null && variableString.trim().length() > 0) {
-			fVariableString= variableString;
+			fVariableString = variableString;
 		} else {
-			fVariableString= null;
+			fVariableString = null;
 		}
 		super.okPressed();
 	}
-	
+
 	public String getVariableString() {
 		return fVariableString;
 	}
 
-	 /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+	 */
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-    	 IDialogSettings settings = AntUIPlugin.getDefault().getDialogSettings();
-         IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
-         if (section == null) {
-             section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
-         } 
-         return section;
-    }
+		IDialogSettings settings = AntUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
+		if (section == null) {
+			section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
+		}
+		return section;
+	}
 }

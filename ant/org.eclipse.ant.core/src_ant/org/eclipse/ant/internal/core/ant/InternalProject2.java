@@ -16,17 +16,19 @@ import org.apache.tools.ant.types.Path;
 
 public class InternalProject2 extends Project {
 
-    /* (non-Javadoc)
-     * @see org.apache.tools.ant.Project#createClassLoader(org.apache.tools.ant.types.Path)
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.tools.ant.Project#createClassLoader(org.apache.tools.ant.types.Path)
+	 */
+	@Override
 	public AntClassLoader createClassLoader(Path path) {
-    	AntClassLoader loader= super.createClassLoader(path);
-    	if (path == null) {
-    		//use the "fake" Eclipse runtime classpath for Ant
-    		loader.setClassPath(Path.systemClasspath);
-    	}
-        
-        return loader;
-    }
+		AntClassLoader loader = super.createClassLoader(path);
+		if (path == null) {
+			// use the "fake" Eclipse runtime classpath for Ant
+			loader.setClassPath(Path.systemClasspath);
+		}
+
+		return loader;
+	}
 }

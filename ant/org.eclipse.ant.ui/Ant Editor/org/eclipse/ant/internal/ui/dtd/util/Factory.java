@@ -13,18 +13,15 @@ package org.eclipse.ant.internal.ui.dtd.util;
 import java.lang.ref.SoftReference;
 
 /**
- * Factory maintains a free list and, with FactoryObject,
- * serves as a basis for factories of all types.
- * Factory should only be subclassed in singleton classes;
- * for static factories, it may be instantiated as
- * a static object.
+ * Factory maintains a free list and, with FactoryObject, serves as a basis for factories of all types. Factory should only be subclassed in singleton
+ * classes; for static factories, it may be instantiated as a static object.
+ * 
  * @author Bob Foster
  */
 public class Factory {
-	
+
 	/**
-	 * Return the first object on the free list
-	 * or null if none.
+	 * Return the first object on the free list or null if none.
 	 */
 	public FactoryObject getFree() {
 		Head head = getHead();
@@ -35,7 +32,7 @@ public class Factory {
 		}
 		return obj;
 	}
-	
+
 	/**
 	 * Add an object to the free list.
 	 */
@@ -44,7 +41,7 @@ public class Factory {
 		obj.next(head.next);
 		head.next = obj;
 	}
-	
+
 	private Head getHead() {
 		Head head = free.get();
 		if (head == null) {
@@ -64,5 +61,6 @@ public class Factory {
 	private static class Head {
 		public FactoryObject next;
 	}
+
 	private SoftReference<Head> free = new SoftReference<Head>(new Head());
 }

@@ -57,7 +57,7 @@ public class InternalAntMessages extends NLS {
 	public static String InternalAntRunner_unknown_target;
 
 	public static String InternalAntRunner_no_known_target;
-	
+
 	public static String ProgressBuildListener_Build_cancelled;
 
 	public static String InternalProject_could_not_create_type;

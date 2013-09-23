@@ -17,11 +17,10 @@ import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateVariableResolver;
 
 /**
- * Looks up existing ant variables and proposes them. The proposals are sorted by 
- * their prefix-likeness with the variable type.
+ * Looks up existing ant variables and proposes them. The proposals are sorted by their prefix-likeness with the variable type.
  */
 public class AntVariableResolver extends TemplateVariableResolver {
-	
+
 	Comparator<String> comparator = new Comparator<String>() {
 
 		@Override
@@ -30,8 +29,8 @@ public class AntVariableResolver extends TemplateVariableResolver {
 		}
 
 		private int getCommonPrefixLength(String type, String var) {
-			int i= 0;
-			CharSequence vSeq= var.subSequence(2, var.length() - 1); // strip away ${}
+			int i = 0;
+			CharSequence vSeq = var.subSequence(2, var.length() - 1); // strip away ${}
 			while (i < type.length() && i < vSeq.length())
 				if (Character.toLowerCase(type.charAt(i)) == Character.toLowerCase(vSeq.charAt(i)))
 					i++;
@@ -40,13 +39,13 @@ public class AntVariableResolver extends TemplateVariableResolver {
 			return i;
 		}
 	};
-	
+
 	/*
 	 * @see org.eclipse.jface.text.templates.TemplateVariableResolver#resolveAll(org.eclipse.jface.text.templates.TemplateContext)
 	 */
 	@Override
 	protected String[] resolveAll(TemplateContext context) {
-		String[] proposals= new String[] { "${srcDir}", "${dstDir}" }; //$NON-NLS-1$ //$NON-NLS-2$
+		String[] proposals = new String[] { "${srcDir}", "${dstDir}" }; //$NON-NLS-1$ //$NON-NLS-2$
 		Arrays.sort(proposals, comparator);
 		return proposals;
 	}

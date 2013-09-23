@@ -15,46 +15,54 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
 
 public class AntElementHyperlink implements IHyperlink {
 
-    private IRegion fRegion= null;
-    private Object fLinkTarget= null;
-    private AntEditor fEditor= null;
-    
-    public AntElementHyperlink(AntEditor editor, IRegion region, Object linkTarget) {
-        
-       fRegion= region;
-       fLinkTarget= linkTarget;
-       fEditor= editor;
-    }
+	private IRegion fRegion = null;
+	private Object fLinkTarget = null;
+	private AntEditor fEditor = null;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkRegion()
-     */
-    @Override
+	public AntElementHyperlink(AntEditor editor, IRegion region, Object linkTarget) {
+
+		fRegion = region;
+		fLinkTarget = linkTarget;
+		fEditor = editor;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkRegion()
+	 */
+	@Override
 	public IRegion getHyperlinkRegion() {
-        return fRegion;
-    }
+		return fRegion;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.hyperlink.IHyperlink#getTypeLabel()
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getTypeLabel()
+	 */
+	@Override
 	public String getTypeLabel() {
-        return null;
-    }
+		return null;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkText()
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkText()
+	 */
+	@Override
 	public String getHyperlinkText() {
-        return null;
-    }
+		return null;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.hyperlink.IHyperlink#open()
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.text.hyperlink.IHyperlink#open()
+	 */
+	@Override
 	public void open() {
-        fEditor.openTarget(fLinkTarget);
-    }
+		fEditor.openTarget(fLinkTarget);
+	}
 }

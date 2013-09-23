@@ -22,64 +22,92 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 
 public class XmlFormatterTest extends TestCase {
 
-    public final void testFormatUsingPreferenceStore() throws Exception{
-        IEclipsePreferences node = InstanceScope.INSTANCE.getNode(AntUIPlugin.getUniqueIdentifier());
-        if(node != null) {
-        	node.putBoolean(AntEditorPreferenceConstants.FORMATTER_WRAP_LONG, true);
-        	node.putInt(AntEditorPreferenceConstants.FORMATTER_MAX_LINE_LENGTH, 40);
-        	node.putBoolean(AntEditorPreferenceConstants.FORMATTER_ALIGN, false);
-        	node.putBoolean(AntEditorPreferenceConstants.FORMATTER_TAB_CHAR, true);
-        	node.putInt(AntEditorPreferenceConstants.FORMATTER_TAB_SIZE, 4);
+	public final void testFormatUsingPreferenceStore() throws Exception {
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(AntUIPlugin.getUniqueIdentifier());
+		if (node != null) {
+			node.putBoolean(AntEditorPreferenceConstants.FORMATTER_WRAP_LONG, true);
+			node.putInt(AntEditorPreferenceConstants.FORMATTER_MAX_LINE_LENGTH, 40);
+			node.putBoolean(AntEditorPreferenceConstants.FORMATTER_ALIGN, false);
+			node.putBoolean(AntEditorPreferenceConstants.FORMATTER_TAB_CHAR, true);
+			node.putInt(AntEditorPreferenceConstants.FORMATTER_TAB_SIZE, 4);
 			node.flush();
-        }
-        String lineSep= System.getProperty("line.separator"); //$NON-NLS-1$
-        String xmlDoc = "<project default=\"go\"><target name=\"go\" description=\"Demonstrate the wrapping of long tags.\"><echo>hi</echo></target></project>"; //$NON-NLS-1$
-        String formattedDoc = XmlFormatter.format(xmlDoc);
-        String expected = "<project default=\"go\">" + lineSep + "\t<target name=\"go\"" + lineSep + "\t        description=\"Demonstrate the wrapping of long tags.\">" + lineSep + "\t\t<echo>hi</echo>" + lineSep + "\t</target>" + lineSep + "</project>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-        assertEquals(expected, formattedDoc);
-    }
+		}
+		String lineSep = System.getProperty("line.separator"); //$NON-NLS-1$
+		String xmlDoc = "<project default=\"go\"><target name=\"go\" description=\"Demonstrate the wrapping of long tags.\"><echo>hi</echo></target></project>"; //$NON-NLS-1$
+		String formattedDoc = XmlFormatter.format(xmlDoc);
+		String expected = "<project default=\"go\">" + lineSep + "\t<target name=\"go\"" + lineSep + "\t        description=\"Demonstrate the wrapping of long tags.\">" + lineSep + "\t\t<echo>hi</echo>" + lineSep + "\t</target>" + lineSep + "</project>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		assertEquals(expected, formattedDoc);
+	}
 
-    public final void testFormatWithPreferenceParameter() {
-        FormattingPreferences prefs = new FormattingPreferences() {
-            @Override
-			public boolean wrapLongTags() { return true;}
-            @Override
-			public int getMaximumLineWidth() { return 40;}
-            @Override
-			public boolean alignElementCloseChar() { return false;}
-            @Override
-			public boolean useSpacesInsteadOfTabs() { return true;}
-            @Override
-			public int getTabWidth() { return 6;}
-        };
-        String lineSep= System.getProperty("line.separator"); //$NON-NLS-1$
-        String xmlDoc = "<project default=\"go\"><target name=\"go\" description=\"Demonstrate the wrapping of long tags.\"><echo>hi</echo></target></project>"; //$NON-NLS-1$
-        String formattedDoc = XmlFormatter.format(xmlDoc, prefs);
-        String expected = "<project default=\"go\">" + lineSep + "      <target name=\"go\"" + lineSep + "              description=\"Demonstrate the wrapping of long tags.\">" + lineSep + "            <echo>hi</echo>" + lineSep + "      </target>" + lineSep + "</project>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-        assertEquals(expected, formattedDoc);
-    }
-    
-    /**
-     * Bug 84342
-     */
-    public final void testFormatMaintainingLineSeparators() {
-        FormattingPreferences prefs = new FormattingPreferences() {
-            @Override
-			public boolean wrapLongTags() { return true;}
-            @Override
-			public int getMaximumLineWidth() { return 40;}
-            @Override
-			public boolean alignElementCloseChar() { return false;}
-            @Override
-			public boolean useSpacesInsteadOfTabs() { return true;}
-            @Override
-			public int getTabWidth() { return 6;}
-        };
-        String lineSep= System.getProperty("line.separator"); //$NON-NLS-1$
-        String xmlDoc = "<project default=\"go\"><target name=\"go\" description=\"Demonstrate the wrapping of long tags.\"><echo>hi</echo></target>" + lineSep + lineSep + "</project>"; //$NON-NLS-1$ //$NON-NLS-2$
-        String formattedDoc = XmlFormatter.format(xmlDoc, prefs);
-        String expected = "<project default=\"go\">" + lineSep + "      <target name=\"go\"" + lineSep + "              description=\"Demonstrate the wrapping of long tags.\">" + lineSep + "            <echo>hi</echo>" + lineSep + "      </target>" + lineSep + lineSep + "</project>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-        assertEquals(expected, formattedDoc);
-    }
+	public final void testFormatWithPreferenceParameter() {
+		FormattingPreferences prefs = new FormattingPreferences() {
+			@Override
+			public boolean wrapLongTags() {
+				return true;
+			}
+
+			@Override
+			public int getMaximumLineWidth() {
+				return 40;
+			}
+
+			@Override
+			public boolean alignElementCloseChar() {
+				return false;
+			}
+
+			@Override
+			public boolean useSpacesInsteadOfTabs() {
+				return true;
+			}
+
+			@Override
+			public int getTabWidth() {
+				return 6;
+			}
+		};
+		String lineSep = System.getProperty("line.separator"); //$NON-NLS-1$
+		String xmlDoc = "<project default=\"go\"><target name=\"go\" description=\"Demonstrate the wrapping of long tags.\"><echo>hi</echo></target></project>"; //$NON-NLS-1$
+		String formattedDoc = XmlFormatter.format(xmlDoc, prefs);
+		String expected = "<project default=\"go\">" + lineSep + "      <target name=\"go\"" + lineSep + "              description=\"Demonstrate the wrapping of long tags.\">" + lineSep + "            <echo>hi</echo>" + lineSep + "      </target>" + lineSep + "</project>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		assertEquals(expected, formattedDoc);
+	}
+
+	/**
+	 * Bug 84342
+	 */
+	public final void testFormatMaintainingLineSeparators() {
+		FormattingPreferences prefs = new FormattingPreferences() {
+			@Override
+			public boolean wrapLongTags() {
+				return true;
+			}
+
+			@Override
+			public int getMaximumLineWidth() {
+				return 40;
+			}
+
+			@Override
+			public boolean alignElementCloseChar() {
+				return false;
+			}
+
+			@Override
+			public boolean useSpacesInsteadOfTabs() {
+				return true;
+			}
+
+			@Override
+			public int getTabWidth() {
+				return 6;
+			}
+		};
+		String lineSep = System.getProperty("line.separator"); //$NON-NLS-1$
+		String xmlDoc = "<project default=\"go\"><target name=\"go\" description=\"Demonstrate the wrapping of long tags.\"><echo>hi</echo></target>" + lineSep + lineSep + "</project>"; //$NON-NLS-1$ //$NON-NLS-2$
+		String formattedDoc = XmlFormatter.format(xmlDoc, prefs);
+		String expected = "<project default=\"go\">" + lineSep + "      <target name=\"go\"" + lineSep + "              description=\"Demonstrate the wrapping of long tags.\">" + lineSep + "            <echo>hi</echo>" + lineSep + "      </target>" + lineSep + lineSep + "</project>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		assertEquals(expected, formattedDoc);
+	}
 
 }

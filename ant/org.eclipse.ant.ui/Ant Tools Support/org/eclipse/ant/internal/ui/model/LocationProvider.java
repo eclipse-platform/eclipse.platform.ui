@@ -18,25 +18,25 @@ import org.eclipse.ui.editors.text.ILocationProvider;
 
 public class LocationProvider {
 	private IEditorInput fEditorInput;
-	
+
 	public LocationProvider(IEditorInput input) {
-		fEditorInput= input;
+		fEditorInput = input;
 	}
 
 	public IPath getLocation() {
 		if (fEditorInput instanceof IFileEditorInput) {
-			return ((IFileEditorInput)fEditorInput).getFile().getLocation();
+			return ((IFileEditorInput) fEditorInput).getFile().getLocation();
 		}
-		ILocationProvider locationProvider= (ILocationProvider)fEditorInput.getAdapter(ILocationProvider.class);
+		ILocationProvider locationProvider = (ILocationProvider) fEditorInput.getAdapter(ILocationProvider.class);
 		if (locationProvider != null) {
 			return locationProvider.getPath(fEditorInput);
 		}
 		return null;
 	}
-	
+
 	public IFile getFile() {
-		if(fEditorInput instanceof IFileEditorInput) {
-			return ((IFileEditorInput)fEditorInput).getFile();
+		if (fEditorInput instanceof IFileEditorInput) {
+			return ((IFileEditorInput) fEditorInput).getFile();
 		}
 		return null;
 	}

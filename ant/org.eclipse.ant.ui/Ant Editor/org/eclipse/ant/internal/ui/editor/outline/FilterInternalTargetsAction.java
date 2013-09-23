@@ -15,13 +15,13 @@ import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.custom.BusyIndicator;
 
-/** 
+/**
  * An action which toggles filtering of internal targets from the Ant outline.
  */
 public class FilterInternalTargetsAction extends Action {
-	
+
 	private AntEditorContentOutlinePage fPage;
-	
+
 	public FilterInternalTargetsAction(AntEditorContentOutlinePage page) {
 		super(AntOutlineMessages.FilterInternalTargetsAction_0);
 		fPage = page;
@@ -29,9 +29,10 @@ public class FilterInternalTargetsAction extends Action {
 		setToolTipText(AntOutlineMessages.FilterInternalTargetsAction_0);
 		setChecked(fPage.filterInternalTargets());
 	}
-	
+
 	/**
 	 * Toggles the filtering of internal targets from the Ant outline
+	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override

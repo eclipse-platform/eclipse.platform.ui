@@ -12,11 +12,12 @@ package org.eclipse.ant.internal.ui.dtd.util;
 
 /**
  * A FactoryObject must implement a simple linked list.
+ * 
  * @author Bob Foster
  */
 public interface FactoryObject {
 
 	FactoryObject next();
-	
+
 	void next(FactoryObject obj);
 }

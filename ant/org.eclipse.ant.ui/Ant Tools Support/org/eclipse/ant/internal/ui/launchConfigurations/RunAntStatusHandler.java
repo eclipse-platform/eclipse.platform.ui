@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 
 /**
- * Status handler called when the launch dialog is opened via the "Run Ant..."
- * action. This allows us to set the initial tab.
+ * Status handler called when the launch dialog is opened via the "Run Ant..." action. This allows us to set the initial tab.
  */
 public class RunAntStatusHandler implements IStatusHandler {
 
@@ -26,7 +24,7 @@ public class RunAntStatusHandler implements IStatusHandler {
 	 */
 	@Override
 	public Object handleStatus(IStatus status, Object source) {
-		ILaunchConfigurationDialog dialog = (ILaunchConfigurationDialog)source;
+		ILaunchConfigurationDialog dialog = (ILaunchConfigurationDialog) source;
 		dialog.setActiveTab(3);
 		return null;
 	}

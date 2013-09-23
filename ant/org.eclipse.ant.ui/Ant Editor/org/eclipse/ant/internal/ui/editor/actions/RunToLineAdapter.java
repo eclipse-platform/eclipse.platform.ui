@@ -42,65 +42,70 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Run to line target for the Ant debugger
  */
 public class RunToLineAdapter implements IRunToLineTarget {
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#runToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#runToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection,
+	 * org.eclipse.debug.core.model.ISuspendResume)
 	 */
 	@Override
 	public void runToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException {
-		IEditorPart editorPart = (IEditorPart)part;
+		IEditorPart editorPart = (IEditorPart) part;
 		IEditorInput input = editorPart.getEditorInput();
 		String errorMessage = null;
 		if (input == null) {
 			errorMessage = AntEditorActionMessages.getString("RunToLineAdapter.0"); //$NON-NLS-1$
 		} else {
-			ITextEditor textEditor = (ITextEditor)editorPart;
-			IDocumentProvider provider= textEditor.getDocumentProvider();
-			IDocument document= provider.getDocument(input);
-			
+			ITextEditor textEditor = (ITextEditor) editorPart;
+			IDocumentProvider provider = textEditor.getDocumentProvider();
+			IDocument document = provider.getDocument(input);
+
 			if (document == null) {
 				errorMessage = AntEditorActionMessages.getString("RunToLineAdapter.1"); //$NON-NLS-1$
 			} else {
-				
+
 				ITextSelection textSelection = (ITextSelection) selection;
 				int lineNumber = textSelection.getStartLine() + 1;
-				
-				IBreakpoint breakpoint= null;
+
+				IBreakpoint breakpoint = null;
 				Map<String, Object> attributes = getRunToLineAttributes();
-				IFile file = (IFile)input.getAdapter(IFile.class);
+				IFile file = (IFile) input.getAdapter(IFile.class);
 				if (file == null) {
-				    errorMessage= AntEditorActionMessages.getString("RunToLineAdapter.2"); //$NON-NLS-1$
+					errorMessage = AntEditorActionMessages.getString("RunToLineAdapter.2"); //$NON-NLS-1$
 				} else {
-				    breakpoint= new AntLineBreakpoint(file, lineNumber, attributes, false);
-                    breakpoint.setPersisted(false);
-				    errorMessage = AntEditorActionMessages.getString("RunToLineAdapter.3"); //$NON-NLS-1$
-				    if (target instanceof IAdaptable) {
-				        IDebugTarget debugTarget = (IDebugTarget) ((IAdaptable)target).getAdapter(IDebugTarget.class);
-				        if (debugTarget != null) {
-				            RunToLineHandler handler = new RunToLineHandler(debugTarget, target, breakpoint);
-                            handler.run(new NullProgressMonitor());
-				            return;
-				        }
-				    }
+					breakpoint = new AntLineBreakpoint(file, lineNumber, attributes, false);
+					breakpoint.setPersisted(false);
+					errorMessage = AntEditorActionMessages.getString("RunToLineAdapter.3"); //$NON-NLS-1$
+					if (target instanceof IAdaptable) {
+						IDebugTarget debugTarget = (IDebugTarget) ((IAdaptable) target).getAdapter(IDebugTarget.class);
+						if (debugTarget != null) {
+							RunToLineHandler handler = new RunToLineHandler(debugTarget, target, breakpoint);
+							handler.run(new NullProgressMonitor());
+							return;
+						}
+					}
 				}
 			}
 		}
-		throw new CoreException(new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), AntUIPlugin.INTERNAL_ERROR,
-				errorMessage, null));
+		throw new CoreException(new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), AntUIPlugin.INTERNAL_ERROR, errorMessage, null));
 	}
 
-    private Map<String, Object> getRunToLineAttributes() {
-        Map<String, Object> attributes = new HashMap<String, Object>();
-        attributes.put(IMarker.TRANSIENT, Boolean.TRUE);
-        attributes.put(IAntDebugConstants.ANT_RUN_TO_LINE, Boolean.TRUE);
-        return attributes;
-    }
+	private Map<String, Object> getRunToLineAttributes() {
+		Map<String, Object> attributes = new HashMap<String, Object>();
+		attributes.put(IMarker.TRANSIENT, Boolean.TRUE);
+		attributes.put(IAntDebugConstants.ANT_RUN_TO_LINE, Boolean.TRUE);
+		return attributes;
+	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#canRunToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#canRunToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection,
+	 * org.eclipse.debug.core.model.ISuspendResume)
 	 */
 	@Override
 	public boolean canRunToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
-	    return target instanceof AntDebugElement;
+		return target instanceof AntDebugElement;
 	}
 }

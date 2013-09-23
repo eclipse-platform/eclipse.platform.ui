@@ -11,7 +11,6 @@
 
 package org.eclipse.ant.internal.ui.editor.text;
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -19,13 +18,13 @@ import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
 
-
 public class NotifyingReconciler extends MonoReconciler {
 
-	private ArrayList<IReconcilingParticipant> fReconcilingParticipants= new ArrayList<IReconcilingParticipant>();
-	
+	private ArrayList<IReconcilingParticipant> fReconcilingParticipants = new ArrayList<IReconcilingParticipant>();
+
 	/**
 	 * Constructor for NotifyingReconciler.
+	 * 
 	 * @param strategy
 	 */
 	public NotifyingReconciler(IReconcilingStrategy strategy) {
@@ -50,12 +49,15 @@ public class NotifyingReconciler extends MonoReconciler {
 	}
 
 	protected void notifyReconcilingParticipants() {
-		Iterator<IReconcilingParticipant> i= new ArrayList<IReconcilingParticipant>(fReconcilingParticipants).iterator();
+		Iterator<IReconcilingParticipant> i = new ArrayList<IReconcilingParticipant>(fReconcilingParticipants).iterator();
 		while (i.hasNext()) {
 			i.next().reconciled();
 		}
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.text.reconciler.AbstractReconciler#initialProcess()
 	 */
 	@Override

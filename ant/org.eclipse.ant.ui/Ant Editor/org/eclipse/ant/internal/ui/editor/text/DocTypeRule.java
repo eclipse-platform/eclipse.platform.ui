@@ -17,35 +17,35 @@ import org.eclipse.jface.text.rules.MultiLineRule;
 
 public class DocTypeRule extends MultiLineRule {
 
-    private int fEmbeddedStart= 0;
+	private int fEmbeddedStart = 0;
 
 	public DocTypeRule(IToken token) {
-        super("<!DOCTYPE", ">", token); //$NON-NLS-1$ //$NON-NLS-2$
-    }
+		super("<!DOCTYPE", ">", token); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.text.rules.PatternRule#endSequenceDetected(org.eclipse.jface.text.rules.ICharacterScanner)
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.text.rules.PatternRule#endSequenceDetected(org.eclipse.jface.text.rules.ICharacterScanner)
+	 */
+	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
-        int c;
-        while ((c = scanner.read()) != ICharacterScanner.EOF) {
-            if (c == fEscapeCharacter) {
-                // Skip the escaped character.
-                scanner.read();
-            } else if (c == '<') {
-            	fEmbeddedStart++;
-            } else if (c == '>') {
-            	if (fEmbeddedStart == 0) {
-            		return true;
-            	}
-            	fEmbeddedStart--;
-            }
-        }
-        
-        scanner.unread();
-        return false;
-    }    
+		int c;
+		while ((c = scanner.read()) != ICharacterScanner.EOF) {
+			if (c == fEscapeCharacter) {
+				// Skip the escaped character.
+				scanner.read();
+			} else if (c == '<') {
+				fEmbeddedStart++;
+			} else if (c == '>') {
+				if (fEmbeddedStart == 0) {
+					return true;
+				}
+				fEmbeddedStart--;
+			}
+		}
+
+		scanner.unread();
+		return false;
+	}
 }

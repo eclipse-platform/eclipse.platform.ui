@@ -18,35 +18,35 @@ import org.eclipse.ui.editors.text.IFoldingCommandIds;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextOperationAction;
 
-
 /**
  * Groups the Ant folding actions.
- *  
+ * 
  * @since 3.1
  */
 public class FoldingActionGroup extends ActionGroup {
 	private ProjectionViewer fViewer;
-	
+
 	private TextOperationAction fToggle;
 	private TextOperationAction fExpand;
 	private TextOperationAction fCollapse;
 	private TextOperationAction fExpandAll;
 
 	private IProjectionListener fProjectionListener;
-	
+
 	/**
-	 * Creates a new projection action group for <code>editor</code>. If the
-	 * supplied viewer is not an instance of <code>ProjectionViewer</code>, the
+	 * Creates a new projection action group for <code>editor</code>. If the supplied viewer is not an instance of <code>ProjectionViewer</code>, the
 	 * action group is disabled.
 	 * 
-	 * @param editor the text editor to operate on
-	 * @param viewer the viewer of the editor
+	 * @param editor
+	 *            the text editor to operate on
+	 * @param viewer
+	 *            the viewer of the editor
 	 */
 	public FoldingActionGroup(ITextEditor editor, ITextViewer viewer) {
 		if (viewer instanceof ProjectionViewer) {
-			fViewer= (ProjectionViewer) viewer;
-			
-			fProjectionListener= new IProjectionListener() {
+			fViewer = (ProjectionViewer) viewer;
+
+			fProjectionListener = new IProjectionListener() {
 
 				@Override
 				public void projectionEnabled() {
@@ -58,30 +58,31 @@ public class FoldingActionGroup extends ActionGroup {
 					update();
 				}
 			};
-			
+
 			fViewer.addProjectionListener(fProjectionListener);
-			
-			fToggle= new TextOperationAction(AntEditorActionMessages.getResourceBundle(), "Projection.Toggle.", editor, ProjectionViewer.TOGGLE, true); //$NON-NLS-1$
+
+			fToggle = new TextOperationAction(AntEditorActionMessages.getResourceBundle(), "Projection.Toggle.", editor, ProjectionViewer.TOGGLE, true); //$NON-NLS-1$
 			fToggle.setChecked(true);
 			fToggle.setActionDefinitionId(IFoldingCommandIds.FOLDING_TOGGLE);
 			editor.setAction("FoldingToggle", fToggle); //$NON-NLS-1$
-			
-			fExpandAll= new TextOperationAction(AntEditorActionMessages.getResourceBundle(), "Projection.ExpandAll.", editor, ProjectionViewer.EXPAND_ALL, true); //$NON-NLS-1$
+
+			fExpandAll = new TextOperationAction(AntEditorActionMessages.getResourceBundle(), "Projection.ExpandAll.", editor, ProjectionViewer.EXPAND_ALL, true); //$NON-NLS-1$
 			fExpandAll.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND_ALL);
 			editor.setAction("FoldingExpandAll", fExpandAll); //$NON-NLS-1$
-			
-			fExpand= new TextOperationAction(AntEditorActionMessages.getResourceBundle(), "Projection.Expand.", editor, ProjectionViewer.EXPAND, true); //$NON-NLS-1$
+
+			fExpand = new TextOperationAction(AntEditorActionMessages.getResourceBundle(), "Projection.Expand.", editor, ProjectionViewer.EXPAND, true); //$NON-NLS-1$
 			fExpand.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND);
 			editor.setAction("FoldingExpand", fExpand); //$NON-NLS-1$
-			
-			fCollapse= new TextOperationAction(AntEditorActionMessages.getResourceBundle(), "Projection.Collapse.", editor, ProjectionViewer.COLLAPSE, true); //$NON-NLS-1$
+
+			fCollapse = new TextOperationAction(AntEditorActionMessages.getResourceBundle(), "Projection.Collapse.", editor, ProjectionViewer.COLLAPSE, true); //$NON-NLS-1$
 			fCollapse.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE);
 			editor.setAction("FoldingCollapse", fCollapse); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
-	 * Returns <code>true</code> if the group is enabled. 
+	 * Returns <code>true</code> if the group is enabled.
+	 * 
 	 * <pre>
 	 * Invariant: isEnabled() <=> fViewer and all actions are != null.
 	 * </pre>
@@ -91,7 +92,7 @@ public class FoldingActionGroup extends ActionGroup {
 	private boolean isEnabled() {
 		return fViewer != null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
 	 */
@@ -99,11 +100,11 @@ public class FoldingActionGroup extends ActionGroup {
 	public void dispose() {
 		if (isEnabled()) {
 			fViewer.removeProjectionListener(fProjectionListener);
-			fViewer= null;
+			fViewer = null;
 		}
 		super.dispose();
 	}
-	
+
 	/**
 	 * Updates the actions.
 	 */
@@ -116,7 +117,7 @@ public class FoldingActionGroup extends ActionGroup {
 			fCollapse.update();
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#updateActionBars()
 	 */

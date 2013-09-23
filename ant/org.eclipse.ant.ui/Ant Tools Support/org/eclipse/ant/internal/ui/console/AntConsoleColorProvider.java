@@ -22,12 +22,11 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 
-
 public class AntConsoleColorProvider extends ConsoleColorProvider implements IPropertyChangeListener {
 
-    
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#getColor(java.lang.String)
 	 */
 	@Override
@@ -37,7 +36,7 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 		}
 		if (streamIdentifer.equals(IDebugUIConstants.ID_STANDARD_ERROR_STREAM)) {
 			return AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_ERROR_COLOR);
-		}				
+		}
 		if (streamIdentifer.equals(AntStreamsProxy.ANT_DEBUG_STREAM)) {
 			return AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_DEBUG_COLOR);
 		}
@@ -50,47 +49,53 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 		return super.getColor(streamIdentifer);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#connect(org.eclipse.debug.core.model.IProcess, org.eclipse.debug.ui.console.IConsole)
 	 */
 	@Override
 	public void connect(IProcess process, IConsole console) {
-		//Both remote and local Ant builds are guaranteed to have
-		//an AntStreamsProxy. The remote Ant builds make use of the
+		// Both remote and local Ant builds are guaranteed to have
+		// an AntStreamsProxy. The remote Ant builds make use of the
 		// org.eclipse.debug.core.processFactories extension point
-		AntStreamsProxy proxy = (AntStreamsProxy)process.getStreamsProxy();
+		AntStreamsProxy proxy = (AntStreamsProxy) process.getStreamsProxy();
 		if (proxy != null) {
 			console.connect(proxy.getDebugStreamMonitor(), AntStreamsProxy.ANT_DEBUG_STREAM);
 			console.connect(proxy.getWarningStreamMonitor(), AntStreamsProxy.ANT_WARNING_STREAM);
 			console.connect(proxy.getVerboseStreamMonitor(), AntStreamsProxy.ANT_VERBOSE_STREAM);
 		}
-		
+
 		AntUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		super.connect(process, console);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#isReadOnly()
 	 */
 	@Override
 	public boolean isReadOnly() {
 		return true;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-	    final String streamId = getStreamId(event.getProperty());
+		final String streamId = getStreamId(event.getProperty());
 		if (streamId != null) {
 			AntUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 				@Override
 				public void run() {
-				    IOConsoleOutputStream stream = getConsole().getStream(streamId);
-				    if (stream != null) {
-				        stream.setColor(getColor(streamId));
-				    }
+					IOConsoleOutputStream stream = getConsole().getStream(streamId);
+					if (stream != null) {
+						stream.setColor(getColor(streamId));
+					}
 				}
 			});
 		}
@@ -110,8 +115,10 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 		}
 		return null;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#disconnect()
 	 */
 	@Override

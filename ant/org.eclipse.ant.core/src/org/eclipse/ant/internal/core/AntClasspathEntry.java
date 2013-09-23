@@ -22,19 +22,23 @@ import org.eclipse.core.variables.VariablesPlugin;
 public class AntClasspathEntry implements IAntClasspathEntry {
 
 	private String entryString;
-	private boolean eclipseRequired= false;
-	private URL url= null;
-	
-	/* (non-Javadoc)
+	private boolean eclipseRequired = false;
+	private URL url = null;
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.core.IAntClasspathEntry#getLabel()
 	 */
 	@Override
 	public String getLabel() {
-		
+
 		return entryString;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.core.IAntClasspathEntry#getEntryURL()
 	 */
 	@Override
@@ -45,49 +49,58 @@ public class AntClasspathEntry implements IAntClasspathEntry {
 		try {
 			String expanded = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(entryString);
 			return new URL(IAntCoreConstants.FILE_PROTOCOL + expanded);
-		} catch (CoreException e) {
+		}
+		catch (CoreException e) {
 			try {
 				return new URL(IAntCoreConstants.FILE_PROTOCOL + entryString);
-			} catch (MalformedURLException e1) {
+			}
+			catch (MalformedURLException e1) {
 				return null;
 			}
-		} catch (MalformedURLException e) {
+		}
+		catch (MalformedURLException e) {
 			AntCorePlugin.log(e);
 		}
 		return null;
 	}
 
 	public AntClasspathEntry(String entryString) {
-		this.entryString= entryString;
+		this.entryString = entryString;
 	}
-	
+
 	public AntClasspathEntry(URL url) {
-		this.url= url;
-		this.entryString= new File(url.getPath()).getAbsolutePath();
+		this.url = url;
+		this.entryString = new File(url.getPath()).getAbsolutePath();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IAntClasspathEntry) {
-			IAntClasspathEntry other= (IAntClasspathEntry)obj;
+			IAntClasspathEntry other = (IAntClasspathEntry) obj;
 			return entryString.equals(other.getLabel());
 		}
 		return false;
-		
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		return entryString.hashCode();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -95,14 +108,16 @@ public class AntClasspathEntry implements IAntClasspathEntry {
 		return getLabel();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.core.IAntClasspathEntry#isEclipseRuntimeRequired()
 	 */
 	@Override
 	public boolean isEclipseRuntimeRequired() {
 		return eclipseRequired;
 	}
-	
+
 	public void setEclipseRuntimeRequired(boolean eclipseRequired) {
 		this.eclipseRequired = eclipseRequired;
 	}

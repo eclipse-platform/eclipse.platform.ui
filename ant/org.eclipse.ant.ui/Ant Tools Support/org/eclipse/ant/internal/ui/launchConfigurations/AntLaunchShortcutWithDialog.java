@@ -11,10 +11,9 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 public class AntLaunchShortcutWithDialog extends AntLaunchShortcut {
-	
+
 	/**
-	 * Creates a new Ant launch shortcut that will open the
-	 * launch configuration dialog.
+	 * Creates a new Ant launch shortcut that will open the launch configuration dialog.
 	 */
 	public AntLaunchShortcutWithDialog() {
 		super();

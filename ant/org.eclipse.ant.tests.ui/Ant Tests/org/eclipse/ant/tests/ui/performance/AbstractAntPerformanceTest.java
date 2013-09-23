@@ -14,14 +14,15 @@ import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.eclipse.test.performance.PerformanceTestCase;
 
 /**
- * Abstract class for ant performance tests, ensures the test project is created 
- * and ready in the test workspace.
+ * Abstract class for ant performance tests, ensures the test project is created and ready in the test workspace.
  * 
  * @since 3.5
  */
 public abstract class AbstractAntPerformanceTest extends PerformanceTestCase {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.test.performance.PerformanceTestCase#setUp()
 	 */
 	@Override

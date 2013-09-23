@@ -61,9 +61,9 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * Represents the Ant Core plug-in's preferences providing utilities for
- * extracting, changing and updating the underlying preferences.
- * Clients may not instantiate or subclass this class.
+ * Represents the Ant Core plug-in's preferences providing utilities for extracting, changing and updating the underlying preferences. Clients may not
+ * instantiate or subclass this class.
+ * 
  * @since 2.1
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
@@ -73,33 +73,45 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	class WrappedClassLoader extends ClassLoader {
 		private Bundle bundle;
+
 		public WrappedClassLoader(Bundle bundle) {
 			super();
 			this.bundle = bundle;
 		}
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.ClassLoader#findClass(java.lang.String)
 		 */
 		@Override
 		public Class<?> findClass(String name) throws ClassNotFoundException {
 			return bundle.loadClass(name);
 		}
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.ClassLoader#findResource(java.lang.String)
 		 */
 		@Override
 		public URL findResource(String name) {
 			return bundle.getResource(name);
 		}
-		
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.ClassLoader#findResources(java.lang.String)
 		 */
 		@Override
 		protected Enumeration<URL> findResources(String name) throws IOException {
 			return bundle.getResources(name);
 		}
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
 		@Override
@@ -109,19 +121,23 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			}
 			return bundle == ((WrappedClassLoader) obj).bundle;
 		}
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Object#hashCode()
 		 */
 		@Override
 		public int hashCode() {
 			return bundle.hashCode();
 		}
+
 		@Override
 		public String toString() {
-			return "WrappedClassLoader(" + bundle.toString() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
+			return "WrappedClassLoader(" + bundle.toString() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	
+
 	static private class Relation {
 		Object from;
 		Object to;
@@ -136,7 +152,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			return from.toString() + "->" + (to == null ? IAntCoreConstants.EMPTY_STRING : to.toString()); //$NON-NLS-1$
 		}
 	}
-	
+
 	private IPreferenceChangeListener prefListener = new IPreferenceChangeListener() {
 		@Override
 		public void preferenceChange(PreferenceChangeEvent event) {
@@ -158,13 +174,13 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			}
 		}
 	};
-	
+
 	private List<Task> defaultTasks;
 	private List<Type> defaultTypes;
 	private List<AntClasspathEntry> extraClasspathURLs;
 	private List<Property> defaultProperties;
 	private IAntClasspathEntry[] defaultAntHomeEntries;
-	
+
 	private Task[] customTasks;
 	private Task[] oldCustomTasks;
 	private Type[] customTypes;
@@ -174,28 +190,21 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	private Property[] customProperties;
 	private Property[] oldCustomProperties;
 	private String[] customPropertyFiles;
-	
-	private List<WrappedClassLoader> pluginClassLoaders;
-	
-	private ClassLoader[] orderedPluginClassLoaders;
-	
-	private String antHome;
-	
-	private boolean runningHeadless= false;
 
-	protected AntCorePreferences(List<IConfigurationElement> defaultTasks, 
-			List<IConfigurationElement> defaultExtraClasspath, 
-			List<IConfigurationElement> defaultTypes, 
-			boolean headless) {
+	private List<WrappedClassLoader> pluginClassLoaders;
+
+	private ClassLoader[] orderedPluginClassLoaders;
+
+	private String antHome;
+
+	private boolean runningHeadless = false;
+
+	protected AntCorePreferences(List<IConfigurationElement> defaultTasks, List<IConfigurationElement> defaultExtraClasspath, List<IConfigurationElement> defaultTypes, boolean headless) {
 		this(defaultTasks, defaultExtraClasspath, defaultTypes, Collections.<IConfigurationElement> emptyList(), headless);
 	}
-	
-	protected AntCorePreferences(List<IConfigurationElement> defaultTasks, 
-			List<IConfigurationElement> defaultExtraClasspath, 
-			List<IConfigurationElement> defaultTypes, 
-			List<IConfigurationElement> defaultProperties, 
-			boolean headless) {
-		runningHeadless= headless;
+
+	protected AntCorePreferences(List<IConfigurationElement> defaultTasks, List<IConfigurationElement> defaultExtraClasspath, List<IConfigurationElement> defaultTypes, List<IConfigurationElement> defaultProperties, boolean headless) {
+		runningHeadless = headless;
 		initializePluginClassLoaders();
 		extraClasspathURLs = new ArrayList<AntClasspathEntry>(20);
 		this.defaultTasks = computeDefaultTasks(defaultTasks);
@@ -203,17 +212,19 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		computeDefaultExtraClasspathEntries(defaultExtraClasspath);
 		computeDefaultProperties(defaultProperties);
 		restoreCustomObjects();
-		
+
 	}
-	
+
 	/**
 	 * When a preference changes, update the in-memory cache of the preference.
-	 * @param event The property change event that has occurred.
+	 * 
+	 * @param event
+	 *            The property change event that has occurred.
 	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
 	 */
 	@Override
 	public void propertyChange(Preferences.PropertyChangeEvent event) {
-		//does nothing any longer, see the IPreferenceChangedListener field 
+		// does nothing any longer, see the IPreferenceChangedListener field
 	}
 
 	/**
@@ -228,58 +239,44 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		restoreCustomProperties();
 		restoreCustomPropertyFiles();
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(AntCorePlugin.PI_ANTCORE);
-		if(node != null) {
+		if (node != null) {
 			node.addPreferenceChangeListener(prefListener);
 		}
 	}
-	
+
 	private void restoreTasks() {
-		 String tasks = Platform.getPreferencesService().getString(
-				 AntCorePlugin.PI_ANTCORE,
-				 IAntCoreConstants.PREFERENCE_TASKS,
-				 null,
-				 null);
-		 if (tasks == null || IAntCoreConstants.EMPTY_STRING.equals(tasks)) {
-			 customTasks = new Task[0];
-		 } else {
-			 customTasks = extractTasks(AntCorePlugin.getPlugin().getPluginPreferences(), getArrayFromString(tasks));
-		 }
+		String tasks = Platform.getPreferencesService().getString(AntCorePlugin.PI_ANTCORE, IAntCoreConstants.PREFERENCE_TASKS, null, null);
+		if (tasks == null || IAntCoreConstants.EMPTY_STRING.equals(tasks)) {
+			customTasks = new Task[0];
+		} else {
+			customTasks = extractTasks(AntCorePlugin.getPlugin().getPluginPreferences(), getArrayFromString(tasks));
+		}
 	}
-	
+
 	private void restoreTypes() {
-		String types = Platform.getPreferencesService().getString(
-				AntCorePlugin.PI_ANTCORE,
-				IAntCoreConstants.PREFERENCE_TYPES,
-				null,
-				null);
+		String types = Platform.getPreferencesService().getString(AntCorePlugin.PI_ANTCORE, IAntCoreConstants.PREFERENCE_TYPES, null, null);
 		if (types == null || IAntCoreConstants.EMPTY_STRING.equals(types)) {
 			customTypes = new Type[0];
 		} else {
 			customTypes = extractTypes(AntCorePlugin.getPlugin().getPluginPreferences(), getArrayFromString(types));
 		}
 	}
-	
+
 	private void restoreAntHomeEntries() {
-		String entries = Platform.getPreferencesService().getString(
-				AntCorePlugin.PI_ANTCORE,
-				"ant_urls", //$NON-NLS-1$
-				null,
-				null); //old constant
+		String entries = Platform.getPreferencesService().getString(AntCorePlugin.PI_ANTCORE, "ant_urls", //$NON-NLS-1$
+		null, null); // old constant
 		if (entries == null || IAntCoreConstants.EMPTY_STRING.equals(entries)) {
-			entries = Platform.getPreferencesService().getString(
-					AntCorePlugin.PI_ANTCORE, 
-					IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES,
-					null,
-					null);
+			entries = Platform.getPreferencesService().getString(AntCorePlugin.PI_ANTCORE, IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES, null, null);
 		} else {
-			//torch the old pref
+			// torch the old pref
 			IEclipsePreferences node = InstanceScope.INSTANCE.getNode(AntCorePlugin.PI_ANTCORE);
-			if(node != null) {
+			if (node != null) {
 				node.remove("ant_urls"); //$NON-NLS-1$
 				try {
 					node.flush();
-				} catch (BackingStoreException e) {
-					//do nothing
+				}
+				catch (BackingStoreException e) {
+					// do nothing
 				}
 			}
 			antHomeEntries = migrateURLEntries(getArrayFromString(entries));
@@ -291,27 +288,21 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			antHomeEntries = extractEntries(getArrayFromString(entries));
 		}
 	}
-	
+
 	private void restoreAdditionalEntries() {
-		String entries = Platform.getPreferencesService().getString(
-				AntCorePlugin.PI_ANTCORE, 
-				"urls", //$NON-NLS-1$
-				null,
-				null); //old constant
+		String entries = Platform.getPreferencesService().getString(AntCorePlugin.PI_ANTCORE, "urls", //$NON-NLS-1$
+		null, null); // old constant
 		if (entries == null || IAntCoreConstants.EMPTY_STRING.equals(entries)) {
-			entries = Platform.getPreferencesService().getString(
-					AntCorePlugin.PI_ANTCORE,
-					IAntCoreConstants.PREFERENCE_ADDITIONAL_ENTRIES,
-					null,
-					null);
+			entries = Platform.getPreferencesService().getString(AntCorePlugin.PI_ANTCORE, IAntCoreConstants.PREFERENCE_ADDITIONAL_ENTRIES, null, null);
 		} else {
 			IEclipsePreferences node = InstanceScope.INSTANCE.getNode(AntCorePlugin.PI_ANTCORE);
-			if(node != null) {
+			if (node != null) {
 				node.remove("urls"); //$NON-NLS-1$
 				try {
 					node.flush();
-				} catch (BackingStoreException e) {
-					//do nothing
+				}
+				catch (BackingStoreException e) {
+					// do nothing
 				}
 			}
 			additionalEntries = migrateURLEntries(getArrayFromString(entries));
@@ -324,11 +315,11 @@ public class AntCorePreferences implements IPropertyChangeListener {
 				if (userLibs == null) {
 					additionalEntries = new IAntClasspathEntry[0];
 				} else {
-				    additionalEntries = userLibs.toArray(new IAntClasspathEntry[userLibs.size()]);
+					additionalEntries = userLibs.toArray(new IAntClasspathEntry[userLibs.size()]);
 				}
 			} else {
 				if (userLibs == null) {
-					additionalEntries = new IAntClasspathEntry[] {toolsJarEntry};
+					additionalEntries = new IAntClasspathEntry[] { toolsJarEntry };
 				} else {
 					userLibs.add(toolsJarEntry);
 					additionalEntries = userLibs.toArray(new IAntClasspathEntry[userLibs.size()]);
@@ -338,7 +329,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			additionalEntries = extractEntries(getArrayFromString(entries));
 		}
 	}
-	
+
 	/*
 	 * Migrates the persisted URL entries restored from a workspace older than 3.0
 	 */
@@ -347,8 +338,9 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		for (int i = 0; i < urlEntries.length; i++) {
 			URL url;
 			try {
-				url = new URL (urlEntries[i]);
-			} catch (MalformedURLException e) {
+				url = new URL(urlEntries[i]);
+			}
+			catch (MalformedURLException e) {
 				continue;
 			}
 			result.add(new AntClasspathEntry(url));
@@ -357,54 +349,41 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	}
 
 	private void restoreAntHome() {
-		antHome = Platform.getPreferencesService().getString(
-				AntCorePlugin.PI_ANTCORE, 
-				IAntCoreConstants.PREFERENCE_ANT_HOME, 
-				null, 
-				null);
+		antHome = Platform.getPreferencesService().getString(AntCorePlugin.PI_ANTCORE, IAntCoreConstants.PREFERENCE_ANT_HOME, null, null);
 		if (antHome == null || IAntCoreConstants.EMPTY_STRING.equals(antHome)) {
 			antHome = getDefaultAntHome();
 		}
 	}
-	
+
 	/**
-	 * Returns the absolute path of the default ant.home to use for the build.
-	 * The default is the org.apache.ant plug-in folder provided with Eclipse.
+	 * Returns the absolute path of the default ant.home to use for the build. The default is the org.apache.ant plug-in folder provided with Eclipse.
 	 * 
 	 * @return String absolute path of the default ant.home
 	 * @since 3.0
 	 */
 	public String getDefaultAntHome() {
-		IAntClasspathEntry[] entries= getDefaultAntHomeEntries();
+		IAntClasspathEntry[] entries = getDefaultAntHomeEntries();
 		if (entries.length > 0) {
-			URL antjar= entries[0].getEntryURL();
-			IPath antHomePath= new Path(antjar.getFile());
-			//parent directory of the lib directory
-			antHomePath= antHomePath.removeLastSegments(2);
+			URL antjar = entries[0].getEntryURL();
+			IPath antHomePath = new Path(antjar.getFile());
+			// parent directory of the lib directory
+			antHomePath = antHomePath.removeLastSegments(2);
 			return antHomePath.toFile().getAbsolutePath();
-		} 
+		}
 		return null;
 	}
-	
+
 	private void restoreCustomProperties() {
-		String properties = Platform.getPreferencesService().getString(
-				AntCorePlugin.PI_ANTCORE, 
-				IAntCoreConstants.PREFERENCE_PROPERTIES,
-				null,
-				null);
+		String properties = Platform.getPreferencesService().getString(AntCorePlugin.PI_ANTCORE, IAntCoreConstants.PREFERENCE_PROPERTIES, null, null);
 		if (properties == null || IAntCoreConstants.EMPTY_STRING.equals(properties)) {
 			customProperties = new Property[0];
 		} else {
 			customProperties = extractProperties(AntCorePlugin.getPlugin().getPluginPreferences(), getArrayFromString(properties));
 		}
 	}
-	
+
 	private void restoreCustomPropertyFiles() {
-		String propertyFiles = Platform.getPreferencesService().getString(
-				AntCorePlugin.PI_ANTCORE, 
-				IAntCoreConstants.PREFERENCE_PROPERTY_FILES,
-				null,
-				null);
+		String propertyFiles = Platform.getPreferencesService().getString(AntCorePlugin.PI_ANTCORE, IAntCoreConstants.PREFERENCE_PROPERTY_FILES, null, null);
 		if (propertyFiles == null || IAntCoreConstants.EMPTY_STRING.equals(propertyFiles)) {
 			customPropertyFiles = new String[0];
 		} else {
@@ -423,10 +402,10 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			Task task = new Task();
 			task.setTaskName(taskName);
 			task.setClassName(values[0]);
-			String library= values[1];
+			String library = values[1];
 			if (library.startsWith(IAntCoreConstants.FILE_PROTOCOL)) {
-				//old format where URLs were persisted
-				library= library.substring(5);
+				// old format where URLs were persisted
+				library = library.substring(5);
 			}
 			task.setLibraryEntry(new AntClasspathEntry(library));
 			result.add(task);
@@ -445,17 +424,17 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			Type type = new Type();
 			type.setTypeName(typeName);
 			type.setClassName(values[0]);
-			String library= values[1];
+			String library = values[1];
 			if (library.startsWith(IAntCoreConstants.FILE_PROTOCOL)) {
-				//old format where URLs were persisted
-				library= library.substring(5);
+				// old format where URLs were persisted
+				library = library.substring(5);
 			}
 			type.setLibraryEntry(new AntClasspathEntry(library));
 			result.add(type);
 		}
 		return result.toArray(new Type[result.size()]);
 	}
-	
+
 	protected Property[] extractProperties(Preferences prefs, String[] properties) {
 		Property[] result = new Property[properties.length];
 		for (int i = 0; i < properties.length; i++) {
@@ -464,7 +443,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			Property property = new Property();
 			property.setName(propertyName);
 			property.setValue(value);
-			result[i]= property;
+			result[i] = property;
 		}
 		return result;
 	}
@@ -472,40 +451,37 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	private IAntClasspathEntry[] extractEntries(String[] entries) {
 		IAntClasspathEntry[] result = new IAntClasspathEntry[entries.length];
 		for (int i = 0; i < entries.length; i++) {
-			result[i]= new AntClasspathEntry(entries[i]);
+			result[i] = new AntClasspathEntry(entries[i]);
 		}
 		return result;
 	}
 
 	/**
-	 * Returns the array of URLs that is the default set of URLs defining
-	 * the Ant classpath.
+	 * Returns the array of URLs that is the default set of URLs defining the Ant classpath.
 	 * 
-	 * Ant running through the command line tries to find tools.jar to help the
-	 * user. Try emulating the same behavior here.
-	 *
+	 * Ant running through the command line tries to find tools.jar to help the user. Try emulating the same behavior here.
+	 * 
 	 * @return the default set of URLs defining the Ant classpath
 	 * @deprecated use {@link #getDefaultAntHomeEntries()} instead
 	 */
 	@Deprecated
 	public URL[] getDefaultAntURLs() {
-		IAntClasspathEntry[] entries= getDefaultAntHomeEntries();
-		List<URL> result= new ArrayList<URL>(3);
+		IAntClasspathEntry[] entries = getDefaultAntHomeEntries();
+		List<URL> result = new ArrayList<URL>(3);
 		for (int i = 0; i < entries.length; i++) {
 			IAntClasspathEntry entry = entries[i];
 			result.add(entry.getEntryURL());
 		}
-		URL toolsURL= getToolsJarURL();
+		URL toolsURL = getToolsJarURL();
 		if (toolsURL != null) {
 			result.add(toolsURL);
 		}
 		return result.toArray(new URL[result.size()]);
 	}
-	
+
 	/**
-	 * Returns the array of classpath entries that is the default set of entries defining
-	 * the Ant classpath.
-	 *
+	 * Returns the array of classpath entries that is the default set of entries defining the Ant classpath.
+	 * 
 	 * @return the default set of classpath entries defining the Ant classpath
 	 */
 	public synchronized IAntClasspathEntry[] getDefaultAntHomeEntries() {
@@ -518,65 +494,66 @@ public class AntCorePreferences implements IPropertyChangeListener {
 				if (packageAdmin != null) {
 					ExportedPackage[] packages = packageAdmin.getExportedPackages("org.apache.tools.ant"); //$NON-NLS-1$
 					Bundle bundle = findHighestAntVersion(packages);
-					if(bundle == null) {
+					if (bundle == null) {
 						for (int i = 0; i < packages.length; i++) {
 							bundle = packages[i].getExportingBundle();
-							if(bundle == null) {
+							if (bundle == null) {
 								continue;
 							}
 							try {
 								addLibraries(bundle, result);
-								if(result.size() > 0) {
+								if (result.size() > 0) {
 									break;
 								}
 							}
-							catch(IOException ioe) {
+							catch (IOException ioe) {
 								AntCorePlugin.log(ioe); // maintain logging
 								result.clear();
-								/*continue to try other providers if an exception occurs*/
+								/* continue to try other providers if an exception occurs */
 							}
 						}
-					}
-					else {
+					} else {
 						try {
 							addLibraries(bundle, result);
-						} catch (IOException ioe) {
+						}
+						catch (IOException ioe) {
 							AntCorePlugin.log(ioe); // maintain logging
 						}
 					}
 				}
 				defaultAntHomeEntries = result.toArray(new IAntClasspathEntry[result.size()]);
-			} finally {
+			}
+			finally {
 				tracker.close();
 			}
 		}
 		return defaultAntHomeEntries;
 	}
-	
+
 	/**
-	 * Simple algorithm to find the highest version of <code>org.apache.ant</code> 
-	 * available. If there are other providers that are not <code>org.apache.ant</code>
-	 * they are ignored and all versions of <code>org.apache.ant</code> are considered.
-	 * <br><br>
+	 * Simple algorithm to find the highest version of <code>org.apache.ant</code> available. If there are other providers that are not
+	 * <code>org.apache.ant</code> they are ignored and all versions of <code>org.apache.ant</code> are considered. <br>
+	 * <br>
 	 * See the following bugs for related history:
 	 * <ul>
 	 * <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=282851">https://bugs.eclipse.org/bugs/show_bug.cgi?id=282851</a></li>
 	 * <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=325125">https://bugs.eclipse.org/bugs/show_bug.cgi?id=325125</a></li>
 	 * </ul>
 	 * 
-	 * @param packages the live list of {@link ExportedPackage}s to inspect
-	 * @return the bundle that represents the highest version of <code>org.apache.ant</code> or <code>null</code>
-	 * if there are no <code>org.apache.ant</code> providers of the <code>org.apache.ant.tools</code> package.
+	 * @param packages
+	 *            the live list of {@link ExportedPackage}s to inspect
+	 * @return the bundle that represents the highest version of <code>org.apache.ant</code> or <code>null</code> if there are no
+	 *         <code>org.apache.ant</code> providers of the <code>org.apache.ant.tools</code> package.
 	 */
 	Bundle findHighestAntVersion(ExportedPackage[] packages) {
 		Bundle bundle = null;
 		HashSet<Bundle> bundles = new HashSet<Bundle>();
 		for (int i = 0; i < packages.length; i++) {
 			bundle = packages[i].getExportingBundle();
-			if(bundle == null) {
+			if (bundle == null) {
 				continue;
 			}
-			if("org.apache.ant".equals(bundle.getSymbolicName())) { //$NON-NLS-1$
+			if ("org.apache.ant".equals(bundle.getSymbolicName())) { //$NON-NLS-1$
 				bundles.add(bundle);
 			}
 		}
@@ -584,51 +561,50 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		Bundle temp = null;
 		for (Iterator<Bundle> iter = bundles.iterator(); iter.hasNext();) {
 			temp = iter.next();
-			if(highest == null) {
+			if (highest == null) {
 				highest = temp;
-			}
-			else {
-				if(highest.getVersion().compareTo(temp.getVersion()) < 0) {
+			} else {
+				if (highest.getVersion().compareTo(temp.getVersion()) < 0) {
 					highest = temp;
 				}
 			}
 		}
 		return highest;
 	}
-	
+
 	/**
-	 * Returns the array of URLs that is the set of URLs defining the Ant
-	 * classpath.
+	 * Returns the array of URLs that is the set of URLs defining the Ant classpath.
 	 * 
 	 * @return the set of URLs defining the Ant classpath
 	 * @deprecated use getAntHomeClasspathEntries and getToolsJarEntry
 	 */
 	@Deprecated
 	public URL[] getAntURLs() {
-		int extra= 0;
-		IAntClasspathEntry entry= getToolsJarEntry();
+		int extra = 0;
+		IAntClasspathEntry entry = getToolsJarEntry();
 		if (entry != null) {
 			extra++;
 		}
-		URL[] urls= new URL[antHomeEntries.length + extra];
+		URL[] urls = new URL[antHomeEntries.length + extra];
 		int i;
 		for (i = 0; i < antHomeEntries.length; i++) {
 			URL url = antHomeEntries[i].getEntryURL();
 			if (url != null) {
-				urls[i]= url;
+				urls[i] = url;
 			}
 		}
 		if (entry != null) {
-			urls[i]= entry.getEntryURL();
+			urls[i] = entry.getEntryURL();
 		}
 		return urls;
-		
+
 	}
 
 	/**
 	 * Returns the complete list of pre-configured {@link Task}s
 	 * 
-	 * @param tasks the {@link IConfigurationElement} handles for contributed {@link Task}s
+	 * @param tasks
+	 *            the {@link IConfigurationElement} handles for contributed {@link Task}s
 	 * @return the list of {@link Task}s
 	 */
 	protected List<Task> computeDefaultTasks(List<IConfigurationElement> tasks) {
@@ -641,8 +617,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			Task task = new Task();
 			task.setTaskName(element.getAttribute(IAntCoreConstants.NAME));
 			task.setClassName(element.getAttribute(AntCorePlugin.CLASS));
-			
-			if(configureAntObject(element, task, task.getTaskName(), InternalCoreAntMessages.AntCorePreferences_No_library_for_task)) {
+
+			if (configureAntObject(element, task, task.getTaskName(), InternalCoreAntMessages.AntCorePreferences_No_library_for_task)) {
 				result.add(task);
 			}
 		}
@@ -650,20 +626,20 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	}
 
 	private void addURLToExtraClasspathEntries(URL url, IConfigurationElement element) {
-		String eclipseRuntime= element.getAttribute(AntCorePlugin.ECLIPSE_RUNTIME);
-		boolean eclipseRuntimeRequired= true;
+		String eclipseRuntime = element.getAttribute(AntCorePlugin.ECLIPSE_RUNTIME);
+		boolean eclipseRuntimeRequired = true;
 		if (eclipseRuntime != null) {
-			eclipseRuntimeRequired= Boolean.valueOf(eclipseRuntime).booleanValue();
+			eclipseRuntimeRequired = Boolean.valueOf(eclipseRuntime).booleanValue();
 		}
-		Iterator<AntClasspathEntry> itr= extraClasspathURLs.iterator();
+		Iterator<AntClasspathEntry> itr = extraClasspathURLs.iterator();
 		while (itr.hasNext()) {
 			IAntClasspathEntry entry = itr.next();
 			if (entry.getEntryURL().equals(url)) {
 				return;
 			}
 		}
-		
-		AntClasspathEntry entry= new AntClasspathEntry(url);
+
+		AntClasspathEntry entry = new AntClasspathEntry(url);
 		entry.setEclipseRuntimeRequired(eclipseRuntimeRequired);
 		extraClasspathURLs.add(entry);
 	}
@@ -671,7 +647,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	/**
 	 * Returns the complete listing of pre-configured {@link Type}s
 	 * 
-	 * @param types the list of {@link IConfigurationElement} handles to contributed {@link Type}s
+	 * @param types
+	 *            the list of {@link IConfigurationElement} handles to contributed {@link Type}s
 	 * @return the list of {@link Type}s
 	 */
 	protected List<Type> computeDefaultTypes(List<IConfigurationElement> types) {
@@ -684,8 +661,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			Type type = new Type();
 			type.setTypeName(element.getAttribute(IAntCoreConstants.NAME));
 			type.setClassName(element.getAttribute(AntCorePlugin.CLASS));
-			
-			if(configureAntObject(element, type, type.getTypeName(), InternalCoreAntMessages.AntCorePreferences_No_library_for_type)) {
+
+			if (configureAntObject(element, type, type.getTypeName(), InternalCoreAntMessages.AntCorePreferences_No_library_for_type)) {
 				result.add(type);
 			}
 		}
@@ -704,12 +681,13 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		}
 		if (!urlFile.exists())
 			return null;
-	    String path = urlFile.getAbsolutePath();
-	    return new URL(IAntCoreConstants.FILE_PROTOCOL + (urlFile.isDirectory() ? path + "/" : path));  //$NON-NLS-1$
+		String path = urlFile.getAbsolutePath();
+		return new URL(IAntCoreConstants.FILE_PROTOCOL + (urlFile.isDirectory() ? path + "/" : path)); //$NON-NLS-1$
 	}
 
 	/**
 	 * Configures the given {@link AntObject} and returns if it should be retained
+	 * 
 	 * @param element
 	 * @param antObject
 	 * @param objectName
@@ -721,21 +699,21 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		if (runtime != null) {
 			antObject.setEclipseRuntimeRequired(Boolean.valueOf(runtime).booleanValue());
 		}
-		
+
 		String uri = element.getAttribute(AntCorePlugin.URI);
 		if (uri != null) {
 			antObject.setURI(uri);
 		}
-		
+
 		String library = element.getAttribute(AntCorePlugin.LIBRARY);
 		if (library == null) {
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(InternalCoreAntMessages.AntCorePreferences_Library_not_specified_for___0__4, new String[]{objectName}), null);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(InternalCoreAntMessages.AntCorePreferences_Library_not_specified_for___0__4, new String[] { objectName }), null);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			return false;
 		}
-		
+
 		try {
-            IContributor contributor= element.getContributor();
+			IContributor contributor = element.getContributor();
 			antObject.setPluginLabel(contributor.getName());
 			Bundle bundle = Platform.getBundle(contributor.getName());
 			URL url = getClasspathEntryURL(bundle, library);
@@ -744,19 +722,23 @@ public class AntCorePreferences implements IPropertyChangeListener {
 				addPluginClassLoader(bundle);
 				antObject.setLibraryEntry(new AntClasspathEntry(url));
 				return true;
-			} 
+			}
 
-			//type specifies a library that does not exist
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(errorMessage, new String[]{library, element.getContributor().getName()}), null);
+			// type specifies a library that does not exist
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(errorMessage, new String[] {
+					library, element.getContributor().getName() }), null);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			return false;
-		} catch (MalformedURLException e) {
+		}
+		catch (MalformedURLException e) {
 			// if the URL does not have a valid format, just log and ignore the exception
 			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.AntCorePreferences_Malformed_URL__1, e);
 			AntCorePlugin.getPlugin().getLog().log(status);
-		} catch (Exception e) {
-			//likely extra classpath entry library that does not exist
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(InternalCoreAntMessages.AntCorePreferences_8, new String[]{library,  element.getContributor().getName()}), null);
+		}
+		catch (Exception e) {
+			// likely extra classpath entry library that does not exist
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(InternalCoreAntMessages.AntCorePreferences_8, new String[] {
+					library, element.getContributor().getName() }), null);
 			AntCorePlugin.getPlugin().getLog().log(status);
 		}
 		return false;
@@ -776,33 +758,37 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			try {
 				URL url = getClasspathEntryURL(bundle, library);
 				if (url != null) {
-					addURLToExtraClasspathEntries(url, element);  
+					addURLToExtraClasspathEntries(url, element);
 					addPluginClassLoader(bundle);
 				} else {
-					//extra classpath entry that does not exist
-					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(InternalCoreAntMessages.AntCorePreferences_6, new String[]{library, element.getContributor().getName()}), null);
+					// extra classpath entry that does not exist
+					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(InternalCoreAntMessages.AntCorePreferences_6, new String[] {
+							library, element.getContributor().getName() }), null);
 					AntCorePlugin.getPlugin().getLog().log(status);
 					continue;
 				}
-			} catch (MalformedURLException e) {
-				//if the URL does not have a valid format, just log and ignore the exception
+			}
+			catch (MalformedURLException e) {
+				// if the URL does not have a valid format, just log and ignore the exception
 				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.AntCorePreferences_Malformed_URL__1, e);
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
-			} catch (Exception e) {
-				//likely extra classpath entry that does not exist
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(InternalCoreAntMessages.AntCorePreferences_6, new String[]{library, element.getContributor().getName()}), null);
+			}
+			catch (Exception e) {
+				// likely extra classpath entry that does not exist
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(InternalCoreAntMessages.AntCorePreferences_6, new String[] {
+						library, element.getContributor().getName() }), null);
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
 		}
 	}
-	
+
 	private boolean relevantRunningHeadless(IConfigurationElement element) {
 		if (runningHeadless) {
 			String headless = element.getAttribute(AntCorePlugin.HEADLESS);
 			if (headless != null) {
-				boolean headlessProperty= Boolean.valueOf(headless).booleanValue();
+				boolean headlessProperty = Boolean.valueOf(headless).booleanValue();
 				if (!headlessProperty) {
 					return false;
 				}
@@ -810,7 +796,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		}
 		return true;
 	}
-	
+
 	/*
 	 * Scan the Ant property extensions for properties to set.
 	 * 
@@ -828,12 +814,12 @@ public class AntCorePreferences implements IPropertyChangeListener {
 				continue;
 			}
 			String value = element.getAttribute(IAntCoreConstants.VALUE);
-			Property property= null;
+			Property property = null;
 			if (value != null) {
 				property = new Property(name, value);
 				property.setPluginLabel(element.getContributor().getName());
 			} else {
-				Bundle bundle= Platform.getBundle(element.getContributor().getName());
+				Bundle bundle = Platform.getBundle(element.getContributor().getName());
 				if (bundle == null) {
 					continue;
 				}
@@ -852,11 +838,11 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	}
 
 	/**
-	 * Returns the IAntClasspathEntry for the tools.jar associated with the path supplied.
-	 * May return <code>null</code> if no tools.jar is found (e.g. the path
-	 * points to a JRE install).
+	 * Returns the IAntClasspathEntry for the tools.jar associated with the path supplied. May return <code>null</code> if no tools.jar is found (e.g.
+	 * the path points to a JRE install).
 	 * 
-	 * @param javaHomePath path for Java home
+	 * @param javaHomePath
+	 *            path for Java home
 	 * @return IAntClasspathEntry tools.jar IAntClasspathEntry or <code>null</code>
 	 * @since 3.0
 	 */
@@ -865,26 +851,25 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		if ("jre".equalsIgnoreCase(newjh.lastSegment())) { //$NON-NLS-1$
 			newjh = newjh.removeLastSegments(1);
 		}
-		newjh= newjh.append("lib").append("tools.jar"); //$NON-NLS-1$ //$NON-NLS-2$
-		File tools= newjh.toFile();
+		newjh = newjh.append("lib").append("tools.jar"); //$NON-NLS-1$ //$NON-NLS-2$
+		File tools = newjh.toFile();
 		if (!tools.exists()) {
-			//attempt to find in the older 1.1.* 
-			newjh= newjh.removeLastSegments(1);
-			newjh= newjh.append("classes.zip"); //$NON-NLS-1$
-			tools= newjh.toFile();
+			// attempt to find in the older 1.1.*
+			newjh = newjh.removeLastSegments(1);
+			newjh = newjh.append("classes.zip"); //$NON-NLS-1$
+			tools = newjh.toFile();
 			if (!tools.exists()) {
 				return null;
 			}
 		}
-        
-		return new AntClasspathEntry(tools.getAbsolutePath());    
+
+		return new AntClasspathEntry(tools.getAbsolutePath());
 	}
 
 	/**
-	 * Returns the URL for the tools.jar associated with the System property "java.home"
-	 * location. If "java.home" has no associated tools.jar (such as a JRE install), the environment variable "JAVA_HOME" is
-	 * resolved to check for a tools.jar.
-     * May return <code>null</code> if no tools.jar is found.
+	 * Returns the URL for the tools.jar associated with the System property "java.home" location. If "java.home" has no associated tools.jar (such as
+	 * a JRE install), the environment variable "JAVA_HOME" is resolved to check for a tools.jar. May return <code>null</code> if no tools.jar is
+	 * found.
 	 * 
 	 * @return URL tools.jar URL or <code>null</code>
 	 * @deprecated use getToolsJarEntry()
@@ -892,19 +877,20 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	@Deprecated
 	public URL getToolsJarURL() {
 		IPath path = new Path(System.getProperty("java.home")); //$NON-NLS-1$
-		IAntClasspathEntry entry= getToolsJarEntry(path);
+		IAntClasspathEntry entry = getToolsJarEntry(path);
 		if (entry == null) {
 			IDynamicVariable variable = VariablesPlugin.getDefault().getStringVariableManager().getDynamicVariable("env_var"); //$NON-NLS-1$
-			String javaHome= null;
+			String javaHome = null;
 			try {
 				if (variable != null) {
 					javaHome = variable.getValue("JAVA_HOME"); //$NON-NLS-1$
 				}
 				if (javaHome != null) {
-					path= new Path(javaHome);
-					entry= getToolsJarEntry(path);
+					path = new Path(javaHome);
+					entry = getToolsJarEntry(path);
 				}
-			} catch (CoreException e) {
+			}
+			catch (CoreException e) {
 				AntCorePlugin.log(e);
 			}
 		}
@@ -913,110 +899,110 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Returns the <code>IAntClasspathEntry</code> for the tools.jar associated with the System property "java.home"
-	 * location.
-	 * If "java.home" has no associated tools.jar (such as a JRE install), the environment variable "JAVA_HOME" is
-	 * resolved to check for a tools.jar. 
-	 * May return <code>null</code> if no tools.jar is found.
+	 * Returns the <code>IAntClasspathEntry</code> for the tools.jar associated with the System property "java.home" location. If "java.home" has no
+	 * associated tools.jar (such as a JRE install), the environment variable "JAVA_HOME" is resolved to check for a tools.jar. May return
+	 * <code>null</code> if no tools.jar is found.
 	 * 
 	 * @return IAntClasspathEntry tools.jar IAntClasspathEntry or <code>null</code>
 	 */
 	public IAntClasspathEntry getToolsJarEntry() {
 		IPath path = new Path(System.getProperty("java.home")); //$NON-NLS-1$
-		IAntClasspathEntry entry= getToolsJarEntry(path);
+		IAntClasspathEntry entry = getToolsJarEntry(path);
 		if (entry == null) {
 			IDynamicVariable variable = VariablesPlugin.getDefault().getStringVariableManager().getDynamicVariable("env_var"); //$NON-NLS-1$
-			String javaHome= null;
+			String javaHome = null;
 			try {
 				if (variable != null) {
 					javaHome = variable.getValue("JAVA_HOME"); //$NON-NLS-1$
 				}
 				if (javaHome != null) {
-					path= new Path(javaHome);
-					entry= getToolsJarEntry(path);
+					path = new Path(javaHome);
+					entry = getToolsJarEntry(path);
 				}
-			} catch (CoreException e) {
+			}
+			catch (CoreException e) {
 				AntCorePlugin.log(e);
 			}
 		}
 		return entry;
 	}
-	
+
 	/**
-	 * Returns the <code>IAntClasspathEntry</code>s for the jars from ${user.home}/.ant/lib
-	 * May return <code>null</code> if jars are found.
+	 * Returns the <code>IAntClasspathEntry</code>s for the jars from ${user.home}/.ant/lib May return <code>null</code> if jars are found.
 	 * 
 	 * TODO Should be promoted to API post 3.1
 	 * 
-	 * @return the collection of <code>IAntClasspathEntry</code> found at ${user.home}/.ant/lib or
-	 * <code>null</code> if none found of location does not exist
+	 * @return the collection of <code>IAntClasspathEntry</code> found at ${user.home}/.ant/lib or <code>null</code> if none found of location does
+	 *         not exist
 	 */
 	private List<IAntClasspathEntry> getUserLibraries() {
-		File libDir= new File(System.getProperty("user.home"), ".ant" + File.separatorChar + "lib"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		URL[] urls= null;
+		File libDir = new File(System.getProperty("user.home"), ".ant" + File.separatorChar + "lib"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		URL[] urls = null;
 		try {
 			urls = getLocationURLs(libDir);
-		} catch (MalformedURLException e) {
+		}
+		catch (MalformedURLException e) {
 			AntCorePlugin.log(e);
 		}
 		if (urls == null) {
 			return null;
 		}
-		
-		List<IAntClasspathEntry> entries= new ArrayList<IAntClasspathEntry>(urls.length);
+
+		List<IAntClasspathEntry> entries = new ArrayList<IAntClasspathEntry>(urls.length);
 		for (int i = 0; i < urls.length; i++) {
-			AntClasspathEntry entry= new AntClasspathEntry(urls[i]);
+			AntClasspathEntry entry = new AntClasspathEntry(urls[i]);
 			entries.add(entry);
 		}
 		return entries;
 	}
-	
-	 private URL[] getLocationURLs(File location) throws MalformedURLException {
-		 URL[] urls= null;
-		 if (!location.exists()) {
-			 return urls;
-		 }
-		 final String extension= ".jar"; //$NON-NLS-1$
-		 if (!location.isDirectory()) {
-			 urls = new URL[1];
-			 String path= location.getPath();
-			 if (path.toLowerCase().endsWith(extension)) {
-				 //make sure the URL is properly escaped
-				 urls[0] = location.toURI().toURL();
-			 }
-			 return urls;
-		 }
-		 
-		 File[] matches= location.listFiles(
-			 new FilenameFilter() {
-				 @Override
-				public boolean accept(File dir, String name) {
-					 return name.toLowerCase().endsWith(extension);
-				 }
-			 });
-		 
-		 urls= new URL[matches.length];
-		 for (int i = 0; i < matches.length; ++i) {
-			 //make sure the URL is properly escaped
-			 urls[i] = matches[i].toURI().toURL();
-		 }
-		 return urls;
-	 }
-	 
+
+	private URL[] getLocationURLs(File location) throws MalformedURLException {
+		URL[] urls = null;
+		if (!location.exists()) {
+			return urls;
+		}
+		final String extension = ".jar"; //$NON-NLS-1$
+		if (!location.isDirectory()) {
+			urls = new URL[1];
+			String path = location.getPath();
+			if (path.toLowerCase().endsWith(extension)) {
+				// make sure the URL is properly escaped
+				urls[0] = location.toURI().toURL();
+			}
+			return urls;
+		}
+
+		File[] matches = location.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.toLowerCase().endsWith(extension);
+			}
+		});
+
+		urls = new URL[matches.length];
+		for (int i = 0; i < matches.length; ++i) {
+			// make sure the URL is properly escaped
+			urls[i] = matches[i].toURI().toURL();
+		}
+		return urls;
+	}
+
 	/**
 	 * Add the libraries contributed by the Ant plug-in, to the classpath.
+	 * 
 	 * @param source
 	 * @param destination
-	 * @throws IOException 
+	 * @throws IOException
 	 * @throws MalformedURLException
 	 */
 	private void addLibraries(Bundle source, List<AntClasspathEntry> destination) throws IOException, MalformedURLException {
 		ManifestElement[] libraries = null;
 		try {
 			libraries = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, source.getHeaders(IAntCoreConstants.EMPTY_STRING).get(Constants.BUNDLE_CLASSPATH));
-		} catch (BundleException e) {
+		}
+		catch (BundleException e) {
 			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.AntCorePreferences_0, e);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			return;
@@ -1027,7 +1013,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		URL url = null;
 		for (int i = 0; i < libraries.length; i++) {
 			url = source.getEntry(libraries[i].getValue());
-			if(url != null) {
+			if (url != null) {
 				destination.add(new AntClasspathEntry(FileLocator.toFileURL(url)));
 			}
 		}
@@ -1041,43 +1027,41 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	}
 
 	/**
-	 * Returns the list of URLs added to the classpath by the extra classpath
-	 * entries extension point.
+	 * Returns the list of URLs added to the classpath by the extra classpath entries extension point.
 	 * 
 	 * @return the list of extra classpath URLs
 	 */
 	public URL[] getExtraClasspathURLs() {
-		URL[] urls= new URL[extraClasspathURLs.size()];
-		
+		URL[] urls = new URL[extraClasspathURLs.size()];
+
 		for (int i = 0; i < extraClasspathURLs.size(); i++) {
-				IAntClasspathEntry entry = extraClasspathURLs.get(i);
-				urls[i]= entry.getEntryURL();	
+			IAntClasspathEntry entry = extraClasspathURLs.get(i);
+			urls[i] = entry.getEntryURL();
 		}
 		return urls;
 	}
-	
+
 	/**
-	 * Returns the list of URLs added to the classpath by the extra classpath
-	 * entries extension point for an Ant build that is occurring without the Eclipse runtime.
+	 * Returns the list of URLs added to the classpath by the extra classpath entries extension point for an Ant build that is occurring without the
+	 * Eclipse runtime.
 	 * 
 	 * @return the list of extra classpath URLs
 	 * @since 3.0
 	 */
 	public URL[] getRemoteExtraClasspathURLs() {
-		List<URL> urls= new ArrayList<URL>(extraClasspathURLs.size());
-		
+		List<URL> urls = new ArrayList<URL>(extraClasspathURLs.size());
+
 		for (int i = 0; i < extraClasspathURLs.size(); i++) {
-				IAntClasspathEntry entry = extraClasspathURLs.get(i);
-				if (!entry.isEclipseRuntimeRequired()) {
-					urls.add(entry.getEntryURL());
-				}
+			IAntClasspathEntry entry = extraClasspathURLs.get(i);
+			if (!entry.isEclipseRuntimeRequired()) {
+				urls.add(entry.getEntryURL());
+			}
 		}
 		return urls.toArray(new URL[urls.size()]);
 	}
-	
+
 	/**
-	 * Returns the entire set of URLs that define the Ant runtime classpath.
-	 * Includes the Ant URLs, the additional URLs and extra classpath URLs.
+	 * Returns the entire set of URLs that define the Ant runtime classpath. Includes the Ant URLs, the additional URLs and extra classpath URLs.
 	 * 
 	 * @return the entire runtime classpath of URLs
 	 */
@@ -1089,22 +1073,22 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		if (additionalEntries != null && additionalEntries.length > 0) {
 			addEntryURLs(result, additionalEntries);
 		}
-		
+
 		for (int i = 0; i < extraClasspathURLs.size(); i++) {
 			IAntClasspathEntry entry = extraClasspathURLs.get(i);
-			URL url= entry.getEntryURL();
+			URL url = entry.getEntryURL();
 			if (url != null) {
 				result.add(url);
-			}	
+			}
 		}
-		
+
 		return result.toArray(new URL[result.size()]);
 	}
 
 	private void addEntryURLs(List<URL> result, IAntClasspathEntry[] entries) {
 		for (int i = 0; i < entries.length; i++) {
 			IAntClasspathEntry entry = entries[i];
-			URL url= entry.getEntryURL();
+			URL url = entry.getEntryURL();
 			if (url != null) {
 				result.add(url);
 			}
@@ -1113,8 +1097,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	protected ClassLoader[] getPluginClassLoaders() {
 		if (orderedPluginClassLoaders == null) {
-			Iterator<WrappedClassLoader> classLoaders= pluginClassLoaders.iterator();
-			Map<String, WrappedClassLoader> idToLoader= new HashMap<String, WrappedClassLoader>(pluginClassLoaders.size());
+			Iterator<WrappedClassLoader> classLoaders = pluginClassLoaders.iterator();
+			Map<String, WrappedClassLoader> idToLoader = new HashMap<String, WrappedClassLoader>(pluginClassLoaders.size());
 			List<BundleDescription> bundles = new ArrayList<BundleDescription>(pluginClassLoaders.size());
 			while (classLoaders.hasNext()) {
 				WrappedClassLoader loader = classLoaders.next();
@@ -1123,15 +1107,15 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			}
 			List<Object> descriptions = computePrerequisiteOrder(bundles);
 			List<WrappedClassLoader> loaders = new ArrayList<WrappedClassLoader>(descriptions.size());
-			for (Iterator<Object> iter = descriptions.iterator(); iter.hasNext(); ) {
-				String id =((BundleDescription) iter.next()).getSymbolicName();
+			for (Iterator<Object> iter = descriptions.iterator(); iter.hasNext();) {
+				String id = ((BundleDescription) iter.next()).getSymbolicName();
 				loaders.add(idToLoader.get(id));
 			}
 			orderedPluginClassLoaders = loaders.toArray(new WrappedClassLoader[loaders.size()]);
 		}
 		return orderedPluginClassLoaders;
 	}
-	
+
 	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
@@ -1164,7 +1148,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			}
 		}
 
-		//The fragments needs to added relatively to their host and to their
+		// The fragments needs to added relatively to their host and to their
 		// own prerequisite (bug #43244)
 		for (Iterator<BundleDescription> iter = fragments.iterator(); iter.hasNext();) {
 			BundleDescription current = iter.next();
@@ -1172,7 +1156,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			if (plugins.contains(current.getHost().getBundle())) {
 				prereqs.add(new Relation(current, current.getHost().getSupplier()));
 			} else {
-				AntCorePlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, NLS.bind(InternalCoreAntMessages.AntCorePreferences_1, new String[] {current.getSymbolicName()}), null));
+				AntCorePlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, NLS.bind(InternalCoreAntMessages.AntCorePreferences_1, new String[] { current.getSymbolicName() }), null));
 			}
 
 			BundleDescription[] prereqList = getDependentBundles(current);
@@ -1199,7 +1183,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		System.arraycopy(required, 0, dependents, imported.length, required.length);
 		return dependents;
 	}
-	
+
 	/*
 	 * Copied from org.eclipse.pde.internal.build.site.PDEState.
 	 */
@@ -1300,7 +1284,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		}
 		return result;
 	}
-	
+
 	private void initializePluginClassLoaders() {
 		pluginClassLoaders = new ArrayList<WrappedClassLoader>(10);
 		// ant.core should always be present
@@ -1322,17 +1306,16 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Returns the default and custom tasks that are relevant when there is no
-	 * Eclipse runtime context (an Ant build in a separate VM).
+	 * Returns the default and custom tasks that are relevant when there is no Eclipse runtime context (an Ant build in a separate VM).
 	 * 
 	 * @return the list of default and custom tasks.
 	 */
 	public List<Task> getRemoteTasks() {
 		List<Task> result = new ArrayList<Task>(10);
 		if (defaultTasks != null && !defaultTasks.isEmpty()) {
-			Iterator<Task> iter= defaultTasks.iterator();
+			Iterator<Task> iter = defaultTasks.iterator();
 			while (iter.hasNext()) {
 				Task task = iter.next();
 				if (!task.isEclipseRuntimeRequired()) {
@@ -1348,6 +1331,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the user defined custom tasks
+	 * 
 	 * @return the user defined tasks
 	 */
 	public Task[] getCustomTasks() {
@@ -1356,6 +1340,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the user defined custom types
+	 * 
 	 * @return the user defined types
 	 */
 	public Type[] getCustomTypes() {
@@ -1370,7 +1355,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	public Property[] getCustomProperties() {
 		return customProperties;
 	}
-	
+
 	/**
 	 * Returns the default and custom properties.
 	 * 
@@ -1387,10 +1372,9 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Returns the default and custom properties that are relevant when there is no
-	 * Eclipse runtime context (Ant build in a separate VM).
+	 * Returns the default and custom properties that are relevant when there is no Eclipse runtime context (Ant build in a separate VM).
 	 * 
 	 * @return the list of default and custom properties.
 	 * @since 3.0
@@ -1398,7 +1382,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	public List<Property> getRemoteAntProperties() {
 		List<Property> result = new ArrayList<Property>(10);
 		if (defaultProperties != null && !defaultProperties.isEmpty()) {
-			Iterator<Property> iter= defaultProperties.iterator();
+			Iterator<Property> iter = defaultProperties.iterator();
 			while (iter.hasNext()) {
 				Property property = iter.next();
 				if (!property.isEclipseRuntimeRequired()) {
@@ -1411,12 +1395,12 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Returns the custom property files specified for Ant builds performing any required 
-	 * string substitution if indicated.
+	 * Returns the custom property files specified for Ant builds performing any required string substitution if indicated.
 	 * 
-	 * @param performStringSubstition whether or not to perform the string substitution on the property file strings
+	 * @param performStringSubstition
+	 *            whether or not to perform the string substitution on the property file strings
 	 * @return the property files defined for Ant builds.
 	 * @since 3.0
 	 */
@@ -1424,20 +1408,21 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		if (!performStringSubstition || customPropertyFiles == null || customPropertyFiles.length == 0) {
 			return customPropertyFiles;
 		}
-		List<String> files= new ArrayList<String>(customPropertyFiles.length);
+		List<String> files = new ArrayList<String>(customPropertyFiles.length);
 		for (int i = 0; i < customPropertyFiles.length; i++) {
-			String filename= customPropertyFiles[i];
-			 try {
+			String filename = customPropertyFiles[i];
+			try {
 				filename = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(filename);
 				files.add(filename);
-			} catch (CoreException e) {
-				//notify the user via the Ant console of the missing file
+			}
+			catch (CoreException e) {
+				// notify the user via the Ant console of the missing file
 				files.add(filename);
 			}
 		}
 		return files.toArray(new String[files.size()]);
 	}
-	
+
 	/**
 	 * Returns the custom property files specified for Ant builds.
 	 * 
@@ -1446,7 +1431,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	public String[] getCustomPropertyFiles() {
 		return getCustomPropertyFiles(true);
 	}
-	
+
 	/**
 	 * Returns the custom URLs specified for the Ant classpath
 	 * 
@@ -1455,93 +1440,91 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 */
 	@Deprecated
 	public URL[] getCustomURLs() {
-		URL[] urls= new URL[additionalEntries.length];
+		URL[] urls = new URL[additionalEntries.length];
 		int i;
 		for (i = 0; i < additionalEntries.length; i++) {
 			URL url = additionalEntries[i].getEntryURL();
 			if (url != null) {
-				urls[i]=url;
+				urls[i] = url;
 			}
 		}
-	
+
 		return urls;
 	}
 
 	/**
-	 * Sets the user defined custom tasks.
-	 * To commit the changes, updatePluginPreferences must be
-	 * called.
+	 * Sets the user defined custom tasks. To commit the changes, updatePluginPreferences must be called.
+	 * 
 	 * @param tasks
 	 */
 	public void setCustomTasks(Task[] tasks) {
-		oldCustomTasks= customTasks;
+		oldCustomTasks = customTasks;
 		customTasks = tasks;
 	}
 
 	/**
-	 * Sets the user defined custom types.
-	 * To commit the changes, updatePluginPreferences must be
-	 * called.
-	 * @param types The custom types
+	 * Sets the user defined custom types. To commit the changes, updatePluginPreferences must be called.
+	 * 
+	 * @param types
+	 *            The custom types
 	 */
 	public void setCustomTypes(Type[] types) {
-		oldCustomTypes= customTypes;
+		oldCustomTypes = customTypes;
 		customTypes = types;
 	}
 
 	/**
-	 * Sets the custom URLs specified for the Ant classpath.
-	 * To commit the changes, updatePluginPreferences must be
-	 * called.
+	 * Sets the custom URLs specified for the Ant classpath. To commit the changes, updatePluginPreferences must be called.
 	 * 
-	 * @param urls the URLs defining the Ant classpath
+	 * @param urls
+	 *            the URLs defining the Ant classpath
 	 * @deprecated use setAdditionalEntries(IAntClasspathEntry)[]
 	 */
 	@Deprecated
 	public void setCustomURLs(URL[] urls) {
-		additionalEntries= new IAntClasspathEntry[urls.length];
+		additionalEntries = new IAntClasspathEntry[urls.length];
 		for (int i = 0; i < urls.length; i++) {
 			URL url = urls[i];
-			IAntClasspathEntry entry= new AntClasspathEntry(url);
-			additionalEntries[i]= entry;
+			IAntClasspathEntry entry = new AntClasspathEntry(url);
+			additionalEntries[i] = entry;
 		}
 	}
-	
+
 	/**
-	 * Sets the Ant URLs specified for the Ant classpath. To commit the changes,
-	 * updatePluginPreferences must be called.
+	 * Sets the Ant URLs specified for the Ant classpath. To commit the changes, updatePluginPreferences must be called.
 	 * 
-	 * @param urls the URLs defining the Ant classpath
+	 * @param urls
+	 *            the URLs defining the Ant classpath
 	 * @deprecated use setAntHomeEntires(IAntClasspathEntry[])
 	 */
 	@Deprecated
 	public void setAntURLs(URL[] urls) {
-		antHomeEntries= new IAntClasspathEntry[urls.length];
+		antHomeEntries = new IAntClasspathEntry[urls.length];
 		for (int i = 0; i < urls.length; i++) {
 			URL url = urls[i];
-			IAntClasspathEntry entry= new AntClasspathEntry(url);
-			antHomeEntries[i]= entry;
+			IAntClasspathEntry entry = new AntClasspathEntry(url);
+			antHomeEntries[i] = entry;
 		}
 	}
-	
+
 	/**
-	 * Sets the custom property files specified for Ant builds. To commit the
-	 * changes, updatePluginPreferences must be called.
+	 * Sets the custom property files specified for Ant builds. To commit the changes, updatePluginPreferences must be called.
 	 * 
-	 * @param paths the absolute paths defining the property files to use.
+	 * @param paths
+	 *            the absolute paths defining the property files to use.
 	 */
 	public void setCustomPropertyFiles(String[] paths) {
 		customPropertyFiles = paths;
 	}
-	
+
 	/**
-	 * Sets the custom user properties specified for Ant builds. To commit the
-	 * changes, updatePluginPreferences must be called.
+	 * Sets the custom user properties specified for Ant builds. To commit the changes, updatePluginPreferences must be called.
 	 * 
-	 * @param properties the properties defining the Ant properties
+	 * @param properties
+	 *            the properties defining the Ant properties
 	 */
 	public void setCustomProperties(Property[] properties) {
-		oldCustomProperties= customProperties;
+		oldCustomProperties = customProperties;
 		customProperties = properties;
 	}
 
@@ -1560,17 +1543,16 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Returns the default and custom types that are relevant when there is no
-	 * Eclipse runtime context (an Ant build in a separate VM).
+	 * Returns the default and custom types that are relevant when there is no Eclipse runtime context (an Ant build in a separate VM).
 	 * 
 	 * @return the list of default and custom types.
 	 */
 	public List<Type> getRemoteTypes() {
 		List<Type> result = new ArrayList<Type>(10);
 		if (defaultTypes != null && !defaultTypes.isEmpty()) {
-			Iterator<Type> iter= defaultTypes.iterator();
+			Iterator<Type> iter = defaultTypes.iterator();
 			while (iter.hasNext()) {
 				Type type = iter.next();
 				if (!type.isEclipseRuntimeRequired()) {
@@ -1583,7 +1565,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns the default types defined via the type extension point
 	 * 
@@ -1596,7 +1578,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns the default tasks defined via the task extension point
 	 * 
@@ -1609,7 +1591,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns the default properties defined via the properties extension point
 	 * 
@@ -1628,7 +1610,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * Convert a list of tokens into an array using "," as the tokenizer.
 	 */
 	protected String[] getArrayFromString(String list) {
-		String separator= ","; //$NON-NLS-1$
+		String separator = ","; //$NON-NLS-1$
 		if (list == null || list.trim().equals(IAntCoreConstants.EMPTY_STRING)) {
 			return new String[0];
 		}
@@ -1647,7 +1629,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 */
 	public void updatePluginPreferences() {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(AntCorePlugin.PI_ANTCORE);
-		if(node != null) {
+		if (node != null) {
 			node.removePreferenceChangeListener(prefListener);
 			Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
 			updateTasks(prefs);
@@ -1656,7 +1638,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			updateAdditionalEntries(prefs);
 			updateProperties(prefs);
 			updatePropertyFiles(prefs);
-			boolean classpathChanged= AntCorePlugin.getPlugin().getPluginPreferences().needsSaving();
+			boolean classpathChanged = AntCorePlugin.getPlugin().getPluginPreferences().needsSaving();
 			AntCorePlugin.getPlugin().savePluginPreferences();
 			if (classpathChanged) {
 				prefs.setValue(IAntCoreConstants.PREFERENCE_CLASSPATH_CHANGED, true);
@@ -1664,7 +1646,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			prefs.setValue(IAntCoreConstants.PREFERENCE_CLASSPATH_CHANGED, false);
 			node.addPreferenceChangeListener(prefListener);
 		}
-		
+
 	}
 
 	protected void updateTasks(Preferences prefs) {
@@ -1673,9 +1655,9 @@ public class AntCorePreferences implements IPropertyChangeListener {
 				Task oldTask = oldCustomTasks[i];
 				prefs.setToDefault(IAntCoreConstants.PREFIX_TASK + oldTask.getTaskName());
 			}
-			oldCustomTasks= null;	
-		}	
-		
+			oldCustomTasks = null;
+		}
+
 		if (customTasks.length == 0) {
 			prefs.setValue(IAntCoreConstants.PREFERENCE_TASKS, IAntCoreConstants.EMPTY_STRING);
 			return;
@@ -1684,7 +1666,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		for (int i = 0; i < customTasks.length; i++) {
 			tasks.append(customTasks[i].getTaskName());
 			tasks.append(',');
-			prefs.setValue(IAntCoreConstants.PREFIX_TASK + customTasks[i].getTaskName(), customTasks[i].getClassName() + "," + customTasks[i].getLibraryEntry().getLabel()); //$NON-NLS-1$
+			prefs.setValue(IAntCoreConstants.PREFIX_TASK + customTasks[i].getTaskName(), customTasks[i].getClassName()
+					+ "," + customTasks[i].getLibraryEntry().getLabel()); //$NON-NLS-1$
 		}
 		prefs.setValue(IAntCoreConstants.PREFERENCE_TASKS, tasks.toString());
 	}
@@ -1695,9 +1678,9 @@ public class AntCorePreferences implements IPropertyChangeListener {
 				Type oldType = oldCustomTypes[i];
 				prefs.setToDefault(IAntCoreConstants.PREFIX_TYPE + oldType.getTypeName());
 			}
-			oldCustomTypes= null;	
-		}	
-				
+			oldCustomTypes = null;
+		}
+
 		if (customTypes.length == 0) {
 			prefs.setValue(IAntCoreConstants.PREFERENCE_TYPES, IAntCoreConstants.EMPTY_STRING);
 			return;
@@ -1706,20 +1689,21 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		for (int i = 0; i < customTypes.length; i++) {
 			types.append(customTypes[i].getTypeName());
 			types.append(',');
-			prefs.setValue(IAntCoreConstants.PREFIX_TYPE + customTypes[i].getTypeName(), customTypes[i].getClassName() + "," + customTypes[i].getLibraryEntry().getLabel()); //$NON-NLS-1$
+			prefs.setValue(IAntCoreConstants.PREFIX_TYPE + customTypes[i].getTypeName(), customTypes[i].getClassName()
+					+ "," + customTypes[i].getLibraryEntry().getLabel()); //$NON-NLS-1$
 		}
 		prefs.setValue(IAntCoreConstants.PREFERENCE_TYPES, types.toString());
 	}
-	
+
 	protected void updateProperties(Preferences prefs) {
 		if (oldCustomProperties != null) {
 			for (int i = 0; i < oldCustomProperties.length; i++) {
 				Property oldProperty = oldCustomProperties[i];
 				prefs.setToDefault(IAntCoreConstants.PREFIX_PROPERTY + oldProperty.getName());
 			}
-			oldCustomProperties= null;
+			oldCustomProperties = null;
 		}
-		
+
 		if (customProperties.length == 0) {
 			prefs.setValue(IAntCoreConstants.PREFERENCE_PROPERTIES, IAntCoreConstants.EMPTY_STRING);
 			return;
@@ -1735,21 +1719,21 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	protected void updateAdditionalEntries(Preferences prefs) {
 		prefs.setValue("urls", IAntCoreConstants.EMPTY_STRING); //old constant removed  //$NON-NLS-1$
-		String serialized= IAntCoreConstants.EMPTY_STRING;
-		IAntClasspathEntry toolsJarEntry= getToolsJarEntry();
-		List<IAntClasspathEntry> userLibs= getUserLibraries();
+		String serialized = IAntCoreConstants.EMPTY_STRING;
+		IAntClasspathEntry toolsJarEntry = getToolsJarEntry();
+		List<IAntClasspathEntry> userLibs = getUserLibraries();
 		if (userLibs == null) {
-			userLibs= new ArrayList<IAntClasspathEntry>();
-		} 
+			userLibs = new ArrayList<IAntClasspathEntry>();
+		}
 		if (toolsJarEntry != null) {
 			userLibs.add(toolsJarEntry);
 		}
-		boolean changed= true;
+		boolean changed = true;
 		if (additionalEntries.length == userLibs.size()) {
-			changed= false;
+			changed = false;
 			for (int i = 0; i < additionalEntries.length; i++) {
 				if (!additionalEntries[i].equals(userLibs.get(i))) {
-					changed= true;
+					changed = true;
 					break;
 				}
 			}
@@ -1760,36 +1744,36 @@ public class AntCorePreferences implements IPropertyChangeListener {
 				entries.append(additionalEntries[i].getLabel());
 				entries.append(',');
 			}
-			serialized= entries.toString();
+			serialized = entries.toString();
 		}
-		
+
 		prefs.setValue(IAntCoreConstants.PREFERENCE_ADDITIONAL_ENTRIES, serialized);
-		
-		String prefAntHome= IAntCoreConstants.EMPTY_STRING;
+
+		String prefAntHome = IAntCoreConstants.EMPTY_STRING;
 		if (antHome != null && !antHome.equals(getDefaultAntHome())) {
-			prefAntHome= antHome;
-		} 
+			prefAntHome = antHome;
+		}
 		prefs.setValue(IAntCoreConstants.PREFERENCE_ANT_HOME, prefAntHome);
 	}
-	
+
 	protected void updateAntHomeEntries(Preferences prefs) {
 		prefs.setValue("ant_urls", IAntCoreConstants.EMPTY_STRING); //old constant removed  //$NON-NLS-1$
-		
-		//see if the custom entries are just the default entries
-		IAntClasspathEntry[] defaultEntries= getDefaultAntHomeEntries();
-		boolean dflt= false;
+
+		// see if the custom entries are just the default entries
+		IAntClasspathEntry[] defaultEntries = getDefaultAntHomeEntries();
+		boolean dflt = false;
 		if (defaultEntries.length == antHomeEntries.length) {
-			dflt= true;
+			dflt = true;
 			for (int i = 0; i < antHomeEntries.length; i++) {
 				if (!antHomeEntries[i].equals(defaultEntries[i])) {
-					dflt= false;
+					dflt = false;
 					break;
 				}
 			}
 		}
 		if (dflt) {
-			//always want to recalculate the default Ant urls
-			//to pick up any changes in the default Ant classpath
+			// always want to recalculate the default Ant urls
+			// to pick up any changes in the default Ant classpath
 			prefs.setValue(IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES, IAntCoreConstants.EMPTY_STRING);
 			return;
 		}
@@ -1798,44 +1782,42 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			entries.append(antHomeEntries[i].getLabel());
 			entries.append(',');
 		}
-		
+
 		prefs.setValue(IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES, entries.toString());
 	}
-	
+
 	protected void updatePropertyFiles(Preferences prefs) {
 		StringBuffer files = new StringBuffer();
 		for (int i = 0; i < customPropertyFiles.length; i++) {
 			files.append(customPropertyFiles[i]);
 			files.append(',');
 		}
-		
+
 		prefs.setValue(IAntCoreConstants.PREFERENCE_PROPERTY_FILES, files.toString());
 	}
-	
+
 	/**
-	 * Sets the string that defines the Ant home set by the user.
-	 * May be set to <code>null</code>.
+	 * Sets the string that defines the Ant home set by the user. May be set to <code>null</code>.
 	 * 
-	 * @param antHome the fully qualified path to Ant home
+	 * @param antHome
+	 *            the fully qualified path to Ant home
 	 */
 	public void setAntHome(String antHome) {
-		this.antHome= antHome;
+		this.antHome = antHome;
 	}
-	
+
 	/**
-	 * Returns the string that defines the Ant home set by the user or the location 
-	 * of the Eclipse Ant plug-in if Ant home has not been specifically set by the user.
-	 * Can return <code>null</code>
+	 * Returns the string that defines the Ant home set by the user or the location of the Eclipse Ant plug-in if Ant home has not been specifically
+	 * set by the user. Can return <code>null</code>
 	 * 
 	 * @return the fully qualified path to Ant home
 	 */
 	public String getAntHome() {
 		return antHome;
 	}
-	
+
 	/**
-	 * Returns the set of classpath entries that compose the libraries added to the
-	 * Ant runtime classpath from the Ant home location.
+	 * Returns the set of classpath entries that compose the libraries added to the Ant runtime classpath from the Ant home location.
 	 * 
 	 * @return the set of ant home classpath entries
 	 * @since 3.0
@@ -1843,10 +1825,9 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	public IAntClasspathEntry[] getAntHomeClasspathEntries() {
 		return antHomeEntries;
 	}
-	
+
 	/**
-	 * Returns the set of classpath entries that the user has added to the
-	 * Ant runtime classpath.
+	 * Returns the set of classpath entries that the user has added to the Ant runtime classpath.
 	 * 
 	 * @return the set of user classpath entries
 	 * @since 3.0
@@ -1854,32 +1835,31 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	public IAntClasspathEntry[] getAdditionalClasspathEntries() {
 		return additionalEntries;
 	}
-	
+
 	/**
-	 * Sets the set of classpath entries that compose the libraries added to the
-	 * Ant runtime classpath from the Ant home location.
+	 * Sets the set of classpath entries that compose the libraries added to the Ant runtime classpath from the Ant home location.
 	 * 
-	 * @param entries the set of ant home classpath entries
+	 * @param entries
+	 *            the set of ant home classpath entries
 	 * @since 3.0
 	 */
 	public void setAntHomeClasspathEntries(IAntClasspathEntry[] entries) {
-		antHomeEntries= entries;
-	}
-	
-	/**
-	 * Sets the set of classpath entries that the user has added to the 
-	 * Ant runtime classpath.
-	 * 
-	 * @param entries the set of user classpath entries
-	 * @since 3.0
-	 */
-	public void setAdditionalClasspathEntries(IAntClasspathEntry[] entries) {
-		additionalEntries= entries;
+		antHomeEntries = entries;
 	}
 
 	/**
-	 * Returns the list of URLs to added to the classpath for an Ant build that is 
-	 * occurring without the Eclipse runtime.
+	 * Sets the set of classpath entries that the user has added to the Ant runtime classpath.
+	 * 
+	 * @param entries
+	 *            the set of user classpath entries
+	 * @since 3.0
+	 */
+	public void setAdditionalClasspathEntries(IAntClasspathEntry[] entries) {
+		additionalEntries = entries;
+	}
+
+	/**
+	 * Returns the list of URLs to added to the classpath for an Ant build that is occurring without the Eclipse runtime.
 	 * 
 	 * @return the list of classpath entries
 	 * @since 3.0
@@ -1895,7 +1875,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		if (additionalEntries != null && additionalEntries.length > 0) {
 			for (int i = 0; i < additionalEntries.length; i++) {
 				IAntClasspathEntry entry = additionalEntries[i];
-				result.add(entry.getEntryURL());	
+				result.add(entry.getEntryURL());
 			}
 		}
 		if (extraClasspathURLs != null) {
@@ -1906,19 +1886,17 @@ public class AntCorePreferences implements IPropertyChangeListener {
 				}
 			}
 		}
-		
+
 		return result.toArray(new URL[result.size()]);
 	}
-	
+
 	/**
-	 * Returns all contributed classpath entries via the 
-	 * <code>extraClasspathEntries</code> extension point.
+	 * Returns all contributed classpath entries via the <code>extraClasspathEntries</code> extension point.
 	 * 
-	 * @return all contributed classpath entries via the 
-	 * <code>extraClasspathEntries</code> extension point
+	 * @return all contributed classpath entries via the <code>extraClasspathEntries</code> extension point
 	 * @since 3.0
 	 */
-	public IAntClasspathEntry[]getContributedClasspathEntries() {
+	public IAntClasspathEntry[] getContributedClasspathEntries() {
 		return extraClasspathURLs.toArray(new IAntClasspathEntry[extraClasspathURLs.size()]);
 	}
 }

@@ -22,7 +22,6 @@ public class DebugModelMessages extends NLS {
 	public static String AntDebugModelPresentation_4;
 	public static String AntDebugModelPresentation_5;
 
-    
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DebugModelMessages.class);

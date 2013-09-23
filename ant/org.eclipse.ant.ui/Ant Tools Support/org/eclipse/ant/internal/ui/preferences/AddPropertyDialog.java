@@ -35,32 +35,34 @@ public class AddPropertyDialog extends Dialog {
 	private String fValue;
 
 	private String fTitle;
-	
+
 	private Label fNameLabel;
 	private Text fNameText;
 	private Label fValueLabel;
 	private Text fValueText;
-	
+
 	private String[] fInitialValues;
 
 	public AddPropertyDialog(Shell shell, String title, String[] initialValues) {
 		super(shell);
 		fTitle = title;
-		fInitialValues= initialValues;
+		fInitialValues = initialValues;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite comp= (Composite) super.createDialogArea(parent);
+		Composite comp = (Composite) super.createDialogArea(parent);
 		((GridLayout) comp.getLayout()).numColumns = 2;
-		
+
 		fNameLabel = new Label(comp, SWT.NONE);
 		fNameLabel.setText(AntPreferencesMessages.AddPropertyDialog__Name__1);
 		fNameLabel.setFont(comp.getFont());
-		
+
 		fNameText = new Text(comp, SWT.BORDER | SWT.SINGLE);
 		fNameText.setText(fInitialValues[0]);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -73,11 +75,11 @@ public class AddPropertyDialog extends Dialog {
 				updateButtons();
 			}
 		});
-		
+
 		fValueLabel = new Label(comp, SWT.NONE);
 		fValueLabel.setText(AntPreferencesMessages.AddPropertyDialog__Value__2);
 		fValueLabel.setFont(comp.getFont());
-		
+
 		fValueText = new Text(comp, SWT.BORDER | SWT.SINGLE);
 		fValueText.setText(fInitialValues[1]);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -89,8 +91,8 @@ public class AddPropertyDialog extends Dialog {
 			public void modifyText(ModifyEvent e) {
 				updateButtons();
 			}
-		});		
-		
+		});
+
 		Button variablesButton = new Button(comp, SWT.PUSH);
 		variablesButton.setText(AntPreferencesMessages.AddPropertyDialog_2);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
@@ -99,17 +101,17 @@ public class AddPropertyDialog extends Dialog {
 		gd.widthHint = Math.max(widthHint, variablesButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		variablesButton.setLayoutData(gd);
 		variablesButton.setFont(comp.getFont());
-		
+
 		variablesButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent se) {
 				getVariable();
 			}
 		});
-		
+
 		return comp;
 	}
-	
+
 	protected void getVariable() {
 		StringVariableSelectionDialog variablesDialog = new StringVariableSelectionDialog(getShell());
 		int returnCode = variablesDialog.open();
@@ -122,21 +124,22 @@ public class AddPropertyDialog extends Dialog {
 	}
 
 	/**
-	 * Return the name/value pair entered in this dialog.  If the cancel button was hit,
-	 * both will be <code>null</code>.
+	 * Return the name/value pair entered in this dialog. If the cancel button was hit, both will be <code>null</code>.
 	 */
 	public String[] getNameValuePair() {
-		return new String[] {fName, fValue};
+		return new String[] { fName, fValue };
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
-			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=248316
-			fName= fNameText.getText().trim();
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=248316
+			fName = fNameText.getText().trim();
 			fValue = fValueText.getText().trim();
 		} else {
 			fName = null;
@@ -144,8 +147,10 @@ public class AddPropertyDialog extends Dialog {
 		}
 		super.buttonPressed(buttonId);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	@Override
@@ -160,18 +165,19 @@ public class AddPropertyDialog extends Dialog {
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IAntUIHelpContextIds.EDIT_PROPERTY_DIALOG);
 		}
 	}
-	
+
 	/**
 	 * Enable the OK button if valid input
 	 */
 	protected void updateButtons() {
 		String name = fNameText.getText().trim();
 		String value = fValueText.getText().trim();
-		getButton(IDialogConstants.OK_ID).setEnabled((name.length() > 0) &&(value.length() > 0));
+		getButton(IDialogConstants.OK_ID).setEnabled((name.length() > 0) && (value.length() > 0));
 	}
-	
+
 	/**
 	 * Enable the buttons on creation.
+	 * 
 	 * @see org.eclipse.jface.window.Window#create()
 	 */
 	@Override

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.net.MalformedURLException;
@@ -35,22 +34,21 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Sub-page that allows the user to enter custom classpaths
- * to be used when running Ant build files.
+ * Sub-page that allows the user to enter custom classpaths to be used when running Ant build files.
  */
 public class AntClasspathPage implements IAntBlockContainer {
 
-	private AntClasspathBlock fAntClasspathBlock= new AntClasspathBlock();
+	private AntClasspathBlock fAntClasspathBlock = new AntClasspathBlock();
 	private AntRuntimePreferencePage fPreferencePage;
 	private ClasspathModel fModel;
-	
+
 	/**
 	 * Creates an instance.
 	 */
 	public AntClasspathPage(AntRuntimePreferencePage preferencePage) {
 		fPreferencePage = preferencePage;
 	}
-	
+
 	/**
 	 * Returns the specified user classpath entries
 	 * 
@@ -59,78 +57,79 @@ public class AntClasspathPage implements IAntBlockContainer {
 	protected IAntClasspathEntry[] getAdditionalEntries() {
 		return fModel.getEntries(ClasspathModel.GLOBAL_USER);
 	}
-	
+
 	/**
 	 * Returns the specified ant home classpath entries
 	 */
 	protected IAntClasspathEntry[] getAntHomeEntries() {
 		return fModel.getEntries(ClasspathModel.ANT_HOME);
 	}
-	
+
 	/**
 	 * Returns the contributed classpath entries
 	 */
 	protected IAntClasspathEntry[] getContributedEntries() {
 		return fModel.getEntries(ClasspathModel.CONTRIBUTED);
 	}
-	
+
 	protected String getAntHome() {
 		return fAntClasspathBlock.getAntHome();
 	}
-	
+
 	/**
 	 * Sets the contents of the tables on this page.
 	 */
 	protected void initialize() {
-		
-		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
+
+		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		createClasspathModel();
 		fAntClasspathBlock.initializeAntHome(prefs.getAntHome());
 		fAntClasspathBlock.setInput(fModel);
-		
+
 		fPreferencePage.setErrorMessage(null);
 		fPreferencePage.setValid(true);
 	}
-	
+
 	protected void createClasspathModel() {
-		fModel= new ClasspathModel();
-		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
+		fModel = new ClasspathModel();
+		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		fModel.setAntHomeEntries(prefs.getAntHomeClasspathEntries());
 		fModel.setGlobalEntries(prefs.getAdditionalClasspathEntries());
-        fModel.setContributedEntries(prefs.getContributedClasspathEntries());
+		fModel.setContributedEntries(prefs.getContributedClasspathEntries());
 	}
-	
+
 	protected void performDefaults() {
-		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		fModel= new ClasspathModel();
+		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
+		fModel = new ClasspathModel();
 		fModel.setAntHomeEntries(prefs.getDefaultAntHomeEntries());
-		List<IAntClasspathEntry> additionalEntries= getDefaultAdditionalEntries();
+		List<IAntClasspathEntry> additionalEntries = getDefaultAdditionalEntries();
 		if (additionalEntries != null) {
 			fModel.setGlobalEntries(additionalEntries.toArray(new IAntClasspathEntry[additionalEntries.size()]));
 		} else {
 			fModel.setGlobalEntries(new IAntClasspathEntry[0]);
 		}
-        fModel.setContributedEntries(prefs.getContributedClasspathEntries());
+		fModel.setContributedEntries(prefs.getContributedClasspathEntries());
 		fAntClasspathBlock.initializeAntHome(prefs.getDefaultAntHome());
 		fAntClasspathBlock.setInput(fModel);
 		update();
 	}
-	
+
 	private List<IAntClasspathEntry> getDefaultAdditionalEntries() {
-		IAntClasspathEntry toolsJarEntry= AntCorePlugin.getPlugin().getPreferences().getToolsJarEntry();
-		//TODO should use AntCorePreferences.getUserLibraries when promoted to API post 3.1
-		File libDir= new File(System.getProperty("user.home"), ".ant" + File.separatorChar + "lib"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		URL[] urls= null;
+		IAntClasspathEntry toolsJarEntry = AntCorePlugin.getPlugin().getPreferences().getToolsJarEntry();
+		// TODO should use AntCorePreferences.getUserLibraries when promoted to API post 3.1
+		File libDir = new File(System.getProperty("user.home"), ".ant" + File.separatorChar + "lib"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		URL[] urls = null;
 		try {
-			urls= getLocationURLs(libDir);
-		} catch (MalformedURLException e) {
-            AntUIPlugin.log(e);
-            return new ArrayList<IAntClasspathEntry>(0);
+			urls = getLocationURLs(libDir);
 		}
-		
-		List<IAntClasspathEntry> entries= new ArrayList<IAntClasspathEntry>(urls.length);
+		catch (MalformedURLException e) {
+			AntUIPlugin.log(e);
+			return new ArrayList<IAntClasspathEntry>(0);
+		}
+
+		List<IAntClasspathEntry> entries = new ArrayList<IAntClasspathEntry>(urls.length);
 		for (int i = 0; i < urls.length; i++) {
-			AntClasspathEntry entry= new AntClasspathEntry(urls[i]);
+			AntClasspathEntry entry = new AntClasspathEntry(urls[i]);
 			entries.add(entry);
 		}
 		if (toolsJarEntry != null) {
@@ -138,39 +137,38 @@ public class AntClasspathPage implements IAntBlockContainer {
 		}
 		return entries;
 	}
-	
+
 	private URL[] getLocationURLs(File location) throws MalformedURLException {
-		 final String extension= ".jar"; //$NON-NLS-1$
-		 URL[] urls = new URL[0];
-		 
-		 if (!location.exists()) {
-			 return urls;
-		 }
-		 
-		 if (!location.isDirectory()) {
-			 urls = new URL[1];
-			 String path = location.getPath();
-			 if (path.toLowerCase().endsWith(extension)) {
-				 urls[0] = location.toURI().toURL();
-			 }
-			 return urls;
-		 }
-		 
-		 File[] matches = location.listFiles(
-			 new FilenameFilter() {
-				 @Override
-				public boolean accept(File dir, String name) {
-					return name.toLowerCase().endsWith(extension);
-				 }
-			 });
-		 
-		 urls = new URL[matches.length];
-		 for (int i = 0; i < matches.length; ++i) {
-			 urls[i] = matches[i].toURI().toURL();
-		 }
-		 return urls;
-	 }
-	
+		final String extension = ".jar"; //$NON-NLS-1$
+		URL[] urls = new URL[0];
+
+		if (!location.exists()) {
+			return urls;
+		}
+
+		if (!location.isDirectory()) {
+			urls = new URL[1];
+			String path = location.getPath();
+			if (path.toLowerCase().endsWith(extension)) {
+				urls[0] = location.toURI().toURL();
+			}
+			return urls;
+		}
+
+		File[] matches = location.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.toLowerCase().endsWith(extension);
+			}
+		});
+
+		urls = new URL[matches.length];
+		for (int i = 0; i < matches.length; ++i) {
+			urls[i] = matches[i].toURI().toURL();
+		}
+		return urls;
+	}
+
 	/**
 	 * Creates the tab item that contains this sub-page.
 	 */
@@ -182,17 +180,17 @@ public class AntClasspathPage implements IAntBlockContainer {
 		item.setControl(createContents(folder));
 		return item;
 	}
-	
+
 	/**
 	 * Creates this page's controls
 	 */
 	protected Composite createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IAntUIHelpContextIds.ANT_CLASSPATH_PAGE);
 		Font font = parent.getFont();
-		
+
 		Composite top = new Composite(parent, SWT.NONE);
 		top.setFont(font);
-		
+
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = 2;
@@ -203,46 +201,54 @@ public class AntClasspathPage implements IAntBlockContainer {
 
 		fAntClasspathBlock.setContainer(this);
 		fAntClasspathBlock.createContents(top);
-		
+
 		return top;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#update()
 	 */
 	@Override
 	public void update() {
-		if (fAntClasspathBlock.isValidated()){
+		if (fAntClasspathBlock.isValidated()) {
 			return;
 		}
 		setMessage(null);
 		setErrorMessage(null);
-		boolean valid= fAntClasspathBlock.validateAntHome();
-	
+		boolean valid = fAntClasspathBlock.validateAntHome();
+
 		if (valid) {
-			valid= fAntClasspathBlock.validateToolsJAR();
+			valid = fAntClasspathBlock.validateToolsJAR();
 		}
-		
+
 		fPreferencePage.setValid(valid);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#setMessage(java.lang.String)
 	 */
 	@Override
 	public void setMessage(String message) {
 		fPreferencePage.setMessage(message);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#setErrorMessage(java.lang.String)
 	 */
 	@Override
 	public void setErrorMessage(String message) {
 		fPreferencePage.setErrorMessage(message);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
 	 */
 	@Override

@@ -30,7 +30,8 @@ public class AntPropertyValueProvider implements IAntPropertyValueProvider {
 	/**
 	 * Returns the dynamic property values for Ant properties.
 	 * 
-	 * @param propertyName The name of the property to resolve the value for
+	 * @param propertyName
+	 *            The name of the property to resolve the value for
 	 * @return The resolved value for the property
 	 * @see org.eclipse.ant.core.IAntPropertyValueProvider#getAntPropertyValue(String)
 	 */
@@ -39,14 +40,15 @@ public class AntPropertyValueProvider implements IAntPropertyValueProvider {
 		String value = null;
 		if ("eclipse.target".equals(propertyName)) { //$NON-NLS-1$
 			try {
-			    IPath home= JavaCore.getClasspathVariable("ECLIPSE_HOME"); //$NON-NLS-1$
-			    if (home != null) {
-			    	value = home.toFile().getAbsolutePath();
-			    	if (value.endsWith("/")) { //$NON-NLS-1$
-			    		value = value.substring(0, value.length() - 1);
-			    	}
-			    }
-			} catch (Exception e) {
+				IPath home = JavaCore.getClasspathVariable("ECLIPSE_HOME"); //$NON-NLS-1$
+				if (home != null) {
+					value = home.toFile().getAbsolutePath();
+					if (value.endsWith("/")) { //$NON-NLS-1$
+						value = value.substring(0, value.length() - 1);
+					}
+				}
+			}
+			catch (Exception e) {
 				AntUIPlugin.log(e);
 			}
 		}

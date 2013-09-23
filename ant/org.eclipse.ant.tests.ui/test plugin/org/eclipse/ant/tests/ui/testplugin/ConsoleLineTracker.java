@@ -20,22 +20,21 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * Simple console line tracker extension point that collects the lines
- * appended to the console. 
+ * Simple console line tracker extension point that collects the lines appended to the console.
  */
 public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
-	
+
 	private static IConsole console;
-	private static List<IRegion> lines= new ArrayList<IRegion>(); 
-	
-	private static boolean consoleClosed= true;
+	private static List<IRegion> lines = new ArrayList<IRegion>();
+
+	private static boolean consoleClosed = true;
 
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
 	 */
 	@Override
 	public void dispose() {
-		//do nothing
+		// do nothing
 	}
 
 	/**
@@ -43,11 +42,11 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	 */
 	@Override
 	public void init(IConsole c) {
-	    synchronized(lines) {
-	        ConsoleLineTracker.console= c;
-	        lines= new ArrayList<IRegion>();
-	        consoleClosed= false;
-	    }
+		synchronized (lines) {
+			ConsoleLineTracker.console = c;
+			lines = new ArrayList<IRegion>();
+			consoleClosed = false;
+		}
 	}
 
 	/**
@@ -57,40 +56,42 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	public void lineAppended(IRegion line) {
 		lines.add(line);
 	}
-	
+
 	public static int getNumberOfMessages() {
 		return lines.size();
 	}
-	
+
 	public static String getMessage(int index) {
-		if (index < lines.size()){
-			IRegion lineRegion= lines.get(index);
+		if (index < lines.size()) {
+			IRegion lineRegion = lines.get(index);
 			try {
 				return console.getDocument().get(lineRegion.getOffset(), lineRegion.getLength());
-			} catch (BadLocationException e) {
+			}
+			catch (BadLocationException e) {
 				return null;
 			}
 		}
 		return null;
 	}
-	
+
 	public static List<String> getAllMessages() {
-		List<String> all= new ArrayList<String>(lines.size());
+		List<String> all = new ArrayList<String>(lines.size());
 		for (int i = 0; i < lines.size(); i++) {
-			IRegion lineRegion= lines.get(i);
+			IRegion lineRegion = lines.get(i);
 			try {
 				all.add(console.getDocument().get(lineRegion.getOffset(), lineRegion.getLength()));
-			} catch (BadLocationException e) {
+			}
+			catch (BadLocationException e) {
 				continue;
 			}
 		}
 		return all;
 	}
-	
+
 	public static IDocument getDocument() {
 		return console.getDocument();
 	}
-	
+
 	public static void waitForConsole() {
 		synchronized (lines) {
 			if (consoleClosed) {
@@ -98,26 +99,29 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 			}
 			try {
 				lines.wait(20000);
-			} catch (InterruptedException ie) {
-				//do nothing
+			}
+			catch (InterruptedException ie) {
+				// do nothing
 			}
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTrackerExtension#consoleClosed()
 	 */
 	@Override
 	public void consoleClosed() {
 		synchronized (lines) {
-			consoleClosed= true;
+			consoleClosed = true;
 			lines.notifyAll();
 		}
 	}
-    
-    public static boolean isClosed() {
-        synchronized (lines) {
-            return consoleClosed;
-        }
-    }
+
+	public static boolean isClosed() {
+		synchronized (lines) {
+			return consoleClosed;
+		}
+	}
 }

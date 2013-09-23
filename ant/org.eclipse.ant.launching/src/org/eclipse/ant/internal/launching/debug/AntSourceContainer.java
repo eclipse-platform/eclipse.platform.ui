@@ -34,7 +34,9 @@ public class AntSourceContainer extends AbstractSourceContainer {
 		fRoot = ResourcesPlugin.getWorkspace().getRoot();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
 	@Override
@@ -52,14 +54,17 @@ public class AntSourceContainer extends AbstractSourceContainer {
 				} else {
 					sources.add(new LocalFileStorage(osFile));
 				}
-			} catch (IOException e) {
-				//do nothing
+			}
+			catch (IOException e) {
+				// do nothing
 			}
 		}
 		return sources.toArray();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
 	@Override
@@ -67,9 +72,10 @@ public class AntSourceContainer extends AbstractSourceContainer {
 		return AntDebugMessages.AntSourceContainer_0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
-     * Not persisted via the launch configuration
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType() Not persisted via the launch configuration
 	 */
 	@Override
 	public ISourceContainerType getType() {

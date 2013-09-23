@@ -15,8 +15,7 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.service.prefs.BackingStoreException;
 
-public class AntLaunchingPreferenceInitializer extends
-		AbstractPreferenceInitializer {
+public class AntLaunchingPreferenceInitializer extends AbstractPreferenceInitializer {
 
 	public AntLaunchingPreferenceInitializer() {
 		super();
@@ -25,19 +24,18 @@ public class AntLaunchingPreferenceInitializer extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#
-	 * initializeDefaultPreferences()
+	 * @seeorg.eclipse.core.runtime.preferences.AbstractPreferenceInitializer# initializeDefaultPreferences()
 	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences node = DefaultScope.INSTANCE.getNode(AntLaunching.getUniqueIdentifier());
-		if(node != null) {
+		if (node != null) {
 			node.putInt(IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT, 20000);
 			try {
 				node.flush();
 			}
 			catch (BackingStoreException e) {
-				//do nothing
+				// do nothing
 			}
 		}
 	}

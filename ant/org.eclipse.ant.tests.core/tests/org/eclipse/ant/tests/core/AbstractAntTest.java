@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.core;
 
-
 import java.io.File;
 import java.util.List;
 
@@ -46,18 +45,20 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.progress.UIJob;
- 
+
 /**
  * Tests for Ant core
  */
 public abstract class AbstractAntTest extends TestCase {
-	
-	protected static final String BUILD_SUCCESSFUL= "BUILD SUCCESSFUL"; //$NON-NLS-1$
+
+	protected static final String BUILD_SUCCESSFUL = "BUILD SUCCESSFUL"; //$NON-NLS-1$
 	public static final String ANT_TEST_BUILD_LOGGER = "org.eclipse.ant.tests.core.support.testloggers.TestBuildLogger"; //$NON-NLS-1$
-	public static final String ANT_TEST_BUILD_LISTENER= "org.eclipse.ant.tests.core.support.testloggers.TestBuildListener"; //$NON-NLS-1$
+	public static final String ANT_TEST_BUILD_LISTENER = "org.eclipse.ant.tests.core.support.testloggers.TestBuildListener"; //$NON-NLS-1$
 	private static boolean welcomeClosed = false;
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
@@ -66,25 +67,25 @@ public abstract class AbstractAntTest extends TestCase {
 		assertProject();
 		assertWelcomeScreenClosed();
 	}
-	
+
 	/**
 	 * Ensure the welcome screen is closed because in 4.x the debug perspective opens a giant fast-view causing issues
-	 *  
+	 * 
 	 * @throws Exception
 	 * @since 3.8
 	 */
 	void assertWelcomeScreenClosed() throws Exception {
-		if(!welcomeClosed && PlatformUI.isWorkbenchRunning()) {
+		if (!welcomeClosed && PlatformUI.isWorkbenchRunning()) {
 			final IWorkbench wb = PlatformUI.getWorkbench();
-			if(wb != null) {
+			if (wb != null) {
 				UIJob job = new UIJob("close welcome screen for Ant test suite") { //$NON-NLS-1$
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
-						if(window != null) {
+						if (window != null) {
 							IIntroManager im = wb.getIntroManager();
 							IIntroPart intro = im.getIntro();
-							if(intro != null) {
+							if (intro != null) {
 								welcomeClosed = im.closeIntro(intro);
 							}
 						}
@@ -97,10 +98,10 @@ public abstract class AbstractAntTest extends TestCase {
 			}
 		}
 	}
-	
+
 	/**
-	 * Asserts that the test project has been created and all testing resources have been 
-	 * loaded each time the {@link #setUp()} method is called
+	 * Asserts that the test project has been created and all testing resources have been loaded each time the {@link #setUp()} method is called
+	 * 
 	 * @throws Exception
 	 * @since 3.5
 	 */
@@ -113,17 +114,17 @@ public abstract class AbstractAntTest extends TestCase {
 			IFolder folder = ProjectHelper.addFolder(project, ProjectHelper.BUILDFILES_FOLDER);
 			File root = AntTestPlugin.getDefault().getFileInPlugin(ProjectHelper.TEST_BUILDFILES_DIR);
 			ProjectHelper.importFilesFromDirectory(root, folder.getFullPath(), null);
-			
+
 			folder = ProjectHelper.addFolder(project, ProjectHelper.RESOURCES_FOLDER);
 			root = AntTestPlugin.getDefault().getFileInPlugin(ProjectHelper.TEST_RESOURCES_DIR);
 			ProjectHelper.importFilesFromDirectory(root, folder.getFullPath(), null);
-			
+
 			folder = ProjectHelper.addFolder(project, ProjectHelper.LIB_FOLDER);
 			root = AntTestPlugin.getDefault().getFileInPlugin(ProjectHelper.TEST_LIB_DIR);
 			ProjectHelper.importFilesFromDirectory(root, folder.getFullPath(), null);
 		}
 	}
-	
+
 	/**
 	 * Returns the 'AntTests' project.
 	 * 
@@ -132,178 +133,173 @@ public abstract class AbstractAntTest extends TestCase {
 	protected IProject getProject() {
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(ProjectHelper.PROJECT_NAME);
 	}
-	
+
 	public AbstractAntTest(String name) {
 		super(name);
 	}
-	
+
 	protected IFile getBuildFile(String buildFileName) {
 		IFile file = getProject().getFolder(ProjectHelper.BUILDFILES_FOLDER).getFile(buildFileName);
 		assertTrue("Could not find build file named: " + buildFileName, file.exists()); //$NON-NLS-1$
 		return file;
 	}
-	
+
 	protected IFolder getWorkingDirectory(String workingDirectoryName) {
 		IFolder folder = getProject().getFolder(workingDirectoryName);
 		assertTrue("Could not find the working directory named: " + workingDirectoryName, folder.exists()); //$NON-NLS-1$
 		return folder;
 	}
-	
+
 	protected IFile checkFileExists(String fileName) throws CoreException {
 		getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
 		IFile file = getProject().getFolder(ProjectHelper.BUILDFILES_FOLDER).getFile(fileName);
 		assertTrue("Could not find file named: " + fileName, file.exists()); //$NON-NLS-1$
 		return file;
 	}
-	
+
 	public void run(String buildFileName) throws CoreException {
 		run(buildFileName, null, false);
 	}
-	
+
 	public void run(String buildFileName, String[] args) throws CoreException {
 		run(buildFileName, args, false);
 	}
-	
+
 	public void run(String buildFileName, String[] args, boolean retrieveTargets) throws CoreException {
 		run(buildFileName, args, retrieveTargets, ""); //$NON-NLS-1$
 	}
-	
+
 	public void run(String buildFileName, String[] args, boolean retrieveTargets, String workingDir) throws CoreException {
 		AntTestChecker.reset();
-		IFile buildFile= null;
+		IFile buildFile = null;
 		if (buildFileName != null) {
-			buildFile= getBuildFile(buildFileName);
+			buildFile = getBuildFile(buildFileName);
 		}
-		AntFileRunner runner= new AntFileRunner();
-		String[] targets= null;
+		AntFileRunner runner = new AntFileRunner();
+		String[] targets = null;
 		if (retrieveTargets) {
-			targets= getTargetNames(buildFileName);
+			targets = getTargetNames(buildFileName);
 		}
 		if (workingDir.length() > 0) {
 			runner.run(buildFile, targets, args, getWorkingDirectory(workingDir).getLocation().toFile().getAbsolutePath(), true);
-		} 
-		else {
+		} else {
 			runner.run(buildFile, targets, args, workingDir, true);
 		}
 		assertTrue("Build starts did not equal build finishes", AntTestChecker.getDefault().getBuildsStartedCount() == AntTestChecker.getDefault().getBuildsFinishedCount()); //$NON-NLS-1$
 	}
-	
+
 	protected TargetInfo[] getTargets(String buildFileName) throws CoreException {
-		IFile buildFile= getBuildFile(buildFileName);
-		
+		IFile buildFile = getBuildFile(buildFileName);
+
 		AntRunner runner = new AntRunner();
 		runner.setBuildFileLocation(buildFile.getLocation().toFile().getAbsolutePath());
-	 	return runner.getAvailableTargets();
+		return runner.getAvailableTargets();
 	}
-	
+
 	protected String[] getTargetNames(String buildFileName) throws CoreException {
-		TargetInfo[] infos= getTargets(buildFileName);
-		String[] names= new String[infos.length];
+		TargetInfo[] infos = getTargets(buildFileName);
+		String[] names = new String[infos.length];
 		for (int i = 0; i < infos.length; i++) {
 			TargetInfo info = infos[i];
-			names[i]= info.getName();
+			names[i] = info.getName();
 		}
 		return names;
 	}
-	
+
 	protected String[] getTargetDescriptions(String buildFileName) throws CoreException {
-		TargetInfo[] infos= getTargets(buildFileName);
-		String[] descriptions= new String[infos.length];
+		TargetInfo[] infos = getTargets(buildFileName);
+		String[] descriptions = new String[infos.length];
 		for (int i = 0; i < infos.length; i++) {
 			TargetInfo info = infos[i];
-			descriptions[i]= info.getDescription();
+			descriptions[i] = info.getDescription();
 		}
 		return descriptions;
 	}
-	
+
 	/**
-	 * Returns the name of the project containing the given target in the given build file or
-	 * <code>null</code> if no project name can be found.
+	 * Returns the name of the project containing the given target in the given build file or <code>null</code> if no project name can be found.
 	 */
 	protected String getProjectName(String buildFileName, String targetName) throws CoreException {
-		TargetInfo info= getTarget(buildFileName, targetName);
+		TargetInfo info = getTarget(buildFileName, targetName);
 		if (info != null) {
 			return info.getProject().getName();
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Returns the dependencies of the target with the given name in the given build file or <code>null</code>
-	 * if no such target can be found.
+	 * Returns the dependencies of the target with the given name in the given build file or <code>null</code> if no such target can be found.
 	 */
 	protected String[] getDependencies(String buildFileName, String targetName) throws CoreException {
-		TargetInfo info= getTarget(buildFileName, targetName);
+		TargetInfo info = getTarget(buildFileName, targetName);
 		if (info != null) {
 			return info.getDependencies();
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Returns the target with the given name in the given build file or <code>null</code>
-	 * if no such target can be found.
+	 * Returns the target with the given name in the given build file or <code>null</code> if no such target can be found.
 	 */
 	protected TargetInfo getTarget(String buildFileName, String targetName) throws CoreException {
-		TargetInfo[] infos= getTargets(buildFileName);
-		for (int i= 0, numTargets= infos.length; i < numTargets; i++) {
+		TargetInfo[] infos = getTargets(buildFileName);
+		for (int i = 0, numTargets = infos.length; i < numTargets; i++) {
 			if (infos[i].getName().equals(targetName)) {
 				return infos[i];
 			}
 		}
 		return null;
 	}
-    
-    /**
-     * Return the log message n from the last:
-     * e.g. getLoggedMessage(0) returns the most recent message
-     * 
-     * @param n message index
-     * @return the nth last message
-     */
-    protected String getLoggedMessage(int n) {
-        return AntTestChecker.getDefault().getLoggedMessage(n);
-    }
-	
+
+	/**
+	 * Return the log message n from the last: e.g. getLoggedMessage(0) returns the most recent message
+	 * 
+	 * @param n
+	 *            message index
+	 * @return the nth last message
+	 */
+	protected String getLoggedMessage(int n) {
+		return AntTestChecker.getDefault().getLoggedMessage(n);
+	}
+
 	protected String getLastMessageLogged() {
 		return getLoggedMessage(0);
 	}
-	
+
 	protected void assertSuccessful() {
-		List<String> messages= AntTestChecker.getDefault().getMessages();
-		String success= messages.get(messages.size() - 1);
+		List<String> messages = AntTestChecker.getDefault().getMessages();
+		String success = messages.get(messages.size() - 1);
 		assertEquals("Build was not flagged as successful: " + success, BUILD_SUCCESSFUL, success); //$NON-NLS-1$
 	}
-	
+
 	protected String getPropertyFileName() {
 		return getProject().getFolder(ProjectHelper.RESOURCES_FOLDER).getFile("test.properties").getLocation().toFile().getAbsolutePath(); //$NON-NLS-1$
 	}
-	
+
 	protected void restorePreferenceDefaults() {
-		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		IAntClasspathEntry toolsEntry= prefs.getToolsJarEntry();
+		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
+		IAntClasspathEntry toolsEntry = prefs.getToolsJarEntry();
 		IAntClasspathEntry[] additionalEntries;
 		if (toolsEntry == null) {
-			additionalEntries= new IAntClasspathEntry[]{};
+			additionalEntries = new IAntClasspathEntry[] {};
 		} else {
-			additionalEntries= new IAntClasspathEntry[] {toolsEntry};
+			additionalEntries = new IAntClasspathEntry[] { toolsEntry };
 		}
 		prefs.setAdditionalClasspathEntries(additionalEntries);
 		prefs.setAntHomeClasspathEntries(prefs.getDefaultAntHomeEntries());
-		prefs.setCustomTasks(new Task[]{});
-		prefs.setCustomTypes(new Type[]{});
-		prefs.setCustomPropertyFiles(new String[]{});
-		prefs.setCustomProperties(new Property[]{});
+		prefs.setCustomTasks(new Task[] {});
+		prefs.setCustomTypes(new Type[] {});
+		prefs.setCustomPropertyFiles(new String[] {});
+		prefs.setCustomProperties(new Property[] {});
 		prefs.setAntHome(prefs.getDefaultAntHome());
 	}
-	
+
 	protected String getAntHome() {
-		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		IAntClasspathEntry[] entries= prefs.getAntHomeClasspathEntries();
-		IAntClasspathEntry antjar= entries[0];
-		IPath antHomePath= new Path(antjar.getEntryURL().getFile());
-		antHomePath= antHomePath.removeLastSegments(1);
+		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
+		IAntClasspathEntry[] entries = prefs.getAntHomeClasspathEntries();
+		IAntClasspathEntry antjar = entries[0];
+		IPath antHomePath = new Path(antjar.getEntryURL().getFile());
+		antHomePath = antHomePath.removeLastSegments(1);
 		return antHomePath.toFile().getAbsolutePath();
 	}
 }
-

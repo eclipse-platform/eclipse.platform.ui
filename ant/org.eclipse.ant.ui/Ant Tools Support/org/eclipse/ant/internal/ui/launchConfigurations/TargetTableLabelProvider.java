@@ -20,8 +20,10 @@ import org.eclipse.swt.graphics.Image;
  * Ant target label provider for a table
  */
 public class TargetTableLabelProvider extends AntModelLabelProvider implements ITableLabelProvider {
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 	 */
 	@Override
@@ -32,15 +34,17 @@ public class TargetTableLabelProvider extends AntModelLabelProvider implements I
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 	 */
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
-		if (columnIndex == 0){
+		if (columnIndex == 0) {
 			return getText(element);
 		}
-		String desc= ((AntTargetNode)element).getTarget().getDescription();
+		String desc = ((AntTargetNode) element).getTarget().getDescription();
 		if (desc == null) {
 			return IAntCoreConstants.EMPTY_STRING;
 		}

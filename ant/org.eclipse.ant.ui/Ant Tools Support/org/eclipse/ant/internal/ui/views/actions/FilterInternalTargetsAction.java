@@ -15,13 +15,13 @@ import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.views.AntView;
 import org.eclipse.jface.action.Action;
 
-/** 
+/**
  * An action which toggles filtering of internal targets from the Ant view.
  */
 public class FilterInternalTargetsAction extends Action {
 
 	private AntView fView;
-	
+
 	public FilterInternalTargetsAction(AntView view) {
 		super(AntViewActionMessages.FilterInternalTargetsAction_0);
 		fView = view;
@@ -29,9 +29,10 @@ public class FilterInternalTargetsAction extends Action {
 		setToolTipText(AntViewActionMessages.FilterInternalTargetsAction_0);
 		setChecked(fView.isFilterInternalTargets());
 	}
-	
+
 	/**
 	 * Toggles the filtering of internal targets from the Ant view
+	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override

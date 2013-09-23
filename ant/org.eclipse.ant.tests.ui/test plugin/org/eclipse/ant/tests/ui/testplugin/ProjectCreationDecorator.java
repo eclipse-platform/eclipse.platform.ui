@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.ui.testplugin;
 
-
-
 /**
  * Utility class
  */
 public class ProjectCreationDecorator {
-	
-	private static boolean fgIsJ2SE15Compatible = false ;
-	
+
+	private static boolean fgIsJ2SE15Compatible = false;
+
 	static {
 		String version = System.getProperty("java.specification.version"); //$NON-NLS-1$
 		if (version != null) {
@@ -32,13 +30,14 @@ public class ProjectCreationDecorator {
 							fgIsJ2SE15Compatible = true;
 						}
 					}
-				} catch (NumberFormatException e) {
-					//do nothing
+				}
+				catch (NumberFormatException e) {
+					// do nothing
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * @return if the system property "java.specification.version" is 1.5 or greater
 	 */

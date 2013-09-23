@@ -14,25 +14,26 @@ import org.eclipse.ant.internal.ui.dtd.IAtom;
 import org.eclipse.ant.internal.ui.dtd.util.Factory;
 import org.eclipse.ant.internal.ui.dtd.util.FactoryObject;
 
-
 /**
  * Non-deterministic finite state machine.
+ * 
  * @author Bob Foster
  */
 public class Nfm implements FactoryObject {
 	private NfmNode start;
 	private NfmNode stop;
-	
+
 	public NfmNode getStart() {
 		return start;
 	}
-	
+
 	public NfmNode getStop() {
 		return stop;
 	}
-	
+
 	/**
 	 * Construct an nfm such that:
+	 * 
 	 * <pre>
 	 * start  stop
 	 *   |      |
@@ -40,6 +41,7 @@ public class Nfm implements FactoryObject {
 	 * | s |->|   |
 	 * +---+  +---+
 	 * </pre>
+	 * 
 	 * In all pictures, boxes are NfmNodes.
 	 */
 	private static Nfm nfm(IAtom s) {
@@ -48,9 +50,10 @@ public class Nfm implements FactoryObject {
 		nfm.start = NfmNode.nfmNode(s, nfm.stop);
 		return nfm;
 	}
-	
+
 	/**
 	 * Construct an nfm that "wraps" an existing nfm x such that:
+	 * 
 	 * <pre>
 	 * start                            stop
 	 *   |                                |
@@ -66,7 +69,7 @@ public class Nfm implements FactoryObject {
 		x.stop.next1 = nfm.stop;
 		return nfm;
 	}
-	
+
 	private static Nfm nfm() {
 		Nfm nfm = free();
 		nfm.start = NfmNode.nfmNode();
@@ -77,9 +80,10 @@ public class Nfm implements FactoryObject {
 	public static Nfm getNfm(IAtom s) {
 		return nfm(s);
 	}
-	
+
 	/**
 	 * "Star" an existing nfm x.
+	 * 
 	 * <pre>
 	 * start                            stop
 	 *   |                                |
@@ -90,6 +94,7 @@ public class Nfm implements FactoryObject {
 	 *   |         +-----<------+         |
 	 *   +------>-------------------------+
 	 * </pre>
+	 * 
 	 * Frees x.
 	 */
 	public static Nfm getStar(Nfm x) {
@@ -101,9 +106,10 @@ public class Nfm implements FactoryObject {
 		free(x);
 		return tmp;
 	}
-	
+
 	/**
 	 * "Question" an existing nfm x: x => x?
+	 * 
 	 * <pre>
 	 * start                            stop
 	 *   |                                |
@@ -113,6 +119,7 @@ public class Nfm implements FactoryObject {
 	 *   |                                |
 	 *   +---------------->---------------+
 	 * </pre>
+	 * 
 	 * Frees x.
 	 */
 	public static Nfm getQuestion(Nfm x) {
@@ -125,6 +132,7 @@ public class Nfm implements FactoryObject {
 
 	/**
 	 * "Plus" an existing nfm x -> x+
+	 * 
 	 * <pre>
 	 * start                            stop
 	 *   |                                |
@@ -134,6 +142,7 @@ public class Nfm implements FactoryObject {
 	 *             |            |
 	 *             +-----<------+
 	 * </pre>
+	 * 
 	 * Frees x.
 	 */
 	public static Nfm getPlus(Nfm x) {
@@ -143,9 +152,10 @@ public class Nfm implements FactoryObject {
 		free(x);
 		return tmp;
 	}
-	
+
 	/**
 	 * "Or" two existing nfms x,y -> x|y
+	 * 
 	 * <pre>
 	 * start                            stop
 	 *   |                                |
@@ -157,6 +167,7 @@ public class Nfm implements FactoryObject {
 	 *   +--->| y start |  | y stop  |-->-+
 	 *        +---------+  +---------+
 	 * </pre>
+	 * 
 	 * Frees x and y.
 	 */
 	public static Nfm getOr(Nfm x, Nfm y) {
@@ -169,14 +180,13 @@ public class Nfm implements FactoryObject {
 		free(y);
 		return tmp;
 	}
-	
+
 	/**
 	 * "Comma" two existing nfms x,y -> x,y
 	 * 
-	 * <p>Re-uses x so that x.stop is first
-	 * transformed to y.start and then
-	 * x.stop is reset to y.stop.
-	 * This is as efficient as possible.
+	 * <p>
+	 * Re-uses x so that x.stop is first transformed to y.start and then x.stop is reset to y.stop. This is as efficient as possible.
+	 * 
 	 * <pre>
 	 * x start      former x stop   x stop
 	 *     |               |           |
@@ -184,6 +194,7 @@ public class Nfm implements FactoryObject {
 	 * | x start |  | y start  |->| y stop |
 	 * +---------+  +----------+  +--------+
 	 * </pre>
+	 * 
 	 * Frees y, returns x modified.
 	 */
 	public static Nfm getComma(Nfm x, Nfm y) {
@@ -194,10 +205,9 @@ public class Nfm implements FactoryObject {
 		free(y);
 		return x;
 	}
-	
+
 	/**
-	 * "{min,*}" an existing nfm x -> x[0],x[1],...,x[min-1],x[min]*
-	 * Frees x.
+	 * "{min,*}" an existing nfm x -> x[0],x[1],...,x[min-1],x[min]* Frees x.
 	 */
 	public static Nfm getUnbounded(Nfm x, int min) {
 		if (min == 0)
@@ -213,17 +223,16 @@ public class Nfm implements FactoryObject {
 		free(x);
 		return getComma(last1, getStar(last2));
 	}
-	
+
 	/**
-	 * "{min,max}" an existing nfm x -> x[0],x[1],...,x[min-1],x[min]?,...,x[max-1]?
-	 * Frees or returns x.
+	 * "{min,max}" an existing nfm x -> x[0],x[1],...,x[min-1],x[min]?,...,x[max-1]? Frees or returns x.
 	 */
 	public static Nfm getMinMax(Nfm x, int min, int max) {
 		if (max == Integer.MAX_VALUE)
 			return getUnbounded(x, min);
 		if (max == 0) {
 			free(x);
-			return nfm((IAtom)null);
+			return nfm((IAtom) null);
 		}
 		if (max == 1) {
 			if (min == 0)
@@ -248,44 +257,52 @@ public class Nfm implements FactoryObject {
 				Nfm tmp = getQuestion(x);
 				last = getComma(last, tmp);
 				free(tmp);
-				//??? this is inefficient since the first failure
-				//    in a sequence of x?,x?,...,x? can skip to
-				//    the end rather than keep trying to match x
+				// ??? this is inefficient since the first failure
+				// in a sequence of x?,x?,...,x? can skip to
+				// the end rather than keep trying to match x
 			}
 		}
 		free(x);
 		return last;
 	}
-	
+
 	// Below here is factory stuff
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next()
 	 */
 	@Override
 	public FactoryObject next() {
 		return fNext;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next(org.eclipse.ant.internal.ui.dtd.util.FactoryObject)
 	 */
 	@Override
 	public void next(FactoryObject obj) {
 		fNext = (Nfm) obj;
 	}
+
 	private Nfm fNext;
 	private static Factory fFactory = new Factory();
+
 	private static Nfm free() {
 		Nfm nfm = (Nfm) fFactory.getFree();
 		if (nfm == null)
 			return new Nfm();
 		return nfm;
 	}
+
 	public static void free(Nfm nfm) {
 		nfm.start = nfm.stop = null;
 		fFactory.setFree(nfm);
 	}
+
 	private Nfm() {
 	}
 }

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.console;
- 
+
 import org.eclipse.ant.internal.ui.launchConfigurations.TaskLinkManager;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
@@ -19,7 +19,7 @@ import org.eclipse.jface.text.IRegion;
  * Processes task hyperlinks as lines are appended to the console
  */
 public class TaskLineTracker implements IConsoleLineTrackerExtension {
-	
+
 	private IConsole fConsole;
 
 	/**
@@ -53,7 +53,9 @@ public class TaskLineTracker implements IConsoleLineTrackerExtension {
 		fConsole = null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTrackerExtension#consoleClosed()
 	 */
 	@Override

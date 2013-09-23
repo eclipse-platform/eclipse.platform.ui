@@ -17,33 +17,36 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
-
 public class AntModelLabelProvider extends LabelProvider implements IColorProvider {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(Object)
 	 */
 	@Override
 	public Image getImage(Object anElement) {
-		AntElementNode node = (AntElementNode)anElement;
+		AntElementNode node = (AntElementNode) anElement;
 		return node.getImage();
 	}
-    
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(Object)
 	 */
 	@Override
 	public String getText(Object node) {
-		AntElementNode element= (AntElementNode) node;
+		AntElementNode element = (AntElementNode) node;
 		return element.getLabel();
 	}
 
 	@Override
 	public Color getForeground(Object node) {
-		if (node instanceof AntTargetNode && ((AntTargetNode)node).isDefaultTarget() ) {
+		if (node instanceof AntTargetNode && ((AntTargetNode) node).isDefaultTarget()) {
 			return Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
 		}
-		
+
 		return null;
 	}
 

@@ -19,18 +19,20 @@ public class AntDTDNode extends AntElementNode {
 	public AntDTDNode(String name) {
 		super(name);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#isStructuralNode()
 	 */
 	@Override
 	public boolean isStructuralNode() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean collapseProjection() {
-		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();		
+		IPreferenceStore store = AntUIPlugin.getDefault().getPreferenceStore();
 		if (store.getBoolean(AntEditorPreferenceConstants.EDITOR_FOLDING_DTD)) {
 			return true;
 		}

@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class ConsoleMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.ui.console.ConsoleMessages";//$NON-NLS-1$
-	
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, ConsoleMessages.class);

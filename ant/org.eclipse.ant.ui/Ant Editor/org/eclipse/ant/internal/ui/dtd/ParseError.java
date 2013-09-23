@@ -15,12 +15,14 @@ package org.eclipse.ant.internal.ui.dtd;
  * @author Bob Foster
  */
 public class ParseError extends Exception {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Constructor for ParseError.
-	 * @param msg Message
+	 * 
+	 * @param msg
+	 *            Message
 	 */
 	public ParseError(String msg) {
 		super(msg);

@@ -80,19 +80,16 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
- * A view which displays a hierarchical view of ant build files and allows the
- * user to run selected targets from those files.
+ * A view which displays a hierarchical view of ant build files and allows the user to run selected targets from those files.
  */
 public class AntView extends ViewPart implements IResourceChangeListener, IShowInSource {
-	
-	private Object[] restoredViewerInput= null;
-	private boolean filterInternalTargets= false;
-	private InternalTargetFilter fInternalTargetFilter= null;
+
+	private Object[] restoredViewerInput = null;
+	private boolean filterInternalTargets = false;
+	private InternalTargetFilter fInternalTargetFilter = null;
 	/**
-	 * This memento allows the Ant view to save and restore state
-	 * when it is closed and opened within a session. A different
-	 * memento is supplied by the platform for persistence at
-	 * workbench shutdown.
+	 * This memento allows the Ant view to save and restore state when it is closed and opened within a session. A different memento is supplied by
+	 * the platform for persistence at workbench shutdown.
 	 */
 	private static IMemento fgTempMemento = null;
 
@@ -101,13 +98,11 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 */
 	private static final String TAG_PROJECT = "project"; //$NON-NLS-1$
 	/**
-	 * XML key used to store whether or not an Ant project is an error node.
-	 * Persisting this data saved a huge amount of processing at startup.
+	 * XML key used to store whether or not an Ant project is an error node. Persisting this data saved a huge amount of processing at startup.
 	 */
 	private static final String KEY_ERROR = "error"; //$NON-NLS-1$
 	/**
-	 * XML key used to store whether or not an Ant project is an error node.
-	 * Persisting this data saved a huge amount of processing at startup.
+	 * XML key used to store whether or not an Ant project is an error node. Persisting this data saved a huge amount of processing at startup.
 	 */
 	private static final String KEY_WARNING = "warning"; //$NON-NLS-1$
 	/**
@@ -127,7 +122,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 */
 	private static final String TAG_FILTER_INTERNAL_TARGETS = "filterInternalTargets"; //$NON-NLS-1$
 	/**
-	 * XML key used to store the value of the "filter internal targets" preference. 
+	 * XML key used to store the value of the "filter internal targets" preference.
 	 */
 	private static final String KEY_VALUE = "value"; //$NON-NLS-1$
 
@@ -138,8 +133,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	private AntViewContentProvider contentProvider;
 
 	/**
-	 * Collection of <code>IUpdate</code> actions that need to update on
-	 * selection changed in the project viewer.
+	 * Collection of <code>IUpdate</code> actions that need to update on selection changed in the project viewer.
 	 */
 	private List<IUpdate> updateProjectActions;
 	// Ant View Actions
@@ -154,23 +148,24 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	private AntOpenWithMenu openWithMenu;
 
 	/**
-	 * The given build file has changed. Refresh the view to pick up any
-	 * structural changes.
+	 * The given build file has changed. Refresh the view to pick up any structural changes.
 	 */
 	private void handleBuildFileChanged(AntProjectNode project) {
-		((AntProjectNodeProxy)project).parseBuildFile(true);
+		((AntProjectNodeProxy) project).parseBuildFile(true);
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				//must do a full refresh to re-sort
+				// must do a full refresh to re-sort
 				projectViewer.refresh();
-				//update the status line
+				// update the status line
 				handleSelectionChanged((IStructuredSelection) projectViewer.getSelection());
 			}
 		});
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -187,7 +182,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IAntUIHelpContextIds.ANT_VIEW);
 		updateProjectActions();
 	}
-	
+
 	private void initializeDragAndDrop() {
 		int ops = DND.DROP_COPY | DND.DROP_DEFAULT;
 		Transfer[] transfers = new Transfer[] { FileTransfer.getInstance() };
@@ -198,9 +193,9 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 
 	/**
 	 * Creates a pop-up menu on the given control
-	 *
-	 * @param menuControl the control with which the pop-up
-	 *  menu will be associated
+	 * 
+	 * @param menuControl
+	 *            the control with which the pop-up menu will be associated
 	 */
 	private void createContextMenu(Viewer viewer) {
 		Control menuControl = viewer.getControl();
@@ -221,9 +216,11 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 
 	/**
 	 * Adds actions to the context menu
-	 *
-	 * @param viewer the viewer who's menu we're configuring
-	 * @param menu The menu to contribute to
+	 * 
+	 * @param viewer
+	 *            the viewer who's menu we're configuring
+	 * @param menu
+	 *            The menu to contribute to
 	 */
 	private void fillContextMenu(IMenuManager menu) {
 		addOpenWithMenu(menu);
@@ -232,17 +229,17 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		menu.add(removeProjectAction);
 		menu.add(removeAllAction);
 		menu.add(refreshBuildFilesAction);
-		
+
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
 	private void addOpenWithMenu(IMenuManager menu) {
-		AntElementNode node= getSelectionNode();
+		AntElementNode node = getSelectionNode();
 		if (node != null) {
-			IFile buildFile= node.getIFile();
+			IFile buildFile = node.getIFile();
 			if (buildFile != null) {
 				menu.add(new Separator("group.open")); //$NON-NLS-1$
-				IMenuManager submenu= new MenuManager(AntViewMessages.AntView_1);
+				IMenuManager submenu = new MenuManager(AntViewMessages.AntView_1);
 				openWithMenu.setNode(node);
 				submenu.add(openWithMenu);
 				menu.appendToGroup("group.open", submenu); //$NON-NLS-1$
@@ -254,32 +251,31 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * Initialize the actions for this view
 	 */
 	private void initializeActions() {
-		updateProjectActions= new ArrayList<IUpdate>(5);
-		
+		updateProjectActions = new ArrayList<IUpdate>(5);
+
 		addBuildFileAction = new AddBuildFilesAction(this);
-		
+
 		removeProjectAction = new RemoveProjectAction(this);
 		updateProjectActions.add(removeProjectAction);
-		
+
 		removeAllAction = new RemoveAllAction(this);
 		updateProjectActions.add(removeAllAction);
-		
+
 		runTargetAction = new RunTargetAction(this);
 		updateProjectActions.add(runTargetAction);
-		
+
 		searchForBuildFilesAction = new SearchForBuildFilesAction(this);
-		
+
 		refreshBuildFilesAction = new RefreshBuildFilesAction(this);
-		updateProjectActions.add(refreshBuildFilesAction); 
-		
-		openWithMenu= new AntOpenWithMenu(this.getViewSite().getPage());
-		
-		filterInternalTargetsAction= new FilterInternalTargetsAction(this);
+		updateProjectActions.add(refreshBuildFilesAction);
+
+		openWithMenu = new AntOpenWithMenu(this.getViewSite().getPage());
+
+		filterInternalTargetsAction = new FilterInternalTargetsAction(this);
 	}
 
 	/**
-	 * Updates the enabled state of all <code>IUpdate</code> actions associated 
-	 * with the project viewer.
+	 * Updates the enabled state of all <code>IUpdate</code> actions associated with the project viewer.
 	 */
 	private void updateProjectActions() {
 		for (IUpdate update : updateProjectActions) {
@@ -294,40 +290,41 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		projectViewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 		contentProvider = new AntViewContentProvider();
 		projectViewer.setContentProvider(contentProvider);
-		
+
 		filterInternalTargetsAction.setChecked(filterInternalTargets);
 		setFilterInternalTargets(filterInternalTargets);
-		
+
 		projectViewer.setLabelProvider(new AntModelLabelProvider());
 		if (fgTempMemento != null) {
 			restoreViewerInput(fgTempMemento);
-			fgTempMemento= null;
+			fgTempMemento = null;
 		}
 		projectViewer.setInput(new Object[0]);
 		if (restoredViewerInput.length > 0) {
-		    contentProvider.addAll(restoredViewerInput);
+			contentProvider.addAll(restoredViewerInput);
 		}
 		projectViewer.setComparator(new ViewerComparator() {
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 			 */
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				if (e1 instanceof AntProjectNode && e2 instanceof AntProjectNode
-					|| e1 instanceof AntTargetNode && e2 instanceof AntTargetNode) {
+				if (e1 instanceof AntProjectNode && e2 instanceof AntProjectNode || e1 instanceof AntTargetNode && e2 instanceof AntTargetNode) {
 					return e1.toString().compareToIgnoreCase(e2.toString());
-				} 
+				}
 				return 0;
 			}
 		});
-		
+
 		projectViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				handleSelectionChanged((IStructuredSelection)event.getSelection());
+				handleSelectionChanged((IStructuredSelection) event.getSelection());
 			}
 		});
-		
+
 		projectViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
@@ -336,18 +333,18 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 				}
 			}
 		});
-		
+
 		projectViewer.getControl().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent event) {
 				handleProjectViewerKeyPress(event);
 			}
 		});
-		
+
 		createContextMenu(projectViewer);
 		getSite().setSelectionProvider(projectViewer);
 	}
-	
+
 	private void handleProjectViewerKeyPress(KeyEvent event) {
 		if (event.character == SWT.DEL && event.stateMask == 0) {
 			if (removeProjectAction.isEnabled()) {
@@ -359,17 +356,16 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			}
 		}
 	}
-	
+
 	private void handleProjectViewerDoubleClick() {
-		AntElementNode node= getSelectionNode();
+		AntElementNode node = getSelectionNode();
 		if (node != null) {
 			runTargetAction.run(node);
-		} 
+		}
 	}
 
 	/**
-	 * Updates the actions and status line for selection change in one of the
-	 * viewers.
+	 * Updates the actions and status line for selection change in one of the viewers.
 	 */
 	private void handleSelectionChanged(IStructuredSelection selection) {
 		updateProjectActions();
@@ -378,30 +374,29 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		if (selectionIter.hasNext()) {
 			selected = selectionIter.next();
 		}
-		String messageString= null;
-		if (!selectionIter.hasNext()) { 
-		    if (selected != null) {
-		        String errorString= selected.getProblemMessage();
-		        if (errorString != null) {
-		            getViewSite().getActionBars().getStatusLineManager().setErrorMessage(errorString);
-		            return;
-		        }
-		    }
-		    getViewSite().getActionBars().getStatusLineManager().setErrorMessage(null);
-			messageString= getStatusLineText(selected);
-		} 
+		String messageString = null;
+		if (!selectionIter.hasNext()) {
+			if (selected != null) {
+				String errorString = selected.getProblemMessage();
+				if (errorString != null) {
+					getViewSite().getActionBars().getStatusLineManager().setErrorMessage(errorString);
+					return;
+				}
+			}
+			getViewSite().getActionBars().getStatusLineManager().setErrorMessage(null);
+			messageString = getStatusLineText(selected);
+		}
 		getViewSite().getActionBars().getStatusLineManager().setMessage(messageString);
 	}
-	
+
 	/**
-	 * Returns text appropriate for display in the workbench status line for the
-	 * given node.
+	 * Returns text appropriate for display in the workbench status line for the given node.
 	 */
 	private String getStatusLineText(AntElementNode node) {
 		if (node instanceof AntProjectNode) {
 			AntProjectNode project = (AntProjectNode) node;
-			StringBuffer message= new StringBuffer(project.getBuildFileName());
-			String description= project.getDescription();
+			StringBuffer message = new StringBuffer(project.getBuildFileName());
+			String description = project.getDescription();
 			if (description != null && description.length() > 0) {
 				message.append(": "); //$NON-NLS-1$
 				message.append(description);
@@ -409,8 +404,8 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			return message.toString();
 		} else if (node instanceof AntTargetNode) {
 			AntTargetNode target = (AntTargetNode) node;
-			StringBuffer message= new StringBuffer();
-			Enumeration<String> depends= target.getTarget().getDependencies();
+			StringBuffer message = new StringBuffer();
+			Enumeration<String> depends = target.getTarget().getDependencies();
 			if (depends.hasMoreElements()) {
 				message.append(AntViewMessages.AntView_3);
 				message.append(depends.nextElement()); // Unroll the loop to avoid trailing comma
@@ -420,7 +415,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 				}
 				message.append('\"');
 			}
-			String description= target.getTarget().getDescription();
+			String description = target.getTarget().getDescription();
 			if (description != null && description.length() != 0) {
 				message.append(AntViewMessages.AntView_4);
 				message.append(description);
@@ -443,14 +438,13 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	/**
 	 * Returns the <code>AntProjectNode</code>s currently displayed in this view.
 	 * 
-	 * @return AntProjectNode[] the <code>ProjectNode</code>s currently displayed
-	 * in this view
+	 * @return AntProjectNode[] the <code>ProjectNode</code>s currently displayed in this view
 	 */
 	public AntProjectNode[] getProjects() {
-		Object[] objects= contentProvider.getElements(projectViewer.getInput());
-		AntProjectNode[] projects= new AntProjectNode[objects.length];
+		Object[] objects = contentProvider.getElements(projectViewer.getInput());
+		AntProjectNode[] projects = new AntProjectNode[objects.length];
 		for (int i = 0; i < projects.length; i++) {
-			projects[i] = (AntProjectNode)objects[i];
+			projects[i] = (AntProjectNode) objects[i];
 		}
 		return projects;
 	}
@@ -458,7 +452,8 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	/**
 	 * Adds the given project to the view
 	 * 
-	 * @param project the project to add
+	 * @param project
+	 *            the project to add
 	 */
 	public void addProject(AntProjectNode project) {
 		contentProvider.add(project);
@@ -470,7 +465,8 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	/**
 	 * Removes the given project from the view
 	 * 
-	 * @param project the project to remove
+	 * @param project
+	 *            the project to remove
 	 */
 	private void removeProject(AntProjectNode project) {
 		removeProjectFromContentProvider(project);
@@ -479,24 +475,22 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	}
 
 	private void setProjectViewerSelectionAfterDeletion() {
-		Object[] children= getProjects();
+		Object[] children = getProjects();
 		if (children.length > 0) {
-			ViewerComparator comparator= projectViewer.getComparator();
+			ViewerComparator comparator = projectViewer.getComparator();
 			comparator.sort(projectViewer, children);
-			IStructuredSelection selection= new StructuredSelection(children[0]);
+			IStructuredSelection selection = new StructuredSelection(children[0]);
 			projectViewer.setSelection(selection);
 			handleSelectionChanged(selection);
 		}
 	}
 
 	/**
-	 * Removes the given list of <code>AntProjectNode</code> objects from the view.
-	 * This method should be called whenever multiple projects are to be removed
-	 * because this method optimizes the viewer refresh associated with removing
-	 * multiple items.
+	 * Removes the given list of <code>AntProjectNode</code> objects from the view. This method should be called whenever multiple projects are to be
+	 * removed because this method optimizes the viewer refresh associated with removing multiple items.
 	 * 
-	 * @param projectNodes the list of <code>ProjectNode</code> objects to
-	 * remove
+	 * @param projectNodes
+	 *            the list of <code>ProjectNode</code> objects to remove
 	 */
 	public void removeProjects(List<AntProjectNode> projectNodes) {
 		for (AntProjectNode project : projectNodes) {
@@ -509,10 +503,11 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	/**
 	 * Removes the given project node from the project content provider.
 	 * 
-	 * @param project the project to remove
+	 * @param project
+	 *            the project to remove
 	 */
 	private void removeProjectFromContentProvider(AntProjectNode project) {
-	    project.dispose();
+		project.dispose();
 		contentProvider.remove(project);
 		if (getProjects().length == 0) {
 			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
@@ -523,20 +518,22 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * Removes all projects from the view
 	 */
 	public void removeAllProjects() {
-	    AntProjectNode[] projects= getProjects();
-	    for (int i = 0; i < projects.length; i++) {
-            AntProjectNode node = projects[i];
-            node.dispose();
-        }
+		AntProjectNode[] projects = getProjects();
+		for (int i = 0; i < projects.length; i++) {
+			AntProjectNode node = projects[i];
+			node.dispose();
+		}
 		// Remove all projects
 		contentProvider.removeAll();
-		
+
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		updateProjectActions();
 		projectViewer.refresh();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
 	 */
 	@Override
@@ -544,9 +541,9 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		init(site);
 		restoreViewerInput(memento);
 		if (memento != null) {
-			IMemento child= memento.getChild(TAG_FILTER_INTERNAL_TARGETS);
+			IMemento child = memento.getChild(TAG_FILTER_INTERNAL_TARGETS);
 			if (child != null) {
-				filterInternalTargets= Boolean.valueOf(child.getString(KEY_VALUE)).booleanValue();
+				filterInternalTargets = Boolean.valueOf(child.getString(KEY_VALUE)).booleanValue();
 			}
 		}
 	}
@@ -554,16 +551,17 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	/**
 	 * Restore the viewer content that was persisted
 	 * 
-	 * @param  memento the memento containing the persisted viewer content
+	 * @param memento
+	 *            the memento containing the persisted viewer content
 	 */
 	private void restoreViewerInput(IMemento memento) {
 		if (memento == null) {
-			restoredViewerInput= new Object[0];
+			restoredViewerInput = new Object[0];
 			return;
 		}
 		IMemento[] projects = memento.getChildren(TAG_PROJECT);
 		if (projects.length < 1) {
-			restoredViewerInput= new Object[0];
+			restoredViewerInput = new Object[0];
 			return;
 		}
 		List<AntProjectNodeProxy> projectNodes = new ArrayList<AntProjectNodeProxy>(projects.length);
@@ -575,7 +573,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 				continue;
 			}
 			String nameString = projectMemento.getString(KEY_NAME);
-			String defaultTarget= projectMemento.getString(KEY_DEFAULT);
+			String defaultTarget = projectMemento.getString(KEY_DEFAULT);
 			String errorString = projectMemento.getString(KEY_ERROR);
 			String warningString = projectMemento.getString(KEY_WARNING);
 
@@ -587,17 +585,19 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			if (errorString != null && Boolean.valueOf(errorString).booleanValue()) {
 				project.setProblemSeverity(AntModelProblem.SEVERITY_ERROR);
 			} else if (warningString != null && Boolean.valueOf(warningString).booleanValue()) {
-			    project.setProblemSeverity(AntModelProblem.SEVERITY_WARNING);
+				project.setProblemSeverity(AntModelProblem.SEVERITY_WARNING);
 			}
 			if (defaultTarget != null) {
 				project.setDefaultTargetName(defaultTarget);
 			}
 			projectNodes.add(project);
 		}
-		restoredViewerInput= projectNodes.toArray(new AntProjectNode[projectNodes.size()]);
+		restoredViewerInput = projectNodes.toArray(new AntProjectNode[projectNodes.size()]);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
 	 */
 	@Override
@@ -607,33 +607,35 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		AntProjectNode project;
 		IMemento projectMemento;
 		for (int i = 0; i < projects.length; i++) {
-			project= projects[i];
+			project = projects[i];
 			projectMemento = memento.createChild(TAG_PROJECT);
 			projectMemento.putString(KEY_PATH, project.getBuildFileName());
 			projectMemento.putString(KEY_NAME, project.getLabel());
-			String defaultTarget= project.getDefaultTargetName();
+			String defaultTarget = project.getDefaultTargetName();
 			if (project.isErrorNode()) {
 				projectMemento.putString(KEY_ERROR, String.valueOf(true));
 			} else {
-			    if (project.isWarningNode()) {
-			        projectMemento.putString(KEY_WARNING, String.valueOf(true));
-			    }
+				if (project.isWarningNode()) {
+					projectMemento.putString(KEY_WARNING, String.valueOf(true));
+				}
 				if (defaultTarget != null) {
 					projectMemento.putString(KEY_DEFAULT, defaultTarget);
 				}
 				projectMemento.putString(KEY_ERROR, String.valueOf(false));
 			}
 		}
-		IMemento filterTargets= memento.createChild(TAG_FILTER_INTERNAL_TARGETS);
+		IMemento filterTargets = memento.createChild(TAG_FILTER_INTERNAL_TARGETS);
 		filterTargets.putString(KEY_VALUE, isFilterInternalTargets() ? String.valueOf(true) : String.valueOf(false));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	@Override
 	public void dispose() {
-		fgTempMemento= XMLMemento.createWriteRoot("AntViewMemento"); //$NON-NLS-1$
+		fgTempMemento = XMLMemento.createWriteRoot("AntViewMemento"); //$NON-NLS-1$
 		saveState(fgTempMemento);
 		super.dispose();
 		if (openWithMenu != null) {
@@ -642,34 +644,37 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta = event.getDelta();
 		if (delta != null) {
-			AntProjectNode projects[]= getProjects();
+			AntProjectNode projects[] = getProjects();
 			IPath buildFilePath;
 			for (int i = 0; i < projects.length; i++) {
-				buildFilePath= new Path(projects[i].getBuildFileName());
-				IResourceDelta change= delta.findMember(buildFilePath);
+				buildFilePath = new Path(projects[i].getBuildFileName());
+				IResourceDelta change = delta.findMember(buildFilePath);
 				if (change != null) {
 					handleChangeDelta(change, projects[i]);
 				}
 			}
 		}
 	}
-	
+
 	/**
-	 * Update the view for the given resource delta. The delta is a resource
-	 * delta for the given build file in the view
+	 * Update the view for the given resource delta. The delta is a resource delta for the given build file in the view
 	 * 
-	 * @param delta a delta for a build file in the view
-	 * @param project the project node that has changed
+	 * @param delta
+	 *            a delta for a build file in the view
+	 * @param project
+	 *            the project node that has changed
 	 */
 	private void handleChangeDelta(IResourceDelta delta, final AntProjectNode project) {
-		IResource resource= delta.getResource();
+		IResource resource = delta.getResource();
 		if (resource.getType() != IResource.FILE) {
 			return;
 		}
@@ -684,11 +689,11 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			handleBuildFileChanged(project);
 		}
 	}
-	
+
 	private void fillMainToolBar() {
-		IToolBarManager toolBarMgr= getViewSite().getActionBars().getToolBarManager();
+		IToolBarManager toolBarMgr = getViewSite().getActionBars().getToolBarManager();
 		toolBarMgr.removeAll();
-		
+
 		toolBarMgr.add(addBuildFileAction);
 		toolBarMgr.add(searchForBuildFilesAction);
 		toolBarMgr.add(filterInternalTargetsAction);
@@ -696,32 +701,34 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		toolBarMgr.add(runTargetAction);
 		toolBarMgr.add(removeProjectAction);
 		toolBarMgr.add(removeAllAction);
-		
-		toolBarMgr.update(false);	
+
+		toolBarMgr.update(false);
 	}
-	
+
 	private AntElementNode getSelectionNode() {
-		IStructuredSelection selection= (IStructuredSelection)getViewer().getSelection();
+		IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
 		if (selection.size() == 1) {
-			Object element= selection.getFirstElement(); 
+			Object element = selection.getFirstElement();
 			if (element instanceof AntElementNode) {
-				AntElementNode node= (AntElementNode) element;
+				AntElementNode node = (AntElementNode) element;
 				return node;
 			}
 		}
-		return null;		
+		return null;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
 	 */
 	@Override
 	public ShowInContext getShowInContext() {
-		AntElementNode node= getSelectionNode();
+		AntElementNode node = getSelectionNode();
 		if (node != null) {
-			IFile buildFile= node.getIFile();
+			IFile buildFile = node.getIFile();
 			if (buildFile != null) {
-				ISelection selection= new StructuredSelection(buildFile);
+				ISelection selection = new StructuredSelection(buildFile);
 				return new ShowInContext(null, selection);
 			}
 		}
@@ -729,8 +736,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	}
 
 	/**
-	 * Returns whether internal targets are currently being filtered out of
-	 * the view.
+	 * Returns whether internal targets are currently being filtered out of the view.
 	 * 
 	 * @return whether or not internal targets are being filtered out
 	 */
@@ -741,25 +747,28 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	/**
 	 * Sets whether internal targets should be filtered out of the view.
 	 * 
-	 * @param filter whether or not internal targets should be filtered out
+	 * @param filter
+	 *            whether or not internal targets should be filtered out
 	 */
 	public void setFilterInternalTargets(boolean filter) {
-		filterInternalTargets= filter;
+		filterInternalTargets = filter;
 		if (filter) {
 			projectViewer.addFilter(getInternalTargetsFilter());
 		} else {
 			projectViewer.removeFilter(getInternalTargetsFilter());
 		}
 	}
-	
+
 	private ViewerFilter getInternalTargetsFilter() {
 		if (fInternalTargetFilter == null) {
-			fInternalTargetFilter= new InternalTargetFilter();
+			fInternalTargetFilter = new InternalTargetFilter();
 		}
 		return fInternalTargetFilter;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	@Override

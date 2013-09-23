@@ -21,22 +21,24 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 
 	private String fName;
 	private AntValue fValue;
-    private String fLabel;
-	
+	private String fLabel;
+
 	/**
-	 * Constructs a variable associated with the debug target
-	 * with the given name and value.
+	 * Constructs a variable associated with the debug target with the given name and value.
 	 * 
-	 * @param target the debug target
-	 * @param name property name
-	 * @param value property value
+	 * @param target
+	 *            the debug target
+	 * @param name
+	 *            property name
+	 * @param value
+	 *            property value
 	 */
 	public AntProperty(AntDebugTarget target, String name, String value) {
 		super(target);
 		fName = name;
-		fValue= new AntValue(target, value);
+		fValue = new AntValue(target, value);
 	}
-	
+
 	/*
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
@@ -44,7 +46,7 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 	public IValue getValue() {
 		return fValue;
 	}
-	
+
 	/*
 	 * @see org.eclipse.debug.core.model.IVariable#getName()
 	 */
@@ -52,7 +54,7 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 	public String getName() {
 		return fName;
 	}
-	
+
 	/*
 	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
 	 */
@@ -60,7 +62,7 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 	public String getReferenceTypeName() {
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	/*
 	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
 	 */
@@ -68,23 +70,23 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 	public boolean hasValueChanged() {
 		return false;
 	}
-	
+
 	/*
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
 	 */
 	@Override
 	public void setValue(String expression) {
-		//do nothing
+		// do nothing
 	}
-	
+
 	/*
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(org.eclipse.debug.core.model.IValue)
 	 */
 	@Override
 	public void setValue(IValue value) {
-		//do nothing
+		// do nothing
 	}
-	
+
 	/*
 	 * @see org.eclipse.debug.core.model.IValueModification#supportsValueModification()
 	 */
@@ -92,7 +94,7 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 	public boolean supportsValueModification() {
 		return false;
 	}
-	
+
 	/*
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang.String)
 	 */
@@ -100,7 +102,7 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 	public boolean verifyValue(String expression) {
 		return false;
 	}
-	
+
 	/*
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(org.eclipse.debug.core.model.IValue)
 	 */
@@ -109,24 +111,26 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 		return false;
 	}
 
-    /**
-     * @return the text used to render this property
-     */
-    public String getText() {
-        if (fLabel == null) {
-            StringBuffer buffer= new StringBuffer(getName());
-            buffer.append("= "); //$NON-NLS-1$
-            buffer.append(fValue.getValueString());          
-            fLabel=  buffer.toString();
-        } 
-        return fLabel;
-    }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    @Override
+	/**
+	 * @return the text used to render this property
+	 */
+	public String getText() {
+		if (fLabel == null) {
+			StringBuffer buffer = new StringBuffer(getName());
+			buffer.append("= "); //$NON-NLS-1$
+			buffer.append(fValue.getValueString());
+			fLabel = buffer.toString();
+		}
+		return fLabel;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
 	public int compareTo(AntProperty other) {
-    	return fName.compareToIgnoreCase(other.getName());
-    }
+		return fName.compareToIgnoreCase(other.getName());
+	}
 }

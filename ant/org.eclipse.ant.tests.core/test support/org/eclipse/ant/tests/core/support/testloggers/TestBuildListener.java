@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.core.support.testloggers;
 
-
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
-
 
 public class TestBuildListener implements BuildListener {
 
@@ -23,7 +21,7 @@ public class TestBuildListener implements BuildListener {
 	 */
 	@Override
 	public void buildFinished(BuildEvent event) {
-		//do nothing
+		// do nothing
 	}
 
 	/**
@@ -39,7 +37,7 @@ public class TestBuildListener implements BuildListener {
 	 */
 	@Override
 	public void messageLogged(BuildEvent event) {
-		//do nothing
+		// do nothing
 	}
 
 	/**
@@ -47,7 +45,7 @@ public class TestBuildListener implements BuildListener {
 	 */
 	@Override
 	public void targetFinished(BuildEvent event) {
-		//do nothing
+		// do nothing
 	}
 
 	/**
@@ -55,7 +53,7 @@ public class TestBuildListener implements BuildListener {
 	 */
 	@Override
 	public void targetStarted(BuildEvent event) {
-		//do nothing
+		// do nothing
 	}
 
 	/**
@@ -63,7 +61,7 @@ public class TestBuildListener implements BuildListener {
 	 */
 	@Override
 	public void taskFinished(BuildEvent event) {
-		//do nothing
+		// do nothing
 	}
 
 	/**
@@ -71,6 +69,6 @@ public class TestBuildListener implements BuildListener {
 	 */
 	@Override
 	public void taskStarted(BuildEvent event) {
-		//do nothing
+		// do nothing
 	}
 }

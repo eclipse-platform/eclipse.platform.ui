@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class AntOutlineMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.ui.editor.outline.AntOutlineMessages";//$NON-NLS-1$
-	
+
 	public static String AntEditorContentOutlinePage_Open_With_1;
 
 	public static String FilterInternalTargetsAction_0;

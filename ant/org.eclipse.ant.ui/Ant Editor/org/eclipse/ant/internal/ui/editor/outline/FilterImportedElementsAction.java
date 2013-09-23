@@ -15,13 +15,13 @@ import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.custom.BusyIndicator;
 
-/** 
+/**
  * An action which toggles filtering of imported elements from the Ant outline.
  */
 public class FilterImportedElementsAction extends Action {
-    
+
 	private AntEditorContentOutlinePage fPage;
-	
+
 	public FilterImportedElementsAction(AntEditorContentOutlinePage page) {
 		super(AntOutlineMessages.FilterImportedElementsAction_0);
 		fPage = page;
@@ -30,8 +30,9 @@ public class FilterImportedElementsAction extends Action {
 		setChecked(fPage.filterImportedElements());
 	}
 
-    /**
+	/**
 	 * Toggles the filtering of imported elements from the Ant outline
+	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override

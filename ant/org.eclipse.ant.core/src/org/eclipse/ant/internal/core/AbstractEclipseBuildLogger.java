@@ -15,16 +15,15 @@ import java.util.Map;
 import org.eclipse.ant.core.AntCorePlugin;
 
 public abstract class AbstractEclipseBuildLogger {
-    
-    /**
-     * Process identifier - used to link the Eclipse Ant build
-     * loggers to a process.
-     */
-    public static final String ANT_PROCESS_ID = AntCorePlugin.PI_ANTCORE + ".ANT_PROCESS_ID"; //$NON-NLS-1$
-    
-    protected String fProcessId= null;
-    
-    public void configure(Map<String, String> userProperties) {
-        fProcessId = userProperties.remove(ANT_PROCESS_ID);
-    } 
+
+	/**
+	 * Process identifier - used to link the Eclipse Ant build loggers to a process.
+	 */
+	public static final String ANT_PROCESS_ID = AntCorePlugin.PI_ANTCORE + ".ANT_PROCESS_ID"; //$NON-NLS-1$
+
+	protected String fProcessId = null;
+
+	public void configure(Map<String, String> userProperties) {
+		fProcessId = userProperties.remove(ANT_PROCESS_ID);
+	}
 }

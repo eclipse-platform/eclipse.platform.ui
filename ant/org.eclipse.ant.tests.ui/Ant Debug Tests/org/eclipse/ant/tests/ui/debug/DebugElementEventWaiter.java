@@ -18,14 +18,14 @@ import org.eclipse.debug.core.DebugEvent;
  */
 
 public class DebugElementEventWaiter extends DebugEventWaiter {
-	
+
 	protected Object fElement;
-	
+
 	public DebugElementEventWaiter(int kind, Object element) {
 		super(kind);
 		fElement = element;
 	}
-	
+
 	@Override
 	public boolean accept(DebugEvent event) {
 		return super.accept(event) && fElement == event.getSource();

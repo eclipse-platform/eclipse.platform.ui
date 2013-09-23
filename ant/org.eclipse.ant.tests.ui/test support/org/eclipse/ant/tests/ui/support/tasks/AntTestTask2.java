@@ -16,42 +16,41 @@ import org.apache.tools.ant.taskdefs.Echo;
 import org.apache.tools.ant.types.EnumeratedAttribute;
 import org.apache.tools.ant.types.Reference;
 
-
 public class AntTestTask2 extends Task {
-	
-	String fMessage= "Default"; //$NON-NLS-1$
-	Reference fRef= null;
-	
+
+	String fMessage = "Default"; //$NON-NLS-1$
+	Reference fRef = null;
+
 	public AntTestTask2() {
 		super();
 	}
-	
+
 	/**
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
 	@Override
 	public void execute() throws BuildException {
-		Echo echo= new Echo();
+		Echo echo = new Echo();
 		echo.setProject(getProject());
 		echo.setMessage("Testing Ant in Eclipse with a custom task2: " + fMessage); //$NON-NLS-1$
 		echo.execute();
 	}
-	
-    public void setMessage(Cool attr) {
-        fMessage = attr.getValue();
-    }
-    
-    public void setReference(Reference ref) {
-        fRef= ref;
-    }
-	
+
+	public void setMessage(Cool attr) {
+		fMessage = attr.getValue();
+	}
+
+	public void setReference(Reference ref) {
+		fRef = ref;
+	}
+
 	/**
-     * Enumerated attribute with the values "cool", "chillin" and "awesome".
-     */
-    public static class Cool extends EnumeratedAttribute {
-        @Override
+	 * Enumerated attribute with the values "cool", "chillin" and "awesome".
+	 */
+	public static class Cool extends EnumeratedAttribute {
+		@Override
 		public String[] getValues() {
-            return new String[] {"cool", "chillin", "awesome"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        }
-    }
+			return new String[] { "cool", "chillin", "awesome" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+	}
 }

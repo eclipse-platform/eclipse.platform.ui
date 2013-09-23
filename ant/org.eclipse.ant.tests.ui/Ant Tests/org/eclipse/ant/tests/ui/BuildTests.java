@@ -28,120 +28,116 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.console.IHyperlink;
 
-
 public class BuildTests extends AbstractAntUIBuildTest {
 
 	public BuildTests(String name) {
 		super(name);
 	}
-	
-  /**
-   * Tests launching Ant and getting messages
-   * logged to the console.
-   */
-  public void testOutput() throws CoreException {
-	  launch("echoing"); //$NON-NLS-1$
-	  assertTrue("Incorrect number of messages logged for build. Should be 8. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 8);  //$NON-NLS-1$
-	  String message= ConsoleLineTracker.getMessage(6);
-	  assertTrue("Incorrect last message. Should start with Total time:. Message: " + message, message.startsWith("Total time:")); //$NON-NLS-1$ //$NON-NLS-2$
-  }
-  
-  /**
-   * This build will fail. With verbose on you should be presented with a full 
-   * stack trace. Bug 82833
-   */
-  public void testVerboseStackTrace() throws Exception {
-	  launch("failingTarget", "-k -verbose"); //$NON-NLS-1$ //$NON-NLS-2$
-      assertEquals("Incorrect message", "BUILD FAILED", ConsoleLineTracker.getMessage(19)); //$NON-NLS-1$ //$NON-NLS-2$
-      assertTrue("Incorrect message" + ConsoleLineTracker.getMessage(22), ConsoleLineTracker.getMessage(22).startsWith("\tat org.apache.tools.ant.taskdefs.Zip")); //$NON-NLS-1$ //$NON-NLS-2$
-  }
-  
-  /**
-	 * Tests launching Ant and getting the build failed message
-	 * logged to the console with associated link.
-	 * Bug 42333 and 44565
+
+	/**
+	 * Tests launching Ant and getting messages logged to the console.
+	 */
+	public void testOutput() throws CoreException {
+		launch("echoing"); //$NON-NLS-1$
+		assertTrue("Incorrect number of messages logged for build. Should be 8. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 8); //$NON-NLS-1$
+		String message = ConsoleLineTracker.getMessage(6);
+		assertTrue("Incorrect last message. Should start with Total time:. Message: " + message, message.startsWith("Total time:")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/**
+	 * This build will fail. With verbose on you should be presented with a full stack trace. Bug 82833
+	 */
+	public void testVerboseStackTrace() throws Exception {
+		launch("failingTarget", "-k -verbose"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Incorrect message", "BUILD FAILED", ConsoleLineTracker.getMessage(19)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Incorrect message" + ConsoleLineTracker.getMessage(22), ConsoleLineTracker.getMessage(22).startsWith("\tat org.apache.tools.ant.taskdefs.Zip")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/**
+	 * Tests launching Ant and getting the build failed message logged to the console with associated link. Bug 42333 and 44565
 	 */
 	public void testBuildFailedMessage() throws CoreException {
 		launch("bad"); //$NON-NLS-1$
 		assertTrue("Incorrect number of messages logged for build. Should be 10. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 10); //$NON-NLS-1$
-		String message= ConsoleLineTracker.getMessage(5);
+		String message = ConsoleLineTracker.getMessage(5);
 		assertTrue("Incorrect last message. Should start with BUILD FAILED. Message: " + message, message.startsWith("BUILD FAILED")); //$NON-NLS-1$ //$NON-NLS-2$
-		int offset= -1;
+		int offset = -1;
 		try {
-			offset= ConsoleLineTracker.getDocument().getLineOffset(4) + 30; //link to buildfile that failed
-		} catch (BadLocationException e) {
+			offset = ConsoleLineTracker.getDocument().getLineOffset(4) + 30; // link to buildfile that failed
+		}
+		catch (BadLocationException e) {
 			assertTrue("failed getting offset of line", false); //$NON-NLS-1$
 		}
-		IHyperlink link= getHyperlink(offset, ConsoleLineTracker.getDocument());
+		IHyperlink link = getHyperlink(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No hyperlink found at offset " + offset, link); //$NON-NLS-1$
 	}
-  
-  /**
-	 * Tests launching Ant and that the
-	 * correct links are in the console doc
+
+	/**
+	 * Tests launching Ant and that the correct links are in the console doc
 	 */
 	public void testLinks() throws CoreException {
 		launch("build"); //$NON-NLS-1$
-		int offset= 25; //buildfile link
-		IHyperlink link= getHyperlink(offset, ConsoleLineTracker.getDocument());
+		int offset = 25; // buildfile link
+		IHyperlink link = getHyperlink(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No hyperlink found at offset " + offset, link); //$NON-NLS-1$
 		activateLink(link);
-		
+
 		try {
-			offset= ConsoleLineTracker.getDocument().getLineOffset(4) + 10; //echo link
-		} catch (BadLocationException e) {
+			offset = ConsoleLineTracker.getDocument().getLineOffset(4) + 10; // echo link
+		}
+		catch (BadLocationException e) {
 			assertTrue("failed getting offset of line", false); //$NON-NLS-1$
 		}
-		link= getHyperlink(offset, ConsoleLineTracker.getDocument());
+		link = getHyperlink(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No hyperlink found at offset " + offset, link); //$NON-NLS-1$
 		activateLink(link);
 	}
-	
-	 /**
+
+	/**
 	 * Tests launching Ant and that build failed presents links to the failures when multi-line.
 	 */
 	public void testBuildFailedLinks() throws CoreException {
 		launch("102282"); //$NON-NLS-1$
 		try {
-			int offset= ConsoleLineTracker.getDocument().getLineOffset(9) + 10; //second line of build failed link
-			IHyperlink link= getHyperlink(offset, ConsoleLineTracker.getDocument());
+			int offset = ConsoleLineTracker.getDocument().getLineOffset(9) + 10; // second line of build failed link
+			IHyperlink link = getHyperlink(offset, ConsoleLineTracker.getDocument());
 			assertNotNull("No hyperlink found at offset " + offset, link); //$NON-NLS-1$
 			activateLink(link);
-			
-		} catch (BadLocationException e) {
+
+		}
+		catch (BadLocationException e) {
 			assertTrue("failed getting offset of line", false); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
-	 * Tests launching Ant and that the
-	 * correct colors are in the console doc
+	 * Tests launching Ant and that the correct colors are in the console doc
 	 */
-	public void testColor() throws BadLocationException, CoreException {		
+	public void testColor() throws BadLocationException, CoreException {
 		launch("echoing"); //$NON-NLS-1$
-		int offset= 15; //buildfile
-		Color color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
+		int offset = 15; // buildfile
+		Color color = getColorAtOffset(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No color found at " + offset, color); //$NON-NLS-1$
 		assertEquals(AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_INFO_COLOR), color);
 		try {
-			offset= ConsoleLineTracker.getDocument().getLineOffset(4) + 10; //echo
-		} catch (BadLocationException e) {
+			offset = ConsoleLineTracker.getDocument().getLineOffset(4) + 10; // echo
+		}
+		catch (BadLocationException e) {
 			assertTrue("failed getting offset of line", false); //$NON-NLS-1$
 		}
-		color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
+		color = getColorAtOffset(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No color found at " + offset, color); //$NON-NLS-1$
 		assertEquals(AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_WARNING_COLOR), color);
 	}
-	
+
 	/**
-	 * Tests launching Ant in a separate vm and that the
-	 * correct property substitions occur
+	 * Tests launching Ant in a separate vm and that the correct property substitions occur
 	 */
 	public void testPropertySubstitution() throws CoreException {
 		ILaunchConfiguration config = getLaunchConfiguration("74840"); //$NON-NLS-1$
 		assertNotNull("Could not locate launch configuration for " + "74840", config); //$NON-NLS-1$ //$NON-NLS-2$
-		ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
-		Map<String, String> properties= new HashMap<String, String>(1);
+		ILaunchConfigurationWorkingCopy copy = config.getWorkingCopy();
+		Map<String, String> properties = new HashMap<String, String>(1);
 		properties.put("platform.location", "${workspace_loc}"); //$NON-NLS-1$ //$NON-NLS-2$
 		copy.setAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTIES, properties);
 		copy.setAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTIES, properties);
@@ -150,91 +146,91 @@ public class BuildTests extends AbstractAntUIBuildTest {
 		assertTrue("Incorrect number of messages logged for build. Should be 8. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 8); //$NON-NLS-1$
 		assertTrue("Incorrect echo message. Should not include unsubstituted property", !ConsoleLineTracker.getMessage(4).trim().startsWith("[echo] ${workspace_loc}")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
-	 /**
+
+	/**
 	 * Tests specifying the XmlLogger as a listener (bug 80435)
-     * @throws FileNotFoundException 
+	 * 
+	 * @throws FileNotFoundException
 	 */
 	public void testXmlLoggerListener() throws CoreException, FileNotFoundException {
 		launch("echoing", "-listener org.apache.tools.ant.XmlLogger"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("Incorrect number of messages logged for build. Should be 8. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 8); //$NON-NLS-1$
-		String message= ConsoleLineTracker.getMessage(6);
+		String message = ConsoleLineTracker.getMessage(6);
 		assertTrue("Incorrect last message. Should start with Total time:. Message: " + message, message.startsWith("Total time:")); //$NON-NLS-1$ //$NON-NLS-2$
-		//find the log file generated by the xml logger
+		// find the log file generated by the xml logger
 		getProject().getFolder("buildfiles").refreshLocal(IResource.DEPTH_INFINITE, null); //$NON-NLS-1$
-		File file= getBuildFile("log.xml"); //$NON-NLS-1$
-		String content= getFileContentAsString(file);
+		File file = getBuildFile("log.xml"); //$NON-NLS-1$
+		String content = getFileContentAsString(file);
 		assertTrue("XML logging file is empty", content.length() > 0); //$NON-NLS-1$
 	}
-	
+
 	/**
-	 * Tests launching Ant and getting the build failed message
-	 * logged to the console.
-	 * Bug 42333.
+	 * Tests launching Ant and getting the build failed message logged to the console. Bug 42333.
 	 */
-//	public void testBuildFailedMessageDebug() throws CoreException {
-//		launchInDebug("bad");
-//		assertTrue("Incorrect number of messages logged for build. Should be 35. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 35);
-//		String message= ConsoleLineTracker.getMessage(33);
-//		assertTrue("Incorrect last message. Should start with Build Failed:. Message: " + message, message.startsWith("BUILD FAILED:"));
-//		}
-//  
-//	  /**
-//	 * Tests launching Ant and that the
-//	 * correct links are in the console doc
-//	 */
-//	public void testLinksDebug() throws CoreException {
-//		launchInDebug("echoing");
-//		int offset= 0; 
-//		try {
-//			offset= ConsoleLineTracker.getDocument().getLineOffset(2) + 15; //buildfile line 3
-//		} catch (BadLocationException e) {
-//			assertTrue("failed getting offset of line", false);
-//		}
-//		IConsoleHyperlink link= getHyperlink(offset, ConsoleLineTracker.getDocument());
-//		assertNotNull("No hyperlink found at offset " + offset, link);
-//	
-//		try {
-//			offset= ConsoleLineTracker.getDocument().getLineOffset(33) + 10; //echo link
-//		} catch (BadLocationException e) {
-//			assertTrue("failed getting offset of line", false);
-//		}
-//		link= getHyperlink(offset, ConsoleLineTracker.getDocument());
-//		assertNotNull("No hyperlink found at offset " + offset, link);
-//	}
-//
-//	/**
-//	 * Tests launching Ant and that the
-//	 * correct colors are in the console doc
-//	 */
-//	public void testColorDebug() throws BadLocationException, CoreException {
-//		launchInDebug("echoing");
-//		int offset= 0; 
-//		try {
-//			offset= ConsoleLineTracker.getDocument().getLineOffset(2) + 15; //buildfile line 3
-//		} catch (BadLocationException e) {
-//			assertTrue("failed getting offset of line", false);
-//		}
-//		Color color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
-//		assertNotNull("No color found at " + offset, color);
-//		assertEquals(AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_INFO_COLOR), color);
-//		
-//		try {
-//			offset= ConsoleLineTracker.getDocument().getLineOffset(4) + 3; //debug info
-//		} catch (BadLocationException e) {
-//			assertTrue("failed getting offset of line", false);
-//		}
-//		color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
-//		assertNotNull("No color found at " + offset, color);
-//		assertEquals(AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_DEBUG_COLOR), color);
-//		
-//		try {
-//			offset= ConsoleLineTracker.getDocument().getLineOffset(33) + 10; //echo line 33
-//		} catch (BadLocationException e) {
-//			assertTrue("failed getting offset of line", false);
-//		}
-//		color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
-//		assertNotNull("No color found at " + offset, color);
-//		assertEquals(AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_WARNING_COLOR), color);
-//	}
+	// public void testBuildFailedMessageDebug() throws CoreException {
+	// launchInDebug("bad");
+	// assertTrue("Incorrect number of messages logged for build. Should be 35. Was " + ConsoleLineTracker.getNumberOfMessages(),
+	// ConsoleLineTracker.getNumberOfMessages() == 35);
+	// String message= ConsoleLineTracker.getMessage(33);
+	// assertTrue("Incorrect last message. Should start with Build Failed:. Message: " + message, message.startsWith("BUILD FAILED:"));
+	// }
+	//
+	// /**
+	// * Tests launching Ant and that the
+	// * correct links are in the console doc
+	// */
+	// public void testLinksDebug() throws CoreException {
+	// launchInDebug("echoing");
+	// int offset= 0;
+	// try {
+	// offset= ConsoleLineTracker.getDocument().getLineOffset(2) + 15; //buildfile line 3
+	// } catch (BadLocationException e) {
+	// assertTrue("failed getting offset of line", false);
+	// }
+	// IConsoleHyperlink link= getHyperlink(offset, ConsoleLineTracker.getDocument());
+	// assertNotNull("No hyperlink found at offset " + offset, link);
+	//
+	// try {
+	// offset= ConsoleLineTracker.getDocument().getLineOffset(33) + 10; //echo link
+	// } catch (BadLocationException e) {
+	// assertTrue("failed getting offset of line", false);
+	// }
+	// link= getHyperlink(offset, ConsoleLineTracker.getDocument());
+	// assertNotNull("No hyperlink found at offset " + offset, link);
+	// }
+	//
+	// /**
+	// * Tests launching Ant and that the
+	// * correct colors are in the console doc
+	// */
+	// public void testColorDebug() throws BadLocationException, CoreException {
+	// launchInDebug("echoing");
+	// int offset= 0;
+	// try {
+	// offset= ConsoleLineTracker.getDocument().getLineOffset(2) + 15; //buildfile line 3
+	// } catch (BadLocationException e) {
+	// assertTrue("failed getting offset of line", false);
+	// }
+	// Color color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
+	// assertNotNull("No color found at " + offset, color);
+	// assertEquals(AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_INFO_COLOR), color);
+	//
+	// try {
+	// offset= ConsoleLineTracker.getDocument().getLineOffset(4) + 3; //debug info
+	// } catch (BadLocationException e) {
+	// assertTrue("failed getting offset of line", false);
+	// }
+	// color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
+	// assertNotNull("No color found at " + offset, color);
+	// assertEquals(AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_DEBUG_COLOR), color);
+	//
+	// try {
+	// offset= ConsoleLineTracker.getDocument().getLineOffset(33) + 10; //echo line 33
+	// } catch (BadLocationException e) {
+	// assertTrue("failed getting offset of line", false);
+	// }
+	// color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
+	// assertNotNull("No color found at " + offset, color);
+	// assertEquals(AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_WARNING_COLOR), color);
+	// }
 }

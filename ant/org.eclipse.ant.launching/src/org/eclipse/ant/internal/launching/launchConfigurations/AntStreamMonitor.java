@@ -22,7 +22,7 @@ public class AntStreamMonitor implements IFlushableStreamMonitor {
 	private StringBuffer fContents = new StringBuffer();
 	private ListenerList fListeners = new ListenerList(1);
 	private boolean fBuffered = true;
-	
+
 	/**
 	 * @see org.eclipse.debug.core.model.IStreamMonitor#addListener(org.eclipse.debug.core.IStreamListener)
 	 */
@@ -58,10 +58,11 @@ public class AntStreamMonitor implements IFlushableStreamMonitor {
 		}
 		Object[] listeners = fListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
-			IStreamListener listener = (IStreamListener)listeners[i];
+			IStreamListener listener = (IStreamListener) listeners[i];
 			listener.streamAppended(message, this);
 		}
 	}
+
 	/**
 	 * @see org.eclipse.debug.core.model.IFlushableStreamMonitor#flushContents()
 	 */
@@ -86,4 +87,3 @@ public class AntStreamMonitor implements IFlushableStreamMonitor {
 		fBuffered = buffer;
 	}
 }
-

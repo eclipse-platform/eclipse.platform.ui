@@ -13,7 +13,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class AntUIModelMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.ui.AntUIModelMessages";//$NON-NLS-1$
-	
+
 	public static String ImageDescriptorRegistry_Allocating_image_for_wrong_display_1;
 
 	public static String AntUtil_6;

@@ -23,20 +23,21 @@ import org.eclipse.swt.dnd.DropTargetEvent;
  * A drop adapter which adds files to the Ant view.
  */
 public class AntViewDropAdapter extends DropTargetAdapter {
-	
+
 	private AntView view;
-	
+
 	/**
 	 * Creates a new drop adapter for the given Ant view.
-	 * @param view the view which dropped files will be added to
+	 * 
+	 * @param view
+	 *            the view which dropped files will be added to
 	 */
 	public AntViewDropAdapter(AntView view) {
-		this.view= view;
+		this.view = view;
 	}
 
 	/**
-	 * @see
-	 * org.eclipse.swt.dnd.DropTargetListener#drop(org.eclipse.swt.dnd.DropTargetEvent)
+	 * @see org.eclipse.swt.dnd.DropTargetListener#drop(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
 	@Override
 	public void drop(DropTargetEvent event) {
@@ -53,13 +54,13 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 			});
 		}
 	}
-	
+
 	/**
-	 * Attempts to process the given string as a path to an
-	 * XML file. If the string is determined to be a path to an
-	 * XML file in the workspace, that file is added to the Ant
-	 * view.
-	 * @param buildFileName the string to process
+	 * Attempts to process the given string as a path to an XML file. If the string is determined to be a path to an XML file in the workspace, that
+	 * file is added to the Ant view.
+	 * 
+	 * @param buildFileName
+	 *            the string to process
 	 */
 	private void processString(String buildFileName) {
 		IFile buildFile = AntUtil.getFileForLocation(buildFileName, null);
@@ -69,7 +70,7 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 		String name = buildFile.getFullPath().toString();
 		AntProjectNode[] existingProjects = view.getProjects();
 		for (int j = 0; j < existingProjects.length; j++) {
-			AntProjectNodeProxy existingProject = (AntProjectNodeProxy)existingProjects[j];
+			AntProjectNodeProxy existingProject = (AntProjectNodeProxy) existingProjects[j];
 			if (existingProject.getBuildFileName().equals(name)) {
 				// Don't parse projects that have already been added.
 				return;
@@ -78,22 +79,26 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 		AntProjectNode project = new AntProjectNodeProxy(name);
 		view.addProject(project);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.swt.dnd.DropTargetListener#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
 	@Override
 	public void dragEnter(DropTargetEvent event) {
-		event.detail= DND.DROP_COPY;
+		event.detail = DND.DROP_COPY;
 		super.dragEnter(event);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.swt.dnd.DropTargetListener#dragOperationChanged(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
 	@Override
 	public void dragOperationChanged(DropTargetEvent event) {
-		event.detail= DND.DROP_COPY;
+		event.detail = DND.DROP_COPY;
 		super.dragOperationChanged(event);
 	}
 }

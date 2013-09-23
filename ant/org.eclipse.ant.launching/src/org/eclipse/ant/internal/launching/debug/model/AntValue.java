@@ -14,64 +14,76 @@ import org.eclipse.ant.internal.launching.debug.IAntDebugConstants;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
-public class AntValue extends AntDebugElement implements IValue  {
+public class AntValue extends AntDebugElement implements IValue {
 
-    private String fValueString;
-    protected static final IVariable[] EMPTY = new IVariable[0];
-    
-    /**
-     * @param target
-     */
-    public AntValue(AntDebugTarget target, String value) {
-        super(target);
-        fValueString= value;
-    }
+	private String fValueString;
+	protected static final IVariable[] EMPTY = new IVariable[0];
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
-     */
-    @Override
+	/**
+	 * @param target
+	 */
+	public AntValue(AntDebugTarget target, String value) {
+		super(target);
+		fValueString = value;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
+	 */
+	@Override
 	public String getReferenceTypeName() {
-        return ""; //$NON-NLS-1$
-    }
+		return ""; //$NON-NLS-1$
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IValue#getValueString()
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.core.model.IValue#getValueString()
+	 */
+	@Override
 	public String getValueString() {
-        return fValueString;
-    }
+		return fValueString;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IValue#isAllocated()
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.core.model.IValue#isAllocated()
+	 */
+	@Override
 	public boolean isAllocated() {
-        return true;
-    }
+		return true;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IValue#getVariables()
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.core.model.IValue#getVariables()
+	 */
+	@Override
 	public IVariable[] getVariables() {
-        return EMPTY;
-    }
+		return EMPTY;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IValue#hasVariables()
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
+	 */
+	@Override
 	public boolean hasVariables() {
-        return false;
-    }
+		return false;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
+	 */
+	@Override
 	public String getModelIdentifier() {
-        return IAntDebugConstants.ID_ANT_DEBUG_MODEL;
-    }
+		return IAntDebugConstants.ID_ANT_DEBUG_MODEL;
+	}
 }

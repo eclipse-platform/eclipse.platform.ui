@@ -35,40 +35,40 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * Default handler for the Open External Documentation command
- * for the Ant editor
+ * Default handler for the Open External Documentation command for the Ant editor
  * 
  * @since 3.5.400
  */
 public class OpenExternalAntDocHandler extends AbstractHandler {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IEditorPart part = HandlerUtil.getActiveEditor(event);
-		if(part instanceof AntEditor) {
+		if (part instanceof AntEditor) {
 			AntEditor editor = (AntEditor) part;
 			ISelection s = HandlerUtil.getCurrentSelection(event);
-			if(s instanceof ITextSelection) {
+			if (s instanceof ITextSelection) {
 				ITextSelection ts = (ITextSelection) s;
-				AntModel model= editor.getAntModel();
+				AntModel model = editor.getAntModel();
 				AntElementNode node = null;
 				if (model != null) {
 					node = model.getNode(ts.getOffset(), false);
 				}
 				if (node != null) {
 					try {
-						URL url= getExternalLocation(node, editor);
+						URL url = getExternalLocation(node, editor);
 						if (url != null) {
-							AntUtil.openBrowser(url.toString(), 
-									editor.getSite().getShell(),
-									AntEditorActionMessages.getString("OpenExternalAntDocHandler_open_external_ant_doc")); //$NON-NLS-1$
-						} 		
-					} catch (MalformedURLException e) {
-			           AntUIPlugin.log(e);
-			        }
+							AntUtil.openBrowser(url.toString(), editor.getSite().getShell(), AntEditorActionMessages.getString("OpenExternalAntDocHandler_open_external_ant_doc")); //$NON-NLS-1$
+						}
+					}
+					catch (MalformedURLException e) {
+						AntUIPlugin.log(e);
+					}
 				}
 			}
 		}
@@ -76,14 +76,14 @@ public class OpenExternalAntDocHandler extends AbstractHandler {
 	}
 
 	public URL getExternalLocation(AntElementNode node, AntEditor editor) throws MalformedURLException {
-		URL baseLocation= getBaseLocation();
+		URL baseLocation = getBaseLocation();
 		if (baseLocation == null) {
 			return null;
 		}
 
-		String urlString= baseLocation.toExternalForm();
+		String urlString = baseLocation.toExternalForm();
 
-		StringBuffer pathBuffer= new StringBuffer(urlString);
+		StringBuffer pathBuffer = new StringBuffer(urlString);
 		if (!urlString.endsWith("/")) { //$NON-NLS-1$
 			pathBuffer.append('/');
 		}
@@ -91,38 +91,39 @@ public class OpenExternalAntDocHandler extends AbstractHandler {
 		if (node instanceof AntProjectNode) {
 			pathBuffer.append("using.html#projects"); //$NON-NLS-1$
 		} else if (node instanceof AntTargetNode) {
-			if (((AntTargetNode)node).isExtensionPoint()) {
+			if (((AntTargetNode) node).isExtensionPoint()) {
 				pathBuffer.append("targets.html#extension-points"); //$NON-NLS-1$
 			} else {
 				pathBuffer.append("using.html#targets"); //$NON-NLS-1$
 			}
 		} else if (node instanceof AntTaskNode) {
-			AntTaskNode taskNode= (AntTaskNode) node;
+			AntTaskNode taskNode = (AntTaskNode) node;
 			if (editor.getAntModel().getDefininingTaskNode(taskNode.getTask().getTaskName()) == null) {
-				//not a user defined task
+				// not a user defined task
 				appendTaskPath(taskNode, pathBuffer);
 			}
-		} 
+		}
 
 		try {
 			return new URL(pathBuffer.toString());
-		} catch (MalformedURLException e) {
+		}
+		catch (MalformedURLException e) {
 			AntUIPlugin.log(e);
 		}
 		return null;
 	}
 
 	private void appendTaskPath(AntTaskNode node, StringBuffer buffer) {
-	    String taskName= node.getTask().getTaskName();
-	    String taskPart= null;
-	    if (taskName.equalsIgnoreCase("path")) {  //$NON-NLS-1$
-	        buffer.append("using.html#path"); //$NON-NLS-1$
-	        return;
-	    } 
-	    taskPart= getTaskTypePart(node);
-        if (taskPart == null) {
-            return;
-        }
+		String taskName = node.getTask().getTaskName();
+		String taskPart = null;
+		if (taskName.equalsIgnoreCase("path")) { //$NON-NLS-1$
+			buffer.append("using.html#path"); //$NON-NLS-1$
+			return;
+		}
+		taskPart = getTaskTypePart(node);
+		if (taskPart == null) {
+			return;
+		}
 		buffer.append(taskPart);
 		buffer.append('/');
 		buffer.append(taskName);
@@ -131,25 +132,25 @@ public class OpenExternalAntDocHandler extends AbstractHandler {
 
 	private URL getBaseLocation() throws MalformedURLException {
 		IPreferenceStore prefs = AntUIPlugin.getDefault().getPreferenceStore();
-		String base= prefs.getString(IAntUIPreferenceConstants.DOCUMENTATION_URL);
+		String base = prefs.getString(IAntUIPreferenceConstants.DOCUMENTATION_URL);
 		return new URL(base);
 	}
-	
+
 	private String getTaskTypePart(AntTaskNode node) {
-		AntProjectNode projectNode= node.getProjectNode();
-    	if (projectNode != null) {
-    		Project antProject= projectNode.getProject();
-    		AntTypeDefinition definition= ComponentHelper.getComponentHelper(antProject).getDefinition(node.getTask().getTaskName());
-    		if (definition == null) {
-    			return null;
-    		}
-    		String className= definition.getClassName();
-    		if (className.indexOf("taskdef") != -1) { //$NON-NLS-1$
-    		    return "Tasks"; //$NON-NLS-1$
-    		} 
-    		return "Types"; //$NON-NLS-1$
-    	}
-    	
-        return null;
-    }
+		AntProjectNode projectNode = node.getProjectNode();
+		if (projectNode != null) {
+			Project antProject = projectNode.getProject();
+			AntTypeDefinition definition = ComponentHelper.getComponentHelper(antProject).getDefinition(node.getTask().getTaskName());
+			if (definition == null) {
+				return null;
+			}
+			String className = definition.getClassName();
+			if (className.indexOf("taskdef") != -1) { //$NON-NLS-1$
+				return "Tasks"; //$NON-NLS-1$
+			}
+			return "Types"; //$NON-NLS-1$
+		}
+
+		return null;
+	}
 }

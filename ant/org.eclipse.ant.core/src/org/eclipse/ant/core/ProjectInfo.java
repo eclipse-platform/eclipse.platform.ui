@@ -12,10 +12,9 @@ package org.eclipse.ant.core;
 
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 
-
 /**
- * Represents information about a project within an Ant build file.
- * Clients may not instantiate or subclass this class.
+ * Represents information about a project within an Ant build file. Clients may not instantiate or subclass this class.
+ * 
  * @since 2.1
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
@@ -28,9 +27,10 @@ public class ProjectInfo {
 	/**
 	 * Create a project information
 	 * 
-	 * @param name project name
-	 * @param description a brief explanation of the project's purpose or
-	 * <code>null</code> if not specified
+	 * @param name
+	 *            project name
+	 * @param description
+	 *            a brief explanation of the project's purpose or <code>null</code> if not specified
 	 * @since 3.3
 	 */
 	public ProjectInfo(String name, String description) {
@@ -48,8 +48,7 @@ public class ProjectInfo {
 	}
 
 	/**
-	 * Returns the project description or <code>null</code> if no
-	 * description is provided.
+	 * Returns the project description or <code>null</code> if no description is provided.
 	 * 
 	 * @return the project description or <code>null</code> if none
 	 */

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.core.ant;
 
-
 import java.text.MessageFormat; // can't use ICU in ant
 
 import org.apache.tools.ant.BuildException;
@@ -19,8 +18,8 @@ import org.apache.tools.ant.input.DefaultInputHandler;
 import org.apache.tools.ant.input.InputHandler;
 
 /**
- * This class exists so that the Ant integration has backwards compatibility
- * with Ant releases previous to 1.5. InputHandlers are a new feature of Ant 1.5.
+ * This class exists so that the Ant integration has backwards compatibility with Ant releases previous to 1.5. InputHandlers are a new feature of Ant
+ * 1.5.
  */
 class InputHandlerSetter {
 
@@ -30,12 +29,15 @@ class InputHandlerSetter {
 			handler = new DefaultInputHandler();
 		} else {
 			try {
-				handler = (InputHandler)(Class.forName(inputHandlerClassname).newInstance());
-			} catch (ClassCastException e) {
-				String msg = MessageFormat.format(InternalAntMessages.InternalAntRunner_handler_does_not_implement_InputHandler5, new Object[]{inputHandlerClassname});
+				handler = (InputHandler) (Class.forName(inputHandlerClassname).newInstance());
+			}
+			catch (ClassCastException e) {
+				String msg = MessageFormat.format(InternalAntMessages.InternalAntRunner_handler_does_not_implement_InputHandler5, new Object[] { inputHandlerClassname });
 				throw new BuildException(msg, e);
-			} catch (Exception e) {
-				String msg = MessageFormat.format(InternalAntMessages.InternalAntRunner_Unable_to_instantiate_input_handler_class, new Object[]{inputHandlerClassname, e.getClass().getName()});
+			}
+			catch (Exception e) {
+				String msg = MessageFormat.format(InternalAntMessages.InternalAntRunner_Unable_to_instantiate_input_handler_class, new Object[] {
+						inputHandlerClassname, e.getClass().getName() });
 				throw new BuildException(msg, e);
 			}
 		}

@@ -43,13 +43,13 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	 * Associated process - discovered as needed to log messages
 	 */
 	private AntProcess fProcess = null;
-	
+
 	protected void logMessage(String message, BuildEvent event, int overridePriority) {
-		int priority= overridePriority;
+		int priority = overridePriority;
 		if (priority == -1) {
-			priority= event.getPriority();
-		} 
-		
+			priority = event.getPriority();
+		}
+
 		if (priority > getMessageOutputLevel()) {
 			return;
 		}
@@ -57,9 +57,9 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		if (antProcess == null) {
 			return;
 		}
-		
-		StringBuffer fullMessage= new StringBuffer();
-		 if (!loggingToLogFile()) {
+
+		StringBuffer fullMessage = new StringBuffer();
+		if (!loggingToLogFile()) {
 			fullMessage.append(System.getProperty("line.separator")); //$NON-NLS-1$
 		}
 		if (event.getException() == null && event.getTask() != null && !fEmacsMode) {
@@ -67,8 +67,8 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		} else {
 			fullMessage.append(message);
 		}
-		message= fullMessage.toString();
-		
+		message = fullMessage.toString();
+
 		if (loggingToLogFile()) {
 			logMessageToLogFile(message, priority);
 		} else {
@@ -78,11 +78,13 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	}
 
 	/**
-	 * Builds a right justified task prefix for the given build event, placing it
-	 * in the given string buffer. Creates the hyperlinks for the task prefix. 
-	 *  
-	 * @param event build event
-	 * @param fullMessage buffer to place task prefix in
+	 * Builds a right justified task prefix for the given build event, placing it in the given string buffer. Creates the hyperlinks for the task
+	 * prefix.
+	 * 
+	 * @param event
+	 *            build event
+	 * @param fullMessage
+	 *            buffer to place task prefix in
 	 */
 	private void adornMessage(BuildEvent event, StringBuffer fullMessage) {
 		String name = event.getTask().getTaskName();
@@ -90,18 +92,18 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			name = "null"; //$NON-NLS-1$
 		}
 		Location location = event.getTask().getLocation();
-		StringBuffer column= new StringBuffer();
+		StringBuffer column = new StringBuffer();
 		int size = AntLaunching.LEFT_COLUMN_SIZE - (name.length() + 3);
 		for (int i = 0; i < size; i++) {
 			column.append(' ');
 		}
-		StringBuffer labelBuff= new StringBuffer();
+		StringBuffer labelBuff = new StringBuffer();
 		labelBuff.append('[');
 		labelBuff.append(name);
 		labelBuff.append("] "); //$NON-NLS-1$
-		
+
 		int offset = Math.max(size, 0) + 1;
-		String label= labelBuff.toString();
+		String label = labelBuff.toString();
 		if (event.getMessage() == null) {
 			return;
 		}
@@ -117,48 +119,49 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 				appendAndLink(fullMessage, location, label, offset, line);
 				line = r.readLine();
 			}
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			if (event.getMessage() != null) {
 				fullMessage.append(label).append(event.getMessage());
 			}
 		}
 	}
-	
+
 	private void appendAndLink(StringBuffer fullMessage, Location location, String label, int offset, String line) {
 		fullMessage.append(label);
 		fullMessage.append(line);
 		if (location != null) {
-			String newLine= (label + line).trim();
-			IRegion region= new Region(offset, label.length() - 3); // only
+			String newLine = (label + line).trim();
+			IRegion region = new Region(offset, label.length() - 3); // only
 			// want
 			// the
 			// name
 			// length
 			// "[name] "
 			AntProcess antProcess = getAntProcess(fProcessId);
-			AntLaunch antLaunch = (AntLaunch)antProcess.getLaunch();
+			AntLaunch antLaunch = (AntLaunch) antProcess.getLaunch();
 			antLaunch.addLinkDescriptor(newLine, location.getFileName(), location.getLineNumber(), region.getOffset(), region.getLength());
 		}
 	}
 
 	private AntStreamMonitor getMonitor(int priority) {
-		AntStreamsProxy proxy = (AntStreamsProxy)fProcess.getStreamsProxy();
+		AntStreamsProxy proxy = (AntStreamsProxy) fProcess.getStreamsProxy();
 		AntStreamMonitor monitor = null;
 		switch (priority) {
 			case Project.MSG_INFO:
-				monitor = (AntStreamMonitor)proxy.getOutputStreamMonitor();
+				monitor = (AntStreamMonitor) proxy.getOutputStreamMonitor();
 				break;
 			case Project.MSG_ERR:
-				monitor = (AntStreamMonitor)proxy.getErrorStreamMonitor();
+				monitor = (AntStreamMonitor) proxy.getErrorStreamMonitor();
 				break;
 			case Project.MSG_DEBUG:
-				monitor = (AntStreamMonitor)proxy.getDebugStreamMonitor();
+				monitor = (AntStreamMonitor) proxy.getDebugStreamMonitor();
 				break;
 			case Project.MSG_WARN:
-				monitor = (AntStreamMonitor)proxy.getWarningStreamMonitor();
+				monitor = (AntStreamMonitor) proxy.getWarningStreamMonitor();
 				break;
 			case Project.MSG_VERBOSE:
-				monitor = (AntStreamMonitor)proxy.getVerboseStreamMonitor();
+				monitor = (AntStreamMonitor) proxy.getVerboseStreamMonitor();
 				break;
 			default:
 				break;
@@ -173,10 +176,9 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			getOutputPrintStream().println(message);
 		}
 	}
-	
+
 	/**
-	 * Returns the associated Ant process, finding it if necessary, if not
-	 * already found.
+	 * Returns the associated Ant process, finding it if necessary, if not already found.
 	 */
 	protected AntProcess getAntProcess(String processId) {
 		if (fProcess == null && processId != null) {
@@ -184,7 +186,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			for (int i = 0; i < all.length; i++) {
 				IProcess process = all[i];
 				if (process instanceof AntProcess && processId.equals(process.getAttribute(AbstractEclipseBuildLogger.ANT_PROCESS_ID))) {
-					fProcess = (AntProcess)process;
+					fProcess = (AntProcess) process;
 					break;
 				}
 			}
@@ -192,85 +194,90 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		return fProcess;
 	}
 
-	/* (non-Javadoc)
-	 * Set the start time.
+	/*
+	 * (non-Javadoc) Set the start time.
 	 * 
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	@Override
 	public void buildStarted(BuildEvent event) {
-		fStartTime= System.currentTimeMillis();
+		fStartTime = System.currentTimeMillis();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	@Override
 	public void buildFinished(BuildEvent event) {
-        String message= handleException(event);
-        if (message != null) {
-        	try {
-    			BufferedReader r = new BufferedReader(new StringReader(message));
-    			String line = r.readLine();
-    			logMessage(line, event, Project.MSG_ERR);
-    			line = r.readLine();
-    			AntProcess antProcess = getAntProcess(fProcessId);
-    			while (line != null) {
-    				logMessage(line, event, Project.MSG_ERR);
-    				if (!message.startsWith("Total time:")) { //$NON-NLS-1$
+		String message = handleException(event);
+		if (message != null) {
+			try {
+				BufferedReader r = new BufferedReader(new StringReader(message));
+				String line = r.readLine();
+				logMessage(line, event, Project.MSG_ERR);
+				line = r.readLine();
+				AntProcess antProcess = getAntProcess(fProcessId);
+				while (line != null) {
+					logMessage(line, event, Project.MSG_ERR);
+					if (!message.startsWith("Total time:")) { //$NON-NLS-1$
 						AntLaunchingUtil.linkBuildFailedMessage(line, antProcess);
-    				}
-    				line = r.readLine();
-    			}
-    			logMessage(IAntCoreConstants.EMPTY_STRING, event, Project.MSG_ERR);
-    		} catch (IOException e) {
-    			//do nothing 
-    		}
-        }
-		fHandledException= null;
+					}
+					line = r.readLine();
+				}
+				logMessage(IAntCoreConstants.EMPTY_STRING, event, Project.MSG_ERR);
+			}
+			catch (IOException e) {
+				// do nothing
+			}
+		}
+		fHandledException = null;
 		if (!(event.getException() instanceof OperationCanceledException)) {
 			logMessage(getTimeString(System.currentTimeMillis() - fStartTime), event, fMessageOutputLevel);
 		}
-		fProcess= null;
+		fProcess = null;
 		event.getProject().removeBuildListener(this);
 	}
-	
+
 	private String getTimeString(long milliseconds) {
-			long seconds = milliseconds / 1000;
-			long minutes = seconds / 60;
-			seconds= seconds % 60;
-		
-			StringBuffer result= new StringBuffer(RuntimeMessages.AntProcessBuildLogger_Total_time);
-			if (minutes > 0) {
-				result.append(minutes);
-				if (minutes > 1) {
-					result.append(RuntimeMessages.AntProcessBuildLogger__minutes_2);
-				} else {
-					result.append(RuntimeMessages.AntProcessBuildLogger__minute_3);
-				}
+		long seconds = milliseconds / 1000;
+		long minutes = seconds / 60;
+		seconds = seconds % 60;
+
+		StringBuffer result = new StringBuffer(RuntimeMessages.AntProcessBuildLogger_Total_time);
+		if (minutes > 0) {
+			result.append(minutes);
+			if (minutes > 1) {
+				result.append(RuntimeMessages.AntProcessBuildLogger__minutes_2);
+			} else {
+				result.append(RuntimeMessages.AntProcessBuildLogger__minute_3);
 			}
-			if (seconds > 0) {
-				if (minutes > 0) {
-					result.append(' ');
-				}
-				result.append(seconds);
-			
-				if (seconds > 1) {
-					result.append(RuntimeMessages.AntProcessBuildLogger__seconds_4);
-				} else {
-					result.append(RuntimeMessages.AntProcessBuildLogger__second_5);
-				} 
-			}
-			if (seconds == 0 && minutes == 0) {
-				result.append(milliseconds);
-				result.append(RuntimeMessages.AntProcessBuildLogger__milliseconds_6);
-			}
-			
-			result.append(System.getProperty("line.separator")); //$NON-NLS-1$
-			return result.toString();
 		}
-	
-	/* (non-Javadoc)
+		if (seconds > 0) {
+			if (minutes > 0) {
+				result.append(' ');
+			}
+			result.append(seconds);
+
+			if (seconds > 1) {
+				result.append(RuntimeMessages.AntProcessBuildLogger__seconds_4);
+			} else {
+				result.append(RuntimeMessages.AntProcessBuildLogger__second_5);
+			}
+		}
+		if (seconds == 0 && minutes == 0) {
+			result.append(milliseconds);
+			result.append(RuntimeMessages.AntProcessBuildLogger__milliseconds_6);
+		}
+
+		result.append(System.getProperty("line.separator")); //$NON-NLS-1$
+		return result.toString();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
 	 */
 	@Override
@@ -283,7 +290,9 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	@Override
@@ -291,24 +300,24 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		if (Project.MSG_INFO > getMessageOutputLevel()) {
 			return;
 		}
-		Target target= event.getTarget();
-		StringBuffer msg= new StringBuffer(System.getProperty("line.separator")); //$NON-NLS-1$
-		String targetName= target.getName();
+		Target target = event.getTarget();
+		StringBuffer msg = new StringBuffer(System.getProperty("line.separator")); //$NON-NLS-1$
+		String targetName = target.getName();
 		msg.append(targetName);
 		msg.append(':');
-		String message= msg.toString();
-		Location location= AntDebugState.getLocation(target);
+		String message = msg.toString();
+		Location location = AntDebugState.getLocation(target);
 		if (location != null && location != Location.UNKNOWN_LOCATION) {
 			IRegion region = new Region(0, targetName.length());
 			AntProcess antProcess = getAntProcess(fProcessId);
-			AntLaunch antLaunch = (AntLaunch)antProcess.getLaunch();
+			AntLaunch antLaunch = (AntLaunch) antProcess.getLaunch();
 			antLaunch.addLinkDescriptor(message, location.getFileName(), location.getLineNumber(), region.getOffset(), region.getLength());
 		}
 		logMessage(message, event, Project.MSG_INFO);
 	}
-	
+
 	private boolean loggingToLogFile() {
-		//check if user has designated to log to a log file
+		// check if user has designated to log to a log file
 		return getErrorPrintStream() != null && getErrorPrintStream() != System.err;
 	}
 }

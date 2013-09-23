@@ -17,8 +17,10 @@ public class MapHolder extends SortedMapFactory implements IMapHolder {
 
 	public Object[] keys;
 	public Object[] values;
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.util.IKeyHolder#getKeys()
 	 */
 	@Override
@@ -26,7 +28,9 @@ public class MapHolder extends SortedMapFactory implements IMapHolder {
 		return keys;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.util.IKeyHolder#setKeys(java.lang.Object[])
 	 */
 	@Override
@@ -34,7 +38,9 @@ public class MapHolder extends SortedMapFactory implements IMapHolder {
 		this.keys = keys;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.util.IValueHolder#getValues()
 	 */
 	@Override
@@ -42,7 +48,9 @@ public class MapHolder extends SortedMapFactory implements IMapHolder {
 		return values;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.util.IValueHolder#setValues(java.lang.Object[])
 	 */
 	@Override

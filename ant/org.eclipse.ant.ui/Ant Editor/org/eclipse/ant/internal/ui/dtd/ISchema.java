@@ -14,20 +14,21 @@ public interface ISchema {
 
 	/**
 	 * Find element by name.
-	 * @param qname Element name.
+	 * 
+	 * @param qname
+	 *            Element name.
 	 * @return element or null if no such element.
 	 */
 	IElement getElement(String qname);
-	
+
 	/**
 	 * @return IElement[] of all visible elements.
 	 */
 	IElement[] getElements();
-	
+
 	/**
-	 * @return Exception thrown by parser when schema was built or <code>null</code> if none.
-	 * Note that the exception does not necessarily mean the schema is
-	 * incomplete.
+	 * @return Exception thrown by parser when schema was built or <code>null</code> if none. Note that the exception does not necessarily mean the
+	 *         schema is incomplete.
 	 */
 	Exception getErrorException();
 }

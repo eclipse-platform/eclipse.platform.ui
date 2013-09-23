@@ -23,7 +23,9 @@ import org.eclipse.jdt.launching.StandardClasspathProvider;
 
 public class AntClasspathProvider extends StandardClasspathProvider {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#computeUnresolvedClasspath(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	@Override
@@ -34,12 +36,12 @@ public class AntClasspathProvider extends StandardClasspathProvider {
 			IRuntimeClasspathEntry jreEntry = null;
 			try {
 				jreEntry = JavaRuntime.computeJREEntry(configuration);
-			} catch (CoreException e) {
+			}
+			catch (CoreException e) {
 				// not a java project
 			}
 			if (jreEntry == null) {
-				jreEntry = JavaRuntime.newRuntimeContainerClasspathEntry(
-						JavaRuntime.newDefaultJREContainerPath(), IRuntimeClasspathEntry.STANDARD_CLASSES);
+				jreEntry = JavaRuntime.newRuntimeContainerClasspathEntry(JavaRuntime.newDefaultJREContainerPath(), IRuntimeClasspathEntry.STANDARD_CLASSES);
 			}
 			rtes.add(jreEntry);
 			rtes.add(new AntHomeClasspathEntry());

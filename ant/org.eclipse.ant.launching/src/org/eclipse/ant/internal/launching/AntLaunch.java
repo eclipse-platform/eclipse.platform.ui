@@ -29,7 +29,7 @@ public class AntLaunch extends Launch {
 	}
 
 	public void addLinkDescriptor(String line, String fileName, int lineNumber, int offset, int length) {
-		if (fileName!= null && fileName.trim().length() > 0) {
+		if (fileName != null && fileName.trim().length() > 0) {
 			synchronized (linkDescriptors) {
 				linkDescriptors.add(new LinkDescriptor(line, fileName, lineNumber, offset, length));
 			}

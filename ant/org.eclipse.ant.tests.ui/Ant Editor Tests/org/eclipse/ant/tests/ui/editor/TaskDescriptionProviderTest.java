@@ -25,41 +25,41 @@ import org.eclipse.ant.internal.ui.editor.TaskDescriptionProvider;
  */
 public class TaskDescriptionProviderTest extends AbstractAntUITest {
 
-    public TaskDescriptionProviderTest(String name) {
-        super(name);
-    }
+	public TaskDescriptionProviderTest(String name) {
+		super(name);
+	}
 
-    /** 
-     * Tests getting the description of a task.
-     */
-    public void testGettingTaskDescription() {
-        TaskDescriptionProvider provider = TaskDescriptionProvider.getDefault();
-        String description = provider.getDescriptionForTask("apply"); //$NON-NLS-1$
-        assertNotNull(description);
-        assertTrue(description.length() > 0);
-    }
+	/**
+	 * Tests getting the description of a task.
+	 */
+	public void testGettingTaskDescription() {
+		TaskDescriptionProvider provider = TaskDescriptionProvider.getDefault();
+		String description = provider.getDescriptionForTask("apply"); //$NON-NLS-1$
+		assertNotNull(description);
+		assertTrue(description.length() > 0);
+	}
 
-    /**
-     * Tests getting the description of an attribute.
-     */
-    public void testGettingAttribute() {
-        TaskDescriptionProvider provider = TaskDescriptionProvider.getDefault();
-        String description = provider.getDescriptionForTaskAttribute("apply", "executable"); //$NON-NLS-1$ //$NON-NLS-2$
-        assertNotNull(description);
-        assertTrue(description.length() > 0);
-    }
-    
-    /**
-     * Tests getting the required value of an attribute.
-     */
-    public void testGettingRequired() {
-        TaskDescriptionProvider provider = TaskDescriptionProvider.getDefault();
-        String required = provider.getRequiredAttributeForTaskAttribute("apply", "executable"); //$NON-NLS-1$ //$NON-NLS-2$
-        assertNotNull(required);
-        assertEquals("yes", required); //$NON-NLS-1$
-    }
+	/**
+	 * Tests getting the description of an attribute.
+	 */
+	public void testGettingAttribute() {
+		TaskDescriptionProvider provider = TaskDescriptionProvider.getDefault();
+		String description = provider.getDescriptionForTaskAttribute("apply", "executable"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull(description);
+		assertTrue(description.length() > 0);
+	}
 
-    public static Test suite() {
+	/**
+	 * Tests getting the required value of an attribute.
+	 */
+	public void testGettingRequired() {
+		TaskDescriptionProvider provider = TaskDescriptionProvider.getDefault();
+		String required = provider.getRequiredAttributeForTaskAttribute("apply", "executable"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull(required);
+		assertEquals("yes", required); //$NON-NLS-1$
+	}
+
+	public static Test suite() {
 		return new TestSuite(TaskDescriptionProviderTest.class);
-    }
+	}
 }

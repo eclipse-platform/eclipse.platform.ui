@@ -12,10 +12,9 @@ package org.eclipse.ant.core;
 
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 
-
 /**
- * Represents information about a target within an Ant build file.
- * Clients may not instantiate or subclass this class.
+ * Represents information about a target within an Ant build file. Clients may not instantiate or subclass this class.
+ * 
  * @since 2.1
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
@@ -31,12 +30,16 @@ public class TargetInfo {
 	/**
 	 * Create a target information
 	 * 
-	 * @param name target name
-	 * @param description a brief explanation of the target's purpose
-	 * 		or <code>null</code> if not specified
-	 * @param project enclosing project
-	 * @param dependencies names of prerequisite projects 
-	 * @param isDefault whether this is the build file default target 
+	 * @param name
+	 *            target name
+	 * @param description
+	 *            a brief explanation of the target's purpose or <code>null</code> if not specified
+	 * @param project
+	 *            enclosing project
+	 * @param dependencies
+	 *            names of prerequisite projects
+	 * @param isDefault
+	 *            whether this is the build file default target
 	 * @since 3.3
 	 */
 	public TargetInfo(ProjectInfo project, String name, String description, String[] dependencies, boolean isDefault) {
@@ -57,15 +60,14 @@ public class TargetInfo {
 	}
 
 	/**
-	 * Returns the target description or <code>null</code> if no
-	 * description is provided.
+	 * Returns the target description or <code>null</code> if no description is provided.
 	 * 
 	 * @return the target description or <code>null</code> if none
 	 */
 	public String getDescription() {
 		return description;
 	}
-	
+
 	/**
 	 * Returns the ProjectInfo of the enclosing project.
 	 * 
@@ -74,7 +76,7 @@ public class TargetInfo {
 	public ProjectInfo getProject() {
 		return project;
 	}
-	
+
 	/**
 	 * Return the names of the targets that this target depends on.
 	 * 
@@ -93,7 +95,9 @@ public class TargetInfo {
 		return isDefault;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -101,11 +105,13 @@ public class TargetInfo {
 		if (!(obj instanceof TargetInfo)) {
 			return false;
 		}
-		TargetInfo other= (TargetInfo)obj;
+		TargetInfo other = (TargetInfo) obj;
 		return getName().equals(other.getName());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -113,7 +119,9 @@ public class TargetInfo {
 		return getName().hashCode();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

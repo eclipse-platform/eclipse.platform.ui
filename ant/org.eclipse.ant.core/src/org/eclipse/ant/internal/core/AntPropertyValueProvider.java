@@ -26,7 +26,8 @@ import org.eclipse.core.runtime.FileLocator;
  * <ul>
  * <li><code>eclipse.home</code> - set to the Eclipse installation directory</li>
  * </ul>
- * * <ul>
+ * *
+ * <ul>
  * <li><code>eclipse.running</code> - set (to "true") when Eclipse is running</li>
  * </ul>
  * 
@@ -36,22 +37,24 @@ public class AntPropertyValueProvider implements IAntPropertyValueProvider {
 	/**
 	 * Returns the dynamic property values for Ant properties.
 	 * 
-	 * @param propertyName The name of the property to resolve the value for
+	 * @param propertyName
+	 *            The name of the property to resolve the value for
 	 * @return The resolved value for the property
 	 * @see org.eclipse.ant.core.IAntPropertyValueProvider#getAntPropertyValue(String)
 	 */
 	@Override
 	public String getAntPropertyValue(String propertyName) {
 		String value = null;
-		if ("eclipse.running".equals(propertyName)){ //$NON-NLS-1$
+		if ("eclipse.running".equals(propertyName)) { //$NON-NLS-1$
 			return "true"; //$NON-NLS-1$
 		} else if ("eclipse.home".equals(propertyName)) { //$NON-NLS-1$
 			try {
 				value = new File(FileLocator.resolve(new URL("platform:/base/")).getPath()).getAbsolutePath(); //$NON-NLS-1$
 				if (value.endsWith("/")) { //$NON-NLS-1$
-				    value = value.substring(0, value.length() - 1);
+					value = value.substring(0, value.length() - 1);
 				}
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				AntCorePlugin.log(e);
 			}
 		}

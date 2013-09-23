@@ -33,51 +33,54 @@ import org.w3c.dom.Element;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * A classpath entry that contains a set of archives for a particular
- * ANT_HOME.
+ * A classpath entry that contains a set of archives for a particular ANT_HOME.
  * 
- * @since 3.0 
+ * @since 3.0
  */
 @SuppressWarnings("restriction")
 public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
-	
+
 	public static final String TYPE_ID = "org.eclipse.ant.ui.classpathentry.antHome"; //$NON-NLS-1$
-	
+
 	/**
-	 * Local path on disk where Ant Home is located or <code>null</code>
-	 * to indicate the use of the default Ant Home.
+	 * Local path on disk where Ant Home is located or <code>null</code> to indicate the use of the default Ant Home.
 	 */
 	private String antHomeLocation = null;
-	
+
 	/**
 	 * Creates an AntHome entry for the default AntHome installation.
 	 */
 	public AntHomeClasspathEntry() {
 		antHomeLocation = null;
 	}
-	
+
 	/**
-	 * Constructs an AntHome entry for the Ant installed at the specified
-	 * root directory.
+	 * Constructs an AntHome entry for the Ant installed at the specified root directory.
 	 * 
-	 * @param antHome path in the local file system to an Ant installation
+	 * @param antHome
+	 *            path in the local file system to an Ant installation
 	 */
 	public AntHomeClasspathEntry(String antHome) {
 		antHomeLocation = antHome;
 	}
-		
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.internal.launching.AbstractRuntimeClasspathEntry#buildMemento(org.w3c.dom.Document, org.w3c.dom.Element)
 	 */
 	@Override
 	protected void buildMemento(Document document, Element memento) throws CoreException {
 		if (antHomeLocation == null) {
-			memento.setAttribute("default", "true");  //$NON-NLS-1$//$NON-NLS-2$
+			memento.setAttribute("default", "true"); //$NON-NLS-1$//$NON-NLS-2$
 		} else {
 			memento.setAttribute("antHome", new Path(antHomeLocation).toString()); //$NON-NLS-1$
 		}
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#initializeFrom(org.w3c.dom.Element)
 	 */
 	@Override
@@ -90,14 +93,20 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 			antHomeLocation = null;
 		}
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getTypeId()
 	 */
 	@Override
 	public String getTypeId() {
 		return TYPE_ID;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	@Override
@@ -111,7 +120,7 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 				libs.add(JavaRuntime.newStringVariableClasspathEntry(entry.getLabel()));
 			}
 		} else {
-			File lib= resolveAntHome();
+			File lib = resolveAntHome();
 			IPath libDir = new Path(antHomeLocation).append("lib"); //$NON-NLS-1$
 			String[] fileNames = lib.list();
 			for (int i = 0; i < fileNames.length; i++) {
@@ -125,30 +134,32 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 		}
 		return libs.toArray(new IRuntimeClasspathEntry[libs.size()]);
 	}
-	
+
 	public File resolveAntHome() throws CoreException {
-		if (antHomeLocation == null) { //using the default ant home
+		if (antHomeLocation == null) { // using the default ant home
 			return null;
 		}
-		IPath libDir= new Path(antHomeLocation).append("lib"); //$NON-NLS-1$
-		File lib= libDir.toFile();
-		File parentDir= lib.getParentFile();
+		IPath libDir = new Path(antHomeLocation).append("lib"); //$NON-NLS-1$
+		File lib = libDir.toFile();
+		File parentDir = lib.getParentFile();
 		if (parentDir == null || !parentDir.exists()) {
-			abort(MessageFormat.format(AntLaunchConfigurationMessages.AntHomeClasspathEntry_10, new Object[] {antHomeLocation}), null);
+			abort(MessageFormat.format(AntLaunchConfigurationMessages.AntHomeClasspathEntry_10, new Object[] { antHomeLocation }), null);
 		}
 		if (!lib.exists() || !lib.isDirectory()) {
-			abort(MessageFormat.format(AntLaunchConfigurationMessages.AntHomeClasspathEntry_11, new Object[] {antHomeLocation}), null);
+			abort(MessageFormat.format(AntLaunchConfigurationMessages.AntHomeClasspathEntry_11, new Object[] { antHomeLocation }), null);
 		}
 		return lib;
 	}
-	
+
 	@Override
 	protected void abort(String message, Throwable exception) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, AntLaunching.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, exception);
 		throw new CoreException(status);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getName()
 	 */
 	@Override
@@ -156,34 +167,39 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 		if (antHomeLocation == null) {
 			return AntLaunchConfigurationMessages.AntHomeClasspathEntry_8;
 		}
-		return MessageFormat.format(AntLaunchConfigurationMessages.AntHomeClasspathEntry_9, new Object[]{antHomeLocation});
+		return MessageFormat.format(AntLaunchConfigurationMessages.AntHomeClasspathEntry_9, new Object[] { antHomeLocation });
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getType()
 	 */
 	@Override
 	public int getType() {
 		return IRuntimeClasspathEntry.OTHER;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#isComposite()
 	 */
 	@Override
 	public boolean isComposite() {
 		return true;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof AntHomeClasspathEntry &&
-		  equalsOrNull(antHomeLocation, ((AntHomeClasspathEntry)obj).antHomeLocation);
+		return obj instanceof AntHomeClasspathEntry && equalsOrNull(antHomeLocation, ((AntHomeClasspathEntry) obj).antHomeLocation);
 	}
-	
+
 	/**
 	 * Return whether s1 is equivalent to s2.
 	 * 
@@ -194,27 +210,30 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	private boolean equalsOrNull(String s1, String s2) {
 		if (s1 == null || s2 == null) {
 			return s1 == s2;
-		} 
+		}
 		return s1.equalsIgnoreCase(s2);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		return getClass().hashCode();
-	}	
-	
+	}
+
 	/**
 	 * Sets the ant home to use.
 	 * 
-	 * @param path path to toor of an ant home installation
+	 * @param path
+	 *            path to toor of an ant home installation
 	 */
 	public void setAntHome(String path) {
 		antHomeLocation = path;
 	}
-	
+
 	/**
 	 * Returns the ant home location
 	 * 

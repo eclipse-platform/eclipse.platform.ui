@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.core;
 
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -34,10 +33,9 @@ import org.eclipse.ant.tests.core.tests.TypeTests;
  * </ol>
  */
 public class AutomatedSuite extends TestSuite {
-	
+
 	/**
-	 * Returns the suite.  This is required to
-	 * use the JUnit Launcher.
+	 * Returns the suite. This is required to use the JUnit Launcher.
 	 */
 	public static Test suite() {
 		return new AutomatedSuite();

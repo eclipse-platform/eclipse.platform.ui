@@ -14,6 +14,7 @@ import org.eclipse.ant.internal.ui.dtd.*;
 
 /**
  * Attr contains information about a single attribute.
+ * 
  * @author Bob Foster
  */
 public class Attribute extends Atom implements IAttribute {
@@ -23,72 +24,89 @@ public class Attribute extends Atom implements IAttribute {
 	private String fDefault;
 	private boolean fFixed;
 	private boolean fRequired;
-	
+
 	/**
 	 * Constructor.
-	 * @param name Attribute qname.
-	 * @param element Parent element.
+	 * 
+	 * @param name
+	 *            Attribute qname.
+	 * @param element
+	 *            Parent element.
 	 */
 	public Attribute(String name, IElement element) {
 		super(ATTRIBUTE, name);
 		fElement = element;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#getType()
 	 */
 	@Override
 	public String getType() {
 		return fType;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#getEnum()
 	 */
 	@Override
 	public String[] getEnum() {
 		return fEnum;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#getElement()
 	 */
 	@Override
 	public IElement getElement() {
 		return fElement;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#getDefault()
 	 */
 	@Override
 	public String getDefault() {
 		return fDefault;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#isFixed()
 	 */
 	@Override
 	public boolean isFixed() {
 		return fFixed;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#isRequired()
 	 */
 	@Override
 	public boolean isRequired() {
 		return fRequired;
 	}
-	
+
 	public void setType(String type) {
 		fType = type;
 	}
-	
+
 	/**
 	 * Sets the default value.
-	 * @param defaultValue Value
+	 * 
+	 * @param defaultValue
+	 *            Value
 	 */
 	public void setDefault(String defaultValue) {
 		fDefault = defaultValue;
@@ -96,7 +114,9 @@ public class Attribute extends Atom implements IAttribute {
 
 	/**
 	 * Sets the enumeration.
-	 * @param enumeration The enumeration to set
+	 * 
+	 * @param enumeration
+	 *            The enumeration to set
 	 */
 	public void setEnum(String[] enumeration) {
 		fEnum = enumeration;
@@ -104,7 +124,9 @@ public class Attribute extends Atom implements IAttribute {
 
 	/**
 	 * Sets the fixed.
-	 * @param fixed The fixed to set
+	 * 
+	 * @param fixed
+	 *            The fixed to set
 	 */
 	public void setFixed(boolean fixed) {
 		fFixed = fixed;
@@ -112,7 +134,9 @@ public class Attribute extends Atom implements IAttribute {
 
 	/**
 	 * Sets the required.
-	 * @param required The required to set
+	 * 
+	 * @param required
+	 *            The required to set
 	 */
 	public void setRequired(boolean required) {
 		fRequired = required;

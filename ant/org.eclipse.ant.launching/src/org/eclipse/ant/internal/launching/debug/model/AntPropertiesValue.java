@@ -18,38 +18,46 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
 public class AntPropertiesValue extends AntDebugElement implements IValue {
-	
-	private List<AntProperty> fProperties= new ArrayList<AntProperty>();
-	
+
+	private List<AntProperty> fProperties = new ArrayList<AntProperty>();
+
 	public AntPropertiesValue(AntDebugTarget target) {
 		super(target);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
 	 */
 	@Override
 	public String getReferenceTypeName() {
 		return ""; //$NON-NLS-1$
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
 	@Override
 	public String getValueString() {
 		return ""; //$NON-NLS-1$
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValue#isAllocated()
 	 */
 	@Override
 	public boolean isAllocated() {
 		return true;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
 	@Override
@@ -57,15 +65,17 @@ public class AntPropertiesValue extends AntDebugElement implements IValue {
 		Collections.sort(fProperties);
 		return fProperties.toArray(new IVariable[fProperties.size()]);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
 	 */
 	@Override
 	public boolean hasVariables() {
 		return true;
 	}
-	
+
 	protected void addProperties(List<AntProperty> properties) {
 		fProperties.addAll(properties);
 	}

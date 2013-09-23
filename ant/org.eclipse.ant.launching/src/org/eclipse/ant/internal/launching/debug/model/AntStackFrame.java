@@ -23,286 +23,335 @@ import org.eclipse.debug.core.model.IVariable;
  * Ant stack frame.
  */
 public class AntStackFrame extends AntDebugElement implements IStackFrame {
-	
+
 	private AntThread fThread;
 	private String fName;
 	private int fLineNumber;
 	private String fFilePath;
 	private int fId;
-    private String fFullPath;
-	
+	private String fFullPath;
+
 	/**
 	 * Constructs a stack frame in the given thread with the given id.
 	 * 
 	 * @param antThread
-	 * @param id stack frame id (0 is the top of the stack)
+	 * @param id
+	 *            stack frame id (0 is the top of the stack)
 	 */
 	public AntStackFrame(AntThread antThread, int id, String name, String fullPath, int lineNumber) {
 		super((AntDebugTarget) antThread.getDebugTarget());
 		fId = id;
 		fThread = antThread;
-		fLineNumber= lineNumber;
-		fName= name;
+		fLineNumber = lineNumber;
+		fName = name;
 		setFilePath(fullPath);
 	}
-	
+
 	public void setId(int id) {
-		fId= id;
+		fId = id;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getThread()
 	 */
 	@Override
 	public IThread getThread() {
 		return fThread;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getVariables()
 	 */
 	@Override
 	public IVariable[] getVariables() throws DebugException {
-	   return fThread.getVariables();
+		return fThread.getVariables();
 	}
 
-    /* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#hasVariables()
 	 */
 	@Override
 	public boolean hasVariables() {
 		return isSuspended();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getLineNumber()
 	 */
 	@Override
 	public int getLineNumber() {
 		return fLineNumber;
 	}
-	
+
 	public void setLineNumber(int lineNumber) {
-		fLineNumber= lineNumber;
+		fLineNumber = lineNumber;
 	}
-	
+
 	public void setFilePath(String fullPath) {
-        fFullPath= fullPath;
-        IFile file= AntLaunchingUtil.getFileForLocation(fullPath, null);
-        if (file != null) {
-            fFilePath= file.getProjectRelativePath().toString();
-        } else {
-            fFilePath= new Path(fullPath).lastSegment();
-        }
+		fFullPath = fullPath;
+		IFile file = AntLaunchingUtil.getFileForLocation(fullPath, null);
+		if (file != null) {
+			fFilePath = file.getProjectRelativePath().toString();
+		} else {
+			fFilePath = new Path(fullPath).lastSegment();
+		}
 	}
-	
+
 	public String getFilePath() {
 		return fFullPath;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getCharStart()
 	 */
 	@Override
 	public int getCharStart() {
 		return -1;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getCharEnd()
 	 */
 	@Override
 	public int getCharEnd() {
 		return -1;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getName()
 	 */
 	@Override
 	public String getName() {
 		return fName;
 	}
-	
+
 	public void setName(String name) {
-		fName= name;
+		fName = name;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getRegisterGroups()
 	 */
 	@Override
 	public IRegisterGroup[] getRegisterGroups() {
 		return null;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#hasRegisterGroups()
 	 */
 	@Override
 	public boolean hasRegisterGroups() {
 		return false;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStep#canStepInto()
 	 */
 	@Override
 	public boolean canStepInto() {
 		return getThread().canStepInto();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStep#canStepOver()
 	 */
 	@Override
 	public boolean canStepOver() {
 		return getThread().canStepOver();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStep#canStepReturn()
 	 */
 	@Override
 	public boolean canStepReturn() {
 		return getThread().canStepReturn();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStep#isStepping()
 	 */
 	@Override
 	public boolean isStepping() {
 		return getThread().isStepping();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStep#stepInto()
 	 */
 	@Override
 	public void stepInto() throws DebugException {
 		getThread().stepInto();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStep#stepOver()
 	 */
 	@Override
 	public void stepOver() throws DebugException {
 		getThread().stepOver();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStep#stepReturn()
 	 */
 	@Override
 	public void stepReturn() throws DebugException {
 		getThread().stepReturn();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
 	 */
 	@Override
 	public boolean canResume() {
 		return getThread().canResume();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
 	 */
 	@Override
 	public boolean canSuspend() {
 		return getThread().canSuspend();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
 	 */
 	@Override
 	public boolean isSuspended() {
 		return getThread().isSuspended();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
 	@Override
 	public void resume() throws DebugException {
 		getThread().resume();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
 	@Override
 	public void suspend() throws DebugException {
 		getThread().suspend();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
 	@Override
 	public boolean canTerminate() {
 		return getThread().canTerminate();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
 	@Override
 	public boolean isTerminated() {
 		return getThread().isTerminated();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
 	@Override
 	public void terminate() throws DebugException {
 		getThread().terminate();
 	}
-	
+
 	/**
-	 * Returns the name of the buildfile this stack frame is associated
-	 * with.
+	 * Returns the name of the buildfile this stack frame is associated with.
 	 * 
-	 * @return the name of the buildfile this stack frame is associated
-	 * with
+	 * @return the name of the buildfile this stack frame is associated with
 	 */
 	public String getSourceName() {
 		return fFilePath;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof AntStackFrame) {
-			AntStackFrame sf = (AntStackFrame)obj;
+			AntStackFrame sf = (AntStackFrame) obj;
 			if (getSourceName() != null) {
-				return getSourceName().equals(sf.getSourceName()) &&
-					sf.getLineNumber() == getLineNumber() &&
-					sf.fId == fId;
-			} 
+				return getSourceName().equals(sf.getSourceName()) && sf.getLineNumber() == getLineNumber() && sf.fId == fId;
+			}
 			return sf.fId == fId;
 		}
 		return false;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
-	    if (getSourceName() == null) {
-	        return fId;
-	    }
-	    return getSourceName().hashCode() + fId;
+		if (getSourceName() == null) {
+			return fId;
+		}
+		return getSourceName().hashCode() + fId;
 	}
-	
+
 	/**
 	 * Returns this stack frame's unique identifier within its thread
 	 * 
@@ -311,31 +360,32 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	protected int getIdentifier() {
 		return fId;
 	}
-    
-    /**
-     * Returns the system, user or runtime property
-     * name, or <code>null</code> if unable to resolve a property with the name.
-     *
-     * @param propertyName the name of the variable to search for
-     * @return a property, or <code>null</code> if none
-     */
-    public AntProperty findProperty(String propertyName) {
-        try {
-            IVariable[] groups= getVariables();
-            for (int i = 0; i < groups.length; i++) {
-                AntProperties propertiesGrouping = (AntProperties) groups[i];
-                AntPropertiesValue value= (AntPropertiesValue) propertiesGrouping.getValue();
-                IVariable[] properties= value.getVariables();
-                for (int j = 0; j < properties.length; j++) {
-                    AntProperty property = (AntProperty) properties[j];
-                    if (property.getName().equals(propertyName)) {
-                        return property;
-                    }
-                }
-            }
-        } catch (DebugException e) {
-        	//do nothing
-        }
-        return null;
-    } 
+
+	/**
+	 * Returns the system, user or runtime property name, or <code>null</code> if unable to resolve a property with the name.
+	 * 
+	 * @param propertyName
+	 *            the name of the variable to search for
+	 * @return a property, or <code>null</code> if none
+	 */
+	public AntProperty findProperty(String propertyName) {
+		try {
+			IVariable[] groups = getVariables();
+			for (int i = 0; i < groups.length; i++) {
+				AntProperties propertiesGrouping = (AntProperties) groups[i];
+				AntPropertiesValue value = (AntPropertiesValue) propertiesGrouping.getValue();
+				IVariable[] properties = value.getVariables();
+				for (int j = 0; j < properties.length; j++) {
+					AntProperty property = (AntProperty) properties[j];
+					if (property.getName().equals(propertyName)) {
+						return property;
+					}
+				}
+			}
+		}
+		catch (DebugException e) {
+			// do nothing
+		}
+		return null;
+	}
 }

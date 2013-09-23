@@ -17,17 +17,18 @@ import org.eclipse.ant.internal.ui.model.LocationProvider;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-
 public class TestLocationProvider extends LocationProvider {
 
 	private File buildFile;
-	
+
 	public TestLocationProvider(File buildFile) {
 		super(null);
-		this.buildFile= buildFile;
+		this.buildFile = buildFile;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.editor.outline.ILocationProvider#getLocation()
 	 */
 	@Override

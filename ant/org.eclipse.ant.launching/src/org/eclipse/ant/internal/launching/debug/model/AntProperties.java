@@ -15,41 +15,46 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
 public class AntProperties extends AntDebugElement implements IVariable {
-	
+
 	private IValue fValue;
 	private String fName;
-    private boolean fValid= true;
+	private boolean fValid = true;
 
 	public AntProperties(AntDebugTarget target, String name) {
 		super(target);
-		fName= name;
+		fName = name;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
 	@Override
 	public synchronized IValue getValue() throws DebugException {
-        int attempts= 0;
-        while (!fValid && !getDebugTarget().isTerminated()) {
-            try {
-                wait(50);
-            } catch (InterruptedException e) {
-            	//do nothing
-            }
-            if (attempts == 20 && !fValid && !getDebugTarget().isTerminated()) {
-                throwDebugException(DebugModelMessages.AntProperties_1);
-            }
-            attempts++;
-        }
- 		return fValue;
+		int attempts = 0;
+		while (!fValid && !getDebugTarget().isTerminated()) {
+			try {
+				wait(50);
+			}
+			catch (InterruptedException e) {
+				// do nothing
+			}
+			if (attempts == 20 && !fValid && !getDebugTarget().isTerminated()) {
+				throwDebugException(DebugModelMessages.AntProperties_1);
+			}
+			attempts++;
+		}
+		return fValue;
 	}
-    
-    public IValue getLastValue() {
-        return fValue;
-    }
 
-	/* (non-Javadoc)
+	public IValue getLastValue() {
+		return fValue;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IVariable#getName()
 	 */
 	@Override
@@ -57,7 +62,9 @@ public class AntProperties extends AntDebugElement implements IVariable {
 		return fName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
 	 */
 	@Override
@@ -65,7 +72,9 @@ public class AntProperties extends AntDebugElement implements IVariable {
 		return ""; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
 	 */
 	@Override
@@ -73,23 +82,29 @@ public class AntProperties extends AntDebugElement implements IVariable {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
 	 */
 	@Override
 	public void setValue(String expression) {
-		//do nothing
+		// do nothing
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(org.eclipse.debug.core.model.IValue)
 	 */
 	@Override
 	public void setValue(IValue value) {
-		fValue= value;
+		fValue = value;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValueModification#supportsValueModification()
 	 */
 	@Override
@@ -97,7 +112,9 @@ public class AntProperties extends AntDebugElement implements IVariable {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang.String)
 	 */
 	@Override
@@ -105,7 +122,9 @@ public class AntProperties extends AntDebugElement implements IVariable {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(org.eclipse.debug.core.model.IValue)
 	 */
 	@Override
@@ -113,8 +132,8 @@ public class AntProperties extends AntDebugElement implements IVariable {
 		return false;
 	}
 
-    public synchronized void setValid(boolean valid) {
-        fValid= valid;        
-        notifyAll();
-    }
+	public synchronized void setValid(boolean valid) {
+		fValid = valid;
+		notifyAll();
+	}
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.views.actions;
 
-
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
@@ -22,15 +21,15 @@ import org.eclipse.ui.texteditor.IUpdate;
 
 public class RemoveAllAction extends Action implements IUpdate {
 	private AntView view;
-	
+
 	public RemoveAllAction(AntView view) {
 		super(AntViewActionMessages.RemoveAllAction_Remove_All, AntUIImages.getImageDescriptor(IAntUIConstants.IMG_REMOVE_ALL));
 		setDescription(AntViewActionMessages.RemoveAllAction_Remove_All);
 		setToolTipText(AntViewActionMessages.RemoveAllAction_Remove_All);
-		this.view= view;
+		this.view = view;
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAntUIHelpContextIds.REMOVE_ALL_ACTION);
 	}
-	
+
 	@Override
 	public void run() {
 		boolean proceed = MessageDialog.openQuestion(view.getViewSite().getShell(), AntViewActionMessages.RemoveAllAction_0, AntViewActionMessages.RemoveAllAction_1);
@@ -39,7 +38,9 @@ public class RemoveAllAction extends Action implements IUpdate {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	@Override

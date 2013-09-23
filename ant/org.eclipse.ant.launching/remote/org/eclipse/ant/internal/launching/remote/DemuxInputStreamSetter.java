@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.launching.remote;
 
-
 import org.apache.tools.ant.DemuxInputStream;
 import org.apache.tools.ant.Project;
 
 /**
- * This class exists so that the Ant integration has backwards compatibility
- * with Ant releases previous to 1.6. DemuxInputStream is a new class to Ant 1.6.
+ * This class exists so that the Ant integration has backwards compatibility with Ant releases previous to 1.6. DemuxInputStream is a new class to Ant
+ * 1.6.
  */
 class DemuxInputStreamSetter {
 

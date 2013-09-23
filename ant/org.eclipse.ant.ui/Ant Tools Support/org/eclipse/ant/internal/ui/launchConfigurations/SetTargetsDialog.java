@@ -23,67 +23,73 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 public class SetTargetsDialog extends Dialog {
-	
-    private static String DIALOG_SETTINGS_SECTION = "SetTargetsDialogSettings"; //$NON-NLS-1$
-    
+
+	private static String DIALOG_SETTINGS_SECTION = "SetTargetsDialogSettings"; //$NON-NLS-1$
+
 	private ILaunchConfigurationWorkingCopy fConfiguration;
 	private AntTargetsTab fTargetsTab;
-	
+
 	public SetTargetsDialog(Shell parentShell, ILaunchConfigurationWorkingCopy config) {
 		super(parentShell);
 		setShellStyle(SWT.RESIZE | getShellStyle());
-		fConfiguration= config;
+		fConfiguration = config;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		
+
 		getShell().setText(AntLaunchConfigurationMessages.SetTargetsDialog_0);
-		Composite composite = (Composite)super.createDialogArea(parent);
-		
-		fTargetsTab= new AntTargetsTab();
+		Composite composite = (Composite) super.createDialogArea(parent);
+
+		fTargetsTab = new AntTargetsTab();
 		fTargetsTab.createControl(composite);
 		fTargetsTab.initializeFrom(fConfiguration);
 		applyDialogFont(composite);
 		return composite;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	@Override
 	protected void okPressed() {
 		fTargetsTab.performApply(fConfiguration);
-        
+
 		super.okPressed();
 	}
 
-    protected String getTargetsSelected() {
-		String defaultValue= null;
+	protected String getTargetsSelected() {
+		String defaultValue = null;
 		if (!fTargetsTab.isTargetSelected()) {
-			defaultValue= IAntCoreConstants.EMPTY_STRING;
+			defaultValue = IAntCoreConstants.EMPTY_STRING;
 		}
-        try {
-            return fConfiguration.getAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, defaultValue);
-        } catch (CoreException e) {
-            return defaultValue;
-        }
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-     */
-    @Override
+		try {
+			return fConfiguration.getAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, defaultValue);
+		}
+		catch (CoreException e) {
+			return defaultValue;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+	 */
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-    	 IDialogSettings settings = AntUIPlugin.getDefault().getDialogSettings();
-         IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
-         if (section == null) {
-             section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
-         } 
-         return section;
-    }
+		IDialogSettings settings = AntUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
+		if (section == null) {
+			section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
+		}
+		return section;
+	}
 }
-    

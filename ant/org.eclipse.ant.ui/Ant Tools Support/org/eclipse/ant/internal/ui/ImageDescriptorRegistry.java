@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui;
 
- 
 import java.util.HashMap;
 
 import org.eclipse.core.runtime.Assert;
@@ -23,46 +22,46 @@ import org.eclipse.swt.widgets.Display;
  */
 public class ImageDescriptorRegistry {
 
-	private HashMap<ImageDescriptor, Image> fRegistry= new HashMap<ImageDescriptor, Image>(10);
+	private HashMap<ImageDescriptor, Image> fRegistry = new HashMap<ImageDescriptor, Image>(10);
 	private Display fDisplay;
-	
+
 	/**
-	 * Creates a new image descriptor registry for the current or default display,
-	 * respectively.
+	 * Creates a new image descriptor registry for the current or default display, respectively.
 	 */
 	public ImageDescriptorRegistry() {
 		this(AntUIPlugin.getStandardDisplay());
 	}
-	
+
 	/**
-	 * Creates a new image descriptor registry for the given display. All images
-	 * managed by this registry will be disposed when the display gets disposed.
+	 * Creates a new image descriptor registry for the given display. All images managed by this registry will be disposed when the display gets
+	 * disposed.
 	 * 
-	 * @param display the display the images managed by this registry are allocated for 
+	 * @param display
+	 *            the display the images managed by this registry are allocated for
 	 */
 	public ImageDescriptorRegistry(Display display) {
-		fDisplay= display;
+		fDisplay = display;
 		Assert.isNotNull(fDisplay);
 		hookDisplay();
 	}
-	
+
 	/**
 	 * Returns the image associated with the given image descriptor.
 	 * 
-	 * @param descriptor the image descriptor for which the registry manages an image
-	 * @return the image associated with the image descriptor or <code>null</code>
-	 *  if the image descriptor can't create the requested image.
+	 * @param descriptor
+	 *            the image descriptor for which the registry manages an image
+	 * @return the image associated with the image descriptor or <code>null</code> if the image descriptor can't create the requested image.
 	 */
 	public Image get(ImageDescriptor descriptor) {
 		if (descriptor == null)
-			descriptor= ImageDescriptor.getMissingImageDescriptor();
-			
-		Image result= fRegistry.get(descriptor);
+			descriptor = ImageDescriptor.getMissingImageDescriptor();
+
+		Image result = fRegistry.get(descriptor);
 		if (result != null)
 			return result;
-	
+
 		Assert.isTrue(fDisplay == AntUIPlugin.getStandardDisplay(), AntUIModelMessages.ImageDescriptorRegistry_Allocating_image_for_wrong_display_1);
-		result= descriptor.createImage();
+		result = descriptor.createImage();
 		if (result != null)
 			fRegistry.put(descriptor, result);
 		return result;
@@ -70,21 +69,20 @@ public class ImageDescriptorRegistry {
 
 	/**
 	 * Disposes all images managed by this registry.
-	 */	
+	 */
 	public void dispose() {
 		for (Image image : fRegistry.values()) {
 			image.dispose();
 		}
 		fRegistry.clear();
 	}
-	
+
 	private void hookDisplay() {
 		fDisplay.disposeExec(new Runnable() {
 			@Override
 			public void run() {
 				dispose();
-			}	
+			}
 		});
 	}
 }
-

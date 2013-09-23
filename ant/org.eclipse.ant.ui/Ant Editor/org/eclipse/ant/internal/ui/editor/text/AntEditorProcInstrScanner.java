@@ -27,45 +27,44 @@ import org.eclipse.swt.SWT;
  */
 public class AntEditorProcInstrScanner extends AbstractAntEditorScanner {
 
-	Token fProcInstructionToken= null;
-	
-    public AntEditorProcInstrScanner() {
-		IRule[] rules =new IRule[2];
-        fProcInstructionToken =
-            new Token(createTextAttribute(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR, 
-					IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR + AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX,
-					IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR + AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX));
+	Token fProcInstructionToken = null;
 
-        //Add rule for processing instructions
-        rules[0]= new MultiLineRule("<?", "?>", fProcInstructionToken); //$NON-NLS-1$ //$NON-NLS-2$
+	public AntEditorProcInstrScanner() {
+		IRule[] rules = new IRule[2];
+		fProcInstructionToken = new Token(createTextAttribute(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR, IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR
+				+ AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX, IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR
+				+ AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX));
 
-        // Add generic whitespace rule.
-        rules[1]= new WhitespaceRule(new AntEditorWhitespaceDetector());
+		// Add rule for processing instructions
+		rules[0] = new MultiLineRule("<?", "?>", fProcInstructionToken); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setRules(rules);
-        
-        setDefaultReturnToken(new Token(createTextAttribute(IAntEditorColorConstants.TEXT_COLOR, 
-    							IAntEditorColorConstants.TEXT_COLOR + AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX,
-								IAntEditorColorConstants.TEXT_COLOR + AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)));
-    }
+		// Add generic whitespace rule.
+		rules[1] = new WhitespaceRule(new AntEditorWhitespaceDetector());
+
+		setRules(rules);
+
+		setDefaultReturnToken(new Token(createTextAttribute(IAntEditorColorConstants.TEXT_COLOR, IAntEditorColorConstants.TEXT_COLOR
+				+ AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX, IAntEditorColorConstants.TEXT_COLOR
+				+ AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)));
+	}
 
 	private Token getTokenAffected(PropertyChangeEvent event) {
-    	if (event.getProperty().startsWith(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR)) {
-    		return fProcInstructionToken;
-    	}
-    	return (Token)fDefaultReturnToken;
-    }
-    
-    public void adaptToPreferenceChange(PropertyChangeEvent event) {
-    	String property= event.getProperty();
-    	if (property.startsWith(IAntEditorColorConstants.TEXT_COLOR) || property.startsWith(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR)) {    		
-    		if (property.endsWith(AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX)) {
-	    		adaptToStyleChange(event, getTokenAffected(event), SWT.BOLD);
-	    	} else if (property.endsWith(AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)) {
-	    		adaptToStyleChange(event, getTokenAffected(event), SWT.ITALIC);
-	    	} else {
-	    		adaptToColorChange(event, getTokenAffected(event));
-	    	}
-    	}
-    }
+		if (event.getProperty().startsWith(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR)) {
+			return fProcInstructionToken;
+		}
+		return (Token) fDefaultReturnToken;
+	}
+
+	public void adaptToPreferenceChange(PropertyChangeEvent event) {
+		String property = event.getProperty();
+		if (property.startsWith(IAntEditorColorConstants.TEXT_COLOR) || property.startsWith(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR)) {
+			if (property.endsWith(AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX)) {
+				adaptToStyleChange(event, getTokenAffected(event), SWT.BOLD);
+			} else if (property.endsWith(AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)) {
+				adaptToStyleChange(event, getTokenAffected(event), SWT.ITALIC);
+			} else {
+				adaptToColorChange(event, getTokenAffected(event));
+			}
+		}
+	}
 }

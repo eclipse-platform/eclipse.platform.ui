@@ -28,69 +28,69 @@ import org.eclipse.jface.text.rules.MultiLineRule;
 
 public class TagRule extends MultiLineRule {
 
-    public TagRule(IToken token) {
-        super("<", ">", token); //$NON-NLS-1$ //$NON-NLS-2$
-    }
+	public TagRule(IToken token) {
+		super("<", ">", token); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
-    @Override
+	@Override
 	protected boolean sequenceDetected(ICharacterScanner scanner, char[] sequence, boolean eofAllowed) {
-        int c = scanner.read();
-        if (sequence[0] == '<') {
-            if (c == '?') {
-                // processing instruction - abort
-                scanner.unread();
-                return false;
-            }
-            if (c == '!') {
-                scanner.unread();
-                // comment - abort
-                return false;
-            }
-        } else if (sequence[0] == '>') {
-            scanner.unread();
-        }
+		int c = scanner.read();
+		if (sequence[0] == '<') {
+			if (c == '?') {
+				// processing instruction - abort
+				scanner.unread();
+				return false;
+			}
+			if (c == '!') {
+				scanner.unread();
+				// comment - abort
+				return false;
+			}
+		} else if (sequence[0] == '>') {
+			scanner.unread();
+		}
 
-        return super.sequenceDetected(scanner, sequence, eofAllowed);
-    }
+		return super.sequenceDetected(scanner, sequence, eofAllowed);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.text.rules.PatternRule#endSequenceDetected(org.eclipse.jface.text.rules.ICharacterScanner)
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.text.rules.PatternRule#endSequenceDetected(org.eclipse.jface.text.rules.ICharacterScanner)
+	 */
+	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
-        int c;
-        while ((c = scanner.read()) != ICharacterScanner.EOF) {
-            if (c == fEscapeCharacter) {
-                // Skip the escaped character.
-                scanner.read();
-            } else if (c == '>') {
-                endOfTagDetected(scanner);
-                return true;
-            } 
-        }
-        
-        scanner.unread();
-        return false;
-    }
+		int c;
+		while ((c = scanner.read()) != ICharacterScanner.EOF) {
+			if (c == fEscapeCharacter) {
+				// Skip the escaped character.
+				scanner.read();
+			} else if (c == '>') {
+				endOfTagDetected(scanner);
+				return true;
+			}
+		}
 
-    private void endOfTagDetected(ICharacterScanner scanner) {
-        int c;
-        int scanAhead = 0;
-        int endOfTagOffset = 0;
-        while ((c = scanner.read()) != ICharacterScanner.EOF && c != '<') {
-            scanAhead++;
-            if (c == '>') {
-            	endOfTagOffset = scanAhead;
-            }
-        }
+		scanner.unread();
+		return false;
+	}
 
-        if (c == '<') {
-            int rewind = (scanAhead - endOfTagOffset) + 1;
-            for (int i = 0; i < rewind; i++) {
-                scanner.unread();
-            }
-        }
-    }    
+	private void endOfTagDetected(ICharacterScanner scanner) {
+		int c;
+		int scanAhead = 0;
+		int endOfTagOffset = 0;
+		while ((c = scanner.read()) != ICharacterScanner.EOF && c != '<') {
+			scanAhead++;
+			if (c == '>') {
+				endOfTagOffset = scanAhead;
+			}
+		}
+
+		if (c == '<') {
+			int rewind = (scanAhead - endOfTagOffset) + 1;
+			for (int i = 0; i < rewind; i++) {
+				scanner.unread();
+			}
+		}
+	}
 }

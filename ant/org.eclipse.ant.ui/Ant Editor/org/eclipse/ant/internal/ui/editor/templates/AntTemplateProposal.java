@@ -21,31 +21,35 @@ import org.eclipse.jface.text.templates.TemplateProposal;
 import org.eclipse.swt.graphics.Image;
 
 public class AntTemplateProposal extends TemplateProposal {
-	
+
 	public AntTemplateProposal(Template template, TemplateContext context, IRegion region, Image image, int relevance) {
 		super(template, context, region, image, relevance);
 	}
-	
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate(org.eclipse.jface.text.IDocument, int, org.eclipse.jface.text.DocumentEvent)
-     */
-    @Override
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate(org.eclipse.jface.text.IDocument, int,
+	 * org.eclipse.jface.text.DocumentEvent)
+	 */
+	@Override
 	public boolean validate(IDocument document, int offset, DocumentEvent event) {
-        try {
-			int replaceOffset= getReplaceOffset();
+		try {
+			int replaceOffset = getReplaceOffset();
 			if (offset >= replaceOffset) {
-				String content= document.get(replaceOffset, offset - replaceOffset);
-                if (content.length() == 0) {
-                    return true;
-                }
+				String content = document.get(replaceOffset, offset - replaceOffset);
+				if (content.length() == 0) {
+					return true;
+				}
 				if (content.charAt(0) == '<') {
-				    content= content.substring(1);
+					content = content.substring(1);
 				}
 				return getTemplate().getName().toLowerCase().startsWith(content.toLowerCase());
 			}
-		} catch (BadLocationException e) {
+		}
+		catch (BadLocationException e) {
 			// concurrent modification - ignore
 		}
 		return false;
-    }
+	}
 }

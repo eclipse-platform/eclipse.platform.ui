@@ -19,16 +19,16 @@ import org.eclipse.debug.core.model.RuntimeProcess;
 public class RemoteAntRuntimeProcess extends RuntimeProcess {
 
 	/**
-	 * Constructs a RuntimeProcess on the given system process
-	 * with the given name, adding this process to the given
-	 * launch.
-	 * Sets the streams proxy to an AntStreamsProxy if output is captured.
+	 * Constructs a RuntimeProcess on the given system process with the given name, adding this process to the given launch. Sets the streams proxy to
+	 * an AntStreamsProxy if output is captured.
 	 */
 	public RemoteAntRuntimeProcess(ILaunch launch, Process process, String name, Map<String, String> attributes) {
 		super(launch, process, name, attributes);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.RuntimeProcess#createStreamsProxy()
 	 */
 	@Override

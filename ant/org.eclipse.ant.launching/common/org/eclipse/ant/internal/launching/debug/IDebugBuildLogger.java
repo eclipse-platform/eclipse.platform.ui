@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.launching.debug;
 
-
 public interface IDebugBuildLogger {
 
 	/**
-	 * Requests to suspend the build if the current debug state
-	 * indicates that suspension is required.
+	 * Requests to suspend the build if the current debug state indicates that suspension is required.
 	 */
-    public abstract void waitIfSuspended();
+	public abstract void waitIfSuspended();
 }

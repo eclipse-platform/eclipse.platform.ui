@@ -29,59 +29,60 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
  * Tests Ant breakpoints.
  */
 public class BreakpointTests extends AbstractAntDebugTest {
-	
+
 	public BreakpointTests(String name) {
 		super(name);
 	}
 
 	public void testDeferredBreakpoints() throws Exception {
-		deferredBreakpoints(false);		
+		deferredBreakpoints(false);
 	}
 
 	public void testDeferredBreakpointsSepVM() throws Exception {
-		deferredBreakpoints(true);		
+		deferredBreakpoints(true);
 	}
 
 	private void deferredBreakpoints(boolean sepVM) throws Exception, CoreException, DebugException {
 		String fileName = "breakpoints"; //$NON-NLS-1$
-		IFile file= getIFile(fileName + ".xml"); //$NON-NLS-1$
+		IFile file = getIFile(fileName + ".xml"); //$NON-NLS-1$
 		List<AntLineBreakpoint> bps = new ArrayList<AntLineBreakpoint>();
 		bps.add(createLineBreakpoint(5, file));
 		bps.add(createLineBreakpoint(14, file));
-		AntThread thread= null;
+		AntThread thread = null;
 		try {
-			thread= launchToBreakpoint(fileName, true, sepVM);
+			thread = launchToBreakpoint(fileName, true, sepVM);
 			assertNotNull("Breakpoint not hit within timeout period", thread); //$NON-NLS-1$
 			while (!bps.isEmpty()) {
 				IBreakpoint hit = getBreakpoint(thread);
 				assertNotNull("suspended, but not by breakpoint", hit); //$NON-NLS-1$
 				assertTrue("hit un-registered breakpoint", bps.contains(hit)); //$NON-NLS-1$
 				assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint); //$NON-NLS-1$
-				ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
+				ILineBreakpoint breakpoint = (ILineBreakpoint) hit;
 				int lineNumber = breakpoint.getLineNumber();
 				int stackLine = thread.getTopStackFrame().getLineNumber();
 				assertEquals("line numbers of breakpoint and stack frame do not match", lineNumber, stackLine); //$NON-NLS-1$
 				bps.remove(breakpoint);
 				breakpoint.delete();
 				if (!bps.isEmpty()) {
-                    if (sepVM) {
-                        waitForTarget();
-                    }
+					if (sepVM) {
+						waitForTarget();
+					}
 					thread = resume(thread);
 				}
 			}
-		} finally {
+		}
+		finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
 	}
 
 	public void testDisabledBreakpoint() throws Exception {
-        disabledBreakpoint(false);				
+		disabledBreakpoint(false);
 	}
 
 	public void testDisabledBreakpointSepVM() throws Exception {
-        disabledBreakpoint(true);				
+		disabledBreakpoint(true);
 	}
 
 	private void disabledBreakpoint(boolean separateVM) throws Exception, CoreException {
@@ -90,83 +91,86 @@ public class BreakpointTests extends AbstractAntDebugTest {
 		bp.setEnabled(false);
 		AntDebugTarget debugTarget = null;
 		try {
-			debugTarget= launchAndTerminate(fileName, separateVM);
-		} finally {
+			debugTarget = launchAndTerminate(fileName, separateVM);
+		}
+		finally {
 			terminateAndRemove(debugTarget);
 			removeAllBreakpoints();
 		}
 	}
 
 	public void testEnableDisableBreakpoint() throws Exception {
-        enableDisableBreapoint(false);				
+		enableDisableBreapoint(false);
 	}
 
 	public void testEnableDisableBreakpointSepVM() throws Exception {
-        enableDisableBreapoint(true);				
+		enableDisableBreapoint(true);
 	}
 
 	private void enableDisableBreapoint(boolean sepVM) throws Exception, CoreException {
-		
+
 		String fileName = "breakpoints"; //$NON-NLS-1$
 		ILineBreakpoint bp = createLineBreakpoint(5, fileName + ".xml"); //$NON-NLS-1$
 		bp.setEnabled(true);
 		AntThread thread = null;
 		try {
 			if (sepVM) {
-				fileName+= "SepVM"; //$NON-NLS-1$
+				fileName += "SepVM"; //$NON-NLS-1$
 			}
-            ILaunchConfiguration config= getLaunchConfiguration(fileName);
-            ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
-            copy.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, "entry1,entry2"); //$NON-NLS-1$
-			thread= launchToLineBreakpoint(copy, bp);
+			ILaunchConfiguration config = getLaunchConfiguration(fileName);
+			ILaunchConfigurationWorkingCopy copy = config.getWorkingCopy();
+			copy.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, "entry1,entry2"); //$NON-NLS-1$
+			thread = launchToLineBreakpoint(copy, bp);
 			bp.setEnabled(false);
-            if (sepVM) {
-                waitForTarget();
-            }
+			if (sepVM) {
+				waitForTarget();
+			}
 			resumeAndExit(thread);
-		} finally {
+		}
+		finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
 	}
 
-    private synchronized void waitForTarget() throws InterruptedException {
-        //wait for the target to get updated for the new breakpoint state 
-        wait(1000);
-    }
-	
-	public void testSkipLineBreakpoint() throws Exception {
-        skipLineBreakpoint(false);			    
+	private synchronized void waitForTarget() throws InterruptedException {
+		// wait for the target to get updated for the new breakpoint state
+		wait(1000);
 	}
-	
+
+	public void testSkipLineBreakpoint() throws Exception {
+		skipLineBreakpoint(false);
+	}
+
 	public void testSkipLineBreakpointSepVM() throws Exception {
-        skipLineBreakpoint(true);			    
+		skipLineBreakpoint(true);
 	}
 
 	private void skipLineBreakpoint(boolean sepVM) throws Exception {
 		String fileName = "breakpoints"; //$NON-NLS-1$
-		IFile file= getIFile(fileName + ".xml"); //$NON-NLS-1$
+		IFile file = getIFile(fileName + ".xml"); //$NON-NLS-1$
 		ILineBreakpoint bp = createLineBreakpoint(5, file);
 		createLineBreakpoint(15, file);
 		AntThread thread = null;
 		try {
 			if (sepVM) {
-				fileName+= "SepVM"; //$NON-NLS-1$
+				fileName += "SepVM"; //$NON-NLS-1$
 			}
-		    thread= launchToLineBreakpoint(fileName, bp);
-		    getBreakpointManager().setEnabled(false);
-		    resumeAndExit(thread);
-		} finally {
+			thread = launchToLineBreakpoint(fileName, bp);
+			getBreakpointManager().setEnabled(false);
+			resumeAndExit(thread);
+		}
+		finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			getBreakpointManager().setEnabled(true);
 		}
 	}
-	
+
 	public void testBreakpoint() throws Exception {
 		breakpoints(false, "default", 5, 15); //$NON-NLS-1$
 	}
-	
+
 	public void testBreakpointSepVM() throws Exception {
 		breakpoints(true, "default", 5, 15); //$NON-NLS-1$
 	}
@@ -174,38 +178,39 @@ public class BreakpointTests extends AbstractAntDebugTest {
 	public void testTargetBreakpoint() throws Exception {
 		breakpoints(false, "entry2", 4, 24); //$NON-NLS-1$
 	}
-    
-    public void testTaskOutOfTargetBreakpoint() throws Exception {
-        breakpoints(false, "entry2", 36, 5); //$NON-NLS-1$
-    }
-    
-    public void testTaskOutOfTargetBreakpointSepVm() throws Exception {
-        breakpoints(true, "entry2", 36, 5); //$NON-NLS-1$
-    }
-	
+
+	public void testTaskOutOfTargetBreakpoint() throws Exception {
+		breakpoints(false, "entry2", 36, 5); //$NON-NLS-1$
+	}
+
+	public void testTaskOutOfTargetBreakpointSepVm() throws Exception {
+		breakpoints(true, "entry2", 36, 5); //$NON-NLS-1$
+	}
+
 	public void testTargetBreakpointSepVM() throws Exception {
 		breakpoints(true, "entry2", 4, 24); //$NON-NLS-1$
 	}
-	
+
 	private void breakpoints(boolean sepVM, String defaultTargetName, int firstLineNumber, int secondLineNumber) throws CoreException, InterruptedException {
 		String fileName = "breakpoints"; //$NON-NLS-1$
-		IFile file= getIFile(fileName + ".xml"); //$NON-NLS-1$
+		IFile file = getIFile(fileName + ".xml"); //$NON-NLS-1$
 		ILineBreakpoint bp = createLineBreakpoint(firstLineNumber, file);
 		AntThread thread = null;
 		try {
 			if (sepVM) {
-				fileName+= "SepVM"; //$NON-NLS-1$
+				fileName += "SepVM"; //$NON-NLS-1$
 			}
-			ILaunchConfiguration config= getLaunchConfiguration(fileName);
-			ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
+			ILaunchConfiguration config = getLaunchConfiguration(fileName);
+			ILaunchConfigurationWorkingCopy copy = config.getWorkingCopy();
 			copy.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, defaultTargetName);
-            if (!sepVM) {
-                Thread.sleep(3000); //TODO bug 121207: wait for previous launch to fully terminate
-            }
-		    thread= launchToLineBreakpoint(copy, bp);
-			bp= createLineBreakpoint(secondLineNumber, file);
-		    resumeToLineBreakpoint(thread, bp);
-		} finally {
+			if (!sepVM) {
+				Thread.sleep(3000); // TODO bug 121207: wait for previous launch to fully terminate
+			}
+			thread = launchToLineBreakpoint(copy, bp);
+			bp = createLineBreakpoint(secondLineNumber, file);
+			resumeToLineBreakpoint(thread, bp);
+		}
+		finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}

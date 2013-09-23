@@ -16,30 +16,34 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 public class AddVariableStringAction extends RuntimeClasspathAction {
-	
+
 	public AddVariableStringAction(IClasspathViewer viewer) {
 		super(AntLaunchConfigurationMessages.AddVariableStringAction_1, viewer);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction#getActionType()
 	 */
 	@Override
 	protected int getActionType() {
 		return ADD;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override
 	public void run() {
 		VariableInputDialog inputDialog = new VariableInputDialog(getShell());
 		inputDialog.open();
-		String variableString= inputDialog.getVariableString();
+		String variableString = inputDialog.getVariableString();
 		if (variableString != null && variableString.trim().length() > 0) {
 			IRuntimeClasspathEntry newEntry = JavaRuntime.newStringVariableClasspathEntry(variableString);
-			getViewer().addEntries(new IRuntimeClasspathEntry[] {newEntry});
+			getViewer().addEntries(new IRuntimeClasspathEntry[] { newEntry });
 		}
 	}
 }

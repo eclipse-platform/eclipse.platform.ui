@@ -20,11 +20,11 @@ public class DebugModelMessages extends NLS {
 	public static String AntThread_0;
 	public static String AntThread_1;
 	public static String AntThread_2;
-    public static String AntThread_3;
-    public static String AntThread_4;
-    
-    public static String AntProperties_1;
-    
+	public static String AntThread_3;
+	public static String AntThread_4;
+
+	public static String AntProperties_1;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DebugModelMessages.class);

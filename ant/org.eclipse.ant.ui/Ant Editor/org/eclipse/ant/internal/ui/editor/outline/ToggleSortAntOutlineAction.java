@@ -20,7 +20,7 @@ import org.eclipse.jface.action.Action;
 public class ToggleSortAntOutlineAction extends Action {
 
 	private AntEditorContentOutlinePage fPage;
-	
+
 	public ToggleSortAntOutlineAction(AntEditorContentOutlinePage page) {
 		super(AntOutlineMessages.ToggleSortAntOutlineAction_0);
 		fPage = page;
@@ -28,14 +28,15 @@ public class ToggleSortAntOutlineAction extends Action {
 		setToolTipText(AntOutlineMessages.ToggleSortAntOutlineAction_0);
 		setChecked(fPage.isSort());
 	}
-	
+
 	/**
 	 * Toggles the sorting of targets in the Ant outline
+	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override
 	public void run() {
 		fPage.setSort(isChecked());
 	}
-	
+
 }

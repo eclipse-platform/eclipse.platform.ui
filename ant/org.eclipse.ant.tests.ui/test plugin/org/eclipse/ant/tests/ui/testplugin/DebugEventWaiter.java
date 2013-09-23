@@ -15,15 +15,11 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 
 /**
- * The <code>DebugEventWaiter</code> is
- * to wait for a specific kind of debug event.
+ * The <code>DebugEventWaiter</code> is to wait for a specific kind of debug event.
  * <p>
- * When a <code>DebugEventWaiter</code> is created, it
- * registers itself with the <code>DebugPlugin</code> as
- * an <code>IDebugEventSetListener</code>.
+ * When a <code>DebugEventWaiter</code> is created, it registers itself with the <code>DebugPlugin</code> as an <code>IDebugEventSetListener</code>.
  * <p>
- * NOTE: <code>DebugEventWaiter</code> objects are intended for
- * one time use only!
+ * NOTE: <code>DebugEventWaiter</code> objects are intended for one time use only!
  */
 public class DebugEventWaiter implements IDebugEventSetListener {
 	/**
@@ -45,7 +41,7 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	 * The <code>DebugEvent</code> received.
 	 */
 	protected DebugEvent fEvent;
-	
+
 	/**
 	 * The event set that was accepted
 	 */
@@ -54,17 +50,16 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	/**
 	 * The default timeout value if none is given (5000).
 	 */
-	public static final long DEFAULT_TIMEOUT= 5000;
+	public static final long DEFAULT_TIMEOUT = 5000;
 
 	/**
-	 * Creates a new <code>DebugEventWaiter</code> which
-	 * waits for events of a kind <code>eventType</code>.
-	 * The wait method will wait the default timeout value.
+	 * Creates a new <code>DebugEventWaiter</code> which waits for events of a kind <code>eventType</code>. The wait method will wait the default
+	 * timeout value.
 	 */
 	public DebugEventWaiter(int eventType) {
-		fDebugPlugin= DebugPlugin.getDefault();
-		fEventType= eventType;
-		fTimeout= DEFAULT_TIMEOUT;
+		fDebugPlugin = DebugPlugin.getDefault();
+		fEventType = eventType;
+		fTimeout = DEFAULT_TIMEOUT;
 
 		fDebugPlugin.addDebugEventListener(this);
 	}
@@ -75,36 +70,37 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	public boolean accept(DebugEvent event) {
 		return event.getKind() == fEventType && event.getDetail() != DebugEvent.EVALUATION_IMPLICIT;
 	}
+
 	/**
 	 * Answers the event name associated with the given flag.
 	 */
 	public String getEventName(int flag) {
 		switch (flag) {
-			case DebugEvent.CREATE :
+			case DebugEvent.CREATE:
 				return "Create"; //$NON-NLS-1$
-			case DebugEvent.TERMINATE :
+			case DebugEvent.TERMINATE:
 				return "Terminate"; //$NON-NLS-1$
-			case DebugEvent.RESUME :
+			case DebugEvent.RESUME:
 				return "Resume"; //$NON-NLS-1$
-			case DebugEvent.SUSPEND :
+			case DebugEvent.SUSPEND:
 				return "Suspend"; //$NON-NLS-1$
-			default :
+			default:
 				return "UNKNOWN"; //$NON-NLS-1$
 		}
 	}
 
 	/**
 	 * Handles debug events.
-	 *
+	 * 
 	 * @see IDebugEventListener
 	 * @see #accept(DebugEvent)
 	 */
 	@Override
 	public synchronized void handleDebugEvents(DebugEvent[] events) {
-		//printReceived(events);
+		// printReceived(events);
 		for (int i = 0; i < events.length; i++) {
 			if (accept(events[i])) {
-				fEvent= events[i];
+				fEvent = events[i];
 				fEventSet = events;
 				unregister();
 				notifyAll();
@@ -118,7 +114,7 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	 */
 	protected void printReceived(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
-			System.out.println(this +" got " + events[i]); //$NON-NLS-1$
+			System.out.println(this + " got " + events[i]); //$NON-NLS-1$
 		}
 	}
 
@@ -126,7 +122,7 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	 * Sets the number of milliseconds to wait for this callback
 	 */
 	public void setTimeout(long milliseconds) {
-		fTimeout= milliseconds;
+		fTimeout = milliseconds;
 	}
 
 	/**
@@ -137,14 +133,14 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	}
 
 	/**
-	 * Returns the source of the accepted event, or <code>null</code>
-	 * if no event was accepted.
+	 * Returns the source of the accepted event, or <code>null</code> if no event was accepted.
 	 */
 	public synchronized Object waitForEvent() {
 		if (fEvent == null) {
 			try {
 				wait(fTimeout);
-			} catch (InterruptedException ie) {
+			}
+			catch (InterruptedException ie) {
 				System.err.println("Interrupted waiting for event"); //$NON-NLS-1$
 			}
 		}
@@ -160,12 +156,11 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	public DebugEvent getEvent() {
 		return fEvent;
 	}
-	
+
 	/**
 	 * Returns the accepted event set, if any.
 	 */
 	public DebugEvent[] getEventSet() {
 		return fEventSet;
-	}	
+	}
 }
-

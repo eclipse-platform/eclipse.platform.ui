@@ -21,69 +21,63 @@ import org.eclipse.ant.internal.ui.dtd.util.SortedMap;
 import org.eclipse.ant.internal.ui.dtd.util.SortedMapFactory;
 
 /**
- * NfmParser parses an NFA and returns an equivalent DFA if it can do so in
- * linear time and space (in terms of the original NFA).<p>
+ * NfmParser parses an NFA and returns an equivalent DFA if it can do so in linear time and space (in terms of the original NFA).
+ * <p>
  * 
- * As used here, NfmParser is called lazily when someone actually asks for a
- * Dfm. This is for performance reasons. Why go to the work of calculating all
- * those Dfms if nobody ever uses them?
+ * As used here, NfmParser is called lazily when someone actually asks for a Dfm. This is for performance reasons. Why go to the work of calculating
+ * all those Dfms if nobody ever uses them?
  * 
- * Well-formed errors in content models have already been detected. The only
- * error that can arise in NfmParser is an ambiguity error.
+ * Well-formed errors in content models have already been detected. The only error that can arise in NfmParser is an ambiguity error.
  * 
- * Bruggemann-Klein showed that if an NFA is 1-unambiguous, an epsilon-free NFA
- * constructed from it in linear time is actually a DFA. This is obvious
- * in NfmParser. The algorithm works by removing all ambiguous transitions as
- * the graph is constructed, then proving that the reduced graph is equivalent
- * to the original in time linear in the number of ambiguous transitions.
+ * Bruggemann-Klein showed that if an NFA is 1-unambiguous, an epsilon-free NFA constructed from it in linear time is actually a DFA. This is obvious
+ * in NfmParser. The algorithm works by removing all ambiguous transitions as the graph is constructed, then proving that the reduced graph is
+ * equivalent to the original in time linear in the number of ambiguous transitions.
  * 
- * An effort is made to keep the DFA small, but there is no optimization
- * step, as DFAs are small anyway, with some linear inflation around *.
- * In a pathological case, like the classical (a*,a*,a*,..., a*) the number
- * of transitions in the DFA can be quadratic but this algorithm will not blow
- * up exponentially.
+ * An effort is made to keep the DFA small, but there is no optimization step, as DFAs are small anyway, with some linear inflation around *. In a
+ * pathological case, like the classical (a*,a*,a*,..., a*) the number of transitions in the DFA can be quadratic but this algorithm will not blow up
+ * exponentially.
  * 
  * @author Bob Foster
  */
 public class NfmParser {
-	
+
 	public Dfm parse(Nfm nfm) throws ParseError {
-		
+
 		// Parse nfm into dfm
-		
+
 		Dfm dfm = parseStart(nfm.getStart(), nfm.getStop());
-		
+
 		// Make list of dfms in graph
-		
+
 		ArrayList<Dfm> dfms = new ArrayList<Dfm>();
 		collect(dfm, dfms);
-		
+
 		// Detect accept conflicts
-		
+
 		HashMap<Dfm, Dfm> duplicates = new HashMap<Dfm, Dfm>();
 		detect(dfms, duplicates);
-		
+
 		// Replace duplicate dfms in graph
-		
+
 		replace(dfms, duplicates);
-		
+
 		// Allow nfm memory to be re-used
-		
+
 		Nfm.free(nfm);
 		NfmNode.freeAll();
-		
+
 		return dfm;
 	}
-	
+
 	private void reportError(String name) throws ParseError {
-		throw new ParseError(MessageFormat.format(AntDTDSchemaMessages.NfmParser_Ambiguous, new Object[]{name}));
+		throw new ParseError(MessageFormat.format(AntDTDSchemaMessages.NfmParser_Ambiguous, new Object[] { name }));
 	}
 
 	public static void collect(Dfm dfm, List<Dfm> dfms) {
 		dfms.add(dfm);
 		collect1(dfm, dfms);
 	}
-	
+
 	private static void collect1(Dfm dfm, List<Dfm> dfms) {
 		Object[] follows = dfm.getValues();
 		if (follows != null) {
@@ -96,7 +90,6 @@ public class NfmParser {
 			}
 		}
 	}
-
 
 	/**
 	 * Replace duplicate dfms found during conflict resolution.
@@ -119,26 +112,19 @@ public class NfmParser {
 		}
 	}
 
-
 	/**
-	 * Detect conflicts in each state. Two transitions are a potential conflict
-	 * if they accept the same string value. They are an actual conflict if
-	 * their follow dfms are not identical and they are an actual ambiguity if
-	 * the transition atoms of the follow dfms are not pairwise identical.
-	 * This is derived from the rule of Bruggemann-Klein, which determines
-	 * that (a|a)b is not ambiguous, but both (a,b)|(a,c) and (a,b)|(a,b) are.
-	 * The latter might be surprising, but that's committee work for you.
-	 * If two transitions are not ambiguous, one can be removed without
-	 * affecting the language accepted, and thus we have converted our
-	 * epsilon-free NFA into a DFA. If any two transitions are ambiguous,
-	 * we report an error and our responsibility ends. Note that no transitions
-	 * can be removed until all have been checked; this might disguise the
-	 * ambiguity in, e.g., ((a|a),b,(a|a))*.
+	 * Detect conflicts in each state. Two transitions are a potential conflict if they accept the same string value. They are an actual conflict if
+	 * their follow dfms are not identical and they are an actual ambiguity if the transition atoms of the follow dfms are not pairwise identical.
+	 * This is derived from the rule of Bruggemann-Klein, which determines that (a|a)b is not ambiguous, but both (a,b)|(a,c) and (a,b)|(a,b) are. The
+	 * latter might be surprising, but that's committee work for you. If two transitions are not ambiguous, one can be removed without affecting the
+	 * language accepted, and thus we have converted our epsilon-free NFA into a DFA. If any two transitions are ambiguous, we report an error and our
+	 * responsibility ends. Note that no transitions can be removed until all have been checked; this might disguise the ambiguity in, e.g.,
+	 * ((a|a),b,(a|a))*.
 	 */
 	private void detect(ArrayList<Dfm> dfms, HashMap<Dfm, Dfm> duplicates) throws ParseError {
 		for (Iterator<Dfm> iter = dfms.iterator(); iter.hasNext();) {
 			Dfm dfm = iter.next();
-			
+
 			Object[] accepts = dfm.getKeys();
 			Object[] follows = dfm.getValues();
 			if (accepts != null) {
@@ -146,24 +132,23 @@ public class NfmParser {
 				for (int i = 0, lasti = -1; i < accepts.length; i++) {
 					String accept = accepts[i].toString();
 					// accepts strings are interned allowing identity comparison
-					
+
 					if (last != null && last == accept) {
 						if (follows[i] != follows[lasti])
-							checkConflict(new Conflict(accept, (Dfm)follows[lasti], (Dfm)follows[i]));
-					}
-					else {
+							checkConflict(new Conflict(accept, (Dfm) follows[lasti], (Dfm) follows[i]));
+					} else {
 						last = accept;
 						lasti = i;
 					}
 				}
 			}
 		}
-		
+
 		// once more for removal
-		
+
 		for (Iterator<Dfm> iter = dfms.iterator(); iter.hasNext();) {
 			Dfm dfm = iter.next();
-			
+
 			// record conflicts
 			Object[] accepts = dfm.getKeys();
 			Object[] follows = dfm.getValues();
@@ -173,7 +158,7 @@ public class NfmParser {
 				String last = null;
 				for (int i = 0, lasti = -1; i < accepts.length; i++) {
 					String accept = accepts[i].toString();
-					
+
 					if (last != null && last == accept) {
 						remove = true;
 						removes[i] = true;
@@ -192,13 +177,12 @@ public class NfmParser {
 								duplicates.put(dfmlo, dup);
 							}
 						}
-					}
-					else {
+					} else {
 						last = accept;
 						lasti = i;
 					}
 				}
-			
+
 				if (remove) {
 					SortedMap map = dfm.getMap();
 					int i = 0;
@@ -212,10 +196,12 @@ public class NfmParser {
 			}
 		}
 	}
-	
+
 	/**
 	 * Check conflict and report ambiguity.
-	 * @param conflict Potential ambiguity
+	 * 
+	 * @param conflict
+	 *            Potential ambiguity
 	 */
 	private void checkConflict(Conflict conflict) throws ParseError {
 		if (conflict.dfm1.accepting != conflict.dfm2.accepting) {
@@ -239,8 +225,7 @@ public class NfmParser {
 	}
 
 	/**
-	 * Recursive parse that visits every node reachable from
-	 * the start symbol.
+	 * Recursive parse that visits every node reachable from the start symbol.
 	 */
 	private Dfm parseStart(NfmNode start, NfmNode accept) {
 		// mark the start node
@@ -252,36 +237,35 @@ public class NfmParser {
 			start = start.next1;
 			start.dfm = result;
 		}
-		
+
 		Dfm parsed = parse(1, start, accept);
 		result.merge(parsed);
-		
+
 		Dfm.free(parsed);
-		
+
 		return result;
 	}
-	
+
 	private void parseNext(int mark, Dfm result, NfmNode start, NfmNode accept) {
-		Dfm parsed = parse(mark+1, start, accept);
+		Dfm parsed = parse(mark + 1, start, accept);
 		result.merge(parsed);
-		
+
 		Dfm.free(parsed);
 	}
-	
+
 	/**
-	 * Recursive parse that visits every node reachable from
-	 * the start symbol.
+	 * Recursive parse that visits every node reachable from the start symbol.
 	 */
 	private Dfm parse(int mark, NfmNode start, NfmNode accept) {
-		
+
 		// eliminate useless recursion (note that accept node has no branches)
 		while (start.next1 != null && start.next2 == null && start.symbol == null)
 			start = start.next1;
-			
+
 		// if we reached the accept node, return an empty dfm that accepts
 		if (start == accept)
 			return Dfm.dfm(true);
-		
+
 		// for a symbol, construct a dfm that accepts the symbol
 		if (start.symbol != null) {
 			Dfm nextdfm = null;
@@ -292,8 +276,7 @@ public class NfmParser {
 				for (NfmNode n = next; n != snext; n = n.next1)
 					n.dfm = snext.dfm;
 				nextdfm = snext.dfm;
-			}
-			else {
+			} else {
 				nextdfm = Dfm.dfm(false);
 				snext.dfm = nextdfm;
 				for (NfmNode n = next; n != snext; n = n.next1)
@@ -303,7 +286,7 @@ public class NfmParser {
 			Dfm dfm = Dfm.dfm(start.symbol, nextdfm);
 			return dfm;
 		}
-		
+
 		// otherwise, follow both branches and return the combined result
 		Dfm dfm1 = null, dfm2 = null;
 		int saveMark;
@@ -319,7 +302,7 @@ public class NfmParser {
 			dfm2 = parse(mark, start.next2, accept);
 			start.next2.mark = saveMark;
 		}
-			
+
 		if (dfm2 != null) {
 			if (dfm1 != null)
 				dfm1.merge(dfm2);
@@ -332,15 +315,18 @@ public class NfmParser {
 	private static class Conflict {
 		public String name;
 		public Dfm dfm1, dfm2;
+
 		public Conflict(String name, Dfm dfm1, Dfm dfm2) {
 			this.name = name;
 			this.dfm1 = dfm1;
 			this.dfm2 = dfm2;
 		}
+
 		@Override
 		public int hashCode() {
 			return dfm1.hashCode() + dfm2.hashCode();
 		}
+
 		@Override
 		public boolean equals(Object o) {
 			if (o == this)
@@ -348,9 +334,8 @@ public class NfmParser {
 			if (!(o instanceof Conflict))
 				return false;
 			Conflict other = (Conflict) o;
-			return (dfm1 == other.dfm1 && dfm2 == other.dfm2)
-				|| (dfm1 == other.dfm2 && dfm2 == other.dfm1);
+			return (dfm1 == other.dfm1 && dfm2 == other.dfm2) || (dfm1 == other.dfm2 && dfm2 == other.dfm1);
 		}
 	}
-	
+
 }

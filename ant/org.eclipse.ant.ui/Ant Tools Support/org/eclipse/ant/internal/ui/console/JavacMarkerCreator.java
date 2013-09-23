@@ -38,112 +38,118 @@ public class JavacMarkerCreator {
 
 	private final TextConsole fConsole;
 	private IProcess fProcess;
-	private static List<IFile> fgFilesToBeCleaned= new ArrayList<IFile>();
-	private Map<IFile, List<MarkerInfo>> fFileToMarkerInfo= new HashMap<IFile, List<MarkerInfo>>();
+	private static List<IFile> fgFilesToBeCleaned = new ArrayList<IFile>();
+	private Map<IFile, List<MarkerInfo>> fFileToMarkerInfo = new HashMap<IFile, List<MarkerInfo>>();
 	private final boolean fUseCustomMessage;
 
 	private class MarkerInfo {
-		
+
 		public int fLineNumber;
 		public int fOffset;
 		public Integer fType;
 
 		public void setLineNumber(int lineNumber) {
-			fLineNumber= lineNumber;
+			fLineNumber = lineNumber;
 		}
+
 		public void setOffset(int offset) {
 			fOffset = offset;
 		}
+
 		public void setType(Integer type) {
-			fType= type;
-			
+			fType = type;
+
 		}
 	}
+
 	public JavacMarkerCreator(TextConsole console, boolean useCustomMessage) {
 		fConsole = console;
 		fUseCustomMessage = useCustomMessage;
 		if (fConsole instanceof ProcessConsole) {
-			fProcess= ((ProcessConsole) fConsole).getProcess();
+			fProcess = ((ProcessConsole) fConsole).getProcess();
 		}
 	}
 
 	protected ISchedulingRule getMarkerRule(IResource resource) {
-	    ISchedulingRule rule = null;
-	    if (resource != null) {
-	        IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
-	        rule = ruleFactory.markerRule(resource);
-	    }
-	    return rule;
+		ISchedulingRule rule = null;
+		if (resource != null) {
+			IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
+			rule = ruleFactory.markerRule(resource);
+		}
+		return rule;
 	}
 
 	protected void run(ISchedulingRule rule, IWorkspaceRunnable wr) {
 		try {
 			ResourcesPlugin.getWorkspace().run(wr, rule, 0, null);
-		} catch (CoreException e) {
+		}
+		catch (CoreException e) {
 			AntUIPlugin.log(e.getStatus());
-		}			
+		}
 	}
 
 	protected void addFileToBeCleaned(IFile file) {
 		fgFilesToBeCleaned.add(file);
 	}
-	
+
 	protected void addMarker(IFile file, int lineNumber, int offset, Integer type) {
-		MarkerInfo info= new MarkerInfo();
+		MarkerInfo info = new MarkerInfo();
 		info.setLineNumber(lineNumber);
 		info.setOffset(offset);
 		info.setType(type);
-		List<MarkerInfo> infos= fFileToMarkerInfo.get(file);
+		List<MarkerInfo> infos = fFileToMarkerInfo.get(file);
 		if (infos == null) {
-			infos= new ArrayList<MarkerInfo>();
+			infos = new ArrayList<MarkerInfo>();
 			fFileToMarkerInfo.put(file, infos);
 		}
 		infos.add(info);
 	}
-	
-	private void createMarkers(final IFile file, final List<MarkerInfo>infos) {
-		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
+
+	private void createMarkers(final IFile file, final List<MarkerInfo> infos) {
+		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
-				
+
 				try {
 					for (MarkerInfo info : infos) {
-						IMarker marker= file.createMarker(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER);
-						Map<String, Object> attributes= new HashMap<String, Object>(3);
+						IMarker marker = file.createMarker(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER);
+						Map<String, Object> attributes = new HashMap<String, Object>(3);
 						attributes.put(IMarker.LINE_NUMBER, new Integer(info.fLineNumber));
-						String message= getMessage(info);
+						String message = getMessage(info);
 						attributes.put(IMarker.MESSAGE, message);
 						attributes.put(IMarker.SEVERITY, info.fType);
 						marker.setAttributes(attributes);
 					}
-				} catch (CoreException e) {
+				}
+				catch (CoreException e) {
 					AntUIPlugin.log(e.getStatus());
-				}	
+				}
 			}
 		};
 		run(getMarkerRule(file), wr);
 	}
 
 	protected String getMessage(MarkerInfo info) {
-		IDocument doc= fConsole.getDocument();
-		String message= ConsoleMessages.JavacMarkerCreator_0;
+		IDocument doc = fConsole.getDocument();
+		String message = ConsoleMessages.JavacMarkerCreator_0;
 		if (fUseCustomMessage) {
-			FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(doc);
+			FindReplaceDocumentAdapter adapter = new FindReplaceDocumentAdapter(doc);
 			try {
-				IRegion match=adapter.find(info.fOffset, "[javac] ----------", true, false, false, false); //$NON-NLS-1$
+				IRegion match = adapter.find(info.fOffset, "[javac] ----------", true, false, false, false); //$NON-NLS-1$
 				if (match != null) {
-					match= adapter.find(match.getOffset(), "[javac]", false, false, false, false); //$NON-NLS-1$
+					match = adapter.find(match.getOffset(), "[javac]", false, false, false, false); //$NON-NLS-1$
 					if (match != null) {
-						int start= match.getOffset() + match.getLength() + 1;
-						IRegion lineInfo= doc.getLineInformationOfOffset(start);
-						message= doc.get(start, lineInfo.getOffset() - start + lineInfo.getLength());
+						int start = match.getOffset() + match.getLength() + 1;
+						IRegion lineInfo = doc.getLineInformationOfOffset(start);
+						message = doc.get(start, lineInfo.getOffset() - start + lineInfo.getLength());
 					}
 				}
-			} catch (BadLocationException e) {
+			}
+			catch (BadLocationException e) {
 				AntUIPlugin.log(e);
 			}
 		}
-		
+
 		return message;
 	}
 
@@ -152,12 +158,13 @@ public class JavacMarkerCreator {
 			for (IFile file : fgFilesToBeCleaned) {
 				try {
 					file.deleteMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-				} catch (CoreException e) {
+				}
+				catch (CoreException e) {
 					AntUIPlugin.log(e.getStatus());
 				}
 			}
 			for (IFile file : fFileToMarkerInfo.keySet()) {
-				createMarkers(file, fFileToMarkerInfo.get(file));	
+				createMarkers(file, fFileToMarkerInfo.get(file));
 			}
 			fFileToMarkerInfo.clear();
 			fgFilesToBeCleaned.clear();

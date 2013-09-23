@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ant.core;
 
-
 import org.eclipse.ant.internal.core.AntObject;
 
 /**
- * Represents an Ant task.
- * Clients may instantiate this class; it is not intended to be subclassed.
+ * Represents an Ant task. Clients may instantiate this class; it is not intended to be subclassed.
+ * 
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -23,6 +22,7 @@ public class Task extends AntObject {
 
 	/**
 	 * Returns the name of the task
+	 * 
 	 * @return the name of the task
 	 */
 	public String getTaskName() {
@@ -31,9 +31,11 @@ public class Task extends AntObject {
 
 	/**
 	 * Sets the name of the task
-	 * @param taskName The taskName to set
+	 * 
+	 * @param taskName
+	 *            The taskName to set
 	 */
 	public void setTaskName(String taskName) {
-		fName= taskName;
+		fName = taskName;
 	}
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -32,12 +31,16 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	private boolean isDirectory = false;
 	private MinimizedFileSystemElement parent;
 	private Object fileSystemObject;
-	
+
 	/**
 	 * Create a <code>MinimizedFileSystemElement</code> with the supplied name and parent.
-	 * @param name the name of the file element this represents
-	 * @param parent the containing parent
-	 * @param isDirectory indicated if this could have children or not
+	 * 
+	 * @param name
+	 *            the name of the file element this represents
+	 * @param parent
+	 *            the containing parent
+	 * @param isDirectory
+	 *            indicated if this could have children or not
 	 */
 	public MinimizedFileSystemElement(String name, MinimizedFileSystemElement parent, boolean isDirectory) {
 		this.name = name;
@@ -47,7 +50,7 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 			parent.addChild(this);
 		}
 	}
-	
+
 	/**
 	 * Returns the adapter
 	 */
@@ -56,39 +59,39 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 		if (adapter == IWorkbenchAdapter.class) {
 			return this;
 		}
-		//defer to the platform
+		// defer to the platform
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
-	
+
 	/**
-	 * Returns true if this element represents a directory, and false
-	 * otherwise.
+	 * Returns true if this element represents a directory, and false otherwise.
 	 */
 	public boolean isDirectory() {
 		return isDirectory;
 	}
-	
+
 	/**
 	 * Adds the passed child to this object's collection of children.
-	 *
-	 * @param child MinimizedFileSystemElement
+	 * 
+	 * @param child
+	 *            MinimizedFileSystemElement
 	 */
 	private void addChild(MinimizedFileSystemElement child) {
 		if (child.isDirectory()) {
 			if (folders == null) {
-				 folders = new ArrayList<MinimizedFileSystemElement>(1);
+				folders = new ArrayList<MinimizedFileSystemElement>(1);
 			}
 			folders.add(child);
 		} else {
 			if (files == null) {
-				 files = new ArrayList<MinimizedFileSystemElement>(1);
+				files = new ArrayList<MinimizedFileSystemElement>(1);
 			}
 			files.add(child);
 		}
 	}
+
 	/**
-	 * Returns a list of the files that are immediate children. Use the supplied provider
-	 * if it needs to be populated.
+	 * Returns a list of the files that are immediate children. Use the supplied provider if it needs to be populated.
 	 */
 	protected List<MinimizedFileSystemElement> getFiles(IImportStructureProvider provider) {
 		if (!populated) {
@@ -96,14 +99,14 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 		}
 
 		if (files == null) {
-			 return Collections.EMPTY_LIST;
+			return Collections.EMPTY_LIST;
 		}
 		return files;
 
 	}
+
 	/**
-	 * Returns a list of the folders that are immediate children. Use the supplied provider
-	 * if it needs to be populated.
+	 * Returns a list of the folders that are immediate children. Use the supplied provider if it needs to be populated.
 	 */
 	protected List<MinimizedFileSystemElement> getFolders(IImportStructureProvider provider) {
 		if (!populated) {
@@ -115,27 +118,31 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	}
 
 	protected List<MinimizedFileSystemElement> getFolders() {
-		if (folders == null){
-			 return Collections.EMPTY_LIST;
+		if (folders == null) {
+			return Collections.EMPTY_LIST;
 		}
 		return folders;
 	}
+
 	/**
 	 * Return whether or not population has happened for the receiver.
 	 */
 	protected boolean isPopulated() {
 		return this.populated;
 	}
+
 	/**
 	 * Return whether or not population has not happened for the receiver.
 	 */
 	protected boolean notPopulated() {
 		return !this.populated;
 	}
+
 	/**
-	 * Populate the files and folders of the receiver using the supplied
-	 * structure provider.
-	 * @param provider org.eclipse.ui.wizards.datatransfer.IImportStructureProvider
+	 * Populate the files and folders of the receiver using the supplied structure provider.
+	 * 
+	 * @param provider
+	 *            org.eclipse.ui.wizards.datatransfer.IImportStructureProvider
 	 */
 	private void populate(IImportStructureProvider provider) {
 
@@ -148,40 +155,43 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 			Object child = childrenEnum.next();
 
 			String elementLabel = provider.getLabel(child);
-			boolean isFolder= provider.isFolder(child);
+			boolean isFolder = provider.isFolder(child);
 			if (!isFolder && !elementLabel.endsWith(".class")) { //$NON-NLS-1$
 				continue;
 			}
-			//Create one level below
+			// Create one level below
 			MinimizedFileSystemElement result = new MinimizedFileSystemElement(elementLabel, this, isFolder);
 			result.setFileSystemObject(child);
 		}
 		setPopulated();
 	}
-	
+
 	/**
-	 *	Returns the file system object property of this element
-	 *
-	 *	@return the file system object
+	 * Returns the file system object property of this element
+	 * 
+	 * @return the file system object
 	 */
 	protected Object getFileSystemObject() {
 		return fileSystemObject;
 	}
-	
+
 	/**
-	 *	Set the file system object property of this element
-	 *
-	 *	@param value the file system object
+	 * Set the file system object property of this element
+	 * 
+	 * @param value
+	 *            the file system object
 	 */
 	protected void setFileSystemObject(Object value) {
 		fileSystemObject = value;
 	}
+
 	/**
 	 * Set whether or not population has happened for the receiver to true.
 	 */
 	protected void setPopulated() {
 		this.populated = true;
 	}
+
 	/**
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
 	 */
@@ -218,4 +228,3 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	}
 
 }
-

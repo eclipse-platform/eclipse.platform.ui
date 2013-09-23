@@ -31,27 +31,26 @@ import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
- * Action which runs the selected target or the default target of the selected
- * project in the AntView.
+ * Action which runs the selected target or the default target of the selected project in the AntView.
  */
 public class RunTargetAction extends Action implements IUpdate {
-	
+
 	private AntView fView;
-	
+
 	/**
-	 * Creates a new <code>RunTargetAction</code> which will execute
-	 * targets in the given view.
-	 * @param view the Ant view whose selection this action will use when
-	 * determining which target to run.
+	 * Creates a new <code>RunTargetAction</code> which will execute targets in the given view.
+	 * 
+	 * @param view
+	 *            the Ant view whose selection this action will use when determining which target to run.
 	 */
 	public RunTargetAction(AntView view) {
-		
+
 		setText(AntViewActionMessages.RunTargetAction_Run_1);
 		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_RUN));
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAntUIHelpContextIds.RUN_TARGET_ACTION);
 
 		setToolTipText(AntViewActionMessages.RunTargetAction_3);
-		fView= view;
+		fView = view;
 	}
 
 	/**
@@ -61,12 +60,13 @@ public class RunTargetAction extends Action implements IUpdate {
 	public void run() {
 		run(getSelectedElement());
 	}
-	
+
 	/**
-     * @param selectedElement The element to use as the context for launching
-     */
-    public void run(final AntElementNode selectedElement) {
-        UIJob job= new UIJob(AntViewActionMessages.RunTargetAction_2) {
+	 * @param selectedElement
+	 *            The element to use as the context for launching
+	 */
+	public void run(final AntElementNode selectedElement) {
+		UIJob job = new UIJob(AntViewActionMessages.RunTargetAction_2) {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				launch(selectedElement);
@@ -74,15 +74,17 @@ public class RunTargetAction extends Action implements IUpdate {
 			}
 		};
 		job.schedule();
-    }
+	}
 
-    /**
+	/**
 	 * Launches the given Ant element node
-	 * @param node the node to use to launch
+	 * 
+	 * @param node
+	 *            the node to use to launch
 	 * @see AntLaunchShortcut#launch(AntElementNode, String)
 	 */
 	public void launch(AntElementNode node) {
-		AntLaunchShortcut shortcut= new AntLaunchShortcut();
+		AntLaunchShortcut shortcut = new AntLaunchShortcut();
 		shortcut.setShowDialog(false);
 		shortcut.launch(node, ILaunchManager.RUN_MODE);
 	}
@@ -92,42 +94,42 @@ public class RunTargetAction extends Action implements IUpdate {
 	 */
 	@Override
 	public void update() {
-		AntElementNode selection= getSelectedElement();
-		boolean enabled= false;
+		AntElementNode selection = getSelectedElement();
+		boolean enabled = false;
 		if (selection instanceof AntTargetNode) {
 			if (!((AntTargetNode) selection).isErrorNode()) {
 				setToolTipText(AntViewActionMessages.RunTargetAction_4);
-				enabled= true;
+				enabled = true;
 			}
 		} else if (selection instanceof AntProjectNode) {
 			if (!((AntProjectNode) selection).isErrorNode()) {
-				enabled= true;
+				enabled = true;
 				setToolTipText(AntViewActionMessages.RunTargetAction_3);
 			}
-		}  else if (selection instanceof AntTaskNode) {
+		} else if (selection instanceof AntTaskNode) {
 			if (!((AntTaskNode) selection).isErrorNode()) {
-				enabled= true;
+				enabled = true;
 				setToolTipText(AntViewActionMessages.RunTargetAction_0);
 			}
 		}
 		setEnabled(enabled);
 	}
-	
+
 	/**
 	 * Returns the selected node or <code>null</code> if more than one element is selected.
 	 * 
 	 * @return AntElementNode the selected node
 	 */
 	private AntElementNode getSelectedElement() {
-		IStructuredSelection selection= (IStructuredSelection) fView.getViewer().getSelection();
+		IStructuredSelection selection = (IStructuredSelection) fView.getViewer().getSelection();
 		if (selection.isEmpty()) {
 			return null;
 		}
-		Iterator<?> iter= selection.iterator();
-		Object data= iter.next();
+		Iterator<?> iter = selection.iterator();
+		Object data = iter.next();
 		if (iter.hasNext()) {
 			return null;
 		}
 		return (AntElementNode) data;
-	}	
+	}
 }

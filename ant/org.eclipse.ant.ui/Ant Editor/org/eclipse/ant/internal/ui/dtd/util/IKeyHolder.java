@@ -16,6 +16,6 @@ package org.eclipse.ant.internal.ui.dtd.util;
 public interface IKeyHolder {
 
 	Object[] getKeys();
-	
+
 	void setKeys(Object[] keys);
 }

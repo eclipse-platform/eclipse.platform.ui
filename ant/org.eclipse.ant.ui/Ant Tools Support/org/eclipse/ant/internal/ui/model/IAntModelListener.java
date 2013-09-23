@@ -11,8 +11,7 @@
 
 package org.eclipse.ant.internal.ui.model;
 
-
 public interface IAntModelListener {
-	
+
 	public void antModelChanged(AntModelChangeEvent event);
 }

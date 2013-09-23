@@ -15,13 +15,13 @@ import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.custom.BusyIndicator;
 
-/** 
+/**
  * An action which toggles filtering of properties from the Ant outline.
  */
 public class FilterPropertiesAction extends Action {
-	
+
 	private AntEditorContentOutlinePage fPage;
-	
+
 	public FilterPropertiesAction(AntEditorContentOutlinePage page) {
 		super(AntOutlineMessages.FilterPropertiesAction_0);
 		fPage = page;
@@ -29,9 +29,10 @@ public class FilterPropertiesAction extends Action {
 		setToolTipText(AntOutlineMessages.FilterPropertiesAction_0);
 		setChecked(fPage.filterProperties());
 	}
-	
+
 	/**
 	 * Toggles the filtering of properties from the Ant outline
+	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override

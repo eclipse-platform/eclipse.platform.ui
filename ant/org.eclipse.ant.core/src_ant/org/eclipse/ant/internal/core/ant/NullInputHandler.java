@@ -16,20 +16,21 @@ import org.apache.tools.ant.input.InputHandler;
 import org.apache.tools.ant.input.InputRequest;
 
 /**
- * A input handler that does nothing with input requests
- * Used to ensure we do not block while retrieving targets from an Ant buildfile
- * that has an input task in the top level implicit target
+ * A input handler that does nothing with input requests Used to ensure we do not block while retrieving targets from an Ant buildfile that has an
+ * input task in the top level implicit target
  */
 public class NullInputHandler implements InputHandler {
 
 	public NullInputHandler() {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.input.InputHandler#handleInput(org.apache.tools.ant.input.InputRequest)
 	 */
 	@Override
 	public void handleInput(InputRequest request) throws BuildException {
-		//do nothing
+		// do nothing
 	}
 }

@@ -20,8 +20,7 @@ public class LinkDescriptor {
 	int offset;
 	int length;
 
-	public LinkDescriptor(String line, String fileName, int lineNumber,
-			int offset, int length) {
+	public LinkDescriptor(String line, String fileName, int lineNumber, int offset, int length) {
 		super();
 		this.line = line;
 		this.fileName = fileName;

@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui;
 
-
 /**
  * Help context ids for the Ant UI
  * <p>
- * This interface contains constants only; it is not intended to be implemented
- * or extended.
+ * This interface contains constants only; it is not intended to be implemented or extended.
  * </p>
  */
 public interface IAntUIHelpContextIds {
@@ -44,7 +42,7 @@ public interface IAntUIHelpContextIds {
 	public static final String STATUS_DIALOG = PREFIX + "status_dialog_context"; //$NON-NLS-1$
 	public static final String MESSAGE_WITH_TOGGLE_DIALOG = PREFIX + "message_with_toggle_dialog_context"; //$NON-NLS-1$
 	public static final String TARGET_ORDER_DIALOG = PREFIX + "target_order_dialog_context"; //$NON-NLS-1$
-	
+
 	// Preference Pages
 	public static final String ANT_PREFERENCE_PAGE = PREFIX + "ant_preference_page_context"; //$NON-NLS-1$
 	public static final String ANT_RUNTIME_PREFERENCE_PAGE = PREFIX + "ant_runtime_preference_page_context"; //$NON-NLS-1$
@@ -55,17 +53,17 @@ public interface IAntUIHelpContextIds {
 	public static final String ANT_TYPES_PAGE = PREFIX + "ant_types_page_context"; //$NON-NLS-1$
 	public static final String ANT_CLASSPATH_PAGE = PREFIX + "ant_classpath_page_context"; //$NON-NLS-1$
 	public static final String ANT_JRE_PAGE = PREFIX + "ant_jre_page_context"; //$NON-NLS-1$
-	
+
 	public static final String ANT_PROPERTIES_PAGE = PREFIX + "ant_properties_page_context"; //$NON-NLS-1$
 	public static final String ANT_TASKS_PAGE = PREFIX + "ant_tasks_page_context"; //$NON-NLS-1$
-	
+
 	// Views
 	public static final String ANT_VIEW = PREFIX + "ant_view_context"; //$NON-NLS-1$
-	
+
 	// Editor
 	public static final String ANT_EDITOR = PREFIX + "ant_editor_context"; //$NON-NLS-1$
 
-	//Launch configuration dialog tabs
+	// Launch configuration dialog tabs
 	public static final String ANT_MAIN_TAB = PREFIX + "ant_main_tab_context"; //$NON-NLS-1$
 	public static final String ANT_REFRESH_TAB = PREFIX + "ant_refresh_tab_context"; //$NON-NLS-1$
 	public static final String ANT_ENVIRONMENT_TAB = PREFIX + "ant_environment_tab_context"; //$NON-NLS-1$

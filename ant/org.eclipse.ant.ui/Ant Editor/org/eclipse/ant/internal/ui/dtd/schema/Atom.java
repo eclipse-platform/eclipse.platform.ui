@@ -14,10 +14,11 @@ import org.eclipse.ant.internal.ui.dtd.IAtom;
 
 /**
  * Atom contains information common to elements and attributes.
+ * 
  * @author Bob Foster
  */
 public class Atom implements IAtom {
-	
+
 	protected String fName;
 	protected int fKind;
 
@@ -25,16 +26,20 @@ public class Atom implements IAtom {
 		fKind = kind;
 		fName = name;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.dtd.IAtom#getName()
 	 */
 	@Override
 	public String getName() {
 		return fName;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

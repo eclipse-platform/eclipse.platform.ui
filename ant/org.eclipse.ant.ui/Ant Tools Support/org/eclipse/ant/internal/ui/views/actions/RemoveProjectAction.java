@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.views.actions;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -27,12 +28,12 @@ import org.eclipse.ui.texteditor.IUpdate;
  * Action that removes selected build files from an <code>AntView</code>
  */
 public class RemoveProjectAction extends Action implements IUpdate {
-	
+
 	private AntView view;
-	
+
 	public RemoveProjectAction(AntView view) {
 		super(AntViewActionMessages.RemoveProjectAction_Remove, AntUIImages.getImageDescriptor(IAntUIConstants.IMG_REMOVE));
-		this.view= view;
+		this.view = view;
 		setToolTipText(AntViewActionMessages.RemoveProjectAction_Remove_2);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAntUIHelpContextIds.REMOVE_PROJECT_ACTION);
 	}
@@ -42,33 +43,33 @@ public class RemoveProjectAction extends Action implements IUpdate {
 	 */
 	@Override
 	public void run() {
-		IStructuredSelection selection= (IStructuredSelection) view.getViewer().getSelection();
-		Iterator<?> iter= selection.iterator();
+		IStructuredSelection selection = (IStructuredSelection) view.getViewer().getSelection();
+		Iterator<?> iter = selection.iterator();
 		Object element;
-		List<AntProjectNode> projectNodes= new ArrayList<AntProjectNode>();
+		List<AntProjectNode> projectNodes = new ArrayList<AntProjectNode>();
 		while (iter.hasNext()) {
-			element= iter.next();
+			element = iter.next();
 			if (element instanceof AntProjectNode) {
 				projectNodes.add((AntProjectNode) element);
 			}
 		}
 		view.removeProjects(projectNodes);
 	}
-	
+
 	/**
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	@Override
 	public void update() {
-		IStructuredSelection selection= (IStructuredSelection) view.getViewer().getSelection();
+		IStructuredSelection selection = (IStructuredSelection) view.getViewer().getSelection();
 		if (selection.isEmpty()) {
 			setEnabled(false);
 			return;
 		}
 		Object element;
-		Iterator<?> iter= selection.iterator();
+		Iterator<?> iter = selection.iterator();
 		while (iter.hasNext()) {
-			element= iter.next();
+			element = iter.next();
 			if (!(element instanceof AntProjectNode)) {
 				setEnabled(false);
 				return;
@@ -76,5 +77,5 @@ public class RemoveProjectAction extends Action implements IUpdate {
 		}
 		setEnabled(true);
 	}
-	
+
 }

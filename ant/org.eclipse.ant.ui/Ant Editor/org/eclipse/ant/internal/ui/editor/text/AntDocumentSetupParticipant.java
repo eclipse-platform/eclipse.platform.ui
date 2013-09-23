@@ -19,36 +19,35 @@ import org.eclipse.jface.text.rules.FastPartitioner;
 /**
  * The document setup participant for Ant.
  */
-public class AntDocumentSetupParticipant  implements IDocumentSetupParticipant {
+public class AntDocumentSetupParticipant implements IDocumentSetupParticipant {
 
 	/**
 	 * The name of the Ant partitioning.
+	 * 
 	 * @since 3.0
 	 */
-	public final static String ANT_PARTITIONING= "org.eclipse.ant.ui.antPartitioning";  //$NON-NLS-1$
-	
+	public final static String ANT_PARTITIONING = "org.eclipse.ant.ui.antPartitioning"; //$NON-NLS-1$
+
 	public AntDocumentSetupParticipant() {
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.filebuffers.IDocumentSetupParticipant#setup(org.eclipse.jface.text.IDocument)
 	 */
 	@Override
 	public void setup(IDocument document) {
 		if (document instanceof IDocumentExtension3) {
-			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+			IDocumentExtension3 extension3 = (IDocumentExtension3) document;
 			IDocumentPartitioner partitioner = createDocumentPartitioner();
 			extension3.setDocumentPartitioner(ANT_PARTITIONING, partitioner);
 			partitioner.connect(document);
-		} 
+		}
 	}
-	
+
 	private IDocumentPartitioner createDocumentPartitioner() {
-		return new FastPartitioner(
-				new AntEditorPartitionScanner(), new String[]{
-						AntEditorPartitionScanner.XML_TAG,
-						AntEditorPartitionScanner.XML_COMMENT, 
-						AntEditorPartitionScanner.XML_CDATA,
-						AntEditorPartitionScanner.XML_DTD});
+		return new FastPartitioner(new AntEditorPartitionScanner(), new String[] { AntEditorPartitionScanner.XML_TAG,
+				AntEditorPartitionScanner.XML_COMMENT, AntEditorPartitionScanner.XML_CDATA, AntEditorPartitionScanner.XML_DTD });
 	}
 }

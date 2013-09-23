@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.launching.remote;
 
-
 import java.io.FileDescriptor;
 import java.net.InetAddress;
 import java.net.SocketPermission;
@@ -18,39 +17,39 @@ import java.security.Permission;
 import java.util.PropertyPermission;
 
 /**
- * A security manager that always throws an <code>AntSecurityException</code>
- * if the calling thread attempts to cause the Java Virtual Machine to 
- * exit/halt or if the restricted thread attempts to set a System property.
- * Otherwise this manager just delegates to the pre-existing manager
- * passed in the constructor or mimics the default security manager behavior
+ * A security manager that always throws an <code>AntSecurityException</code> if the calling thread attempts to cause the Java Virtual Machine to
+ * exit/halt or if the restricted thread attempts to set a System property. Otherwise this manager just delegates to the pre-existing manager passed
+ * in the constructor or mimics the default security manager behavior
  */
 public class AntSecurityManager extends SecurityManager {
 
-	private SecurityManager fSecurityManager= null;
-	private Thread fRestrictedThread= null;
-	//ensure that the PropertyPermission class is loaded before we 
-	//start checking permissions: bug 85908
-	private static final PropertyPermission fgPropertyPermission= new PropertyPermission("*", "write"); //$NON-NLS-1$ //$NON-NLS-2$
-	
-	private boolean fAllowSettingSystemProperties= true;
-	
+	private SecurityManager fSecurityManager = null;
+	private Thread fRestrictedThread = null;
+	// ensure that the PropertyPermission class is loaded before we
+	// start checking permissions: bug 85908
+	private static final PropertyPermission fgPropertyPermission = new PropertyPermission("*", "write"); //$NON-NLS-1$ //$NON-NLS-2$
+
+	private boolean fAllowSettingSystemProperties = true;
+
 	public AntSecurityManager(SecurityManager securityManager, Thread restrictedThread, boolean allowSettingProperties) {
-		fSecurityManager= securityManager;
-		fRestrictedThread= restrictedThread;
-		fAllowSettingSystemProperties= allowSettingProperties;
+		fSecurityManager = securityManager;
+		fRestrictedThread = restrictedThread;
+		fAllowSettingSystemProperties = allowSettingProperties;
 	}
-	
+
 	public AntSecurityManager(SecurityManager securityManager, Thread restrictedThread) {
 		this(securityManager, restrictedThread, true);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkExit(int)
 	 */
 	@Override
 	public void checkExit(int status) {
-		//no exit allowed from the restricted thread...System.exit is being called
-		//by some ant task...disallow the exit
+		// no exit allowed from the restricted thread...System.exit is being called
+		// by some ant task...disallow the exit
 		if (Thread.currentThread() == fRestrictedThread) {
 			throw new AntSecurityException();
 		}
@@ -58,7 +57,10 @@ public class AntSecurityManager extends SecurityManager {
 			fSecurityManager.checkExit(status);
 		}
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkAccept(java.lang.String, int)
 	 */
 	@Override
@@ -68,7 +70,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkAccess(java.lang.Thread)
 	 */
 	@Override
@@ -78,7 +82,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkAccess(java.lang.ThreadGroup)
 	 */
 	@Override
@@ -88,7 +94,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkAwtEventQueueAccess()
 	 */
 	@Override
@@ -98,7 +106,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkConnect(java.lang.String, int, java.lang.Object)
 	 */
 	@Override
@@ -108,7 +118,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkConnect(java.lang.String, int)
 	 */
 	@Override
@@ -118,7 +130,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkCreateClassLoader()
 	 */
 	@Override
@@ -128,7 +142,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkDelete(java.lang.String)
 	 */
 	@Override
@@ -138,7 +154,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkExec(java.lang.String)
 	 */
 	@Override
@@ -148,7 +166,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkLink(java.lang.String)
 	 */
 	@Override
@@ -158,7 +178,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkListen(int)
 	 */
 	@Override
@@ -168,7 +190,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkMemberAccess(java.lang.Class, int)
 	 */
 	@Override
@@ -188,13 +212,15 @@ public class AntSecurityManager extends SecurityManager {
 		if (fSecurityManager != null) {
 			String host = maddr.getHostAddress();
 			if (!host.startsWith("[") && host.indexOf(':') != -1) { //$NON-NLS-1$
-	   			host = "[" + host + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+				host = "[" + host + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
-	    	checkPermission(new SocketPermission(host, "accept,connect")); //$NON-NLS-1$
+			checkPermission(new SocketPermission(host, "accept,connect")); //$NON-NLS-1$
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkMulticast(java.net.InetAddress)
 	 */
 	@Override
@@ -204,7 +230,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkPackageAccess(java.lang.String)
 	 */
 	@Override
@@ -214,7 +242,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkPackageDefinition(java.lang.String)
 	 */
 	@Override
@@ -224,7 +254,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkPermission(java.security.Permission, java.lang.Object)
 	 */
 	@Override
@@ -234,13 +266,15 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkPermission(java.security.Permission)
 	 */
 	@Override
 	public void checkPermission(Permission perm) {
 		if (!fAllowSettingSystemProperties && fgPropertyPermission.implies(perm) && fRestrictedThread == Thread.currentThread()) {
-			//attempting to write a system property
+			// attempting to write a system property
 			throw new AntSecurityException();
 		}
 		if (fSecurityManager != null) {
@@ -248,7 +282,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkPrintJobAccess()
 	 */
 	@Override
@@ -258,7 +294,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkPropertiesAccess()
 	 */
 	@Override
@@ -269,7 +307,9 @@ public class AntSecurityManager extends SecurityManager {
 		super.checkPropertiesAccess();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkPropertyAccess(java.lang.String)
 	 */
 	@Override
@@ -279,7 +319,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkRead(java.io.FileDescriptor)
 	 */
 	@Override
@@ -289,7 +331,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkRead(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -299,7 +343,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkRead(java.lang.String)
 	 */
 	@Override
@@ -309,7 +355,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkSecurityAccess(java.lang.String)
 	 */
 	@Override
@@ -319,7 +367,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkSetFactory()
 	 */
 	@Override
@@ -329,7 +379,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkSystemClipboardAccess()
 	 */
 	@Override
@@ -339,7 +391,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkTopLevelWindow(java.lang.Object)
 	 */
 	@Override
@@ -350,7 +404,9 @@ public class AntSecurityManager extends SecurityManager {
 		return super.checkTopLevelWindow(window);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkWrite(java.io.FileDescriptor)
 	 */
 	@Override
@@ -360,7 +416,9 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#checkWrite(java.lang.String)
 	 */
 	@Override
@@ -383,7 +441,9 @@ public class AntSecurityManager extends SecurityManager {
 		return super.getInCheck();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#getSecurityContext()
 	 */
 	@Override
@@ -394,7 +454,9 @@ public class AntSecurityManager extends SecurityManager {
 		return super.getSecurityContext();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.SecurityManager#getThreadGroup()
 	 */
 	@Override

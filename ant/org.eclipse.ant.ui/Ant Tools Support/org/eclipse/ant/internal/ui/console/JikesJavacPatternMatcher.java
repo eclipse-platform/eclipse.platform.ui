@@ -14,25 +14,25 @@ import org.eclipse.ui.console.PatternMatchEvent;
 
 public class JikesJavacPatternMatcher extends AbstractJavacPatternMatcher {
 
-    /*
-     *     [javac] Found 1 semantic error compiling "/Users/kevinbarnes/Eclipse/runtime-workspace/Foo/src/CarriageReturn.java":
-     *     [javac] 3.         System.out.printer("\r");
-     */
-    @Override
+	/*
+	 * [javac] Found 1 semantic error compiling "/Users/kevinbarnes/Eclipse/runtime-workspace/Foo/src/CarriageReturn.java": [javac] 3.
+	 * System.out.printer("\r");
+	 */
+	@Override
 	public void matchFound(PatternMatchEvent event) {
-        String matchedText= getMatchedText(event);
-        if (matchedText == null) {
-            return;
-        }
-        int start = matchedText.indexOf('\"')+1;
-        int end = matchedText.indexOf('\"', start);        
-        String filePath = matchedText.substring(start, end);
-        int eventOffset= event.getOffset();
-        int fileStart = matchedText.indexOf(filePath) + eventOffset;
-        int fileLength = filePath.length();
-        
-        int lineNumber = getLineNumber(eventOffset, false);
-        //TODO determine if error or warning
-        addLink(filePath, lineNumber, fileStart, fileLength, fgErrorType);
-    }
+		String matchedText = getMatchedText(event);
+		if (matchedText == null) {
+			return;
+		}
+		int start = matchedText.indexOf('\"') + 1;
+		int end = matchedText.indexOf('\"', start);
+		String filePath = matchedText.substring(start, end);
+		int eventOffset = event.getOffset();
+		int fileStart = matchedText.indexOf(filePath) + eventOffset;
+		int fileLength = filePath.length();
+
+		int lineNumber = getLineNumber(eventOffset, false);
+		// TODO determine if error or warning
+		addLink(filePath, lineNumber, fileStart, fileLength, fgErrorType);
+	}
 }

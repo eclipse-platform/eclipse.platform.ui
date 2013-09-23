@@ -15,24 +15,27 @@ import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 
 /**
- * Ant source lookup director. For Ant source lookup there is one source
- * lookup participant. 
+ * Ant source lookup director. For Ant source lookup there is one source lookup participant.
  */
 public class AntSourceLookupDirector extends AbstractSourceLookupDirector {
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#initializeParticipants()
 	 */
 	@Override
 	public void initializeParticipants() {
-		addParticipants(new ISourceLookupParticipant[]{new AntSourceLookupParticipant()});
+		addParticipants(new ISourceLookupParticipant[] { new AntSourceLookupParticipant() });
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
+	 */
+	@Override
 	public String getMemento() throws CoreException {
-        return null;
-    }
+		return null;
+	}
 }

@@ -15,33 +15,38 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Echo;
 
-public class NestElementTask extends Task {  
-	
-	String message= "bar"; //$NON-NLS-1$
+public class NestElementTask extends Task {
+
+	String message = "bar"; //$NON-NLS-1$
 	NestedElement e;
-    public static class NestedElement{
-    	Boolean works= Boolean.FALSE;
-    	public NestedElement() {	
-    	}
-    	
-        public void setWorks(Boolean booleanValue) {
-        	works= booleanValue;
-        }
+
+	public static class NestedElement {
+		Boolean works = Boolean.FALSE;
+
+		public NestedElement() {
+		}
+
+		public void setWorks(Boolean booleanValue) {
+			works = booleanValue;
+		}
 
 		public boolean works() {
 			return works.booleanValue();
 		}
-    }
-    public void addNestedElement(NestedElement nestedElement) {
-    	e= nestedElement;
-    }
-   
-	/* (non-Javadoc)
+	}
+
+	public void addNestedElement(NestedElement nestedElement) {
+		e = nestedElement;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
 	@Override
 	public void execute() throws BuildException {
-		Echo echo= new Echo();
+		Echo echo = new Echo();
 		echo.setProject(getProject());
 		if (e.works()) {
 			echo.setMessage(message);

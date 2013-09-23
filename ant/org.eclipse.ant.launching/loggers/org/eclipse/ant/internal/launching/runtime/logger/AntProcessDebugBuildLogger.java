@@ -32,31 +32,35 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IProcess;
 
 public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements IAntDebugController, IDebugBuildLogger {
-	
-	private AntDebugState fDebugState= null;
-	
-	private List<IBreakpoint> fBreakpoints= null;
-    
+
+	private AntDebugState fDebugState = null;
+
+	private List<IBreakpoint> fBreakpoints = null;
+
 	private AntDebugTarget fAntDebugTarget;
-	private boolean fResumed= false;
-	
-	/* (non-Javadoc)
+	private boolean fResumed = false;
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	@Override
 	public void buildStarted(BuildEvent event) {
-		fDebugState= new AntDebugState(this);
+		fDebugState = new AntDebugState(this);
 		super.buildStarted(event);
-		IProcess process= getAntProcess(fProcessId);
-		ILaunch launch= process.getLaunch();
-		fAntDebugTarget= new AntDebugTarget(launch, process, this);
+		IProcess process = getAntProcess(fProcessId);
+		ILaunch launch = process.getLaunch();
+		fAntDebugTarget = new AntDebugTarget(launch, process, this);
 		launch.addDebugTarget(fAntDebugTarget);
-        
-        fAntDebugTarget.buildStarted();
-        fDebugState.buildStarted();
+
+		fAntDebugTarget.buildStarted();
+		fDebugState.buildStarted();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.launching.runtime.logger.AntProcessBuildLogger#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	@Override
@@ -64,30 +68,33 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 		super.buildFinished(event);
 		cleanup();
 	}
-	
+
 	/**
-	 * Cleans up all held memory.
-	 * <br><br>
+	 * Cleans up all held memory. <br>
+	 * <br>
 	 * Called from {@link #buildFinished(BuildEvent)} and {@link #terminate()}
+	 * 
 	 * @since 1.0.1
 	 */
 	void cleanup() {
-		if(fAntDebugTarget != null) {
-			IProcess process= getAntProcess(fProcessId);
-			if(process != null) {
-				ILaunch launch= process.getLaunch();
+		if (fAntDebugTarget != null) {
+			IProcess process = getAntProcess(fProcessId);
+			if (process != null) {
+				ILaunch launch = process.getLaunch();
 				launch.removeDebugTarget(fAntDebugTarget);
 			}
 		}
-		if(fDebugState != null) {
+		if (fDebugState != null) {
 			fDebugState.buildFinished();
 		}
-		if(fBreakpoints != null) {
+		if (fBreakpoints != null) {
 			fBreakpoints.clear();
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	@Override
@@ -95,80 +102,91 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 		super.taskFinished(event);
 		fDebugState.taskFinished();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	@Override
 	public void taskStarted(BuildEvent event) {
-        super.taskStarted(event);
+		super.taskStarted(event);
 		fDebugState.taskStarted(event);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.antsupport.logger.util.IDebugBuildLogger#waitIfSuspended()
 	 */
 	@Override
 	public synchronized void waitIfSuspended() {
-		fResumed= false;
-		IBreakpoint breakpoint= breakpointAtLineNumber(fDebugState.getBreakpointLocation());
+		fResumed = false;
+		IBreakpoint breakpoint = breakpointAtLineNumber(fDebugState.getBreakpointLocation());
 		if (breakpoint != null) {
-			 fAntDebugTarget.breakpointHit(breakpoint);
-			 try {
-				 while (!fResumed) {
-					 wait(500);
-					 checkCancelled();
-				 }
-			 } catch (InterruptedException e) {
-				//do nothing
-			 }
+			fAntDebugTarget.breakpointHit(breakpoint);
+			try {
+				while (!fResumed) {
+					wait(500);
+					checkCancelled();
+				}
+			}
+			catch (InterruptedException e) {
+				// do nothing
+			}
 		} else if (fDebugState.getCurrentTask() != null) {
-			int detail= -1;
-	        boolean shouldSuspend= true;
-	        if (fDebugState.isStepIntoSuspend()) {
-	            detail= DebugEvent.STEP_END;
-	            fDebugState.setStepIntoSuspend(false);               
-	        } else if ((fDebugState.getLastTaskFinished() != null && fDebugState.getLastTaskFinished() == fDebugState.getStepOverTask()) || fDebugState.shouldSuspend()) {
-				detail= DebugEvent.STEP_END;
+			int detail = -1;
+			boolean shouldSuspend = true;
+			if (fDebugState.isStepIntoSuspend()) {
+				detail = DebugEvent.STEP_END;
+				fDebugState.setStepIntoSuspend(false);
+			} else if ((fDebugState.getLastTaskFinished() != null && fDebugState.getLastTaskFinished() == fDebugState.getStepOverTask())
+					|| fDebugState.shouldSuspend()) {
+				detail = DebugEvent.STEP_END;
 				fDebugState.setShouldSuspend(false);
 				fDebugState.setStepOverTask(null);
-	        } else if (fDebugState.isClientSuspend()) {
-	            detail= DebugEvent.CLIENT_REQUEST;
-	            fDebugState.setClientSuspend(false);
-	        } else {
-	            shouldSuspend= false;
-	        }
-	        if (shouldSuspend) {
-                fAntDebugTarget.suspended(detail);
-	            try {
-	            	while (!fResumed) {
-	            		wait(500);
-	            		checkCancelled();
-	            	}
-	            } catch (InterruptedException e) {
-	            	//do nothing
-	            }
-	        }
-	    }
+			} else if (fDebugState.isClientSuspend()) {
+				detail = DebugEvent.CLIENT_REQUEST;
+				fDebugState.setClientSuspend(false);
+			} else {
+				shouldSuspend = false;
+			}
+			if (shouldSuspend) {
+				fAntDebugTarget.suspended(detail);
+				try {
+					while (!fResumed) {
+						wait(500);
+						checkCancelled();
+					}
+				}
+				catch (InterruptedException e) {
+					// do nothing
+				}
+			}
+		}
 	}
 
 	private void checkCancelled() {
-		AntProcess process= getAntProcess(fProcessId);
+		AntProcess process = getAntProcess(fProcessId);
 		if (process != null && process.isCanceled()) {
 			throw new OperationCanceledException(RuntimeMessages.AntProcessDebugBuildLogger_1);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#resume()
 	 */
 	@Override
 	public synchronized void resume() {
-		fResumed= true;
-        notifyAll();
+		fResumed = true;
+		notifyAll();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#suspend()
 	 */
 	@Override
@@ -176,41 +194,49 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 		fDebugState.setClientSuspend(true);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#stepInto()
 	 */
 	@Override
 	public synchronized void stepInto() {
 		fDebugState.setStepIntoSuspend(true);
-		fResumed= true;
+		fResumed = true;
 		notifyAll();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.launching.debug.IAntDebugController#terminate()
 	 */
 	@Override
 	public void terminate() {
 		cleanup();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#stepOver()
 	 */
 	@Override
 	public synchronized void stepOver() {
-		fResumed= true;
+		fResumed = true;
 		fDebugState.stepOver();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#handleBreakpoint(org.eclipse.debug.core.model.IBreakpoint, boolean)
 	 */
 	@Override
 	public void handleBreakpoint(IBreakpoint breakpoint, boolean added) {
 		if (added) {
 			if (fBreakpoints == null) {
-				fBreakpoints= new ArrayList<IBreakpoint>();
+				fBreakpoints = new ArrayList<IBreakpoint>();
 			}
 			if (!fBreakpoints.contains(breakpoint)) {
 				fBreakpoints.add(breakpoint);
@@ -222,7 +248,9 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#getProperties()
 	 */
 	@Override
@@ -230,70 +258,79 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 		if (fAntDebugTarget == null || !fAntDebugTarget.isSuspended()) {
 			return;
 		}
-	    StringBuffer propertiesRepresentation= new StringBuffer();
+		StringBuffer propertiesRepresentation = new StringBuffer();
 		fDebugState.marshallProperties(propertiesRepresentation, false);
 		if (fAntDebugTarget.getThreads().length > 0) {
 			((AntThread) fAntDebugTarget.getThreads()[0]).newProperties(propertiesRepresentation.toString());
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#getStackFrames()
 	 */
 	@Override
 	public void getStackFrames() {
-		StringBuffer stackRepresentation= new StringBuffer();
+		StringBuffer stackRepresentation = new StringBuffer();
 		fDebugState.marshalStack(stackRepresentation);
 		((AntThread) fAntDebugTarget.getThreads()[0]).buildStack(stackRepresentation.toString());
 	}
-    
-    private IBreakpoint breakpointAtLineNumber(Location location) {
-        if (fBreakpoints == null || location == null || location == Location.UNKNOWN_LOCATION) {
-            return null;
-        }
-        int lineNumber= fDebugState.getLineNumber(location);
-        File locationFile= new File(fDebugState.getFileName(location));
-        for (int i = 0; i < fBreakpoints.size(); i++) {
-            ILineBreakpoint breakpoint = (ILineBreakpoint) fBreakpoints.get(i);
-            int breakpointLineNumber;
-            try {
-            	if (!breakpoint.isEnabled()) {
-                	continue;
-                }
-            	breakpointLineNumber = breakpoint.getLineNumber();
-            } catch (CoreException e) {
-               return null;
-            }
-            IFile resource= (IFile) breakpoint.getMarker().getResource();
-            if (breakpointLineNumber == lineNumber && resource.getLocation().toFile().equals(locationFile)) {
-                return breakpoint;
-            }
-        }
-        return null;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
-     */
-    @Override
+
+	private IBreakpoint breakpointAtLineNumber(Location location) {
+		if (fBreakpoints == null || location == null || location == Location.UNKNOWN_LOCATION) {
+			return null;
+		}
+		int lineNumber = fDebugState.getLineNumber(location);
+		File locationFile = new File(fDebugState.getFileName(location));
+		for (int i = 0; i < fBreakpoints.size(); i++) {
+			ILineBreakpoint breakpoint = (ILineBreakpoint) fBreakpoints.get(i);
+			int breakpointLineNumber;
+			try {
+				if (!breakpoint.isEnabled()) {
+					continue;
+				}
+				breakpointLineNumber = breakpoint.getLineNumber();
+			}
+			catch (CoreException e) {
+				return null;
+			}
+			IFile resource = (IFile) breakpoint.getMarker().getResource();
+			if (breakpointLineNumber == lineNumber && resource.getLocation().toFile().equals(locationFile)) {
+				return breakpoint;
+			}
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
+	 */
+	@Override
 	public void targetStarted(BuildEvent event) {
 		fDebugState.targetStarted(event);
 		waitIfSuspended();
 		super.targetStarted(event);
-    }
-	
-	/* (non-Javadoc)
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	@Override
 	public void targetFinished(BuildEvent event) {
 		super.targetFinished(event);
-		if(fDebugState != null) {
+		if (fDebugState != null) {
 			fDebugState.setTargetExecuting(null);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#unescapeString(java.lang.StringBuffer)
 	 */
 	@Override

@@ -15,6 +15,7 @@ import org.eclipse.ant.tests.core.AbstractAntTest;
 
 /**
  * Tests the {@link Property} class
+ * 
  * @since 3.8
  */
 public class PropertyTests extends AbstractAntTest {
@@ -31,25 +32,25 @@ public class PropertyTests extends AbstractAntTest {
 		Property p2 = new Property("one", "ONE"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("The properties should be equal", p1.equals(p2)); //$NON-NLS-1$
 	}
-	
+
 	public void testPropertyEqualNameOnly() throws Exception {
 		Property p1 = new Property("two", "TWO"); //$NON-NLS-1$ //$NON-NLS-2$
 		Property p2 = new Property("two", "FOUR"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("The properties should be equal", p1.equals(p2)); //$NON-NLS-1$
 	}
-	
+
 	public void testPropertyNotEqual() throws Exception {
 		Property p1 = new Property("three", "THREE"); //$NON-NLS-1$ //$NON-NLS-2$
 		Property p2 = new Property("four", "FOUR"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertFalse("The properties should not be equal", p1.equals(p2)); //$NON-NLS-1$
 	}
-	
+
 	public void testPropertyNotEqual2() throws Exception {
 		Property p1 = new Property("five", "FIVE"); //$NON-NLS-1$ //$NON-NLS-2$
 		Property p2 = new Property("six", "FIVE"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertFalse("The properties should not be equal", p1.equals(p2)); //$NON-NLS-1$
 	}
-	
+
 	public void testPropertyNotEqualNull() throws Exception {
 		Property p1 = new Property("seven", "SEVEN"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertFalse("The properties should not be equal", p1.equals(null)); //$NON-NLS-1$

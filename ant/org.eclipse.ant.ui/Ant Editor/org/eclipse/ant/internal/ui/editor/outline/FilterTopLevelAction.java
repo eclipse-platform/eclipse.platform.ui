@@ -15,13 +15,13 @@ import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.custom.BusyIndicator;
 
-/** 
+/**
  * An action which toggles filtering of properties from the Ant outline.
  */
 public class FilterTopLevelAction extends Action {
-	
+
 	private AntEditorContentOutlinePage fPage;
-	
+
 	public FilterTopLevelAction(AntEditorContentOutlinePage page) {
 		super(AntOutlineMessages.FilterTopLevelAction_0);
 		fPage = page;
@@ -29,9 +29,10 @@ public class FilterTopLevelAction extends Action {
 		setToolTipText(AntOutlineMessages.FilterTopLevelAction_0);
 		setChecked(fPage.filterTopLevel());
 	}
-	
+
 	/**
 	 * Toggles the filtering of top level tasks and types from the Ant outline
+	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override

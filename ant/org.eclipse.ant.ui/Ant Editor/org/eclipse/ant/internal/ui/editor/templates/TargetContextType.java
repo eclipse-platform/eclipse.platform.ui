@@ -12,5 +12,5 @@
 package org.eclipse.ant.internal.ui.editor.templates;
 
 public class TargetContextType extends BuildFileContextType {
-	public static final String TARGET_CONTEXT_TYPE= "org.eclipse.ant.ui.templateContextType.target"; //$NON-NLS-1$
+	public static final String TARGET_CONTEXT_TYPE = "org.eclipse.ant.ui.templateContextType.target"; //$NON-NLS-1$
 }

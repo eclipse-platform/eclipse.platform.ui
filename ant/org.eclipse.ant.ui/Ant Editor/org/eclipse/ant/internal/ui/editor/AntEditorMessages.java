@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.editor;
 
-
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -26,7 +25,8 @@ public class AntEditorMessages {
 	public static String getString(String key) {
 		try {
 			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
+		}
+		catch (MissingResourceException e) {
 			return '!' + key + '!';
 		}
 	}

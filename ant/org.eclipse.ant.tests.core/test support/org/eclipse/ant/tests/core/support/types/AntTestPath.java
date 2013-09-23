@@ -10,25 +10,23 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.core.support.types;
 
-
-
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.Path;
 
 public class AntTestPath extends Path {
-	
+
 	String message;
-	
+
 	public AntTestPath(Project project) {
 		super(project);
 	}
-	
+
 	public void setMessage(String message) {
-		this.message= message;
+		this.message = message;
 	}
-	
+
 	public String getMessage() {
 		return message;
 	}
-	
+
 }

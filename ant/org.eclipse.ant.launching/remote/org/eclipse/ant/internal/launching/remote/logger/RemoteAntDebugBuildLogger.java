@@ -30,31 +30,29 @@ import org.eclipse.ant.internal.launching.debug.IDebugBuildLogger;
 import org.eclipse.ant.internal.launching.debug.model.DebugMessageIds;
 
 /**
- * Parts adapted from org.eclipse.jdt.internal.junit.runner.RemoteTestRunner
- * A build logger that reports via a socket connection.
- * See DebugMessageIds and MessageIds for more information about the protocol.
+ * Parts adapted from org.eclipse.jdt.internal.junit.runner.RemoteTestRunner A build logger that reports via a socket connection. See DebugMessageIds
+ * and MessageIds for more information about the protocol.
  */
 public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements IDebugBuildLogger {
-	
+
 	private ServerSocket fServerSocket;
-	private static final int fgServerSocketTimeout= 5000;
+	private static final int fgServerSocketTimeout = 5000;
 	private Socket fRequestSocket;
-	
+
 	private PrintWriter fRequestWriter;
-	
+
 	private BufferedReader fRequestReader;
-	
-    private boolean fBuildStartedSuspend= true;
-	
+
+	private boolean fBuildStartedSuspend = true;
+
 	private Task fStepOverTaskInterrupted;
-	
-	private List<RemoteAntBreakpoint> fBreakpoints= null;
-	
+
+	private List<RemoteAntBreakpoint> fBreakpoints = null;
+
 	/**
-	 * Request port to connect to.
-	 * Used for debug connections
+	 * Request port to connect to. Used for debug connections
 	 */
-	private int fRequestPort= -1;
+	private int fRequestPort = -1;
 	private AntDebugState fDebugState;
 
 	/**
@@ -67,144 +65,157 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		}
 
 		@Override
-		public void run(){
-			try { 
-				String message= null; 
-				while (fRequestReader != null) { 
-					if ((message= fRequestReader.readLine()) != null) {
-						
-						if (message.startsWith(DebugMessageIds.STEP_INTO)){
-							synchronized(RemoteAntDebugBuildLogger.this) {
+		public void run() {
+			try {
+				String message = null;
+				while (fRequestReader != null) {
+					if ((message = fRequestReader.readLine()) != null) {
+
+						if (message.startsWith(DebugMessageIds.STEP_INTO)) {
+							synchronized (RemoteAntDebugBuildLogger.this) {
 								fDebugState.setStepIntoSuspend(true);
 								fDebugState.setStepIntoTask(fDebugState.getCurrentTask());
 								RemoteAntDebugBuildLogger.this.notifyAll();
 							}
-						} if (message.startsWith(DebugMessageIds.STEP_OVER)){
-							synchronized(RemoteAntDebugBuildLogger.this) {
+						}
+						if (message.startsWith(DebugMessageIds.STEP_OVER)) {
+							synchronized (RemoteAntDebugBuildLogger.this) {
 								fDebugState.stepOver();
 							}
 						} else if (message.startsWith(DebugMessageIds.SUSPEND)) {
-							synchronized(RemoteAntDebugBuildLogger.this) {
+							synchronized (RemoteAntDebugBuildLogger.this) {
 								fDebugState.setStepIntoTask(null);
 								fDebugState.setStepOverTask(null);
-								fStepOverTaskInterrupted= null;
+								fStepOverTaskInterrupted = null;
 								fDebugState.setClientSuspend(true);
 							}
 						} else if (message.startsWith(DebugMessageIds.RESUME)) {
-							synchronized(RemoteAntDebugBuildLogger.this) {
+							synchronized (RemoteAntDebugBuildLogger.this) {
 								fDebugState.setStepIntoTask(null);
 								fDebugState.setStepOverTask(null);
-								fStepOverTaskInterrupted= null;
+								fStepOverTaskInterrupted = null;
 								RemoteAntDebugBuildLogger.this.notifyAll();
 							}
 						} else if (message.startsWith(DebugMessageIds.TERMINATE)) {
-							synchronized(RemoteAntDebugBuildLogger.this) {
-							    sendRequestResponse(DebugMessageIds.TERMINATED);
+							synchronized (RemoteAntDebugBuildLogger.this) {
+								sendRequestResponse(DebugMessageIds.TERMINATED);
 								shutDown();
 							}
 						} else if (message.startsWith(DebugMessageIds.STACK)) {
-							synchronized(RemoteAntDebugBuildLogger.this) {
+							synchronized (RemoteAntDebugBuildLogger.this) {
 								marshallStack();
 							}
 						} else if (message.startsWith(DebugMessageIds.ADD_BREAKPOINT)) {
-							synchronized(RemoteAntDebugBuildLogger.this) {
+							synchronized (RemoteAntDebugBuildLogger.this) {
 								addBreakpoint(message);
 							}
 						} else if (message.startsWith(DebugMessageIds.REMOVE_BREAKPOINT)) {
-							synchronized(RemoteAntDebugBuildLogger.this) {
+							synchronized (RemoteAntDebugBuildLogger.this) {
 								removeBreakpoint(message);
 							}
-						}  else if (message.startsWith(DebugMessageIds.PROPERTIES)) {
-							synchronized(RemoteAntDebugBuildLogger.this) {
+						} else if (message.startsWith(DebugMessageIds.PROPERTIES)) {
+							synchronized (RemoteAntDebugBuildLogger.this) {
 								marshallProperties();
 							}
 						}
 					}
-				} 
-			} catch (Exception e) {
+				}
+			}
+			catch (Exception e) {
 				RemoteAntDebugBuildLogger.this.shutDown();
 			}
 		}
 	}
-	
+
 	private void requestConnect() {
 		if (fDebugMode) {
 			System.out.println("RemoteAntDebugBuildLogger: trying to connect" + fHost + ":" + fRequestPort); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
-		try{
+
+		try {
 			fServerSocket.setSoTimeout(fgServerSocketTimeout);
-			fRequestSocket= fServerSocket.accept();
-			fRequestWriter= new PrintWriter(fRequestSocket.getOutputStream(), true);
+			fRequestSocket = fServerSocket.accept();
+			fRequestWriter = new PrintWriter(fRequestSocket.getOutputStream(), true);
 			fRequestReader = new BufferedReader(new InputStreamReader(fRequestSocket.getInputStream()));
-			
-			ReaderThread readerThread= new ReaderThread();
+
+			ReaderThread readerThread = new ReaderThread();
 			readerThread.setDaemon(true);
 			readerThread.start();
 			return;
-		} catch(SocketTimeoutException e){
-			//do nothing
-		} catch(IOException e) {
-			//do nothing
+		}
+		catch (SocketTimeoutException e) {
+			// do nothing
+		}
+		catch (IOException e) {
+			// do nothing
 		}
 		shutDown();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger#shutDown()
 	 */
 	@Override
 	protected synchronized void shutDown() {
 		if (fRequestWriter != null) {
 			fRequestWriter.close();
-			fRequestWriter= null;
+			fRequestWriter = null;
 		}
-		
+
 		if (fRequestReader != null) {
 			try {
 				fRequestReader.close();
-			} catch (IOException e) {
-				//do nothing
 			}
-			fRequestReader= null;
+			catch (IOException e) {
+				// do nothing
+			}
+			fRequestReader = null;
 		}
-		
+
 		if (fRequestSocket != null) {
 			try {
-				fRequestSocket.close();	
-			} catch(IOException e) {
-				//do nothing
+				fRequestSocket.close();
+			}
+			catch (IOException e) {
+				// do nothing
 			}
 		}
-		fRequestSocket= null;
-		
+		fRequestSocket = null;
+
 		super.shutDown();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	@Override
 	public synchronized void buildStarted(BuildEvent event) {
-		fDebugState= new AntDebugState(this);
+		fDebugState = new AntDebugState(this);
 		super.buildStarted(event);
 		marshalMessage(-1, DebugMessageIds.BUILD_STARTED);
 		if (fRequestPort != -1) {
 			try {
-				fServerSocket= new ServerSocket(fRequestPort);
-			} catch (IOException ioe) {
+				fServerSocket = new ServerSocket(fRequestPort);
+			}
+			catch (IOException ioe) {
 				shutDown();
 			}
 			requestConnect();
 		} else {
 			shutDown();
 		}
-        fDebugState.buildStarted();
+		fDebugState.buildStarted();
 		fDebugState.setShouldSuspend(true);
 		waitIfSuspended();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.launching.remote.logger.RemoteAntBuildLogger#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	@Override
@@ -212,31 +223,36 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		super.buildFinished(event);
 		fDebugState.buildFinished();
 		fDebugState = null;
-		if(fBreakpoints != null) {
+		if (fBreakpoints != null) {
 			fBreakpoints.clear();
 		}
-		if(fRequestReader != null) {
+		if (fRequestReader != null) {
 			try {
 				fRequestReader.close();
-			} catch (IOException e) {
-				//do nothing
+			}
+			catch (IOException e) {
+				// do nothing
 			}
 		}
-		if(fRequestWriter != null) {
+		if (fRequestWriter != null) {
 			fRequestWriter.close();
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	@Override
 	public synchronized void taskStarted(BuildEvent event) {
-        super.taskStarted(event);
+		super.taskStarted(event);
 		fDebugState.taskStarted(event);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	@Override
@@ -244,64 +260,68 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		super.taskFinished(event);
 		fDebugState.taskFinished();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.antsupport.logger.util.IDebugBuildLogger#waitIfSuspended()
 	 */
 	@Override
 	public synchronized void waitIfSuspended() {
-		String detail= null;
-		boolean shouldSuspend= true;
-		RemoteAntBreakpoint breakpoint= breakpointAtLineNumber(fDebugState.getBreakpointLocation());
+		String detail = null;
+		boolean shouldSuspend = true;
+		RemoteAntBreakpoint breakpoint = breakpointAtLineNumber(fDebugState.getBreakpointLocation());
 		if (breakpoint != null) {
-			detail= breakpoint.toMarshallString();
+			detail = breakpoint.toMarshallString();
 			fDebugState.setShouldSuspend(false);
 			if (fDebugState.getStepOverTask() != null) {
-				fStepOverTaskInterrupted= fDebugState.getStepOverTask();
+				fStepOverTaskInterrupted = fDebugState.getStepOverTask();
 				fDebugState.setStepOverTask(null);
 			}
 		} else if (fDebugState.getCurrentTask() != null) {
-	        if (fDebugState.isStepIntoSuspend()) {
-	            detail= DebugMessageIds.STEP;
+			if (fDebugState.isStepIntoSuspend()) {
+				detail = DebugMessageIds.STEP;
 				fDebugState.setStepIntoSuspend(false);
-	        } else if ((fDebugState.getLastTaskFinished() != null && fDebugState.getLastTaskFinished() == fDebugState.getStepOverTask()) || fDebugState.shouldSuspend()) {
-	        	//suspend as a step over has finished
-	        	detail= DebugMessageIds.STEP;
+			} else if ((fDebugState.getLastTaskFinished() != null && fDebugState.getLastTaskFinished() == fDebugState.getStepOverTask())
+					|| fDebugState.shouldSuspend()) {
+				// suspend as a step over has finished
+				detail = DebugMessageIds.STEP;
 				fDebugState.setStepOverTask(null);
 				fDebugState.setShouldSuspend(false);
-	        } else if (fDebugState.getLastTaskFinished() != null && fDebugState.getLastTaskFinished() == fDebugState.getStepIntoTask()) {
-	        	//suspend as a task that was stepped into has finally completed
-	        	 detail= DebugMessageIds.STEP;
-	        	 fDebugState.setStepIntoTask(null);
-	        } else if (fDebugState.getLastTaskFinished() != null && fDebugState.getLastTaskFinished() == fStepOverTaskInterrupted) {
-	        	//suspend as a task that was stepped over but hit a breakpoint has finally completed
-	        	 detail= DebugMessageIds.STEP;
-	        	 fStepOverTaskInterrupted= null;
-	        } else if (fDebugState.isClientSuspend()) {
-	            detail= DebugMessageIds.CLIENT_REQUEST;
+			} else if (fDebugState.getLastTaskFinished() != null && fDebugState.getLastTaskFinished() == fDebugState.getStepIntoTask()) {
+				// suspend as a task that was stepped into has finally completed
+				detail = DebugMessageIds.STEP;
+				fDebugState.setStepIntoTask(null);
+			} else if (fDebugState.getLastTaskFinished() != null && fDebugState.getLastTaskFinished() == fStepOverTaskInterrupted) {
+				// suspend as a task that was stepped over but hit a breakpoint has finally completed
+				detail = DebugMessageIds.STEP;
+				fStepOverTaskInterrupted = null;
+			} else if (fDebugState.isClientSuspend()) {
+				detail = DebugMessageIds.CLIENT_REQUEST;
 				fDebugState.setClientSuspend(false);
-	        } else {
-	            shouldSuspend= false;
-	        }
-	    } else if (fDebugState.shouldSuspend() && fBuildStartedSuspend) {
-            fBuildStartedSuspend= false;
+			} else {
+				shouldSuspend = false;
+			}
+		} else if (fDebugState.shouldSuspend() && fBuildStartedSuspend) {
+			fBuildStartedSuspend = false;
 			fDebugState.setShouldSuspend(false);
-	    } else {
-			shouldSuspend= false;
-	    }
-		
+		} else {
+			shouldSuspend = false;
+		}
+
 		if (shouldSuspend) {
 			if (detail != null) {
-				StringBuffer message= new StringBuffer(DebugMessageIds.SUSPENDED);
+				StringBuffer message = new StringBuffer(DebugMessageIds.SUSPENDED);
 				message.append(detail);
 				sendRequestResponse(message.toString());
 			}
-			 try {
-				 wait();
-                 shouldSuspend= false;
-			 } catch (InterruptedException e) {
-				//do nothing
-			 }
+			try {
+				wait();
+				shouldSuspend = false;
+			}
+			catch (InterruptedException e) {
+				// do nothing
+			}
 		}
 	}
 
@@ -309,8 +329,8 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		if (fBreakpoints == null || location == null || location == Location.UNKNOWN_LOCATION) {
 			return null;
 		}
-		String fileName= fDebugState.getFileName(location);
-		int lineNumber= fDebugState.getLineNumber(location);
+		String fileName = fDebugState.getFileName(location);
+		int lineNumber = fDebugState.getLineNumber(location);
 		for (int i = 0; i < fBreakpoints.size(); i++) {
 			RemoteAntBreakpoint breakpoint = fBreakpoints.get(i);
 			if (breakpoint.isAt(fileName, lineNumber)) {
@@ -324,38 +344,38 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		if (fRequestWriter == null) {
 			return;
 		}
-		
+
 		fRequestWriter.println(message);
 	}
-	
+
 	protected void marshallStack() {
-	    StringBuffer stackRepresentation= new StringBuffer();
-	    fDebugState.marshalStack(stackRepresentation);
-	    sendRequestResponse(stackRepresentation.toString());
+		StringBuffer stackRepresentation = new StringBuffer();
+		fDebugState.marshalStack(stackRepresentation);
+		sendRequestResponse(stackRepresentation.toString());
 	}
-	
+
 	protected void marshallProperties() {
-	    StringBuffer propertiesRepresentation= new StringBuffer();
+		StringBuffer propertiesRepresentation = new StringBuffer();
 		fDebugState.marshallProperties(propertiesRepresentation, true);
-	    sendRequestResponse(propertiesRepresentation.toString());
+		sendRequestResponse(propertiesRepresentation.toString());
 	}
-	
+
 	protected void addBreakpoint(String breakpointRepresentation) {
 		if (fBreakpoints == null) {
-			fBreakpoints= new ArrayList<RemoteAntBreakpoint>();
+			fBreakpoints = new ArrayList<RemoteAntBreakpoint>();
 		}
-		RemoteAntBreakpoint newBreakpoint= new RemoteAntBreakpoint(breakpointRepresentation);
+		RemoteAntBreakpoint newBreakpoint = new RemoteAntBreakpoint(breakpointRepresentation);
 		if (!fBreakpoints.contains(newBreakpoint)) {
-			fBreakpoints.add(newBreakpoint);	
+			fBreakpoints.add(newBreakpoint);
 		}
 	}
-	
+
 	protected void removeBreakpoint(String breakpointRepresentation) {
 		if (fBreakpoints == null) {
 			return;
-		} 
-		RemoteAntBreakpoint equivalentBreakpoint= new RemoteAntBreakpoint(breakpointRepresentation);
-		for (Iterator<RemoteAntBreakpoint> iter = fBreakpoints.iterator(); iter.hasNext(); ) {
+		}
+		RemoteAntBreakpoint equivalentBreakpoint = new RemoteAntBreakpoint(breakpointRepresentation);
+		for (Iterator<RemoteAntBreakpoint> iter = fBreakpoints.iterator(); iter.hasNext();) {
 			RemoteAntBreakpoint breakpoint = iter.next();
 			if (breakpoint.equals(equivalentBreakpoint)) {
 				iter.remove();
@@ -364,7 +384,9 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	@Override
@@ -376,25 +398,29 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		waitIfSuspended();
 		super.targetStarted(event);
 	}
-    
-    /* (non-Javadoc)
-     * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
-     */
-    @Override
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
+	 */
+	@Override
 	public synchronized void targetFinished(BuildEvent event) {
-        super.targetFinished(event);
+		super.targetFinished(event);
 		fDebugState.setTargetExecuting(null);
-    }   
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger#configure(java.util.Map)
-     */
-    @Override
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger#configure(java.util.Map)
+	 */
+	@Override
 	public synchronized void configure(Map<String, String> userProperties) {
-       super.configure(userProperties);
-       String requestPortProperty= userProperties.remove("eclipse.connect.request_port"); //$NON-NLS-1$
-        if (requestPortProperty != null) {
-            fRequestPort= Integer.parseInt(requestPortProperty);
-        }
-    }
+		super.configure(userProperties);
+		String requestPortProperty = userProperties.remove("eclipse.connect.request_port"); //$NON-NLS-1$
+		if (requestPortProperty != null) {
+			fRequestPort = Integer.parseInt(requestPortProperty);
+		}
+	}
 }

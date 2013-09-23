@@ -22,40 +22,43 @@ import org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 /**
- * Delegate for migrating Ant launch configurations.
- * The migration process involves a resource mapping being created such that launch configurations
+ * Delegate for migrating Ant launch configurations. The migration process involves a resource mapping being created such that launch configurations
  * can be filtered from the launch configuration dialog based on resource availability.
  * 
  * @since 3.2
  */
 public class AntMigrationDelegate implements ILaunchConfigurationMigrationDelegate {
-	
+
 	/**
-	 * Method to get the file for the specified launch configuration that should be mapped to the launch configuration  
+	 * Method to get the file for the specified launch configuration that should be mapped to the launch configuration
 	 * 
-	 * @param candidate the launch configuration that the file will be mapped to.
+	 * @param candidate
+	 *            the launch configuration that the file will be mapped to.
 	 * @return the buildfile or <code>null</code> if not in the workspace
 	 */
 	protected IFile getFileForCandidate(ILaunchConfiguration candidate) {
-		IFile file= null;
-		String expandedLocation= null;
-		String location= null;
+		IFile file = null;
+		String expandedLocation = null;
+		String location = null;
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		try {
-			location= candidate.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
+			location = candidate.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String) null);
 			if (location != null) {
-				expandedLocation= manager.performStringSubstitution(location);
+				expandedLocation = manager.performStringSubstitution(location);
 				if (expandedLocation != null) {
-					file= AntLaunchingUtil.getFileForLocation(expandedLocation, null);
+					file = AntLaunchingUtil.getFileForLocation(expandedLocation, null);
 				}
 			}
-		} catch (CoreException e) {
-			//do nothing
+		}
+		catch (CoreException e) {
+			// do nothing
 		}
 		return file;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate#isCandidate()
 	 */
 	@Override
@@ -67,14 +70,16 @@ public class AntMigrationDelegate implements ILaunchConfigurationMigrationDelega
 		return getFileForCandidate(candidate) != null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate#migrate(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	@Override
 	public void migrate(ILaunchConfiguration candidate) throws CoreException {
 		IFile file = getFileForCandidate(candidate);
 		ILaunchConfigurationWorkingCopy wc = candidate.getWorkingCopy();
-		wc.setMappedResources(new IResource[] {file});
+		wc.setMappedResources(new IResource[] { file });
 		wc.doSave();
 	}
 }

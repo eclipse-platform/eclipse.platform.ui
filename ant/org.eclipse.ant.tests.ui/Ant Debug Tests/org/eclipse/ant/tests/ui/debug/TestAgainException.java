@@ -24,11 +24,11 @@ public class TestAgainException extends RuntimeException {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param string
 	 */
 	public TestAgainException(String string) {
 		super(string);
 	}
-
 
 }

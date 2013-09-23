@@ -13,7 +13,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class AntCoreModelMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.launching.launchConfigurations.AntCoreModelMessages";//$NON-NLS-1$
-	
+
 	public static String AntUtil_6;
 	public static String AntUtil_7;
 	public static String AntUtil_2;

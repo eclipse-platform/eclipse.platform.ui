@@ -14,19 +14,18 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Echo;
 
-
 public class AntTestTask extends Task {
-	
+
 	public AntTestTask() {
 		super();
 	}
-	
+
 	/**
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
 	@Override
 	public void execute() throws BuildException {
-		Echo echo= new Echo();
+		Echo echo = new Echo();
 		echo.setProject(getProject());
 		echo.setMessage("Testing Ant in Eclipse with a custom task"); //$NON-NLS-1$
 		echo.execute();

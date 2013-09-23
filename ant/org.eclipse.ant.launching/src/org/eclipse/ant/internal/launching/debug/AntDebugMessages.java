@@ -13,7 +13,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class AntDebugMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.launching.debug.AntDebugMessages";//$NON-NLS-1$
-    
+
 	public static String AntSourceContainer_0;
 
 	static {

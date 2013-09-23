@@ -19,21 +19,19 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.IHyperlink;
 
-
 public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 
 	/**
 	 * Flag that indicates test are in progress
 	 */
 	protected boolean testing = true;
-		
+
 	public AbstractAntUIBuildTest(String name) {
 		super(name);
 	}
-	
+
 	/**
-	 * Runs the test and collects the result in a TestResult without blocking
-	 * the UI thread.
+	 * Runs the test and collects the result in a TestResult without blocking the UI thread.
 	 */
 	@Override
 	public void run(final TestResult result) {
@@ -43,50 +41,52 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 			Runnable r = new Runnable() {
 				@Override
 				public void run() {
-					AbstractAntUIBuildTest.super.run(result);		
+					AbstractAntUIBuildTest.super.run(result);
 					testing = false;
 					display.wake();
 				}
 			};
 			thread = new Thread(r);
 			thread.start();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		while (testing) {
 			try {
 				if (!display.readAndDispatch())
 					display.sleep();
-			} catch (Throwable e) {
+			}
+			catch (Throwable e) {
 				e.printStackTrace();
-			}			
-		}		
+			}
+		}
 	}
-	
+
 	/**
-	 * Launches the Ant build with the buildfile name (no extension).
-	 * Waits for all of the lines to be appended to the console.
+	 * Launches the Ant build with the buildfile name (no extension). Waits for all of the lines to be appended to the console.
 	 * 
-	 * @param buildFileName the buildfile to execute
+	 * @param buildFileName
+	 *            the buildfile to execute
 	 * @return thread in which the first suspend event occurred
 	 */
 	@Override
 	protected void launch(String buildFileName) throws CoreException {
 		super.launch(buildFileName);
 	}
-	
+
 	/**
-	 * Launches the launch configuration
-	 * Waits for all of the lines to be appended to the console.
+	 * Launches the launch configuration Waits for all of the lines to be appended to the console.
 	 * 
-	 * @param config the config to execute
+	 * @param config
+	 *            the config to execute
 	 * @return thread in which the first suspend event occurred
 	 */
 	protected void launch(ILaunchConfiguration config) throws CoreException {
-	    launchAndTerminate(config, 20000);
+		launchAndTerminate(config, 20000);
 	}
-	
+
 	protected void activateLink(final IHyperlink link) {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
@@ -95,7 +95,10 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 			}
 		});
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest#launch(java.lang.String, java.lang.String)
 	 */
 	@Override

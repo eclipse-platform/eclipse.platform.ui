@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.antsupport.inputhandler;
 
-
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -26,7 +25,8 @@ public class RemoteAntMessages {
 	public static String getString(String key) {
 		try {
 			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
+		}
+		catch (MissingResourceException e) {
 			return '!' + key + '!';
 		}
 	}

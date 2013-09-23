@@ -11,8 +11,7 @@
 package org.eclipse.ant.internal.launching.remote;
 
 /**
- * A security exception that is thrown by the AntSecurityManager if
- * an Ant task in some way attempts to halt or exit the Java Virtual Machine.
+ * A security exception that is thrown by the AntSecurityManager if an Ant task in some way attempts to halt or exit the Java Virtual Machine.
  * 
  * @since 2.1
  */

@@ -15,7 +15,7 @@ import org.eclipse.osgi.util.NLS;
 public class AntLaunchConfigurationMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchConfigurationMessages";//$NON-NLS-1$
 
-    public static String AddVariableStringAction_1;
+	public static String AddVariableStringAction_1;
 	public static String AddVariableStringAction_2;
 	public static String AddVariableStringAction_3;
 	public static String AddVariableStringAction_4;
@@ -37,7 +37,7 @@ public class AntLaunchConfigurationMessages extends NLS {
 
 	public static String AntJRETab_2;
 	public static String AntJRETab_3;
-	
+
 	public static String AntBuilderTargetsTab_0;
 	public static String AntBuilderTargetsTab_1;
 	public static String AntBuilderTargetsTab_2;
@@ -83,8 +83,8 @@ public class AntLaunchConfigurationMessages extends NLS {
 
 	public static String AntEnvironmentTab_0;
 	public static String SetTargetsDialog_0;
-    
-    public static String AntWorkingDirectoryBlock_0;
+
+	public static String AntWorkingDirectoryBlock_0;
 
 	static {
 		// load message values from bundle file
