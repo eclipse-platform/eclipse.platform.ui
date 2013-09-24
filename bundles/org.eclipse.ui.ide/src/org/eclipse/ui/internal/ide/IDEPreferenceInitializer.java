@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ide.handlers.ShowInSystemExplorerHandler;
 import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 
 /**
@@ -87,6 +88,8 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 		
 		node.put(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE, IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT);
 		node.put(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE, IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT);
+
+		node.put(IDEInternalPreferences.WORKBENCH_SYSTEM_EXPLORER, ShowInSystemExplorerHandler.getDefaultCommand());
 	}
 
 	private String getHelpSeparatorKey(String groupId) {

@@ -999,6 +999,12 @@
             id="org.eclipse.ui.ide.copyConfigCommand"
             name="%command.copyConfigCommand.name">
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.navigate"
+            name="%command.showInSystemExplorer.name"
+            id="org.eclipse.ui.ide.showInSystemExplorer"
+            description="%command.showInSystemExplorer.description">
+      </command>
    </extension>
    
    <extension
@@ -2034,6 +2040,13 @@
                style="push">
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.menus.showInMenu">
+ 	     <command
+             commandId="org.eclipse.ui.ide.showInSystemExplorer"
+             style="push">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -2215,6 +2228,18 @@
                      property="org.eclipse.ui.ide.editable">
                </test>
             </iterate>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.ide.handlers.ShowInSystemExplorerHandler"
+            commandId="org.eclipse.ui.ide.showInSystemExplorer">
+         <enabledWhen>
+            <with variable="selection">
+                    <count value="1" />
+                    <iterate ifEmpty="false">
+                        <adapt type="org.eclipse.core.resources.IResource" />
+                    </iterate>
+             </with>
          </enabledWhen>
       </handler>
    </extension>

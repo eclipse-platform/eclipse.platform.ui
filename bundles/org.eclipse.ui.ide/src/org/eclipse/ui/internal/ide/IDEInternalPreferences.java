@@ -118,5 +118,12 @@ public interface IDEInternalPreferences {
     /**
      * Workspace name, will be displayed in the window title.
      */
-	public static final String WORKSPACE_NAME = "WORKSPACE_NAME"; //$NON-NLS-1$
+    public static final String WORKSPACE_NAME = "WORKSPACE_NAME"; //$NON-NLS-1$
+
+    /**
+     * System explore command, used to launch file manager showing selected resource.
+     */
+    public static final String WORKBENCH_SYSTEM_EXPLORER = "SYSTEM_EXPLORER"; //$NON-NLS-1$
+    
+    
 }
