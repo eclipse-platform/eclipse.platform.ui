@@ -359,13 +359,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.equinox.launcher"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.equinox.launcher.gtk.solaris.sparc"
          os="solaris"
          ws="gtk"
@@ -380,16 +373,6 @@
          os="solaris"
          ws="gtk"
          arch="x86"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"/>
-
-   <plugin
-         id="org.eclipse.equinox.launcher.cocoa.macosx"
-         os="macosx"
-         ws="cocoa"
-         arch="ppc"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -636,17 +619,6 @@
          os="linux"
          ws="gtk"
          arch="x86_64"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.swt.cocoa.macosx"
-         os="macosx"
-         ws="cocoa"
-         arch="ppc"
          download-size="0"
          install-size="0"
          version="0.0.0"
