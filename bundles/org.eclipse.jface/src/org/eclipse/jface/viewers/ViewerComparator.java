@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,10 @@ import org.eclipse.jface.util.Policy;
  * The default <code>compare</code> method compares elements using two steps. 
  * The first step uses the values returned from <code>category</code>. 
  * By default, all elements are in the same category. 
- * The second level is based on a case insensitive compare of the strings obtained 
- * from the content viewer's label provider via <code>ILabelProvider.getText</code>.
+ * The second level uses strings obtained from the content viewer's label
+ * provider via <code>ILabelProvider.getText()</code>.
+ * The strings are compared using a comparator from {@link Policy#getComparator()}
+ * which by default does a case sensitive string comparison.
  * </p>
  * <p>
  * Subclasses may implement the <code>isSorterProperty</code> method;
