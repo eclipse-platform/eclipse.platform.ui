@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
@@ -281,12 +282,12 @@ public class KeyBindingDispatcher {
 				}
 			}
 
-			try {
-				handlerService.executeHandler(parameterizedCommand, staticContext);
-			} catch (final Exception e) {
+			handlerService.executeHandler(parameterizedCommand, staticContext);
+			final Object commandException = staticContext.get(HandlerServiceImpl.HANDLER_EXCEPTION);
+			if (commandException instanceof CommandException) {
 				commandHandled = false;
-				if (logger != null) {
-					logger.error(e);
+				if (logger != null && commandException instanceof ExecutionException) {
+					logger.error((Throwable) commandException);
 				}
 			}
 			/*
