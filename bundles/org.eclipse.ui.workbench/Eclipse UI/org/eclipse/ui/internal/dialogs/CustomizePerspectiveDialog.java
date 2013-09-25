@@ -3351,7 +3351,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		// Remove explicitly 'visible' elements from the current list
 		for (Iterator<String> iterator = changedAndVisible.iterator(); iterator.hasNext();) {
 			String id = iterator.next();
-			if (id != null && currentHidden.contains(id)) {
+			if (id != null && currentHidden.contains(prefix + id)) {
 				hasChanges = true;
 				((WorkbenchPage) window.getActivePage()).removeHiddenItems(prefix + id);
 			}
@@ -3360,7 +3360,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		// Add explicitly 'hidden' elements to the current list
 		for (Iterator<String> iterator = changedAndInvisible.iterator(); iterator.hasNext();) {
 			String id = iterator.next();
-			if (id != null && !currentHidden.contains(id)) {
+			if (id != null && !currentHidden.contains(prefix + id)) {
 				hasChanges = true;
 				((WorkbenchPage) window.getActivePage()).addHiddenItems(prefix + id);
 			}
