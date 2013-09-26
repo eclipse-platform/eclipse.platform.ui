@@ -20,6 +20,7 @@ import java.util.List;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
+import org.eclipse.ant.internal.ui.model.AntModelContentProvider;
 import org.eclipse.ant.internal.ui.model.AntModelLabelProvider;
 import org.eclipse.ant.internal.ui.model.AntModelProblem;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
@@ -84,7 +85,12 @@ import org.eclipse.ui.texteditor.IUpdate;
  */
 public class AntView extends ViewPart implements IResourceChangeListener, IShowInSource {
 
-	private Object[] restoredViewerInput = null;
+	/**
+	 * The view root elements
+	 * 
+	 * @since 3.5.00
+	 */
+	private List<AntProjectNode> fInput = new ArrayList<AntProjectNode>();
 	private boolean filterInternalTargets = false;
 	private InternalTargetFilter fInternalTargetFilter = null;
 	/**
@@ -130,7 +136,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * The tree viewer that displays the users ant projects
 	 */
 	private TreeViewer projectViewer;
-	private AntViewContentProvider contentProvider;
+	private AntModelContentProvider contentProvider;
 
 	/**
 	 * Collection of <code>IUpdate</code> actions that need to update on selection changed in the project viewer.
@@ -288,7 +294,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 */
 	private void createProjectViewer(Composite parent) {
 		projectViewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
-		contentProvider = new AntViewContentProvider();
+		contentProvider = new AntModelContentProvider();
 		projectViewer.setContentProvider(contentProvider);
 
 		filterInternalTargetsAction.setChecked(filterInternalTargets);
@@ -299,10 +305,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			restoreViewerInput(fgTempMemento);
 			fgTempMemento = null;
 		}
-		projectViewer.setInput(new Object[0]);
-		if (restoredViewerInput.length > 0) {
-			contentProvider.addAll(restoredViewerInput);
-		}
+		projectViewer.setInput(fInput);
 		projectViewer.setComparator(new ViewerComparator() {
 			/*
 			 * (non-Javadoc)
@@ -441,12 +444,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * @return AntProjectNode[] the <code>ProjectNode</code>s currently displayed in this view
 	 */
 	public AntProjectNode[] getProjects() {
-		Object[] objects = contentProvider.getElements(projectViewer.getInput());
-		AntProjectNode[] projects = new AntProjectNode[objects.length];
-		for (int i = 0; i < projects.length; i++) {
-			projects[i] = (AntProjectNode) objects[i];
-		}
-		return projects;
+		return fInput.toArray(new AntProjectNode[fInput.size()]);
 	}
 
 	/**
@@ -456,7 +454,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 *            the project to add
 	 */
 	public void addProject(AntProjectNode project) {
-		contentProvider.add(project);
+		fInput.add(project);
 		projectViewer.refresh();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		handleSelectionChanged(new StructuredSelection(project));
@@ -469,7 +467,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 *            the project to remove
 	 */
 	private void removeProject(AntProjectNode project) {
-		removeProjectFromContentProvider(project);
+		fInput.remove(project);
 		projectViewer.refresh();
 		setProjectViewerSelectionAfterDeletion();
 	}
@@ -494,24 +492,10 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 */
 	public void removeProjects(List<AntProjectNode> projectNodes) {
 		for (AntProjectNode project : projectNodes) {
-			removeProjectFromContentProvider(project);
+			fInput.remove(project);
 		}
 		projectViewer.refresh();
 		setProjectViewerSelectionAfterDeletion();
-	}
-
-	/**
-	 * Removes the given project node from the project content provider.
-	 * 
-	 * @param project
-	 *            the project to remove
-	 */
-	private void removeProjectFromContentProvider(AntProjectNode project) {
-		project.dispose();
-		contentProvider.remove(project);
-		if (getProjects().length == 0) {
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-		}
 	}
 
 	/**
@@ -523,9 +507,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			AntProjectNode node = projects[i];
 			node.dispose();
 		}
-		// Remove all projects
-		contentProvider.removeAll();
-
+		fInput.clear();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		updateProjectActions();
 		projectViewer.refresh();
@@ -556,15 +538,12 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 */
 	private void restoreViewerInput(IMemento memento) {
 		if (memento == null) {
-			restoredViewerInput = new Object[0];
 			return;
 		}
 		IMemento[] projects = memento.getChildren(TAG_PROJECT);
 		if (projects.length < 1) {
-			restoredViewerInput = new Object[0];
 			return;
 		}
-		List<AntProjectNodeProxy> projectNodes = new ArrayList<AntProjectNodeProxy>(projects.length);
 		for (int i = 0; i < projects.length; i++) {
 			IMemento projectMemento = projects[i];
 			String pathString = projectMemento.getString(KEY_PATH);
@@ -590,9 +569,8 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			if (defaultTarget != null) {
 				project.setDefaultTargetName(defaultTarget);
 			}
-			projectNodes.add(project);
+			fInput.add(project);
 		}
-		restoredViewerInput = projectNodes.toArray(new AntProjectNode[projectNodes.size()]);
 	}
 
 	/*
@@ -637,6 +615,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	public void dispose() {
 		fgTempMemento = XMLMemento.createWriteRoot("AntViewMemento"); //$NON-NLS-1$
 		saveState(fgTempMemento);
+		fInput.clear();
 		super.dispose();
 		if (openWithMenu != null) {
 			openWithMenu.dispose();

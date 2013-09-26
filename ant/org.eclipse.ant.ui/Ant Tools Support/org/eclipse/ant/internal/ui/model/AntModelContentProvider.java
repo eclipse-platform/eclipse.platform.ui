@@ -94,7 +94,9 @@ public class AntModelContentProvider implements ITreeContentProvider {
 
 			return new Object[] { projectNode };
 		}
-
+		if (inputElement instanceof List) {
+			return ((List<?>) inputElement).toArray();
+		}
 		if (inputElement instanceof Object[]) {
 			return (Object[]) inputElement;
 		}
