@@ -15,6 +15,7 @@ package org.eclipse.ant.internal.launching.launchConfigurations;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -63,8 +64,10 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.SocketUtil;
-import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.namespace.HostNamespace;
+import org.osgi.framework.wiring.BundleWire;
+import org.osgi.framework.wiring.BundleWiring;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -706,12 +709,13 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 	private String getSWTLibraryLocation() {
 		if (fgSWTLibraryLocation == null) {
 			Bundle bundle = Platform.getBundle("org.eclipse.swt"); //$NON-NLS-1$
-			BundleDescription description = Platform.getPlatformAdmin().getState(false).getBundle(bundle.getBundleId());
-			BundleDescription[] fragments = description.getFragments();
-			if (fragments == null || fragments.length == 0) {
+			BundleWiring wiring = bundle.adapt(BundleWiring.class);
+			List<BundleWire> fragmentWires = wiring == null ? Collections.<BundleWire> emptyList()
+					: wiring.getProvidedWires(HostNamespace.HOST_NAMESPACE);
+			if (fragmentWires.isEmpty()) {
 				return null;
 			}
-			Bundle fragBundle = Platform.getBundle(fragments[0].getSymbolicName());
+			Bundle fragBundle = fragmentWires.get(0).getRequirer().getBundle();
 			try {
 				URL url = FileLocator.toFileURL(fragBundle.getEntry("/")); //$NON-NLS-1$
 				IPath path = new Path(url.getPath());

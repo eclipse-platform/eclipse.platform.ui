@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
@@ -34,8 +35,10 @@ import org.eclipse.jdt.internal.launching.AbstractRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.namespace.HostNamespace;
+import org.osgi.framework.wiring.BundleWire;
+import org.osgi.framework.wiring.BundleWiring;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -158,10 +161,11 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 		if (fgSWTEntries == null) {
 			fgSWTEntries = new ArrayList<IRuntimeClasspathEntry>();
 			Bundle bundle = Platform.getBundle("org.eclipse.swt"); //$NON-NLS-1$
-			BundleDescription description = Platform.getPlatformAdmin().getState(false).getBundle(bundle.getBundleId());
-			BundleDescription[] fragments = description.getFragments();
-			for (int i = 0; i < fragments.length; i++) {
-				Bundle fragmentBundle = Platform.getBundle(fragments[i].getName());
+			BundleWiring wiring = bundle.adapt(BundleWiring.class);
+			List<BundleWire> fragmentWires = wiring == null ? Collections.<BundleWire> emptyList()
+					: wiring.getProvidedWires(HostNamespace.HOST_NAMESPACE);
+			for (BundleWire fragmentWire : fragmentWires) {
+				Bundle fragmentBundle = fragmentWire.getRequirer().getBundle();
 				URL bundleURL;
 				try {
 					bundleURL = FileLocator.resolve(fragmentBundle.getEntry("/")); //$NON-NLS-1$

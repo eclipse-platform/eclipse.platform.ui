@@ -48,13 +48,17 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChange
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+import org.osgi.framework.namespace.BundleNamespace;
+import org.osgi.framework.namespace.HostNamespace;
+import org.osgi.framework.namespace.PackageNamespace;
+import org.osgi.framework.wiring.BundleRevision;
+import org.osgi.framework.wiring.BundleWire;
+import org.osgi.framework.wiring.BundleWiring;
 import org.osgi.service.packageadmin.ExportedPackage;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.service.prefs.BackingStoreException;
@@ -139,10 +143,10 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	}
 
 	static private class Relation {
-		Object from;
-		Object to;
+		BundleRevision from;
+		BundleRevision to;
 
-		Relation(Object from, Object to) {
+		Relation(BundleRevision from, BundleRevision to) {
 			this.from = from;
 			this.to = to;
 		}
@@ -827,7 +831,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 				property.setName(name);
 				property.setPluginLabel(element.getContributor().getName());
 				String className = element.getAttribute(AntCorePlugin.CLASS);
-				property.setValueProvider(className, new WrappedClassLoader(bundle));
+				property.setValueProvider(className, getClassLoader(bundle));
 			}
 			defaultProperties.add(property);
 			String runtime = element.getAttribute(AntCorePlugin.ECLIPSE_RUNTIME);
@@ -835,6 +839,10 @@ public class AntCorePreferences implements IPropertyChangeListener {
 				property.setEclipseRuntimeRequired(Boolean.valueOf(runtime).booleanValue());
 			}
 		}
+	}
+
+	private WrappedClassLoader getClassLoader(Bundle b) {
+		return new WrappedClassLoader(b);
 	}
 
 	/**
@@ -1020,7 +1028,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	}
 
 	protected void addPluginClassLoader(Bundle bundle) {
-		WrappedClassLoader loader = new WrappedClassLoader(bundle);
+		WrappedClassLoader loader = getClassLoader(bundle);
 		if (!pluginClassLoaders.contains(loader)) {
 			pluginClassLoaders.add(loader);
 		}
@@ -1099,19 +1107,22 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		if (orderedPluginClassLoaders == null) {
 			Iterator<WrappedClassLoader> classLoaders = pluginClassLoaders.iterator();
 			Map<String, WrappedClassLoader> idToLoader = new HashMap<String, WrappedClassLoader>(pluginClassLoaders.size());
-			List<BundleDescription> bundles = new ArrayList<BundleDescription>(pluginClassLoaders.size());
+			List<BundleRevision> bundles = new ArrayList<BundleRevision>(pluginClassLoaders.size());
 			while (classLoaders.hasNext()) {
 				WrappedClassLoader loader = classLoaders.next();
 				idToLoader.put(loader.bundle.getSymbolicName(), loader);
-				bundles.add(Platform.getPlatformAdmin().getState(false).getBundle(loader.bundle.getBundleId()));
+				BundleRevision revision = loader.bundle.adapt(BundleRevision.class);
+				if (revision != null) {
+					bundles.add(revision);
+				}
 			}
-			List<Object> descriptions = computePrerequisiteOrder(bundles);
-			List<WrappedClassLoader> loaders = new ArrayList<WrappedClassLoader>(descriptions.size());
-			for (Iterator<Object> iter = descriptions.iterator(); iter.hasNext();) {
-				String id = ((BundleDescription) iter.next()).getSymbolicName();
+			List<BundleRevision> sorted = computePrerequisiteOrder(bundles);
+			List<WrappedClassLoader> loaders = new ArrayList<WrappedClassLoader>(sorted.size());
+			for (BundleRevision revision : sorted) {
+				String id = revision.getSymbolicName();
 				loaders.add(idToLoader.get(id));
 			}
-			orderedPluginClassLoaders = loaders.toArray(new WrappedClassLoader[loaders.size()]);
+			orderedPluginClassLoaders = loaders.toArray(new ClassLoader[loaders.size()]);
 		}
 		return orderedPluginClassLoaders;
 	}
@@ -1119,25 +1130,24 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
-	private List<Object> computePrerequisiteOrder(List<BundleDescription> plugins) {
+	private List<BundleRevision> computePrerequisiteOrder(List<BundleRevision> plugins) {
 		List<Relation> prereqs = new ArrayList<Relation>(plugins.size());
-		List<BundleDescription> fragments = new ArrayList<BundleDescription>();
+		List<BundleRevision> fragments = new ArrayList<BundleRevision>();
 
 		// create a collection of directed edges from plugin to prereq
-		for (Iterator<BundleDescription> iter = plugins.iterator(); iter.hasNext();) {
-			BundleDescription current = iter.next();
-			if (current.getHost() != null) {
+		for (BundleRevision current : plugins) {
+			if ((current.getTypes() & BundleRevision.TYPE_FRAGMENT) != 0) {
 				fragments.add(current);
 				continue;
 			}
 			boolean found = false;
 
-			BundleDescription[] prereqList = getDependentBundles(current);
-			for (int j = 0; j < prereqList.length; j++) {
+			BundleRevision[] prereqList = getDependentBundles(current);
+			for (BundleRevision prereq : prereqList) {
 				// ensure that we only include values from the original set.
-				if (plugins.contains(prereqList[j])) {
+				if (plugins.contains(prereq)) {
 					found = true;
-					prereqs.add(new Relation(current, prereqList[j]));
+					prereqs.add(new Relation(current, prereq));
 				}
 			}
 
@@ -1150,21 +1160,17 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 		// The fragments needs to added relatively to their host and to their
 		// own prerequisite (bug #43244)
-		for (Iterator<BundleDescription> iter = fragments.iterator(); iter.hasNext();) {
-			BundleDescription current = iter.next();
+		for (BundleRevision currentFrag : fragments) {
 
-			if (plugins.contains(current.getHost().getBundle())) {
-				prereqs.add(new Relation(current, current.getHost().getSupplier()));
-			} else {
-				AntCorePlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, NLS.bind(InternalCoreAntMessages.AntCorePreferences_1, new String[] { current.getSymbolicName() }), null));
-			}
-
-			BundleDescription[] prereqList = getDependentBundles(current);
-			for (int j = 0; j < prereqList.length; j++) {
-				// ensure that we only include values from the original set.
-				if (plugins.contains(prereqList[j])) {
-					prereqs.add(new Relation(current, prereqList[j]));
+			if (plugins.contains(currentFrag)) {
+				BundleWiring wiring = currentFrag.getWiring();
+				List<BundleWire> hostWires = wiring == null ? Collections.<BundleWire> emptyList()
+						: wiring.getRequiredWires(HostNamespace.HOST_NAMESPACE);
+				if (!hostWires.isEmpty()) {
+					prereqs.add(new Relation(currentFrag, hostWires.get(0).getProvider()));
 				}
+			} else {
+				AntCorePlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, NLS.bind(InternalCoreAntMessages.AntCorePreferences_1, new String[] { currentFrag.getSymbolicName() }), null));
 			}
 		}
 
@@ -1175,10 +1181,10 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	/*
 	 * Copied from org.eclipse.pde.internal.build.site.PDEState.
 	 */
-	private BundleDescription[] getDependentBundles(BundleDescription root) {
-		BundleDescription[] imported = getImportedBundles(root);
-		BundleDescription[] required = getRequiredBundles(root);
-		BundleDescription[] dependents = new BundleDescription[imported.length + required.length];
+	private BundleRevision[] getDependentBundles(BundleRevision root) {
+		BundleRevision[] imported = getImportedBundles(root);
+		BundleRevision[] required = getRequiredBundles(root);
+		BundleRevision[] dependents = new BundleRevision[imported.length + required.length];
 		System.arraycopy(imported, 0, dependents, 0, imported.length);
 		System.arraycopy(required, 0, dependents, imported.length, required.length);
 		return dependents;
@@ -1187,39 +1193,42 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	/*
 	 * Copied from org.eclipse.pde.internal.build.site.PDEState.
 	 */
-	private BundleDescription[] getRequiredBundles(BundleDescription root) {
-		if (root == null) {
-			return new BundleDescription[0];
-		}
-		return root.getResolvedRequires();
+	private BundleRevision[] getRequiredBundles(BundleRevision root) {
+		return getDependantRequirements(root, BundleNamespace.BUNDLE_NAMESPACE);
 	}
 
 	/*
 	 * Copied from org.eclipse.pde.internal.build.site.PDEState.
 	 */
-	private BundleDescription[] getImportedBundles(BundleDescription root) {
+	private BundleRevision[] getImportedBundles(BundleRevision root) {
+		return getDependantRequirements(root, PackageNamespace.PACKAGE_NAMESPACE);
+	}
+
+	private BundleRevision[] getDependantRequirements(BundleRevision root, String namespace) {
 		if (root == null) {
-			return new BundleDescription[0];
+			return new BundleRevision[0];
 		}
-		ExportPackageDescription[] packages = root.getResolvedImports();
-		ArrayList<BundleDescription> resolvedImports = new ArrayList<BundleDescription>(packages.length);
-		for (int i = 0; i < packages.length; i++) {
-			if (!root.getLocation().equals(packages[i].getExporter().getLocation()) && !resolvedImports.contains(packages[i].getExporter())) {
-				resolvedImports.add(packages[i].getExporter());
+		BundleWiring wiring = root.getWiring();
+		List<BundleWire> requiredWires = wiring == null ? Collections.<BundleWire> emptyList() : wiring.getRequiredWires(namespace);
+		ArrayList<BundleRevision> requirementProviders = new ArrayList<BundleRevision>(requiredWires.size());
+		for (BundleWire requiredWire : requiredWires) {
+			BundleRevision provider = requiredWire.getProvider();
+			if (!provider.equals(root) && !requirementProviders.contains(provider)) {
+				requirementProviders.add(provider);
 			}
 		}
-		return resolvedImports.toArray(new BundleDescription[resolvedImports.size()]);
+		return requirementProviders.toArray(new BundleRevision[requirementProviders.size()]);
 	}
 
 	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
-	private void removeArcs(List<Relation> edges, List<Object> roots, Map<Object, Integer> counts) {
-		for (Iterator<Object> j = roots.iterator(); j.hasNext();) {
+	private void removeArcs(List<Relation> edges, List<BundleRevision> roots, Map<BundleRevision, Integer> counts) {
+		for (Iterator<BundleRevision> j = roots.iterator(); j.hasNext();) {
 			Object root = j.next();
 			for (int i = 0; i < edges.size(); i++) {
 				if (root.equals(edges.get(i).to)) {
-					Object input = edges.get(i).from;
+					BundleRevision input = edges.get(i).from;
 					Integer count = counts.get(input);
 					if (count != null) {
 						counts.put(input, new Integer(count.intValue() - 1));
@@ -1232,15 +1241,15 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
-	private List<Object> computeNodeOrder(List<Relation> edges) {
-		Map<Object, Integer> counts = computeCounts(edges);
-		List<Object> nodes = new ArrayList<Object>(counts.size());
+	private List<BundleRevision> computeNodeOrder(List<Relation> edges) {
+		Map<BundleRevision, Integer> counts = computeCounts(edges);
+		List<BundleRevision> nodes = new ArrayList<BundleRevision>(counts.size());
 		while (!counts.isEmpty()) {
-			List<Object> roots = findRootNodes(counts);
+			List<BundleRevision> roots = findRootNodes(counts);
 			if (roots.isEmpty()) {
 				break;
 			}
-			for (Iterator<Object> i = roots.iterator(); i.hasNext();) {
+			for (Iterator<BundleRevision> i = roots.iterator(); i.hasNext();) {
 				counts.remove(i.next());
 			}
 			nodes.addAll(roots);
@@ -1252,12 +1261,12 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
-	private Map<Object, Integer> computeCounts(List<Relation> mappings) {
-		Map<Object, Integer> counts = new HashMap<Object, Integer>(5);
+	private Map<BundleRevision, Integer> computeCounts(List<Relation> mappings) {
+		Map<BundleRevision, Integer> counts = new HashMap<BundleRevision, Integer>(5);
 		for (int i = 0; i < mappings.size(); i++) {
-			Object from = mappings.get(i).from;
+			BundleRevision from = mappings.get(i).from;
 			Integer fromCount = counts.get(from);
-			Object to = mappings.get(i).to;
+			BundleRevision to = mappings.get(i).to;
 			if (to == null)
 				counts.put(from, new Integer(0));
 			else {
@@ -1273,10 +1282,10 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
-	private List<Object> findRootNodes(Map<Object, Integer> counts) {
-		List<Object> result = new ArrayList<Object>(5);
-		for (Iterator<Object> i = counts.keySet().iterator(); i.hasNext();) {
-			Object node = i.next();
+	private List<BundleRevision> findRootNodes(Map<BundleRevision, Integer> counts) {
+		List<BundleRevision> result = new ArrayList<BundleRevision>(5);
+		for (Iterator<BundleRevision> i = counts.keySet().iterator(); i.hasNext();) {
+			BundleRevision node = i.next();
 			int count = counts.get(node).intValue();
 			if (count == 0) {
 				result.add(node);
@@ -1288,7 +1297,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	private void initializePluginClassLoaders() {
 		pluginClassLoaders = new ArrayList<WrappedClassLoader>(10);
 		// ant.core should always be present
-		pluginClassLoaders.add(new WrappedClassLoader(AntCorePlugin.getPlugin().getBundle()));
+		pluginClassLoaders.add(getClassLoader(AntCorePlugin.getPlugin().getBundle()));
 	}
 
 	/**
