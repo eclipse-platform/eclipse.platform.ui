@@ -48,6 +48,8 @@ public class E4Workbench implements IWorkbench {
 	public static final String DELTA_RESTORE = "deltaRestore"; //$NON-NLS-1$
 
 	public static final String RTL_MODE = "dir"; //$NON-NLS-1$
+	public static final String NO_SAVED_MODEL_FOUND = "NO_SAVED_MODEL_FOUND"; //$NON-NLS-1$
+
 
 	IEclipseContext appContext;
 	IPresentationEngine renderer;

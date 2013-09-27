@@ -208,6 +208,7 @@ public class ResourceHandler implements IModelResourceHandler {
 				restoreLocation = URI.createFileURI(workbenchData.getAbsolutePath());
 			resource = resourceSetImpl.createResource(restoreLocation);
 			resource.getContents().add((EObject) theApp);
+			context.set(E4Workbench.NO_SAVED_MODEL_FOUND, Boolean.TRUE);
 		}
 
 		// Add model items described in the model extension point

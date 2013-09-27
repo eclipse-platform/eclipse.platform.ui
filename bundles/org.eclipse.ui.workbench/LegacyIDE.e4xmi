@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xsi:schemaLocation="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic http://www.eclipse.org/ui/2010/UIModel/application#//ui/basic" xmi:id="org.eclipse.e4.legacy.ide.application" elementId="org.eclipse.e4.legacy.ide.application" bindingContexts="_SeXUHO8EEd6BC9cDb6iV7y">
-  <children xsi:type="basic:TrimmedWindow" xmi:id="IDEWindow" elementId="IDEWindow" width="1024" height="768"/>
+  <children xsi:type="basic:TrimmedWindow" xmi:id="IDEWindow" elementId="IDEWindow" label="%trimmedwindow.label.eclipseSDK" width="5" height="5"/>
   <handlers xmi:id="_UW9TY_r3Ed6gmo7caOxU9g" elementId="_UW9TY_r3Ed6gmo7caOxU9g" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.ExitHandler" command="e4.exit"/>
   <handlers xmi:id="_BESTZfr3Ed6gmo7caOxU04" elementId="_BESTZfr3Ed6gmo7caOxU04" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.internal.workbench.swt.handlers.ShowViewHandler" command="e4.show.view"/>
   <handlers xmi:id="_eTBRgAFSEd-Z8rQksLwRYw" elementId="org.eclipse.e4.ui.saveHandler" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.handlers.SaveHandler" command="_jR5mUAFSEd-Z8rQksLwRYw"/>

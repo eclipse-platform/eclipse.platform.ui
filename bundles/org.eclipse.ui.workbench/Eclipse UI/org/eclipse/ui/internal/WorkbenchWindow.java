@@ -45,6 +45,7 @@ import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.PartServiceSaveHandler;
 import org.eclipse.e4.ui.internal.workbench.URIHelper;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService;
@@ -108,6 +109,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -544,16 +547,13 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		cs.activateContext(IContextService.CONTEXT_ID_WINDOW);
 		cs.getActiveContextIds();
 
-		String title = getWindowConfigurer().basicGetTitle();
-		if (title != null) {
-			getShell().setText(TextProcessor.process(title, TEXT_DELIMITERS));
-		}
 
 		initializeDefaultServices();
 
 		// register with the tracker
 
 		fireWindowOpening();
+		configureShell(getShell(), windowContext);
 
 		try {
 			page = new WorkbenchPage(this, input);
@@ -682,6 +682,26 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		trackShellActivation();
 	}
 
+	private void configureShell(Shell shell, IEclipseContext context) {
+		String title = getWindowConfigurer().basicGetTitle();
+		if (title != null) {
+			shell.setText(TextProcessor.process(title, TEXT_DELIMITERS));
+		}
+		workbench.getHelpSystem().setHelp(shell, IWorkbenchHelpContextIds.WORKBENCH_WINDOW);
+
+		IContextService contextService = context.get(IContextService.class);
+		contextService.registerShell(shell, IContextService.TYPE_WINDOW);
+		if (model.getContext().get(E4Workbench.NO_SAVED_MODEL_FOUND) != null) {
+			Point initialSize = getWindowConfigurer().getInitialSize();
+			Rectangle bounds = shell.getBounds();
+			// actually set the shell size, so that setting the
+			// menuBar on the shell doesn't override the model changes.
+			bounds.width = initialSize.x;
+			bounds.height = initialSize.y;
+			shell.setBounds(bounds);
+		}
+	}
+	
 	private boolean manageChanges = true;
 	private boolean canUpdateMenus = true;
 
