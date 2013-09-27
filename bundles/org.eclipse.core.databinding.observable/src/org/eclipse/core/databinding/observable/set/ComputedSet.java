@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 237703)
  *     Matthew Hall - bug 274081
+ *     Abel Hegedus - bug 414297
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.set;
 
@@ -227,12 +228,15 @@ public abstract class ComputedSet extends AbstractObservableSet {
 		if (!dirty) {
 			dirty = true;
 
+			// copy the old set
+			// bug 414297: moved before makeStale(), as cachedSet may be
+			// overwritten
+			// in makeStale() if a listener calls isStale()
+			final Set oldSet = new HashSet(cachedSet);
 			makeStale();
 
 			stopListening();
 
-			// copy the old set
-			final Set oldSet = new HashSet(cachedSet);
 			// Fire the "dirty" event. This implementation recomputes the new
 			// set lazily.
 			fireSetChange(new SetDiff() {
