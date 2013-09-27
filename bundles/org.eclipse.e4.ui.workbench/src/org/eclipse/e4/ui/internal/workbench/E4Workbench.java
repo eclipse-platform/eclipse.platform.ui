@@ -78,6 +78,8 @@ public class E4Workbench implements IWorkbench {
 	 */
 	public static final String FORCED_PERSPECTIVE_ID = "forcedPerspetiveId"; //$NON-NLS-1$
 
+	public static final String NO_SAVED_MODEL_FOUND = "NO_SAVED_MODEL_FOUND"; //$NON-NLS-1$
+
 	private final String id;
 	private ServiceRegistration<?> osgiRegistration;
 
