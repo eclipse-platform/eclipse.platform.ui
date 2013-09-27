@@ -52,17 +52,28 @@ public class WorkbenchThemeManager extends EventManager implements
 	 * 
 	 * @return singleton instance
 	 */
-	public static synchronized WorkbenchThemeManager getInstance() {
+	public static WorkbenchThemeManager getInstance() {
 		if (instance == null) {
 			if (PlatformUI.getWorkbench().getDisplay() != null) {
 				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 					public void run() {
-						instance = new WorkbenchThemeManager();
-						instance.getCurrentTheme(); // initialize the current
-													// theme
+						getInternalInstance();
 					}
 				});
 			}
+		}
+		return instance;
+	}
+
+	/**
+	 * Initialize the singleton theme manager. Must be called in the UI thread.
+	 * 
+	 * @return the theme manager.
+	 */
+	private static synchronized WorkbenchThemeManager getInternalInstance() {
+		if (instance == null) {
+			instance = new WorkbenchThemeManager();
+			instance.getCurrentTheme(); // initialize the current theme
 		}
 		return instance;
 	}
