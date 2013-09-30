@@ -7,28 +7,21 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel (Lars.Vogel@gmail.com) - Bug 416099
  ******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench.handlers;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 
 public class SaveAllHandler {
 
 	@CanExecute
-	boolean canExecute(@Optional MWindow window) {
-		if (window != null) {
-			IEclipseContext context = window.getContext();
-			if (context != null) {
-				EPartService partService = context.get(EPartService.class);
-				if (partService != null) {
-					return !partService.getDirtyParts().isEmpty();
-				}
-			}
+	boolean canExecute(@Optional EPartService partService) {
+		if (partService != null) {
+			return !partService.getDirtyParts().isEmpty();
 		}
 		return false;
 	}
