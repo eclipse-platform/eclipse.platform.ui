@@ -105,6 +105,7 @@ public class E4Application implements IApplication {
 	private static final String WORKSPACE_VERSION_VALUE = "2"; //$NON-NLS-1$
 	private static final String APPLICATION_MODEL_PATH_DEFAULT = "Application.e4xmi";
 	private static final String PERSPECTIVE_ARG_NAME = "perspective";
+	private static final String DEFAULT_THEME_ID = "org.eclipse.e4.ui.css.theme.e4_default";
 
 	private String[] args;
 
@@ -292,10 +293,7 @@ public class E4Application implements IApplication {
 		String xmiURI = getArgValue(IWorkbench.XMI_URI_ARG, applicationContext,
 				false);
 		appContext.set(IWorkbench.XMI_URI_ARG, xmiURI);
-
-		String themeId = getArgValue(E4Application.THEME_ID,
-				applicationContext, false);
-		appContext.set(E4Application.THEME_ID, themeId);
+		appContext.set(E4Application.THEME_ID, getThemeId(applicationContext));
 
 		String cssURI = getArgValue(IWorkbench.CSS_URI_ARG, applicationContext,
 				false);
@@ -654,6 +652,11 @@ public class E4Application implements IApplication {
 		mbox.setText(title);
 		mbox.setMessage(message);
 		return mbox.open() == SWT.OK;
+	}
+
+	private String getThemeId(IApplicationContext appContext) {
+		String themeId = getArgValue(E4Application.THEME_ID, appContext, false);
+		return themeId != null ? themeId : DEFAULT_THEME_ID;
 	}
 
 	/**
