@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Rüdiger Herrmann - fix for bug 418420
  *******************************************************************************/
 package org.eclipse.jface.fieldassist;
 
@@ -1075,6 +1076,12 @@ public class ControlDecoration {
 		if (!visible) {
 			return;
 		}
+		
+		// If the decoration is hidden, don't show the hover.
+		if (showOnlyOnFocus && !control.isFocusControl()) {
+			return;
+		}
+		
 		// If there is no text, any existing hover should be hidden, and
 		// there is nothing more to do.
 		if (text == null || text.length() == 0) {

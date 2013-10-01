@@ -75,6 +75,19 @@ public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 		assertTwoShellsUp();
 	}
 	
+	public void testBug418420() {
+		AbstractFieldAssistWindow window = getFieldAssistWindow();
+		window.open();
+		ControlDecoration decoration = new ControlDecoration(window.getFieldAssistControl(), SWT.RIGHT);
+		decoration.setImage(FieldDecorationRegistry.getDefault()             
+		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());   
+		decoration.setDescriptionText("foo");   
+		decoration.setShowOnlyOnFocus(true);
+		anotherControl.forceFocus();
+		decoration.showHoverText("Show me");
+		assertOneShellUp();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.tests.fieldassist.AbstractFieldAssistTestCase#createFieldAssistWindow()
 	 */
