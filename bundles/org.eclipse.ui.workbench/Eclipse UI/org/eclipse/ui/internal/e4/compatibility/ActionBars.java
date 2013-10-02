@@ -120,9 +120,7 @@ public class ActionBars extends SubActionBars {
 			if (renderer instanceof StackRenderer) {
 				StackRenderer stackRenderer = (StackRenderer) renderer;
 				CTabFolder folder = (CTabFolder) parent.getWidget();
-				stackRenderer.disposeViewMenu(folder);
-				stackRenderer.setupMenuButton(part, folder);
-				stackRenderer.layoutTopRight(folder);
+				stackRenderer.adjustTopRight(folder);
 			}
 		}
 
