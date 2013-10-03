@@ -618,6 +618,9 @@ public class StackRenderer extends LazyStackRenderer {
 				part.getToolbar().setVisible(true);
 				newViewTB = (ToolBar) renderer.createGui(part.getToolbar(),
 						ctf.getTopRight(), part.getContext());
+				// We can get calls during shutdown in which case the
+				// rendering engine will return 'null' because you can't
+				// render anything while a removeGui is taking place...
 				if (newViewTB == null) {
 					adjusting = false;
 					return;
