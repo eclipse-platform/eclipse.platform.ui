@@ -14,6 +14,7 @@ org.eclipse.jdt.core.compiler.problem.assertIdentifier=error
 org.eclipse.jdt.core.compiler.problem.enumIdentifier=error
 org.eclipse.jdt.core.compiler.problem.incompleteEnumSwitch=error
 org.eclipse.jdt.core.compiler.problem.nonExternalizedStringLiteral=error
+org.eclipse.jdt.core.compiler.problem.unavoidableGenericTypeProblems=disabled
 org.eclipse.jdt.core.compiler.problem.unnecessaryElse=error
 org.eclipse.jdt.core.compiler.problem.unnecessaryTypeCheck=error
 org.eclipse.jdt.core.compiler.problem.unusedDeclaredThrownException=ignore
