@@ -226,7 +226,6 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 				LaunchDelegate delegate = null;
 				ILaunchConfigurationType type = null;
 				PerspectiveChange change = null;
-				Set<String> modes = null;
 				for (Iterator<Object> iter = fgCurrentWorkingContext.iterator(); iter.hasNext();) {
 					o = iter.next();
 					if(o instanceof ILaunchDelegate) {
@@ -237,7 +236,8 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 						delegate = null;
 						type = (ILaunchConfigurationType) o;
 					}
-					modes = (Set<String>) combo.getData();
+					@SuppressWarnings("unchecked")
+					Set<String> modes = (Set<String>) combo.getData();
 					change = findChange(type, delegate, modes);
 					if(change == null) {
 						change = new PerspectiveChange(type, delegate, modes, fgPerspectiveIdMap.get(combo.getText()));

@@ -15,6 +15,7 @@ import java.util.Comparator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+
 import org.eclipse.debug.core.DebugPlugin;
 
 /**
@@ -45,7 +46,9 @@ public class LaunchConfigurationComparator implements Comparator<Object> {
 	protected Comparator<Object> getComparator() {
 		if (fDelegate == null) {
 			try {
-				fDelegate = (Comparator<Object>) fConfigurationElement.createExecutableExtension(IConfigurationElementConstants.CLASS);
+				@SuppressWarnings("unchecked")
+				Comparator<Object> delegate = (Comparator<Object>) fConfigurationElement.createExecutableExtension(IConfigurationElementConstants.CLASS);
+				fDelegate = delegate;
 			} catch (CoreException e) {
 				DebugPlugin.log(e);
 			}

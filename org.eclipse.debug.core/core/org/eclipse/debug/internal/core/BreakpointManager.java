@@ -894,7 +894,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		private void handleProjectResourceOpenStateChange(final IResource project) {
 			if (!project.isAccessible()) {
 				//closed
-				for (IBreakpoint breakpoint : (Vector<IBreakpoint>) getBreakpoints0().clone()) {
+				for (@SuppressWarnings("unchecked") IBreakpoint breakpoint : (Vector<IBreakpoint>) getBreakpoints0().clone()) {
 					IResource markerResource= breakpoint.getMarker().getResource();
 					if (project.getFullPath().isPrefixOf(markerResource.getFullPath())) {
 						fRemoved.add(breakpoint);
