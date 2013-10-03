@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,10 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.WeakHashMap;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -22,6 +24,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 public class E4XMIResource extends XMIResourceImpl {
 
 	private Map<EObject, String> objectMap = new WeakHashMap<EObject, String>();
+	private Set<String> knownIds = new HashSet<String>();
 
 	public E4XMIResource() {
 	}
@@ -32,6 +35,7 @@ public class E4XMIResource extends XMIResourceImpl {
 
 	public void setInternalId(EObject object, String id) {
 		objectMap.put(object, id);
+		knownIds.add(id);
 	}
 
 	public String getInternalId(EObject object) {
@@ -49,7 +53,7 @@ public class E4XMIResource extends XMIResourceImpl {
 
 	private String getUniqueId() {
 		String id = createId();
-		while (objectMap.values().contains(id)) {
+		while (knownIds.contains(id)) {
 			id = createId();
 		}
 		return id;
@@ -63,6 +67,7 @@ public class E4XMIResource extends XMIResourceImpl {
 				super.setID(eObject, internalId);
 			}
 			objectMap.put(eObject, id);
+			knownIds.add(id);
 		}
 		super.setID(eObject, id);
 	}
