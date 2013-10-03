@@ -37,6 +37,14 @@ import org.eclipse.e4.core.services.log.Logger;
  *
  */
 public class HandlerServiceImpl implements EHandlerService {
+	/**
+	 * The static context key under which a command 'trigger' from legacy code is stored during
+	 * calls to {@link #executeHandler(ParameterizedCommand, IEclipseContext)}
+	 * 
+	 * @see IEclipseContext
+	 * @see HandlerServiceImpl#executeHandler(ParameterizedCommand, IEclipseContext)
+	 */
+	private static final String SWT_TRIGGER = "org.eclipse.swt.widgets.Event"; //$NON-NLS-1$
 	static final String TMP_STATIC_CONTEXT = "tmp-staticContext"; //$NON-NLS-1$
 	public final static String H_ID = "handler::"; //$NON-NLS-1$
 	public final static String PARM_MAP = "parmMap::"; //$NON-NLS-1$
@@ -211,7 +219,8 @@ public class HandlerServiceImpl implements EHandlerService {
 		push(executionContext, staticContext);
 		try {
 			// Command cmd = command.getCommand();
-			return command.executeWithChecks(null, new ExpressionContext(peek().context));
+			return command.executeWithChecks(staticContext.get(SWT_TRIGGER), new ExpressionContext(
+					peek().context));
 		} catch (ExecutionException e) {
 			staticContext.set(HANDLER_EXCEPTION, e);
 		} catch (NotDefinedException e) {
