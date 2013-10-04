@@ -44,6 +44,7 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 	public static final String ID = "org.eclipse.ui.showIn.systemExplorer"; //$NON-NLS-1$
 
 	private static final String VARIABLE_RE = "\\$\\{selected_resource_loc\\}"; //$NON-NLS-1$
+	private static final String VARIABLE_FOLDER = "\\$\\{selected_resource_parent\\}"; //$NON-NLS-1$
 
 	/*
 	 * (non-Javadoc)
@@ -78,7 +79,7 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 		}
 
 		try {
-			String canonicalPath = getSystemExplorerPath(item);
+			File canonicalPath = getSystemExplorerPath(item);
 			if (canonicalPath == null) {
 				ErrorDialog
 						.openError(
@@ -138,10 +139,11 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 	 *            the path to show
 	 * @return the command that shows the path
 	 */
-	private String formShowInSytemExplorerCommand(String path) {
+	private String formShowInSytemExplorerCommand(File path) throws IOException {
 		String command = IDEWorkbenchPlugin.getDefault().getPreferenceStore()
 				.getString(IDEInternalPreferences.WORKBENCH_SYSTEM_EXPLORER);
-		return command.replaceAll(VARIABLE_RE, path);
+		command =  command.replaceAll(VARIABLE_RE, path.getCanonicalPath());
+		return command.replaceAll(VARIABLE_FOLDER, path.getParentFile().getCanonicalPath());
 	}
 
 	/**
@@ -156,12 +158,11 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 	 * @throws IOException
 	 *             if an I/O error occurs while trying to determine the path
 	 */
-	private String getSystemExplorerPath(IResource resource) throws IOException {
+	private File getSystemExplorerPath(IResource resource) throws IOException {
 		IPath location = resource.getLocation();
 		if (location == null)
 			return null;
-		File f = location.toFile();
-		return f.getCanonicalPath();
+		return location.toFile();
 	}
 
 	/**
