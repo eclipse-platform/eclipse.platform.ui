@@ -16,9 +16,7 @@ import java.util.Properties;
 import org.eclipse.core.internal.preferences.*;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.DefaultScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.*;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -29,6 +27,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * hierarchy.
  * 
  * @since 3.0
+ * @deprecated to avoid warnings for interacting with deprecated Preferences class.
  */
 public class PreferenceForwarder extends Preferences implements IEclipsePreferences.IPreferenceChangeListener, IEclipsePreferences.INodeChangeListener {
 
@@ -840,7 +839,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 
 	private void convertFromProperties(Properties props) {
 		IEclipsePreferences preferences = getPluginPreferences(true);
-		for (Iterator i = props.keySet().iterator(); i.hasNext();) {
+		for (Iterator<Object> i = props.keySet().iterator(); i.hasNext();) {
 			String key = (String) i.next();
 			String value = props.getProperty(key);
 			if (value != null)

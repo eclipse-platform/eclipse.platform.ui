@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,7 @@
 package org.eclipse.core.internal.runtime;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.PerformanceStats.PerformanceListener;
 import org.eclipse.core.runtime.jobs.Job;
@@ -33,13 +32,13 @@ public class PerformanceStatsProcessor extends Job {
 	/**
 	 * Events that have occurred but have not yet been broadcast.
 	 */
-	private final ArrayList changes = new ArrayList();
+	private final ArrayList<PerformanceStats> changes = new ArrayList<PerformanceStats>();
 
 	/**
 	 * Event failures that have occurred but have not yet been broadcast.
 	 * Maps (PerformanceStats -> Long).
 	 */
-	private final HashMap failures = new HashMap();
+	private final HashMap<PerformanceStats,Long> failures = new HashMap<PerformanceStats,Long>();
 
 	/**
 	 * Event listeners.
@@ -147,13 +146,13 @@ public class PerformanceStatsProcessor extends Job {
 		setPriority(DECORATE);
 		BundleContext context = PlatformActivator.getContext();
 		String filter = '(' + FrameworkLog.SERVICE_PERFORMANCE + '=' + Boolean.TRUE.toString() + ')';
-		ServiceReference[] references;
+		Collection<ServiceReference<FrameworkLog>> references;
 		FrameworkLog perfLog = null;
 		try {
-			references = context.getServiceReferences(FrameworkLog.class.getName(), filter);
-			if (references != null && references.length > 0) {
+			references = context.getServiceReferences(FrameworkLog.class, filter);
+			if (references != null && !references.isEmpty()) {
 				//just take the first matching service
-				perfLog = (FrameworkLog) context.getService(references[0]);
+				perfLog = context.getService(references.iterator().next());
 				//make sure correct location is set
 				IPath logLocation = Platform.getLogFileLocation();
 				logLocation = logLocation.removeLastSegments(1).append("performance.log"); //$NON-NLS-1$
@@ -192,10 +191,10 @@ public class PerformanceStatsProcessor extends Job {
 		PerformanceStats[] failedEvents;
 		Long[] failedTimes;
 		synchronized (this) {
-			events = (PerformanceStats[]) changes.toArray(new PerformanceStats[changes.size()]);
+			events = changes.toArray(new PerformanceStats[changes.size()]);
 			changes.clear();
-			failedEvents = (PerformanceStats[]) failures.keySet().toArray(new PerformanceStats[failures.size()]);
-			failedTimes = (Long[]) failures.values().toArray(new Long[failures.size()]);
+			failedEvents = failures.keySet().toArray(new PerformanceStats[failures.size()]);
+			failedTimes = failures.values().toArray(new Long[failures.size()]);
 			failures.clear();
 		}
 

@@ -58,7 +58,7 @@ public class CompatibilityHelper {
 		if (compatibility == null)
 			throw new IllegalStateException();
 
-		Class oldInternalPlatform = null;
+		Class<?> oldInternalPlatform = null;
 		try {
 			oldInternalPlatform = compatibility.loadClass("org.eclipse.core.internal.plugins.InternalPlatform"); //$NON-NLS-1$
 			Method getPluginDescriptor = oldInternalPlatform.getMethod("getPluginDescriptor", new Class[] {String.class}); //$NON-NLS-1$

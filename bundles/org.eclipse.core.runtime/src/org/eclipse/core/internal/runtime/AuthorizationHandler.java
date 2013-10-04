@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
-import java.lang.reflect.InvocationTargetException;
 import java.io.File;
 import java.lang.reflect.*;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
@@ -37,14 +35,14 @@ public class AuthorizationHandler {
 
 	private static Object keyring = null;
 	//reflective access to legacy authentication implementation
-	private static Class authClass;
+	private static Class<?> authClass;
 	private static boolean authNotAvailableLogged = false;
 
 	/**
 	 * Get the legacy class that implemented the authorization API. Return <code>null</code>
 	 * if the legacy implementation is not present.
 	 */
-	private static Class getAuthClass() {
+	private static Class<?> getAuthClass() {
 		if (authClass == null) {
 			try {
 				authClass = Class.forName("org.eclipse.core.internal.runtime.auth.AuthorizationDatabase"); //$NON-NLS-1$
@@ -73,25 +71,26 @@ public class AuthorizationHandler {
 		if (keyring != null && new File(keyringFile).lastModified() == keyringTimeStamp)
 			return true;
 		if (keyringFile == null) {
-			ServiceReference[] refs = null;
+			Collection<ServiceReference<Location>> refs = null;
 			try {
-				refs = PlatformActivator.getContext().getServiceReferences(Location.class.getName(), Location.CONFIGURATION_FILTER);
-				if (refs == null || refs.length == 0)
+				refs = PlatformActivator.getContext().getServiceReferences(Location.class, Location.CONFIGURATION_FILTER);
+				if (refs == null || refs.isEmpty())
 					return true;
 			} catch (InvalidSyntaxException e) {
 				// ignore this.  It should never happen as we have tested the above format.
 				return true;
 			}
-			Location configurationLocation = (Location) PlatformActivator.getContext().getService(refs[0]);
+			ServiceReference<Location> serviceRef = refs.iterator().next();
+			Location configurationLocation = PlatformActivator.getContext().getService(serviceRef);
 			if (configurationLocation == null)
 				return true;
 			File file = new File(configurationLocation.getURL().getPath() + "/org.eclipse.core.runtime"); //$NON-NLS-1$
-			PlatformActivator.getContext().ungetService(refs[0]);
+			PlatformActivator.getContext().ungetService(serviceRef);
 			file = new File(file, F_KEYRING);
 			keyringFile = file.getAbsolutePath();
 		}
 		try {
-			Constructor constructor = authClass.getConstructor(new Class[] {String.class, String.class});
+			Constructor<?> constructor = authClass.getConstructor(new Class[] {String.class, String.class});
 			keyring = constructor.newInstance(new Object[] {keyringFile, password});
 		} catch (Exception e) {
 			log(e);
@@ -100,7 +99,7 @@ public class AuthorizationHandler {
 			//try deleting the file and loading again - format may have changed
 			new java.io.File(keyringFile).delete();
 			try {
-				Constructor constructor = authClass.getConstructor(new Class[] {String.class, String.class});
+				Constructor<?> constructor = authClass.getConstructor(new Class[] {String.class, String.class});
 				keyring = constructor.newInstance(new Object[] {keyringFile, password});
 			} catch (Exception e) {
 				//don't bother logging a second failure and let it flows to the callers
@@ -165,12 +164,12 @@ public class AuthorizationHandler {
 	 * </ul>
 	 * XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
-	public static synchronized void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
+	public static synchronized void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map<String,String> info) throws CoreException {
 		if (!loadKeyring())
 			return;
 		try {
 			Method method = authClass.getMethod("addAuthorizationInfo", new Class[] {URL.class, String.class, String.class, Map.class}); //$NON-NLS-1$
-			method.invoke(keyring, new Object[] {serverUrl, realm, authScheme, new HashMap(info)});
+			method.invoke(keyring, new Object[] {serverUrl, realm, authScheme, new HashMap<String,String>(info)});
 		} catch (Exception e) {
 			log(e);
 		}
@@ -258,21 +257,22 @@ public class AuthorizationHandler {
 	 *		such information exists
 	 *XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
-	public static synchronized Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
-		Map info = null;
+	public static synchronized Map<String,String> getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
+		Map<String,String> info = null;
 		try {
 			if (!loadKeyring())
 				return null;
 			try {
+				@SuppressWarnings("unchecked")
 				Method method = authClass.getMethod("getAuthorizationInfo", new Class[] {URL.class, String.class, String.class}); //$NON-NLS-1$
-				info = (Map) method.invoke(keyring, new Object[] {serverUrl, realm, authScheme});
+				info = (Map<String,String>) method.invoke(keyring, new Object[] {serverUrl, realm, authScheme});
 			} catch (Exception e) {
 				log(e);
 			}
 		} catch (CoreException e) {
 			// The error has already been logged in loadKeyring()
 		}
-		return info == null ? null : new HashMap(info);
+		return info == null ? null : new HashMap<String,String>(info);
 	}
 
 	/**

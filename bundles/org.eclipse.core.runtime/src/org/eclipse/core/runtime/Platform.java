@@ -475,7 +475,7 @@ public final class Platform {
 	 * Consider using <code>ISecurePreferences#put(String, String, boolean)</code> as a replacement of this method.
 	 * This API will be deleted in a future release. See bug 370248 for details.
 	 */
-	public static void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
+	public static void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map<String,String> info) throws CoreException {
 		AuthorizationHandler.addAuthorizationInfo(serverUrl, realm, authScheme, info);
 	}
 
@@ -618,7 +618,7 @@ public final class Platform {
 	 * Consider using <code>ISecurePreferences#get(String, String)</code> as a replacement of this method.
 	 * This API will be deleted in a future release. See bug 370248 for details.
 	 */
-	public static Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
+	public static Map<String,String> getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
 		return AuthorizationHandler.getAuthorizationInfo(serverUrl, realm, authScheme);
 	}
 
@@ -753,7 +753,7 @@ public final class Platform {
 		if (compatibility == null)
 			throw new IllegalStateException();
 
-		Class oldInternalPlatform = null;
+		Class<?> oldInternalPlatform = null;
 		try {
 			oldInternalPlatform = compatibility.loadClass("org.eclipse.core.internal.plugins.InternalPlatform"); //$NON-NLS-1$
 			Method getPluginRegistry = oldInternalPlatform.getMethod("getPluginRegistry"); //$NON-NLS-1$

@@ -1211,7 +1211,7 @@ public class Preferences {
 	 * @return an array of property names 
 	 */
 	public String[] propertyNames() {
-		return (String[]) properties.keySet().toArray(EMPTY_STRING_ARRAY);
+		return properties.keySet().toArray(EMPTY_STRING_ARRAY);
 	}
 
 	/**
@@ -1221,7 +1221,7 @@ public class Preferences {
 	 * @return an array of property names 
 	 */
 	public String[] defaultPropertyNames() {
-		return (String[]) defaultProperties.keySet().toArray(EMPTY_STRING_ARRAY);
+		return defaultProperties.keySet().toArray(EMPTY_STRING_ARRAY);
 	}
 
 	/**

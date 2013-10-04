@@ -519,5 +519,5 @@ public interface IPluginDescriptor {
 	 * where <code>bundle</code> is the bundle associated with 
 	 * the relevant plug-in.
 	 */
-	public URL find(IPath path, Map override);
+	public URL find(IPath path, Map<String,String> override);
 }

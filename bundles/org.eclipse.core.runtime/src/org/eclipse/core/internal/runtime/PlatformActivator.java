@@ -11,9 +11,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.equinox.internal.app.CommandLineArgs;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 
 /**
  * Activator for the Eclipse runtime.

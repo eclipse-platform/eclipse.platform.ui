@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public final class InternalPlatform {
 	private static String keyringFile;
 
 	//XXX This is not synchronized
-	private static Map logs = new HashMap(5);
+	private static Map<Bundle,Log> logs = new HashMap<Bundle,Log>(5);
 
 	private static final String[] OS_LIST = {Platform.OS_AIX, Platform.OS_HPUX, Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_QNX, Platform.OS_SOLARIS, Platform.OS_WIN32};
 	private static String password = ""; //$NON-NLS-1$
@@ -89,28 +89,28 @@ public final class InternalPlatform {
 
 	private static final String[] WS_LIST = {Platform.WS_CARBON, Platform.WS_COCOA, Platform.WS_GTK, Platform.WS_MOTIF, Platform.WS_PHOTON, Platform.WS_WIN32, Platform.WS_WPF};
 	private Path cachedInstanceLocation; // Cache the path of the instance location
-	private ServiceTracker configurationLocation = null;
+	private ServiceTracker<Location,Location> configurationLocation = null;
 	private BundleContext context;
 
-	private Map groupProviders = new HashMap(3);
-	private ServiceTracker installLocation = null;
-	private ServiceTracker instanceLocation = null;
+	private Map<IBundleGroupProvider,ServiceRegistration<IBundleGroupProvider>> groupProviders = new HashMap<IBundleGroupProvider,ServiceRegistration<IBundleGroupProvider>>(3);
+	private ServiceTracker<Location,Location> installLocation = null;
+	private ServiceTracker<Location,Location> instanceLocation = null;
+	private ServiceTracker<Location,Location> userLocation = null;
 
 	private Plugin runtimeInstance; // Keep track of the plugin object for runtime in case the backward compatibility is run.
 
-	private ServiceRegistration legacyPreferencesService = null;
-	private ServiceRegistration customPreferencesService = null;
+	private ServiceRegistration<ILegacyPreferences> legacyPreferencesService = null;
+	private ServiceRegistration<IProductPreferencesService> customPreferencesService = null;
 
-	private ServiceTracker environmentTracker = null;
-	private ServiceTracker logTracker = null;
-	private ServiceTracker bundleTracker = null;
-	private ServiceTracker debugTracker = null;
-	private ServiceTracker contentTracker = null;
-	private ServiceTracker preferencesTracker = null;
-	private ServiceTracker userLocation = null;
-	private ServiceTracker groupProviderTracker = null;
-	private ServiceTracker logReaderTracker = null;
-	private ServiceTracker extendedLogTracker = null;
+	private ServiceTracker<EnvironmentInfo,EnvironmentInfo> environmentTracker = null;
+	private ServiceTracker<FrameworkLog,FrameworkLog> logTracker = null;
+	private ServiceTracker<PackageAdmin,PackageAdmin> bundleTracker = null;
+	private ServiceTracker<DebugOptions,DebugOptions> debugTracker = null;
+	private ServiceTracker<IContentTypeManager,IContentTypeManager> contentTracker = null;
+	private ServiceTracker<IPreferencesService,IPreferencesService> preferencesTracker = null;
+	private ServiceTracker<IBundleGroupProvider,IBundleGroupProvider> groupProviderTracker = null;
+	private ServiceTracker<ExtendedLogReaderService,ExtendedLogReaderService> logReaderTracker = null;
+	private ServiceTracker<ExtendedLogService,ExtendedLogService> extendedLogTracker = null;
 
 	private IProduct product;
 
@@ -212,17 +212,12 @@ public final class InternalPlatform {
 	}
 
 	public IBundleGroupProvider[] getBundleGroupProviders() {
-		Object[] objectArray = groupProviderTracker.getServices();
-		if (objectArray == null) // getServices may return null; but we can not.
-			return new IBundleGroupProvider[0];
-		IBundleGroupProvider[] result = new IBundleGroupProvider[objectArray.length];
-		System.arraycopy(objectArray, 0, result, 0, objectArray.length);
-		return result;
+		return groupProviderTracker.getServices(new IBundleGroupProvider[0]);
 	}
 
 	public void registerBundleGroupProvider(IBundleGroupProvider provider) {
 		// get the bundle context and register the provider as a service
-		ServiceRegistration registration = getBundleContext().registerService(IBundleGroupProvider.class.getName(), provider, null);
+		ServiceRegistration<IBundleGroupProvider> registration = getBundleContext().registerService(IBundleGroupProvider.class, provider, null);
 		// store the service registration (map provider -> registration)
 		synchronized (groupProviders) {
 			groupProviders.put(provider, registration);
@@ -231,9 +226,9 @@ public final class InternalPlatform {
 
 	public void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
 		// get the service reference (map provider -> reference)
-		ServiceRegistration registration;
+		ServiceRegistration<IBundleGroupProvider> registration;
 		synchronized (groupProviders) {
-			registration = (ServiceRegistration) groupProviders.remove(provider);
+			registration = groupProviders.remove(provider);
 		}
 		if (registration == null)
 			return;
@@ -274,7 +269,7 @@ public final class InternalPlatform {
 
 	public Location getConfigurationLocation() {
 		assertInitialized();
-		return (Location) configurationLocation.getService();
+		return configurationLocation.getService();
 	}
 
 	/**
@@ -308,7 +303,7 @@ public final class InternalPlatform {
 
 	public Location getInstallLocation() {
 		assertInitialized();
-		return (Location) installLocation.getService();
+		return installLocation.getService();
 	}
 
 	public URL getInstallURL() {
@@ -322,7 +317,7 @@ public final class InternalPlatform {
 
 	public Location getInstanceLocation() {
 		assertInitialized();
-		return (Location) instanceLocation.getService();
+		return instanceLocation.getService();
 	}
 
 	/**
@@ -348,13 +343,13 @@ public final class InternalPlatform {
 	 * The system log listener needs to be optional: turned on or off. What about a system property? :-)
 	 */
 	public ILog getLog(Bundle bundle) {
-		Log result = (Log) logs.get(bundle);
+		Log result = logs.get(bundle);
 		if (result != null)
 			return result;
-		ExtendedLogService logService = (ExtendedLogService) extendedLogTracker.getService();
+		ExtendedLogService logService = extendedLogTracker.getService();
 		Logger logger = logService == null ? null : logService.getLogger(bundle, PlatformLogWriter.EQUINOX_LOGGER_NAME);
 		result = new Log(bundle, logger);
-		ExtendedLogReaderService logReader = (ExtendedLogReaderService) logReaderTracker.getService();
+		ExtendedLogReaderService logReader = logReaderTracker.getService();
 		logReader.addLogListener(result, result);
 		logs.put(bundle, result);
 		return result;
@@ -407,10 +402,10 @@ public final class InternalPlatform {
 	public PlatformAdmin getPlatformAdmin() {
 		if (context == null)
 			return null;
-		ServiceReference platformAdminReference = context.getServiceReference(PlatformAdmin.class.getName());
+		ServiceReference<PlatformAdmin> platformAdminReference = context.getServiceReference(PlatformAdmin.class);
 		if (platformAdminReference == null)
 			return null;
-		return (PlatformAdmin) context.getService(platformAdminReference);
+		return context.getService(platformAdminReference);
 	}
 
 	//TODO I guess it is now time to get rid of that
@@ -517,18 +512,19 @@ public final class InternalPlatform {
 	}
 
 	private IApplicationContext getApplicationContext() {
-		ServiceReference[] ref;
+		Collection<ServiceReference<IApplicationContext>> references;
 		try {
-			ref = context.getServiceReferences(IApplicationContext.class.getName(), "(eclipse.application.type=main.thread)"); //$NON-NLS-1$
+			references = context.getServiceReferences(IApplicationContext.class, "(eclipse.application.type=main.thread)"); //$NON-NLS-1$
 		} catch (InvalidSyntaxException e) {
 			return null;
 		}
-		if (ref == null || ref.length == 0)
+		if (references == null || references.isEmpty())
 			return null;
 		// assumes the application context is available as a service
-		IApplicationContext result = (IApplicationContext) context.getService(ref[0]);
+		ServiceReference<IApplicationContext> firstRef = references.iterator().next();
+		IApplicationContext result = context.getService(firstRef);
 		if (result != null) {
-			context.ungetService(ref[0]);
+			context.ungetService(firstRef);
 			return result;
 		}
 		return null;
@@ -556,7 +552,7 @@ public final class InternalPlatform {
 
 	public Location getUserLocation() {
 		assertInitialized();
-		return (Location) userLocation.getService();
+		return userLocation.getService();
 	}
 
 	public String getWS() {
@@ -667,21 +663,21 @@ public final class InternalPlatform {
 		} catch (IOException e) {
 			return null;
 		}
-		Vector result = new Vector(5);
-		for (Enumeration groups = ini.propertyNames(); groups.hasMoreElements();) {
+		List<URL>result = new ArrayList<URL>(5);
+		for (Enumeration<?> groups = ini.propertyNames(); groups.hasMoreElements();) {
 			String group = (String) groups.nextElement();
 			for (StringTokenizer entries = new StringTokenizer(ini.getProperty(group), ";"); entries.hasMoreElements();) { //$NON-NLS-1$
 				String entry = (String) entries.nextElement();
 				if (!entry.equals("")) //$NON-NLS-1$
 					try {
-						result.addElement(new URL(entry));
+						result.add(new URL(entry));
 					} catch (MalformedURLException e) {
 						//intentionally ignore bad URLs
 						System.err.println("Ignoring plugin: " + entry); //$NON-NLS-1$
 					}
 			}
 		}
-		return (URL[]) result.toArray(new URL[result.size()]);
+		return result.toArray(new URL[result.size()]);
 	}
 
 	/**
@@ -747,7 +743,7 @@ public final class InternalPlatform {
 		} catch (InvalidSyntaxException e) {
 			// ignore this.  It should never happen as we have tested the above format.
 		}
-		instanceLocation = new ServiceTracker(context, filter, null);
+		instanceLocation = new ServiceTracker<Location,Location>(context, filter, null);
 		instanceLocation.open();
 		
 		try {
@@ -755,7 +751,7 @@ public final class InternalPlatform {
 		} catch (InvalidSyntaxException e) {
 			// ignore this.  It should never happen as we have tested the above format.
 		}
-		userLocation = new ServiceTracker(context, filter, null);
+		userLocation = new ServiceTracker<Location,Location>(context, filter, null);
 		userLocation.open();
 		
 		try {
@@ -763,7 +759,7 @@ public final class InternalPlatform {
 		} catch (InvalidSyntaxException e) {
 			// ignore this.  It should never happen as we have tested the above format.
 		}
-		configurationLocation = new ServiceTracker(context, filter, null);
+		configurationLocation = new ServiceTracker<Location,Location>(context, filter, null);
 		configurationLocation.open();
 		
 		try {
@@ -771,26 +767,26 @@ public final class InternalPlatform {
 		} catch (InvalidSyntaxException e) {
 			// ignore this.  It should never happen as we have tested the above format.
 		}
-		installLocation = new ServiceTracker(context, filter, null);
+		installLocation = new ServiceTracker<Location,Location>(context, filter, null);
 		installLocation.open();
 		
 		if (context != null) {
-			logTracker = new ServiceTracker(context, FrameworkLog.class.getName(), null);
+			logTracker = new ServiceTracker<FrameworkLog,FrameworkLog>(context, FrameworkLog.class, null);
 			logTracker.open();
 		}
 		
 		if (context != null) {
-			bundleTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
+			bundleTracker = new ServiceTracker<PackageAdmin,PackageAdmin>(context, PackageAdmin.class, null);
 			bundleTracker.open();
 		}
 		
 		if (context != null) {
-			contentTracker = new ServiceTracker(context, IContentTypeManager.class.getName(), null);
+			contentTracker = new ServiceTracker<IContentTypeManager,IContentTypeManager>(context, IContentTypeManager.class, null);
 			contentTracker.open();
 		}
 		
 		if (context != null) {
-			preferencesTracker = new ServiceTracker(context, IPreferencesService.class.getName(), null);
+			preferencesTracker = new ServiceTracker<IPreferencesService,IPreferencesService>(context, IPreferencesService.class, null);
 			preferencesTracker.open();
 		}
 		
@@ -799,31 +795,31 @@ public final class InternalPlatform {
 		} catch (InvalidSyntaxException e) {
 			// ignore this, it should never happen
 		}
-		groupProviderTracker = new ServiceTracker(context, filter, null);
+		groupProviderTracker = new ServiceTracker<IBundleGroupProvider,IBundleGroupProvider>(context, filter, null);
 		groupProviderTracker.open();
 		
-		logReaderTracker = new ServiceTracker(context, ExtendedLogReaderService.class.getName(), null);
+		logReaderTracker = new ServiceTracker<ExtendedLogReaderService,ExtendedLogReaderService>(context, ExtendedLogReaderService.class.getName(), null);
 		logReaderTracker.open();
 		
-		extendedLogTracker = new ServiceTracker(context, ExtendedLogService.class.getName(), null);
+		extendedLogTracker = new ServiceTracker<ExtendedLogService,ExtendedLogService>(context, ExtendedLogService.class, null);
 		extendedLogTracker.open();
 		
-		environmentTracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
+		environmentTracker = new ServiceTracker<EnvironmentInfo,EnvironmentInfo>(context, EnvironmentInfo.class, null);
 		environmentTracker.open();
 
-		debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
+		debugTracker = new ServiceTracker<DebugOptions,DebugOptions>(context, DebugOptions.class, null);
 		debugTracker.open();
 	}
 
 	private void startServices() {
 		// The check for getProduct() is relatively expensive (about 3% of the headless startup),
 		// so we don't want to enforce it here. 
-		customPreferencesService = context.registerService(IProductPreferencesService.class.getName(), new ProductPreferencesService(), new Hashtable());
+		customPreferencesService = context.registerService(IProductPreferencesService.class, new ProductPreferencesService(), new Hashtable<String,String>());
 
 		// Only register this interface if compatibility is installed - the check for a bundle presence
 		// is a quick test that doesn't consume much.
 		if (getBundle(CompatibilityHelper.PI_RUNTIME_COMPATIBILITY) != null)
-			legacyPreferencesService = context.registerService(ILegacyPreferences.class.getName(), new InitLegacyPreferences(), new Hashtable());
+			legacyPreferencesService = context.registerService(ILegacyPreferences.class, new InitLegacyPreferences(), new Hashtable<String, String>());
 	}
 
 	private void stopServices() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import org.osgi.service.log.LogEntry;
 public class Log implements ILog, SynchronousLogListener, LogFilter {
 	final Bundle bundle;
 	private final Logger logger;
-	private final Set logListeners = new HashSet(5);
+	private final Set<ILogListener> logListeners = new HashSet<ILogListener>(5);
 
 	public Log(Bundle plugin, Logger logger) {
 		if (plugin == null)
@@ -82,7 +82,7 @@ public class Log implements ILog, SynchronousLogListener, LogFilter {
 		// create array to avoid concurrent access
 		ILogListener[] listeners;
 		synchronized (logListeners) {
-			listeners = (ILogListener[]) logListeners.toArray(new ILogListener[logListeners.size()]);
+			listeners = logListeners.toArray(new ILogListener[logListeners.size()]);
 		}
 		for (int i = 0; i < listeners.length; i++) {
 			final ILogListener listener = listeners[i];

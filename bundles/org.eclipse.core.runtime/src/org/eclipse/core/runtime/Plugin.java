@@ -135,7 +135,7 @@ public abstract class Plugin implements BundleActivator {
 	/**
 	 * DebugOptions service tracker
 	 */
-	private ServiceTracker debugTracker = null;
+	private ServiceTracker<DebugOptions,DebugOptions> debugTracker = null;
 
 	/** The plug-in descriptor.
 	 * @deprecated Marked as deprecated to suppress deprecation warnings.
@@ -260,7 +260,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @return a URL for the given path or <code>null</code>
 	 * @deprecated use {@link FileLocator#find(Bundle, IPath, Map)}
 	 */
-	public final URL find(IPath path, Map override) {
+	public final URL find(IPath path, Map<String,String> override) {
 		return FileLocator.find(getBundle(), path, override);
 	}
 
@@ -580,10 +580,10 @@ public abstract class Plugin implements BundleActivator {
 			BundleContext context = debugBundle.getBundleContext();
 			if (context == null)
 				return null;
-			debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
+			debugTracker = new ServiceTracker<DebugOptions,DebugOptions>(context, DebugOptions.class.getName(), null);
 			debugTracker.open();
 		}
-		return (DebugOptions) this.debugTracker.getService();
+		return this.debugTracker.getService();
 	}
 
 	/**
