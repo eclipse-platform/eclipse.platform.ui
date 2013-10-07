@@ -1,5 +1,5 @@
  /****************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -347,6 +347,9 @@ public class IDEWorkspacePreferencePage extends PreferencePage
 
 		systemExplorer = new StringFieldEditor(IDEInternalPreferences.WORKBENCH_SYSTEM_EXPLORER,
 				IDEWorkbenchMessages.IDEWorkbenchPreference_workbenchSystemExplorer, 40, groupComposite);
+		gd = (GridData) systemExplorer.getTextControl(groupComposite).getLayoutData();
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
 		systemExplorer.setPreferenceStore(getIDEPreferenceStore());
 		systemExplorer.setPage(this);
 

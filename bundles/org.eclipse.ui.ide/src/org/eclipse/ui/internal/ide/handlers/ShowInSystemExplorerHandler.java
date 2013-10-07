@@ -43,8 +43,8 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 	 */
 	public static final String ID = "org.eclipse.ui.showIn.systemExplorer"; //$NON-NLS-1$
 
-	private static final String VARIABLE_RE = "\\$\\{selected_resource_loc\\}"; //$NON-NLS-1$
-	private static final String VARIABLE_FOLDER = "\\$\\{selected_resource_parent\\}"; //$NON-NLS-1$
+	private static final String VARIABLE_RESOURCE = "${selected_resource_loc}"; //$NON-NLS-1$
+	private static final String VARIABLE_FOLDER = "${selected_resource_parent}"; //$NON-NLS-1$
 
 	/*
 	 * (non-Javadoc)
@@ -142,8 +142,12 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 	private String formShowInSytemExplorerCommand(File path) throws IOException {
 		String command = IDEWorkbenchPlugin.getDefault().getPreferenceStore()
 				.getString(IDEInternalPreferences.WORKBENCH_SYSTEM_EXPLORER);
-		command =  command.replaceAll(VARIABLE_RE, path.getCanonicalPath());
-		return command.replaceAll(VARIABLE_FOLDER, path.getParentFile().getCanonicalPath());
+		command = Util.replaceAll(command, VARIABLE_RESOURCE, path.getCanonicalPath());
+		File parent = path.getParentFile();
+		if (parent != null) {
+			command = Util.replaceAll(command, VARIABLE_FOLDER, parent.getCanonicalPath());
+		}
+		return command;
 	}
 
 	/**

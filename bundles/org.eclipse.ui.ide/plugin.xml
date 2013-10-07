@@ -2044,6 +2044,8 @@
             locationURI="popup:org.eclipse.ui.menus.showInMenu">
  	     <command
              commandId="org.eclipse.ui.ide.showInSystemExplorer"
+             label="%command.showInSystemExplorer.menu.name"
+             mnemonic="%command.showInSystemExplorer.menu.mnemonic"
              style="push">
          </command>
       </menuContribution>
