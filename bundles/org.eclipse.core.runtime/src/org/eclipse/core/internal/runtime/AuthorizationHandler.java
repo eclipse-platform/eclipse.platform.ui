@@ -258,21 +258,21 @@ public class AuthorizationHandler {
 	 *XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
 	public static synchronized Map<String,String> getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
-		Map<String,String> info = null;
 		try {
 			if (!loadKeyring())
 				return null;
 			try {
-				@SuppressWarnings("unchecked")
 				Method method = authClass.getMethod("getAuthorizationInfo", new Class[] {URL.class, String.class, String.class}); //$NON-NLS-1$
-				info = (Map<String,String>) method.invoke(keyring, new Object[] {serverUrl, realm, authScheme});
+				@SuppressWarnings("unchecked")
+				Map<String,String> info = (Map<String,String>) method.invoke(keyring, new Object[] {serverUrl, realm, authScheme});
+				return info == null ? null : new HashMap<String,String>(info);
 			} catch (Exception e) {
 				log(e);
 			}
 		} catch (CoreException e) {
 			// The error has already been logged in loadKeyring()
 		}
-		return info == null ? null : new HashMap<String,String>(info);
+		return null;
 	}
 
 	/**
