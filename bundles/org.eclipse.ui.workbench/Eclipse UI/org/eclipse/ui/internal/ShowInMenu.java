@@ -227,6 +227,16 @@ public class ShowInMenu extends ContributionItem implements
 					CommandContributionItemParameter ccip = new CommandContributionItemParameter(
 							workbenchWindow, commandId, commandId,
 							CommandContributionItem.STYLE_PUSH);
+					String label = menuElement.getLabel();
+					if (label.length() > 0) {
+						ccip.label = label;
+						String mnemonics = menuElement.getMnemonics();
+						if (mnemonics != null && mnemonics.length() == 1) {
+							ccip.mnemonic = mnemonics;
+						} else {
+							ccip.mnemonic = label.substring(0, 1);
+						}
+					}
 					String iconURI = menuElement.getIconURI();
 					try {
 						ccip.icon = ImageDescriptor.createFromURL(new URL(iconURI));
