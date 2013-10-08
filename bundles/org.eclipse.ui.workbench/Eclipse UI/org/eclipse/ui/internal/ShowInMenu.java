@@ -37,7 +37,6 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
@@ -306,13 +305,10 @@ public class ShowInMenu extends ContributionItem implements
 	 */
 	private IWorkbenchPart getSourcePart() {
 		IWorkbenchWindow window = getWindow();
-		
+
 		if (window == null)
 			return null;
-		Shell shell = window.getShell();
-		if (shell == null)
-			return null;
-		
+
 		IWorkbenchPage page = window.getActivePage();
 		if (page != null) {
 			return page.getActivePart();
