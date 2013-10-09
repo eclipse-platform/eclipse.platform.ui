@@ -23,15 +23,14 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * @since 3.106
@@ -81,47 +80,40 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 		try {
 			File canonicalPath = getSystemExplorerPath(item);
 			if (canonicalPath == null) {
-				ErrorDialog
-						.openError(
-								Display.getDefault().getActiveShell(),
-								"Could not determine resource location", //$NON-NLS-1$
-								"The system could not determine the selected resource's location.", //$NON-NLS-1$
-								new Status(
-										IStatus.ERROR,
-										IDEWorkbenchPlugin.getDefault()
-												.getBundle().getSymbolicName(),
-										logMsgPrefix
-												+ "Could not determine resource's location.")); //$NON-NLS-1$
+				StatusManager
+						.getManager()
+						.handle(new Status(
+								IStatus.ERROR,
+								IDEWorkbenchPlugin.getDefault().getBundle()
+										.getSymbolicName(),
+								logMsgPrefix
+										+ IDEWorkbenchMessages.ShowInSystemExplorerHandler_notDetermineLocation),
+								StatusManager.SHOW | StatusManager.LOG);
 				return null;
 			}
 			String launchCmd = formShowInSytemExplorerCommand(canonicalPath);
 
 			if ("".equals(launchCmd)) { //$NON-NLS-1$
-				ErrorDialog
-						.openError(
-								Display.getDefault().getActiveShell(),
-								"System explorer is not set", //$NON-NLS-1$
-								"Please set the system explorer command in the workbench preferences.", //$NON-NLS-1$
-								new Status(IStatus.ERROR, IDEWorkbenchPlugin
-										.getDefault().getBundle()
-										.getSymbolicName(), logMsgPrefix
-										+ "Command for launching is not set.")); //$NON-NLS-1$
+				StatusManager
+						.getManager()
+						.handle(new Status(
+								IStatus.ERROR,
+								IDEWorkbenchPlugin.getDefault().getBundle()
+										.getSymbolicName(),
+								logMsgPrefix
+										+ IDEWorkbenchMessages.ShowInSystemExplorerHandler_commandUnavailable),
+								StatusManager.SHOW | StatusManager.LOG);
 				return null;
 			}
-
-			log.log(new Status(IStatus.INFO, IDEWorkbenchPlugin.getDefault()
-					.getBundle().getSymbolicName(), launchCmd));
 
 			Process p = Runtime.getRuntime().exec(launchCmd, null,
 					item.getWorkspace().getRoot().getLocation().toFile());
 			int retCode = p.waitFor();
-			if (retCode != 0) {
-				log.log(new Status(
-						IStatus.ERROR,
-						IDEWorkbenchPlugin.getDefault().getBundle()
-								.getSymbolicName(),
-						logMsgPrefix
-								+ "Execution of launch command failed with return code: " + retCode)); //$NON-NLS-1$
+			if (retCode != 0 && !Util.isWindows()) {
+				log.log(new Status(IStatus.ERROR, IDEWorkbenchPlugin
+						.getDefault().getBundle().getSymbolicName(),
+						logMsgPrefix + "Execution of '" + launchCmd //$NON-NLS-1$
+								+ "' failed with return code: " + retCode)); //$NON-NLS-1$
 			}
 		} catch (Exception e) {
 			log.log(new Status(IStatus.ERROR, IDEWorkbenchPlugin.getDefault()
@@ -177,11 +169,11 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 	 */
 	public static String getDefaultCommand() {
 		if (Util.isGtk()) {
-			return IDEWorkbenchMessages.ShowInSystemExplorerHandler_LinuxDefaultCommand;
+			return "dbus-send --print-reply --dest=org.freedesktop.FileManager1 /org/freedesktop/FileManager1 org.freedesktop.FileManager1.ShowItems array:string:\"file://${selected_resource_loc}\" string:\"\""; //$NON-NLS-1$
 		} else if (Util.isWindows()) {
-			return IDEWorkbenchMessages.ShowInSystemExplorerHandler_Win32DefaultCommand;
+			return "explorer /E,/select=${selected_resource_loc}"; //$NON-NLS-1$
 		} else if (Util.isMac()) {
-			return IDEWorkbenchMessages.ShowInSystemExplorerHandler_MacOSXDefaultCommand;
+			return "open -R '${selected_resource_loc}'"; //$NON-NLS-1$
 		}
 
 		// if all else fails, return empty default

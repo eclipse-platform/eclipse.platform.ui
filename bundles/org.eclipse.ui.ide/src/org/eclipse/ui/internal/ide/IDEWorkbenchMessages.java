@@ -515,10 +515,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEWorkspacePreference_workspaceName;
 	public static String IDEWorkbenchPreference_workbenchSystemExplorer;
 
-	public static String ShowInSystemExplorerHandler_LinuxDefaultCommand;
-	public static String ShowInSystemExplorerHandler_MacOSXDefaultCommand;
-	public static String ShowInSystemExplorerHandler_Win32DefaultCommand;
-
 	// --- Linked Resources ---
 	public static String LinkedResourcesPreference_explanation;
 	public static String LinkedResourcesPreference_enableLinkedResources;
@@ -885,6 +881,10 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ScrubLocalAction_toolTip;
 	public static String ScrubLocalAction_problemsTitle;
 	public static String ScrubLocalAction_progress;
+
+	public static String ShowInSystemExplorerHandler_commandUnavailable;
+
+	public static String ShowInSystemExplorerHandler_notDetermineLocation;
 
 	public static String TextAction_selectAll;
 	public static String Cut;
