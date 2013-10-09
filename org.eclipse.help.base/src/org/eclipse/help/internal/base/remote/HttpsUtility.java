@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,14 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 
 public class HttpsUtility {
@@ -31,189 +25,82 @@ public class HttpsUtility {
 
 	private final static int SOCKET_TIMEOUT = 5000; //milliseconds
 	
-	public static InputStream getHttpsStream(URL httpsURL)
+	public static HttpsURLConnection getConnection(URL httpsURL)
 	{
-		InputStream in =null; 
 		try
 		{
-	            TrustManager[] trustAllCerts = new TrustManager[] {
-	                        new X509TrustManager(){
-	                              public java.security.cert.X509Certificate[] getAcceptedIssuers(){
-	                                    return null;
-	                              }
-	                        public void checkClientTrusted( java.security.cert.X509Certificate[] certs, String authType ) { }
-	                              public void checkServerTrusted( java.security.cert.X509Certificate[] certs, String authType ) { }
-	                        }
-	                  };
-
-	            SSLContext sc = SSLContext.getInstance( "SSL" ); //$NON-NLS-1$
-	            sc.init( null, trustAllCerts, new java.security.SecureRandom() );
-	            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-	            
-	           in = httpsURL.openStream();
+			SSLContext sc = SSLContext.getInstance("SSL"); //$NON-NLS-1$
+			sc.init( null, null, new java.security.SecureRandom() );
+			HttpsURLConnection con = (HttpsURLConnection)httpsURL.openConnection();
+			con.setSSLSocketFactory(sc.getSocketFactory());
+			return con;
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
+			return null;
 		}
-		return in;
+	}	
+	public static InputStream getHttpsStream(URL httpsURL)
+	{
+		try {
+			HttpsURLConnection con = getConnection(httpsURL);
+			return con==null ? null : con.getInputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	public static InputStream getHttpsInputStream(String thisProtocol,String thisHost, String thisPort, String thisPath, String locale)
 	{
-		URL url; 
-		InputStream in = null;
-		try
-		{
-	            TrustManager[] trustAllCerts = new TrustManager[] {
-	                        new X509TrustManager(){
-	                              public java.security.cert.X509Certificate[] getAcceptedIssuers(){
-	                                    return null;
-	                              }
-	                        public void checkClientTrusted( java.security.cert.X509Certificate[] certs, String authType ) { }
-	                              public void checkServerTrusted( java.security.cert.X509Certificate[] certs, String authType ) { }
-	                        }
-	                  };
-
-	            SSLContext sc = SSLContext.getInstance( "SSL" ); //$NON-NLS-1$
-	            sc.init( null, trustAllCerts, new java.security.SecureRandom() );
-	            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-	            
-	            url = new URL(thisProtocol, thisHost, new Integer(thisPort) .intValue(), 
-						thisPath + PATH_TOC + '?' + PARAM_LANG + '=' + locale);
-				
-				in = url.openStream();
+		try {
+			URL url = new URL(thisProtocol, thisHost, new Integer(thisPort) .intValue(), 
+					thisPath + PATH_TOC + '?' + PARAM_LANG + '=' + locale);
+	        return getHttpsStream(url);
+		} catch (Exception e) {
+			e.printStackTrace();
+	        return null;
 		}
-		catch(Exception e)
-		{
-			
-		}
-		return in;
 	}
 	
 	public static URL getHttpsURL(String thisProtocol,String thisHost, int thisPort, String thisPath)
 	{
-		URL url=null; 
-		try
-		{
-	            TrustManager[] trustAllCerts = new TrustManager[] {
-	                        new X509TrustManager(){
-	                              public java.security.cert.X509Certificate[] getAcceptedIssuers(){
-	                                    return null;
-	                              }
-	                        public void checkClientTrusted( java.security.cert.X509Certificate[] certs, String authType ) { }
-	                              public void checkServerTrusted( java.security.cert.X509Certificate[] certs, String authType ) { }
-	                        }
-	                  };
-
-	            SSLContext sc = SSLContext.getInstance( "SSL" ); //$NON-NLS-1$
-	            sc.init( null, trustAllCerts, new java.security.SecureRandom() );
-	            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-	            
-	            url = new URL(thisProtocol, thisHost, thisPort, thisPath);
+		try {
+			return new URL(thisProtocol, thisHost, new Integer(thisPort) .intValue(), 
+					thisPath + PATH_TOC);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
-		catch(Exception e)
-		{
-			
-		}
-		return url;
 	}
 	
 	public static URL getHttpsURL(String urlPath)
 	{
-		URL url=null; 
-		try
-		{
-	            TrustManager[] trustAllCerts = new TrustManager[] {
-	                        new X509TrustManager(){
-	                              public java.security.cert.X509Certificate[] getAcceptedIssuers(){
-	                                    return null;
-	                              }
-	                        public void checkClientTrusted( java.security.cert.X509Certificate[] certs, String authType ) { }
-	                              public void checkServerTrusted( java.security.cert.X509Certificate[] certs, String authType ) { }
-	                        }
-	                  };
-
-	            SSLContext sc = SSLContext.getInstance( "SSL" ); //$NON-NLS-1$
-	            sc.init( null, trustAllCerts, new java.security.SecureRandom() );
-	            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-	            
-	            url = new URL(urlPath);
+		try {
+			return new URL(urlPath);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return null;
 		}
-		catch(Exception e)
-		{
-			
-		}
-		return url;
 	}
 	
 	public static URL getHttpsURL(String thisProtocol,String thisHost, String thisPort, String thisPath)
 	{
-		URL url=null; 
-		try
-		{
-	            TrustManager[] trustAllCerts = new TrustManager[] {
-	                        new X509TrustManager(){
-	                              public java.security.cert.X509Certificate[] getAcceptedIssuers(){
-	                                    return null;
-	                              }
-	                        public void checkClientTrusted( java.security.cert.X509Certificate[] certs, String authType ) { }
-	                              public void checkServerTrusted( java.security.cert.X509Certificate[] certs, String authType ) { }
-	                        }
-	                  };
-
-	            SSLContext sc = SSLContext.getInstance( "SSL" ); //$NON-NLS-1$
-	            sc.init( null, trustAllCerts, new java.security.SecureRandom() );
-	            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-	            
-	            url = new URL(thisProtocol, thisHost, Integer.parseInt(thisPort), thisPath);
-		}
-		catch(Exception e)
-		{
-			
-		}
-		return url;
+		return getHttpsURL(thisProtocol,thisHost,Integer.parseInt(thisPort),thisPath);
 	}
 	
 	public static boolean canConnectToHttpsURL(String urlConnection)
 	{
-		boolean validConnection=true;
 		try
 		{
-	            TrustManager[] trustAllCerts = new TrustManager[] {
-	                        new X509TrustManager(){
-	                              public java.security.cert.X509Certificate[] getAcceptedIssuers(){
-	                                    return null;
-	                              }
-	                        public void checkClientTrusted( java.security.cert.X509Certificate[] certs, String authType ) { }
-	                              public void checkServerTrusted( java.security.cert.X509Certificate[] certs, String authType ) { }
-	                        }
-	                  };
-
-	            SSLContext sc = SSLContext.getInstance( "SSL" ); //$NON-NLS-1$
-	            sc.init( null, trustAllCerts, new java.security.SecureRandom() );
-	            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-	            
-			HttpsURLConnection testConnection = (HttpsURLConnection)new URL(urlConnection).openConnection();
-			setTimeout(testConnection,SOCKET_TIMEOUT);
+			HttpsURLConnection testConnection = getConnection(new URL(urlConnection));
+			testConnection.setConnectTimeout(SOCKET_TIMEOUT);
 			testConnection.connect();
 		}
-		catch (MalformedURLException e) {
-			validConnection = false;
-		} catch (IOException e) {
-			validConnection = false;
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			validConnection = false;
-		} catch (KeyManagementException e) {
-			// TODO Auto-generated catch block
-			validConnection = false;
+		catch (Exception e) {
+			return false;
 		}
-		
-		return validConnection;
-	}
-	
-	private static void setTimeout(URLConnection conn, int milliseconds) {
-		conn.setConnectTimeout(milliseconds);
+		return true;
 	}
 }
