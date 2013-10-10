@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1139,6 +1139,72 @@ public class PreferencesServiceTest extends RuntimeTest {
 		verifier.addExpected(node.absolutePath(), VALID_KEY_2);
 		verifier.verify();
 
+	}
+
+	/**
+	 * The test verifies that there is no PreferenceModifyListener which modifies unknown
+	 * exported preferences node. Unnecessary nodes must not be created because empty
+	 * exported node means that when it is applied to global preferences hierarchy, all
+	 * preferences from the global node with the same path as the exported node
+	 * will be removed.
+	 * <p>
+	 * If the test fails, you need to fix every PreferenceModifyListener that created
+	 * unnecessary node. Failure message gives a hint which plug-ins you need to start
+	 * with, although it is not 100% accurate since some plug-ins migrate old-style
+	 * preferences from other plug-ins.
+	 * <p>
+	 * If you need to manually verify the bug, use the steps from
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=418046#c0
+	 * <p>
+	 * For more details see bug 418046:
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=418046
+	 */
+	public void testApplyAndExportedPreferencesNotModified() throws BackingStoreException, CoreException {
+		// create a dummy node and export it to a stream
+		IEclipsePreferences toExport = InstanceScope.INSTANCE.getNode("bug418046");
+		toExport.put("someKey", "someValue");
+		IPreferencesService service = Platform.getPreferencesService();
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		assertTrue(service.exportPreferences(toExport, stream, null).isOK());
+
+		// read preferences from a stream
+		IExportedPreferences exported = service.readPreferences(new ByteArrayInputStream(stream.toByteArray()));
+
+		// verify that reading from a stream does not modify exported preferences
+		verifyExportedPreferencesNotModified(exported);
+
+		// use the export root node to apply it to the global preferences hierarchy;
+		// it does not change the behavior of the apply method, but shows more problems in
+		// implementations of PreferenceModifyListener
+		exported = (IExportedPreferences) exported.node(InstanceScope.SCOPE).node("bug418046");
+
+		// apply exported preferences to the global preferences hierarchy
+		assertTrue(service.applyPreferences(exported).isOK());
+
+		// verify that applying does not modify exported preferences
+		verifyExportedPreferencesNotModified(exported);
+	}
+
+	private void verifyExportedPreferencesNotModified(IExportedPreferences exported) throws BackingStoreException {
+		Preferences node = exported;
+		while (node.parent() != null) {
+			node = node.parent();
+		}
+		String debugString = ((EclipsePreferences) node).toDeepDebugString();
+		String[] children = node.childrenNames();
+		assertEquals(debugString, 1, children.length);
+
+		assertEquals(InstanceScope.SCOPE, children[0]);
+		node = node.node(children[0]);
+		children = node.childrenNames();
+		assertEquals(debugString, 1, children.length);
+
+		assertEquals("bug418046", children[0]);
+		node = node.node(children[0]);
+		children = node.childrenNames();
+		assertEquals(debugString, 0, children.length);
+
+		assertEquals(debugString, "someValue", node.get("someKey", null));
 	}
 
 	public void testApplyWithTransfers() {
