@@ -23,6 +23,12 @@ public class NLSTest extends TestCase {
 		BundleMessages bundleMessages;
 	}
 	
+	static class TestResourceBundleClassObject {
+		@Inject
+		@Translation
+		ResourceBundleClassMessages bundleClassMessages;
+	}
+	
 	private IEclipseContext context;
 	
 	private IEclipseContext getOrCreateContext() {
@@ -46,5 +52,12 @@ public class NLSTest extends TestCase {
 		assertNotNull(o.bundleMessages);
 		assertNotNull(o.bundleMessages.message_1);
 		assertEquals("BundleMessages 1", o.bundleMessages.message_1);
+	}
+	
+	public void testResourceBundle() {
+		TestResourceBundleClassObject o = ContextInjectionFactory.make(TestResourceBundleClassObject.class, getOrCreateContext());
+		assertNotNull(o.bundleClassMessages);
+		assertNotNull(o.bundleClassMessages.message_1);
+		assertEquals("ResourceBundleClass 1", o.bundleClassMessages.message_1);
 	}
 }
