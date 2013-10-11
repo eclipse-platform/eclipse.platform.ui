@@ -43,7 +43,8 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 	public static final String ID = "org.eclipse.ui.showIn.systemExplorer"; //$NON-NLS-1$
 
 	private static final String VARIABLE_RESOURCE = "${selected_resource_loc}"; //$NON-NLS-1$
-	private static final String VARIABLE_FOLDER = "${selected_resource_parent}"; //$NON-NLS-1$
+	private static final String VARIABLE_RESOURCE_URI = "${selected_resource_uri}"; //$NON-NLS-1$
+	private static final String VARIABLE_FOLDER = "${selected_resource_parent_loc}"; //$NON-NLS-1$
 
 	/*
 	 * (non-Javadoc)
@@ -106,8 +107,13 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 				return null;
 			}
 
-			Process p = Runtime.getRuntime().exec(launchCmd, null,
-					item.getWorkspace().getRoot().getLocation().toFile());
+			File dir = item.getWorkspace().getRoot().getLocation().toFile();
+			Process p;
+			if (Util.isLinux() || Util.isMac()) {
+				p = Runtime.getRuntime().exec(new String[] { "/bin/sh", "-c", launchCmd }, null, dir); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				p = Runtime.getRuntime().exec(launchCmd, null, dir);
+			}
 			int retCode = p.waitFor();
 			if (retCode != 0 && !Util.isWindows()) {
 				log.log(new Status(IStatus.ERROR, IDEWorkbenchPlugin
@@ -134,12 +140,23 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 	private String formShowInSytemExplorerCommand(File path) throws IOException {
 		String command = IDEWorkbenchPlugin.getDefault().getPreferenceStore()
 				.getString(IDEInternalPreferences.WORKBENCH_SYSTEM_EXPLORER);
-		command = Util.replaceAll(command, VARIABLE_RESOURCE, path.getCanonicalPath());
+		
+		command = Util.replaceAll(command, VARIABLE_RESOURCE, quotePath(path.getCanonicalPath()));
+		command = Util.replaceAll(command, VARIABLE_RESOURCE_URI, path.getCanonicalFile().toURI().toString());
 		File parent = path.getParentFile();
 		if (parent != null) {
-			command = Util.replaceAll(command, VARIABLE_FOLDER, parent.getCanonicalPath());
+			command = Util.replaceAll(command, VARIABLE_FOLDER, quotePath(parent.getCanonicalPath()));
 		}
 		return command;
+	}
+
+	private String quotePath(String path) {
+		if (Util.isLinux() || Util.isMac()) {
+			// Quote for usage inside "", man sh, topic QUOTING:
+			path = path.replaceAll("[\"$`]", "\\\\$0"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		// Windows: Can't quote, since explorer.exe has a very special command line parsing strategy.
+		return path;
 	}
 
 	/**
@@ -169,11 +186,11 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 	 */
 	public static String getDefaultCommand() {
 		if (Util.isGtk()) {
-			return "dbus-send --print-reply --dest=org.freedesktop.FileManager1 /org/freedesktop/FileManager1 org.freedesktop.FileManager1.ShowItems array:string:\"file://${selected_resource_loc}\" string:\"\""; //$NON-NLS-1$
+			return "dbus-send --print-reply --dest=org.freedesktop.FileManager1 /org/freedesktop/FileManager1 org.freedesktop.FileManager1.ShowItems array:string:\"${selected_resource_uri}\" string:\"\""; //$NON-NLS-1$
 		} else if (Util.isWindows()) {
 			return "explorer /E,/select=${selected_resource_loc}"; //$NON-NLS-1$
 		} else if (Util.isMac()) {
-			return "open -R '${selected_resource_loc}'"; //$NON-NLS-1$
+			return "open -R \"${selected_resource_loc}\""; //$NON-NLS-1$
 		}
 
 		// if all else fails, return empty default
