@@ -81,5 +81,6 @@ public class ApiTestSuite extends TestSuite {
         //addTest(new TestSuite(IWorkbenchPartTestableTests.class));
         addTest(new TestSuite(ArbitraryPropertyTest.class));
         addTest(new TestSuite(LifecycleViewTest.class));
+        addTest(new TestSuite(Bug407422Test.class));
     }
 }

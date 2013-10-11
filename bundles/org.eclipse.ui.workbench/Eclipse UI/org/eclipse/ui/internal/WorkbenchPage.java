@@ -2265,10 +2265,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @see org.eclipse.ui.IWorkbenchPage#getEditors()
 	 */
 	public IEditorPart[] getEditors() {
-		int length = editorReferences.size();
+		final IEditorReference[] editorReferences = getEditorReferences();
+		int length = editorReferences.length;
 		IEditorPart[] editors = new IEditorPart[length];
 		for (int i = 0; i < length; i++) {
-			editors[i] = editorReferences.get(i).getEditor(true);
+			editors[i] = editorReferences[i].getEditor(true);
 		}
 		return editors;
 	}
