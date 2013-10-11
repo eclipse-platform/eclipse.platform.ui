@@ -51,6 +51,7 @@ import org.eclipse.e4.core.internal.tests.di.RecursiveObjectCreationTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionEventTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionMixedSuppliersTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionPreferencesTest;
+import org.eclipse.e4.core.internal.tests.nls.NLSTest;
 
 public class CoreTestSuite extends TestSuite {
 	public static Test suite() {
@@ -102,5 +103,8 @@ public class CoreTestSuite extends TestSuite {
 		addTestSuite(ActivationInjectionTest.class);
 		addTestSuite(GenericsInjectionTest.class);
 		addTestSuite(RecursiveObjectCreationTest.class);
+		
+		// NLS
+		addTestSuite(NLSTest.class);
 	}
 }
