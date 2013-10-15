@@ -562,7 +562,9 @@ public class StringConverter {
             } catch (NumberFormatException e) {
                 throw new DataFormatException(e.getMessage());
             }
-            return new RGB(rval, gval, bval);
+            return new RGB(rval, gval, bval); // may throw IllegalArgumentException
+        } catch (IllegalArgumentException e) {
+        	throw new DataFormatException(e.getMessage());
         } catch (NoSuchElementException e) {
             throw new DataFormatException(e.getMessage());
         }
