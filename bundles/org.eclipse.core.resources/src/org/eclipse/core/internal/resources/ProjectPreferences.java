@@ -427,9 +427,12 @@ public class ProjectPreferences extends EclipsePreferences {
 		if (project.isOpen()) {
 			try {
 				synchronized (this) {
+					List<String> addedNames = Arrays.asList(internalChildNames());
 					String[] names = computeChildren();
+					// add names only for nodes that were not added previously
 					for (int i = 0; i < names.length; i++)
-						addChild(names[i], null);
+						if (!addedNames.contains(names[i]))
+							addChild(names[i], null);
 				}
 			} finally {
 				// mark as initialized so that subsequent project opening will not initialize preferences again

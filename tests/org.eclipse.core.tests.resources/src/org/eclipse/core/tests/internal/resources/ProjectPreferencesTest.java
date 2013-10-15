@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -978,6 +978,36 @@ public class ProjectPreferencesTest extends ResourceTest {
 			instanceNode.flush();
 			project.delete(true, getMonitor());
 		}
+	}
+
+	public void test_336211() throws BackingStoreException, CoreException, IOException {
+		String projectName = getUniqueString();
+		String nodeName = "node";
+		IProject project = getProject(projectName);
+
+		//create project but do not open it yet
+		project.create(getMonitor());
+
+		//create file with preferences that will be discovered during refresh
+		File folder = new File(project.getLocation().toOSString() + "/.settings");
+		folder.mkdir();
+		BufferedWriter bw = new BufferedWriter(new FileWriter(folder.getPath() + "/" + nodeName + ".prefs"));
+		bw.write("#Fri Jan 28 10:28:45 CET 2011\neclipse.preferences.version=1\nKEY=VALUE");
+		bw.close();
+
+		//create project preference node
+		Preferences projectNode = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE).node(projectName);
+		assertFalse(projectNode.nodeExists(nodeName));
+
+		//create node for storing preferences
+		Preferences node = projectNode.node(nodeName);
+
+		//open the project; the new file will be found during refresh
+		project.open(getMonitor());
+
+		//loading preferences from a file must not remove nodes that were previously created
+		assertTrue(node == projectNode.node(nodeName));
+		assertEquals("VALUE", node.get("KEY", null));
 	}
 
 	public void testProjectOpenClose() {
