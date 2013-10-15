@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christian Georgi <christian.georgi@sap.com> - [Themes] Invalid RGB color value in themes extension makes workbench unusable - http://bugs.eclipse.org/419435
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -562,9 +563,9 @@ public class StringConverter {
             } catch (NumberFormatException e) {
                 throw new DataFormatException(e.getMessage());
             }
-            return new RGB(rval, gval, bval); // may throw IllegalArgumentException
+            return new RGB(rval, gval, bval);
         } catch (IllegalArgumentException e) {
-        	throw new DataFormatException(e.getMessage());
+            throw new DataFormatException(e.getMessage());
         } catch (NoSuchElementException e) {
             throw new DataFormatException(e.getMessage());
         }
