@@ -79,6 +79,7 @@ public class Messages {
 	public String CommandEditor_ParameterId;
 	public String CommandEditor_Category;
 	public String CommandEditor_AddCommandParameter;
+	public String CommandEditor_NewCommandParameter;
 
 	public String DirectMenuItemEditor_Label;
 	public String DirectMenuItemEditor_Description;

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -65,6 +66,7 @@ public class CommandEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 	private EStackLayout stackLayout;
 	private List<Action> actions = new ArrayList<Action>();
+	private MessageFormat newCommandParameterName;
 
 	private IEMFEditListProperty COMMAND__PARAMETERS = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__PARAMETERS);
 
@@ -81,6 +83,8 @@ public class CommandEditor extends AbstractComponentEditor {
 				handleAddCommandParameter();
 			}
 		});
+
+		newCommandParameterName = new MessageFormat(Messages.CommandEditor_NewCommandParameter);
 	}
 
 	@Override
@@ -327,6 +331,7 @@ public class CommandEditor extends AbstractComponentEditor {
 	protected void handleAddCommandParameter() {
 		MCommandParameter param = MCommandsFactory.INSTANCE.createCommandParameter();
 		setElementId(param);
+		param.setName(newCommandParameterName.format(new Object[] { getParameterCount() }));
 
 		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.COMMAND__PARAMETERS, param);
 
@@ -341,5 +346,20 @@ public class CommandEditor extends AbstractComponentEditor {
 		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
 		return l;
+	}
+
+	/**
+	 * Returns the current amount of {@link MCommandParameter}s the edited
+	 * {@link MCommand} has.
+	 * 
+	 * @return the amount of {@link MCommandParameter}s of the edited
+	 *         {@link MCommand}
+	 */
+	private int getParameterCount() {
+		// getChildList() will always create a new IObservableList and
+		// this method uses the normal EMF way to retrieve the count manually.
+		EObject command = (EObject) getMaster().getValue();
+		List<?> commandParameters = (List<?>) command.eGet(CommandsPackageImpl.Literals.COMMAND__PARAMETERS);
+		return commandParameters.size();
 	}
 }
