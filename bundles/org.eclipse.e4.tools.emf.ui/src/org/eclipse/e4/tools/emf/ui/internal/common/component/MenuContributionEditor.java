@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Marco Descher <marco@descher.at> - Bug 397650, Bug 395982
+ *     Marco Descher <marco@descher.at> - Bug 397650, Bug 395982, Bug 396975
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -19,16 +19,21 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
+import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.MenuIdDialog;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
@@ -63,6 +68,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 public class MenuContributionEditor extends AbstractComponentEditor {
 	private Composite composite;
@@ -71,6 +77,12 @@ public class MenuContributionEditor extends AbstractComponentEditor {
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private EStackLayout stackLayout;
 	private List<Action> actions = new ArrayList<Action>();
+
+	@Inject
+	private IModelResource resource;
+
+	@Inject
+	private EModelService modelService;
 
 	private static class Struct {
 		private final String label;
@@ -207,7 +219,31 @@ public class MenuContributionEditor extends AbstractComponentEditor {
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
-		ControlFactory.createTextField(parent, Messages.MenuContributionEditor_ParentId, master, context, textProp, EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.MENU_CONTRIBUTION__PARENT_ID));
+
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText(Messages.MenuContributionEditor_ParentId);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+
+			final Text t = new Text(parent, SWT.BORDER);
+			TextPasteHandler.createFor(t);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.MENU_CONTRIBUTION__PARENT_ID).observeDetail(getMaster()));
+
+			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			b.setText(Messages.ModelTooling_Common_FindEllipsis);
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					MenuIdDialog dialog = new MenuIdDialog(t.getShell(), resource, (MMenuContribution) getMaster().getValue(), getEditingDomain(), modelService, Messages);
+					dialog.open();
+				}
+			});
+
+		}
+
 		ControlFactory.createTextField(parent, Messages.MenuContributionEditor_Position, master, context, textProp, EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.MENU_CONTRIBUTION__POSITION_IN_PARENT));
 
 		// ------------------------------------------------------------

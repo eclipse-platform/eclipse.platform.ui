@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Marco Descher <marco@descher.at> - Bug 395982
+ *     Marco Descher <marco@descher.at> - Bug 395982, Bug 396975
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal;
 
@@ -584,6 +584,11 @@ public class Messages {
 	public String ExpressionIdDialog_DialogTitle;
 	public String ExpressionIdDialog_DialogMessage;
 	public String ExpressionIdDialog_Id;
+
+	public String MenuIdDialog_ShellTitle;
+	public String MenuIdDialog_DialogTitle;
+	public String MenuIdDialog_DialogMessage;
+	public String MenuIdDialog_Id;
 
 	public String CommandToStringConverter_None;
 
