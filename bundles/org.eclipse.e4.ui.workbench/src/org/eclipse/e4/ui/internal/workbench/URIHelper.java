@@ -94,4 +94,16 @@ public class URIHelper {
 		return uri.toString();
 	}
 
+	/**
+	 * Helper method which checks if given String represents a Platform URI.
+	 * 
+	 * @param uri
+	 *            a possible Platform URI
+	 * @return true if the given string is not {@code null} and starts with
+	 *         {@value #PLATFORM_SCHEMA}; false otherwise
+	 */
+	public static boolean isPlatformURI(String uri) {
+		return uri != null && uri.startsWith(PLATFORM_SCHEMA);
+	}
+
 }
