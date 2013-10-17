@@ -321,7 +321,10 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 								|| entry.getKey().equals(
 										NewApplicationWizardPage.APPLICATION)
 								|| entry.getKey().equals(
-										NewApplicationWizardPage.richSample)) {
+										NewApplicationWizardPage.richSample)
+								|| entry.getKey().equals(
+										NewApplicationWizardPage.CLEAR_PERSISTED_STATE)
+								) {
 							continue;
 						}
 						IPluginElement element = fmodel.getFactory()
