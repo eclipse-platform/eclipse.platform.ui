@@ -11,7 +11,10 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.property.list.IListProperty;
@@ -40,6 +43,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -69,12 +73,30 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 	private IListProperty MODEL_FRAGMENT__ELEMENTS = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
 
+	private List<Action> actions = new ArrayList<Action>();
+
 	@Inject
 	IEclipseContext eclipseContext;
 
 	@Inject
 	public StringModelFragment() {
 		super();
+	}
+
+	@PostConstruct
+	public void init() {
+		List<FeatureClass> list = new ArrayList<FeatureClass>();
+		Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
+		list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
+		for (final FeatureClass featureClass : list) {
+			actions.add(new Action(featureClass.label) {
+
+				@Override
+				public void run() {
+					handleAdd(featureClass.eClass, false);
+				}
+			});
+		}
 	}
 
 	@Override
@@ -338,6 +360,31 @@ public class StringModelFragment extends AbstractComponentEditor {
 	@Override
 	public IObservableList getChildList(Object element) {
 		return MODEL_FRAGMENT__ELEMENTS.observe(element);
+	}
+
+	protected void handleAdd(EClass eClass, boolean separator) {
+		EObject eObject = EcoreUtil.create(eClass);
+		setElementId(eObject);
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS, eObject);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			getEditor().setSelection(eObject);
+		}
+	}
+
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		Collections.sort(l, new Comparator<Action>() {
+			@Override
+			public int compare(Action o1, Action o2) {
+
+				return o1.getText().compareTo(o2.getText());
+			}
+		});
+		return l;
 	}
 
 }
