@@ -48,6 +48,8 @@ public interface IPresentationEngine {
 	/**
 	 * Declare the stack as containing a singe 'standalone' view. These stacks will not allow either
 	 * dragging the view out of the stack nor dragging other views in.
+	 * 
+	 * @since 1.1
 	 */
 	public static final String STANDALONE = "Standalone"; //$NON-NLS-1$
 
