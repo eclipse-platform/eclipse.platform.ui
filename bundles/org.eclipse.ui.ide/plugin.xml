@@ -2047,6 +2047,12 @@
              label="%command.showInSystemExplorer.menu.name"
              mnemonic="%command.showInSystemExplorer.menu.mnemonic"
              style="push">
+          <visibleWhen
+                checkEnabled="false">
+             <reference
+                   definitionId="org.eclipse.ui.ide.showInDefinition">
+             </reference>
+          </visibleWhen>
          </command>
       </menuContribution>
    </extension>
@@ -2236,12 +2242,9 @@
             class="org.eclipse.ui.internal.ide.handlers.ShowInSystemExplorerHandler"
             commandId="org.eclipse.ui.ide.showInSystemExplorer">
          <enabledWhen>
-            <with variable="selection">
-                    <count value="1" />
-                    <iterate ifEmpty="false">
-                        <adapt type="org.eclipse.core.resources.IResource" />
-                    </iterate>
-             </with>
+            <reference
+                  definitionId="org.eclipse.ui.ide.showInDefinition">
+            </reference>
          </enabledWhen>
       </handler>
    </extension>
@@ -2296,6 +2299,13 @@
             properties="severity,type,superType,priority,done,message,resourceType"
             type="org.eclipse.core.resources.IMarker">
       </propertyTester>
+      <propertyTester
+            class="org.eclipse.ui.internal.ide.handlers.EditorInputPropertyTester"
+            id="org.eclipse.ui.ide.editorInputTester"
+            namespace="org.eclipse.ui.ide.editor"
+            properties="input"
+            type="org.eclipse.ui.IWorkbenchPart">
+      </propertyTester>
    </extension>
    <extension
          point="org.eclipse.core.resources.filterMatchers">
@@ -2347,6 +2357,26 @@
             class="org.eclipse.ui.internal.about.AboutFeaturesPage"
             id="20.FeaturesPage">
           </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.ui.ide.showInDefinition">
+            <or>
+            <with variable="selection">
+                    <count value="1" />
+                    <iterate ifEmpty="false">
+                        <adapt type="org.eclipse.core.resources.IResource" />
+                    </iterate>
+             </with>
+            <with
+                  variable="activePart">
+               <test
+                     property="org.eclipse.ui.ide.editor.input">
+               </test>
+            </with>
+             </or>
+      </definition>
    </extension>
 
 </plugin>

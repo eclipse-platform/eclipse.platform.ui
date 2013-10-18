@@ -26,6 +26,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -56,16 +60,7 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ILog log = IDEWorkbenchPlugin.getDefault().getLog();
 
-		ISelection selection = HandlerUtil.getCurrentSelection(event);
-		if ((selection == null) || (selection.isEmpty())
-				|| (!(selection instanceof IStructuredSelection))) {
-			return null;
-		}
-
-		Object selectedObject = ((IStructuredSelection) selection)
-				.getFirstElement();
-		IResource item = (IResource) org.eclipse.ui.internal.util.Util
-				.getAdapter(selectedObject, IResource.class);
+		IResource item = getResource(event);
 		if (item == null) {
 			return null;
 		}
@@ -128,6 +123,44 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 			throw new ExecutionException("Show in Explorer command failed.", e); //$NON-NLS-1$
 		}
 		return null;
+	}
+
+	private IResource getResource(ExecutionEvent event) {
+		IResource resource = getSelectionResource(event);
+		if (resource==null) {
+			resource = getEditorInputResource(event);
+		}
+		return resource;
+	}
+	
+	private IResource getSelectionResource(ExecutionEvent event) {
+		ISelection selection = HandlerUtil.getCurrentSelection(event);
+		if ((selection == null) || (selection.isEmpty())
+				|| (!(selection instanceof IStructuredSelection))) {
+			return null;
+		}
+
+		Object selectedObject = ((IStructuredSelection) selection)
+				.getFirstElement();
+		IResource item = (IResource) org.eclipse.ui.internal.util.Util
+				.getAdapter(selectedObject, IResource.class);
+		return item;
+	}
+
+	/**
+	 * @param event
+	 * @return
+	 */
+	private IResource getEditorInputResource(ExecutionEvent event) {
+		IWorkbenchPart activePart = HandlerUtil.getActivePart(event);
+		if (!(activePart instanceof IEditorPart)) {
+			return null;
+		}
+		IEditorInput input = ((IEditorPart)activePart).getEditorInput();
+		if (input instanceof IFileEditorInput) {
+			return ((IFileEditorInput)input).getFile();
+		}
+		return (IResource) input.getAdapter(IResource.class);
 	}
 
 	/**
