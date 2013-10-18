@@ -46,6 +46,12 @@ public interface IPresentationEngine {
 	public static final String NO_CLOSE = "NoClose"; //$NON-NLS-1$
 
 	/**
+	 * Declare the stack as containing a singe 'standalone' view. These stacks will not allow either
+	 * dragging the view out of the stack nor dragging other views in.
+	 */
+	public static final String STANDALONE = "Standalone"; //$NON-NLS-1$
+
+	/**
 	 * Don't remove the element from the display even if it has no displayable children
 	 */
 	public static final String NO_AUTO_COLLAPSE = "NoAutoCollapse"; //$NON-NLS-1$

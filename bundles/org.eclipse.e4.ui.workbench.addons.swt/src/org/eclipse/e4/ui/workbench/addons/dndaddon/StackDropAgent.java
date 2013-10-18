@@ -17,6 +17,7 @@ import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -53,6 +54,9 @@ public class StackDropAgent extends DropAgent {
 			return false;
 
 		MPartStack stack = (MPartStack) info.curElement;
+
+		if (stack.getTags().contains(IPresentationEngine.STANDALONE))
+			return false;
 
 		// We only work for CTabFolders
 		if (!(stack.getWidget() instanceof CTabFolder))

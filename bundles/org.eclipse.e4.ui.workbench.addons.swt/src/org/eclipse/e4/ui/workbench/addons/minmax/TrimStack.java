@@ -254,7 +254,7 @@ public class TrimStack {
 				item.setSelection(false);
 			}
 		} else {
-			if (isEditorStack()) {
+			if (isEditorStack() || minimizedElement instanceof MPlaceholder) {
 				trimStackTB.getItem(1).setSelection(true);
 			} else if (isPerspectiveStack()) {
 				MPerspectiveStack pStack = (MPerspectiveStack) minimizedElement;
@@ -277,7 +277,11 @@ public class TrimStack {
 	}
 
 	private boolean isEditorStack() {
-		return minimizedElement instanceof MPlaceholder;
+		if (!(minimizedElement instanceof MPlaceholder))
+			return false;
+
+		MPlaceholder ph = (MPlaceholder) minimizedElement;
+		return ph.getRef() instanceof MArea;
 	}
 
 	private boolean isPerspectiveStack() {
@@ -743,6 +747,16 @@ public class TrimStack {
 			ti.setToolTipText(Messages.TrimStack_SharedAreaTooltip);
 			ti.setImage(getLayoutImage());
 			ti.addSelectionListener(toolItemSelectionListener);
+		} else if (minimizedElement instanceof MPlaceholder) {
+			MPlaceholder ph = (MPlaceholder) minimizedElement;
+			if (ph.getRef() instanceof MPart) {
+				MPart part = (MPart) ph.getRef();
+				ToolItem ti = new ToolItem(trimStackTB, SWT.CHECK);
+				ti.setData(part);
+				ti.setImage(getImage(part));
+				ti.setToolTipText(getLabelText(part));
+				ti.addSelectionListener(toolItemSelectionListener);
+			}
 		} else if (minimizedElement instanceof MGenericStack<?>) {
 			// Handle *both* PartStacks and PerspectiveStacks here...
 			MGenericStack<?> theStack = (MGenericStack<?>) minimizedElement;
@@ -797,15 +811,14 @@ public class TrimStack {
 	 *            whether the stack should be visible
 	 */
 	public void showStack(boolean show) {
-		Control ctf = (Control) minimizedElement.getWidget();
+		Control ctrl = (Control) minimizedElement.getWidget();
 		Composite clientArea = getShellClientComposite();
 		if (clientArea == null)
 			return;
 
 		if (show && !isShowing) {
 			hostPane = getHostPane();
-			ctf.setParent(hostPane);
-
+			ctrl.setParent(hostPane);
 			clientArea.addControlListener(caResizeListener);
 
 			// Set the initial location
@@ -828,8 +841,7 @@ public class TrimStack {
 						partService.activate((MPart) ph.getRef());
 					}
 				}
-			} else if (minimizedElement instanceof MPlaceholder
-					&& ((MPlaceholder) minimizedElement).getRef() instanceof MArea) {
+			} else if (isEditorStack()) {
 				MArea area = (MArea) ((MPlaceholder) minimizedElement).getRef();
 
 				// See if we can find an element to activate...
@@ -858,6 +870,12 @@ public class TrimStack {
 
 				if (partToActivate != null) {
 					partService.activate(partToActivate);
+				}
+			} else if (minimizedElement instanceof MPlaceholder) {
+				MPlaceholder ph = (MPlaceholder) minimizedElement;
+				if (ph.getRef() instanceof MPart) {
+					MPart part = (MPart) ph.getRef();
+					partService.activate(part);
 				}
 			}
 

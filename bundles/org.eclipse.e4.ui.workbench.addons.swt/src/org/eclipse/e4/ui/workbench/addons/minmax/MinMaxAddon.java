@@ -663,6 +663,17 @@ public class MinMaxAddon {
 				}
 			}
 
+			// Find any 'standalone' views *not* in a stack
+			List<String> standaloneTag = new ArrayList();
+			standaloneTag.add(IPresentationEngine.STANDALONE);
+			List<MPlaceholder> standaloneViews = modelService.findElements(persp == null ? win
+					: persp, null, MPlaceholder.class, standaloneTag, EModelService.PRESENTATION);
+			for (MPlaceholder part : standaloneViews) {
+				if (!part.isToBeRendered())
+					continue;
+				elementsToMinimize.add(part);
+			}
+
 			// Find the editor 'area'
 			if (persp != null) {
 				MPlaceholder eaPlaceholder = (MPlaceholder) modelService
@@ -749,12 +760,24 @@ public class MinMaxAddon {
 		AnimationEngine engine = new AnimationEngine(win.getContext(), fader, 300);
 		engine.schedule();
 
-		List<MPartStack> stacks = modelService.findElements(win, null, MPartStack.class, null,
+		List<String> minTag = new ArrayList<String>();
+		minTag.add(IPresentationEngine.MINIMIZED_BY_ZOOM);
+
+		// Restore any minimized stacks
+		List<MPartStack> stacks = modelService.findElements(win, null, MPartStack.class, minTag,
 				EModelService.PRESENTATION);
 		for (MPartStack theStack : stacks) {
-			if (theStack.getWidget() != null && theStack.getTags().contains(MINIMIZED)
-					&& theStack.getTags().contains(MINIMIZED_BY_ZOOM)) {
+			if (theStack.getWidget() != null) {
 				theStack.getTags().remove(MINIMIZED);
+			}
+		}
+
+		// Restore any minimized standalone views
+		List<MPlaceholder> views = modelService.findElements(win, null, MPlaceholder.class, minTag,
+				EModelService.PRESENTATION);
+		for (MPlaceholder ph : views) {
+			if (ph.getWidget() != null) {
+				ph.getTags().remove(MINIMIZED);
 			}
 		}
 
