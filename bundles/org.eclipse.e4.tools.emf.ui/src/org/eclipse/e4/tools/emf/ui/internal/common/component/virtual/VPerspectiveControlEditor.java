@@ -100,6 +100,12 @@ public class VPerspectiveControlEditor extends AbstractComponentEditor {
 				handleAdd(AdvancedPackageImpl.Literals.AREA);
 			}
 		});
+		actions.add(new Action(Messages.PerspectiveEditor_AddPlaceholder, createImageDescriptor(ResourceProvider.IMG_Placeholder)) {
+			@Override
+			public void run() {
+				handleAdd(AdvancedPackageImpl.Literals.PLACEHOLDER);
+			}
+		});
 	}
 
 	@Override
