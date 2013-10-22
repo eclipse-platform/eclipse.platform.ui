@@ -16,6 +16,8 @@ import org.eclipse.osgi.service.localization.BundleLocalization;
 
 /**
  * Service that is responsible for creating and managing message class instances.
+ * 
+ * @since 1.2
  */
 public interface IMessageFactoryService {
 

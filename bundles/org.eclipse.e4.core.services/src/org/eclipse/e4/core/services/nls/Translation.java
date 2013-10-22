@@ -32,6 +32,8 @@ import javax.inject.Qualifier;
  * 	SimpleMessages simpleMessages;
  * }
  * </pre>
+ * 
+ * @since 1.2
  */
 @Qualifier
 @Documented

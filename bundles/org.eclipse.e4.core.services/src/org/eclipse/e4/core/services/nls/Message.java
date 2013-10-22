@@ -29,6 +29,7 @@ import java.lang.annotation.RetentionPolicy;
  * }
  * </pre>
  * 
+ * @since 1.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Message {
