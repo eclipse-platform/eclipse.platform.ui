@@ -16,7 +16,7 @@
 }
 
 .MTrimBar#org-eclipse-ui-main-toolbar  {
-    background-image:  url(./gtkGrey.png);	
+    background-color: COLOR-WIDGET-BACKGROUND #E2E2E2 100%;
 }
 
 .MToolControl.TrimStack {
@@ -31,7 +31,7 @@
 }
 
 #PerspectiveSwitcher { 
-	background-color: #EBEBEB #E2E2E2 100%;
+	background-color: COLOR-WIDGET-BACKGROUND #E2E2E2 100%;
 	eclipse-perspective-keyline-color: #B4B4B4 #B4B4B4;
 }
 
