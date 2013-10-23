@@ -277,7 +277,15 @@ public class ShowInMenu extends ContributionItem implements
 		ArrayList targetIds = new ArrayList();
 		WorkbenchPage page = (WorkbenchPage) getWindow().getActivePage();
 		if (page != null) {
-			targetIds.addAll(page.getShowInPartIds());
+			String srcId = sourcePart == null ? null : sourcePart.getSite().getId();
+			ArrayList<?> pagePartIds = page.getShowInPartIds();
+			for (Object pagePartId : pagePartIds) {
+				// Don't add own view, except when explicitly requested with
+				// IShowInTargetList below
+				if (!pagePartId.equals(srcId)) {
+					targetIds.add(pagePartId);
+				}
+			}
 		}
 		IShowInTargetList targetList = getShowInTargetList(sourcePart);
 		if (targetList != null) {
@@ -376,17 +384,14 @@ public class ShowInMenu extends ContributionItem implements
 	 * Returns the view descriptors to show in the dialog.
 	 */
 	private IViewDescriptor[] getViewDescriptors(IWorkbenchPart sourcePart) {
-		String srcId = sourcePart == null ? null : sourcePart.getSite().getId();
 		ArrayList ids = getShowInPartIds(sourcePart);
 		ArrayList descs = new ArrayList();
 		IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
 		for (Iterator i = ids.iterator(); i.hasNext();) {
 			String id = (String) i.next();
-			if (!id.equals(srcId)) {
-				IViewDescriptor desc = reg.find(id);
-				if (desc != null) {
-					descs.add(desc);
-				}
+			IViewDescriptor desc = reg.find(id);
+			if (desc != null) {
+				descs.add(desc);
 			}
 		}
 		return (IViewDescriptor[]) descs.toArray(new IViewDescriptor[descs
