@@ -13,10 +13,12 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.helpers;
 
+import org.eclipse.e4.ui.internal.css.swt.CSSActivator;
+
+import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-
 import org.eclipse.swt.SWT;
 import java.util.List;
 import org.eclipse.e4.ui.css.core.css2.CSS2ColorHelper;
@@ -32,9 +34,11 @@ import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.css.CSSValueList;
 import org.w3c.dom.css.RGBColor;
+import static org.eclipse.e4.ui.css.swt.helpers.ThemeElementDefinitionHelper.normalizeId;
 
 public class CSSSWTColorHelper {
-
+	public static final String COLOR_DEFINITION_MARKER = "#";
+	
 	private static Field[] cachedFields;
 	
 	/*--------------- SWT Color Helper -----------------*/
@@ -57,8 +61,10 @@ public class CSSSWTColorHelper {
 	private static RGB getRGB(CSSPrimitiveValue value, Display display) {
 		RGB rgb = getRGB(value);
 		if (rgb == null && display != null) {
-			String name = value.getStringValue();
-			if (name.contains("-")) {
+			String name = value.getStringValue();			
+			if (name.startsWith(COLOR_DEFINITION_MARKER)) {
+				rgb = findColorByDefinition(name);
+			} else if (name.contains("-")) {
 				name = name.replace('-', '_');
 				rgb = process(display, name);
 			}
@@ -282,5 +288,13 @@ public class CSSSWTColorHelper {
 		int green = color.green;
 		int blue = color.blue;
 		return new CSS2RGBColorImpl(red, green, blue);
+	}
+	
+	private static RGB findColorByDefinition(String name) {
+		IColorAndFontProvider provider = CSSActivator.getDefault().getColorAndFontProvider();
+		if (provider != null) {
+			return provider.getColor(normalizeId(name.substring(1)));
+		}
+		return null;
 	}
 }

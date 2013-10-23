@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
+import java.util.ResourceBundle;
+import org.eclipse.e4.ui.internal.css.swt.definition.IFontDefinitionOverridable;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.graphics.FontData;
@@ -20,7 +22,9 @@ import org.eclipse.ui.PlatformUI;
  * from the plugin.xml of a type.
  */
 public class FontDefinition implements IHierarchalThemeElementDefinition,
-        ICategorizedThemeElementDefinition, IEditable {
+		ICategorizedThemeElementDefinition, IEditable, IFontDefinitionOverridable {
+	private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(Theme.class
+			.getName());
 
     private String label;
 
@@ -35,6 +39,8 @@ public class FontDefinition implements IHierarchalThemeElementDefinition,
     private String value;
 
     private boolean isEditable;
+
+	private boolean overridden;
 
     private FontData[] parsedValue;
 
@@ -157,5 +163,33 @@ public class FontDefinition implements IHierarchalThemeElementDefinition,
      */
     public int hashCode() {
         return id.hashCode();
-    }    
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.css.swt.definition.IDefinitionOverridable#setData(java
+	 * .lang.Object)
+	 */
+	public void setValue(FontData[] data) {
+		if (data != null && data.length > 0) {
+			value = data[0].getName();
+			parsedValue = data;
+			if (!isOverridden()) {
+				description += ' ' + RESOURCE_BUNDLE.getString("Overridden.by.css.label"); //$NON-NLS-1$
+				overridden = true;
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.css.swt.definition.IDefinitionOverridable#isOverriden()
+	 */
+	public boolean isOverridden() {
+		return overridden;
+	}
 }

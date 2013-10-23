@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
+import java.util.ResourceBundle;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.e4.ui.internal.css.swt.definition.IColorDefinitionOverridable;
 import org.eclipse.jface.resource.DataFormatException;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IPluginContribution;
@@ -26,8 +28,11 @@ import org.eclipse.ui.themes.ColorUtil;
  */
 public class ColorDefinition implements IPluginContribution,
         IHierarchalThemeElementDefinition, ICategorizedThemeElementDefinition,
-        IEditable {
+ IEditable, IColorDefinitionOverridable {
 	
+	private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(Theme.class
+			.getName());
+
 	/**
 	 * Default color value - black - for colors that cannot be parsed.
 	 */
@@ -50,6 +55,8 @@ public class ColorDefinition implements IPluginContribution,
     boolean isEditable;
 
     private RGB parsedValue;
+
+	private boolean overridden;
 
     /**
      * Create a new instance of the receiver.
@@ -197,4 +204,30 @@ public class ColorDefinition implements IPluginContribution,
     public int hashCode() {
         return id.hashCode();
     }
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.internal.css.swt.definition.
+	 * IThemeElementDefinitionOverridable#setValue(java.lang.Object)
+	 */
+	public void setValue(RGB data) {
+		if (data != null) {
+			parsedValue = data;
+			if (!isOverridden()) {
+				description += ' ' + RESOURCE_BUNDLE.getString("Overridden.by.css.label"); //$NON-NLS-1$
+				overridden = true;
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.internal.css.swt.definition.
+	 * IThemeElementDefinitionOverridable#isOverriden()
+	 */
+	public boolean isOverridden() {
+		return overridden;
+	}
 }

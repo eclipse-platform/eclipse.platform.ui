@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,10 @@ import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.services.IStylingEngine;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
@@ -28,12 +32,14 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
+import org.osgi.service.event.EventHandler;
 
 /**
  * Theme manager for the Workbench.
@@ -46,6 +52,10 @@ public class WorkbenchThemeManager extends EventManager implements
 	private static final String SYSTEM_DEFAULT_THEME = "org.eclipse.ui.ide.systemDefault";//$NON-NLS-1$
 
 	private static WorkbenchThemeManager instance;
+
+	private IEclipseContext context;
+
+	private IEventBroker eventBroker;
 
 	/**
 	 * Returns the singelton instance of the WorkbenchThemeManager
@@ -102,6 +112,29 @@ public class WorkbenchThemeManager extends EventManager implements
 
 	private Map themes = new HashMap(7);
 
+	private EventHandler themeChangedHandler = new EventHandler() {
+		public void handleEvent(org.osgi.service.event.Event event) {
+			IStylingEngine engine = (IStylingEngine) context.get(IStylingEngine.SERVICE_NAME);
+			IThemeRegistry themeRegistry = (IThemeRegistry) context.get(IThemeRegistry.class
+					.getName());
+			FontRegistry fontRegistry = getCurrentTheme().getFontRegistry();
+			ColorRegistry colorRegistry = getCurrentTheme().getColorRegistry();
+
+			for (FontDefinition fontDefinition : themeRegistry.getFonts()) {
+				engine.style(fontDefinition);
+				if (fontDefinition.isOverridden()) {
+					fontRegistry.put(fontDefinition.getId(), fontDefinition.getValue());
+				}
+			}
+			for (ColorDefinition colorDefinition : themeRegistry.getColors()) {
+				engine.style(colorDefinition);
+				if (colorDefinition.isOverridden()) {
+					colorRegistry.put(colorDefinition.getId(), colorDefinition.getValue());
+				}
+			}
+		}
+	};
+
 	/*
 	 * Initialize the WorkbenchThemeManager.
 	 * Determine the default theme according to the following rules:
@@ -146,6 +179,12 @@ public class WorkbenchThemeManager extends EventManager implements
 
 		PrefUtil.getAPIPreferenceStore().setDefault(
 				IWorkbenchPreferenceConstants.CURRENT_THEME_ID, themeId);
+
+		context = (IEclipseContext) Workbench.getInstance().getService(IEclipseContext.class);
+		eventBroker = (IEventBroker) Workbench.getInstance().getService(IEventBroker.class);
+		if (eventBroker != null) {
+			eventBroker.subscribe(UIEvents.UILifeCycle.THEME_CHANGED, themeChangedHandler);
+		}
 	}
 
 	/*
@@ -188,6 +227,10 @@ public class WorkbenchThemeManager extends EventManager implements
 	 * Disposes all ThemeEntries.
 	 */
 	public void dispose() {
+		if (eventBroker != null) {
+			eventBroker.unsubscribe(themeChangedHandler);
+		}
+
 		for (Iterator i = themes.values().iterator(); i.hasNext();) {
 			ITheme theme = (ITheme) i.next();
 			theme.removePropertyChangeListener(currentThemeListener);
@@ -356,6 +399,11 @@ public class WorkbenchThemeManager extends EventManager implements
 						.hasNext();) {
 					String key = (String) i.next();
 					jfaceFonts.put(key, themeFonts.getFontData(key));
+				}
+			}
+			{
+				if (oldTheme != null && eventBroker != null) {
+					eventBroker.send(UIEvents.UILifeCycle.THEME_CHANGED, null);
 				}
 			}
 		}

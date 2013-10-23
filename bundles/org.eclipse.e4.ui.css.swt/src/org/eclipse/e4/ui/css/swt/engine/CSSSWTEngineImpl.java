@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Angelo Zerr and others.
+ * Copyright (c) 2008, 2013 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,8 +48,10 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 
 	@Override
 	protected void hookNativeWidget(Object widget) {
-		Widget swtWidget = (Widget) widget;
-		swtWidget.addDisposeListener(disposeListener);
+		if (widget instanceof Widget) {
+			Widget swtWidget = (Widget) widget;
+			swtWidget.addDisposeListener(disposeListener);
+		}
 	}
 
 	@Override

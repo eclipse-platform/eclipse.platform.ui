@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2008, 2013 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,6 +8,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
+
+import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelperTest;
+import org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelperTest;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -24,6 +27,10 @@ public class CssSwtTestSuite extends TestSuite {
 	 * Construct the test suite.
 	 */
 	public CssSwtTestSuite() {
+		addTestSuite(CSSSWTFontHelperTest.class);
+		addTestSuite(CSSSWTColorHelperTest.class);
+		addTestSuite(FontDefinitionTest.class);
+		addTestSuite(ColorDefinitionTest.class);
 		addTestSuite(CSSSWTWidgetTest.class);		
 		addTestSuite(LabelTest.class);
 		addTestSuite(CTabFolderTest.class);
@@ -46,6 +53,5 @@ public class CssSwtTestSuite extends TestSuite {
 		addTestSuite(DescendentTest.class);  
 
 		addTestSuite(ThemeTest.class);
-
 	}
 }
