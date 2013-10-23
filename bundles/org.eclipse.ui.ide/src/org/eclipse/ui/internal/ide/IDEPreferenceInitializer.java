@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.ide;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.jface.util.Util;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.ide.IDE;
@@ -33,9 +34,7 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 	 */
 	public void initializeDefaultPreferences() {
 
-		IEclipsePreferences node = new DefaultScope()
-				.getNode(IDEWorkbenchPlugin.getDefault().getBundle()
-						.getSymbolicName());
+		IEclipsePreferences node= DefaultScope.INSTANCE.getNode(IDEWorkbenchPlugin.getDefault().getBundle().getSymbolicName());
 
 		// API preferences
 
@@ -89,7 +88,28 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.put(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE, IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT);
 		node.put(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE, IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT);
 
-		node.put(IDEInternalPreferences.WORKBENCH_SYSTEM_EXPLORER, ShowInSystemExplorerHandler.getDefaultCommand());
+		node.put(IDEInternalPreferences.WORKBENCH_SYSTEM_EXPLORER, getShowInSystemExplorerCommand());
+	}
+
+	/**
+	 * The default command for launching the system explorer on this platform.
+	 * 
+	 * @return The default command which launches the system explorer on this system, or an empty
+	 *         string if no default exists
+	 * @see ShowInSystemExplorerHandler#getDefaultCommand()
+	 */
+	public static String getShowInSystemExplorerCommand() {
+		// See https://bugs.eclipse.org/419940 why it is implemented in here and not in ShowInSystemExplorerHandler#getDefaultCommand() 
+		if (Util.isGtk()) {
+			return "dbus-send --print-reply --dest=org.freedesktop.FileManager1 /org/freedesktop/FileManager1 org.freedesktop.FileManager1.ShowItems array:string:\"${selected_resource_uri}\" string:\"\""; //$NON-NLS-1$
+		} else if (Util.isWindows()) {
+			return "explorer /E,/select=${selected_resource_loc}"; //$NON-NLS-1$
+		} else if (Util.isMac()) {
+			return "open -R \"${selected_resource_loc}\""; //$NON-NLS-1$
+		}
+
+		// if all else fails, return empty default
+		return ""; //$NON-NLS-1$
 	}
 
 	private String getHelpSeparatorKey(String groupId) {
