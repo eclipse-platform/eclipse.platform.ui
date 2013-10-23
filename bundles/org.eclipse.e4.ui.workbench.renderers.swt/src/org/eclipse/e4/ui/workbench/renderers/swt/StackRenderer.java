@@ -31,6 +31,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -372,6 +373,11 @@ public class StackRenderer extends LazyStackRenderer {
 						&& newActivePart.getCurSharedRef() != null)
 					partParent = newActivePart.getCurSharedRef().getParent();
 
+				// Skip sash containers
+				while (partParent != null
+						&& partParent instanceof MPartSashContainer)
+					partParent = partParent.getParent();
+
 				MPartStack pStack = (MPartStack) (partParent instanceof MPartStack ? partParent
 						: null);
 
@@ -455,7 +461,8 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	private String getToolTip(String newToolTip) {
-		return newToolTip == null ? null : LegacyActionTools.escapeMnemonics(newToolTip);
+		return newToolTip == null ? null : LegacyActionTools
+				.escapeMnemonics(newToolTip);
 	}
 
 	public Object createWidget(MUIElement element, Object parent) {

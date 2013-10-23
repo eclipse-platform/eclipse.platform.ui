@@ -1911,20 +1911,21 @@ UIEvents.Context.TOPIC_CONTEXT,
 	 */
 	private void setReference(MPart part, IEclipseContext context) {
 		String uri = part.getContributionURI();
-		if (CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(uri)) {
-			WorkbenchPage page = getWorkbenchPage(part);
-			ViewReference ref = page.getViewReference(part);
-			if (ref == null) {
-				ref = createViewReference(part, page);
-			}
-			context.set(ViewReference.class.getName(), ref);
-		} else if (CompatibilityPart.COMPATIBILITY_EDITOR_URI.equals(uri)) {
+		if (CompatibilityPart.COMPATIBILITY_EDITOR_URI.equals(uri)) {
 			WorkbenchPage page = getWorkbenchPage(part);
 			EditorReference ref = page.getEditorReference(part);
 			if (ref == null) {
 				ref = createEditorReference(part, page);
 			}
 			context.set(EditorReference.class.getName(), ref);
+		} else {
+			// Create View References for 'e4' parts as well
+			WorkbenchPage page = getWorkbenchPage(part);
+			ViewReference ref = page.getViewReference(part);
+			if (ref == null) {
+				ref = createViewReference(part, page);
+			}
+			context.set(ViewReference.class.getName(), ref);
 		}
 	}
 
