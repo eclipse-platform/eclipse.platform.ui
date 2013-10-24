@@ -8,6 +8,7 @@
  * Contributors:
  *     Tom Schindl<tom.schindl@bestsolution.at> - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430075, 430080
+ *     René Brandstetter - Bug 419749 - [Workbench] [e4 Workbench] - Remove the deprecated PackageAdmin
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
@@ -47,8 +49,9 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EContentsEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.osgi.framework.Bundle;
-import org.osgi.service.packageadmin.PackageAdmin;
-import org.osgi.service.packageadmin.RequiredBundle;
+import org.osgi.framework.namespace.BundleNamespace;
+import org.osgi.framework.wiring.BundleWire;
+import org.osgi.framework.wiring.BundleWiring;
 
 /**
  *
@@ -204,7 +207,7 @@ public class ModelAssembler {
 
 	/**
 	 * @param extensions
-	 * @param b
+	 * @param afterFragments
 	 */
 	private void runProcessors(IExtension[] extensions, Boolean afterFragments) {
 		for (IExtension extension : extensions) {
@@ -335,7 +338,6 @@ public class ModelAssembler {
 			return extensions;
 		}
 
-		PackageAdmin admin = Activator.getDefault().getBundleAdmin();
 		final Map<String, Collection<IExtension>> mappedExtensions = new HashMap<String, Collection<IExtension>>();
 		// Captures the bundles that are listed as requirements for a particular bundle.
 		final Map<String, Collection<String>> requires = new HashMap<String, Collection<String>>();
@@ -376,9 +378,13 @@ public class ModelAssembler {
 		// now populate the dependency graph
 		for (String bundleId : mappedExtensions.keySet()) {
 			assert requires.containsKey(bundleId) && depends.containsKey(bundleId);
-			for (RequiredBundle requiredBundle : admin.getRequiredBundles(bundleId)) {
+
+			// can only be one, because ExtensionPoints require the singleton setting
+			// on a bundle
+			Bundle requiredBundle = Activator.getDefault().getBundleForName(bundleId);
+			if (requiredBundle != null) {
 				assert requiredBundle.getSymbolicName().equals(bundleId);
-				for (Bundle dependentBundle : requiredBundle.getRequiringBundles()) {
+				for (Bundle dependentBundle : resolveRequiringBundle(requiredBundle)) {
 					if (!mappedExtensions.containsKey(dependentBundle.getSymbolicName())) {
 						// not a contributor of an extension
 						continue;
@@ -430,6 +436,64 @@ public class ModelAssembler {
 		}
 		assert resultIndex == extensions.length;
 		return extensions;
+	}
+
+	/**
+	 * Returns the bundles that currently require the given bundle.
+	 * <p>
+	 * If this required bundle is required and then re-exported by another bundle then all the
+	 * requiring bundles of the re-exporting bundle are included in the returned array.
+	 * </p>
+	 * @return An unmodifiable {@link Iterable} set of bundles currently requiring this required
+	 *         bundle. An empty {@link Iterable} will be returned if the given {@code Bundle} object
+	 *         has become stale or no bundles require the given bundle.
+	 * @throws NullPointerException
+	 *             if the given bundle is <code>null</code>
+	 */
+	private static Iterable<Bundle> resolveRequiringBundle(Bundle bundle) {
+		BundleWiring providerWiring = bundle.adapt(BundleWiring.class);
+		if (!providerWiring.isInUse()) {
+			return Collections.emptySet();
+		}
+
+		Set<Bundle> requiring = new HashSet<Bundle>();
+
+		addRequirers(requiring, providerWiring);
+		return Collections.unmodifiableSet(requiring);
+	}
+
+	/**
+	 * Recursively collects all bundles which depend-on/require the given {@link BundleWiring}.
+	 * <p>
+	 * All re-exports will be followed and also be contained in the result.
+	 * </p>
+	 * @param requiring
+	 *            the result which will contain all the bundles which require the given
+	 *            {@link BundleWiring}
+	 * @param providerWiring
+	 *            the {@link BundleWiring} for which the requirers should be resolved
+	 * @throws NullPointerException
+	 *             if either the requiring or the providerWiring is <code>null</code>
+	 */
+	private static void addRequirers(Set<Bundle> requiring, BundleWiring providerWiring) {
+		List<BundleWire> requirerWires = providerWiring
+				.getProvidedWires(BundleNamespace.BUNDLE_NAMESPACE);
+		if (requirerWires == null) {
+			// we don't hold locks while checking the graph, just return if no longer isInUse
+			return;
+		}
+		for (BundleWire requireBundleWire : requirerWires) {
+			Bundle requirer = requireBundleWire.getRequirer().getBundle();
+			if (requiring.contains(requirer)) {
+				continue;
+			}
+			requiring.add(requirer);
+			String reExport = requireBundleWire.getRequirement().getDirectives()
+					.get(BundleNamespace.REQUIREMENT_VISIBILITY_DIRECTIVE);
+			if (BundleNamespace.VISIBILITY_REEXPORT.equals(reExport)) {
+				addRequirers(requiring, requireBundleWire.getRequirerWiring());
+			}
+		}
 	}
 
 	// FIXME Should we not reuse ModelUtils???
