@@ -470,7 +470,7 @@ public class WelcomeEditor extends EditorPart {
 				}
 
                 // enable/disable copy action
-                copyAction.setEnabled(currentText.getSelectionCount() > 0);
+				copyAction.setEnabled(currentText.isTextSelected());
             }
         });
 
