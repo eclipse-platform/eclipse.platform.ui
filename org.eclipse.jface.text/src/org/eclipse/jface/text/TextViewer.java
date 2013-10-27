@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1418,7 +1418,7 @@ public class TextViewer extends Viewer implements
 		 * @see KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
 		 */
 		public void keyReleased(KeyEvent e) {
-			if (fTextWidget.getSelectionCount() == 0) {
+			if (!fTextWidget.isTextSelected()) {
 				fLastSentSelectionChange= null;
 				queuePostSelectionChanged(e.character == SWT.DEL);
 			}
@@ -1440,7 +1440,7 @@ public class TextViewer extends Viewer implements
 		 * @see MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseUp(MouseEvent event) {
-			if (fTextWidget.getSelectionCount() == 0)
+			if (!fTextWidget.isTextSelected())
 				queuePostSelectionChanged(false);
 		}
 	}
@@ -3947,9 +3947,9 @@ public class TextViewer extends Viewer implements
 
 		switch (operation) {
 			case CUT:
-				return isEditable() &&(fTextWidget.getSelectionCount() > 0 || !isMarkedRegionEmpty());
+				return isEditable() && (fTextWidget.isTextSelected() || !isMarkedRegionEmpty());
 			case COPY:
-				return fTextWidget.getSelectionCount() > 0 || !isMarkedRegionEmpty();
+				return fTextWidget.isTextSelected() || !isMarkedRegionEmpty();
 			case DELETE:
 			case PASTE:
 				return isEditable();
@@ -4001,7 +4001,7 @@ public class TextViewer extends Viewer implements
 				}
 				break;
 			case CUT:
-				if (fTextWidget.getSelectionCount() == 0)
+				if (!fTextWidget.isTextSelected())
 					copyMarkedRegion(true);
 				else
 					wrapCompoundChange(new Runnable() {
@@ -4015,7 +4015,7 @@ public class TextViewer extends Viewer implements
 
 				break;
 			case COPY:
-				if (fTextWidget.getSelectionCount() == 0)
+				if (!fTextWidget.isTextSelected())
 					copyMarkedRegion(false);
 				else
 					fTextWidget.copy();

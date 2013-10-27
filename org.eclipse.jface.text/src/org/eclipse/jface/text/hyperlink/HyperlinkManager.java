@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -408,7 +408,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			return;
 		}
 
-		if (text.getSelectionCount() != 0) {
+		if (text.isTextSelected()) {
 			deactivate();
 			return;
 		}
@@ -461,7 +461,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			return;
 		}
 
-		if ((event.stateMask & SWT.BUTTON1) != 0 && text.getSelectionCount() != 0) {
+		if ((event.stateMask & SWT.BUTTON1) != 0 && text.isTextSelected()) {
 			deactivate();
 			return;
 		}
