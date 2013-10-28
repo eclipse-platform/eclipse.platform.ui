@@ -262,6 +262,8 @@ public class UIEvents {
 
 		/**
 		 * Sent when the theme is changed
+		 * 
+		 * @since 1.1
 		 */
 		public static final String THEME_CHANGED = TOPIC + TOPIC_SEP + "themeChanged"; //$NON-NLS-1$
 	}

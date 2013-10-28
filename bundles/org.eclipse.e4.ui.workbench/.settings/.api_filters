@@ -1,9 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.e4.ui.workbench" version="2">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.e4.ui.workbench" version="2">
     <resource path="META-INF/MANIFEST.MF">
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="923795461">
             <message_arguments>
                 <message_argument value="1.0.100"/>
                 <message_argument value="1.0.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$UILifeCycle">
+        <filter comment="All of the subinterfaces shouldn't be subclassed either" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.UILifeCycle"/>
+                <message_argument value="THEME_CHANGED"/>
             </message_arguments>
         </filter>
     </resource>
@@ -92,9 +101,6 @@
                 <message_argument value="createModelReconciler()"/>
             </message_arguments>
         </filter>
-    </resource>
-    <resource path="src/org/eclipse/e4/ui/workbench/modeling/IPartListener.java">
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="0"/>
     </resource>
     <resource path="src/org/eclipse/e4/ui/workbench/modeling/IPartListener.java" type="org.eclipse.e4.ui.workbench.modeling.IPartListener">
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
