@@ -752,7 +752,7 @@ public class MinMaxAddon {
 	}
 
 	void unzoom(final MUIElement element) {
-		MWindow win = modelService.getTopLevelWindowFor(element);
+		MWindow win = getWindowFor(element);
 		MPerspective persp = modelService.getActivePerspective(win);
 
 		Shell hostShell = (Shell) win.getWidget();
@@ -768,7 +768,10 @@ public class MinMaxAddon {
 				EModelService.PRESENTATION);
 		for (MPartStack theStack : stacks) {
 			if (theStack.getWidget() != null) {
-				theStack.getTags().remove(MINIMIZED);
+				// Make sure we're only working on *our* window
+				if (getWindowFor(theStack) == win) {
+					theStack.getTags().remove(MINIMIZED);
+				}
 			}
 		}
 
