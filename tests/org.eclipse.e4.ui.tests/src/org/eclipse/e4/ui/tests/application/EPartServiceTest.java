@@ -9798,8 +9798,6 @@ public class EPartServiceTest extends UITest {
 
 		partService.switchPerspective(perspectiveA);
 
-		assertEquals(window2.getContext(), application.getContext()
-				.getActiveChild());
 		assertEquals(perspectiveA.getContext(), window2.getContext()
 				.getActiveChild());
 	}
