@@ -364,6 +364,7 @@ public class KeyAssistDialog extends PopupDialog {
 		int selectionIndex = completionsTable.getSelectionIndex();
 		// Try to execute the corresponding command.
 		if (selectionIndex >= 0) {
+			close();
 			Binding binding = bindings.get(selectionIndex);
 			try {
 				// workbenchKeyboard.updateShellKludge(null);
