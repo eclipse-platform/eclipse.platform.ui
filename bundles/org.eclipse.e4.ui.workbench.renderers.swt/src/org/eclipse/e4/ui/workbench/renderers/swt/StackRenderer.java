@@ -535,6 +535,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// Create a TB for the view's drop-down menu
 		ToolBar menuTB = new ToolBar(trComp, SWT.FLAT | SWT.RIGHT);
+		menuTB.setData(TAG_VIEW_MENU);
 		RowData rd = new RowData();
 		menuTB.setLayoutData(rd);
 		ToolItem ti = new ToolItem(menuTB, SWT.PUSH);
