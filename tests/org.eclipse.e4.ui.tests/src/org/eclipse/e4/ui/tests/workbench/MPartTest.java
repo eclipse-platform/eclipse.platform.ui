@@ -160,7 +160,7 @@ public class MPartTest extends TestCase {
 	}
 
 	public void testDeclaredTooltipEmptyString() {
-		testDeclaredTooltip("", "");
+		testDeclaredTooltip("", null);
 	}
 
 	public void testDeclaredTooltipDefined() {
@@ -197,7 +197,7 @@ public class MPartTest extends TestCase {
 	}
 
 	public void testMPart_setTooltipEmptyString() {
-		testMPart_setTooltip("", "");
+		testMPart_setTooltip("", null);
 	}
 
 	public void testMPart_setTooltipDefined() {
