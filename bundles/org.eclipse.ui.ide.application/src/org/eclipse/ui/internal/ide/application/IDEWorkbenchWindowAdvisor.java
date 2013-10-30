@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,14 +97,14 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	private IPerspectiveDescriptor lastPerspective = null;
 
 	private IWorkbenchPage lastActivePage;
-	private String lastEditorTitle = ""; //$NON-NLS-1$
+	private String lastEditorTitleTooltip = ""; //$NON-NLS-1$
 
 	private IPropertyListener editorPropertyListener = new IPropertyListener() {
 		public void propertyChanged(Object source, int propId) {
 			if (propId == IWorkbenchPartConstants.PROP_TITLE) {
 				if (lastActiveEditor != null) {
-					String newTitle = lastActiveEditor.getTitle();
-					if (!lastEditorTitle.equals(newTitle)) {
+					String newTitle= lastActiveEditor.getTitleToolTip();
+					if (!lastEditorTitleTooltip.equals(newTitle)) {
 						recomputeTitle();
 					}
 				}
@@ -377,10 +377,10 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 		if (currentPage != null) {
 			if (activeEditor != null) {
-				lastEditorTitle = activeEditor.getTitleToolTip();
+				lastEditorTitleTooltip = activeEditor.getTitleToolTip();
 				title = NLS.bind(
 						IDEWorkbenchMessages.WorkbenchWindow_shellTitle,
-						lastEditorTitle, title);
+						lastEditorTitleTooltip, title);
 			}
 			IPerspectiveDescriptor persp = currentPage.getPerspective();
 			String label = ""; //$NON-NLS-1$
