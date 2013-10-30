@@ -464,7 +464,8 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	private String getToolTip(String newToolTip) {
-		return newToolTip == null ? null : LegacyActionTools.escapeMnemonics(newToolTip);
+		return newToolTip == null || newToolTip.length() == 0 ? null
+				: LegacyActionTools.escapeMnemonics(newToolTip);
 	}
 
 	public Object createWidget(MUIElement element, Object parent) {
