@@ -1,9 +1,8 @@
-
-.MTrimmedWindow.topLevel { 
-    margin-top: 5px;
-    margin-bottom: 2px;
-    margin-left: 2px;
-    margin-right: 2px;
+.MTrimmedWindow.topLevel {
+	margin-top: 3px;
+    	margin-bottom: 3px;
+    	margin-left: 3px;
+    	margin-right: 3px;
 }
 
 .MPartStack {
@@ -11,16 +10,16 @@
     swt-unselected-tabs-color: #FFFFFF #FFFFFF #FFFFFF 100% 100%;
     swt-outer-keyline-color: #FFFFFF;
 	swt-inner-keyline-color: #FFFFFF;
-	padding: 0px 9px 10px;
+	padding: 0px 2px 2px;
 	swt-tab-outline: #B6BCCC;
-	swt-shadow-visible: true;
+	swt-shadow-visible: false;
 	swt-mru-visible: false;
 }
 
 .MPartStack.active {
 	swt-inner-keyline-color: #FFFFFF;
 	swt-tab-outline: #B6BCCC;
-	swt-shadow-visible: true;
+	swt-shadow-visible: false;
 }
 
 #PerspectiveSwitcher {
