@@ -474,7 +474,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 		hideConflictingProjects = new Button(optionsGroup, SWT.CHECK);
 		hideConflictingProjects
-				.setText(DataTransferMessages.WizardProjectsImportPage_hideConflictingProjects);
+				.setText(DataTransferMessages.WizardProjectsImportPage_hideExistingProjects);
 		hideConflictingProjects.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
 		hideConflictingProjects.addSelectionListener(new SelectionAdapter() {
