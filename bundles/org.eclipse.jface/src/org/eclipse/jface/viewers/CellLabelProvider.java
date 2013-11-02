@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ import org.eclipse.swt.graphics.Point;
  * @since 3.3
  * @see ColumnLabelProvider as a concrete implementation
  */
-public abstract class CellLabelProvider extends BaseLabelProvider {
+public abstract class CellLabelProvider extends BaseLabelProvider implements IToolTipProvider {
 
 	/**
 	 * Create a new instance of the receiver.
