@@ -240,7 +240,7 @@ public class CTabRendering extends CTabFolderRenderer {
 		region.intersect(clipping);
 		gc.setClipping(region);
 
-		int header = shadowEnabled ? onBottom ? 6 : 3 : 0; // TODO: this needs to be added to computeTrim for
+		int header = shadowEnabled ? onBottom ? 6 : 3 : 1; // TODO: this needs to be added to computeTrim for
 						// HEADER
 		Rectangle trim = computeTrim(PART_HEADER, state, 0, 0, 0, 0);
 		trim.width = bounds.width - trim.width;
