@@ -128,11 +128,6 @@
    <extension
          point="org.eclipse.e4.ui.css.swt.theme">
       <theme
-            basestylesheeturi="css/e4_default.css"
-            id="org.eclipse.e4.ui.css.theme.e4_default.noos"
-            label="%theme.default">
-      </theme>
-      <theme
             basestylesheeturi="css/e4_classic_winxp.css"
             id="org.eclipse.e4.ui.css.theme.e4_classic"
             label="%theme.classic">
