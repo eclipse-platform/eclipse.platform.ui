@@ -20,7 +20,7 @@ import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
 /**
- * 
+ *
  */
 public class CSSPropertyFontXMLHandler extends AbstractCSSPropertyFontHandler {
 

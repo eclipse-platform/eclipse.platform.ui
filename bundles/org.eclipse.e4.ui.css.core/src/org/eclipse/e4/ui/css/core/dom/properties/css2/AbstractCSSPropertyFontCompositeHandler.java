@@ -20,10 +20,10 @@ import org.w3c.dom.css.CSSValue;
  * Abstract class which dispatch font CSS Property defined to call the
  * applyCSSProperty methods CSS Properties font-style, font-family, font-weight,
  * font-size.
- * 
+ *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
+ *
  */
 public abstract class AbstractCSSPropertyFontCompositeHandler extends
 		AbstractCSSPropertyCompositeHandler {

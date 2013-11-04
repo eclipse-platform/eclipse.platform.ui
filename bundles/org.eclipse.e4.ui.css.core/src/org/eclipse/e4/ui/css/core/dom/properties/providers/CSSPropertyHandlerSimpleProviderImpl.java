@@ -171,7 +171,7 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 				ICSSPropertyMarginHandler.class);
 		registerDefaultCSSProperty("margin-right",
 				ICSSPropertyMarginHandler.class);
-		
+
 		// Register Padding Properties
 		registerDefaultCSSProperty("padding", ICSSPropertyPaddingHandler.class);
 		registerDefaultCSSProperty("padding-bottom",
@@ -236,7 +236,7 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.properties.providers.AbstractCSSPropertyHandlerProvider#getDefaultCSSStyleDeclaration(org.eclipse.e4.ui.css.core.engine.CSSEngine,
 	 *      org.eclipse.e4.ui.css.core.dom.CSSStylableElement,
 	 *      org.w3c.dom.css.CSSStyleDeclaration, java.lang.String)

@@ -14,10 +14,10 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 
 /**
  * Abstract base class for converters.
- * 
+ *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
+ *
  */
 public abstract class AbstractCSSValueConverter implements ICSSValueConverter {
 
@@ -29,7 +29,7 @@ public abstract class AbstractCSSValueConverter implements ICSSValueConverter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverter#getToType()
 	 */
 	public Object getToType() {
@@ -38,7 +38,7 @@ public abstract class AbstractCSSValueConverter implements ICSSValueConverter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverter#convert(java.lang.Object,
 	 *      org.eclipse.e4.ui.css.core.engine.CSSEngine, java.lang.Object)
 	 */

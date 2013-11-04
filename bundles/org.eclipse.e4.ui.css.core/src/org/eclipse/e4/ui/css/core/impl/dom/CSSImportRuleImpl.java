@@ -18,17 +18,17 @@ import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.stylesheets.MediaList;
 
 public class CSSImportRuleImpl extends CSSRuleImpl implements CSSImportRule {
-	
+
 	String uri;
 	MediaListImpl mediaList;
-	
+
 	public CSSImportRuleImpl(CSSStyleSheet parentStyleSheet, CSSRule parentRule,
 			String uri, MediaListImpl mediaListImpl) {
 		super(parentStyleSheet, parentRule);
 		this.uri = uri;
 		this.mediaList = mediaListImpl;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSRule#getType()
@@ -36,7 +36,7 @@ public class CSSImportRuleImpl extends CSSRuleImpl implements CSSImportRule {
 	public short getType() {
 		return CSSRule.IMPORT_RULE;
 	}
-	
+
 	// W3C CSSImportRule API methods
 
 	/*

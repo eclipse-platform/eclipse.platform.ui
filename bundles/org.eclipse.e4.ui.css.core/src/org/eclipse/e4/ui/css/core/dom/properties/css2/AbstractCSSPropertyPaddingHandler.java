@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,7 +15,7 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.w3c.dom.css.CSSValue;
 
 public abstract class AbstractCSSPropertyPaddingHandler implements ICSSPropertyPaddingHandler {
-	
+
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		if ("padding".equals(property))
@@ -30,7 +30,7 @@ public abstract class AbstractCSSPropertyPaddingHandler implements ICSSPropertyP
 			applyCSSPropertyPaddingLeft(element, value, pseudo, engine);
 		return false;
 	}
-	
+
 	public String retrieveCSSProperty(Object element, String property,
 			String pseudo, CSSEngine engine) throws Exception {
 		if ("padding".equals(property)) {

@@ -30,7 +30,7 @@ public interface ISACParserFactory {
 	/**
 	 * Return instance of SAC Parser registered into the factory with name
 	 * <code>name</code>.
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 * @throws ClassNotFoundException

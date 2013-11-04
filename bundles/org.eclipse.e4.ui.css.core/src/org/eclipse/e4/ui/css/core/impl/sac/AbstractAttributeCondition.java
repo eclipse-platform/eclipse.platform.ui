@@ -1,6 +1,6 @@
 /*
 
-   Copyright 2002  The Apache Software Foundation 
+   Copyright 2002  The Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public abstract class AbstractAttributeCondition implements AttributeCondition,
 
 	/**
 	 * Indicates whether some other object is "equal to" this one.
-	 * 
+	 *
 	 * @param obj
 	 *            the reference object with which to compare.
 	 */
@@ -57,7 +57,7 @@ public abstract class AbstractAttributeCondition implements AttributeCondition,
 
 	/**
 	 * equal objects should have equal hashCodes.
-	 * 
+	 *
 	 * @return hashCode of this AbstractAttributeCondition
 	 */
 	public int hashCode() {

@@ -27,7 +27,7 @@ public interface ICSSPropertyHandlerProvider {
 	/**
 	 * Return list of {@link ICSSPropertyHandler} linked to the CSS Property
 	 * <code>property</code>.
-	 * 
+	 *
 	 * @param property
 	 * @return
 	 * @throws Exception
@@ -38,7 +38,7 @@ public interface ICSSPropertyHandlerProvider {
 	/**
 	 * Return the default CSS style declaration of the <code>element</code>
 	 * before apply the <code>newStyle</code> {@link CSSStyleDeclaration}.
-	 * 
+	 *
 	 * @param engine
 	 * @param element
 	 * @param newStyle
@@ -53,7 +53,7 @@ public interface ICSSPropertyHandlerProvider {
 	/**
 	 * Return list of {@link ICSSPropertyHandler} linked to the CSS Property
 	 * <code>property</code> for the provided element.
-	 * 
+	 *
 	 * @param element
 	 *            the DOM element
 	 * @param property
@@ -65,7 +65,7 @@ public interface ICSSPropertyHandlerProvider {
 
 	/**
 	 * Return the list of applicable properties for <code>element</code>
-	 * 
+	 *
 	 * @param element
 	 *            the DOM element
 	 */

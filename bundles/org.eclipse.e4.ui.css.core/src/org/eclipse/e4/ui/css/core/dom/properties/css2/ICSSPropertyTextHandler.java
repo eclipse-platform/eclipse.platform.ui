@@ -16,14 +16,14 @@ import org.w3c.dom.css.CSSValue;
 
 /**
  * CSS2 Text Property Handler.
- * 
+ *
  * @see http://www.w3schools.com/css/css_reference.asp#text
  */
 public interface ICSSPropertyTextHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the color of a text.
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -36,7 +36,7 @@ public interface ICSSPropertyTextHandler extends ICSSPropertyHandler {
 	/**
 	 * Controls the letters in an element. Available values are : none
 	 * capitalize uppercase lowercase
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo

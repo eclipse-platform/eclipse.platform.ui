@@ -16,7 +16,7 @@ import org.w3c.dom.css.CSSValue;
 
 /**
  * CSS2 Font Property Handler.
- * 
+ *
  * @see http://www.w3schools.com/css/css_reference.asp#font
  */
 public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
@@ -26,7 +26,7 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	 * declaration. Available values are=font-style font-variant font-weight
 	 * font-size/line-height font-family caption icon menu message-box
 	 * small-caption status-bar
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -39,7 +39,7 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	/**
 	 * A prioritized list of font family names and/or generic family names for
 	 * an element.
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -52,7 +52,7 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the size of a font.
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -66,7 +66,7 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	/**
 	 * Specifies an aspect value for an element that will preserve the x-height
 	 * of the first-choice font.
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -79,7 +79,7 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Condenses or expands the current font-family.
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -92,7 +92,7 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the style of the font.
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -105,7 +105,7 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Displays text in a small-caps font or a normal font.
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -118,7 +118,7 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the weight of a font.
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo

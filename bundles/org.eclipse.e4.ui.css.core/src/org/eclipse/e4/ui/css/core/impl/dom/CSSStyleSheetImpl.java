@@ -24,20 +24,20 @@ import org.w3c.dom.stylesheets.StyleSheet;
 public class CSSStyleSheetImpl extends AbstractCSSNode implements CSSStyleSheet {
 
 	private CSSRuleList rules = null;
-	
+
 	public CSSStyleSheetImpl() {
 		super();
 	}
 
 	// W3C CSSStyleSheet API methods
-		
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSStyleSheet#deleteRule(int)
 	 */
 	public void deleteRule(int position) throws DOMException {
 		try {
-			((CSSRuleListImpl) rules).remove(position);			
+			((CSSRuleListImpl) rules).remove(position);
 		} catch (IndexOutOfBoundsException ex) {
 			throw new DOMExceptionImpl(DOMException.INDEX_SIZE_ERR, DOMExceptionImpl.ARRAY_OUT_OF_BOUNDS, ex.getMessage());
 		}
@@ -69,9 +69,9 @@ public class CSSStyleSheetImpl extends AbstractCSSNode implements CSSStyleSheet 
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	
+
 	// org.w3c.dom.stylesheet.StyleSheet API methods
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.stylesheet.StyleSheet#getDisabled()
@@ -83,7 +83,7 @@ public class CSSStyleSheetImpl extends AbstractCSSNode implements CSSStyleSheet 
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.w3c.dom.stylesheet.StyleSheet#getHref() 
+	 * @see org.w3c.dom.stylesheet.StyleSheet#getHref()
 	 */
 	public String getHref() {
 		// TODO Auto-generated method stub
@@ -114,9 +114,9 @@ public class CSSStyleSheetImpl extends AbstractCSSNode implements CSSStyleSheet 
 	 */
 	public StyleSheet getParentStyleSheet() {
 		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");	
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.stylesheet.StyleSheet#getTitle()

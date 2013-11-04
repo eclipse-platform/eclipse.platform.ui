@@ -15,10 +15,10 @@ import org.w3c.dom.css.RGBColor;
 /**
  * {@link ICSSValueConverterConfig} to manage format String of the
  * {@link RGBColor}.
- * 
+ *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
+ *
  */
 public interface ICSSValueConverterColorConfig extends ICSSValueConverterConfig {
 
@@ -39,7 +39,7 @@ public interface ICSSValueConverterColorConfig extends ICSSValueConverterConfig 
 
 	/**
 	 * Return format (Hexadecimal color, Color name, RGB color).
-	 * 
+	 *
 	 * @return
 	 */
 	public int getFormat();

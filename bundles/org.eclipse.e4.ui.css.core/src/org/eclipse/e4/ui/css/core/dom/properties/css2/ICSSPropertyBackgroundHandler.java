@@ -25,7 +25,7 @@ public interface ICSSPropertyBackgroundHandler extends ICSSPropertyHandler {
 	 * A shorthand property for setting all background properties in one
 	 * declaration Available values = background-color background-image
 	 * background-repeat background-attachment background-position
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -38,7 +38,7 @@ public interface ICSSPropertyBackgroundHandler extends ICSSPropertyHandler {
 	/**
 	 * Sets whether a background image is fixed or scrolls with the rest of the
 	 * page. Available values are=scroll,fixed
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -52,7 +52,7 @@ public interface ICSSPropertyBackgroundHandler extends ICSSPropertyHandler {
 	/**
 	 * Sets the background color of an element. Available values are= color-rgb,
 	 * color-hex, color-name, transparent
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -65,7 +65,7 @@ public interface ICSSPropertyBackgroundHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets an image as the background. Available values=url(URL), none
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -80,7 +80,7 @@ public interface ICSSPropertyBackgroundHandler extends ICSSPropertyHandler {
 	 * Sets the starting position of a background image. Available values=top
 	 * left,top center,top right,center left,center center,center right,bottom
 	 * left,bottom center,bottom right,x% y%,xpos ypos
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -94,7 +94,7 @@ public interface ICSSPropertyBackgroundHandler extends ICSSPropertyHandler {
 	/**
 	 * Sets if/how a background image will be repeated. Available
 	 * values=repeat,repeat-x,repeat-y,no-repeat
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo

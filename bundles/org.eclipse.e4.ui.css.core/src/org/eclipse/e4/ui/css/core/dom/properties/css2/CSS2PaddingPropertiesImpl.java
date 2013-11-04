@@ -16,13 +16,13 @@ import org.w3c.dom.css.CSSValue;
 public class CSS2PaddingPropertiesImpl implements CSSValue {
 
 	public CSSValue top;
-	
+
 	public CSSValue bottom;
-	
+
 	public CSSValue left;
-	
+
 	public CSSValue right;
-	
+
 	public String getCssText() {
 		// TODO Auto-generated method stub
 		return null;

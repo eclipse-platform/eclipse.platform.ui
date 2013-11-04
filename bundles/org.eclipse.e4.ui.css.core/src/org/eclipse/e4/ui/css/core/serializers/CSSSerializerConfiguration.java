@@ -25,7 +25,7 @@ public class CSSSerializerConfiguration {
 
 	/**
 	 * Add attribute name <code>attributeName</code> to filter.
-	 * 
+	 *
 	 * @param attributeName
 	 */
 	public void addAttributeFilter(String attributeName) {
@@ -36,7 +36,7 @@ public class CSSSerializerConfiguration {
 
 	/**
 	 * Return list of attribute name to filter.
-	 * 
+	 *
 	 * @return
 	 */
 	public String[] getAttributesFilter() {

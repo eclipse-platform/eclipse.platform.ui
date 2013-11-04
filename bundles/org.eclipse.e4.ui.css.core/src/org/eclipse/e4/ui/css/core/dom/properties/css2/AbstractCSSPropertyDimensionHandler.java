@@ -17,43 +17,43 @@ public abstract class AbstractCSSPropertyDimensionHandler implements ICSSPropert
 
 	public void applyCSSPropertyHeight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		
+
 	}
 
 	public void applyCSSPropertyLineHeight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void applyCSSPropertyMaxHeight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void applyCSSPropertyMaxWidth(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void applyCSSPropertyMinHeight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void applyCSSPropertyMinWidth(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void applyCSSPropertyWidth(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public String retrieveCSSPropertyHeight(Object widget, String property,
@@ -92,5 +92,5 @@ public abstract class AbstractCSSPropertyDimensionHandler implements ICSSPropert
 		return null;
 	}
 
-	
+
 }

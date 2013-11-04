@@ -31,9 +31,9 @@ public class CSSFontFaceRuleImpl extends CSSRuleImpl implements CSSFontFaceRule 
 	public short getType() {
 		return CSSRule.FONT_FACE_RULE;
 	}
-	
+
 	// W3C CSSFontFaceRule API methods
-	
+
 	/**
 	 * @see org.w3c.dom.css.CSSFontFaceRule.getStyle()
 	 */
@@ -43,7 +43,7 @@ public class CSSFontFaceRuleImpl extends CSSRuleImpl implements CSSFontFaceRule 
 	}
 
 	// Additional methods
-	
+
 	public void setStyle(CSSStyleDeclarationImpl decl) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");

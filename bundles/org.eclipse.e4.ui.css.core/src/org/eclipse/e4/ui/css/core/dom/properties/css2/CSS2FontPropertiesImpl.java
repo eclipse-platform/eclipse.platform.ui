@@ -17,17 +17,17 @@ import org.w3c.dom.css.CSSValue;
 public class CSS2FontPropertiesImpl implements CSS2FontProperties {
 
 	private CSSPrimitiveValue family;
-	
+
 	private CSSPrimitiveValue size;
-	
+
 	private CSSPrimitiveValue sizeAdjust;
-	
+
 	private CSSPrimitiveValue weight;
-	 
+
 	private CSSPrimitiveValue style;
-	
+
 	private CSSPrimitiveValue variant;
-	
+
 	private CSSPrimitiveValue stretch;
 
 	public CSSPrimitiveValue getFamily() {
@@ -96,7 +96,7 @@ public class CSS2FontPropertiesImpl implements CSS2FontProperties {
 
 	public void setCssText(String arg0) throws DOMException {
 	}
-	
-	
-	
+
+
+
 }

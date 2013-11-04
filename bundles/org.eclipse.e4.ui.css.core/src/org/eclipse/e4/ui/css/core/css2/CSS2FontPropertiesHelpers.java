@@ -18,10 +18,10 @@ import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.css.CSSValueList;
 
 /**
- * 
+ *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
+ *
  */
 public class CSS2FontPropertiesHelpers {
 
@@ -33,7 +33,7 @@ public class CSS2FontPropertiesHelpers {
 
 	/**
 	 * Get {@link CSS2FontProperties} from {@link CSSElementContext} context.
-	 * 
+	 *
 	 * @param control
 	 * @return
 	 */
@@ -46,7 +46,7 @@ public class CSS2FontPropertiesHelpers {
 	/**
 	 * Set {@link CSS2FontProperties} <code>fontProperties</code> into
 	 * {@link CSSElementContext} context.
-	 * 
+	 *
 	 * @param fontProperties
 	 * @param context
 	 */
@@ -60,7 +60,7 @@ public class CSS2FontPropertiesHelpers {
 	/**
 	 * Create and return {@link CSS2FontProperties} instance from
 	 * <code>value</code>.
-	 * 
+	 *
 	 * @param value
 	 * @param property
 	 * @return
@@ -75,7 +75,7 @@ public class CSS2FontPropertiesHelpers {
 	/**
 	 * Update the <code>property of</code> <code>fontProperties</code>
 	 * instance with the <code>value</code>.
-	 * 
+	 *
 	 * @param fontProperties
 	 * @param property
 	 * @param value
@@ -98,7 +98,7 @@ public class CSS2FontPropertiesHelpers {
 	 * Update <code>fontProperties</code> instance with the {@link CSSValue}
 	 * <code>value</code>. value can be {@link CSSPrimitiveValue} or
 	 * {@link CSSValueList}.
-	 * 
+	 *
 	 * @param font
 	 * @param value
 	 */
@@ -122,7 +122,7 @@ public class CSS2FontPropertiesHelpers {
 
 	/**
 	 * Update CSS2FontProperties instance with font-family.
-	 * 
+	 *
 	 * @param font
 	 * @param value
 	 * @throws Exception
@@ -136,7 +136,7 @@ public class CSS2FontPropertiesHelpers {
 
 	/**
 	 * Update CSS2FontProperties instance with font-size.
-	 * 
+	 *
 	 * @param font
 	 * @param value
 	 * @throws Exception
@@ -150,7 +150,7 @@ public class CSS2FontPropertiesHelpers {
 
 	/**
 	 * Update CSS2FontProperties instance with font-style.
-	 * 
+	 *
 	 * @param font
 	 * @param value
 	 * @throws Exception
@@ -164,7 +164,7 @@ public class CSS2FontPropertiesHelpers {
 
 	/**
 	 * Update CSS2FontProperties instance with font-weight.
-	 * 
+	 *
 	 * @param font
 	 * @param value
 	 * @throws Exception

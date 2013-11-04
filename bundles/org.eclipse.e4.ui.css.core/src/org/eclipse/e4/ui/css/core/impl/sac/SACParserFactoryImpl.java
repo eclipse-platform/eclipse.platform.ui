@@ -29,7 +29,7 @@ public class SACParserFactoryImpl extends SACParserFactory {
 		// Register Flute SAC Parser
 		registerSACParser(SACConstants.SACPARSER_FLUTE);
 		// Register Flute SAC CSS3Parser
-		registerSACParser(SACConstants.SACPARSER_FLUTE_CSS3);		
+		registerSACParser(SACConstants.SACPARSER_FLUTE_CSS3);
 		// Register SteadyState SAC Parser
 		registerSACParser(SACConstants.SACPARSER_STEADYSTATE);
 		// Register Batik SAC Parser
@@ -43,7 +43,7 @@ public class SACParserFactoryImpl extends SACParserFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.akrogen.tkui.core.css.sac.SACParserFactory#makeParser(java.lang.String)
 	 */
 	public Parser makeParser(String name) throws ClassNotFoundException,
@@ -61,7 +61,7 @@ public class SACParserFactoryImpl extends SACParserFactory {
 
 	/**
 	 * Register SAC parser name.
-	 * 
+	 *
 	 * @param parser
 	 */
 	public static void registerSACParser(String parser) {
@@ -71,7 +71,7 @@ public class SACParserFactoryImpl extends SACParserFactory {
 	/**
 	 * register SAC parser with name <code>name</code> mapped with Class name
 	 * <code>classNameParser</code>.
-	 * 
+	 *
 	 * @param name
 	 * @param classNameParser
 	 */

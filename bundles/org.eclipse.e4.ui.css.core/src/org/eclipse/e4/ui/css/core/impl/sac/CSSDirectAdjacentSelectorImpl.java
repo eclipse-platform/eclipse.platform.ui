@@ -1,6 +1,6 @@
 /*
 
-   Copyright 2002  The Apache Software Foundation 
+   Copyright 2002  The Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ public class CSSDirectAdjacentSelectorImpl extends AbstractSiblingSelector {
         while ((n = n.getPreviousSibling()) != null &&
                n.getNodeType() != Node.ELEMENT_NODE);
 
-        if (n == null) 
+        if (n == null)
             return false;
 
         return ((ExtendedSelector)getSelector()).match((Element)n, null);

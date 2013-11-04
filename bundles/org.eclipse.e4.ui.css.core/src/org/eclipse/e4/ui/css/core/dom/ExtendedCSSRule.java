@@ -21,14 +21,14 @@ public interface ExtendedCSSRule extends CSSRule {
 
 	/**
 	 * Return the list of {@link CSSProperty} of this {@link CSSRule}.
-	 * 
+	 *
 	 * @return
 	 */
 	public CSSPropertyList getCSSPropertyList();
 
 	/**
 	 * Return the list of {@link Selector} of this {@link CSSRule}.
-	 * 
+	 *
 	 * @return
 	 */
 	public SelectorList getSelectorList();

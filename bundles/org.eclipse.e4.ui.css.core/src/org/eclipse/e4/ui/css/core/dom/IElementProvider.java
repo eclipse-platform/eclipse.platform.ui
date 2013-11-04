@@ -23,10 +23,10 @@ public interface IElementProvider {
 	 * Return the w3c Element which wrap the native widget <code>element</code>
 	 * (SWT Control, Swing JComponent). The <code>element</code> can be the
 	 * w3c Element.
-	 * 
+	 *
 	 * @param element
 	 * @param engine
-	 * 
+	 *
 	 * @return
 	 */
 	public Element getElement(Object element, CSSEngine engine);

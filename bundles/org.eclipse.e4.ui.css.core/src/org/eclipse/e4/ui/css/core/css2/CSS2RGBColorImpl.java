@@ -15,10 +15,10 @@ import org.w3c.dom.css.RGBColor;
 
 /**
  * Simple {@link RGBColor} implementation.
- * 
+ *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
+ *
  */
 public class CSS2RGBColorImpl implements RGBColor {
 

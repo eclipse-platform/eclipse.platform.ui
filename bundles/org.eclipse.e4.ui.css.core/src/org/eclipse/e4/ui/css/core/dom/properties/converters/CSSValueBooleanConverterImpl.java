@@ -20,10 +20,10 @@ import org.w3c.dom.css.CSSValue;
  * <li>CSS Value to {@link Boolean}</li>.
  * <li>{@link Boolean} to String CSS Value</li>
  * </ul>
- * 
+ *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
+ *
  */
 public class CSSValueBooleanConverterImpl extends AbstractCSSValueConverter {
 

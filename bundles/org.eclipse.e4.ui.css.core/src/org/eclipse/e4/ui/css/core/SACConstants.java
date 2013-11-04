@@ -12,10 +12,10 @@ package org.eclipse.e4.ui.css.core;
 
 /**
  * SAC Constants Parsers.
- * 
+ *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
+ *
  */
 public class SACConstants {
 
@@ -23,7 +23,7 @@ public class SACConstants {
 	 * org.w3c.flute.parser.Parser SAC Parser.
 	 */
 	public static final String SACPARSER_FLUTE = "org.w3c.flute.parser.Parser";
-	
+
 	/**
 	 * org.w3c.flute.parser.Parser SAC Parser.
 	 */

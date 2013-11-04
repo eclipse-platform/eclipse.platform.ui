@@ -31,7 +31,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getAzimuth()
 	 */
 	public String getAzimuth() {
@@ -40,7 +40,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBackground()
 	 */
 	public String getBackground() {
@@ -49,7 +49,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBackgroundAttachment()
 	 */
 	public String getBackgroundAttachment() {
@@ -59,7 +59,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBackgroundColor()
 	 */
 	public String getBackgroundColor() {
@@ -68,7 +68,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBackgroundImage()
 	 */
 	public String getBackgroundImage() {
@@ -77,7 +77,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBackgroundPosition()
 	 */
 	public String getBackgroundPosition() {
@@ -86,7 +86,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBackgroundRepeat()
 	 */
 	public String getBackgroundRepeat() {
@@ -95,7 +95,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorder()
 	 */
 	public String getBorder() {
@@ -104,7 +104,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderBottom()
 	 */
 	public String getBorderBottom() {
@@ -113,7 +113,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderBottomColor()
 	 */
 	public String getBorderBottomColor() {
@@ -122,7 +122,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderBottomStyle()
 	 */
 	public String getBorderBottomStyle() {
@@ -131,7 +131,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderBottomWidth()
 	 */
 	public String getBorderBottomWidth() {
@@ -140,7 +140,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderCollapse()
 	 */
 	public String getBorderCollapse() {
@@ -149,7 +149,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderColor()
 	 */
 	public String getBorderColor() {
@@ -158,7 +158,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderLeft()
 	 */
 	public String getBorderLeft() {
@@ -167,7 +167,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderLeftColor()
 	 */
 	public String getBorderLeftColor() {
@@ -176,7 +176,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderLeftStyle()
 	 */
 	public String getBorderLeftStyle() {
@@ -185,7 +185,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderLeftWidth()
 	 */
 	public String getBorderLeftWidth() {
@@ -194,7 +194,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderRight()
 	 */
 	public String getBorderRight() {
@@ -203,7 +203,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderRightColor()
 	 */
 	public String getBorderRightColor() {
@@ -212,7 +212,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderRightStyle()
 	 */
 	public String getBorderRightStyle() {
@@ -221,7 +221,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderRightWidth()
 	 */
 	public String getBorderRightWidth() {
@@ -230,7 +230,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderSpacing()
 	 */
 	public String getBorderSpacing() {
@@ -239,7 +239,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderStyle()
 	 */
 	public String getBorderStyle() {
@@ -248,7 +248,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderTop()
 	 */
 	public String getBorderTop() {
@@ -257,7 +257,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderTopColor()
 	 */
 	public String getBorderTopColor() {
@@ -266,7 +266,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderTopStyle()
 	 */
 	public String getBorderTopStyle() {
@@ -275,7 +275,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderTopWidth()
 	 */
 	public String getBorderTopWidth() {
@@ -284,7 +284,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBorderWidth()
 	 */
 	public String getBorderWidth() {
@@ -293,7 +293,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getBottom()
 	 */
 	public String getBottom() {
@@ -302,7 +302,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getCaptionSide()
 	 */
 	public String getCaptionSide() {
@@ -311,7 +311,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getClear()
 	 */
 	public String getClear() {
@@ -320,7 +320,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getClip()
 	 */
 	public String getClip() {
@@ -329,7 +329,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getColor()
 	 */
 	public String getColor() {
@@ -338,7 +338,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getContent()
 	 */
 	public String getContent() {
@@ -347,7 +347,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getCounterIncrement()
 	 */
 	public String getCounterIncrement() {
@@ -356,7 +356,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getCounterReset()
 	 */
 	public String getCounterReset() {
@@ -365,7 +365,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getCssFloat()
 	 */
 	public String getCssFloat() {
@@ -374,7 +374,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getCue()
 	 */
 	public String getCue() {
@@ -383,7 +383,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getCueAfter()
 	 */
 	public String getCueAfter() {
@@ -392,7 +392,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getCueBefore()
 	 */
 	public String getCueBefore() {
@@ -401,7 +401,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getCursor()
 	 */
 	public String getCursor() {
@@ -410,7 +410,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getDirection()
 	 */
 	public String getDirection() {
@@ -419,7 +419,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getDisplay()
 	 */
 	public String getDisplay() {
@@ -428,7 +428,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getElevation()
 	 */
 	public String getElevation() {
@@ -437,7 +437,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getEmptyCells()
 	 */
 	public String getEmptyCells() {
@@ -446,7 +446,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getFont()
 	 */
 	public String getFont() {
@@ -455,7 +455,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getFontFamily()
 	 */
 	public String getFontFamily() {
@@ -464,7 +464,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getFontSize()
 	 */
 	public String getFontSize() {
@@ -473,7 +473,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getFontSizeAdjust()
 	 */
 	public String getFontSizeAdjust() {
@@ -482,7 +482,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getFontStretch()
 	 */
 	public String getFontStretch() {
@@ -491,7 +491,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getFontStyle()
 	 */
 	public String getFontStyle() {
@@ -500,7 +500,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getFontVariant()
 	 */
 	public String getFontVariant() {
@@ -509,7 +509,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getFontWeight()
 	 */
 	public String getFontWeight() {
@@ -518,7 +518,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getHeight()
 	 */
 	public String getHeight() {
@@ -527,7 +527,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getLeft()
 	 */
 	public String getLeft() {
@@ -536,7 +536,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getLetterSpacing()
 	 */
 	public String getLetterSpacing() {
@@ -545,7 +545,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getLineHeight()
 	 */
 	public String getLineHeight() {
@@ -554,7 +554,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getListStyle()
 	 */
 	public String getListStyle() {
@@ -563,7 +563,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getListStyleImage()
 	 */
 	public String getListStyleImage() {
@@ -572,7 +572,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getListStylePosition()
 	 */
 	public String getListStylePosition() {
@@ -581,7 +581,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getListStyleType()
 	 */
 	public String getListStyleType() {
@@ -590,7 +590,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getMargin()
 	 */
 	public String getMargin() {
@@ -599,7 +599,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getMarginBottom()
 	 */
 	public String getMarginBottom() {
@@ -608,7 +608,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getMarginLeft()
 	 */
 	public String getMarginLeft() {
@@ -617,7 +617,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getMarginRight()
 	 */
 	public String getMarginRight() {
@@ -626,7 +626,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getMarginTop()
 	 */
 	public String getMarginTop() {
@@ -635,7 +635,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getMarkerOffset()
 	 */
 	public String getMarkerOffset() {
@@ -644,7 +644,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getMarks()
 	 */
 	public String getMarks() {
@@ -653,7 +653,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getMaxHeight()
 	 */
 	public String getMaxHeight() {
@@ -662,7 +662,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getMaxWidth()
 	 */
 	public String getMaxWidth() {
@@ -671,7 +671,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getMinHeight()
 	 */
 	public String getMinHeight() {
@@ -680,7 +680,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getMinWidth()
 	 */
 	public String getMinWidth() {
@@ -689,7 +689,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getOrphans()
 	 */
 	public String getOrphans() {
@@ -698,7 +698,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getOutline()
 	 */
 	public String getOutline() {
@@ -707,7 +707,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getOutlineColor()
 	 */
 	public String getOutlineColor() {
@@ -716,7 +716,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getOutlineStyle()
 	 */
 	public String getOutlineStyle() {
@@ -725,7 +725,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getOutlineWidth()
 	 */
 	public String getOutlineWidth() {
@@ -734,7 +734,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getOverflow()
 	 */
 	public String getOverflow() {
@@ -743,7 +743,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getPadding()
 	 */
 	public String getPadding() {
@@ -752,7 +752,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getPaddingBottom()
 	 */
 	public String getPaddingBottom() {
@@ -761,7 +761,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getPaddingLeft()
 	 */
 	public String getPaddingLeft() {
@@ -770,7 +770,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getPaddingRight()
 	 */
 	public String getPaddingRight() {
@@ -779,7 +779,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getPaddingTop()
 	 */
 	public String getPaddingTop() {
@@ -788,7 +788,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getPage()
 	 */
 	public String getPage() {
@@ -797,7 +797,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getPageBreakAfter()
 	 */
 	public String getPageBreakAfter() {
@@ -806,7 +806,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getPageBreakBefore()
 	 */
 	public String getPageBreakBefore() {
@@ -815,7 +815,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getPageBreakInside()
 	 */
 	public String getPageBreakInside() {
@@ -824,7 +824,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getPause()
 	 */
 	public String getPause() {
@@ -833,7 +833,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getPauseAfter()
 	 */
 	public String getPauseAfter() {
@@ -842,7 +842,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getPauseBefore()
 	 */
 	public String getPauseBefore() {
@@ -851,7 +851,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getPitch()
 	 */
 	public String getPitch() {
@@ -860,7 +860,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getPitchRange()
 	 */
 	public String getPitchRange() {
@@ -869,7 +869,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getPlayDuring()
 	 */
 	public String getPlayDuring() {
@@ -878,7 +878,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getPosition()
 	 */
 	public String getPosition() {
@@ -887,7 +887,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getQuotes()
 	 */
 	public String getQuotes() {
@@ -896,7 +896,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getRichness()
 	 */
 	public String getRichness() {
@@ -905,7 +905,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getRight()
 	 */
 	public String getRight() {
@@ -914,7 +914,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getSize()
 	 */
 	public String getSize() {
@@ -923,7 +923,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getSpeak()
 	 */
 	public String getSpeak() {
@@ -932,7 +932,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getSpeakHeader()
 	 */
 	public String getSpeakHeader() {
@@ -941,7 +941,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getSpeakNumeral()
 	 */
 	public String getSpeakNumeral() {
@@ -950,7 +950,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getSpeakPunctuation()
 	 */
 	public String getSpeakPunctuation() {
@@ -959,7 +959,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getSpeechRate()
 	 */
 	public String getSpeechRate() {
@@ -968,7 +968,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getStress()
 	 */
 	public String getStress() {
@@ -977,7 +977,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getTableLayout()
 	 */
 	public String getTableLayout() {
@@ -986,7 +986,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getTextAlign()
 	 */
 	public String getTextAlign() {
@@ -995,7 +995,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getTextDecoration()
 	 */
 	public String getTextDecoration() {
@@ -1004,7 +1004,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getTextIndent()
 	 */
 	public String getTextIndent() {
@@ -1013,7 +1013,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getTextShadow()
 	 */
 	public String getTextShadow() {
@@ -1022,7 +1022,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getTextTransform()
 	 */
 	public String getTextTransform() {
@@ -1031,7 +1031,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getTop()
 	 */
 	public String getTop() {
@@ -1040,7 +1040,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getUnicodeBidi()
 	 */
 	public String getUnicodeBidi() {
@@ -1049,7 +1049,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getVerticalAlign()
 	 */
 	public String getVerticalAlign() {
@@ -1058,7 +1058,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getVisibility()
 	 */
 	public String getVisibility() {
@@ -1067,7 +1067,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getVoiceFamily()
 	 */
 	public String getVoiceFamily() {
@@ -1076,7 +1076,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getVolume()
 	 */
 	public String getVolume() {
@@ -1085,7 +1085,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getWhiteSpace()
 	 */
 	public String getWhiteSpace() {
@@ -1094,7 +1094,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getWidows()
 	 */
 	public String getWidows() {
@@ -1103,7 +1103,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getWidth()
 	 */
 	public String getWidth() {
@@ -1112,7 +1112,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getWordSpacing()
 	 */
 	public String getWordSpacing() {
@@ -1121,7 +1121,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#getZIndex()
 	 */
 	public String getZIndex() {
@@ -1130,7 +1130,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setAzimuth(java.lang.String)
 	 */
 	public void setAzimuth(String azimuth) throws DOMException {
@@ -1139,7 +1139,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBackground(java.lang.String)
 	 */
 	public void setBackground(String background) throws DOMException {
@@ -1148,7 +1148,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBackgroundAttachment(java.lang.String)
 	 */
 	public void setBackgroundAttachment(String backgroundAttachment)
@@ -1158,7 +1158,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBackgroundColor(java.lang.String)
 	 */
 	public void setBackgroundColor(String backgroundColor) throws DOMException {
@@ -1167,7 +1167,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBackgroundImage(java.lang.String)
 	 */
 	public void setBackgroundImage(String backgroundImage) throws DOMException {
@@ -1176,7 +1176,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBackgroundPosition(java.lang.String)
 	 */
 	public void setBackgroundPosition(String backgroundPosition)
@@ -1186,7 +1186,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBackgroundRepeat(java.lang.String)
 	 */
 	public void setBackgroundRepeat(String backgroundRepeat)
@@ -1196,7 +1196,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorder(java.lang.String)
 	 */
 	public void setBorder(String border) throws DOMException {
@@ -1205,7 +1205,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderBottom(java.lang.String)
 	 */
 	public void setBorderBottom(String borderBottom) throws DOMException {
@@ -1214,7 +1214,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderBottomColor(java.lang.String)
 	 */
 	public void setBorderBottomColor(String borderColor) throws DOMException {
@@ -1223,7 +1223,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderBottomStyle(java.lang.String)
 	 */
 	public void setBorderBottomStyle(String borderBottomStyle)
@@ -1233,7 +1233,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderBottomWidth(java.lang.String)
 	 */
 	public void setBorderBottomWidth(String borderBottomWidth)
@@ -1243,7 +1243,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderCollapse(java.lang.String)
 	 */
 	public void setBorderCollapse(String borderCollapse) throws DOMException {
@@ -1252,7 +1252,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderColor(java.lang.String)
 	 */
 	public void setBorderColor(String borderColor) throws DOMException {
@@ -1261,7 +1261,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderLeft(java.lang.String)
 	 */
 	public void setBorderLeft(String borderLeft) throws DOMException {
@@ -1270,7 +1270,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderLeftColor(java.lang.String)
 	 */
 	public void setBorderLeftColor(String borderLeftColor) throws DOMException {
@@ -1279,7 +1279,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderLeftStyle(java.lang.String)
 	 */
 	public void setBorderLeftStyle(String borderLeftStyle) throws DOMException {
@@ -1288,7 +1288,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderLeftWidth(java.lang.String)
 	 */
 	public void setBorderLeftWidth(String borderLeftWidth) throws DOMException {
@@ -1297,7 +1297,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderRight(java.lang.String)
 	 */
 	public void setBorderRight(String borderRight) throws DOMException {
@@ -1306,7 +1306,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderRightColor(java.lang.String)
 	 */
 	public void setBorderRightColor(String borderRightColor)
@@ -1316,7 +1316,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderRightStyle(java.lang.String)
 	 */
 	public void setBorderRightStyle(String borderRightStyle)
@@ -1326,7 +1326,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderRightWidth(java.lang.String)
 	 */
 	public void setBorderRightWidth(String borderRightWidth)
@@ -1336,7 +1336,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderSpacing(java.lang.String)
 	 */
 	public void setBorderSpacing(String borderSpacing) throws DOMException {
@@ -1345,7 +1345,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderStyle(java.lang.String)
 	 */
 	public void setBorderStyle(String borderStyle) throws DOMException {
@@ -1354,7 +1354,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderTop(java.lang.String)
 	 */
 	public void setBorderTop(String borderTop) throws DOMException {
@@ -1363,7 +1363,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderTopColor(java.lang.String)
 	 */
 	public void setBorderTopColor(String borderTopColor) throws DOMException {
@@ -1372,7 +1372,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderTopStyle(java.lang.String)
 	 */
 	public void setBorderTopStyle(String borderTopStyle) throws DOMException {
@@ -1381,7 +1381,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderTopWidth(java.lang.String)
 	 */
 	public void setBorderTopWidth(String borderTopWidth) throws DOMException {
@@ -1390,7 +1390,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBorderWidth(java.lang.String)
 	 */
 	public void setBorderWidth(String borderWidth) throws DOMException {
@@ -1399,7 +1399,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setBottom(java.lang.String)
 	 */
 	public void setBottom(String bottom) throws DOMException {
@@ -1408,7 +1408,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setCaptionSide(java.lang.String)
 	 */
 	public void setCaptionSide(String captionSide) throws DOMException {
@@ -1417,7 +1417,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setClear(java.lang.String)
 	 */
 	public void setClear(String clear) throws DOMException {
@@ -1426,7 +1426,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setClip(java.lang.String)
 	 */
 	public void setClip(String clip) throws DOMException {
@@ -1435,7 +1435,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setColor(java.lang.String)
 	 */
 	public void setColor(String color) throws DOMException {
@@ -1444,7 +1444,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setContent(java.lang.String)
 	 */
 	public void setContent(String content) throws DOMException {
@@ -1453,7 +1453,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setCounterIncrement(java.lang.String)
 	 */
 	public void setCounterIncrement(String counterIncrement)
@@ -1463,7 +1463,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setCounterReset(java.lang.String)
 	 */
 	public void setCounterReset(String counterReset) throws DOMException {
@@ -1476,7 +1476,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setCue(java.lang.String)
 	 */
 	public void setCue(String cue) throws DOMException {
@@ -1485,7 +1485,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setCueAfter(java.lang.String)
 	 */
 	public void setCueAfter(String cueAfter) throws DOMException {
@@ -1494,7 +1494,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setCueBefore(java.lang.String)
 	 */
 	public void setCueBefore(String cueBefore) throws DOMException {
@@ -1503,7 +1503,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setCursor(java.lang.String)
 	 */
 	public void setCursor(String cursor) throws DOMException {
@@ -1512,7 +1512,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setDirection(java.lang.String)
 	 */
 	public void setDirection(String direction) throws DOMException {
@@ -1521,7 +1521,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setDisplay(java.lang.String)
 	 */
 	public void setDisplay(String display) throws DOMException {
@@ -1530,7 +1530,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setElevation(java.lang.String)
 	 */
 	public void setElevation(String elevation) throws DOMException {
@@ -1539,7 +1539,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setEmptyCells(java.lang.String)
 	 */
 	public void setEmptyCells(String emptyCells) throws DOMException {
@@ -1548,7 +1548,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setFont(java.lang.String)
 	 */
 	public void setFont(String font) throws DOMException {
@@ -1557,7 +1557,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setFontFamily(java.lang.String)
 	 */
 	public void setFontFamily(String fontFamily) throws DOMException {
@@ -1566,7 +1566,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setFontSize(java.lang.String)
 	 */
 	public void setFontSize(String fontSize) throws DOMException {
@@ -1575,7 +1575,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setFontSizeAdjust(java.lang.String)
 	 */
 	public void setFontSizeAdjust(String fontSizeAdjust) throws DOMException {
@@ -1584,7 +1584,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setFontStretch(java.lang.String)
 	 */
 	public void setFontStretch(String fontStretch) throws DOMException {
@@ -1593,7 +1593,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setFontStyle(java.lang.String)
 	 */
 	public void setFontStyle(String fontStyle) throws DOMException {
@@ -1602,7 +1602,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setFontVariant(java.lang.String)
 	 */
 	public void setFontVariant(String fontVariant) throws DOMException {
@@ -1611,7 +1611,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setFontWeight(java.lang.String)
 	 */
 	public void setFontWeight(String fontWeight) throws DOMException {
@@ -1620,7 +1620,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setHeight(java.lang.String)
 	 */
 	public void setHeight(String height) throws DOMException {
@@ -1629,7 +1629,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setLeft(java.lang.String)
 	 */
 	public void setLeft(String left) throws DOMException {
@@ -1638,7 +1638,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setLetterSpacing(java.lang.String)
 	 */
 	public void setLetterSpacing(String letterSpacing) throws DOMException {
@@ -1647,7 +1647,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setLineHeight(java.lang.String)
 	 */
 	public void setLineHeight(String lineHeight) throws DOMException {
@@ -1656,7 +1656,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setListStyle(java.lang.String)
 	 */
 	public void setListStyle(String listStyle) throws DOMException {
@@ -1666,7 +1666,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setListStyleImage(java.lang.String)
 	 */
 	public void setListStyleImage(String listStyleImage) throws DOMException {
@@ -1675,7 +1675,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setListStylePosition(java.lang.String)
 	 */
 	public void setListStylePosition(String listStylePosition)
@@ -1685,7 +1685,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setListStyleType(java.lang.String)
 	 */
 	public void setListStyleType(String listStyleType) throws DOMException {
@@ -1694,7 +1694,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setMargin(java.lang.String)
 	 */
 	public void setMargin(String margin) throws DOMException {
@@ -1703,7 +1703,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setMarginBottom(java.lang.String)
 	 */
 	public void setMarginBottom(String marginBottom) throws DOMException {
@@ -1712,7 +1712,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setMarginLeft(java.lang.String)
 	 */
 	public void setMarginLeft(String marginLeft) throws DOMException {
@@ -1721,7 +1721,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setMarginRight(java.lang.String)
 	 */
 	public void setMarginRight(String marginRight) throws DOMException {
@@ -1730,7 +1730,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setMarginTop(java.lang.String)
 	 */
 	public void setMarginTop(String marginTop) throws DOMException {
@@ -1739,7 +1739,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setMarkerOffset(java.lang.String)
 	 */
 	public void setMarkerOffset(String markerOffset) throws DOMException {
@@ -1748,7 +1748,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setMarks(java.lang.String)
 	 */
 	public void setMarks(String marks) throws DOMException {
@@ -1757,7 +1757,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setMaxHeight(java.lang.String)
 	 */
 	public void setMaxHeight(String maxHeight) throws DOMException {
@@ -1766,7 +1766,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setMaxWidth(java.lang.String)
 	 */
 	public void setMaxWidth(String maxWidth) throws DOMException {
@@ -1775,7 +1775,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setMinHeight(java.lang.String)
 	 */
 	public void setMinHeight(String minHeight) throws DOMException {
@@ -1784,7 +1784,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setMinWidth(java.lang.String)
 	 */
 	public void setMinWidth(String minWidth) throws DOMException {
@@ -1793,7 +1793,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setOrphans(java.lang.String)
 	 */
 	public void setOrphans(String orphans) throws DOMException {
@@ -1802,7 +1802,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setOutline(java.lang.String)
 	 */
 	public void setOutline(String outline) throws DOMException {
@@ -1811,7 +1811,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setOutlineColor(java.lang.String)
 	 */
 	public void setOutlineColor(String outlineColor) throws DOMException {
@@ -1820,7 +1820,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setOutlineStyle(java.lang.String)
 	 */
 	public void setOutlineStyle(String outlineStyle) throws DOMException {
@@ -1829,7 +1829,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setOutlineWidth(java.lang.String)
 	 */
 	public void setOutlineWidth(String outlineWidth) throws DOMException {
@@ -1838,7 +1838,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setOverflow(java.lang.String)
 	 */
 	public void setOverflow(String overflow) throws DOMException {
@@ -1847,7 +1847,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setPadding(java.lang.String)
 	 */
 	public void setPadding(String padding) throws DOMException {
@@ -1856,7 +1856,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setPaddingBottom(java.lang.String)
 	 */
 	public void setPaddingBottom(String paddingBottom) throws DOMException {
@@ -1865,7 +1865,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setPaddingLeft(java.lang.String)
 	 */
 	public void setPaddingLeft(String paddingLeft) throws DOMException {
@@ -1874,7 +1874,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setPaddingRight(java.lang.String)
 	 */
 	public void setPaddingRight(String paddingRight) throws DOMException {
@@ -1883,7 +1883,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setPaddingTop(java.lang.String)
 	 */
 	public void setPaddingTop(String paddingTop) throws DOMException {
@@ -1892,7 +1892,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setPage(java.lang.String)
 	 */
 	public void setPage(String page) throws DOMException {
@@ -1901,7 +1901,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setPageBreakAfter(java.lang.String)
 	 */
 	public void setPageBreakAfter(String pageBreakAfter) throws DOMException {
@@ -1910,7 +1910,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setPageBreakBefore(java.lang.String)
 	 */
 	public void setPageBreakBefore(String pageBreakBefore) throws DOMException {
@@ -1919,7 +1919,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setPageBreakInside(java.lang.String)
 	 */
 	public void setPageBreakInside(String pageBreakInside) throws DOMException {
@@ -1928,7 +1928,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setPause(java.lang.String)
 	 */
 	public void setPause(String pause) throws DOMException {
@@ -1937,7 +1937,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setPauseAfter(java.lang.String)
 	 */
 	public void setPauseAfter(String pauseAfter) throws DOMException {
@@ -1946,7 +1946,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setPauseBefore(java.lang.String)
 	 */
 	public void setPauseBefore(String pauseBefore) throws DOMException {
@@ -1955,7 +1955,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setPitch(java.lang.String)
 	 */
 	public void setPitch(String pitch) throws DOMException {
@@ -1964,7 +1964,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setPitchRange(java.lang.String)
 	 */
 	public void setPitchRange(String pitchRange) throws DOMException {
@@ -1973,7 +1973,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setPlayDuring(java.lang.String)
 	 */
 	public void setPlayDuring(String playDuring) throws DOMException {
@@ -1982,7 +1982,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setPosition(java.lang.String)
 	 */
 	public void setPosition(String position) throws DOMException {
@@ -1991,7 +1991,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setQuotes(java.lang.String)
 	 */
 	public void setQuotes(String quotes) throws DOMException {
@@ -2000,7 +2000,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setRichness(java.lang.String)
 	 */
 	public void setRichness(String richness) throws DOMException {
@@ -2010,7 +2010,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setRight(java.lang.String)
 	 */
 	public void setRight(String right) throws DOMException {
@@ -2020,7 +2020,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setSize(java.lang.String)
 	 */
 	public void setSize(String size) throws DOMException {
@@ -2030,7 +2030,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setSpeak(java.lang.String)
 	 */
 	public void setSpeak(String speak) throws DOMException {
@@ -2040,7 +2040,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setSpeakHeader(java.lang.String)
 	 */
 	public void setSpeakHeader(String speakHeader) throws DOMException {
@@ -2050,7 +2050,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setSpeakNumeral(java.lang.String)
 	 */
 	public void setSpeakNumeral(String speakNumeral) throws DOMException {
@@ -2060,7 +2060,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setSpeakPunctuation(java.lang.String)
 	 */
 	public void setSpeakPunctuation(String speakPunctuation)
@@ -2071,7 +2071,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setSpeechRate(java.lang.String)
 	 */
 	public void setSpeechRate(String speechRate) throws DOMException {
@@ -2081,7 +2081,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setStress(java.lang.String)
 	 */
 	public void setStress(String stress) throws DOMException {
@@ -2091,7 +2091,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setTableLayout(java.lang.String)
 	 */
 	public void setTableLayout(String tableLayout) throws DOMException {
@@ -2101,7 +2101,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setTextAlign(java.lang.String)
 	 */
 	public void setTextAlign(String textAlign) throws DOMException {
@@ -2111,7 +2111,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setTextDecoration(java.lang.String)
 	 */
 	public void setTextDecoration(String textDecoration) throws DOMException {
@@ -2120,7 +2120,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setTextIndent(java.lang.String)
 	 */
 	public void setTextIndent(String textIndent) throws DOMException {
@@ -2129,7 +2129,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setTextShadow(java.lang.String)
 	 */
 	public void setTextShadow(String textShadow) throws DOMException {
@@ -2138,7 +2138,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setTextTransform(java.lang.String)
 	 */
 	public void setTextTransform(String textTransform) throws DOMException {
@@ -2147,7 +2147,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setTop(java.lang.String)
 	 */
 	public void setTop(String top) throws DOMException {
@@ -2156,7 +2156,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setUnicodeBidi(java.lang.String)
 	 */
 	public void setUnicodeBidi(String unicodeBidi) throws DOMException {
@@ -2165,7 +2165,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setVerticalAlign(java.lang.String)
 	 */
 	public void setVerticalAlign(String verticalAlign) throws DOMException {
@@ -2174,7 +2174,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setVisibility(java.lang.String)
 	 */
 	public void setVisibility(String visibility) throws DOMException {
@@ -2183,7 +2183,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setVoiceFamily(java.lang.String)
 	 */
 	public void setVoiceFamily(String voiceFamily) throws DOMException {
@@ -2192,7 +2192,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setVolume(java.lang.String)
 	 */
 	public void setVolume(String volume) throws DOMException {
@@ -2201,7 +2201,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setWhiteSpace(java.lang.String)
 	 */
 	public void setWhiteSpace(String whiteSpace) throws DOMException {
@@ -2210,7 +2210,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setWidows(java.lang.String)
 	 */
 	public void setWidows(String widows) throws DOMException {
@@ -2219,7 +2219,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setWidth(java.lang.String)
 	 */
 	public void setWidth(String width) throws DOMException {
@@ -2228,7 +2228,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setWordSpacing(java.lang.String)
 	 */
 	public void setWordSpacing(String wordSpacing) throws DOMException {
@@ -2237,7 +2237,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.css.CSS2Properties#setZIndex(java.lang.String)
 	 */
 	public void setZIndex(String zIndex) throws DOMException {
@@ -2247,7 +2247,7 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 	/**
 	 * Parse and apply CSS property name <code>propertyName</code> with value
 	 * <code>propertyValue</code> to the widget.
-	 * 
+	 *
 	 * @param propertyName
 	 * @param propertyValue
 	 */

@@ -17,14 +17,14 @@ public interface IResourcesLocatorManager extends IResourceLocator {
 
 	/**
 	 * Register <code>resourceLocator</code>.
-	 * 
+	 *
 	 * @param resourceLocator
 	 */
 	public void registerResourceLocator(IResourceLocator resourceLocator);
 
 	/**
 	 * Unregister <code>resourceLocator</code>.
-	 * 
+	 *
 	 * @param resourceLocator
 	 */
 	public void unregisterResourceLocator(IResourceLocator resourceLocator);

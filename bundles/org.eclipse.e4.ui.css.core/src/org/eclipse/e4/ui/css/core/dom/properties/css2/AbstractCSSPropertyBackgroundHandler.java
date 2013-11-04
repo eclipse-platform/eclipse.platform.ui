@@ -15,7 +15,7 @@ import org.eclipse.e4.ui.css.core.exceptions.UnsupportedPropertyException;
 import org.w3c.dom.css.CSSValue;
 
 /**
- * Abstract CSS property background which is enable to manage 
+ * Abstract CSS property background which is enable to manage
  * apply CSS Property background, background-color, background-image...
  */
 public abstract class AbstractCSSPropertyBackgroundHandler extends
@@ -69,7 +69,7 @@ public abstract class AbstractCSSPropertyBackgroundHandler extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackground(java.lang.Object,
 	 *      org.w3c.dom.css.CSSValue, java.lang.String,
 	 *      org.eclipse.e4.css.core.engine.CSSEngine)
@@ -82,7 +82,7 @@ public abstract class AbstractCSSPropertyBackgroundHandler extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundAttachment(java.lang.Object,
 	 *      org.w3c.dom.css.CSSValue, java.lang.String,
 	 *      org.eclipse.e4.css.core.engine.CSSEngine)
@@ -94,7 +94,7 @@ public abstract class AbstractCSSPropertyBackgroundHandler extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundColor(java.lang.Object,
 	 *      org.w3c.dom.css.CSSValue, java.lang.String,
 	 *      org.eclipse.e4.css.core.engine.CSSEngine)
@@ -106,7 +106,7 @@ public abstract class AbstractCSSPropertyBackgroundHandler extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundImage(java.lang.Object,
 	 *      org.w3c.dom.css.CSSValue, java.lang.String,
 	 *      org.eclipse.e4.css.core.engine.CSSEngine)
@@ -118,7 +118,7 @@ public abstract class AbstractCSSPropertyBackgroundHandler extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundPosition(java.lang.Object,
 	 *      org.w3c.dom.css.CSSValue, java.lang.String,
 	 *      org.eclipse.e4.css.core.engine.CSSEngine)
@@ -130,7 +130,7 @@ public abstract class AbstractCSSPropertyBackgroundHandler extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundRepeat(java.lang.Object,
 	 *      org.w3c.dom.css.CSSValue, java.lang.String,
 	 *      org.eclipse.e4.css.core.engine.CSSEngine)

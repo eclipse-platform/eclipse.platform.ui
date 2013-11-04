@@ -83,7 +83,7 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 	/**
 	 * Register a package path "name.name1." where to search for PropertyHandler
 	 * class
-	 * 
+	 *
 	 * @param packageName
 	 */
 	public void registerPackage(String packageName) {
@@ -99,7 +99,7 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 
 	/**
 	 * Reflexive method that return a property handler class
-	 * 
+	 *
 	 * @param packageName
 	 * @param handlerClassName
 	 * @return
@@ -127,7 +127,7 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 	 * Return the handler class name corresponding to the property label given
 	 * as argument A Property Handler Class Name is CSSPropertyXXXHandler (like
 	 * CSSPropertyBorderTopColorHandler)
-	 * 
+	 *
 	 * @param property
 	 * @return
 	 */

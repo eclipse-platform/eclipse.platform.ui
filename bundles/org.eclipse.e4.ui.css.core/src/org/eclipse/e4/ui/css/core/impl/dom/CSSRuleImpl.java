@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,9 +21,9 @@ public abstract class CSSRuleImpl extends AbstractCSSNode implements CSSRule {
 	private CSSStyleSheet parentStyleSheet = null;  // null allowed
 	private CSSRule parentRule = null;  // null allowed
 	private boolean readOnly;
-	
+
 	//TODO who sets readOnly?  Seems should be ViewCSSImpl.getComputedStyle(Element,String)
-	
+
 	public CSSRuleImpl(CSSStyleSheet parentStyleSheet, CSSRule parentRule) {
 		super();
 		this.parentStyleSheet = parentStyleSheet;
@@ -31,14 +31,14 @@ public abstract class CSSRuleImpl extends AbstractCSSNode implements CSSRule {
 	}
 
 	// W3C CSSRule API methods
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSRule#getCssText()
 	 */
 	public String getCssText() {
 		// TODO Auto-generated constructor stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 	/*
@@ -74,6 +74,6 @@ public abstract class CSSRuleImpl extends AbstractCSSNode implements CSSRule {
 		// TODO throws SYNTAX_ERR if cssText is unparsable
 		// TODO throws INVALID_MODIFICATION_ERR: Raised if the specified CSS string value represents a different type of rule than the current one.
 		// TODO throws HIERARCHY_REQUEST_ERR: Raised if the rule cannot be inserted at this point in the style sheet.
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 }

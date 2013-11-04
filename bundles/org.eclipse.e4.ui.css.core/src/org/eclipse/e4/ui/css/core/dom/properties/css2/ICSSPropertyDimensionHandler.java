@@ -16,14 +16,14 @@ import org.w3c.dom.css.CSSValue;
 
 /**
  * CSS2 Dimension Property Handler.
- * 
+ *
  * @see http://www.w3schools.com/css/css_reference.asp#dimension
  */
 public interface ICSSPropertyDimensionHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the height of an element. Available values are=auto length %
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -36,7 +36,7 @@ public interface ICSSPropertyDimensionHandler extends ICSSPropertyHandler {
 	/**
 	 * Sets the distance between lines. Available values are=normal number
 	 * length %
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -48,7 +48,7 @@ public interface ICSSPropertyDimensionHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the maximum height of an element. Available values are= none length %
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -60,7 +60,7 @@ public interface ICSSPropertyDimensionHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the maximum width of an element. Available values are=none length %
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -72,7 +72,7 @@ public interface ICSSPropertyDimensionHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the minimum height of an element. Available values are=length %
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -84,7 +84,7 @@ public interface ICSSPropertyDimensionHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the minimum width of an element. Available values are=length %
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -96,7 +96,7 @@ public interface ICSSPropertyDimensionHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the width of an element. Available values are=auto % length
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo

@@ -19,7 +19,7 @@ public abstract class CSSParserFactory implements ICSSParserFactory {
 
 	/**
 	 * Obtain a new instance of a {@link ICSSParserFactory}.
-	 * 
+	 *
 	 * @return
 	 */
 	public static ICSSParserFactory newInstance() {

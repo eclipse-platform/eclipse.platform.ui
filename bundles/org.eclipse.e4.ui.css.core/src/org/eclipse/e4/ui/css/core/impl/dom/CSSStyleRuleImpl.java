@@ -25,7 +25,7 @@ public class CSSStyleRuleImpl extends CSSRuleImpl implements CSSStyleRule, Exten
 
 	private SelectorList selectors;
 	private CSSStyleDeclarationImpl styleDeclaration;
-	
+
 	public CSSStyleRuleImpl(CSSStyleSheet parentStyleSheet, CSSRule parentRule,
 			SelectorList selectors) {
 		super(parentStyleSheet, parentRule);
@@ -42,11 +42,11 @@ public class CSSStyleRuleImpl extends CSSRuleImpl implements CSSStyleRule, Exten
 	public short getType() {
 		return CSSRule.STYLE_RULE;
 	}
-	
-	
+
+
 	//----------------------------------------
 	// W3C CSSStyleRule API methods
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSStyleRule#getSelectorText()
@@ -73,7 +73,7 @@ public class CSSStyleRuleImpl extends CSSRuleImpl implements CSSStyleRule, Exten
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	
+
 	//----------------------------------------
 	// Additional methods
 

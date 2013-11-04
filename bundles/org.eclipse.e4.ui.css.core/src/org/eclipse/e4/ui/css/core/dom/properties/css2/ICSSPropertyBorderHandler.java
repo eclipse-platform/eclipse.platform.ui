@@ -16,7 +16,7 @@ import org.w3c.dom.css.CSSValue;
 
 /**
  * CSS2 Border Property Handler.
- * 
+ *
  * @see http://www.w3schools.com/css/css_reference.asp#border
  */
 public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
@@ -25,7 +25,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * A shorthand property for setting all of the properties for the four
 	 * borders in one declaration. Available values are= border-width
 	 * border-style border-color
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -39,7 +39,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * A shorthand property for setting all of the properties for the bottom
 	 * border in one declaration. Available values are=border-bottom-width
 	 * border-style border-color
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -51,7 +51,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the color of the bottom border. Available values are=border-color
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -63,7 +63,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the style of the bottom border. Available values are=border-style
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -76,7 +76,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	/**
 	 * Sets the width of the bottom border. Available values are= thin medium
 	 * thick length
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -89,7 +89,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	/**
 	 * Sets the color of the four borders, can have from one to four colors.
 	 * Available values are=color
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -103,7 +103,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * A shorthand property for setting all of the properties for the left
 	 * border in one declaration. Available values are=border-left-width
 	 * border-style border-color
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -115,7 +115,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the color of the left border. Available values are=border-color
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -127,7 +127,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the style of the left border. Available values are=border-style
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -140,7 +140,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	/**
 	 * Sets the width of the left border. Available values are=thin medium thick
 	 * length
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -154,7 +154,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * A shorthand property for setting all of the properties for the right
 	 * border in one declaration. Available values are=border-right-width
 	 * border-style border-color
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -166,7 +166,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the color of the right border. Available values are=border-color
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -178,7 +178,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the style of the right border. Available values are=border-style
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -191,7 +191,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	/**
 	 * Sets the width of the right border.Available values are= thin medium
 	 * thick length
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -205,7 +205,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * Sets the style of the four borders, can have from one to four styles.
 	 * Available values are=none hidden dotted dashed solid double groove ridge
 	 * inset outset
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -219,7 +219,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * A shorthand property for setting all of the properties for the top border
 	 * in one declaration. Available values are=border-top-width border-style
 	 * border-color
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -231,7 +231,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the color of the top border. Available values are=border-color
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -243,7 +243,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the style of the top border. Available values are=border-style
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -256,7 +256,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	/**
 	 * Sets the width of the top border. Available values are=thin medium thick
 	 * length
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -270,7 +270,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * A shorthand property for setting the width of the four borders in one
 	 * declaration, can have from one to four values. Available values are=thin
 	 * medium thick length
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo

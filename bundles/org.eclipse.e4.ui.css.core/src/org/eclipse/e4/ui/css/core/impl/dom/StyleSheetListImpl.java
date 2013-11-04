@@ -27,7 +27,7 @@ public class StyleSheetListImpl implements StyleSheetList {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.stylesheets.StyleSheetList#getLength()
 	 */
 	public int getLength() {
@@ -36,7 +36,7 @@ public class StyleSheetListImpl implements StyleSheetList {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.stylesheets.StyleSheetList#item(int)
 	 */
 	public StyleSheet item(int index) {
@@ -46,7 +46,7 @@ public class StyleSheetListImpl implements StyleSheetList {
 
 	/**
 	 * Add {@link StyleSheet} to the collection of style sheets
-	 * 
+	 *
 	 * @param styleSheet
 	 */
 	public void addStyleSheet(StyleSheet styleSheet) {

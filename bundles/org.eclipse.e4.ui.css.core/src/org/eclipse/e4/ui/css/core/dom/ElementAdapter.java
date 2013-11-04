@@ -43,15 +43,15 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 	private CSSExtendedProperties style = null;
 
 	private List staticPseudoInstances;
-	
+
 	public ElementAdapter(Object nativeWidget, CSSEngine engine) {
 		this.nativeWidget = nativeWidget;
 		this.engine = engine;
 	}
-	
+
 	/**
 	 * Add static pseudo instance
-	 * 
+	 *
 	 * @param instance
 	 */
 	public void addStaticPseudoInstance(String pseudoE) {
@@ -62,7 +62,7 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#isStaticPseudoInstance(java.lang.String)
 	 */
 	public boolean isStaticPseudoInstance(String s) {
@@ -73,7 +73,7 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#copyDefaultStyleDeclarations(org.eclipse.e4.ui.css.core.dom.CSSStylableElement)
 	 */
 	public void copyDefaultStyleDeclarations(CSSStylableElement stylableElement) {
@@ -95,14 +95,14 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.Node#getLocalName()
 	 */
 	public abstract String getLocalName();
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.w3c.dom.Element#getAttribute(java.lang.String)
 	 */
 	public abstract String getAttribute(String arg0);
@@ -338,7 +338,7 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#getStyle()
 	 */
 	public CSSExtendedProperties getStyle() {
@@ -349,7 +349,7 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#getStaticPseudoInstances()
 	 */
 	public String[] getStaticPseudoInstances() {
@@ -360,7 +360,7 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#isPseudoInstanceOf(java.lang.String)
 	 */
 	public boolean isPseudoInstanceOf(String s) {
@@ -368,15 +368,15 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 			return false;
 		return staticPseudoInstances.contains(s);
 	}
-	
+
 	public void initialize() {
-	
+
 	}
-	
+
 	public void dispose() {
-		
+
 	}
-	
+
 	/**
 	 * Apply styles for the native widget.
 	 */

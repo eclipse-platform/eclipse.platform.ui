@@ -53,7 +53,7 @@ public class AbstractCSSParser implements CSSParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.parsers.CSSParser#parseStyleSheet(org.w3c.css.sac.InputSource)
 	 */
 	public CSSStyleSheet parseStyleSheet(InputSource source) throws IOException {
@@ -67,7 +67,7 @@ public class AbstractCSSParser implements CSSParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.parsers.CSSParser#parseStyleDeclaration(org.w3c.css.sac.InputSource)
 	 */
 	public CSSStyleDeclaration parseStyleDeclaration(InputSource source)
@@ -81,7 +81,7 @@ public class AbstractCSSParser implements CSSParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.parsers.CSSParser#parseStyleDeclaration(org.w3c.dom.css.CSSStyleDeclaration,
 	 *      org.w3c.css.sac.InputSource)
 	 */
@@ -99,7 +99,7 @@ public class AbstractCSSParser implements CSSParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.parsers.CSSParser#parsePropertyValue(org.w3c.css.sac.InputSource)
 	 */
 	public CSSValue parsePropertyValue(InputSource source) throws IOException {
@@ -112,7 +112,7 @@ public class AbstractCSSParser implements CSSParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.parsers.CSSParser#parseRule(org.w3c.css.sac.InputSource)
 	 */
 	public CSSRule parseRule(InputSource source) throws IOException {
@@ -122,7 +122,7 @@ public class AbstractCSSParser implements CSSParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.css.core.dom.parsers.CSSParser#parseSelectors(org.w3c
 	 * .css.sac.InputSource)
@@ -137,7 +137,7 @@ public class AbstractCSSParser implements CSSParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.parsers.CSSParser#setParentStyleSheet(org.w3c.dom.css.CSSStyleSheet)
 	 */
 	public void setParentStyleSheet(CSSStyleSheet parentStyleSheet) {
@@ -146,7 +146,7 @@ public class AbstractCSSParser implements CSSParser {
 
 	/**
 	 * Return instance of {@link DocumentHandlerFactory}.
-	 * 
+	 *
 	 * @return
 	 */
 	public DocumentHandlerFactory getDocumentHandlerFactory() {
@@ -157,7 +157,7 @@ public class AbstractCSSParser implements CSSParser {
 
 	/**
 	 * Set instance of {@link DocumentHandlerFactory}.
-	 * 
+	 *
 	 * @param documentHandlerFactory
 	 */
 	public void setDocumentHandlerFactory(
@@ -167,7 +167,7 @@ public class AbstractCSSParser implements CSSParser {
 
 	/**
 	 * Return SAC {@link Parser} to use.
-	 * 
+	 *
 	 * @return
 	 */
 	public Parser getParser() {
@@ -188,7 +188,7 @@ public class AbstractCSSParser implements CSSParser {
 
 	/**
 	 * Set SAC {@link Parser} to use.
-	 * 
+	 *
 	 * @param parser
 	 */
 	public void setParser(Parser parser) {
@@ -197,7 +197,7 @@ public class AbstractCSSParser implements CSSParser {
 
 	/**
 	 * Return factory {@link ISACParserFactory} to use.
-	 * 
+	 *
 	 * @return
 	 */
 	public ISACParserFactory getSACParserFactory() {
@@ -208,7 +208,7 @@ public class AbstractCSSParser implements CSSParser {
 
 	/**
 	 * Set factory {@link ISACParserFactory} to use.
-	 * 
+	 *
 	 * @param parserFactory
 	 */
 	public void setSACParserFactory(ISACParserFactory parserFactory) {
@@ -217,7 +217,7 @@ public class AbstractCSSParser implements CSSParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.parsers.CSSParser#getConditionFactory()
 	 */
 	public ConditionFactory getConditionFactory() {
@@ -226,7 +226,7 @@ public class AbstractCSSParser implements CSSParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.parsers.CSSParser#setConditionFactory(org.w3c.css.sac.ConditionFactory)
 	 */
 	public void setConditionFactory(ConditionFactory conditionFactory) {
@@ -235,7 +235,7 @@ public class AbstractCSSParser implements CSSParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.parsers.CSSParser#getSelectorFactory()
 	 */
 	public SelectorFactory getSelectorFactory() {
@@ -244,7 +244,7 @@ public class AbstractCSSParser implements CSSParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.parsers.CSSParser#setSelectorFactory(org.w3c.css.sac.SelectorFactory)
 	 */
 	public void setSelectorFactory(SelectorFactory selectorFactory) {

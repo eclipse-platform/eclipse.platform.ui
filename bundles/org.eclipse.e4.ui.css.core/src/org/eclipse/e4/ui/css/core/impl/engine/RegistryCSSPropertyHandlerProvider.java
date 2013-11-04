@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Brian de Alwis - cobbled together from other sources  
+ *     Brian de Alwis - cobbled together from other sources
  *     Angelo Zerr <angelo.zerr@gmail.com> - likely source of initial implementation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.engine;
@@ -153,7 +153,7 @@ public class RegistryCSSPropertyHandlerProvider extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.properties.providers.
 	 * AbstractCSSPropertyHandlerProvider
 	 * #getDefaultCSSStyleDeclaration(org.eclipse

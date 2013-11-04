@@ -15,13 +15,13 @@ import org.w3c.dom.css.CSSValue;
 
 /**
  * A one-way converter.
- * 
+ *
  * This interface is not intended to be implemented by clients; clients should
  * subclass {@link AbstractCSSValueConverter}.
- * 
+ *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
+ *
  */
 public interface ICSSValueConverter {
 
@@ -29,7 +29,7 @@ public interface ICSSValueConverter {
 	 * Returns the type to which this converter can convert. The return type is
 	 * Object rather than Class to optionally support richer type systems than
 	 * the one provided by Java reflection.
-	 * 
+	 *
 	 * @return the type to which this converter can convert, or null if this
 	 *         converter is untyped
 	 */
@@ -38,12 +38,12 @@ public interface ICSSValueConverter {
 	/**
 	 * Returns the result of the conversion of the given CSSValue
 	 * <code>value</code>.
-	 * 
+	 *
 	 * @param value
 	 *            the CSSValue to convert, of type {@link #getFromType()}
 	 * @param engine
 	 * @param context
-	 * 
+	 *
 	 * @return the converted object, of type {@link #getToType()}
 	 */
 	public Object convert(CSSValue value, CSSEngine engine, Object context)
@@ -52,12 +52,12 @@ public interface ICSSValueConverter {
 	/**
 	 * Returns String {@link CSSValue} of the result of the conversion of the
 	 * given Object <code>value</code>.
-	 * 
+	 *
 	 * @param value
-	 * 
+	 *
 	 * @param engine
 	 * @param context
-	 * 
+	 *
 	 * @return
 	 */
 	public String convert(Object value, CSSEngine engine, Object context)
@@ -67,7 +67,7 @@ public interface ICSSValueConverter {
 	 * Returns String {@link CSSValue} of the result of the conversion of the
 	 * given Object <code>value</code>. <code>config</code> can be used to
 	 * manage format of the CSSValue String to return.
-	 * 
+	 *
 	 * @param value
 	 * @param engine
 	 * @param context

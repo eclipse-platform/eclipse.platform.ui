@@ -34,11 +34,11 @@ public class CSSMediaRuleImpl extends CSSRuleImpl implements CSSMediaRule {
 	public short getType() {
 		return CSSRule.MEDIA_RULE;
 	}
-	
+
 	// W3C CSSMediaRule API methods
-	
+
 	public void deleteRule(int index) throws DOMException {
-		// TODO Auto-generated method stub		
+		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
@@ -57,9 +57,9 @@ public class CSSMediaRuleImpl extends CSSRuleImpl implements CSSMediaRule {
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	
+
 	// Additional methods
-	
+
 	public void setRuleList(CSSRuleListImpl rules) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");

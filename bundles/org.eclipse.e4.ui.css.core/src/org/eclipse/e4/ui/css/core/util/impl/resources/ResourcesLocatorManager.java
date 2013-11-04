@@ -35,13 +35,13 @@ public class ResourcesLocatorManager implements IResourcesLocatorManager {
 	 */
 	private List uriResolvers = null;
 
-	public ResourcesLocatorManager() {		
+	public ResourcesLocatorManager() {
 		registerResourceLocator(new HttpResourcesLocatorImpl());
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager#registerResourceLocator(org.eclipse.e4.ui.css.core.util.resources.IResourceLocator)
 	 */
 	public void registerResourceLocator(IResourceLocator resourceLocator) {
@@ -56,7 +56,7 @@ public class ResourcesLocatorManager implements IResourcesLocatorManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager#unregisterResourceLocator(org.eclipse.e4.ui.css.core.util.resources.IResourceLocator)
 	 */
 	public void unregisterResourceLocator(IResourceLocator resourceLocator) {
@@ -67,7 +67,7 @@ public class ResourcesLocatorManager implements IResourcesLocatorManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.util.resources.IURIResolver#resolve(java.lang.String)
 	 */
 	public String resolve(String uri) {
@@ -92,7 +92,7 @@ public class ResourcesLocatorManager implements IResourcesLocatorManager {
 			return null;
 		if (uriResolvers == null)
 			return null;
-		
+
 		// Loop for IResourceLocator registered and return the InputStream from
 		// the uri resolved
 		// as soon as an IResourceLocator return an uri resolved which is not

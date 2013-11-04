@@ -1,6 +1,6 @@
 /*
 
-   Copyright 2002  The Apache Software Foundation 
+   Copyright 2002  The Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 /* This class copied from org.apache.batik.css.engine.sac */
 
 package org.eclipse.e4.ui.css.core.impl.sac;
- 
+
 import java.util.Set;
 
 import org.w3c.css.sac.Selector;

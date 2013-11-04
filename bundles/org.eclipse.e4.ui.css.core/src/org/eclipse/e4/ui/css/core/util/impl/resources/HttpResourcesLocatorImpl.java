@@ -24,7 +24,7 @@ public class HttpResourcesLocatorImpl implements IResourceLocator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.util.resources.IURIResolver#resolve(java.lang.String)
 	 */
 	public String resolve(String uri) {
@@ -35,7 +35,7 @@ public class HttpResourcesLocatorImpl implements IResourceLocator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.util.resources.IResourceLocator#getInputStream(java.lang.String)
 	 */
 	public InputStream getInputStream(String uri) throws Exception {
@@ -45,7 +45,7 @@ public class HttpResourcesLocatorImpl implements IResourceLocator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.util.resources.IResourceLocator#getReader(java.lang.String)
 	 */
 	public Reader getReader(String uri) throws Exception {

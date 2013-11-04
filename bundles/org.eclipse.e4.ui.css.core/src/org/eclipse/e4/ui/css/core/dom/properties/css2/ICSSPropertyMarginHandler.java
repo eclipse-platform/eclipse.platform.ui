@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ import org.w3c.dom.css.CSSValue;
 
 /**
  * CSS Border Margin Handler.
- * 
+ *
  * @see http://www.w3schools.com/css/css_reference.asp#margin
  */
 
@@ -24,7 +24,7 @@ public interface ICSSPropertyMarginHandler extends ICSSPropertyHandler {
 
 	/**
 	 * A shorthand property for setting all four margins in one declaration.
-	 * Available values are 
+	 * Available values are
 	 * {margin-top, margin-right, margin-bottom, margin-left}
 	 * @param element
 	 * @param value
@@ -38,7 +38,7 @@ public interface ICSSPropertyMarginHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the top margin. Available values are {length}
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -49,10 +49,10 @@ public interface ICSSPropertyMarginHandler extends ICSSPropertyHandler {
 	public void applyCSSPropertyMarginTop(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception;
 
-	
+
 	/**
 	 * Sets the right margin. Available values are {length}
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -63,10 +63,10 @@ public interface ICSSPropertyMarginHandler extends ICSSPropertyHandler {
 	public void applyCSSPropertyMarginRight(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception;
 
-	
+
 	/**
 	 * Sets the bottom margin. Available values are {length}
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo
@@ -80,7 +80,7 @@ public interface ICSSPropertyMarginHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the left margin. Available values are {length}
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo

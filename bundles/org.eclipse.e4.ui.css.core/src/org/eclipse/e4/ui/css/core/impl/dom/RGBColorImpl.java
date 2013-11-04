@@ -22,7 +22,7 @@ public class RGBColorImpl extends CSSValueImpl implements RGBColor {
 	private CSSPrimitiveValue red;
 	private CSSPrimitiveValue green;
 	private CSSPrimitiveValue blue;
-	
+
 	public RGBColorImpl(LexicalUnit lexicalUnit) {
 		LexicalUnit nextUnit = lexicalUnit.getParameters();
 		red = new Measure(nextUnit);
@@ -71,7 +71,7 @@ public class RGBColorImpl extends CSSValueImpl implements RGBColor {
 	public short getPrimitiveType() {
 		return CSS_RGBCOLOR;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSValue#getCssText()

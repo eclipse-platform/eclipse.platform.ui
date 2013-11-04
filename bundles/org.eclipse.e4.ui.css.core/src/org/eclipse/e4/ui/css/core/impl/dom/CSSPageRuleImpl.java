@@ -33,9 +33,9 @@ public class CSSPageRuleImpl extends CSSRuleImpl implements CSSPageRule {
 	public short getType() {
 		return CSSRule.PAGE_RULE;
 	}
-	
+
 	// W3C CSSPageRule API methods
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSPageRule#getSelectorText()

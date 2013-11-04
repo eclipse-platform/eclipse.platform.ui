@@ -17,10 +17,10 @@ import org.w3c.dom.css.CSSValueList;
 /**
  * Abstract class which manage CSS Property composite like border:solid black
  * 1px; It dispatch
- * 
+ *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
+ *
  */
 public abstract class AbstractCSSPropertyCompositeHandler implements
 		ICSSPropertyCompositeHandler {
@@ -28,7 +28,7 @@ public abstract class AbstractCSSPropertyCompositeHandler implements
 	/**
 	 * Apply CSS Property composite and dispatch CSS Property if CSSValue is
 	 * CSSValueList by calling applyCSSProperty for each item of CSSValue.
-	 * 
+	 *
 	 * @param element
 	 * @param property
 	 * @param value
@@ -52,7 +52,7 @@ public abstract class AbstractCSSPropertyCompositeHandler implements
 
 	/**
 	 * Apply CSS Property.
-	 * 
+	 *
 	 * @param element
 	 * @param value
 	 * @param pseudo

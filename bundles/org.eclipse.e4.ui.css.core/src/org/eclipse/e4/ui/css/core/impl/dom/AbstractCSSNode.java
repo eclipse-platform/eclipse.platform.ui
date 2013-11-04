@@ -18,7 +18,7 @@ import org.eclipse.e4.ui.css.core.dom.parsers.CSSParser;
  * Abstract CSS Node.
  */
 public class AbstractCSSNode {
-	
+
 	public AbstractCSSNode() {
 		super();
 	}

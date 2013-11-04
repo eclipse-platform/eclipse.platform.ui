@@ -12,10 +12,10 @@ package org.eclipse.e4.ui.css.core.dom.properties.converters;
 
 /**
  * CSS Value converter color config to format the CSSValue string color.
- * 
+ *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
+ *
  */
 public class CSSValueConverterConfigColorImpl implements
 		ICSSValueConverterColorConfig {
@@ -37,7 +37,7 @@ public class CSSValueConverterConfigColorImpl implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverterColorConfig#getFormat()
 	 */
 	public int getFormat() {

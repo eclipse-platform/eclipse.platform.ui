@@ -38,7 +38,7 @@ public abstract class SACParserFactory extends ParserFactory implements
 
 	/**
 	 * Return preferred SAC parser name if it is filled and null otherwise.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getPreferredParserName() {
@@ -47,7 +47,7 @@ public abstract class SACParserFactory extends ParserFactory implements
 
 	/**
 	 * Set the preferred SAC parser name to use when makeParser is called.
-	 * 
+	 *
 	 * @param preferredParserName
 	 */
 	public void setPreferredParserName(String preferredParserName) {
@@ -56,7 +56,7 @@ public abstract class SACParserFactory extends ParserFactory implements
 
 	/**
 	 * Return instance of SACParserFactory
-	 * 
+	 *
 	 * @return
 	 */
 	public static ISACParserFactory newInstance() {
@@ -68,7 +68,7 @@ public abstract class SACParserFactory extends ParserFactory implements
 	/**
 	 * Return instance of SAC Parser registered into the factory with name
 	 * <code>name</code>.
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 * @throws ClassNotFoundException

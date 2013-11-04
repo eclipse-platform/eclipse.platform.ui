@@ -22,7 +22,7 @@ import org.w3c.dom.DOMException;
 public class DOMExceptionImpl extends DOMException {
 
 	private static final long serialVersionUID = 4001374962941459011L;
-	
+
 	public static final int SYNTAX_ERROR = 0;
 	public static final int ARRAY_OUT_OF_BOUNDS = 1;
 	public static final int READ_ONLY_STYLE_SHEET = 2;
@@ -44,7 +44,7 @@ public class DOMExceptionImpl extends DOMException {
 	public static final int NOT_FOUND = 18;
 	public static final int NOT_IMPLEMENTED = 19;
 	public static final int NO_MODIFICATION_ALLOWED_ERROR = 20;
-	
+
 	private static ResourceBundle exceptionResource = ResourceBundle.getBundle(
 			ExceptionResource.class.getName(), Locale.getDefault());
 

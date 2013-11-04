@@ -20,7 +20,7 @@ public interface IResourceLocator extends IURIResolver {
 
 	/**
 	 * Return {@link InputStream} from the <code>uri</code>.
-	 * 
+	 *
 	 * @param uri
 	 * @return
 	 * @throws Exception
@@ -29,7 +29,7 @@ public interface IResourceLocator extends IURIResolver {
 
 	/**
 	 * Return {@link Reader} from the <code>uri</code>.
-	 * 
+	 *
 	 * @param uri
 	 * @return
 	 * @throws Exception

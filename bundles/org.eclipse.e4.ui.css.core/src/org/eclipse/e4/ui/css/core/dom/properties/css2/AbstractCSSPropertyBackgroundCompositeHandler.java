@@ -18,10 +18,10 @@ import org.w3c.dom.css.CSSValue;
 /**
  * Abstract CSS property composite background which is enable to dispatch to well
  * CSS Property background-color, background-image...
- * 
+ *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
+ *
  */
 public abstract class AbstractCSSPropertyBackgroundCompositeHandler extends
 		AbstractCSSPropertyCompositeHandler {

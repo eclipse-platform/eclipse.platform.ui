@@ -17,7 +17,7 @@ public interface IDocumentHandlerFactory {
 
 	/**
 	 * Return default instance of {@link ExtendedDocumentHandler}.
-	 *  
+	 *
 	 * @return
 	 */
 	public ExtendedDocumentHandler makeDocumentHandler();

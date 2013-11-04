@@ -15,7 +15,7 @@ import org.eclipse.e4.ui.css.core.dom.properties.providers.CSSPropertyHandlerLaz
 
 /**
  * Exception used when java Class CSS property is not retrieved.
- * 
+ *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
  * @see CSSPropertyHandlerLazyProviderImpl

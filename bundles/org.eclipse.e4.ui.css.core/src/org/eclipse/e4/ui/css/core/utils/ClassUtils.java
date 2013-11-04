@@ -17,7 +17,7 @@ public class ClassUtils {
 
 	/**
 	 * Return the simple name of Class <code>c</code>.
-	 * 
+	 *
 	 * @param c
 	 * @return
 	 */
@@ -32,7 +32,7 @@ public class ClassUtils {
 
 	/**
 	 * Return the package name of Class <code>c</code>.
-	 * 
+	 *
 	 * @param c
 	 * @return
 	 */

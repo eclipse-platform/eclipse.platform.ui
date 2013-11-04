@@ -17,10 +17,10 @@ import java.util.Set;
 
 /**
  * Abstract class resources registry which implement basic cache with Map.
- * 
+ *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
+ *
  */
 public abstract class AbstractResourcesRegistry implements IResourcesRegistry {
 
@@ -28,7 +28,7 @@ public abstract class AbstractResourcesRegistry implements IResourcesRegistry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.core.css.resources.IResourcesRegistry#getResource(java.lang.Object,
 	 *      java.lang.Object)
 	 */
@@ -43,7 +43,7 @@ public abstract class AbstractResourcesRegistry implements IResourcesRegistry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.core.css.resources.IResourcesRegistry#registerResource(java.lang.Object,
 	 *      java.lang.Object, java.lang.Object)
 	 */
@@ -60,7 +60,7 @@ public abstract class AbstractResourcesRegistry implements IResourcesRegistry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.core.css.resources.IResourcesRegistry#unregisterResource(java.lang.Object,
 	 *      java.lang.Object)
 	 */
@@ -84,14 +84,14 @@ public abstract class AbstractResourcesRegistry implements IResourcesRegistry {
 			}
 		}
 	}
-	
+
 	public Object getResourceType(Object resource) {
 		return resource.getClass();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.core.css.resources.IResourcesRegistry#dispose()
 	 */
 	public void dispose() {

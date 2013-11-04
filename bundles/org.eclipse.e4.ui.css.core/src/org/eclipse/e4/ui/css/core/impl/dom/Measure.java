@@ -4,18 +4,18 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
- 
+
 package org.eclipse.e4.ui.css.core.impl.dom;
 
 import org.w3c.css.sac.LexicalUnit;
 import org.w3c.dom.DOMException;
 
 public class Measure extends CSSValueImpl {
-	
+
 	LexicalUnit value;
 
 	public Measure(LexicalUnit value) {
@@ -59,7 +59,7 @@ public class Measure extends CSSValueImpl {
 		// TODO There are more cases to catch of getLexicalUnitType()
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSPrimitiveValue#getPrimitiveType()
@@ -97,7 +97,7 @@ public class Measure extends CSSValueImpl {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED - LexicalUnit type: " + value.getLexicalUnitType());
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSValue#getCssText()

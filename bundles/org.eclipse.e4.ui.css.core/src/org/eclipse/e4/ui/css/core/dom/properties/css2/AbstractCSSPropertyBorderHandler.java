@@ -18,7 +18,7 @@ import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
 /**
- * Abstract CSS property background which is enable to manage 
+ * Abstract CSS property background which is enable to manage
  * apply CSS Property border, border-color, border-style...
  */
 public abstract class AbstractCSSPropertyBorderHandler extends

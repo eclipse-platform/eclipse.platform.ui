@@ -19,7 +19,7 @@ public abstract class DocumentHandlerFactory implements IDocumentHandlerFactory 
 
 	/**
 	 * Return instance of {@link DocumentHandlerFactory}.
-	 * 
+	 *
 	 * @return
 	 */
 	public static DocumentHandlerFactory newInstance() {

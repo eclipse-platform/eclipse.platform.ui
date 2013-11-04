@@ -23,7 +23,7 @@ import org.w3c.dom.css.Rect;
 public abstract class CSSValueImpl extends AbstractCSSNode implements CSSPrimitiveValue, CSSValue {
 
 	// W3C CSSValue API methods
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSValue#getCssText()
@@ -68,7 +68,7 @@ public abstract class CSSValueImpl extends AbstractCSSNode implements CSSPrimiti
 	public Counter getCounterValue() throws DOMException {
 		throw new DOMExceptionImpl(DOMException.INVALID_ACCESS_ERR, DOMExceptionImpl.COUNTER_ERROR);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSPrimitiveValue#getRGBColorValue()
@@ -76,7 +76,7 @@ public abstract class CSSValueImpl extends AbstractCSSNode implements CSSPrimiti
 	public RGBColor getRGBColorValue() throws DOMException {
 		throw new DOMExceptionImpl(DOMException.INVALID_ACCESS_ERR, DOMExceptionImpl.RGBCOLOR_ERROR);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSPrimitiveValue#getRectValue()
@@ -111,9 +111,9 @@ public abstract class CSSValueImpl extends AbstractCSSNode implements CSSPrimiti
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
-	
+
 	// Additional methods
-	
+
 	public float getFloatValue(short valueType) throws DOMException {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
