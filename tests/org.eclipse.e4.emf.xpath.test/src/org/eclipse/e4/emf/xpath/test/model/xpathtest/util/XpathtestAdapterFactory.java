@@ -84,6 +84,22 @@ public class XpathtestAdapterFactory extends AdapterFactoryImpl {
 				return createExtendedNodeAdapter();
 			}
 			@Override
+			public Adapter caseMenu(Menu object) {
+				return createMenuAdapter();
+			}
+			@Override
+			public Adapter caseMenuItem(MenuItem object) {
+				return createMenuItemAdapter();
+			}
+			@Override
+			public Adapter caseMenuElement(MenuElement object) {
+				return createMenuElementAdapter();
+			}
+			@Override
+			public Adapter caseMenuContainer(MenuContainer object) {
+				return createMenuContainerAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -142,6 +158,62 @@ public class XpathtestAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createExtendedNodeAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.Menu <em>Menu</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.emf.xpath.test.model.xpathtest.Menu
+	 * @generated
+	 */
+	public Adapter createMenuAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuItem <em>Menu Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuItem
+	 * @generated
+	 */
+	public Adapter createMenuItemAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuElement <em>Menu Element</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuElement
+	 * @generated
+	 */
+	public Adapter createMenuElementAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuContainer <em>Menu Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuContainer
+	 * @generated
+	 */
+	public Adapter createMenuContainerAdapter() {
 		return null;
 	}
 

@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ecore:EPackage xmi:version="2.0"
-    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="xpathtest"
-    nsURI="http://www.eclipse.org/emf/xpathtest" nsPrefix="xpathtest">
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="xpathtest" nsURI="http://www.eclipse.org/emf/xpathtest" nsPrefix="xpathtest">
   <eClassifiers xsi:type="ecore:EClass" name="Root">
     <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" upperBound="-1"
         eType="#//Node" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Node">
+  <eClassifiers xsi:type="ecore:EClass" name="Node" eSuperTypes="#//MenuContainer">
     <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//Node"
         eOpposite="#//Node/children"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
@@ -24,5 +22,20 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ExtendedNode" eSuperTypes="#//Node">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Menu" eSuperTypes="#//MenuElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        eType="#//MenuElement" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MenuItem" eSuperTypes="#//MenuElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="mnemonic" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EChar"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MenuElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MenuContainer" abstract="true" interface="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
+        eType="#//MenuElement" containment="true"/>
   </eClassifiers>
 </ecore:EPackage>

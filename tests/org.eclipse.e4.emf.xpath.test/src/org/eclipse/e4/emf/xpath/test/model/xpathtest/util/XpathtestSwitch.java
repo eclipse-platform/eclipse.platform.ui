@@ -12,6 +12,8 @@ import org.eclipse.e4.emf.xpath.test.model.xpathtest.*;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.util.Switch;
 
 /**
  * <!-- begin-user-doc -->
@@ -26,7 +28,7 @@ import org.eclipse.emf.ecore.EObject;
  * @see org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestPackage
  * @generated
  */
-public class XpathtestSwitch<T> {
+public class XpathtestSwitch<T> extends Switch<T> {
 	/**
 	 * The cached model package
 	 * <!-- begin-user-doc -->
@@ -48,14 +50,16 @@ public class XpathtestSwitch<T> {
 	}
 
 	/**
-	 * Calls <code>caseXXX</code> for each class of the model until one returns a non null result; it yields that result.
+	 * Checks whether this is a switch for the given package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the first non-null result returned by a <code>caseXXX</code> call.
+	 * @parameter ePackage the package in question.
+	 * @return whether this is a switch for the given package.
 	 * @generated
 	 */
-	public T doSwitch(EObject theEObject) {
-		return doSwitch(theEObject.eClass(), theEObject);
+	@Override
+	protected boolean isSwitchFor(EPackage ePackage) {
+		return ePackage == modelPackage;
 	}
 
 	/**
@@ -65,26 +69,7 @@ public class XpathtestSwitch<T> {
 	 * @return the first non-null result returned by a <code>caseXXX</code> call.
 	 * @generated
 	 */
-	protected T doSwitch(EClass theEClass, EObject theEObject) {
-		if (theEClass.eContainer() == modelPackage) {
-			return doSwitch(theEClass.getClassifierID(), theEObject);
-		}
-		else {
-			List<EClass> eSuperTypes = theEClass.getESuperTypes();
-			return
-				eSuperTypes.isEmpty() ?
-					defaultCase(theEObject) :
-					doSwitch(eSuperTypes.get(0), theEObject);
-		}
-	}
-
-	/**
-	 * Calls <code>caseXXX</code> for each class of the model until one returns a non null result; it yields that result.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the first non-null result returned by a <code>caseXXX</code> call.
-	 * @generated
-	 */
+	@Override
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
 			case XpathtestPackage.ROOT: {
@@ -96,6 +81,7 @@ public class XpathtestSwitch<T> {
 			case XpathtestPackage.NODE: {
 				Node node = (Node)theEObject;
 				T result = caseNode(node);
+				if (result == null) result = caseMenuContainer(node);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -103,6 +89,33 @@ public class XpathtestSwitch<T> {
 				ExtendedNode extendedNode = (ExtendedNode)theEObject;
 				T result = caseExtendedNode(extendedNode);
 				if (result == null) result = caseNode(extendedNode);
+				if (result == null) result = caseMenuContainer(extendedNode);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case XpathtestPackage.MENU: {
+				Menu menu = (Menu)theEObject;
+				T result = caseMenu(menu);
+				if (result == null) result = caseMenuElement(menu);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case XpathtestPackage.MENU_ITEM: {
+				MenuItem menuItem = (MenuItem)theEObject;
+				T result = caseMenuItem(menuItem);
+				if (result == null) result = caseMenuElement(menuItem);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case XpathtestPackage.MENU_ELEMENT: {
+				MenuElement menuElement = (MenuElement)theEObject;
+				T result = caseMenuElement(menuElement);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case XpathtestPackage.MENU_CONTAINER: {
+				MenuContainer menuContainer = (MenuContainer)theEObject;
+				T result = caseMenuContainer(menuContainer);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -156,6 +169,66 @@ public class XpathtestSwitch<T> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Menu</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Menu</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseMenu(Menu object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Menu Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Menu Item</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseMenuItem(MenuItem object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Menu Element</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Menu Element</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseMenuElement(MenuElement object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Menu Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Menu Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseMenuContainer(MenuContainer object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>EObject</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -166,6 +239,7 @@ public class XpathtestSwitch<T> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject)
 	 * @generated
 	 */
+	@Override
 	public T defaultCase(EObject object) {
 		return null;
 	}

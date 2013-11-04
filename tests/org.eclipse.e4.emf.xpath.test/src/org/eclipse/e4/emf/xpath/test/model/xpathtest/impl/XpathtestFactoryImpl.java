@@ -31,7 +31,7 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 	 */
 	public static XpathtestFactory init() {
 		try {
-			XpathtestFactory theXpathtestFactory = (XpathtestFactory)EPackage.Registry.INSTANCE.getEFactory("http://www.eclipse.org/emf/xpathtest"); 
+			XpathtestFactory theXpathtestFactory = (XpathtestFactory)EPackage.Registry.INSTANCE.getEFactory(XpathtestPackage.eNS_URI);
 			if (theXpathtestFactory != null) {
 				return theXpathtestFactory;
 			}
@@ -63,6 +63,9 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 			case XpathtestPackage.ROOT: return createRoot();
 			case XpathtestPackage.NODE: return createNode();
 			case XpathtestPackage.EXTENDED_NODE: return createExtendedNode();
+			case XpathtestPackage.MENU: return createMenu();
+			case XpathtestPackage.MENU_ITEM: return createMenuItem();
+			case XpathtestPackage.MENU_ELEMENT: return createMenuElement();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -96,6 +99,36 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 	public ExtendedNode createExtendedNode() {
 		ExtendedNodeImpl extendedNode = new ExtendedNodeImpl();
 		return extendedNode;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Menu createMenu() {
+		MenuImpl menu = new MenuImpl();
+		return menu;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MenuItem createMenuItem() {
+		MenuItemImpl menuItem = new MenuItemImpl();
+		return menuItem;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MenuElement createMenuElement() {
+		MenuElementImpl menuElement = new MenuElementImpl();
+		return menuElement;
 	}
 
 	/**

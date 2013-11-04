@@ -33,7 +33,7 @@ import org.eclipse.emf.ecore.EObject;
  * @model
  * @generated
  */
-public interface Node extends EObject {
+public interface Node extends MenuContainer {
 	/**
 	 * Returns the value of the '<em><b>Parent</b></em>' container reference.
 	 * It is bidirectional and its opposite is '{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.Node#getChildren <em>Children</em>}'.

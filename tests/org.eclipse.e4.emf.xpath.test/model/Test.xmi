@@ -1,14 +1,74 @@
 <?xml version="1.0" encoding="ASCII"?>
-<xpathtest:Root xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xpathtest="http://www.eclipse.org/emf/xpathtest" xsi:schemaLocation="http://www.eclipse.org/emf/xpathtest XPathTest.ecore" id="root">
-  <nodes root="/" cat="cat1" value="val1" id="element1">
-    <children root="/" cat="cat1.1" value="val1.1" id="element1.1" inrefs="//@nodes.1/@children.0 //@nodes.1/@children.0/@children.0"/>
-    <children root="/" cat="cat1.2" value="val1.2" id="element1.2"/>
+<xpathtest:Root
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xpathtest="http://www.eclipse.org/emf/xpathtest"
+    xsi:schemaLocation="http://www.eclipse.org/emf/xpathtest XPathTest.ecore"
+    id="root">
+  <nodes root="/"
+      cat="cat1"
+      value="val1"
+      id="element1">
+    <children
+        root="/"
+        cat="cat1.1"
+        value="val1.1"
+        id="element1.1"
+        inrefs="//@nodes.1/@children.0 //@nodes.1/@children.0/@children.0"/>
+    <children
+        root="/"
+        cat="cat1.2"
+        value="val1.2"
+        id="element1.2"/>
   </nodes>
-  <nodes root="/" cat="cat2" value="val2" id="element2">
-    <children root="/" cat="cat2.1" value="val2.1" id="element2.1" outrefs="//@nodes.0/@children.0">
-      <children root="/" cat="cat2.1.1" value="val2.1.1" id="element2.1.1" outrefs="//@nodes.0/@children.0"/>
+  <nodes root="/"
+      cat="cat2"
+      value="val2"
+      id="element2">
+    <children
+        root="/"
+        cat="cat2.1"
+        value="val2.1"
+        id="element2.1"
+        outrefs="//@nodes.0/@children.0">
+      <children
+          root="/"
+          cat="cat2.1.1"
+          value="val2.1.1"
+          id="element2.1.1"
+          outrefs="//@nodes.0/@children.0"/>
     </children>
-    <children root="/" cat="cat2.2" value="val2.2" id="element2.2"/>
-    <children xsi:type="xpathtest:ExtendedNode" root="/" cat="cat2.3" value="val2.3" id="element2.3" name="myname"/>
+    <children
+        root="/"
+        cat="cat2.2"
+        value="val2.2"
+        id="element2.2"/>
+    <children
+        xsi:type="xpathtest:ExtendedNode"
+        root="/"
+        cat="cat2.3"
+        value="val2.3"
+        id="element2.3"
+        name="myname"/>
+  </nodes>
+  <nodes id="menu.1"/>
+  <nodes root="/"
+      cat="cat-menu"
+      value=""
+      id="menuContainer.1">
+    <menus xsi:type="xpathtest:Menu"
+        id="menu.1"
+        label="Menu One">
+      <children
+          xsi:type="xpathtest:MenuItem"
+          id="item.1"
+          label="MenuItem 1"
+          mnemonic="101"/>
+      <children
+          xsi:type="xpathtest:MenuItem"
+          id="item.2"
+          label="MenuItem 2"/>
+    </menus>
   </nodes>
 </xpathtest:Root>

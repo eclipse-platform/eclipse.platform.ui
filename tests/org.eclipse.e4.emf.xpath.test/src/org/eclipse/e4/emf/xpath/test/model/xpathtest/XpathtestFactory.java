@@ -53,6 +53,33 @@ public interface XpathtestFactory extends EFactory {
 	ExtendedNode createExtendedNode();
 
 	/**
+	 * Returns a new object of class '<em>Menu</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Menu</em>'.
+	 * @generated
+	 */
+	Menu createMenu();
+
+	/**
+	 * Returns a new object of class '<em>Menu Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Menu Item</em>'.
+	 * @generated
+	 */
+	MenuItem createMenuItem();
+
+	/**
+	 * Returns a new object of class '<em>Menu Element</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Menu Element</em>'.
+	 * @generated
+	 */
+	MenuElement createMenuElement();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
