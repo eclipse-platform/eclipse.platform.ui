@@ -42,7 +42,7 @@
 }
 
 .DragFeedback {
-    background-color: #00FF00; 
+    background-color: COLOR-WIDGET-NORMAL-SHADOW;
 }
 
 .ModifiedDragFeedback {
