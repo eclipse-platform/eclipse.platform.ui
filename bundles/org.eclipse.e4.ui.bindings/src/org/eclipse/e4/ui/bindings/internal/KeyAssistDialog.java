@@ -172,7 +172,11 @@ public class KeyAssistDialog extends PopupDialog {
 			completionsTable = null;
 		}
 		matches = null;
-		return super.close();
+		boolean popupClosed = super.close();
+		if (resetState) {
+			workbenchKeyboard.resetState();
+		}
+		return popupClosed;
 	}
 
 	/**
