@@ -12,12 +12,16 @@
 
 package org.eclipse.ant.internal.ui.views;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ant.internal.core.IAntCoreConstants;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModelContentProvider;
@@ -74,6 +78,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
@@ -93,11 +98,6 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	private List<AntProjectNode> fInput = new ArrayList<AntProjectNode>();
 	private boolean filterInternalTargets = false;
 	private InternalTargetFilter fInternalTargetFilter = null;
-	/**
-	 * This memento allows the Ant view to save and restore state when it is closed and opened within a session. A different memento is supplied by
-	 * the platform for persistence at workbench shutdown.
-	 */
-	private static IMemento fgTempMemento = null;
 
 	/**
 	 * XML tag used to identify an ant project in storage
@@ -301,10 +301,6 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		setFilterInternalTargets(filterInternalTargets);
 
 		projectViewer.setLabelProvider(new AntModelLabelProvider());
-		if (fgTempMemento != null) {
-			restoreViewerInput(fgTempMemento);
-			fgTempMemento = null;
-		}
 		projectViewer.setInput(fInput);
 		projectViewer.setComparator(new ViewerComparator() {
 			/*
@@ -520,9 +516,18 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 */
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
-		init(site);
-		restoreViewerInput(memento);
+		super.init(site, memento);
+		String persistedMemento = AntUIPlugin.getDefault().getDialogSettingsSection(getClass().getName()).get("memento"); //$NON-NLS-1$
+		if (persistedMemento != null) {
+			try {
+				memento = XMLMemento.createReadRoot(new StringReader(persistedMemento));
+			}
+			catch (WorkbenchException e) {
+				// don't do anything. Simply don't restore the settings
+			}
+		}
 		if (memento != null) {
+			restoreViewerInput(memento);
 			IMemento child = memento.getChild(TAG_FILTER_INTERNAL_TARGETS);
 			if (child != null) {
 				filterInternalTargets = Boolean.valueOf(child.getString(KEY_VALUE)).booleanValue();
@@ -537,9 +542,6 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 *            the memento containing the persisted viewer content
 	 */
 	private void restoreViewerInput(IMemento memento) {
-		if (memento == null) {
-			return;
-		}
 		IMemento[] projects = memento.getChildren(TAG_PROJECT);
 		if (projects.length < 1) {
 			return;
@@ -573,6 +575,49 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		}
 	}
 
+	/**
+	 * Saves the state of the viewer into the dialog settings. Works around the issues of {@link #saveState()} not being called when a view is closed
+	 * while the workbench is still running
+	 * 
+	 * @since 3.5.500
+	 */
+	private void saveViewerState() {
+		XMLMemento memento = XMLMemento.createWriteRoot("antView"); //$NON-NLS-1$
+		StringWriter writer = new StringWriter();
+		AntProjectNode[] projects = getProjects();
+		if (projects.length > 0) {
+			AntProjectNode project;
+			IMemento projectMemento;
+			for (int i = 0; i < projects.length; i++) {
+				project = projects[i];
+				projectMemento = memento.createChild(TAG_PROJECT);
+				projectMemento.putString(KEY_PATH, project.getBuildFileName());
+				projectMemento.putString(KEY_NAME, project.getLabel());
+				String defaultTarget = project.getDefaultTargetName();
+				if (project.isErrorNode()) {
+					projectMemento.putString(KEY_ERROR, String.valueOf(true));
+				} else {
+					if (project.isWarningNode()) {
+						projectMemento.putString(KEY_WARNING, String.valueOf(true));
+					}
+					if (defaultTarget != null) {
+						projectMemento.putString(KEY_DEFAULT, defaultTarget);
+					}
+					projectMemento.putString(KEY_ERROR, String.valueOf(false));
+				}
+			}
+			IMemento filterTargets = memento.createChild(TAG_FILTER_INTERNAL_TARGETS);
+			filterTargets.putString(KEY_VALUE, isFilterInternalTargets() ? String.valueOf(true) : String.valueOf(false));
+		}
+		try {
+			memento.save(writer);
+			AntUIPlugin.getDefault().getDialogSettingsSection(getClass().getName()).put("memento", writer.getBuffer().toString()); //$NON-NLS-1$
+		}
+		catch (IOException e) {
+			// don't do anything. Simply don't store the settings
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -580,30 +625,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 */
 	@Override
 	public void saveState(IMemento memento) {
-		// Save the projects
-		AntProjectNode[] projects = getProjects();
-		AntProjectNode project;
-		IMemento projectMemento;
-		for (int i = 0; i < projects.length; i++) {
-			project = projects[i];
-			projectMemento = memento.createChild(TAG_PROJECT);
-			projectMemento.putString(KEY_PATH, project.getBuildFileName());
-			projectMemento.putString(KEY_NAME, project.getLabel());
-			String defaultTarget = project.getDefaultTargetName();
-			if (project.isErrorNode()) {
-				projectMemento.putString(KEY_ERROR, String.valueOf(true));
-			} else {
-				if (project.isWarningNode()) {
-					projectMemento.putString(KEY_WARNING, String.valueOf(true));
-				}
-				if (defaultTarget != null) {
-					projectMemento.putString(KEY_DEFAULT, defaultTarget);
-				}
-				projectMemento.putString(KEY_ERROR, String.valueOf(false));
-			}
-		}
-		IMemento filterTargets = memento.createChild(TAG_FILTER_INTERNAL_TARGETS);
-		filterTargets.putString(KEY_VALUE, isFilterInternalTargets() ? String.valueOf(true) : String.valueOf(false));
+		saveViewerState();
 	}
 
 	/*
@@ -613,8 +635,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 */
 	@Override
 	public void dispose() {
-		fgTempMemento = XMLMemento.createWriteRoot("AntViewMemento"); //$NON-NLS-1$
-		saveState(fgTempMemento);
+		saveViewerState();
 		fInput.clear();
 		super.dispose();
 		if (openWithMenu != null) {
