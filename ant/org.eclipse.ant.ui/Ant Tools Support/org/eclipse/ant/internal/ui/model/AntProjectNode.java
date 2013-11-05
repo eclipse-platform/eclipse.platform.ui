@@ -94,6 +94,9 @@ public class AntProjectNode extends AntElementNode {
 	}
 
 	public String getDescription() {
+		if (fProject == null) {
+			return AntModelMessages.AntProjectNode_0;
+		}
 		return fProject.getDescription();
 	}
 

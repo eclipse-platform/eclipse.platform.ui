@@ -91,10 +91,10 @@ public class AntProjectNodeProxy extends AntProjectNode {
 	 */
 	@Override
 	public String getDescription() {
-		if (fProject != null) {
-			return super.getDescription();
+		if (fProject == null) {
+			parseBuildFile();
 		}
-		return null;
+		return super.getDescription();
 	}
 
 	/*
@@ -104,20 +104,10 @@ public class AntProjectNodeProxy extends AntProjectNode {
 	 */
 	@Override
 	public String getLabel() {
-		if (fName != null) {
-			return fName;
-		}
 		if (fProject == null) {
 			parseBuildFile();
 		}
-		StringBuffer name = new StringBuffer(super.getLabel());
-		AntProjectNode realNode = getRealNode();
-		if (realNode != null && realNode.getProblemMessage() != null) {
-			name.append(" <"); //$NON-NLS-1$
-			name.append(getRealNode().getProblemMessage());
-			name.append('>');
-		}
-		fName = name.toString();
+		fName = super.getLabel();
 		return fName;
 	}
 
