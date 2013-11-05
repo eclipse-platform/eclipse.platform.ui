@@ -570,6 +570,10 @@ public class KeyBindingDispatcher {
 		}
 	}
 
+	public void resetState() {
+		resetState(true);
+	}
+
 	private void resetState(boolean clearRememberedState) {
 		startTime = Long.MAX_VALUE;
 		state = KeySequence.getInstance();
