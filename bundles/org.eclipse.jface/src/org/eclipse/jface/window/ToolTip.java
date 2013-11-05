@@ -17,8 +17,6 @@ import java.util.HashMap;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -102,15 +100,6 @@ public abstract class ToolTip {
 	public ToolTip(Control control, int style, boolean manualActivation) {
 		this.control = control;
 		this.style = style;
-		this.control.addDisposeListener(new DisposeListener() {
-
-			public void widgetDisposed(DisposeEvent e) {
-				data = null;
-				deactivate();
-			}
-
-		});
-
 		this.listener = new ToolTipOwnerControlListener();
 		this.shellListener = new Listener() {
 			public void handleEvent(final Event event) {
@@ -452,6 +441,10 @@ public abstract class ToolTip {
 			tip.dispose();
 			CURRENT_TOOLTIP = null;
 			afterHideToolTip(event);
+		}
+		if (event != null && event.type == SWT.Dispose) {
+			deactivate();
+			data = null;
 		}
 	}
 
