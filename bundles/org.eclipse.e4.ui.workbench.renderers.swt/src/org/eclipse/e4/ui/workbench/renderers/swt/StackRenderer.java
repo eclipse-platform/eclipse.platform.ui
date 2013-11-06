@@ -749,6 +749,10 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	public CTabItem findItemForPart(MPart part) {
+		// Invisible parts don't have items
+		if (!part.isToBeRendered())
+			return null;
+
 		// is this a direct child of the stack?
 		if (part.getParent() != null
 				&& part.getParent().getRenderer() == StackRenderer.this) {
