@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 		IBM - Initial API and implementation
- * 		Remy Chi Jian Suen <remy.suen@gmail.com>
- * 			- Fix for Bug 155436 [IDE] Project>Clean dialog should not use a question-mark icon
- * 		Mark Melvin <mark_melvin@amis.com>
+ *     IBM - Initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - [IDE] Project>Clean dialog should not use a question-mark icon - http://bugs.eclipse.org/155436
+ *     Mark Melvin <mark_melvin@amis.com>
+ *     Christian Georgi <christian.georgi@sap.com> -  [IDE] Clean dialog should scroll to reveal selected projects - http://bugs.eclipse.org/415522
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
