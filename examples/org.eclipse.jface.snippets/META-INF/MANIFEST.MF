@@ -9,6 +9,8 @@ Require-Bundle: org.eclipse.jface,
  org.eclipse.core.runtime
 Export-Package: org.eclipse.jface.snippets.dialogs,
  org.eclipse.jface.snippets.layout,
+ org.eclipse.jface.snippets.resources,
  org.eclipse.jface.snippets.viewers,
- org.eclipse.jface.snippets.window
+ org.eclipse.jface.snippets.window,
+ org.eclipse.jface.snippets.wizard
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
