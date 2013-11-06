@@ -765,6 +765,10 @@ public class StackRenderer extends LazyStackRenderer {
 		// Do we have any stacks with place holders for the element
 		// that's changed?
 		MWindow win = modelService.getTopLevelWindowFor(part);
+
+		if (win == null)
+			return null;
+
 		List<MPlaceholder> refs = modelService.findElements(win, null,
 				MPlaceholder.class, null);
 		if (refs != null) {
