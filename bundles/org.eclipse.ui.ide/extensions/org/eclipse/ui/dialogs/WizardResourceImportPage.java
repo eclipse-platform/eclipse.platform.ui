@@ -332,6 +332,16 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
     }
 
     /**
+     * <bold>DO NOT USE THIS METHOD</bold>
+     * Returns this page's list of currently-specified resources to be 
+     * imported filtered by the IElementFilter.
+     * @deprecated Should use the API {@link IElementFilter}
+     */
+    protected void getSelectedResources(org.eclipse.ui.internal.ide.dialogs.IElementFilter filter, IProgressMonitor monitor) throws InterruptedException {
+        this.selectionGroup.getAllCheckedListItems(filter, monitor);
+    }
+
+    /**
      * Returns the container resource specified in the container name entry field,
      * or <code>null</code> if such a container does not exist in the workbench.
      *

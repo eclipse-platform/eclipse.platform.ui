@@ -46,7 +46,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
 
 /**
@@ -184,8 +183,9 @@ public class ResourceTreeAndListGroup extends EventManager {
 
     /**
      * This method must be called just before this window becomes visible.
+     * @noreference This method is not intended to be referenced by clients.
      */
-    public void aboutToOpen() {
+    protected void aboutToOpen() {
         determineWhiteCheckedDescendents(root);
         checkNewTreeElements(treeContentProvider.getElements(root));
         currentTreeSelection = null;
@@ -707,13 +707,6 @@ public class ResourceTreeAndListGroup extends EventManager {
         return elements.length;
     }
 
-    /**
-     * Get the table the list viewer uses.
-     * @return org.eclipse.swt.widgets.Table
-     */
-    public Table getListTable() {
-        return this.listViewer.getTable();
-    }
 
     /**
      *	Logically gray-check all ancestors of treeItem by ensuring that they
