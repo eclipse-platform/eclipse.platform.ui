@@ -200,6 +200,13 @@ public class BasicPartList extends AbstractTableInformationControl {
 				getShell().dispose();
 				return true;
 			}
+
+			// Remove part from viewer model
+			@SuppressWarnings("unchecked")
+			List<Object> viewerInput = (List<Object>) getTableViewer()
+					.getInput();
+			viewerInput.remove(selectedElement);
+
 		}
 		return false;
 
