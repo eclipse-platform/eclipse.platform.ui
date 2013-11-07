@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -39,6 +40,7 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchCategoryFilter;
+
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -322,15 +324,13 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		UIJob exportjob = new UIJob(getContainer().getShell().getDisplay(), WizardMessages.ExportLaunchConfigurationsWizard_0) {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				if(monitor == null) {
-					monitor = new NullProgressMonitor();
-				}
+				IProgressMonitor progressMonitor = monitor != null ? monitor : new NullProgressMonitor();
 				IPath destpath = new Path(dpath);
 				File destfolder = destpath.toFile();
 				if(!destfolder.exists()) {
 					destfolder.mkdirs();
 				}
-				monitor.beginTask(WizardMessages.ExportLaunchConfigurationsWizardPage_10, configs.length);
+				progressMonitor.beginTask(WizardMessages.ExportLaunchConfigurationsWizardPage_10, configs.length);
 				try {
 					List<IStatus> errors = null;
 					IFileStore file = null;
@@ -338,7 +338,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 					boolean owall = false, nowall = false;
 					MessageDialog dialog = null;
 					for(int i = 0; i < configs.length; i++) {
-						if(monitor.isCanceled()) {
+						if (progressMonitor.isCanceled()) {
 							return Status.CANCEL_STATUS;
 						}
 						if(configs[i] instanceof ILaunchConfiguration) {
@@ -349,19 +349,19 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 									if (errors == null) {
 										errors = new ArrayList<IStatus>(configs.length);
 									}
-									errors.add(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(),
- MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_19, new Object[] { launchConfig.getName() }), null));
+									errors.add(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_19, new Object[] { launchConfig.getName() }), null));
 								} else {
 									newfile = new File(destpath.append(file.getName()).toOSString());
 									if(newfile.exists() & !overwrite) {
 										if(nowall) {
 											continue;
 										}
-										dialog = new MessageDialog(DebugUIPlugin.getShell(), 
-												WizardMessages.ExportLaunchConfigurationsWizardPage_11, 
-												null, 
- MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_12, new Object[] { file.getName() }),
-												MessageDialog.QUESTION, new String[] {WizardMessages.ExportLaunchConfigurationsWizardPage_13, WizardMessages.ExportLaunchConfigurationsWizardPage_14, WizardMessages.ExportLaunchConfigurationsWizardPage_15, WizardMessages.ExportLaunchConfigurationsWizardPage_16, WizardMessages.ExportLaunchConfigurationsWizardPage_17}, 0);
+										dialog = new MessageDialog(DebugUIPlugin.getShell(), WizardMessages.ExportLaunchConfigurationsWizardPage_11, null, MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_12, new Object[] { file.getName() }), MessageDialog.QUESTION, new String[] {
+												WizardMessages.ExportLaunchConfigurationsWizardPage_13,
+												WizardMessages.ExportLaunchConfigurationsWizardPage_14,
+												WizardMessages.ExportLaunchConfigurationsWizardPage_15,
+												WizardMessages.ExportLaunchConfigurationsWizardPage_16,
+												WizardMessages.ExportLaunchConfigurationsWizardPage_17 }, 0);
 										if(!owall) {
 											int ret = dialog.open();
 											switch(ret) {
@@ -379,7 +379,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 													break;
 												}
 												case 4: {
-													monitor.setCanceled(true);
+													progressMonitor.setCanceled(true);
 													break;
 												}
 												default:
@@ -409,8 +409,8 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 								errors.add(e.getStatus());
 							}
 						}
-						if(!monitor.isCanceled()) {
-							monitor.worked(1);
+						if (!progressMonitor.isCanceled()) {
+							progressMonitor.worked(1);
 						}
 					}
 					if (errors == null || errors.isEmpty()) {
@@ -426,7 +426,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 					}
 				}
 				finally {
-					monitor.done();
+					progressMonitor.done();
 				}
 			}
 		};

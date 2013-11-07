@@ -308,7 +308,6 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
      */
     protected void resetSelection(final IPath path) {
     	BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			@SuppressWarnings("restriction")
 			@Override
 			public void run() {
 				File file = new File(path.toOSString());
