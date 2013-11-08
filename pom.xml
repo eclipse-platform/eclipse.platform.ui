@@ -8,6 +8,7 @@
 
   Contributors:
      Igor Fedorenko - initial implementation
+     Lars Vogel <Lars.Vogel@gmail.com> - Bug 421291
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -98,6 +99,7 @@
     <module>bundles/org.eclipse.ui</module>
     <module>bundles/org.eclipse.ui.browser</module>
     <module>bundles/org.eclipse.ui.forms</module>
+    <module>bundles/org.eclipse.ui.images</module>
     <module>bundles/org.eclipse.ui.views</module>
     <module>bundles/org.eclipse.ui.views.properties.tabbed</module>
     <module>bundles/org.eclipse.ui.workbench</module>
