@@ -1,17 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2006 Tom Schindl and others.
+ * Copyright (c) 2006 - 2013 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl - initial API and implementation
+ *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 414565
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -28,8 +30,6 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Customized context menu based on TreeItem-Selection
- * 
- * @author Tom Schindl <tom.schindl@bestsolution.at>
  *
  */
 public class Snippet005TreeCustomMenu {
@@ -83,7 +83,7 @@ public class Snippet005TreeCustomMenu {
 	public class MyModel {
 		public MyModel parent;
 
-		public ArrayList child = new ArrayList();
+		public List<MyModel> child = new ArrayList<MyModel>();
 
 		public int counter;
 
@@ -92,6 +92,7 @@ public class Snippet005TreeCustomMenu {
 			this.counter = counter;
 		}
 
+		@Override
 		public String toString() {
 			String rv = "Item ";
 			if (parent != null) {

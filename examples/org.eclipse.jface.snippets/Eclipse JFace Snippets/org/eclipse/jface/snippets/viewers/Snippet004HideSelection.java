@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Tom Schindl and others.
+ * Copyright (c) 2006 - 2013 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,15 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 414565
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
 
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -26,93 +26,66 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Snippet that hides the selection when nothing is selected.
- * 
- * @author Tom Schindl <tom.schindl@bestsolution.at>
  *
  */
 public class Snippet004HideSelection {
-	private class MyContentProvider implements IStructuredContentProvider {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
-		public Object[] getElements(Object inputElement) {
-			return (MyModel[])inputElement;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
-		public void dispose() {
-			
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			
-		}
-	}
-	
 	public class MyModel {
 		public int counter;
-		
+
 		public MyModel(int counter) {
 			this.counter = counter;
 		}
-		
+
+		@Override
 		public String toString() {
 			return "Item " + this.counter;
 		}
 	}
-	
+
 	public Snippet004HideSelection(Shell shell) {
-		final TableViewer v = new TableViewer(shell,SWT.BORDER|SWT.FULL_SELECTION);
+		final TableViewer v = new TableViewer(shell, SWT.BORDER
+				| SWT.FULL_SELECTION);
 		v.setLabelProvider(new LabelProvider());
-		v.setContentProvider(new MyContentProvider());
+		v.setContentProvider(ArrayContentProvider.getInstance());
 		MyModel[] model = createModel();
 		v.setInput(model);
 		v.getTable().setLinesVisible(true);
 		v.getTable().addMouseListener(new MouseAdapter() {
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.MouseAdapter#mouseDown(org.eclipse.swt.events.MouseEvent)
-			 */
+			@Override
 			public void mouseDown(MouseEvent e) {
-				if( v.getTable().getItem(new Point(e.x,e.y)) == null ) {
+				if (v.getTable().getItem(new Point(e.x, e.y)) == null) {
 					v.setSelection(new StructuredSelection());
 				}
 			}
-			
+
 		});
 	}
-	
+
 	private MyModel[] createModel() {
 		MyModel[] elements = new MyModel[10];
-		
-		for( int i = 0; i < 10; i++ ) {
+
+		for (int i = 0; i < 10; i++) {
 			elements[i] = new MyModel(i);
 		}
-		
+
 		return elements;
 	}
-	
-	/**
-	 * @param args
-	 */
+
 	public static void main(String[] args) {
-		Display display = new Display ();
+		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
 		new Snippet004HideSelection(shell);
-		shell.open ();
-		
-		while (!shell.isDisposed ()) {
-			if (!display.readAndDispatch ()) display.sleep ();
+		shell.open();
+
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch())
+				display.sleep();
 		}
-		
-		display.dispose ();
+
+		display.dispose();
 
 	}
 
