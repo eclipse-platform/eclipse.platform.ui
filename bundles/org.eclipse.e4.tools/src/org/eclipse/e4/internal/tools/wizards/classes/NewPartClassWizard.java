@@ -169,13 +169,13 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 	public static class PartClass extends JavaClass {
 		private PropertyChangeSupport support = new PropertyChangeSupport(this);
 
-		private boolean usePostConstruct;
+		private boolean usePostConstruct = true;
 		private String postConstructMethodName = "postConstruct";
 
 		private boolean usePredestroy;
 		private String preDestroyMethodName = "preDestroy";
 
-		private boolean useFocus = true;
+		private boolean useFocus;
 		private String focusMethodName = "onFocus";
 
 		private boolean usePersist;
