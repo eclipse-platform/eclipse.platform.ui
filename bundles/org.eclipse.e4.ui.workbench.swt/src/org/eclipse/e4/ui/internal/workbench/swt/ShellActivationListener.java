@@ -145,12 +145,14 @@ public class ShellActivationListener implements Listener {
 		SafeRunner.run(new ISafeRunnable() {
 			public void run() throws Exception {
 				if (prevChild == null) {
-					IEclipseContext activeChild = parentContext.getActiveChild();
+					IEclipseContext activeChild = parentContext
+							.getActiveChild();
 					if (activeChild != null) {
 						activeChild.deactivate();
 					}
 				} else {
-					prevChild.activate();
+					// Bug 412001. Don't do this!
+					// prevChild.activate();
 				}
 			}
 
