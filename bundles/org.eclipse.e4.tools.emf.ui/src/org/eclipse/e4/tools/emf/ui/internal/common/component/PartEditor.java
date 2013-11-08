@@ -159,7 +159,7 @@ public class PartEditor extends AbstractComponentEditor {
 	protected Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master, boolean isImport) {
 		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		CTabItem item = new CTabItem(folder, SWT.BORDER);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
 
 		parent = createScrollableContainer(folder);
@@ -234,6 +234,10 @@ public class PartEditor extends AbstractComponentEditor {
 					}
 				});
 			} else {
+				// Dispose the lnk widget, which is unused in this else branch
+				// and screws up the layout: see https://bugs.eclipse.org/421369
+				lnk.dispose();
+
 				Label l = new Label(parent, SWT.NONE);
 				l.setText(Messages.PartEditor_ClassURI);
 				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -245,7 +249,10 @@ public class PartEditor extends AbstractComponentEditor {
 			t.addModifyListener(new ModifyListener() {
 
 				public void modifyText(ModifyEvent e) {
-					lnk.setToolTipText(((Text) (e.getSource())).getText());
+					// lnk might be disposed if else branch above taken
+					if (!lnk.isDisposed()) {
+						lnk.setToolTipText(((Text) (e.getSource())).getText());
+					}
 				}
 			});
 			Binding binding = context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master), new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()), new UpdateValueStrategy());
