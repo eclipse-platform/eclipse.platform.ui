@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google) - Bug 421375
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
@@ -81,11 +82,11 @@ public class AdaptExpression extends CompositeExpression {
 				// if the adapter manager doesn't have an adapter contributed, 
 				// try to see if the variable itself implements IAdaptable
 				if (var instanceof IAdaptable) {
-					try {
-						Class typeClazz= Class.forName(fTypeName, false, var.getClass().getClassLoader());
-						adapted= ((IAdaptable)var).getAdapter(typeClazz);
-					} catch (ClassNotFoundException e) {
+					Class typeClazz= Expressions.loadClass(var.getClass().getClassLoader(), fTypeName);
+					if (typeClazz == null) {
+						return EvaluationResult.FALSE;
 					}
+					adapted= ((IAdaptable)var).getAdapter(typeClazz);
 				}
 				if (adapted == null) {
 					// all attempts failed, return false

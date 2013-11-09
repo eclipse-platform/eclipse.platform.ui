@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google) - Bug 421375
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.osgi.framework.BundleContext;
@@ -39,7 +42,14 @@ public class Expressions {
 	 * conflicts caused by multiple classloader contributions with the same class name. It's a rare
 	 * occurrence but is supported by the OSGi classloader.
 	 */
-	private static WeakHashMap fgKnownClasses;
+	private static WeakHashMap/*<Class, Map<String, Boolean>>*/ fgKnownClasses;
+
+	/**
+	 * Cache to optimize loading of classes for evaluation of adapt expressions. Keys are class
+	 * loaders. Values are sets of qualified class names that the corresponding class loader was
+	 * not able to find.
+	 */
+	private static WeakHashMap/*<ClassLoader, Set<String>>*/ fgNotFoundClasses;
 
 	/* debugging flag to enable tracing */
 	public static final boolean TRACING= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.core.expressions/tracePropertyResolving")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -72,17 +82,66 @@ public class Expressions {
 		nameMap.put(type, isSubtype ? Boolean.TRUE : Boolean.FALSE);
 		return isSubtype;
 	}
-	
+
+	/**
+	 * Loads the given class using the given class loader. Uses {@link #fgNotFoundClasses} for
+	 * performance.
+	 *
+	 * @param classLoader the class loader to use
+	 * @param className the qualified name of the class
+	 * @return the loaded class, or {@code null} if the class was not found
+	 */
+	static Class loadClass(ClassLoader classLoader, String className) {
+		/*
+		 * Class.forName is pretty slow when it throws a ClassNotFoundException. Since expression
+		 * evaluation is done very often, we use a cache of names of classes that failed to load.
+		 */
+		WeakHashMap cache;
+		synchronized (Expressions.class) {
+			cache = getNotFoundClasses();
+			Set classNames= (Set)cache.get(classLoader);
+			if (classNames != null && classNames.contains(className)) {
+				return null;
+			}
+		}
+
+		try {
+			return Class.forName(className, false, classLoader);
+		} catch (ClassNotFoundException e) {
+			synchronized (Expressions.class) {
+				Set classNames= (Set)cache.get(classLoader);
+				if (classNames == null) {
+					classNames= new HashSet();
+					cache.put(classLoader, classNames);
+				}
+				classNames.add(className);
+			}
+		}
+		return null;
+	}
+
 	private static WeakHashMap getKnownClasses() {
+		createClassCaches();
+		return fgKnownClasses;
+	}
+
+	private static WeakHashMap getNotFoundClasses() {
+		createClassCaches();
+		return fgNotFoundClasses;
+	}
+
+	private static void createClassCaches() {
 		if (fgKnownClasses == null) {
 			fgKnownClasses= new WeakHashMap();
+			fgNotFoundClasses = new WeakHashMap();
 			BundleContext bundleContext= ExpressionPlugin.getDefault().getBundleContext();
 			BundleListener listener= new BundleListener() {
 				public void bundleChanged(BundleEvent event) {
-					// invalidate the cache if any of the bundles is stopped
+					// Invalidate the caches if any of the bundles is stopped
 					if (event.getType() == BundleEvent.STOPPED) {
 						synchronized (Expressions.class) {
 							fgKnownClasses.clear();
+							fgNotFoundClasses.clear();
 						}
 					}
 				}
@@ -90,7 +149,6 @@ public class Expressions {
 			ExpressionPlugin.fgBundleListener = listener;
 			bundleContext.addBundleListener(listener);
 		}
-		return fgKnownClasses;
 	}
 
 	public static boolean uncachedIsSubtype(Class clazz, String type) {
