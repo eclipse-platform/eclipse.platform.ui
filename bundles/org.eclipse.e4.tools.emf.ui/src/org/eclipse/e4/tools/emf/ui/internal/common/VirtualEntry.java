@@ -38,6 +38,7 @@ public abstract class VirtualEntry<M> {
 
 		final IListChangeListener listener = new IListChangeListener() {
 
+			@Override
 			public void handleListChange(ListChangeEvent event) {
 				if (!VirtualEntry.this.list.isDisposed()) {
 					List<Object> clean = cleanedList(event.getObservableList());

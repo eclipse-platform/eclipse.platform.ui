@@ -188,6 +188,7 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 			UpdateValueStrategy t2m = new UpdateValueStrategy();
 			t2m.setConverter(new Converter(String.class, MUIElement.class) {
 
+				@Override
 				public Object convert(Object fromObject) {
 					return null;
 				}
@@ -195,6 +196,7 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 			UpdateValueStrategy m2t = new UpdateValueStrategy();
 			m2t.setConverter(new Converter(MUIElement.class, String.class) {
 
+				@Override
 				public Object convert(Object fromObject) {
 					if (fromObject != null) {
 						EObject o = (EObject) fromObject;

@@ -27,6 +27,7 @@ public class EMFDocumentResourceMediator {
 		this.document = new Document();
 		this.document.addDocumentListener(new IDocumentListener() {
 
+			@Override
 			public void documentChanged(DocumentEvent event) {
 				if (updateFromEMF) {
 					return;
@@ -50,6 +51,7 @@ public class EMFDocumentResourceMediator {
 				}
 			}
 
+			@Override
 			public void documentAboutToBeChanged(DocumentEvent event) {
 
 			}

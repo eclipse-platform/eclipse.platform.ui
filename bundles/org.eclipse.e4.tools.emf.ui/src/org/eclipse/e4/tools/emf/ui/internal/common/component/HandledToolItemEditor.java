@@ -124,6 +124,7 @@ public class HandledToolItemEditor extends ToolItemEditor {
 
 		UI_ELEMENT__VISIBLE_WHEN.observe(element).addValueChangeListener(new IValueChangeListener() {
 
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				if (event.diff.getOldValue() != null) {
 					list.remove(event.diff.getOldValue());

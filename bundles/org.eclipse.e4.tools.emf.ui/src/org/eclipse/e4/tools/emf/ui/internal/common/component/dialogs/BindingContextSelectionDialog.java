@@ -72,6 +72,7 @@ public class BindingContextSelectionDialog extends TitleAreaDialog {
 		setTitleImage(titleImage);
 		getShell().addDisposeListener(new DisposeListener() {
 
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				titleImage.dispose();
 			}
@@ -94,6 +95,7 @@ public class BindingContextSelectionDialog extends TitleAreaDialog {
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
@@ -137,6 +139,7 @@ public class BindingContextSelectionDialog extends TitleAreaDialog {
 
 	private static class LabelProviderImpl extends StyledCellLabelProvider implements ILabelProvider {
 
+		@Override
 		public void update(final ViewerCell cell) {
 			MBindingContext cmd = (MBindingContext) cell.getElement();
 
@@ -159,10 +162,12 @@ public class BindingContextSelectionDialog extends TitleAreaDialog {
 			cell.setStyleRanges(styledString.getStyleRanges());
 		}
 
+		@Override
 		public Image getImage(Object element) {
 			return null;
 		}
 
+		@Override
 		public String getText(Object element) {
 			MBindingContext command = (MBindingContext) element;
 			String s = ""; //$NON-NLS-1$

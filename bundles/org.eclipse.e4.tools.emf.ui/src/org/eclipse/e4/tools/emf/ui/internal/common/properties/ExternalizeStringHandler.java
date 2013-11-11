@@ -1,5 +1,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.properties;
 
+import org.eclipse.core.resources.IResource;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -227,10 +229,10 @@ public class ExternalizeStringHandler {
 
 					ByteArrayInputStream stream = new ByteArrayInputStream(b.toString().getBytes());
 					if (f.exists()) {
-						f.appendContents(stream, IFile.KEEP_HISTORY, new NullProgressMonitor());
+						f.appendContents(stream, IResource.KEEP_HISTORY, new NullProgressMonitor());
 					} else {
 						createParent(f.getParent());
-						f.create(stream, IFile.KEEP_HISTORY, new NullProgressMonitor());
+						f.create(stream, IResource.KEEP_HISTORY, new NullProgressMonitor());
 					}
 
 					stream.close();

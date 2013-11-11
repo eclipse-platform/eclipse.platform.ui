@@ -373,6 +373,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 
 		PART__TOOLBAR.observe(element).addValueChangeListener(new IValueChangeListener() {
 
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				if (event.diff.getOldValue() != null) {
 					list.remove(event.diff.getOldValue());

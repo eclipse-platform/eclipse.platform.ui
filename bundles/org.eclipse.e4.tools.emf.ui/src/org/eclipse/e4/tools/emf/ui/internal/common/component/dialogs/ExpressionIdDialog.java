@@ -94,6 +94,7 @@ public class ExpressionIdDialog extends TitleAreaDialog {
 		viewer.setInput(getElements(lookup));
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
@@ -136,10 +137,12 @@ public class ExpressionIdDialog extends TitleAreaDialog {
 			cell.setStyleRanges(str.getStyleRanges());
 		}
 
+		@Override
 		public Image getImage(Object element) {
 			return null;
 		}
 
+		@Override
 		public String getText(Object element) {
 			IConfigurationElement el = (IConfigurationElement) element;
 			return el.getAttribute("id") + " " + el.getContributor().getName(); //$NON-NLS-1$//$NON-NLS-2$

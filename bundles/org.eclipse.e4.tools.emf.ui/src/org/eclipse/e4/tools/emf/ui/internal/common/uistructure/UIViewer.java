@@ -46,6 +46,7 @@ public class UIViewer {
 		IObservableValue value = property.observeDetail(master);
 		value.addValueChangeListener(new IValueChangeListener() {
 
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				if (event.diff.getNewValue() != null) {
 					viewer.setInput(Collections.singleton(event.diff.getNewValue()));
@@ -60,6 +61,7 @@ public class UIViewer {
 		mgr.setRemoveAllWhenShown(true);
 		mgr.addMenuListener(new IMenuListener() {
 
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				final Object o = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
 				if (o instanceof Control) {

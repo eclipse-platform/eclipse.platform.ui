@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.jface.window.Window;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -404,7 +406,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 		if (eClass == BasicPackageImpl.Literals.PART) {
 			ModelImportWizard wizard = new ModelImportWizard(MPart.class, this);
 			WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
-			if (wizardDialog.open() == WizardDialog.OK) {
+			if (wizardDialog.open() == Window.OK) {
 				MPart[] parts = (MPart[]) wizard.getElements(MPart.class);
 				for (MPart part : parts) {
 					addToModel((EObject) part);
@@ -415,7 +417,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 		if (eClass == BasicPackageImpl.Literals.INPUT_PART) {
 			ModelImportWizard wizard = new ModelImportWizard(MInputPart.class, this);
 			WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
-			if (wizardDialog.open() == WizardDialog.OK) {
+			if (wizardDialog.open() == Window.OK) {
 				MInputPart[] parts = (MInputPart[]) wizard.getElements(MInputPart.class);
 				for (MInputPart part : parts) {
 					addToModel((EObject) part);

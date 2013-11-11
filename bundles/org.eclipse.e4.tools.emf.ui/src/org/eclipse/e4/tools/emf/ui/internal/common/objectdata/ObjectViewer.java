@@ -52,6 +52,7 @@ public class ObjectViewer {
 		IObservableValue value = property.observeDetail(master);
 		value.addValueChangeListener(new IValueChangeListener() {
 
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				if (event.diff.getNewValue() != null) {
 					viewer.setInput(Collections.singleton(new JavaObject(event.diff.getNewValue())));
@@ -71,6 +72,7 @@ public class ObjectViewer {
 			mgr.setRemoveAllWhenShown(true);
 			mgr.addMenuListener(new IMenuListener() {
 
+				@Override
 				public void menuAboutToShow(IMenuManager manager) {
 					if (viewer.getSelection().isEmpty()) {
 						return;
@@ -252,19 +254,23 @@ public class ObjectViewer {
 
 	class ContentProviderImpl implements ITreeContentProvider {
 
+		@Override
 		public void dispose() {
 
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((Collection<?>) inputElement).toArray();
 
 		}
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof JavaObject) {
 				return ((JavaObject) parentElement).getAttributes().toArray();
@@ -274,11 +280,13 @@ public class ObjectViewer {
 			return new Object[0];
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			return getChildren(element).length > 0;
 		}

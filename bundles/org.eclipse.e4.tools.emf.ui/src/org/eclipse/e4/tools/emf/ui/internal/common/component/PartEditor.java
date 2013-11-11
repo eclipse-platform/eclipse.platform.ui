@@ -248,6 +248,7 @@ public class PartEditor extends AbstractComponentEditor {
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			t.addModifyListener(new ModifyListener() {
 
+				@Override
 				public void modifyText(ModifyEvent e) {
 					// lnk might be disposed if else branch above taken
 					if (!lnk.isDisposed()) {
@@ -403,6 +404,7 @@ public class PartEditor extends AbstractComponentEditor {
 
 		PART__TOOLBAR.observe(element).addValueChangeListener(new IValueChangeListener() {
 
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				if (event.diff.getOldValue() != null) {
 					list.remove(event.diff.getOldValue());

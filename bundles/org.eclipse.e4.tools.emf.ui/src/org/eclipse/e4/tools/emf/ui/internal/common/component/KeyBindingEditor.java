@@ -298,6 +298,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 		b.setText(Messages.ModelTooling_Common_Remove);
 		b.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 				if (!s.isEmpty()) {
@@ -348,6 +349,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 	class BindingValidator implements IValidator {
 
+		@Override
 		public IStatus validate(Object value) {
 			int statusCode = getEditor().isLiveModel() ? IStatus.ERROR : IStatus.WARNING;
 			if (value != null && value.toString().trim().length() > 0) {

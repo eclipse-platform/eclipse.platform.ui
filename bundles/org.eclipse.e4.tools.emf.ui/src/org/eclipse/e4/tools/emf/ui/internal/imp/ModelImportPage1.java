@@ -41,10 +41,12 @@ import org.eclipse.swt.widgets.TableColumn;
 public class ModelImportPage1 extends WizardPage {
 
 	private class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			if (element instanceof IConfigurationElement) {
 				IConfigurationElement config = (IConfigurationElement) element;
@@ -59,6 +61,7 @@ public class ModelImportPage1 extends WizardPage {
 	protected Object[] checkedElements;
 
 	private class TableContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object inputElement) {
 
 			if (!(inputElement instanceof RegistryStruct)) {
@@ -70,21 +73,26 @@ public class ModelImportPage1 extends WizardPage {
 			return RegistryUtil.getExtensions(registry, input, wizard.isLiveModel());
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
 
 	private class ComboContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return RegistryUtil.getProvidingBundles(registry, wizard.getExtensionPoint(), wizard.isLiveModel());
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
@@ -105,6 +113,7 @@ public class ModelImportPage1 extends WizardPage {
 	 * 
 	 * @param parent
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 
@@ -135,6 +144,7 @@ public class ModelImportPage1 extends WizardPage {
 
 		comboViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				String bundle = ((IStructuredSelection) event.getSelection()).getFirstElement().toString();
 				RegistryStruct struct = RegistryUtil.getStruct(wizard.getApplicationElement(), wizard.getHint());
@@ -145,6 +155,7 @@ public class ModelImportPage1 extends WizardPage {
 		});
 
 		checkboxTableViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				checkedElements = checkboxTableViewer.getCheckedElements();
 				if (checkedElements.length > 0) {

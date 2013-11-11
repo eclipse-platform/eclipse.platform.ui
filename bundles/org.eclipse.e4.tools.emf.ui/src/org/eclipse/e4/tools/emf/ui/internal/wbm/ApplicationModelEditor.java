@@ -90,6 +90,7 @@ public class ApplicationModelEditor extends ModelEditor {
 	 * the resource was deleted or the containing project was closed.
 	 */
 	private IResourceChangeListener listener = new IResourceChangeListener() {
+		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
 
 			if (event.getType() == IResourceChangeEvent.PRE_CLOSE || event.getType() == IResourceChangeEvent.PRE_DELETE) {
@@ -136,6 +137,7 @@ public class ApplicationModelEditor extends ModelEditor {
 	protected void statusDialog(final Exception exc) {
 		try {
 			sync.syncExec(new Runnable() {
+				@Override
 				public void run() {
 					String bundle = FrameworkUtil.getBundle(getClass()).getSymbolicName();
 					Status status = new Status(IStatus.ERROR, bundle, exc.getMessage());
@@ -152,6 +154,7 @@ public class ApplicationModelEditor extends ModelEditor {
 	 */
 	protected void reloadModel() {
 		getModelProvider().getRoot().getRealm().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					resource.unload();

@@ -369,6 +369,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_WINDOW_SHARED_ELEMENTS, SHARED_ELEMENTS, element, Messages.WindowEditor_SharedElements) {
+			@Override
 			protected boolean accepted(Object o) {
 				return true;
 			}
@@ -381,6 +382,7 @@ public class WindowEditor extends AbstractComponentEditor {
 
 		WINDOW__MAIN_MENU.observe(element).addValueChangeListener(new IValueChangeListener() {
 
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				if (event.diff.getOldValue() != null) {
 					list.remove(event.diff.getOldValue());

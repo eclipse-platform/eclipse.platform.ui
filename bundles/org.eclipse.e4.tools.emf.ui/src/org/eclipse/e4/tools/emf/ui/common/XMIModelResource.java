@@ -56,6 +56,7 @@ public class XMIModelResource implements IModelResource {
 		BasicCommandStack commandStack = new BasicCommandStack();
 		commandStack.addCommandStackListener(new CommandStackListener() {
 
+			@Override
 			public void commandStackChanged(EventObject event) {
 				dirty = true;
 				fireDirtyChanged();
@@ -67,6 +68,7 @@ public class XMIModelResource implements IModelResource {
 		resource = resourceSet.getResource(uri, true);
 	}
 
+	@Override
 	public IObservableList getRoot() {
 		if (list != null) {
 			return list;
@@ -77,6 +79,7 @@ public class XMIModelResource implements IModelResource {
 		return list;
 	}
 
+	@Override
 	public void replaceRoot(EObject eObject) {
 		E4XMIResource resource = (E4XMIResource) eObject.eResource();
 		Map<EObject, String> idMap = new HashMap<EObject, String>();
@@ -101,22 +104,27 @@ public class XMIModelResource implements IModelResource {
 		}
 	}
 
+	@Override
 	public EditingDomain getEditingDomain() {
 		return editingDomain;
 	}
 
+	@Override
 	public boolean isSaveable() {
 		return true;
 	}
 
+	@Override
 	public void addModelListener(ModelListener listener) {
 		listeners.add(listener);
 	}
 
+	@Override
 	public void removeModelListener(ModelListener listener) {
 		listeners.remove(listener);
 	}
 
+	@Override
 	public boolean isDirty() {
 		return dirty && getEditingDomain().getCommandStack().canUndo();
 	}
@@ -133,6 +141,7 @@ public class XMIModelResource implements IModelResource {
 		}
 	}
 
+	@Override
 	public IStatus save() {
 		Map<String, String> map = new HashMap<String, String>();
 		try {

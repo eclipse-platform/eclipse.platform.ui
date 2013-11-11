@@ -12,6 +12,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -336,6 +338,7 @@ public class ModelEditor {
 					if (viewer != null) {
 						viewer.getControl().getDisplay().asyncExec(new Runnable() {
 
+							@Override
 							public void run() {
 								viewer.refresh();
 							}
@@ -354,6 +357,7 @@ public class ModelEditor {
 		if (project == null) {
 			keyListener = new Listener() {
 
+				@Override
 				public void handleEvent(Event event) {
 					if ((event.stateMask & SWT.ALT) == SWT.ALT) {
 						findAndHighlight(context.get(Display.class).getFocusControl());
@@ -457,6 +461,7 @@ public class ModelEditor {
 
 		emfDocumentProvider.setValidationChangedCallback(new Runnable() {
 
+			@Override
 			public void run() {
 				model.removeAllAnnotations();
 
@@ -562,6 +567,7 @@ public class ModelEditor {
 		});
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (!event.getSelection().isEmpty()) {
 					final IStructuredSelection s = (IStructuredSelection) event.getSelection();
@@ -574,6 +580,7 @@ public class ModelEditor {
 							iconLabel.setImage(editor.getImage(obj, iconLabel.getDisplay()));
 							obsManager.runAndCollect(new Runnable() {
 
+								@Override
 								public void run() {
 									Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
 									comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
@@ -591,6 +598,7 @@ public class ModelEditor {
 							iconLabel.setImage(editor.getImage(entry, iconLabel.getDisplay()));
 							obsManager.runAndCollect(new Runnable() {
 
+								@Override
 								public void run() {
 									Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
 									comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
@@ -622,6 +630,7 @@ public class ModelEditor {
 		mgr.setRemoveAllWhenShown(true);
 		mgr.addMenuListener(new IMenuListener() {
 
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 				boolean addSeparator = false;
@@ -654,6 +663,7 @@ public class ModelEditor {
 						// build the extract action
 						if ((!((VirtualEntry<?>) s.getFirstElement()).getList().isEmpty()) && (!isModelFragment()) && modelExtractor != null) {
 							manager.add(new Action(messages.ModelEditor_ExtractFragment, ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_ModelFragments))) {
+								@Override
 								public void run() {
 									VirtualEntry<?> ve = (VirtualEntry<?>) s.getFirstElement();
 									EObject container = (EObject) ve.getOriginalParent();
@@ -721,6 +731,7 @@ public class ModelEditor {
 						if (o.eContainer() != null) {
 							addSeparator = true;
 							manager.add(new Action(messages.ModelEditor_Delete, ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_cross))) {
+								@Override
 								public void run() {
 									Command cmd = DeleteCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), o);
 									if (cmd.canExecute()) {
@@ -779,6 +790,7 @@ public class ModelEditor {
 					}
 
 					Action nlsAction = new Action(messages.ModelEditor_ExternalizeStrings) {
+						@Override
 						public void run() {
 							ExternalizeStringHandler h = ContextInjectionFactory.make(ExternalizeStringHandler.class, context);
 							ContextInjectionFactory.invoke(h, Execute.class, context);
@@ -795,6 +807,7 @@ public class ModelEditor {
 						if (el.getWidget() instanceof Control) {
 							manager.add(new Action(messages.ModelEditor_ShowControl) {
 
+								@Override
 								public void run() {
 									ControlHighlighter.show((Control) el.getWidget());
 								}
@@ -806,6 +819,7 @@ public class ModelEditor {
 				}
 				if ((s.getFirstElement() instanceof MApplicationElement) && (!isModelFragment()) && (!(s.getFirstElement() instanceof MApplication)) && modelExtractor != null) {
 					manager.add(new Action(messages.ModelEditor_ExtractFragment, ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_ModelFragments))) {
+						@Override
 						public void run() {
 							MApplicationElement oe = (MApplicationElement) s.getFirstElement();
 							EObject container = ((EObject) oe).eContainer();
@@ -830,12 +844,13 @@ public class ModelEditor {
 				}
 
 				Action expandAction = new Action(messages.ModelEditor_ExpandSubtree) {
+					@Override
 					public void run() {
 						if (!s.isEmpty()) {
 							if (viewer.getExpandedState(s.getFirstElement())) {
-								viewer.collapseToLevel(s.getFirstElement(), TreeViewer.ALL_LEVELS);
+								viewer.collapseToLevel(s.getFirstElement(), AbstractTreeViewer.ALL_LEVELS);
 							} else {
-								viewer.expandToLevel(s.getFirstElement(), TreeViewer.ALL_LEVELS);
+								viewer.expandToLevel(s.getFirstElement(), AbstractTreeViewer.ALL_LEVELS);
 							}
 						}
 					}
@@ -847,12 +862,14 @@ public class ModelEditor {
 
 		// Save the stateMask
 		viewer.getTree().addKeyListener(new KeyListener() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				if (mod1Down && (e.keyCode & SWT.MOD1) == SWT.MOD1) {
 					mod1Down = false;
 				}
 			}
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (!mod1Down && (e.keyCode & SWT.MOD1) == SWT.MOD1) {
 					mod1Down = true;
@@ -861,21 +878,25 @@ public class ModelEditor {
 		});
 
 		viewer.addTreeListener(new ITreeViewerListener() {
+			@Override
 			public void treeExpanded(final TreeExpansionEvent event) {
 				if (mod1Down) {
 					viewer.getTree().getDisplay().asyncExec(new Runnable() {
+						@Override
 						public void run() {
-							viewer.expandToLevel(event.getElement(), TreeViewer.ALL_LEVELS);
+							viewer.expandToLevel(event.getElement(), AbstractTreeViewer.ALL_LEVELS);
 						}
 					});
 				}
 			}
 
+			@Override
 			public void treeCollapsed(final TreeExpansionEvent event) {
 				if (mod1Down) {
 					viewer.getTree().getDisplay().asyncExec(new Runnable() {
+						@Override
 						public void run() {
-							viewer.collapseToLevel(event.getElement(), TreeViewer.ALL_LEVELS);
+							viewer.collapseToLevel(event.getElement(), AbstractTreeViewer.ALL_LEVELS);
 						}
 					});
 				}
@@ -1003,6 +1024,7 @@ public class ModelEditor {
 
 		contentProvider.getKnownElements().addSetChangeListener(new ISetChangeListener() {
 
+			@Override
 			public void handleSetChange(SetChangeEvent event) {
 				for (Object o : event.diff.getAdditions()) {
 					if (o instanceof EObject) {
@@ -1022,6 +1044,7 @@ public class ModelEditor {
 			IObservableMap map = EMFProperties.value(p).observeDetail(clearedSet);
 			map.addMapChangeListener(new IMapChangeListener() {
 
+				@Override
 				public void handleMapChange(MapChangeEvent event) {
 					viewer.update(event.diff.getChangedKeys().toArray(), null);
 				}
@@ -1033,6 +1056,7 @@ public class ModelEditor {
 		viewer.expandToLevel(viewer.getAutoExpandLevel());
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				TreeViewer viewer = (TreeViewer) event.getViewer();
 				IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection();
@@ -1041,7 +1065,7 @@ public class ModelEditor {
 					if (viewer.getExpandedState(selectedNode))
 						viewer.setExpandedState(selectedNode, false);
 					else
-						viewer.expandToLevel(selectedNode, TreeViewer.ALL_LEVELS);
+						viewer.expandToLevel(selectedNode, AbstractTreeViewer.ALL_LEVELS);
 				} else {
 					viewer.setExpandedState(selectedNode, !viewer.getExpandedState(selectedNode));
 				}
@@ -1334,6 +1358,7 @@ public class ModelEditor {
 
 	class ClipboardHandler implements Handler {
 
+		@Override
 		public void paste() {
 			if (editorTabFolder.getSelectionIndex() == 0) {
 				if (viewer.getControl().getDisplay().getFocusControl() == viewer.getControl()) {
@@ -1405,6 +1430,7 @@ public class ModelEditor {
 			}
 		}
 
+		@Override
 		public void copy() {
 			if (editorTabFolder.getSelectionIndex() == 0) {
 				if (viewer.getControl().getDisplay().getFocusControl() == viewer.getControl()) {
@@ -1426,6 +1452,7 @@ public class ModelEditor {
 			}
 		}
 
+		@Override
 		public void cut() {
 			if (editorTabFolder.getSelectionIndex() == 0) {
 				if (viewer.getControl().getDisplay().getFocusControl() == viewer.getControl()) {
@@ -1459,6 +1486,7 @@ public class ModelEditor {
 
 	class ObservableFactoryImpl implements IObservableFactory {
 
+		@Override
 		public IObservable createObservable(Object target) {
 			if (target instanceof IObservableList) {
 				return (IObservable) target;

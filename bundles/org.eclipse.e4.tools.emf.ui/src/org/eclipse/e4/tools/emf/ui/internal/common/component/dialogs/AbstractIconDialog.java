@@ -148,6 +148,7 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 		viewer.setInput(list);
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
@@ -158,6 +159,7 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 			private Timer timer = new Timer(true);
 			private TimerTask task;
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (callback != null) {
 					callback.cancel = true;
@@ -177,6 +179,7 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 
 		getShell().addDisposeListener(new DisposeListener() {
 
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				clearImages();
 			}
@@ -264,6 +267,7 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 			if (!cancel) {
 				list.getRealm().exec(new Runnable() {
 
+					@Override
 					public void run() {
 						list.add(file);
 					}
@@ -292,6 +296,7 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 			try {
 				project.accept(new IResourceVisitor() {
 
+					@Override
 					public boolean visit(IResource resource) throws CoreException {
 						if (callback.cancel) {
 							return false;

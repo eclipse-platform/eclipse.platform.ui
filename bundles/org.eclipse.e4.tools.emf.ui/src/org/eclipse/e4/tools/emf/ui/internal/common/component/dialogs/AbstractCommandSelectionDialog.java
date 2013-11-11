@@ -75,6 +75,7 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 		setTitleImage(titleImage);
 		getShell().addDisposeListener(new DisposeListener() {
 
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				titleImage.dispose();
 			}
@@ -97,6 +98,7 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
@@ -146,6 +148,7 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 
 	private static class LabelProviderImpl extends StyledCellLabelProvider implements ILabelProvider {
 
+		@Override
 		public void update(final ViewerCell cell) {
 			MCommand cmd = (MCommand) cell.getElement();
 
@@ -163,10 +166,12 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 			cell.setStyleRanges(styledString.getStyleRanges());
 		}
 
+		@Override
 		public Image getImage(Object element) {
 			return null;
 		}
 
+		@Override
 		public String getText(Object element) {
 			MCommand command = (MCommand) element;
 			String s = ""; //$NON-NLS-1$

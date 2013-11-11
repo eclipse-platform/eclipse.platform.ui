@@ -253,6 +253,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 			UpdateValueStrategy t2m = new UpdateValueStrategy();
 			t2m.setConverter(new Converter(boolean.class, ItemType.class) {
 
+				@Override
 				public Object convert(Object fromObject) {
 					return null;
 				}
@@ -260,6 +261,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 			UpdateValueStrategy m2t = new UpdateValueStrategy();
 			m2t.setConverter(new Converter(ItemType.class, boolean.class) {
 
+				@Override
 				public Object convert(Object fromObject) {
 					return fromObject == ItemType.CHECK || fromObject == ItemType.RADIO;
 				}
@@ -367,6 +369,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 			this.Messages = Messages;
 		}
 
+		@Override
 		public Object convert(Object fromObject) {
 			if (fromObject == null) {
 				return Messages.MenuItemEditor_NoExpression;
@@ -383,6 +386,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 			this.Messages = Messages;
 		}
 
+		@Override
 		public Object convert(Object fromObject) {
 			if (fromObject == null || fromObject.toString().equals(Messages.MenuItemEditor_NoExpression)) {
 				return null;

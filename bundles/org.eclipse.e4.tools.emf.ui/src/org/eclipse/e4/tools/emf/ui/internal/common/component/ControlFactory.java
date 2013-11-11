@@ -115,6 +115,7 @@ public class ControlFactory {
 			t.setData(COPY_HANDLER, new TextPasteHandler(t));
 		}
 
+		@Override
 		public void paste() {
 			Clipboard cp = new Clipboard(t.getDisplay());
 			Object o = cp.getContents(TextTransfer.getInstance());
@@ -128,10 +129,12 @@ public class ControlFactory {
 			}
 		}
 
+		@Override
 		public void cut() {
 			t.cut();
 		}
 
+		@Override
 		public void copy() {
 			t.copy();
 		}
@@ -156,6 +159,7 @@ public class ControlFactory {
 
 		editor.getMaster().addValueChangeListener(new IValueChangeListener() {
 
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				Object val = event.diff.getNewValue();
 				if (val != null && val instanceof EObject && !t.isDisposed()) {
@@ -376,6 +380,7 @@ public class ControlFactory {
 			controlDecoration.setImage(fieldDecoration.getImage());
 			IValidator iv = new IValidator() {
 
+				@Override
 				public IStatus validate(Object value) {
 					if (value == null) {
 						controlDecoration.show();
@@ -476,6 +481,7 @@ public class ControlFactory {
 		final IObservableValue mObs = EMFEditProperties.value(editor.getEditingDomain(), UiPackageImpl.Literals.ELEMENT_CONTAINER__SELECTED_ELEMENT).observeDetail(editor.getMaster());
 		editor.getMaster().addValueChangeListener(new IValueChangeListener() {
 
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				if (binding[0] != null) {
 					binding[0].dispose();
@@ -516,6 +522,7 @@ public class ControlFactory {
 
 		editor.getMaster().addValueChangeListener(new IValueChangeListener() {
 
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				binding[0] = context.bindValue(uiObs, mObs);
 			}
@@ -851,6 +858,7 @@ public class ControlFactory {
 
 	public static void attachFiltering(Text searchText, final TableViewer viewer, final PatternFilter filter) {
 		searchText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				filter.setPattern(((Text) e.widget).getText());
 				viewer.refresh();
@@ -862,6 +870,7 @@ public class ControlFactory {
 		});
 		searchText.addTraverseListener(new TraverseListener() {
 
+			@Override
 			public void keyTraversed(TraverseEvent e) {
 				if (e.keyCode == SWT.ARROW_DOWN && viewer.getTable().getItemCount() > 0) {
 					viewer.getControl().setFocus();

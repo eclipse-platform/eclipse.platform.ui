@@ -99,12 +99,14 @@ public class ShadowComposite extends Composite {
 		this.outerKeyline = new Color(getDisplay(), new RGB(240, 240, 240));
 		addListener(SWT.Paint, new Listener() {
 
+			@Override
 			public void handleEvent(Event event) {
 				onPaint(event);
 			}
 		});
 		addListener(SWT.Dispose, new Listener() {
 
+			@Override
 			public void handleEvent(Event event) {
 				outerKeyline.dispose();
 			}
@@ -120,6 +122,7 @@ public class ShadowComposite extends Composite {
 		// });
 	}
 
+	@Override
 	public Rectangle getClientArea() {
 		Rectangle trim = computeTrim(CTabFolderRenderer.PART_BODY, SWT.NONE, 0, 0, 0, 0);
 		// if (minimized)
@@ -473,6 +476,7 @@ public class ShadowComposite extends Composite {
 			tmpImage.dispose();
 			shadowColor.dispose();
 			display.disposeExec(new Runnable() {
+				@Override
 				public void run() {
 					Object obj = display.getData(E4_SHADOW_IMAGE);
 					if (obj != null) {

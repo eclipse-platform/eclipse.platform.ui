@@ -94,6 +94,7 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 
 		composite.addDisposeListener(new DisposeListener() {
 
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				packageImage.dispose();
 				classImage.dispose();
@@ -114,6 +115,7 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 
 		searchText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (filter != null) {
 					filter.setPattern(searchText.getText());
@@ -137,6 +139,7 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 		viewer.setLabelProvider(new LabelProviderImpl(packageImage, classImage, featureImage));
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
@@ -155,6 +158,7 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 			}
 		});
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				Button buttonOk = getButton(IDialogConstants.OK_ID);
@@ -190,18 +194,22 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 
 	static class ContentProviderImpl implements ITreeContentProvider {
 
+		@Override
 		public void dispose() {
 
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((List<?>) inputElement).toArray();
 		}
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement.getClass() == InternalPackage.class) {
 				return ((InternalPackage) parentElement).classes.toArray();
@@ -211,6 +219,7 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 			return new Object[0];
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			if (element.getClass() == InternalFeature.class) {
 				return ((InternalFeature) element).clazz;
@@ -220,6 +229,7 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			return getChildren(element).length > 0;
 		}
@@ -237,6 +247,7 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 			this.featureImage = featureImage;
 		}
 
+		@Override
 		public void update(final ViewerCell cell) {
 			if (cell.getElement().getClass() == InternalPackage.class) {
 				InternalPackage o = (InternalPackage) cell.getElement();
@@ -266,10 +277,12 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 			}
 		}
 
+		@Override
 		public Image getImage(Object element) {
 			return null;
 		}
 
+		@Override
 		public String getText(Object element) {
 			if (element.getClass() == InternalPackage.class) {
 				InternalPackage o = (InternalPackage) element;
@@ -410,7 +423,7 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 				}
 				i = j;
 			}
-			return (String[]) words.toArray(new String[words.size()]);
+			return words.toArray(new String[words.size()]);
 		}
 	}
 }

@@ -96,6 +96,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		setTitleImage(titleImage);
 		getShell().addDisposeListener(new DisposeListener() {
 
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				titleImage.dispose();
 			}
@@ -137,6 +138,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		eClassViewer.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		eClassViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSearch();
 
@@ -179,6 +181,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		viewer.setContentProvider(new ObservableListContentProvider());
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
@@ -191,6 +194,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 
 		searchText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateSearch();
 			}
@@ -262,6 +266,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 			this.resource = resource;
 		}
 
+		@Override
 		public void result(EObject data) {
 			if (!cancled) {
 				if (!resource.getURI().equals(data.eResource().getURI())) {

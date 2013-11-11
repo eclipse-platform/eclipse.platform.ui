@@ -74,6 +74,7 @@ public class FindImportElementDialog extends TitleAreaDialog {
 		setTitleImage(titleImage);
 		getShell().addDisposeListener(new DisposeListener() {
 
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				titleImage.dispose();
 			}
@@ -121,6 +122,7 @@ public class FindImportElementDialog extends TitleAreaDialog {
 		viewer.setContentProvider(new ObservableListContentProvider());
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
@@ -134,6 +136,7 @@ public class FindImportElementDialog extends TitleAreaDialog {
 		searchText.addModifyListener(new ModifyListener() {
 			private ModelResultHandlerImpl currentResultHandler;
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (currentResultHandler != null) {
 					currentResultHandler.cancled = true;
@@ -199,6 +202,7 @@ public class FindImportElementDialog extends TitleAreaDialog {
 			this.resource = resource;
 		}
 
+		@Override
 		public void result(EObject data) {
 			if (!cancled) {
 				if (!resource.getURI().equals(data.eResource().getURI()))

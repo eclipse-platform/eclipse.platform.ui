@@ -97,20 +97,20 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 				public void setClassname(Object widget, String classname) {
 					((Widget) widget).setData(
 							"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
-					engine.applyStyles((Widget) widget, true);
+					engine.applyStyles(widget, true);
 				}
 
 				public void setId(Object widget, String id) {
 					((Widget) widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
-					engine.applyStyles((Widget) widget, true);
+					engine.applyStyles(widget, true);
 				}
 
 				public void style(Object widget) {
-					engine.applyStyles((Widget) widget, true);
+					engine.applyStyles(widget, true);
 				}
 
 				public CSSStyleDeclaration getStyle(Object widget) {
-					return engine.getStyle((Widget) widget);
+					return engine.getStyle(widget);
 				}
 
 				public void setClassnameAndId(Object widget, String classname,
@@ -118,7 +118,7 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 					((Widget) widget).setData(
 							"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
 					((Widget) widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
-					engine.applyStyles((Widget) widget, true);
+					engine.applyStyles(widget, true);
 				}
 			});
 			

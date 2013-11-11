@@ -14,7 +14,6 @@ package org.eclipse.e4.tools.emf.editor3x.extension;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.internal.tools.wizards.classes.NewAddonClassWizard;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.ui.model.application.MContribution;
@@ -32,14 +31,10 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.core.project.IBundleProjectDescription;
-import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
 
 public class AddonContributionEditor implements IContributionClassCreator {
 
@@ -58,7 +53,7 @@ public class AddonContributionEditor implements IContributionClassCreator {
 			NewAddonClassWizard wizard = new NewAddonClassWizard(contribution.getContributionURI());
 			wizard.init( null, new StructuredSelection(project));
 			WizardDialog dialog = new WizardDialog(shell, wizard);
-			if( dialog.open() == WizardDialog.OK ) {
+			if( dialog.open() == Window.OK ) {
 				IFile f = wizard.getFile();
 				ICompilationUnit el = JavaCore.createCompilationUnitFrom(f);
 				try {

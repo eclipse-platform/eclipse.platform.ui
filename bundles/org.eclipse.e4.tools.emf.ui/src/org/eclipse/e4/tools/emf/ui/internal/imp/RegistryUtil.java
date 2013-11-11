@@ -109,7 +109,7 @@ public class RegistryUtil {
 				}
 			}
 
-			result.add((MCommand) command);
+			result.add(command);
 		}
 
 		return result.toArray(new MCommand[0]);
@@ -128,7 +128,7 @@ public class RegistryUtil {
 			perspective.setElementId(element.getAttribute("id"));
 			perspective.setToBeRendered(true);
 			perspective.setVisible(true);
-			result.add((MPerspective) perspective);
+			result.add(perspective);
 		}
 
 		return result.toArray(new MPerspective[0]);
@@ -298,7 +298,7 @@ public class RegistryUtil {
 
 		ArrayList<MHandler> result = new ArrayList<MHandler>();
 		for (IConfigurationElement element : elements) {
-			MHandler hand = (MHandler) MCommandsFactory.INSTANCE.createHandler();
+			MHandler hand = MCommandsFactory.INSTANCE.createHandler();
 			hand.setElementId(element.getAttribute("id"));
 			hand.setContributionURI(getContributionURI(element, "class"));
 

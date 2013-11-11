@@ -44,6 +44,7 @@ public class E4WorkbenchModelEditor extends
 		setPartName(getEditorInput().getName());
 	}
 	
+	@Override
 	protected void makeActions() {
 		super.makeActions();
 		undoAction = new UndoAction(getComponent().getModelProvider());

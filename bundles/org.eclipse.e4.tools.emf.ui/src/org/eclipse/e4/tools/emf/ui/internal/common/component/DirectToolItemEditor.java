@@ -103,6 +103,7 @@ public class DirectToolItemEditor extends ToolItemEditor {
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		t.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				lnk.setToolTipText(((Text) (e.getSource())).getText());
 			}
@@ -123,6 +124,7 @@ public class DirectToolItemEditor extends ToolItemEditor {
 		});
 	}
 
+	@Override
 	protected CTabFolder createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean isImport) {
 		if (!isImport) {
 			CTabFolder folder = super.createForm(parent, context, master, isImport);
@@ -167,6 +169,7 @@ public class DirectToolItemEditor extends ToolItemEditor {
 
 		UI_ELEMENT__VISIBLE_WHEN.observe(element).addValueChangeListener(new IValueChangeListener() {
 
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				if (event.diff.getOldValue() != null) {
 					list.remove(event.diff.getOldValue());

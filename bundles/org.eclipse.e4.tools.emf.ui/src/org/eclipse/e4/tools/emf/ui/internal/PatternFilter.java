@@ -37,6 +37,7 @@ public class PatternFilter extends org.eclipse.e4.ui.workbench.swt.internal.copy
 	 *            the tree element to check
 	 * @return true if the given element's label matches the filter text
 	 */
+	@Override
 	protected boolean isLeafMatch(Viewer viewer, Object element) {
 
 		Object labelProvider = ((StructuredViewer) viewer).getLabelProvider();

@@ -491,6 +491,7 @@ public class MenuEditor extends AbstractComponentEditor {
 
 		UI_ELEMENT__VISIBLE_WHEN.observe(element).addValueChangeListener(new IValueChangeListener() {
 
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				if (event.diff.getOldValue() != null) {
 					list.remove(event.diff.getOldValue());
@@ -505,6 +506,7 @@ public class MenuEditor extends AbstractComponentEditor {
 		IObservableList l = ELEMENT_CONTAINER__CHILDREN.observe(element);
 		l.addListChangeListener(new IListChangeListener() {
 
+			@Override
 			public void handleListChange(ListChangeEvent event) {
 				event.diff.accept(new ListDiffVisitor() {
 

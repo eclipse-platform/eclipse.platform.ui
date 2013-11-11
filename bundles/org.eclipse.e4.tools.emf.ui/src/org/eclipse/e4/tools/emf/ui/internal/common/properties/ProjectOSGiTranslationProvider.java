@@ -63,11 +63,13 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 		this.project = project;
 		this.project.getWorkspace().addResourceChangeListener(new IResourceChangeListener() {
 
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
 					try {
 						event.getDelta().accept(new IResourceDeltaVisitor() {
 
+							@Override
 							public boolean visit(IResourceDelta delta) throws CoreException {
 								return ProjectOSGiTranslationProvider.this.visit(delta);
 							}
@@ -249,6 +251,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 				InputStream stream = null;
 				try {
 					stream = AccessController.doPrivileged(new PrivilegedExceptionAction<InputStream>() {
+						@Override
 						public InputStream run() throws IOException {
 							return getResourceAsStream(resourceName);
 						}

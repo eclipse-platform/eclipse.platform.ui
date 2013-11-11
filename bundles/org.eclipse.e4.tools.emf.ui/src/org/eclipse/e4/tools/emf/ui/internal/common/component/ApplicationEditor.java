@@ -440,6 +440,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			super(pageName);
 		}
 
+		@Override
 		public void createControl(Composite parent) {
 			setTitle("Command/Handler");
 			setMessage("Insert informations for Command and Handler");
@@ -464,6 +465,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 				nameField.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 				nameField.addModifyListener(new ModifyListener() {
 
+					@Override
 					public void modifyText(ModifyEvent e) {
 						setPageComplete(nameField.getText().trim().length() > 0);
 					}
@@ -501,6 +503,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			this.application = application;
 		}
 
+		@Override
 		public void createControl(Composite parent) {
 			setTitle("Keybinding");
 			setMessage("Insert informations for a keybinding");
@@ -517,6 +520,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 				keyField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 				keyField.addModifyListener(new ModifyListener() {
 
+					@Override
 					public void modifyText(ModifyEvent e) {
 						bindtableViewer.getControl().setEnabled(isPageComplete());
 						setPageComplete(isPageComplete());
@@ -535,6 +539,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 				bindtableViewer.setInput(application.getBindingTables());
 				bindtableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
 						setPageComplete(isPageComplete());
 					}
@@ -571,6 +576,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			this.application = application;
 		}
 
+		@Override
 		public void createControl(Composite parent) {
 			setTitle("Handled Menu Item");
 			setMessage("Insert informations for a Handled Menu Item");
@@ -625,6 +631,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 				menuViewer.setInput(menuList);
 				menuViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
 						setPageComplete(isPageComplete());
 					}
@@ -660,6 +667,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			this.application = application;
 		}
 
+		@Override
 		public void createControl(Composite parent) {
 			setTitle("Handled Toolbar Item");
 			setMessage("Insert informations for a Toolbar Item");
@@ -714,6 +722,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 				toolbarViewer.setInput(toolbarList);
 				toolbarViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
 						setPageComplete(isPageComplete());
 					}

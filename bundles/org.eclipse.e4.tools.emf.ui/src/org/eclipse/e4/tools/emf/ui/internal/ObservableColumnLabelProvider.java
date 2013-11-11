@@ -25,6 +25,7 @@ public class ObservableColumnLabelProvider<M> extends CellLabelProvider {
 	private IObservableMap[] attributeMaps;
 
 	private IMapChangeListener mapChangeListener = new IMapChangeListener() {
+		@Override
 		public void handleMapChange(MapChangeEvent event) {
 			Set<?> affectedElements = event.diff.getChangedKeys();
 			LabelProviderChangedEvent newEvent = new LabelProviderChangedEvent(
@@ -59,6 +60,7 @@ public class ObservableColumnLabelProvider<M> extends CellLabelProvider {
 		}
 	}
 
+	@Override
 	public void dispose() {
 		for (int i = 0; i < attributeMaps.length; i++) {
 			attributeMaps[i].removeMapChangeListener(mapChangeListener);
@@ -68,6 +70,7 @@ public class ObservableColumnLabelProvider<M> extends CellLabelProvider {
 		this.mapChangeListener = null;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void update(ViewerCell cell) {
 		M element = (M) cell.getElement();

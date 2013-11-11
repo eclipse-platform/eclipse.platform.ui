@@ -18,7 +18,6 @@ import java.io.InputStreamReader;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider;
@@ -81,6 +80,7 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 //		char[] typeName = "*".toCharArray();
 		
 		TypeNameRequestor req = new TypeNameRequestor() {
+			@Override
 			public void acceptType(int modifiers, char[] packageName, char[] simpleTypeName, char[][] enclosingTypeNames, String path) {
 				// Accept search results from the JDT SearchEngine
 				String cName = new String(simpleTypeName);

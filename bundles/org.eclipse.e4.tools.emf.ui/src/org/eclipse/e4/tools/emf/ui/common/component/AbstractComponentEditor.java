@@ -206,6 +206,7 @@ public abstract class AbstractComponentEditor {
 		scrolling.setContent(contentContainer);
 
 		scrolling.addControlListener(new ControlAdapter() {
+			@Override
 			public void controlResized(ControlEvent e) {
 				Rectangle r = scrolling.getClientArea();
 				scrolling.setMinSize(contentContainer.computeSize(r.width, SWT.DEFAULT));

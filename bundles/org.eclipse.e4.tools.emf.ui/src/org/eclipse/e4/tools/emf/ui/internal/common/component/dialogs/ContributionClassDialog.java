@@ -89,6 +89,7 @@ public class ContributionClassDialog extends TitleAreaDialog {
 
 		getShell().addDisposeListener(new DisposeListener() {
 
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				javaClassImage.dispose();
 				titleImage.dispose();
@@ -139,6 +140,7 @@ public class ContributionClassDialog extends TitleAreaDialog {
 		});
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
@@ -152,6 +154,7 @@ public class ContributionClassDialog extends TitleAreaDialog {
 		t.addModifyListener(new ModifyListener() {
 			private ContributionResultHandlerImpl currentResultHandler;
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (currentResultHandler != null) {
 					currentResultHandler.cancled = true;
@@ -161,6 +164,7 @@ public class ContributionClassDialog extends TitleAreaDialog {
 				Filter filter = new Filter(project, t.getText());
 				collector.findContributions(filter, currentResultHandler);
 				t.addKeyListener(new KeyAdapter() {
+					@Override
 					public void keyPressed(KeyEvent e) {
 						if (e.keyCode == SWT.ARROW_DOWN) {
 							if (viewer.getTable().getItemCount() > 0) {
@@ -217,6 +221,7 @@ public class ContributionClassDialog extends TitleAreaDialog {
 			this.list = list;
 		}
 
+		@Override
 		public void result(ContributionData data) {
 			if (!cancled) {
 				list.add(data);

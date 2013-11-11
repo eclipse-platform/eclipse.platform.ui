@@ -28,6 +28,7 @@ public class TrimmedWindowEditor extends WindowEditor {
 		super();
 	}
 
+	@Override
 	public IObservableList getChildList(Object element) {
 		IObservableList list = super.getChildList(element);
 

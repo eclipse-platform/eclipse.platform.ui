@@ -196,6 +196,7 @@ public class HandlerEditor extends AbstractComponentEditor {
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			t.addModifyListener(new ModifyListener() {
 
+				@Override
 				public void modifyText(ModifyEvent e) {
 					lnk.setToolTipText(((Text) (e.getSource())).getText());
 				}

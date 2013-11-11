@@ -42,6 +42,7 @@ public class MemoryTransfer extends ByteArrayTransfer {
 		return new String[] { NAME };
 	}
 
+	@Override
 	public void javaToNative(Object object, TransferData transferData) {
 		this.uid = UUID.randomUUID().toString();
 		this.object = object;
@@ -50,6 +51,7 @@ public class MemoryTransfer extends ByteArrayTransfer {
 		}
 	}
 
+	@Override
 	public Object nativeToJava(TransferData transferData) {
 		byte[] bytes = (byte[]) super.nativeToJava(transferData);
 		if (bytes == null)

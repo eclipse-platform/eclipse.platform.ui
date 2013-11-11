@@ -140,6 +140,7 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			t.addModifyListener(new ModifyListener() {
 
+				@Override
 				public void modifyText(ModifyEvent e) {
 					lnk.setToolTipText(((Text) (e.getSource())).getText());
 				}
@@ -171,6 +172,7 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 
 		UI_ELEMENT__VISIBLE_WHEN.observe(element).addValueChangeListener(new IValueChangeListener() {
 
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				if (event.diff.getOldValue() != null) {
 					list.remove(event.diff.getOldValue());

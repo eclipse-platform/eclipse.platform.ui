@@ -200,6 +200,7 @@ public class Util {
 		final ControlDecoration dec = new ControlDecoration(control, SWT.BOTTOM);
 		binding.getValidationStatus().addValueChangeListener(new IValueChangeListener() {
 
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				IStatus s = (IStatus) event.getObservableValue().getValue();
 				if (s.isOK()) {

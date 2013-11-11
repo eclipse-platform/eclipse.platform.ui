@@ -42,10 +42,11 @@ class RefactorParticipantDelegate {
 
 		final Map<IFile, TextFileChange> changes = new HashMap<IFile, TextFileChange>();
 		TextSearchRequestor searchRequestor = new TextSearchRequestor() {
+			@Override
 			public boolean acceptPatternMatch(TextSearchMatchAccess matchAccess)
 					throws CoreException {
 				IFile file = matchAccess.getFile();
-				TextFileChange change = (TextFileChange) changes.get(file);
+				TextFileChange change = changes.get(file);
 
 				if (change == null) {
 					TextChange textChange = p.getTextChange(file);

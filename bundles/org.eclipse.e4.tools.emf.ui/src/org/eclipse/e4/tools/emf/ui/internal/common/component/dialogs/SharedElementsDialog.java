@@ -99,6 +99,7 @@ public class SharedElementsDialog extends TitleAreaDialog {
 
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
@@ -158,6 +159,7 @@ public class SharedElementsDialog extends TitleAreaDialog {
 	}
 
 	private class LabelProviderImpl extends StyledCellLabelProvider implements ILabelProvider {
+		@Override
 		public void update(final ViewerCell cell) {
 			EObject o = (EObject) cell.getElement();
 
@@ -175,6 +177,7 @@ public class SharedElementsDialog extends TitleAreaDialog {
 			cell.setImage(getImage(o));
 		}
 
+		@Override
 		public String getText(Object element) {
 			EObject o = (EObject) element;
 			MApplicationElement el = (MApplicationElement) o;
@@ -196,6 +199,7 @@ public class SharedElementsDialog extends TitleAreaDialog {
 			}
 		}
 
+		@Override
 		public Image getImage(Object element) {
 			AbstractComponentEditor editor = SharedElementsDialog.this.editor.getEditor(((EObject) element).eClass());
 			if (editor != null) {

@@ -15,6 +15,6 @@ public class DefaultLoggerProvider implements ILoggerProvider {
 	public Logger getClassLogger(Class<?> clazz) {
 		IEclipseContext childContext = context.createChild();
 		childContext.set("logger.bundlename", FrameworkUtil.getBundle(clazz).getSymbolicName()); //$NON-NLS-1$
-		return (Logger) ContextInjectionFactory.make(WorkbenchLogger.class, childContext);
+		return ContextInjectionFactory.make(WorkbenchLogger.class, childContext);
 	}
 }

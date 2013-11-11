@@ -23,6 +23,7 @@ public class ControlHighlighter {
 		s.open();
 		s.addListener(SWT.MouseDown, new Listener() {
 
+			@Override
 			public void handleEvent(Event event) {
 				hide();
 			}

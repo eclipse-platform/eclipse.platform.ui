@@ -16,43 +16,52 @@ public class AnnotationAccess implements IAnnotationAccess, IAnnotationAccessExt
 		this.pool = pool;
 	}
 
+	@Override
 	public String getTypeLabel(Annotation annotation) {
 		return annotation.getText();
 	}
 
+	@Override
 	public int getLayer(Annotation annotation) {
 		return IAnnotationAccessExtension.DEFAULT_LAYER;
 	}
 
+	@Override
 	public void paint(Annotation annotation, GC gc, Canvas canvas, Rectangle bounds) {
 		gc.drawImage(pool.getImageUnchecked(ResourceProvider.IMG_Obj16_error_obj), bounds.x, bounds.y);
 	}
 
+	@Override
 	public boolean isPaintable(Annotation annotation) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@Override
 	public boolean isSubtype(Object annotationType, Object potentialSupertype) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@Override
 	public Object[] getSupertypes(Object annotationType) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public Object getType(Annotation annotation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public boolean isMultiLine(Annotation annotation) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@Override
 	public boolean isTemporary(Annotation annotation) {
 		// TODO Auto-generated method stub
 		return false;

@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.jface.window.Window;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -184,7 +186,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					BindingContextSelectionDialog dialog = new BindingContextSelectionDialog(b.getShell(), getEditor().getModelProvider(), Messages);
-					if (dialog.open() == BindingContextSelectionDialog.OK) {
+					if (dialog.open() == Window.OK) {
 						Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.BINDING_TABLE__BINDING_CONTEXT, dialog.getSelectedContext());
 						if (cmd.canExecute()) {
 							getEditingDomain().getCommandStack().execute(cmd);

@@ -25,6 +25,7 @@ public class CommandToStringConverter extends Converter {
 		this.Messages = Messages;
 	}
 
+	@Override
 	public Object convert(Object fromObject) {
 		MCommand cmd = (MCommand) fromObject;
 		String elementId = null;

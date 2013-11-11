@@ -40,8 +40,6 @@ import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -75,6 +73,7 @@ public class CommandCategorySelectionDialog extends TitleAreaDialog {
 		setTitleImage(titleImage);
 		getShell().addDisposeListener(new DisposeListener() {
 
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				titleImage.dispose();
 			}
@@ -97,6 +96,7 @@ public class CommandCategorySelectionDialog extends TitleAreaDialog {
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
@@ -139,6 +139,7 @@ public class CommandCategorySelectionDialog extends TitleAreaDialog {
 
 	private static class LabelProviderImpl extends StyledCellLabelProvider implements ILabelProvider {
 
+		@Override
 		public void update(final ViewerCell cell) {
 			MCategory cmd = (MCategory) cell.getElement();
 
@@ -158,10 +159,12 @@ public class CommandCategorySelectionDialog extends TitleAreaDialog {
 			cell.setStyleRanges(styledString.getStyleRanges());
 		}
 
+		@Override
 		public Image getImage(Object element) {
 			return null;
 		}
 
+		@Override
 		public String getText(Object element) {
 			MCategory command = (MCategory) element;
 			String s = ""; //$NON-NLS-1$

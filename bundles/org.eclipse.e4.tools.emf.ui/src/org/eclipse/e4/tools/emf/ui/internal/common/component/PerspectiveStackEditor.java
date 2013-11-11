@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.jface.window.Window;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -344,7 +346,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 	protected void handleImportPerspective() {
 		ModelImportWizard wizard = new ModelImportWizard(MPerspective.class, this);
 		WizardDialog wizardDialog = new WizardDialog(shell, wizard);
-		if (wizardDialog.open() == WizardDialog.OK) {
+		if (wizardDialog.open() == Window.OK) {
 			MPerspective[] elements = (MPerspective[]) wizard.getElements(MPerspective.class);
 			for (MPerspective category : elements) {
 				addToModel(category);

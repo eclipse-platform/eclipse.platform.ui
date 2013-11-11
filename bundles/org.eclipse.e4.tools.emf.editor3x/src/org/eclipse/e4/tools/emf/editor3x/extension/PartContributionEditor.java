@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
@@ -50,7 +51,7 @@ public class PartContributionEditor implements IContributionClassCreator {
 			NewPartClassWizard wizard = new NewPartClassWizard(contribution.getContributionURI());
 			wizard.init(null, new StructuredSelection(project));
 			WizardDialog dialog = new WizardDialog(shell, wizard);
-			if (dialog.open() == WizardDialog.OK) {
+			if (dialog.open() == Window.OK) {
 				IFile f = wizard.getFile();
 				ICompilationUnit el = JavaCore.createCompilationUnitFrom(f);
 				try {

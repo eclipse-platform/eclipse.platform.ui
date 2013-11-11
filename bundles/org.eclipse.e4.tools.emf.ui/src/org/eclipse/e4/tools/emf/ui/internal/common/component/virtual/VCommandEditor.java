@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
+import org.eclipse.jface.window.Window;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -245,7 +247,7 @@ public class VCommandEditor extends AbstractComponentEditor {
 	protected void handleImport() {
 		ModelImportWizard wizard = new ModelImportWizard(MCommand.class, this);
 		WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
-		if (wizardDialog.open() == WizardDialog.OK) {
+		if (wizardDialog.open() == Window.OK) {
 			MCommand[] elements = (MCommand[]) wizard.getElements(MCommand.class);
 			for (MCommand mCommand : elements) {
 				addCommand(mCommand);

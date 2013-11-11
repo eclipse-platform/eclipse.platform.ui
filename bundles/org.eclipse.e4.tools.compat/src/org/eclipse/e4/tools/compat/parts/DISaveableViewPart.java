@@ -51,6 +51,7 @@ public abstract class DISaveableViewPart<C> extends DIViewPart<C> implements ISa
 		return dirtyState;
 	}
 
+	@Override
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
 		

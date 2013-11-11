@@ -99,6 +99,7 @@ public class MenuIdDialog extends TitleAreaDialog {
 		viewer.addFilter(filter);
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
