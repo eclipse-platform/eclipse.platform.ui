@@ -788,31 +788,6 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		debugUIPreferences.setValue(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, activate);
 	}
 
-	/**
-	 * When a test throws the 'try again' exception, try it again.
-	 * 
-	 * @see junit.framework.TestCase#runBare()
-	 */
-	@Override
-	public void runBare() throws Throwable {
-		boolean tryAgain = true;
-		int attempts = 0;
-		while (tryAgain) {
-			try {
-				attempts++;
-				super.runBare();
-				tryAgain = false;
-			}
-			catch (TestAgainException e) {
-				System.err.println("Test failed attempt " + attempts + ". Re-testing: " + this.getName()); //$NON-NLS-1$ //$NON-NLS-2$ 
-				e.printStackTrace();
-				if (attempts > 5) {
-					tryAgain = false;
-				}
-			}
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 

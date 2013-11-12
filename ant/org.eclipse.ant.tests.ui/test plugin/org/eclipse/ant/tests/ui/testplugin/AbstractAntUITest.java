@@ -30,6 +30,7 @@ import junit.framework.TestCase;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.model.AntModel;
+import org.eclipse.ant.tests.ui.debug.TestAgainException;
 import org.eclipse.ant.tests.ui.editor.support.TestLocationProvider;
 import org.eclipse.ant.tests.ui.editor.support.TestProblemRequestor;
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
@@ -111,6 +112,31 @@ public abstract class AbstractAntUITest extends TestCase {
 		IFile file = getIFile(buildFileName);
 		assertTrue("Could not find build file named: " + buildFileName, file.exists()); //$NON-NLS-1$
 		return file.getLocation().toFile();
+	}
+
+	/**
+	 * When a test throws the 'try again' exception, try it again.
+	 * 
+	 * @see junit.framework.TestCase#runBare()
+	 */
+	@Override
+	public void runBare() throws Throwable {
+		boolean tryAgain = true;
+		int attempts = 0;
+		while (tryAgain) {
+			try {
+				attempts++;
+				super.runBare();
+				tryAgain = false;
+			}
+			catch (TestAgainException e) {
+				System.out.println("Test failed attempt " + attempts + ". Re-testing: " + this.getName()); //$NON-NLS-1$ //$NON-NLS-2$ 
+				e.printStackTrace();
+				if (attempts > 5) {
+					tryAgain = false;
+				}
+			}
+		}
 	}
 
 	/*

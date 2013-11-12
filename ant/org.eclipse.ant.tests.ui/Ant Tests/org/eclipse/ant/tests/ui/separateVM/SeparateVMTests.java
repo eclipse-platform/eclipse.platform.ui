@@ -25,6 +25,7 @@ import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.ant.tests.ui.AbstractAntUIBuildTest;
+import org.eclipse.ant.tests.ui.debug.TestAgainException;
 import org.eclipse.ant.tests.ui.testplugin.ConsoleLineTracker;
 import org.eclipse.ant.tests.ui.testplugin.ProjectHelper;
 import org.eclipse.core.resources.IFile;
@@ -59,11 +60,12 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		ConsoleLineTracker.waitForConsole();
 		if (ConsoleLineTracker.getNumberOfMessages() != expectedLines) {
 			List<String> lines = ConsoleLineTracker.getAllMessages();
-			System.err.println("Failed line count from " + getName() + ", tracked lines: "); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("Failed line count from " + getName() + ", tracked lines: "); //$NON-NLS-1$ //$NON-NLS-2$
 			for (String string : lines) {
-				System.err.println('\t' + string);
+				System.out.println('\t' + string);
 			}
-			fail("Incorrect number of messages logged for build - should be " + expectedLines + " but was " + ConsoleLineTracker.getNumberOfMessages()); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new TestAgainException("Test again - Incorrect number of messages logged for build - should be " + expectedLines + " but was " //$NON-NLS-1$ //$NON-NLS-2$
+					+ ConsoleLineTracker.getNumberOfMessages());
 		}
 	}
 
@@ -136,8 +138,8 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	 * Tests launching Ant and that build failed presents links to the failures
 	 */
 	public void testBuildFailedLinks() throws CoreException {
-		launch("102282"); //$NON-NLS-1$
 		try {
+			launch("102282"); //$NON-NLS-1$
 			int offset = ConsoleLineTracker.getDocument().getLineOffset(9) + 10; // second line of build failed link
 			IHyperlink link = getHyperlink(offset, ConsoleLineTracker.getDocument());
 			assertNotNull("No hyperlink found at offset " + offset, link); //$NON-NLS-1$
@@ -251,7 +253,6 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 			return true;
 		}
 
-		// org.apache.ant_1.7.1.v200704241635
 		int index = msg.lastIndexOf('.');
 		if (index > 0) {
 			msg = msg.substring(0, index);
