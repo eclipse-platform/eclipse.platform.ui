@@ -12,8 +12,8 @@
 package org.eclipse.jface.snippets.viewers;
 
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnPixelData;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.OwnerDrawLabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
@@ -108,43 +108,10 @@ public class Snippet006TableMultiLineCells {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
 	public void createPartControl(Composite parent) {
 		viewer = new TableViewer(parent, SWT.FULL_SELECTION);
 
-		viewer.setContentProvider(new IStructuredContentProvider() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-			 */
-			public void dispose() {
-			};
-
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-			 */
-			public Object[] getElements(Object inputElement) {
-				return entries;
-			};
-
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
-			 */
-			public void inputChanged(org.eclipse.jface.viewers.Viewer viewer,
-					Object oldInput, Object newInput) {
-			}
-
-		});
+		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		createColumns();
 
 		viewer.setLabelProvider(new OwnerDrawLabelProvider() {
@@ -166,7 +133,7 @@ public class Snippet006TableMultiLineCells {
 				event.gc.drawText(entry.line, event.x, event.y, true);
 			}
 		});
-		viewer.setInput(this);
+		viewer.setInput(entries);
 
 		GridData data = new GridData(GridData.GRAB_HORIZONTAL
 				| GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
