@@ -109,9 +109,6 @@ public class Snippet005TreeCustomMenu {
 
 		mgr.addMenuListener(new IMenuListener() {
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.action.IMenuListener#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
-			 */
 			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				IStructuredSelection selection = (IStructuredSelection) v

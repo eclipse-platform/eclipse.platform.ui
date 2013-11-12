@@ -7,17 +7,17 @@
  *
  * Contributors:
  *     Hendrik Still<hendrik.still@gammas.de> - initial implementation
+ *     Lars Vogel <lars.vogel@gmail.com> - Bug 414565
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
 
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -25,45 +25,10 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * A simple ComboViewer to demonstrate usage
- * 
- * @author Hendrik Still <hendrik.still@gammas.de>
- * 
+ *
  */
+
 public class Snippet063ComboViewer {
-	private class MyContentProvider implements IStructuredContentProvider {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.viewers.IStructuredContentProvider#getElements(
-		 * java.lang.Object)
-		 */
-		public Object[] getElements(Object inputElement) {
-			return (MyModel[]) inputElement;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
-		public void dispose() {
-
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse
-		 * .jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
-		}
-
-	}
 
 	public class MyModel {
 		public int counter;
@@ -72,6 +37,7 @@ public class Snippet063ComboViewer {
 			this.counter = counter;
 		}
 
+		@Override
 		public String toString() {
 			return "Item " + this.counter;
 		}
@@ -86,7 +52,7 @@ public class Snippet063ComboViewer {
 		l.setText("Choose Item:");
 		final ComboViewer v = new ComboViewer(shell);
 		v.setLabelProvider(new LabelProvider());
-		v.setContentProvider(new MyContentProvider());
+		v.setContentProvider(ArrayContentProvider.getInstance());
 
 		MyModel[] model = createModel();
 		v.setInput(model);
@@ -108,9 +74,6 @@ public class Snippet063ComboViewer {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);
