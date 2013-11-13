@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.model.application.ui.MInput;
  * to store what would be the input as an entry on the Part's 'persistentData' map.
  * </p>
  * @since 1.0
+ * @deprecated Use Part instead.
  * <!-- end-model-doc -->
  *
  *

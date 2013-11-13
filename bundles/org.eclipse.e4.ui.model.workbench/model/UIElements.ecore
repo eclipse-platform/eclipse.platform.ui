@@ -30,6 +30,12 @@
         <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dialogs" upperBound="-1"
+        eType="#//ui/basic/Dialog">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This is the ordered list of MDialogs for this model.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.1"/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
       <eTypeArguments eClassifier="#//ui/basic/Window"/>
     </eGenericSuperTypes>
@@ -360,7 +366,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Input" abstract="true" interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This class should be mixed into UI elements such as InputParts that need to &#xD;&#xA;reference an external resource (files...).&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This class should be mixed into UI elements such as InputParts that need to &#xD;&#xA;reference an external resource (files...).&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@deprecated No longer used"/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -938,14 +944,18 @@
           </eAnnotations>
         </eStructuralFeatures>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="CompositePart" eSuperTypes="#//ui/basic/Part #//ui/basic/PartSashContainer">
+      <eClassifiers xsi:type="ecore:EClass" name="CompositePart">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
           <details key="documentation" value="&lt;p>&#xD;&#xA;This is a Part that is capable of supporting an internal structure. In order to be useful instances of this part muct be capable&#xD;&#xA;of managing their internal structure.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.1&#xD;&#xA;"/>
         </eAnnotations>
+        <eGenericSuperTypes eClassifier="#//ui/basic/Part"/>
+        <eGenericSuperTypes eClassifier="#//ui/GenericTile">
+          <eTypeArguments eClassifier="#//ui/basic/PartSashContainerElement"/>
+        </eGenericSuperTypes>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="InputPart" eSuperTypes="#//ui/basic/Part #//ui/Input">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a subclass of Part that allows tracking of an 'input'. While originally defined as&#xD;&#xA;a type of 'editor' it turns out that it may well be better to just use a regular Part and&#xD;&#xA;to store what would be the input as an entry on the Part's 'persistentData' map.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a subclass of Part that allows tracking of an 'input'. While originally defined as&#xD;&#xA;a type of 'editor' it turns out that it may well be better to just use a regular Part and&#xD;&#xA;to store what would be the input as an entry on the Part's 'persistentData' map.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@deprecated Use Part instead."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PartStack">
@@ -1070,6 +1080,16 @@
           eSuperTypes="#//ui/UIElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
           <details key="documentation" value="&lt;p>&#xD;&#xA;A class to be mixed in to any element that should be allowed to be added to a&#xD;&#xA;PartStack.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        </eAnnotations>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="Dialog" eSuperTypes="#//ui/basic/Window">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A subclass of Window representing a dialog.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.1"/>
+        </eAnnotations>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="WizardDialog" eSuperTypes="#//ui/basic/Dialog">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A subclass of Window representing a wizard dialog.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.1"/>
         </eAnnotations>
       </eClassifiers>
     </eSubpackages>

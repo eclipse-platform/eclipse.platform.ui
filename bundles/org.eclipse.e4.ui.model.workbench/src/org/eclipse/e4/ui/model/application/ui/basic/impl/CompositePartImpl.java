@@ -12,28 +12,19 @@ package org.eclipse.e4.ui.model.application.ui.basic.impl;
 
 import java.util.Collection;
 import java.util.List;
-
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-
 import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
-
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -313,11 +304,6 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 				default: return -1;
 			}
 		}
-		if (baseClass == MPartSashContainer.class) {
-			switch (derivedFeatureID) {
-				default: return -1;
-			}
-		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -338,11 +324,6 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 		if (baseClass == MGenericTile.class) {
 			switch (baseFeatureID) {
 				case UiPackageImpl.GENERIC_TILE__HORIZONTAL: return BasicPackageImpl.COMPOSITE_PART__HORIZONTAL;
-				default: return -1;
-			}
-		}
-		if (baseClass == MPartSashContainer.class) {
-			switch (baseFeatureID) {
 				default: return -1;
 			}
 		}

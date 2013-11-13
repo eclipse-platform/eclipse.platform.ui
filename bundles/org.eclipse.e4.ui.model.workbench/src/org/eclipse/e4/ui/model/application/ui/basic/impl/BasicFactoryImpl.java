@@ -77,6 +77,8 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 			case BasicPackageImpl.WINDOW: return (EObject)createWindow();
 			case BasicPackageImpl.TRIMMED_WINDOW: return (EObject)createTrimmedWindow();
 			case BasicPackageImpl.TRIM_BAR: return (EObject)createTrimBar();
+			case BasicPackageImpl.DIALOG: return (EObject)createDialog();
+			case BasicPackageImpl.WIZARD_DIALOG: return (EObject)createWizardDialog();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -160,6 +162,26 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	public MTrimBar createTrimBar() {
 		TrimBarImpl trimBar = new TrimBarImpl();
 		return trimBar;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MDialog createDialog() {
+		DialogImpl dialog = new DialogImpl();
+		return dialog;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MWizardDialog createWizardDialog() {
+		WizardDialogImpl wizardDialog = new WizardDialogImpl();
+		return wizardDialog;
 	}
 
 	/**
