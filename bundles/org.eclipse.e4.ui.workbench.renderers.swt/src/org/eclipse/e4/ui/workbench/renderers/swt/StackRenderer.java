@@ -13,13 +13,16 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.BasicPartList;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
@@ -44,6 +47,7 @@ import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
@@ -151,10 +155,110 @@ public class StackRenderer extends LazyStackRenderer {
 
 	private boolean ignoreTabSelChanges = false;
 
+	List<CTabItem> getItemsToSet(MPart part) {
+		List<CTabItem> itemsToSet = new ArrayList<CTabItem>();
+
+		MUIElement partParent = part.getParent();
+		if (partParent instanceof MPartStack) {
+			CTabItem item = findItemForPart(part);
+			if (item != null) {
+				itemsToSet.add(findItemForPart(part));
+			}
+		} else if (part.getCurSharedRef() != null) {
+			MWindow topWin = modelService.getTopLevelWindowFor(part);
+			List<MPlaceholder> partRefs = modelService.findElements(topWin,
+					part.getElementId(), MPlaceholder.class, null);
+			for (MPlaceholder ref : partRefs) {
+				CTabItem item = findItemForPart(ref, null);
+				if (item != null) {
+					itemsToSet.add(item);
+				}
+			}
+		}
+
+		return itemsToSet;
+	}
+
+	/**
+	 * This is the new way to handle UIEvents (as opposed to subscring and
+	 * unsubscribing them with the event broker.
+	 * 
+	 * The method is described in detail at
+	 * http://wiki.eclipse.org/Eclipse4/RCP/Event_Model
+	 */
+	@SuppressWarnings("unchecked")
+	@Inject
+	@Optional
+	private void handleTransientDataEvents(
+			@UIEventTopic(UIEvents.ApplicationElement.TOPIC_TRANSIENTDATA) org.osgi.service.event.Event event) {
+		MUIElement changedElement = (MUIElement) event
+				.getProperty(UIEvents.EventTags.ELEMENT);
+
+		if (!(changedElement instanceof MPart))
+			return;
+
+		String key;
+		if (UIEvents.isREMOVE(event)) {
+			key = ((Entry<String, Object>) event
+					.getProperty(UIEvents.EventTags.OLD_VALUE)).getKey();
+		} else {
+			key = ((Entry<String, Object>) event
+					.getProperty(UIEvents.EventTags.NEW_VALUE)).getKey();
+		}
+
+		if (!IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY.equals(key)
+				&& !IPresentationEngine.OVERRIDE_TITLE_TOOL_TIP_KEY.equals(key))
+			return;
+
+		MPart part = (MPart) changedElement;
+		List<CTabItem> itemsToSet = getItemsToSet(part);
+		for (CTabItem item : itemsToSet) {
+			if (key.equals(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY)) {
+				item.setImage(getImage(part));
+			} else if (key
+					.equals(IPresentationEngine.OVERRIDE_TITLE_TOOL_TIP_KEY)) {
+				String newTip = getToolTip(part);
+				item.setToolTipText(getToolTip(newTip));
+			}
+		}
+	}
+
 	// private ToolBar menuTB;
 	// private boolean menuButtonShowing = false;
 
 	// private Control partTB;
+
+	/**
+	 * Handles changes in tags
+	 * 
+	 * @param event
+	 */
+	@Inject
+	@Optional
+	private void subscribeTopicTagsChanged(
+			@UIEventTopic(UIEvents.ApplicationElement.TOPIC_TAGS) Event event) {
+		Object changedObj = event.getProperty(EventTags.ELEMENT);
+
+		if (!(changedObj instanceof MPart))
+			return;
+
+		final MPart part = (MPart) changedObj;
+		CTabItem item = findItemForPart(part);
+		if (item == null || item.isDisposed())
+			return;
+
+		if (UIEvents.isADD(event)) {
+			if (UIEvents.contains(event, UIEvents.EventTags.NEW_VALUE,
+					IPresentationEngine.ADORNMENT_PIN)) {
+				item.setImage(getImage(part));
+			}
+		} else if (UIEvents.isREMOVE(event)) {
+			if (UIEvents.contains(event, UIEvents.EventTags.OLD_VALUE,
+					IPresentationEngine.ADORNMENT_PIN)) {
+				item.setImage(getImage(part));
+			}
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -737,7 +841,7 @@ public class StackRenderer extends LazyStackRenderer {
 			stack = element.getParent();
 
 		CTabFolder ctf = (CTabFolder) stack.getWidget();
-		if (ctf == null)
+		if (ctf == null || ctf.isDisposed())
 			return null;
 
 		CTabItem[] items = ctf.getItems();

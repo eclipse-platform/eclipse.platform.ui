@@ -16,6 +16,9 @@ import java.net.URL;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 
 public class ResourceUtility implements ISWTResourceUtilities {
 
@@ -31,5 +34,22 @@ public class ResourceUtility implements ISWTResourceUtilities {
 					+ "\" is invalid, no image will be shown");
 			return null;
 		}
+	}
+
+	public Image adornImage(Image toAdorn, Image adornment) {
+		if (toAdorn == null)
+			return null;
+		if (adornment == null)
+			return toAdorn;
+		Rectangle adornmentSize = adornment.getBounds();
+
+		Image adornedImage = new Image(toAdorn.getDevice(), 16, 16);
+		GC gc = new GC(adornedImage);
+		gc.drawImage(toAdorn, 0, 0);
+		// For now assume top-right
+		gc.drawImage(adornment, 16 - adornmentSize.width, 0);
+		gc.dispose();
+
+		return adornedImage;
 	}
 }

@@ -125,6 +125,12 @@ public interface IPresentationEngine {
 	public static final String OVERRIDE_TITLE_TOOL_TIP_KEY = "e4_override_title_tool_tip_key"; //$NON-NLS-1$
 
 	/**
+	 * This is a Tag that when applied to an MUILabel element will cause whatever Image is to be
+	 * shown to be adorned with the 'pinned' affordance.
+	 */
+	public static final String ADORNMENT_PIN = "Pin Adornment"; //$NON-NLS-1$
+
+	/**
 	 * This is a <b>Boolean</b> preference used to control animations in the application
 	 */
 	public static final String ANIMATIONS_ENABLED = "Animations Enabled"; //$NON-NLS-1$
