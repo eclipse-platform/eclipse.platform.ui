@@ -529,7 +529,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					IWorkbenchPart workbenchPart = ((CompatibilityPart) object).getPart();
 					if (workbenchPart instanceof ISaveablePart) {
 						ISaveablePart saveablePart = (ISaveablePart) workbenchPart;
-						return page.saveSaveable(saveablePart, workbenchPart, confirm, false);
+						return page.saveSaveable(saveablePart, workbenchPart, confirm, true);
 					}
 				}
 				return super.save(dirtyPart, confirm);
