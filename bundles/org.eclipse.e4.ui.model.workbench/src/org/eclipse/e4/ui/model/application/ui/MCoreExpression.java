@@ -21,6 +21,7 @@ package org.eclipse.e4.ui.model.application.ui;
  * A specific kind of expression used by the Eclipse Workbench.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  * <p>

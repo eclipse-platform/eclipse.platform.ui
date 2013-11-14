@@ -22,6 +22,7 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
  * This defines the value of a Parameter to be used by a Command.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  * <p>

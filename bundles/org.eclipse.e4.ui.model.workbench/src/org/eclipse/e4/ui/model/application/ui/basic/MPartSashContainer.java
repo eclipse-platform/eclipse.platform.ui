@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.model.application.ui.MGenericTile;
  * type is recursive, allowing the creation of a tree of sashes whose leafs are Parts.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  *

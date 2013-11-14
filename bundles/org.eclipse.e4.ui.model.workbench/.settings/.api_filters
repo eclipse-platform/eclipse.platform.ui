@@ -6,6 +6,222 @@
                 <message_argument value="1.0.0"/>
             </message_arguments>
         </filter>
+        <filter comment="Forgot to add @noimplement in 1.0" id="923795461">
+            <message_arguments>
+                <message_argument value="1.1.0"/>
+                <message_argument value="1.0.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/MAddon.java" type="org.eclipse.e4.ui.model.application.MAddon">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.MAddon"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/MApplication.java" type="org.eclipse.e4.ui.model.application.MApplication">
+        <filter comment="Added for Bug 421462" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.MApplication"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/MApplicationElement.java" type="org.eclipse.e4.ui.model.application.MApplicationElement">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.MApplicationElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/MContribution.java" type="org.eclipse.e4.ui.model.application.MContribution">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.MContribution"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/commands/MBindingContext.java" type="org.eclipse.e4.ui.model.application.commands.MBindingContext">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.commands.MBindingContext"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/commands/MBindingTable.java" type="org.eclipse.e4.ui.model.application.commands.MBindingTable">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.commands.MBindingTable"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/commands/MBindingTableContainer.java" type="org.eclipse.e4.ui.model.application.commands.MBindingTableContainer">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.commands.MBindingTableContainer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/commands/MBindings.java" type="org.eclipse.e4.ui.model.application.commands.MBindings">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.commands.MBindings"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/commands/MCategory.java" type="org.eclipse.e4.ui.model.application.commands.MCategory">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.commands.MCategory"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/commands/MCommand.java" type="org.eclipse.e4.ui.model.application.commands.MCommand">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.commands.MCommand"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/commands/MCommandParameter.java" type="org.eclipse.e4.ui.model.application.commands.MCommandParameter">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.commands.MCommandParameter"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/commands/MHandler.java" type="org.eclipse.e4.ui.model.application.commands.MHandler">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.commands.MHandler"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/commands/MHandlerContainer.java" type="org.eclipse.e4.ui.model.application.commands.MHandlerContainer">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.commands.MHandlerContainer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/commands/MKeyBinding.java" type="org.eclipse.e4.ui.model.application.commands.MKeyBinding">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.commands.MKeyBinding"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/commands/MKeySequence.java" type="org.eclipse.e4.ui.model.application.commands.MKeySequence">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.commands.MKeySequence"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/commands/MParameter.java" type="org.eclipse.e4.ui.model.application.commands.MParameter">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.commands.MParameter"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/descriptor/basic/MPartDescriptor.java" type="org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/descriptor/basic/MPartDescriptorContainer.java" type="org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/MContext.java" type="org.eclipse.e4.ui.model.application.ui.MContext">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.MContext"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/MCoreExpression.java" type="org.eclipse.e4.ui.model.application.ui.MCoreExpression">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.MCoreExpression"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/MDirtyable.java" type="org.eclipse.e4.ui.model.application.ui.MDirtyable">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.MDirtyable"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/MElementContainer.java" type="org.eclipse.e4.ui.model.application.ui.MElementContainer">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.MElementContainer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/MExpression.java" type="org.eclipse.e4.ui.model.application.ui.MExpression">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.MExpression"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/MGenericStack.java" type="org.eclipse.e4.ui.model.application.ui.MGenericStack">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.MGenericStack"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/MGenericTile.java" type="org.eclipse.e4.ui.model.application.ui.MGenericTile">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.MGenericTile"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/MGenericTrimContainer.java" type="org.eclipse.e4.ui.model.application.ui.MGenericTrimContainer">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.MGenericTrimContainer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/MInput.java" type="org.eclipse.e4.ui.model.application.ui.MInput">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.MInput"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/MSnippetContainer.java" type="org.eclipse.e4.ui.model.application.ui.MSnippetContainer">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.MSnippetContainer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/MUIElement.java" type="org.eclipse.e4.ui.model.application.ui.MUIElement">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.MUIElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/MUILabel.java" type="org.eclipse.e4.ui.model.application.ui.MUILabel">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.MUILabel"/>
+            </message_arguments>
+        </filter>
     </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/SideValue.java" type="org.eclipse.e4.ui.model.application.ui.SideValue">
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="371236918">
@@ -20,10 +236,115 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/advanced/MArea.java" type="org.eclipse.e4.ui.model.application.ui.advanced.MArea">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.advanced.MArea"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/advanced/MPerspective.java" type="org.eclipse.e4.ui.model.application.ui.advanced.MPerspective">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.advanced.MPerspective"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/advanced/MPerspectiveStack.java" type="org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/advanced/MPlaceholder.java" type="org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/basic/MBasicFactory.java" type="org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory">
         <filter id="403853384">
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/basic/MInputPart.java" type="org.eclipse.e4.ui.model.application.ui.basic.MInputPart">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.basic.MInputPart"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/basic/MPart.java" type="org.eclipse.e4.ui.model.application.ui.basic.MPart">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.basic.MPart"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/basic/MPartSashContainer.java" type="org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/basic/MPartSashContainerElement.java" type="org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/basic/MPartStack.java" type="org.eclipse.e4.ui.model.application.ui.basic.MPartStack">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.basic.MPartStack"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/basic/MStackElement.java" type="org.eclipse.e4.ui.model.application.ui.basic.MStackElement">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.basic.MStackElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/basic/MTrimBar.java" type="org.eclipse.e4.ui.model.application.ui.basic.MTrimBar">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.basic.MTrimBar"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/basic/MTrimElement.java" type="org.eclipse.e4.ui.model.application.ui.basic.MTrimElement">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.basic.MTrimElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/basic/MTrimmedWindow.java" type="org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/basic/MWindow.java" type="org.eclipse.e4.ui.model.application.ui.basic.MWindow">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.basic.MWindow"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/basic/MWindowElement.java" type="org.eclipse.e4.ui.model.application.ui.basic.MWindowElement">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.basic.MWindowElement"/>
             </message_arguments>
         </filter>
     </resource>
@@ -40,7 +361,68 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MDirectMenuItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MDirectToolItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MDynamicMenuContribution.java" type="org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MHandledItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MHandledItem">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MHandledItem"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MHandledMenuItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MHandledToolItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MItem">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MItem"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MMenu.java" type="org.eclipse.e4.ui.model.application.ui.menu.MMenu">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenu"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MMenuContribution.java" type="org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution"/>
+            </message_arguments>
+        </filter>
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution"/>
@@ -67,6 +449,11 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MMenuContributions.java" type="org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions"/>
+            </message_arguments>
+        </filter>
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions"/>
@@ -74,7 +461,40 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MMenuElement.java" type="org.eclipse.e4.ui.model.application.ui.menu.MMenuElement">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MMenuItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MMenuItem">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuItem"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MMenuSeparator.java" type="org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MOpaqueMenu.java" type="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenu">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenu"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MOpaqueMenuItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem"/>
+            </message_arguments>
+        </filter>
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem"/>
@@ -89,6 +509,11 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MOpaqueMenuSeparator.java" type="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator"/>
+            </message_arguments>
+        </filter>
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator"/>
@@ -103,6 +528,11 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MOpaqueToolItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem"/>
+            </message_arguments>
+        </filter>
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem"/>
@@ -116,7 +546,19 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MPopupMenu.java" type="org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MRenderedMenu.java" type="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu"/>
+            </message_arguments>
+        </filter>
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu"/>
@@ -131,6 +573,11 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MRenderedMenuItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem"/>
+            </message_arguments>
+        </filter>
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem"/>
@@ -145,6 +592,11 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MRenderedToolBar.java" type="org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar"/>
+            </message_arguments>
+        </filter>
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar"/>
@@ -158,7 +610,19 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MToolBar.java" type="org.eclipse.e4.ui.model.application.ui.menu.MToolBar">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MToolBar"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MToolBarContribution.java" type="org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution"/>
+            </message_arguments>
+        </filter>
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution"/>
@@ -185,6 +649,11 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MToolBarContributions.java" type="org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions"/>
+            </message_arguments>
+        </filter>
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions"/>
@@ -192,7 +661,40 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MToolBarElement.java" type="org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MToolBarSeparator.java" type="org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MToolControl.java" type="org.eclipse.e4.ui.model.application.ui.menu.MToolControl">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MToolControl"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MToolItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MToolItem">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MToolItem"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MTrimContribution.java" type="org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution"/>
+            </message_arguments>
+        </filter>
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution"/>
@@ -219,6 +721,11 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MTrimContributions.java" type="org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions">
+        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions"/>
+            </message_arguments>
+        </filter>
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions"/>

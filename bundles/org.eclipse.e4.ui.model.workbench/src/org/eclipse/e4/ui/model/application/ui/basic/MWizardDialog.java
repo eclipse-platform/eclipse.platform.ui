@@ -21,6 +21,7 @@ package org.eclipse.e4.ui.model.application.ui.basic;
  * A subclass of Window representing a wizard dialog.
  * </p>
  * @since 1.1
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  *

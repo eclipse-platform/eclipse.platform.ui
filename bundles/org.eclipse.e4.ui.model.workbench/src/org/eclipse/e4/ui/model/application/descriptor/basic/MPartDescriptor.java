@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
  * parts and is used in the e4 version of 'Show View'...
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  * <p>

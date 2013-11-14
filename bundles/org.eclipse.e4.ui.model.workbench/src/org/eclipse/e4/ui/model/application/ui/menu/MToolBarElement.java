@@ -22,6 +22,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
  * This is a placeholder class mixed in to any other type that can be added to a Toolbar.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  *

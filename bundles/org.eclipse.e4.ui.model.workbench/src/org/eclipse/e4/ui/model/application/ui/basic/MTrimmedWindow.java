@@ -22,6 +22,7 @@ import java.util.List;
  * A subclass of Window that also supports TrimBars on its edges.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  * <p>

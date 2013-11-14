@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
  * This is the concrete class representing a Toolbar in the UI Model.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  *

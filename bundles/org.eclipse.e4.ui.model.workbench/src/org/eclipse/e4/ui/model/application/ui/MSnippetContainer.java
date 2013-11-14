@@ -24,6 +24,7 @@ import java.util.List;
  * Perspective will create a clone and store it in this container.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  * <p>

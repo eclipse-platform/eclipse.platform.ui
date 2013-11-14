@@ -25,6 +25,7 @@ import java.util.List;
  * <p>Example values: org.eclipse.ui.contexts.dialog, org.eclipse.ui.contexts.window
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  * <p>

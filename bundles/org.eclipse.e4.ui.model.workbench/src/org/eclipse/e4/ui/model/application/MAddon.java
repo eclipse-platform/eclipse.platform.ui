@@ -28,6 +28,7 @@ package org.eclipse.e4.ui.model.application;
  * addon (i.e. The MinMaxAddon's TrimElements.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  *

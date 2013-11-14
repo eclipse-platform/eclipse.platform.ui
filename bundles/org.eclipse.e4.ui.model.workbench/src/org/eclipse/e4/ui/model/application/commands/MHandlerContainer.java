@@ -22,6 +22,7 @@ import java.util.List;
  * This provides a container in which to store lists of Handlers. 
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  * <p>

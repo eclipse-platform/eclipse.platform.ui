@@ -30,6 +30,7 @@ import java.util.List;
  * 'StackElement' (which is an empty stub used only to constran the stack's types.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  * <p>

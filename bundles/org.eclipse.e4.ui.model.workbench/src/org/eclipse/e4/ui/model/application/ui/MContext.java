@@ -27,6 +27,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
  * element is rendered and disposed when the element is unrendered.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  * <p>

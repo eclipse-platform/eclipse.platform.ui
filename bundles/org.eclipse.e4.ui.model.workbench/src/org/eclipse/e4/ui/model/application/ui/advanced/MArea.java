@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
  * Editor Area.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  *

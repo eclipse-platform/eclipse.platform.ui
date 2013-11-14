@@ -23,6 +23,7 @@ package org.eclipse.e4.ui.model.application.ui;
  * a mix-in to allow for future model extensions.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  * <p>

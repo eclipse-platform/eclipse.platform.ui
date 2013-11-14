@@ -10,7 +10,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Application">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="&lt;p>&#xD;&#xA;The MApplication acts as the root of the UI Model. It's children are the&#xD;&#xA; MWindows representing the UI for this application. It also owns the application's&#xD;&#xA;context (which is hooked to the OSGI context, allowing access not only to its&#xD;&#xA;own runtime information but also to any registered OSGI service.&#xD;&#xA;&lt;/p>&lt;p>&#xD;&#xA;It also owns a number of caches which, while independent of the UI itself are&#xD;&#xA;used by the appliecation to populate new windows or to define state that is&#xD;&#xA;epected to be the same for all windows:&#xD;&#xA;&lt;ui>&#xD;&#xA;&lt;li>Keybindings, Handlers, Commands&lt;/li>&#xD;&#xA;&lt;li>Part Descriptors (to support a 'Show View' dialog...)&lt;/li>&#xD;&#xA;&lt;li>Snippets of model (such as saved perspectives...)&lt;/li>&#xD;&#xA;&lt;/ui>&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+      <details key="documentation" value="&lt;p>&#xD;&#xA;The MApplication acts as the root of the UI Model. It's children are the&#xD;&#xA; MWindows representing the UI for this application. It also owns the application's&#xD;&#xA;context (which is hooked to the OSGI context, allowing access not only to its&#xD;&#xA;own runtime information but also to any registered OSGI service.&#xD;&#xA;&lt;/p>&lt;p>&#xD;&#xA;It also owns a number of caches which, while independent of the UI itself are&#xD;&#xA;used by the appliecation to populate new windows or to define state that is&#xD;&#xA;epected to be the same for all windows:&#xD;&#xA;&lt;ui>&#xD;&#xA;&lt;li>Keybindings, Handlers, Commands&lt;/li>&#xD;&#xA;&lt;li>Part Descriptors (to support a 'Show View' dialog...)&lt;/li>&#xD;&#xA;&lt;li>Snippets of model (such as saved perspectives...)&lt;/li>&#xD;&#xA;&lt;/ui>&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="commands" upperBound="-1"
         eType="#//commands/Command" containment="true">
@@ -51,7 +51,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ApplicationElement" abstract="true">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="&lt;p>&#xD;&#xA;This is the root element for all UI Model elements, defining attribtues common&#xD;&#xA;to every element; the element's id as well as three general storage elements:&#xD;&#xA;&lt;ul>&#xD;&#xA;&lt;li>Tags: This is a set of strings which can be used to stereotype a particular&#xD;&#xA;element. Tags may be specified in element searches and can also be referred&#xD;&#xA;to in the CSS styling definition.&lt;/li>&#xD;&#xA;&lt;li>PersistedState: A string to string map used to store information that nneds&#xD;&#xA;to be persisted between sessions.&lt;/li>&#xD;&#xA;&lt;li>TransientData: A string to object map which can be used to store runtime data&#xD;&#xA;relevant to a particular model element.&lt;/li>&#xD;&#xA;&lt;/ul>&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+      <details key="documentation" value="&lt;p>&#xD;&#xA;This is the root element for all UI Model elements, defining attribtues common&#xD;&#xA;to every element; the element's id as well as three general storage elements:&#xD;&#xA;&lt;ul>&#xD;&#xA;&lt;li>Tags: This is a set of strings which can be used to stereotype a particular&#xD;&#xA;element. Tags may be specified in element searches and can also be referred&#xD;&#xA;to in the CSS styling definition.&lt;/li>&#xD;&#xA;&lt;li>PersistedState: A string to string map used to store information that nneds&#xD;&#xA;to be persisted between sessions.&lt;/li>&#xD;&#xA;&lt;li>TransientData: A string to object map which can be used to store runtime data&#xD;&#xA;relevant to a particular model element.&lt;/li>&#xD;&#xA;&lt;/ul>&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="elementId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -83,7 +83,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Contribution" abstract="true" eSuperTypes="#//ApplicationElement">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="&lt;p>&#xD;&#xA;MContribution is a mix-in class used by concrete elements such as Parts to define&#xD;&#xA;the location of the client supplied class implementing the specific logic needed.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+      <details key="documentation" value="&lt;p>&#xD;&#xA;MContribution is a mix-in class used by concrete elements such as Parts to define&#xD;&#xA;the location of the client supplied class implementing the specific logic needed.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -99,7 +99,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Addon" eSuperTypes="#//Contribution">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="&lt;p>&#xD;&#xA;An MAddon represents a self-contained application logic. Addons may be used&#xD;&#xA;to augment the UI in a variety of ways without requriing that the base application&#xD;&#xA;be aware of the extensions.&#xD;&#xA;&lt;/p>&lt;p>&#xD;&#xA;Addons aare expected to be capable of being removed without damage to the&#xD;&#xA;original UI. While not yet implemented there will be an uninstall protocol defined&#xD;&#xA;ni the future allowing an addon to remove any model elements specific to the&#xD;&#xA;addon (i.e. The MinMaxAddon's TrimElements.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+      <details key="documentation" value="&lt;p>&#xD;&#xA;An MAddon represents a self-contained application logic. Addons may be used&#xD;&#xA;to augment the UI in a variety of ways without requriing that the base application&#xD;&#xA;be aware of the extensions.&#xD;&#xA;&lt;/p>&lt;p>&#xD;&#xA;Addons aare expected to be capable of being removed without damage to the&#xD;&#xA;original UI. While not yet implemented there will be an uninstall protocol defined&#xD;&#xA;ni the future allowing an addon to remove any model elements specific to the&#xD;&#xA;addon (i.e. The MinMaxAddon's TrimElements.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
     </eAnnotations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="StringToObjectMap" instanceClassName="java.util.Map$Entry">
@@ -111,7 +111,7 @@
     <eClassifiers xsi:type="ecore:EClass" name="BindingTableContainer" abstract="true"
         interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This type contains the list of binding 'tables', representing the various sets of bindings&#xD;&#xA;based on the applicaiton's current running 'context'. Here the 'context' represents&#xD;&#xA;the applicaiton's UI state (i.e. whenther a Dialog is open...).&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This type contains the list of binding 'tables', representing the various sets of bindings&#xD;&#xA;based on the applicaiton's current running 'context'. Here the 'context' represents&#xD;&#xA;the applicaiton's UI state (i.e. whenther a Dialog is open...).&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EReference" name="bindingTables" upperBound="-1"
           eType="#//commands/BindingTable" containment="true">
@@ -128,7 +128,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Bindings" abstract="true" interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;Mixin interface that lists MBindingContexts that should be active when this&#xA;object is active.&#xD;&#xA;&lt;/p>&#xA;&lt;p>Example values: org.eclipse.ui.contexts.dialog, org.eclipse.ui.contexts.window&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;Mixin interface that lists MBindingContexts that should be active when this&#xA;object is active.&#xD;&#xA;&lt;/p>&#xA;&lt;p>Example values: org.eclipse.ui.contexts.dialog, org.eclipse.ui.contexts.window&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EReference" name="bindingContexts" upperBound="-1"
           eType="#//commands/BindingContext">
@@ -139,7 +139,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="BindingContext" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This class describes the hierarchy of contexts that are used by the &#xA;&lt;code>EBindingService&lt;/code> to determine which Bindings are currently &#xA;available to the user.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This class describes the hierarchy of contexts that are used by the &#xA;&lt;code>EBindingService&lt;/code> to determine which Bindings are currently &#xA;available to the user.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -160,7 +160,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="BindingTable" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;A set of Bindings that will be active if the matching &lt;code>MBindingContext&lt;/code>&#xA;is active.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;A set of Bindings that will be active if the matching &lt;code>MBindingContext&lt;/code>&#xA;is active.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EReference" name="bindings" upperBound="-1"
           eType="#//commands/KeyBinding" containment="true">
@@ -177,7 +177,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Command" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;A Command represents a logical operation within the applicaiton. The implementation&#xD;&#xA;is provided by an MHandler chosen by examining all the candidate's enablement.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;A Command represents a logical operation within the applicaiton. The implementation&#xD;&#xA;is provided by an MHandler chosen by examining all the candidate's enablement.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eOperations name="getLocalizedCommandName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -213,7 +213,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="CommandParameter" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This represents the format of a parameter to be used in a Command.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This represents the format of a parameter to be used in a Command.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
@@ -235,7 +235,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Handler" eSuperTypes="#//Contribution">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;Handlers provide the execution logic that provides the implementation of a&#xD;&#xA;particular command.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;Handlers provide the execution logic that provides the implementation of a&#xD;&#xA;particular command.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EReference" name="command" lowerBound="1"
           eType="#//commands/Command">
@@ -247,7 +247,7 @@
     <eClassifiers xsi:type="ecore:EClass" name="HandlerContainer" abstract="true"
         interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This provides a container in which to store lists of Handlers. &#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This provides a container in which to store lists of Handlers. &#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EReference" name="handlers" upperBound="-1"
           eType="#//commands/Handler" containment="true">
@@ -258,7 +258,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="KeyBinding" eSuperTypes="#//ApplicationElement #//commands/KeySequence">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;Keybindings map a particular keyboard sequence (i.e. Ctrl + C for Copy...) onto&#xD;&#xA;some command.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;Keybindings map a particular keyboard sequence (i.e. Ctrl + C for Copy...) onto&#xD;&#xA;some command.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EReference" name="command" lowerBound="1"
           eType="#//commands/Command">
@@ -275,7 +275,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="KeySequence" abstract="true" interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This represents the sequence of characters in a KeyBinding whose detection will&#xD;&#xA;fire the associated Command.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This represents the sequence of characters in a KeyBinding whose detection will&#xD;&#xA;fire the associated Command.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="keySequence" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
@@ -286,7 +286,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Parameter" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This defines the value of a Parameter to be used by a Command.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This defines the value of a Parameter to be used by a Command.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -303,7 +303,7 @@
         serializable="false"/>
     <eClassifiers xsi:type="ecore:EClass" name="Category" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This defines a logical grouping of Commands in order to facilitate showing &#xD;&#xA;the current set of Commands in dialogs, lists etc&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This defines a logical grouping of Commands in order to facilitate showing &#xD;&#xA;the current set of Commands in dialogs, lists etc&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eOperations name="getLocalizedName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -332,7 +332,7 @@
       nsPrefix="ui">
     <eClassifiers xsi:type="ecore:EClass" name="Context" abstract="true" interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This class is mixed into a UI element when that element is expected to participate&#xD;&#xA;in the Dependency Injection context hierarchy. The context life-cycle matches&#xD;&#xA;that of the rendered element it belongs to. It's automatically created when the&#xD;&#xA;element is rendered and disposed when the element is unrendered.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This class is mixed into a UI element when that element is expected to participate&#xD;&#xA;in the Dependency Injection context hierarchy. The context life-cycle matches&#xD;&#xA;that of the rendered element it belongs to. It's automatically created when the&#xD;&#xA;element is rendered and disposed when the element is unrendered.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" eType="#//IEclipseContext"
           transient="true" derived="true">
@@ -355,7 +355,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Dirtyable" abstract="true" interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This class should be mixed into any UI element that should participate in the&#xD;&#xA;dirty / save handling. Parts are the most likely scenario for this but it exists as&#xD;&#xA;a mix-in to allow for future model extensions.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This class should be mixed into any UI element that should participate in the&#xD;&#xA;dirty / save handling. Parts are the most likely scenario for this but it exists as&#xD;&#xA;a mix-in to allow for future model extensions.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="dirty" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
           transient="true" derived="true">
@@ -366,7 +366,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Input" abstract="true" interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This class should be mixed into UI elements such as InputParts that need to &#xD;&#xA;reference an external resource (files...).&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@deprecated No longer used"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This class should be mixed into UI elements such as InputParts that need to &#xD;&#xA;reference an external resource (files...).&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients.&#xD;&#xA;@deprecated No longer used"/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -376,7 +376,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="UIElement" abstract="true" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base mix-in shared by all model elements that can be rendered into the&#xD;&#xA;UI presentation of the application. Its main job is to manage the bindings between&#xD;&#xA;the concrete element and the UI 'widget' representing it in the UI.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base mix-in shared by all model elements that can be rendered into the&#xD;&#xA;UI presentation of the application. Its main job is to manage the bindings between&#xD;&#xA;the concrete element and the UI 'widget' representing it in the UI.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eOperations name="getLocalizedAccessibilityPhrase" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -447,7 +447,7 @@
     <eClassifiers xsi:type="ecore:EClass" name="ElementContainer" abstract="true"
         eSuperTypes="#//ui/UIElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base for the two different types of containment used in the model;&#xD;&#xA;'Stacks' (where only one element would be visible at a time) and 'Tiles' (where &#xD;&#xA;all the ele elements are visible at the same time.&#xD;&#xA;&lt;/p>&lt;p>&#xD;&#xA;All containers define the type of element that they are to contain. By design this is&#xD;&#xA;always a single type. Where different concrete types are to be contained within the&#xD;&#xA;same container they all both mix in a container-specific type. For example both&#xD;&#xA;MParts and MPlaceholders are valid children for an MPartStack so they both mix in&#xD;&#xA;'StackElement' (which is an empty stub used only to constran the stack's types.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base for the two different types of containment used in the model;&#xD;&#xA;'Stacks' (where only one element would be visible at a time) and 'Tiles' (where &#xD;&#xA;all the ele elements are visible at the same time.&#xD;&#xA;&lt;/p>&lt;p>&#xD;&#xA;All containers define the type of element that they are to contain. By design this is&#xD;&#xA;always a single type. Where different concrete types are to be contained within the&#xD;&#xA;same container they all both mix in a container-specific type. For example both&#xD;&#xA;MParts and MPlaceholders are valid children for an MPartStack so they both mix in&#xD;&#xA;'StackElement' (which is an empty stub used only to constran the stack's types.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eTypeParameters name="T">
         <eBounds eClassifier="#//ui/UIElement"/>
@@ -468,7 +468,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="UILabel" abstract="true" interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This is a mix in that will be used for UI Elements that are capable of showing label&#xD;&#xA;information in the GUI (e.g. Parts, Menus / Toolbars, Persepectives...)&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This is a mix in that will be used for UI Elements that are capable of showing label&#xD;&#xA;information in the GUI (e.g. Parts, Menus / Toolbars, Persepectives...)&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eOperations name="getLocalizedLabel" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -498,7 +498,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="GenericStack" abstract="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This type defines the base type for 'stack' type containers. These containers are&#xD;&#xA;expected to only show their currently 'selected' element.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This type defines the base type for 'stack' type containers. These containers are&#xD;&#xA;expected to only show their currently 'selected' element.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eTypeParameters name="T">
         <eBounds eClassifier="#//ui/UIElement"/>
@@ -509,7 +509,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="GenericTile" abstract="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This type defines the base type for 'tile' type containers. These containers are&#xD;&#xA;expected to only show all their visible children at the same time.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This type defines the base type for 'tile' type containers. These containers are&#xD;&#xA;expected to only show all their visible children at the same time.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eTypeParameters name="T">
         <eBounds eClassifier="#//ui/UIElement"/>
@@ -525,7 +525,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="GenericTrimContainer" abstract="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This provides a collection specifically for TrimBars.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This provides a collection specifically for TrimBars.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eTypeParameters name="T">
         <eBounds eClassifier="#//ui/UIElement"/>
@@ -551,12 +551,12 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Expression" abstract="true" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;A class upon which specific types of expressions are based.  These are often used to&#xA;evaluate visibility and enablement of model elements.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;A class upon which specific types of expressions are based.  These are often used to&#xA;evaluate visibility and enablement of model elements.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="CoreExpression" eSuperTypes="#//ui/Expression">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;A specific kind of expression used by the Eclipse Workbench.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;A specific kind of expression used by the Eclipse Workbench.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="coreExpressionId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
           defaultValueLiteral="">
@@ -574,7 +574,7 @@
     <eClassifiers xsi:type="ecore:EClass" name="SnippetContainer" abstract="true"
         interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This provides a collection of model fragments that can be subsequently cloned and&#xD;&#xA;inserterd into the model using the EModelService. For example saving a customized&#xD;&#xA;Perspective will create a clone and store it in this container.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This provides a collection of model fragments that can be subsequently cloned and&#xD;&#xA;inserterd into the model using the EModelService. For example saving a customized&#xD;&#xA;Perspective will create a clone and store it in this container.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EReference" name="snippets" upperBound="-1"
           eType="#//ui/UIElement" containment="true">
@@ -595,7 +595,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Item" abstract="true" eSuperTypes="#//ui/UIElement #//ui/UILabel">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base type for various menu and toolbar items.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base type for various menu and toolbar items.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="enabled" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
             defaultValueLiteral="true">
@@ -617,7 +617,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="HandledItem" abstract="true" eSuperTypes="#//ui/menu/Item">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base class for menu and tool items associated with Commands.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base class for menu and tool items associated with Commands.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="command" eType="#//commands/Command">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -639,7 +639,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="MenuElement" abstract="true" eSuperTypes="#//ui/UIElement #//ui/UILabel">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the bsae type for both menu items and Separators.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the bsae type for both menu items and Separators.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eOperations name="getLocalizedMnemonics" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -654,17 +654,17 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="MenuItem" abstract="true" eSuperTypes="#//ui/menu/Item #//ui/menu/MenuElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base type for both Handled and direct menu items.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base type for both Handled and direct menu items.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="MenuSeparator" eSuperTypes="#//ui/menu/MenuElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;An element representing a separator in a menu.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;An element representing a separator in a menu.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Menu">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete class used to represent a menu in the UI Model.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete class used to represent a menu in the UI Model.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="enabled" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
             defaultValueLiteral="true">
@@ -679,7 +679,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="MenuContribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This represents a potential extension to some menu already&#xD;&#xA;defined in the UI.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This represents a potential extension to some menu already&#xD;&#xA;defined in the UI.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="positionInParent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
             defaultValueLiteral="">
@@ -699,22 +699,22 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PopupMenu" eSuperTypes="#//ui/menu/Menu #//ui/Context">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete class representing context menus. Menus of this type are generally&#xD;&#xA;managed by code within the running application since they're not visible in the UI.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete class representing context menus. Menus of this type are generally&#xD;&#xA;managed by code within the running application since they're not visible in the UI.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DirectMenuItem" eSuperTypes="#//ui/menu/MenuItem #//Contribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class use to represent a menu item that is directly &#xD;&#xA;invoked when selected.  The supplied contribution is asked to execute&#xA;when selected.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class use to represent a menu item that is directly &#xD;&#xA;invoked when selected.  The supplied contribution is asked to execute&#xA;when selected.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="HandledMenuItem" eSuperTypes="#//ui/menu/MenuItem #//ui/menu/HandledItem">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete UI Model element representing a menu item that is managed&#xD;&#xA;through the Commands / Handlers infrastructure.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete UI Model element representing a menu item that is managed&#xD;&#xA;through the Commands / Handlers infrastructure.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolItem" abstract="true" eSuperTypes="#//ui/menu/Item #//ui/menu/ToolBarElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base type for both Direct and Handled tool items.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base type for both Direct and Handled tool items.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="menu" eType="#//ui/menu/Menu"
             containment="true">
@@ -725,7 +725,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBar">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class representing a Toolbar in the UI Model.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class representing a Toolbar in the UI Model.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
           <eTypeArguments eClassifier="#//ui/menu/ToolBarElement"/>
@@ -735,33 +735,33 @@
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarElement" abstract="true"
           eSuperTypes="#//ui/UIElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a placeholder class mixed in to any other type that can be added to a Toolbar.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a placeholder class mixed in to any other type that can be added to a Toolbar.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolControl" eSuperTypes="#//ui/menu/ToolBarElement #//Contribution #//ui/basic/TrimElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete class representing a widget hosted directly in the trim &#xD;&#xA;or as an item in a Toolbar.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete class representing a widget hosted directly in the trim &#xD;&#xA;or as an item in a Toolbar.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="HandledToolItem" eSuperTypes="#//ui/menu/ToolItem #//ui/menu/HandledItem">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete UI Model element representing a tool item that is managed&#xD;&#xA;through the Commands / Handlers infrastructure.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete UI Model element representing a tool item that is managed&#xD;&#xA;through the Commands / Handlers infrastructure.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DirectToolItem" eSuperTypes="#//ui/menu/ToolItem #//Contribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class use to represent a tool item that is directly &#xD;&#xA;invoked when selected.  The supplied contribution is asked to execute&#xA;when selected.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class use to represent a tool item that is directly &#xD;&#xA;invoked when selected.  The supplied contribution is asked to execute&#xA;when selected.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarSeparator" eSuperTypes="#//ui/menu/ToolBarElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class used to represent a separator in a Toolbar.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class used to represent a separator in a Toolbar.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="MenuContributions" abstract="true"
           interface="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This is a container aggregating the menu contributions to be&#xD;&#xA;applied to menus.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This is a container aggregating the menu contributions to be&#xD;&#xA;applied to menus.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="menuContributions"
             upperBound="-1" eType="#//ui/menu/MenuContribution" containment="true">
@@ -772,7 +772,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="RenderedMenu" eSuperTypes="#//ui/menu/Menu">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenu&#xD;&#xA;@noreference&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenu&#xD;&#xA;@noreference&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionManager"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
@@ -784,7 +784,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="RenderedToolBar" eSuperTypes="#//ui/menu/ToolBar">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MToolBar&#xD;&#xA;@noreference&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MToolBar&#xD;&#xA;@noreference&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionManager"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
@@ -796,7 +796,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarContribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This represents a potential extension to some toolbar already&#xD;&#xA;defined in the UI.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This represents a potential extension to some toolbar already&#xD;&#xA;defined in the UI.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -815,7 +815,7 @@
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarContributions" abstract="true"
           interface="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This is a container aggregating the toolbar contributions to be&#xD;&#xA;applied to existing toolbars.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This is a container aggregating the toolbar contributions to be&#xD;&#xA;applied to existing toolbars.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="toolBarContributions"
             upperBound="-1" eType="#//ui/menu/ToolBarContribution" containment="true">
@@ -826,7 +826,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TrimContribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This represents a potential extension to some trim bar.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This represents a potential extension to some trim bar.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -845,7 +845,7 @@
       <eClassifiers xsi:type="ecore:EClass" name="TrimContributions" abstract="true"
           interface="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This is a container aggregating the trim bar contributions to be&#xD;&#xA;applied.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This is a container aggregating the trim bar contributions to be&#xD;&#xA;applied.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="trimContributions"
             upperBound="-1" eType="#//ui/menu/TrimContribution" containment="true">
@@ -856,7 +856,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="RenderedMenuItem" eSuperTypes="#//ui/menu/MenuItem">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
             transient="true">
@@ -867,7 +867,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="OpaqueToolItem" eSuperTypes="#//ui/menu/ToolItem">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="opaqueItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
             transient="true">
@@ -878,7 +878,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="OpaqueMenuItem" eSuperTypes="#//ui/menu/MenuItem">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="opaqueItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
             transient="true">
@@ -889,7 +889,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="OpaqueMenuSeparator" eSuperTypes="#//ui/menu/MenuSeparator">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="opaqueItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
             transient="true">
@@ -900,12 +900,12 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="OpaqueMenu" eSuperTypes="#//ui/menu/Menu">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DynamicMenuContribution" eSuperTypes="#//ui/menu/MenuItem #//Contribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete class used to represent a menu item that replaces itself through&#xD;&#xA;the execution of the associated client code.  The supplied contribution will&#xA;provide the appropriate MMenuElement model elements when queried.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete class used to represent a menu item that replaces itself through&#xD;&#xA;the execution of the associated client code.  The supplied contribution will&#xA;provide the appropriate MMenuElement model elements when queried.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
     </eSubpackages>
@@ -913,7 +913,7 @@
         nsPrefix="basic">
       <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//ui/UIElement #//ui/basic/PartSashContainerElement #//ui/basic/StackElement #//Contribution #//ui/Context #//ui/UILabel #//commands/HandlerContainer #//ui/Dirtyable #//commands/Bindings #//ui/basic/WindowElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This a concrete class representing the core UI functionality within a Window. It's what&#xD;&#xA;used to be a View / Editor in Eclipse 3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This a concrete class representing the core UI functionality within a Window. It's what&#xD;&#xA;used to be a View / Editor in Eclipse 3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eOperations name="getLocalizedDescription" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -946,7 +946,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="CompositePart">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a Part that is capable of supporting an internal structure. In order to be useful instances of this part muct be capable&#xD;&#xA;of managing their internal structure.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.1&#xD;&#xA;"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a Part that is capable of supporting an internal structure. In order to be useful instances of this part muct be capable&#xD;&#xA;of managing their internal structure.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.1&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients.&#xD;&#xA;"/>
         </eAnnotations>
         <eGenericSuperTypes eClassifier="#//ui/basic/Part"/>
         <eGenericSuperTypes eClassifier="#//ui/GenericTile">
@@ -955,12 +955,12 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="InputPart" eSuperTypes="#//ui/basic/Part #//ui/Input">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a subclass of Part that allows tracking of an 'input'. While originally defined as&#xD;&#xA;a type of 'editor' it turns out that it may well be better to just use a regular Part and&#xD;&#xA;to store what would be the input as an entry on the Part's 'persistentData' map.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@deprecated Use Part instead."/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a subclass of Part that allows tracking of an 'input'. While originally defined as&#xD;&#xA;a type of 'editor' it turns out that it may well be better to just use a regular Part and&#xD;&#xA;to store what would be the input as an entry on the Part's 'persistentData' map.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@deprecated Use Part instead.&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PartStack">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class representing a stack of Parts in the UI Model.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class representing a stack of Parts in the UI Model.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eGenericSuperTypes eClassifier="#//ui/GenericStack">
           <eTypeArguments eClassifier="#//ui/basic/StackElement"/>
@@ -970,7 +970,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PartSashContainer">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class representing sashed containment in the UI Model. This&#xD;&#xA;type is recursive, allowing the creation of a tree of sashes whose leafs are Parts.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class representing sashed containment in the UI Model. This&#xD;&#xA;type is recursive, allowing the creation of a tree of sashes whose leafs are Parts.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eGenericSuperTypes eClassifier="#//ui/GenericTile">
           <eTypeArguments eClassifier="#//ui/basic/PartSashContainerElement"/>
@@ -980,7 +980,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Window">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class representing a bare bones window in the UI Model. Unless&#xD;&#xA;specifically desired it's likely better to use the TrimmedWindow instead.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class representing a bare bones window in the UI Model. Unless&#xD;&#xA;specifically desired it's likely better to use the TrimmedWindow instead.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="mainMenu" eType="#//ui/menu/Menu"
             containment="true">
@@ -1035,7 +1035,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TrimmedWindow" eSuperTypes="#//ui/basic/Window">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;A subclass of Window that also supports TrimBars on its edges.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A subclass of Window that also supports TrimBars on its edges.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="trimBars" upperBound="-1"
             eType="#//ui/basic/TrimBar" containment="true">
@@ -1046,24 +1046,24 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TrimElement" abstract="true" eSuperTypes="#//ui/UIElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;A class to be mixed in to any element that should be allowed to be added to a TrimBar.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A class to be mixed in to any element that should be allowed to be added to a TrimBar.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PartSashContainerElement" abstract="true"
           interface="true" eSuperTypes="#//ui/UIElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;A class to be mixed in to any element that should be allowed to be added to&#xD;&#xA;a PartSashContainer. Since a PartSashContainer is itself a PartSashContainerElement&#xD;&#xA;we can defined nested 'trees' of sash containment.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A class to be mixed in to any element that should be allowed to be added to&#xD;&#xA;a PartSashContainer. Since a PartSashContainer is itself a PartSashContainerElement&#xD;&#xA;we can defined nested 'trees' of sash containment.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="WindowElement" abstract="true" interface="true"
           eSuperTypes="#//ui/UIElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;A class to be mixed in to any element that should be allowed to be added to a&#xD;&#xA;Window.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A class to be mixed in to any element that should be allowed to be added to a&#xD;&#xA;Window.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TrimBar">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete class representing the trim along a Window's edge.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete class representing the trim along a Window's edge.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="pendingCleanup" upperBound="-1"
             eType="#//ui/basic/TrimElement" transient="true">
@@ -1079,17 +1079,17 @@
       <eClassifiers xsi:type="ecore:EClass" name="StackElement" abstract="true" interface="true"
           eSuperTypes="#//ui/UIElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;A class to be mixed in to any element that should be allowed to be added to a&#xD;&#xA;PartStack.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A class to be mixed in to any element that should be allowed to be added to a&#xD;&#xA;PartStack.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Dialog" eSuperTypes="#//ui/basic/Window">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;A subclass of Window representing a dialog.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.1"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A subclass of Window representing a dialog.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.1&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="WizardDialog" eSuperTypes="#//ui/basic/Dialog">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;A subclass of Window representing a wizard dialog.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.1"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A subclass of Window representing a wizard dialog.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.1&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
     </eSubpackages>
@@ -1097,7 +1097,7 @@
         nsPrefix="advanced">
       <eClassifiers xsi:type="ecore:EClass" name="Placeholder" eSuperTypes="#//ui/UIElement #//ui/basic/PartSashContainerElement #//ui/basic/StackElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;A Placeholder is a concrete class used to share elements between perspectives. The&#xD;&#xA;elements referenced by a Placeholder generally exist in the Window's 'sharedElements'&#xD;&#xA;list. By convention a placeholder usually shares the same elementId as the element&#xD;&#xA;that it's referencing.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A Placeholder is a concrete class used to share elements between perspectives. The&#xD;&#xA;elements referenced by a Placeholder generally exist in the Window's 'sharedElements'&#xD;&#xA;list. By convention a placeholder usually shares the same elementId as the element&#xD;&#xA;that it's referencing.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="ref" lowerBound="1"
             eType="#//ui/UIElement">
@@ -1114,7 +1114,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Perspective">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;The Persepctive defines a part of the UI presentation that can be switched independently&#xD;&#xA;of the rest of the UI. By using Placeholders it's possible to share elements between&#xD;&#xA;different perspectives.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;The Persepctive defines a part of the UI presentation that can be switched independently&#xD;&#xA;of the rest of the UI. By using Placeholders it's possible to share elements between&#xD;&#xA;different perspectives.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="windows" upperBound="-1"
             eType="#//ui/basic/Window" containment="true">
@@ -1130,7 +1130,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PerspectiveStack">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;The PerspectiveStack is a collectin of Perspectives. Only one perspective may be&#xD;&#xA;visible at a time and is determined by the container's 'selectedElement'.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;The PerspectiveStack is a collectin of Perspectives. Only one perspective may be&#xD;&#xA;visible at a time and is determined by the container's 'selectedElement'.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eGenericSuperTypes eClassifier="#//ui/UIElement"/>
         <eGenericSuperTypes eClassifier="#//ui/GenericStack">
@@ -1141,7 +1141,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Area" eSuperTypes="#//ui/basic/PartSashContainer #//ui/UILabel">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete element representing a (possibly sashed) chunk of the UI presentation&#xD;&#xA;that will minimize / maximize as one unit. This is used in Eclipse 4 to allow for a split&#xD;&#xA;Editor Area.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete element representing a (possibly sashed) chunk of the UI presentation&#xD;&#xA;that will minimize / maximize as one unit. This is used in Eclipse 4 to allow for a split&#xD;&#xA;Editor Area.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
       </eClassifiers>
     </eSubpackages>
@@ -1152,7 +1152,7 @@
         nsPrefix="basic">
       <eClassifiers xsi:type="ecore:EClass" name="PartDescriptor" eSuperTypes="#//ApplicationElement #//ui/UILabel #//commands/HandlerContainer #//commands/Bindings">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This element represents a template from which an MPart can be created on demand.&#xD;&#xA;The collection of PartDescriptors owned by the Application represents the contributed&#xD;&#xA;parts and is used in the e4 version of 'Show View'...&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This element represents a template from which an MPart can be created on demand.&#xD;&#xA;The collection of PartDescriptors owned by the Application represents the contributed&#xD;&#xA;parts and is used in the e4 version of 'Show View'...&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eOperations name="getLocalizedDescription" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -1206,7 +1206,7 @@
       <eClassifiers xsi:type="ecore:EClass" name="PartDescriptorContainer" abstract="true"
           interface="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;A type specific collection of PartDescriptors.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A type specific collection of PartDescriptors.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="descriptors" upperBound="-1"
             eType="#//descriptor/basic/PartDescriptor" containment="true">

@@ -20,6 +20,7 @@ package org.eclipse.e4.ui.model.application.ui.menu;
  * This is the base type for both Direct and Handled tool items.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  * <p>

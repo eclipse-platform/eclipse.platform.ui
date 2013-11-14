@@ -26,6 +26,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
  * visible at a time and is determined by the container's 'selectedElement'.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  *

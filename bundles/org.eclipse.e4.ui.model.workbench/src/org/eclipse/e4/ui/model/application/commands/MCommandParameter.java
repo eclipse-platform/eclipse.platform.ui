@@ -22,6 +22,7 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
  * This represents the format of a parameter to be used in a Command.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  * <p>

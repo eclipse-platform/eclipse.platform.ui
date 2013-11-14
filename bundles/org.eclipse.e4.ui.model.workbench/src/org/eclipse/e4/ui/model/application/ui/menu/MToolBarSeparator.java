@@ -21,6 +21,7 @@ package org.eclipse.e4.ui.model.application.ui.menu;
  * This is the concrete class used to represent a separator in a Toolbar.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  *

@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.model.application.ui.MContext;
  * managed by code within the running application since they're not visible in the UI.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
  *
  *
