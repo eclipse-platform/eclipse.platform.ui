@@ -3757,6 +3757,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 */
 	public boolean saveSaveable(ISaveablePart saveable, IWorkbenchPart part, boolean confirm,
 			boolean closing) {
+		if (closing && !saveable.isSaveOnCloseNeeded()) {
+			return true;
+		}
 		return SaveableHelper.savePart(saveable, part, legacyWindow, confirm);
 	}
 
