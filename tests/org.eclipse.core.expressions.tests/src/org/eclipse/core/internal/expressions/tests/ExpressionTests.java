@@ -59,7 +59,7 @@ import org.eclipse.core.runtime.Platform;
 
 public class ExpressionTests extends TestCase {
 
-	private static final int TYPE_ITERATIONS = 10000;
+	private static final int TYPE_ITERATIONS = 100000;
 
 	public static class CollectionWrapper {
 		public Collection collection;
