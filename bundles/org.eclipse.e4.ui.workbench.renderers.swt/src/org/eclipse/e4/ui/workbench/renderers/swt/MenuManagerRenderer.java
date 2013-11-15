@@ -123,6 +123,28 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		}
 	};
 
+	private EventHandler labelUpdater = new EventHandler() {
+		public void handleEvent(Event event) {
+			// Ensure that this event is for a MMenu
+			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenu))
+				return;
+
+			String attName = (String) event
+					.getProperty(UIEvents.EventTags.ATTNAME);
+			MMenu model = (MMenu) event.getProperty(UIEvents.EventTags.ELEMENT);
+			MenuManager manager = getManager(model);
+			Menu menu = manager.getMenu();
+			if ((menu == null) || (menu.getParentItem() == null))
+				return;
+			if (UIEvents.UILabel.LABEL.equals(attName)) {
+				menu.getParentItem().setText(getText(model));
+			}
+			if (UIEvents.UILabel.ICONURI.equals(attName)) {
+				menu.getParentItem().setImage(getImage(model));
+			}
+		}
+	};
+
 	private EventHandler toBeRenderedUpdater = new EventHandler() {
 		public void handleEvent(Event event) {
 			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
@@ -214,6 +236,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	@PostConstruct
 	public void init() {
 		eventBroker.subscribe(UIEvents.UILabel.TOPIC_ALL, itemUpdater);
+		eventBroker.subscribe(UIEvents.UILabel.TOPIC_ALL, labelUpdater);
 		eventBroker.subscribe(UIEvents.Item.TOPIC_SELECTED, selectionUpdater);
 		eventBroker.subscribe(UIEvents.Item.TOPIC_ENABLED, enabledUpdater);
 		eventBroker
@@ -237,6 +260,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	@PreDestroy
 	public void contextDisposed() {
 		eventBroker.unsubscribe(itemUpdater);
+		eventBroker.unsubscribe(labelUpdater);
 		eventBroker.unsubscribe(selectionUpdater);
 		eventBroker.unsubscribe(enabledUpdater);
 		eventBroker.unsubscribe(toBeRenderedUpdater);
