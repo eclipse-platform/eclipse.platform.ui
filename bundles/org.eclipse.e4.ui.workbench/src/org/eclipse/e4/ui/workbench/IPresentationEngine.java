@@ -127,6 +127,8 @@ public interface IPresentationEngine {
 	/**
 	 * This is a Tag that when applied to an MUILabel element will cause whatever Image is to be
 	 * shown to be adorned with the 'pinned' affordance.
+	 * 
+	 * @since 1.1
 	 */
 	public static final String ADORNMENT_PIN = "Pin Adornment"; //$NON-NLS-1$
 
