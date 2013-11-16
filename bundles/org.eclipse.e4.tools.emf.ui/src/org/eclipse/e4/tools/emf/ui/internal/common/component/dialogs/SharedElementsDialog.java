@@ -11,6 +11,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -119,6 +120,12 @@ public class SharedElementsDialog extends TitleAreaDialog {
 						list.addAll(filter(f.getElements()));
 					}
 				}
+			}
+
+			// NEW IMPLEMENTATION:
+			for (MApplicationElement f : ((MModelFragments) resource.getRoot().get(0)).getImports()) {
+				// let filter() do its job
+				list.addAll(filter(Collections.singletonList(f)));
 			}
 			viewer.setInput(list);
 		}
