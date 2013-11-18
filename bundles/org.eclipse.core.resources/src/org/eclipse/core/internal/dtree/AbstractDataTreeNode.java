@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -537,10 +537,12 @@ public abstract class AbstractDataTreeNode {
 	 * Simplifies the given nodes, and answers their replacements.
 	 */
 	protected static AbstractDataTreeNode[] simplifyWithParent(AbstractDataTreeNode[] nodes, IPath key, DeltaDataTree parent, IComparator comparer) {
-
-		AbstractDataTreeNode[] simplifiedNodes = new AbstractDataTreeNode[nodes.length];
+		int nodeCount = nodes.length;
+		if (nodeCount == 0)
+			return NO_CHILDREN;
+		AbstractDataTreeNode[] simplifiedNodes = new AbstractDataTreeNode[nodeCount];
 		int simplifiedCount = 0;
-		for (int i = 0; i < nodes.length; ++i) {
+		for (int i = 0; i < nodeCount; ++i) {
 			AbstractDataTreeNode node = nodes[i];
 			AbstractDataTreeNode simplifiedNode = node.simplifyWithParent(key.append(node.getName()), parent, comparer);
 			if (!simplifiedNode.isEmptyDelta()) {
