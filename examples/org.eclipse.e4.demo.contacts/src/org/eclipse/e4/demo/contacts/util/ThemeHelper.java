@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 
-public class Util {
+public class ThemeHelper {
 	public static String getCSSUri(String themeId, IExtensionRegistry registry) {
 		IExtensionPoint extPoint = registry
 				.getExtensionPoint("org.eclipse.e4.ui.css.swt.theme");

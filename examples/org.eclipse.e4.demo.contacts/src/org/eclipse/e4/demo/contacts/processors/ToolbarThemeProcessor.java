@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Siemens AG and others.
+ * Copyright (c) 2010, 2013 Siemens AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -18,7 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.demo.contacts.util.Util;
+import org.eclipse.e4.demo.contacts.util.ThemeHelper;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
@@ -31,7 +31,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.widgets.Display;
 
-public class ToolbarThemeProcessor extends Util {
+public class ToolbarThemeProcessor {
 
 	@Inject
 	@Named("toolbar:org.eclipse.ui.main.toolbar")
@@ -58,7 +58,7 @@ public class ToolbarThemeProcessor extends Util {
 		IThemeEngine engine = mgr.getEngineForDisplay(Display.getCurrent());
 		List<ITheme> themes = engine.getThemes();
 
-		MCommand switchThemeCommand = findCommand(app);
+		MCommand switchThemeCommand = ThemeHelper.findCommand(app);
 
 		// no themes or command, stop processing
 		if (themes.size() <= 0 || switchThemeCommand == null) {
@@ -75,7 +75,8 @@ public class ToolbarThemeProcessor extends Util {
 						.createModelElement(MParameter.class);
 				parameter.setName("contacts.commands.switchtheme.themeid"); //$NON-NLS-1$
 				parameter.setValue(theme.getId());
-				String iconURI = getCSSUri(theme.getId(), registery);
+				String iconURI = ThemeHelper
+						.getCSSUri(theme.getId(), registery);
 				if (iconURI != null) {
 					iconURI = iconURI.replace(".css", ".png");
 				}

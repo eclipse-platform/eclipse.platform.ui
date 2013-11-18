@@ -18,7 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.demo.contacts.util.Util;
+import org.eclipse.e4.demo.contacts.util.ThemeHelper;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
@@ -30,7 +30,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.widgets.Display;
 
-public class MenuThemeProcessor extends Util {
+public class MenuThemeProcessor {
 	private static final String BUNDLE_ID = "platform:/plugin/org.eclipse.e4.demo.contacts"; //$NON-NLS-1$
 
 	@Inject
@@ -63,7 +63,7 @@ public class MenuThemeProcessor extends Util {
 
 		List<ITheme> themes = engine.getThemes();
 
-		MCommand switchThemeCommand = findCommand(app);
+		MCommand switchThemeCommand = ThemeHelper.findCommand(app);
 
 		// no themes or command, stop processing
 		if (themes.size() <= 0 || switchThemeCommand == null) {
@@ -78,7 +78,7 @@ public class MenuThemeProcessor extends Util {
 			MParameter parameter = service.createModelElement(MParameter.class);
 			parameter.setName("contacts.commands.switchtheme.themeid"); //$NON-NLS-1$
 			parameter.setValue(theme.getId());
-			String iconURI = Util.getCSSUri(theme.getId(), registery);
+			String iconURI = ThemeHelper.getCSSUri(theme.getId(), registery);
 			if (iconURI != null) {
 				iconURI = iconURI.replace(".css", ".png");
 			}
