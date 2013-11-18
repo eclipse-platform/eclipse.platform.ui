@@ -488,7 +488,6 @@ public abstract class AbstractAntUITest extends TestCase {
 		waiter.setTimeout(timeout);
 
 		Object terminatee = launchAndWait(config, waiter);
-		assertNotNull("Program did not terminate.", terminatee); //$NON-NLS-1$
 		assertTrue("terminatee is not an IProcess", terminatee instanceof IProcess); //$NON-NLS-1$
 		IProcess process = (IProcess) terminatee;
 		boolean terminated = process.isTerminated();
@@ -516,10 +515,9 @@ public abstract class AbstractAntUITest extends TestCase {
 			}
 			catch (CoreException e) {
 				e.printStackTrace();
-				fail("Program did not suspend, and unable to terminate launch."); //$NON-NLS-1$
 			}
+			throw new TestAgainException("Retest - Program did not suspend launching: " + configuration.getName()); //$NON-NLS-1$
 		}
-		assertNotNull("Program did not suspend, launch terminated.", suspendee); //$NON-NLS-1$
 		boolean terminated = launch.isTerminated();
 		assertTrue("launch did not terminate", terminated); //$NON-NLS-1$
 		if (terminated && !ConsoleLineTracker.isClosed()) {
