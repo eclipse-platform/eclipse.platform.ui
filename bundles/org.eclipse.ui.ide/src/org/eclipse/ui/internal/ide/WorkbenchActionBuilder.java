@@ -369,9 +369,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             fileToolBar.add(saveAllAction);
             fileToolBar
                     .add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
-            IContributionItem printItem = getPrintItem();
-            fileToolBar.add(printItem);
-            printItem.setVisible(false);
+            fileToolBar.add(getPrintItem());
             fileToolBar
                     .add(new GroupMarker(IWorkbenchActionConstants.PRINT_EXT));
 
