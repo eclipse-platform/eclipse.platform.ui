@@ -42,7 +42,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
 	Map<String, Image> imageMap = new HashMap<String, Image>();
 
-	String pinURI = "platform:/plugin/org.eclipse.ui/icons/full/ovr16/pinned_ovr.gif"; //$NON-NLS-1$
+	String pinURI = "platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/icons/full/ovr16/pinned_ovr.gif"; //$NON-NLS-1$
 	Image pinImage;
 
 	private ISWTResourceUtilities resUtils;
