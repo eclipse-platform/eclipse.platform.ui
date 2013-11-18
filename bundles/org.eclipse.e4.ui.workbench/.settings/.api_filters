@@ -1,10 +1,23 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<component id="org.eclipse.e4.ui.workbench" version="2">
+<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.e4.ui.workbench" version="2">
     <resource path="META-INF/MANIFEST.MF">
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="923795461">
             <message_arguments>
                 <message_argument value="1.0.100"/>
                 <message_argument value="1.0.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Application">
+        <filter comment="New dialogs field in MApplication" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Application"/>
+                <message_argument value="DIALOGS"/>
+            </message_arguments>
+        </filter>
+        <filter comment="New dialogs field in MApplication" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Application"/>
+                <message_argument value="TOPIC_DIALOGS"/>
             </message_arguments>
         </filter>
     </resource>
