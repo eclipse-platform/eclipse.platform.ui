@@ -1,45 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.e4.ui.services" version="2">
-    <resource path="src/org/eclipse/e4/ui/services/ContextServiceAddon.java" type="org.eclipse.e4.ui.services.ContextServiceAddon">
-        <filter comment="Bug 416843 - Lots of API errors in 4.3.1" id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.services.ContextServiceAddon"/>
-                <message_argument value="init(IEclipseContext)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/e4/ui/services/IStylingEngine.java" type="org.eclipse.e4.ui.services.IStylingEngine">
-        <filter comment="Bug 416843 - Lots of API errors in 4.3.1" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.services.IStylingEngine"/>
-                <message_argument value="getStyle(Object)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 416843 - Lots of API errors in 4.3.1" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.services.IStylingEngine"/>
-                <message_argument value="setClassname(Object, String)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 416843 - Lots of API errors in 4.3.1" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.services.IStylingEngine"/>
-                <message_argument value="setClassnameAndId(Object, String, String)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 416843 - Lots of API errors in 4.3.1" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.services.IStylingEngine"/>
-                <message_argument value="setId(Object, String)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 416843 - Lots of API errors in 4.3.1" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.services.IStylingEngine"/>
-                <message_argument value="style(Object)"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/e4/ui/services/internal/events/EventBroker.java" type="org.eclipse.e4.ui.services.internal.events.EventBroker">
         <filter comment="Our default impllementation of IEventBroker" id="574619656">
             <message_arguments>
