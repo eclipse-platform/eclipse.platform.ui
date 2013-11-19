@@ -219,7 +219,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	public Image getImage(MUILabel element) {
 		Image image = (Image) ((MUIElement) element).getTransientData().get(
 				IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY);
-		if (image == null) {
+		if (image == null || image.isDisposed()) {
 			String iconURI = element.getIconURI();
 			image = getImageFromURI(iconURI);
 		}
