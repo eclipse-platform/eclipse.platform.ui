@@ -1010,4 +1010,20 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 		}
 		return item.isVisible();
 	}
+
+	/**
+	 * @param menuText The text (label) of the menu.
+	 * @since 3.10
+	 */
+	public void setMenuText(String menuText) {
+		this.menuText = menuText;
+	}
+
+	/**
+	 * @param imageDescriptor The image descriptor to set.
+	 * @since 3.10
+	 */
+	public void setImageDescriptor(ImageDescriptor imageDescriptor) {
+		this.image = imageDescriptor;
+	}
 }
