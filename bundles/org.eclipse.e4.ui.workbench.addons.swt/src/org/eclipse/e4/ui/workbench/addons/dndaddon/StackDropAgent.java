@@ -255,13 +255,33 @@ public class StackDropAgent extends DropAgent {
 			MPartStack stack = (MPartStack) dragElement;
 			MStackElement curSel = stack.getSelectedElement();
 			List<MStackElement> kids = stack.getChildren();
-			while (kids.size() > 0) {
-				MStackElement lastChild = kids.remove(kids.size() - 1);
+
+			// First move over all *non-selected* elements
+			int selIndex = kids.indexOf(curSel);
+			boolean curSelProcessed = false;
+			while (kids.size() > 1) {
+				// Offset the 'get' to account for skipping 'curSel'
+				MStackElement kid = curSelProcessed ? kids.get(kids.size() - 2) : kids.get(kids
+						.size() - 1);
+				if (kid == curSel) {
+					curSelProcessed = true;
+					continue;
+				}
+
+				kids.remove(kid);
 				if (dropIndex >= 0 && dropIndex < dropStack.getChildren().size())
-					dropStack.getChildren().add(dropIndex, lastChild);
+					dropStack.getChildren().add(dropIndex, kid);
 				else
-					dropStack.getChildren().add(lastChild);
+					dropStack.getChildren().add(kid);
 			}
+
+			// Finally, move over the selected element
+			kids.remove(curSel);
+			dropIndex = dropIndex + selIndex;
+			if (dropIndex >= 0 && dropIndex < dropStack.getChildren().size())
+				dropStack.getChildren().add(dropIndex, curSel);
+			else
+				dropStack.getChildren().add(curSel);
 
 			// (Re)active the element being dropped
 			dropStack.setSelectedElement(curSel);
@@ -294,8 +314,12 @@ public class StackDropAgent extends DropAgent {
 	public boolean drop(MUIElement dragElement, DnDInfo info) {
 		if (dndManager.getFeedbackStyle() != DnDManager.HOSTED) {
 			int dropIndex = getDropIndex(info);
-			if (dropIndex != -1)
+			if (dropIndex != -1) {
+				MUIElement toActivate = dragElement instanceof MPartStack ? ((MPartStack) dragElement)
+						.getSelectedElement() : dragElement;
 				dock(dragElement, dropIndex);
+				reactivatePart(toActivate);
+			}
 		}
 		return true;
 	}

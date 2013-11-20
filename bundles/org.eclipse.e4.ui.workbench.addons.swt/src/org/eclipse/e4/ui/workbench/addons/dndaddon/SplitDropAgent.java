@@ -170,6 +170,7 @@ public class SplitDropAgent extends DropAgent {
 	public boolean drop(MUIElement dragElement, DnDInfo info) {
 		if (dndManager.getFeedbackStyle() != DnDManager.HOSTED && curDockLocation != NOWHERE) {
 			dock(dragElement, curDockLocation);
+			reactivatePart(dragElement);
 		}
 		clearFeedback();
 		return true;
