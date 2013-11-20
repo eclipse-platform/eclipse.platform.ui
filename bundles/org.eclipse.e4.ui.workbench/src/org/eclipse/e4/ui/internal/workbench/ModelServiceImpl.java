@@ -751,6 +751,10 @@ public class ModelServiceImpl implements EModelService {
 		} else {
 			MPartSashContainer newSash = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
 			newSash.setHorizontal(horizontal);
+
+			// Maintain the existing weight in the new sash
+			newSash.setContainerData(relTo.getContainerData());
+
 			combine(toInsert, relTo, newSash, insertBefore, ratio);
 		}
 
