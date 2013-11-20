@@ -174,6 +174,22 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 					}
 				}
 			}
+
+			if (element instanceof MPart) {
+				MPart part = (MPart) element;
+				if (UIEvents.UIElement.TOBERENDERED.equals(attName)) {
+					boolean tbr = (Boolean) event
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
+					if (!tbr) {
+						List<MMenu> menus = part.getMenus();
+						for (MMenu menu : menus) {
+							if (menu instanceof MPopupMenu)
+								unlinkMenu(menu);
+						}
+					}
+				}
+			}
+
 			if (UIEvents.UIElement.VISIBLE.equals(attName)) {
 				if (element instanceof MMenu) {
 					MMenu menuModel = (MMenu) element;
@@ -384,11 +400,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			}
 		}
 
-		if (menuModel instanceof MPopupMenu)
-			unlinkMenu(menuModel);
-
-		// The cleanup() is called recursively via cleanUpCopy(), hence
-		// the need to do a separate pass to remove disposed records:
 		Iterator<Entry<MMenuElement, ContributionRecord>> iterator = modelContributionToRecord
 				.entrySet().iterator();
 		for (; iterator.hasNext();) {
