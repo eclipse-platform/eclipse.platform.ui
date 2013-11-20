@@ -537,20 +537,26 @@ public class RenderMojo extends AbstractMojo {
                 if (parentDirName.startsWith("e")) {
                     StringBuilder builder = new StringBuilder();
                     builder.append("d");
-                    builder.append(parentDirName.substring(1,
-                            parentDirName.length()));
+                    builder.append(parentDirName.substring(1, parentDirName.length()));
+                    
+                    // Disabled variant folder name
                     String disabledVariant = builder.toString();
 
+                    // The parent's parent, to create the disabled directory in
                     File setParent = parentFile.getParentFile();
-                    for (File disabledFolder : setParent.listFiles()) {
-                        if (disabledFolder.getName()
-                                .equals(disabledVariant)) {
-                            String path = rootUri.relativize(
-                                    disabledFolder.toURI()).getPath();
-                            disabledOutputDir = new File(outputBase, path);
-                        }
-                    }
 
+                    // The source directory's disabled folder
+                    File disabledSource = new File(setParent, disabledVariant);
+
+                    // Compute a relative path, so we can create the output folder
+                    String path = rootUri.relativize(
+                    		disabledSource.toURI()).getPath();
+
+                    // Create the output folder, so a disabled icon is generated
+                    disabledOutputDir = new File(outputBase, path);
+                    if(!disabledOutputDir.exists()) {
+                    	disabledOutputDir.mkdirs();
+                    }
                 }
             }
 
