@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.IRegistryEventListener;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
@@ -90,45 +89,10 @@ final class GenericMApplicationElementFactoryImpl {
 	public EObject createEObject(Class<? extends MApplicationElement> clazz) {
 		EClass eClass = emfGeneratedPackages.getEClass(clazz);
 		if (eClass != null) {
-			checkDeprecation(eClass);
 			return EcoreUtil.create(eClass);
 		}
 
 		return null;
-	}
-
-	/**
-	 * Checks if the given {@link EClass} is marked as "deprecated".
-	 * 
-	 * <p>
-	 * The method will check if the {@link EClass} was annotated with
-	 * {@code "http://www.eclipse.org/ui/2010/UIModel/application/deprecated"} and if so a warning
-	 * will be logged via the {@link LogService}.
-	 * </p>
-	 * 
-	 * @param eClass
-	 *            the class to check
-	 */
-	private static void checkDeprecation(EClass eClass) {
-		if (eClass == null)
-			return;
-
-		// TODO (if you want to keep it): find a good place for a constant variable and a valid
-		// "source" value
-		EAnnotation deprecated = eClass
-				.getEAnnotation("http://www.eclipse.org/ui/2010/UIModel/application/deprecated"); //$NON-NLS-1$
-		if (deprecated != null) {
-			StringBuilder sb = new StringBuilder("The element '").append(eClass.getInstanceTypeName()).append("' is already deprecated!"); //$NON-NLS-1$ //$NON-NLS-2$
-
-			// TODO (if you want to keep it): adapted it the way you need it (or remove it,
-			// because it was just a show-case of what would be possible)
-			String since = deprecated.getDetails().get("since"); //$NON-NLS-1$
-			if (since != null) {
-				sb.append(" (since version: ").append(since).append(')'); //$NON-NLS-1$
-			}
-
-			Activator.log(LogService.LOG_WARNING, sb.toString());
-		}
 	}
 
 	/**
