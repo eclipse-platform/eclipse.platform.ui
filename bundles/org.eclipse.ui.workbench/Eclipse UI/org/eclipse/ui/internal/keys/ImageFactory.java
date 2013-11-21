@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422040
  *******************************************************************************/
 
 package org.eclipse.ui.internal.keys;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -26,15 +26,15 @@ final class ImageFactory {
 	private static Map map = new HashMap();
 
 	static {
-		put("blank", "$nl$/icons/full/obj16/blank.gif"); //$NON-NLS-1$//$NON-NLS-2$
-		put("change", "$nl$/icons/full/obj16/change_obj.gif"); //$NON-NLS-1$//$NON-NLS-2$
+		put("blank", "$nl$/icons/full/obj16/blank.png"); //$NON-NLS-1$//$NON-NLS-2$
+		put("change", "$nl$/icons/full/obj16/change_obj.png"); //$NON-NLS-1$//$NON-NLS-2$
 		
 		/*
 		 * TODO Remove these images from the registry if they are no longer
 		 * needed.
 		 */
-		put("minus", "$nl$/icons/full/obj16/delete_obj.gif"); //$NON-NLS-1$//$NON-NLS-2$
-		put("plus", "$nl$/icons/full/obj16/add_obj.gif"); //$NON-NLS-1$//$NON-NLS-2$
+		put("minus", "$nl$/icons/full/obj16/delete_obj.png"); //$NON-NLS-1$//$NON-NLS-2$
+		put("plus", "$nl$/icons/full/obj16/add_obj.png"); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	static Image getImage(String key) {

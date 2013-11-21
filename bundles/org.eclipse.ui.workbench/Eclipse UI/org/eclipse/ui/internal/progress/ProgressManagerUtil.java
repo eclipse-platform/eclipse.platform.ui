@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422040
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
@@ -499,7 +500,7 @@ public class ProgressManagerUtil {
 	 */
 	public static URL getProgressSpinnerLocation() {
 		try {
-			return new URL(getIconsRoot(), "progress_spinner.gif");//$NON-NLS-1$
+			return new URL(getIconsRoot(), "progress_spinner.png");//$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			return null;
 		}

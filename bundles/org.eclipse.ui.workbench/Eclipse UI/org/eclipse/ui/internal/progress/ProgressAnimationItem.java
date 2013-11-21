@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422040
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
@@ -271,11 +272,11 @@ public class ProgressAnimationItem extends AnimationItem implements
 		if (okImage == null) {
 			Display display = parent.getDisplay();
 			noneImage = WorkbenchImages.getWorkbenchImageDescriptor(
-					"progress/progress_none.gif").createImage(display); //$NON-NLS-1$
+					"progress/progress_none.png").createImage(display); //$NON-NLS-1$
 			okImage = WorkbenchImages.getWorkbenchImageDescriptor(
-					"progress/progress_ok.gif").createImage(display); //$NON-NLS-1$
+					"progress/progress_ok.png").createImage(display); //$NON-NLS-1$
 			errorImage = WorkbenchImages.getWorkbenchImageDescriptor(
-					"progress/progress_error.gif").createImage(display); //$NON-NLS-1$
+					"progress/progress_error.png").createImage(display); //$NON-NLS-1$
 		}
 
 		top = new Composite(parent, SWT.NULL);

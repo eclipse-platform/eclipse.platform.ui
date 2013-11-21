@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala - bug 187762
  *     Mohamed Tarief - tarief@eg.ibm.com - IBM - Bug 174481
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422040
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -194,12 +195,12 @@ public class FilteredTree extends Composite {
 	static {
 		ImageDescriptor descriptor = AbstractUIPlugin
 				.imageDescriptorFromPlugin(PlatformUI.PLUGIN_ID,
-						"$nl$/icons/full/etool16/clear_co.gif"); //$NON-NLS-1$
+						"$nl$/icons/full/etool16/clear_co.png"); //$NON-NLS-1$
 		if (descriptor != null) {
 			JFaceResources.getImageRegistry().put(CLEAR_ICON, descriptor);
 		}
 		descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-				PlatformUI.PLUGIN_ID, "$nl$/icons/full/dtool16/clear_co.gif"); //$NON-NLS-1$
+				PlatformUI.PLUGIN_ID, "$nl$/icons/full/dtool16/clear_co.png"); //$NON-NLS-1$
 		if (descriptor != null) {
 			JFaceResources.getImageRegistry().put(DISABLED_CLEAR_ICON, descriptor);
 		}

@@ -204,7 +204,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         public CategoryLabelProvider(boolean decorate) {
             this.decorate = decorate;
             lockDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-                    PlatformUI.PLUGIN_ID, "icons/full/ovr16/lock_ovr.gif"); //$NON-NLS-1$
+                    PlatformUI.PLUGIN_ID, "icons/full/ovr16/lock_ovr.png"); //$NON-NLS-1$
         }
 
         /*
