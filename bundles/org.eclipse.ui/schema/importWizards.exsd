@@ -225,7 +225,7 @@ added to the &quot;Other&quot; category.
          id=&quot;com.xyz.ImportWizard1&quot; 
          name=&quot;XYZ Web Scraper&quot; 
          class=&quot;com.xyz.imports.ImportWizard1&quot; 
-         icon=&quot;./icons/import1.gif&quot;&gt; 
+         icon=&quot;./icons/import1.png&quot;&gt;
          &lt;description&gt; 
             A simple engine that searches the Web and imports files 
          &lt;/description&gt; 

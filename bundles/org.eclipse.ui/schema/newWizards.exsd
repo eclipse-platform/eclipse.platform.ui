@@ -303,7 +303,7 @@ Since 3.0
           id=&quot;com.xyz.wizard1&quot; 
           name=&quot;XYZ artifact&quot; 
           category=&quot;com.xyz.XYZ/com.xyz.XYZ.Web&quot; 
-          icon=&quot;./icons/XYZwizard1.gif&quot; 
+          icon=&quot;./icons/XYZwizard1.png&quot;
           class=&quot;com.xyz.XYZWizard1&quot;&gt; 
           &lt;description&gt; 
               Create a simple XYZ artifact and set initial content 

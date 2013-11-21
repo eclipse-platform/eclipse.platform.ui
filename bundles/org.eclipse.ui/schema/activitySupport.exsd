@@ -257,10 +257,10 @@ The following is an example of binding images to activities and categories:
   &lt;extension point=&quot;org.eclipse.ui.activitySupport&quot;&gt;
     &lt;activityImageBinding
        id=&quot;some.activity.id&quot;
-       icon=&quot;icons/someIcon.gif&quot;/&gt;    
+       icon=&quot;icons/someIcon.png&quot;/&gt;
     &lt;categoryImageBinding
        id=&quot;some.category.id&quot;
-       icon=&quot;icons/someIcon.gif&quot;/&gt;
+       icon=&quot;icons/someIcon.png&quot;/&gt;
   &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;

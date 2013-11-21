@@ -126,7 +126,7 @@ with this perspective.
             id=&quot;org.eclipse.ui.resourcePerspective&quot; 
             name=&quot;Resource&quot; 
             class=&quot;org.eclipse.ui.internal.ResourcePerspective&quot; 
-            icon=&quot;icons/MyIcon.gif&quot;&gt; 
+            icon=&quot;icons/MyIcon.png&quot;&gt;
         &lt;/perspective&gt; 
     &lt;/extension&gt; 
 &lt;/pre&gt;

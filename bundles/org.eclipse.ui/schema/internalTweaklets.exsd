@@ -128,7 +128,7 @@ be associated with the tweaklet.
          description=&quot;Short description of the tweak&quot; 
          definition=&quot;org.eclipse.ui.internal.tweaklets.AbstractXYZTweaklet&quot; 
          implementation=&quot;org.eclipse.ui.internal.tweaklets.ConcreteXYZTweaklet&quot; 
-         icon=&quot;icons/XYZ.gif&quot;/&gt;
+         icon=&quot;icons/XYZ.png&quot;/&gt;
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;

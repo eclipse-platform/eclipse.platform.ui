@@ -459,7 +459,7 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
             label=&quot;&amp;amp;Run XYZ Tool&quot;
             style=&quot;push&quot;
             menubarPath=&quot;com.xyz.xyzMenu/group1&quot; 
-            icon=&quot;icons/runXYZ.gif&quot; 
+            icon=&quot;icons/runXYZ.png&quot;
             helpContextId=&quot;com.xyz.run_action_context&quot; 
             class=&quot;com.xyz.actions.XYZToolActionDelegate&quot; 
             enablesFor=&quot;1&quot; /&gt; 
@@ -473,7 +473,7 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
             style=&quot;toggle&quot;
             state=&quot;true&quot;
             menubarPath=&quot;additions&quot; 
-            icon=&quot;icons/showXYZ.gif&quot; 
+            icon=&quot;icons/showXYZ.png&quot;
             helpContextId=&quot;com.xyz.show_action_context&quot; 
             class=&quot;com.xyz.actions.XYZShowActionDelegate&quot; /&gt; 
       &lt;/viewerContribution&gt; 
@@ -497,7 +497,7 @@ The following is an example of the filter mechanism. In this case the action wil
          &lt;action
             id=&quot;com.xyz.runXYZ&quot; 
             label=&quot;High Priority Completed Action Tool&quot; 
-            icon=&quot;icons/runXYZ.gif&quot; 
+            icon=&quot;icons/runXYZ.png&quot;
             class=&quot;com.xyz.actions.MarkerActionDelegate&quot;&gt; 
          &lt;/action&gt; 
       &lt;/objectContribution&gt; 
@@ -522,7 +522,7 @@ The following is an other example of using the visibility element:
             label=&quot;&amp;amp;Show XYZ&quot;
             style=&quot;push&quot;
             menubarPath=&quot;additions&quot; 
-            icon=&quot;icons/showXYZ.gif&quot; 
+            icon=&quot;icons/showXYZ.png&quot;
             helpContextId=&quot;com.xyz.show_action_context&quot; 
             class=&quot;com.xyz.actions.XYZShowActionDelegate&quot;&gt; 
          &lt;/action&gt; 

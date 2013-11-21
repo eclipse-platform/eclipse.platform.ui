@@ -147,7 +147,7 @@ Added in 3.4.
             id=&quot;org.eclipse.ui.resourceWorkingSetPage&quot;
             name=&quot;Resource&quot;
             description=&quot;Contains basic resources (files, folders, and projects)&quot;
-            icon=&quot;icons/resworkset.gif&quot;
+            icon=&quot;icons/resworkset.png&quot;
             pageClass=&quot;org.eclipse.ui.internal.dialogs.ResourceWorkingSetPage&quot;
             updaterClass=&quot;org.eclipse.ui.internal.workingsets.ResourceWorkingSetUpdater&quot;
             elementAdapterClass=&quot;org.eclipse.ui.internal.workingsets.ResourceWorkingSetElementAdapter&quot;&gt;

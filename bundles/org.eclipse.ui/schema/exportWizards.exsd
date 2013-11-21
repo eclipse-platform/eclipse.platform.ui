@@ -229,7 +229,7 @@ when the wizard is invoked.
          id=&quot;com.xyz.ExportWizard1&quot; 
          name=&quot;XYZ Web Exporter&quot; 
          class=&quot;com.xyz.exports.ExportWizard1&quot; 
-         icon=&quot;./icons/import1.gif&quot;&gt; 
+         icon=&quot;./icons/import1.png&quot;&gt;
          &lt;description&gt; 
             A simple engine that exports Web project 
          &lt;/description&gt; 

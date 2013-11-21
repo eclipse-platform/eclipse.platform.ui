@@ -958,7 +958,7 @@ A basic extension looks like this.
          locationURI=&quot;menu:someorg.somemenu.id?after=additions&quot;&gt;
          &lt;command
                commandId=&quot;someorg.someid.someCommand&quot;
-               icon=&quot;icons/anything.gif&quot;
+               icon=&quot;icons/anything.png&quot;
                id=&quot;someorg.someid.BasicCmdItem&quot;
                label=&quot;Simple Item&quot;
                mnemonic=&quot;S&quot;&gt;

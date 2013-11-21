@@ -429,7 +429,7 @@ If multiple extensions contribute ruler actions to the same text editor, the ext
             toolbarPath=&quot;Normal/additions&quot;
             style=&quot;toggle&quot;
             state=&quot;true&quot; 
-            icon=&quot;icons/runXYZ.gif&quot; 
+            icon=&quot;icons/runXYZ.png&quot;
             tooltip=&quot;Run XYZ Tool&quot; 
             helpContextId=&quot;com.xyz.run_action_context&quot; 
             class=&quot;com.xyz.actions.RunXYZ&quot;&gt; 
@@ -460,7 +460,7 @@ The following is an other example of an editor action extension:
             label=&quot;&amp;amp;Run XYZ2 Tool&quot; 
             menubarPath=&quot;edit/XYZ2/group1&quot;
             style=&quot;push&quot;
-            icon=&quot;icons/runXYZ2.gif&quot; 
+            icon=&quot;icons/runXYZ2.png&quot;
             tooltip=&quot;Run XYZ2 Tool&quot; 
             helpContextId=&quot;com.xyz.run_action_context2&quot; 
             class=&quot;com.xyz.actions.RunXYZ2&quot;&gt; 

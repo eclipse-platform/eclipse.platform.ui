@@ -240,7 +240,7 @@ of an internal editor extension definition:
       &lt;editor 
          id=&quot;com.xyz.XMLEditor&quot; 
          name=&quot;Fancy XYZ XML editor&quot; 
-         icon=&quot;./icons/XMLEditor.gif&quot; 
+         icon=&quot;./icons/XMLEditor.png&quot;
          extensions=&quot;xml&quot; 
          class=&quot;com.xyz.XMLEditor&quot; 
          contributorClass=&quot;com.xyz.XMLEditorContributor&quot; 

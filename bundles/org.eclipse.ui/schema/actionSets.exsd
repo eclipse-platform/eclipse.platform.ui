@@ -458,7 +458,7 @@ the sub-elements and the way attributes are used):
                style=&quot;toggle&quot;
                state=&quot;false&quot;
                menubarPath=&quot;com.xyz.xyzMenu/group1&quot; 
-               icon=&quot;icons/runXYZ.gif&quot; 
+               icon=&quot;icons/runXYZ.png&quot;
                tooltip=&quot;Run XYZ Tool&quot; 
                helpContextId=&quot;com.xyz.run_action_context&quot; 
                class=&quot;com.xyz.actions.RunXYZ&quot; 
@@ -471,7 +471,7 @@ the sub-elements and the way attributes are used):
                style=&quot;push&quot;
                menubarPath=&quot;com.xyz.xyzMenu/group1&quot;
                toolbarPath=&quot;Normal/XYZ&quot;
-               icon=&quot;icons/runABC.gif&quot;
+               icon=&quot;icons/runABC.png&quot;
                tooltip=&quot;Run ABC Tool&quot;
                helpContextId=&quot;com.xyz.run_abc_action_context&quot;
                retarget=&quot;true&quot;
@@ -492,7 +492,7 @@ the sub-elements and the way attributes are used):
                style=&quot;radio&quot;
                state=&quot;true&quot;
                menubarPath=&quot;com.xyz.xyzMenu/option1&quot;
-               icon=&quot;icons/runDEF.gif&quot;
+               icon=&quot;icons/runDEF.png&quot;
                tooltip=&quot;Run DEF Tool&quot;
                class=&quot;com.xyz.actions.RunDEF&quot; 
                helpContextId=&quot;com.xyz.run_def_action_context&quot;&gt;
@@ -503,7 +503,7 @@ the sub-elements and the way attributes are used):
                style=&quot;radio&quot;
                state=&quot;false&quot;
                menubarPath=&quot;com.xyz.xyzMenu/option1&quot;
-               icon=&quot;icons/runGHI.gif&quot;
+               icon=&quot;icons/runGHI.png&quot;
                tooltip=&quot;Run GHI Tool&quot;
                class=&quot;com.xyz.actions.RunGHI&quot; 
                helpContextId=&quot;com.xyz.run_ghi_action_context&quot;&gt;
@@ -514,7 +514,7 @@ the sub-elements and the way attributes are used):
                style=&quot;radio&quot;
                state=&quot;false&quot;
                menubarPath=&quot;com.xyz.xyzMenu/option1&quot;
-               icon=&quot;icons/runJKL.gif&quot;
+               icon=&quot;icons/runJKL.png&quot;
                tooltip=&quot;Run JKL Tool&quot;
                class=&quot;com.xyz.actions.RunJKL&quot; 
                helpContextId=&quot;com.xyz.run_jkl_action_context&quot;&gt;

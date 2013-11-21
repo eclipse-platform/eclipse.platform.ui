@@ -238,7 +238,7 @@ supplies an icon and a quadrant to apply that icon.
             label=&quot;XYZ Lightweight Declarative Decorator&quot; 
             state=&quot;false&quot; 
             lightweight=&quot;true&quot; 
-            icon=&quot;icons/full/declarative.gif&quot; 
+            icon=&quot;icons/full/declarative.png&quot;
             location=&quot;TOP_LEFT&quot;&gt; 
             &lt;enablement&gt;
                 &lt;objectClass name=&quot;org.eclipse.core.resources.IResource&quot;/&gt; 

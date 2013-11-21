@@ -356,7 +356,7 @@ If no value is supplied, a default ratio will be used.
          name=&quot;XYZ View&quot; 
          category=&quot;com.xyz.views.XYZviews&quot; 
          class=&quot;com.xyz.views.XYZView&quot; 
-         icon=&quot;icons/XYZ.gif&quot;/&gt;
+         icon=&quot;icons/XYZ.png&quot;/&gt;
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;

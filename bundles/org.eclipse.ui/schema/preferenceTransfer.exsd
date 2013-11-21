@@ -242,7 +242,7 @@ default (org.eclipse.core.resources.ProjectScope.SCOPE)
    &lt;extension
          point=&quot;org.eclipse.ui.preferenceTransfer&quot;&gt;
        &lt;transfer
-            icon=&quot;XYZ.gif&quot;
+            icon=&quot;XYZ.png&quot;
             name=&quot;Export All Transfer Test&quot;
             id=&quot;org.eclipse.ui.tests.all&quot;&gt;
             &lt;mapping scope=&quot;instance&quot;/&gt;
@@ -278,7 +278,7 @@ default (org.eclipse.core.resources.ProjectScope.SCOPE)
    &lt;extension
          point=&quot;org.eclipse.ui.preferenceTransfer&quot;&gt;
        &lt;transfer
-            icon=&quot;XYZ.gif&quot;
+            icon=&quot;XYZ.png&quot;
             name=&quot;Export many preferences&quot;
             id=&quot;org.eclipse.ui.tests.all&quot;&gt;
             &lt;mapping scope=&quot;instance&quot;&gt;
