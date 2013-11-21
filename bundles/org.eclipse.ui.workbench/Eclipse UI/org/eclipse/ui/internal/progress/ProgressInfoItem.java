@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422040
  *******************************************************************************/
 
 package org.eclipse.ui.internal.progress;
@@ -145,35 +146,35 @@ public class ProgressInfoItem extends Composite {
 				.put(
 						STOP_IMAGE_KEY,
 						WorkbenchImages
-								.getWorkbenchImageDescriptor("elcl16/progress_stop.gif"));//$NON-NLS-1$
+								.getWorkbenchImageDescriptor("elcl16/progress_stop.png"));//$NON-NLS-1$
 
 		JFaceResources
 				.getImageRegistry()
 				.put(
 						DISABLED_STOP_IMAGE_KEY,
 						WorkbenchImages
-								.getWorkbenchImageDescriptor("dlcl16/progress_stop.gif"));//$NON-NLS-1$
+								.getWorkbenchImageDescriptor("dlcl16/progress_stop.png"));//$NON-NLS-1$
 
 		JFaceResources
 				.getImageRegistry()
 				.put(
 						DEFAULT_JOB_KEY,
 						WorkbenchImages
-								.getWorkbenchImageDescriptor("progress/progress_task.gif")); //$NON-NLS-1$
+								.getWorkbenchImageDescriptor("progress/progress_task.png")); //$NON-NLS-1$
 
 		JFaceResources
 				.getImageRegistry()
 				.put(
 						CLEAR_FINISHED_JOB_KEY,
 						WorkbenchImages
-								.getWorkbenchImageDescriptor("elcl16/progress_rem.gif")); //$NON-NLS-1$
+								.getWorkbenchImageDescriptor("elcl16/progress_rem.png")); //$NON-NLS-1$
 
 		JFaceResources
 				.getImageRegistry()
 				.put(
 						DISABLED_CLEAR_FINISHED_JOB_KEY,
 						WorkbenchImages
-								.getWorkbenchImageDescriptor("dlcl16/progress_rem.gif")); //$NON-NLS-1$
+								.getWorkbenchImageDescriptor("dlcl16/progress_rem.png")); //$NON-NLS-1$
 
 		// Mac has different Gamma value
 		int shift = Util.isMac() ? -25 : -10;

@@ -1331,83 +1331,83 @@
          point="org.eclipse.ui.commandImages">
       <image
             commandId="org.eclipse.ui.edit.copy"
-            disabledIcon="$nl$/icons/full/dtool16/copy_edit.gif"
-            icon="$nl$/icons/full/etool16/copy_edit.gif"/>
+            disabledIcon="$nl$/icons/full/dtool16/copy_edit.png"
+            icon="$nl$/icons/full/etool16/copy_edit.png"/>
       <image
             commandId="org.eclipse.ui.edit.cut"
-            disabledIcon="$nl$/icons/full/dtool16/cut_edit.gif"
-            icon="$nl$/icons/full/etool16/cut_edit.gif"/>
+            disabledIcon="$nl$/icons/full/dtool16/cut_edit.png"
+            icon="$nl$/icons/full/etool16/cut_edit.png"/>
       <image
             commandId="org.eclipse.ui.edit.delete"
-            disabledIcon="$nl$/icons/full/dtool16/delete_edit.gif"
-            icon="$nl$/icons/full/etool16/delete_edit.gif"/>
+            disabledIcon="$nl$/icons/full/dtool16/delete_edit.png"
+            icon="$nl$/icons/full/etool16/delete_edit.png"/>
       <image
             commandId="org.eclipse.ui.edit.paste"
-            disabledIcon="$nl$/icons/full/dtool16/paste_edit.gif"
-            icon="$nl$/icons/full/etool16/paste_edit.gif"/>
+            disabledIcon="$nl$/icons/full/dtool16/paste_edit.png"
+            icon="$nl$/icons/full/etool16/paste_edit.png"/>
       <image
             commandId="org.eclipse.ui.file.print"
-            disabledIcon="$nl$/icons/full/dtool16/print_edit.gif"
-            icon="$nl$/icons/full/etool16/print_edit.gif"/>
+            disabledIcon="$nl$/icons/full/dtool16/print_edit.png"
+            icon="$nl$/icons/full/etool16/print_edit.png"/>
       <image
             commandId="org.eclipse.ui.edit.undo"
-            disabledIcon="$nl$/icons/full/dtool16/undo_edit.gif"
-            icon="$nl$/icons/full/etool16/undo_edit.gif"/>
+            disabledIcon="$nl$/icons/full/dtool16/undo_edit.png"
+            icon="$nl$/icons/full/etool16/undo_edit.png"/>
       <image
             commandId="org.eclipse.ui.edit.redo"
-            disabledIcon="$nl$/icons/full/dtool16/redo_edit.gif"
-            icon="$nl$/icons/full/etool16/redo_edit.gif"/>
+            disabledIcon="$nl$/icons/full/dtool16/redo_edit.png"
+            icon="$nl$/icons/full/etool16/redo_edit.png"/>
       <image
             commandId="org.eclipse.ui.file.save"
-            disabledIcon="$nl$/icons/full/dtool16/save_edit.gif"
-            icon="$nl$/icons/full/etool16/save_edit.gif"/>
+            disabledIcon="$nl$/icons/full/dtool16/save_edit.png"
+            icon="$nl$/icons/full/etool16/save_edit.png"/>
       <image
             commandId="org.eclipse.ui.file.saveAll"
-            disabledIcon="$nl$/icons/full/dtool16/saveall_edit.gif"
-            icon="$nl$/icons/full/etool16/saveall_edit.gif"/>
+            disabledIcon="$nl$/icons/full/dtool16/saveall_edit.png"
+            icon="$nl$/icons/full/etool16/saveall_edit.png"/>
       <image
             commandId="org.eclipse.ui.file.saveAs"
-            disabledIcon="$nl$/icons/full/dtool16/saveas_edit.gif"
-            icon="$nl$/icons/full/etool16/saveas_edit.gif"/>
+            disabledIcon="$nl$/icons/full/dtool16/saveas_edit.png"
+            icon="$nl$/icons/full/etool16/saveas_edit.png"/>
       <image
             commandId="org.eclipse.ui.file.refresh"
-            disabledIcon="$nl$/icons/full/dlcl16/refresh_nav.gif"
-            icon="$nl$/icons/full/elcl16/refresh_nav.gif"/>
+            disabledIcon="$nl$/icons/full/dlcl16/refresh_nav.png"
+            icon="$nl$/icons/full/elcl16/refresh_nav.png"/>
       <image
             commandId="org.eclipse.ui.file.export"
-            disabledIcon="$nl$/icons/full/dtool16/export_wiz.gif"
-            icon="$nl$/icons/full/etool16/export_wiz.gif">
+            disabledIcon="$nl$/icons/full/dtool16/export_wiz.png"
+            icon="$nl$/icons/full/etool16/export_wiz.png">
       </image>
       <image
             commandId="org.eclipse.ui.file.import"
-            disabledIcon="$nl$/icons/full/dtool16/import_wiz.gif"
-            icon="$nl$/icons/full/etool16/import_wiz.gif">
+            disabledIcon="$nl$/icons/full/dtool16/import_wiz.png"
+            icon="$nl$/icons/full/etool16/import_wiz.png">
       </image>
       <image
             commandId="org.eclipse.ui.navigate.collapseAll"
-            disabledIcon="$nl$/icons/full/dlcl16/collapseall.gif"
-            icon="$nl$/icons/full/elcl16/collapseall.gif">
+            disabledIcon="$nl$/icons/full/dlcl16/collapseall.png"
+            icon="$nl$/icons/full/elcl16/collapseall.png">
       </image>
       <image
             commandId="org.eclipse.ui.navigate.expandAll"
-            icon="$nl$/icons/full/elcl16/expandall.gif">
+            icon="$nl$/icons/full/elcl16/expandall.png">
       </image>
       <image
             commandId="org.eclipse.ui.newWizard"
-            disabledIcon="$nl$/icons/full/dtool16/new_wiz.gif"
-            icon="$nl$/icons/full/etool16/new_wiz.gif">
+            disabledIcon="$nl$/icons/full/dtool16/new_wiz.png"
+            icon="$nl$/icons/full/etool16/new_wiz.png">
       </image>
       <image
             commandId="org.eclipse.ui.perspectives.showPerspective"
-            icon="$nl$/icons/full/eview16/new_persp.gif">
+            icon="$nl$/icons/full/eview16/new_persp.png">
       </image>
       <image
             commandId="org.eclipse.ui.help.helpContents"
-            icon="$nl$/icons/full/etool16/help_contents.gif">
+            icon="$nl$/icons/full/etool16/help_contents.png">
       </image>
       <image
             commandId="org.eclipse.ui.help.helpSearch"
-            icon="$nl$/icons/full/etool16/help_search.gif">
+            icon="$nl$/icons/full/etool16/help_search.png">
       </image>
    </extension>
    
