@@ -757,29 +757,6 @@ public class PartServiceImpl implements EPartService {
 	 * @see MPartDescriptor#isAllowMultiple()
 	 */
 	private MPart addPart(MPart providedPart, MPart localPart) {
-		// If this is a multi-instance view see if there's a placeholder
-		String partId = providedPart.getElementId();
-		int colonIndex = partId == null ? -1 : partId.indexOf(':');
-		if (colonIndex >= 0) {
-			String descId = providedPart.getElementId().substring(0, colonIndex);
-			descId += ":*"; //$NON-NLS-1$
-			List<MPlaceholder> phList = modelService.findElements(workbenchWindow, descId,
-					MPlaceholder.class, null);
-			if (phList.size() > 0) {
-				MUIElement phParent = phList.get(0).getParent();
-				if (phParent instanceof MPartStack) {
-					MPartStack theStack = (MPartStack) phParent;
-					adjustPlaceholder(providedPart);
-					MPlaceholder placeholder = providedPart.getCurSharedRef();
-					if (placeholder == null) {
-						theStack.getChildren().add(providedPart);
-					} else {
-						theStack.getChildren().add(placeholder);
-					}
-
-				}
-			}
-		}
 		MPartDescriptor descriptor = modelService.getPartDescriptor(providedPart.getElementId());
 		if (descriptor == null) {
 			// there is no part descriptor backing the provided part, just add it to the container
@@ -887,6 +864,32 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private void addToLastContainer(String category, MPart part) {
+		// OK, we haven't found an explicit placeholder;
+		// If this is a multi-instance view see if there's a 'global' placeholder
+		String partId = part.getElementId();
+		int colonIndex = partId == null ? -1 : partId.indexOf(':');
+		if (colonIndex >= 0) {
+			String descId = part.getElementId().substring(0, colonIndex);
+			descId += ":*"; //$NON-NLS-1$
+			List<MPlaceholder> phList = modelService.findElements(workbenchWindow, descId,
+					MPlaceholder.class, null, EModelService.PRESENTATION);
+			if (phList.size() > 0) {
+				MUIElement phParent = phList.get(0).getParent();
+				if (phParent instanceof MPartStack) {
+					MPartStack theStack = (MPartStack) phParent;
+					int phIndex = theStack.getChildren().indexOf(phList.get(0));
+					adjustPlaceholder(part);
+					MPlaceholder placeholder = part.getCurSharedRef();
+					if (placeholder == null) {
+						theStack.getChildren().add(phIndex, part);
+					} else {
+						theStack.getChildren().add(phIndex, placeholder);
+					}
+					return;
+				}
+			}
+		}
+
 		MElementContainer<?> lastContainer = getLastContainer();
 		MPlaceholder placeholder = part.getCurSharedRef();
 		if (placeholder == null) {
