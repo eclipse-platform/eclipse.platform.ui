@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Soyatec(http://www.soyatec.com) and others.
+ * Copyright (c) 2006, 2013 Soyatec(http://www.soyatec.com) and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -286,7 +286,8 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			String cssValue = map
 					.get(NewApplicationWizardPage.APPLICATION_CSS_PROPERTY);
 			if (cssValue != null) {
-				cssValue = "platform:/plugin/" + fPluginData.getId() + "/" + cssValue;
+				cssValue = "platform:/plugin/" + fPluginData.getId() + "/"
+						+ cssValue;
 				map.put(NewApplicationWizardPage.APPLICATION_CSS_PROPERTY,
 						cssValue);
 			}
@@ -322,9 +323,8 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 										NewApplicationWizardPage.APPLICATION)
 								|| entry.getKey().equals(
 										NewApplicationWizardPage.richSample)
-								|| entry.getKey().equals(
-										NewApplicationWizardPage.CLEAR_PERSISTED_STATE)
-								) {
+								|| entry.getKey()
+										.equals(NewApplicationWizardPage.CLEAR_PERSISTED_STATE)) {
 							continue;
 						}
 						IPluginElement element = fmodel.getFactory()
@@ -417,7 +417,8 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 
 		Map<String, String> keys = new HashMap<String, String>();
 		keys.put("projectName", pluginName);
-		keys.put("productFileName", map.get(NewApplicationWizardPage.PRODUCT_NAME));
+		keys.put("productFileName",
+				map.get(NewApplicationWizardPage.PRODUCT_NAME));
 		String elementName = fragment.getElementName();
 		keys.put("packageName", (elementName.equals("") ? "" : elementName
 				+ ".")
@@ -500,7 +501,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			addon.setElementId("org.eclipse.e4.ui.workbench.handler.model");
 			addon.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon");
 			application.getAddons().add(addon);
-			
+
 			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.workbench.contexts.model");
 			addon.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon");
@@ -519,21 +520,20 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			resource.getContents().add((EObject) application);
 			MBindingContext rootContext = MCommandsFactory.INSTANCE
 					.createBindingContext();
-			rootContext
-			.setElementId("org.eclipse.ui.contexts.dialogAndWindow");
+			rootContext.setElementId("org.eclipse.ui.contexts.dialogAndWindow");
 			rootContext.setName("In Dialog and Windows");
-			
+
 			MBindingContext childContext = MCommandsFactory.INSTANCE
 					.createBindingContext();
 			childContext.setElementId("org.eclipse.ui.contexts.window");
 			childContext.setName("In Windows");
 			rootContext.getChildren().add(childContext);
-			
+
 			childContext = MCommandsFactory.INSTANCE.createBindingContext();
 			childContext.setElementId("org.eclipse.ui.contexts.dialog");
 			childContext.setName("In Dialogs");
 			rootContext.getChildren().add(childContext);
-			
+
 			application.getRootContext().add(rootContext);
 			application.getBindingContexts().add(rootContext);
 			if (!isMinimalist) {
@@ -571,7 +571,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 					fileMenuItem.getChildren().add(menuItemOpen);
 					menuItemOpen.setLabel("Open");
 					menuItemOpen.setIconURI("platform:/plugin/" + pluginName
-							+ "/icons/sample.gif");
+							+ "/icons/sample.png");
 					menuItemOpen.setCommand(openCommand);
 
 					MHandledMenuItem menuItemSave = MMenuFactory.INSTANCE
@@ -579,7 +579,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 					fileMenuItem.getChildren().add(menuItemSave);
 					menuItemSave.setLabel("Save");
 					menuItemSave.setIconURI("platform:/plugin/" + pluginName
-							+ "/icons/save_edit.gif");
+							+ "/icons/save_edit.png");
 					menuItemSave.setCommand(saveCommand);
 
 					MHandledMenuItem menuItemQuit = MMenuFactory.INSTANCE
@@ -638,14 +638,14 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 						.createHandledToolItem();
 				toolBar.getChildren().add(toolItemOpen);
 				toolItemOpen.setIconURI("platform:/plugin/" + pluginName
-						+ "/icons/sample.gif");
+						+ "/icons/sample.png");
 				toolItemOpen.setCommand(openCommand);
 
 				MHandledToolItem toolItemSave = MMenuFactory.INSTANCE
 						.createHandledToolItem();
 				toolBar.getChildren().add(toolItemSave);
 				toolItemSave.setIconURI("platform:/plugin/" + pluginName
-						+ "/icons/save_edit.gif");
+						+ "/icons/save_edit.png");
 				toolItemSave.setCommand(saveCommand);
 			}
 			Map<Object, Object> options = new HashMap<Object, Object>();
@@ -676,7 +676,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 					+ "handlers." + className);
 			handler.setElementId(projectName + ".handler." + name);
 			application.getHandlers().add(handler);
-			
+
 			// create binding for the command
 			MKeyBinding binding = MCommandsFactory.INSTANCE.createKeyBinding();
 			binding.setKeySequence(keyBinding);
@@ -728,18 +728,12 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 
 	private class ContentWizard extends Wizard implements IBundleContentWizard {
 
-		String[] dependencies = new String[] { 
-				"javax.inject",
-				"org.eclipse.core.runtime", 
-				"org.eclipse.swt",
-				"org.eclipse.e4.ui.model.workbench",
-				"org.eclipse.jface",
-				"org.eclipse.e4.ui.services",
-				"org.eclipse.e4.ui.workbench", 
-				"org.eclipse.e4.core.di", 
-				"org.eclipse.e4.ui.di",
-				"org.eclipse.e4.core.contexts",
-				};
+		String[] dependencies = new String[] { "javax.inject",
+				"org.eclipse.core.runtime", "org.eclipse.swt",
+				"org.eclipse.e4.ui.model.workbench", "org.eclipse.jface",
+				"org.eclipse.e4.ui.services", "org.eclipse.e4.ui.workbench",
+				"org.eclipse.e4.core.di", "org.eclipse.e4.ui.di",
+				"org.eclipse.e4.core.contexts", };
 
 		public void init(IFieldData data) {
 		}
