@@ -309,7 +309,11 @@ class PartActivationHistory {
 				activeTag);
 		if (activeCandidates.size() > 0) {
 			activeCandidates.get(0).getTags().remove(EPartService.ACTIVE_ON_CLOSE_TAG);
-			return activeCandidates.get(0);
+			MPart candidate = activeCandidates.get(0);
+			if (partService.isInContainer(perspective, candidate)
+					&& isValid(perspective, candidate)) {
+				return candidate;
+			}
 		}
 
 		Collection<MPart> candidates = perspective.getContext().get(EPartService.class).getParts();
