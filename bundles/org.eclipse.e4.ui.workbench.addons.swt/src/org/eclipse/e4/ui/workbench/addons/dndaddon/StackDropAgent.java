@@ -15,8 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -61,6 +64,15 @@ public class StackDropAgent extends DropAgent {
 		// We can't drop stacks onto itself
 		if (stack == dragElement)
 			return false;
+
+		// You can only drag MParts from window to window
+		if (!(dragElement instanceof MPart)) {
+			EModelService ms = dndManager.getModelService();
+			MWindow dragElementWin = ms.getTopLevelWindowFor(dragElement);
+			MWindow dropWin = ms.getTopLevelWindowFor(stack);
+			if (dragElementWin != dropWin)
+				return false;
+		}
 
 		// only allow dropping into the the area
 		Rectangle areaRect = getTabAreaRect((CTabFolder) stack.getWidget());
