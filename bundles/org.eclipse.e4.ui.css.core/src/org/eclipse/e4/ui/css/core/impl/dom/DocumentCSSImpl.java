@@ -8,6 +8,7 @@
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
  *     IBM Corporation - ongoing development
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422702
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
@@ -26,6 +27,7 @@ import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
+import org.w3c.dom.css.DocumentCSS;
 import org.w3c.dom.stylesheets.StyleSheet;
 import org.w3c.dom.stylesheets.StyleSheetList;
 
@@ -80,8 +82,9 @@ public class DocumentCSSImpl implements ExtendedDocumentCSS {
 
 	public List querySelector(int selectorType, int conditionType) {
 		List list = getCSSStyleDeclarationList(selectorType, conditionType);
-		if (list != null)
+		if (list != null) {
 			return list;
+		}
 		int l = styleSheetList.getLength();
 		for (int i = 0; i < l; i++) {
 			CSSStyleSheet styleSheet = (CSSStyleSheet) styleSheetList.item(i);
@@ -104,7 +107,7 @@ public class DocumentCSSImpl implements ExtendedDocumentCSS {
 					// Loop for SelectorList
 					int l = selectorList.getLength();
 					for (int j = 0; j < l; j++) {
-						Selector selector = (Selector) selectorList.item(j);
+						Selector selector = selectorList.item(j);
 						if (selector.getSelectorType() == selectorType) {
 							// It's conditional selector
 							ConditionalSelector conditionalSelector = (ConditionalSelector) selector;
@@ -138,12 +141,15 @@ public class DocumentCSSImpl implements ExtendedDocumentCSS {
 
 	protected Integer getKey(int selectorType, int conditionType) {
 		if (selectorType == Selector.SAC_CONDITIONAL_SELECTOR) {
-			if (conditionType == SAC_CLASS_CONDITION.intValue())
+			if (conditionType == SAC_CLASS_CONDITION.intValue()) {
 				return SAC_CLASS_CONDITION;
-			if (conditionType == SAC_ID_CONDITION.intValue())
+			}
+			if (conditionType == SAC_ID_CONDITION.intValue()) {
 				return SAC_ID_CONDITION;
-			if (conditionType == SAC_PSEUDO_CLASS_CONDITION.intValue())
+			}
+			if (conditionType == SAC_PSEUDO_CLASS_CONDITION.intValue()) {
 				return SAC_PSEUDO_CLASS_CONDITION;
+			}
 			return OTHER_SAC_CONDITIONAL_SELECTOR;
 		}
 
@@ -151,8 +157,9 @@ public class DocumentCSSImpl implements ExtendedDocumentCSS {
 	}
 
 	protected Map getStyleDeclarationMap() {
-		if (styleDeclarationMap == null)
+		if (styleDeclarationMap == null) {
 			styleDeclarationMap = new HashMap();
+		}
 		return styleDeclarationMap;
 	}
 }

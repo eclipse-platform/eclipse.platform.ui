@@ -7,6 +7,7 @@
  * Contributors:
  *   EclipseSource - initial API and implementation
  *   IBM Corporation - ongoing development
+ *   Lars Vogel <Lars.Vogel@gmail.com> - Bug 422702
  ******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.dom;
 
@@ -24,8 +25,8 @@ final class StyleWrapper {
 
 		public int compare(final StyleWrapper object1, final StyleWrapper object2) {
 			int result = 0;
-			StyleWrapper wrapper1 = (StyleWrapper) object1;
-			StyleWrapper wrapper2 = (StyleWrapper) object2;
+			StyleWrapper wrapper1 = object1;
+			StyleWrapper wrapper2 = object2;
 			if (wrapper1.specificity > wrapper2.specificity) {
 				result = 1;
 			} else if (wrapper1.specificity < wrapper2.specificity) {

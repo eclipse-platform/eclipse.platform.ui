@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Angelo Zerr and others.
+ * Copyright (c) 2008 -2013 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422702
  *******************************************************************************/
 package org.eclipse.e4.ui.css.xml.properties.css2;
 
@@ -20,14 +21,15 @@ import org.w3c.dom.css.CSSValue;
  *
  */
 public class CSSPropertyBackgroundXMLHandler extends
-		AbstractCSSPropertyBackgroundHandler {
+AbstractCSSPropertyBackgroundHandler {
 
 	public final static ICSSPropertyBackgroundHandler INSTANCE = new CSSPropertyBackgroundXMLHandler();
 
+	@Override
 	public boolean applyCSSProperty(Object node, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		if (node instanceof Element) {
-			super.applyCSSProperty((Element) node, property, value, pseudo,
+			super.applyCSSProperty(node, property, value, pseudo,
 					engine);
 			return true;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Angelo Zerr and others.
+ * Copyright (c) 2008, 2013 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
  *     IBM Corporation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422702
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.dom.parsers;
 
@@ -74,7 +75,7 @@ public class AbstractCSSParser implements CSSParser {
 			throws IOException {
 		CSSStyleDeclarationImpl styleDeclaration = new CSSStyleDeclarationImpl(
 				null);
-		parseStyleDeclaration(((CSSStyleDeclaration) (styleDeclaration)),
+		parseStyleDeclaration(((styleDeclaration)),
 				source);
 		return styleDeclaration;
 	}
@@ -150,8 +151,9 @@ public class AbstractCSSParser implements CSSParser {
 	 * @return
 	 */
 	public DocumentHandlerFactory getDocumentHandlerFactory() {
-		if (documentHandlerFactory == null)
+		if (documentHandlerFactory == null) {
 			return defaultDocumentHandlerFactory;
+		}
 		return documentHandlerFactory;
 	}
 
@@ -171,18 +173,21 @@ public class AbstractCSSParser implements CSSParser {
 	 * @return
 	 */
 	public Parser getParser() {
-		if (parser == null)
+		if (parser == null) {
 			try {
 				parser = getSACParserFactory().makeParser();
-				if (conditionFactory != null)
+				if (conditionFactory != null) {
 					parser.setConditionFactory(conditionFactory);
-				if (selectorFactory != null)
+				}
+				if (selectorFactory != null) {
 					parser.setSelectorFactory(selectorFactory);
+				}
 			} catch (Exception e) {
 				// TODO : manage error.
 				// e.printStackTrace();
 				throw new ParserNotFoundException(e);
 			}
+		}
 		return parser;
 	}
 
@@ -201,8 +206,9 @@ public class AbstractCSSParser implements CSSParser {
 	 * @return
 	 */
 	public ISACParserFactory getSACParserFactory() {
-		if (parserFactory == null)
+		if (parserFactory == null) {
 			return defaultParserFactory;
+		}
 		return parserFactory;
 	}
 

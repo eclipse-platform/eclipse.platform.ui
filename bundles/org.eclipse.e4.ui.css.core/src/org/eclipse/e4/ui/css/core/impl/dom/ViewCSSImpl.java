@@ -8,6 +8,7 @@
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
  *     IBM Corporation - ongoing development
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422702
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.dom;
 
@@ -63,8 +64,9 @@ public class ViewCSSImpl implements ViewCSS {
 			CSSStyleSheet styleSheet = (CSSStyleSheet) styleSheetList.item(i);
 			CSSStyleDeclaration styleDeclaration = getComputedStyle(styleSheet,
 					elt, pseudoElt);
-			if (styleDeclaration != null)
+			if (styleDeclaration != null) {
 				return styleDeclaration;
+			}
 		}
 		return null;
 	}
@@ -85,7 +87,7 @@ public class ViewCSSImpl implements ViewCSS {
 					// Loop for SelectorList
 					int l = selectorList.getLength();
 					for (int j = 0; j < l; j++) {
-						Selector selector = (Selector) selectorList.item(j);
+						Selector selector = selectorList.item(j);
 						if (selector instanceof ExtendedSelector) {
 							ExtendedSelector extendedSelector = (ExtendedSelector) selector;
 							if (extendedSelector.match(elt, pseudoElt)) {
