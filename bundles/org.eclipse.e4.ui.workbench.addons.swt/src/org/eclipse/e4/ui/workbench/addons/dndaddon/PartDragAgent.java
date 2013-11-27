@@ -48,6 +48,12 @@ public class PartDragAgent extends DragAgent {
 			if (info.itemElement.getTags().contains(IPresentationEngine.NO_MOVE))
 				return null;
 
+			// If it's an MPart only drag the part itself
+			if (info.itemElement instanceof MPart) {
+				return info.itemElement;
+			}
+
+			// check if we want to drag the placeholder or default to dragging the whole stack
 			int tbrCount = dndManager.getModelService().countRenderableChildren(stack);
 			if (tbrCount > 1 || dndManager.getModelService().isLastEditorStack(stack)) {
 				dragElement = info.itemElement;
