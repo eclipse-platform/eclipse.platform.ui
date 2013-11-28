@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,12 +19,14 @@ import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
 /**
- * Manages the decorators contributed via the decorators extension point.
- * Views which allow decoration of their elements should use the label
- * decorator returned by <code>getLabelDecorator()</code>.
+ * Manages the decorators contributed via the
+ * <code>org.eclipse.ui.decorator</code> extension point. Views which allow
+ * decoration of their elements should use the label decorator returned by
+ * <code>getLabelDecorator()</code>.
  * <p>
  * This class is not intended to be implemented by clients.
  * </p>
+ * 
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IDecoratorManager extends IDelayedLabelDecorator{
