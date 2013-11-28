@@ -4,10 +4,13 @@ import java.text.MessageFormat;
 
 import javax.annotation.PostConstruct;
 
+import org.eclipse.e4.core.services.nls.Message;
+
 /**
- * Load messages from a relative positioned resource bundle (./SimpleMessages.properties)
+ * Load messages from a resource folder in the plugin
  */
-public class SimpleMessages {
+@Message(contributorURI="platform:/plugin/org.eclipse.e4.core.tests/resources/another")
+public class ResourcesMessages {
 	
 	//message as is
 	public String message;

@@ -5,9 +5,10 @@ import java.text.MessageFormat;
 import javax.annotation.PostConstruct;
 
 /**
- * Load messages from a relative positioned resource bundle (./SimpleMessages.properties)
+ * Load messages from a relative positioned resource bundle (./messages.properties)
+ * Used to verify the case sensitive filename handling under Linux
  */
-public class SimpleMessages {
+public class Messages {
 	
 	//message as is
 	public String message;
