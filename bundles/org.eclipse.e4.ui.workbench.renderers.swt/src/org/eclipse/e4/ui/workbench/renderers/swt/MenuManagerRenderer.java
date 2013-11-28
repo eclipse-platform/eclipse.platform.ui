@@ -250,29 +250,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		}
 	};
 
-	private EventHandler childrenUpdater = new EventHandler() {
-
-		public void handleEvent(Event event) {
-			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
-			if (changedObj instanceof MMenu) {
-				MMenu menuModel = (MMenu) changedObj;
-				MenuManager manager = getManager(menuModel);
-				if (manager == null)
-					return;
-				if (UIEvents.isREMOVE(event)) {
-					MMenuElement menuElement = (MMenuElement) event
-							.getProperty(UIEvents.EventTags.OLD_VALUE);
-					handleMenuElementRemove(manager, menuElement);
-				} else if (UIEvents.isADD(event)) {
-					MMenuElement menuElement = (MMenuElement) event
-							.getProperty(UIEvents.EventTags.NEW_VALUE);
-					handleMenuElementAdd(manager, menuElement);
-				}
-			}
-
-		}
-	};
-
 	private MenuManagerRendererFilter rendererFilter;
 
 	@PostConstruct
@@ -283,8 +260,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		eventBroker.subscribe(UIEvents.Item.TOPIC_ENABLED, enabledUpdater);
 		eventBroker
 				.subscribe(UIEvents.UIElement.TOPIC_ALL, toBeRenderedUpdater);
-		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN,
-				childrenUpdater);
 
 		context.set(MenuManagerRenderer.class, this);
 		Display display = context.get(Display.class);
@@ -301,29 +276,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 
 	}
 
-	/**
-	 * @param manager
-	 * @param menuElement
-	 */
-	protected void handleMenuElementAdd(MenuManager manager,
-			MMenuElement menuElement) {
-		modelProcessSwitch(manager, menuElement);
-	}
-
-	/**
-	 * @param manager
-	 * @param menuElement
-	 */
-	protected void handleMenuElementRemove(MenuManager manager,
-			MMenuElement menuElement) {
-		if (menuElement instanceof MMenu) {
-			MMenu menuModel = (MMenu) menuElement;
-			manager.remove(getManager(menuModel));
-		} else
-			manager.remove(getContribution(menuElement));
-		manager.update(false);
-	}
-
 	@PreDestroy
 	public void contextDisposed() {
 		eventBroker.unsubscribe(itemUpdater);
@@ -331,7 +283,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		eventBroker.unsubscribe(selectionUpdater);
 		eventBroker.unsubscribe(enabledUpdater);
 		eventBroker.unsubscribe(toBeRenderedUpdater);
-		eventBroker.unsubscribe(childrenUpdater);
 
 		ContextInjectionFactory.uninject(MenuManagerEventHelper.showHelper,
 				context);
