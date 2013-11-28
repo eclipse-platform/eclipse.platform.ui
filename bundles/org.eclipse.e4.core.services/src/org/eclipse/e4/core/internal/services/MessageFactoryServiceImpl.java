@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import org.eclipse.e4.core.services.nls.IMessageFactoryService;
@@ -167,13 +166,15 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 			// check for the resource bundle relative to the messages class
 			String baseName = messages.getName().replace('.', '/');
 
-			try {
-				resourceBundle = ResourceBundleHelper.getEquinoxResourceBundle(baseName, locale,
-						messages.getClassLoader());
-			} catch (MissingResourceException e) {
-				// do nothing as this just means there is no resource bundle named
-				// like the messages class in the same package
-				// therefore we will go on and search for the OSGi resource bundle
+			resourceBundle = ResourceBundleHelper.getEquinoxResourceBundle(baseName, locale,
+					messages.getClassLoader());
+
+			if (resourceBundle == null) {
+				// check for the resource bundle relative to the messages class by searching
+				// the properties file lower case
+				// this is a fix for Linux environments
+				resourceBundle = ResourceBundleHelper.getEquinoxResourceBundle(
+						baseName.toLowerCase(), locale, messages.getClassLoader());
 			}
 		}
 
