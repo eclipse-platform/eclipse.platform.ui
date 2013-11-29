@@ -158,7 +158,9 @@ class DnDInfo {
 
 		MUIElement element = (MUIElement) ctrl.getData(AbstractPartRenderer.OWNING_ME);
 		if (element != null) {
-			return element;
+			if (modelService.getTopLevelWindowFor(element) == topLevelWindow)
+				return element;
+			return null;
 		}
 
 		return getModelElement(ctrl.getParent());

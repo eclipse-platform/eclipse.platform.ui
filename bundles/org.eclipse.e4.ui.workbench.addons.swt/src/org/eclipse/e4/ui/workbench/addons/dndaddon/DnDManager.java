@@ -143,11 +143,6 @@ class DnDManager {
 			public void handleEvent(org.osgi.service.event.Event event) {
 				MUIElement element = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 
-				// Only add listeners for stacks in *this* window
-				MWindow elementWin = getModelService().getTopLevelWindowFor(element);
-				if (elementWin != dragWindow)
-					return;
-
 				// Listen for drags starting in CTabFolders
 				if (element.getWidget() instanceof CTabFolder
 						|| element.getWidget() instanceof ImageBasedFrame) {

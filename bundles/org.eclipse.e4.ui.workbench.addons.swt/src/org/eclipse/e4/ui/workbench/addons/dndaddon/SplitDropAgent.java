@@ -20,7 +20,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -86,15 +85,6 @@ public class SplitDropAgent extends DropAgent {
 				return false;
 
 			dropStack = (MPartStack) parent;
-		}
-
-		// You can only drag MParts from window to window
-		if (!(dragElement instanceof MPart)) {
-			EModelService ms = dndManager.getModelService();
-			MWindow dragElementWin = ms.getTopLevelWindowFor(dragElement);
-			MWindow dropWin = ms.getTopLevelWindowFor(dropStack);
-			if (dragElementWin != dropWin)
-				return false;
 		}
 
 		// We can't split ourselves with if the element being dragged is the only element in the
