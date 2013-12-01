@@ -63,6 +63,9 @@ public interface IAction {
     /**
      * Action style constant (value <code>2</code>) indicating action is 
      * a check box (or a toggle button).
+     * <p>
+     * <strong>Note:</strong> The action is also run when a check box gets
+     * deselected. Use {@link #isChecked} to determine the selection state.
      */
     public static int AS_CHECK_BOX = 0x02;
 
@@ -75,6 +78,10 @@ public interface IAction {
     /**
      * Action style constant (value <code>8</code>) indicating action is 
      * a radio button.
+     * <p>
+     * <strong>Note:</strong> When a radio button gets selected, the action for
+     * the unselected radio button will also be run. Use {@link #isChecked} to
+     * determine the selection state.
      * 
      * @since 2.1
      */
@@ -323,6 +330,9 @@ public interface IAction {
      * Each action implementation must define the steps needed to carry out this action.
      * The default implementation of this method in <code>Action</code>
      * does nothing.
+     *
+     * @see #AS_RADIO_BUTTON How radio buttons are handled
+     * @see #AS_CHECK_BOX How check boxes are handled
      */
     public void run();
 
@@ -335,6 +345,9 @@ public interface IAction {
      * 
      * @param event the SWT event which triggered this action being run 
      * @since 2.0
+     *
+     * @see #AS_RADIO_BUTTON How radio buttons are handled
+     * @see #AS_CHECK_BOX How check boxes are handled
      */
     public void runWithEvent(Event event);
 
