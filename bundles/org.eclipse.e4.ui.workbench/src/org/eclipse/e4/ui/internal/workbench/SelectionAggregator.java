@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Oliver Puetter - activePart set to NULL when all parts are closed (http://bugs.eclipse.org/423040)
  ******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench;
 
@@ -97,7 +98,10 @@ public class SelectionAggregator {
 
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) final MPart part) {
-		if ((part != null) && (activePart != part)) {
+		if (part == null) {
+			activePart = null;
+			context.set(IServiceConstants.ACTIVE_SELECTION, null);
+		} else if (activePart != part) {
 			activePart = part;
 			IEclipseContext partContext = part.getContext();
 			if (partContext.containsKey(OUT_POST_SELECTION)) {
