@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Oliver Puetter - activePart set to NULL when all parts are closed (http://bugs.eclipse.org/423040)
  ******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench;
 
@@ -97,7 +98,10 @@ public class SelectionAggregator {
 
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) final MPart part) {
-		if ((part != null) && (activePart != part)) {
+		if (part == null) {
+			activePart = null;
+			context.set(IServiceConstants.ACTIVE_SELECTION, null);
+		} else if (activePart != part) {
 			activePart = part;
 			IEclipseContext partContext = part.getContext();
 			if (partContext.containsKey(OUT_POST_SELECTION)) {
