@@ -18,6 +18,8 @@ import org.eclipse.osgi.util.NLS;
 public class SWTRenderersMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.e4.ui.internal.workbench.renderers.swt.messages"; //$NON-NLS-1$
 
+	public static String choosePartsToSave;
+
 	public static String menuClose;
 	public static String menuCloseOthers;
 	public static String menuCloseAll;
