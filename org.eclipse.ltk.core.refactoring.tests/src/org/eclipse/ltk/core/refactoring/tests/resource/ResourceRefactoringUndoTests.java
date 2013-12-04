@@ -179,25 +179,30 @@ public class ResourceRefactoringUndoTests extends TestCase {
 	}
 
 	public void testProjectRenameUndoRedoLTK() throws ExecutionException, CoreException {
-		RefactoringContribution renameContribution= RefactoringCore.getRefactoringContribution(RenameResourceDescriptor.ID);
-		RenameResourceDescriptor desc= (RenameResourceDescriptor) renameContribution.createDescriptor();
-		desc.setResourcePath(fProject.getProject().getFullPath());
-		desc.setNewName(TEST_NEWPROJECT_NAME);
-		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoringContext(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
-
-		ProjectSnapshot snap= new ProjectSnapshot(fProject.getProject());
-		execute(op);
-		IProject renamedProject= getWorkspaceRoot().getProject(TEST_NEWPROJECT_NAME);
-		assertTrue("Project rename failed", renamedProject.exists());
-		snap.name= TEST_NEWPROJECT_NAME;
-		assertTrue("Project CONTENT was altered on rename", snap.isValid());
-		undo();
-		snap.name= SimpleTestProject.TEST_PROJECT_NAME;
-		assertTrue("Project CONTENT was altered on undo rename", snap.isValid());
-		assertFalse("Undo rename failed", renamedProject.exists());
-		redo();
-		snap.name= TEST_NEWPROJECT_NAME;
-		assertTrue("Project CONTENT was altered on redo rename", snap.isValid());
+		IProject renamedProject= null;
+		try {
+			RefactoringContribution renameContribution= RefactoringCore.getRefactoringContribution(RenameResourceDescriptor.ID);
+			RenameResourceDescriptor desc= (RenameResourceDescriptor) renameContribution.createDescriptor();
+			desc.setResourcePath(fProject.getProject().getFullPath());
+			desc.setNewName(TEST_NEWPROJECT_NAME);
+			PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoringContext(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
+	
+			ProjectSnapshot snap= new ProjectSnapshot(fProject.getProject());
+			execute(op);
+			renamedProject= getWorkspaceRoot().getProject(TEST_NEWPROJECT_NAME);
+			assertTrue("Project rename failed", renamedProject.exists());
+			snap.name= TEST_NEWPROJECT_NAME;
+			assertTrue("Project CONTENT was altered on rename", snap.isValid());
+			undo();
+			snap.name= SimpleTestProject.TEST_PROJECT_NAME;
+			assertTrue("Project CONTENT was altered on undo rename", snap.isValid());
+			assertFalse("Undo rename failed", renamedProject.exists());
+			redo();
+			snap.name= TEST_NEWPROJECT_NAME;
+			assertTrue("Project CONTENT was altered on redo rename", snap.isValid());
+		} finally {
+			renamedProject.delete(true, true, null);
+		}
 	}
 
 	public void testFileDeleteUndoRedoLTK() throws ExecutionException, CoreException {
