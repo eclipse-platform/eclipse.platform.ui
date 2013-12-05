@@ -629,6 +629,12 @@ public class PartRenderingEngine implements IPresentationEngine {
 			}
 		}
 
+		// We check the widget again since it could be created by some UI event.
+		// See Bug 417399
+		if (element.getWidget() != null) {
+			return safeCreateGui(element, parentWidget, parentContext);
+		}
+
 		// Create a control appropriate to the part
 		Object newWidget = createWidget(element, parentWidget);
 
