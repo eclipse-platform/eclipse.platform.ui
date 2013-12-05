@@ -10,19 +10,23 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.core.runtime.Assert;
+
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * A registry that maps <code>ImageDescriptors</code> to <code>Image</code>.
  */
 public class ImageDescriptorRegistry {
 
-	private HashMap<ImageDescriptor, Image> fRegistry = new HashMap<ImageDescriptor, Image>(10);
+	private Map<ImageDescriptor, Image> fRegistry = Collections.synchronizedMap(new HashMap<ImageDescriptor, Image>(10));
 	private Display fDisplay;
 
 	/**
@@ -78,10 +82,15 @@ public class ImageDescriptorRegistry {
 	}
 
 	private void hookDisplay() {
-		fDisplay.disposeExec(new Runnable() {
+		fDisplay.asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				dispose();
+				fDisplay.disposeExec(new Runnable() {
+					@Override
+					public void run() {
+						dispose();
+					}
+				});
 			}
 		});
 	}
