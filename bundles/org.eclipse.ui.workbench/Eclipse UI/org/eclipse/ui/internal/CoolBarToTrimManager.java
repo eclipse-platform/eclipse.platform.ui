@@ -85,9 +85,8 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 		if (topTrim == null) {
 			topTrim = modelService.getTrim(window, SideValue.TOP);
 			topTrim.setElementId(MAIN_TOOLBAR_ID);
-			topTrim.setToBeRendered(false);
 		}
-		// trimBar.setToBeRendered(false);
+		topTrim.setToBeRendered(false);
 
 		renderer = (ToolBarManagerRenderer) rendererFactory.getRenderer(
 				MenuFactoryImpl.eINSTANCE.createToolBar(), null);
