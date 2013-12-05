@@ -13,7 +13,8 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: javax.annotation;version="1.0.0",
  javax.inject;version="1.0.0"
-Service-Component: OSGI-INF/preferences.xml, OSGI-INF/events.xml
+Service-Component: OSGI-INF/preferences.xml, OSGI-INF/events.xml,
+ OSGI-INF/bundleContext.xml
 Export-Package: org.eclipse.e4.core.di.extensions;x-internal:=true,
  org.eclipse.e4.core.di.internal.extensions;x-friends:="org.eclipse.e4.ui.di"
 Bundle-Localization: fragment
