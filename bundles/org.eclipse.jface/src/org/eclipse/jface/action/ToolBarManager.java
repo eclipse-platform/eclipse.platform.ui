@@ -93,13 +93,29 @@ public class ToolBarManager extends ContributionManager implements
 	public ToolBarManager(ToolBar toolbar) {
 		this();
 		this.toolBar = toolbar;
+		if (toolBarExist()) {
+			this.itemStyle = toolBar.getStyle();
+		}
 	}
 
 	/**
-	 * Creates and returns this manager's tool bar control. Does not create a
-	 * new control if one already exists. Also create an {@link AccessibleListener}
-	 * for the {@link ToolBar}.
-	 * 
+	 * Sets SWT button style for new tool bar controls created
+	 * in the {@code createControl(Composite)} method. It does not
+	 * affect already existing tool bar control.
+	 *
+	 * @param style
+	 *            the tool bar item style
+	 * @since 3.10
+	 */
+	public void setStyle(int style) {
+		itemStyle = style;
+	}
+
+	/**
+	 * Creates and returns this manager's tool bar control. Does not create
+	 * a new control if one already exists and is not disposed.
+	 * Also create an {@link AccessibleListener} for the {@link ToolBar}.
+	 *
 	 * @param parent
 	 *            the parent control
 	 * @return the tool bar control

@@ -362,11 +362,11 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 	private ToolBar createToolbar(final MUIElement element, Composite parent) {
 		int orientation = getOrientation(element);
+		int style = orientation | SWT.WRAP | SWT.FLAT | SWT.RIGHT;
 
 		ToolBarManager manager = getManager((MToolBar) element);
 		if (manager == null) {
-			manager = new ToolBarManager(orientation | SWT.WRAP | SWT.FLAT
-					| SWT.RIGHT);
+			manager = new ToolBarManager(style);
 			IContributionManagerOverrides overrides = null;
 			MApplicationElement parentElement = element.getParent();
 			if (parentElement == null) {
@@ -382,6 +382,13 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 			manager.setOverrides(overrides);
 			linkModelToManager((MToolBar) element, manager);
+		} else {
+			ToolBar toolBar = manager.getControl();
+			if (toolBar != null && !toolBar.isDisposed()
+					&& (toolBar.getStyle() & orientation) == 0) {
+				toolBar.dispose();
+			}
+			manager.setStyle(style);
 		}
 		ToolBar bar = manager.createControl(parent);
 		bar.setData(manager);
