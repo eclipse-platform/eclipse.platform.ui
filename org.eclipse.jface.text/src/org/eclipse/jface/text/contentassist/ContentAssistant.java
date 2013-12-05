@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -831,13 +831,35 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 	}
 
+
 	/**
-	 * Dialog store constants.
-	 *
+	 * Dialog store constant for the x-size of the completion proposal pop-up
+	 * 
 	 * @since 3.0
 	 */
 	public static final String STORE_SIZE_X= "size.x"; //$NON-NLS-1$
+
+	/**
+	 * Dialog store constant for the y-size of the completion proposal pop-up
+	 * 
+	 * @since 3.0
+	 */
 	public static final String STORE_SIZE_Y= "size.y"; //$NON-NLS-1$
+	
+	/**
+	 * Dialog store constant for the x-size of the context selector pop-up
+	 * 
+	 * @since 3.9
+	 */
+	public static final String STORE_CONTEXT_SELECTOR_POPUP_SIZE_X= "contextSelector.size.x"; //$NON-NLS-1$
+	
+	/**
+	 * Dialog store constant for the y-size of the context selector pop-up
+	 * 
+	 * @since 3.9
+	 */
+	public static final String STORE_CONTEXT_SELECTOR_POPUP_SIZE_Y= "contextSelector.size.y"; //$NON-NLS-1$
+
 
 	// Content-Assist Listener types
 	final static int CONTEXT_SELECTOR= 0;
@@ -2081,9 +2103,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * <ul>
 	 * <li>{@link ContentAssistant#STORE_SIZE_X}</li>
 	 * <li>{@link ContentAssistant#STORE_SIZE_Y}</li>
+	 * <li>{@link ContentAssistant#STORE_CONTEXT_SELECTOR_POPUP_SIZE_X}</li>
+	 * <li>{@link ContentAssistant#STORE_CONTEXT_SELECTOR_POPUP_SIZE_Y}</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * @param dialogSettings the dialog settings
 	 * @since 3.0
 	 */
@@ -2093,7 +2117,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
-	 * Stores the content assist pop-up's size.
+	 * Stores the content assist's proposal pop-up size.
 	 */
 	protected void storeCompletionProposalPopupSize() {
 		if (fDialogSettings == null || fProposalPopup == null)
@@ -2108,9 +2132,26 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
-	 * Restores the content assist pop-up's size.
-	 *
-	 * @return the stored size
+	 * Stores the content assist's context selector pop-up size.
+	 * 
+	 * @since 3.9
+	 */
+	protected void storeContextSelectorPopupSize() {
+		if (fDialogSettings == null || fContextInfoPopup == null)
+			return;
+
+		Point size= fContextInfoPopup.getConextSelectorPopupSize();
+		if (size == null)
+			return;
+
+		fDialogSettings.put(STORE_CONTEXT_SELECTOR_POPUP_SIZE_X, size.x);
+		fDialogSettings.put(STORE_CONTEXT_SELECTOR_POPUP_SIZE_Y, size.y);
+	}
+
+	/**
+	 * Restores the content assist's proposal pop-up size.
+	 * 
+	 * @return the stored size or <code>null</code> if none
 	 * @since 3.0
 	 */
 	protected Point restoreCompletionProposalPopupSize() {
@@ -2123,8 +2164,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			size.x= fDialogSettings.getInt(STORE_SIZE_X);
 			size.y= fDialogSettings.getInt(STORE_SIZE_Y);
 		} catch (NumberFormatException ex) {
-			size.x= -1;
-			size.y= -1;
+			return null;
 		}
 
 		// sanity check
@@ -2158,9 +2198,53 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
+	 * Restores the content assist's context selector pop-up size.
+	 * 
+	 * @return the stored size or <code>null</code> if none
+	 * @since 3.9
+	 */
+	protected Point restoreContextSelectorPopupSize() {
+		if (fDialogSettings == null)
+			return null;
+
+		Point size= new Point(-1, -1);
+
+		try {
+			size.x= fDialogSettings.getInt(STORE_CONTEXT_SELECTOR_POPUP_SIZE_X);
+			size.y= fDialogSettings.getInt(STORE_CONTEXT_SELECTOR_POPUP_SIZE_Y);
+		} catch (NumberFormatException ex) {
+			return null;
+		}
+
+		// sanity check
+		if (size.x == -1 && size.y == -1)
+			return null;
+
+		Rectangle maxBounds= null;
+		Display display= Display.getCurrent();
+		if (display == null)
+			display= Display.getDefault();
+		if (display != null && !display.isDisposed())
+			maxBounds= display.getBounds();
+
+		if (size.x > -1 && size.y > -1) {
+			if (maxBounds != null) {
+				size.x= Math.min(size.x, maxBounds.width);
+				size.y= Math.min(size.y, maxBounds.height);
+			}
+
+			// Enforce an absolute minimal size
+			size.x= Math.max(size.x, 30);
+			size.y= Math.max(size.y, 30);
+		}
+
+		return size;
+	}
+
+	/**
 	 * Sets the prefix completion property. If enabled, content assist delegates completion to
 	 * prefix completion.
-	 *
+	 * 
 	 * @param enabled <code>true</code> to enable prefix completion, <code>false</code> to
 	 *        disable
 	 */

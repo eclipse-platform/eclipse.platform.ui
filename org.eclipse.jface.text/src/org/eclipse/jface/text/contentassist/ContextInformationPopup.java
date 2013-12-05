@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyEvent;
@@ -112,6 +114,7 @@ class ContextInformationPopup implements IContentAssistListener {
 
 	private PopupCloser fPopupCloser= new PopupCloser();
 	private Shell fContextSelectorShell;
+	private Point fContextSelectorPopupSize;
 	private Table fContextSelectorTable;
 	private IContextInformation[] fContextSelectorInput;
 	private String fLineDelimiter= null;
@@ -509,6 +512,17 @@ class ContextInformationPopup implements IContentAssistListener {
 		fContextSelectorShell.setLayout(layout);
 		fContextSelectorShell.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 
+		fContextSelectorShell.addControlListener(new ControlListener() {
+
+			public void controlMoved(ControlEvent e) {
+			}
+
+			public void controlResized(ControlEvent e) {
+				fContextSelectorPopupSize= fContextSelectorShell.getSize();
+			}
+		});
+
+
 		if (fViewer instanceof ITextViewerExtension) {
 			final ITextViewerExtension textViewerExtension= (ITextViewerExtension)fViewer;
 			final StyledText textWidget= fViewer.getTextWidget();
@@ -539,7 +553,11 @@ class ContextInformationPopup implements IContentAssistListener {
 		gd.widthHint= 300;
 		fContextSelectorTable.setLayoutData(gd);
 
-		fContextSelectorShell.pack(true);
+		Point size= fContentAssistant.restoreContextSelectorPopupSize();
+		if (size != null)
+			fContextSelectorShell.setSize(size);
+		else
+			fContextSelectorShell.pack(true);
 
 		Color c= fContentAssistant.getContextSelectorBackground();
 		if (c == null)
@@ -582,6 +600,16 @@ class ContextInformationPopup implements IContentAssistListener {
 			height= trim.height;
 		}
 		return height;
+	}
+
+	/**
+	 * Returns the size of the context selector pop-up.
+	 * 
+	 * @return a Point containing the size
+	 * @since 3.9
+	 */
+	Point getConextSelectorPopupSize() {
+		return fContextSelectorPopupSize;
 	}
 
 	/**
@@ -640,6 +668,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	 */
 	private void hideContextSelector() {
 		if (Helper.okToUse(fContextSelectorShell)) {
+			fContentAssistant.storeContextSelectorPopupSize();
 			fContentAssistant.removeContentAssistListener(this, ContentAssistant.CONTEXT_SELECTOR);
 
 			fPopupCloser.uninstall();
