@@ -66,6 +66,7 @@ public interface IAction {
      * <p>
      * <strong>Note:</strong> The action is also run when a check box gets
      * deselected. Use {@link #isChecked} to determine the selection state.
+     * </p>
      */
     public static int AS_CHECK_BOX = 0x02;
 
@@ -82,6 +83,7 @@ public interface IAction {
      * <strong>Note:</strong> When a radio button gets selected, the action for
      * the unselected radio button will also be run. Use {@link #isChecked} to
      * determine the selection state.
+     * </p>
      * 
      * @since 2.1
      */
