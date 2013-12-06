@@ -10,6 +10,8 @@
  *     Zhongwei Zhao - Bug 379495 - Two "Run" on top menu
  *     Patrick Chuong - Bug 391481 - Contributing perspectiveExtension, hiddenMenuItem 
  *     								 removes a menu from multiple perspectives
+ *     René Brandstetter - Bug 411821 - [QuickAccess] Contribute SearchField
+ *                                      through a fragment or other means
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -18,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -69,6 +72,8 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.model.internal.Position;
+import org.eclipse.e4.ui.model.internal.PositionInfo;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -81,6 +86,8 @@ import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRendererFilter;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimBarLayout;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimmedPartLayout;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.action.AbstractGroupMarker;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.GroupMarker;
@@ -323,6 +330,25 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	static final int CLIENT_INSET = 3;
 
 	static final int BAR_SIZE = 23;
+
+	/** Marks the beginning of a tag which contains positioning information. */
+	static final String MOVE_TAG = "move_"; //$NON-NLS-1$
+
+	/**
+	 * Ordered list of element IDs which belong to the QuickAccess
+	 * {@link MToolControl}s.
+	 * 
+	 * <p>
+	 * Element IDs which belong to QuickAccess:
+	 * <ul>
+	 * <li><code>Spacer Glue</code></li>
+	 * <li><code>SearchField</code></li>
+	 * <li><code>Search-PS Glue</code></li>
+	 * </ul>
+	 * </p>
+	 */
+	private static final List<String> QUICK_ACCESS_ELEMENT_IDS = Collections
+			.unmodifiableList(Arrays.asList("Spacer Glue", "SearchField", "Search-PS Glue")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	/**
 	 * Coolbar visibility change property.
@@ -573,6 +599,19 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		initializeDefaultServices();
 
+		/*
+		 * Remove the second QuickAccess control if an older workspace is
+		 * opened.
+		 * 
+		 * An older workspace will create an ApplicationModel which already
+		 * contains the QuickAccess elements, from the old
+		 * "popuolateTopTrimContribution()" method. The new implementation of
+		 * this method doesn't add the QuickAccess elements anymore but an old
+		 * workbench.xmi still has these entries in it and so they need to be
+		 * removed.
+		 */
+		cleanLegacyQuickAccessContribution();
+
 		// register with the tracker
 
 		fireWindowOpening();
@@ -601,6 +640,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		// sides. See bug 383269 for details
 		modelService.getTrim(model, SideValue.LEFT);
 		modelService.getTrim(model, SideValue.RIGHT);
+
+		// move the QuickAccess ToolControl to the correct position (only if it
+		// exists)
+		positionQuickAccess();
 
 		Shell shell = (Shell) model.getWidget();
 		if (model.getMainMenu() == null) {
@@ -748,6 +791,17 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		final MTrimBar trimBar = getTopTrim();
 		// TODO why aren't these added as trim contributions
 		// that would remove everything from this method except the fill(*)
+		/*
+		 * Reason Why: The setup() method which calls this method also calls the
+		 * ActionBarAdvisor to fill the TopTrim-Bar. Both this and the
+		 * ActionBarAdvisor fill method will be called after the entire
+		 * application model and all its fragments have been build already. This
+		 * leads to the effect that all the elements contributed via the
+		 * application model would be placed in front of the elements
+		 * contributed by the setup() method. (Means all the "Save", "Save All",
+		 * and so on, buttons which are normally placed at the beginning of the
+		 * trimbar (left) would be moved to the end of it (right).)
+		 */
 		MToolControl spacerControl = (MToolControl) modelService.find("PerspectiveSpacer", model); //$NON-NLS-1$
 		if (spacerControl == null) {
 			spacerControl = MenuFactoryImpl.eINSTANCE.createToolControl();
@@ -756,35 +810,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
 			spacerControl.getTags().add(TrimBarLayout.SPACER);
 			trimBar.getChildren().add(spacerControl);
-		}
-
-		MToolControl spacerGlueControl = (MToolControl) modelService.find("Spacer Glue", model); //$NON-NLS-1$
-		if (spacerGlueControl == null) {
-			spacerGlueControl = MenuFactoryImpl.eINSTANCE.createToolControl();
-			spacerGlueControl.setElementId("Spacer Glue"); //$NON-NLS-1$
-			spacerGlueControl
-					.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
-			spacerGlueControl.getTags().add(TrimBarLayout.GLUE);
-			trimBar.getChildren().add(spacerGlueControl);
-		}
-
-		MToolControl searchControl = (MToolControl) modelService.find("SearchField", model); //$NON-NLS-1$
-		if (searchControl == null) {
-			searchControl = MenuFactoryImpl.eINSTANCE.createToolControl();
-			searchControl.setElementId("SearchField"); //$NON-NLS-1$
-			searchControl
-					.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.quickaccess.SearchField"); //$NON-NLS-1$
-			trimBar.getChildren().add(searchControl);
-		}
-
-		MToolControl glueControl = (MToolControl) modelService.find("Search-PS Glue", model); //$NON-NLS-1$
-		if (glueControl == null) {
-			glueControl = MenuFactoryImpl.eINSTANCE.createToolControl();
-			glueControl.setElementId("Search-PS Glue"); //$NON-NLS-1$
-			glueControl
-					.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
-			glueControl.getTags().add(TrimBarLayout.GLUE);
-			trimBar.getChildren().add(glueControl);
 		}
 
 		MToolControl switcherControl = (MToolControl) modelService.find(
@@ -802,6 +827,172 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		// render now after everything has been added so contributions can be
 		// inserted in the right place
 		updateLayoutDataForContents();
+	}
+
+	/**
+	 * Removes the "legacy" QuickAccess related fields from the
+	 * ApplicationModel.
+	 * <p>
+	 * The "legacy" QuickAccess fields exist in the ApplicationModel if an older
+	 * workspace is opened which was build before the QuickAccess was
+	 * contributed via e4xmi-fragment.
+	 * </p>
+	 */
+	private void cleanLegacyQuickAccessContribution() {
+		for (String quickAccessElementId : QUICK_ACCESS_ELEMENT_IDS) {
+			MToolControl legacyElement = (MToolControl) modelService.find(quickAccessElementId,
+					model);
+			if (legacyElement != null) {
+				EcoreUtil.remove((EObject) legacyElement);
+			}
+		}
+	}
+
+	/**
+	 * Moves the QucickAccess related fields to the wanted position.
+	 * <p>
+	 * If the elements "Spacer Glue", "SearchField" and "Search-PS Glue" are
+	 * available in the model this method will move them to the correct place if
+	 * required. The movement can be influenced by a tag which begins with
+	 * {@value #MOVE_TAG} followed by the normal positioning information (e.g.:
+	 * move_after:PerspectiveSpacer). For more information about positioning
+	 * have a look at: {@link PositionInfo#parse(String)}.
+	 * </p>
+	 */
+	private void positionQuickAccess() {
+		/*
+		 * The QUICK_ACCESS_ELEMENT_IDS array contains the IDs of optional
+		 * elements provided via an e4xmi application model fragment. The method
+		 * checks if they should be moved to a special position. This behavior
+		 * is required because nearly all elements in the legacy workbench are
+		 * not provided via e4xmi application model. They are provided
+		 * programmatically after the e4xmi application model and the
+		 * corresponding fragment models are already processed.
+		 */
+		for (String quickAccessElementId : QUICK_ACCESS_ELEMENT_IDS) {
+			MToolControl quickAccessElement = (MToolControl) modelService.find(
+					quickAccessElementId, model);
+			if (quickAccessElement != null) {
+				moveControl(quickAccessElement.getParent(), quickAccessElement);
+			}
+		}
+
+	}
+
+	/**
+	 * Moves the given element from its current position to the position
+	 * mentioned in one of its tags.
+	 * 
+	 * @param elementContainer
+	 *            the list of elements in which the element should be moved
+	 * @param element
+	 *            the element to move
+	 */
+	private void moveControl(MElementContainer<MUIElement> elementContainer, MUIElement element) {
+		if (element == null || elementContainer == null)
+			return;
+
+		PositionInfo positionInfo = findMovePositionInfo(element);
+
+		// does the element has a tag with a "move_" position info
+		if (positionInfo != null) {
+			List<MUIElement> elements = elementContainer.getChildren();
+
+			if (elements.remove(element)) {
+				// reposition only if the element was in the list
+
+				switch (positionInfo.getPosition()) {
+				case LAST:
+					elements.add(element);
+					break;
+
+				case FIRST:
+					elements.add(0, element);
+					break;
+
+				case INDEX:
+					int index = positionInfo.getPositionReferenceAsInteger();
+					if (index >= 0 && index < elements.size()) {
+						elements.add(index, element);
+					} else {
+						elements.add(element);
+					}
+					break;
+
+				case BEFORE:
+				case AFTER:
+					int idx = indexOfElementWithID(elements, positionInfo.getPositionReference());
+					if (idx < 0) {
+						// element no found
+						elements.add(element);
+					} else {
+						if (positionInfo.getPosition() == Position.AFTER) {
+							idx++;
+						}
+
+						if (idx < elements.size()) {
+							elements.add(idx, element);
+						} else {
+							elements.add(element);
+						}
+					}
+					break;
+
+				default:
+					WorkbenchPlugin.log("Can't position control '" + element.getElementId() //$NON-NLS-1$
+							+ "' because of the unknown position type '" //$NON-NLS-1$
+							+ positionInfo.getPosition() + "'!"); //$NON-NLS-1$
+				}
+			}
+		}
+	}
+
+	/**
+	 * Find the element with the given id in the given list of
+	 * {@link MUIElement}s.
+	 * 
+	 * @param elements
+	 *            the list of {@link MUIElement}s to search
+	 * @param id
+	 *            the id of the {@link MUIElement} to find
+	 * @return the index of the {@link MUIElement} in the given list or -1 if
+	 *         element wasn't found
+	 */
+	private int indexOfElementWithID(List<MUIElement> elements, String id) {
+		if (elements == null || id == null)
+			return -1;
+
+		int index = 0;
+		for (MUIElement element : elements) {
+			if (id.equals(element.getElementId())) {
+				return index;
+			}
+			index++;
+		}
+
+		return -1;
+	}
+
+	/**
+	 * Checks if the {@link MUIElement} has a tag starting with
+	 * {@value #MOVE_TAG} and if so it will extract the {@link PositionInfo} out
+	 * of it.
+	 * 
+	 * @param element
+	 *            the element to check
+	 * @return the found {@link PositionInfo} on the given {@link MUIElement},
+	 *         or <code>null</code> if none was found
+	 */
+	private PositionInfo findMovePositionInfo(MUIElement element) {
+		if (element != null) {
+			for (String tag : element.getTags()) {
+				if (tag.startsWith(MOVE_TAG)) {
+					return PositionInfo.parse(tag.substring(MOVE_TAG.length()));
+				}
+			}
+		}
+
+		return null;
 	}
 
 	private void populateStandardTrim(MTrimBar bottomTrim) {

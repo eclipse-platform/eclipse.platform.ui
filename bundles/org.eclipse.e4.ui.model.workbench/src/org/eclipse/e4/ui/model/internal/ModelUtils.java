@@ -7,6 +7,8 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     René Brandstetter - Bug 411821 - [QuickAccess] Contribute SearchField
+ *                                      through a fragment or other means 
  *******************************************************************************/
 package org.eclipse.e4.ui.model.internal;
 
@@ -83,38 +85,46 @@ public class ModelUtils {
 			boolean flag = true;
 			if( positionInList != null && positionInList.trim().length() != 0 ) {
 				int index = -1;
-				if( positionInList.startsWith("first") ) {
-					index = 0;
-				} else if( positionInList.startsWith("index:") ) {
-					index = Integer.parseInt(positionInList.substring("index:".length()));	
-				} else if( positionInList.startsWith("before:") || positionInList.startsWith("after:") ) {
-					String elementId;
-					boolean before;
-					if( positionInList.startsWith("before:") ) {
-						elementId = positionInList.substring("before:".length());
-						before = true;
-					} else {
-						elementId = positionInList.substring("after:".length());
-						before = false;
-					}
-					
-					int tmpIndex = -1;
-					for( int i = 0; i < list.size(); i++ ) {
-						if( elementId.equals(((MApplicationElement)list.get(i)).getElementId()) ) {
-							tmpIndex = i;
-							break;
-						}
-					}
-					
-					if( tmpIndex != -1 ) {
-						if( before ) {
-							index = tmpIndex;
-						} else {
-							index = tmpIndex + 1;
-						}
-					} else {
-						System.err.println("Could not find element with Id '"+elementId+"'");
-					}
+				
+				PositionInfo posInfo = PositionInfo.parse(positionInList);
+				
+				if( posInfo != null ){
+				  switch (posInfo.getPosition()){
+				    case FIRST:
+				      index = 0;
+				      break;
+				      
+				    case INDEX:
+				      index = posInfo.getPositionReferenceAsInteger();
+				      break;
+				      
+				    case BEFORE:
+				    case AFTER:
+				      int tmpIndex = -1;
+				      String elementId = posInfo.getPositionReference();
+				      
+				      for( int i = 0; i < list.size(); i++ ) {
+		            if( elementId.equals(((MApplicationElement)list.get(i)).getElementId()) ) {
+		              tmpIndex = i;
+		              break;
+		            }
+		          }
+				      
+				      if( tmpIndex != -1 ) {
+		            if( posInfo.getPosition() == Position.BEFORE ) {
+		              index = tmpIndex;
+		            } else {
+		              index = tmpIndex + 1;
+		            }
+		          } else {
+		            System.err.println("Could not find element with Id '"+elementId+"'");
+		          }
+				      
+				    case LAST:
+				      default:
+				        // both no special operation, because the default is adding it at the last position
+				        break;
+				  }
 				} else {
 					System.err.println("Not a valid list position.");
 				}
@@ -208,5 +218,4 @@ public class ModelUtils {
 
 		return null;
 	}
-
 }
