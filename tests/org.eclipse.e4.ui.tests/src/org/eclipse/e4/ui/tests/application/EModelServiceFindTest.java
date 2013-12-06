@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.commands.MHandler;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -28,6 +30,12 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 
 public class EModelServiceFindTest extends TestCase {
@@ -55,6 +63,12 @@ public class EModelServiceFindTest extends TestCase {
 		window.setElementId("singleValidId");
 		app.getChildren().add(window);
 
+		MMenu mainMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		window.setMainMenu(mainMenu);
+
+		MMenu mainMenuItem = MenuFactoryImpl.eINSTANCE.createMenu();
+		mainMenu.getChildren().add(mainMenuItem);
+
 		MPartSashContainer psc = BasicFactoryImpl.eINSTANCE
 				.createPartSashContainer();
 		psc.setElementId("twoValidIds");
@@ -77,6 +91,32 @@ public class EModelServiceFindTest extends TestCase {
 		MPart part3 = BasicFactoryImpl.eINSTANCE.createPart();
 		psc.getChildren().add(part3);
 
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		menu.setElementId("menuId");
+		part1.getMenus().add(menu);
+
+		MMenu menuItem1 = MenuFactoryImpl.eINSTANCE.createMenu();
+		menuItem1.setElementId("menuItem1Id");
+		menu.getChildren().add(menuItem1);
+
+		MMenu menuItem2 = MenuFactoryImpl.eINSTANCE.createMenu();
+		menuItem2.setElementId("menuItem2Id");
+		menu.getChildren().add(menuItem2);
+
+		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		toolBar.setElementId("toolBarId");
+		part2.setToolbar(toolBar);
+
+		MToolControl toolControl1 = MenuFactoryImpl.eINSTANCE
+				.createToolControl();
+		toolControl1.setElementId("toolControl1Id");
+		toolBar.getChildren().add(toolControl1);
+
+		MToolControl toolControl2 = MenuFactoryImpl.eINSTANCE
+				.createToolControl();
+		toolControl2.setElementId("toolControl2Id");
+		toolBar.getChildren().add(toolControl2);
+
 		return app;
 	}
 
@@ -98,6 +138,14 @@ public class EModelServiceFindTest extends TestCase {
 		List<MUIElement> elements3 = modelService.findElements(application,
 				"invalidId", null, null);
 		assertEquals(elements3.size(), 0);
+
+		List<MUIElement> elements4 = modelService.findElements(application,
+				"menuItem1Id", null, null);
+		assertEquals(1, elements4.size());
+
+		List<MUIElement> elements5 = modelService.findElements(application,
+				"toolControl1Id", null, null);
+		assertEquals(1, elements5.size());
 	}
 
 	public void testFindElementsTypeOnly() {
@@ -119,10 +167,18 @@ public class EModelServiceFindTest extends TestCase {
 				application, null, MDirtyable.class, null);
 		assertEquals(dirtyableElements.size(), 3);
 
+		List<MMenuElement> menuElements = modelService.findElements(
+				application, null, MMenuElement.class, null);
+		assertEquals(5, menuElements.size());
+
+		List<MToolBarElement> toolBarElements = modelService.findElements(
+				application, null, MToolBarElement.class, null);
+		assertEquals(2, toolBarElements.size());
+
 		// Should find all the elements
 		List<MUIElement> uiElements = modelService.findElements(application,
 				null, null, null);
-		assertEquals(uiElements.size(), 7);
+		assertEquals(uiElements.size(), 15);
 
 		// Should match 0 since String is not an MUIElement
 		List<String> strings = modelService.findElements(application, null,
@@ -230,6 +286,73 @@ public class EModelServiceFindTest extends TestCase {
 		} catch (IllegalArgumentException e) {
 			// expected
 		}
+	}
+
+	public void testFlags() {
+		MApplication application = createApplication();
+
+		EModelService modelService = (EModelService) application.getContext()
+				.get(EModelService.class.getName());
+		assertNotNull(modelService);
+
+		List<MToolBarElement> toolBarElements = modelService.findElements(
+				application, null, MToolBarElement.class, null,
+				EModelService.IN_ANY_PERSPECTIVE);
+		assertEquals(0, toolBarElements.size());
+
+		toolBarElements = modelService.findElements(application, null,
+				MToolBarElement.class, null, EModelService.IN_ANY_PERSPECTIVE
+						| EModelService.IN_PART);
+		assertEquals(2, toolBarElements.size());
+
+		List<MMenuElement> menuElements = modelService.findElements(
+				application, null, MMenuElement.class, null,
+				EModelService.IN_ANY_PERSPECTIVE);
+		assertEquals(0, menuElements.size());
+
+		menuElements = modelService.findElements(application, null,
+				MMenuElement.class, null, EModelService.IN_ANY_PERSPECTIVE
+						| EModelService.IN_PART);
+		assertEquals(3, menuElements.size());
+
+		menuElements = modelService.findElements(application, null,
+				MMenuElement.class, null, EModelService.IN_ANY_PERSPECTIVE
+						| EModelService.IN_MAIN_MENU);
+		assertEquals(2, menuElements.size());
+	}
+
+	public void testFindHandler() {
+		MApplication application = createApplication();
+
+		EModelService modelService = (EModelService) application.getContext()
+				.get(EModelService.class.getName());
+		assertNotNull(modelService);
+
+		MHandler handler1 = CommandsFactoryImpl.eINSTANCE.createHandler();
+		handler1.setElementId("handler1");
+		application.getHandlers().add(handler1);
+
+		MHandler handler2 = CommandsFactoryImpl.eINSTANCE.createHandler();
+		handler2.setElementId("handler2");
+		application.getHandlers().add(handler2);
+
+		MHandler foundHandler = null;
+
+		foundHandler = modelService.findHandler(application, "handler1");
+		assertNotNull(foundHandler);
+		assertSame(handler1, foundHandler);
+
+		foundHandler = modelService.findHandler(application, "invalidId");
+		assertNull(foundHandler);
+
+		foundHandler = modelService.findHandler(null, "handler1");
+		assertNull(foundHandler);
+
+		foundHandler = modelService.findHandler(application, "");
+		assertNull(foundHandler);
+
+		foundHandler = modelService.findHandler(application, null);
+		assertNull(foundHandler);
 	}
 
 	public void testBug314685() {
