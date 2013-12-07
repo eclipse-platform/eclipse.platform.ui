@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTFontDataConver
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTGradientConverterImpl;
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTImageConverterImpl;
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTRGBConverterImpl;
+import org.eclipse.e4.ui.css.swt.resources.SWTResourceRegistryKeyFactory;
 import org.eclipse.e4.ui.css.swt.resources.SWTResourcesRegistry;
 import org.eclipse.swt.widgets.Display;
 
@@ -37,7 +38,7 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 
 	public AbstractCSSSWTEngineImpl(Display display, boolean lazyApplyingStyles) {
 		this.display = display;
-		
+
 		/** Initialize SWT CSSValue converter * */
 
 		// Register SWT RGB CSSValue Converter
@@ -46,28 +47,31 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 		super.registerCSSValueConverter(CSSValueSWTColorConverterImpl.INSTANCE);
 		// Register SWT Gradient CSSValue Converter
 		super
-				.registerCSSValueConverter(CSSValueSWTGradientConverterImpl.INSTANCE);
+		.registerCSSValueConverter(CSSValueSWTGradientConverterImpl.INSTANCE);
 		// Register SWT Cursor CSSValue Converter
 		super
-				.registerCSSValueConverter(CSSValueSWTCursorConverterImpl.INSTANCE);
+		.registerCSSValueConverter(CSSValueSWTCursorConverterImpl.INSTANCE);
 		// Register SWT Font CSSValue Converter
 		super.registerCSSValueConverter(CSSValueSWTFontConverterImpl.INSTANCE);
 		// Register SWT FontData CSSValue Converter
 		super
-				.registerCSSValueConverter(CSSValueSWTFontDataConverterImpl.INSTANCE);
+		.registerCSSValueConverter(CSSValueSWTFontDataConverterImpl.INSTANCE);
 		// Register SWT Image CSSValue Converter
 		super.registerCSSValueConverter(CSSValueSWTImageConverterImpl.INSTANCE);
 
 		if (lazyApplyingStyles) {
 			new CSSSWTApplyStylesListener(display, this);
 		}
-		
+
 		initializeCSSPropertyHandlers();
-//		SWTElement.setEngine(display, this);
+		//		SWTElement.setEngine(display, this);
+
+		setResourceRegistryKeyFactory(new SWTResourceRegistryKeyFactory());
 	}
 
 	protected abstract void initializeCSSPropertyHandlers();
 
+	@Override
 	public IResourcesRegistry getResourcesRegistry() {
 		IResourcesRegistry resourcesRegistry = super.getResourcesRegistry();
 		if (resourcesRegistry == null) {

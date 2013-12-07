@@ -9,6 +9,7 @@
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com>
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422702
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
@@ -46,10 +47,26 @@ implements ICSSPropertyHandler2 {
 	private static final String CSS_CTABITEM_SELECTED_FONT_LISTENER_KEY = "CSS_CTABFOLDER_SELECTED_FONT_LISTENER_KEY"; //$NON-NLS-1$
 
 	private static void setFont(Widget widget, Font font) {
+
 		if (widget instanceof CTabItem) {
 			((CTabItem) widget).setFont(font);
 		} else if (widget instanceof Control) {
-			((Control) widget).setFont(font);
+			Control control = (Control) widget;
+			try {
+				control.setRedraw(false);
+				control.setFont(font);
+				if (control instanceof CTabFolder) {
+					updateChildrenFonts((CTabFolder) widget, font);
+				}
+			} finally {
+				control.setRedraw(true);
+			}
+		}
+	}
+
+	private static void updateChildrenFonts(CTabFolder folder, Font font) {
+		for (CTabItem item : folder.getItems()) {
+			item.setFont(font);
 		}
 	}
 

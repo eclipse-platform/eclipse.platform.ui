@@ -17,6 +17,7 @@ import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.resource.ColorRegistry;
@@ -404,6 +405,8 @@ public class WorkbenchThemeManager extends EventManager implements
 			{
 				if (oldTheme != null && eventBroker != null) {
 					eventBroker.send(UIEvents.UILifeCycle.THEME_CHANGED, null);
+					eventBroker.send(UIEvents.UILifeCycle.THEME_DEFINITION_CHANGED,
+							context.get(MApplication.class.getName()));
 				}
 			}
 		}

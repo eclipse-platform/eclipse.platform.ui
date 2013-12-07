@@ -28,6 +28,12 @@
                 <message_argument value="THEME_CHANGED"/>
             </message_arguments>
         </filter>
+        <filter id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.UILifeCycle"/>
+                <message_argument value="THEME_DEFINITION_CHANGED"/>
+            </message_arguments>
+        </filter>
     </resource>
     <resource path="src/org/eclipse/e4/ui/workbench/modeling/EObjModelHandler.java" type="org.eclipse.e4.ui.workbench.modeling.EObjModelHandler">
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">

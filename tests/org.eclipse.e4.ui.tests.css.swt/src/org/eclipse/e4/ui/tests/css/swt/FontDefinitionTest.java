@@ -25,23 +25,23 @@ import org.eclipse.ui.internal.themes.FontDefinition;
 @SuppressWarnings("restriction")
 public class FontDefinitionTest extends CSSSWTTestCase {
 	private Display display;
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		display = Display.getDefault();
 	}
-	
+
 	public void testFontDefinition() throws Exception {
 		//given
-		CSSEngine engine = createEngine("FontDefinition#org-eclipse-jface-bannerfont {font-family: 'Times';font-size: 12;font-style: italic;}", display);		
-		FontDefinition definition = fontDefinition("org.eclipse.jface.bannerfont");		
-		
+		CSSEngine engine = createEngine("FontDefinition#org-eclipse-jface-bannerfont {font-family: 'Times';font-size: 12;font-style: italic;}", display);
+		FontDefinition definition = fontDefinition("org.eclipse.jface.bannerfont");
+
 		assertNull(definition.getValue());
-		assertFalse(definition.isOverridden());		
-				
+		assertFalse(definition.isOverridden());
+
 		//when
 		engine.applyStyles(definition, true);
-				
+
 		//then
 		assertNotNull(definition.getValue());
 		assertEquals("Times", definition.getValue()[0].getName());
@@ -49,68 +49,69 @@ public class FontDefinitionTest extends CSSSWTTestCase {
 		assertEquals(SWT.ITALIC, definition.getValue()[0].getStyle());
 		assertTrue(definition.isOverridden());
 	}
-	
+
 	public void testFontDefinitionWhenDefinitionStylesheetNotFound() throws Exception{
 		//given
-		CSSEngine engine = createEngine("FontDefinition#org-eclipse-jface-bannerfont {font-family: 'Times';font-size: 12;font-style: italic;}", display);		
-		FontDefinition definition = fontDefinition("font definition uniqueId without matching stylesheet");		
-		
+		CSSEngine engine = createEngine("FontDefinition#org-eclipse-jface-bannerfont {font-family: 'Times';font-size: 12;font-style: italic;}", display);
+		FontDefinition definition = fontDefinition("font definition uniqueId without matching stylesheet");
+
 		assertNull(definition.getValue());
 		assertFalse(definition.isOverridden());
-				
+
 		//when
 		engine.applyStyles(definition, true);
-				
+
 		//then
 		assertNull(definition.getValue());
 		assertFalse(definition.isOverridden());
 	}
-	
+
 	public void testWidgetWithFontDefinitionAsFontFamily() throws Exception {
 		//given
 		registerFontProviderWith("org.eclipse.jface.bannerfont", new FontData("Times", 12, SWT.ITALIC));
-		
-		CSSEngine engine = createEngine("Label {font-family: '#org-eclipse-jface-bannerfont'; font-size: default; font-style: default}", 
+
+		CSSEngine engine = createEngine(
+				"Label {font-family: '#org-eclipse-jface-bannerfont'}",
 				display);
-				
+
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
-		Label label = new Label(shell, SWT.NONE);		
+		Label label = new Label(shell, SWT.NONE);
 		Font font = new Font(display, "Arial", 9, SWT.NORMAL);
 		label.setFont(font);
 		label.setText("Some label text");
-			
-		
+
+
 		//when
-		engine.applyStyles(label, true);	
-		
-		
+		engine.applyStyles(label, true);
+
+
 		//then
 		assertEquals("Times", label.getFont().getFontData()[0].getName());
 		assertEquals(12, label.getFont().getFontData()[0].getHeight());
 		assertEquals(SWT.ITALIC, label.getFont().getFontData()[0].getStyle());
-		
+
 		shell.dispose();
 		font.dispose();
 	}
-	
+
 	private FontDefinition fontDefinition(String uniqueId) {
-		return new FontDefinition(new FontDefinition("fontName", uniqueId, "defaultsId", 
-				"value", "categoryId", true, "fontDescription"), 
+		return new FontDefinition(new FontDefinition("fontName", uniqueId, "defaultsId",
+				"value", "categoryId", true, "fontDescription"),
 				new FontData[] {new FontData("Arial", 10, SWT.NORMAL)});
 	}
-	
+
 	private void registerFontProviderWith(final String expectedSymbolicName, final FontData fontData) throws Exception {
 		new CSSActivator() {
 			@Override
 			public IColorAndFontProvider getColorAndFontProvider() {
-				return new IColorAndFontProvider() {			
-					public FontData[] getFont(String symbolicName) {	
+				return new IColorAndFontProvider() {
+					public FontData[] getFont(String symbolicName) {
 						if (expectedSymbolicName.equals(symbolicName)) {
 							return new FontData[]{fontData};
 						}
 						return null;
-					}					
-					public RGB getColor(String symbolicName) {								
+					}
+					public RGB getColor(String symbolicName) {
 						return null;
 					}
 				};

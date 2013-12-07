@@ -49,8 +49,8 @@ import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.DocumentCSSImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.ViewCSSImpl;
 import org.eclipse.e4.ui.css.core.impl.sac.ExtendedSelector;
-import org.eclipse.e4.ui.css.core.resources.CSSResourcesHelpers;
 import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
+import org.eclipse.e4.ui.css.core.resources.ResourceRegistryKeyFactory;
 import org.eclipse.e4.ui.css.core.util.impl.resources.ResourcesLocatorManager;
 import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
 import org.eclipse.e4.ui.css.core.utils.StringUtils;
@@ -136,6 +136,8 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	private boolean parseImport;
 
+	private ResourceRegistryKeyFactory keyFactory;
+
 	public AbstractCSSEngine() {
 		this(new DocumentCSSImpl());
 	}
@@ -143,6 +145,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	public AbstractCSSEngine(ExtendedDocumentCSS documentCSS) {
 		this.documentCSS = documentCSS;
 		this.viewCSS = new ViewCSSImpl(documentCSS);
+		keyFactory = new ResourceRegistryKeyFactory();
 	}
 
 	/*--------------- Parse style sheet -----------------*/
@@ -1123,30 +1126,31 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	public Object convert(CSSValue value, Object toType, Object context)
 			throws Exception {
-		Object newValue = null;
-		String key = CSSResourcesHelpers.getCSSValueKey(value);
-		IResourcesRegistry resourcesRegistry = getResourcesRegistry();
-		if (resourcesRegistry != null) {
-			if (key != null) {
-				newValue = resourcesRegistry.getResource(toType, key);
-			}
-		}
+		Object key = keyFactory.createKey(value);
+		Object newValue = getResource(toType, key);
+
 		if (newValue == null) {
 			ICSSValueConverter converter = getCSSValueConverter(toType);
 			if (converter != null) {
 				newValue = converter.convert(value, this, context);
-				if (newValue != null) {
-					// cache it
-					if (resourcesRegistry != null) {
-						if (key != null) {
-							resourcesRegistry.registerResource(toType, key,
-									newValue);
-						}
-					}
-				}
+				// cache it
+				registerResource(toType, key, newValue);
 			}
 		}
 		return newValue;
+	}
+
+	private Object getResource(Object toType, Object key) {
+		if (key != null && getResourcesRegistry() != null) {
+			return getResourcesRegistry().getResource(toType, key);
+		}
+		return null;
+	}
+
+	private void registerResource(Object toType, Object key, Object resource) {
+		if (key != null && resource != null && getResourcesRegistry() != null) {
+			getResourcesRegistry().registerResource(toType, key, resource);
+		}
 	}
 
 	public String convert(Object value, Object toType, Object context)
@@ -1168,4 +1172,8 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	 */
 	public abstract CSSParser makeCSSParser();
 
+	protected void setResourceRegistryKeyFactory(
+			ResourceRegistryKeyFactory keyFactory) {
+		this.keyFactory = keyFactory;
+	}
 }

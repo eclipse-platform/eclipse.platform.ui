@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Angelo Zerr and others.
+ * Copyright (c) 2008, 2013 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.resources;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -33,11 +35,13 @@ public abstract class AbstractResourcesRegistry implements IResourcesRegistry {
 	 *      java.lang.Object)
 	 */
 	public Object getResource(Object type, Object key) {
-		if (allResourcesMap == null)
+		if (allResourcesMap == null) {
 			return null;
+		}
 		Map resourcesMap = (Map) allResourcesMap.get(type);
-		if (resourcesMap == null)
+		if (resourcesMap == null) {
 			return null;
+		}
 		return resourcesMap.get(key);
 	}
 
@@ -48,14 +52,25 @@ public abstract class AbstractResourcesRegistry implements IResourcesRegistry {
 	 *      java.lang.Object, java.lang.Object)
 	 */
 	public void registerResource(Object type, Object key, Object resource) {
-		if (allResourcesMap == null)
+		if (allResourcesMap == null) {
 			allResourcesMap = new HashMap();
+		}
 		Map resourcesMap = (Map) allResourcesMap.get(type);
 		if (resourcesMap == null) {
 			resourcesMap = new HashMap();
 			allResourcesMap.put(type, resourcesMap);
 		}
 		resourcesMap.put(key, resource);
+	}
+
+	protected Map getCacheByType(Object type) {
+		if (allResourcesMap != null) {
+			Map resourcesMap = (Map) allResourcesMap.get(type);
+			if (resourcesMap != null) {
+				return resourcesMap;
+			}
+		}
+		return Collections.EMPTY_MAP;
 	}
 
 	/*
@@ -65,14 +80,17 @@ public abstract class AbstractResourcesRegistry implements IResourcesRegistry {
 	 *      java.lang.Object)
 	 */
 	public void unregisterResource(Object type, Object key) {
-		if (allResourcesMap == null)
+		if (allResourcesMap == null) {
 			return;
+		}
 		Map resourcesMap = (Map) allResourcesMap.get(type);
-		if (resourcesMap == null)
+		if (resourcesMap == null) {
 			return;
+		}
 		Object resource = resourcesMap.get(key);
-		if (resource != null)
+		if (resource != null) {
 			resourcesMap.remove(resource);
+		}
 	}
 
 	public void unregisterResource(Object resource) {
@@ -95,8 +113,9 @@ public abstract class AbstractResourcesRegistry implements IResourcesRegistry {
 	 * @see org.eclipse.e4.ui.core.css.resources.IResourcesRegistry#dispose()
 	 */
 	public void dispose() {
-		if (allResourcesMap == null)
+		if (allResourcesMap == null) {
 			return;
+		}
 		// Loop for all resources stored into cache
 		Set allResources = allResourcesMap.entrySet();
 		for (Iterator iterator = allResources.iterator(); iterator.hasNext();) {
@@ -107,13 +126,13 @@ public abstract class AbstractResourcesRegistry implements IResourcesRegistry {
 			for (Iterator iterator2 = resources.iterator(); iterator2.hasNext();) {
 				Map.Entry entry2 = (Map.Entry) iterator2.next();
 				// Dispose the current resource.
-				disposeResource(type, (String) entry2.getKey(), entry2
+				disposeResource(type, entry2.getKey(), entry2
 						.getValue());
 			}
 		}
 		allResourcesMap = null;
 	}
 
-	public abstract void disposeResource(Object type, String key,
+	public abstract void disposeResource(Object type, Object key,
 			Object resource);
 }

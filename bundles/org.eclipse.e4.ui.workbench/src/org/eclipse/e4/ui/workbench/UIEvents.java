@@ -266,6 +266,14 @@ public class UIEvents {
 		 * @since 1.1
 		 */
 		public static final String THEME_CHANGED = TOPIC + TOPIC_SEP + "themeChanged"; //$NON-NLS-1$
+
+		/**
+		 * Sent when the theme definition is changed
+		 * 
+		 * @since 1.1
+		 */
+		public static final String THEME_DEFINITION_CHANGED = TOPIC + TOPIC_SEP
+				+ "themeDefinitionChanged"; //$NON-NLS-1$
 	}
 
 	/**

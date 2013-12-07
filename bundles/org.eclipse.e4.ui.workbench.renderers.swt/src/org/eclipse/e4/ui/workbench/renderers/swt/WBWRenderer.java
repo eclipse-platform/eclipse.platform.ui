@@ -10,21 +10,27 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
+import org.eclipse.e4.ui.css.swt.resources.ResourceByDefinitionKey;
+import org.eclipse.e4.ui.css.swt.resources.SWTResourcesRegistry;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.PartServiceSaveHandler;
+import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -58,7 +64,10 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -117,6 +126,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	private EventHandler shellUpdater;
 	private EventHandler visibilityHandler;
 	private EventHandler sizeHandler;
+	private EventHandler themeDefinitionChanged;
 
 	public WBWRenderer() {
 		super();
@@ -293,6 +303,10 @@ public class WBWRenderer extends SWTPartRenderer {
 		};
 
 		eventBroker.subscribe(UIEvents.Window.TOPIC_ALL, sizeHandler);
+
+		themeDefinitionChanged = new ThemeDefinitionChangedHandler();
+		eventBroker.subscribe(UIEvents.UILifeCycle.THEME_DEFINITION_CHANGED,
+				themeDefinitionChanged);
 	}
 
 	@PreDestroy
@@ -301,6 +315,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		eventBroker.unsubscribe(shellUpdater);
 		eventBroker.unsubscribe(visibilityHandler);
 		eventBroker.unsubscribe(sizeHandler);
+		eventBroker.unsubscribe(themeDefinitionChanged);
 	}
 
 	public Object createWidget(MUIElement element, Object parent) {
@@ -765,4 +780,58 @@ public class WBWRenderer extends SWTPartRenderer {
 
 	}
 
+	@SuppressWarnings("restriction")
+	protected static class ThemeDefinitionChangedHandler implements
+			EventHandler {
+		public void handleEvent(Event event) {
+			Object element = event.getProperty(IEventBroker.DATA);
+
+			if (!(element instanceof MApplication)) {
+				return;
+			}
+
+			List<Object> unusedResources = new ArrayList<Object>();
+			Set<CSSEngine> engines = new HashSet<CSSEngine>();
+
+			// In theory we can have multiple engines since API allows it.
+			// It doesn't hurt to be prepared for such case
+			for (MWindow window : ((MApplication) element).getChildren()) {
+				CSSEngine engine = getEngine(window);
+				if (engine != null) {
+					engines.add(engine);
+				}
+			}
+
+			for (CSSEngine engine : engines) {
+				unusedResources.addAll(removeResources(engine
+						.getResourcesRegistry()));
+				engine.reapply();
+			}
+
+			for (Object resource : unusedResources) {
+				disposeResource(resource);
+			}
+		}
+
+		protected CSSEngine getEngine(MWindow window) {
+			return WidgetElement.getEngine((Widget) window.getWidget());
+		}
+
+		protected List<Object> removeResources(IResourcesRegistry registry) {
+			if (registry instanceof SWTResourcesRegistry) {
+				return ((SWTResourcesRegistry) registry)
+						.removeResourcesByKeyTypeAndType(
+								ResourceByDefinitionKey.class, Font.class,
+								Color.class);
+			}
+			return Collections.emptyList();
+		}
+
+		protected void disposeResource(Object resource) {
+			if (resource instanceof Resource
+					&& !((Resource) resource).isDisposed()) {
+				((Resource) resource).dispose();
+			}
+		}
+	}
 }
