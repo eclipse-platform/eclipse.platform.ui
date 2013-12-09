@@ -103,12 +103,16 @@ public interface IPresentationEngine {
 	/**
 	 * This tag can be applied to an element (usually an MPart) to indicate that the element should
 	 * be split with the result being side by side.
+	 * 
+	 * @since 1.1
 	 */
 	public static String SPLIT_HORIZONTAL = "Split Horizontal"; //$NON-NLS-1$
 
 	/**
 	 * This tag can be applied to an element (usually an MPart) to indicate that the element should
 	 * be split with the result being one above the other.
+	 * 
+	 * @since 1.1
 	 */
 	public static String SPLIT_VERTICAL = "Split Vertical"; //$NON-NLS-1$
 

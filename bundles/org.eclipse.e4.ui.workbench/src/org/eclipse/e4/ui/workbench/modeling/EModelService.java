@@ -86,6 +86,8 @@ public interface EModelService {
 	/**
 	 * When invoking the 'cloneElement' method the newly cloned element's 'transientData' map will
 	 * contain a reference to the original element using this as a key.
+	 * 
+	 * @since 1.1
 	 */
 	public static String CLONED_FROM_KEY = "Cloned From"; //$NON-NLS-1$
 
