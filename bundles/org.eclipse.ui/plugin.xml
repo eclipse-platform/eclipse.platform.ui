@@ -1023,6 +1023,17 @@
             categoryId="org.eclipse.ui.category.window"
             id="org.eclipse.ui.window.newEditor" />
       <command
+            name="%command.splitEditor.name"
+            description="%command.splitEditor.description"
+            categoryId="org.eclipse.ui.category.window"
+            id="org.eclipse.ui.window.splitEditor">
+            <commandParameter
+               id="Splitter.isHorizontal"
+               name="%command.splitEditor.orientation.name"
+               optional="true">
+            </commandParameter>
+      </command>
+      <command
             name="%command.openEditorDropDown.name"
             description="%command.openEditorDropDown.description"
             categoryId="org.eclipse.ui.category.window"

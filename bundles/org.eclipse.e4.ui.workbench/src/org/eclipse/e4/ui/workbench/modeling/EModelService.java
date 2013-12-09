@@ -84,6 +84,12 @@ public interface EModelService {
 	public static final int GLOBAL = OUTSIDE_PERSPECTIVE | IN_SHARED_AREA;
 
 	/**
+	 * When invoking the 'cloneElement' method the newly cloned element's 'transientData' map will
+	 * contain a reference to the original element using this as a key.
+	 */
+	public static String CLONED_FROM_KEY = "Cloned From"; //$NON-NLS-1$
+
+	/**
 	 * Creates instances of model elements. Supported types are
 	 * <ul>
 	 * <li>{@link org.eclipse.e4.ui.model.application.MAddon MAddon}</li>
@@ -251,6 +257,10 @@ public interface EModelService {
 
 	/**
 	 * Clones the element, creating a deep copy of its structure.
+	 * 
+	 * NOTE: The cloned element gets the original element added into its 'transientData' map using
+	 * the CLONED_FROM_KEY key. This is useful in cases where there may be other information the
+	 * newly cloned element needs from the original.
 	 * 
 	 * @param element
 	 *            The element to clone

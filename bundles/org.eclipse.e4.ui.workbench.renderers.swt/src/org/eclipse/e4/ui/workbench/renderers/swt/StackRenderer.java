@@ -33,6 +33,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -481,6 +482,12 @@ public class StackRenderer extends LazyStackRenderer {
 				while (partParent != null
 						&& partParent instanceof MPartSashContainer)
 					partParent = partParent.getParent();
+
+				// Ensure the stack of a split part gets updated when one
+				// of its internal parts gets activated
+				if (partParent instanceof MCompositePart) {
+					partParent = partParent.getParent();
+				}
 
 				MPartStack pStack = (MPartStack) (partParent instanceof MPartStack ? partParent
 						: null);

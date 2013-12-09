@@ -17,6 +17,10 @@
             beforefragment="true"
             class="org.eclipse.e4.ui.workbench.addons.swt.DnDProcessor">
       </processor>
+      <processor
+            beforefragment="true"
+            class="org.eclipse.e4.ui.workbench.addons.swt.SplitterProcessor">
+      </processor>
    </extension>
 
 </plugin>

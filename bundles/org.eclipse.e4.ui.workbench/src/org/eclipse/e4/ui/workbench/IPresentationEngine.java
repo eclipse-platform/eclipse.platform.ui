@@ -101,6 +101,18 @@ public interface IPresentationEngine {
 	public static String ORIENTATION_VERTICAL = "Vertical"; //$NON-NLS-1$
 
 	/**
+	 * This tag can be applied to an element (usually an MPart) to indicate that the element should
+	 * be split with the result being side by side.
+	 */
+	public static String SPLIT_HORIZONTAL = "Split Horizontal"; //$NON-NLS-1$
+
+	/**
+	 * This tag can be applied to an element (usually an MPart) to indicate that the element should
+	 * be split with the result being one above the other.
+	 */
+	public static String SPLIT_VERTICAL = "Split Vertical"; //$NON-NLS-1$
+
+	/**
 	 * This key should be used to add an optional String to an element that is a URI to the elements
 	 * disabled icon. This is used, for example, by Toolbar Items which, in Eclipse SDK, provide a
 	 * unique icon for disabled tool items that look better than the OS default graying on the
