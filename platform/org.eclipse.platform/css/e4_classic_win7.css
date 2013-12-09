@@ -1,3 +1,19 @@
+.MPart.busy {
+	font-style: italic;
+}
+
+.MPart.highlighted {
+	font-weight: bold;
+}
+
+.MPartStack, .MPart {
+	font-family: '#org-eclipse-ui-workbench-TAB_TEXT_FONT';
+}
+
+CTabItem:selected {
+	color: '#org-eclipse-ui-workbench-ACTIVE_TAB_TEXT_COLOR';
+}
+
 .MTrimmedWindow {  
     margin-top: 0px;
     margin-bottom: 0px;
@@ -7,15 +23,14 @@
 
 .MPartStack {
   swt-tab-renderer: null;
-  swt-selected-tabs-background: #FFFFFF #F0F0F0 100%;
+  swt-selected-tabs-background: '#org-eclipse-ui-workbench-INACTIVE_TAB_BG_START' '#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END' 100%;
   swt-simple: false;
   swt-mru-visible: true;
-  color: #000000;
+  color: '#org-eclipse-ui-workbench-INACTIVE_TAB_TEXT_COLOR';
 }
 
-
 .MPartStack.active {
-  swt-selected-tabs-background: #F2F5F9 #99B4D1	 100%;
+  swt-selected-tabs-background: '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_START' '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END' 100%;  
 }
 
 #PerspectiveSwitcher  {
@@ -44,15 +59,3 @@
     background-color: #A0A000; 
 }
 
-CTabItem {
-	font-style: normal;
-	font-weight: normal;
-}
-
-CTabItem.busy {
-	font-style: italic;
-}
-
-CTabItem.highlighted {
-	font-weight: bold;
-}
