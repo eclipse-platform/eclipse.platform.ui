@@ -608,7 +608,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * @return a Point containing the size
 	 * @since 3.9
 	 */
-	Point getConextSelectorPopupSize() {
+	Point getContextSelectorPopupSize() {
 		return fContextSelectorPopupSize;
 	}
 

@@ -2140,7 +2140,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (fDialogSettings == null || fContextInfoPopup == null)
 			return;
 
-		Point size= fContextInfoPopup.getConextSelectorPopupSize();
+		Point size= fContextInfoPopup.getContextSelectorPopupSize();
 		if (size == null)
 			return;
 
