@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -199,6 +199,8 @@ public final class JFaceTextUtil {
 			try {
 				IRegion r= viewer.getVisibleRegion();
 				IDocument d= viewer.getDocument();
+				if (d == null)
+					return -1;
 				modelLine= widgetLine + d.getLineOfOffset(r.getOffset());
 			} catch (BadLocationException x) {
 				modelLine= widgetLine;
@@ -225,6 +227,8 @@ public final class JFaceTextUtil {
 		} else {
 			IRegion region= viewer.getVisibleRegion();
 			IDocument document= viewer.getDocument();
+			if (document == null)
+				return -1;
 			try {
 				int visibleStartLine= document.getLineOfOffset(region.getOffset());
 				int visibleEndLine= document.getLineOfOffset(region.getOffset() + region.getLength());
