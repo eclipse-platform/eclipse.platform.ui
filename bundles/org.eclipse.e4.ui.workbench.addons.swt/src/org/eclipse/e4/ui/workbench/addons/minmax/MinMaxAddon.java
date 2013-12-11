@@ -768,10 +768,19 @@ public class MinMaxAddon {
 		minTag.add(IPresentationEngine.MINIMIZED_BY_ZOOM);
 
 		// Restore any minimized stacks
+		boolean outsidePerspectives = (modelService.getElementLocation(element) & EModelService.OUTSIDE_PERSPECTIVE) != 0;
 		List<MPartStack> stacks = modelService.findElements(win, null, MPartStack.class, minTag,
 				EModelService.PRESENTATION);
 		for (MPartStack theStack : stacks) {
 			if (theStack.getWidget() != null) {
+				// Make sure we don't restore perspective-based stacks if we're
+				// unzoooming an element outside the perspectives
+				if (outsidePerspectives) {
+					int stackLoc = modelService.getElementLocation(theStack);
+					if ((stackLoc & EModelService.OUTSIDE_PERSPECTIVE) == 0)
+						continue;
+				}
+
 				// Make sure we're only working on *our* window
 				if (getWindowFor(theStack) == win) {
 					theStack.getTags().remove(MINIMIZED);
