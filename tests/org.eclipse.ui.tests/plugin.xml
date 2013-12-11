@@ -625,7 +625,7 @@
  
 	   <editor
             class="org.eclipse.ui.tests.api.MockEditorPart"
-            icon="platform:/plugin/org.eclipse.ui/icons/full/obj16/font.png"
+            icon="platform:/plugin/org.eclipse.ui/icons/full/obj16/font.gif"
             default="true"
             name="Plugin Icon Test 1"
             id="org.eclipse.ui.tests.IconTestEditor1"
