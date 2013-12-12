@@ -228,9 +228,10 @@ public class ControlFactory {
 
 			@Override
 			protected void setValue(Object element, Object value) {
-				Command cmd = SetCommand.create(editor.getEditingDomain(), element, ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP__KEY, value.toString().trim().length() == 0 ? null : value.toString());
+				Command cmd = SetCommand.create(editor.getEditingDomain(), element, ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP__VALUE, value.toString().trim().length() == 0 ? null : value.toString());
 				if (cmd.canExecute()) {
 					editor.getEditingDomain().getCommandStack().execute(cmd);
+					tableviewer.refresh();
 				}
 			}
 
