@@ -1013,6 +1013,12 @@ public class WorkbenchMessages extends NLS {
 //	public static String ShowKyrsoftViewAction_ErrorShowingKyrsoftView;
 
 
+	public static String SplitValues_Horizontal;
+
+
+	public static String SplitValues_Vertical;
+
+
     // ==============================================================================
     // Content Types preference page
     // ==============================================================================
