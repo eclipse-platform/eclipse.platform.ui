@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
-import java.util.ResourceBundle;
 import org.eclipse.e4.ui.internal.css.swt.definition.IFontDefinitionOverridable;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
@@ -21,26 +20,17 @@ import org.eclipse.ui.PlatformUI;
  * The FontDefiniton is the representation of the fontDefinition
  * from the plugin.xml of a type.
  */
-public class FontDefinition implements IHierarchalThemeElementDefinition,
-		ICategorizedThemeElementDefinition, IEditable, IFontDefinitionOverridable {
-	private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(Theme.class
-			.getName());
+public class FontDefinition extends ThemeElementDefinition implements
+		IHierarchalThemeElementDefinition, ICategorizedThemeElementDefinition, IEditable,
+		IFontDefinitionOverridable {
 
-    private String label;
-
-    private String id;
-
-    private String defaultsTo;
-
-    private String categoryId;
-
-    private String description;
+	private String defaultsTo;
 
     private String value;
 
-    private boolean isEditable;
+	private String defaultValue;
 
-	private boolean overridden;
+    private boolean isEditable;
 
     private FontData[] parsedValue;
 
@@ -56,12 +46,9 @@ public class FontDefinition implements IHierarchalThemeElementDefinition,
     public FontDefinition(String fontName, String uniqueId, String defaultsId,
             String value, String categoryId, boolean isEditable,
             String fontDescription) {
-        this.label = fontName;
-        this.id = uniqueId;
+		super(uniqueId, fontName, fontDescription, categoryId);
         this.defaultsTo = defaultsId;
         this.value = value;
-        this.categoryId = categoryId;
-        this.description = fontDescription;
         this.isEditable = isEditable;
     }
 
@@ -74,10 +61,8 @@ public class FontDefinition implements IHierarchalThemeElementDefinition,
      * @param datas the FontData[] value
      */
     public FontDefinition(FontDefinition originalFont, FontData[] datas) {
-        this.label = originalFont.getName();
-        this.id = originalFont.getId();
-        this.categoryId = originalFont.getCategoryId();
-        this.description = originalFont.getDescription();
+		super(originalFont.getId(), originalFont.getName(), originalFont.getDescription(),
+				originalFont.getCategoryId());
         this.isEditable = originalFont.isEditable();
         this.parsedValue = datas;
     }
@@ -89,38 +74,6 @@ public class FontDefinition implements IHierarchalThemeElementDefinition,
      */
     public String getDefaultsTo() {
         return defaultsTo;
-    }
-
-    /**
-     * Returns the description.
-     * @return String or <pre>null</pre>.
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Returns the label.
-     * @return String
-     */
-    public String getName() {
-        return label;
-    }
-
-    /**
-     * Returns the id.
-     * @return String
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Returns the categoryId.
-     * @return String
-     */
-    public String getCategoryId() {
-        return categoryId;
     }
 
     /**
@@ -140,6 +93,13 @@ public class FontDefinition implements IHierarchalThemeElementDefinition,
 
         return parsedValue;
     }
+
+	@Override
+	public void resetToDefaultValue() {
+		value = defaultValue;
+		parsedValue = null;
+		super.resetToDefaultValue();
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IEditable#isEditable()
@@ -162,7 +122,7 @@ public class FontDefinition implements IHierarchalThemeElementDefinition,
      * @see java.lang.Object#hashCode()
      */
     public int hashCode() {
-        return id.hashCode();
+		return getId().hashCode();
 	}
 
 	/*
@@ -174,22 +134,12 @@ public class FontDefinition implements IHierarchalThemeElementDefinition,
 	 */
 	public void setValue(FontData[] data) {
 		if (data != null && data.length > 0) {
+			if (defaultValue == null) {
+				defaultValue = value;
+			}
 			value = data[0].getName();
 			parsedValue = data;
-			if (!isOverridden()) {
-				description += ' ' + RESOURCE_BUNDLE.getString("Overridden.by.css.label"); //$NON-NLS-1$
-				overridden = true;
-			}
+			setOverridden(true);
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.css.swt.definition.IDefinitionOverridable#isOverriden()
-	 */
-	public boolean isOverridden() {
-		return overridden;
 	}
 }

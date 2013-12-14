@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.ui.workbench" version="2">
+    <resource path="Eclipse UI/org/eclipse/ui/internal/themes/WorkbenchThemeManager.java" type="org.eclipse.ui.internal.themes.WorkbenchThemeManager">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="IStylingEngine"/>
+                <message_argument value="WorkbenchThemeManager"/>
+                <message_argument value="style(Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

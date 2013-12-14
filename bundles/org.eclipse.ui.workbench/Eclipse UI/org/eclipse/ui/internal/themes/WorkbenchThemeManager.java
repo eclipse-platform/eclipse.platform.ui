@@ -17,6 +17,8 @@ import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
+import org.eclipse.e4.ui.internal.css.swt.definition.IThemeElementDefinitionOverridable;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -113,28 +115,7 @@ public class WorkbenchThemeManager extends EventManager implements
 
 	private Map themes = new HashMap(7);
 
-	private EventHandler themeChangedHandler = new EventHandler() {
-		public void handleEvent(org.osgi.service.event.Event event) {
-			IStylingEngine engine = (IStylingEngine) context.get(IStylingEngine.SERVICE_NAME);
-			IThemeRegistry themeRegistry = (IThemeRegistry) context.get(IThemeRegistry.class
-					.getName());
-			FontRegistry fontRegistry = getCurrentTheme().getFontRegistry();
-			ColorRegistry colorRegistry = getCurrentTheme().getColorRegistry();
-
-			for (FontDefinition fontDefinition : themeRegistry.getFonts()) {
-				engine.style(fontDefinition);
-				if (fontDefinition.isOverridden()) {
-					fontRegistry.put(fontDefinition.getId(), fontDefinition.getValue());
-				}
-			}
-			for (ColorDefinition colorDefinition : themeRegistry.getColors()) {
-				engine.style(colorDefinition);
-				if (colorDefinition.isOverridden()) {
-					colorRegistry.put(colorDefinition.getId(), colorDefinition.getValue());
-				}
-			}
-		}
-	};
+	private EventHandler themeChangedHandler = new WorkbenchThemeChangedHandler();
 
 	/*
 	 * Initialize the WorkbenchThemeManager.
@@ -185,6 +166,7 @@ public class WorkbenchThemeManager extends EventManager implements
 		eventBroker = (IEventBroker) Workbench.getInstance().getService(IEventBroker.class);
 		if (eventBroker != null) {
 			eventBroker.subscribe(UIEvents.UILifeCycle.THEME_CHANGED, themeChangedHandler);
+			eventBroker.subscribe(IThemeEngine.Events.THEME_CHANGED, themeChangedHandler);
 		}
 	}
 
@@ -411,4 +393,105 @@ public class WorkbenchThemeManager extends EventManager implements
 			}
 		}
 	}
+	
+	public static class WorkbenchThemeChangedHandler implements EventHandler {
+		public void handleEvent(org.osgi.service.event.Event event) {
+			IStylingEngine engine = getStylingEngine();
+			ThemeRegistry themeRegistry = getThemeRegistry();
+			FontRegistry fontRegistry = getFontRegistry();
+			ColorRegistry colorRegistry = getColorRegistry();
+
+			resetThemeRegistries(themeRegistry);
+			overrideAlreadyExistingDefinitions(engine, themeRegistry, fontRegistry, colorRegistry);
+			addNewDefinitions(engine, themeRegistry, fontRegistry, colorRegistry);
+		}
+
+		protected IStylingEngine getStylingEngine() {
+			return (IStylingEngine) getContext().get(IStylingEngine.SERVICE_NAME);
+		}
+
+		protected ThemeRegistry getThemeRegistry() {
+			return (ThemeRegistry) getContext().get(IThemeRegistry.class.getName());
+		}
+
+		protected FontRegistry getFontRegistry() {
+			return getCurrentTheme().getFontRegistry();
+		}
+
+		protected ColorRegistry getColorRegistry() {
+			return getCurrentTheme().getColorRegistry();
+		}
+
+		private ITheme getCurrentTheme() {
+			return WorkbenchThemeManager.getInstance().getCurrentTheme();
+		}
+
+		private IEclipseContext getContext() {
+			return WorkbenchThemeManager.getInstance().context;
+		}
+
+		// At this moment we don't remove the definitions added by CSS since we
+		// don't want to modify the 3.x theme registries api
+		private void resetThemeRegistries(ThemeRegistry themeRegistry) {
+			for (FontDefinition fontDefinition : themeRegistry.getFonts()) {
+				if (fontDefinition.isOverridden()) {
+					fontDefinition.resetToDefaultValue();
+				}
+			}
+			for (ColorDefinition colorDefinition : themeRegistry.getColors()) {
+				if (colorDefinition.isOverridden()) {
+					colorDefinition.resetToDefaultValue();
+				}
+			}
+		}
+
+		private void overrideAlreadyExistingDefinitions(IStylingEngine engine,
+				ThemeRegistry themeRegistry, FontRegistry fontRegistry, ColorRegistry colorRegistry) {
+			for (FontDefinition fontDefinition : themeRegistry.getFonts()) {
+				engine.style(fontDefinition);
+				if (fontDefinition.isOverridden()) {
+					fontRegistry.put(fontDefinition.getId(), fontDefinition.getValue());
+				}
+			}
+			for (ColorDefinition colorDefinition : themeRegistry.getColors()) {
+				engine.style(colorDefinition);
+				if (colorDefinition.isOverridden()) {
+					colorRegistry.put(colorDefinition.getId(), colorDefinition.getValue());
+				}
+			}
+		}
+
+		private void addNewDefinitions(IStylingEngine engine, ThemeRegistry themeRegistry,
+				FontRegistry fontRegistry, ColorRegistry colorRegistry) {
+			ThemesExtension themesExtension = createThemesExtension();
+			engine.style(themesExtension);
+
+			for (IThemeElementDefinitionOverridable<?> definition : themesExtension
+					.getDefinitions()) {
+				engine.style(definition);
+				if (definition.isOverridden() && definition instanceof FontDefinition) {
+					addFontDefinition((FontDefinition) definition, themeRegistry, fontRegistry);
+				} else if (definition.isOverridden() && definition instanceof ColorDefinition) {
+					addColorDefinition((ColorDefinition) definition, themeRegistry, colorRegistry);
+				}
+			}
+		}
+
+		private void addFontDefinition(FontDefinition definition, ThemeRegistry themeRegistry,
+				FontRegistry fontRegistry) {
+			themeRegistry.add(definition);
+			fontRegistry.put(definition.getId(), definition.getValue());
+		}
+
+		private void addColorDefinition(ColorDefinition definition, ThemeRegistry themeRegistry,
+				ColorRegistry colorRegistry) {
+			themeRegistry.add(definition);
+			colorRegistry.put(definition.getId(), definition.getValue());
+		}
+
+		protected ThemesExtension createThemesExtension() {
+			return new ThemesExtension();
+		}
+	}
+
 }

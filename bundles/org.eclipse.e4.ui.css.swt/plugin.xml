@@ -42,6 +42,7 @@
 			class="org.eclipse.e4.ui.css.swt.dom.definition.ThemeElementDefinitionProvider">
 		 <widget class="org.eclipse.ui.internal.themes.FontDefinition"/>
 		 <widget class="org.eclipse.ui.internal.themes.ColorDefinition"/>
+		 <widget class="org.eclipse.ui.internal.themes.ThemesExtension"/>
       </provider> 
    </extension>
    
@@ -473,7 +474,14 @@
       </handler>
       
       
-      <!-- Theme element definitions -->
+      <!-- Theme element definitions -->            
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.definition.ThemeDefinitionElement"
+            handler="org.eclipse.e4.ui.css.swt.properties.definition.CSSPropertyThemeElementDefinitionHandler">
+       	 <property-name name="category"/>
+         <property-name name="label"/>       
+         <property-name name="description"/>
+      </handler>
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.definition.FontDefinitionElement"
             handler="org.eclipse.e4.ui.css.swt.properties.definition.CSSPropertyFontDefinitionHandler">
@@ -485,6 +493,12 @@
             adapter="org.eclipse.e4.ui.css.swt.dom.definition.ColorDefinitionElement"
             handler="org.eclipse.e4.ui.css.swt.properties.definition.CSSPropertyColorDefinitionHandler">
        	 <property-name name="color"/>
+      </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.definition.ThemesExtensionElement"
+            handler="org.eclipse.e4.ui.css.swt.properties.definition.CSSPropertyThemesExtensionHandler">
+       	 <property-name name="font-definition"/>
+       	 <property-name name="color-definition"/>
       </handler>
    </extension>
                

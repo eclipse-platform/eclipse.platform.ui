@@ -37,6 +37,7 @@ public class CssSwtTestSuite extends TestSuite {
 		addTestSuite(SWTResourcesRegistryTest.class);
 		addTestSuite(FontDefinitionTest.class);
 		addTestSuite(ColorDefinitionTest.class);
+		addTestSuite(ThemesExtensionTest.class);
 		addTestSuite(CSSSWTWidgetTest.class);
 		addTestSuite(LabelTest.class);
 		addTestSuite(CTabFolderTest.class);

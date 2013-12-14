@@ -367,8 +367,15 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
         private IPropertyChangeListener listener = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
-                fireLabelProviderChanged(new LabelProviderChangedEvent(
-                        PresentationLabelProvider.this));
+				if (event.getNewValue() != null) {
+					fireLabelProviderChanged(new LabelProviderChangedEvent(
+							PresentationLabelProvider.this));
+				} else {
+					// Some theme definition element has been modified and we
+					// need to refresh the viewer
+					tree.getViewer().setContentProvider(new ThemeContentProvider());
+					tree.getViewer().collapseAll();
+				}
             }
         };
 
