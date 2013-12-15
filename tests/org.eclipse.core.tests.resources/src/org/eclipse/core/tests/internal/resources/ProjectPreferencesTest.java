@@ -1233,4 +1233,318 @@ public class ProjectPreferencesTest extends ResourceTest {
 		}
 		return true;
 	}
+
+	public void testChildrenNamesAgainstInitialize() throws BackingStoreException, CoreException {
+		String nodeA = "nodeA";
+		String nodeB = "nodeB";
+		String key = "key";
+		String value = "value";
+
+		IProject project1 = getProject(getUniqueString());
+		project1.create(getMonitor());
+		project1.open(getMonitor());
+
+		Preferences prefs1 = new ProjectScope(project1).getNode(nodeA).node(nodeB);
+		prefs1.put(key, value);
+		prefs1.flush();
+		assertEquals(value, prefs1.get(key, null));
+
+		IProject project2 = getProject(getUniqueString());
+		project1.move(project2.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences prefs2 = new ProjectScope(project2).getNode(nodeA).node(nodeB);
+		assertEquals(value, prefs2.get(key, null));
+
+		// this will trigger the creation of "phantom" preferences node for the now-missing project
+		new ProjectScope(project1).getNode("");
+
+		project2.move(project1.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences node = new ProjectScope(project1).getNode("");
+		String[] childrenNames = node.childrenNames();
+		assertEquals(1, childrenNames.length);
+		assertEquals(nodeA, childrenNames[0]);
+		node = node.node(nodeA);
+		childrenNames = node.childrenNames();
+		assertEquals(1, childrenNames.length);
+		assertEquals(nodeB, childrenNames[0]);
+
+		project1.delete(true, getMonitor());
+		project2.delete(true, getMonitor());
+	}
+
+	public void testChildrenNamesAgainstLoad() throws BackingStoreException, CoreException {
+		String nodeA = "nodeA";
+		String nodeB = "nodeB";
+		String key = "key";
+		String value = "value";
+
+		IProject project1 = getProject(getUniqueString());
+		project1.create(getMonitor());
+		project1.open(getMonitor());
+
+		Preferences prefs1 = new ProjectScope(project1).getNode(nodeA).node(nodeB);
+		prefs1.put(key, value);
+		prefs1.flush();
+		assertEquals(value, prefs1.get(key, null));
+
+		IProject project2 = getProject(getUniqueString());
+		project1.move(project2.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences prefs2 = new ProjectScope(project2).getNode(nodeA).node(nodeB);
+		assertEquals(value, prefs2.get(key, null));
+
+		// this will trigger the creation of "phantom" preferences node for the now-missing project
+		new ProjectScope(project1).getNode(nodeA);
+
+		project2.move(project1.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences node = new ProjectScope(project1).getNode(nodeA);
+		String[] childrenNames = node.childrenNames();
+		assertEquals(1, childrenNames.length);
+		assertEquals(nodeB, childrenNames[0]);
+
+		project1.delete(true, getMonitor());
+		project2.delete(true, getMonitor());
+	}
+
+	public void testClear() throws BackingStoreException, CoreException {
+		String nodeA = "nodeA";
+		String nodeB = "nodeB";
+		String key = "key";
+		String value = "value";
+
+		IProject project1 = getProject(getUniqueString());
+		project1.create(getMonitor());
+		project1.open(getMonitor());
+
+		Preferences prefs1 = new ProjectScope(project1).getNode(nodeA).node(nodeB);
+		prefs1.put(key, value);
+		prefs1.flush();
+		assertEquals(value, prefs1.get(key, null));
+
+		IProject project2 = getProject(getUniqueString());
+		project1.move(project2.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences prefs2 = new ProjectScope(project2).getNode(nodeA).node(nodeB);
+		assertEquals(value, prefs2.get(key, null));
+
+		// this will trigger the creation of "phantom" preferences node for the now-missing project
+		new ProjectScope(project1).getNode(nodeA).node(nodeB);
+
+		project2.move(project1.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences node = new ProjectScope(project1).getNode(nodeA).node(nodeB);
+		node.clear();
+		assertEquals(0, node.keys().length);
+		assertNull(node.get(key, null));
+
+		project1.delete(true, getMonitor());
+		project2.delete(true, getMonitor());
+	}
+
+	public void testGet() throws BackingStoreException, CoreException {
+		String nodeA = "nodeA";
+		String nodeB = "nodeB";
+		String key = "key";
+		String value = "value";
+
+		IProject project1 = getProject(getUniqueString());
+		project1.create(getMonitor());
+		project1.open(getMonitor());
+
+		Preferences prefs1 = new ProjectScope(project1).getNode(nodeA).node(nodeB);
+		prefs1.put(key, value);
+		prefs1.flush();
+		assertEquals(value, prefs1.get(key, null));
+
+		IProject project2 = getProject(getUniqueString());
+		project1.move(project2.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences prefs2 = new ProjectScope(project2).getNode(nodeA).node(nodeB);
+		assertEquals(value, prefs2.get(key, null));
+
+		// this will trigger the creation of "phantom" preferences node for the now-missing project
+		new ProjectScope(project1).getNode(nodeA).node(nodeB);
+
+		project2.move(project1.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences node = new ProjectScope(project1).getNode(nodeA).node(nodeB);
+		assertEquals(value, node.get(key, null));
+
+		project1.delete(true, getMonitor());
+		project2.delete(true, getMonitor());
+	}
+
+	public void testKeys() throws BackingStoreException, CoreException {
+		String nodeA = "nodeA";
+		String nodeB = "nodeB";
+		String key = "key";
+		String value = "value";
+
+		IProject project1 = getProject(getUniqueString());
+		project1.create(getMonitor());
+		project1.open(getMonitor());
+
+		Preferences prefs1 = new ProjectScope(project1).getNode(nodeA).node(nodeB);
+		prefs1.put(key, value);
+		prefs1.flush();
+		assertEquals(value, prefs1.get(key, null));
+
+		IProject project2 = getProject(getUniqueString());
+		project1.move(project2.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences prefs2 = new ProjectScope(project2).getNode(nodeA).node(nodeB);
+		assertEquals(value, prefs2.get(key, null));
+
+		// this will trigger the creation of "phantom" preferences node for the now-missing project
+		new ProjectScope(project1).getNode(nodeA).node(nodeB);
+
+		project2.move(project1.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences node = new ProjectScope(project1).getNode(nodeA).node(nodeB);
+		String[] keys = node.keys();
+		assertEquals(1, keys.length);
+		assertEquals(key, keys[0]);
+
+		project1.delete(true, getMonitor());
+		project2.delete(true, getMonitor());
+	}
+
+	public void testNodeExistsAgainstInitialize() throws BackingStoreException, CoreException {
+		String nodeA = "nodeA";
+		String nodeB = "nodeB";
+		String key = "key";
+		String value = "value";
+
+		IProject project1 = getProject(getUniqueString());
+		project1.create(getMonitor());
+		project1.open(getMonitor());
+
+		Preferences prefs1 = new ProjectScope(project1).getNode(nodeA).node(nodeB);
+		prefs1.put(key, value);
+		prefs1.flush();
+		assertEquals(value, prefs1.get(key, null));
+
+		IProject project2 = getProject(getUniqueString());
+		project1.move(project2.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences prefs2 = new ProjectScope(project2).getNode(nodeA).node(nodeB);
+		assertEquals(value, prefs2.get(key, null));
+
+		// this will trigger the creation of "phantom" preferences node for the now-missing project
+		new ProjectScope(project1).getNode("nodeC");
+
+		project2.move(project1.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences node = new ProjectScope(project1).getNode("");
+		assertTrue(node.nodeExists(nodeA));
+		node = node.node(nodeA);
+		assertTrue(node.nodeExists(nodeB));
+
+		project1.delete(true, getMonitor());
+		project2.delete(true, getMonitor());
+	}
+
+	public void testNodeExistsAgainstLoad() throws BackingStoreException, CoreException {
+		String nodeA = "nodeA";
+		String nodeB = "nodeB";
+		String key = "key";
+		String value = "value";
+
+		IProject project1 = getProject(getUniqueString());
+		project1.create(getMonitor());
+		project1.open(getMonitor());
+
+		Preferences prefs1 = new ProjectScope(project1).getNode(nodeA).node(nodeB);
+		prefs1.put(key, value);
+		prefs1.flush();
+		assertEquals(value, prefs1.get(key, null));
+
+		IProject project2 = getProject(getUniqueString());
+		project1.move(project2.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences prefs2 = new ProjectScope(project2).getNode(nodeA).node(nodeB);
+		assertEquals(value, prefs2.get(key, null));
+
+		// this will trigger the creation of "phantom" preferences node for the now-missing project
+		new ProjectScope(project1).getNode(nodeA).node("nodeC");
+
+		project2.move(project1.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences node = new ProjectScope(project1).getNode(nodeA);
+		assertTrue(node.nodeExists(nodeB));
+
+		project1.delete(true, getMonitor());
+		project2.delete(true, getMonitor());
+	}
+
+	public void testPut() throws BackingStoreException, CoreException {
+		String nodeA = "nodeA";
+		String nodeB = "nodeB";
+		String key = "key";
+		String value = "value";
+		String anotherValue = "anotherValue";
+
+		IProject project1 = getProject(getUniqueString());
+		project1.create(getMonitor());
+		project1.open(getMonitor());
+
+		Preferences prefs1 = new ProjectScope(project1).getNode(nodeA).node(nodeB);
+		prefs1.put(key, value);
+		prefs1.flush();
+		assertEquals(value, prefs1.get(key, null));
+
+		IProject project2 = getProject(getUniqueString());
+		project1.move(project2.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences prefs2 = new ProjectScope(project2).getNode(nodeA).node(nodeB);
+		assertEquals(value, prefs2.get(key, null));
+
+		// this will trigger the creation of "phantom" preferences node for the now-missing project
+		new ProjectScope(project1).getNode(nodeA).node(nodeB);
+
+		project2.move(project1.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences node = new ProjectScope(project1).getNode(nodeA).node(nodeB);
+		node.put(key, anotherValue);
+		assertEquals(anotherValue, node.get(key, null));
+
+		project1.delete(true, getMonitor());
+		project2.delete(true, getMonitor());
+	}
+
+	public void testRemove() throws BackingStoreException, CoreException {
+		String nodeA = "nodeA";
+		String nodeB = "nodeB";
+		String key = "key";
+		String value = "value";
+
+		IProject project1 = getProject(getUniqueString());
+		project1.create(getMonitor());
+		project1.open(getMonitor());
+
+		Preferences prefs1 = new ProjectScope(project1).getNode(nodeA).node(nodeB);
+		prefs1.put(key, value);
+		prefs1.flush();
+		assertEquals(value, prefs1.get(key, null));
+
+		IProject project2 = getProject(getUniqueString());
+		project1.move(project2.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences prefs2 = new ProjectScope(project2).getNode(nodeA).node(nodeB);
+		assertEquals(value, prefs2.get(key, null));
+
+		// this will trigger the creation of "phantom" preferences node for the now-missing project
+		new ProjectScope(project1).getNode(nodeA).node(nodeB);
+
+		project2.move(project1.getFullPath(), IResource.NONE, getMonitor());
+
+		Preferences node = new ProjectScope(project1).getNode(nodeA).node(nodeB);
+		node.remove(key);
+		assertNull(node.get(key, null));
+
+		project1.delete(true, getMonitor());
+		project2.delete(true, getMonitor());
+	}
 }

@@ -312,8 +312,21 @@ public class ProjectPreferences extends EclipsePreferences {
 		// cache the qualifier
 		if (segmentCount > 2)
 			qualifier = getSegment(path, 2);
+	}
 
+	public String[] childrenNames() throws BackingStoreException {
+		// illegal state if this node has been removed
+		checkRemoved();
 		initialize();
+		silentLoad();
+		return super.childrenNames();
+	}
+
+	public void clear() {
+		// illegal state if this node has been removed
+		checkRemoved();
+		silentLoad();
+		super.clear();
 	}
 
 	/*
@@ -402,7 +415,20 @@ public class ProjectPreferences extends EclipsePreferences {
 		return new ProjectPreferences(nodeParent, nodeName);
 	}
 
+	protected String internalGet(String key) {
+		// throw NPE if key is null
+		if (key == null)
+			throw new NullPointerException();
+		// illegal state if this node has been removed
+		checkRemoved();
+		silentLoad();
+		return super.internalGet(key);
+	}
+
 	protected String internalPut(String key, String newValue) {
+		// illegal state if this node has been removed
+		checkRemoved();
+		silentLoad();
 		if ((segmentCount == 3) && PREFS_REGULAR_QUALIFIER.equals(qualifier) && (project != null)) {
 			if (ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS.equals(key)) {
 				CharsetManager charsetManager = ((Workspace) ResourcesPlugin.getWorkspace()).getCharsetManager();
@@ -415,7 +441,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		return super.internalPut(key, newValue);
 	}
 
-	protected void initialize() {
+	private void initialize() {
 		if (segmentCount != 2)
 			return;
 
@@ -449,16 +475,24 @@ public class ProjectPreferences extends EclipsePreferences {
 		return loadedNodes.contains(path);
 	}
 
+	public String[] keys() {
+		// illegal state if this node has been removed
+		checkRemoved();
+		silentLoad();
+		return super.keys();
+	}
+
 	protected void load() throws BackingStoreException {
+		load(true);
+	}
+
+	private void load(boolean reportProblems) throws BackingStoreException {
 		IFile localFile = getFile();
 		if (localFile == null || !localFile.exists()) {
 			if (Policy.DEBUG_PREFERENCES)
 				Policy.debug("Unable to determine preference file or file does not exist for node: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
-		// Before loading the preferences, try to initialize parent node (/project/<projectName>)
-		// see bug 335591
-		((ProjectPreferences) parent).initialize();
 		if (Policy.DEBUG_PREFERENCES)
 			Policy.debug("Loading preferences from file: " + localFile.getFullPath()); //$NON-NLS-1$
 		Properties fromDisk = new Properties();
@@ -466,19 +500,23 @@ public class ProjectPreferences extends EclipsePreferences {
 		try {
 			input = new BufferedInputStream(localFile.getContents(true));
 			fromDisk.load(input);
+			convertFromProperties(this, fromDisk, true);
+			loadedNodes.add(absolutePath());
 		} catch (CoreException e) {
-			String message = NLS.bind(Messages.preferences_loadException, localFile.getFullPath());
-			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
-			throw new BackingStoreException(message);
+			if (reportProblems) {
+				String message = NLS.bind(Messages.preferences_loadException, localFile.getFullPath());
+				log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
+				throw new BackingStoreException(message);
+			}
 		} catch (IOException e) {
-			String message = NLS.bind(Messages.preferences_loadException, localFile.getFullPath());
-			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
-			throw new BackingStoreException(message);
+			if (reportProblems) {
+				String message = NLS.bind(Messages.preferences_loadException, localFile.getFullPath());
+				log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
+				throw new BackingStoreException(message);
+			}
 		} finally {
 			FileUtil.safeClose(input);
 		}
-		convertFromProperties(this, fromDisk, true);
-		loadedNodes.add(absolutePath());
 	}
 
 	/* (non-Javadoc)
@@ -489,6 +527,14 @@ public class ProjectPreferences extends EclipsePreferences {
 	 * return true if the node exists OR if a project with that name exists in the workspace.
 	 */
 	public boolean nodeExists(String path) throws BackingStoreException {
+		// short circuit for checking this node
+		if (path.length() == 0)
+			return !removed;
+		// illegal state if this node has been removed.
+		// do this AFTER checking for the empty string.
+		checkRemoved();
+		initialize();
+		silentLoad();
 		if (segmentCount != 1)
 			return super.nodeExists(path);
 		if (path.length() == 0)
@@ -503,6 +549,9 @@ public class ProjectPreferences extends EclipsePreferences {
 	}
 
 	public void remove(String key) {
+		// illegal state if this node has been removed
+		checkRemoved();
+		silentLoad();
 		super.remove(key);
 		if ((segmentCount == 3) && PREFS_REGULAR_QUALIFIER.equals(qualifier) && (project != null)) {
 			if (ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS.equals(key)) {
@@ -611,6 +660,22 @@ public class ProjectPreferences extends EclipsePreferences {
 			String message = NLS.bind(Messages.preferences_saveProblems, fileInWorkspace.getFullPath());
 			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
 			throw new BackingStoreException(message);
+		}
+	}
+
+	private void silentLoad() {
+		ProjectPreferences node = (ProjectPreferences) getLoadLevel();
+		if (node == null)
+			return;
+		if (isAlreadyLoaded(node) || node.isLoading())
+			return;
+		try {
+			node.setLoading(true);
+			node.load(false);
+		} catch (BackingStoreException e) {
+			// will not happen, all exceptions are swallowed by load(false)
+		} finally {
+			node.setLoading(false);
 		}
 	}
 }
