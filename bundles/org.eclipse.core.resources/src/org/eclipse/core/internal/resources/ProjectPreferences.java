@@ -471,10 +471,6 @@ public class ProjectPreferences extends EclipsePreferences {
 		return loadedNodes.contains(node.absolutePath());
 	}
 
-	protected boolean isAlreadyLoaded(String path) {
-		return loadedNodes.contains(path);
-	}
-
 	public String[] keys() {
 		// illegal state if this node has been removed
 		checkRemoved();
