@@ -16,6 +16,8 @@ public class CSSConstants {
 
 	public static final String CSS_ACTIVE_CLASS = "active";
 
+	public static final String CSS_NO_FOCUS_CLASS = "noFocus";
+
 	public static final String CSS_HIGHLIGHTED_CLASS = "highlighted";
 
 	public static final String CSS_CONTENT_CHANGE_CLASS = "contentChange";

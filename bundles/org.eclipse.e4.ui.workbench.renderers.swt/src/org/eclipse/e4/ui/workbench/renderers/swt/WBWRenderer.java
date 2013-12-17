@@ -31,12 +31,14 @@ import org.eclipse.e4.ui.css.swt.resources.SWTResourcesRegistry;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.PartServiceSaveHandler;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
+import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -44,6 +46,7 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
@@ -127,6 +130,9 @@ public class WBWRenderer extends SWTPartRenderer {
 	private EventHandler visibilityHandler;
 	private EventHandler sizeHandler;
 	private EventHandler themeDefinitionChanged;
+
+	@Inject
+	private EModelService modelService;
 
 	public WBWRenderer() {
 		super();
@@ -550,8 +556,42 @@ public class WBWRenderer extends SWTPartRenderer {
 							w.getContext().activate();
 						}
 					}
+					updateNonFocusState(SWT.Activate, w);
 				}
 			});
+
+			shell.addListener(SWT.Deactivate, new Listener() {
+				public void handleEvent(org.eclipse.swt.widgets.Event event) {
+					updateNonFocusState(SWT.Deactivate, w);
+				}
+			});
+		}
+	}
+
+	private void updateNonFocusState(int event, MWindow win) {
+		MPerspective perspective = modelService.getActivePerspective(win);
+		if (perspective == null) {
+			return;
+		}
+
+		List<MPartStack> stacks = modelService.findElements(perspective, null,
+				MPartStack.class, Arrays.asList(CSSConstants.CSS_ACTIVE_CLASS));
+		if (stacks.isEmpty()) {
+			return;
+		}
+
+		MPartStack stack = stacks.get(0);
+		int tagsCount = stack.getTags().size();
+		boolean hasNonFocusTag = stack.getTags().contains(
+				CSSConstants.CSS_NO_FOCUS_CLASS);
+
+		if (event == SWT.Activate && hasNonFocusTag) {
+			stack.getTags().remove(CSSConstants.CSS_NO_FOCUS_CLASS);
+		} else if (event == SWT.Deactivate && !hasNonFocusTag) {
+			stack.getTags().add(CSSConstants.CSS_NO_FOCUS_CLASS);
+		}
+		if (tagsCount != stack.getTags().size()) {
+			setCSSInfo(stack, stack.getWidget());
 		}
 	}
 
