@@ -33,6 +33,15 @@ CTabItem:selected {
   swt-selected-tabs-background: '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_START' '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END' 100%;  
 }
 
+.MPartStack.active.noFocus {
+  swt-selected-tabs-background: '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_START' '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_END' 100%;
+  color: '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_TEXT_COLOR';
+}
+
+.MPartStack.active.noFocus > CTabItem:selected {
+	color: '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_TEXT_COLOR';
+} 
+
 #PerspectiveSwitcher  {
 	eclipse-perspective-keyline-color: #ECE9D8 #FFFFFF;
 }
