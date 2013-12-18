@@ -2420,13 +2420,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	/**
-	 * @deprecated
-	 */
-	public void setWorkspaceLock(WorkspaceLock lock) {
-		// do nothing
-	}
-
-	/**
 	 * Shuts down the workspace managers.
 	 */
 	protected void shutdown(IProgressMonitor monitor) throws CoreException {

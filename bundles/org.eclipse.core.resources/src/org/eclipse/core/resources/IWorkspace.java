@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import java.util.Map;
 import org.eclipse.core.resources.team.FileModificationValidationContext;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.LockListener;
 
 /**
  * Workspaces are the basis for Eclipse Platform resource management. There is
@@ -1347,23 +1346,6 @@ public interface IWorkspace extends IAdaptable {
 	 * </ul>
 	 */
 	public void setDescription(IWorkspaceDescription description) throws CoreException;
-
-	/**
-	 * Sets the lock to use for controlling write access to this workspace. The
-	 * lock must only be set once.
-	 * <p>
-	 * This method is for internal use by the platform-related plug-ins. Clients
-	 * should not call this method.
-	 * </p>
-	 * 
-	 * @param lock the lock to install on this workspace.
-	 * 
-	 * @deprecated it is no longer possible to override the workspace lock
-	 * behavior. This functionality is now provided in the platform API by
-	 * subclassing the {@link LockListener} class. This API will be deleted
-	 * in a future release. See bug 311240 for details.
-	 */
-	public void setWorkspaceLock(WorkspaceLock lock);
 
 	/**
 	 * Returns a copy of the given set of natures sorted in prerequisite order.
