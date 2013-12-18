@@ -69,10 +69,18 @@ public interface EModelService {
 	/** Returned Location if the element is in an MTrimBar */
 	public static final int IN_TRIM = 0x10;
 
-	/** Returned Location if the element is in a main menu of an MWindow */
+	/**
+	 * Returned Location if the element is in a main menu of an MWindow
+	 * 
+	 * @since 1.1
+	 */
 	public static final int IN_MAIN_MENU = 0x20;
 
-	/** Returned Location if the element is in a menu or a tool bar of an MPart */
+	/**
+	 * Returned Location if the element is in a menu or a tool bar of an MPart
+	 * 
+	 * @since 1.1
+	 */
 	public static final int IN_PART = 0x40;
 
 	// 'Standard' searches
@@ -81,13 +89,13 @@ public interface EModelService {
 	public static final int PRESENTATION = OUTSIDE_PERSPECTIVE | IN_ACTIVE_PERSPECTIVE
 			| IN_SHARED_AREA;
 
-	/** Searches for elements in the UI that the user is currently seeing */
+	/** Searches for elements in the UI presentation, including all perspectives */
 	public static final int ANYWHERE = OUTSIDE_PERSPECTIVE | IN_ANY_PERSPECTIVE | IN_SHARED_AREA
-			| IN_TRIM | IN_MAIN_MENU | IN_PART;
+			| IN_TRIM;
 
 	/**
 	 * Searches for elements in the UI that the user is currently seeing that are OUTSIDE the
-	 * perspective
+	 * perspective (i.e. visible regardless of the current perspective)
 	 */
 	public static final int GLOBAL = OUTSIDE_PERSPECTIVE | IN_SHARED_AREA;
 
@@ -270,6 +278,7 @@ public interface EModelService {
 	 * @param id
 	 *            The ID of the handler
 	 * @return The handler or <code>null</code> if none is found
+	 * @since 1.1
 	 */
 	public MHandler findHandler(MHandlerContainer handlerContainer, String id);
 
