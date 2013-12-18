@@ -17,11 +17,11 @@ package org.eclipse.ui.dialogs;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -56,7 +56,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
     private TreeViewer fViewer;
 
-    private ILabelProvider fLabelProvider;
+	private IBaseLabelProvider fLabelProvider;
 
     private ITreeContentProvider fContentProvider;
 
@@ -91,6 +91,24 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
      */
     public ElementTreeSelectionDialog(Shell parent,
             ILabelProvider labelProvider, ITreeContentProvider contentProvider) {
+		this(parent, (IBaseLabelProvider) labelProvider, contentProvider);
+	}
+
+	/**
+	 * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
+	 * 
+	 * @param parent
+	 *            The parent shell for the dialog
+	 * @param labelProvider
+	 *            the label provider to render the entries. It must be
+	 *            compatible with the Viewerreturned from
+	 *            {@link #doCreateTreeViewer(Composite, int)}
+	 * @param contentProvider
+	 *            the content provider to evaluate the tree structure
+	 * @since 3.106
+	 */
+	public ElementTreeSelectionDialog(Shell parent, IBaseLabelProvider labelProvider,
+			ITreeContentProvider contentProvider) {
         super(parent);
 
         fLabelProvider = labelProvider;
