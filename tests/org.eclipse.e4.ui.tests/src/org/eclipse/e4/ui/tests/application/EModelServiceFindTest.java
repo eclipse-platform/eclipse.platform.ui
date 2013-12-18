@@ -140,11 +140,13 @@ public class EModelServiceFindTest extends TestCase {
 		assertEquals(elements3.size(), 0);
 
 		List<MUIElement> elements4 = modelService.findElements(application,
-				"menuItem1Id", null, null);
+				"menuItem1Id", null, null, EModelService.ANYWHERE
+						| EModelService.IN_MAIN_MENU | EModelService.IN_PART);
 		assertEquals(1, elements4.size());
 
 		List<MUIElement> elements5 = modelService.findElements(application,
-				"toolControl1Id", null, null);
+				"toolControl1Id", null, null, EModelService.ANYWHERE
+						| EModelService.IN_MAIN_MENU | EModelService.IN_PART);
 		assertEquals(1, elements5.size());
 	}
 
@@ -168,17 +170,22 @@ public class EModelServiceFindTest extends TestCase {
 		assertEquals(dirtyableElements.size(), 3);
 
 		List<MMenuElement> menuElements = modelService.findElements(
-				application, null, MMenuElement.class, null);
+				application, null, MMenuElement.class, null,
+				EModelService.ANYWHERE | EModelService.IN_MAIN_MENU
+						| EModelService.IN_PART);
 		assertEquals(5, menuElements.size());
 
 		List<MToolBarElement> toolBarElements = modelService.findElements(
-				application, null, MToolBarElement.class, null);
+				application, null, MToolBarElement.class, null,
+				EModelService.ANYWHERE | EModelService.IN_MAIN_MENU
+						| EModelService.IN_PART);
 		assertEquals(2, toolBarElements.size());
 
 		// Should find all the elements
 		List<MUIElement> uiElements = modelService.findElements(application,
-				null, null, null);
-		assertEquals(uiElements.size(), 15);
+				null, null, null, EModelService.ANYWHERE
+						| EModelService.IN_MAIN_MENU | EModelService.IN_PART);
+		assertEquals(15, uiElements.size());
 
 		// Should match 0 since String is not an MUIElement
 		List<String> strings = modelService.findElements(application, null,
