@@ -17,7 +17,8 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * https://bugs.eclipse.org/423212
+ * A method or field annotated with {@link BundleContext} will be injected with the
+ * {@link org.osgi.framework.BundleContext} from the bundle contain the class.
  */
 @Qualifier
 @Documented
