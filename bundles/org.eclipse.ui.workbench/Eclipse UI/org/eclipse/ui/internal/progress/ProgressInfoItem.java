@@ -877,6 +877,10 @@ public class ProgressInfoItem extends Composite {
 			}
 		}
 
+		if (link.isDisposed()) {
+			return;
+		}
+
 		Object text = link.getData(TEXT_KEY);
 		if (text == null)
 			return;
@@ -894,6 +898,9 @@ public class ProgressInfoItem extends Composite {
 	 * @param link
 	 */
 	private void updateTrigger(Object trigger, Link link) {
+		if (link.isDisposed()) {
+			return;
+		}
 
 		if (trigger instanceof IAction && ((IAction) trigger).isEnabled()) {
 			link.setData(TRIGGER_KEY, trigger);
