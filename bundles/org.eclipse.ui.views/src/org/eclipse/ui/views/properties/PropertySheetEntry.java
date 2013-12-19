@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Gunnar Wagenknecht - fix for bug 21756 [PropertiesView] property view sorting
+ *     Kevin Milburn - [Bug 423214] [PropertiesView] add support for IColorProvider and IFontProvider
  *******************************************************************************/
 
 package org.eclipse.ui.views.properties;
@@ -21,7 +22,11 @@ import java.util.Map;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellEditorListener;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.internal.views.ViewsPlugin;
@@ -787,5 +792,49 @@ public class PropertySheetEntry extends EventManager implements
 		if (parent != null) {
 			parent.valueChanged(this);
 		}
+	}
+
+	/**
+	 * Returns the foreground color for the entry.
+	 * 
+	 * @return the foreground color for the entry, or <code>null</code> to use the default
+	 *         foreground color
+	 * @since 3.7
+	 */
+	protected Color getForeground() {
+		ILabelProvider provider = descriptor.getLabelProvider();
+		if (provider instanceof IColorProvider) {
+			return ((IColorProvider) provider).getForeground(this);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the background color for the entry.
+	 * 
+	 * @return the background color for the entry, or <code>null</code> to use the default
+	 *         background color
+	 * @since 3.7
+	 */
+	protected Color getBackground() {
+		ILabelProvider provider = descriptor.getLabelProvider();
+		if (provider instanceof IColorProvider) {
+			return ((IColorProvider) provider).getBackground(this);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the font for the entry.
+	 * 
+	 * @return the font for the entry, or <code>null</code> to use the default font
+	 * @since 3.7
+	 */
+	protected Font getFont() {
+		ILabelProvider provider = descriptor.getLabelProvider();
+		if (provider instanceof IFontProvider) {
+			return ((IFontProvider) provider).getFont(this);
+		}
+		return null;
 	}
 }

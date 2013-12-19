@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Gunnar Wagenknecht - fix for bug 21756 [PropertiesView] property view sorting
+ *     Kevin Milburn - [Bug 423214] [PropertiesView] add support for IColorProvider and IFontProvider
  *******************************************************************************/
 
 package org.eclipse.ui.views.properties;
@@ -44,6 +45,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -1337,8 +1340,27 @@ class PropertySheetViewer extends Viewer {
         item.setText(1, entry.getValueAsString());
         Image image = entry.getImage();
         if (item.getImage(1) != image) {
-			item.setImage(1, image);
-		}
+            item.setImage(1, image);
+        }
+
+        if (entry instanceof PropertySheetEntry) {
+            PropertySheetEntry entry2 = (PropertySheetEntry) entry;
+
+            Color color = entry2.getForeground();
+			if (item.getForeground() != color) {
+                item.setForeground(color);
+                }
+
+            color = entry2.getBackground();
+			if (item.getBackground() != color) {
+                item.setBackground(color);
+            }
+
+            Font font = entry2.getFont();
+			if (item.getFont() != font) {
+                item.setFont(font);
+            }
+        }
 
         // update the "+" icon
         updatePlus(entry, item);
