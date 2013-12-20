@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.eclipse.e4.core.di.extensions.bundleContext">
-   <implementation class="org.eclipse.e4.core.di.internal.extensions.BundleContextObjectSupplier"/>
-   <property name="dependency.injection.annotation" type="String" value="org.eclipse.e4.core.di.extensions.BundleContext"/>
+   <implementation class="org.eclipse.e4.core.di.internal.extensions.OSGiObjectSupplier"/>
+   <property name="dependency.injection.annotation" type="String" value="org.eclipse.e4.core.di.extensions.OSGiBundle"/>
    <service>
       <provide interface="org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier"/>
    </service>

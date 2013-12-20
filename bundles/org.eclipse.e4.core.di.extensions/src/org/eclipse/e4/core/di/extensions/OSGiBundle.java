@@ -15,15 +15,22 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import javax.inject.Qualifier;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 /**
- * A method or field annotated with {@link BundleContext} will be injected with the
- * {@link org.osgi.framework.BundleContext} from the bundle contain the class.
+ * A method or field of type {@link org.osgi.framework.BundleContext} and 
+ * annotated with {@link OSGiBundle} will be injected with the from the bundle 
+ * containing the class if the annotated type is a {@link BundleContext} 
+ * and the bundle's state is {@link Bundle#ACTIVE}.
+ * <p>
+ * If the method or field type is of {@link Bundle}, the bundle containing 
+ * the class will be injected even for bundles in the {@link Bundle#RESOLVED} state.
  */
 @Qualifier
 @Documented
 @Target({ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface BundleContext {
+public @interface OSGiBundle {
 	// Nop
 }

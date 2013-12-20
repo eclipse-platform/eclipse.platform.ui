@@ -9,6 +9,7 @@
  ******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.e4.core.di.InjectionException;
@@ -23,37 +24,49 @@ import org.osgi.framework.BundleListener;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.SynchronousBundleListener;
 
-public class BundleContextObjectSupplier extends ExtendedObjectSupplier {
+public class OSGiObjectSupplier extends ExtendedObjectSupplier {
 
 	/**
 	 * A Map of Requestor to BundleListener. Each Requestor will only ever request its own bundle and thus there is a 1:1 relationship between R and BL.
 	 */
 	private final Map<IRequestor, BundleListener> requestor2listener = new HashMap<IRequestor, BundleListener>();
 
-	private final BundleContext localBundleContext = FrameworkUtil.getBundle(BundleContextObjectSupplier.class).getBundleContext();
+	private final BundleContext localBundleContext = FrameworkUtil.getBundle(OSGiObjectSupplier.class).getBundleContext();
 
 	@Override
 	public Object get(IObjectDescriptor descriptor, IRequestor requestor, boolean track, boolean group) {
 		final Class<?> requestingObjectClass = requestor.getRequestingObjectClass();
-		final Bundle bundle = FrameworkUtil.getBundle(requestingObjectClass);
 
-		// Cannot use BundleListener as a BL can only be registered with a BC (which might be null)
-		if (track) {
-			if (!requestor2listener.containsKey(requestor)) {
-				track(bundle, requestor);
+		final Type desiredType = descriptor.getDesiredType();
+		if (BundleContext.class.equals(desiredType)) {
+			final Bundle bundle = FrameworkUtil.getBundle(requestingObjectClass);
+
+			// Cannot use BundleListener as a BL can only be registered with a BC (which might be null)
+			if (track) {
+				if (!requestor2listener.containsKey(requestor)) {
+					track(bundle, requestor);
+				}
+			} else {
+				untrack(requestor);
 			}
-		} else {
-			untrack(requestor);
-		}
 
-		final BundleContext bundleContext = bundle.getBundleContext();
-		if (bundleContext != null) {
-			return bundleContext;
-		} else if (descriptor.getQualifier(Optional.class) != null) {
-			// Do not have a bundle context but requestor has marked the parameter/field optional
-			return null;
+			final BundleContext bundleContext = bundle.getBundleContext();
+			if (bundleContext != null) {
+				return bundleContext;
+			} else if (descriptor.getQualifier(Optional.class) != null) {
+				// Do not have a bundle context but requestor has marked the parameter/field optional
+				return null;
+			}
+			throw new InjectionException("Unable to inject BundleContext: " + bundle.getSymbolicName() + " bundle is not active or starting/stopping"); //$NON-NLS-1$  //$NON-NLS-2$
+		} else if (Bundle.class.equals(desiredType)) {
+			// Not tracking the Bundle's life-cycle because the B instance does 
+			// not change whether a bundle is ACTIVE or RESOLVED. The only
+			// thing worth tracking is when a bundle switches to the INSTALLED 
+			// state. However, the requestor will go away along with its bundle anyway. 
+			return FrameworkUtil.getBundle(requestingObjectClass);
 		}
-		throw new InjectionException("Unable to inject BundleContext: " + bundle.getSymbolicName() + " bundle is not active or starting/stopping"); //$NON-NLS-1$  //$NON-NLS-2$
+		// Annotation used with unsupported type
+		return null;
 	}
 
 	private void untrack(final IRequestor requestor) {

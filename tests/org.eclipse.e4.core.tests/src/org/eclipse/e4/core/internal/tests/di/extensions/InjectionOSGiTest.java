@@ -17,21 +17,22 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.di.extensions.BundleContext;
+import org.eclipse.e4.core.di.extensions.OSGiBundle;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 
-public class InjectionBundleContextTest extends TestCase {
+public class InjectionOSGiTest extends TestCase {
 
-	// classed used as a user of the @BundleContext annotation
+	// classed used as a user of the @OSGiBundle annotation
 	static class InjectionTarget {
 
-		private org.osgi.framework.BundleContext ctx;
+		private BundleContext ctx;
 
 		@Inject
 		public void setBundleContext(
-				@BundleContext @Optional org.osgi.framework.BundleContext ctx) {
+				@OSGiBundle @Optional BundleContext ctx) {
 			this.ctx = ctx;
 		}
 
@@ -39,9 +40,30 @@ public class InjectionBundleContextTest extends TestCase {
 			return this.ctx != null;
 		}
 
-		public org.osgi.framework.BundleContext getContext() {
+		public BundleContext getContext() {
 			return this.ctx;
 		}
+
+		private Bundle b;
+
+		@Inject
+		public void setBundle(
+				@OSGiBundle Bundle b) {
+					this.b = b;
+		}
+
+		public Bundle getBundle() {
+			return this.b;
+		}
+		
+		@Inject
+		public void setFoo(@OSGiBundle Object o) {
+			// make sure we don't fail when incompatible type requested
+		}
+	}
+	
+	// classed used as a user of the @OSGiBundle annotation
+	static class InjectionBundleTarget extends InjectionTarget {
 	}
 
 	private InjectionTarget target;
@@ -51,7 +73,7 @@ public class InjectionBundleContextTest extends TestCase {
 	protected void tearDown() throws Exception {
 		bundle.start();
 
-		final org.osgi.framework.BundleContext bundleContext = CoreTestsActivator
+		final BundleContext bundleContext = CoreTestsActivator
 				.getDefault().getBundleContext();
 		final IEclipseContext localContext = EclipseContextFactory
 				.getServiceContext(bundleContext);
@@ -65,7 +87,7 @@ public class InjectionBundleContextTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		final org.osgi.framework.BundleContext bundleContext = CoreTestsActivator
+		final BundleContext bundleContext = CoreTestsActivator
 				.getDefault().getBundleContext();
 		bundle = bundleContext.getBundle();
 
@@ -85,7 +107,7 @@ public class InjectionBundleContextTest extends TestCase {
 		assertTrue(target.hasContext());
 
 		// Check also that the BundleContext instance has indeed changed
-		final org.osgi.framework.BundleContext firstContext = target
+		final BundleContext firstContext = target
 				.getContext();
 
 		// uninject
@@ -96,8 +118,23 @@ public class InjectionBundleContextTest extends TestCase {
 		bundle.start();
 		assertTrue(target.hasContext());
 
-		final org.osgi.framework.BundleContext secondContext = target
+		final BundleContext secondContext = target
 				.getContext();
 		assertNotSame(firstContext, secondContext);
+	}
+	
+	public void testBundleInject() throws BundleException {
+		// inject
+		assertNotNull(target.getBundle());
+
+		// Contrary to the BC, the Bundle is available even for RESOLVED bundles
+		bundle.stop();
+
+		// not null but resolved _and_ still usable
+		assertNotNull(target.getBundle());
+		assertTrue(target.getBundle().getState() == Bundle.RESOLVED);
+		assertNotNull(target.getBundle().getSymbolicName());
+		
+		assertNull(target.getContext());
 	}
 }
