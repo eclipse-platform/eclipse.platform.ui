@@ -105,5 +105,37 @@
             </separator>
          </menu>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:window?after=openNewWindow">
+         <menu
+               id="org.eclipse.ui.editors"
+               label="%menu.label"
+               mnemonic="%menu.mnemonic">
+            <command
+                  commandId="org.eclipse.ui.window.splitEditor"
+                  mnemonic="%command.split.horizontal.mnemonic"
+                  style="push">
+               <parameter
+                     name="Splitter.isHorizontal"
+                     value="true">
+               </parameter>
+            </command>
+            <command
+                  commandId="org.eclipse.ui.window.splitEditor"
+                  mnemonic="%command.split.vertical.mnemonic"
+                  style="push">
+               <parameter
+                     name="Splitter.isHorizontal"
+                     value="false">
+               </parameter>
+            </command>
+            <command
+                  commandId="org.eclipse.ui.window.newEditor"
+                  label="%command.clone.label"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
    </extension>
 </plugin>
