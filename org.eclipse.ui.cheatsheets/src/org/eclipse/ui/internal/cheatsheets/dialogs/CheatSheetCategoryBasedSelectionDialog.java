@@ -285,7 +285,8 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		treeViewer.setInput(cheatsheetCategories);
 
 		desc = new ScrolledFormText(sform, true);
-
+		desc.setEnabled(false);
+		
 		sform.setWeights(new int[] {10, 2});
 		
 		if (activityViewerFilter.getHasEncounteredFilteredItem())
