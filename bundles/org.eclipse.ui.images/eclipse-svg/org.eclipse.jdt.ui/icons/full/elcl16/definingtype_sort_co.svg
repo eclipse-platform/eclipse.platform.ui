@@ -8935,13 +8935,6 @@
            d="m 2.276,1038.6178 0.9059805,0 0,8.6842 1.8119611,0 -2.1876116,2.6516 -2.20970869,-2.6295 1.70147569,0 z"
            style="fill:url(#linearGradient4888);fill-opacity:1;stroke:none" />
       </g>
-      <image
-         y="1035.5564"
-         x="-41.546944"
-         id="image5012"
-         xlink:href="file:///home/tmccrary/git/eclipse-svg/src/main/resources/org.eclipse.jdt.ui/icons/full/elcl16/definingtype_sort_co.gif"
-         height="17.802094"
-         width="17.802094" />
     </g>
   </g>
 </svg>
