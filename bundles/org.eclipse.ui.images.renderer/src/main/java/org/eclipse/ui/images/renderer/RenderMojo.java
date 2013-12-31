@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.images.renderer;
 
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.imageio.ImageIO;
 
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
+import org.apache.batik.gvt.renderer.ImageRenderer;
 import org.apache.batik.transcoder.ErrorHandler;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -46,11 +48,9 @@ import org.w3c.dom.svg.SVGDocument;
 
 import com.jhlabs.image.GrayscaleFilter;
 import com.jhlabs.image.HSBAdjustFilter;
-import com.mortennobel.imagescaling.ResampleFilters;
-import com.mortennobel.imagescaling.ResampleOp;
 
 /**
- * <p>Mojo which renders SVG icons into PNG format./p>
+ * <p>Mojo which renders SVG icons into PNG format.</p>
  * 
  * @goal render-icons
  * @phase generate-resources
@@ -224,23 +224,20 @@ public class RenderMojo extends AbstractMojo {
         int doubleWidth = nativeWidth * 2;
         int doubleHeight = nativeHeight * 2;
 
-        int quadWidth = nativeWidth * 4;
-        int quadHeight = nativeHeight * 4;
-
         // Guesstimate the PNG size in memory, BAOS will enlarge if necessary.
-        int outputInitSize = quadWidth * quadHeight * 4 + 1024;
+        int outputInitSize = nativeWidth * nativeHeight * 4 + 1024;
         ByteArrayOutputStream iconOutput = new ByteArrayOutputStream(
                 outputInitSize);
 
         // Render to SVG
         try {
             log.info(Thread.currentThread().getName() + " "
-                    + " Rasterizing: " + icon.nameBase + ".png at " + quadWidth
-                    + "x" + quadHeight);
+                    + " Rasterizing: " + icon.nameBase + ".png at " + nativeWidth
+                    + "x" + nativeHeight);
             
             TranscoderInput svgInput = new TranscoderInput(svgDocument);
             
-            boolean success = renderIcon(icon.nameBase, quadWidth, quadHeight, svgInput, iconOutput);
+            boolean success = renderIcon(icon.nameBase, nativeWidth, nativeHeight, svgInput, iconOutput);
             
             if (!success) {
                 log.error("Failed to render icon: " + icon.nameBase + ".png, skipping.");
@@ -272,10 +269,6 @@ public class RenderMojo extends AbstractMojo {
             return;
         }
 
-        // Icons lose definition and accuracy when rendered directly
-        // to <128px res with Batik
-        // Here we resize a 16x,32x,48x,64x images down, which gives better
-        // results
         
         // Default to the native svg size
         int targetWidth = nativeWidth;
@@ -294,7 +287,7 @@ public class RenderMojo extends AbstractMojo {
             targetHeight = doubleHeight;
         }
         
-        resizeIcon(icon, targetWidth, targetHeight, inputImage);
+        writeIcon(icon, targetWidth, targetHeight, inputImage);
     }
 
     /**
@@ -334,21 +327,13 @@ public class RenderMojo extends AbstractMojo {
      * @param height the desired output height after rescaling operations
      * @param sourceImage the source image to resource
      */
-    private void resizeIcon(IconEntry icon, int width, int height, BufferedImage sourceImage) {
-        ResampleOp resampleOpNative = new ResampleOp(width, height);
-        resampleOpNative.setFilter(ResampleFilters.getLanczos3Filter());
-        // resampleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Oversharpened);
-        resampleOpNative.setNumberOfThreads(2);
-        
+    private void writeIcon(IconEntry icon, int width, int height, BufferedImage sourceImage) {
         try {
-            // Resize and render the 16x16 icon
-            BufferedImage rescaled = resampleOpNative.filter(sourceImage, null);
-
-            ImageIO.write(rescaled, "PNG", new File(icon.outputPath, icon.nameBase + ".png"));
+            ImageIO.write(sourceImage, "PNG", new File(icon.outputPath, icon.nameBase + ".png"));
             
             if (icon.disabledPath != null) {
                 BufferedImage desaturated16 = desaturator.filter(
-                        grayFilter.filter(rescaled, null), null);
+                        grayFilter.filter(sourceImage, null), null);
 
                 ImageIO.write(desaturated16, "PNG", new File(icon.disabledPath, icon.nameBase + ".png"));
             }
@@ -367,7 +352,7 @@ public class RenderMojo extends AbstractMojo {
         // The number of icons that haven't been distributed to
         // callables
         int remainingIcons = icons.size();
-        
+
         // The number of icons to distribute to a rendering callable
         final int threadExecSize = icons.size() / this.threads;
 
@@ -455,11 +440,49 @@ public class RenderMojo extends AbstractMojo {
      */
     public boolean renderIcon(final String iconName, int width, int height,
             TranscoderInput tinput, OutputStream stream) {
-        PNGTranscoder t = new PNGTranscoder();
-        t.addTranscodingHint(PNGTranscoder.KEY_WIDTH, new Float(width));
-        t.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, new Float(height));
+        PNGTranscoder transcoder = new PNGTranscoder() {
+            protected ImageRenderer createRenderer() {
+                ImageRenderer renderer = super.createRenderer();
 
-        t.setErrorHandler(new ErrorHandler() {
+                RenderingHints renderHints = renderer.getRenderingHints();
+
+                renderHints.add(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING,
+                    RenderingHints.VALUE_TEXT_ANTIALIAS_OFF));
+
+                renderHints.add(new RenderingHints(RenderingHints.KEY_RENDERING,
+                    RenderingHints.VALUE_RENDER_QUALITY));
+
+                renderHints.add(new RenderingHints(RenderingHints.KEY_DITHERING,
+                    RenderingHints.VALUE_DITHER_DISABLE));
+
+                renderHints.add(new RenderingHints(RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BICUBIC));
+
+                renderHints.add(new RenderingHints(RenderingHints.KEY_ALPHA_INTERPOLATION,
+                    RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY));
+
+                renderHints.add(new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON));
+
+                renderHints.add(new RenderingHints(RenderingHints.KEY_COLOR_RENDERING,
+                    RenderingHints.VALUE_COLOR_RENDER_QUALITY));
+
+                renderHints.add(new RenderingHints(RenderingHints.KEY_STROKE_CONTROL,
+                    RenderingHints.VALUE_STROKE_PURE));
+
+                renderHints.add(new RenderingHints(RenderingHints.KEY_FRACTIONALMETRICS,
+                    RenderingHints.VALUE_FRACTIONALMETRICS_ON));
+
+                renderer.setRenderingHints(renderHints);
+
+                return renderer;
+            }
+        };
+          
+        transcoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, new Float(width));
+        transcoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, new Float(height));
+
+        transcoder.setErrorHandler(new ErrorHandler() {
             public void warning(TranscoderException arg0)
                     throws TranscoderException {
                 log.error("Icon: " + iconName + " - WARN: " + arg0.getMessage());
@@ -480,7 +503,7 @@ public class RenderMojo extends AbstractMojo {
         TranscoderOutput output = new TranscoderOutput(stream);
 
         try {
-            t.transcode(tinput, output);
+            transcoder.transcode(tinput, output);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -550,12 +573,12 @@ public class RenderMojo extends AbstractMojo {
 
                     // Compute a relative path, so we can create the output folder
                     String path = rootUri.relativize(
-                    		disabledSource.toURI()).getPath();
+                              disabledSource.toURI()).getPath();
 
                     // Create the output folder, so a disabled icon is generated
                     disabledOutputDir = new File(outputBase, path);
                     if(!disabledOutputDir.exists()) {
-                    	disabledOutputDir.mkdirs();
+                        disabledOutputDir.mkdirs();
                     }
                 }
             }
