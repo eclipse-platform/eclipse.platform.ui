@@ -21,6 +21,10 @@ mvn org.eclipse.ui:org.eclipse.ui.images.renderer:render-icons
 
 This renders all of the svg icons in "eclipse-svg" into the "eclipse-png" folder of the org.eclipse.ui.images project, maintaining the directory structure (i.e. eclipse-svg/icondir will be rendered into org.eclipse.ui.images/eclipse-png/icondir).
 
+Supported runtime arguments (e.g mvn -Declipse.svg.scale=2 ...):
+
+eclipse.svg.scale - an integer that is used to scale output images (e.g. 2 will render a 16x16 svg at 32x32)
+eclipse.svg.renderthreads - an integer that specifies how many threads to use simultaneously while rendering
 
 License
 -------
