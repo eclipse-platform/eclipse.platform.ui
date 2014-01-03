@@ -133,6 +133,7 @@
             <command
                   commandId="org.eclipse.ui.window.newEditor"
                   label="%command.clone.label"
+                  mnemonic="%command.clone.mnemonic"
                   style="push">
             </command>
          </menu>
