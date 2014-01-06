@@ -9,6 +9,7 @@
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
  *     IBM Corporation - ongoing implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Sergey Prigogin (Google) - bug 424972
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -26,6 +27,21 @@ import org.eclipse.osgi.util.NLS;
  * Class that instantiate IResourceFilter's  that are stored in the project description.
  */
 public class Filter {
+	/**
+	 * A placeholder Filter provider that doesn't match any files or folders.
+	 */
+	private static class MatchNothingInfoMatcher extends AbstractFileInfoMatcher {
+		public MatchNothingInfoMatcher() {
+		}
+
+		public boolean matches(IContainer parent, IFileInfo fileInfo) {
+			return false;
+		}
+
+		public void initialize(IProject project, Object arguments) {
+			// No initialization required.
+		}
+	}
 
 	FilterDescription description;
 	IProject project;
@@ -43,7 +59,10 @@ public class Filter {
 				provider = ((FilterDescriptor) filterDescriptor).createFilter();
 			if (provider == null) {
 				String message = NLS.bind(Messages.filters_missingFilterType, getId());
-				throw new CoreException(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, Platform.PLUGIN_ERROR, message, new Error()));
+				Policy.log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, Platform.PLUGIN_ERROR, message, new Error()));
+				// Avoid further initialization attempts by instantiating a placeholder filter
+				// provider that doesn't match any files or folders.
+				provider = new MatchNothingInfoMatcher();
 			}
 			try {
 				provider.initialize(project, description.getFileInfoMatcherDescription().getArguments());
