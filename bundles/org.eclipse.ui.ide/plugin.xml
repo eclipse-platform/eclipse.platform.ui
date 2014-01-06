@@ -832,6 +832,19 @@
          <enabledWhen>
             <adapt type="org.eclipse.core.resources.IProject"/>
          </enabledWhen>
+      </page>    
+      <page
+            class="org.eclipse.ui.internal.ide.dialogs.ProjectNaturesPage"
+            id="org.eclipse.ui.propertypages.project.natures"
+            name="%PropertyPages.project.natures"
+            >
+         <filter
+               name="open"
+               value="true">
+         </filter>
+         <enabledWhen>
+            <adapt type="org.eclipse.core.resources.IProject"/>
+         </enabledWhen>
       </page>
    </extension>
    <extension
