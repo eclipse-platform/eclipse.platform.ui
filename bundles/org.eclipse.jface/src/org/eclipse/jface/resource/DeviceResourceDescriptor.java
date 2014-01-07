@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,14 @@ package org.eclipse.jface.resource;
 import org.eclipse.swt.graphics.Device;
 
 /**
- * Instances of this class can allocate and dispose SWT resources. Each
- * instance describes a particular resource (such as a Color, Font, or Image)
- * and can create and destroy that resource on demand. DeviceResourceDescriptors
- * are managed by a ResourceRegistry.
+ * Instances of this class can allocate and dispose SWT resources. Each instance describes a
+ * particular resource (such as a Color, Font, or Image) and can create and destroy that resource on
+ * demand. DeviceResourceDescriptors are managed by a ResourceRegistry.
+ * <p>
+ * <strong>Note:</strong> It is recommended that subclasses implement <code>#equals</code> and
+ * <code>#hashCode</code>, so that clients, like decoration managers, can recognize when they have
+ * two equal descriptors at hand, e.g. decorating an identical object.
+ * </p>
  * 
  * @see org.eclipse.jface.resource.ResourceManager
  * 
