@@ -1,10 +1,17 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<component id="org.eclipse.core.resources" version="2">
-    <resource path="src/org/eclipse/core/resources/mapping/ModelProvider.java" type="org.eclipse.core.resources.mapping.ModelProvider">
-        <filter id="338944126">
+<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.core.resources" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.resources.WorkspaceLock">
+        <filter comment="See bug 311240" id="305324134">
             <message_arguments>
-                <message_argument value="org.eclipse.core.resources.mapping.ModelProvider"/>
-                <message_argument value="init(IModelProviderDescriptor)"/>
+                <message_argument value="org.eclipse.core.resources.WorkspaceLock"/>
+                <message_argument value="org.eclipse.core.resources_3.9.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/core/resources/IWorkspace.java" type="org.eclipse.core.resources.IWorkspace">
+        <filter comment="See bug 311240" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.resources.IWorkspace"/>
+                <message_argument value="setWorkspaceLock(WorkspaceLock)"/>
             </message_arguments>
         </filter>
     </resource>
