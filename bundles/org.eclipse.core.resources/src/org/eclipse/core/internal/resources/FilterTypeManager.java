@@ -13,6 +13,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.HashMap;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IFilterMatcherDescriptor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
@@ -76,7 +77,7 @@ class FilterTypeManager implements IManager {
 					IFilterMatcherDescriptor desc = new FilterDescriptor(element);
 					factories.put(desc.getId(), desc);
 				} catch (CoreException e) {
-					e.printStackTrace();
+					Policy.log(e);
 				}
 			}
 		}
@@ -91,7 +92,7 @@ class FilterTypeManager implements IManager {
 					IFilterMatcherDescriptor desc = new FilterDescriptor(element, false);
 					factories.remove(desc.getId());
 				} catch (CoreException e) {
-					e.printStackTrace();
+					Policy.log(e);
 				}
 			}
 		}
