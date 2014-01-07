@@ -235,7 +235,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	// Comparator used to provide a stable ordering of project buildConfigs
 	private static class BuildConfigurationComparator implements Comparator<IBuildConfiguration> {
-		public BuildConfigurationComparator() {}
+		public BuildConfigurationComparator() {
+		}
+
 		public int compare(IBuildConfiguration px, IBuildConfiguration py) {
 			int cmp = py.getProject().getName().compareTo(px.getProject().getName());
 			if (cmp == 0)
@@ -351,7 +353,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		Assert.isNotNull(participant, "Participant must not be null"); //$NON-NLS-1$
 		return saveManager.addParticipant(plugin.getBundle().getSymbolicName(), participant);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#addSaveParticipant(String, ISaveParticipant)
 	 */
@@ -491,12 +493,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 							for (int i = 0; i < prjs.length; i++)
 								if (prjs[i].isAccessible())
 									configArr.addAll(Arrays.asList(prjs[i].getBuildConfigs()));
-							configs = configArr.toArray(new IBuildConfiguration[configArr.size()]);										
+							configs = configArr.toArray(new IBuildConfiguration[configArr.size()]);
 						}
 					} else {
 						// Order the passed in build configurations + resolve references if requested
 						Set<IBuildConfiguration> refsList = new HashSet<IBuildConfiguration>();
-						for (int i = 0 ; i < configs.length ; i++) {
+						for (int i = 0; i < configs.length; i++) {
 							// Check project + build configuration are accessible.
 							if (!configs[i].getProject().isAccessible() || !configs[i].getProject().hasBuildConfig(configs[i].getName()))
 								continue;
@@ -517,7 +519,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 					if (rule == null) {
 						endOperation(rule, false, monitor);
 						prepareOperation(buildRule, monitor);
-						beginOperation(false);							
+						beginOperation(false);
 					}
 					//must fire POST_BUILD if PRE_BUILD has occurred
 					broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
@@ -1061,15 +1063,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 	}
 
-	protected void copyTree(IResource source, IPath destination, int depth,
-			int updateFlags, boolean keepSyncInfo) throws CoreException {
+	protected void copyTree(IResource source, IPath destination, int depth, int updateFlags, boolean keepSyncInfo) throws CoreException {
 		copyTree(source, destination, depth, updateFlags, keepSyncInfo, false, source.getType() == IResource.PROJECT);
 	}
 
-	private void copyTree(IResource source, IPath destination, int depth,
-			int updateFlags, boolean keepSyncInfo, boolean moveResources, boolean movingProject)
-			throws CoreException {
-				
+	private void copyTree(IResource source, IPath destination, int depth, int updateFlags, boolean keepSyncInfo, boolean moveResources, boolean movingProject) throws CoreException {
+
 		// retrieve the resource at the destination if there is one (phantoms included).
 		// if there isn't one, then create a new handle based on the type that we are
 		// trying to copy
@@ -1134,9 +1133,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			LinkedList<FilterDescription> originalDescriptions = sourceProject.internalGetDescription().getFilter(source.getProjectRelativePath());
 			LinkedList<FilterDescription> filterDescriptions = FilterDescription.copy(originalDescriptions, destinationResource);
 			if (moveResources && !movingProject) {
-				if (((Project) source.getProject())
-						.internalGetDescription()
-						.setFilters(source.getProjectRelativePath(), null))
+				if (((Project) source.getProject()).internalGetDescription().setFilters(source.getProjectRelativePath(), null))
 					((Project) source.getProject()).writeDescription(updateFlags);
 			}
 			Project project = (Project) destinationResource.getProject();
@@ -1167,18 +1164,15 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 	}
 
-	public URI transferVariableDefinition(IResource source, IResource dest,
-			URI sourceURI) throws CoreException {
+	public URI transferVariableDefinition(IResource source, IResource dest, URI sourceURI) throws CoreException {
 		IPath srcLoc = source.getLocation();
 		IPath srcRawLoc = source.getRawLocation();
 		if ((srcLoc != null) && (srcRawLoc != null) && !srcLoc.equals(srcRawLoc)) {
 			// the location is variable relative
 			if (!source.getProject().equals(dest.getProject())) {
 				String variable = srcRawLoc.segment(0);
-				variable = copyVariable(source, dest,
-						variable);
-				IPath newLocation = Path.fromPortableString(variable).append(
-						srcRawLoc.removeFirstSegments(1));
+				variable = copyVariable(source, dest, variable);
+				IPath newLocation = Path.fromPortableString(variable).append(srcRawLoc.removeFirstSegments(1));
 				sourceURI = toURI(newLocation);
 			} else {
 				sourceURI = toURI(srcRawLoc);
@@ -1197,8 +1191,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 	}
 
-	String copyVariable(IResource source, IResource dest, String variable)
-			throws CoreException {
+	String copyVariable(IResource source, IResource dest, String variable) throws CoreException {
 		IPathVariableManager destPathVariableManager = dest.getPathVariableManager();
 		IPathVariableManager srcPathVariableManager = source.getPathVariableManager();
 
@@ -1212,10 +1205,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// look if the exact same variable exists
 		if (destPathVariableManager.isDefined(variable)) {
 			variableExisted = true;
-			IPath destValue = 
-				URIUtil.toPath(destPathVariableManager.getURIValue(variable));
-			if (destValue != null && URIUtil.toPath(destPathVariableManager.resolveURI(URIUtil.toURI(destValue))).equals(
-					resolvedSrcValue))
+			IPath destValue = URIUtil.toPath(destPathVariableManager.getURIValue(variable));
+			if (destValue != null && URIUtil.toPath(destPathVariableManager.resolveURI(URIUtil.toURI(destValue))).equals(resolvedSrcValue))
 				return variable;
 		}
 		// look if one variable in the destination project matches
@@ -1223,8 +1214,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		for (int i = 0; i < variables.length; i++) {
 			if (!PathVariableUtil.isPreferred(variables[i]))
 				continue;
-			IPath resolveDestVariable = URIUtil.toPath(destPathVariableManager
-					.resolveURI(destPathVariableManager.getURIValue(variables[i])));
+			IPath resolveDestVariable = URIUtil.toPath(destPathVariableManager.resolveURI(destPathVariableManager.getURIValue(variables[i])));
 			if (resolveDestVariable != null && resolveDestVariable.equals(resolvedSrcValue)) {
 				return variables[i];
 			}
@@ -1237,9 +1227,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		boolean shouldConvertToRelative = true;
 		if (!srcValue.equals(resolvedSrcValue) && !variableExisted) {
 			// the variable content contains references to more variables
-			
-			String[] referencedVariables = PathVariableUtil
-				.splitVariableNames(srcValue.toPortableString());
+
+			String[] referencedVariables = PathVariableUtil.splitVariableNames(srcValue.toPortableString());
 			shouldConvertToRelative = false;
 			// If the variable value is of type ${PARENT-COUNT-VAR}, 
 			// we can avoid generating an intermediate variable and convert it directly.
@@ -1247,14 +1236,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				if (PathVariableUtil.isParentVariable(referencedVariables[0]))
 					shouldConvertToRelative = true;
 			}
-				
+
 			if (!shouldConvertToRelative) {
-				String[] segments = PathVariableUtil
-				.splitVariablesAndContent(srcValue.toPortableString());
+				String[] segments = PathVariableUtil.splitVariablesAndContent(srcValue.toPortableString());
 				StringBuffer result = new StringBuffer();
 				for (int i = 0; i < segments.length; i++) {
-					String var = PathVariableUtil
-							.extractVariable(segments[i]);
+					String var = PathVariableUtil.extractVariable(segments[i]);
 					if (var.length() > 0) {
 						String copiedVariable = copyVariable(source, dest, var);
 						int index = segments[i].indexOf(var);
@@ -1699,8 +1686,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return moveDeleteHook;
 	}
 
-	public IFilterMatcherDescriptor getFilterMatcherDescriptor(String filterMAtcherId) {
-		return filterManager.getFilterDescriptor(filterMAtcherId);
+	public IFilterMatcherDescriptor getFilterMatcherDescriptor(String filterMatcherId) {
+		return filterManager.getFilterDescriptor(filterMatcherId);
 	}
 
 	public IFilterMatcherDescriptor[] getFilterMatcherDescriptors() {
@@ -2312,7 +2299,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		Assert.isNotNull(plugin, "Plugin must not be null"); //$NON-NLS-1$
 		saveManager.removeParticipant(plugin.getBundle().getSymbolicName());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#removeSaveParticipant(String)
 	 */
@@ -2509,9 +2496,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			//must start at the end to avoid potential cyclic dependency on other uninitialized managers (see bug 369177)
 			aliasManager = new AliasManager(this);
 			aliasManager.startup(null);
-		} finally {	
+		} finally {
 			//unlock tree even in case of failure, otherwise shutdown will also fail
-			treeLocked = null;	
+			treeLocked = null;
 			_workManager.postWorkspaceStartup();
 		}
 	}
