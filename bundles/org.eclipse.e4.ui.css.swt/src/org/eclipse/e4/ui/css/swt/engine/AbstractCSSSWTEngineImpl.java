@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Angelo Zerr and others.
+ * Copyright (c) 2008, 2014 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,10 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.engine;
 
+import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.e4.ui.css.core.impl.engine.CSSEngineImpl;
 import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTColorConverterImpl;
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTCursorConverterImpl;
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTFontConverterImpl;
@@ -23,6 +25,7 @@ import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTRGBConverterIm
 import org.eclipse.e4.ui.css.swt.resources.SWTResourceRegistryKeyFactory;
 import org.eclipse.e4.ui.css.swt.resources.SWTResourcesRegistry;
 import org.eclipse.swt.widgets.Display;
+import org.w3c.dom.Element;
 
 /**
  * CSS SWT Engine implementation which configure CSSEngineImpl to apply styles
@@ -79,4 +82,18 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 		}
 		return super.getResourcesRegistry();
 	}
+
+	@Override
+	public void reset() {
+		for (CSSElementContext elementContext : getElementsContext().values()) {
+			Element element = elementContext.getElement();
+			if (element instanceof WidgetElement) {
+				((WidgetElement) element).reset();
+			}
+		}
+
+		getResourcesRegistry().dispose();
+		super.reset();
+	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Tom Schindl and others.
+ * Copyright (c) 2010, 2014 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Brian de Alwis - added support for multiple CSS engines
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422702
+ *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.internal.theme;
 
@@ -39,18 +40,12 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
 import org.eclipse.e4.ui.css.core.util.impl.resources.FileResourcesLocatorImpl;
 import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
 import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
-import org.eclipse.e4.ui.css.swt.resources.SWTResourcesRegistry;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.osgi.service.datalocation.Location;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -403,7 +398,6 @@ public class ThemeEngine implements IThemeEngine {
 
 			this.currentTheme = theme;
 			for (CSSEngine engine : cssEngines) {
-				removeSWTResourceFromCache(engine.getResourcesRegistry());
 				engine.reset();
 			}
 
@@ -464,15 +458,6 @@ public class ThemeEngine implements IThemeEngine {
 			}
 		}
 		sendThemeChangeEvent(restore);
-	}
-
-	@SuppressWarnings("restriction")
-	private void removeSWTResourceFromCache(IResourcesRegistry registry) {
-		if (registry instanceof SWTResourcesRegistry) {
-			((SWTResourcesRegistry) registry)
-			.removeResourcesByKeyTypeAndType(Object.class, Font.class,
-					Color.class, Image.class, Cursor.class);
-		}
 	}
 
 	/**

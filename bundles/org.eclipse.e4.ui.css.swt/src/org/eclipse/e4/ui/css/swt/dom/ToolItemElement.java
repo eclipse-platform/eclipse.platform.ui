@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.css.swt.dom;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -24,15 +25,18 @@ import org.w3c.dom.Node;
  * 
  */
 public class ToolItemElement extends ItemElement {
+	private static final String DEFAULT_IMAGE = "defaultImage";
 
 	public ToolItemElement(ToolItem toolItem, CSSEngine engine) {
 		super(toolItem, engine);
+		toolItem.setData(DEFAULT_IMAGE, toolItem.getImage());
 	}
 
 	public ToolItem getToolItem() {
 		return (ToolItem) getNativeWidget();
 	}
 
+	@Override
 	public Node getParentNode() {
 		ToolItem item = getToolItem();
 		ToolBar parent = item.getParent();
@@ -43,6 +47,7 @@ public class ToolItemElement extends ItemElement {
 		return null;
 	}
 
+	@Override
 	public Node item(int index) {
 		ToolItem item = getToolItem();
 		if ((item.getStyle() & SWT.SEPARATOR) == SWT.SEPARATOR) {
@@ -54,9 +59,20 @@ public class ToolItemElement extends ItemElement {
 		return null;
 	}
 
+	@Override
 	public int getLength() {
 		ToolItem item = getToolItem();
 		return (item.getStyle() & SWT.SEPARATOR) == SWT.SEPARATOR
 				&& item.getControl() != null ? 1 : 0;
+	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		ToolItem item = getToolItem();
+		Image defaultImage = (Image) item.getData(DEFAULT_IMAGE);
+		if (item.getImage() != defaultImage) {
+			item.setImage(defaultImage);
+		}
 	}
 }

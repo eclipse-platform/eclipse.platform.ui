@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Angelo Zerr and others.
+ * Copyright (c) 2009, 2014 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,14 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.dom;
 
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 
@@ -20,11 +23,12 @@ import org.eclipse.swt.widgets.TableItem;
  * 
  */
 public class TableItemElement extends ItemElement {
-	
+
 	public TableItemElement(TableItem tableItem, CSSEngine engine) {
 		super(tableItem, engine);
 	}
 
+	@Override
 	public boolean isPseudoInstanceOf(String s) {
 		if ("odd".equals(s)) {
 			TableItem tableItem = getTableItem();
@@ -42,5 +46,20 @@ public class TableItemElement extends ItemElement {
 
 	protected TableItem getTableItem() {
 		return (TableItem) getNativeWidget();
+	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		TableItem tableItem = getTableItem();
+		tableItem.setForeground(null);
+		tableItem.setBackground(null);
+		tableItem.setImage((Image) null);
+		tableItem.setFont(null); // in such case the parent's font will be taken
+
+		Table parent = tableItem.getParent();
+		parent.setForeground(null);
+		parent.setBackground(null);
+		parent.setFont(parent.getDisplay().getSystemFont());
 	}
 }

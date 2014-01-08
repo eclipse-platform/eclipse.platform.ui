@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ public class CTabItemElement extends ItemElement {
 		super(item, engine);
 	}
 
+	@Override
 	protected void computeStaticPseudoInstances() {
 		super.computeStaticPseudoInstances();
 		// it's CTabFolder. Set selected as static pseudo instance.
@@ -32,6 +33,7 @@ public class CTabItemElement extends ItemElement {
 		super.addStaticPseudoInstance("selected");
 	}
 
+	@Override
 	public Node getParentNode() {
 		CTabItem item = getItem();
 		CTabFolder parent = item.getParent();
@@ -44,6 +46,14 @@ public class CTabItemElement extends ItemElement {
 
 	private CTabItem getItem() {
 		return (CTabItem) getNativeWidget();
+	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		CTabItem item = getItem();
+		item.setImage(null);
+		item.setFont(null); // in such case the parent's font will be taken
 	}
 
 }

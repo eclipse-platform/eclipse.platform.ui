@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Angelo Zerr and others.
+ * Copyright (c) 2008, 2014 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,10 +27,10 @@ import org.w3c.dom.NodeList;
  * 
  */
 public class WidgetElement extends ElementAdapter implements NodeList {
-	
+
 	boolean dynamicEnabled = Boolean
 			.getBoolean("org.eclipse.e4.ui.css.dynamic");
-	
+
 	/**
 	 * Convenience method for getting the CSS class of a widget.
 	 * 
@@ -76,7 +76,7 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 	public static void setID(Widget widget, String id) {
 		widget.setData(CSSSWTConstants.CSS_ID_KEY, id);
 	}
-	
+
 	/**
 	 * Convenience method for getting the CSS engine responsible for a widget.
 	 * @param widget SWT widget which is styled by an engine
@@ -158,7 +158,7 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 	 * 
 	 */
 	protected void computeStaticPseudoInstances() {
-		
+
 	}
 
 	/**
@@ -177,6 +177,7 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 	 * org.eclipse.e4.ui.css.core.dom.ElementAdapter#getAttribute(java.lang.
 	 * String)
 	 */
+	@Override
 	public String getAttribute(String attr) {
 		Widget widget = getWidget();
 		if (attr.equals("style")) {
@@ -198,21 +199,23 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 			return sb.toString();
 		}
 		Object o = widget.getData(attr.toLowerCase());
-		if (o != null)
+		if (o != null) {
 			return o.toString();
+		}
 
 		// FIXME: Commented out dead code. Filed https://bugs.eclipse.org/415442 to review this part of the code.
-//		try {
-//			//o = PropertyUtils.getProperty(widget, attr);
-//			if (o != null)
-//				return o.toString();
-//		} catch (Exception e) {
-//			// e.printStackTrace();
-//		}
+		//		try {
+		//			//o = PropertyUtils.getProperty(widget, attr);
+		//			if (o != null)
+		//				return o.toString();
+		//		} catch (Exception e) {
+		//			// e.printStackTrace();
+		//		}
 
 		return "";
 	}
 
+	@Override
 	public String getLocalName() {
 		return localName;
 	}
@@ -221,7 +224,7 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 		return namespaceURI;
 	}
 
-	public Node getParentNode() {		
+	public Node getParentNode() {
 		return null;
 	}
 
@@ -229,7 +232,7 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 		return this;
 	}
 
-	public int getLength() {	
+	public int getLength() {
 		return 0;
 	}
 
@@ -244,8 +247,9 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 	public String getCSSId() {
 		Widget widget = getWidget();
 		Object id = getID(widget);
-		if (id != null)
+		if (id != null) {
 			return id.toString();
+		}
 		return null;
 	}
 
@@ -257,8 +261,9 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 	public String getCSSClass() {
 		Widget widget = getWidget();
 		Object id = getCSSClass(widget);
-		if (id != null)
+		if (id != null) {
 			return id.toString();
+		}
 		return null;
 	}
 
@@ -271,10 +276,12 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 		Widget widget = getWidget();
 		// TODO should have key in CSSSWT
 		Object id = widget.getData("style");
-		if (id != null)
+		if (id != null) {
 			return id.toString();
+		}
 		return null;
 	}
 
-
+	public void reset() {
+	}
 }
