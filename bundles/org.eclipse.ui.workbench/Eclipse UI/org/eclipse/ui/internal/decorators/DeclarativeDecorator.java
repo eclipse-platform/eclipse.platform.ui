@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-import java.net.MalformedURLException;
 import java.net.URL;
+
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
+import org.eclipse.ui.internal.util.BundleUtility;
 
 /**
  * The DeclarativeDecorator is a decorator that is made entirely from an XML
@@ -68,21 +68,14 @@ public class DeclarativeDecorator implements ILightweightLabelDecorator {
      *      org.eclipse.jface.viewers.IDecoration)
      */
     public void decorate(Object element, IDecoration decoration) {
-		if (descriptor == null) {
-			URI iconURI = URI.createURI(iconLocation);
-			if (iconURI.isRelative()) {
-				URI pluginURI = URI.createPlatformPluginURI(configElement.getContributor()
-						.getName() + "/", true); //$NON-NLS-1$
-				iconURI = iconURI.resolve(pluginURI);
-			}
-
-			try {
-				descriptor = ImageDescriptor.createFromURL(new URL(iconURI.toString()));
-			} catch (MalformedURLException e) {
+        if (descriptor == null) {
+            URL url = BundleUtility.find(configElement.getDeclaringExtension()
+                    .getNamespace(), iconLocation);
+            if (url == null) {
 				return;
 			}
-
-		}
+            descriptor = ImageDescriptor.createFromURL(url);
+        }
         decoration.addOverlay(descriptor);
     }
 }
