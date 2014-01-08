@@ -133,6 +133,14 @@ public class CommandElement extends QuickAccessElement {
 		return null;
 	}
 
+	public String getSortLabel() {
+		try {
+			return command.getName();
+		} catch (NotDefinedException e) {
+			return command.toString();
+		}
+	}
+
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
