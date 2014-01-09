@@ -24,7 +24,7 @@ import org.eclipse.debug.core.model.IVariable;
 
 public class PropertyTests extends AbstractAntDebugTest {
 
-	private static final String ANT_VERSION = "Apache Ant(TM) version 1.9.2 compiled on July 8 2013"; //$NON-NLS-1$
+	private static final String ANT_VERSION = "Apache Ant(TM) version 1.9.2"; //$NON-NLS-1$
 
 	public PropertyTests(String name) {
 		super(name);
@@ -92,7 +92,7 @@ public class PropertyTests extends AbstractAntDebugTest {
 			AntProperty property = frame.findProperty("ant.home"); //$NON-NLS-1$
 			assertNotNull(property);
 
-			assertProperty(thread, "ant.version", ANT_VERSION); //$NON-NLS-1$
+			assertPropertyStartsWith(thread, "ant.version", ANT_VERSION); //$NON-NLS-1$
 			assertProperty(thread, "ant.project.name", "debugEcho"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		finally {
@@ -104,11 +104,6 @@ public class PropertyTests extends AbstractAntDebugTest {
 	public void testRuntimeProperties() throws Exception {
 		runtimeProperties(false);
 	}
-
-	// TODO timing issues with retrieving properties
-	// public void testRuntimePropertiesSepVM() throws Exception {
-	// runtimeProperties(true);
-	// }
 
 	private void runtimeProperties(boolean sepVM) throws Exception, CoreException {
 		String fileName = "breakpoints"; //$NON-NLS-1$
@@ -150,6 +145,15 @@ public class PropertyTests extends AbstractAntDebugTest {
 		assertNotNull("Did not find property: " + propertyName, property); //$NON-NLS-1$
 		AntValue value = (AntValue) property.getValue();
 		assertEquals("Value of property " + propertyName + " incorrect", propertyValue, value.getValueString()); //$NON-NLS-1$ //$NON-NLS-2$
+		return frame;
+	}
+
+	private AntStackFrame assertPropertyStartsWith(AntThread thread, String propertyName, String propertyValue) throws DebugException {
+		AntStackFrame frame = (AntStackFrame) thread.getTopStackFrame();
+		AntProperty property = frame.findProperty(propertyName);
+		assertNotNull("Did not find property: " + propertyName, property); //$NON-NLS-1$
+		AntValue value = (AntValue) property.getValue();
+		assertTrue("Value of property" + propertyName + " incorrect: " + value.getValueString(), value.getValueString().startsWith(propertyValue)); //$NON-NLS-1$ //$NON-NLS-2$
 		return frame;
 	}
 }

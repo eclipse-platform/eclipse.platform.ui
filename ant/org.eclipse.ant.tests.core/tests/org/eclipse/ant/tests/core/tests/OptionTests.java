@@ -26,7 +26,7 @@ public class OptionTests extends AbstractAntTest {
 
 	protected static final String UNKNOWN_ARG = "Unknown argument: "; //$NON-NLS-1$
 	protected static final String START_OF_HELP = "ant [options] [target [target2 [target3] ...]]"; //$NON-NLS-1$
-	protected static final String VERSION = "Apache Ant(TM) version 1.9.2 compiled on July 8 2013"; //$NON-NLS-1$
+	protected static final String VERSION = "Apache Ant(TM) version 1.9.2"; //$NON-NLS-1$
 	protected static final String PLUGIN_VERSION = "org.apache.ant_1.9.2"; //$NON-NLS-1$
 
 	public OptionTests(String name) {
@@ -57,7 +57,7 @@ public class OptionTests extends AbstractAntTest {
 	public void testVersion() throws CoreException {
 		run("TestForEcho.xml", new String[] { "-version" }); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("One message should have been logged", AntTestChecker.getDefault().getMessagesLoggedCount() == 1); //$NON-NLS-1$
-		assertEquals("Version is incorrect: ", VERSION, getLastMessageLogged()); //$NON-NLS-1$
+		assertTrue("Version is incorrect", getLastMessageLogged().startsWith(VERSION)); //$NON-NLS-1$
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class OptionTests extends AbstractAntTest {
 		run("TestForEcho.xml", new String[] { "-listenr" }); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("Unrecognized option message should have been logged before successful build", //$NON-NLS-1$
 				(AntTestChecker.getDefault().getMessagesLoggedCount() == 6) && (getLoggedMessage(5).startsWith(UNKNOWN_ARG))
-						&& (getLastMessageLogged().startsWith(BUILD_SUCCESSFUL)));
+				&& (getLastMessageLogged().startsWith(BUILD_SUCCESSFUL)));
 	}
 
 	/**
