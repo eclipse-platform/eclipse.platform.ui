@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -385,23 +385,8 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 
 	/**
 	 * Returns the scheduling rule that is required for building 
-	 * the project for which this builder is defined. The default 
-	 * is the workspace root rule.
-	 * 
-	 * @return a scheduling rule which is contained in the workspace root rule or <code>null</code>
-	 * @since 3.5
-	 * @see #getRule(int, Map)
-	 * @deprecated clients should call and override {@link #getRule(int, Map)} instead.
-	 */
-	public ISchedulingRule getRule() {
-		return ResourcesPlugin.getWorkspace().getRoot();
-	}
-
-	/**
-	 * Returns the scheduling rule that is required for building 
 	 * the project build configuration for which this builder is defined. The default 
-	 * is {@link #getRule()}, which returns the workspace root 
-	 * rule unless overridden.
+	 * is the workspace root rule.
 	 * <p>
 	 * The scheduling rule determines which resources in the workspace are 
 	 * protected from being modified by other threads while the builder is running. Up until
@@ -450,8 +435,8 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * 
 	 * @since 3.6
 	 */
-	public ISchedulingRule getRule(int kind, Map<String,String> args) {
-		return getRule();
+	public ISchedulingRule getRule(int kind, Map<String, String> args) {
+		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
 	/**

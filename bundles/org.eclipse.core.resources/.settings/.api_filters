@@ -15,4 +15,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/core/resources/IncrementalProjectBuilder.java" type="org.eclipse.core.resources.IncrementalProjectBuilder">
+        <filter comment="See bug 310072" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.resources.IncrementalProjectBuilder"/>
+                <message_argument value="getRule()"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>
