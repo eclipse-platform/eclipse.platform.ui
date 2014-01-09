@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -448,7 +448,6 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 	static WizardCollectionElement filter(Viewer viewer, ViewerFilter viewerFilter,
 			WizardCollectionElement inputCollection) {
 		AdaptableList wizards = null;
-
 		for (Object child : inputCollection.getWizardAdaptableList().getChildren()) {
 			if (viewerFilter.select(viewer, inputCollection, child)) {
 				if (wizards == null) {
@@ -459,8 +458,12 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 		}
 
 		if (wizards == null) {
+			if (inputCollection.getChildren().length > 0) {
+				return new WizardCollectionElement(inputCollection, new AdaptableList());
+			}
 			return null;
 		}
+
 		if (inputCollection.getWizardAdaptableList().size() == wizards.size()) {
 			return inputCollection;
 		}

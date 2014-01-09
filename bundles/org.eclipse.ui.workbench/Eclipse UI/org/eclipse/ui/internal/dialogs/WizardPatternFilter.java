@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.dialogs.PatternFilter;
 
 /**
@@ -67,21 +66,10 @@ public class WizardPatternFilter extends PatternFilter {
 	@Override
 	public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
 		ArrayList<Object> result = new ArrayList<Object>();
-		ViewerFilter viewerFilter = new ViewerFilter() {
-			@Override
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				return WizardPatternFilter.this.select(viewer, parentElement, element)
-						|| hasChildren(element);
-			}
-			private boolean hasChildren(Object element) {
-				return element instanceof WorkbenchWizardElement
-						&& ((WorkbenchWizardElement) element).getCollectionElement().size() > 0;
-			}
-		};
 
 		for (Object elem : super.filter(viewer, parent, elements)) {
 			if (elem instanceof WizardCollectionElement) {
-				Object wizardCollection = WizardCollectionElement.filter(viewer, viewerFilter,
+				Object wizardCollection = WizardCollectionElement.filter(viewer, this,
 						(WizardCollectionElement) elem);
 				if (wizardCollection != null) {
 					result.add(wizardCollection);
