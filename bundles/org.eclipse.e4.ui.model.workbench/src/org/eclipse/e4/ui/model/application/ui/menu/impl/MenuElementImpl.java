@@ -31,6 +31,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl#getLocalizedLabel <em>Localized Label</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl#getLocalizedTooltip <em>Localized Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl#getMnemonics <em>Mnemonics</em>}</li>
  * </ul>
  * </p>
@@ -97,6 +99,26 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 * @ordered
 	 */
 	protected String tooltip = TOOLTIP_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalizedLabel() <em>Localized Label</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedLabel()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_LABEL_EDEFAULT = ""; //$NON-NLS-1$
+
+	/**
+	 * The default value of the '{@link #getLocalizedTooltip() <em>Localized Tooltip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedTooltip()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_TOOLTIP_EDEFAULT = ""; //$NON-NLS-1$
 
 	/**
 	 * The default value of the '{@link #getMnemonics() <em>Mnemonics</em>}' attribute.
@@ -236,6 +258,19 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 */
+	public void updateLocalization() {
+		if (eNotificationRequired()) {
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__LOCALIZED_LABEL, null, getLocalizedLabel()));
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__LOCALIZED_TOOLTIP, null, getLocalizedTooltip()));
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 */
 	public String getLocalizedLabel() {
 		return LocalizationHelper.getLocalizedLabel(this);
 	}
@@ -262,6 +297,10 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 				return getIconURI();
 			case MenuPackageImpl.MENU_ELEMENT__TOOLTIP:
 				return getTooltip();
+			case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_LABEL:
+				return getLocalizedLabel();
+			case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_TOOLTIP:
+				return getLocalizedTooltip();
 			case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
 				return getMnemonics();
 		}
@@ -330,6 +369,10 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case MenuPackageImpl.MENU_ELEMENT__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
+			case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_LABEL:
+				return LOCALIZED_LABEL_EDEFAULT == null ? getLocalizedLabel() != null : !LOCALIZED_LABEL_EDEFAULT.equals(getLocalizedLabel());
+			case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_TOOLTIP:
+				return LOCALIZED_TOOLTIP_EDEFAULT == null ? getLocalizedTooltip() != null : !LOCALIZED_TOOLTIP_EDEFAULT.equals(getLocalizedTooltip());
 			case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
 				return MNEMONICS_EDEFAULT == null ? mnemonics != null : !MNEMONICS_EDEFAULT.equals(mnemonics);
 		}
@@ -348,6 +391,8 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 				case MenuPackageImpl.MENU_ELEMENT__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
 				case MenuPackageImpl.MENU_ELEMENT__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
 				case MenuPackageImpl.MENU_ELEMENT__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
+				case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_LABEL: return UiPackageImpl.UI_LABEL__LOCALIZED_LABEL;
+				case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -366,6 +411,8 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 				case UiPackageImpl.UI_LABEL__LABEL: return MenuPackageImpl.MENU_ELEMENT__LABEL;
 				case UiPackageImpl.UI_LABEL__ICON_URI: return MenuPackageImpl.MENU_ELEMENT__ICON_URI;
 				case UiPackageImpl.UI_LABEL__TOOLTIP: return MenuPackageImpl.MENU_ELEMENT__TOOLTIP;
+				case UiPackageImpl.UI_LABEL__LOCALIZED_LABEL: return MenuPackageImpl.MENU_ELEMENT__LOCALIZED_LABEL;
+				case UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP: return MenuPackageImpl.MENU_ELEMENT__LOCALIZED_TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -378,31 +425,10 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 * @generated
 	 */
 	@Override
-	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
-		if (baseClass == MUILabel.class) {
-			switch (baseOperationID) {
-				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_LABEL: return MenuPackageImpl.MENU_ELEMENT___GET_LOCALIZED_LABEL;
-				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_TOOLTIP: return MenuPackageImpl.MENU_ELEMENT___GET_LOCALIZED_TOOLTIP;
-				default: return -1;
-			}
-		}
-		return super.eDerivedOperationID(baseOperationID, baseClass);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
 			case MenuPackageImpl.MENU_ELEMENT___GET_LOCALIZED_MNEMONICS:
 				return getLocalizedMnemonics();
-			case MenuPackageImpl.MENU_ELEMENT___GET_LOCALIZED_LABEL:
-				return getLocalizedLabel();
-			case MenuPackageImpl.MENU_ELEMENT___GET_LOCALIZED_TOOLTIP:
-				return getLocalizedTooltip();
 		}
 		return super.eInvoke(operationID, arguments);
 	}

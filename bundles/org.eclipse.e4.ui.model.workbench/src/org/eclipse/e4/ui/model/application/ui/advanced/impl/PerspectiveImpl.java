@@ -10,7 +10,6 @@
  */
 package org.eclipse.e4.ui.model.application.ui.advanced.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +49,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getLocalizedLabel <em>Localized Label</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getLocalizedTooltip <em>Localized Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getVariables <em>Variables</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getProperties <em>Properties</em>}</li>
@@ -119,6 +120,26 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * @ordered
 	 */
 	protected String tooltip = TOOLTIP_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalizedLabel() <em>Localized Label</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedLabel()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_LABEL_EDEFAULT = ""; //$NON-NLS-1$
+
+	/**
+	 * The default value of the '{@link #getLocalizedTooltip() <em>Localized Tooltip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedTooltip()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_TOOLTIP_EDEFAULT = ""; //$NON-NLS-1$
 
 	/**
 	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
@@ -338,6 +359,19 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 */
+	public void updateLocalization() {
+		if (eNotificationRequired()) {
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_LABEL, null, getLocalizedLabel()));
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_TOOLTIP, null, getLocalizedTooltip()));
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 */
 	public String getLocalizedLabel() {
 		return LocalizationHelper.getLocalizedLabel(this);		
 	}
@@ -380,6 +414,10 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 				return getIconURI();
 			case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP:
 				return getTooltip();
+			case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_LABEL:
+				return getLocalizedLabel();
+			case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_TOOLTIP:
+				return getLocalizedTooltip();
 			case AdvancedPackageImpl.PERSPECTIVE__CONTEXT:
 				return getContext();
 			case AdvancedPackageImpl.PERSPECTIVE__VARIABLES:
@@ -476,6 +514,10 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
+			case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_LABEL:
+				return LOCALIZED_LABEL_EDEFAULT == null ? getLocalizedLabel() != null : !LOCALIZED_LABEL_EDEFAULT.equals(getLocalizedLabel());
+			case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_TOOLTIP:
+				return LOCALIZED_TOOLTIP_EDEFAULT == null ? getLocalizedTooltip() != null : !LOCALIZED_TOOLTIP_EDEFAULT.equals(getLocalizedTooltip());
 			case AdvancedPackageImpl.PERSPECTIVE__CONTEXT:
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 			case AdvancedPackageImpl.PERSPECTIVE__VARIABLES:
@@ -500,6 +542,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 				case AdvancedPackageImpl.PERSPECTIVE__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
 				case AdvancedPackageImpl.PERSPECTIVE__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
 				case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
+				case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_LABEL: return UiPackageImpl.UI_LABEL__LOCALIZED_LABEL;
+				case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -526,6 +570,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 				case UiPackageImpl.UI_LABEL__LABEL: return AdvancedPackageImpl.PERSPECTIVE__LABEL;
 				case UiPackageImpl.UI_LABEL__ICON_URI: return AdvancedPackageImpl.PERSPECTIVE__ICON_URI;
 				case UiPackageImpl.UI_LABEL__TOOLTIP: return AdvancedPackageImpl.PERSPECTIVE__TOOLTIP;
+				case UiPackageImpl.UI_LABEL__LOCALIZED_LABEL: return AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_LABEL;
+				case UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP: return AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -538,44 +584,6 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
-		if (baseClass == MUILabel.class) {
-			switch (baseOperationID) {
-				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_LABEL: return AdvancedPackageImpl.PERSPECTIVE___GET_LOCALIZED_LABEL;
-				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_TOOLTIP: return AdvancedPackageImpl.PERSPECTIVE___GET_LOCALIZED_TOOLTIP;
-				default: return -1;
-			}
-		}
-		if (baseClass == MContext.class) {
-			switch (baseOperationID) {
-				default: return -1;
-			}
-		}
-		return super.eDerivedOperationID(baseOperationID, baseClass);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
-		switch (operationID) {
-			case AdvancedPackageImpl.PERSPECTIVE___GET_LOCALIZED_LABEL:
-				return getLocalizedLabel();
-			case AdvancedPackageImpl.PERSPECTIVE___GET_LOCALIZED_TOOLTIP:
-				return getLocalizedTooltip();
-		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -43,7 +44,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container implements MApplicationElement {
+public abstract class ApplicationElementImpl extends Container implements MApplicationElement {
 	/**
 	 * The default value of the '{@link #getElementId() <em>Element Id</em>}' attribute.
 	 * <!-- begin-user-doc -->

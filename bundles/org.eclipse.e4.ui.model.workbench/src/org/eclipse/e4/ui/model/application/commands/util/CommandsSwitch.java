@@ -14,6 +14,7 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.*;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
@@ -105,6 +106,7 @@ public class CommandsSwitch<T> extends Switch<T> {
 				MCommand command = (MCommand)theEObject;
 				T result = caseCommand(command);
 				if (result == null) result = caseApplicationElement(command);
+				if (result == null) result = caseLocalizable(command);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -154,6 +156,7 @@ public class CommandsSwitch<T> extends Switch<T> {
 				MCategory category = (MCategory)theEObject;
 				T result = caseCategory(category);
 				if (result == null) result = caseApplicationElement(category);
+				if (result == null) result = caseLocalizable(category);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -353,6 +356,21 @@ public class CommandsSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseApplicationElement(MApplicationElement object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Localizable</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Localizable</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseLocalizable(MLocalizable object) {
 		return null;
 	}
 

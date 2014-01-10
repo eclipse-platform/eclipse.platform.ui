@@ -10,7 +10,6 @@
  */
 package org.eclipse.e4.ui.model.application.ui.basic.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +56,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getLocalizedLabel <em>Localized Label</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getLocalizedTooltip <em>Localized Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getVariables <em>Variables</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getProperties <em>Properties</em>}</li>
@@ -135,6 +136,26 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * @ordered
 	 */
 	protected String tooltip = TOOLTIP_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalizedLabel() <em>Localized Label</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedLabel()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_LABEL_EDEFAULT = ""; //$NON-NLS-1$
+
+	/**
+	 * The default value of the '{@link #getLocalizedTooltip() <em>Localized Tooltip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedTooltip()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_TOOLTIP_EDEFAULT = ""; //$NON-NLS-1$
 
 	/**
 	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
@@ -659,6 +680,20 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 */
+	public void updateLocalization() {
+		if (eNotificationRequired()) {
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, BasicPackageImpl.WINDOW__LOCALIZED_LABEL, null, getLocalizedLabel()));
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, BasicPackageImpl.WINDOW__LOCALIZED_TOOLTIP, null, getLocalizedTooltip()));
+		}
+
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 */
 	public String getLocalizedLabel() {
 		return LocalizationHelper.getLocalizedLabel(this);		
 	}
@@ -709,6 +744,10 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 				return getIconURI();
 			case BasicPackageImpl.WINDOW__TOOLTIP:
 				return getTooltip();
+			case BasicPackageImpl.WINDOW__LOCALIZED_LABEL:
+				return getLocalizedLabel();
+			case BasicPackageImpl.WINDOW__LOCALIZED_TOOLTIP:
+				return getLocalizedTooltip();
 			case BasicPackageImpl.WINDOW__CONTEXT:
 				return getContext();
 			case BasicPackageImpl.WINDOW__VARIABLES:
@@ -881,6 +920,10 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case BasicPackageImpl.WINDOW__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
+			case BasicPackageImpl.WINDOW__LOCALIZED_LABEL:
+				return LOCALIZED_LABEL_EDEFAULT == null ? getLocalizedLabel() != null : !LOCALIZED_LABEL_EDEFAULT.equals(getLocalizedLabel());
+			case BasicPackageImpl.WINDOW__LOCALIZED_TOOLTIP:
+				return LOCALIZED_TOOLTIP_EDEFAULT == null ? getLocalizedTooltip() != null : !LOCALIZED_TOOLTIP_EDEFAULT.equals(getLocalizedTooltip());
 			case BasicPackageImpl.WINDOW__CONTEXT:
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 			case BasicPackageImpl.WINDOW__VARIABLES:
@@ -923,6 +966,8 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 				case BasicPackageImpl.WINDOW__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
 				case BasicPackageImpl.WINDOW__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
 				case BasicPackageImpl.WINDOW__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
+				case BasicPackageImpl.WINDOW__LOCALIZED_LABEL: return UiPackageImpl.UI_LABEL__LOCALIZED_LABEL;
+				case BasicPackageImpl.WINDOW__LOCALIZED_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -967,6 +1012,8 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 				case UiPackageImpl.UI_LABEL__LABEL: return BasicPackageImpl.WINDOW__LABEL;
 				case UiPackageImpl.UI_LABEL__ICON_URI: return BasicPackageImpl.WINDOW__ICON_URI;
 				case UiPackageImpl.UI_LABEL__TOOLTIP: return BasicPackageImpl.WINDOW__TOOLTIP;
+				case UiPackageImpl.UI_LABEL__LOCALIZED_LABEL: return BasicPackageImpl.WINDOW__LOCALIZED_LABEL;
+				case UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP: return BasicPackageImpl.WINDOW__LOCALIZED_TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -997,59 +1044,6 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
-		if (baseClass == MUILabel.class) {
-			switch (baseOperationID) {
-				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_LABEL: return BasicPackageImpl.WINDOW___GET_LOCALIZED_LABEL;
-				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_TOOLTIP: return BasicPackageImpl.WINDOW___GET_LOCALIZED_TOOLTIP;
-				default: return -1;
-			}
-		}
-		if (baseClass == MContext.class) {
-			switch (baseOperationID) {
-				default: return -1;
-			}
-		}
-		if (baseClass == MHandlerContainer.class) {
-			switch (baseOperationID) {
-				default: return -1;
-			}
-		}
-		if (baseClass == MBindings.class) {
-			switch (baseOperationID) {
-				default: return -1;
-			}
-		}
-		if (baseClass == MSnippetContainer.class) {
-			switch (baseOperationID) {
-				default: return -1;
-			}
-		}
-		return super.eDerivedOperationID(baseOperationID, baseClass);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
-		switch (operationID) {
-			case BasicPackageImpl.WINDOW___GET_LOCALIZED_LABEL:
-				return getLocalizedLabel();
-			case BasicPackageImpl.WINDOW___GET_LOCALIZED_TOOLTIP:
-				return getLocalizedTooltip();
-		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

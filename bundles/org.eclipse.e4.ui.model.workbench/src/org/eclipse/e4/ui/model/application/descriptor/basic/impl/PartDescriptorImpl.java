@@ -21,6 +21,7 @@ import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
+import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
@@ -45,6 +46,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getLocalizedLabel <em>Localized Label</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getLocalizedTooltip <em>Localized Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getBindingContexts <em>Binding Contexts</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#isAllowMultiple <em>Allow Multiple</em>}</li>
@@ -55,6 +58,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#isDirtyable <em>Dirtyable</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getContributionURI <em>Contribution URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getLocalizedDescription <em>Localized Description</em>}</li>
  * </ul>
  * </p>
  *
@@ -120,6 +124,26 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	 * @ordered
 	 */
 	protected String tooltip = TOOLTIP_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalizedLabel() <em>Localized Label</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedLabel()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_LABEL_EDEFAULT = ""; //$NON-NLS-1$
+
+	/**
+	 * The default value of the '{@link #getLocalizedTooltip() <em>Localized Tooltip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedTooltip()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_TOOLTIP_EDEFAULT = ""; //$NON-NLS-1$
 
 	/**
 	 * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
@@ -280,6 +304,16 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	 * @ordered
 	 */
 	protected String description = DESCRIPTION_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalizedDescription() <em>Localized Description</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedDescription()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_DESCRIPTION_EDEFAULT = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -580,6 +614,21 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 */
+	public void updateLocalization() {
+		if (eNotificationRequired()) {
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__LOCALIZED_LABEL, null, getLocalizedLabel()));
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__LOCALIZED_TOOLTIP, null, getLocalizedTooltip()));
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__LOCALIZED_DESCRIPTION, null, getLocalizedDescription()));
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 */
 	public String getLocalizedLabel() {
 		return LocalizationHelper.getLocalizedFeature(UiPackageImpl.Literals.UI_LABEL__LABEL, this);
 	}
@@ -624,6 +673,10 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 				return getIconURI();
 			case BasicPackageImpl.PART_DESCRIPTOR__TOOLTIP:
 				return getTooltip();
+			case BasicPackageImpl.PART_DESCRIPTOR__LOCALIZED_LABEL:
+				return getLocalizedLabel();
+			case BasicPackageImpl.PART_DESCRIPTOR__LOCALIZED_TOOLTIP:
+				return getLocalizedTooltip();
 			case BasicPackageImpl.PART_DESCRIPTOR__HANDLERS:
 				return getHandlers();
 			case BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS:
@@ -644,6 +697,8 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 				return getContributionURI();
 			case BasicPackageImpl.PART_DESCRIPTOR__DESCRIPTION:
 				return getDescription();
+			case BasicPackageImpl.PART_DESCRIPTOR__LOCALIZED_DESCRIPTION:
+				return getLocalizedDescription();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -768,6 +823,10 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case BasicPackageImpl.PART_DESCRIPTOR__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
+			case BasicPackageImpl.PART_DESCRIPTOR__LOCALIZED_LABEL:
+				return LOCALIZED_LABEL_EDEFAULT == null ? getLocalizedLabel() != null : !LOCALIZED_LABEL_EDEFAULT.equals(getLocalizedLabel());
+			case BasicPackageImpl.PART_DESCRIPTOR__LOCALIZED_TOOLTIP:
+				return LOCALIZED_TOOLTIP_EDEFAULT == null ? getLocalizedTooltip() != null : !LOCALIZED_TOOLTIP_EDEFAULT.equals(getLocalizedTooltip());
 			case BasicPackageImpl.PART_DESCRIPTOR__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
 			case BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS:
@@ -788,6 +847,8 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 				return CONTRIBUTION_URI_EDEFAULT == null ? contributionURI != null : !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
 			case BasicPackageImpl.PART_DESCRIPTOR__DESCRIPTION:
 				return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
+			case BasicPackageImpl.PART_DESCRIPTOR__LOCALIZED_DESCRIPTION:
+				return LOCALIZED_DESCRIPTION_EDEFAULT == null ? getLocalizedDescription() != null : !LOCALIZED_DESCRIPTION_EDEFAULT.equals(getLocalizedDescription());
 		}
 		return super.eIsSet(featureID);
 	}
@@ -799,11 +860,18 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	 */
 	@Override
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
+		if (baseClass == MLocalizable.class) {
+			switch (derivedFeatureID) {
+				default: return -1;
+			}
+		}
 		if (baseClass == MUILabel.class) {
 			switch (derivedFeatureID) {
 				case BasicPackageImpl.PART_DESCRIPTOR__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
 				case BasicPackageImpl.PART_DESCRIPTOR__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
 				case BasicPackageImpl.PART_DESCRIPTOR__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
+				case BasicPackageImpl.PART_DESCRIPTOR__LOCALIZED_LABEL: return UiPackageImpl.UI_LABEL__LOCALIZED_LABEL;
+				case BasicPackageImpl.PART_DESCRIPTOR__LOCALIZED_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -829,11 +897,18 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	 */
 	@Override
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
+		if (baseClass == MLocalizable.class) {
+			switch (baseFeatureID) {
+				default: return -1;
+			}
+		}
 		if (baseClass == MUILabel.class) {
 			switch (baseFeatureID) {
 				case UiPackageImpl.UI_LABEL__LABEL: return BasicPackageImpl.PART_DESCRIPTOR__LABEL;
 				case UiPackageImpl.UI_LABEL__ICON_URI: return BasicPackageImpl.PART_DESCRIPTOR__ICON_URI;
 				case UiPackageImpl.UI_LABEL__TOOLTIP: return BasicPackageImpl.PART_DESCRIPTOR__TOOLTIP;
+				case UiPackageImpl.UI_LABEL__LOCALIZED_LABEL: return BasicPackageImpl.PART_DESCRIPTOR__LOCALIZED_LABEL;
+				case UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP: return BasicPackageImpl.PART_DESCRIPTOR__LOCALIZED_TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -859,10 +934,14 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	 */
 	@Override
 	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
+		if (baseClass == MLocalizable.class) {
+			switch (baseOperationID) {
+				case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION: return BasicPackageImpl.PART_DESCRIPTOR___UPDATE_LOCALIZATION;
+				default: return -1;
+			}
+		}
 		if (baseClass == MUILabel.class) {
 			switch (baseOperationID) {
-				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_LABEL: return BasicPackageImpl.PART_DESCRIPTOR___GET_LOCALIZED_LABEL;
-				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_TOOLTIP: return BasicPackageImpl.PART_DESCRIPTOR___GET_LOCALIZED_TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -887,12 +966,9 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case BasicPackageImpl.PART_DESCRIPTOR___GET_LOCALIZED_DESCRIPTION:
-				return getLocalizedDescription();
-			case BasicPackageImpl.PART_DESCRIPTOR___GET_LOCALIZED_LABEL:
-				return getLocalizedLabel();
-			case BasicPackageImpl.PART_DESCRIPTOR___GET_LOCALIZED_TOOLTIP:
-				return getLocalizedTooltip();
+			case BasicPackageImpl.PART_DESCRIPTOR___UPDATE_LOCALIZATION:
+				updateLocalization();
+				return null;
 		}
 		return super.eInvoke(operationID, arguments);
 	}

@@ -175,20 +175,10 @@
         </eAnnotations>
       </eStructuralFeatures>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="Command" eSuperTypes="#//ApplicationElement">
+    <eClassifiers xsi:type="ecore:EClass" name="Command" eSuperTypes="#//ApplicationElement #//ui/Localizable">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="&lt;p>&#xD;&#xA;A Command represents a logical operation within the applicaiton. The implementation&#xD;&#xA;is provided by an MHandler chosen by examining all the candidate's enablement.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
-      <eOperations name="getLocalizedCommandName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a method that will return the translated name.&#xD;&#xA;&lt;/p>"/>
-        </eAnnotations>
-      </eOperations>
-      <eOperations name="getLocalizedDescription" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a method that will return the translated description.&#xD;&#xA;&lt;/p>"/>
-        </eAnnotations>
-      </eOperations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="commandName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
           <details key="documentation" value="&lt;p>&#xD;&#xA;This field holds the command's name, used in the UI by default when there&#xD;&#xA;are menu or toolbar items representing this command.&#xD;&#xA;&lt;/p>"/>
@@ -210,6 +200,12 @@
           <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="localizedCommandName"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false" volatile="true" transient="true" derived="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="localizedDescription"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false" volatile="true" transient="true" derived="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="CommandParameter" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -301,20 +297,10 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EDataType" name="ParameterizedCommand" instanceClassName="org.eclipse.core.commands.ParameterizedCommand"
         serializable="false"/>
-    <eClassifiers xsi:type="ecore:EClass" name="Category" eSuperTypes="#//ApplicationElement">
+    <eClassifiers xsi:type="ecore:EClass" name="Category" eSuperTypes="#//ApplicationElement #//ui/Localizable">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="&lt;p>&#xD;&#xA;This defines a logical grouping of Commands in order to facilitate showing &#xD;&#xA;the current set of Commands in dialogs, lists etc&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
-      <eOperations name="getLocalizedName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a method that will return the translated name of the Category.&#xD;&#xA;&lt;/p>"/>
-        </eAnnotations>
-      </eOperations>
-      <eOperations name="getLocalizedDescription" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a method that will return the translated description of the Category.&#xD;&#xA;&lt;/p>"/>
-        </eAnnotations>
-      </eOperations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -326,6 +312,12 @@
           <details key="documentation" value="&lt;p>&#xD;&#xA;The description to display for this category.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="localizedName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false" volatile="true" transient="true" defaultValueLiteral=""
+          derived="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="localizedDescription"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false" volatile="true" transient="true" derived="true"/>
     </eClassifiers>
   </eSubpackages>
   <eSubpackages name="ui" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui"
@@ -374,15 +366,10 @@
         </eAnnotations>
       </eStructuralFeatures>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="UIElement" abstract="true" eSuperTypes="#//ApplicationElement">
+    <eClassifiers xsi:type="ecore:EClass" name="UIElement" abstract="true" eSuperTypes="#//ApplicationElement #//ui/Localizable">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base mix-in shared by all model elements that can be rendered into the&#xD;&#xA;UI presentation of the application. Its main job is to manage the bindings between&#xD;&#xA;the concrete element and the UI 'widget' representing it in the UI.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
-      <eOperations name="getLocalizedAccessibilityPhrase" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This field is intended to allow enhanced support for accessibility by providing the &#xD;&#xA;ability to have a screen reader 'say' this phrase along with its normal output.&#xD;&#xA;This is currently unused in teh base SWT renderer but is available for use by&#xD;&#xA;other rendering platforms...&#xD;&#xA;&lt;/p>"/>
-        </eAnnotations>
-      </eOperations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="widget" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
           transient="true" derived="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -443,6 +430,9 @@
           <details key="documentation" value="&lt;p>&#xD;&#xA;This field is provided as a way to inform accessibility screen readers with extra&#xD;&#xA;information. The intent is that the reader should 'say' this phrase as well as what&#xD;&#xA;it would normally emit given the widget hierarchy.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="localizedAccessibilityPhrase"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false" volatile="true" transient="true" derived="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ElementContainer" abstract="true"
         eSuperTypes="#//ui/UIElement">
@@ -466,20 +456,11 @@
         <eGenericType eTypeParameter="#//ui/ElementContainer/T"/>
       </eStructuralFeatures>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="UILabel" abstract="true" interface="true">
+    <eClassifiers xsi:type="ecore:EClass" name="UILabel" abstract="true" interface="true"
+        eSuperTypes="#//ui/Localizable">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="&lt;p>&#xD;&#xA;This is a mix in that will be used for UI Elements that are capable of showing label&#xD;&#xA;information in the GUI (e.g. Parts, Menus / Toolbars, Persepectives...)&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
-      <eOperations name="getLocalizedLabel" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a method that will retrieve the internationalized label by using the current&#xD;&#xA;value of the label itself and some translation service.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
-        </eAnnotations>
-      </eOperations>
-      <eOperations name="getLocalizedTooltip" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a method that will retrieve the internationalized tooltip by using the current&#xD;&#xA;value of the label itself and some translation service.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
-        </eAnnotations>
-      </eOperations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
           <details key="documentation" value="&lt;p>&#xD;&#xA;The label to display for this element. If the label is expected to be internationalized&#xD;&#xA;then the label may be set to a 'key' value to be used by the translation service.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
@@ -495,6 +476,12 @@
           <details key="documentation" value="&lt;p>&#xD;&#xA;The tooltip to display for this element. If the tooltip is expected to be internationalized&#xD;&#xA;then the tooltip may be set to a 'key' value to be used by the translation service.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eStructuralFeatures>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="localizedLabel" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false" volatile="true" transient="true" defaultValueLiteral=""
+          derived="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="localizedTooltip" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false" volatile="true" transient="true" defaultValueLiteral=""
+          derived="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="GenericStack" abstract="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -582,6 +569,16 @@
           <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Localizable" abstract="true" interface="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This class should be mixed into any UI element that should participate in the&#xD;&#xA;Locale update handling.&#xD;&#xA;&lt;/p>"/>
+      </eAnnotations>
+      <eOperations name="updateLocalization">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This method is used to support Locale changes at runtime.&#xD;&#xA;Implementing this method should result in refreshing localizable properties&#xD;&#xA;like labels, tooltips and descriptions.&#xD;&#xA;&lt;/p>"/>
+        </eAnnotations>
+      </eOperations>
     </eClassifiers>
     <eSubpackages name="menu" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu"
         nsPrefix="menu">
@@ -915,11 +912,6 @@
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
           <details key="documentation" value="&lt;p>&#xD;&#xA;This a concrete class representing the core UI functionality within a Window. It's what&#xD;&#xA;used to be a View / Editor in Eclipse 3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
-        <eOperations name="getLocalizedDescription" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-          <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
-          </eAnnotations>
-        </eOperations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
             eType="#//ui/menu/Menu" containment="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -943,6 +935,9 @@
             <details key="documentation" value="&lt;p>&#xD;&#xA;The description of this Part; used when the Part appears in a list of Parts&#xD;&#xA;(i.e. 'Show View').&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="localizedDescription"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+            changeable="false" volatile="true" transient="true" derived="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="CompositePart">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -1155,11 +1150,6 @@
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
           <details key="documentation" value="&lt;p>&#xD;&#xA;This element represents a template from which an MPart can be created on demand.&#xD;&#xA;The collection of PartDescriptors owned by the Application represents the contributed&#xD;&#xA;parts and is used in the e4 version of 'Show View'...&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
         </eAnnotations>
-        <eOperations name="getLocalizedDescription" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-          <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;A method that will return the translated description.&#xD;&#xA;&lt;/p>"/>
-          </eAnnotations>
-        </eOperations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="allowMultiple" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
             <details key="documentation" value="&lt;p>&#xD;&#xA;Determines whether or not the part represented by this descriptot can have multiple&#xD;&#xA;instances with a given window.&#xD;&#xA;&lt;/p>"/>
@@ -1203,6 +1193,9 @@
             <details key="documentation" value="&lt;p>&#xD;&#xA;The description of this Part.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="localizedDescription"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+            changeable="false" volatile="true" transient="true" derived="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PartDescriptorContainer" abstract="true"
           interface="true">

@@ -15,6 +15,7 @@ import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.descriptor.basic.*;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -84,6 +85,7 @@ public class BasicSwitch<T> extends Switch<T> {
 				if (result == null) result = caseUILabel(partDescriptor);
 				if (result == null) result = caseHandlerContainer(partDescriptor);
 				if (result == null) result = caseBindings(partDescriptor);
+				if (result == null) result = caseLocalizable(partDescriptor);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -184,6 +186,21 @@ public class BasicSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseApplicationElement(MApplicationElement object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Localizable</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Localizable</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseLocalizable(MLocalizable object) {
 		return null;
 	}
 

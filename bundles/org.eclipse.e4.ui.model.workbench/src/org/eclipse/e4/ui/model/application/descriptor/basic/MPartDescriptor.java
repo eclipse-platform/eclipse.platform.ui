@@ -44,6 +44,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable <em>Dirtyable</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getContributionURI <em>Contribution URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getLocalizedDescription <em>Localized Description</em>}</li>
  * </ul>
  * </p>
  *
@@ -262,14 +263,11 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	void setDescription(String value);
 
 	/**
+	 * Returns the value of the '<em><b>Localized Description</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * <p>
-	 * A method that will return the translated description.
-	 * </p>
-	 * <!-- end-model-doc -->
-	 * @model kind="operation"
+	 * @return the value of the '<em>Localized Description</em>' attribute.
+	 * @model transient="true" changeable="false" volatile="true" derived="true"
 	 * @generated
 	 */
 	String getLocalizedDescription();

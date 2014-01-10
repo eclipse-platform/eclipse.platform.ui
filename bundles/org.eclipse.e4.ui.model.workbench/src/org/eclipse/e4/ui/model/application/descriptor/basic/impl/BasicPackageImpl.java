@@ -21,7 +21,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EFactory;
-import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
@@ -157,13 +156,31 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_DESCRIPTOR__TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
+	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_DESCRIPTOR__LOCALIZED_LABEL = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_DESCRIPTOR__LOCALIZED_TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+
+	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__HANDLERS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+	public static final int PART_DESCRIPTOR__HANDLERS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
@@ -172,7 +189,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__BINDING_CONTEXTS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+	public static final int PART_DESCRIPTOR__BINDING_CONTEXTS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Allow Multiple</b></em>' attribute.
@@ -181,7 +198,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__ALLOW_MULTIPLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 5;
+	public static final int PART_DESCRIPTOR__ALLOW_MULTIPLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Category</b></em>' attribute.
@@ -190,7 +207,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__CATEGORY = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 6;
+	public static final int PART_DESCRIPTOR__CATEGORY = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Menus</b></em>' containment reference list.
@@ -199,7 +216,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__MENUS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 7;
+	public static final int PART_DESCRIPTOR__MENUS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Toolbar</b></em>' containment reference.
@@ -208,7 +225,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__TOOLBAR = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 8;
+	public static final int PART_DESCRIPTOR__TOOLBAR = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Closeable</b></em>' attribute.
@@ -217,7 +234,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__CLOSEABLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 9;
+	public static final int PART_DESCRIPTOR__CLOSEABLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Dirtyable</b></em>' attribute.
@@ -226,7 +243,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__DIRTYABLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 10;
+	public static final int PART_DESCRIPTOR__DIRTYABLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
@@ -235,7 +252,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__CONTRIBUTION_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 11;
+	public static final int PART_DESCRIPTOR__CONTRIBUTION_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 13;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -244,7 +261,16 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 12;
+	public static final int PART_DESCRIPTOR__DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 14;
+
+	/**
+	 * The feature id for the '<em><b>Localized Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_DESCRIPTOR__LOCALIZED_DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 15;
 
 	/**
 	 * The number of structural features of the '<em>Part Descriptor</em>' class.
@@ -253,34 +279,16 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 13;
+	public static final int PART_DESCRIPTOR_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 16;
 
 	/**
-	 * The operation id for the '<em>Get Localized Label</em>' operation.
+	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR___GET_LOCALIZED_LABEL = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 0;
-
-	/**
-	 * The operation id for the '<em>Get Localized Tooltip</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR___GET_LOCALIZED_TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 1;
-
-	/**
-	 * The operation id for the '<em>Get Localized Description</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR___GET_LOCALIZED_DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 2;
+	public static final int PART_DESCRIPTOR___UPDATE_LOCALIZATION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
 	 * The number of operations of the '<em>Part Descriptor</em>' class.
@@ -289,7 +297,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 3;
+	public static final int PART_DESCRIPTOR_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer <em>Part Descriptor Container</em>}' class.
@@ -542,15 +550,16 @@ public class BasicPackageImpl extends EPackageImpl {
 
 
 	/**
-	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getLocalizedDescription() <em>Get Localized Description</em>}' operation.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getLocalizedDescription <em>Localized Description</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Get Localized Description</em>' operation.
+	 * @return the meta object for the attribute '<em>Localized Description</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getLocalizedDescription()
+	 * @see #getPartDescriptor()
 	 * @generated
 	 */
-	public EOperation getPartDescriptor__GetLocalizedDescription() {
-		return partDescriptorEClass.getEOperations().get(0);
+	public EAttribute getPartDescriptor_LocalizedDescription() {
+		return (EAttribute)partDescriptorEClass.getEStructuralFeatures().get(8);
 	}
 
 
@@ -618,7 +627,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		createEAttribute(partDescriptorEClass, PART_DESCRIPTOR__DIRTYABLE);
 		createEAttribute(partDescriptorEClass, PART_DESCRIPTOR__CONTRIBUTION_URI);
 		createEAttribute(partDescriptorEClass, PART_DESCRIPTOR__DESCRIPTION);
-		createEOperation(partDescriptorEClass, PART_DESCRIPTOR___GET_LOCALIZED_DESCRIPTION);
+		createEAttribute(partDescriptorEClass, PART_DESCRIPTOR__LOCALIZED_DESCRIPTION);
 
 		partDescriptorContainerEClass = createEClass(PART_DESCRIPTOR_CONTAINER);
 		createEReference(partDescriptorContainerEClass, PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
@@ -673,8 +682,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		initEAttribute(getPartDescriptor_Dirtyable(), ecorePackage.getEBoolean(), "dirtyable", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getPartDescriptor_ContributionURI(), ecorePackage.getEString(), "contributionURI", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getPartDescriptor_Description(), ecorePackage.getEString(), "description", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-
-		initEOperation(getPartDescriptor__GetLocalizedDescription(), ecorePackage.getEString(), "getLocalizedDescription", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getPartDescriptor_LocalizedDescription(), ecorePackage.getEString(), "localizedDescription", null, 0, 1, MPartDescriptor.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(partDescriptorContainerEClass, MPartDescriptorContainer.class, "PartDescriptorContainer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getPartDescriptorContainer_Descriptors(), this.getPartDescriptor(), null, "descriptors", null, 0, -1, MPartDescriptorContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -768,12 +776,12 @@ public class BasicPackageImpl extends EPackageImpl {
 		public static final EAttribute PART_DESCRIPTOR__DESCRIPTION = eINSTANCE.getPartDescriptor_Description();
 
 		/**
-		 * The meta object literal for the '<em><b>Get Localized Description</b></em>' operation.
+		 * The meta object literal for the '<em><b>Localized Description</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		public static final EOperation PART_DESCRIPTOR___GET_LOCALIZED_DESCRIPTION = eINSTANCE.getPartDescriptor__GetLocalizedDescription();
+		public static final EAttribute PART_DESCRIPTOR__LOCALIZED_DESCRIPTION = eINSTANCE.getPartDescriptor_LocalizedDescription();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer <em>Part Descriptor Container</em>}' class.

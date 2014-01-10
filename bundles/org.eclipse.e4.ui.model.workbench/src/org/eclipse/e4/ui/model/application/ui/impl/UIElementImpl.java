@@ -11,9 +11,11 @@
 package org.eclipse.e4.ui.model.application.ui.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MExpression;
+import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.emf.common.notify.Notification;
@@ -42,6 +44,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl#getCurSharedRef <em>Cur Shared Ref</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl#getVisibleWhen <em>Visible When</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl#getAccessibilityPhrase <em>Accessibility Phrase</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl#getLocalizedAccessibilityPhrase <em>Localized Accessibility Phrase</em>}</li>
  * </ul>
  * </p>
  *
@@ -207,6 +210,16 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * @ordered
 	 */
 	protected String accessibilityPhrase = ACCESSIBILITY_PHRASE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalizedAccessibilityPhrase() <em>Localized Accessibility Phrase</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedAccessibilityPhrase()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_ACCESSIBILITY_PHRASE_EDEFAULT = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -500,12 +513,20 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
 	 */
 	public String getLocalizedAccessibilityPhrase() {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		return LocalizationHelper.getLocalizedAccessibilityPhrase(this);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 */
+	public void updateLocalization() {
+		if (eNotificationRequired()) {
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, UiPackageImpl.UI_ELEMENT__LOCALIZED_ACCESSIBILITY_PHRASE, null, getLocalizedAccessibilityPhrase()));
+		}
 	}
 
 	/**
@@ -584,6 +605,8 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 				return getVisibleWhen();
 			case UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE:
 				return getAccessibilityPhrase();
+			case UiPackageImpl.UI_ELEMENT__LOCALIZED_ACCESSIBILITY_PHRASE:
+				return getLocalizedAccessibilityPhrase();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -701,6 +724,8 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 				return visibleWhen != null;
 			case UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE:
 				return ACCESSIBILITY_PHRASE_EDEFAULT == null ? accessibilityPhrase != null : !ACCESSIBILITY_PHRASE_EDEFAULT.equals(accessibilityPhrase);
+			case UiPackageImpl.UI_ELEMENT__LOCALIZED_ACCESSIBILITY_PHRASE:
+				return LOCALIZED_ACCESSIBILITY_PHRASE_EDEFAULT == null ? getLocalizedAccessibilityPhrase() != null : !LOCALIZED_ACCESSIBILITY_PHRASE_EDEFAULT.equals(getLocalizedAccessibilityPhrase());
 		}
 		return super.eIsSet(featureID);
 	}
@@ -711,10 +736,27 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * @generated
 	 */
 	@Override
+	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
+		if (baseClass == MLocalizable.class) {
+			switch (baseOperationID) {
+				case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION: return UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION;
+				default: return -1;
+			}
+		}
+		return super.eDerivedOperationID(baseOperationID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case UiPackageImpl.UI_ELEMENT___GET_LOCALIZED_ACCESSIBILITY_PHRASE:
-				return getLocalizedAccessibilityPhrase();
+			case UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION:
+				updateLocalization();
+				return null;
 		}
 		return super.eInvoke(operationID, arguments);
 	}

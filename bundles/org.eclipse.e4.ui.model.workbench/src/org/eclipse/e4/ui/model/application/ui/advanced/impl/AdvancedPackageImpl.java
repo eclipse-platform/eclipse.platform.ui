@@ -222,6 +222,15 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PLACEHOLDER__ACCESSIBILITY_PHRASE = UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE;
 
 	/**
+	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PLACEHOLDER__LOCALIZED_ACCESSIBILITY_PHRASE = UiPackageImpl.UI_ELEMENT__LOCALIZED_ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -249,13 +258,13 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PLACEHOLDER_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The operation id for the '<em>Get Localized Accessibility Phrase</em>' operation.
+	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER___GET_LOCALIZED_ACCESSIBILITY_PHRASE = UiPackageImpl.UI_ELEMENT___GET_LOCALIZED_ACCESSIBILITY_PHRASE;
+	public static final int PLACEHOLDER___UPDATE_LOCALIZATION = UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION;
 
 	/**
 	 * The number of operations of the '<em>Placeholder</em>' class.
@@ -412,6 +421,15 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PERSPECTIVE__ACCESSIBILITY_PHRASE = UiPackageImpl.ELEMENT_CONTAINER__ACCESSIBILITY_PHRASE;
 
 	/**
+	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE__LOCALIZED_ACCESSIBILITY_PHRASE = UiPackageImpl.ELEMENT_CONTAINER__LOCALIZED_ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -457,13 +475,31 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PERSPECTIVE__TOOLTIP = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 2;
 
 	/**
+	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE__LOCALIZED_LABEL = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE__LOCALIZED_TOOLTIP = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 4;
+
+	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE__CONTEXT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 3;
+	public static final int PERSPECTIVE__CONTEXT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
@@ -472,7 +508,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE__VARIABLES = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 4;
+	public static final int PERSPECTIVE__VARIABLES = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' map.
@@ -481,7 +517,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE__PROPERTIES = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 5;
+	public static final int PERSPECTIVE__PROPERTIES = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Windows</b></em>' containment reference list.
@@ -490,7 +526,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE__WINDOWS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 6;
+	public static final int PERSPECTIVE__WINDOWS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 8;
 
 	/**
 	 * The number of structural features of the '<em>Perspective</em>' class.
@@ -499,34 +535,16 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 7;
+	public static final int PERSPECTIVE_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 9;
 
 	/**
-	 * The operation id for the '<em>Get Localized Accessibility Phrase</em>' operation.
+	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE___GET_LOCALIZED_ACCESSIBILITY_PHRASE = UiPackageImpl.ELEMENT_CONTAINER___GET_LOCALIZED_ACCESSIBILITY_PHRASE;
-
-	/**
-	 * The operation id for the '<em>Get Localized Label</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PERSPECTIVE___GET_LOCALIZED_LABEL = UiPackageImpl.ELEMENT_CONTAINER_OPERATION_COUNT + 0;
-
-	/**
-	 * The operation id for the '<em>Get Localized Tooltip</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PERSPECTIVE___GET_LOCALIZED_TOOLTIP = UiPackageImpl.ELEMENT_CONTAINER_OPERATION_COUNT + 1;
+	public static final int PERSPECTIVE___UPDATE_LOCALIZATION = UiPackageImpl.ELEMENT_CONTAINER___UPDATE_LOCALIZATION;
 
 	/**
 	 * The number of operations of the '<em>Perspective</em>' class.
@@ -535,7 +553,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE_OPERATION_COUNT = UiPackageImpl.ELEMENT_CONTAINER_OPERATION_COUNT + 2;
+	public static final int PERSPECTIVE_OPERATION_COUNT = UiPackageImpl.ELEMENT_CONTAINER_OPERATION_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveStackImpl <em>Perspective Stack</em>}' class.
@@ -683,6 +701,15 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PERSPECTIVE_STACK__ACCESSIBILITY_PHRASE = UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE;
 
 	/**
+	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE_STACK__LOCALIZED_ACCESSIBILITY_PHRASE = UiPackageImpl.UI_ELEMENT__LOCALIZED_ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -710,13 +737,13 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PERSPECTIVE_STACK_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The operation id for the '<em>Get Localized Accessibility Phrase</em>' operation.
+	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE_STACK___GET_LOCALIZED_ACCESSIBILITY_PHRASE = UiPackageImpl.UI_ELEMENT___GET_LOCALIZED_ACCESSIBILITY_PHRASE;
+	public static final int PERSPECTIVE_STACK___UPDATE_LOCALIZATION = UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION;
 
 	/**
 	 * The number of operations of the '<em>Perspective Stack</em>' class.
@@ -873,6 +900,15 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int AREA__ACCESSIBILITY_PHRASE = BasicPackageImpl.PART_SASH_CONTAINER__ACCESSIBILITY_PHRASE;
 
 	/**
+	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int AREA__LOCALIZED_ACCESSIBILITY_PHRASE = BasicPackageImpl.PART_SASH_CONTAINER__LOCALIZED_ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -927,40 +963,40 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int AREA__TOOLTIP = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 2;
 
 	/**
+	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int AREA__LOCALIZED_LABEL = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int AREA__LOCALIZED_TOOLTIP = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 4;
+
+	/**
 	 * The number of structural features of the '<em>Area</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int AREA_FEATURE_COUNT = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 3;
+	public static final int AREA_FEATURE_COUNT = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 5;
 
 	/**
-	 * The operation id for the '<em>Get Localized Accessibility Phrase</em>' operation.
+	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int AREA___GET_LOCALIZED_ACCESSIBILITY_PHRASE = BasicPackageImpl.PART_SASH_CONTAINER___GET_LOCALIZED_ACCESSIBILITY_PHRASE;
-
-	/**
-	 * The operation id for the '<em>Get Localized Label</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int AREA___GET_LOCALIZED_LABEL = BasicPackageImpl.PART_SASH_CONTAINER_OPERATION_COUNT + 0;
-
-	/**
-	 * The operation id for the '<em>Get Localized Tooltip</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int AREA___GET_LOCALIZED_TOOLTIP = BasicPackageImpl.PART_SASH_CONTAINER_OPERATION_COUNT + 1;
+	public static final int AREA___UPDATE_LOCALIZATION = BasicPackageImpl.PART_SASH_CONTAINER___UPDATE_LOCALIZATION;
 
 	/**
 	 * The number of operations of the '<em>Area</em>' class.
@@ -969,7 +1005,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int AREA_OPERATION_COUNT = BasicPackageImpl.PART_SASH_CONTAINER_OPERATION_COUNT + 2;
+	public static final int AREA_OPERATION_COUNT = BasicPackageImpl.PART_SASH_CONTAINER_OPERATION_COUNT + 0;
 
 	/**
 	 * <!-- begin-user-doc -->

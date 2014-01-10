@@ -31,13 +31,15 @@ package org.eclipse.e4.ui.model.application.ui;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalizedLabel <em>Localized Label</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalizedTooltip <em>Localized Tooltip</em>}</li>
  * </ul>
  * </p>
  *
  * @model interface="true" abstract="true"
  * @generated
  */
-public interface MUILabel {
+public interface MUILabel extends MLocalizable {
 	/**
 	 * Returns the value of the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -123,31 +125,23 @@ public interface MUILabel {
 	void setTooltip(String value);
 
 	/**
+	 * Returns the value of the '<em><b>Localized Label</b></em>' attribute.
+	 * The default value is <code>""</code>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * <p>
-	 * This is a method that will retrieve the internationalized label by using the current
-	 * value of the label itself and some translation service.
-	 * </p>
-	 * @since 1.0
-	 * <!-- end-model-doc -->
-	 * @model kind="operation"
+	 * @return the value of the '<em>Localized Label</em>' attribute.
+	 * @model default="" transient="true" changeable="false" volatile="true" derived="true"
 	 * @generated
 	 */
 	String getLocalizedLabel();
 
 	/**
+	 * Returns the value of the '<em><b>Localized Tooltip</b></em>' attribute.
+	 * The default value is <code>""</code>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * <p>
-	 * This is a method that will retrieve the internationalized tooltip by using the current
-	 * value of the label itself and some translation service.
-	 * </p>
-	 * @since 1.0
-	 * <!-- end-model-doc -->
-	 * @model kind="operation"
+	 * @return the value of the '<em>Localized Tooltip</em>' attribute.
+	 * @model default="" transient="true" changeable="false" volatile="true" derived="true"
 	 * @generated
 	 */
 	String getLocalizedTooltip();

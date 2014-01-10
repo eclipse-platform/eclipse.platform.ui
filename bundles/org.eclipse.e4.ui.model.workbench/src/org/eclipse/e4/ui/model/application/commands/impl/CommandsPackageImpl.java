@@ -33,7 +33,6 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EFactory;
-import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
@@ -452,31 +451,40 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int COMMAND__CATEGORY = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
+	 * The feature id for the '<em><b>Localized Command Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int COMMAND__LOCALIZED_COMMAND_NAME = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Localized Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int COMMAND__LOCALIZED_DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 5;
+
+	/**
 	 * The number of structural features of the '<em>Command</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int COMMAND_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+	public static final int COMMAND_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 6;
 
 	/**
-	 * The operation id for the '<em>Get Localized Command Name</em>' operation.
+	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int COMMAND___GET_LOCALIZED_COMMAND_NAME = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 0;
-
-	/**
-	 * The operation id for the '<em>Get Localized Description</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int COMMAND___GET_LOCALIZED_DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 1;
+	public static final int COMMAND___UPDATE_LOCALIZATION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
 	 * The number of operations of the '<em>Command</em>' class.
@@ -485,7 +493,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int COMMAND_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 2;
+	public static final int COMMAND_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.commands.impl.CommandParameterImpl <em>Command Parameter</em>}' class.
@@ -1026,31 +1034,40 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int CATEGORY__DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Localized Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CATEGORY__LOCALIZED_NAME = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Localized Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CATEGORY__LOCALIZED_DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
 	 * The number of structural features of the '<em>Category</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int CATEGORY_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+	public static final int CATEGORY_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 4;
 
 	/**
-	 * The operation id for the '<em>Get Localized Name</em>' operation.
+	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int CATEGORY___GET_LOCALIZED_NAME = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 0;
-
-	/**
-	 * The operation id for the '<em>Get Localized Description</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int CATEGORY___GET_LOCALIZED_DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 1;
+	public static final int CATEGORY___UPDATE_LOCALIZATION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
 	 * The number of operations of the '<em>Category</em>' class.
@@ -1059,7 +1076,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int CATEGORY_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 2;
+	public static final int CATEGORY_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 1;
 
 	/**
 	 * The meta object id for the '<em>Parameterized Command</em>' data type.
@@ -1464,28 +1481,30 @@ public class CommandsPackageImpl extends EPackageImpl {
 
 
 	/**
-	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.commands.MCommand#getLocalizedCommandName() <em>Get Localized Command Name</em>}' operation.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.commands.MCommand#getLocalizedCommandName <em>Localized Command Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Get Localized Command Name</em>' operation.
+	 * @return the meta object for the attribute '<em>Localized Command Name</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCommand#getLocalizedCommandName()
+	 * @see #getCommand()
 	 * @generated
 	 */
-	public EOperation getCommand__GetLocalizedCommandName() {
-		return commandEClass.getEOperations().get(0);
+	public EAttribute getCommand_LocalizedCommandName() {
+		return (EAttribute)commandEClass.getEStructuralFeatures().get(4);
 	}
 
 
 	/**
-	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.commands.MCommand#getLocalizedDescription() <em>Get Localized Description</em>}' operation.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.commands.MCommand#getLocalizedDescription <em>Localized Description</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Get Localized Description</em>' operation.
+	 * @return the meta object for the attribute '<em>Localized Description</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCommand#getLocalizedDescription()
+	 * @see #getCommand()
 	 * @generated
 	 */
-	public EOperation getCommand__GetLocalizedDescription() {
-		return commandEClass.getEOperations().get(1);
+	public EAttribute getCommand_LocalizedDescription() {
+		return (EAttribute)commandEClass.getEStructuralFeatures().get(5);
 	}
 
 
@@ -1733,28 +1752,30 @@ public class CommandsPackageImpl extends EPackageImpl {
 
 
 	/**
-	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.commands.MCategory#getLocalizedName() <em>Get Localized Name</em>}' operation.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.commands.MCategory#getLocalizedName <em>Localized Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Get Localized Name</em>' operation.
+	 * @return the meta object for the attribute '<em>Localized Name</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCategory#getLocalizedName()
+	 * @see #getCategory()
 	 * @generated
 	 */
-	public EOperation getCategory__GetLocalizedName() {
-		return categoryEClass.getEOperations().get(0);
+	public EAttribute getCategory_LocalizedName() {
+		return (EAttribute)categoryEClass.getEStructuralFeatures().get(2);
 	}
 
 
 	/**
-	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.commands.MCategory#getLocalizedDescription() <em>Get Localized Description</em>}' operation.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.commands.MCategory#getLocalizedDescription <em>Localized Description</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Get Localized Description</em>' operation.
+	 * @return the meta object for the attribute '<em>Localized Description</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCategory#getLocalizedDescription()
+	 * @see #getCategory()
 	 * @generated
 	 */
-	public EOperation getCategory__GetLocalizedDescription() {
-		return categoryEClass.getEOperations().get(1);
+	public EAttribute getCategory_LocalizedDescription() {
+		return (EAttribute)categoryEClass.getEStructuralFeatures().get(3);
 	}
 
 
@@ -1822,8 +1843,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 		createEAttribute(commandEClass, COMMAND__DESCRIPTION);
 		createEReference(commandEClass, COMMAND__PARAMETERS);
 		createEReference(commandEClass, COMMAND__CATEGORY);
-		createEOperation(commandEClass, COMMAND___GET_LOCALIZED_COMMAND_NAME);
-		createEOperation(commandEClass, COMMAND___GET_LOCALIZED_DESCRIPTION);
+		createEAttribute(commandEClass, COMMAND__LOCALIZED_COMMAND_NAME);
+		createEAttribute(commandEClass, COMMAND__LOCALIZED_DESCRIPTION);
 
 		commandParameterEClass = createEClass(COMMAND_PARAMETER);
 		createEAttribute(commandParameterEClass, COMMAND_PARAMETER__NAME);
@@ -1850,8 +1871,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 		categoryEClass = createEClass(CATEGORY);
 		createEAttribute(categoryEClass, CATEGORY__NAME);
 		createEAttribute(categoryEClass, CATEGORY__DESCRIPTION);
-		createEOperation(categoryEClass, CATEGORY___GET_LOCALIZED_NAME);
-		createEOperation(categoryEClass, CATEGORY___GET_LOCALIZED_DESCRIPTION);
+		createEAttribute(categoryEClass, CATEGORY__LOCALIZED_NAME);
+		createEAttribute(categoryEClass, CATEGORY__LOCALIZED_DESCRIPTION);
 
 		// Create data types
 		parameterizedCommandEDataType = createEDataType(PARAMETERIZED_COMMAND);
@@ -1882,6 +1903,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 
 		// Obtain other dependent packages
 		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
+		UiPackageImpl theUiPackage = (UiPackageImpl)EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
 
 		// Create type parameters
 
@@ -1891,12 +1913,14 @@ public class CommandsPackageImpl extends EPackageImpl {
 		bindingContextEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
 		bindingTableEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
 		commandEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
+		commandEClass.getESuperTypes().add(theUiPackage.getLocalizable());
 		commandParameterEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
 		handlerEClass.getESuperTypes().add(theApplicationPackage.getContribution());
 		keyBindingEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
 		keyBindingEClass.getESuperTypes().add(this.getKeySequence());
 		parameterEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
 		categoryEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
+		categoryEClass.getESuperTypes().add(theUiPackage.getLocalizable());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(bindingTableContainerEClass, MBindingTableContainer.class, "BindingTableContainer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -1920,10 +1944,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 		initEAttribute(getCommand_Description(), ecorePackage.getEString(), "description", null, 0, 1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getCommand_Parameters(), this.getCommandParameter(), null, "parameters", null, 0, -1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getCommand_Category(), this.getCategory(), null, "category", null, 0, 1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-
-		initEOperation(getCommand__GetLocalizedCommandName(), ecorePackage.getEString(), "getLocalizedCommandName", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
-
-		initEOperation(getCommand__GetLocalizedDescription(), ecorePackage.getEString(), "getLocalizedDescription", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getCommand_LocalizedCommandName(), ecorePackage.getEString(), "localizedCommandName", null, 0, 1, MCommand.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getCommand_LocalizedDescription(), ecorePackage.getEString(), "localizedDescription", null, 0, 1, MCommand.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(commandParameterEClass, MCommandParameter.class, "CommandParameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getCommandParameter_Name(), ecorePackage.getEString(), "name", null, 1, 1, MCommandParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -1950,10 +1972,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 		initEClass(categoryEClass, MCategory.class, "Category", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getCategory_Name(), ecorePackage.getEString(), "name", null, 1, 1, MCategory.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getCategory_Description(), ecorePackage.getEString(), "description", null, 0, 1, MCategory.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-
-		initEOperation(getCategory__GetLocalizedName(), ecorePackage.getEString(), "getLocalizedName", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
-
-		initEOperation(getCategory__GetLocalizedDescription(), ecorePackage.getEString(), "getLocalizedDescription", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getCategory_LocalizedName(), ecorePackage.getEString(), "localizedName", "", 0, 1, MCategory.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
+		initEAttribute(getCategory_LocalizedDescription(), ecorePackage.getEString(), "localizedDescription", null, 0, 1, MCategory.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		// Initialize data types
 		initEDataType(parameterizedCommandEDataType, ParameterizedCommand.class, "ParameterizedCommand", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -2119,20 +2139,20 @@ public class CommandsPackageImpl extends EPackageImpl {
 		public static final EReference COMMAND__CATEGORY = eINSTANCE.getCommand_Category();
 
 		/**
-		 * The meta object literal for the '<em><b>Get Localized Command Name</b></em>' operation.
+		 * The meta object literal for the '<em><b>Localized Command Name</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		public static final EOperation COMMAND___GET_LOCALIZED_COMMAND_NAME = eINSTANCE.getCommand__GetLocalizedCommandName();
+		public static final EAttribute COMMAND__LOCALIZED_COMMAND_NAME = eINSTANCE.getCommand_LocalizedCommandName();
 
 		/**
-		 * The meta object literal for the '<em><b>Get Localized Description</b></em>' operation.
+		 * The meta object literal for the '<em><b>Localized Description</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		public static final EOperation COMMAND___GET_LOCALIZED_DESCRIPTION = eINSTANCE.getCommand__GetLocalizedDescription();
+		public static final EAttribute COMMAND__LOCALIZED_DESCRIPTION = eINSTANCE.getCommand_LocalizedDescription();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.commands.impl.CommandParameterImpl <em>Command Parameter</em>}' class.
@@ -2301,20 +2321,20 @@ public class CommandsPackageImpl extends EPackageImpl {
 		public static final EAttribute CATEGORY__DESCRIPTION = eINSTANCE.getCategory_Description();
 
 		/**
-		 * The meta object literal for the '<em><b>Get Localized Name</b></em>' operation.
+		 * The meta object literal for the '<em><b>Localized Name</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		public static final EOperation CATEGORY___GET_LOCALIZED_NAME = eINSTANCE.getCategory__GetLocalizedName();
+		public static final EAttribute CATEGORY__LOCALIZED_NAME = eINSTANCE.getCategory_LocalizedName();
 
 		/**
-		 * The meta object literal for the '<em><b>Get Localized Description</b></em>' operation.
+		 * The meta object literal for the '<em><b>Localized Description</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		public static final EOperation CATEGORY___GET_LOCALIZED_DESCRIPTION = eINSTANCE.getCategory__GetLocalizedDescription();
+		public static final EAttribute CATEGORY__LOCALIZED_DESCRIPTION = eINSTANCE.getCategory_LocalizedDescription();
 
 		/**
 		 * The meta object literal for the '<em>Parameterized Command</em>' data type.

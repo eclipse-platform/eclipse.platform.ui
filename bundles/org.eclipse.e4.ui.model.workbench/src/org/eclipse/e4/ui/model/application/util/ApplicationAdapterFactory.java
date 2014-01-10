@@ -19,6 +19,7 @@ import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorConta
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
@@ -108,6 +109,10 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseStringToObjectMap(Map.Entry<String, Object> object) {
 				return createStringToObjectMapAdapter();
+			}
+			@Override
+			public Adapter caseLocalizable(MLocalizable object) {
+				return createLocalizableAdapter();
 			}
 			@Override
 			public Adapter caseUIElement(MUIElement object) {
@@ -254,6 +259,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createStringToObjectMapAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MLocalizable <em>Localizable</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.MLocalizable
+	 * @generated
+	 */
+	public Adapter createLocalizableAdapter() {
 		return null;
 	}
 

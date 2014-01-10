@@ -94,11 +94,13 @@ public class ToolItemRenderer extends SWTPartRenderer {
 
 			String attName = (String) event
 					.getProperty(UIEvents.EventTags.ATTNAME);
-			if (UIEvents.UILabel.LABEL.equals(attName)) {
+			if (UIEvents.UILabel.LABEL.equals(attName)
+					|| UIEvents.UILabel.LOCALIZED_LABEL.equals(attName)) {
 				setItemText(itemModel, toolItem);
 			} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
 				toolItem.setImage(getImage(itemModel));
-			} else if (UIEvents.UILabel.TOOLTIP.equals(attName)) {
+			} else if (UIEvents.UILabel.TOOLTIP.equals(attName)
+					|| UIEvents.UILabel.LOCALIZED_TOOLTIP.equals(attName)) {
 				toolItem.setToolTipText(getToolTipText(itemModel));
 				toolItem.setImage(getImage(itemModel));
 			}

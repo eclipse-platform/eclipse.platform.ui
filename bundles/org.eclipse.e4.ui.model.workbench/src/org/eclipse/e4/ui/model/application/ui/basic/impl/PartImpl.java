@@ -10,7 +10,6 @@
  */
 package org.eclipse.e4.ui.model.application.ui.basic.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +63,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getLocalizedLabel <em>Localized Label</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getLocalizedTooltip <em>Localized Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#isDirty <em>Dirty</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getBindingContexts <em>Binding Contexts</em>}</li>
@@ -71,6 +72,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getToolbar <em>Toolbar</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#isCloseable <em>Closeable</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getLocalizedDescription <em>Localized Description</em>}</li>
  * </ul>
  * </p>
  *
@@ -218,6 +220,26 @@ public class PartImpl extends UIElementImpl implements MPart {
 	protected String tooltip = TOOLTIP_EDEFAULT;
 
 	/**
+	 * The default value of the '{@link #getLocalizedLabel() <em>Localized Label</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedLabel()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_LABEL_EDEFAULT = ""; //$NON-NLS-1$
+
+	/**
+	 * The default value of the '{@link #getLocalizedTooltip() <em>Localized Tooltip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedTooltip()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_TOOLTIP_EDEFAULT = ""; //$NON-NLS-1$
+
+	/**
 	 * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -316,6 +338,16 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * @ordered
 	 */
 	protected String description = DESCRIPTION_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalizedDescription() <em>Localized Description</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedDescription()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_DESCRIPTION_EDEFAULT = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -640,6 +672,21 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 */
+	public void updateLocalization() {
+		if (eNotificationRequired()) {
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, BasicPackageImpl.PART__LOCALIZED_LABEL, null, getLocalizedLabel()));
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, BasicPackageImpl.PART__LOCALIZED_TOOLTIP, null, getLocalizedTooltip()));
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, BasicPackageImpl.PART__LOCALIZED_DESCRIPTION, null, getLocalizedDescription()));
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 */
 	public String getLocalizedLabel() {
 		return LocalizationHelper.getLocalizedLabel(this);		
 	}
@@ -697,6 +744,10 @@ public class PartImpl extends UIElementImpl implements MPart {
 				return getIconURI();
 			case BasicPackageImpl.PART__TOOLTIP:
 				return getTooltip();
+			case BasicPackageImpl.PART__LOCALIZED_LABEL:
+				return getLocalizedLabel();
+			case BasicPackageImpl.PART__LOCALIZED_TOOLTIP:
+				return getLocalizedTooltip();
 			case BasicPackageImpl.PART__HANDLERS:
 				return getHandlers();
 			case BasicPackageImpl.PART__DIRTY:
@@ -711,6 +762,8 @@ public class PartImpl extends UIElementImpl implements MPart {
 				return isCloseable();
 			case BasicPackageImpl.PART__DESCRIPTION:
 				return getDescription();
+			case BasicPackageImpl.PART__LOCALIZED_DESCRIPTION:
+				return getLocalizedDescription();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -858,6 +911,10 @@ public class PartImpl extends UIElementImpl implements MPart {
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case BasicPackageImpl.PART__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
+			case BasicPackageImpl.PART__LOCALIZED_LABEL:
+				return LOCALIZED_LABEL_EDEFAULT == null ? getLocalizedLabel() != null : !LOCALIZED_LABEL_EDEFAULT.equals(getLocalizedLabel());
+			case BasicPackageImpl.PART__LOCALIZED_TOOLTIP:
+				return LOCALIZED_TOOLTIP_EDEFAULT == null ? getLocalizedTooltip() != null : !LOCALIZED_TOOLTIP_EDEFAULT.equals(getLocalizedTooltip());
 			case BasicPackageImpl.PART__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
 			case BasicPackageImpl.PART__DIRTY:
@@ -872,6 +929,8 @@ public class PartImpl extends UIElementImpl implements MPart {
 				return closeable != CLOSEABLE_EDEFAULT;
 			case BasicPackageImpl.PART__DESCRIPTION:
 				return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
+			case BasicPackageImpl.PART__LOCALIZED_DESCRIPTION:
+				return LOCALIZED_DESCRIPTION_EDEFAULT == null ? getLocalizedDescription() != null : !LOCALIZED_DESCRIPTION_EDEFAULT.equals(getLocalizedDescription());
 		}
 		return super.eIsSet(featureID);
 	}
@@ -913,6 +972,8 @@ public class PartImpl extends UIElementImpl implements MPart {
 				case BasicPackageImpl.PART__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
 				case BasicPackageImpl.PART__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
 				case BasicPackageImpl.PART__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
+				case BasicPackageImpl.PART__LOCALIZED_LABEL: return UiPackageImpl.UI_LABEL__LOCALIZED_LABEL;
+				case BasicPackageImpl.PART__LOCALIZED_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -979,6 +1040,8 @@ public class PartImpl extends UIElementImpl implements MPart {
 				case UiPackageImpl.UI_LABEL__LABEL: return BasicPackageImpl.PART__LABEL;
 				case UiPackageImpl.UI_LABEL__ICON_URI: return BasicPackageImpl.PART__ICON_URI;
 				case UiPackageImpl.UI_LABEL__TOOLTIP: return BasicPackageImpl.PART__TOOLTIP;
+				case UiPackageImpl.UI_LABEL__LOCALIZED_LABEL: return BasicPackageImpl.PART__LOCALIZED_LABEL;
+				case UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP: return BasicPackageImpl.PART__LOCALIZED_TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -1006,81 +1069,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
-		if (baseClass == MPartSashContainerElement.class) {
-			switch (baseOperationID) {
-				default: return -1;
-			}
-		}
-		if (baseClass == MStackElement.class) {
-			switch (baseOperationID) {
-				default: return -1;
-			}
-		}
-		if (baseClass == MContribution.class) {
-			switch (baseOperationID) {
-				default: return -1;
-			}
-		}
-		if (baseClass == MContext.class) {
-			switch (baseOperationID) {
-				default: return -1;
-			}
-		}
-		if (baseClass == MUILabel.class) {
-			switch (baseOperationID) {
-				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_LABEL: return BasicPackageImpl.PART___GET_LOCALIZED_LABEL;
-				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_TOOLTIP: return BasicPackageImpl.PART___GET_LOCALIZED_TOOLTIP;
-				default: return -1;
-			}
-		}
-		if (baseClass == MHandlerContainer.class) {
-			switch (baseOperationID) {
-				default: return -1;
-			}
-		}
-		if (baseClass == MDirtyable.class) {
-			switch (baseOperationID) {
-				default: return -1;
-			}
-		}
-		if (baseClass == MBindings.class) {
-			switch (baseOperationID) {
-				default: return -1;
-			}
-		}
-		if (baseClass == MWindowElement.class) {
-			switch (baseOperationID) {
-				default: return -1;
-			}
-		}
-		return super.eDerivedOperationID(baseOperationID, baseClass);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
-		switch (operationID) {
-			case BasicPackageImpl.PART___GET_LOCALIZED_DESCRIPTION:
-				return getLocalizedDescription();
-			case BasicPackageImpl.PART___GET_LOCALIZED_LABEL:
-				return getLocalizedLabel();
-			case BasicPackageImpl.PART___GET_LOCALIZED_TOOLTIP:
-				return getLocalizedTooltip();
-		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

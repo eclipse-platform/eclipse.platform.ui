@@ -10,14 +10,12 @@
  */
 package org.eclipse.e4.ui.model.application.ui.advanced.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.PartSashContainerImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
@@ -31,6 +29,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getLocalizedLabel <em>Localized Label</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getLocalizedTooltip <em>Localized Tooltip</em>}</li>
  * </ul>
  * </p>
  *
@@ -96,6 +96,26 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	 * @ordered
 	 */
 	protected String tooltip = TOOLTIP_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalizedLabel() <em>Localized Label</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedLabel()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_LABEL_EDEFAULT = ""; //$NON-NLS-1$
+
+	/**
+	 * The default value of the '{@link #getLocalizedTooltip() <em>Localized Tooltip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedTooltip()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_TOOLTIP_EDEFAULT = ""; //$NON-NLS-1$
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -198,6 +218,19 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 */
+	public void updateLocalization() {
+		if (eNotificationRequired()) {
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, AdvancedPackageImpl.AREA__LOCALIZED_LABEL, null, getLocalizedLabel()));
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, AdvancedPackageImpl.AREA__LOCALIZED_TOOLTIP, null, getLocalizedTooltip()));
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
@@ -209,6 +242,10 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 				return getIconURI();
 			case AdvancedPackageImpl.AREA__TOOLTIP:
 				return getTooltip();
+			case AdvancedPackageImpl.AREA__LOCALIZED_LABEL:
+				return getLocalizedLabel();
+			case AdvancedPackageImpl.AREA__LOCALIZED_TOOLTIP:
+				return getLocalizedTooltip();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -269,6 +306,10 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case AdvancedPackageImpl.AREA__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
+			case AdvancedPackageImpl.AREA__LOCALIZED_LABEL:
+				return LOCALIZED_LABEL_EDEFAULT == null ? getLocalizedLabel() != null : !LOCALIZED_LABEL_EDEFAULT.equals(getLocalizedLabel());
+			case AdvancedPackageImpl.AREA__LOCALIZED_TOOLTIP:
+				return LOCALIZED_TOOLTIP_EDEFAULT == null ? getLocalizedTooltip() != null : !LOCALIZED_TOOLTIP_EDEFAULT.equals(getLocalizedTooltip());
 		}
 		return super.eIsSet(featureID);
 	}
@@ -285,6 +326,8 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 				case AdvancedPackageImpl.AREA__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
 				case AdvancedPackageImpl.AREA__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
 				case AdvancedPackageImpl.AREA__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
+				case AdvancedPackageImpl.AREA__LOCALIZED_LABEL: return UiPackageImpl.UI_LABEL__LOCALIZED_LABEL;
+				case AdvancedPackageImpl.AREA__LOCALIZED_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -303,43 +346,12 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 				case UiPackageImpl.UI_LABEL__LABEL: return AdvancedPackageImpl.AREA__LABEL;
 				case UiPackageImpl.UI_LABEL__ICON_URI: return AdvancedPackageImpl.AREA__ICON_URI;
 				case UiPackageImpl.UI_LABEL__TOOLTIP: return AdvancedPackageImpl.AREA__TOOLTIP;
+				case UiPackageImpl.UI_LABEL__LOCALIZED_LABEL: return AdvancedPackageImpl.AREA__LOCALIZED_LABEL;
+				case UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP: return AdvancedPackageImpl.AREA__LOCALIZED_TOOLTIP;
 				default: return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
-		if (baseClass == MUILabel.class) {
-			switch (baseOperationID) {
-				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_LABEL: return AdvancedPackageImpl.AREA___GET_LOCALIZED_LABEL;
-				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_TOOLTIP: return AdvancedPackageImpl.AREA___GET_LOCALIZED_TOOLTIP;
-				default: return -1;
-			}
-		}
-		return super.eDerivedOperationID(baseOperationID, baseClass);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
-		switch (operationID) {
-			case AdvancedPackageImpl.AREA___GET_LOCALIZED_LABEL:
-				return getLocalizedLabel();
-			case AdvancedPackageImpl.AREA___GET_LOCALIZED_TOOLTIP:
-				return getLocalizedTooltip();
-		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

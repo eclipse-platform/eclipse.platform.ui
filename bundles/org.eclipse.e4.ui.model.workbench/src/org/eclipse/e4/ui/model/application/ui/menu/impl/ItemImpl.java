@@ -10,7 +10,6 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl;
@@ -18,7 +17,6 @@ import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
@@ -32,6 +30,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl#getLocalizedLabel <em>Localized Label</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl#getLocalizedTooltip <em>Localized Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl#isSelected <em>Selected</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl#getType <em>Type</em>}</li>
@@ -100,6 +100,26 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 	 * @ordered
 	 */
 	protected String tooltip = TOOLTIP_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalizedLabel() <em>Localized Label</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedLabel()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_LABEL_EDEFAULT = ""; //$NON-NLS-1$
+
+	/**
+	 * The default value of the '{@link #getLocalizedTooltip() <em>Localized Tooltip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedTooltip()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_TOOLTIP_EDEFAULT = ""; //$NON-NLS-1$
 
 	/**
 	 * The default value of the '{@link #isEnabled() <em>Enabled</em>}' attribute.
@@ -310,6 +330,19 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 */
+	public void updateLocalization() {
+		if (eNotificationRequired()) {
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, MenuPackageImpl.ITEM__LOCALIZED_LABEL, null, getLocalizedLabel()));
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, MenuPackageImpl.ITEM__LOCALIZED_TOOLTIP, null, getLocalizedTooltip()));
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 */
 	public String getLocalizedLabel() {
 		return LocalizationHelper.getLocalizedLabel(this);
 	}
@@ -336,6 +369,10 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 				return getIconURI();
 			case MenuPackageImpl.ITEM__TOOLTIP:
 				return getTooltip();
+			case MenuPackageImpl.ITEM__LOCALIZED_LABEL:
+				return getLocalizedLabel();
+			case MenuPackageImpl.ITEM__LOCALIZED_TOOLTIP:
+				return getLocalizedTooltip();
 			case MenuPackageImpl.ITEM__ENABLED:
 				return isEnabled();
 			case MenuPackageImpl.ITEM__SELECTED:
@@ -420,6 +457,10 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case MenuPackageImpl.ITEM__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
+			case MenuPackageImpl.ITEM__LOCALIZED_LABEL:
+				return LOCALIZED_LABEL_EDEFAULT == null ? getLocalizedLabel() != null : !LOCALIZED_LABEL_EDEFAULT.equals(getLocalizedLabel());
+			case MenuPackageImpl.ITEM__LOCALIZED_TOOLTIP:
+				return LOCALIZED_TOOLTIP_EDEFAULT == null ? getLocalizedTooltip() != null : !LOCALIZED_TOOLTIP_EDEFAULT.equals(getLocalizedTooltip());
 			case MenuPackageImpl.ITEM__ENABLED:
 				return enabled != ENABLED_EDEFAULT;
 			case MenuPackageImpl.ITEM__SELECTED:
@@ -442,6 +483,8 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 				case MenuPackageImpl.ITEM__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
 				case MenuPackageImpl.ITEM__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
 				case MenuPackageImpl.ITEM__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
+				case MenuPackageImpl.ITEM__LOCALIZED_LABEL: return UiPackageImpl.UI_LABEL__LOCALIZED_LABEL;
+				case MenuPackageImpl.ITEM__LOCALIZED_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -460,43 +503,12 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 				case UiPackageImpl.UI_LABEL__LABEL: return MenuPackageImpl.ITEM__LABEL;
 				case UiPackageImpl.UI_LABEL__ICON_URI: return MenuPackageImpl.ITEM__ICON_URI;
 				case UiPackageImpl.UI_LABEL__TOOLTIP: return MenuPackageImpl.ITEM__TOOLTIP;
+				case UiPackageImpl.UI_LABEL__LOCALIZED_LABEL: return MenuPackageImpl.ITEM__LOCALIZED_LABEL;
+				case UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP: return MenuPackageImpl.ITEM__LOCALIZED_TOOLTIP;
 				default: return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
-		if (baseClass == MUILabel.class) {
-			switch (baseOperationID) {
-				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_LABEL: return MenuPackageImpl.ITEM___GET_LOCALIZED_LABEL;
-				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_TOOLTIP: return MenuPackageImpl.ITEM___GET_LOCALIZED_TOOLTIP;
-				default: return -1;
-			}
-		}
-		return super.eDerivedOperationID(baseOperationID, baseClass);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
-		switch (operationID) {
-			case MenuPackageImpl.ITEM___GET_LOCALIZED_LABEL:
-				return getLocalizedLabel();
-			case MenuPackageImpl.ITEM___GET_LOCALIZED_TOOLTIP:
-				return getLocalizedTooltip();
-		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

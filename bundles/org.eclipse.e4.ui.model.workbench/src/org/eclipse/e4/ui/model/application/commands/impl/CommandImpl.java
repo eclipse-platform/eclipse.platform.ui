@@ -18,6 +18,8 @@ import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
+import org.eclipse.e4.ui.model.application.ui.MLocalizable;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
@@ -39,6 +41,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getCategory <em>Category</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getLocalizedCommandName <em>Localized Command Name</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getLocalizedDescription <em>Localized Description</em>}</li>
  * </ul>
  * </p>
  *
@@ -104,6 +108,26 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	 * @ordered
 	 */
 	protected MCategory category;
+
+	/**
+	 * The default value of the '{@link #getLocalizedCommandName() <em>Localized Command Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedCommandName()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_COMMAND_NAME_EDEFAULT = null;
+
+	/**
+	 * The default value of the '{@link #getLocalizedDescription() <em>Localized Description</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalizedDescription()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCALIZED_DESCRIPTION_EDEFAULT = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -235,6 +259,19 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 */
+	public void updateLocalization() {
+		if (eNotificationRequired()) {
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, CommandsPackageImpl.COMMAND__LOCALIZED_COMMAND_NAME, null, getLocalizedCommandName()));
+			eNotify(new ENotificationImpl(
+					this, Notification.SET, CommandsPackageImpl.COMMAND__LOCALIZED_DESCRIPTION, null, getLocalizedDescription()));
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
@@ -263,6 +300,10 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 			case CommandsPackageImpl.COMMAND__CATEGORY:
 				if (resolve) return getCategory();
 				return basicGetCategory();
+			case CommandsPackageImpl.COMMAND__LOCALIZED_COMMAND_NAME:
+				return getLocalizedCommandName();
+			case CommandsPackageImpl.COMMAND__LOCALIZED_DESCRIPTION:
+				return getLocalizedDescription();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -333,6 +374,10 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 				return parameters != null && !parameters.isEmpty();
 			case CommandsPackageImpl.COMMAND__CATEGORY:
 				return category != null;
+			case CommandsPackageImpl.COMMAND__LOCALIZED_COMMAND_NAME:
+				return LOCALIZED_COMMAND_NAME_EDEFAULT == null ? getLocalizedCommandName() != null : !LOCALIZED_COMMAND_NAME_EDEFAULT.equals(getLocalizedCommandName());
+			case CommandsPackageImpl.COMMAND__LOCALIZED_DESCRIPTION:
+				return LOCALIZED_DESCRIPTION_EDEFAULT == null ? getLocalizedDescription() != null : !LOCALIZED_DESCRIPTION_EDEFAULT.equals(getLocalizedDescription());
 		}
 		return super.eIsSet(featureID);
 	}
@@ -343,12 +388,27 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	 * @generated
 	 */
 	@Override
+	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
+		if (baseClass == MLocalizable.class) {
+			switch (baseOperationID) {
+				case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION: return CommandsPackageImpl.COMMAND___UPDATE_LOCALIZATION;
+				default: return -1;
+			}
+		}
+		return super.eDerivedOperationID(baseOperationID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case CommandsPackageImpl.COMMAND___GET_LOCALIZED_COMMAND_NAME:
-				return getLocalizedCommandName();
-			case CommandsPackageImpl.COMMAND___GET_LOCALIZED_DESCRIPTION:
-				return getLocalizedDescription();
+			case CommandsPackageImpl.COMMAND___UPDATE_LOCALIZATION:
+				updateLocalization();
+				return null;
 		}
 		return super.eInvoke(operationID, arguments);
 	}

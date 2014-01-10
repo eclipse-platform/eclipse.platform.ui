@@ -344,6 +344,15 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION__ACCESSIBILITY_PHRASE = UiPackageImpl.ELEMENT_CONTAINER__ACCESSIBILITY_PHRASE;
 
 	/**
+	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int APPLICATION__LOCALIZED_ACCESSIBILITY_PHRASE = UiPackageImpl.ELEMENT_CONTAINER__LOCALIZED_ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -515,13 +524,13 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 16;
 
 	/**
-	 * The operation id for the '<em>Get Localized Accessibility Phrase</em>' operation.
+	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION___GET_LOCALIZED_ACCESSIBILITY_PHRASE = UiPackageImpl.ELEMENT_CONTAINER___GET_LOCALIZED_ACCESSIBILITY_PHRASE;
+	public static final int APPLICATION___UPDATE_LOCALIZATION = UiPackageImpl.ELEMENT_CONTAINER___UPDATE_LOCALIZATION;
 
 	/**
 	 * The number of operations of the '<em>Application</em>' class.

@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.model.application.commands;
 
 import java.util.List;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 
 /**
  * <!-- begin-user-doc -->
@@ -34,13 +35,15 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.MCommand#getDescription <em>Description</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.MCommand#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.MCommand#getCategory <em>Category</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.commands.MCommand#getLocalizedCommandName <em>Localized Command Name</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.commands.MCommand#getLocalizedDescription <em>Localized Description</em>}</li>
  * </ul>
  * </p>
  *
  * @model
  * @generated
  */
-public interface MCommand extends MApplicationElement {
+public interface MCommand extends MApplicationElement, MLocalizable {
 	/**
 	 * Returns the value of the '<em><b>Command Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -142,27 +145,21 @@ public interface MCommand extends MApplicationElement {
 	void setCategory(MCategory value);
 
 	/**
+	 * Returns the value of the '<em><b>Localized Command Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * <p>
-	 * This is a method that will return the translated name.
-	 * </p>
-	 * <!-- end-model-doc -->
-	 * @model kind="operation"
+	 * @return the value of the '<em>Localized Command Name</em>' attribute.
+	 * @model transient="true" changeable="false" volatile="true" derived="true"
 	 * @generated
 	 */
 	String getLocalizedCommandName();
 
 	/**
+	 * Returns the value of the '<em><b>Localized Description</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * <p>
-	 * This is a method that will return the translated description.
-	 * </p>
-	 * <!-- end-model-doc -->
-	 * @model kind="operation"
+	 * @return the value of the '<em>Localized Description</em>' attribute.
+	 * @model transient="true" changeable="false" volatile="true" derived="true"
 	 * @generated
 	 */
 	String getLocalizedDescription();
