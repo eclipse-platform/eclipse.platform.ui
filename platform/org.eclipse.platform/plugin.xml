@@ -108,6 +108,9 @@
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
             content="$nl$/intro/whatsnewExtensionContent3.xml"/>
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="$nl$/intro/migrateExtensionContent.xml"/>
    </extension>
 
 
