@@ -172,11 +172,11 @@ public class HandlerEditor extends AbstractComponentEditor {
 		}
 
 		// ------------------------------------------------------------
-		final Link lnk = new Link(parent, SWT.NONE);
+		final Link lnk;
 		{
 			final IContributionClassCreator c = getEditor().getContributionCreator(CommandsPackageImpl.Literals.HANDLER);
 			if (project != null && c != null) {
-
+				lnk = new Link(parent, SWT.NONE);
 				lnk.setText("<A>" + Messages.HandlerEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
 				lnk.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 				lnk.addSelectionListener(new SelectionAdapter() {
@@ -186,6 +186,7 @@ public class HandlerEditor extends AbstractComponentEditor {
 					}
 				});
 			} else {
+				lnk = null;
 				Label l = new Label(parent, SWT.NONE);
 				l.setText(Messages.HandlerEditor_ClassURI);
 				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -198,7 +199,9 @@ public class HandlerEditor extends AbstractComponentEditor {
 
 				@Override
 				public void modifyText(ModifyEvent e) {
-					lnk.setToolTipText(((Text) (e.getSource())).getText());
+					if (lnk != null) {
+						lnk.setToolTipText(((Text) (e.getSource())).getText());
+					}
 				}
 			});
 			Binding binding = context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(getMaster()), new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()), new UpdateValueStrategy());

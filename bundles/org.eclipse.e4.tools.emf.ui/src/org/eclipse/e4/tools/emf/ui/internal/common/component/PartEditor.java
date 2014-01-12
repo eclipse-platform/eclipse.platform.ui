@@ -220,11 +220,11 @@ public class PartEditor extends AbstractComponentEditor {
 		}
 
 		// ------------------------------------------------------------
-		final Link lnk = new Link(parent, SWT.NONE);
+		final Link lnk;
 		{
 			final IContributionClassCreator c = getEditor().getContributionCreator(BasicPackageImpl.Literals.PART);
 			if (project != null && c != null) {
-
+				lnk = new Link(parent, SWT.NONE);
 				lnk.setText("<A>" + Messages.PartEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
 				lnk.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 				lnk.addSelectionListener(new SelectionAdapter() {
@@ -236,7 +236,7 @@ public class PartEditor extends AbstractComponentEditor {
 			} else {
 				// Dispose the lnk widget, which is unused in this else branch
 				// and screws up the layout: see https://bugs.eclipse.org/421369
-				lnk.dispose();
+				lnk = null;
 
 				Label l = new Label(parent, SWT.NONE);
 				l.setText(Messages.PartEditor_ClassURI);
@@ -251,7 +251,7 @@ public class PartEditor extends AbstractComponentEditor {
 				@Override
 				public void modifyText(ModifyEvent e) {
 					// lnk might be disposed if else branch above taken
-					if (!lnk.isDisposed()) {
+					if (lnk != null) {
 						lnk.setToolTipText(((Text) (e.getSource())).getText());
 					}
 				}

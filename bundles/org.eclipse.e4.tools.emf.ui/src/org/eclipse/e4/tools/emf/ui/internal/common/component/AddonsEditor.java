@@ -147,12 +147,12 @@ public class AddonsEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
-		final Link lnk = new Link(parent, SWT.NONE);
+		final Link lnk;
 		// ------------------------------------------------------------
 		{
 			final IContributionClassCreator c = getEditor().getContributionCreator(ApplicationPackageImpl.Literals.ADDON);
 			if (project != null && c != null) {
-
+				lnk = new Link(parent, SWT.NONE);
 				lnk.setText("<A>" + Messages.PartEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
 				lnk.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 				lnk.addSelectionListener(new SelectionAdapter() {
@@ -162,6 +162,7 @@ public class AddonsEditor extends AbstractComponentEditor {
 					}
 				});
 			} else {
+				lnk = null;
 				Label l = new Label(parent, SWT.NONE);
 				l.setText(Messages.AddonsEditor_ClassURI);
 				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -174,7 +175,9 @@ public class AddonsEditor extends AbstractComponentEditor {
 
 				@Override
 				public void modifyText(ModifyEvent e) {
-					lnk.setToolTipText(((Text) (e.getSource())).getText());
+					if (lnk != null) {
+						lnk.setToolTipText(((Text) (e.getSource())).getText());
+					}
 				}
 			});
 			Binding binding = context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(getMaster()), new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()), new UpdateValueStrategy());

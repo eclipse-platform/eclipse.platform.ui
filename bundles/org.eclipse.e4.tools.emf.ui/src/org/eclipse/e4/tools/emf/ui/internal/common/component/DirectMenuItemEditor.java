@@ -116,11 +116,11 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		// ------------------------------------------------------------
-		final Link lnk = new Link(parent, SWT.NONE);
+		final Link lnk;
 		{
 			final IContributionClassCreator c = getEditor().getContributionCreator(MenuPackageImpl.Literals.DIRECT_MENU_ITEM);
 			if (project != null && c != null) {
-
+				lnk = new Link(parent, SWT.NONE);
 				lnk.setText("<A>" + Messages.DirectMenuItemEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
 				lnk.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 				lnk.addSelectionListener(new SelectionAdapter() {
@@ -130,6 +130,7 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 					}
 				});
 			} else {
+				lnk = null;
 				Label l = new Label(parent, SWT.NONE);
 				l.setText(Messages.DirectMenuItemEditor_ClassURI);
 				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -142,7 +143,9 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 
 				@Override
 				public void modifyText(ModifyEvent e) {
-					lnk.setToolTipText(((Text) (e.getSource())).getText());
+					if (lnk != null) {
+						lnk.setToolTipText(((Text) (e.getSource())).getText());
+					}
 				}
 			});
 			Binding binding = context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master), new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()), new UpdateValueStrategy());
