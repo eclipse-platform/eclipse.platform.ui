@@ -1969,6 +1969,10 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
+            commandId="org.eclipse.ui.window.splitEditor"
+            class="org.eclipse.ui.internal.SplitHandler">
+      </handler>
+      <handler
             class="org.eclipse.ui.internal.ActivateEditorHandler"
             commandId="org.eclipse.ui.window.activateEditor">
          <enabledWhen>
