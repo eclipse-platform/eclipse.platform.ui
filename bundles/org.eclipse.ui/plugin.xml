@@ -1052,7 +1052,7 @@
             <commandParameter
                   id="Splitter.isHorizontal"
                   name="%command.splitEditor.orientation.name"
-                  optional="true"
+                  optional="false"
                   values="org.eclipse.ui.internal.SplitValues">
             </commandParameter>
       </command>
