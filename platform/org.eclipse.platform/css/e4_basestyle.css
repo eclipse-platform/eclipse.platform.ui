@@ -1,14 +1,14 @@
 .MTrimmedWindow.topLevel {
 	margin-top: 3px;
-    	margin-bottom: 3px;
-    	margin-left: 3px;
-    	margin-right: 3px;
+	margin-bottom: 3px;
+	margin-left: 3px;
+	margin-right: 3px;
 }
 
 .MPartStack {
-    swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
-    swt-unselected-tabs-color: #FFFFFF #FFFFFF #FFFFFF 100% 100%;
-    swt-outer-keyline-color: #FFFFFF;
+	swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
+	swt-unselected-tabs-color: #FFFFFF #FFFFFF #FFFFFF 100% 100%;
+	swt-outer-keyline-color: #FFFFFF;
 	swt-inner-keyline-color: #FFFFFF;
 	padding: 0px 2px 2px;
 	swt-tab-outline: #B6BCCC;
@@ -41,11 +41,11 @@
 }
 
 .DragFeedback {
-    background-color: COLOR-WIDGET-NORMAL-SHADOW;
+	background-color: COLOR-WIDGET-NORMAL-SHADOW;
 }
 
 .ModifiedDragFeedback {
-    background-color: #A0A000; 
+	background-color: #A0A000; 
 }
 
 CTabItem {

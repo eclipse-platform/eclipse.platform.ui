@@ -2,7 +2,7 @@
 @import url("e4_basestyle.css");
 
 .MTrimmedWindow { 
-    background-color: #E2E2E2; 
+	background-color: #E2E2E2; 
 }
 
 .MPartStack {
@@ -12,11 +12,11 @@
 }
 
 .MTrimBar {
-    background-color: #E2E2E2; 
+	background-color: #E2E2E2; 
 }
 
 .MTrimBar#org-eclipse-ui-main-toolbar  {
-    background-color: COLOR-WIDGET-BACKGROUND #E2E2E2 100%;
+	background-color: COLOR-WIDGET-BACKGROUND #E2E2E2 100%;
 }
 
 .MToolControl.TrimStack {
@@ -26,8 +26,8 @@
 
 .MPartStack.active {
 	swt-unselected-tabs-color: #DCDCDC #E1E1E1 #FFFFFF 100% 100%;
-    swt-outer-keyline-color: #B4B4B4;
-    swt-tab-outline: #B4B4B4;
+	swt-outer-keyline-color: #B4B4B4;
+	swt-tab-outline: #B4B4B4;
 }
 
 #PerspectiveSwitcher { 
@@ -36,21 +36,21 @@
 }
 
 #org-eclipse-ui-editorss {
-   swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
-   swt-unselected-tabs-color: #F0F0F0 #F0F0F0 #F0F0F0 100% 100%;
-   swt-outer-keyline-color: #B4B4B4;
-   swt-inner-keyline-color: #F0F0F0;
-   swt-tab-outline: #F0F0F0;
-   color: #F0F0F0;
-   swt-tab-height: 8px;
-   padding: 0px 5px 7px;
+	swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
+	swt-unselected-tabs-color: #F0F0F0 #F0F0F0 #F0F0F0 100% 100%;
+	swt-outer-keyline-color: #B4B4B4;
+	swt-inner-keyline-color: #F0F0F0;
+	swt-tab-outline: #F0F0F0;
+	color: #F0F0F0;
+	swt-tab-height: 8px;
+	padding: 0px 5px 7px;
 }
 
 CTabFolder.MArea .MPartStack, CTabFolder.MArea .MPartStack.active {
-   swt-shadow-visible: false;
+	swt-shadow-visible: false;
 }
 
 CTabFolder Canvas {
-  background-color: #F8F8F8;
+	background-color: #F8F8F8;
 }
 
