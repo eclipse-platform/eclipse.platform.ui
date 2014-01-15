@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.e4.ui.workbench" version="2">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.e4.ui.workbench" version="2">
     <resource path="META-INF/MANIFEST.MF">
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="923795461">
             <message_arguments>
@@ -18,6 +19,114 @@
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Application"/>
                 <message_argument value="TOPIC_DIALOGS"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Category">
+        <filter comment="Bug 423991 - Add support for Locale changes at runtime to the Application Model" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Category"/>
+                <message_argument value="LOCALIZED_NAME"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 423991 - Add support for Locale changes at runtime to the Application Model" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Category"/>
+                <message_argument value="TOPIC_LOCALIZED_NAME"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Command">
+        <filter comment="Bug 423991 - Add support for Locale changes at runtime to the Application Model" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Command"/>
+                <message_argument value="LOCALIZED_COMMANDNAME"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 423991 - Add support for Locale changes at runtime to the Application Model" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Command"/>
+                <message_argument value="LOCALIZED_DESCRIPTION"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 423991 - Add support for Locale changes at runtime to the Application Model" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Command"/>
+                <message_argument value="TOPIC_LOCALIZED_COMMANDNAME"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 423991 - Add support for Locale changes at runtime to the Application Model" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Command"/>
+                <message_argument value="TOPIC_LOCALIZED_DESCRIPTION"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Part">
+        <filter comment="Bug 423991 - Add support for Locale changes at runtime to the Application Model" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Part"/>
+                <message_argument value="LOCALIZED_DESCRIPTION"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 423991 - Add support for Locale changes at runtime to the Application Model" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Part"/>
+                <message_argument value="TOPIC_LOCALIZED_DESCRIPTION"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$PartDescriptor">
+        <filter comment="Bug 423991 - Add support for Locale changes at runtime to the Application Model" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.PartDescriptor"/>
+                <message_argument value="LOCALIZED_DESCRIPTION"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 423991 - Add support for Locale changes at runtime to the Application Model" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.PartDescriptor"/>
+                <message_argument value="TOPIC_LOCALIZED_DESCRIPTION"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$UIElement">
+        <filter comment="Bug 423991 - Add support for Locale changes at runtime to the Application Model" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.UIElement"/>
+                <message_argument value="LOCALIZED_ACCESSIBILITYPHRASE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 423991 - Add support for Locale changes at runtime to the Application Model" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.UIElement"/>
+                <message_argument value="TOPIC_LOCALIZED_ACCESSIBILITYPHRASE"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$UILabel">
+        <filter comment="Bug 423991 - Add support for Locale changes at runtime to the Application Model" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.UILabel"/>
+                <message_argument value="LOCALIZED_LABEL"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 423991 - Add support for Locale changes at runtime to the Application Model" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.UILabel"/>
+                <message_argument value="LOCALIZED_TOOLTIP"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 423991 - Add support for Locale changes at runtime to the Application Model" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.UILabel"/>
+                <message_argument value="TOPIC_LOCALIZED_LABEL"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 423991 - Add support for Locale changes at runtime to the Application Model" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.UILabel"/>
+                <message_argument value="TOPIC_LOCALIZED_TOOLTIP"/>
             </message_arguments>
         </filter>
     </resource>

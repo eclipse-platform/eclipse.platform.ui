@@ -14,6 +14,7 @@ import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MInput;
+import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
@@ -105,6 +106,8 @@ public class TestSwitch<T1> extends Switch<T1> {
 			if (result == null)
 				result = caseApplicationElement(testHarness);
 			if (result == null)
+				result = caseLocalizable(testHarness);
+			if (result == null)
 				result = defaultCase(theEObject);
 			return result;
 		}
@@ -144,6 +147,23 @@ public class TestSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseApplicationElement(MApplicationElement object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '
+	 * <em>Localizable</em>'. <!-- begin-user-doc --> This implementation
+	 * returns null; returning a non-null result will terminate the switch. <!--
+	 * end-user-doc -->
+	 * 
+	 * @param object
+	 *            the target of the switch.
+	 * @return the result of interpreting the object as an instance of '
+	 *         <em>Localizable</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseLocalizable(MLocalizable object) {
 		return null;
 	}
 

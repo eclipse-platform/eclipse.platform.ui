@@ -144,13 +144,31 @@ public interface MTestPackage extends EPackage {
 	int TEST_HARNESS__CATEGORY = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
+	 * The feature id for the '<em><b>Localized Command Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__LOCALIZED_COMMAND_NAME = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Localized Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__LOCALIZED_DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 5;
+
+	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
 	 * 
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__CONTEXT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+	int TEST_HARNESS__CONTEXT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list. <!--
@@ -159,7 +177,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__VARIABLES = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 5;
+	int TEST_HARNESS__VARIABLES = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' map. <!--
@@ -168,7 +186,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__PROPERTIES = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 6;
+	int TEST_HARNESS__PROPERTIES = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute. <!--
@@ -177,7 +195,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__CONTRIBUTION_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 7;
+	int TEST_HARNESS__CONTRIBUTION_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Object</b></em>' attribute. <!--
@@ -186,7 +204,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__OBJECT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 8;
+	int TEST_HARNESS__OBJECT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute. <!--
@@ -195,7 +213,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__WIDGET = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 9;
+	int TEST_HARNESS__WIDGET = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute. <!--
@@ -204,7 +222,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__RENDERER = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 10;
+	int TEST_HARNESS__RENDERER = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute. <!--
@@ -213,7 +231,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__TO_BE_RENDERED = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 11;
+	int TEST_HARNESS__TO_BE_RENDERED = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 13;
 
 	/**
 	 * The feature id for the '<em><b>On Top</b></em>' attribute. <!--
@@ -222,7 +240,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__ON_TOP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 12;
+	int TEST_HARNESS__ON_TOP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 14;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute. <!--
@@ -231,7 +249,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__VISIBLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 13;
+	int TEST_HARNESS__VISIBLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 15;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference. <!--
@@ -240,7 +258,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__PARENT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 14;
+	int TEST_HARNESS__PARENT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 16;
 
 	/**
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute. <!--
@@ -249,7 +267,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__CONTAINER_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 15;
+	int TEST_HARNESS__CONTAINER_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 17;
 
 	/**
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
@@ -258,7 +276,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__CUR_SHARED_REF = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 16;
+	int TEST_HARNESS__CUR_SHARED_REF = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 18;
 
 	/**
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
@@ -267,7 +285,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__VISIBLE_WHEN = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 17;
+	int TEST_HARNESS__VISIBLE_WHEN = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 19;
 
 	/**
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
@@ -276,7 +294,16 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__ACCESSIBILITY_PHRASE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 18;
+	int TEST_HARNESS__ACCESSIBILITY_PHRASE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 20;
+
+	/**
+	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__LOCALIZED_ACCESSIBILITY_PHRASE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 21;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -284,7 +311,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__CHILDREN = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 19;
+	int TEST_HARNESS__CHILDREN = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 22;
 
 	/**
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference. <!--
@@ -293,7 +320,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__SELECTED_ELEMENT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 20;
+	int TEST_HARNESS__SELECTED_ELEMENT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 23;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute. <!--
@@ -302,7 +329,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__NAME = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 21;
+	int TEST_HARNESS__NAME = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 24;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute. <!--
@@ -311,7 +338,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__VALUE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 22;
+	int TEST_HARNESS__VALUE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 25;
 
 	/**
 	 * The feature id for the '<em><b>Input URI</b></em>' attribute. <!--
@@ -320,7 +347,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__INPUT_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 23;
+	int TEST_HARNESS__INPUT_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 26;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute. <!--
@@ -329,7 +356,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__LABEL = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 24;
+	int TEST_HARNESS__LABEL = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 27;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute. <!--
@@ -338,7 +365,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__ICON_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 25;
+	int TEST_HARNESS__ICON_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 28;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute. <!--
@@ -347,7 +374,25 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 26;
+	int TEST_HARNESS__TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 29;
+
+	/**
+	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__LOCALIZED_LABEL = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 30;
+
+	/**
+	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__LOCALIZED_TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 31;
 
 	/**
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute. <!--
@@ -356,7 +401,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__DIRTY = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 27;
+	int TEST_HARNESS__DIRTY = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 32;
 
 	/**
 	 * The feature id for the '<em><b>Snippets</b></em>' containment reference list.
@@ -365,7 +410,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__SNIPPETS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 28;
+	int TEST_HARNESS__SNIPPETS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 33;
 
 	/**
 	 * The number of structural features of the '<em>Harness</em>' class. <!--
@@ -374,52 +419,16 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 29;
+	int TEST_HARNESS_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 34;
 
 	/**
-	 * The operation id for the '<em>Get Localized Command Name</em>' operation.
+	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS___GET_LOCALIZED_COMMAND_NAME = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 0;
-
-	/**
-	 * The operation id for the '<em>Get Localized Description</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TEST_HARNESS___GET_LOCALIZED_DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 1;
-
-	/**
-	 * The operation id for the '<em>Get Localized Accessibility Phrase</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TEST_HARNESS___GET_LOCALIZED_ACCESSIBILITY_PHRASE = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 2;
-
-	/**
-	 * The operation id for the '<em>Get Localized Label</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TEST_HARNESS___GET_LOCALIZED_LABEL = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 3;
-
-	/**
-	 * The operation id for the '<em>Get Localized Tooltip</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TEST_HARNESS___GET_LOCALIZED_TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 4;
+	int TEST_HARNESS___UPDATE_LOCALIZATION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
 	 * The number of operations of the '<em>Harness</em>' class.
@@ -428,7 +437,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 5;
+	int TEST_HARNESS_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 1;
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.tests.model.test.MTestHarness <em>Harness</em>}'.
