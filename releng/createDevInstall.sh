@@ -16,6 +16,13 @@ org.apache.commons.jxpath/1.3.0.v200911051830,\
 org.apache.batik.xml/1.7.0.v201011041433,\
 org.dojotoolkit/1.6.1.v201108161253,\
 org.json/1.0.0.v201011060100,\
+org.easymock/2.4.0.v20090202-0900,\
+org.mockito/1.8.4.v201303031500,\
+org.hamcrest/1.1.0.v20090501071000,\
+org.hamcrest.integration/1.1.0.v201303031500,\
+org.hamcrest.library/1.1.0.v20090501071000,\
+org.hamcrest.text/1.1.0.v20090501071000,\
+org.objenesis/1.0.0.v201105211943,\
 org.eclipse.nebula.widgets.gallery.feature.feature.group,\
 org.eclipse.egit.feature.group,\
 org.eclipse.egit.source.feature.group,\
