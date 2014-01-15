@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2012 IBM Corporation and others.
+ *  Copyright (c) 2003, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -827,6 +827,56 @@ public class JobTest extends AbstractJobTest {
 		//finally canceling the job will cause the join to return
 		longJob.cancel();
 		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
+	}
+
+	public void testJoinInterruptNonUIThread() throws InterruptedException {
+		final Job job = new TestJob("job", 1000, 100);
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				job.schedule();
+				try {
+					job.join();
+				} catch (InterruptedException e) {
+					job.cancel();
+				}
+			}
+		});
+		t.start();
+		// make sure the job is running before we interrupt the thread
+		waitForState(job, Job.RUNNING);
+		t.interrupt();
+		job.join();
+		assertTrue("Thread not interrupted", job.getResult() == Status.CANCEL_STATUS);
+	}
+
+	public void testJoinInterruptUIThread() throws InterruptedException {
+		final Job job = new TestJob("job", 1000, 100);
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				job.schedule();
+				try {
+					job.join();
+				} catch (InterruptedException e) {
+					job.cancel();
+				}
+			}
+		});
+		try {
+			Job.getJobManager().setLockListener(new LockListener() {
+				public boolean canBlock() {
+					// pretend to be the UI thread
+					return false;
+				}
+			});
+			t.start();
+			// make sure the job is running before we interrupt the thread
+			waitForState(job, Job.RUNNING);
+			t.interrupt();
+			job.join();
+			assertTrue("Thread interrupted", job.getResult() == Status.OK_STATUS);
+		} finally {
+			Job.getJobManager().setLockListener(null);
+		}
 	}
 
 	/**

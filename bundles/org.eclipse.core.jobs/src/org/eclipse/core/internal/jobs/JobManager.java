@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -814,7 +814,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#job(org.eclipse.core.runtime.jobs.Job)
 	 */
-	protected void join(InternalJob job) {
+	protected void join(InternalJob job) throws InterruptedException {
 		final IJobChangeListener listener;
 		final Semaphore barrier;
 		synchronized (lock) {
@@ -840,6 +840,7 @@ public class JobManager implements IJobManager {
 		}
 		//wait until listener notifies this thread.
 		try {
+			boolean canBlock = lockManager.canBlock();
 			while (true) {
 				//notify hook to service pending syncExecs before falling asleep
 				lockManager.aboutToWait(job.getThread());
@@ -847,7 +848,10 @@ public class JobManager implements IJobManager {
 					if (barrier.acquire(Long.MAX_VALUE))
 						break;
 				} catch (InterruptedException e) {
-					//loop and keep trying
+					// if non-UI thread, re-throw the exception
+					if (canBlock)
+						throw e;
+					// if UI thread, loop and keep trying
 				}
 			}
 		} finally {
