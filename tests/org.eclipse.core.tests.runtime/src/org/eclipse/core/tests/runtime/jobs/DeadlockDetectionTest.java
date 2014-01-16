@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,7 @@ public class DeadlockDetectionTest extends TestCase {
 	 */
 	private void createRunnables(ILock[] locks, int n, ArrayList allRunnables, boolean cond) {
 		for (int i = 0; i < n; i++) {
-			allRunnables.add(new RandomTestRunnable(locks, "# " + (allRunnables.size() + 1), cond));
+			allRunnables.add(new RandomTestRunnable(locks, getName() + " # " + (allRunnables.size() + 1), cond));
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
