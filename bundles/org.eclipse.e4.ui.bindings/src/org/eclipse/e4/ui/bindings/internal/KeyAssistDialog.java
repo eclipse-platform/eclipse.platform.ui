@@ -463,6 +463,8 @@ public class KeyAssistDialog extends PopupDialog {
 			return Window.OK;
 		}
 		create();
+		// Bug 412001. Stop ShellActivationListener from creating a context for this.
+		getShell().setData("org.eclipse.e4.ui.ignoreDialog", Boolean.TRUE); //$NON-NLS-1$
 
 		// Configure the size and location.
 		Point size = configureSize();
