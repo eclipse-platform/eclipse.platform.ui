@@ -24,6 +24,7 @@ public class ResourceProvider extends BasicResourceProvider {
 	public static final String IMG_Command = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.Command"; //$NON-NLS-1$
 	public static final String IMG_CommandParameter = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.CommandParameter"; //$NON-NLS-1$
 	public static final String IMG_CoreExpression = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.CoreExpression"; //$NON-NLS-1$
+	public static final String IMG_Dialog = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.Dialog"; //$NON-NLS-1$
 	public static final String IMG_DirectMenuItem = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.DirectMenuItem"; //$NON-NLS-1$
 	public static final String IMG_DirectToolItem = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.DirectToolItem"; //$NON-NLS-1$
 	public static final String IMG_HandledMenuItem = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.HandledMenuItem"; //$NON-NLS-1$
@@ -53,6 +54,7 @@ public class ResourceProvider extends BasicResourceProvider {
 	public static final String IMG_TrimContribution = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.TrimContribution"; //$NON-NLS-1$
 	public static final String IMG_Window = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.Window"; //$NON-NLS-1$
 	public static final String IMG_WindowTrim = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.WindowTrim"; //$NON-NLS-1$
+	public static final String IMG_WizardDialog = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.WizardDialog"; //$NON-NLS-1$
 
 	public static final String IMG_Tbr_Addons = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.Addons"; //$NON-NLS-1$
 	public static final String IMG_Tbr_Application = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.Application"; //$NON-NLS-1$
@@ -61,6 +63,7 @@ public class ResourceProvider extends BasicResourceProvider {
 	public static final String IMG_Tbr_BindingContext = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.BindingContext"; //$NON-NLS-1$
 	public static final String IMG_Tbr_BindingTable = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.BindingTable"; //$NON-NLS-1$
 	public static final String IMG_Tbr_CommandParameter = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.CommandParameter"; //$NON-NLS-1$
+	public static final String IMG_Tbr_Dialog = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.Dialog"; //$NON-NLS-1$
 	public static final String IMG_Tbr_DirectMenuItem = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.DirectMenuItem"; //$NON-NLS-1$
 	public static final String IMG_Tbr_DirectToolItem = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.DirectToolItem"; //$NON-NLS-1$
 	public static final String IMG_Tbr_HandledMenuItem = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.HandledMenuItem"; //$NON-NLS-1$
@@ -88,6 +91,7 @@ public class ResourceProvider extends BasicResourceProvider {
 	public static final String IMG_Tbr_TrimContribution = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.TrimContribution"; //$NON-NLS-1$
 	public static final String IMG_Tbr_Window = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.Window"; //$NON-NLS-1$
 	public static final String IMG_Tbr_WindowTrim = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.WindowTrim"; //$NON-NLS-1$
+	public static final String IMG_Tbr_WizardDialog = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.WizardDialog"; //$NON-NLS-1$
 
 	public static final String IMG_Obj16_arrow_down = "IMG_org.eclipse.e4.tools.emf.ui.obj16.arrow_down"; //$NON-NLS-1$
 	public static final String IMG_Obj16_arrow_up = "IMG_org.eclipse.e4.tools.emf.ui.obj16.arrow_up"; //$NON-NLS-1$

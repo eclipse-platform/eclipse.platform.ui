@@ -419,9 +419,13 @@ public class WindowEditor extends AbstractComponentEditor {
 
 		MWindow window = (MWindow) element;
 		if (window.getMainMenu() == null) {
-			actions.add(addMainMenu);
+			actions.add(getActionAddMainMenu());
 		}
 
 		return actions;
+	}
+
+	protected Action getActionAddMainMenu() {
+		return addMainMenu;
 	}
 }

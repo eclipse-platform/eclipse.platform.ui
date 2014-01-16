@@ -12,8 +12,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
-import org.eclipse.jface.viewers.AbstractTreeViewer;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -75,6 +73,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.CommandEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.CommandParameterEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.CoreExpressionEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DefaultEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.DialogEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DirectMenuItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DirectToolItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DynamicMenuContributionEditor;
@@ -108,6 +107,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.TrimBarEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.TrimContributionEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.TrimmedWindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.WizardDialogEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationAddons;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationCategoriesEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationWindowEditor;
@@ -195,6 +195,7 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.VerticalRuler;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -1203,6 +1204,8 @@ public class ModelEditor {
 		registerEditor(BasicPackageImpl.Literals.PART_STACK, ContextInjectionFactory.make(PartStackEditor.class, context));
 		registerEditor(BasicPackageImpl.Literals.INPUT_PART, ContextInjectionFactory.make(InputPartEditor.class, context));
 		registerEditor(BasicPackageImpl.Literals.TRIM_BAR, ContextInjectionFactory.make(TrimBarEditor.class, context));
+		registerEditor(BasicPackageImpl.Literals.DIALOG, ContextInjectionFactory.make(DialogEditor.class, context));
+		registerEditor(BasicPackageImpl.Literals.WIZARD_DIALOG, ContextInjectionFactory.make(WizardDialogEditor.class, context));
 
 		registerEditor(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR, ContextInjectionFactory.make(PartDescriptorEditor.class, context));
 

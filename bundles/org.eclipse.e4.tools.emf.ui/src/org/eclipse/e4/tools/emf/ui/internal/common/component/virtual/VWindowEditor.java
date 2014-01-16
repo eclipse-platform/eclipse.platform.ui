@@ -65,6 +65,12 @@ public abstract class VWindowEditor extends AbstractComponentEditor {
 
 	@PostConstruct
 	void init() {
+		actions.add(new Action(Messages.VWindowEditor_AddDialog, createImageDescriptor(ResourceProvider.IMG_Dialog)) {
+			@Override
+			public void run() {
+				handleAdd(BasicPackageImpl.Literals.DIALOG);
+			}
+		});
 		actions.add(new Action(Messages.VWindowEditor_AddTrimmedWindow, createImageDescriptor(ResourceProvider.IMG_Window)) {
 			@Override
 			public void run() {
@@ -75,6 +81,12 @@ public abstract class VWindowEditor extends AbstractComponentEditor {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.WINDOW);
+			}
+		});
+		actions.add(new Action(Messages.VWindowEditor_AddWizardDialog, createImageDescriptor(ResourceProvider.IMG_WizardDialog)) {
+			@Override
+			public void run() {
+				handleAdd(BasicPackageImpl.Literals.WIZARD_DIALOG);
 			}
 		});
 	}
@@ -139,7 +151,7 @@ public abstract class VWindowEditor extends AbstractComponentEditor {
 				return eclass.getName();
 			}
 		});
-		childrenDropDown.setInput(new EClass[] { BasicPackageImpl.Literals.TRIMMED_WINDOW, BasicPackageImpl.Literals.WINDOW });
+		childrenDropDown.setInput(new EClass[] { BasicPackageImpl.Literals.DIALOG, BasicPackageImpl.Literals.TRIMMED_WINDOW, BasicPackageImpl.Literals.WINDOW, BasicPackageImpl.Literals.WIZARD_DIALOG });
 		childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.TRIMMED_WINDOW));
 
 		Button b = new Button(buttonCompTop, SWT.PUSH | SWT.FLAT);
