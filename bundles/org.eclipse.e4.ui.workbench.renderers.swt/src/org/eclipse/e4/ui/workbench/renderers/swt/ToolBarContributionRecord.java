@@ -11,13 +11,13 @@
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import org.eclipse.e4.core.commands.ExpressionContext;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.core.expressions.ExpressionInfo;
+import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -129,6 +129,17 @@ public class ToolBarContributionRecord {
 		return currentVisibility;
 	}
 
+	public void collectInfo(ExpressionInfo info) {
+		ContributionsAnalyzer.collectInfo(info,
+				toolbarContribution.getVisibleWhen());
+		for (MToolBarElement item : generatedElements) {
+			ContributionsAnalyzer.collectInfo(info, item.getVisibleWhen());
+		}
+		for (MToolBarElement item : sharedElements) {
+			ContributionsAnalyzer.collectInfo(info, item.getVisibleWhen());
+		}
+	}
+
 	public boolean anyVisibleWhen() {
 		if (toolbarContribution.getVisibleWhen() != null) {
 			return true;
@@ -200,8 +211,8 @@ public class ToolBarContributionRecord {
 		}
 		IEclipseContext staticContext = getStaticContext();
 		staticContext.remove(List.class);
-		factoryDispose = (Runnable) ((IContextFunction) obj)
-				.compute(staticContext, null);
+		factoryDispose = (Runnable) ((IContextFunction) obj).compute(
+				staticContext, null);
 		return staticContext.get(List.class);
 	}
 

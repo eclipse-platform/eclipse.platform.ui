@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,93 +96,13 @@ public class HandledContributionItem extends ContributionItem {
 	 */
 	private static final String ORG_ECLIPSE_UI_COMMANDS_TOGGLE_STATE = "org.eclipse.ui.commands.toggleState"; //$NON-NLS-1$
 
-	static class RunnableRunner implements ISafeRunnable {
-		private Runnable runnable;
-
-		public void setRunnable(Runnable r) {
-			runnable = r;
-		}
-
-		public void handleException(Throwable exception) {
-			// Do not report these exceptions ATM
-		}
-
-		public void run() throws Exception {
-			runnable.run();
-		}
-
-	}
-
-	public static class ToolItemUpdateTimer implements Runnable {
-		Display display = Display.getCurrent();
-		RunnableRunner runner = new RunnableRunner();
-
-		List<HandledContributionItem> itemsToCheck = new ArrayList<HandledContributionItem>();
-		List<Runnable> windowRunnables = new ArrayList<Runnable>();
-		final List<HandledContributionItem> orphanedToolItems = new ArrayList<HandledContributionItem>();
-
-		public void addWindowRunnable(Runnable r) {
-			windowRunnables.add(r);
-		}
-
-		public void removeWindowRunnable(Runnable r) {
-			windowRunnables.remove(r);
-		}
-
-		void registerItem(HandledContributionItem item) {
-			if (!itemsToCheck.contains(item)) {
-				itemsToCheck.add(item);
-
-				// Start the timer on the first item registered
-				if (itemsToCheck.size() == 1)
-					display.timerExec(400, this);
-			}
-		}
-
-		void removeItem(HandledContributionItem item) {
-			itemsToCheck.remove(item);
-		}
-
-		public void run() {
-
-			for (final HandledContributionItem hci : itemsToCheck) {
-				// HACK. Remove orphaned entries. See bug 388516.
-				if (hci.model != null && hci.model.getParent() != null) {
-					hci.updateItemEnablement();
-				} else {
-					orphanedToolItems.add(hci);
-				}
-			}
-			if (!orphanedToolItems.isEmpty()) {
-				itemsToCheck.removeAll(orphanedToolItems);
-				orphanedToolItems.clear();
-			}
-
-			if (windowRunnables.size() > 0) {
-				Runnable[] array = new Runnable[windowRunnables.size()];
-				windowRunnables.toArray(array);
-				for (Runnable r : array) {
-					runner.setRunnable(r);
-					SafeRunner.run(runner);
-				}
-			}
-
-			// repeat until the list goes empty
-			if (itemsToCheck.size() > 0)
-				display.timerExec(400, this);
-		}
-	}
-
-	// HACK!! local 'static' timerExec...should move out of this class post 4.1
-	public static ToolItemUpdateTimer toolItemUpdater = new ToolItemUpdateTimer();
-
 	private static final String FORCE_TEXT = "FORCE_TEXT"; //$NON-NLS-1$
 	private static final String ICON_URI = "iconURI"; //$NON-NLS-1$
 	private static final String DISABLED_URI = "disabledURI"; //$NON-NLS-1$
 	private static final String DISPOSABLE_CHECK = "IDisposable"; //$NON-NLS-1$
 	private static final String WW_SUPPORT = "org.eclipse.ui.IWorkbenchWindow"; //$NON-NLS-1$
 	private static final String HCI_STATIC_CONTEXT = "HCI-staticContext"; //$NON-NLS-1$
-	private MHandledItem model;
+	MHandledItem model;
 	private Widget widget;
 	private Listener menuItemListener;
 	private LocalResourceManager localResourceManager;
@@ -431,7 +350,10 @@ public class HandledContributionItem extends ContributionItem {
 		widget = item;
 		model.setWidget(widget);
 		widget.setData(AbstractPartRenderer.OWNING_ME, model);
-		toolItemUpdater.registerItem(this);
+		ToolItemUpdater updater = getUpdater();
+		if (updater != null) {
+			updater.registerItem(this);
+		}
 
 		update(null);
 		hookCheckListener();
@@ -676,7 +598,10 @@ public class HandledContributionItem extends ContributionItem {
 				unreferenceRunnable = null;
 			}
 			unhookCheckListener();
-			toolItemUpdater.removeItem(this);
+			ToolItemUpdater updater = getUpdater();
+			if (updater != null) {
+				updater.removeItem(this);
+			}
 			if (infoContext != null) {
 				infoContext.dispose();
 				infoContext = null;
@@ -912,5 +837,15 @@ public class HandledContributionItem extends ContributionItem {
 	 */
 	public MHandledItem getModel() {
 		return model;
+	}
+
+	private ToolItemUpdater getUpdater() {
+		if (model != null) {
+			Object obj = model.getRenderer();
+			if (obj instanceof ToolBarManagerRenderer) {
+				return ((ToolBarManagerRenderer) obj).getUpdater();
+			}
+		}
+		return null;
 	}
 }

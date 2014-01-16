@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -73,11 +74,18 @@ public final class EvaluationService implements IEvaluationService {
 					ratContext.set(var, value);
 				}
 			}
+			// This ties tool item enablement to variable changes that can
+			// effect the enablement.
+			ToolBarManagerRenderer toolBarManagerRenderer = getToolBarManagerRenderer();
+			if (toolBarManagerRenderer != null) {
+				toolBarManagerRenderer.updateEnablement();
+			}
 			return true;
 		}
 	};
 
 	private HashSet<String> variableFilter = new HashSet<String>();
+	private ToolBarManagerRenderer toolBarManagerRenderer;
 
 	public EvaluationService(IEclipseContext c) {
 		context = c;
@@ -380,5 +388,16 @@ public final class EvaluationService implements IEvaluationService {
 				}
 			});
 		}
+	}
+
+	private ToolBarManagerRenderer getToolBarManagerRenderer() {
+		if (toolBarManagerRenderer == null) {
+			// The TBMRenderer won't appear in the context until the
+			// PartRenderingEngine creates it. Since that happens after the
+			// initial WorkbenchWindow instantiates its model, we need to get it
+			// lazily and gaurd against null.
+			toolBarManagerRenderer = context.get(ToolBarManagerRenderer.class);
+		}
+		return toolBarManagerRenderer;
 	}
 }
