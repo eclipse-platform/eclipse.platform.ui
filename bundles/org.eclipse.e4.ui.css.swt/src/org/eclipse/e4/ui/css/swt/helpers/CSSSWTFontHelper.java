@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Angelo Zerr and others.
+ * Copyright (c) 2008, 2014 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,11 +42,13 @@ import org.w3c.dom.css.CSSValue;
 public class CSSSWTFontHelper {
 	public static final String FONT_DEFINITION_MARKER = "#";
 
+	private static final String DEFAULT_FONT = "defaultFont";
+
 	/**
 	 * Get CSS2FontProperties from Control stored into Data of Control. If
 	 * CSS2FontProperties doesn't exist, create it from Font of Control and
 	 * store it into Data of Control.
-	 * 
+	 *
 	 * @param control
 	 * @return
 	 */
@@ -66,12 +68,14 @@ public class CSSSWTFontHelper {
 	}
 
 	/**
-	 * Get CSS2FontProperties from the widget. If
-	 * CSS2FontProperties doesn't exist, create it from the widget's font, if it
-	 * has one, and then store it in the widget's data if applicable.
-	 * 
-	 * @param widget the widget to retrieve CSS2 font properties from
-	 * @return the font properties of the specified widget, or <code>null</code> if none
+	 * Get CSS2FontProperties from the widget. If CSS2FontProperties doesn't
+	 * exist, create it from the widget's font, if it has one, and then store it
+	 * in the widget's data if applicable.
+	 *
+	 * @param widget
+	 *            the widget to retrieve CSS2 font properties from
+	 * @return the font properties of the specified widget, or <code>null</code>
+	 *         if none
 	 */
 	public static CSS2FontProperties getCSS2FontProperties(Widget widget,
 			CSSElementContext context) {
@@ -95,7 +99,7 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Build CSS2FontProperties from SWT Font.
-	 * 
+	 *
 	 * @param font
 	 * @return
 	 */
@@ -123,7 +127,7 @@ public class CSSSWTFontHelper {
 	/**
 	 * Get CSS2FontProperties from Font of JComponent and store
 	 * CSS2FontProperties instance into ClientProperty of JComponent.
-	 * 
+	 *
 	 * @param component
 	 * @return
 	 */
@@ -141,7 +145,7 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return FontData from {@link CSS2FontProperties}.
-	 * 
+	 *
 	 * @param fontProperties
 	 * @param control
 	 * @return
@@ -221,7 +225,7 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return SWT style Font from {@link CSS2FontProperties}.
-	 * 
+	 *
 	 * @param fontProperties
 	 * @param control
 	 * @return
@@ -262,7 +266,7 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-family from the widget's font, if it has a font
-	 * 
+	 *
 	 * @param widget
 	 * @return
 	 */
@@ -272,7 +276,7 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-family from SWT Font
-	 * 
+	 *
 	 * @param font
 	 * @return
 	 */
@@ -291,7 +295,7 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-size the widget's font, if it has a font
-	 * 
+	 *
 	 * @param widget
 	 * @return
 	 */
@@ -301,7 +305,7 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-size from SWT Font
-	 * 
+	 *
 	 * @param font
 	 * @return
 	 */
@@ -319,7 +323,7 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-style from the widget's font, if it has a font
-	 * 
+	 *
 	 * @param widget
 	 * @return
 	 */
@@ -329,7 +333,7 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-style from SWT Font
-	 * 
+	 *
 	 * @param font
 	 * @return
 	 */
@@ -353,7 +357,7 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-weight from the widget's font, if it has a font
-	 * 
+	 *
 	 * @param widget
 	 * @return
 	 */
@@ -363,7 +367,7 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-weight from Control Font
-	 * 
+	 *
 	 * @param font
 	 * @return
 	 */
@@ -387,7 +391,7 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-family from Control Font
-	 * 
+	 *
 	 * @param control
 	 * @return
 	 */
@@ -397,7 +401,7 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-family from SWT Font
-	 * 
+	 *
 	 * @param font
 	 * @return
 	 */
@@ -427,7 +431,7 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return first FontData from Control Font.
-	 * 
+	 *
 	 * @param control
 	 * @return
 	 */
@@ -440,9 +444,9 @@ public class CSSSWTFontHelper {
 	}
 
 	/**
-	 * 
+	 *
 	 * Return first FontData from SWT Font.
-	 * 
+	 *
 	 * @param font
 	 * @return
 	 */
@@ -461,6 +465,36 @@ public class CSSSWTFontHelper {
 			return ((Control) widget).getFont();
 		} else {
 			return null;
+		}
+	}
+
+	public static void storeDefaultFont(Control control) {
+		storeDefaultFont(control, control.getFont());
+	}
+
+	public static void storeDefaultFont(CTabItem item) {
+		storeDefaultFont(item, item.getFont());
+	}
+
+	private static void storeDefaultFont(Widget widget, Font font) {
+		if (widget.getData(DEFAULT_FONT) == null) {
+			widget.setData(DEFAULT_FONT, font);
+		}
+	}
+
+	public static void restoreDefaultFont(Control control) {
+		Font defaultFont = (Font) control.getData(DEFAULT_FONT);
+		if (defaultFont != null) {
+			control.setFont(defaultFont.isDisposed() ? control.getDisplay()
+					.getSystemFont() : defaultFont);
+		}
+	}
+
+	public static void restoreDefaultFont(CTabItem item) {
+		Font defaultFont = (Font) item.getData(DEFAULT_FONT);
+		if (defaultFont != null) {
+			item.setFont(defaultFont.isDisposed() ? item.getDisplay()
+					.getSystemFont() : defaultFont);
 		}
 	}
 }

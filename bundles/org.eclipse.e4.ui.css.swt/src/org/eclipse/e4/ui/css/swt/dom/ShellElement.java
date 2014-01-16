@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.css.swt.dom;
 
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.helpers.CSSSWTImageHelper;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.widgets.Composite;
@@ -21,7 +22,7 @@ import org.w3c.dom.Node;
 
 /**
  * {@link CSSStylableElement} implementation which wrap SWT {@link Shell}.
- * 
+ *
  */
 public class ShellElement extends CompositeElement {
 
@@ -136,7 +137,6 @@ public class ShellElement extends CompositeElement {
 	@Override
 	public void reset() {
 		super.reset();
-		Shell shell = getShell();
-		shell.setImage(null);
+		CSSSWTImageHelper.restoreDefaultImage(getShell());
 	}
 }

@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.css.swt.dom;
 
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.helpers.CSSSWTImageHelper;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -20,7 +21,7 @@ import org.eclipse.swt.widgets.Button;
 
 /**
  * {@link CSSStylableElement} implementation which wrap SWT {@link Button}.
- * 
+ *
  */
 public class ButtonElement extends ControlElement {
 
@@ -84,8 +85,7 @@ public class ButtonElement extends ControlElement {
 	@Override
 	public void reset() {
 		super.reset();
-		Button button = getButton();
-		button.setImage(null);
+		CSSSWTImageHelper.restoreDefaultImage(getButton());
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Angelo Zerr and others.
+ * Copyright (c) 2008, 2014 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
- *     IBM Corporation     
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
@@ -17,6 +17,7 @@ import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyBackgroundHand
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
+import org.eclipse.e4.ui.css.swt.helpers.CSSSWTImageHelper;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
 import org.eclipse.e4.ui.css.swt.properties.GradientBackgroundListener;
 import org.eclipse.swt.custom.CTabFolder;
@@ -29,15 +30,16 @@ import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyBackgroundSWTHandler extends
-		AbstractCSSPropertyBackgroundHandler {
+AbstractCSSPropertyBackgroundHandler {
 
 	public final static ICSSPropertyBackgroundHandler INSTANCE = new CSSPropertyBackgroundSWTHandler();
 
+	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = SWTElementHelpers.getWidget(element);
 		if (widget != null) {
-//			super.applyCSSProperty(widget, property, value, pseudo, engine);
+			// super.applyCSSProperty(widget, property, value, pseudo, engine);
 			super.applyCSSProperty(element, property, value, pseudo, engine);
 			return true;
 		}
@@ -45,6 +47,7 @@ public class CSSPropertyBackgroundSWTHandler extends
 
 	}
 
+	@Override
 	public String retrieveCSSProperty(Object element, String property,
 			String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = SWTElementHelpers.getWidget(element);
@@ -56,11 +59,14 @@ public class CSSPropertyBackgroundSWTHandler extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.ui.core.css.dom.properties.css2.AbstractCSSPropertyBackgroundHandler#applyCSSPropertyBackgroundColor(java.lang.Object,
-	 *      org.w3c.dom.css.CSSValue, java.lang.String,
-	 *      org.eclipse.e4.ui.core.css.engine.CSSEngine)
+	 *
+	 * @see org.eclipse.e4.ui.core.css.dom.properties.css2.
+	 * AbstractCSSPropertyBackgroundHandler
+	 * #applyCSSPropertyBackgroundColor(java.lang.Object,
+	 * org.w3c.dom.css.CSSValue, java.lang.String,
+	 * org.eclipse.e4.ui.core.css.engine.CSSEngine)
 	 */
+	@Override
 	public void applyCSSPropertyBackgroundColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = (Widget) ((WidgetElement) element).getNativeWidget();
@@ -96,14 +102,17 @@ public class CSSPropertyBackgroundSWTHandler extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.ui.core.css.dom.properties.css2.AbstractCSSPropertyBackgroundHandler#applyCSSPropertyBackgroundImage(java.lang.Object,
-	 *      org.w3c.dom.css.CSSValue, java.lang.String,
-	 *      org.eclipse.e4.ui.core.css.engine.CSSEngine)
+	 *
+	 * @see org.eclipse.e4.ui.core.css.dom.properties.css2.
+	 * AbstractCSSPropertyBackgroundHandler
+	 * #applyCSSPropertyBackgroundImage(java.lang.Object,
+	 * org.w3c.dom.css.CSSValue, java.lang.String,
+	 * org.eclipse.e4.ui.core.css.engine.CSSEngine)
 	 */
+	@Override
 	public void applyCSSPropertyBackgroundImage(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-//		Widget control = (Widget) element;
+		// Widget control = (Widget) element;
 		Widget control = (Widget) ((WidgetElement) element).getNativeWidget();
 		Image image = (Image) engine.convert(value, Image.class, control
 				.getDisplay());
@@ -114,16 +123,19 @@ public class CSSPropertyBackgroundSWTHandler extends
 			// Image oldImage = button.getImage();
 			// if (oldImage != null)
 			// oldImage.dispose();
+			CSSSWTImageHelper.storeDefaultImage(button);
 			button.setImage(image);
+
 		} else {
 			try {
-				if(control instanceof Control)
+				if (control instanceof Control) {
 					((Control) control).setBackgroundImage(image);
+				}
 			} catch (Throwable e) {
 				//TODO replace with eclipse logging
-//				if (logger.isWarnEnabled())
-//					logger
-//							.warn("Impossible to manage backround-image, This SWT version doesn't support control.setBackgroundImage(Image image) Method");
+				// if (logger.isWarnEnabled())
+				// logger
+				// .warn("Impossible to manage backround-image, This SWT version doesn't support control.setBackgroundImage(Image image) Method");
 			}
 		}
 	}
@@ -139,12 +151,13 @@ public class CSSPropertyBackgroundSWTHandler extends
 		Color color = null;
 		if (widget instanceof CTabItem) {
 			if ("selected".equals(pseudo)) {
-				color = ((CTabItem) widget).getParent().getSelectionBackground();	
+				color = ((CTabItem) widget).getParent()
+						.getSelectionBackground();
 			} else {
-				color = ((CTabItem) widget).getParent().getBackground();				
+				color = ((CTabItem) widget).getParent().getBackground();
 			}
 		} else if (widget instanceof Control) {
-			color = ((Control) widget).getBackground();	
+			color = ((Control) widget).getBackground();
 		}
 		return engine.convert(color, Color.class, null);
 	}
