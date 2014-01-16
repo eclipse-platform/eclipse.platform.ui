@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006-2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthieu Wipliez <matthieu.wipliez@synflow.com> (Synflow SAS) - [CommonNavigator] Implementation of Binding isVisibleExtension not excluding as expected - http://bugs.eclipse.org/425867 
  ******************************************************************************/
 
 package org.eclipse.ui.internal.navigator.extensions;
@@ -48,25 +49,10 @@ class Binding {
 	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorViewerDescriptor#isVisibleExtension(java.lang.String)
 	 */
 	boolean isVisibleExtension(String anExtensionId) {
-		
-
 		// Have we seen this pattern before?
 		if (knownIds.containsKey(anExtensionId)) {
 			// we have, don't recompute
 			return ((Boolean) knownIds.get(anExtensionId)).booleanValue();
-		}
-		
-		for (Iterator itr = includePatterns.iterator(); itr.hasNext();) {
-			Pattern pattern = (Pattern) itr.next();
-			if (pattern.matcher(anExtensionId).matches()) {
-				// keep track of the result for next time
-				knownIds.put(anExtensionId, Boolean.TRUE);
-				if (Policy.DEBUG_RESOLUTION) {
-					System.out.println("Viewer Binding: " + TAG_EXTENSION +//$NON-NLS-1$
-							" to: " + anExtensionId); //$NON-NLS-1$
-				}
-				return true;
-			}
 		}
 
 		for (Iterator itr = excludePatterns.iterator(); itr.hasNext();) {
@@ -78,6 +64,19 @@ class Binding {
 							" to: " + anExtensionId); //$NON-NLS-1$
 				}
 				return false;
+			}
+		}
+
+		for (Iterator itr = includePatterns.iterator(); itr.hasNext();) {
+			Pattern pattern = (Pattern) itr.next();
+			if (pattern.matcher(anExtensionId).matches()) {
+				// keep track of the result for next time
+				knownIds.put(anExtensionId, Boolean.TRUE);
+				if (Policy.DEBUG_RESOLUTION) {
+					System.out.println("Viewer Binding: " + TAG_EXTENSION +//$NON-NLS-1$
+							" to: " + anExtensionId); //$NON-NLS-1$
+				}
+				return true;
 			}
 		}
 
