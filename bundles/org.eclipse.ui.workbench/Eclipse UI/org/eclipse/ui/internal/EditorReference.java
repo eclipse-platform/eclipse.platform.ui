@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
@@ -224,7 +225,15 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	}
 
 	public String getTitle() {
-		String label = Util.safeString(getModel().getLocalizedLabel());
+		// First check if the tooltip has been over-ridden
+		String label = (String) getModel().getTransientData().get(
+				IPresentationEngine.OVERRIDE_TITLE_TOOL_TIP_KEY);
+
+		// Use the part's label
+		if (label == null || label.length() == 0)
+			label = Util.safeString(getModel().getLocalizedLabel());
+
+		// Use the descriptor's label or the input's name
 		if (label.length() == 0) {
 			if (input == null) {
 				if (descriptor != null) {
