@@ -189,6 +189,7 @@ public class Messages {
 	public String PartEditor_LabelLabel;
 	public String PartEditor_Tooltip;
 	public String PartEditor_IconURI;
+	public String PartEditor_IconURI_Tooltip;
 	public String PartEditor_ClassURI;
 	public String PartEditor_Closeable;
 	public String PartEditor_Closeable_Tooltip;
