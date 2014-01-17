@@ -187,6 +187,7 @@ public class PartEditor extends AbstractComponentEditor {
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartEditor_IconURI);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setToolTipText(Messages.PartEditor_IconURI_Tooltip);
 
 			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);
