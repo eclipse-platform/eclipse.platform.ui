@@ -91,4 +91,22 @@ public interface IConsoleView extends IViewPart {
      */
     public boolean getScrollLock();
 
+	/**
+	 * Sets the word wrap state of the currently active console.
+	 *
+	 * @param wordWrap <code>true</code> to turn word wrap on, otherwise
+	 *            <code>false</code>
+	 * @since 4.5
+	 */
+	public void setWordWrap(boolean wordWrap);
+
+	/**
+	 * Returns the word wrap state of the currently active console.
+	 *
+	 * @return <code>true</code> if word wrap is on, <code>false</code>
+	 *         otherwise
+	 * @since 4.5
+	 */
+	public boolean getWordWrap();
+
 }

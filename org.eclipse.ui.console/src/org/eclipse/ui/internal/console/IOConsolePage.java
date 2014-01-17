@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     vogella GmbH - added word wrap button (bug 287303)
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
@@ -31,6 +32,7 @@ import org.eclipse.ui.console.TextConsoleViewer;
 public class IOConsolePage extends TextConsolePage {
 
     private ScrollLockAction fScrollLockAction;
+    private WordWrapAction fWordWrapAction;
 
     private boolean fReadOnly;
 
@@ -51,11 +53,6 @@ public class IOConsolePage extends TextConsolePage {
         console.addPropertyChangeListener(fPropertyChangeListener);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
     @Override
 	public void createControl(Composite parent) {
         super.createControl(parent);
@@ -65,12 +62,6 @@ public class IOConsolePage extends TextConsolePage {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.ui.console.TextConsolePage#createViewer(org.eclipse.swt.widgets.Composite,
-     *      org.eclipse.ui.console.TextConsole)
-     */
     @Override
 	protected TextConsoleViewer createViewer(Composite parent) {
         return new IOConsoleViewer(parent, (TextConsole)getConsole());
@@ -81,6 +72,14 @@ public class IOConsolePage extends TextConsolePage {
         if (viewer != null) {
             viewer.setAutoScroll(scroll);
             fScrollLockAction.setChecked(!scroll);
+        }
+    }
+
+    public void setWordWrap(boolean wordwrap) {
+        IOConsoleViewer viewer = (IOConsoleViewer) getViewer();
+        if (viewer != null) {
+            viewer.setWordWrap(wordwrap);
+            fWordWrapAction.setChecked(wordwrap);
         }
     }
 
@@ -95,23 +94,20 @@ public class IOConsolePage extends TextConsolePage {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.TextConsolePage#createActions()
-     */
     @Override
 	protected void createActions() {
         super.createActions();
         fScrollLockAction = new ScrollLockAction(getConsoleView());
         setAutoScroll(!fScrollLockAction.isChecked());
+        fWordWrapAction = new WordWrapAction(getConsoleView());
+        setWordWrap(fWordWrapAction.isChecked());
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.TextConsolePage#contextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
-     */
     @Override
 	protected void contextMenuAboutToShow(IMenuManager menuManager) {
         super.contextMenuAboutToShow(menuManager);
         menuManager.add(fScrollLockAction);
+        menuManager.add(fWordWrapAction);
         IOConsoleViewer viewer = (IOConsoleViewer) getViewer();
         if (!viewer.isReadOnly()) {
             menuManager.remove(ActionFactory.CUT.getId());
@@ -119,30 +115,24 @@ public class IOConsolePage extends TextConsolePage {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.ui.console.TextConsolePage#configureToolBar(org.eclipse.jface.action.IToolBarManager)
-     */
 	@Override
 	protected void configureToolBar(IToolBarManager mgr) {
         super.configureToolBar(mgr);
         mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fScrollLockAction);
+        mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fWordWrapAction);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.ui.part.IPage#dispose()
-     */
     @Override
 	public void dispose() {
         if (fScrollLockAction != null) {
             fScrollLockAction.dispose();
             fScrollLockAction = null;
         }
+        if (fWordWrapAction != null) {
+            fWordWrapAction.dispose();
+            fWordWrapAction = null;
+        }
         getConsole().removePropertyChangeListener(fPropertyChangeListener);
         super.dispose();
     }
-
 }

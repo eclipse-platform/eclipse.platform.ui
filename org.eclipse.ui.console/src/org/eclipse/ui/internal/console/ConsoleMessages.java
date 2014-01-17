@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * vogella GmbH - Added word wrap button (bug 287303)
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
@@ -41,6 +42,8 @@ public class ConsoleMessages extends NLS {
 
 	public static String ScrollLockAction_0;
 	public static String ScrollLockAction_1;
+	public static String WordWrapAction_0;
+	public static String WordWrapAction_1;
 	public static String FollowHyperlinkAction_0;
 	public static String FollowHyperlinkAction_1;
 	public static String OpenConsoleAction_0;
@@ -56,7 +59,7 @@ public class ConsoleMessages extends NLS {
     public static String TextConsolePage_CopyDescrip;
     public static String TextConsolePage_PasteText;
     public static String TextConsolePage_PasteDescrip;
-    
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, ConsoleMessages.class);

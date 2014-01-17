@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     vogella GmbH - added word wrap button (bug 287303)
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
@@ -33,6 +34,8 @@ public class IOConsoleViewer extends TextConsoleViewer {
      */
     private boolean fAutoScroll = true;
 
+    private boolean fWordWrap = false;
+
     private IDocumentListener fDocumentListener;
 
     public IOConsoleViewer(Composite parent, TextConsole console) {
@@ -47,11 +50,15 @@ public class IOConsoleViewer extends TextConsoleViewer {
         fAutoScroll = scroll;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.jface.text.TextViewer#handleVerifyEvent(org.eclipse.swt.events.VerifyEvent)
-     */
+    public boolean isWordWrap() {
+        return fWordWrap;
+    }
+
+    public void setWordWrap(boolean wordwrap) {
+        fWordWrap = wordwrap;
+        getTextWidget().setWordWrap(wordwrap);
+    }
+
     @Override
 	protected void handleVerifyEvent(VerifyEvent e) {
         IDocument doc = getDocument();
@@ -112,9 +119,6 @@ public class IOConsoleViewer extends TextConsoleViewer {
         return !getTextWidget().getEditable();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.ITextViewer#setDocument(org.eclipse.jface.text.IDocument)
-     */
     @Override
 	public void setDocument(IDocument document) {
         IDocument oldDocument= getDocument();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     vogella GmbH - added word wrap button (bug 287303)
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
@@ -27,10 +28,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -112,14 +115,12 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	private OpenConsoleAction fOpenConsoleAction = null;
 
     private boolean fScrollLock;
+	private boolean fWordWrap;
 
 	private boolean isAvailable() {
 		return getPageBook() != null && !getPageBook().isDisposed();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		Object source = event.getSource();
@@ -131,26 +132,17 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
-	 */
 	@Override
 	public void partClosed(IWorkbenchPart part) {
 		super.partClosed(part);
 		fPinAction.update();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsoleView#getConsole()
-	 */
 	@Override
 	public IConsole getConsole() {
 		return fActiveConsole;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.PageBookView#showPageRec(org.eclipse.ui.part.PageBookView.PageRec)
-	 */
 	@Override
 	protected void showPageRec(PageRec pageRec) {
         // don't show the page when pinned, unless this is the first console to be added
@@ -191,6 +183,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	    IPage page = getCurrentPage();
 	    if (page instanceof IOConsolePage) {
 	        ((IOConsolePage)page).setAutoScroll(!fScrollLock);
+	        ((IOConsolePage) page).setWordWrap(fWordWrap);
 	    }
 	}
 
@@ -261,9 +254,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getPageBook().getParent(), helpContextId);
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.PageBookView#doDestroyPage(org.eclipse.ui.IWorkbenchPart, org.eclipse.ui.part.PageBookView.PageRec)
-	 */
 	@Override
 	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
 	    IConsole console = fPartToConsole.get(part);
@@ -313,9 +303,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	    return fConsoleToPageParticipants.get(console);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.PageBookView#doCreatePage(org.eclipse.ui.IWorkbenchPart)
-	 */
 	@Override
 	protected PageRec doCreatePage(IWorkbenchPart dummyPart) {
 		ConsoleWorkbenchPart part = (ConsoleWorkbenchPart)dummyPart;
@@ -352,17 +339,11 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		return rec;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.PageBookView#isImportant(org.eclipse.ui.IWorkbenchPart)
-	 */
 	@Override
 	protected boolean isImportant(IWorkbenchPart part) {
 		return part instanceof ConsoleWorkbenchPart;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		IViewSite site = getViewSite();
@@ -384,9 +365,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
         return ConsolePlugin.getDefault().getConsoleManager();
     }
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.part.PageBookView#createDefaultPage(org.eclipse.ui.part.PageBook)
-	 */
 	@Override
 	protected IPage createDefaultPage(PageBook book) {
 		MessagePage page = new MessagePage();
@@ -395,9 +373,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		return page;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleListener#consolesAdded(org.eclipse.ui.console.IConsole[])
-	 */
 	@Override
 	public void consolesAdded(final IConsole[] consoles) {
 		if (isAvailable()) {
@@ -428,9 +403,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleListener#consolesRemoved(org.eclipse.ui.console.IConsole[])
-	 */
 	@Override
 	public void consolesRemoved(final IConsole[] consoles) {
 		if (isAvailable()) {
@@ -515,9 +487,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleView#display(org.eclipse.ui.console.IConsole)
-	 */
 	@Override
 	public void display(IConsole console) {
 	    if (fPinned && fActiveConsole != null) {
@@ -532,9 +501,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	    }
 	}
 
-	/*/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleView#pin(org.eclipse.ui.console.IConsole)
-	 */
 	@Override
 	public void setPinned(boolean pin) {
         fPinned = pin;
@@ -543,17 +509,11 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleView#isPinned()
-	 */
 	@Override
 	public boolean isPinned() {
 		return fPinned;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.PageBookView#getBootstrapPart()
-	 */
 	@Override
 	protected IWorkbenchPart getBootstrapPart() {
 		return null;
@@ -651,9 +611,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		manager.addConsoleListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleView#warnOfContentChange(org.eclipse.ui.console.IConsole)
-	 */
 	@Override
 	public void warnOfContentChange(IConsole console) {
 		IWorkbenchPart part = fConsoleToPart.get(console);
@@ -688,9 +645,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
         return adpater;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partActivated(IWorkbenchPartReference partRef) {
 		if (isThisPart(partRef)) {
@@ -703,23 +657,14 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partBroughtToTop(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partClosed(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partDeactivated(IWorkbenchPartReference partRef) {
         if (isThisPart(partRef)) {
@@ -785,37 +730,22 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	    }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partOpened(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partHidden(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partVisible(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partInputChanged(IWorkbenchPartReference partRef) {
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsoleView#setScrollLock(boolean)
-     */
     @Override
 	public void setScrollLock(boolean scrollLock) {
         fScrollLock = scrollLock;
@@ -826,17 +756,29 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsoleView#getScrollLock()
-     */
     @Override
 	public boolean getScrollLock() {
         return fScrollLock;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsoleView#pin(org.eclipse.ui.console.IConsole)
-     */
+	@Override
+	public void setWordWrap(boolean wordWrap) {
+		fWordWrap = wordWrap;
+
+		IWorkbenchPart part = getSite().getPart();
+		if (part instanceof PageBookView) {
+			Control control = ((PageBookView) part).getCurrentPage().getControl();
+			if (control instanceof StyledText) {
+				((StyledText) control).setWordWrap(wordWrap);
+			}
+		}
+	}
+
+	@Override
+	public boolean getWordWrap() {
+		return fWordWrap;
+	}
+
     @Override
 	public void pin(IConsole console) {
         if (console == null) {

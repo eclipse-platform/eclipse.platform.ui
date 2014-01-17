@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     vogella GmbH - added word wrap icon (bug 287303)
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
@@ -54,17 +55,20 @@ public class ConsolePluginImages {
 		declareRegistryImage(IConsoleConstants.IMG_LCL_CLEAR, LOCALTOOL + "clear_co.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalConsoleConstants.IMG_LCL_PIN, LOCALTOOL + "pin.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalConsoleConstants.IMG_LCL_LOCK, LOCALTOOL + "lock_co.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalConsoleConstants.IMG_LCL_WRAP, LOCALTOOL + "wordwrap.png"); //$NON-NLS-1$
 
 		// disabled local toolbars
 		declareRegistryImage(IInternalConsoleConstants.IMG_DLCL_CLEAR, DLCL + "clear_co.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalConsoleConstants.IMG_DLCL_PIN, DLCL + "pin.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalConsoleConstants.IMG_DLCL_LOCK, DLCL + "lock_co.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalConsoleConstants.IMG_DLCL_WRAP, DLCL + "wordwrap.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalConsoleConstants.IMG_DLCL_CLOSE, DLCL + "rem_co.png"); //$NON-NLS-1$
 
 		// enabled local toolbars
 		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_CLEAR, ELCL + "clear_co.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_PIN, ELCL + "pin.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_LOCK, ELCL + "lock_co.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_WRAP, ELCL + "wordwrap.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_CLOSE, ELCL + "rem_co.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_NEW_CON, ELCL + "new_con.png"); //$NON-NLS-1$
 
