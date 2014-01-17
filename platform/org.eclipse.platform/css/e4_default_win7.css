@@ -5,8 +5,7 @@
 }
 
 .MPartStack {
-	font-size: 9;
-	font-family: 'Segoe UI';
+	font-family: '#org-eclipse-ui-workbench-TAB_TEXT_FONT'
 	swt-simple: true;
 	swt-mru-visible: false;
 }
