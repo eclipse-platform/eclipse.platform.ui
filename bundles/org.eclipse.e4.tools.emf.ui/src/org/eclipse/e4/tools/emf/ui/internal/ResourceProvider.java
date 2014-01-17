@@ -119,6 +119,7 @@ public class ResourceProvider extends BasicResourceProvider {
 	public static final String IMG_Wizban16_newexp_wiz = "IMG_org.eclipse.e4.tools.emf.ui.wizban.newexp_wiz"; //$NON-NLS-1$
 	public static final String IMG_Wizban16_typerefact_wiz = "IMG_org.eclipse.e4.tools.emf.ui.wizban.typerefact_wiz"; //$NON-NLS-1$
 	public static final String IMG_Wizban16_extstr_wiz = "IMG_org.eclipse.e4.tools.emf.ui.wizban.extstr_wiz"; //$NON-NLS-1$
+	public static final String IMG_Wizban16_imp3x_wiz = "IMG_org.eclipse.e4.tools.emf.ui.wizban.imp3x_wiz"; //$NON-NLS-1$
 
 	public static final String IMG_Widgets_ctabfolder_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.ctabfolder_obj"; //$NON-NLS-1$
 	public static final String IMG_Widgets_tabfolder_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.tabfolder_obj"; //$NON-NLS-1$

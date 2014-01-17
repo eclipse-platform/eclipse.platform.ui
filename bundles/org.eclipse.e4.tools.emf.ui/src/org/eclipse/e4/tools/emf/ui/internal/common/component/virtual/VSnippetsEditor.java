@@ -1,6 +1,8 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -57,28 +59,25 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 
 	@PostConstruct
 	void init() {
-		actions.add(new Action(Messages.VWindowEditor_AddTrimmedWindow, createImageDescriptor(ResourceProvider.IMG_Window)) {
+
+		actions.add(new Action(Messages.VWindowControlEditor_AddArea, createImageDescriptor(ResourceProvider.IMG_Area_vertical)) {
 			@Override
 			public void run() {
-				handleAdd(BasicPackageImpl.Literals.TRIMMED_WINDOW);
+				handleAdd(AdvancedPackageImpl.Literals.AREA);
 			}
 		});
-		actions.add(new Action(Messages.VWindowEditor_AddWindow, createImageDescriptor(ResourceProvider.IMG_Window)) {
+
+		actions.add(new Action(Messages.VWindowEditor_AddDialog, createImageDescriptor(ResourceProvider.IMG_Dialog)) {
 			@Override
 			public void run() {
-				handleAdd(BasicPackageImpl.Literals.WINDOW);
+				handleAdd(BasicPackageImpl.Literals.DIALOG);
 			}
 		});
-		actions.add(new Action(Messages.VWindowControlEditor_AddPerspectiveStack, createImageDescriptor(ResourceProvider.IMG_PerspectiveStack)) {
+
+		actions.add(new Action(Messages.VWindowControlEditor_AddPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
 			@Override
 			public void run() {
-				handleAdd(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK);
-			}
-		});
-		actions.add(new Action(Messages.PerspectiveStackEditor_AddPerspective, createImageDescriptor(ResourceProvider.IMG_Perspective)) {
-			@Override
-			public void run() {
-				handleAdd(AdvancedPackageImpl.Literals.PERSPECTIVE);
+				handleAdd(BasicPackageImpl.Literals.PART);
 			}
 		});
 
@@ -96,24 +95,36 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 			}
 		});
 
-		actions.add(new Action(Messages.VWindowControlEditor_AddPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
+		actions.add(new Action(Messages.VWindowControlEditor_AddPerspectiveStack, createImageDescriptor(ResourceProvider.IMG_PerspectiveStack)) {
 			@Override
 			public void run() {
-				handleAdd(BasicPackageImpl.Literals.PART);
+				handleAdd(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK);
+			}
+		});
+		actions.add(new Action(Messages.PerspectiveStackEditor_AddPerspective, createImageDescriptor(ResourceProvider.IMG_Perspective)) {
+			@Override
+			public void run() {
+				handleAdd(AdvancedPackageImpl.Literals.PERSPECTIVE);
 			}
 		});
 
-		actions.add(new Action(Messages.VWindowControlEditor_AddInputPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
+		actions.add(new Action(Messages.VTrimContributionsEditor_AddTrimContribution, createImageDescriptor(ResourceProvider.IMG_TrimContribution)) {
 			@Override
 			public void run() {
-				handleAdd(BasicPackageImpl.Literals.INPUT_PART);
+				handleAdd(BasicPackageImpl.Literals.TRIM_ELEMENT);
 			}
 		});
 
-		actions.add(new Action(Messages.VWindowControlEditor_AddArea, createImageDescriptor(ResourceProvider.IMG_Area_vertical)) {
+		actions.add(new Action(Messages.VWindowEditor_AddTrimmedWindow, createImageDescriptor(ResourceProvider.IMG_Window)) {
 			@Override
 			public void run() {
-				handleAdd(AdvancedPackageImpl.Literals.AREA);
+				handleAdd(BasicPackageImpl.Literals.TRIMMED_WINDOW);
+			}
+		});
+		actions.add(new Action(Messages.VWindowEditor_AddWindow, createImageDescriptor(ResourceProvider.IMG_Window)) {
+			@Override
+			public void run() {
+				handleAdd(BasicPackageImpl.Literals.WINDOW);
 			}
 		});
 		actions.add(new Action(Messages.VWindowTrimEditor_AddWindowTrim, createImageDescriptor(ResourceProvider.IMG_WindowTrim)) {
@@ -122,10 +133,17 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 				handleAdd(BasicPackageImpl.Literals.TRIM_BAR);
 			}
 		});
-		actions.add(new Action(Messages.VTrimContributionsEditor_AddTrimContribution, createImageDescriptor(ResourceProvider.IMG_TrimContribution)) {
+		actions.add(new Action(Messages.VWindowEditor_AddWizardDialog, createImageDescriptor(ResourceProvider.IMG_WizardDialog)) {
 			@Override
 			public void run() {
-				handleAdd(BasicPackageImpl.Literals.TRIM_ELEMENT);
+				handleAdd(BasicPackageImpl.Literals.WIZARD_DIALOG);
+			}
+		});
+
+		Collections.sort(actions, new Comparator<Action>() {
+			@Override
+			public int compare(Action o1, Action o2) {
+				return o1.getText().compareTo(o2.getText());
 			}
 		});
 

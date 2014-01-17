@@ -14,8 +14,11 @@ package org.eclipse.e4.tools.emf.ui.internal.imp;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
+import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 
 public class ModelImportWizard extends Wizard {
@@ -30,16 +33,17 @@ public class ModelImportWizard extends Wizard {
 
 	private final String hint;
 
-	public ModelImportWizard(Class<? extends MApplicationElement> applicationElement, AbstractComponentEditor editor) {
-		this(applicationElement, editor, "");
+	public ModelImportWizard(Class<? extends MApplicationElement> applicationElement, AbstractComponentEditor editor, IResourcePool resourcePool) {
+		this(applicationElement, editor, "", resourcePool);
 	}
 
-	public ModelImportWizard(Class<? extends MApplicationElement> applicationElement, AbstractComponentEditor editor, String hint) {
+	public ModelImportWizard(Class<? extends MApplicationElement> applicationElement, AbstractComponentEditor editor, String hint, IResourcePool resourcePool) {
 		this.applicationElement = applicationElement;
 		this.editor = editor;
 		this.hint = hint;
 		this.application = (MApplication) editor.getEditor().getModelProvider().getRoot().get(0);
 		setWindowTitle("Model " + applicationElement.getSimpleName() + " Import Wizard");
+		setDefaultPageImageDescriptor(ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Wizban16_imp3x_wiz)));
 		Assert.isNotNull(RegistryUtil.getStruct(applicationElement, getHint()), "Unknown Element: " + applicationElement.getClass().getName());
 	}
 

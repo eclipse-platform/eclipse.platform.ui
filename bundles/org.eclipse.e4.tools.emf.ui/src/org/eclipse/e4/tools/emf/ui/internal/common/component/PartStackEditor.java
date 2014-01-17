@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.jface.window.Window;
-
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -58,6 +56,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -404,7 +403,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 	protected void handleImportChild(EClass eClass) {
 
 		if (eClass == BasicPackageImpl.Literals.PART) {
-			ModelImportWizard wizard = new ModelImportWizard(MPart.class, this);
+			ModelImportWizard wizard = new ModelImportWizard(MPart.class, this, resourcePool);
 			WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
 			if (wizardDialog.open() == Window.OK) {
 				MPart[] parts = (MPart[]) wizard.getElements(MPart.class);
@@ -415,11 +414,11 @@ public class PartStackEditor extends AbstractComponentEditor {
 		}
 
 		if (eClass == BasicPackageImpl.Literals.INPUT_PART) {
-			ModelImportWizard wizard = new ModelImportWizard(MInputPart.class, this);
+			ModelImportWizard wizard = new ModelImportWizard(MInputPart.class, this, resourcePool);
 			WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
 			if (wizardDialog.open() == Window.OK) {
-				MInputPart[] parts = (MInputPart[]) wizard.getElements(MInputPart.class);
-				for (MInputPart part : parts) {
+				MPart[] parts = (MPart[]) wizard.getElements(MInputPart.class);
+				for (MPart part : parts) {
 					addToModel((EObject) part);
 				}
 			}

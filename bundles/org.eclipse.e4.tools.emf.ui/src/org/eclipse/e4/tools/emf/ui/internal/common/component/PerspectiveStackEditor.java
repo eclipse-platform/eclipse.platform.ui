@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.jface.window.Window;
-
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -51,6 +49,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -344,7 +343,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 	}
 
 	protected void handleImportPerspective() {
-		ModelImportWizard wizard = new ModelImportWizard(MPerspective.class, this);
+		ModelImportWizard wizard = new ModelImportWizard(MPerspective.class, this, resourcePool);
 		WizardDialog wizardDialog = new WizardDialog(shell, wizard);
 		if (wizardDialog.open() == Window.OK) {
 			MPerspective[] elements = (MPerspective[]) wizard.getElements(MPerspective.class);

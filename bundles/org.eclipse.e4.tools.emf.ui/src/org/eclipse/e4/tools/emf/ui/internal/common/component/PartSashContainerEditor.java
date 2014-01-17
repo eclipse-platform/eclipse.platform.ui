@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.jface.window.Window;
-
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -33,7 +31,6 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
@@ -62,6 +59,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -464,22 +462,11 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 	protected void handleImportChild(EClass eClass, String hint) {
 
 		if (eClass == BasicPackageImpl.Literals.PART) {
-			ModelImportWizard wizard = new ModelImportWizard(MPart.class, this, hint);
+			ModelImportWizard wizard = new ModelImportWizard(MPart.class, this, hint, resourcePool);
 			WizardDialog wizardDialog = new WizardDialog(shell, wizard);
 			if (wizardDialog.open() == Window.OK) {
 				MPart[] parts = (MPart[]) wizard.getElements(MPart.class);
 				for (MPart part : parts) {
-					addToModel((EObject) part);
-				}
-			}
-		}
-
-		if (eClass == BasicPackageImpl.Literals.INPUT_PART) {
-			ModelImportWizard wizard = new ModelImportWizard(MInputPart.class, this);
-			WizardDialog wizardDialog = new WizardDialog(shell, wizard);
-			if (wizardDialog.open() == Window.OK) {
-				MInputPart[] parts = (MInputPart[]) wizard.getElements(MInputPart.class);
-				for (MInputPart part : parts) {
 					addToModel((EObject) part);
 				}
 			}

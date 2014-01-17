@@ -11,6 +11,8 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -66,6 +68,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 
 	@PostConstruct
 	void init() {
+
 		actions.add(new Action(Messages.VWindowControlEditor_AddPerspectiveStack, createImageDescriptor(ResourceProvider.IMG_PerspectiveStack)) {
 			@Override
 			public void run() {
@@ -93,18 +96,17 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 				handleAdd(BasicPackageImpl.Literals.PART);
 			}
 		});
-
-		actions.add(new Action(Messages.VWindowControlEditor_AddInputPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
-			@Override
-			public void run() {
-				handleAdd(BasicPackageImpl.Literals.INPUT_PART);
-			}
-		});
-
 		actions.add(new Action(Messages.VWindowControlEditor_AddArea, createImageDescriptor(ResourceProvider.IMG_Area_vertical)) {
 			@Override
 			public void run() {
 				handleAdd(AdvancedPackageImpl.Literals.AREA);
+			}
+		});
+
+		Collections.sort(actions, new Comparator<Action>() {
+			@Override
+			public int compare(Action o1, Action o2) {
+				return o1.getText().compareTo(o2.getText());
 			}
 		});
 	}
