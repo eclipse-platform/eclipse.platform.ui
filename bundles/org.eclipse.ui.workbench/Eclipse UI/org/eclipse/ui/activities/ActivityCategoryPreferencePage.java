@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 20014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.dialogs.Dialog;
@@ -134,9 +133,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
 			setShellStyle(getShellStyle() | SWT.SHEET);
          }
         
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-         */
+		@Override
         protected void configureShell(Shell newShell) {
             super.configureShell(newShell);
             String activityName = strings.getProperty(ACTIVITY_NAME, ActivityMessages.ActivityEnabler_activities);
@@ -146,11 +143,9 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
             		activityName		
             ));
         }
-        
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-         */
-        protected Control createDialogArea(Composite parent) {
+
+		@Override
+		protected Control createDialogArea(Composite parent) {
             Composite composite = (Composite) super.createDialogArea(parent);
             enabler = new ActivityEnabler(workingCopy, strings);
             Control enablerControl = enabler.createControl(composite);
@@ -158,20 +153,14 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
             return composite;
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-         */
-        protected void okPressed() {
+        @Override
+		protected void okPressed() {
             enabler.updateActivityStates();            
             super.okPressed();
         }
         
-    	/* (non-Javadoc)
-         * @see org.eclipse.jface.window.Dialog#getDialogBoundsSettings()
-         * 
-         * @since 3.2
-         */
-    	protected IDialogSettings getDialogBoundsSettings() {
+    	@Override
+		protected IDialogSettings getDialogBoundsSettings() {
             IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
             IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
             if (section == null) {
@@ -180,11 +169,8 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
             return section;
     	}
     	
-        /*
-         * (non-Javadoc)
-         * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-         */
-        protected boolean isResizable() {
+        @Override
+		protected boolean isResizable() {
         	return true;
         }
     }
@@ -239,10 +225,8 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
             return null;
         }
       
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-         */
-        public String getText(Object element) {
+        @Override
+		public String getText(Object element) {
             String name = null;
             ICategory category = (ICategory) element;
             try {
@@ -263,12 +247,8 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         	return getText(element);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-         */
-        public void dispose() {
+        @Override
+		public void dispose() {
             super.dispose();
             manager.dispose();
         }
@@ -322,13 +302,8 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
 
     private class EmptyCategoryFilter extends ViewerFilter {
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
-         *      java.lang.Object, java.lang.Object)
-         */
-        public boolean select(Viewer viewer, Object parentElement,
+        @Override
+		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
 			ICategory category = (ICategory) element;
 			if (InternalActivityHelper.getActivityIdsForCategory(workingCopy,
@@ -357,12 +332,8 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
     
     private Properties strings = new Properties();
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-     */
-    protected Control createContents(Composite parent) {
+    @Override
+	protected Control createContents(Composite parent) {
     	initializeDialogUnits(parent);
     	
         Composite composite = new Composite(parent, SWT.NONE);  
@@ -424,12 +395,8 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         Button enableAll = new Button(composite, SWT.PUSH);
         enableAll.addSelectionListener(new SelectionAdapter() {
 
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-             */
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 workingCopy.setEnabledActivityIds(workingCopy
                         .getDefinedActivityIds());
             }
@@ -439,12 +406,9 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
 
         Button disableAll = new Button(composite, SWT.PUSH);
         disableAll.addSelectionListener(new SelectionAdapter() {
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-             */
-            public void widgetSelected(SelectionEvent e) {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
                 workingCopy.setEnabledActivityIds(Collections.EMPTY_SET);
             }
         });
@@ -458,12 +422,8 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
             advancedButton = new Button(composite, SWT.PUSH);
             advancedButton.addSelectionListener(new SelectionAdapter() {
 
-                /*
-                 * (non-Javadoc)
-                 * 
-                 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-                 */
-                public void widgetSelected(SelectionEvent e) {
+                @Override
+				public void widgetSelected(SelectionEvent e) {
                     AdvancedDialog dialog = new AdvancedDialog(parent.getShell());
                     dialog.open(); // logic for updating the working copy is in the dialog class.                    
                 }
@@ -520,11 +480,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         Table table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.SINGLE);
         table.addSelectionListener(new SelectionAdapter() {
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (e.detail == SWT.CHECK) {
 					TableItem tableItem = (TableItem) e.item;
@@ -667,12 +623,8 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                 category.getId()).isEmpty();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.preference.PreferencePage#performOk()
-     */
-    public boolean performOk() {
+    @Override
+	public boolean performOk() {
         workbench.getActivitySupport().setEnabledActivityIds(
                 workingCopy.getEnabledActivityIds());
         getPreferenceStore().setValue(
@@ -681,10 +633,8 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-     */
-    protected void performDefaults() {
+    @Override
+	protected void performDefaults() {
         super.performDefaults();
         activityPromptButton.setSelection(getPreferenceStore()
                 .getDefaultBoolean(
@@ -722,10 +672,8 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.DialogPage#dispose()
-     */
-    public void dispose() {
+    @Override
+	public void dispose() {
     	if (workingCopy != null) {
     		workingCopy.removeActivityManagerListener((CategoryLabelProvider)categoryViewer.getLabelProvider());
     	}
