@@ -13,7 +13,6 @@
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -634,8 +633,11 @@ public class ModelEditor {
 			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+				final List listOfSelections = s.toList();
+				int noSelected = listOfSelections.size();
+
 				boolean addSeparator = false;
-				if (!s.isEmpty()) {
+				if (!s.isEmpty() && noSelected == 1) {
 					List<Action> actions;
 					if (s.getFirstElement() instanceof VirtualEntry<?>) {
 						actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId()).getActions(s.getFirstElement());
@@ -661,36 +663,6 @@ public class ModelEditor {
 						if (addSeparator)
 							manager.add(new Separator());
 
-						// build the extract action
-						if ((!((VirtualEntry<?>) s.getFirstElement()).getList().isEmpty()) && (!isModelFragment()) && modelExtractor != null) {
-							manager.add(new Action(messages.ModelEditor_ExtractFragment, ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_ModelFragments))) {
-								@Override
-								public void run() {
-									VirtualEntry<?> ve = (VirtualEntry<?>) s.getFirstElement();
-									EObject container = (EObject) ve.getOriginalParent();
-									String containerId = ((MApplicationElement) container).getElementId();
-									if (containerId == null || containerId.length() == 0) {
-										MessageDialog.openError(viewer.getControl().getShell(), null, messages.ModelEditor_ExtractFragment_NoParentId);
-										return;
-									}
-									ArrayList<MApplicationElement> maes = new ArrayList<MApplicationElement>();
-									IObservableList list = ve.getList();
-									Iterator iterator = list.iterator();
-									while (iterator.hasNext()) {
-										maes.add((MApplicationElement) iterator.next());
-									}
-
-									if (modelExtractor.extract(viewer.getControl().getShell(), project, maes)) {
-										for (MApplicationElement mae : maes) {
-											Command cmd = DeleteCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), mae);
-											if (cmd.canExecute()) {
-												ModelEditor.this.modelProvider.getEditingDomain().getCommandStack().execute(cmd);
-											}
-										}
-									}
-								};
-							});
-						}
 					} else {
 
 						final EObject o = (EObject) s.getFirstElement();
@@ -743,12 +715,62 @@ public class ModelEditor {
 						}
 					}
 				}
+				// multi selection
+				if (noSelected > 0) {
+					if ((!isModelFragment()) && modelExtractor != null)
+						manager.add(new Action(messages.ModelEditor_ExtractFragment, ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_ModelFragments))) {
+							public void run() {
+								ArrayList<MApplicationElement> maes = new ArrayList<MApplicationElement>();
+								for (Object objSelect : listOfSelections) {
+									EObject container = null;
+									if (objSelect instanceof VirtualEntry<?>) {
+
+										VirtualEntry<?> ve = (VirtualEntry<?>) objSelect;
+										container = (EObject) ve.getOriginalParent();
+										IObservableList list = ve.getList();
+										Iterator iterator = list.iterator();
+										while (iterator.hasNext()) {
+											maes.add((MApplicationElement) iterator.next());
+										}
+
+									} else {
+										container = ((EObject) objSelect).eContainer();
+										MApplicationElement objSelect2 = (MApplicationElement) objSelect;
+										if (!(objSelect2 instanceof MApplication))
+											maes.add(objSelect2);
+										else {
+											// can't extract application
+											return;
+										}
+
+									}
+
+									String containerId = ((MApplicationElement) container).getElementId();
+									if (containerId == null || containerId.length() == 0) {
+										MessageDialog.openError(viewer.getControl().getShell(), null, messages.ModelEditor_ExtractFragment_NoParentId);
+
+										return;
+									}
+
+								}
+
+								if (modelExtractor.extract(viewer.getControl().getShell(), project, maes)) {
+									Command cmd = DeleteCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), maes);
+									if (cmd.canExecute()) {
+										ModelEditor.this.modelProvider.getEditingDomain().getCommandStack().execute(cmd);
+									}
+								}
+
+							};
+						});
+
+				}
 
 				IExtensionRegistry registry = RegistryFactory.getRegistry();
 				IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.scripting"); //$NON-NLS-1$
 				final IConfigurationElement[] elements = extPoint.getConfigurationElements();
 
-				if (elements.length > 0 && !s.isEmpty() && s.getFirstElement() instanceof MApplicationElement) {
+				if (elements.length > 0 && !s.isEmpty() && s.getFirstElement() instanceof MApplicationElement && noSelected == 1) {
 					if (addSeparator) {
 						manager.add(new Separator());
 					}
@@ -817,27 +839,6 @@ public class ModelEditor {
 						}
 					}
 
-				}
-				if ((s.getFirstElement() instanceof MApplicationElement) && (!isModelFragment()) && (!(s.getFirstElement() instanceof MApplication)) && modelExtractor != null) {
-					manager.add(new Action(messages.ModelEditor_ExtractFragment, ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_ModelFragments))) {
-						@Override
-						public void run() {
-							MApplicationElement oe = (MApplicationElement) s.getFirstElement();
-							EObject container = ((EObject) oe).eContainer();
-							String containerId = ((MApplicationElement) container).getElementId();
-							if (containerId == null || containerId.length() == 0) {
-								MessageDialog.openError(viewer.getControl().getShell(), null, messages.ModelEditor_ExtractFragment_NoParentId);
-								return;
-							}
-							if (modelExtractor.extract(viewer.getControl().getShell(), project, Collections.singletonList(oe))) {
-								Command cmd = DeleteCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), oe);
-								if (cmd.canExecute()) {
-									ModelEditor.this.modelProvider.getEditingDomain().getCommandStack().execute(cmd);
-								}
-							}
-						};
-
-					});
 				}
 
 				if (addSeparator) {
@@ -1010,10 +1011,10 @@ public class ModelEditor {
 		TreeViewer tempViewer = null;
 		String property = System.getProperty(ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED);
 		if (property != null) {
-			FilteredTree viewParent = new FilteredTree(treeArea, SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter(), true);
+			FilteredTree viewParent = new FilteredTree(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter(), true);
 			tempViewer = viewParent.getViewer();
 		} else {
-			tempViewer = new TreeViewer(treeArea, SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+			tempViewer = new TreeViewer(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		}
 		final TreeViewer viewer = tempViewer;
 

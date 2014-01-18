@@ -50,16 +50,16 @@ public class ExtractContributionModelWizard extends BaseApplicationModelWizard {
 	@Override
 	protected EObject createInitialModel() {
 		MModelFragments createModelFragments = MFragmentFactory.INSTANCE.createModelFragments();
-		MStringModelFragment createStringModelFragment = MFragmentFactory.INSTANCE.createStringModelFragment();
 		for (MApplicationElement moe : oes) {
-			
+	    MStringModelFragment createStringModelFragment = MFragmentFactory.INSTANCE.createStringModelFragment();	
 		MApplicationElement e = (MApplicationElement) EcoreUtil.copy((EObject) moe);
 		String featurename = ((EObject) moe).eContainmentFeature().getName();
 		createStringModelFragment.setParentElementId(((MApplicationElement) ((EObject) moe).eContainer()).getElementId());
 		createStringModelFragment.getElements().add(e);
 		createStringModelFragment.setFeaturename(featurename);
-		}
+		
 		createModelFragments.getFragments().add(createStringModelFragment);
+		}
 		return (EObject)createModelFragments;
 	}
 	
