@@ -256,7 +256,7 @@ public class InjectionEventTest extends TestCase {
 		
 	}
 	
-	private void ensureEventAdminStarted() {
+	static void ensureEventAdminStarted() {
 		if (CoreTestsActivator.getDefault().getEventAdmin() == null) {
 			Bundle[] bundles = CoreTestsActivator.getDefault().getBundleContext().getBundles();
 			for (Bundle bundle : bundles) {

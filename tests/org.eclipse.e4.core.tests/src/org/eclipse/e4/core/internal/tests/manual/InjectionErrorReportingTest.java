@@ -22,6 +22,7 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Creatable;
+import org.junit.Ignore;
 
 /**
  * Manual test to observe error reporting. The JUnits in this
@@ -244,6 +245,7 @@ public class InjectionErrorReportingTest extends TestCase {
 	/**
 	 * Manual test to check error message for recursive object creation
 	 */
+	@Ignore("Exception on recursive creations removed with bug 377343")
 	public void testRecursionError() {
 		IEclipseContext context = EclipseContextFactory.create();
 		boolean exception = false;

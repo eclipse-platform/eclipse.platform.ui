@@ -427,7 +427,12 @@ public class InjectorImpl implements IInjector {
 	}
 
 	private Object[] resolveArgs(Requestor requestor, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean uninject, boolean initial, boolean track) {
+		/* Special indicator for ExtendedObjectSuppliers not having a value */
+		final Object EOS_NOT_A_VALUE = new Object();
+
 		IObjectDescriptor[] descriptors = requestor.getDependentObjects();
+
+		// Resolution order changed in 1.4 as we now check extended suppliers first (bug 398728) 
 
 		// 0) initial fill - all values are unresolved
 		Object[] actualArgs = new Object[descriptors.length];
@@ -441,15 +446,7 @@ public class InjectorImpl implements IInjector {
 			actualArgs[i] = new ProviderImpl<Class<?>>(descriptors[i], this, objectSupplier);
 		}
 
-		// 2) use the temporary supplier
-		if (tempSupplier != null)
-			tempSupplier.get(descriptors, actualArgs, requestor, initial, false /* no tracking */, requestor.shouldGroupUpdates());
-
-		// 3) use the primary supplier
-		if (objectSupplier != null)
-			objectSupplier.get(descriptors, actualArgs, requestor, initial, requestor.shouldTrack() && track, requestor.shouldGroupUpdates());
-
-		// 4) try extended suppliers
+		// 2) try extended suppliers
 		for (int i = 0; i < actualArgs.length; i++) {
 			if (actualArgs[i] != NOT_A_VALUE)
 				continue; // already resolved
@@ -457,7 +454,19 @@ public class InjectorImpl implements IInjector {
 			if (extendedSupplier == null)
 				continue;
 			actualArgs[i] = extendedSupplier.get(descriptors[i], requestor, requestor.shouldTrack() && track, requestor.shouldGroupUpdates());
+			if (actualArgs[i] == NOT_A_VALUE) {
+				// Use special marker to prevent these annotated arguments from being resolved using temporary and primary suppliers
+				actualArgs[i] = EOS_NOT_A_VALUE;
+			}
 		}
+
+		// 3) use the temporary supplier
+		if (tempSupplier != null)
+			tempSupplier.get(descriptors, actualArgs, requestor, initial, false /* no tracking */, requestor.shouldGroupUpdates());
+
+		// 4) use the primary supplier
+		if (objectSupplier != null)
+			objectSupplier.get(descriptors, actualArgs, requestor, initial, requestor.shouldTrack() && track, requestor.shouldGroupUpdates());
 
 		// 5) try the bindings
 		for (int i = 0; i < actualArgs.length; i++) {
@@ -490,7 +499,7 @@ public class InjectorImpl implements IInjector {
 		// 6) post process
 		for (int i = 0; i < descriptors.length; i++) {
 			// check that values are of a correct type
-			if (actualArgs[i] != null && actualArgs[i] != IInjector.NOT_A_VALUE) {
+			if (actualArgs[i] != null && actualArgs[i] != IInjector.NOT_A_VALUE && actualArgs[i] != EOS_NOT_A_VALUE) {
 				Class<?> descriptorsClass = getDesiredClass(descriptors[i].getDesiredType());
 				if (descriptorsClass.isPrimitive()) { // support type autoboxing
 					if (descriptorsClass.equals(boolean.class))
@@ -513,7 +522,7 @@ public class InjectorImpl implements IInjector {
 				if (!descriptorsClass.isAssignableFrom(actualArgs[i].getClass()))
 					actualArgs[i] = IInjector.NOT_A_VALUE;
 			}
-			if (actualArgs[i] == IInjector.NOT_A_VALUE) { // still unresolved?
+			if (actualArgs[i] == IInjector.NOT_A_VALUE || actualArgs[i] == EOS_NOT_A_VALUE) { // still unresolved?
 				if (descriptors[i].hasQualifier(Optional.class)) { // uninject or optional - fill defaults
 					Class<?> descriptorsClass = getDesiredClass(descriptors[i].getDesiredType());
 					if (descriptorsClass.isPrimitive()) {
@@ -535,6 +544,9 @@ public class InjectorImpl implements IInjector {
 							actualArgs[i] = DEFAULT_BYTE;
 					} else
 						actualArgs[i] = null;
+				} else if (actualArgs[i] == EOS_NOT_A_VALUE) {
+					// Wasn't @Optional, so replace with NOT_A_VALUE
+					actualArgs[i] = IInjector.NOT_A_VALUE;
 				}
 			}
 		}
