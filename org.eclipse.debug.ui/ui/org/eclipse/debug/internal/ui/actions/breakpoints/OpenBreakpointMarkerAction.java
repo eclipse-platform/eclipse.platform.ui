@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 426110
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpoints;
 
@@ -33,12 +34,12 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 	protected static DelegatingModelPresentation fgPresentation = new DelegatingModelPresentation();
 	private IBreakpoint breakpoint;
 	private IEditorInput input;
-	
+
 	public OpenBreakpointMarkerAction(ISelectionProvider selectionProvider) {
 		super(selectionProvider, ActionMessages.OpenBreakpointMarkerAction__Go_to_File_1); 
 		setToolTipText(ActionMessages.OpenBreakpointMarkerAction_Go_to_File_for_Breakpoint_2); 
-		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui.ide", "icons/full/elcl16/gotoobj_tsk.gif")); //$NON-NLS-1$ //$NON-NLS-2$
-		setDisabledImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui.ide", "icons/full/dlcl16/gotoobj_tsk.gif")); //$NON-NLS-1$ //$NON-NLS-2$
+		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui.ide", "icons/full/elcl16/gotoobj_tsk.png")); //$NON-NLS-1$ //$NON-NLS-2$
+		setDisabledImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui.ide", "icons/full/dlcl16/gotoobj_tsk.png")); //$NON-NLS-1$ //$NON-NLS-2$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			this,
 			IDebugHelpContextIds.OPEN_BREAKPOINT_ACTION);
