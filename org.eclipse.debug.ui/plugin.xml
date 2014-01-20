@@ -2498,11 +2498,6 @@ M4 = Platform-specific fourth key
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>
          <factory 
-            class="" 
-            adaptableType="org.eclipse.ui.part.FileEditorInput">
-            <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
-         </factory>
-         <factory 
             class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
             adaptableType="org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
