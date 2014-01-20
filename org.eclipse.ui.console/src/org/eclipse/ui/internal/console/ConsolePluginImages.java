@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,11 +25,11 @@ import org.eclipse.ui.console.IConsoleConstants;
  */
 public class ConsolePluginImages {
 
-	/** 
+	/**
 	 * The image registry containing <code>Image</code>s and the <code>ImageDescriptor</code>s.
 	 */
 	private static ImageRegistry imageRegistry;
-		
+
 	/* Declare Common paths */
 	private static URL ICON_BASE_URL= null;
 
@@ -43,33 +43,33 @@ public class ConsolePluginImages {
 	private final static String DLCL= "dlcl16/"; //disabled - size 16x16 //$NON-NLS-1$
 	private final static String ELCL= "elcl16/"; //enabled - size 16x16 //$NON-NLS-1$
 	private final static String VIEW= "cview16/"; // views //$NON-NLS-1$
-	
+
 	/**
 	 * Declare all images
 	 */
 	private static void declareImages() {
 		// Actions
-		
+
 		//local toolbars
-		declareRegistryImage(IConsoleConstants.IMG_LCL_CLEAR, LOCALTOOL + "clear_co.gif"); //$NON-NLS-1$
-		declareRegistryImage(IInternalConsoleConstants.IMG_LCL_PIN, LOCALTOOL + "pin.gif"); //$NON-NLS-1$
-		declareRegistryImage(IInternalConsoleConstants.IMG_LCL_LOCK, LOCALTOOL + "lock_co.gif"); //$NON-NLS-1$
-			
+		declareRegistryImage(IConsoleConstants.IMG_LCL_CLEAR, LOCALTOOL + "clear_co.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalConsoleConstants.IMG_LCL_PIN, LOCALTOOL + "pin.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalConsoleConstants.IMG_LCL_LOCK, LOCALTOOL + "lock_co.png"); //$NON-NLS-1$
+
 		// disabled local toolbars
-		declareRegistryImage(IInternalConsoleConstants.IMG_DLCL_CLEAR, DLCL + "clear_co.gif"); //$NON-NLS-1$
-		declareRegistryImage(IInternalConsoleConstants.IMG_DLCL_PIN, DLCL + "pin.gif"); //$NON-NLS-1$
-		declareRegistryImage(IInternalConsoleConstants.IMG_DLCL_LOCK, DLCL + "lock_co.gif"); //$NON-NLS-1$
-		declareRegistryImage(IInternalConsoleConstants.IMG_DLCL_CLOSE, DLCL + "rem_co.gif"); //$NON-NLS-1$
-		
+		declareRegistryImage(IInternalConsoleConstants.IMG_DLCL_CLEAR, DLCL + "clear_co.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalConsoleConstants.IMG_DLCL_PIN, DLCL + "pin.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalConsoleConstants.IMG_DLCL_LOCK, DLCL + "lock_co.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalConsoleConstants.IMG_DLCL_CLOSE, DLCL + "rem_co.png"); //$NON-NLS-1$
+
 		// enabled local toolbars
-		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_CLEAR, ELCL + "clear_co.gif"); //$NON-NLS-1$
-		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_PIN, ELCL + "pin.gif"); //$NON-NLS-1$
-		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_LOCK, ELCL + "lock_co.gif"); //$NON-NLS-1$
-		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_CLOSE, ELCL + "rem_co.gif"); //$NON-NLS-1$
-		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_NEW_CON, ELCL + "new_con.gif"); //$NON-NLS-1$
-		
+		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_CLEAR, ELCL + "clear_co.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_PIN, ELCL + "pin.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_LOCK, ELCL + "lock_co.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_CLOSE, ELCL + "rem_co.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_NEW_CON, ELCL + "new_con.png"); //$NON-NLS-1$
+
 		// Views
-		declareRegistryImage(IConsoleConstants.IMG_VIEW_CONSOLE, VIEW + "console_view.gif"); //$NON-NLS-1$				
+		declareRegistryImage(IConsoleConstants.IMG_VIEW_CONSOLE, VIEW + "console_view.gif"); //$NON-NLS-1$
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class ConsolePluginImages {
 		}
 		imageRegistry.put(key, desc);
 	}
-	
+
 	/**
 	 * Returns the ImageRegistry.
 	 */
@@ -120,7 +120,7 @@ public class ConsolePluginImages {
 	 *		Misc images				MISC_
 	 *
 	 *	Where are the images?
-	 *		The images (typically gifs) are found in the same location as this plugin class.
+	 *		The images (typically pngs) are found in the same location as this plugin class.
 	 *		This may mean the same package directory as the package holding this class.
 	 *		The images are declared using this.getClass() to ensure they are looked up via
 	 *		this plugin class.
@@ -139,7 +139,7 @@ public class ConsolePluginImages {
 	public static Image getImage(String key) {
 		return getImageRegistry().get(key);
 	}
-	
+
 	/**
 	 * Returns the <code>ImageDescriptor<code> identified by the given key,
 	 * or <code>null</code> if it does not exist.
@@ -147,12 +147,12 @@ public class ConsolePluginImages {
 	public static ImageDescriptor getImageDescriptor(String key) {
 		return getImageRegistry().getDescriptor(key);
 	}
-	
+
 	private static URL makeIconFileURL(String iconPath) throws MalformedURLException {
 		if (ICON_BASE_URL == null) {
 			throw new MalformedURLException();
 		}
-			
+
 		return new URL(ICON_BASE_URL, iconPath);
 	}
 }

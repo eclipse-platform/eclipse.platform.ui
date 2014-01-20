@@ -39,7 +39,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%DebugPerspective.name"
-            icon="$nl$/icons/full/eview16/debug_persp.gif"
+            icon="$nl$/icons/full/eview16/debug_persp.png"
             class="org.eclipse.debug.internal.ui.DebugPerspectiveFactory"
             id="org.eclipse.debug.ui.DebugPerspective">
          <description>
@@ -70,14 +70,14 @@
       </category>
       <view
             name="%DebugView.name"
-            icon="$nl$/icons/full/eview16/debug_view.gif"
+            icon="$nl$/icons/full/eview16/debug_view.png"
             category="org.eclipse.debug.ui"
             class="org.eclipse.debug.internal.ui.views.launch.LaunchView"
             id="org.eclipse.debug.ui.DebugView">
       </view>
       <view
             name="%BreakpointsView.name"
-            icon="$nl$/icons/full/eview16/breakpoint_view.gif"
+            icon="$nl$/icons/full/eview16/breakpoint_view.png"
             category="org.eclipse.debug.ui"
             class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView"
             allowMultiple="true"
@@ -85,7 +85,7 @@
       </view>
       <view
             name="%VariablesView.name"
-            icon="$nl$/icons/full/eview16/variable_view.gif"
+            icon="$nl$/icons/full/eview16/variable_view.png"
             category="org.eclipse.debug.ui"
             class="org.eclipse.debug.internal.ui.views.variables.VariablesView"
             allowMultiple="true"
@@ -93,7 +93,7 @@
       </view>
       <view
             name="%ExpressionView.name"
-            icon="$nl$/icons/full/eview16/watchlist_view.gif"
+            icon="$nl$/icons/full/eview16/watchlist_view.png"
             category="org.eclipse.debug.ui"
             class="org.eclipse.debug.internal.ui.views.expression.ExpressionView"
             allowMultiple="true"
@@ -101,7 +101,7 @@
       </view>
       <view
             name="%RegistersView.name"
-            icon="$nl$/icons/full/eview16/register_view.gif"
+            icon="$nl$/icons/full/eview16/register_view.png"
             category="org.eclipse.debug.ui"
             class="org.eclipse.debug.internal.ui.views.registers.RegistersView"
             allowMultiple="true"
@@ -109,7 +109,7 @@
       </view>
       <view
             name="%ModulesView.name"
-            icon="$nl$/icons/full/eview16/module_view.gif"
+            icon="$nl$/icons/full/eview16/module_view.png"
             category="org.eclipse.debug.ui"
             class="org.eclipse.debug.internal.ui.views.modules.ModulesView"
             allowMultiple="true"
@@ -119,7 +119,7 @@
             allowMultiple="true"
             category="org.eclipse.debug.ui"
             class="org.eclipse.debug.internal.ui.views.memory.MemoryView"
-            icon="$nl$/icons/full/eview16/memory_view.gif"
+            icon="$nl$/icons/full/eview16/memory_view.png"
             id="org.eclipse.debug.ui.MemoryView"
             name="%MemoryViewName">
       </view>      
@@ -209,9 +209,9 @@
          <action
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RemoveAllBreakpointsAction"
                definitionId="org.eclipse.debug.ui.commands.RemoveAllBreakpoints"
-               disabledIcon="$nl$/icons/full/dlcl16/rem_all_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/rem_all_co.png"
                helpContextId="remove_all_breakpoints_action_context"
-               icon="$nl$/icons/full/elcl16/rem_all_co.gif"
+               icon="$nl$/icons/full/elcl16/rem_all_co.png"
                id="org.eclipse.debug.ui.actions.RemoveAllBreakpoints"
                label="%RemoveAllBreakpointsAction.label"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
@@ -220,7 +220,7 @@
                definitionId="org.eclipse.debug.ui.commands.SkipAllBreakpoints"
                label="%SkipAllBreakpointsAction.label"
                tooltip="%SkipAllBreakpointsAction.tooltip"
-               icon="$nl$/icons/full/elcl16/skip_brkp.gif"
+               icon="$nl$/icons/full/elcl16/skip_brkp.png"
                helpContextId="skip_all_breakpoints_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsAction"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
@@ -231,8 +231,8 @@
          <action
                definitionId="org.eclipse.debug.ui.commands.ToggleWatchpoint"
                label="%ToggleWatchpointAction.label"
-               icon="$nl$/icons/full/obj16/readwrite_obj.gif"
-               disabledIcon="$nl$/icons/full/obj16/readwrite_obj_disabled.gif"
+               icon="$nl$/icons/full/obj16/readwrite_obj.png"
+               disabledIcon="$nl$/icons/full/obj16/readwrite_obj_disabled.png"
                helpContextId="toggle_watchpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetWatchpointAction"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
@@ -241,8 +241,8 @@
          <action
                definitionId="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint"
                label="%ToggleMethodBreakpointAction.label"
-               icon="$nl$/icons/full/obj16/brkp_obj.gif"
-               disabledIcon="$nl$/icons/full/obj16/brkpd_obj.gif"
+               icon="$nl$/icons/full/obj16/brkp_obj.png"
+               disabledIcon="$nl$/icons/full/obj16/brkpd_obj.png"
                helpContextId="toggle_method_breakpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetMethodBreakpointAction"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
@@ -251,8 +251,8 @@
          <action
                definitionId="org.eclipse.debug.ui.commands.ToggleLineBreakpoint"
                label="%ToggleLineBreakpointAction.label"
-               icon="$nl$/icons/full/obj16/brkp_obj.gif"
-               disabledIcon="$nl$/icons/full/obj16/brkpd_obj.gif"
+               icon="$nl$/icons/full/obj16/brkp_obj.png"
+               disabledIcon="$nl$/icons/full/obj16/brkpd_obj.png"
                helpContextId="toggle_line_breakpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetToggleLineBreakpointAction"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
@@ -261,8 +261,8 @@
          <action
                definitionId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
                label="%ToggleBreakpointAction.label"
-               icon="$nl$/icons/full/obj16/brkp_obj.gif"
-               disabledIcon="$nl$/icons/full/obj16/brkpd_obj.gif"
+               icon="$nl$/icons/full/obj16/brkp_obj.png"
+               disabledIcon="$nl$/icons/full/obj16/brkpd_obj.png"
                helpContextId="toggle_breakpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetToggleBreakpointAction"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
@@ -295,11 +295,11 @@
          </menu>
          <action
                id="org.eclipse.debug.ui.actions.ToggleStepFilters"
-               hoverIcon="$nl$/icons/full/elcl16/stepbystep_co.gif"
+               hoverIcon="$nl$/icons/full/elcl16/stepbystep_co.png"
                class="org.eclipse.debug.internal.ui.commands.actions.ToggleStepFiltersCommandActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.ToggleStepFilters"
-               disabledIcon="$nl$/icons/full/dlcl16/stepbystep_co.gif"
-               icon="$nl$/icons/full/elcl16/stepbystep_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/stepbystep_co.png"
+               icon="$nl$/icons/full/elcl16/stepbystep_co.png"
                helpContextId="org.eclipse.debug.ui.step_with_filters_action_context"
                label="%StepWithFiltersAction.label"
                menubarPath="org.eclipse.ui.run/emptyStepGroup"
@@ -311,7 +311,7 @@
                id="org.eclipse.debug.ui.actions.DropToFrame"
                class="org.eclipse.debug.internal.ui.commands.actions.DropToFrameCommandActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.DropToFrame"
-               icon="$nl$/icons/full/elcl16/drop_to_frame.gif"
+               icon="$nl$/icons/full/elcl16/drop_to_frame.png"
                helpContextId="org.eclipse.debug.ui.drop_to_frame_action_context"
                label="%DropToFrame.label"
                toolbarPath="org.eclipse.debug.ui.main.toolbar/renderGroup">
@@ -321,19 +321,19 @@
                class="org.eclipse.debug.internal.ui.actions.RetargetRunToLineAction"
                definitionId="org.eclipse.debug.ui.commands.RunToLine"
                helpContextId="run_to_line_action_context"
-               disabledIcon="$nl$/icons/full/dlcl16/runtoline_co.gif"
-               icon="$nl$/icons/full/elcl16/runtoline_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/runtoline_co.png"
+               icon="$nl$/icons/full/elcl16/runtoline_co.png"
                label="%RunToLine.label"
                menubarPath="org.eclipse.ui.run/emptyStepGroup"
                toolbarPath="org.eclipse.debug.ui.main.toolbar/emptyStepGroup">
          </action>                  
          <action
                id="org.eclipse.debug.ui.actions.StepReturn"
-               hoverIcon="$nl$/icons/full/elcl16/stepreturn_co.gif"
+               hoverIcon="$nl$/icons/full/elcl16/stepreturn_co.png"
                class="org.eclipse.debug.internal.ui.commands.actions.StepReturnCommandActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.StepReturn"
-               disabledIcon="$nl$/icons/full/dlcl16/stepreturn_co.gif"
-               icon="$nl$/icons/full/elcl16/stepreturn_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/stepreturn_co.png"
+               icon="$nl$/icons/full/elcl16/stepreturn_co.png"
                helpContextId="step_return_action_context"
                label="%StepReturnAction.label"
                menubarPath="org.eclipse.ui.run/stepReturnGroup"
@@ -341,11 +341,11 @@
          </action>
          <action
                id="org.eclipse.debug.ui.actions.StepOver"
-               hoverIcon="$nl$/icons/full/elcl16/stepover_co.gif"
+               hoverIcon="$nl$/icons/full/elcl16/stepover_co.png"
                class="org.eclipse.debug.internal.ui.commands.actions.StepOverCommandActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.StepOver"
-               disabledIcon="$nl$/icons/full/dlcl16/stepover_co.gif"
-               icon="$nl$/icons/full/elcl16/stepover_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/stepover_co.png"
+               icon="$nl$/icons/full/elcl16/stepover_co.png"
                helpContextId="step_over_action_context"
                label="%StepOverAction.label"
                menubarPath="org.eclipse.ui.run/stepOverGroup"
@@ -353,11 +353,11 @@
          </action>
          <action
                id="org.eclipse.debug.ui.actions.StepInto"
-               hoverIcon="$nl$/icons/full/elcl16/stepinto_co.gif"
+               hoverIcon="$nl$/icons/full/elcl16/stepinto_co.png"
                class="org.eclipse.debug.internal.ui.commands.actions.StepIntoCommandActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.StepInto"
-               disabledIcon="$nl$/icons/full/dlcl16/stepinto_co.gif"
-               icon="$nl$/icons/full/elcl16/stepinto_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/stepinto_co.png"
+               icon="$nl$/icons/full/elcl16/stepinto_co.png"
                helpContextId="step_into_action_context"
                label="%StepIntoAction.label"
                menubarPath="org.eclipse.ui.run/stepIntoGroup"
@@ -365,11 +365,11 @@
          </action>
          <action
                id="org.eclipse.debug.ui.actions.toolbar.Disconnect"
-               hoverIcon="$nl$/icons/full/elcl16/disconnect_co.gif"
+               hoverIcon="$nl$/icons/full/elcl16/disconnect_co.png"
                class="org.eclipse.debug.internal.ui.commands.actions.DisconnectCommandActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.Disconnect"
-               disabledIcon="$nl$/icons/full/dlcl16/disconnect_co.gif"
-               icon="$nl$/icons/full/elcl16/disconnect_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/disconnect_co.png"
+               icon="$nl$/icons/full/elcl16/disconnect_co.png"
                helpContextId="disconnect_action_context"
                label="%Disconnect.label"
                menubarPath="org.eclipse.ui.run/stepGroup"
@@ -377,11 +377,11 @@
          </action>
          <action
                id="org.eclipse.debug.ui.actions.Terminate"
-               hoverIcon="$nl$/icons/full/elcl16/terminate_co.gif"
+               hoverIcon="$nl$/icons/full/elcl16/terminate_co.png"
                class="org.eclipse.debug.internal.ui.commands.actions.TerminateCommandActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.Terminate"
-               disabledIcon="$nl$/icons/full/dlcl16/terminate_co.gif"
-               icon="$nl$/icons/full/elcl16/terminate_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/terminate_co.png"
+               icon="$nl$/icons/full/elcl16/terminate_co.png"
                helpContextId="terminate_action_context"
                label="%TerminateAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup"
@@ -389,11 +389,11 @@
          </action>
          <action
                id="org.eclipse.debug.ui.actions.Suspend"
-               hoverIcon="$nl$/icons/full/elcl16/suspend_co.gif"
+               hoverIcon="$nl$/icons/full/elcl16/suspend_co.png"
                class="org.eclipse.debug.internal.ui.commands.actions.SuspendCommandActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.Suspend"
-               disabledIcon="$nl$/icons/full/dlcl16/suspend_co.gif"
-               icon="$nl$/icons/full/elcl16/suspend_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/suspend_co.png"
+               icon="$nl$/icons/full/elcl16/suspend_co.png"
                helpContextId="suspend_action_context"
                label="%SuspendAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup"
@@ -401,11 +401,11 @@
          </action>
          <action
                id="org.eclipse.debug.ui.actions.Resume"
-               hoverIcon="$nl$/icons/full/elcl16/resume_co.gif"
+               hoverIcon="$nl$/icons/full/elcl16/resume_co.png"
                class="org.eclipse.debug.internal.ui.commands.actions.ResumeCommandActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.Resume"
-               disabledIcon="$nl$/icons/full/dlcl16/resume_co.gif"
-               icon="$nl$/icons/full/elcl16/resume_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/resume_co.png"
+               icon="$nl$/icons/full/elcl16/resume_co.png"
                helpContextId="resume_action_context"
                label="%ResumeAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup"
@@ -459,22 +459,22 @@
          </action>
          <action
                id="org.eclipse.debug.ui.actions.DebugLast"
-               hoverIcon="$nl$/icons/full/elcl16/debuglast_co.gif"
+               hoverIcon="$nl$/icons/full/elcl16/debuglast_co.png"
                class="org.eclipse.debug.internal.ui.actions.DebugLastAction"
                definitionId="org.eclipse.debug.ui.commands.DebugLast"
-               disabledIcon="$nl$/icons/full/dlcl16/debuglast_co.gif"
-               icon="$nl$/icons/full/elcl16/debuglast_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/debuglast_co.png"
+               icon="$nl$/icons/full/elcl16/debuglast_co.png"
                helpContextId="debug_last_action_context"
                label="%ContextLaunchingDebugMenu.name"
                menubarPath="org.eclipse.ui.run/relaunchGroup">
          </action>
          <action
                id="org.eclipse.debug.ui.actions.RunLast"
-               hoverIcon="$nl$/icons/full/elcl16/runlast_co.gif"
+               hoverIcon="$nl$/icons/full/elcl16/runlast_co.png"
                class="org.eclipse.debug.internal.ui.actions.RunLastAction"
                definitionId="org.eclipse.debug.ui.commands.RunLast"
-               disabledIcon="$nl$/icons/full/dlcl16/runlast_co.gif"
-               icon="$nl$/icons/full/elcl16/runlast_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/runlast_co.png"
+               icon="$nl$/icons/full/elcl16/runlast_co.png"
                helpContextId="run_last_action_context"
                label="%ContextLaunchingRunMenu.name"
                menubarPath="org.eclipse.ui.run/relaunchGroup">
@@ -482,10 +482,10 @@
          <action
                id="org.eclipse.debug.internal.ui.actions.RunDropDownAction"
                toolbarPath="org.eclipse.debug.ui.launchActionSet/debug"
-               hoverIcon="$nl$/icons/full/etool16/run_exc.gif"
+               hoverIcon="$nl$/icons/full/etool16/run_exc.png"
                class="org.eclipse.debug.internal.ui.actions.RunToolbarAction"
-               disabledIcon="$nl$/icons/full/dtool16/run_exc.gif"
-               icon="$nl$/icons/full/etool16/run_exc.gif"
+               disabledIcon="$nl$/icons/full/dtool16/run_exc.png"
+               icon="$nl$/icons/full/etool16/run_exc.png"
                helpContextId="run_action_context"
                label="%RunDropDownAction.label"
                style="pulldown">
@@ -517,10 +517,10 @@
          <action
                id="org.eclipse.debug.internal.ui.actions.DebugDropDownAction"
                toolbarPath="org.eclipse.debug.ui.launchActionSet/debug"
-               hoverIcon="$nl$/icons/full/etool16/debug_exc.gif"
+               hoverIcon="$nl$/icons/full/etool16/debug_exc.png"
                class="org.eclipse.debug.internal.ui.actions.DebugToolbarAction"
-               disabledIcon="$nl$/icons/full/dtool16/debug_exc.gif"
-               icon="$nl$/icons/full/etool16/debug_exc.gif"
+               disabledIcon="$nl$/icons/full/dtool16/debug_exc.png"
+               icon="$nl$/icons/full/etool16/debug_exc.png"
                helpContextId="debug_action_context"
                label="%DebugDropDownAction.label"
                style="pulldown">
@@ -544,10 +544,10 @@
          <action
                id="org.eclipse.debug.internal.ui.actions.ProfileDropDownAction"
                toolbarPath="org.eclipse.debug.ui.launchActionSet/debug"
-               hoverIcon="$nl$/icons/full/etool16/profile_exc.gif"
+               hoverIcon="$nl$/icons/full/etool16/profile_exc.png"
                class="org.eclipse.debug.internal.ui.actions.ProfileToolbarAction"
-               disabledIcon="$nl$/icons/full/dtool16/profile_exc.gif"
-               icon="$nl$/icons/full/etool16/profile_exc.gif"
+               disabledIcon="$nl$/icons/full/dtool16/profile_exc.png"
+               icon="$nl$/icons/full/etool16/profile_exc.png"
                helpContextId="profile_action_context"
                label="%ProfileDropDownAction.label"
                style="pulldown">
@@ -578,11 +578,11 @@
          </action>
          <action
                id="org.eclipse.debug.ui.actions.ProfileLast"
-               hoverIcon="$nl$/icons/full/etool16/profile_exc.gif"
+               hoverIcon="$nl$/icons/full/etool16/profile_exc.png"
                class="org.eclipse.debug.internal.ui.actions.ProfileLastAction"
                definitionId="org.eclipse.debug.ui.commands.ProfileLast"
-               disabledIcon="$nl$/icons/full/dtool16/profile_exc.gif"
-               icon="$nl$/icons/full/etool16/profile_exc.gif"
+               disabledIcon="$nl$/icons/full/dtool16/profile_exc.png"
+               icon="$nl$/icons/full/etool16/profile_exc.png"
                helpContextId="profile_last_action_context"
                label="%ProfileLastAction.label"
                menubarPath="org.eclipse.ui.run/relaunchGroup">
@@ -698,7 +698,7 @@
           <command
                 commandId="org.eclipse.debug.ui.actions.WatchCommand"
                 helpContextId="variable_watch_action_context"
-                icon="$nl$/icons/full/etool16/watch_exp.gif"
+                icon="$nl$/icons/full/etool16/watch_exp.png"
                 label="%Watch.label">
              <visibleWhen>
                 <and>
@@ -751,10 +751,10 @@
          <action
                id="org.eclipse.debug.ui.debugview.toolbar.removeAllTerminated"
                toolbarPath="threadGroup"
-               hoverIcon="$nl$/icons/full/elcl16/rem_all_co.gif"
+               hoverIcon="$nl$/icons/full/elcl16/rem_all_co.png"
                class="org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction"
-               disabledIcon="$nl$/icons/full/dlcl16/rem_all_co.gif"
-               icon="$nl$/icons/full/elcl16/rem_all_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/rem_all_co.png"
+               icon="$nl$/icons/full/elcl16/rem_all_co.png"
                helpContextId="remove_all_terminated_action_context"
                label="%RemoveAllTerminatedAction.label"
                tooltip="%RemoveAllTerminatedAction.tooltip">
@@ -768,10 +768,10 @@
          <action
                id="org.eclipse.debug.ui.breakpointsView.toolbar.removeAll"
                toolbarPath="breakpointGroup"
-               hoverIcon="$nl$/icons/full/elcl16/rem_all_co.gif"
+               hoverIcon="$nl$/icons/full/elcl16/rem_all_co.png"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RemoveAllBreakpointsAction"
-               disabledIcon="$nl$/icons/full/dlcl16/rem_all_co.gif"
-               icon="$nl$/icons/full/elcl16/rem_all_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/rem_all_co.png"
+               icon="$nl$/icons/full/elcl16/rem_all_co.png"
                helpContextId="remove_all_breakpoints_action_context"
                label="%RemoveAllAction.label"
                tooltip="%RemoveAllBreakpointsAction.tooltip">
@@ -780,10 +780,10 @@
                id="org.eclipse.debug.ui.breakpointsView.toolbar.remove"
                definitionId="org.eclipse.ui.edit.delete"
                toolbarPath="breakpointGroup"
-               hoverIcon="$nl$/icons/full/elcl16/rem_co.gif"
+               hoverIcon="$nl$/icons/full/elcl16/rem_co.png"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RemoveBreakpointAction"
-               disabledIcon="$nl$/icons/full/dlcl16/rem_co.gif"
-               icon="$nl$/icons/full/elcl16/rem_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/rem_co.png"
+               icon="$nl$/icons/full/elcl16/rem_co.png"
                helpContextId="remove_breakpoint_action_context"
                label="%RemoveAction.label"
                tooltip="%RemoveBreakpointAction.tooltip">
@@ -795,7 +795,7 @@
                id="org.eclipse.debug.ui.breakpointsView.toolbar.linkWithDebugView"
                toolbarPath="navigationGroup"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.LinkBreakpointsWithDebugViewAction"
-               icon="$nl$/icons/full/elcl16/synced.gif"
+               icon="$nl$/icons/full/elcl16/synced.png"
                helpContextId="link_breakpoints_with_debug_view_action_context"
                label="%LinkWithDebugView.label"
                tooltip="%LinkWithDebugView.tooltip">
@@ -804,7 +804,7 @@
                class="org.eclipse.debug.internal.ui.actions.breakpoints.BreakpointsCollapseAllAction"
                definitionId="org.eclipse.ui.navigate.collapseAll"
                helpContextId="breakpoints_collapse_all_action_context"
-               icon="$nl$/icons/full/elcl16/collapseall.gif"
+               icon="$nl$/icons/full/elcl16/collapseall.png"
                id="org.eclipse.debug.ui.breakpointsView.toolbar.collapseAll"
                label="%CollapseAll.label"
                toolbarPath="navigationGroup"
@@ -814,7 +814,7 @@
                class="org.eclipse.debug.internal.ui.actions.breakpoints.BreakpointsExpandAllAction"
                definitionId="org.eclipse.ui.navigate.expandAll"
                helpContextId="breakpoints_expand_all_action_context"
-               icon="$nl$/icons/full/elcl16/expandall.gif"
+               icon="$nl$/icons/full/elcl16/expandall.png"
                id="org.eclipse.debug.ui.breakpointsView.toolbar.expandAll"
                label="%ExpandAll.label"
                toolbarPath="navigationGroup"
@@ -840,7 +840,7 @@
                id="org.eclipse.debug.ui.breakpointsView.toolbar.setDefaultBreakpointGroup"
                menubarPath="defaultBreakpointGroup"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.SetDefaultBreakpointGroupAction"
-               icon="$nl$/icons/full/obj16/brkp_grp.gif"
+               icon="$nl$/icons/full/obj16/brkp_grp.png"
                helpContextId="set_default_breakpoint_group_action_context"
                label="%setDefaultGroup.label"
                tooltip="%setDefaultGroup.tooltip">
@@ -861,10 +861,10 @@
          <action
                id="org.eclipse.debug.ui.expresssionsView.toolbar.removeAll"
                toolbarPath="expressionGroup"
-               hoverIcon="$nl$/icons/full/elcl16/rem_all_co.gif"
+               hoverIcon="$nl$/icons/full/elcl16/rem_all_co.png"
                class="org.eclipse.debug.internal.ui.actions.expressions.RemoveAllExpressionsAction"
-               disabledIcon="$nl$/icons/full/dlcl16/rem_all_co.gif"
-               icon="$nl$/icons/full/elcl16/rem_all_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/rem_all_co.png"
+               icon="$nl$/icons/full/elcl16/rem_all_co.png"
                helpContextId="remove_all_expressions_action_context"
                label="%RemoveAllAction.label"
                tooltip="%RemoveAllExpressionsAction.tooltip">
@@ -873,10 +873,10 @@
                id="org.eclipse.debug.ui.expresssionsView.toolbar.remove"
                toolbarPath="expressionGroup"
                definitionId="org.eclipse.ui.edit.delete"
-               hoverIcon="$nl$/icons/full/elcl16/rem_co.gif"
+               hoverIcon="$nl$/icons/full/elcl16/rem_co.png"
                class="org.eclipse.debug.internal.ui.actions.expressions.RemoveExpressionAction"
-               disabledIcon="$nl$/icons/full/dlcl16/rem_co.gif"
-               icon="$nl$/icons/full/elcl16/rem_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/rem_co.png"
+               icon="$nl$/icons/full/elcl16/rem_co.png"
                helpContextId="remove_expression_action_context"
                label="%RemoveAction.label"
                tooltip="%RemoveExpressionAction.tooltip">
@@ -890,8 +890,8 @@
          <action
                label="%addWatchExpressionAction.label"
                toolbarPath="expressionGroup"
-               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.gif"
-               hoverIcon="$nl$/icons/full/elcl16/monitorexpression_tsk.gif"
+               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.png"
+               hoverIcon="$nl$/icons/full/elcl16/monitorexpression_tsk.png"
                helpContextId="add_watch_expression_context"
                class="org.eclipse.debug.internal.ui.actions.expressions.AddWatchExpressionAction"
                tooltip="%addWatchExpressionAction.tooltip"
@@ -904,7 +904,7 @@
          <action
                class="org.eclipse.debug.internal.ui.views.memory.PinMemoryBlockAction"
                helpContextId="PinMemoryBlockAction_context"
-               icon="$nl$/icons/full/elcl16/pin.gif"
+               icon="$nl$/icons/full/elcl16/pin.png"
                id="org.eclipse.debug.ui.PinMemoryBlockAction"
                label="%PinMemoryBlockAction.label"
                state="false"
@@ -914,29 +914,29 @@
          <action
                class="org.eclipse.debug.internal.ui.views.memory.NewMemoryViewAction"
                helpContextId="NewMemoryViewAction_context"
-               icon="$nl$/icons/full/elcl16/new_con.gif"
+               icon="$nl$/icons/full/elcl16/new_con.png"
                id="org.eclipse.debug.ui.NewMemoryViewAction"
                label="%NewMemoryViewAction.label"
                style="push"
                toolbarPath="additions"
                tooltip="%NewMemoryViewAction.tooltip"/>
          <action
-               disabledIcon="$nl$/icons/full/dlcl16/var_cntnt_prvdr.gif"
-               hoverIcon="$nl$/icons/full/elcl16/var_cntnt_prvdr.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/var_cntnt_prvdr.png"
+               hoverIcon="$nl$/icons/full/elcl16/var_cntnt_prvdr.png"
                toolbarPath="MemoryMonitorsGroup"
                label="%ToggleMemoryMonitorsPaneAction.name"
                tooltip="%ToggleMemoryMonitorsPaneAction.tooltip"
                class="org.eclipse.debug.internal.ui.views.memory.ToggleMemoryMonitorsAction"
-               icon="$nl$/icons/full/elcl16/var_cntnt_prvdr.gif"
+               icon="$nl$/icons/full/elcl16/var_cntnt_prvdr.png"
                style="toggle"
                id="org.eclipse.debug.ui.togglemonitors"/>
          <action
-               disabledIcon="$nl$/icons/full/dlcl16/synced.gif"
-               hoverIcon="$nl$/icons/full/elcl16/synced.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/synced.png"
+               hoverIcon="$nl$/icons/full/elcl16/synced.png"
                toolbarPath="RenderingPanesGroup"
                label="%LinkRenderingPanesAction.name"
                tooltip="%LinkRenderingPanesAction.tooltip"
-               icon="$nl$/icons/full/elcl16/synced.gif"
+               icon="$nl$/icons/full/elcl16/synced.png"
                class="org.eclipse.debug.internal.ui.views.memory.LinkRenderingPanesAction"
                style="toggle"
                id="org.eclipse.debug.ui.linkrenderingpanes"/>
@@ -949,21 +949,21 @@
                style="push"
                tooltip="%TableRenderingPrefActionName"/>
          <action
-               disabledIcon="$nl$/icons/full/dlcl16/det_pane_right.gif"
-               hoverIcon="$nl$/icons/full/elcl16/det_pane_right.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/det_pane_right.png"
+               hoverIcon="$nl$/icons/full/elcl16/det_pane_right.png"
                toolbarPath="RenderingPanesGroup"
                label="%ToggleSplitPaneAction.name"
                tooltip="%ToggleSplitPaneAction.tooltip"
-               icon="$nl$/icons/full/elcl16/toggledetailpane_co.gif"
+               icon="$nl$/icons/full/elcl16/toggledetailpane_co.png"
                class="org.eclipse.debug.internal.ui.views.memory.ToggleSplitPaneAction"
                style="toggle"
                id="org.eclipse.debug.ui.togglesplitpane"/>
          <action
                class="org.eclipse.debug.internal.ui.views.memory.SwitchMemoryBlockAction"
-               disabledIcon="$nl$/icons/full/dlcl16/display_selected_mb.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/display_selected_mb.png"
                helpContextId="switchMemoryBlockAction_context"
-               hoverIcon="$nl$/icons/full/elcl16/display_selected_mb.gif"
-               icon="$nl$/icons/full/elcl16/display_selected_mb.gif"
+               hoverIcon="$nl$/icons/full/elcl16/display_selected_mb.png"
+               icon="$nl$/icons/full/elcl16/display_selected_mb.png"
                id="org.eclipse.debug.ui.switchMemoryBlock"
                label="%switchMemoryBlock.label"
                toolbarPath="switchMonitorGroup"
@@ -1071,7 +1071,7 @@
             id="org.eclipse.debug.ui.ExpressionViewPopupActions">
          <action
                label="%addWatchExpressionAction.label"
-               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.gif"
+               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.png"
                helpContextId="add_watch_expression_context"
                class="org.eclipse.debug.internal.ui.actions.expressions.AddWatchExpressionAction"
                tooltip="%addWatchExpressionAction.tooltip"
@@ -1109,7 +1109,7 @@
 
          <action
                label="%CopyToClipboardAction.label"
-               icon="$nl$/icons/full/elcl16/copy_edit_co.gif"
+               icon="$nl$/icons/full/elcl16/copy_edit_co.png"
                definitionId="org.eclipse.ui.edit.copy"
                helpContextId="copy_to_clipboard_action_context"
                class="org.eclipse.debug.internal.ui.views.launch.LaunchViewCopyToClipboardActionDelegate"
@@ -1120,7 +1120,7 @@
 
          <action
                label="%RelaunchAction.label"
-               icon="$nl$/icons/full/elcl16/runlast_co.gif"
+               icon="$nl$/icons/full/elcl16/runlast_co.png"
                helpContextId="relaunch_action_context"
                class="org.eclipse.debug.internal.ui.actions.RelaunchActionDelegate"
                menubarPath="launchGroup"
@@ -1128,7 +1128,7 @@
          </action>
          <action
                label="%RemoveAllTerminatedAction.label"
-               icon="$nl$/icons/full/elcl16/rem_all_co.gif"
+               icon="$nl$/icons/full/elcl16/rem_all_co.png"
                helpContextId="remove_all_terminated_action_context"
                class="org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction"
                menubarPath="launchGroup"
@@ -1164,7 +1164,7 @@
             id="org.eclipse.debug.ui.breakpointview.popupMenu">
          <action
                label="%Copy.label"
-               icon="$nl$/icons/full/elcl16/copy_edit_co.gif"
+               icon="$nl$/icons/full/elcl16/copy_edit_co.png"
                definitionId="org.eclipse.ui.edit.copy"
                helpContextId="copy_breakpoints_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.CopyBreakpointsActionDelegate"
@@ -1180,7 +1180,7 @@
          </action>
          <action
                label="%RemoveAllAction.label"
-               icon="$nl$/icons/full/elcl16/rem_all_co.gif"
+               icon="$nl$/icons/full/elcl16/rem_all_co.png"
                helpContextId="remove_all_breakpoints_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RemoveAllBreakpointsAction"
                menubarPath="breakpointGroup"
@@ -1188,7 +1188,7 @@
          </action>
         <action
                label="%RemoveAction.label"
-               icon="$nl$/icons/full/elcl16/rem_co.gif"
+               icon="$nl$/icons/full/elcl16/rem_co.png"
                helpContextId="remove_breakpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RemoveBreakpointAction"
                menubarPath="breakpointGroup"
@@ -1197,7 +1197,7 @@
         </action>
         <action
                label="%DisableBreakpointsAction.label"
-               icon="$nl$/icons/full/elcl16/disabled_co.gif"
+               icon="$nl$/icons/full/elcl16/disabled_co.png"
                helpContextId="disable_breakpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.DisableBreakpointsAction"
                menubarPath="breakpointGroup"
@@ -1206,7 +1206,7 @@
         </action>
         <action
                label="%EnableBreakpointsAction.label"
-               icon="$nl$/icons/full/elcl16/enabled_co.gif"
+               icon="$nl$/icons/full/elcl16/enabled_co.png"
                helpContextId="enable_breakpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.EnableBreakpointsAction"
                menubarPath="breakpointGroup"
@@ -1217,14 +1217,14 @@
               class="org.eclipse.debug.internal.ui.importexport.breakpoints.ExportBreakpoints"
               enablesFor="+"
               helpContextId="export_breakpoints_action_context"
-              icon="$nl$/icons/full/elcl16/export_brkpts.gif"
+              icon="$nl$/icons/full/elcl16/export_brkpts.png"
               id="org.eclipse.debug.internal.ui.importexport.breakpoints.exportBreakpointsContext"
               label="%exportBreakpoints.label"
               menubarPath="additions"/>
         <action
               class="org.eclipse.debug.internal.ui.importexport.breakpoints.ImportBreakpoints"
               helpContextId="import_breakpoints_action_context"
-              icon="$nl$/icons/full/elcl16/import_brkpts.gif"
+              icon="$nl$/icons/full/elcl16/import_brkpts.png"
               id="org.eclipse.debug.internal.ui.importexport.breakpoints.importBreakpointsContext"
               label="%importBreakpoints.label"
               menubarPath="additions"/>
@@ -1237,7 +1237,7 @@
       <!-- Variable Group -->
          <action
                label="%CopyVariablesToClipboardAction.label"
-               icon="$nl$/icons/full/elcl16/copy_edit_co.gif"
+               icon="$nl$/icons/full/elcl16/copy_edit_co.png"
                definitionId="org.eclipse.ui.edit.copy"
                helpContextId="copy_variables_to_clipboard_action_context"
                class="org.eclipse.debug.internal.ui.viewers.model.VirtualCopyToClipboardActionDelegate"
@@ -1260,7 +1260,7 @@
       <!-- Expression Group -->
          <action
                label="%RemoveAllAction.label"
-               icon="$nl$/icons/full/elcl16/rem_all_co.gif"
+               icon="$nl$/icons/full/elcl16/rem_all_co.png"
                helpContextId="remove_all_expressions_action_context"
                class="org.eclipse.debug.internal.ui.actions.expressions.RemoveAllExpressionsAction"
                menubarPath="expressionGroup"
@@ -1268,7 +1268,7 @@
          </action>
          <action
                label="%RemoveAction.label"
-               icon="$nl$/icons/full/elcl16/rem_co.gif"
+               icon="$nl$/icons/full/elcl16/rem_co.png"
                helpContextId="remove_expression_action_context"
                class="org.eclipse.debug.internal.ui.actions.expressions.RemoveExpressionAction"
                menubarPath="expressionGroup"
@@ -1282,7 +1282,7 @@
          </action>
          <action
                label="%CopyExpressionsToClipboardAction.label"
-               icon="$nl$/icons/full/elcl16/copy_edit_co.gif"
+               icon="$nl$/icons/full/elcl16/copy_edit_co.png"
                definitionId="org.eclipse.ui.edit.copy"
                helpContextId="copy_variables_to_clipboard_action_context"
                class="org.eclipse.debug.internal.ui.viewers.model.VirtualCopyToClipboardActionDelegate"
@@ -1309,7 +1309,7 @@
                menubarPath="variableGroup"
                class="org.eclipse.debug.internal.ui.viewers.model.VirtualCopyToClipboardActionDelegate"
                definitionId="org.eclipse.ui.edit.copy"
-               icon="$nl$/icons/full/elcl16/copy_edit_co.gif"
+               icon="$nl$/icons/full/elcl16/copy_edit_co.png"
                label="%CopyRegistersToClipboardAction.label"
                id="org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard"
                helpContextId="copy_to_clipboard_action_context">
@@ -1332,7 +1332,7 @@
          <action
                class="org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction"
                helpContextId="console_remove_all_terminated_context"
-               icon="$nl$/icons/full/elcl16/rem_all_co.gif"
+               icon="$nl$/icons/full/elcl16/rem_all_co.png"
                id="org.eclipse.debug.ui.consoleRemoveAllTerminatedAction"
                label="%RemoveAllTerminatedAction.label"
                menubarPath="additions"
@@ -1488,7 +1488,7 @@
          <action
                class="org.eclipse.debug.internal.ui.views.memory.ResetMemoryBlockAction"
                helpContextId="resetMemoryMonitor_context"
-               icon="$nl$/icons/full/elcl16/memoryreset_tsk.gif"
+               icon="$nl$/icons/full/elcl16/memoryreset_tsk.png"
                id="org.eclipse.debug.ui.resetMemoryBlock"
                label="%resetMemoryMonitorAction.label"
                menubarPath="additions">
@@ -1505,7 +1505,7 @@
          <action
                class="org.eclipse.debug.internal.ui.views.memory.RemoveRenderingContextAction"
                helpContextId="RemoveRenderingContextAction_context"
-               icon="$nl$/icons/full/elcl16/removememory_tsk.gif"
+               icon="$nl$/icons/full/elcl16/removememory_tsk.png"
                id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2.remove"
                label="%RemoveRenderingAction.name"
                menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove">
@@ -1513,7 +1513,7 @@
          <action
                class="org.eclipse.debug.internal.ui.views.memory.AddMemoryRenderingContextAction"
                helpContextId="AddRenderingContextAction_context"
-               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.gif"
+               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.png"
                id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2.add"
                label="%AddRenderingAction.name"
                menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove">
@@ -1530,7 +1530,7 @@
          <action
                class="org.eclipse.debug.internal.ui.views.memory.RemoveRenderingContextAction"
                helpContextId="RemoveRenderingContextAction_context"
-               icon="$nl$/icons/full/elcl16/removememory_tsk.gif"
+               icon="$nl$/icons/full/elcl16/removememory_tsk.png"
                id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1.remove"
                label="%RemoveRenderingAction.name"
                menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.1.addremove">
@@ -1538,7 +1538,7 @@
          <action
                class="org.eclipse.debug.internal.ui.views.memory.AddMemoryRenderingContextAction"
                helpContextId="AddRenderingContextAction_context"
-               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.gif"
+               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.png"
                id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1.add"
                label="%AddRenderingAction.name"
                menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.1.addremove">
@@ -1650,7 +1650,7 @@
       <launchGroup
             label="%DebugLaunchGroup.label"
             bannerImage="$nl$/icons/full/wizban/debug_wiz.png"
-            image="$nl$/icons/full/etool16/debug_exc.gif"
+            image="$nl$/icons/full/etool16/debug_exc.png"
             mode="debug"
             id="org.eclipse.debug.ui.launchGroup.debug"
             title="%DebugLaunchGroup.title">
@@ -1658,7 +1658,7 @@
       <launchGroup
             label="%RunLaunchGroup.label"
             bannerImage="$nl$/icons/full/wizban/run_wiz.png"
-            image="$nl$/icons/full/etool16/run_exc.gif"
+            image="$nl$/icons/full/etool16/run_exc.png"
             mode="run"
             id="org.eclipse.debug.ui.launchGroup.run"
             title="%RunLaunchGroup.title">
@@ -1666,7 +1666,7 @@
       <launchGroup
             label="%ProfileLaunchGroup.label"
             bannerImage="$nl$/icons/full/wizban/profile_wiz.png"
-            image="$nl$/icons/full/etool16/profile_exc.gif"
+            image="$nl$/icons/full/etool16/profile_exc.png"
             mode="profile"
             id="org.eclipse.debug.ui.launchGroup.profile"
             title="%ProfileLaunchGroup.title">
@@ -2147,57 +2147,57 @@ M4 = Platform-specific fourth key
   	<extension point="org.eclipse.ui.commandImages">
        <image
           commandId="org.eclipse.debug.ui.commands.ToggleStepFilters"
-          icon="$nl$/icons/full/elcl16/stepbystep_co.gif"
-          disabledIcon="$nl$/icons/full/dlcl16/stepbystep_co.gif"/>
+          icon="$nl$/icons/full/elcl16/stepbystep_co.png"
+          disabledIcon="$nl$/icons/full/dlcl16/stepbystep_co.png"/>
        <image
              commandId="org.eclipse.debug.ui.commands.StepInto"
-             disabledIcon="$nl$/icons/full/dlcl16/stepinto_co.gif"
-             icon="$nl$/icons/full/elcl16/stepinto_co.gif">
+             disabledIcon="$nl$/icons/full/dlcl16/stepinto_co.png"
+             icon="$nl$/icons/full/elcl16/stepinto_co.png">
        </image>
        <image
              commandId="org.eclipse.debug.ui.commands.StepOver"
-             disabledIcon="$nl$/icons/full/dlcl16/stepover_co.gif"
-             icon="$nl$/icons/full/elcl16/stepover_co.gif">
+             disabledIcon="$nl$/icons/full/dlcl16/stepover_co.png"
+             icon="$nl$/icons/full/elcl16/stepover_co.png">
        </image>
        <image
              commandId="org.eclipse.debug.ui.commands.StepReturn"
-             disabledIcon="$nl$/icons/full/dlcl16/stepreturn_co.gif"
-             icon="$nl$/icons/full/elcl16/stepreturn_co.gif">
+             disabledIcon="$nl$/icons/full/dlcl16/stepreturn_co.png"
+             icon="$nl$/icons/full/elcl16/stepreturn_co.png">
        </image>
        <image
              commandId="org.eclipse.debug.ui.commands.Resume"
-             disabledIcon="$nl$/icons/full/dlcl16/resume_co.gif"
-             icon="$nl$/icons/full/elcl16/resume_co.gif">
+             disabledIcon="$nl$/icons/full/dlcl16/resume_co.png"
+             icon="$nl$/icons/full/elcl16/resume_co.png">
        </image>
        <image
              commandId="org.eclipse.debug.ui.commands.Terminate"
-             disabledIcon="$nl$/icons/full/dlcl16/terminate_co.gif"
-             icon="$nl$/icons/full/elcl16/terminate_co.gif">
+             disabledIcon="$nl$/icons/full/dlcl16/terminate_co.png"
+             icon="$nl$/icons/full/elcl16/terminate_co.png">
        </image>
        <image
              commandId="org.eclipse.debug.ui.commands.DebugLast"
-             disabledIcon="$nl$/icons/full/dlcl16/debuglast_co.gif"
-             icon="$nl$/icons/full/elcl16/debuglast_co.gif">
+             disabledIcon="$nl$/icons/full/dlcl16/debuglast_co.png"
+             icon="$nl$/icons/full/elcl16/debuglast_co.png">
        </image>
        <image
              commandId="org.eclipse.debug.ui.commands.RunLast"
-             disabledIcon="$nl$/icons/full/dlcl16/runlast_co.gif"
-             icon="$nl$/icons/full/elcl16/runlast_co.gif">
+             disabledIcon="$nl$/icons/full/dlcl16/runlast_co.png"
+             icon="$nl$/icons/full/elcl16/runlast_co.png">
        </image>
        <image
              commandId="org.eclipse.debug.ui.commands.RunToLine"
-             disabledIcon="$nl$/icons/full/dlcl16/runtoline_co.gif"
-             icon="$nl$/icons/full/elcl16/runtoline_co.gif">
+             disabledIcon="$nl$/icons/full/dlcl16/runtoline_co.png"
+             icon="$nl$/icons/full/elcl16/runtoline_co.png">
        </image>
        <image
              commandId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
-             disabledIcon="$nl$/icons/full/obj16/brkpd_obj.gif"
-             icon="$nl$/icons/full/obj16/brkp_obj.gif">
+             disabledIcon="$nl$/icons/full/obj16/brkpd_obj.png"
+             icon="$nl$/icons/full/obj16/brkp_obj.png">
        </image>
        <image
              commandId="org.eclipse.debug.ui.commands.Suspend"
-             disabledIcon="$nl$/icons/full/dlcl16/suspend_co.gif"
-             icon="$nl$/icons/full/elcl16/suspend_co.gif">
+             disabledIcon="$nl$/icons/full/dlcl16/suspend_co.png"
+             icon="$nl$/icons/full/elcl16/suspend_co.png">
        </image>
     </extension>
    <extension
@@ -2229,7 +2229,7 @@ M4 = Platform-specific fourth key
             verticalRulerPreferenceKey="breakpointVerticalRuler"
             verticalRulerPreferenceValue="true"
             overviewRulerPreferenceKey="breakpointIndicationInOverviewRuler"
-            icon="$nl$/icons/full/obj16/brkp_obj.gif"
+            icon="$nl$/icons/full/obj16/brkp_obj.png"
             annotationImageProvider="org.eclipse.debug.internal.ui.BreakpointImageProvider"
             textStylePreferenceKey="breakpointTextStyle"
             textStylePreferenceValue="SQUIGGLES"
@@ -2247,7 +2247,7 @@ M4 = Platform-specific fourth key
             colorPreferenceValue="198,219,174"
             highlightPreferenceKey="currentIPHighlight"
             highlightPreferenceValue="true"
-            icon="$nl$/icons/full/obj16/inst_ptr_top.gif"
+            icon="$nl$/icons/full/obj16/inst_ptr_top.png"
             includeOnPreferencePage="true"
             label="%debugCurrentInstructionPointer"
             overviewRulerPreferenceKey="currentIPOverviewRuler"
@@ -2267,7 +2267,7 @@ M4 = Platform-specific fourth key
             colorPreferenceValue="219,235,204"
             highlightPreferenceKey="secondaryIPHighlight"
             highlightPreferenceValue="true"
-            icon="$nl$/icons/full/obj16/inst_ptr.gif"
+            icon="$nl$/icons/full/obj16/inst_ptr.png"
             includeOnPreferencePage="true"
             label="%debugCallStack"
             overviewRulerPreferenceKey="secondaryIPOverviewRuler"
@@ -2387,13 +2387,13 @@ M4 = Platform-specific fourth key
          point="org.eclipse.ui.editors">
       <editor
             name="%sourceNotFoundEditorName"
-            icon="$nl$/icons/full/obj16/stckframe_obj.gif"
+            icon="$nl$/icons/full/obj16/stckframe_obj.png"
             class="org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor"
             id="org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor">
       </editor>
       <editor
             name="%NoSourceFoundEditor.name"
-            icon="$nl$/icons/full/obj16/stckframe_obj.gif"
+            icon="$nl$/icons/full/obj16/stckframe_obj.png"
             class="org.eclipse.debug.internal.ui.views.launch.SourceNotFoundEditor"
             contributorClass="org.eclipse.ui.part.EditorActionBarContributor"
             id="org.eclipse.debug.ui.NoSourceFoundEditor">
@@ -2418,48 +2418,48 @@ M4 = Platform-specific fourth key
       <sourceContainerPresentation
             browserClass="org.eclipse.debug.internal.ui.sourcelookup.browsers.ProjectSourceContainerBrowser"
             containerTypeID="org.eclipse.debug.core.containerType.project"
-            icon="$nl$/icons/full/obj16/prj_obj.gif"
+            icon="$nl$/icons/full/obj16/prj_obj.png"
             id="org.eclipse.debug.ui.containerPresentation.project">
       </sourceContainerPresentation>
       <sourceContainerPresentation
             browserClass="org.eclipse.debug.internal.ui.sourcelookup.browsers.WorkingSetSourceContainerBrowser"
             containerTypeID="org.eclipse.debug.ui.containerType.workingSet"
-            icon="$nl$/icons/full/obj16/workset.gif"
+            icon="$nl$/icons/full/obj16/workset.png"
             id="org.eclipse.debug.ui.containerPresentation.workingSet">
       </sourceContainerPresentation>           
       <sourceContainerPresentation
             browserClass="org.eclipse.debug.internal.ui.sourcelookup.browsers.DirectorySourceContainerBrowser"
             containerTypeID="org.eclipse.debug.core.containerType.directory"
-            icon="$nl$/icons/full/obj16/fldr_obj.gif"
+            icon="$nl$/icons/full/obj16/fldr_obj.png"
             id="org.eclipse.debug.ui.containerPresentation.directory">
       </sourceContainerPresentation>
       <sourceContainerPresentation
             browserClass="org.eclipse.debug.internal.ui.sourcelookup.browsers.FolderSourceContainerBrowser"
             containerTypeID="org.eclipse.debug.core.containerType.folder"
-            icon="$nl$/icons/full/obj16/fldr_obj.gif"
+            icon="$nl$/icons/full/obj16/fldr_obj.png"
             id="org.eclipse.debug.ui.containerPresentation.folder">
       </sourceContainerPresentation>
       <sourceContainerPresentation
             browserClass="org.eclipse.debug.internal.ui.sourcelookup.browsers.WorkspaceSourceContainerBrowser"
             containerTypeID="org.eclipse.debug.core.containerType.workspace"
-            icon="$nl$/icons/full/obj16/prj_obj.gif"
+            icon="$nl$/icons/full/obj16/prj_obj.png"
             id="org.eclipse.debug.ui.containerPresentation.workspace">
       </sourceContainerPresentation>
       <sourceContainerPresentation
             browserClass="org.eclipse.debug.internal.ui.sourcelookup.browsers.ArchiveSourceContainerBrowser"
             containerTypeID="org.eclipse.debug.core.containerType.archive"
-            icon="$nl$/icons/full/obj16/jar_obj.gif"
+            icon="$nl$/icons/full/obj16/jar_obj.png"
             id="org.eclipse.debug.ui.containerPresentation.archive">
       </sourceContainerPresentation>  
       <sourceContainerPresentation
             browserClass="org.eclipse.debug.internal.ui.sourcelookup.browsers.ExternalArchiveSourceContainerBrowser"
             containerTypeID="org.eclipse.debug.core.containerType.externalArchive"
-            icon="$nl$/icons/full/obj16/jar_obj.gif"
+            icon="$nl$/icons/full/obj16/jar_obj.png"
             id="org.eclipse.debug.ui.containerPresentation.externalArchive">
       </sourceContainerPresentation>      
       <sourceContainerPresentation           
             containerTypeID="org.eclipse.debug.core.containerType.default"
-            icon="$nl$/icons/full/obj16/prj_obj.gif"
+            icon="$nl$/icons/full/obj16/prj_obj.png"
             id="org.eclipse.debug.ui.containerPresentation.default">
       </sourceContainerPresentation>
    </extension>
@@ -2931,32 +2931,32 @@ M4 = Platform-specific fourth key
           <breakpointOrganizer
                 othersLabel="%Project.others"
                 label="%Project.label"
-                icon="$nl$/icons/full/obj16/prj_obj.gif"
+                icon="$nl$/icons/full/obj16/prj_obj.png"
                 class="org.eclipse.debug.internal.ui.views.breakpoints.ProjectBreakpointOrganizer"
                 id="org.eclipse.debug.ui.breakpointProjectOrganizer"/>
           <breakpointOrganizer
                 othersLabel="%File.others"
                 label="%File.label"
-                icon="$nl$/icons/full/obj16/file_obj.gif"
+                icon="$nl$/icons/full/obj16/file_obj.png"
                 class="org.eclipse.debug.internal.ui.views.breakpoints.FileBreakpointOrganizer"
                 id="org.eclipse.debug.ui.breakpointFileOrganizer"/>
 		  <breakpointOrganizer
           othersLabel="%WorkingSet.others"
           label="%WorkingSet.label"
           class="org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetBreakpointOrganizer"
-          icon="$nl$/icons/full/obj16/fldr_obj.gif"
+          icon="$nl$/icons/full/obj16/fldr_obj.png"
           id="org.eclipse.debug.ui.workingSetOrganizer"/>          	
           <breakpointOrganizer
                 othersLabel="%BreakpointType.others"
                 label="%BreakpointType.label"
-                icon="$nl$/icons/full/obj16/brkp_type.gif"
+                icon="$nl$/icons/full/obj16/brkp_type.png"
                 class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointTypeOrganizer"
                 id="org.eclipse.debug.ui.breakpointTypeOrganizer"/>
           <breakpointOrganizer
                 othersLabel="%BreakpointWorkingSet.others"
                 label="%BreakpointWorkingSet.label"
                 class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointSetOrganizer"
-                icon="$nl$/icons/full/obj16/brkp_grp.gif"
+                icon="$nl$/icons/full/obj16/brkp_grp.png"
                 id="org.eclipse.debug.ui.breakpointWorkingSetOrganizer"/>
     </extension>    
    <extension
@@ -2988,7 +2988,7 @@ M4 = Platform-specific fourth key
        <workingSet
              description="%BreakpointWorkingSet.description"
              elementAdapterClass="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointWorkingSetElementAdapter"
-             icon="$nl$/icons/full/obj16/brkp_grp.gif"
+             icon="$nl$/icons/full/obj16/brkp_grp.png"
              id="org.eclipse.debug.ui.breakpointWorkingSet"
              name="%BreakpointWorkingSet.name"
              pageClass="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointWorkingSetPage"/>
@@ -3030,7 +3030,7 @@ M4 = Platform-specific fourth key
        <wizard
              category="org.eclipse.debug.ui"
              class="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardImportBreakpoints"
-             icon="$nl$/icons/full/elcl16/import_brkpts.gif"
+             icon="$nl$/icons/full/elcl16/import_brkpts.png"
              id="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardImportBreakpoints"
              name="%exportBreakpoints.name">
           <description>
@@ -3041,7 +3041,7 @@ M4 = Platform-specific fourth key
        <wizard
              category="org.eclipse.debug.ui"
              class="org.eclipse.debug.internal.ui.importexport.launchconfigurations.ImportLaunchConfigurationsWizard"
-             icon="icons/full/obj16/import_config_obj.gif"
+             icon="icons/full/obj16/import_config_obj.png"
              id="org.eclipse.debug.ui.import.launchconfigurations"
              name="%importLaunchConfigurations.name">
           <description>
@@ -3061,7 +3061,7 @@ M4 = Platform-specific fourth key
        <wizard
              category="org.eclipse.debug.ui"
              class="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardExportBreakpoints"
-             icon="icons/full/elcl16/export_brkpts.gif"
+             icon="icons/full/elcl16/export_brkpts.png"
              id="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardExportBreakpoints"
              name="%exportBreakpoints.name">
           <description>
@@ -3072,7 +3072,7 @@ M4 = Platform-specific fourth key
        <wizard
              category="org.eclipse.debug.ui"
              class="org.eclipse.debug.internal.ui.importexport.launchconfigurations.ExportLaunchConfigurationsWizard"
-             icon="$nl$/icons/full/obj16/export_config_obj.gif"
+             icon="$nl$/icons/full/obj16/export_config_obj.png"
              id="org.eclipse.debug.ui.export.launchconfigurations"
              name="%importLaunchConfigurations.name">
           <description>

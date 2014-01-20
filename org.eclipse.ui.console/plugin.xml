@@ -23,7 +23,7 @@
       <view
             allowMultiple="true"
             class="org.eclipse.ui.internal.console.ConsoleView"
-            icon="$nl$/icons/full/cview16/console_view.gif"
+            icon="$nl$/icons/full/cview16/console_view.png"
             category="org.eclipse.ui"
             name="%ConsoleView.name"
             id="org.eclipse.ui.console.ConsoleView">
