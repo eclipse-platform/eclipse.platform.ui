@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
 import org.eclipse.core.runtime.content.XMLContentDescriber;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.harness.TestRegistryChangeListener;
 import org.eclipse.test.OrderedTestSuite;
@@ -837,6 +837,16 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 
 		IContentType[] multiple = finder.findContentTypesFor(getInputStream(XML_UTF_8, "UTF-8"), null);
 		assertTrue("3.0", contains(multiple, xmlContentType));
+	}
+
+	public void testImportFileAssociation() throws CoreException {
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		assertNull(contentTypeManager.findContentTypeFor("*.bug122217"));
+		IPreferencesService service = Platform.getPreferencesService();
+		String prefs = "file_export_version=3.0\n/instance/org.eclipse.core.runtime/content-types/org.eclipse.core.runtime.xml/file-extensions=bug122217";
+		IExportedPreferences exported = service.readPreferences(new ByteArrayInputStream(prefs.getBytes()));
+		assertTrue(service.applyPreferences(exported).isOK());
+		assertNotNull(contentTypeManager.findContentTypeFor("*.bug122217"));
 	}
 
 	public void testInvalidMarkup() {
