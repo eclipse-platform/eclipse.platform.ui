@@ -25,5 +25,8 @@
 			file-extensions="properties">
 			<property name="org.eclipse.core.runtime.charset" default="ISO-8859-1"/>
 		</content-type>			
-	</extension>		 
+	</extension>
+	<extension point="org.eclipse.equinox.preferences.preferences">
+		<modifier class="org.eclipse.core.internal.content.PreferenceModifyListener"/>
+	</extension>
 </plugin>
