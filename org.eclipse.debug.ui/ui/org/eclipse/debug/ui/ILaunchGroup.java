@@ -26,7 +26,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * 			  id="com.example.ExampleLaunchGroupId"
  * 			  mode="run"
  * 			  label="Run"
- * 			  image="icons\run.gif"
+ * 			  image="icons\run.png"
  * 		&lt;/launchGroup&gt;
  * 	&lt;/extension&gt;
  * </pre>

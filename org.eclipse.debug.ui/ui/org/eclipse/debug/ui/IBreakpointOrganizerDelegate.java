@@ -32,7 +32,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * 		class="com.example.BreakpointOrganizer"
  *      id="com.example.BreakpointOrganizer"
  *      label="Example Organizer"
- *      icon="icons/full/obj16/example_org.gif"/&gt;
+ *      icon="icons/full/obj16/example_org.png"/&gt;
  * &lt;/extension&gt;
  * </pre>
  * The attributes are specified as follows:
