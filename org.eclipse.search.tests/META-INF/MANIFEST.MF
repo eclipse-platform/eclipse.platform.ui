@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.search.tests
 Bundle-Version: 3.8.200.qualifier
-Bundle-ClassPath: searchtests.jar
 Bundle-Activator: org.eclipse.search.tests.SearchTestPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin

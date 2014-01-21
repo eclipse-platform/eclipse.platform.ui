@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.jface.text.tests
 Bundle-Version: 3.10.100.qualifier
-Bundle-ClassPath: jfacetexttests.jar
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: 

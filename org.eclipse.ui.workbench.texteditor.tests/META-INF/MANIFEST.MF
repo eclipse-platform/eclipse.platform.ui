@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.workbench.texteditor.tests
 Bundle-Version: 3.10.0.qualifier
-Bundle-ClassPath: workbenchtexteditortests.jar
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: 
