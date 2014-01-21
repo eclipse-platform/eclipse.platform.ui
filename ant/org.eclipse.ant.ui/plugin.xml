@@ -16,7 +16,7 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%AntEditor.name"
-            icon="$nl$/icons/full/obj16/ant_buildfile.gif"
+            icon="$nl$/icons/full/obj16/ant_buildfile.png"
             class="org.eclipse.ant.internal.ui.editor.AntEditor"
             contributorClass="org.eclipse.ant.internal.ui.editor.AntEditorActionContributor"
             id="org.eclipse.ant.ui.internal.editor.AntEditor">
@@ -32,7 +32,7 @@
       </category>
       <view
             name="%View.antView"
-            icon="$nl$/icons/full/eview16/ant_view.gif"
+            icon="$nl$/icons/full/eview16/ant_view.png"
             category="org.eclipse.ant.ui.views"
             fastViewWidthRatio="0.40"
             class="org.eclipse.ant.internal.ui.views.AntView"
@@ -406,12 +406,12 @@ M4 = Platform-specific fourth key -->
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            icon="$nl$/icons/full/obj16/ant.gif"
+            icon="$nl$/icons/full/obj16/ant.png"
             configTypeID="org.eclipse.ant.AntLaunchConfigurationType"
             id="org.eclipse.ant.launchConfigurationTypeImage.ant">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
-            icon="$nl$/icons/full/obj16/ant.gif"
+            icon="$nl$/icons/full/obj16/ant.png"
             configTypeID="org.eclipse.ant.AntBuilderLaunchConfigurationType"
             id="org.eclipse.ant.launchConfigurationTypeImage.ant.builder">
       </launchConfigurationTypeImage>
@@ -457,7 +457,7 @@ M4 = Platform-specific fourth key -->
             class="org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchShortcut"
             description="%AntBuildShortcut.description"
             helpContextId="org.eclipse.ui.externaltools.launchShortcutHelpContext.antShortcut"
-            icon="$nl$/icons/full/obj16/ant.gif"
+            icon="$nl$/icons/full/obj16/ant.png"
             id="org.eclipse.ant.ui.antShortcut"
             label="%AntLaunchShortcut.label"
             modes="run, debug">
@@ -489,7 +489,7 @@ M4 = Platform-specific fourth key -->
             class="org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchShortcutWithDialog"
             description="%AntBuild...Shortcut.description"
             helpContextId="org.eclipse.ui.externaltools.launchShortcutHelpContext.antShortcutWithDialog"
-            icon="$nl$/icons/full/obj16/ant.gif"
+            icon="$nl$/icons/full/obj16/ant.png"
             id="org.eclipse.ant.ui.antShortcutWithDialog"
             label="%AntLaunchShortcutWithDialog.label"
             modes="run, debug">
@@ -556,7 +556,7 @@ M4 = Platform-specific fourth key -->
       <resolver
             name="%ant.resolvers.src"
             type="src"
-            icon="$nl$/templates/resolver.gif"
+            icon="$nl$/templates/resolver.png"
             description="%ant.resolvers.src.description"
             contextTypeId="org.eclipse.ant.ui.templateContextType.XML"
             class="org.eclipse.ant.internal.ui.editor.templates.AntVariableResolver">
@@ -564,7 +564,7 @@ M4 = Platform-specific fourth key -->
       <resolver
             name="%ant.resolvers.dst"
             type="dst"
-            icon="$nl$/templates/resolver.gif"
+            icon="$nl$/templates/resolver.png"
             description="%ant.resolvers.dst.description"
             contextTypeId="org.eclipse.ant.ui.templateContextType.XML"
             class="org.eclipse.ant.internal.ui.editor.templates.AntVariableResolver">
@@ -584,7 +584,7 @@ M4 = Platform-specific fourth key -->
          point="org.eclipse.ui.newWizards">
     <wizard
             name="%antNewJavaProjectWizard.name"
-            icon="$nl$/icons/full/obj16/new_ant_project.gif"
+            icon="$nl$/icons/full/obj16/new_ant_project.png"
             class="org.eclipse.ant.internal.ui.datatransfer.AntNewJavaProjectWizard"
             preferredPerspectives="org.eclipse.jdt.ui.JavaPerspective,org.eclipse.jdt.ui.JavaBrowsingPerspective,org.eclipse.jdt.ui.JavaHierarchyPerspective"
             project="true"
@@ -684,7 +684,7 @@ M4 = Platform-specific fourth key -->
             id="org.eclipse.ant.ui.export" 
             name="%antExportWizard.name"
             class="org.eclipse.ant.internal.ui.datatransfer.AntBuildfileExportWizard" 
-            icon="$nl$/icons/full/elcl16/exportAnt_co.gif"
+            icon="$nl$/icons/full/elcl16/exportAnt_co.png"
             category="org.eclipse.ui.Basic">
          <description> 
             %antExportWizard.description
@@ -704,8 +704,8 @@ M4 = Platform-specific fourth key -->
   				toolbarPath="org.eclipse.ui.edit.text.actionSet.presentation/Presentation" 
   				id="org.eclipse.ant.ui.toggleMarkOccurrences" 
   				definitionId="org.eclipse.ant.ui.toggleMarkOccurrences"
-  				disabledIcon="$nl$/icons/full/dtool16/mark_occurrences.gif" 
-  				icon="$nl$/icons/full/etool16/mark_occurrences.gif" 
+  				disabledIcon="$nl$/icons/full/dtool16/mark_occurrences.png" 
+  				icon="$nl$/icons/full/etool16/mark_occurrences.png" 
   				label="%toggleMarkOccurrences.label" 
   				retarget="true" 
   				tooltip="%toggleMarkOccurrences.tooltip" />
@@ -713,8 +713,8 @@ M4 = Platform-specific fourth key -->
   				style="toggle" 
   				toolbarPath="org.eclipse.ui.edit.text.actionSet.presentation/Presentation" 
   				id="org.eclipse.ant.ui.toggleAutoReconcile"
-  				disabledIcon="$nl$/icons/full/dlcl16/refresh.gif" 
-  				icon="$nl$/icons/full/elcl16/refresh.gif" 
+  				disabledIcon="$nl$/icons/full/dlcl16/refresh.png" 
+  				icon="$nl$/icons/full/elcl16/refresh.png" 
   				label="%toggleAutoReconcile.label" 
   				retarget="true" 
   				tooltip="%toggleAutoReconcile.tooltip" />
