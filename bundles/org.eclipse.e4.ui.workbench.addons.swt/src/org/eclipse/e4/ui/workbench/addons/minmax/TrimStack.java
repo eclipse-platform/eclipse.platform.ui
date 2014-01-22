@@ -263,7 +263,7 @@ public class TrimStack {
 	@Inject
 	private void setMinMaxElement(MApplication theApp) {
 		for (MAddon addon : theApp.getAddons()) {
-			if (addon.getElementId().contains("MinMaxAddon")) {
+			if (addon.getContributionURI().contains("MinMaxAddon")) { //$NON-NLS-1$
 				minMaxAddon = addon;
 			}
 		}
@@ -849,6 +849,8 @@ public class TrimStack {
 	}
 
 	void restoreStack() {
+		showStack(false);
+
 		minimizedElement.setVisible(true);
 		minimizedElement.getTags().remove(IPresentationEngine.MINIMIZED);
 		toolControl.setToBeRendered(false);
