@@ -14,4 +14,11 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/ui/ide/IDE.java" type="org.eclipse.ui.ide.IDE$Preferences">
+        <filter comment="Bug 413943 - [Workbench] Make &quot;instance/org.eclipse.ui.ide/WORKSPACE_NAME&quot; a public preference" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.ide.IDE.Preferences"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

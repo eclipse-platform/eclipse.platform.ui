@@ -184,6 +184,7 @@ public final class IDE {
 	 * <p>
 	 * This interface is not intended to be implemented by clients.
 	 * </p>
+	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	public interface Preferences {
 
@@ -246,6 +247,12 @@ public final class IDE {
 		 */
 		public static final String RECENT_WORKSPACES_PROTOCOL = "RECENT_WORKSPACES_PROTOCOL"; //$NON-NLS-1$
 
+		/**
+		 * Workspace name, will be displayed in the window title. This
+		 * preference must only be changed on the UI thread.
+		 * @since 3.10
+		 */
+		public static final String WORKSPACE_NAME = "WORKSPACE_NAME"; //$NON-NLS-1$
 	}
 
 	/**
