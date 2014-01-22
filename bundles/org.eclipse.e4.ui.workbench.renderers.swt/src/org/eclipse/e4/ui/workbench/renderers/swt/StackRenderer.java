@@ -805,7 +805,11 @@ public class StackRenderer extends LazyStackRenderer {
 		cti.setData(OWNING_ME, element);
 		cti.setText(getLabel(part, part.getLocalizedLabel()));
 		cti.setImage(getImage(part));
-		cti.setToolTipText(getToolTip(part.getLocalizedTooltip()));
+
+		String toolTip = getToolTip(part);
+		if (toolTip == null)
+			toolTip = part.getLocalizedTooltip();
+		cti.setToolTipText(getToolTip(toolTip));
 		if (element.getWidget() != null) {
 			// The part might have a widget but may not yet have been placed
 			// under this stack, check this
