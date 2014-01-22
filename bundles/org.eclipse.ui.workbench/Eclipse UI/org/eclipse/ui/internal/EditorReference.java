@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
@@ -81,6 +82,10 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 
 					boolean pinnedVal = "true".equals(createReadRoot.getString(IWorkbenchConstants.TAG_PINNED)); //$NON-NLS-1$
 					setPinned(pinnedVal);
+
+					String ttip = createReadRoot.getString(IWorkbenchConstants.TAG_TOOLTIP);
+					part.getTransientData().put(IPresentationEngine.OVERRIDE_TITLE_TOOL_TIP_KEY,
+							ttip);
 				}
 			} catch (WorkbenchException e) {
 				WorkbenchPlugin.log(e);
