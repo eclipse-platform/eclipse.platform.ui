@@ -733,9 +733,45 @@
          </parameter>
       </key>
       <key
+            platform="carbon"
+            commandId=""
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+_"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+      <key
+            platform="carbon"
+            commandId="org.eclipse.ui.window.splitEditor"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="Command+Shift+-"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+         <parameter
+               id="Splitter.isHorizontal"
+               value="true">
+         </parameter>
+      </key>
+      <key
             commandId="org.eclipse.ui.window.splitEditor"
             contextId="org.eclipse.ui.contexts.window"
             sequence="M1+{"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+         <parameter
+               id="Splitter.isHorizontal"
+               value="false">
+         </parameter>
+      </key>
+      <key
+            platform="carbon"
+            commandId=""
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+{"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+      <key
+            platform="carbon"
+            commandId="org.eclipse.ui.window.splitEditor"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="Command+Shift+["
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
          <parameter
                id="Splitter.isHorizontal"
