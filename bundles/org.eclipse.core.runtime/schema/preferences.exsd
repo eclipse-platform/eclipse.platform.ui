@@ -143,7 +143,7 @@
          Following is an example of a preference scope declaration.  This example declares that this plug-in will provide a preference implementation for the scope &quot;foo&quot;. It also declares that when the default values are loaded for this plug-in, the class &quot;MyPreferenceInitializer&quot; contains code to be run to initialize preference default values at runtime.
 &lt;p&gt;
    &lt;pre&gt;
-      &lt;extension point=&quot;org.eclipse.equinox.preferences.preferences&quot;&gt;
+      &lt;extension point=&quot;org.eclipse.core.runtime.preferences&quot;&gt;
          &lt;scope name=&quot;foo&quot; class=&quot;com.example.FooPrefs&quot;/&gt;
          &lt;initializer class=&quot;com.example.MyPreferenceInitializer&quot;/&gt;
          &lt;modifier class=&quot;com.example.MyModifyListener&quot;/&gt;
@@ -154,7 +154,7 @@
 If the client chooses to let the Eclipse Platform handle the preference nodes but wishes to define a custom location/mechanism for persisting the data, then they are able to set the &quot;storage&quot; attribute on the &quot;scope&quot; element. Note that only one of the &quot;class&quot; and &quot;storage&quot; attributes can be defined at the same time. The class referenced in the &quot;storage&quot; attribute must extend the AbstractPreferenceStorage class. In the following example the &quot;FooStorage&quot; class handles the loading/saving for the &quot;foo&quot; preferences.
 &lt;p&gt;
    &lt;pre&gt;
-      &lt;extension point=&quot;org.eclipse.equinox.preferences.preferences&quot;&gt;
+      &lt;extension point=&quot;org.eclipse.core.runtime.preferences&quot;&gt;
          &lt;scope name=&quot;foo&quot; storage=&quot;com.example.FooStorage&quot;/&gt;
          &lt;initializer class=&quot;com.example.MyPreferenceInitializer&quot;/&gt;
          &lt;modifier class=&quot;com.example.MyModifyListener&quot;/&gt;
@@ -187,7 +187,7 @@ If the client chooses to let the Eclipse Platform handle the preference nodes bu
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2004, 2012 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2004, 2014 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies 
