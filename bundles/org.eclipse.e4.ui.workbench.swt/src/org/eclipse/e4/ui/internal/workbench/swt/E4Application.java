@@ -10,6 +10,7 @@
  *     Tristan Hume - <trishume@gmail.com> -
  *     		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
  *     		Implemented workbench auto-save to correctly restore state in case of crash.
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 366364
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench.swt;
@@ -217,13 +218,6 @@ public class E4Application implements IApplication {
 		// This context will be used by the injector for its
 		// extended data suppliers
 		ContextInjectionFactory.setDefault(appContext);
-
-		// Check if DS is running
-		if (!appContext
-				.containsKey("org.eclipse.e4.ui.workbench.modeling.EPartService")) {
-			throw new IllegalStateException(
-					"Core services not available. Please make sure that a declarative service implementation (such as the bundle 'org.eclipse.equinox.ds') is available!");
-		}
 
 		// Get the factory to create DI instances with
 		IContributionFactory factory = (IContributionFactory) appContext
