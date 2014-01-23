@@ -1042,6 +1042,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @return true if the close succeeded, and false otherwise
 	 */
 	private boolean busyClose(final boolean force) {
+		// Fire an E4 lifecycle notification
+		UIEvents.publishEvent(UIEvents.UILifeCycle.APP_SHUTDOWN_STARTED, application);
 
 		// notify the advisor of preShutdown and allow it to veto if not forced
 		isClosing = advisor.preShutdown();

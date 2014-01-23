@@ -104,6 +104,7 @@ public class TrimStack {
 	 */
 	private Menu trimStackMenu;
 
+	private boolean cachedUseOverlays = true;
 	private boolean isShowing = false;
 	private MUIElement minimizedElement;
 	private Composite clientAreaComposite;
@@ -257,13 +258,21 @@ public class TrimStack {
 			showStack(false);
 		}
 	};
+	
+	// Close any open stacks before shutting down
+	private EventHandler shutdownHandler = new EventHandler() {
+		public void handleEvent(org.osgi.service.event.Event event) {
+			showStack(false);
+		}
+	};
 
 	private MAddon minMaxAddon;
 
 	@Inject
 	private void setMinMaxElement(MApplication theApp) {
 		for (MAddon addon : theApp.getAddons()) {
-			if (addon.getContributionURI().contains("MinMaxAddon")) { //$NON-NLS-1$
+			String uri = addon.getContributionURI();
+			if (uri != null && uri.contains("MinMaxAddon")) { //$NON-NLS-1$
 				minMaxAddon = addon;
 			}
 		}
@@ -489,6 +498,7 @@ public class TrimStack {
 		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, widgetHandler);
 		eventBroker.subscribe(UIEvents.UILifeCycle.BRINGTOTOP, openHandler);
 		eventBroker.subscribe(UIEvents.UILifeCycle.ACTIVATE, closeHandler);
+		eventBroker.subscribe(UIEvents.UILifeCycle.APP_SHUTDOWN_STARTED, shutdownHandler);
 	}
 
 	/**
@@ -521,11 +531,10 @@ public class TrimStack {
 		trimStackTB = new ToolBar(parent, orientation | SWT.FLAT | SWT.WRAP);
 		trimStackTB.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
+				showStack(false);
+
 				trimStackTB = null;
 				trimStackMenu = null;
-
-				if (isShowing && hostPane != null && !hostPane.isDisposed())
-					showStack(false);
 			}
 		});
 
@@ -888,14 +897,14 @@ public class TrimStack {
 
 				// Cache the value to ensure that a stack is hidden using the same mode it was
 				// opened in
-				trimStackTB.setData(USE_OVERLAYS_KEY, true);
+				cachedUseOverlays = true;
 			} else {
 				minimizedElement.setVisible(true);
 				ctrl.addListener(SWT.Traverse, escapeListener);
 
 				// Cache the value to ensure that a stack is hidden using the same mode it was
 				// opened in
-				trimStackTB.setData(USE_OVERLAYS_KEY, false);
+				cachedUseOverlays = false;
 			}
 
 			isShowing = true;
@@ -952,8 +961,7 @@ public class TrimStack {
 
 			fixToolItemSelection();
 		} else if (!show && isShowing) {
-			boolean cachedOverlayState = (Boolean) trimStackTB.getData(USE_OVERLAYS_KEY);
-			if (cachedOverlayState) {
+			if (cachedUseOverlays) {
 				// Check to ensure that the client area is non-null since the
 				// trimstack may be currently hosted in the limbo shell
 				if (clientAreaComposite != null) {
@@ -966,7 +974,8 @@ public class TrimStack {
 					hostPane.setVisible(false);
 				}
 			} else {
-				ctrl.removeListener(SWT.Traverse, escapeListener);
+				if (ctrl != null && !ctrl.isDisposed())
+					ctrl.removeListener(SWT.Traverse, escapeListener);
 				minimizedElement.setVisible(false);
 			}
 

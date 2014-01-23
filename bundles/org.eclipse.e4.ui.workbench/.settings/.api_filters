@@ -22,6 +22,12 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$UILifeCycle">
+        <filter id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.UILifeCycle"/>
+                <message_argument value="APP_SHUTDOWN_STARTED"/>
+            </message_arguments>
+        </filter>
         <filter comment="All of the subinterfaces shouldn't be subclassed either" id="403767336">
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.UILifeCycle"/>

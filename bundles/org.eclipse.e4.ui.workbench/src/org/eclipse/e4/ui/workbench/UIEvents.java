@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.osgi.service.event.Event;
@@ -259,6 +260,12 @@ public class UIEvents {
 		 * Sent when application startup is complete
 		 */
 		public static final String APP_STARTUP_COMPLETE = TOPIC + TOPIC_SEP + "appStartupComplete"; //$NON-NLS-1$
+		/**
+		 * Sent when application shutdown is starting
+		 * 
+		 * @since 1.1
+		 */
+		public static final String APP_SHUTDOWN_STARTED = TOPIC + TOPIC_SEP + "appShutdownStarted"; //$NON-NLS-1$
 
 		/**
 		 * Sent when the theme is changed
@@ -314,7 +321,8 @@ public class UIEvents {
 		if (uiElement == null || !(uiElement instanceof MUIElement))
 			return false;
 
-		IEclipseContext context = ModelUtils.getContainingContext((MUIElement) uiElement);
+		IEclipseContext context = uiElement instanceof MApplication ? ((MApplication) uiElement)
+				.getContext() : ModelUtils.getContainingContext((MUIElement) uiElement);
 		if (context == null)
 			return false;
 
