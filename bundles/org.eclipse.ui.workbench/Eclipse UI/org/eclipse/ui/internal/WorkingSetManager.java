@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -169,5 +169,11 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements
 		sa.setProperty(IStatusAdapterConstants.TITLE_PROPERTY, title);
 		StatusManager.getManager().handle(sa,
 				StatusManager.SHOW | StatusManager.LOG);
+	}
+
+	@Override
+	protected void restoreWorkingSetState(IMemento memento) {
+		super.restoreWorkingSetState(memento);
+		saveState();
 	}
 }

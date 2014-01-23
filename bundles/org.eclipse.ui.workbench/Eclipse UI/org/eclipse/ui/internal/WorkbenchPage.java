@@ -4483,12 +4483,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (aggregateWorkingSet == null) {
 			IWorkingSetManager workingSetManager = PlatformUI.getWorkbench()
 					.getWorkingSetManager();
-			aggregateWorkingSet = (AggregateWorkingSet) workingSetManager.getWorkingSet(
-							getAggregateWorkingSetId());
+
+			if (aggregateWorkingSetId == null) {
+				aggregateWorkingSet = findAggregateWorkingSet(workingSetManager);
+				aggregateWorkingSetId = aggregateWorkingSet == null ? getDefaultAggregateWorkingSetId()
+						: aggregateWorkingSet.getName();
+			} else {
+				aggregateWorkingSet = (AggregateWorkingSet) workingSetManager
+						.getWorkingSet(aggregateWorkingSetId);
+			}
+
 			if (aggregateWorkingSet == null) {
 				aggregateWorkingSet = (AggregateWorkingSet) workingSetManager
-						.createAggregateWorkingSet(
-								getAggregateWorkingSetId(),
+						.createAggregateWorkingSet(aggregateWorkingSetId,
 								WorkbenchMessages.WorkbenchPage_workingSet_default_label,
 								getWorkingSets());
 				workingSetManager.addWorkingSet(aggregateWorkingSet);
@@ -4497,13 +4504,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return aggregateWorkingSet;
 	}
 
-	private String getAggregateWorkingSetId() {	
-		if (aggregateWorkingSetId == null) {
-			aggregateWorkingSetId = "Aggregate for window " + System.currentTimeMillis(); //$NON-NLS-1$
-		}
-		return aggregateWorkingSetId;
+	private String getDefaultAggregateWorkingSetId() {
+		return "Aggregate for window " + System.currentTimeMillis(); //$NON-NLS-1$
 	}
 	
+	private AggregateWorkingSet findAggregateWorkingSet(IWorkingSetManager workingSetManager) {
+		for (IWorkingSet workingSet : workingSetManager.getAllWorkingSets()) {
+			if (workingSet instanceof AggregateWorkingSet) {
+				return (AggregateWorkingSet) workingSet;
+			}
+		}
+		return null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
