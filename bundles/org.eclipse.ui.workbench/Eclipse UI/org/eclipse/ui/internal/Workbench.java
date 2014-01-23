@@ -34,6 +34,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ExecutionException;
@@ -270,7 +271,8 @@ import org.osgi.util.tracker.ServiceTracker;
  * rewritten to use the new workbench advisor API.
  * </p>
  */
-public final class Workbench extends EventManager implements IWorkbench {
+public final class Workbench extends EventManager implements IWorkbench,
+		org.eclipse.e4.ui.workbench.IWorkbench {
 
 	public static String WORKBENCH_AUTO_SAVE_JOB = "Workbench Auto-Save Job"; //$NON-NLS-1$
 
@@ -452,6 +454,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	private Job autoSaveJob;
 
+	private String id;
+	private ServiceRegistration<?> e4WorkbenchService;
+
 	/**
 	 * Creates a new workbench.
 	 * 
@@ -466,6 +471,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private Workbench(Display display, final WorkbenchAdvisor advisor, MApplication app,
 			IEclipseContext appContext) {
 		super();
+		this.id = createId();
 		StartupThreading.setWorkbench(this);
 		if (instance != null && instance.isRunning()) {
 			throw new IllegalStateException(WorkbenchMessages.Workbench_CreatingWorkbenchTwice);
@@ -523,7 +529,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 		serviceLocator.registerService(IWorkbenchLocationService.class,
 				new WorkbenchLocationService(IServiceScopes.WORKBENCH_SCOPE, this, null, null,
 						null, null, 0));
-
 	}
 
 	/**
@@ -2754,8 +2759,17 @@ UIEvents.Context.TOPIC_CONTEXT,
 			}
 
 			if (initOK[0] && runEventLoop) {
-				workbenchService = WorkbenchPlugin.getDefault().getBundleContext().registerService(
-						IWorkbench.class.getName(), this, null);
+				// Same registration as in E4Workbench
+				Hashtable<String, Object> properties = new Hashtable<String, Object>();
+				properties.put("id", getId()); //$NON-NLS-1$
+
+				workbenchService = WorkbenchPlugin.getDefault().getBundleContext()
+						.registerService(IWorkbench.class.getName(), this, properties);
+
+				e4WorkbenchService = WorkbenchPlugin.getDefault().getBundleContext()
+						.registerService(org.eclipse.e4.ui.workbench.IWorkbench.class.getName(),
+								this, properties);
+
 				Runnable earlyStartup = new Runnable() {
 					public void run() {
 						// start eager plug-ins
@@ -2942,6 +2956,10 @@ UIEvents.Context.TOPIC_CONTEXT,
 		if (workbenchService != null)
 			workbenchService.unregister();
 		workbenchService = null;
+
+		if (e4WorkbenchService != null)
+			e4WorkbenchService.unregister();
+		e4WorkbenchService = null;
 
 		// for dynamic UI
 		Platform.getExtensionRegistry().removeRegistryChangeListener(extensionEventHandler);
@@ -3674,5 +3692,13 @@ UIEvents.Context.TOPIC_CONTEXT,
 			UIStats.end(UIStats.RESTORE_WORKBENCH, this, "MRUList"); //$NON-NLS-1$
 		}
 		return result;
+	}
+
+	public final String getId() {
+		return id;
+	}
+
+	protected String createId() {
+		return UUID.randomUUID().toString();
 	}
 }
