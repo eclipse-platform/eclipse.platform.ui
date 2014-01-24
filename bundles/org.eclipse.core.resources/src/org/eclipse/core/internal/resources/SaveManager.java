@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1455,8 +1455,9 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 					writeWorkspaceFields(out, monitor);
 					writer.writeDelta(tree, lastSnap, Path.ROOT, ElementTreeWriter.D_INFINITE, out, ResourceComparator.getSaveComparator());
 					safeStream.succeed();
-				} finally {
 					out.close();
+				} finally {
+					FileUtil.safeClose(out);
 				}
 			} catch (IOException e) {
 				message = NLS.bind(Messages.resources_writeWorkspaceMeta, localFile.getAbsolutePath());
@@ -1605,6 +1606,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				o2 = new DataOutputStream(new SafeFileOutputStream(syncInfoLocation.toOSString(), syncInfoTempLocation.toOSString()));
 		} catch (IOException e) {
 			FileUtil.safeClose(o1);
+			FileUtil.safeClose(o2);
 			message = NLS.bind(Messages.resources_writeMeta, root.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 		}
@@ -1985,8 +1987,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * </ul>
 	 * This format is designed to work with WorkspaceTreeReader versions 2.
 	 *
-	 * @throws IOException if anything went wrong during save. Attempts to close
-	 * the provided stream at all costs.
+	 * @throws IOException if anything went wrong during save.
 	 * @see WorkspaceTreeReader_2
 	 */
 	protected void writeTree(Project project, DataOutputStream output, IProgressMonitor monitor) throws IOException, CoreException {
@@ -2034,9 +2035,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 					output.writeUTF(it.next());
 				for (Iterator<String> it = additionalConfigNames.iterator(); it.hasNext();)
 					output.writeUTF(it.next());
-				output.close();
 			} finally {
-				FileUtil.safeClose(output);
 				if (!wasImmutable)
 					workspace.newWorkingTree();
 			}
@@ -2051,13 +2050,13 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
 		try {
 			SafeFileOutputStream safe = new SafeFileOutputStream(treeLocation.toOSString(), tempLocation.toOSString());
+			DataOutputStream output = new DataOutputStream(safe);
 			try {
-				DataOutputStream output = new DataOutputStream(safe);
 				output.writeInt(ICoreConstants.WORKSPACE_TREE_VERSION_2);
 				writeTree(project, output, null);
-				safe.close();
+				output.close();
 			} finally {
-				FileUtil.safeClose(safe);
+				FileUtil.safeClose(output);
 			}
 		} catch (IOException e) {
 			String msg = NLS.bind(Messages.resources_writeMeta, project.getFullPath());
