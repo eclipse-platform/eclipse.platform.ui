@@ -111,9 +111,8 @@ public class ProjectVariableProviderManager {
 	}
 
 	public Descriptor findDescriptor(String name) {
-		Object result = descriptors.get(name);
-		if (result != null)
-			return (Descriptor) result;
-		return null;
+		lazyInitialize();
+		Descriptor result = descriptors.get(name);
+		return result;
 	}
 }
