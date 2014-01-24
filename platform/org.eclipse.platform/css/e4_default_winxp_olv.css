@@ -1,4 +1,3 @@
-
 .MTrimmedWindow { 
 	margin-top: 2px;
 	margin-bottom: 2px;
@@ -13,12 +12,23 @@
 	margin-right: 12px;
 }
 
+.MPart.busy {
+	font-style: italic;
+}
+
+.MPart.highlighted {
+	font-weight: bold;
+}
+
+.MPartStack, .MPart {
+	font-family: '#org-eclipse-ui-workbench-TAB_TEXT_FONT';
+}
+
 .MPartStack {
 	swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
 	swt-unselected-tabs-color: #FFFFFF #FFFFFF #FFFFFF 100% 100%;
 	swt-outer-keyline-color: #FFFFFF;
 	swt-inner-keyline-color: #FFFFFF;
-	font-size: 9;
 	swt-simple: true;
 	padding: 0px 10px 11px;
 	swt-mru-visible: false;
@@ -46,17 +56,4 @@
 
 .MToolControl.Draggable {
 	handle-image:  url(./dragHandle.png);
-}
-
-CTabItem {
-	font-style: normal;
-	font-weight: normal;
-}
-
-CTabItem.busy {
-	font-style: italic;
-}
-
-CTabItem.highlighted {
-	font-weight: bold;
 }

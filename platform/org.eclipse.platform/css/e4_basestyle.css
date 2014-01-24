@@ -5,6 +5,18 @@
 	margin-right: 3px;
 }
 
+.MPart.busy {
+	font-style: italic;
+}
+
+.MPart.highlighted {
+	font-weight: bold;
+}
+
+.MPartStack, .MPart {
+	font-family: '#org-eclipse-ui-workbench-TAB_TEXT_FONT';
+}
+
 .MPartStack {
 	swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
 	swt-unselected-tabs-color: #FFFFFF #FFFFFF #FFFFFF 100% 100%;
@@ -48,16 +60,4 @@
 	background-color: #A0A000; 
 }
 
-CTabItem {
-	font-style: normal;
-	font-weight: normal;
-}
-
-CTabItem.busy {
-	font-style: italic;
-}
-
-CTabItem.highlighted {
-	font-weight: bold;
-}
 

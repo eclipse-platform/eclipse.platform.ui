@@ -5,7 +5,6 @@
 }
 
 .MPartStack {
-	font-family: '#org-eclipse-ui-workbench-TAB_TEXT_FONT'
 	swt-simple: true;
 	swt-mru-visible: false;
 }
