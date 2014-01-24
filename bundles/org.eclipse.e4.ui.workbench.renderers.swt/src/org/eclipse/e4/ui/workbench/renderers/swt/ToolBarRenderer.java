@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import org.eclipse.e4.core.commands.ExpressionContext;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
@@ -40,20 +39,13 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * Create a contribute part.
+ * Create a toolbar
  */
 public class ToolBarRenderer extends SWTPartRenderer {
 	private MApplication application;
 
 	HashMap<MToolBar, ArrayList<ArrayList<MToolBarElement>>> pendingCleanup = new HashMap<MToolBar, ArrayList<ArrayList<MToolBarElement>>>();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer#init(org.eclipse
-	 * .e4.core.contexts.IEclipseContext)
-	 */
 	@Override
 	public void init(IEclipseContext context) {
 		super.init(context);
@@ -83,8 +75,6 @@ public class ToolBarRenderer extends SWTPartRenderer {
 		layout.marginLeft = 3;
 		layout.center = true;
 		intermediate.setLayout(layout);
-		// new Label(intermediate, (orientation == SWT.HORIZONTAL ? SWT.VERTICAL
-		// : SWT.HORIZONTAL) | SWT.SEPARATOR);
 		ToolBar separatorToolBar = new ToolBar(intermediate, orientation
 				| SWT.WRAP | SWT.FLAT | SWT.RIGHT);
 		new ToolItem(separatorToolBar, SWT.SEPARATOR);
