@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2013 BestSolution.at and others.
+ * Copyright (c) 2010-2014 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Wim Jongman <wim.jongman@remainsoftware.com> - Maintenance
- *     Marco Descher <marco@descher.at> - Bug395982
+ *     Marco Descher <marco@descher.at> - Bug395982, Bug426653
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
@@ -130,6 +130,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowCont
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowSharedElementsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowTrimEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowWindowsEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.properties.ExportIdsHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.properties.ExternalizeStringHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.properties.ProjectOSGiTranslationProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.AnnotationAccess;
@@ -820,7 +821,17 @@ public class ModelEditor {
 							ContextInjectionFactory.invoke(h, Execute.class, context);
 						}
 					};
+
+					Action extIdAction = new Action(messages.ModelEditor_ExportIds) {
+						@Override
+						public void run() {
+							ExportIdsHandler h = ContextInjectionFactory.make(ExportIdsHandler.class, context);
+							ContextInjectionFactory.invoke(h, Execute.class, context);
+						}
+					};
+
 					manager.add(nlsAction);
+					manager.add(extIdAction);
 				} else {
 					if (addSeparator) {
 						manager.add(new Separator());

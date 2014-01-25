@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2013 BestSolution.at and others.
+ * Copyright (c) 2010-2014 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Marco Descher <marco@descher.at> - Bug 395982, Bug 396975
+ *     Marco Descher <marco@descher.at> - Bug 395982, 396975, 426653
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal;
 
@@ -626,6 +626,7 @@ public class Messages {
 	public String ModelEditor_Form;
 	public String ModelEditor_XMI;
 	public String ModelEditor_ExternalizeStrings;
+	public String ModelEditor_ExportIds;
 	public String ModelEditor_Script;
 	public String ModelEditor_ShowControl;
 
@@ -636,6 +637,14 @@ public class Messages {
 	public String ExternalizeStringHandler_Dialog_ShellTitle;
 	public String ExternalizeStringHandler_Dialog_DialogTitle;
 	public String ExternalizeStringHandler_Dialog_DialogMessage;
+
+	public String ExportIdsHandler_Dialog_ElementName;
+	public String ExportIdsHandler_Dialog_Key;
+	public String ExportIdsHandler_Dialog_Id_Value;
+	public String ExportIdsHandler_Dialog_ShellTitle;
+	public String ExportIdsHandler_Dialog_DialogTitle;
+	public String ExportIdsHandler_Dialog_DialogMessage;
+	public String ExportIdsHandler_Dialog_SelectProject;
 
 	public String ObjectViewer_Tooltip_Value;
 	public String ObjectViewer_Tooltip_InjectionKey;
