@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.HashMap;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorMapping;
@@ -172,6 +173,33 @@ public class PlatformUIPreferenceListener implements
 				}
 			}
 		}
+
+		// Set Open mode
+		if (IPreferenceConstants.OPEN_ON_SINGLE_CLICK.equals(propertyName)
+				|| IPreferenceConstants.SELECT_ON_HOVER.equals(propertyName)
+				|| IPreferenceConstants.OPEN_AFTER_DELAY.equals(propertyName)
+				|| IPreferenceConstants.SELECT_ON_HOVER.equals(propertyName)) {
+			initializeSingleClickOption();
+		}
+
+	}
+
+	private static void initializeSingleClickOption() {
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		boolean openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK);
+		boolean selectOnHover = store.getBoolean(IPreferenceConstants.SELECT_ON_HOVER);
+		boolean openAfterDelay = store.getBoolean(IPreferenceConstants.OPEN_AFTER_DELAY);
+		int singleClickMethod = openOnSingleClick ? OpenStrategy.SINGLE_CLICK
+				: OpenStrategy.DOUBLE_CLICK;
+		if (openOnSingleClick) {
+			if (selectOnHover) {
+				singleClickMethod |= OpenStrategy.SELECT_ON_HOVER;
+			}
+			if (openAfterDelay) {
+				singleClickMethod |= OpenStrategy.ARROW_KEYS_OPEN;
+			}
+		}
+		OpenStrategy.setOpenMethod(singleClickMethod);
 	}
 
 }
