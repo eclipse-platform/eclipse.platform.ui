@@ -61,9 +61,10 @@ public class E4Workbench implements IWorkbench {
 	 * The argument for setting the delta store location <br>
 	 * <br>
 	 * Value is: <code>deltaRestore</code>
-	 * 
+	 *
 	 * @deprecated
 	 */
+	@Deprecated
 	public static final String DELTA_RESTORE = "deltaRestore"; //$NON-NLS-1$
 	/**
 	 * The argument for setting RTL mode <br>
@@ -99,7 +100,7 @@ public class E4Workbench implements IWorkbench {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param uiRoot
 	 *            the root UI element
 	 * @param applicationContext
@@ -148,7 +149,7 @@ public class E4Workbench implements IWorkbench {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void instantiateRenderer() {
 		renderer = (IPresentationEngine) appContext.get(IPresentationEngine.class.getName());
@@ -178,7 +179,7 @@ public class E4Workbench implements IWorkbench {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.workbench.IWorkbench#close()
 	 */
 	public boolean close() {
@@ -222,7 +223,7 @@ public class E4Workbench implements IWorkbench {
 	/**
 	 * Create the context chain. It both creates the chain for the current model, and adds eAdapters
 	 * so it can add new contexts when new model items are added.
-	 * 
+	 *
 	 * @param parentContext
 	 *            The parent context
 	 * @param contextModel
