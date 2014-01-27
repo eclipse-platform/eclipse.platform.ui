@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -232,11 +232,11 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		try {
 			IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
 			IFile file= workspaceRoot.getFile(location);
-			if (file == null)
-				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.ResourceFileBuffer_error_fileDoesNotExist, null));
 			URI uri= file.getLocationURI();
-			if (uri == null)
-				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.ResourceFileBuffer_error_fileDoesNotExist, null));
+			if (uri == null) {
+				String message= NLSUtility.format(FileBuffersMessages.ResourceFileBuffer_error_cannot_determine_URI, location);
+				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, null));
+			}
 
 			fLocation= location;
 			fFile= file;
