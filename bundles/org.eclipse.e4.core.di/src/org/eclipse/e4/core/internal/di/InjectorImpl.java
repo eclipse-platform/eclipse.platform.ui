@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -114,7 +114,7 @@ public class InjectorImpl implements IInjector {
 		}
 		rememberInjectedObject(object, objectSupplier);
 
-		// We call @PostConstruct after injection. This means that is is called 
+		// We call @PostConstruct after injection. This means that is is called
 		// as a part of both #make() and #inject().
 		processAnnotated(PostConstruct.class, object, object.getClass(), objectSupplier, tempSupplier, new ArrayList<Class<?>>(5));
 
@@ -226,8 +226,7 @@ public class InjectorImpl implements IInjector {
 
 	private Object invokeUsingClass(Object userObject, Class<?> currentClass, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean throwUnresolved) {
 		Method[] methods = getDeclaredMethods(currentClass);
-		for (int j = 0; j < methods.length; j++) {
-			Method method = methods[j];
+		for (Method method : methods) {
 			if (method.getAnnotation(qualifier) == null)
 				continue;
 			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, tempSupplier, userObject, false);
@@ -554,7 +553,7 @@ public class InjectorImpl implements IInjector {
 				// use qualified name to refer to a class that might be missing
 				supplier = org.eclipse.e4.core.internal.di.osgi.ProviderHelper.findProvider(key, defaultSupplier);
 			} catch (NoClassDefFoundError e) {
-				return null; // OSGi framework not present 
+				return null; // OSGi framework not present
 			}
 			if (supplier != null)
 				return supplier;
@@ -625,8 +624,7 @@ public class InjectorImpl implements IInjector {
 	private boolean processFields(Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, Class<?> objectsClass, boolean track, List<Requestor> requestors) {
 		boolean injectedStatic = false;
 		Field[] fields = objectsClass.getDeclaredFields();
-		for (int i = 0; i < fields.length; i++) {
-			Field field = fields[i];
+		for (Field field : fields) {
 			if (Modifier.isStatic(field.getModifiers())) {
 				if (hasInjectedStatic(objectsClass))
 					continue;
@@ -645,8 +643,7 @@ public class InjectorImpl implements IInjector {
 	private boolean processMethods(final Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, Class<?> objectsClass, ArrayList<Class<?>> classHierarchy, boolean track, List<Requestor> requestors) {
 		boolean injectedStatic = false;
 		Method[] methods = getDeclaredMethods(objectsClass);
-		for (int i = 0; i < methods.length; i++) {
-			final Method method = methods[i];
+		for (Method method : methods) {
 
 			Boolean isOverridden = null;
 			Map<Method, Boolean> methodMap = null;
@@ -820,14 +817,12 @@ public class InjectorImpl implements IInjector {
 				}
 			}
 
-			for (Iterator<Binding> i = collection.iterator(); i.hasNext();) {
-				Binding collectionBinding = i.next();
+			for (Binding collectionBinding : collection) {
 				if (eq(collectionBinding.getQualifierName(), desiredQualifierName))
 					return collectionBinding;
 			}
 			desiredQualifierName = desiredClass.getName();
-			for (Iterator<Binding> i = collection.iterator(); i.hasNext();) {
-				Binding collectionBinding = i.next();
+			for (Binding collectionBinding : collection) {
 				Class<?> bindingClass = collectionBinding.getDescribedClass();
 				if (bindingClass == null)
 					continue;
@@ -858,8 +853,7 @@ public class InjectorImpl implements IInjector {
 			classHierarchy.remove(objectClass);
 		}
 		Method[] methods = getDeclaredMethods(objectClass);
-		for (int i = 0; i < methods.length; i++) {
-			Method method = methods[i];
+		for (Method method : methods) {
 			if (!method.isAnnotationPresent(annotation))
 				continue;
 			if (isOverridden(method, classHierarchy))
