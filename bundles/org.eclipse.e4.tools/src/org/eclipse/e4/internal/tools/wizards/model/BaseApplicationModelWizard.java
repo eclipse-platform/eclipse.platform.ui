@@ -10,7 +10,10 @@
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.model;
 
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
@@ -24,8 +27,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MHandler;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.fragment.MModelFragment;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -51,7 +58,7 @@ import org.eclipse.ui.part.ISetSelectionTarget;
 public abstract class BaseApplicationModelWizard extends Wizard implements INewWizard {
 	private NewModelFilePage page;
 	private ISelection selection;
-	
+
 	protected IWorkbench workbench;
 
 	/**
@@ -73,16 +80,16 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 	}
 
 	protected abstract NewModelFilePage createWizardPage(ISelection selection);
-	
+
 	public abstract String getDefaultFileName();
-	
+
 	@Override
 	public boolean performFinish() {
 		try {
 			// Remember the file.
 			//
 			final IFile modelFile = getModelFile();
-			
+
 			if( modelFile.exists() ) {
 				if( ! MessageDialog.openQuestion(getShell(), "File exists", "The file already exists. "
 						+ "Would you like to add the extracted node to this file?")) {
@@ -104,11 +111,11 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 							// Get the URI of the model file.
 							//
 							URI fileURI = URI.createPlatformResourceURI(modelFile.getFullPath().toString(), true);
-							
+
 							// Create a resource for this file.
 							//
 							Resource resource = resourceSet.createResource(fileURI);
-							
+
 							// If target file already exists, load its content
 							//
 							if (modelFile.exists()) {
@@ -127,12 +134,56 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 									//and copy multiple attributes 'imports' and 'fragments' objects from source to target
 									MModelFragments sourceFragments = (MModelFragments) rootObject;
 									MModelFragments targetFragments = (MModelFragments) resource.getContents().get(0);
-									for (MApplicationElement element : sourceFragments.getImports()) {
-										targetFragments.getImports().add((MApplicationElement) EcoreUtil.copy((EObject) element));
-									}
+
+
+									List<MCommand> listOfAllImportsFromElements=new ArrayList<MCommand>();
 									for (MModelFragment fragment : sourceFragments.getFragments()) {
+										List<MCommand> commandsToImport=new ArrayList<MCommand>();
+										EObject eObject=(EObject) fragment;
+										TreeIterator<EObject> eAllContents = eObject.eAllContents();
+										while(eAllContents.hasNext()){
+											EObject next = eAllContents.next();
+											MApplicationElement mApplicationElement=(MApplicationElement) next;
+											if(mApplicationElement instanceof MHandler){
+												MHandler mHandler=(MHandler)mApplicationElement;
+												MCommand command = mHandler.getCommand();
+												commandsToImport.add(command);
+												MApplicationElement copy = (MApplicationElement) EcoreUtil.copy((EObject)command);
+												targetFragments.getImports().add(copy);
+												mHandler.setCommand((MCommand) copy);
+											}
+											else if(mApplicationElement instanceof MHandledItem){
+												MHandledItem mHandledItem=(MHandledItem)mApplicationElement;
+												MCommand command = mHandledItem.getCommand();
+												commandsToImport.add(command);
+												MApplicationElement copy = (MApplicationElement) EcoreUtil.copy((EObject)command);
+												targetFragments.getImports().add(copy);
+												mHandledItem.setCommand((MCommand) copy);
+											}
+
+										}
+										listOfAllImportsFromElements.addAll(commandsToImport);
 										targetFragments.getFragments().add((MModelFragment) EcoreUtil.copy((EObject) fragment));
+
 									}
+									for (MApplicationElement element : sourceFragments.getImports()) {
+										boolean isAlreadyImport=true;
+					  					for (MCommand mCommand : listOfAllImportsFromElements) {
+
+											if(!mCommand.getElementId().equals(element.getElementId())){
+
+											    isAlreadyImport=false;
+												break;
+											}
+											if(!isAlreadyImport){
+
+												targetFragments.getImports().add((MApplicationElement) EcoreUtil.copy((EObject)element));
+											}
+
+										}
+
+									}
+
 								}
 							}
 
@@ -172,7 +223,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 			try {
 				page.openEditor
 					(new FileEditorInput(modelFile),
-					 workbench.getEditorRegistry().getDefaultEditor(modelFile.getFullPath().toString()).getId());					 	 
+					 workbench.getEditorRegistry().getDefaultEditor(modelFile.getFullPath().toString()).getId());
 			}
 			catch (PartInitException exception) {
 				MessageDialog.openError(workbenchWindow.getShell(), "Could not init editor", exception.getMessage()); //$NON-NLS-1$
@@ -187,7 +238,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 			return false;
 		}
 	}
-	
+
 	protected abstract EObject createInitialModel();
 
 	protected IFile getModelFile() throws CoreException {
@@ -202,7 +253,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 		IContainer container = (IContainer) resource;
 		return container.getFile(new Path(fileName));
 	}
-	
+
 	private void throwCoreException(String message) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR,
 				"org.eclipse.e4.tools.emf.editor3x", IStatus.OK, message, null);
@@ -212,7 +263,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 	/**
 	 * We will accept the selection in the workbench to see if we can initialize
 	 * from it.
-	 * 
+	 *
 	 * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
