@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 426754
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
@@ -211,8 +212,12 @@ public class InjectorImpl implements IInjector {
 
 	public Object invoke(Object object, Class<? extends Annotation> qualifier, PrimaryObjectSupplier objectSupplier) {
 		Object result = invokeUsingClass(object, object.getClass(), qualifier, IInjector.NOT_A_VALUE, objectSupplier, null, true);
-		if (result == IInjector.NOT_A_VALUE)
-			throw new InjectionException("Unable to find matching method to invoke"); //$NON-NLS-1$
+		if (result == IInjector.NOT_A_VALUE) {
+			if (object != null && qualifier != null) {
+				throw new InjectionException("Unable to find matching method to invoke. Searching for the annotation: \"" + qualifier.toString() + "\"on an instance of: \"" + object.getClass().getSimpleName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+			throw new InjectionException("Unable to find matching method to invoke. One of the arguments was null."); //$NON-NLS-1$
+		}
 		return result;
 	}
 
