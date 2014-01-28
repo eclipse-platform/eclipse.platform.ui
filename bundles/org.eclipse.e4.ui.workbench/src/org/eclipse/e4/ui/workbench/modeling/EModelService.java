@@ -214,7 +214,7 @@ public interface EModelService {
 	 *            the element to locate parent context for
 	 * @return the containing context for this element
 	 */
-	public IEclipseContext getContainingContext(MUIElement element);
+	public IEclipseContext getContainingContext(MApplicationElement element);
 
 	/**
 	 * Brings the specified element to the top of its containment structure. If the specified
