@@ -45,6 +45,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.w3c.dom.Element;
 import org.w3c.dom.svg.SVGDocument;
 
+import com.jhlabs.image.ContrastFilter;
 import com.jhlabs.image.GrayscaleFilter;
 import com.jhlabs.image.HSBAdjustFilter;
 
@@ -130,6 +131,9 @@ public class RenderMojo extends AbstractMojo {
 
     /** Used for creating desaturated icons */
     private HSBAdjustFilter desaturator;
+    
+    /** Reduces contrast for disabled icons. */
+    private ContrastFilter decontrast;
 
     /**
      * @return the number of icons rendered at the time of the call
@@ -310,7 +314,9 @@ public class RenderMojo extends AbstractMojo {
                 BufferedImage desaturated16 = desaturator.filter(
                         grayFilter.filter(sourceImage, null), null);
 
-                ImageIO.write(desaturated16, "PNG", new File(icon.disabledPath, icon.nameBase + ".png"));
+                BufferedImage deconstrast = decontrast.filter(desaturated16, null);
+
+                ImageIO.write(deconstrast, "PNG", new File(icon.disabledPath, icon.nameBase + ".png"));
             }
         } catch (Exception e1) {
             log.error("Failed to resize rendered icon to output size: "  + 
@@ -581,6 +587,10 @@ public class RenderMojo extends AbstractMojo {
 
         desaturator = new HSBAdjustFilter();
         desaturator.setSFactor(0.0f);
+        
+        decontrast = new ContrastFilter();
+             decontrast.setBrightness(2.9f);
+             decontrast.setContrast(0.2f);
     }
     
     /**
