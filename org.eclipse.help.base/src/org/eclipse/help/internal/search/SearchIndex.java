@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Holger Voormann - fix for bug 426785 (http://eclip.se/426785)
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
@@ -121,7 +122,7 @@ public class SearchIndex implements IHelpSearchIndex {
 
 	private HelpProperties dependencies;
 
-	private boolean closed = false;
+	private volatile boolean closed = false;
 
 	// Collection of searches occuring now
 	private Collection<Thread> searches = new ArrayList<Thread>();
@@ -803,20 +804,23 @@ public class SearchIndex implements IHelpSearchIndex {
 	 */
 	public void close() {
 		closed = true;
-		// wait for all sarches to finish
-		synchronized (searches) {
-			while (searches.size() > 0) {
-				try {
-					Thread.sleep(50);
-				} catch (InterruptedException ie) {
+
+		// wait for all searches to finish
+		while (true) {
+			synchronized (searches) {
+				if (searches.isEmpty()) {
+					if (searcher != null) {
+						try {
+							searcher.close();
+						} catch (IOException ioe) {
+						}
+					}
+					break;
 				}
 			}
-			//
-			if (searcher != null) {
-				try {
-					searcher.close();
-				} catch (IOException ioe) {
-				}
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException ie) {
 			}
 		}
 	}
