@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,6 @@ package org.eclipse.ui.internal;
  */
 public interface IWorkbenchThemeConstants {
     public static final String TAB_TEXT_FONT = "org.eclipse.ui.workbench.TAB_TEXT_FONT"; //$NON-NLS-1$    
-
-    public static final String VIEW_MESSAGE_TEXT_FONT = "org.eclipse.ui.workbench.VIEW_MESSAGE_TEXT_FONT"; //$NON-NLS-1$
 
     public static final String ACTIVE_TAB_TEXT_COLOR = "org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR"; //$NON-NLS-1$
 

@@ -1560,14 +1560,6 @@
             %FontsPreference.TitleFontDescription
          </description>
       </fontDefinition>
-      <fontDefinition
-            label="%FontsPreference.ViewMessageFont"
-            categoryId="org.eclipse.ui.presentation.default"
-            id="org.eclipse.ui.workbench.VIEW_MESSAGE_TEXT_FONT">
-         <description>
-            %FontsPreference.ViewMessageFontDescription
-         </description>
-      </fontDefinition>
       <colorDefinition
             label="%Color.errorText"
             value="COLOR_RED"
