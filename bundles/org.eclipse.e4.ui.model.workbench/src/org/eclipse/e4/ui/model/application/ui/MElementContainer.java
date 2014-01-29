@@ -47,7 +47,6 @@ import java.util.List;
 public interface MElementContainer<T extends MUIElement> extends MUIElement {
 	/**
 	 * Returns the value of the '<em><b>Children</b></em>' containment reference list.
-	 * The list contents are of type {@link T}.
 	 * It is bidirectional and its opposite is '{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getParent <em>Parent</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

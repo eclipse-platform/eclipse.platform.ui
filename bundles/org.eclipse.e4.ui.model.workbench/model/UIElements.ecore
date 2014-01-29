@@ -572,7 +572,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Localizable" abstract="true" interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This class should be mixed into any UI element that should participate in the&#xD;&#xA;Locale update handling.&#xD;&#xA;&lt;/p>"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This class should be mixed into any UI element that should participate in the&#xD;&#xA;Locale update handling.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.1"/>
       </eAnnotations>
       <eOperations name="updateLocalization">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">

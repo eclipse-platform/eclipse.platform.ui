@@ -21,12 +21,12 @@ package org.eclipse.e4.ui.model.application.ui;
  * This class should be mixed into any UI element that should participate in the
  * Locale update handling.
  * </p>
+ * @since 1.1
  * <!-- end-model-doc -->
  *
  *
  * @model interface="true" abstract="true"
  * @generated
- * @since 1.1
  */
 public interface MLocalizable {
 	/**
