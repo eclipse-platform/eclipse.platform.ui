@@ -7,7 +7,7 @@ eclipse/eclipse \
 http://download.eclipse.org/egit/pde/updates-nightly,\
 http://download.eclipse.org/egit/updates-nightly,\
 http://download.eclipse.org/eclipse/updates/4.4-I-builds,\
-http://download.eclipse.org/e4/updates/0.15-I-builds,\
+http://download.eclipse.org/e4/updates/0.16-I-builds,\
 http://download.eclipse.org/releases/luna,\
 http://download.eclipse.org/tools/orbit/downloads/drops/R20130827064939/repository,\
 http://download.eclipse.org/technology/nebula/snapshot \
