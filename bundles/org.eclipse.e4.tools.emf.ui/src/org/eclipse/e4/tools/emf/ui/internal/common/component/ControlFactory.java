@@ -350,7 +350,7 @@ public class ControlFactory {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param parent
 	 * @param label
 	 * @param master
@@ -823,7 +823,7 @@ public class ControlFactory {
 	}
 
 	public static String getLocalizedLabel(ProjectOSGiTranslationProvider translationProvider, MUILabel element) {
-		return getLocalizedValue(translationProvider, (MApplicationElement) element, UiPackageImpl.Literals.UI_LABEL__LABEL, UiPackageImpl.Literals.UI_LABEL___GET_LOCALIZED_LABEL);
+		return getLocalizedValue(translationProvider, (MApplicationElement) element, UiPackageImpl.Literals.UI_LABEL__LABEL, UiPackageImpl.Literals.LOCALIZABLE___UPDATE_LOCALIZATION);
 	}
 
 	public static String getLocalizedValue(ProjectOSGiTranslationProvider translationProvider, MApplicationElement element, EStructuralFeature feature, EOperation operation) {
