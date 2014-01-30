@@ -1655,7 +1655,7 @@
    <extension
          point="org.eclipse.ui.menus">
          <menuContribution
-            locationURI="menu:window?after=newEditor">
+            locationURI="menu:window?after=org.eclipse.ui.editors">
          <command
                commandId="org.eclipse.ui.ToggleCoolbarAction"
                tooltip="%menu.toggleCoolbar.tooltip"
