@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?p2f version='1.0.0'?>
+<p2f  version='1.0.0'>
+  <ius size='16'>
+    <iu id='org.eclipse.pde.api.tools.ee.feature.feature.group' name='API Tools Execution Environment Descriptions' >
+      <repositories size='2'>
+        <repository location='http://download.eclipse.org/eclipse/updates/4.3'/>
+        <repository location='http://download.eclipse.org/releases/kepler'/>
+      </repositories>
+    </iu>
+    <iu id='org.eclipse.jgit.pgm.feature.group' name='Command Line Interface for Java implementation of Git' >
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/releases/kepler'/>
+      </repositories>
+    </iu>
+    <iu id='org.eclipse.jgit.pgm.source.feature.group' name='Command Line Interface for Java implementation of Git - Source Code' >
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/releases/kepler'/>
+      </repositories>
+    </iu>
+    <iu id='org.eclipse.e4.tools.css.spy.feature.feature.group' name='E4 CSS Spy (Incubation)' >
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/e4/updates/0.15'/>
+      </repositories>
+    </iu>
+    <iu id='org.eclipse.e4.tools.css.spy.feature.source.feature.group' name='E4 CSS Spy (Incubation) Developer Resources' >
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/e4/updates/0.15'/>
+      </repositories>
+    </iu>
+    <iu id='org.eclipse.e4.tools.event.spy.feature.feature.group' name='E4 Event Spy (Incubation)' >
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/e4/updates/0.15'/>
+      </repositories>
+    </iu>
+    <iu id='org.eclipse.e4.tools.event.spy.feature.source.feature.group' name='E4 Event Spy (Incubation) Developer Resources' >
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/e4/updates/0.15'/>
+      </repositories>
+    </iu>
+    <iu id='org.eclipse.e4.tools.orion.css.editor.feature.feature.group' name='E4 Orion CSS Preference editor (Incubation)' >
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/e4/updates/0.15'/>
+      </repositories>
+    </iu>
+    <iu id='org.eclipse.e4.tools.orion.css.editor.feature.source.feature.group' name='E4 Orion CSS Preference editor (Incubation) Developer Resources' >
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/e4/updates/0.15'/>
+      </repositories>
+    </iu>
+    <iu id='org.eclipse.e4.core.tools.feature.feature.group' name='Eclipse e4 Tools (Incubation)' >
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/e4/updates/0.15'/>
+      </repositories>
+    </iu>
+    <iu id='org.eclipse.e4.core.tools.feature.source.feature.group' name='Eclipse e4 Tools Source (Incubation)' >
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/e4/updates/0.15'/>
+      </repositories>
+    </iu>
+    <iu id='org.eclipse.egit.feature.group' name='Eclipse Git Team Provider' >
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/releases/kepler'/>
+      </repositories>
+    </iu>
+    <iu id='org.eclipse.egit.source.feature.group' name='Eclipse Git Team Provider - Source Code' >
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/releases/kepler'/>
+      </repositories>
+    </iu>
+    <iu id='org.eclipse.emf.sdk.feature.group' name='EMF - Eclipse Modeling Framework SDK' >
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/releases/kepler'/>
+      </repositories>
+    </iu>
+    <iu id='org.eclipse.jgit.feature.group' name='Java implementation of Git' >
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/releases/kepler'/>
+      </repositories>
+    </iu>
+    <iu id='org.eclipse.jgit.source.feature.group' name='Java implementation of Git - Source Code' >
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/releases/kepler'/>
+      </repositories>
+    </iu>
+  </ius>
+</p2f>
