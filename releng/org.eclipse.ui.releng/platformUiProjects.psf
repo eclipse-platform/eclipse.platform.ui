@@ -53,6 +53,7 @@
 <project reference="1.0,ssh://git.eclipse.org:29418/platform/eclipse.platform.ui,R4_3_maintenance,bundles/org.eclipse.ui.ide.application"/>
 <project reference="1.0,ssh://git.eclipse.org:29418/platform/eclipse.platform.ui,R4_3_maintenance,bundles/org.eclipse.ui.navigator"/>
 <project reference="1.0,ssh://git.eclipse.org:29418/platform/eclipse.platform.ui,R4_3_maintenance,bundles/org.eclipse.ui.navigator.resources"/>
+<project reference="1.0,ssh://git.eclipse.org:29418/platform/eclipse.platform.ui,R4_3_maintenance,releng/org.eclipse.ui.releng"/>
 <project reference="1.0,ssh://git.eclipse.org:29418/platform/eclipse.platform.ui,R4_3_maintenance,tests/org.eclipse.ui.tests"/>
 <project reference="1.0,ssh://git.eclipse.org:29418/platform/eclipse.platform.ui,R4_3_maintenance,tests/org.eclipse.ui.tests.browser"/>
 <project reference="1.0,ssh://git.eclipse.org:29418/platform/eclipse.platform.ui,R4_3_maintenance,tests/org.eclipse.ui.tests.forms"/>
