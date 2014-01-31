@@ -26,6 +26,22 @@ import org.osgi.framework.BundleContext;
  * <p>
  * If the method or field type is of {@link Bundle}, the bundle containing 
  * the class will be injected even for bundles in the {@link Bundle#RESOLVED} state.
+ * </p><p>
+ * The {@link Bundle} injected will be the {@link Bundle} that supplied the class of 
+ * the object instance.  For example, in:
+ * <pre>
+ * class A {
+ * &#64;Inject
+ * &#64;OSGiBundle
+ * BundleContext context;
+ * }
+ * class B extends A {
+ * }
+ * </pre>
+ * <code>ContextInjectionFactory.make(B.class)</code> will inject the 
+ * {@link BundleContext} for the bundle that supplies class B, not class A.
+
+ * </p>
  */
 @Qualifier
 @Documented
