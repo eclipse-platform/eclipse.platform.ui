@@ -59,25 +59,6 @@
          </command>
       </menuContribution>
       <menuContribution
-             locationURI="menu:help?after=additions">
-       <menu id="org.eclipse.update.ui.updateMenu" label="%updateMenu.label">
-               <command
-                     commandId="org.eclipse.ui.update.findAndInstallUpdates"
-                     helpContextId="org.eclipse.update.ui.newUpdates"
-                     icon="icons/full/elcl16/usearch_obj.gif"
-                     label="%actionSets.updates.label"
-                     style="push">
-               </command>
-               <command
-                     commandId="org.eclipse.ui.update.manageConfiguration"
-                     helpContextId="org.eclipse.update.ui.newUpdates"
-                     icon="icons/full/elcl16/configs.gif"
-                     label="%actionSets.configManager.label"
-                     style="push">
-               </command>
-       </menu>
-       </menuContribution>
-      <menuContribution
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
          <menu
                id="org.eclipse.ui.projectConfigure"
