@@ -1,0 +1,213 @@
+/*******************************************************************************
+ * Copyright (c) 2010, 2014 Andrea Guarinoni and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Andrea Guarinoni <andrea.guarinoni.dev@outlook.com> - initial API and implementation
+ *     Lars Vogel - initial API and implementation
+ *******************************************************************************/
+
+
+/* ###################################### CSS for the parts ############################# */
+
+.MPart {
+    background-color: #313538;
+    color: #DDDDDD;
+}
+
+/* ------------------------------------------------------------- */
+
+#org-eclipse-jdt-ui-TypeHierarchy Label, #org-eclipse-jdt-ui-TypeHierarchy CLabel {
+    background-color: #313538;
+    color: #DDDDDD;
+}
+#org-eclipse-jdt-ui-TypeHierarchy Table {
+    background-color: #333;
+    color: #DDDDDD;
+}
+
+/* ------------------------------------------------------------- */
+
+
+#org-eclipse-ui-views-ContentOutline Label { /* SWT-BUG workaround: 'color' is not inherited */
+    background-color: #333;
+    color: #DDDDDD;
+}
+
+/* ------------------------------------------------------------- */
+
+/* not triggered */
+/*.MPartStack.active #org-eclipse-e4-primaryDataStack {
+    background-color: #202020;
+} */
+#org-eclipse-e4-ui-compatibility-editor Canvas,
+#org-eclipse-e4-ui-compatibility-editor Canvas > *,
+/* Workaround for CDT folding column SWT-BUG (styles aren't inherited) */
+#org-eclipse-e4-ui-compatibility-editor Canvas > * > * {
+    background-color: #262626;
+    /* SWT-BUG: background-color rule for LineNumberRulerColumn is ignored */
+}
+.MPartStack.active #org-eclipse-e4-ui-compatibility-editor Canvas,
+.MPartStack.active #org-eclipse-e4-ui-compatibility-editor Canvas > *,
+/* Workaround for CDT folding column SWT-BUG (styles aren't inherited) */
+.MPartStack.active #org-eclipse-e4-ui-compatibility-editor Canvas > * > * {
+    background-color: #202020;
+    /* SWT-BUG: background-color rule for LineNumberRulerColumn is ignored */
+}
+#org-eclipse-e4-ui-compatibility-editor CTabItem {
+    color: #EEEEEE;
+    font-weight: normal;
+    font-family: 'Calibri'; /* currently, there is no way to define a fallback for font-family */
+}
+#org-eclipse-e4-ui-compatibility-editor CTabItem:selected {
+    background-color: #262626;
+    font-weight: bold;
+    font-family: 'Calibri'; /* currently, there is no way to define a fallback for font-family */
+}
+#org-eclipse-e4-ui-compatibility-editor .MPart {
+    color: #EEEEEE;
+}
+#org-eclipse-e4-ui-compatibility-editor PaletteControl ScrolledComposite > Composite > * {
+    background-color: #515658;
+    color: #eeeeee;
+}
+#org-eclipse-e4-ui-compatibility-editor PaletteControl CLabel {
+    background-color: #383838;
+    color: #dddddd;
+}
+#org-eclipse-e4-ui-compatibility-editor PaletteControl CLabel :hover {
+/* SWT-BUG: The event is never triggered so the native rule cannot be overridden (for hover event) */
+    background-color: #252525;
+    color: #dddddd;
+}
+#org-eclipse-e4-ui-compatibility-editor FlyoutControlComposite > Composite {
+    background-color: #3f4447;
+    color: #DDDDDD;
+}
+#org-eclipse-e4-ui-compatibility-editor LayoutCanvas {
+    background-color: #252525;
+    color: #CCCCCC;
+}
+
+#org-eclipse-help-ui-HelpView Composite,
+#org-eclipse-help-ui-HelpView LayoutComposite,
+#org-eclipse-help-ui-HelpView Label,
+#org-eclipse-help-ui-HelpView Hyperlink,
+#org-eclipse-help-ui-HelpView ScrolledForm,
+#org-eclipse-help-ui-HelpView Form,
+#org-eclipse-help-ui-HelpView FormHeading,
+#org-eclipse-help-ui-HelpView Section,
+#org-eclipse-help-ui-HelpView FormText {
+    background-color: #2F2F2F;
+    color: #CCC;
+}
+.MPartStack.active #org-eclipse-help-ui-HelpView Composite,
+.MPartStack.active #org-eclipse-help-ui-HelpView LayoutComposite,
+.MPartStack.active #org-eclipse-help-ui-HelpView Label,
+.MPartStack.active #org-eclipse-help-ui-HelpView Hyperlink,
+.MPartStack.active #org-eclipse-help-ui-HelpView ScrolledForm,
+.MPartStack.active #org-eclipse-help-ui-HelpView Form,
+.MPartStack.active #org-eclipse-help-ui-HelpView FormHeading,
+.MPartStack.active #org-eclipse-help-ui-HelpView Section,
+.MPartStack.active #org-eclipse-help-ui-HelpView FormText{
+    background-color: #262626;
+    color: #CCC;
+}
+
+/* ------------------------------------------------------------- */
+
+
+#org-eclipse-pde-runtime-LogView .MPart > Label,
+#org-eclipse-ui-views-ProblemView .MPart > Label,
+#org-eclipse-ui-views-TaskList .MPart > Label{
+    background-color: #313538;
+    color: #DDDDDD;
+}
+
+#org-eclipse-pde-runtime-LogView FilteredTree Composite {
+    background-color: #262B2D;
+}
+#org-eclipse-pde-runtime-LogView Text {
+    background-color: #333;
+    color: #F4F7F7;
+}
+#org-eclipse-jdt-ui-SourceView .MPart > Label,
+#org-eclipse-ui-console-ConsoleView .MPart > Label {
+    background-color: #313538;
+    color: #DDDDDD;
+}
+#org-eclipse-jdt-ui-SourceView .MPart > Composite {
+    background-color: #4D565B;
+    color: #EEEEEE;
+}
+#org-eclipse-jdt-ui-SourceView StyledText {
+    background-color: #252525;
+}
+#org-eclipse-ui-console-ConsoleView .MPart > Composite,
+#org-eclipse-ui-console-ConsoleView .MPart StyledText,
+#org-eclipse-ui-console-ConsoleView .MPart PageBook Label {
+    background-color: #333;
+    color: #EEEEEE;
+}
+#org-eclipse-ui-views-ProgressView Composite,
+#org-eclipse-ui-views-ProgressView ScrolledComposite,
+#org-eclipse-ui-views-ProgressView Composite Text,
+#org-eclipse-ui-views-ProgressView ScrolledComposite ProgressInfoItem,
+#org-eclipse-ui-views-ProgressView ScrolledComposite Label,
+#org-eclipse-ui-views-ProgressView ScrolledComposite ToolBar,
+#org-eclipse-ui-views-ProgressView ScrolledComposite Link {
+    background-color: #333;
+    color: #EEEEEE;
+}
+#org-eclipse-search-ui-views-SearchView Composite,
+#org-eclipse-search-ui-views-SearchView Composite Link {
+    background-color: #333;
+    color: #EEEEEE
+}
+#org-eclipse-ui-texteditor-TemplatesView CLabel {
+    background-color: #313538;
+    color: #DDDDDD;
+}
+#org-eclipse-debug-ui-VariableView Label, #org-eclipse-debug-ui-VariableView StyledText,
+#org-eclipse-debug-ui-BreakpointView Label, #org-eclipse-debug-ui-BreakpointView StyledText {
+    background-color: #3f4447;
+    color: #EEEEEE;
+}
+#org-eclipse-debug-ui-VariableView SashForm, #org-eclipse-debug-ui-VariableView Sash,
+#org-eclipse-debug-ui-BreakpointView SashForm, #org-eclipse-debug-ui-BreakpointView Sash {
+    background-color: #333;
+    color: #EEEEEE;
+}
+
+/* Android views---------------------------------------------------------- */
+
+#com-android-ide-eclipse-ddms-views-LogCatView .MPart Label {
+    color: #EEEEEE;
+}
+#com-android-ide-eclipse-ddms-views-LogCatView .MPart Table {
+    background-color: #555;
+    color: #EEEEEE;
+}
+
+#com-android-ide-eclipse-ddms-views-LogCatView .MPart Combo,
+#com-android-ide-eclipse-ddms-views-LogCatView .MPart Text {
+    background-color: #333;
+    color: #EEEEEE;
+}
+
+#com-android-ide-eclipse-ddms-views-LogCatView .MPart Composite,
+#com-android-ide-eclipse-ddms-views-LogCatView .MPart Sash {
+    background-color: #444;
+    color: #DDDDDD;
+}
+
+.MPartStack.active #com-android-ide-eclipse-ddms-views-LogCatView .MPart Composite,
+.MPartStack.active #com-android-ide-eclipse-ddms-views-LogCatView .MPart Sash {
+    background-color: #313538;
+    color: #DDDDDD;
+}
+
+
