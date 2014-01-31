@@ -166,9 +166,11 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 				dynamicMenuContext.set(List.class, mel);
 				IEclipseContext parentContext = modelService
 						.getContainingContext(currentMenuElement);
-				if (ContextInjectionFactory.invoke(contribution,
+				Object rc = ContextInjectionFactory.invoke(contribution,
 						AboutToShow.class, parentContext, dynamicMenuContext,
-						this) == this) {
+						this);
+				dynamicMenuContext.dispose();
+				if (rc == this) {
 					if (logger != null) {
 						logger.error("Missing @AboutToShow method in " + contribution); //$NON-NLS-1$
 					}
