@@ -7,13 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Gorkem Ercan (Red Hat) - Fix for Bug 427142
  *******************************************************************************/
 
 package org.eclipse.ui.statushandlers;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
@@ -258,7 +258,9 @@ public class StatusManager {
 	 * 
 	 */
 	public void handle(CoreException coreException,String pluginId) {
-		handle(new Status(IStatus.WARNING, pluginId, coreException
+		IStatus exceptionStatus = coreException.getStatus();
+		handle(new Status(exceptionStatus.getSeverity(), pluginId,
+				coreException
 				.getLocalizedMessage(), coreException));
 	}
 
