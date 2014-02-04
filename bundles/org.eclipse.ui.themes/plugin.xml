@@ -5,7 +5,7 @@
          point="org.eclipse.e4.ui.css.swt.theme">
       <theme
             basestylesheeturi="css/e4-dark.css"
-            id="org.eclipse.ui.e4.theme.e4_dark"
+            id="org.eclipse.ui.theme.e4_dark"
             label="%theme.dark">
       </theme>
    </extension>

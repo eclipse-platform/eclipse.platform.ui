@@ -11,7 +11,7 @@
  *******************************************************************************/
 
 @import url("platform:/plugin/org.eclipse.platform/css/e4_basestyle.css"); 
-@import url("platform:/plugin/org.eclipse.e4.ui.themes/css/e4-dark-config-parts.css"); 
+@import url("platform:/plugin/org.eclipse.ui.themes/css/e4-dark-config-parts.css");
 
 
 /*******************************************************************************
