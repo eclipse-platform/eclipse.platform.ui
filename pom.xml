@@ -8,7 +8,7 @@
 
   Contributors:
      Igor Fedorenko - initial implementation
-     Lars Vogel <Lars.Vogel@gmail.com> - Bug 421291
+     Lars Vogel <Lars.Vogel@gmail.com> - Bug 421291, 427127 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -103,6 +103,7 @@
     <module>bundles/org.eclipse.ui.views.properties.tabbed</module>
     <module>bundles/org.eclipse.ui.workbench</module>
     <module>bundles/org.eclipse.ui.navigator</module>
+    <module>bundles/org.eclipse.ui.themes</module>
     <module>examples/org.eclipse.ui.tutorials.rcp.part1</module>
     <module>examples/org.eclipse.ui.tutorials.rcp.part2</module>
     <module>examples/org.eclipse.ui.tutorials.rcp.part3</module>
