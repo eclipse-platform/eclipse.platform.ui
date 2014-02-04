@@ -2,9 +2,8 @@
 <feature
       id="org.eclipse.core.tools"
       label="%featureName"
-      version="1.4.0.qualifier"
-      provider-name="%providerName"
-      image="eclipse_update_120.jpg">
+      version="1.4.100.qualifier"
+      provider-name="%providerName">
 
    <description>
       %description
