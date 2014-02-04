@@ -603,12 +603,48 @@ public class MinMaxAddon {
 
 		adjustCTFButtons(element);
 		element.getTags().remove(MINIMIZED_BY_ZOOM);
+
+		List<String> maximizeTag = new ArrayList<String>();
+		maximizeTag.add(IPresentationEngine.MAXIMIZED);
+		List<MUIElement> curMax = modelService.findElements(window, null, MUIElement.class,
+				maximizeTag);
+		if (curMax.size() > 0) {
+			MUIElement maxElement = curMax.get(0);
+			List<MUIElement> elementsLeftToRestore = getElementsToRestore(maxElement);
+			if (elementsLeftToRestore.size() == 0) {
+				maxElement.getTags().remove(IPresentationEngine.MAXIMIZED);
+			}
+		}
 	}
 
 	void maximize(final MUIElement element) {
 		if (!element.isToBeRendered())
 			return;
 
+		List<MUIElement> elementsToMinimize = getElementsToMinimize(element);
+		Shell hostShell = (Shell) modelService.getTopLevelWindowFor(element).getWidget();
+		MWindow win = getWindowFor(element);
+
+		FaderAnimationFeedback fader = new FaderAnimationFeedback(hostShell);
+		AnimationEngine engine = new AnimationEngine(win.getContext(), fader, 300);
+		engine.schedule();
+
+		// Restore any currently maximized element
+		restoreMaximizedElement(element, win);
+
+		for (MUIElement toMinimize : elementsToMinimize) {
+			toMinimize.getTags().add(MINIMIZED);
+			toMinimize.getTags().add(MINIMIZED_BY_ZOOM);
+		}
+
+		adjustCTFButtons(element);
+	}
+
+	/**
+	 * @param element
+	 * @return The list of elements that need to be minimized during a maximize
+	 */
+	private List<MUIElement> getElementsToMinimize(MUIElement element) {
 		MWindow win = getWindowFor(element);
 		MPerspective persp = modelService.getActivePerspective(win);
 
@@ -685,20 +721,7 @@ public class MinMaxAddon {
 			}
 		}
 
-		Shell hostShell = (Shell) modelService.getTopLevelWindowFor(element).getWidget();
-		FaderAnimationFeedback fader = new FaderAnimationFeedback(hostShell);
-		AnimationEngine engine = new AnimationEngine(win.getContext(), fader, 300);
-		engine.schedule();
-
-		// Restore any currently maximized element
-		restoreMaximizedElement(element, win);
-
-		for (MUIElement toMinimize : elementsToMinimize) {
-			toMinimize.getTags().add(MINIMIZED);
-			toMinimize.getTags().add(MINIMIZED_BY_ZOOM);
-		}
-
-		adjustCTFButtons(element);
+		return elementsToMinimize;
 	}
 
 	/**
@@ -757,12 +780,29 @@ public class MinMaxAddon {
 
 	void unzoom(final MUIElement element) {
 		MWindow win = getWindowFor(element);
-		MPerspective persp = modelService.getActivePerspective(win);
 
 		Shell hostShell = (Shell) win.getWidget();
 		FaderAnimationFeedback fader = new FaderAnimationFeedback(hostShell);
 		AnimationEngine engine = new AnimationEngine(win.getContext(), fader, 300);
 		engine.schedule();
+
+		List<MUIElement> elementsToRestore = getElementsToRestore(element);
+		for (MUIElement toRestore : elementsToRestore) {
+			toRestore.getTags().remove(IPresentationEngine.MINIMIZED);
+		}
+
+		adjustCTFButtons(element);
+	}
+
+	/**
+	 * @param element
+	 * @return The list of elements that need to be restored by an unzoom
+	 */
+	private List<MUIElement> getElementsToRestore(MUIElement element) {
+		MWindow win = getWindowFor(element);
+		MPerspective persp = modelService.getActivePerspective(win);
+
+		List<MUIElement> elementsToRestore = new ArrayList<MUIElement>();
 
 		List<String> minTag = new ArrayList<String>();
 		minTag.add(IPresentationEngine.MINIMIZED_BY_ZOOM);
@@ -783,7 +823,7 @@ public class MinMaxAddon {
 
 				// Make sure we're only working on *our* window
 				if (getWindowFor(theStack) == win) {
-					theStack.getTags().remove(MINIMIZED);
+					elementsToRestore.add(theStack);
 				}
 			}
 		}
@@ -792,8 +832,8 @@ public class MinMaxAddon {
 		List<MPlaceholder> views = modelService.findElements(win, null, MPlaceholder.class, minTag,
 				EModelService.PRESENTATION);
 		for (MPlaceholder ph : views) {
-			if (ph.getWidget() != null) {
-				ph.getTags().remove(MINIMIZED);
+			if (ph.getWidget() != null && getWindowFor(ph) == win) {
+				elementsToRestore.add(ph);
 			}
 		}
 
@@ -802,7 +842,7 @@ public class MinMaxAddon {
 				persp == null ? win : persp);
 		if (element != eaPlaceholder && eaPlaceholder != null
 				&& eaPlaceholder.getTags().contains(MINIMIZED_BY_ZOOM)) {
-			eaPlaceholder.getTags().remove(MINIMIZED);
+			elementsToRestore.add(eaPlaceholder);
 		}
 
 		// Find the Perspective Stack
@@ -814,12 +854,12 @@ public class MinMaxAddon {
 				MPerspectiveStack perspStack = psList.get(0);
 				if (element != perspStack && perspStack != null
 						&& perspStack.getTags().contains(MINIMIZED_BY_ZOOM)) {
-					perspStack.getTags().remove(MINIMIZED);
+					elementsToRestore.add(perspStack);
 				}
 			}
 		}
 
-		adjustCTFButtons(element);
+		return elementsToRestore;
 	}
 
 	private void createTrim(MUIElement element) {
