@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2014 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,10 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 426986
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
@@ -54,7 +54,6 @@ import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.command.AddCommand;
@@ -823,20 +822,15 @@ public class ControlFactory {
 	}
 
 	public static String getLocalizedLabel(ProjectOSGiTranslationProvider translationProvider, MUILabel element) {
-		return getLocalizedValue(translationProvider, (MApplicationElement) element, UiPackageImpl.Literals.UI_LABEL__LABEL, UiPackageImpl.Literals.LOCALIZABLE___UPDATE_LOCALIZATION);
+		return getLocalizedValue(translationProvider, (MApplicationElement) element, UiPackageImpl.Literals.UI_LABEL__LABEL, UiPackageImpl.Literals.UI_LABEL__LOCALIZED_LABEL);
 	}
 
-	public static String getLocalizedValue(ProjectOSGiTranslationProvider translationProvider, MApplicationElement element, EStructuralFeature feature, EOperation operation) {
+	public static String getLocalizedValue(ProjectOSGiTranslationProvider translationProvider, MApplicationElement element, EStructuralFeature feature, EStructuralFeature localizedFeature) {
 		EObject eo = (EObject) element;
 		if (translationProvider == null) {
-			try {
-				String value = (String) eo.eInvoke(operation, null);
-				if (value != null && value.trim().length() > 0) {
-					return value;
-				}
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			String value = (String) eo.eGet(localizedFeature);
+			if (value != null && value.trim().length() > 0) {
+				return value;
 			}
 		}
 
