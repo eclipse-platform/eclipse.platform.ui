@@ -89,7 +89,7 @@ public class UnsettableUpdateValueStrategy extends EMFUpdateValueStrategy {
 							return result.toString();
 						} else {
 							// If the value
-2							if (fromObject == SetCommand.UNSET_VALUE || fromObject == null || fromObject.equals(eAttribute.getDefaultValue())) {
+							if (fromObject == SetCommand.UNSET_VALUE || fromObject == null || fromObject.equals(eAttribute.getDefaultValue())) {
 								return "";
 							}
 							return eFactory.convertToString(eDataType, fromObject);
@@ -103,7 +103,7 @@ public class UnsettableUpdateValueStrategy extends EMFUpdateValueStrategy {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.databinding.UpdateValueStrategy#doSet(org.eclipse.core
 	 * .databinding.observable.value.IObservableValue, java.lang.Object)
