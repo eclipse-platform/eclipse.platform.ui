@@ -17,25 +17,25 @@ public class XMIResourceFunction extends ContextFunction {
 		JFaceResources.getColorRegistry().put(JFacePreferences.DECORATIONS_COLOR,new RGB(149, 125, 71));
 		JFaceResources.getColorRegistry().put(JFacePreferences.QUALIFIER_COLOR,new RGB(128, 128, 128));
 	}
-	
+
 	@Override
 	public Object compute(IEclipseContext context) {
 		final MInputPart part = context.get(MInputPart.class);
 		if( part != null ) {
 			final XMIModelResource resource = new XMIModelResource(URI.createURI(part.getInputURI()));
 			resource.addModelListener(new ModelListener() {
-				
+
 				public void dirtyChanged() {
 					part.setDirty(resource.isDirty());
 				}
 
 				public void commandStackChanged() {
-					
+
 				}
 			});
-			return resource;			
+			return resource;
 		}
-		
+
 		return null;
 	}
 }

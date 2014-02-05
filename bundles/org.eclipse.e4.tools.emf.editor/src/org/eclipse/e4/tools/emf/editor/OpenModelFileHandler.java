@@ -38,7 +38,7 @@ public class OpenModelFileHandler {
 			Collection<MInputPart> parts = partService.getInputParts(filePath);
 			if( parts.size() == 0 ) {
 				MPartStack stack = (MPartStack) modelService.find("org.eclipse.e4.tools.emf.editor.mainwindow.editorstack", application);
-				
+
 				try {
 					MInputPart part = MBasicFactory.INSTANCE.createInputPart();
 					part.setLabel(name);
@@ -46,7 +46,7 @@ public class OpenModelFileHandler {
 					part.setContributionURI("bundleclass://org.eclipse.e4.tools.emf.ui/org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor");
 					part.setIconURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/application_view_tile.png");
 					part.setInputURI(filePath);
-					
+
 					part.setCloseable(true);
 					stack.getChildren().add(part);
 					stack.setSelectedElement(part);

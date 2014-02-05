@@ -27,24 +27,24 @@ public class NewModelContributionHandler {
 		if( file != null ) {
 			String name = file.substring(file.lastIndexOf("/") + 1);
 			String filePath = "file://" + file;
-			
+
 			try {
 				E4XMIResource resource = new E4XMIResource();
 				resource.getContents().add((EObject) MFragmentFactory.INSTANCE.createModelFragments());
 				resource.setURI(URI.createFileURI(file));
 				resource.save(null);
-				
+
 				System.err.println("Saved to: " + file);
-				
+
 				MPartStack stack = (MPartStack) modelService.find("modeleditorstack", application);
-				
+
 				MInputPart part = MBasicFactory.INSTANCE.createInputPart();
 				part.setLabel(name);
 				part.setTooltip(file);
 				part.setContributionURI("bundleclass://org.eclipse.e4.tools.emf.ui/org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor");
 				part.setIconURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/application_view_tile.png");
 				part.setInputURI(filePath);
-				
+
 				part.setCloseable(true);
 				stack.getChildren().add(part);
 				stack.setSelectedElement(part);

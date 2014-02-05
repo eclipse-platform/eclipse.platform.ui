@@ -10,7 +10,7 @@ public class SelectionProviderContextFunction extends ContextFunction {
 	@Override
 	public Object compute(final IEclipseContext context) {
 		return new ISelectionProviderService() {
-			
+
 			public void setSelection(Object selection) {
 				context.set(IServiceConstants.SELECTION, selection);
 			}
