@@ -4188,6 +4188,11 @@
          </command>
       </menuContribution>
       <menuContribution
+            allPopups="false"
+            class="org.eclipse.ui.tests.menus.DeclaredProgrammaticFactoryForToolbarVisibilityTest"
+            locationURI="toolbar:org.eclipse.ui.tests.toolbarContributionFromFactoryVisibilityTest">
+      </menuContribution>
+      <menuContribution
             locationURI="popup:org.eclipse.ui.tests.Bug264804?after=additions">
          <command
                commandId="org.eclipse.ui.file.close"

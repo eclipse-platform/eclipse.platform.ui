@@ -40,6 +40,7 @@ public class MenusTestSuite extends TestSuite {
         addTest(new TestSuite(Bug231304Test.class));
         addTest(new TestSuite(ShowViewMenuTest.class));
         addTest(new TestSuite(Bug264804Test.class));
-		addTest(new TestSuite(MenuHelperTest.class));
+        addTest(new TestSuite(MenuHelperTest.class));
+        addTest(new TestSuite(Bug410426Test.class));
     }
 }
