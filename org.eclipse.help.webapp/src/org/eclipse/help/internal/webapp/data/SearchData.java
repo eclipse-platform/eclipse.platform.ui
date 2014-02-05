@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> - fix for Bug 182466 
+ *     Holger Voormann - fix for bug 365549 (http://eclip.se/365549)
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
@@ -189,6 +190,8 @@ public class SearchData extends ActivitiesData {
 				}
 				if (reset)
 					hits = SearchManager.convertResultsToHits(results);
+				if (isShowCategories())
+					primallySortByCategory(hits);
 			}
 		}
 	}
@@ -434,11 +437,6 @@ public class SearchData extends ActivitiesData {
 					HelpWebappPlugin
 							.logWarning("No search results returned.  Help index is in use."); //$NON-NLS-1$
 				}
-				else {
-					if (isShowCategories()) {
-						Arrays.sort(hits, new SearchResultComparator());
-					}
-				}
 				return;
 			}
 			// progress
@@ -671,48 +669,34 @@ public class SearchData extends ActivitiesData {
 		}
 	}
 	
-	private static class SearchResultComparator implements Comparator {
-	    public int category(Object element) {
-			if (element instanceof ISearchEngineResult) {
-				ISearchEngineResult r = (ISearchEngineResult)element;
-				IHelpResource c = r.getCategory();
-				if (c!=null) {
-					String label = c.getLabel();
-					if (label.length()==0)
-						return 10;
-					return 5;
-				}
+	/**
+	 * Sorts the given {@link ISearchEngineResult} array alphabetically (case
+	 * insensitive) by category label but keeps the order within each category.
+	 * Results without a category or of a category without a label or with an
+	 * empty label are sorted to the end ({@code "Category Label" < "" < null}).
+	 * 
+	 * @param toSort the {@link ISearchEngineResult} array to sort; must not
+	 *               contain {@code null} elements
+	 */
+	private static void primallySortByCategory(ISearchEngineResult[] toSort) {
+		Arrays.sort(toSort, new Comparator() {
+			public int compare(Object e1, Object e2) {
+				IHelpResource c1 = ((ISearchEngineResult)e1).getCategory();
+				IHelpResource c2 = ((ISearchEngineResult)e2).getCategory();
+				if (c1 == null && c2 == null) return 0;
+				if (c1 == null) return 1;
+				if (c2 == null) return -1;
+				String l1 = c1.getLabel();
+				String l2 = c2.getLabel();
+				if (l1 == null && l2 == null) return 0;
+				if (l1 == null) return 1;
+				if (l2 == null) return -1;
+				if (l1.length() == 0 && l2.length() == 0) return 0;
+				if (l1.length() == 0) return 1;
+				if (l2.length() == 0) return -1;
+				return l1.compareToIgnoreCase(l2);
 			}
-	        return 0;
-	    }
-
-		public int compare(Object e1, Object e2) {
-		    int cat1 = category(e1);
-		    int cat2 = category(e2);
-		    if (cat1 != cat2) {
-		    	return cat1 - cat2;
-		    }
-			ISearchEngineResult r1 = (ISearchEngineResult)e1;
-			ISearchEngineResult r2 = (ISearchEngineResult)e2;
-			IHelpResource c1 = r1.getCategory();
-			IHelpResource c2 = r2.getCategory();
-			if (c1 != null && c2 != null) {
-				int cat = c1.getLabel().compareToIgnoreCase(c2.getLabel());
-				if (cat != 0) {
-					return cat;
-				}
-			}
-			float rank1 = ((ISearchEngineResult)e1).getScore();
-			float rank2 = ((ISearchEngineResult)e2).getScore();
-			if (rank1 - rank2 > 0) {
-				return -1;
-			}
-			else if (rank1 == rank2) {
-				return 0;
-			}
-			else {
-				return 1;
-			}
-		}
+		});
 	}
+
 }
