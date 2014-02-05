@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 IBM Corporation and others.
+ * Copyright (c) 2011, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -586,12 +586,6 @@ public class MinMaxAddon {
 	}
 
 	void restore(MUIElement element) {
-		if (isEmptyPerspectiveStack(element)) {
-			element.setVisible(true);
-			element.getTags().remove(MINIMIZED_BY_ZOOM);
-			return;
-		}
-
 		MWindow window = modelService.getTopLevelWindowFor(element);
 		String trimId = element.getElementId() + getMinimizedElementSuffix(element);
 		MToolControl trimStack = (MToolControl) modelService.find(trimId, window);
