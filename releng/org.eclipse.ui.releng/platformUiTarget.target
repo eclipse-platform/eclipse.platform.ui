@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="platformUiTarget" sequenceNumber="9">
+<?pde version="3.8"?><target name="platformUiTarget" sequenceNumber="11">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.json" version="1.0.0.v201011060100"/>
@@ -23,16 +23,16 @@
 <repository location="http://download.eclipse.org/technology/nebula/snapshot"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.jgit.feature.group" version="3.2.0.201312181205-r"/>
-<unit id="org.eclipse.jgit.source.feature.group" version="3.2.0.201312181205-r"/>
-<unit id="org.eclipse.emf.sdk.feature.group" version="2.10.0.v20131216-0403"/>
-<unit id="org.eclipse.egit.feature.group" version="3.2.0.201312181205-r"/>
-<unit id="org.eclipse.egit.source.feature.group" version="3.2.0.201312181205-r"/>
-<repository location="http://download.eclipse.org/releases/luna"/>
+<unit id="org.eclipse.sdk.ide" version="4.4.0.I20140204-0800"/>
+<repository location="http://download.eclipse.org/eclipse/updates/4.4-I-builds"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.sdk.ide" version="4.4.0.I20140128-0800"/>
-<repository location="http://download.eclipse.org/eclipse/updates/4.4-I-builds"/>
+<unit id="org.eclipse.egit.source.feature.group" version="3.2.0.201312181205-r"/>
+<unit id="org.eclipse.jgit.feature.group" version="3.2.0.201312181205-r"/>
+<unit id="org.eclipse.jgit.source.feature.group" version="3.2.0.201312181205-r"/>
+<unit id="org.eclipse.egit.feature.group" version="3.2.0.201312181205-r"/>
+<unit id="org.eclipse.emf.sdk.feature.group" version="2.10.0.v20140127-0448"/>
+<repository location="http://download.eclipse.org/releases/luna"/>
 </location>
 </locations>
 </target>
