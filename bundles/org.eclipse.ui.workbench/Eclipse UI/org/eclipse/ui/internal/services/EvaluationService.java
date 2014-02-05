@@ -29,8 +29,9 @@ import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -76,16 +77,14 @@ public final class EvaluationService implements IEvaluationService {
 			}
 			// This ties tool item enablement to variable changes that can
 			// effect the enablement.
-			ToolBarManagerRenderer toolBarManagerRenderer = getToolBarManagerRenderer();
-			if (toolBarManagerRenderer != null) {
-				toolBarManagerRenderer.updateEnablement();
-			}
+			getEventBroker()
+					.post(UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC, UIEvents.ALL_ELEMENT_ID);
 			return true;
 		}
 	};
 
 	private HashSet<String> variableFilter = new HashSet<String>();
-	private ToolBarManagerRenderer toolBarManagerRenderer;
+	private IEventBroker eventBroker;
 
 	public EvaluationService(IEclipseContext c) {
 		context = c;
@@ -390,14 +389,10 @@ public final class EvaluationService implements IEvaluationService {
 		}
 	}
 
-	private ToolBarManagerRenderer getToolBarManagerRenderer() {
-		if (toolBarManagerRenderer == null) {
-			// The TBMRenderer won't appear in the context until the
-			// PartRenderingEngine creates it. Since that happens after the
-			// initial WorkbenchWindow instantiates its model, we need to get it
-			// lazily and gaurd against null.
-			toolBarManagerRenderer = context.get(ToolBarManagerRenderer.class);
+	IEventBroker getEventBroker() {
+		if (eventBroker == null) {
+			eventBroker = context.get(IEventBroker.class);
 		}
-		return toolBarManagerRenderer;
+		return eventBroker;
 	}
 }
