@@ -765,7 +765,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 		}
 
 		public String[] getImportPackages() {
-			return new String[] { "javax.annotation;version=\"1.0.0\"" };
+			return new String[] { };
 		}
 
 		@Override
