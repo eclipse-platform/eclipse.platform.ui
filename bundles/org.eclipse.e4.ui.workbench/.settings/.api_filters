@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.e4.ui.workbench" version="2">
     <resource path="META-INF/MANIFEST.MF">
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="923795461">
+        <filter comment="Bug 319463 - Remove dead code" id="923795461">
             <message_arguments>
-                <message_argument value="1.0.100"/>
-                <message_argument value="1.0.0"/>
+                <message_argument value="1.1.0"/>
+                <message_argument value="1.0.1"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.e4.ui.workbench.modeling.ModelService">
+        <filter comment="Bug 319463 - Remove dead code" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelService"/>
+                <message_argument value="org.eclipse.e4.ui.workbench_1.1.0"/>
             </message_arguments>
         </filter>
     </resource>
@@ -397,38 +405,6 @@
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelReconciler"/>
                 <message_argument value="ModelReconciler()"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/e4/ui/workbench/modeling/ModelService.java" type="org.eclipse.e4.ui.workbench.modeling.ModelService">
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelService"/>
-                <message_argument value="getChildren(Object, String)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelService"/>
-                <message_argument value="getPropIds(Object)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelService"/>
-                <message_argument value="getProperty(Object, String)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelService"/>
-                <message_argument value="setProperty(Object, String, Object)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338948223">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelService"/>
-                <message_argument value="ModelService(IAdapterManager)"/>
             </message_arguments>
         </filter>
     </resource>
