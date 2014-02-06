@@ -101,6 +101,9 @@ public abstract class AbstractComponentEditor {
 	}
 
 	public ImageDescriptor createImageDescriptor(String key) {
+		if (key == null) {
+			return null;
+		}
 		return ImageDescriptor.createFromImage(createImage(key));
 	}
 
@@ -132,7 +135,7 @@ public abstract class AbstractComponentEditor {
 	 * Translates an input <code>String</code> using the current
 	 * {@link ResourceBundleTranslationProvider} and <code>locale</code> from
 	 * the {@link TranslationService}.
-	 * 
+	 *
 	 * @param string
 	 *            the string to translate, may not be null.
 	 * @return the translated string or the input string if it could not be

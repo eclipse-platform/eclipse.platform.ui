@@ -376,12 +376,12 @@ public class ModelEditor {
 			context.set(IProject.class, project);
 		}
 
+		loadEditorFeatures();
 		registerDefaultEditors();
 		registerVirtualEditors();
 
 		registerContributedEditors();
 		registerContributedVirtualEditors();
-		loadEditorFeatures();
 		loadContributionCreators();
 
 		fragment = modelProvider.getRoot().get(0) instanceof MModelFragments;
@@ -719,6 +719,7 @@ public class ModelEditor {
 				if (noSelected > 0) {
 					if ((!isModelFragment()) && modelExtractor != null)
 						manager.add(new Action(messages.ModelEditor_ExtractFragment, ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_ModelFragments))) {
+							@Override
 							public void run() {
 								ArrayList<MApplicationElement> maes = new ArrayList<MApplicationElement>();
 								for (Object objSelect : listOfSelections) {

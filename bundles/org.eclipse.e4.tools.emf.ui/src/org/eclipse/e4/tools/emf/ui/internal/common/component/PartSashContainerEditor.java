@@ -20,6 +20,7 @@ import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
+import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
@@ -137,6 +138,15 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 				handleAddChild(AdvancedPackageImpl.Literals.PLACEHOLDER);
 			}
 		});
+		for (FeatureClass c : getEditor().getFeatureClasses(BasicPackageImpl.Literals.PART_STACK, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN)) {
+			final EClass ec = c.eClass;
+			actions.add(new Action(c.label, createImageDescriptor(c.iconId)) {
+				@Override
+				public void run() {
+					handleAddChild(ec);
+				}
+			});
+		}
 
 		// --- Import Actions ---
 		actionsImport.add(new Action("Views", createImageDescriptor(ResourceProvider.IMG_Part)) {
@@ -296,8 +306,16 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 					return eclass.getName();
 				}
 			});
-			childrenDropDown.setInput(new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, AdvancedPackageImpl.Literals.AREA, AdvancedPackageImpl.Literals.PLACEHOLDER });
-			childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART_SASH_CONTAINER));
+			List<FeatureClass> eClassList = new ArrayList<FeatureClass>();
+			eClassList.add(new FeatureClass("PartSashContainer", BasicPackageImpl.Literals.PART_SASH_CONTAINER));
+			eClassList.add(new FeatureClass("PartStack", BasicPackageImpl.Literals.PART_STACK));
+			eClassList.add(new FeatureClass("Part", BasicPackageImpl.Literals.PART));
+			eClassList.add(new FeatureClass("InputPart", BasicPackageImpl.Literals.INPUT_PART));
+			eClassList.add(new FeatureClass("Area", AdvancedPackageImpl.Literals.AREA));
+			eClassList.add(new FeatureClass("Placeholder", AdvancedPackageImpl.Literals.PLACEHOLDER));
+			eClassList.addAll(getEditor().getFeatureClasses(BasicPackageImpl.Literals.PART_SASH_CONTAINER, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN));
+
+			childrenDropDown.setSelection(new StructuredSelection(eClassList.get(0)));
 
 			Button b = new Button(buttonCompTop, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_AddEllipsis);
@@ -307,7 +325,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (!childrenDropDown.getSelection().isEmpty()) {
-						EClass eClass = (EClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
+						EClass eClass = ((FeatureClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement()).eClass;
 						handleAddChild(eClass);
 					}
 				}

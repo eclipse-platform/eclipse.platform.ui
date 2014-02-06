@@ -20,6 +20,7 @@ import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
+import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
@@ -114,6 +115,20 @@ public class PartStackEditor extends AbstractComponentEditor {
 				handleAddChild(AdvancedPackageImpl.Literals.PLACEHOLDER);
 			}
 		});
+
+		List<FeatureClass> list = getEditor().getFeatureClasses(BasicPackageImpl.Literals.PART_STACK, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+
+		if (!list.isEmpty()) {
+			for (FeatureClass c : list) {
+				final EClass ec = c.eClass;
+				actions.add(new Action(c.label, createImageDescriptor(c.iconId)) {
+					@Override
+					public void run() {
+						handleAddChild(ec);
+					}
+				});
+			}
+		}
 
 		// --- Import Actions ---
 		actionsImport.add(new Action("Views", createImageDescriptor(ResourceProvider.IMG_Part)) {
@@ -236,12 +251,17 @@ public class PartStackEditor extends AbstractComponentEditor {
 			childrenDropDown.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {
-					EClass eclass = (EClass) element;
-					return eclass.getName();
+					FeatureClass eclass = (FeatureClass) element;
+					return eclass.label;
 				}
 			});
-			childrenDropDown.setInput(new EClass[] { BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, AdvancedPackageImpl.Literals.PLACEHOLDER });
-			childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART));
+			List<FeatureClass> eClassList = new ArrayList<FeatureClass>();
+			eClassList.add(new FeatureClass("Part", BasicPackageImpl.Literals.PART));
+			eClassList.add(new FeatureClass("Input Part", BasicPackageImpl.Literals.INPUT_PART));
+			eClassList.add(new FeatureClass("Placeholder", AdvancedPackageImpl.Literals.PLACEHOLDER));
+			eClassList.addAll(getEditor().getFeatureClasses(BasicPackageImpl.Literals.PART_STACK, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN));
+			childrenDropDown.setInput(eClassList);
+			childrenDropDown.setSelection(new StructuredSelection(eClassList.get(0)));
 
 			Button b = new Button(buttonCompTop, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_AddEllipsis);
@@ -250,7 +270,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					EClass eClass = (EClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
+					EClass eClass = ((FeatureClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement()).eClass;
 					handleAddChild(eClass);
 				}
 			});

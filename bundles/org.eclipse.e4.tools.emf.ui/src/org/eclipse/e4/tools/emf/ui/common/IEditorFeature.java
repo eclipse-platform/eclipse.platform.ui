@@ -21,10 +21,18 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 public interface IEditorFeature {
 	public class FeatureClass {
 		public final String label;
+		public final String iconId;
 		public final EClass eClass;
 
 		public FeatureClass(String label, EClass eClass) {
 			this.label = label;
+			this.iconId = null;
+			this.eClass = eClass;
+		}
+
+		public FeatureClass(String label, String iconId, EClass eClass) {
+			this.label = label;
+			this.iconId = iconId;
 			this.eClass = eClass;
 		}
 	}
@@ -33,7 +41,7 @@ public interface IEditorFeature {
 	 * Return a list of {@link FeatureClass} elements, where
 	 * {@link FeatureClass#eClass} must be castable to <b>eClass</b> and will be
 	 * stored in <b>feature</b>.
-	 * 
+	 *
 	 * @param eClass
 	 *            your contribution must be castable to
 	 * @param feature
