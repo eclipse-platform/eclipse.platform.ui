@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> - fix for Bug 182466
  *     Holger Voormann - fix for bug 365549 (http://eclip.se/365549)
+ *     Holger Voormann - fix for bug 364324 (http://eclip.se/364324)
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
@@ -16,8 +17,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
@@ -41,6 +44,7 @@ import org.eclipse.help.internal.search.SearchManager;
 import org.eclipse.help.internal.search.SearchProgressMonitor;
 import org.eclipse.help.internal.search.SearchQuery;
 import org.eclipse.help.internal.search.SearchResults;
+import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
 import org.eclipse.help.internal.webapp.servlet.WebappWorkingSetManager;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
@@ -678,12 +682,40 @@ public class SearchData extends ActivitiesData {
 	 *               contain {@code null} elements
 	 */
 	private static void primallySortByCategory(ISearchEngineResult[] toSort) {
+
+		// compute TOC ordering
+		Map<String, String> nameIdMap = new HashMap<String, String>();
+		List<String> itemsToOrder = new ArrayList<String>();
+		for (int i = 0; i < toSort.length; i++) {
+			IHelpResource cat = toSort[i].getCategory();
+			if (cat == null) continue;
+			String href = cat.getHref();
+			String label = cat.getLabel();
+			if (href != null && label != null) {
+				nameIdMap.put(href, label);
+				if (!itemsToOrder.contains(href)) {
+					itemsToOrder.add(href);
+				}
+			}
+		}
+		List<Object> order = ProductPreferences.getTocOrder(itemsToOrder, nameIdMap);
+		final Map<Object, Integer> catOrder = new HashMap<Object, Integer>();
+		for (int i = 0; i < order.size(); i++) {
+			catOrder.put(order.get(i), Integer.valueOf(i));
+		}
+
 		Arrays.sort(toSort, new Comparator<ISearchEngineResult>() {
 			@Override
 			public int compare(ISearchEngineResult c1, ISearchEngineResult c2) {
 				if (c1 == null && c2 == null) return 0;
 				if (c1 == null) return 1;
 				if (c2 == null) return -1;
+
+				// ordering after TOC ordering
+				if (catOrder.containsKey(c1.getHref()) && catOrder.containsKey(c2.getHref()))
+					return catOrder.get(c1.getHref()).intValue() - catOrder.get(c2.getHref()).intValue();
+
+				// alphabetical ordering by category label
 				String l1 = c1.getLabel();
 				String l2 = c2.getLabel();
 				if (l1 == null && l2 == null) return 0;
