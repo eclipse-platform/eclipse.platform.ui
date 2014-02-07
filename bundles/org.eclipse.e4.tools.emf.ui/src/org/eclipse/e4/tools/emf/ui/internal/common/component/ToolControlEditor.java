@@ -27,6 +27,7 @@ import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -192,6 +193,8 @@ public class ToolControlEditor extends AbstractComponentEditor {
 			createInstanceInspection(folder);
 			createUITreeInspection(folder);
 		}
+
+		createContributedEditorTabs(folder, context, getMaster(), MToolControl.class);
 
 		folder.setSelection(0);
 

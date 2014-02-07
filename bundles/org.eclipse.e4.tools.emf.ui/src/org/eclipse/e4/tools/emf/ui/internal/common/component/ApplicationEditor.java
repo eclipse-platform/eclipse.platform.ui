@@ -202,6 +202,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			createUITreeInspection(folder);
 		}
 
+		createContributedEditorTabs(folder, context, getMaster(), MApplication.class);
+
 		folder.setSelection(0);
 
 		return folder;

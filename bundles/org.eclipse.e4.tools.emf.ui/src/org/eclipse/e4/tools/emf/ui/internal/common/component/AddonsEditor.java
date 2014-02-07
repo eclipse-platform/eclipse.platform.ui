@@ -26,6 +26,7 @@ import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.objectdata.ObjectViewer;
+import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -208,6 +209,8 @@ public class AddonsEditor extends AbstractComponentEditor {
 		if (project == null) {
 			createInstanceInspection(folder);
 		}
+
+		createContributedEditorTabs(folder, context, getMaster(), MAddon.class);
 
 		folder.setSelection(0);
 

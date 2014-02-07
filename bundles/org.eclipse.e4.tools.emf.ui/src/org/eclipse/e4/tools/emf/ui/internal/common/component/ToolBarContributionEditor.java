@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.command.Command;
@@ -359,6 +360,8 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 		if (project == null) {
 			createUITreeInspection(folder);
 		}
+
+		createContributedEditorTabs(folder, context, getMaster(), MToolBarContribution.class);
 
 		folder.setSelection(0);
 

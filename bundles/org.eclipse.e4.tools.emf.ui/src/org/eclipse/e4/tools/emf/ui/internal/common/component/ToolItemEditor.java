@@ -155,6 +155,8 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 			createUITreeInspection(folder);
 		}
 
+		createContributedEditorTabs(folder, context, getMaster(), MToolItem.class);
+
 		folder.setSelection(0);
 
 		return folder;

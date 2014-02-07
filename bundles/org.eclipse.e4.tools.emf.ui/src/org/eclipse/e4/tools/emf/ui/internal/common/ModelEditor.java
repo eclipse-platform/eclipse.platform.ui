@@ -8,11 +8,9 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Wim Jongman <wim.jongman@remainsoftware.com> - Maintenance
- *     Marco Descher <marco@descher.at> - Bug395982, Bug426653
+ *     Marco Descher <marco@descher.at> - Bug395982, 426653, 422465
  ******************************************************************************/
-package org.eclipse.e4.tools.emf.ui.internal.common;
-
-import java.util.ArrayList;
+package org.eclipse.e4.tools.emf.ui.internal.common;import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +43,7 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.translation.TranslationService;
+import org.eclipse.e4.tools.emf.ui.common.AbstractElementEditorContribution;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.common.IEditorDescriptor;
@@ -235,6 +234,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TreeItem;
+;
 
 public class ModelEditor {
 	private static final String ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED = "org.eclipse.e4.tools.modeleditor.filteredtree.enabled.xmitab.disabled";
@@ -270,6 +270,7 @@ public class ModelEditor {
 
 	private Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
 	private Map<String, AbstractComponentEditor> virtualEditors = new HashMap<String, AbstractComponentEditor>();
+	private Map<Class<?>, List<AbstractElementEditorContribution>> tabContributions = new HashMap<Class<?>, List<AbstractElementEditorContribution>>();
 	private List<FeaturePath> labelFeaturePaths = new ArrayList<FeaturePath>();
 	private List<IEditorFeature> editorFeatures = new ArrayList<IEditorFeature>();
 	private List<IContributionClassCreator> contributionCreator = new ArrayList<IContributionClassCreator>();
@@ -383,6 +384,7 @@ public class ModelEditor {
 
 		registerContributedEditors();
 		registerContributedVirtualEditors();
+		registerContributedEditorTabs();
 		loadContributionCreators();
 
 		fragment = modelProvider.getRoot().get(0) instanceof MModelFragments;
@@ -1171,6 +1173,44 @@ public class ModelEditor {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private void registerContributedEditorTabs() {
+		IExtensionRegistry registry = RegistryFactory.getRegistry();
+		IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.editors"); //$NON-NLS-1$
+		for (IConfigurationElement el : extPoint.getConfigurationElements()) {
+			if (!"editorTab".equals(el.getName())) { //$NON-NLS-1$
+				continue;
+			}
+
+			try {
+				final Object o = el.createExecutableExtension("contribution"); //$NON-NLS-1$
+				if (o instanceof AbstractElementEditorContribution) {
+					AbstractElementEditorContribution contribution = (AbstractElementEditorContribution) o;
+					ContextInjectionFactory.inject(contribution, context);
+					Class<?> contribElem = contribution.getContributableTo();
+					if (contribElem == null)
+						continue;
+					if (!tabContributions.containsKey(contribElem)) {
+						tabContributions.put(contribElem, new ArrayList<AbstractElementEditorContribution>());
+					}
+					List<AbstractElementEditorContribution> res = tabContributions.get(contribElem);
+					res.add(contribution);
+				}
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block 1204
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public List<AbstractElementEditorContribution> getTabContributionsForClass(Class<?> clazz) {
+		List<AbstractElementEditorContribution> ret = new ArrayList<AbstractElementEditorContribution>();
+		for (Class<?> clasz : tabContributions.keySet()) {
+			if (clasz.isAssignableFrom(clazz))
+				ret.addAll(tabContributions.get(clasz));
+		}
+		return ret;
 	}
 
 	private void registerDefaultEditors() {

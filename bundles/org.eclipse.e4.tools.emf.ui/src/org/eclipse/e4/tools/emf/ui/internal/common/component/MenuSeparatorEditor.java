@@ -22,6 +22,7 @@ import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EObject;
@@ -143,6 +144,8 @@ public class MenuSeparatorEditor extends AbstractComponentEditor {
 		if (project == null) {
 			createUITreeInspection(folder);
 		}
+
+		createContributedEditorTabs(folder, context, getMaster(), MMenuSeparator.class);
 
 		folder.setSelection(0);
 

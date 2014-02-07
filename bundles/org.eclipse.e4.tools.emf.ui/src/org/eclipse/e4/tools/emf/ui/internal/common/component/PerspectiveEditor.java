@@ -273,6 +273,8 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 			createUITreeInspection(folder);
 		}
 
+		createContributedEditorTabs(folder, context, getMaster(), MPerspective.class);
+
 		folder.setSelection(0);
 
 		return folder;

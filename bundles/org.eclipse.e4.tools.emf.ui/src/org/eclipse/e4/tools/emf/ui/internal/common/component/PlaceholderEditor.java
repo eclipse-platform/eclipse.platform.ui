@@ -246,6 +246,8 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 			createUITreeInspection(folder);
 		}
 
+		createContributedEditorTabs(folder, context, getMaster(), MPlaceholder.class);
+
 		folder.setSelection(0);
 
 		return folder;

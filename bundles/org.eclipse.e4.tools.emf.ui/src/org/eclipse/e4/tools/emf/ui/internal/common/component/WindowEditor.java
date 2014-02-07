@@ -300,6 +300,8 @@ public class WindowEditor extends AbstractComponentEditor {
 			createUITreeInspection(folder);
 		}
 
+		createContributedEditorTabs(folder, context, getMaster(), MWindow.class);
+
 		folder.setSelection(0);
 
 		return folder;

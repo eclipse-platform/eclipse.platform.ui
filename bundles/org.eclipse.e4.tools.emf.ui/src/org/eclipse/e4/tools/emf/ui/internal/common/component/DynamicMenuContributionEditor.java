@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -201,6 +202,8 @@ public class DynamicMenuContributionEditor extends AbstractComponentEditor {
 				}
 			});
 		}
+
+		createContributedEditorTabs(folder, context, getMaster(), MDynamicMenuContribution.class);
 
 		folder.setSelection(0);
 

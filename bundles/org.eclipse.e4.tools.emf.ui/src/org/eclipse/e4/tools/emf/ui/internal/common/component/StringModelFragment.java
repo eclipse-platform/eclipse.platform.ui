@@ -340,6 +340,8 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 		}
 
+		createContributedEditorTabs(folder, context, getMaster(), MStringModelFragment.class);
+
 		folder.setSelection(0);
 
 		return folder;

@@ -10,9 +10,10 @@
 &lt;br&gt;&lt;br&gt;
 This extension point allows three distinct extensions:
 &lt;ul&gt;
-&lt;li&gt;Definition of (virtual) element editors&lt;/LI&gt;
-&lt;li&gt;Contribution of model element creation assistants&lt;/LI&gt;
-&lt;li&gt;Contribution of features for reference by existing model elements&lt;/LI&gt;
+&lt;li&gt;Definition of (virtual) element editors&lt;/li&gt;
+&lt;li&gt;Contribution of model element creation assistants&lt;/li&gt;
+&lt;li&gt;Contribution of features for reference by existing model elements&lt;/li&gt;
+&lt;li&gt;Contribution of additional tabs to existing element editors&lt;/li&gt;
 &lt;/ul&gt;
       </documentation>
    </annotation>
@@ -29,6 +30,7 @@ This extension point allows three distinct extensions:
             <element ref="virtualeditor" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="editorfeature" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="contributionClassCreator" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="editorTab" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -147,6 +149,26 @@ This assistant will be called by the element editor when instantiating a new con
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="editorTab">
+      <annotation>
+         <documentation>
+            Register additional editor tabs to elements in the editor. For each contribution to this extension point, a respective tab item is shown for elements the contribution opts for.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="contribution" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Defines the types the editorTab is contributed to, the tab label to present and the contributed editor tab itself.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.e4.tools.emf.ui.common.AbstractElementEditorContribution:"/>
                </appinfo>
             </annotation>
          </attribute>

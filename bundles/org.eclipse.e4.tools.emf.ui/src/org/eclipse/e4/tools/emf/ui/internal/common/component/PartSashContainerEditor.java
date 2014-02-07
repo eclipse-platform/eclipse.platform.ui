@@ -429,6 +429,8 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 			createUITreeInspection(folder);
 		}
 
+		createContributedEditorTabs(folder, context, getMaster(), MPartSashContainer.class);
+
 		folder.setSelection(0);
 
 		return folder;

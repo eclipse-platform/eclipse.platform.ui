@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010-2014 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Marco Descher <marco@descher.at> - Bug 422465
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common.component;
 
@@ -15,8 +16,10 @@ import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.translation.TranslationService;
+import org.eclipse.e4.tools.emf.ui.common.AbstractElementEditorContribution;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
@@ -28,12 +31,15 @@ import org.eclipse.e4.tools.services.Translation;
 import org.eclipse.e4.tools.services.impl.ResourceBundleTranslationProvider;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -64,6 +70,10 @@ public abstract class AbstractComponentEditor {
 	private ModelEditor editor;
 	@Inject
 	protected IResourcePool resourcePool;
+
+	@Inject
+	@Optional
+	protected IProject project;
 
 	@Inject
 	@Translation
@@ -223,5 +233,20 @@ public abstract class AbstractComponentEditor {
 		contentContainer.setLayout(gl);
 
 		return contentContainer;
+	}
+
+	protected void createContributedEditorTabs(CTabFolder folder, EMFDataBindingContext context, WritableValue master, Class<?> clazz) {
+		List<AbstractElementEditorContribution> contributionList = editor.getTabContributionsForClass(clazz);
+
+		for (AbstractElementEditorContribution eec : contributionList) {
+			CTabItem item = new CTabItem(folder, SWT.BORDER);
+			item.setText(eec.getTabLabel());
+
+			Composite parent = createScrollableContainer(folder);
+			item.setControl(parent.getParent());
+
+			eec.createContributedEditorTab(parent, context, master, getEditingDomain(), project);
+		}
+
 	}
 }

@@ -318,6 +318,8 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 			createUITreeInspection(folder);
 		}
 
+		createContributedEditorTabs(folder, context, getMaster(), MMenuItem.class);
+
 		folder.setSelection(0);
 
 		return folder;

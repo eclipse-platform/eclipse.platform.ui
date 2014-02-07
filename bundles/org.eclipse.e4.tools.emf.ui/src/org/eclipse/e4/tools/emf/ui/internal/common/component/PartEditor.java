@@ -322,6 +322,8 @@ public class PartEditor extends AbstractComponentEditor {
 			createUITreeInspection(folder);
 		}
 
+		createContributedEditorTabs(folder, context, getMaster(), MPart.class);
+
 		folder.setSelection(0);
 
 		return folder;
