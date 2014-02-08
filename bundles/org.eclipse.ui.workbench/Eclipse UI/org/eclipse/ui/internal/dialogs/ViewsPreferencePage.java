@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Erik Chou <ekchou@ymail.com> - Bug 425962
  *******************************************************************************/
 
 package org.eclipse.ui.internal.dialogs;
@@ -151,11 +152,6 @@ public class ViewsPreferencePage extends PreferencePage implements
 		engine = context.get(IThemeEngine.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		if (getSelection() != null) {
@@ -201,11 +197,6 @@ public class ViewsPreferencePage extends PreferencePage implements
 		super.performDefaults();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
-	 */
 	@Override
 	public boolean performCancel() {
 		if (currentTheme != null) {
