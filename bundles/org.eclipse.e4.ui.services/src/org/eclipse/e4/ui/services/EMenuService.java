@@ -8,15 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.ui.workbench.swt.modeling;
-
-import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
+package org.eclipse.e4.ui.services;
 
 /**
  * Provide for management of different menus.
  * 
  * @noimplement This interface is not intended to be implemented by clients.
- * @noreference This interface is not intended to be referenced by clients.
  */
 public interface EMenuService {
 
@@ -27,7 +24,8 @@ public interface EMenuService {
 	 *            The parent for the context menu. A Control in SWT.
 	 * @param menuId
 	 *            the ID of the menu to use
+	 * @return <code>true</code> if registration succeeded else <code>false</code>
 	 */
-	MPopupMenu registerContextMenu(Object parent, String menuId);
+	boolean registerContextMenu(Object parent, String menuId);
 
 }

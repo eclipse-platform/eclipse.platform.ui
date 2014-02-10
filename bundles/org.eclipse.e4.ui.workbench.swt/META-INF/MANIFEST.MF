@@ -40,7 +40,6 @@ Export-Package: org.eclipse.e4.ui.internal.workbench.swt;x-friends:="org.eclipse
  org.eclipse.e4.ui.internal.workbench.swt.handlers;x-internal:=true,
  org.eclipse.e4.ui.workbench.swt.factories;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench",
  org.eclipse.e4.ui.workbench.swt.internal.copy;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt",
- org.eclipse.e4.ui.workbench.swt.modeling;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench",
  org.eclipse.e4.ui.workbench.swt.util;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench"
 Import-Package: com.ibm.icu.text;version="4.2.1",
  javax.annotation;version="1.0.0",

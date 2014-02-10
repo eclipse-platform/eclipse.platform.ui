@@ -8,16 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.ui.workbench.swt.modeling;
+package org.eclipse.e4.ui.internal.workbench.swt;
 
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
+import org.eclipse.e4.ui.services.EMenuService;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -26,9 +26,9 @@ public class MenuService implements EMenuService {
 	@Inject
 	private MPart myPart;
 
-	public MPopupMenu registerContextMenu(Object parent, String menuId) {
+	public boolean registerContextMenu(Object parent, String menuId) {
 		if (!(parent instanceof Control)) {
-			return null;
+			return false;
 		}
 		Control parentControl = (Control) parent;
 		for (MMenu mmenu : myPart.getMenus()) {
@@ -38,13 +38,13 @@ public class MenuService implements EMenuService {
 						myPart.getContext());
 				if (menu != null) {
 					parentControl.setMenu(menu);
-					return (MPopupMenu) mmenu;
+					return true;
 				} else {
-					return null;
+					return false;
 				}
 			}
 		}
-		return null;
+		return false;
 	}
 
 	public static Menu registerMenu(final Control parentControl,

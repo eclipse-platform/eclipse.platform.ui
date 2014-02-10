@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (c) 2009, 2012 Siemens AG and others.
  * 
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
@@ -12,14 +12,13 @@
 
 package org.eclipse.e4.demo.contacts.views;
 
-import org.eclipse.e4.ui.workbench.swt.modeling.EMenuService;
-
 import javax.inject.Inject;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.demo.contacts.model.ContactsRepositoryFactory;
 import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.services.EMenuService;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
@@ -41,7 +40,7 @@ public class ListView {
 
 	@Inject
 	private ESelectionService selectionService;
-	
+
 	@Inject
 	public ListView(Composite parent, EMenuService menuService) {
 		// Table composite (because of TableColumnLayout)
@@ -58,13 +57,13 @@ public class ListView {
 		contactsViewer.setComparator(new ContactViewerComparator());
 
 		contactsViewer
-				.addSelectionChangedListener(new ISelectionChangedListener() {
-					public void selectionChanged(SelectionChangedEvent event) {
-						IStructuredSelection selection = (IStructuredSelection) event
-								.getSelection();
-						selectionService.setSelection(selection.getFirstElement());
-					}
-				});
+		.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) event
+						.getSelection();
+				selectionService.setSelection(selection.getFirstElement());
+			}
+		});
 
 		// First name column
 		final TableViewerColumn firstNameColumn = new TableViewerColumn(
@@ -81,7 +80,7 @@ public class ListView {
 				new ColumnWeightData(60));
 
 		menuService.registerContextMenu(contactsViewer.getControl(), "contacts.popup");
-		
+
 		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
 
 		contactsViewer.setContentProvider(contentProvider);
