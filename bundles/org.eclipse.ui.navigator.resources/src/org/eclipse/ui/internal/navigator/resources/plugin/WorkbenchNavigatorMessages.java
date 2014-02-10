@@ -22,6 +22,7 @@ public class WorkbenchNavigatorMessages extends NLS {
 	/** The bundle properties file */
 	public static final String BUNDLE_NAME = "org.eclipse.ui.internal.navigator.resources.plugin.messages"; //$NON-NLS-1$
 
+
 	public static String PortingActionProvider_ImportResourcesMenu_label;
 
 	public static String PortingActionProvider_ExportResourcesMenu_label;
@@ -63,6 +64,11 @@ public class WorkbenchNavigatorMessages extends NLS {
 	
 	public static String ProjectExplorerPart_workspace;
 	public static String ProjectExplorerPart_workingSetModel;
+	
+	public static String OpenProjectAction_OpenExistingProject;
+	public static String OpenProjectAction_OpenExistingProject_desc;
+
+	public static String SelectProjectForFolderAction_SelectProject;
 	
 	
 	static {
