@@ -64,6 +64,29 @@ public interface IPresentationEngine {
 	public static final String NO_MOVE = "NoMove"; //$NON-NLS-1$
 
 	/**
+	 * This key is used to store information in the 'persistentData' map which will be used to
+	 * override the initial style of an element at rendering time. For example the SWT renderer will
+	 * expect to see an integer (as a string) which defines the initial SWT style bits.
+	 * 
+	 * @since 1.1
+	 */
+	public static String STYLE_OVERRIDE_KEY = "styleOverride"; //$NON-NLS-1$
+
+	/**
+	 * When applied to an MWindow causes the renderer to minimize the resulting control.
+	 * 
+	 * @since 1.1
+	 */
+	public static String WINDOW_MINIMIZED_TAG = "shellMinimized"; //$NON-NLS-1$
+
+	/**
+	 * When applied to an MWindow causes the renderer to maximize the resulting control.
+	 * 
+	 * @since 1.1
+	 */
+	public static String WINDOW_MAXIMIZED_TAG = "shellMaximized"; //$NON-NLS-1$
+
+	/**
 	 * When added to an element's 'tags' this should cause the presentation to move that element to
 	 * the trim. In the default implementation you can only apply this tag to an MPartStack or the
 	 * MPlaceholder of the MArea.
