@@ -111,6 +111,12 @@ public interface EModelService {
 	 * Creates instances of model elements. The method supports any type extending
 	 * {@link MApplicationElement}, both in the standard e4 UI model and in an extension models.
 	 * 
+	 * <p>
+	 * <b>Caution:</b> To create model element instances of extension models you need to register
+	 * them with the <code>the org.eclipse.e4.workbench.model.definition.enrichment</code>
+	 * ExtensionPoint.
+	 * </p>
+	 * 
 	 * @param elementType
 	 *            the class to instantiate. Cannot be <code>null</code>
 	 * @return a new instance

@@ -74,7 +74,7 @@ final class GenericMApplicationElementFactoryImpl {
 		// which is used throughout the running application and so this instance will also life as
 		// long as the application is running.
 		extensionRegistry.addListener(emfGeneratedPackages,
-				MApplicationElementClassToEClass.EP_GENERATED_PACKAGE);
+				MApplicationElementClassToEClass.EP_MODEL_DEFINITION_ENRICHMENT);
 		emfGeneratedPackages.initialize(extensionRegistry);
 	}
 
@@ -100,8 +100,8 @@ final class GenericMApplicationElementFactoryImpl {
 	 * {@link EClass} for the given {@link Class}.
 	 * 
 	 * <p>
-	 * This Listener must be registered on EMF's {@value #EP_GENERATED_PACKAGE} extension point to
-	 * build the appropriate mapping between {@link Class} and {@link EClass}.
+	 * This Listener must be registered on EMF's {@value #EP_MODEL_DEFINITION_ENRICHMENT} extension
+	 * point to build the appropriate mapping between {@link Class} and {@link EClass}.
 	 * </p>
 	 * 
 	 * <p>
@@ -112,16 +112,16 @@ final class GenericMApplicationElementFactoryImpl {
 	private static final class MApplicationElementClassToEClass implements IRegistryEventListener {
 
 		/** The extension point name which holds the required information. */
-		public static final String EP_GENERATED_PACKAGE = "org.eclipse.emf.ecore.generated_package"; //$NON-NLS-1$
+		public static final String EP_MODEL_DEFINITION_ENRICHMENT = "org.eclipse.e4.workbench.model.definition.enrichment"; //$NON-NLS-1$
 
 		/**
 		 * The configuration element inside the extension point which holds the required
 		 * information.
 		 */
-		private static final String CONFIG_ELEMENT_NAME = "package"; //$NON-NLS-1$
+		private static final String CONFIG_ELEMENT_NAME = "definitionEnrichment"; //$NON-NLS-1$
 
 		/** Attribute name which holds the EMF EPackage Namespace URI. */
-		private static final String CONFIG_ATTR_EPACKAGE_URI = "uri"; //$NON-NLS-1$
+		private static final String CONFIG_ATTR_EPACKAGE_URI = "ePackageNS"; //$NON-NLS-1$
 
 		/** Holds the mapping between {@link Class} and {@link EClass}. */
 		private final ConcurrentMap<Class<? extends MApplicationElement>, EClass> classToEClass = new ConcurrentHashMap<Class<? extends MApplicationElement>, EClass>();
@@ -141,8 +141,8 @@ final class GenericMApplicationElementFactoryImpl {
 		 * ExtensionRegistry.
 		 * 
 		 * <p>
-		 * The method will retrieve all {@link #EP_GENERATED_PACKAGE} extensions form the given
-		 * Eclipse ExtensionRegistry and initializes the basic mapping.
+		 * The method will retrieve all {@link #EP_MODEL_DEFINITION_ENRICHMENT} extensions form the
+		 * given Eclipse ExtensionRegistry and initializes the basic mapping.
 		 * </p>
 		 * 
 		 * @param extensionRegistry
@@ -154,7 +154,7 @@ final class GenericMApplicationElementFactoryImpl {
 			}
 
 			IExtensionPoint epGeneratedPackage = extensionRegistry
-					.getExtensionPoint(EP_GENERATED_PACKAGE);
+					.getExtensionPoint(EP_MODEL_DEFINITION_ENRICHMENT);
 			if (epGeneratedPackage != null) {
 				added(epGeneratedPackage.getExtensions());
 			}
