@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.navigator.resources.workbench;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -104,7 +103,7 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 		}
 		
 		
-		final Collection runnables = new ArrayList();
+		final Collection<Runnable> runnables = new ArrayList<Runnable>();
 		processDelta(delta, runnables);
 
 		if (runnables.isEmpty()) {
@@ -136,7 +135,7 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 	/**
 	 * Process a resource delta. Add any runnables
 	 */
-	private void processDelta(IResourceDelta delta, Collection runnables) {
+	private void processDelta(IResourceDelta delta, Collection<Runnable> runnables) {
 		//he widget may have been destroyed
 		// by the time this is run. Check for this and do nothing if so.
 		Control ctrl = viewer.getControl();
@@ -300,10 +299,9 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 	 * Run all of the runnables that are the widget updates
 	 * @param runnables
 	 */
-	private void runUpdates(Collection runnables) {
-		Iterator runnableIterator = runnables.iterator();
-		while(runnableIterator.hasNext()){
-			((Runnable)runnableIterator.next()).run();
+	private void runUpdates(Collection<Runnable> runnables) {
+		for (Runnable runnable : runnables) {
+			runnable.run();
 		}
 		
 	}

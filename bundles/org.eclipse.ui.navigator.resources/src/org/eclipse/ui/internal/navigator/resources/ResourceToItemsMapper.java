@@ -36,15 +36,15 @@ public class ResourceToItemsMapper implements ICommonViewerMapper {
 
 	private static final int NUMBER_LIST_REUSE = 10;
 
-	// map from resource to item
-	private HashMap _resourceToItem;
-	private Stack _reuseLists;
+	// map from resource to item. Value can be single Item of List<Item>
+	private HashMap<IResource, Object> _resourceToItem;
+	private Stack<List<Item>> _reuseLists;
 
 	private CommonViewer _commonViewer;
 
 	public ResourceToItemsMapper(CommonViewer viewer) {
-		_resourceToItem = new HashMap();
-		_reuseLists = new Stack();
+		_resourceToItem = new HashMap<IResource, Object>();
+		_reuseLists = new Stack<List<Item>>();
 
 		_commonViewer = viewer;
 		viewer.setMapper(this);
@@ -58,13 +58,13 @@ public class ResourceToItemsMapper implements ICommonViewerMapper {
 				_resourceToItem.put(resource, item);
 			} else if (existingMapping instanceof Item) {
 				if (existingMapping != item) {
-					List list = getNewList();
-					list.add(existingMapping);
+					List<Item> list = getNewList();
+					list.add((Item)existingMapping);
 					list.add(item);
 					_resourceToItem.put(resource, list);
 				}
 			} else { // List
-				List list = (List) existingMapping;
+				List<Item> list = (List<Item>) existingMapping;
 				if (!list.contains(item)) {
 					list.add(item);
 				}
@@ -81,7 +81,7 @@ public class ResourceToItemsMapper implements ICommonViewerMapper {
 			} else if (existingMapping instanceof Item) {
 				_resourceToItem.remove(resource);
 			} else { // List
-				List list = (List) existingMapping;
+				List<Item> list = (List<Item>) existingMapping;
 				list.remove(item);
 				if (list.isEmpty()) {
 					_resourceToItem.remove(list);
@@ -99,14 +99,14 @@ public class ResourceToItemsMapper implements ICommonViewerMapper {
 		return _resourceToItem.isEmpty();
 	}
 
-	private List getNewList() {
+	private List<Item> getNewList() {
 		if (!_reuseLists.isEmpty()) {
-			return (List) _reuseLists.pop();
+			return _reuseLists.pop();
 		}
-		return new ArrayList(2);
+		return new ArrayList<Item>(2);
 	}
 
-	private void releaseList(List list) {
+	private void releaseList(List<Item> list) {
 		if (_reuseLists.size() < NUMBER_LIST_REUSE) {
 			_reuseLists.push(list);
 		}
@@ -130,9 +130,9 @@ public class ResourceToItemsMapper implements ICommonViewerMapper {
 		} else if (obj instanceof Item) {
 			updateItem((Item) obj);
 		} else { // List of Items
-			List list = (List) obj;
-			for (int k = 0; k < list.size(); k++) {
-				updateItem((Item) list.get(k));
+			List<Item> list = (List<Item>) obj;
+			for (Item item : list) {
+				updateItem(item);
 			}
 		}
 	}
