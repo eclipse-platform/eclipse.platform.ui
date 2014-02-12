@@ -251,6 +251,8 @@ public class BindingProcessingAddon {
 				}
 				keyBinding = bindingService.createBinding(sequence, cmd,
 						bindingContext.getId(), attrs);
+				binding.getTransientData().put(
+						EBindingService.MODEL_TO_BINDING_KEY, keyBinding);
 			} catch (IllegalArgumentException e) {
 				Activator.trace(Policy.DEBUG_MENUS,
 						"failed to create: " + binding, e); //$NON-NLS-1$
