@@ -93,6 +93,7 @@ public abstract class CellLabelProvider extends BaseLabelProvider implements ITo
 	 * @return the {@link String} or <code>null</code> if there is not text to
 	 *         display
 	 */
+	@Override
 	public String getToolTipText(Object element) {
 		return null;
 	}

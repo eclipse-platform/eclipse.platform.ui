@@ -71,6 +71,7 @@ public class Policy {
 	 */
 	private static ILogger getDummyLog() {
 		return new ILogger() {
+			@Override
 			public void log(IStatus status) {
 				System.err.println(status.getMessage());
 				if (status.getException() != null) {
@@ -140,12 +141,14 @@ public class Policy {
 			@Override
 			public void show(final IStatus status, String title) {
 				Runnable runnable = new Runnable() {
+					@Override
 					public void run() {
 						if (dialog == null || dialog.getShell().isDisposed()) {
 							dialog = new SafeRunnableDialog(status);
 							dialog.create();
 							dialog.getShell().addDisposeListener(
 									new DisposeListener() {
+										@Override
 										public void widgetDisposed(
 												DisposeEvent e) {
 											dialog = null;
@@ -188,6 +191,7 @@ public class Policy {
 			 * @exception ClassCastException
 			 *                the arguments cannot be cast to Strings.
 			 */
+			@Override
 			public int compare(String s1, String s2) {
 				return s1.compareTo(s2);
 			}

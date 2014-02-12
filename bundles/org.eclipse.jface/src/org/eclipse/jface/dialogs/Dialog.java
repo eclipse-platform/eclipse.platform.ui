@@ -392,6 +392,7 @@ public abstract class Dialog extends Window {
 		 * 
 		 * @see org.eclipse.jface.dialogs.IDialogBlockedHandler#clearBlocked()
 		 */
+		@Override
 		public void clearBlocked() {
 			// No default behaviour
 		}
@@ -402,6 +403,7 @@ public abstract class Dialog extends Window {
 		 * @see org.eclipse.jface.dialogs.IDialogBlockedHandler#showBlocked(org.eclipse.core.runtime.IProgressMonitor,
 		 *      org.eclipse.core.runtime.IStatus, java.lang.String)
 		 */
+		@Override
 		public void showBlocked(IProgressMonitor blocking,
 				IStatus blockingStatus, String blockedName) {
 			// No default behaviour
@@ -414,6 +416,7 @@ public abstract class Dialog extends Window {
 		 *      org.eclipse.core.runtime.IProgressMonitor,
 		 *      org.eclipse.core.runtime.IStatus, java.lang.String)
 		 */
+		@Override
 		public void showBlocked(Shell parentShell, IProgressMonitor blocking,
 				IStatus blockingStatus, String blockedName) {
 			// No default behaviour

@@ -27,6 +27,7 @@ public class TreeColumnViewerLabelProvider extends
 		 * @see org.eclipse.jface.viewers.ITreePathLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel,
 		 *      org.eclipse.jface.viewers.TreePath)
 		 */
+		@Override
 		public void updateLabel(ViewerLabel label, TreePath elementPath) {
 			// Do nothing by default
 
@@ -37,6 +38,7 @@ public class TreeColumnViewerLabelProvider extends
 		 * 
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 			// Do nothing by default
 
@@ -47,6 +49,7 @@ public class TreeColumnViewerLabelProvider extends
 		 * 
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 		 */
+		@Override
 		public void addListener(ILabelProviderListener listener) {
 			// Do nothing by default
 
@@ -57,6 +60,7 @@ public class TreeColumnViewerLabelProvider extends
 		 * 
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 		 */
+		@Override
 		public void removeListener(ILabelProviderListener listener) {
 			// Do nothing by default
 
@@ -65,6 +69,7 @@ public class TreeColumnViewerLabelProvider extends
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
 		 */
+		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}

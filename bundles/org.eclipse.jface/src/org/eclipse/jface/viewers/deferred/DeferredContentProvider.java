@@ -131,6 +131,7 @@ public class DeferredContentProvider implements ILazyContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		setProvider(null);
 	}
@@ -138,6 +139,7 @@ public class DeferredContentProvider implements ILazyContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (newInput == null) {
 			setProvider(null);
@@ -215,6 +217,7 @@ public class DeferredContentProvider implements ILazyContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILazyContentProvider#updateElement(int)
 	 */
+	@Override
 	public void updateElement(int element) {
 		if (provider != null) {
 			provider.checkVisibleRange(element);

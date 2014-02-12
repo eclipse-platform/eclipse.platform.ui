@@ -280,6 +280,7 @@ public abstract class TrayDialog extends Dialog {
 		final Cursor cursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
 		toolBar.setCursor(cursor);
 		toolBar.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				cursor.dispose();
 			}
@@ -439,6 +440,7 @@ public abstract class TrayDialog extends Dialog {
 		Rectangle bounds = shell.getBounds();
 		shell.setBounds(bounds.x - ((getDefaultOrientation() == SWT.RIGHT_TO_LEFT) ? trayWidth : 0), bounds.y, bounds.width + trayWidth, bounds.height);
 		sash.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				if (event.detail != SWT.DRAG) {
 					Rectangle clientArea = shell.getClientArea();

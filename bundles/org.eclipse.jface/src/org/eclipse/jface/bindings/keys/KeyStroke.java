@@ -189,6 +189,7 @@ public final class KeyStroke extends Trigger implements Comparable {
      * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public final int compareTo(final Object object) {
 		final KeyStroke keyStroke = (KeyStroke) object;
 		int compareTo = Util.compare(modifierKeys, keyStroke.modifierKeys);

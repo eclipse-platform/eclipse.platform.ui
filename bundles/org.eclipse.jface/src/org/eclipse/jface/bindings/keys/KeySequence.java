@@ -213,6 +213,7 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	 * 
 	 * @see java.lang.Object#compareTo(java.lang.Object)
 	 */
+	@Override
 	public final int compareTo(final Object object) {
 		final KeySequence castedObject = (KeySequence) object;
 		return Util.compare(triggers, castedObject.triggers);

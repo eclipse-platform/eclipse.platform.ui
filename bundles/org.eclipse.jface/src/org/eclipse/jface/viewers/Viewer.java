@@ -114,7 +114,8 @@ public abstract class Viewer implements IInputSelectionProvider {
             if (control != null && !control.isDisposed()) {
                 if (this.helpListener == null) {
                     this.helpListener = new HelpListener() {
-                        public void helpRequested(HelpEvent event) {
+                        @Override
+						public void helpRequested(HelpEvent event) {
                             handleHelpRequest(event);
                         }
                     };
@@ -128,7 +129,8 @@ public abstract class Viewer implements IInputSelectionProvider {
     /* (non-Javadoc)
      * Method declared on ISelectionProvider.
      */
-    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+    @Override
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
         selectionChangedListeners.add(listener);
     }
 
@@ -160,7 +162,8 @@ public abstract class Viewer implements IInputSelectionProvider {
         for (int i = 0; i < listeners.length; ++i) {
             final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
             SafeRunnable.run(new SafeRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     l.selectionChanged(event);
                 }
             });
@@ -205,12 +208,14 @@ public abstract class Viewer implements IInputSelectionProvider {
     /* (non-Javadoc)
      * Copy-down of method declared on <code>IInputProvider</code>.
      */
-    public abstract Object getInput();
+    @Override
+	public abstract Object getInput();
 
     /* (non-Javadoc)
      * Copy-down of method declared on <code>ISelectionProvider</code>.
      */
-    public abstract ISelection getSelection();
+    @Override
+	public abstract ISelection getSelection();
 
     /**
      * Handles a help request from the underlying SWT control.
@@ -268,7 +273,8 @@ public abstract class Viewer implements IInputSelectionProvider {
     /* (non-Javadoc)
      * Method declared on ISelectionProvider.
      */
-    public void removeSelectionChangedListener(
+    @Override
+	public void removeSelectionChangedListener(
             ISelectionChangedListener listener) {
         selectionChangedListeners.remove(listener);
     }
@@ -390,7 +396,8 @@ public abstract class Viewer implements IInputSelectionProvider {
 	 * without also revealing it, for example (as of 3.3) TreeViewer.
 	 * </p>
 	 */
-    public void setSelection(ISelection selection) {
+    @Override
+	public void setSelection(ISelection selection) {
         setSelection(selection, false);
     }
 

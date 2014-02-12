@@ -73,6 +73,7 @@ public class DecoratingStyledCellLabelProvider extends
 				: DecorationContext.DEFAULT_CONTEXT;
 		
 		this.labelProviderListener = new ILabelProviderListener() {
+			@Override
 			public void labelProviderChanged(LabelProviderChangedEvent event) {
 				fireLabelProviderChanged(event);
 			}

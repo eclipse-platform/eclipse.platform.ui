@@ -608,6 +608,7 @@ public class PopupDialog extends Window {
 				shell);
 
 		shell.addListener(SWT.Deactivate, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				/*
 				 * Close if we are deactivating and have no child shells. If we
@@ -634,6 +635,7 @@ public class PopupDialog extends Window {
 		// Set this true whenever we activate. It may have been turned
 		// off by a menu or secondary popup showing.
 		shell.addListener(SWT.Activate, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				// ignore this event if we have launched a child
 				if (event.widget == getShell()
@@ -650,6 +652,7 @@ public class PopupDialog extends Window {
 
 		if ((getShellStyle() & SWT.ON_TOP) != 0 && shell.getParent() != null) {
 			parentDeactivateListener = new Listener() {
+				@Override
 				public void handleEvent(Event event) {
 					if (listenToParentDeactivate) {
 						asyncClose();
@@ -664,6 +667,7 @@ public class PopupDialog extends Window {
 		}
 
 		shell.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent event) {
 				handleDispose();
 			}
@@ -673,6 +677,7 @@ public class PopupDialog extends Window {
 	private void asyncClose() {
 		// workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=152010
 		getShell().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				close();
 			}

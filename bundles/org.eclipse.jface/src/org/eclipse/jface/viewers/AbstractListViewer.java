@@ -461,7 +461,8 @@ public abstract class AbstractListViewer extends StructuredViewer {
         	return;
         }
         preservingSelection(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 internalRemove(elements);
             }
         });

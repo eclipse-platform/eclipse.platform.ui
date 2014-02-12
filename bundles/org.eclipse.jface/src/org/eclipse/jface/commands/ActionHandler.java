@@ -74,6 +74,7 @@ public final class ActionHandler extends AbstractHandler {
 	private final void attachListener() {
 		if (propertyChangeListener == null) {
 			propertyChangeListener = new IPropertyChangeListener() {
+				@Override
 				public final void propertyChange(
 						final PropertyChangeEvent propertyChangeEvent) {
 					final String property = propertyChangeEvent.getProperty();
@@ -108,6 +109,7 @@ public final class ActionHandler extends AbstractHandler {
 		}
 	}
 
+	@Override
 	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException {
 		if ((action.getStyle() == IAction.AS_CHECK_BOX)

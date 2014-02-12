@@ -42,11 +42,13 @@ import java.util.NoSuchElementException;
     }
 
     private static final class EmptyEnumerator implements Enumeration {
-        public boolean hasMoreElements() {
+        @Override
+		public boolean hasMoreElements() {
             return false;
         }
 
-        public Object nextElement() {
+        @Override
+		public Object nextElement() {
             throw new NoSuchElementException();
         }
     }
@@ -63,7 +65,8 @@ import java.util.NoSuchElementException;
             start = firstSlot;
         }
 
-        public boolean hasMoreElements() {
+        @Override
+		public boolean hasMoreElements() {
             if (entry != null) {
 				return true;
 			}
@@ -76,7 +79,8 @@ import java.util.NoSuchElementException;
             return false;
         }
 
-        public Object nextElement() {
+        @Override
+		public Object nextElement() {
             if (hasMoreElements()) {
                 Object result = key ? entry.key : entry.value;
                 entry = entry.next;

@@ -694,7 +694,8 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * responsibility to call <code>Display.readAndDispatch()</code>
      * to ensure UI responsiveness.
      */
-    public void run(final boolean fork, boolean cancelable,
+    @Override
+	public void run(final boolean fork, boolean cancelable,
             final IRunnableWithProgress runnable)
             throws InvocationTargetException, InterruptedException {
         try {
@@ -762,7 +763,8 @@ public class ApplicationWindow extends Window implements IRunnableContext {
                 mgr.setCancelEnabled(cancelable);
                 final Exception[] holder = new Exception[1];
                 BusyIndicator.showWhile(display, new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         try {
                             ModalContext.run(runnable, fork, mgr
                                     .getProgressMonitor(), display);

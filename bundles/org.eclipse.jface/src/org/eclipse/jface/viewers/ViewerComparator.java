@@ -187,6 +187,7 @@ public class ViewerComparator {
 	public void sort(final Viewer viewer, Object[] elements) {
 		try {
 			Arrays.sort(elements, new Comparator() {
+				@Override
 				public int compare(Object a, Object b) {
 					return ViewerComparator.this.compare(viewer, a, b);
 				}

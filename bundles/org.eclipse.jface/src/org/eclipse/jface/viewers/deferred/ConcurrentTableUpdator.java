@@ -101,7 +101,8 @@ package org.eclipse.jface.viewers.deferred;
      * an update to the real table.  
      */
     Runnable uiRunnable = new Runnable() {
-        public void run() {
+        @Override
+		public void run() {
             updateScheduled = false;
             if(!table.getControl().isDisposed()) {
 				updateTable();

@@ -145,7 +145,8 @@ public class StatusLineManager extends ContributionManager implements
      * (non-Javadoc)
      * Method declared on IStatusLineManager
      */
-    public IProgressMonitor getProgressMonitor() {
+    @Override
+	public IProgressMonitor getProgressMonitor() {
 		final IProgressMonitor progressDelegate = statusLineExist() ? getProgressMonitorDelegate()
 				: new NullProgressMonitor();
 
@@ -154,7 +155,8 @@ public class StatusLineManager extends ContributionManager implements
             /* (non-Javadoc)
              * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
              */
-            public void beginTask(String name, int totalWork) {
+            @Override
+			public void beginTask(String name, int totalWork) {
                 progressDelegate.beginTask(name, totalWork);
 
             }
@@ -162,14 +164,16 @@ public class StatusLineManager extends ContributionManager implements
             /* (non-Javadoc)
              * @see org.eclipse.core.runtime.IProgressMonitor#done()
              */
-            public void done() {
+            @Override
+			public void done() {
                 progressDelegate.done();
             }
 
             /* (non-Javadoc)
              * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
              */
-            public void internalWorked(double work) {
+            @Override
+			public void internalWorked(double work) {
                 progressDelegate.internalWorked(work);
 
             }
@@ -177,14 +181,16 @@ public class StatusLineManager extends ContributionManager implements
             /* (non-Javadoc)
              * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
              */
-            public boolean isCanceled() {
+            @Override
+			public boolean isCanceled() {
                 return progressDelegate.isCanceled();
             }
 
             /* (non-Javadoc)
              * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
              */
-            public void setCanceled(boolean value) {
+            @Override
+			public void setCanceled(boolean value) {
                 //Don't bother updating for disposed status
                 if (statusLineExist()) {
                 	progressDelegate.setCanceled(value);
@@ -194,7 +200,8 @@ public class StatusLineManager extends ContributionManager implements
             /* (non-Javadoc)
              * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
              */
-            public void setTaskName(String name) {
+            @Override
+			public void setTaskName(String name) {
                 progressDelegate.setTaskName(name);
 
             }
@@ -202,7 +209,8 @@ public class StatusLineManager extends ContributionManager implements
             /* (non-Javadoc)
              * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
              */
-            public void subTask(String name) {
+            @Override
+			public void subTask(String name) {
                 progressDelegate.subTask(name);
 
             }
@@ -210,21 +218,24 @@ public class StatusLineManager extends ContributionManager implements
             /* (non-Javadoc)
              * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
              */
-            public void worked(int work) {
+            @Override
+			public void worked(int work) {
                 progressDelegate.worked(work);
             }
 
             /* (non-Javadoc)
              * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
              */
-            public void clearBlocked() {
+            @Override
+			public void clearBlocked() {
                 //Do nothing here as we let the modal context handle it
             }
 
             /* (non-Javadoc)
              * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
              */
-            public void setBlocked(IStatus reason) {
+            @Override
+			public void setBlocked(IStatus reason) {
                 //			Do nothing here as we let the modal context handle it
             }
         };
@@ -233,14 +244,16 @@ public class StatusLineManager extends ContributionManager implements
     /* (non-Javadoc)
      * Method declared on IStatueLineManager
      */
-    public boolean isCancelEnabled() {
+    @Override
+	public boolean isCancelEnabled() {
         return statusLineExist() && ((StatusLine) statusLine).isCancelEnabled();
     }
 
     /* (non-Javadoc)
      * Method declared on IStatueLineManager
      */
-    public void setCancelEnabled(boolean enabled) {
+    @Override
+	public void setCancelEnabled(boolean enabled) {
         if (statusLineExist()) {
 			((StatusLine) statusLine).setCancelEnabled(enabled);
 		}
@@ -249,7 +262,8 @@ public class StatusLineManager extends ContributionManager implements
     /* (non-Javadoc)
      * Method declared on IStatusLineManager.
      */
-    public void setErrorMessage(String message) {
+    @Override
+	public void setErrorMessage(String message) {
         if (statusLineExist()) {
 			((StatusLine) statusLine).setErrorMessage(message);
 		}
@@ -258,7 +272,8 @@ public class StatusLineManager extends ContributionManager implements
     /* (non-Javadoc)
      * Method declared on IStatusLineManager.
      */
-    public void setErrorMessage(Image image, String message) {
+    @Override
+	public void setErrorMessage(Image image, String message) {
         if (statusLineExist()) {
 			((StatusLine) statusLine).setErrorMessage(image, message);
 		}
@@ -267,7 +282,8 @@ public class StatusLineManager extends ContributionManager implements
     /* (non-Javadoc)
      * Method declared on IStatusLineManager.
      */
-    public void setMessage(String message) {
+    @Override
+	public void setMessage(String message) {
         if (statusLineExist()) {
 			((StatusLine) statusLine).setMessage(message);
 		}
@@ -276,7 +292,8 @@ public class StatusLineManager extends ContributionManager implements
     /* (non-Javadoc)
      * Method declared on IStatusLineManager.
      */
-    public void setMessage(Image image, String message) {
+    @Override
+	public void setMessage(Image image, String message) {
         if (statusLineExist()) {
 			((StatusLine) statusLine).setMessage(image, message);
 		}
@@ -296,7 +313,8 @@ public class StatusLineManager extends ContributionManager implements
     /* (non-Javadoc)
      * Method declared on IContributionManager.
      */
-    public void update(boolean force) {
+    @Override
+	public void update(boolean force) {
 
         //boolean DEBUG= false;
 

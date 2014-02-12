@@ -164,6 +164,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 		 */
 		protected boolean locked = false;
 
+		@Override
 		public void beginTask(String name, int totalWork) {
 			if (progressIndicator.isDisposed()) {
 				return;
@@ -188,6 +189,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 			}
 		}
 
+		@Override
 		public void done() {
 			if (!progressIndicator.isDisposed()) {
 				progressIndicator.sendRemainingWork();
@@ -195,6 +197,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 			}
 		}
 
+		@Override
 		public void setTaskName(String name) {
 			if (name == null) {
 				task = "";//$NON-NLS-1$
@@ -211,10 +214,12 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 			}
 		}
 
+		@Override
 		public boolean isCanceled() {
 			return fIsCanceled;
 		}
 
+		@Override
 		public void setCanceled(boolean b) {
 			fIsCanceled = b;
 			if (locked) {
@@ -222,6 +227,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 			}
 		}
 
+		@Override
 		public void subTask(String name) {
 			if (subTaskLabel.isDisposed()) {
 				return;
@@ -237,10 +243,12 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 			}
 		}
 
+		@Override
 		public void worked(int work) {
 			internalWorked(work);
 		}
 
+		@Override
 		public void internalWorked(double work) {
 			if (!progressIndicator.isDisposed()) {
 				progressIndicator.worked(work);
@@ -252,6 +260,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 		 * 
 		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
 		 */
+		@Override
 		public void clearBlocked() {
 			if (getShell() == null || getShell().isDisposed())
 				return;
@@ -264,6 +273,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 		 * 
 		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
 		 */
+		@Override
 		public void setBlocked(IStatus reason) {
 			if (getShell() == null || getShell().isDisposed())
 				return;
@@ -325,6 +335,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	private void asyncSetOperationCancelButtonEnabled(final boolean b) {
 		if (getShell() != null) {
 			getShell().getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					setOperationCancelButtonEnabled(b);
 				}
@@ -401,10 +412,12 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 		// Add a listener to set the message properly when the dialog becomes
 		// visible
 		shell.addListener(SWT.Show, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				// We need to async the message update since the Show precedes
 				// visibility
 				shell.getDisplay().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						setMessage(message, true);
 					}
@@ -502,6 +515,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	 * responsibility to call <code>Display.readAndDispatch()</code> to ensure
 	 * UI responsiveness.
 	 */
+	@Override
 	public void run(boolean fork, boolean cancelable,
 			IRunnableWithProgress runnable) throws InvocationTargetException,
 			InterruptedException {

@@ -105,7 +105,8 @@ public class CoolBarManager extends ContributionManager implements
      * 
      * @see org.eclipse.jface.action.ICoolBarManager#add(org.eclipse.jface.action.IToolBarManager)
      */
-    public void add(IToolBarManager toolBarManager) {
+    @Override
+	public void add(IToolBarManager toolBarManager) {
         Assert.isNotNull(toolBarManager);
         super.add(new ToolBarContributionItem(toolBarManager));
     }
@@ -378,7 +379,8 @@ public class CoolBarManager extends ContributionManager implements
      * 
      * @see org.eclipse.jface.action.ICoolBarManager#isLayoutLocked()
      */
-    public IMenuManager getContextMenuManager() {
+    @Override
+	public IMenuManager getContextMenuManager() {
         return contextMenuManager;
     }
 
@@ -410,7 +412,8 @@ public class CoolBarManager extends ContributionManager implements
      * 
      * @see org.eclipse.jface.action.ICoolBarManager#isLayoutLocked()
      */
-    public boolean getLockLayout() {
+    @Override
+	public boolean getLockLayout() {
         if (!coolBarExist()) {
             return false;
         }
@@ -445,7 +448,8 @@ public class CoolBarManager extends ContributionManager implements
      * 
      * @see org.eclipse.jface.action.ICoolBarManager#getStyle()
      */
-    public int getStyle() {
+    @Override
+	public int getStyle() {
         return itemStyle;
     }
 
@@ -776,7 +780,8 @@ public class CoolBarManager extends ContributionManager implements
      * 
      * @see org.eclipse.jface.action.ICoolBarManager#setContextMenuManager(org.eclipse.jface.action.IMenuManager)
      */
-    public void setContextMenuManager(IMenuManager contextMenuManager) {
+    @Override
+	public void setContextMenuManager(IMenuManager contextMenuManager) {
         this.contextMenuManager = (MenuManager) contextMenuManager;
         if (coolBar != null) {
             coolBar.setMenu(getContextMenuControl());
@@ -808,7 +813,8 @@ public class CoolBarManager extends ContributionManager implements
      * 
      * @see org.eclipse.jface.action.ICoolBarManager#lockLayout(boolean)
      */
-    public void setLockLayout(boolean value) {
+    @Override
+	public void setLockLayout(boolean value) {
         if (!coolBarExist()) {
             return;
         }
@@ -821,7 +827,8 @@ public class CoolBarManager extends ContributionManager implements
      * 
      * @see org.eclipse.jface.action.IContributionManager#update(boolean)
      */
-    public void update(boolean force) {
+    @Override
+	public void update(boolean force) {
         if ((!isDirty() && !force) || (!coolBarExist())) {
             return;
         }

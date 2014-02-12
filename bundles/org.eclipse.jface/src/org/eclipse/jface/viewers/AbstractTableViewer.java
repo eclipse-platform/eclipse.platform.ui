@@ -66,6 +66,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 				 *
 				 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 				 */
+				@Override
 				public void handleEvent(Event event) {
 					Item item = (Item) event.item;
 					final int index = doIndexOf(item);
@@ -598,6 +599,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		getControl().setRedraw(false);
 		try {
 			preservingSelection(new Runnable() {
+				@Override
 				public void run() {
 					internalRefresh(getRoot());
 				}
@@ -842,6 +844,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			return;
 		}
 		preservingSelection(new Runnable() {
+			@Override
 			public void run() {
 				internalRemove(elements);
 			}

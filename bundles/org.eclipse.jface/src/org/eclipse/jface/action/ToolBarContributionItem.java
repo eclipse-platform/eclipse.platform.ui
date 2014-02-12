@@ -218,7 +218,8 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
             if (oldToolBar != toolBar) {
 	            toolBar.addListener(SWT.MenuDetect, new Listener() {
 	
-	                public void handleEvent(Event event) {
+	                @Override
+					public void handleEvent(Event event) {
 	                    // if the toolbar does not have its own context menu then
 	                    // handle the event
 	                    if (toolBarManager.getContextMenuManager() == null) {
@@ -245,7 +246,8 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
             // Handle for disposal
             coolItem.addDisposeListener(new DisposeListener() {
 
-                public void widgetDisposed(DisposeEvent event) {
+                @Override
+				public void widgetDisposed(DisposeEvent event) {
                     handleWidgetDispose(event);
                 }
             });
@@ -284,7 +286,8 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
      * 
      * @return the current height
      */
-    public int getCurrentHeight() {
+    @Override
+	public int getCurrentHeight() {
         if (checkDisposed()) {
             return -1;
         }
@@ -296,7 +299,8 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
      * 
      * @return the current size
      */
-    public int getCurrentWidth() {
+    @Override
+	public int getCurrentWidth() {
         if (checkDisposed()) {
             return -1;
         }
@@ -310,7 +314,8 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
      *         if a value was not set
      * @see #setMinimumItemsToShow(int)
      */
-    public int getMinimumItemsToShow() {
+    @Override
+	public int getMinimumItemsToShow() {
         if (checkDisposed()) {
             return -1;
         }
@@ -324,7 +329,8 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
      *         defined.
      * @see IToolBarManager
      */
-    public IToolBarManager getToolBarManager() {
+    @Override
+	public IToolBarManager getToolBarManager() {
         if (checkDisposed()) {
             return null;
         }
@@ -337,7 +343,8 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
      * @return <code>true</code> if chevron support is enabled, <code>false</code>
      *         otherwise
      */
-    public boolean getUseChevron() {
+    @Override
+	public boolean getUseChevron() {
         if (checkDisposed()) {
             return false;
         }
@@ -412,7 +419,8 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
             // Hook listener to remove menu once it has disapeared
             parentMenu.addListener(SWT.Hide, new Listener() {
 
-                public void handleEvent(Event innerEvent) {
+                @Override
+				public void handleEvent(Event innerEvent) {
                     ToolBar innerToolBar = toolBarManager.getControl();
                     if (innerToolBar != null) {
                         innerToolBar.setMenu(null);
@@ -526,7 +534,8 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
      * @param currentHeight
      *            the current height to set
      */
-    public void setCurrentHeight(int currentHeight) {
+    @Override
+	public void setCurrentHeight(int currentHeight) {
         if (checkDisposed()) {
             return;
         }
@@ -540,7 +549,8 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
      * @param currentWidth
      *            the current width to set
      */
-    public void setCurrentWidth(int currentWidth) {
+    @Override
+	public void setCurrentWidth(int currentWidth) {
         if (checkDisposed()) {
             return;
         }
@@ -558,7 +568,8 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
      * @see #getMinimumItemsToShow()
      * @see #setUseChevron(boolean)
      */
-    public void setMinimumItemsToShow(int minimumItemsToShow) {
+    @Override
+	public void setMinimumItemsToShow(int minimumItemsToShow) {
         if (checkDisposed()) {
             return;
         }
@@ -573,7 +584,8 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
      *            <code>true</code> to enable chevron support, <code>false</code>
      *            otherwise.
      */
-    public void setUseChevron(boolean value) {
+    @Override
+	public void setUseChevron(boolean value) {
         if (checkDisposed()) {
             return;
         }

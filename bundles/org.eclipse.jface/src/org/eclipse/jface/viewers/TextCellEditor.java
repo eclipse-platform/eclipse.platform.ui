@@ -167,7 +167,8 @@ public class TextCellEditor extends CellEditor {
             }
         });
         text.addTraverseListener(new TraverseListener() {
-            public void keyTraversed(TraverseEvent e) {
+            @Override
+			public void keyTraversed(TraverseEvent e) {
                 if (e.detail == SWT.TRAVERSE_ESCAPE
                         || e.detail == SWT.TRAVERSE_RETURN) {
                     e.doit = false;
@@ -281,7 +282,8 @@ public class TextCellEditor extends CellEditor {
     private ModifyListener getModifyListener() {
         if (modifyListener == null) {
             modifyListener = new ModifyListener() {
-                public void modifyText(ModifyEvent e) {
+                @Override
+				public void modifyText(ModifyEvent e) {
                     editOccured(e);
                 }
             };

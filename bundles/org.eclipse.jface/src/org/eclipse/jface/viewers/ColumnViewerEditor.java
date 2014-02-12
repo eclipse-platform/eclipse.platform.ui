@@ -129,6 +129,7 @@ public abstract class ColumnViewerEditor {
 		this.feature = feature;
 		this.disposeListener = new DisposeListener() {
 
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				if( viewer.isCellEditorActive() ) {
 					cancelEditing();
@@ -141,15 +142,18 @@ public abstract class ColumnViewerEditor {
 
 	private void initCellEditorListener() {
 		cellEditorListener = new ICellEditorListener() {
+			@Override
 			public void editorValueChanged(boolean oldValidState,
 					boolean newValidState) {
 				// Ignore.
 			}
 
+			@Override
 			public void cancelEditor() {
 				ColumnViewerEditor.this.cancelEditing();
 			}
 
+			@Override
 			public void applyEditorValue() {
 				ColumnViewerEditor.this.applyEditorValue();
 			}
@@ -244,6 +248,7 @@ public abstract class ColumnViewerEditor {
 				if (tabeditingListener == null) {
 					tabeditingListener = new TraverseListener() {
 
+						@Override
 						public void keyTraversed(TraverseEvent e) {
 							if ((feature & DEFAULT) != DEFAULT) {
 								processTraverseEvent(cell.getColumnIndex(),

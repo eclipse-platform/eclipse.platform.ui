@@ -121,7 +121,8 @@ public class DelegatingDropAdapter implements DropTargetListener {
      * @param event the drop target event 
      * @see DropTargetListener#dragEnter(DropTargetEvent)
      */
-    public void dragEnter(DropTargetEvent event) {
+    @Override
+	public void dragEnter(DropTargetEvent event) {
         //		if (Policy.DEBUG_DRAG_DROP)
         //			System.out.println("Drag Enter: " + toString()); //$NON-NLS-1$
         originalDropType = event.detail;
@@ -135,7 +136,8 @@ public class DelegatingDropAdapter implements DropTargetListener {
      * @param event the drop target event
      * @see DropTargetListener#dragLeave(DropTargetEvent)
      */
-    public void dragLeave(final DropTargetEvent event) {
+    @Override
+	public void dragLeave(final DropTargetEvent event) {
         //		if (Policy.DEBUG_DRAG_DROP)
         //			System.out.println("Drag Leave: " + toString()); //$NON-NLS-1$
         setCurrentListener(null, event);
@@ -149,7 +151,8 @@ public class DelegatingDropAdapter implements DropTargetListener {
      * @param event the drop target event
      * @see DropTargetListener#dragOperationChanged(DropTargetEvent)
      */
-    public void dragOperationChanged(final DropTargetEvent event) {
+    @Override
+	public void dragOperationChanged(final DropTargetEvent event) {
         //		if (Policy.DEBUG_DRAG_DROP)
         //			System.out.println("Drag Operation Changed to: " + event.detail); //$NON-NLS-1$
         originalDropType = event.detail;
@@ -161,7 +164,8 @@ public class DelegatingDropAdapter implements DropTargetListener {
         // followed by a dragOperationChanged with the exact same event. 
         if (newListener != null && newListener == oldListener) {
             SafeRunnable.run(new SafeRunnable() {
-                public void run() throws Exception {
+                @Override
+				public void run() throws Exception {
                     newListener.dragOperationChanged(event);
                 }
             });
@@ -177,7 +181,8 @@ public class DelegatingDropAdapter implements DropTargetListener {
      * @param event the drop target event
      * @see DropTargetListener#dragOver(DropTargetEvent)
      */
-    public void dragOver(final DropTargetEvent event) {
+    @Override
+	public void dragOver(final DropTargetEvent event) {
         TransferDropTargetListener oldListener = getCurrentListener();
         updateCurrentListener(event);
         final TransferDropTargetListener newListener = getCurrentListener();
@@ -187,7 +192,8 @@ public class DelegatingDropAdapter implements DropTargetListener {
         // followed by a dragOver with the exact same event. 
         if (newListener != null && newListener == oldListener) {
         	SafeRunnable.run(new SafeRunnable() {
-                public void run() throws Exception {
+                @Override
+				public void run() throws Exception {
                     newListener.dragOver(event);
                 }
             });
@@ -201,13 +207,15 @@ public class DelegatingDropAdapter implements DropTargetListener {
      * @param event the drop target event
      * @see DropTargetListener#drop(DropTargetEvent)
      */
-    public void drop(final DropTargetEvent event) {
+    @Override
+	public void drop(final DropTargetEvent event) {
         //		if (Policy.DEBUG_DRAG_DROP)
         //			System.out.println("Drop: " + toString()); //$NON-NLS-1$
         updateCurrentListener(event);
         if (getCurrentListener() != null) {
         	SafeRunnable.run(new SafeRunnable() {
-                public void run() throws Exception {
+                @Override
+				public void run() throws Exception {
                     getCurrentListener().drop(event);
                 }
             });
@@ -221,12 +229,14 @@ public class DelegatingDropAdapter implements DropTargetListener {
      * @param event the drop target event
      * @see DropTargetListener#dropAccept(DropTargetEvent)
      */
-    public void dropAccept(final DropTargetEvent event) {
+    @Override
+	public void dropAccept(final DropTargetEvent event) {
         //		if (Policy.DEBUG_DRAG_DROP)
         //			System.out.println("Drop Accept: " + toString()); //$NON-NLS-1$
         if (getCurrentListener() != null) {
         	SafeRunnable.run(new SafeRunnable() {
-                public void run() throws Exception {
+                @Override
+				public void run() throws Exception {
                     getCurrentListener().dropAccept(event);
                 }
             });
@@ -317,7 +327,8 @@ public class DelegatingDropAdapter implements DropTargetListener {
 		}
         if (currentListener != null) {
         	SafeRunnable.run(new SafeRunnable() {
-                public void run() throws Exception {
+                @Override
+				public void run() throws Exception {
                     currentListener.dragLeave(event);
                 }
             });
@@ -327,7 +338,8 @@ public class DelegatingDropAdapter implements DropTargetListener {
         //			System.out.println("Current drop listener: " + listener); //$NON-NLS-1$
         if (currentListener != null) {
         	SafeRunnable.run(new SafeRunnable() {
-                public void run() throws Exception {
+                @Override
+				public void run() throws Exception {
                     currentListener.dragEnter(event);
                 }
             });

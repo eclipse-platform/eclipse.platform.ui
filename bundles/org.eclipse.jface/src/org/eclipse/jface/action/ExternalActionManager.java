@@ -149,11 +149,13 @@ public final class ExternalActionManager {
 		public CommandCallback(final BindingManager bindingManager,
 				final CommandManager commandManager) {
 			this(bindingManager, commandManager, new IActiveChecker() {
+				@Override
 				public boolean isActive(String commandId) {
 					return true;
 				}
 
 			}, new IExecuteApplicable() {
+				@Override
 				public boolean isApplicable(IAction action) {
 					return true;
 				}
@@ -180,6 +182,7 @@ public final class ExternalActionManager {
 				final IActiveChecker activeChecker) {
 			this(bindingManager, commandManager, activeChecker,
 					new IExecuteApplicable() {
+				@Override
 				public boolean isApplicable(IAction action) {
 					return true;
 				}
@@ -237,6 +240,7 @@ public final class ExternalActionManager {
 		 * @see org.eclipse.jface.action.ExternalActionManager.ICallback#addPropertyChangeListener(String,
 		 *      IPropertyChangeListener)
 		 */
+		@Override
 		public final void addPropertyChangeListener(final String commandId,
 				final IPropertyChangeListener listener) {
 			Object existing = registeredListeners.get(commandId);
@@ -256,6 +260,7 @@ public final class ExternalActionManager {
 			}
 		}
 
+		@Override
 		public final void bindingManagerChanged(final BindingManagerEvent event) {
 			if (event.isActiveBindingsChanged()) {
 				final Iterator<Entry<String, Object>> listenerItr = registeredListeners.entrySet()
@@ -289,6 +294,7 @@ public final class ExternalActionManager {
 		/**
 		 * @see org.eclipse.jface.action.ExternalActionManager.ICallback#getAccelerator(String)
 		 */
+		@Override
 		public final Integer getAccelerator(final String commandId) {
 			final TriggerSequence triggerSequence = bindingManager
 					.getBestActiveBindingFor(commandId);
@@ -311,6 +317,7 @@ public final class ExternalActionManager {
 		/**
 		 * @see org.eclipse.jface.action.ExternalActionManager.ICallback#getAcceleratorText(String)
 		 */
+		@Override
 		public final String getAcceleratorText(final String commandId) {
 			final TriggerSequence triggerSequence = bindingManager
 					.getBestActiveBindingFor(commandId);
@@ -333,6 +340,7 @@ public final class ExternalActionManager {
 		 *         not to be <code>null</code>, but it may be empty.
 		 * @since 3.2
 		 */
+		@Override
 		public final TriggerSequence[] getActiveBindingsFor(
 				final String commandId) {
 			return bindingManager.getActiveBindingsFor(commandId);
@@ -341,6 +349,7 @@ public final class ExternalActionManager {
 		/**
 		 * @see org.eclipse.jface.action.ExternalActionManager.ICallback#isAcceleratorInUse(int)
 		 */
+		@Override
 		public final boolean isAcceleratorInUse(final int accelerator) {
 			final KeySequence keySequence = KeySequence
 					.getInstance(SWTKeySupport
@@ -355,6 +364,7 @@ public final class ExternalActionManager {
 		 * Calling this method with an undefined command id will generate a log
 		 * message.
 		 */
+		@Override
 		public final boolean isActive(final String commandId) {
 			if (commandId != null) {
 				final Command command = commandManager.getCommand(commandId);
@@ -379,6 +389,7 @@ public final class ExternalActionManager {
 						 * 
 						 * @see org.eclipse.ui.commands.ICommandListener#commandChanged(org.eclipse.ui.commands.CommandEvent)
 						 */
+						@Override
 						public final void commandChanged(
 								final CommandEvent commandEvent) {
 							if (command.isDefined()) {
@@ -401,6 +412,7 @@ public final class ExternalActionManager {
 		 * @see org.eclipse.jface.action.ExternalActionManager.ICallback#removePropertyChangeListener(String,
 		 *      IPropertyChangeListener)
 		 */
+		@Override
 		public final void removePropertyChangeListener(final String commandId,
 				final IPropertyChangeListener listener) {
 			Object existing= registeredListeners.get(commandId);
@@ -422,6 +434,7 @@ public final class ExternalActionManager {
 		/**
 		 * @since 3.4
 		 */
+		@Override
 		public void preExecute(IAction action, Event event) {
 			String actionDefinitionId = action.getActionDefinitionId();
 			if (actionDefinitionId==null 
@@ -438,6 +451,7 @@ public final class ExternalActionManager {
 		/**
 		 * @since 3.4
 		 */
+		@Override
 		public void postExecuteSuccess(IAction action, Object returnValue) {
 			String actionDefinitionId = action.getActionDefinitionId();
 			if (actionDefinitionId==null 
@@ -450,6 +464,7 @@ public final class ExternalActionManager {
 		/**
 		 * @since 3.4
 		 */
+		@Override
 		public void postExecuteFailure(IAction action,
 				ExecutionException exception) {
 			String actionDefinitionId = action.getActionDefinitionId();
@@ -463,6 +478,7 @@ public final class ExternalActionManager {
 		/**
 		 * @since 3.4
 		 */
+		@Override
 		public void notDefined(IAction action, NotDefinedException exception) {
 			String actionDefinitionId = action.getActionDefinitionId();
 			if (actionDefinitionId==null 
@@ -475,6 +491,7 @@ public final class ExternalActionManager {
 		/**
 		 * @since 3.4
 		 */
+		@Override
 		public void notEnabled(IAction action, NotEnabledException exception) {
 			String actionDefinitionId = action.getActionDefinitionId();
 			if (actionDefinitionId==null 

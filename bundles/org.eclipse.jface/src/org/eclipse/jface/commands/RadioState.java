@@ -102,6 +102,7 @@ public class RadioState extends ToggleState {
 				}
 			}
 
+			@Override
 			public final void handleStateChange(final State state,
 					final Object oldValue) {
 				final Object newValue = state.getValue();

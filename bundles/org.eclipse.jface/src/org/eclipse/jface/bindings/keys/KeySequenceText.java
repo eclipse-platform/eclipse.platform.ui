@@ -116,6 +116,7 @@ public final class KeySequenceText {
 		 * @param event
 		 *            The triggering event; must not be <code>null</code>.
 		 */
+		@Override
 		public void handleEvent(Event event) {
 			KeyStroke[] keyStrokes = getKeySequence().getKeyStrokes();
 
@@ -345,6 +346,7 @@ public final class KeySequenceText {
 		 * @param event
 		 *            The trigger event; must not be <code>null</code>.
 		 */
+		@Override
 		public void handleEvent(Event event) {
 			switch (event.detail) {
 			case SWT.TRAVERSE_ESCAPE:
@@ -408,6 +410,7 @@ public final class KeySequenceText {
 		 * @param event
 		 *            Ignored.
 		 */
+		@Override
 		public void focusGained(FocusEvent event) {
 			Display.getCurrent().addFilter(SWT.Traverse, filter);
 			filtering = true;
@@ -419,6 +422,7 @@ public final class KeySequenceText {
 		 * @param event
 		 *            Ignored.
 		 */
+		@Override
 		public void focusLost(FocusEvent event) {
 			Display.getCurrent().removeFilter(SWT.Traverse, filter);
 			filtering = false;
@@ -446,6 +450,7 @@ public final class KeySequenceText {
 		 * @param event
 		 *            The triggering event; ignored.
 		 */
+		@Override
 		public void modifyText(ModifyEvent event) {
 			try {
 				// The original sequence.
@@ -549,6 +554,7 @@ public final class KeySequenceText {
 					"Lucida Grande", 13, SWT.NORMAL); //$NON-NLS-1$
 			text.setFont(font);
 			text.addDisposeListener(new DisposeListener() {
+				@Override
 				public void widgetDisposed(DisposeEvent e) {
 					font.dispose();
 				}
@@ -562,6 +568,7 @@ public final class KeySequenceText {
 		final TraversalFilterManager traversalFilterManager = new TraversalFilterManager();
 		text.addFocusListener(traversalFilterManager);
 		text.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				traversalFilterManager.dispose();
 			} 

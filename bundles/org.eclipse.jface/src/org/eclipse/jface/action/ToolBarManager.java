@@ -247,6 +247,7 @@ public class ToolBarManager extends ContributionManager implements
 	/*
 	 * (non-Javadoc) Method declared on IContributionManager.
 	 */
+	@Override
 	public void update(boolean force) {
 
 		//	long startTime= 0;

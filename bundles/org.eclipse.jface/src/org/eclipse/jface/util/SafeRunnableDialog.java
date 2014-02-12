@@ -171,6 +171,7 @@ class SafeRunnableDialog extends ErrorDialog {
 		statusListViewer.setLabelProvider(getStatusListLabelProvider());
 		statusListViewer
 				.addSelectionChangedListener(new ISelectionChangedListener() {
+					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
 						handleSelectionChange();
 					}
@@ -211,6 +212,7 @@ class SafeRunnableDialog extends ErrorDialog {
 			 * 
 			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 			 */
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return statuses.toArray();
 			}
@@ -220,6 +222,7 @@ class SafeRunnableDialog extends ErrorDialog {
 			 * 
 			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
+			@Override
 			public void dispose() {
 
 			}
@@ -230,6 +233,7 @@ class SafeRunnableDialog extends ErrorDialog {
 			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
 

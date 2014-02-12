@@ -153,21 +153,24 @@ public class StructuredSelection implements IStructuredSelection {
     /* (non-Javadoc)
      * Method declared in IStructuredSelection.
      */
-    public Object getFirstElement() {
+    @Override
+	public Object getFirstElement() {
         return isEmpty() ? null : elements[0];
     }
 
     /* (non-Javadoc)
      * Method declared in ISelection.
      */
-    public boolean isEmpty() {
+    @Override
+	public boolean isEmpty() {
         return elements == null || elements.length == 0;
     }
 
     /* (non-Javadoc)
      * Method declared in IStructuredSelection.
      */
-    public Iterator iterator() {
+    @Override
+	public Iterator iterator() {
         return Arrays.asList(elements == null ? new Object[0] : elements)
                 .iterator();
     }
@@ -175,21 +178,24 @@ public class StructuredSelection implements IStructuredSelection {
     /* (non-Javadoc)
      * Method declared in IStructuredSelection.
      */
-    public int size() {
+    @Override
+	public int size() {
         return elements == null ? 0 : elements.length;
     }
 
     /* (non-Javadoc)
      * Method declared in IStructuredSelection.
      */
-    public Object[] toArray() {
+    @Override
+	public Object[] toArray() {
         return elements == null ? new Object[0] : (Object[]) elements.clone();
     }
 
     /* (non-Javadoc)
      * Method declared in IStructuredSelection.
      */
-    public List toList() {
+    @Override
+	public List toList() {
         return Arrays.asList(elements == null ? new Object[0] : elements);
     }
 

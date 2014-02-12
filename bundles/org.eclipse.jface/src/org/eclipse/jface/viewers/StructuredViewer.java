@@ -485,6 +485,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			this.fullMap = fullMap;
 		}
 
+		@Override
 		public void run() {
 			doUpdateItem(widget, element, fullMap);
 		}
@@ -523,6 +524,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	/*
 	 * (non-Javadoc) Method declared on IPostSelectionProvider.
 	 */
+	@Override
 	public void addPostSelectionChangedListener(ISelectionChangedListener listener) {
 		postSelectionChangedListeners.add(listener);
 	}
@@ -845,6 +847,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		for (int i = 0; i < listeners.length; ++i) {
 			final IDoubleClickListener l = (IDoubleClickListener) listeners[i];
 			SafeRunnable.run(new SafeRunnable() {
+				@Override
 				public void run() {
 					l.doubleClick(event);
 				}
@@ -866,6 +869,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		for (int i = 0; i < listeners.length; ++i) {
 			final IOpenListener l = (IOpenListener) listeners[i];
 			SafeRunnable.run(new SafeRunnable() {
+				@Override
 				public void run() {
 					l.open(event);
 				}
@@ -888,6 +892,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		for (int i = 0; i < listeners.length; ++i) {
 			final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
 			SafeRunnable.run(new SafeRunnable() {
+				@Override
 				public void run() {
 					l.selectionChanged(event);
 				}
@@ -1241,6 +1246,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		super.hookControl(control);
 		OpenStrategy handler = new OpenStrategy(control);
 		handler.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// On Windows, selection events may happen during a refresh.
 				// Ignore these events if we are currently in preservingSelection().
@@ -1250,6 +1256,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 				}
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				handleDoubleSelect(e);
 			}
@@ -1261,6 +1268,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			}
 		});
 		handler.addOpenListener(new IOpenEventListener() {
+			@Override
 			public void handleOpen(SelectionEvent e) {
 				StructuredViewer.this.handleOpen(e);
 			}
@@ -1514,6 +1522,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 */
 	public void refresh(final Object element) {
 		preservingSelection(new Runnable() {
+			@Override
 			public void run() {
 				internalRefresh(element);
 			}
@@ -1541,6 +1550,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 */
 	public void refresh(final Object element, final boolean updateLabels) {
 		preservingSelection(new Runnable() {
+			@Override
 			public void run() {
 				internalRefresh(element, updateLabels);
 			}
@@ -1578,6 +1588,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	/*
 	 * (non-Javadoc) Method declared on IPostSelectionProvider.
 	 */
+	@Override
 	public void removePostSelectionChangedListener(ISelectionChangedListener listener) {
 		postSelectionChangedListeners.remove(listener);
 	}
@@ -2138,6 +2149,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		}
 		if (needsRefilter) {
 			preservingSelection(new Runnable() {
+				@Override
 				public void run() {
 					internalRefresh(getRoot());
 					refreshOccurred = true;

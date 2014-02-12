@@ -143,6 +143,7 @@ public class FieldAssistColors {
 		// a dispose exec on the display.
 		if (!displays.containsValue(display)) {
 			display.disposeExec(new Runnable() {
+				@Override
 				public void run() {
 					disposeColors(display);
 				}

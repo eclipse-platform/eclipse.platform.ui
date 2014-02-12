@@ -55,7 +55,8 @@ public class ImageRegistry {
     private Map<String, Entry> table;
     
     private Runnable disposeRunnable = new Runnable() {
-        public void run() {
+        @Override
+		public void run() {
             dispose();
         }
     };
@@ -198,7 +199,8 @@ public class ImageRegistry {
                 final Image[] image = new Image[1];
                 final int id = swtKey;
                 display.syncExec(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         image[0] = display.getSystemImage(id);
                     }
                 });

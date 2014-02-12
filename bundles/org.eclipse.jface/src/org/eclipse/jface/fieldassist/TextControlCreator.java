@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Text;
 @Deprecated
 public class TextControlCreator implements IControlCreator {
 
+	@Override
 	public Control createControl(Composite parent, int style) {
 		return new Text(parent, style);
 	}

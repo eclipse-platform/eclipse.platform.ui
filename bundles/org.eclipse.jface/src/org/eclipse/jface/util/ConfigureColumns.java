@@ -254,6 +254,7 @@ public class ConfigureColumns {
 				upButton = new Button(composite, SWT.PUSH);
 				upButton.setText(JFaceResources.getString("ConfigureColumnsDialog_up")); //$NON-NLS-1$
 				upButton.addListener(SWT.Selection, new Listener() {
+					@Override
 					public void handleEvent(Event event) {
 						handleMove(table, true);
 					}
@@ -263,6 +264,7 @@ public class ConfigureColumns {
 				downButton.setText(JFaceResources
 						.getString("ConfigureColumnsDialog_down")); //$NON-NLS-1$
 				downButton.addListener(SWT.Selection, new Listener() {
+					@Override
 					public void handleEvent(Event event) {
 						handleMove(table, false);
 					}
@@ -291,11 +293,13 @@ public class ConfigureColumns {
 			GridLayoutFactory.swtDefaults().numColumns(numColumns).applyTo(composite);
 
 			table.addListener(SWT.Selection, new Listener() {
+				@Override
 				public void handleEvent(Event event) {
 					handleSelectionChanged(table.indexOf((TableItem) event.item));
 				}
 			});
 			text.addListener(SWT.Modify, new Listener() {
+				@Override
 				public void handleEvent(Event event) {
 					ColumnObject columnObject = columnObjects[table.getSelectionIndex()];
 					if (!columnObject.resizable) {

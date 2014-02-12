@@ -277,6 +277,7 @@ import org.eclipse.swt.widgets.ToolItem;
 		});
 
 		addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				handleDispose();
 			}
@@ -326,6 +327,7 @@ import org.eclipse.swt.widgets.ToolItem;
 			}
 		});
 		fCancelButton.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				Image i = fCancelButton.getImage();
 				if ((i != null) && (!i.isDisposed())) {
@@ -363,6 +365,7 @@ import org.eclipse.swt.widgets.ToolItem;
 	 *            general users should use the UNKNOWN value if they don't know
 	 *            the total amount of work units.
 	 */
+	@Override
 	public void beginTask(String name, int totalWork) {
 		final long timestamp = System.currentTimeMillis();
 		fStartTime = timestamp;
@@ -370,6 +373,7 @@ import org.eclipse.swt.widgets.ToolItem;
 		// make sure the progress bar is made visible while
 		// the task is running. Fixes bug 32198 for the non-animated case.
 		Runnable timer = new Runnable() {
+			@Override
 			public void run() {
 				StatusLine.this.startTask(timestamp, animated);
 			}
@@ -395,6 +399,7 @@ import org.eclipse.swt.widgets.ToolItem;
 	 * completed or the user cancelled it. Done() can be called more than once;
 	 * an implementation should be prepared to handle this case.
 	 */
+	@Override
 	public void done() {
 
 		fStartTime = 0;
@@ -455,6 +460,7 @@ import org.eclipse.swt.widgets.ToolItem;
 	/**
 	 * @see IProgressMonitor#internalWorked(double)
 	 */
+	@Override
 	public void internalWorked(double work) {
 		if (!fProgressIsVisible) {
 			if (System.currentTimeMillis() - fStartTime > DELAY_PROGRESS) {
@@ -472,6 +478,7 @@ import org.eclipse.swt.widgets.ToolItem;
 	 * (like hitting the Cancel button on the progress dialog). The long running
 	 * operation typically polls isCanceled().
 	 */
+	@Override
 	public boolean isCanceled() {
 		return fIsCanceled;
 	}
@@ -490,6 +497,7 @@ import org.eclipse.swt.widgets.ToolItem;
 	 * Sets the cancel status. This method is usually called with the argument
 	 * false if a client wants to abort a cancel action.
 	 */
+	@Override
 	public void setCanceled(boolean b) {
 		fIsCanceled = b;
 		if (fCancelButton != null) {
@@ -582,6 +590,7 @@ import org.eclipse.swt.widgets.ToolItem;
 	/**
 	 * @see IProgressMonitor#setTaskName(java.lang.String)
 	 */
+	@Override
 	public void setTaskName(String name) {
 		if (name == null)
 			fTaskName = Util.ZERO_LENGTH_STRING;
@@ -642,6 +651,7 @@ import org.eclipse.swt.widgets.ToolItem;
 	 *            the name (or description) of the subtask
 	 * @see IProgressMonitor#subTask(String)
 	 */
+	@Override
 	public void subTask(String name) {
 
 		String newName;
@@ -711,6 +721,7 @@ import org.eclipse.swt.widgets.ToolItem;
 	/**
 	 * @see IProgressMonitor#worked(int)
 	 */
+	@Override
 	public void worked(int work) {
 		internalWorked(work);
 	}

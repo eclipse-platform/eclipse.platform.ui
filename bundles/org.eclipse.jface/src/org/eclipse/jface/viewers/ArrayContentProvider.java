@@ -48,7 +48,8 @@ public class ArrayContentProvider implements IStructuredContentProvider {
      * Returns the elements in the input, which must be either an array or a
      * <code>Collection</code>. 
      */
-    public Object[] getElements(Object inputElement) {
+    @Override
+	public Object[] getElements(Object inputElement) {
         if (inputElement instanceof Object[]) {
 			return (Object[]) inputElement;
 		}
@@ -61,14 +62,16 @@ public class ArrayContentProvider implements IStructuredContentProvider {
     /**
      * This implementation does nothing.
      */
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    @Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         // do nothing.
     }
 
     /**
      * This implementation does nothing.
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         // do nothing.
     }
 }

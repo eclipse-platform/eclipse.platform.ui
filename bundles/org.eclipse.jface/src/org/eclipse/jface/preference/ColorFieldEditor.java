@@ -156,6 +156,7 @@ public class ColorFieldEditor extends FieldEditor {
 			colorSelector = new ColorSelector(parent);
 			colorSelector.addListener(new IPropertyChangeListener() {
 				// forward the property change of the color selector
+				@Override
 				public void propertyChange(PropertyChangeEvent event) {
 					ColorFieldEditor.this.fireValueChanged(event.getProperty(),
 							event.getOldValue(), event.getNewValue());

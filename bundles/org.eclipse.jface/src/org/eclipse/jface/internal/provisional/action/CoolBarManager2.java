@@ -72,7 +72,8 @@ public class CoolBarManager2 extends CoolBarManager implements ICoolBarManager2 
      * @return the cool bar control
 	 * @since 3.2
      */
-    public Control createControl2(Composite parent) {
+    @Override
+	public Control createControl2(Composite parent) {
         return createControl(parent);
     }
     
@@ -82,7 +83,8 @@ public class CoolBarManager2 extends CoolBarManager implements ICoolBarManager2 
      * @return the control, or <code>null</code> if none
 	 * @since 3.2
      */
-    public Control getControl2() {
+    @Override
+	public Control getControl2() {
         return getControl();
     }
 

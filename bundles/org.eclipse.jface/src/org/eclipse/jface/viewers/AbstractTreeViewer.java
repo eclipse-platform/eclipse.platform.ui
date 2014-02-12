@@ -109,6 +109,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			this.element = element;
 		}
 
+		@Override
 		public void run() {
 			doUpdateItem(item, element);
 		}
@@ -798,6 +799,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			}
 
 			BusyIndicator.showWhile(widget.getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 					// fix for PR 1FW89L7:
 					// don't complain and remove all "dummies" ...
@@ -1099,6 +1101,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			for (int i = 0; i < listeners.length; ++i) {
 				final ITreeViewerListener l = (ITreeViewerListener) listeners[i];
 				SafeRunnable.run(new SafeRunnable() {
+					@Override
 					public void run() {
 						l.treeCollapsed(event);
 					}
@@ -1125,6 +1128,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			for (int i = 0; i < listeners.length; ++i) {
 				final ITreeViewerListener l = (ITreeViewerListener) listeners[i];
 				SafeRunnable.run(new SafeRunnable() {
+					@Override
 					public void run() {
 						l.treeExpanded(event);
 					}
@@ -1518,10 +1522,12 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	protected void hookControl(Control control) {
 		super.hookControl(control);
 		addTreeListener(control, new TreeListener() {
+			@Override
 			public void treeExpanded(TreeEvent event) {
 				handleTreeExpand(event);
 			}
 
+			@Override
 			public void treeCollapsed(TreeEvent event) {
 				handleTreeCollapse(event);
 			}
@@ -1535,6 +1541,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	@Override
 	protected void inputChanged(Object input, Object oldInput) {
 		preservingSelection(new Runnable() {
+			@Override
 			public void run() {
 	            Control tree = getControl();
 	            tree.setRedraw(false);
@@ -2235,6 +2242,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (checkBusy())
 			return;
 		preservingSelection(new Runnable() {
+			@Override
 			public void run() {
 				internalRemove(elementsOrTreePaths);
 			}
@@ -2267,6 +2275,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (checkBusy())
 			return;
 		preservingSelection(new Runnable() {
+			@Override
 			public void run() {
 				internalRemove(parent, elements);
 			}
@@ -2473,10 +2482,12 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		final IElementComparer comparer = getComparer();
 		IElementComparer treePathComparer = new IElementComparer() {
 
+			@Override
 			public boolean equals(Object a, Object b) {
 				return ((TreePath) a).equals(((TreePath) b), comparer);
 			}
 
+			@Override
 			public int hashCode(Object element) {
 				return ((TreePath) element).hashCode(comparer);
 			}

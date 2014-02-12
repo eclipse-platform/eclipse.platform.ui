@@ -212,6 +212,7 @@ public class JFaceResources {
 				 * 
 				 * @see java.lang.Runnable#run()
 				 */
+				@Override
 				public void run() {
 					mgr.dispose();
 					registries.remove(toQuery);

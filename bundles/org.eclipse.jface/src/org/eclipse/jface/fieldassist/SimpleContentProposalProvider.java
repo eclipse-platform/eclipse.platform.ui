@@ -64,6 +64,7 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 	 * @return the array of Objects that represent valid proposals for the field
 	 *         given its current content.
 	 */
+	@Override
 	public IContentProposal[] getProposals(String contents, int position) {
 		if (filterProposals) {
 			ArrayList<ContentProposal> list = new ArrayList<ContentProposal>();

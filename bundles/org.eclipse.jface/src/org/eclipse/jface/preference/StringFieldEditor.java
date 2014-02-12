@@ -382,7 +382,8 @@ public class StringFieldEditor extends FieldEditor {
                 Assert.isTrue(false, "Unknown validate strategy");//$NON-NLS-1$
             }
             textField.addDisposeListener(new DisposeListener() {
-                public void widgetDisposed(DisposeEvent event) {
+                @Override
+				public void widgetDisposed(DisposeEvent event) {
                     textField = null;
                 }
             });

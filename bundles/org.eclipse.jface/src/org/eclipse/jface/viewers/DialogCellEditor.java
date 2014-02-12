@@ -318,6 +318,7 @@ public abstract class DialogCellEditor extends CellEditor {
 				/* (non-Javadoc)
 				 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
 				 */
+				@Override
 				public void focusGained(FocusEvent e) {
 					// Do nothing
 				}
@@ -325,6 +326,7 @@ public abstract class DialogCellEditor extends CellEditor {
 				/* (non-Javadoc)
 				 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
 				 */
+				@Override
 				public void focusLost(FocusEvent e) {
 					DialogCellEditor.this.focusLost();
 				}

@@ -77,7 +77,8 @@ public interface IMenuManager extends IContributionManager, IContributionItem {
      * @return <code>true</code> if enabled, and
      *   <code>false</code> if disabled
      */
-    public boolean isEnabled();
+    @Override
+	public boolean isEnabled();
 
     /**
      * Removes the given menu listener from this menu.

@@ -211,6 +211,7 @@ public class DecoratedField {
 			hoverShell.setForeground(display
 					.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 			hoverShell.addPaintListener(new PaintListener() {
+				@Override
 				public void paintControl(PaintEvent pe) {
 					pe.gc.drawString(text, hm, hm);
 					if (!MAC) {
@@ -409,6 +410,7 @@ public class DecoratedField {
 			formData = createFormDataForIndex(i, decoration.getImage());
 			label = new Label(form, SWT.HORIZONTAL | SWT.VERTICAL | SWT.CENTER);
 			label.addMouseTrackListener(new MouseTrackListener() {
+				@Override
 				public void mouseHover(MouseEvent event) {
 					FieldDecorationData decData = (FieldDecorationData) event.widget
 							.getData();
@@ -418,9 +420,11 @@ public class DecoratedField {
 					}
 				}
 
+				@Override
 				public void mouseEnter(MouseEvent event) {
 				}
 
+				@Override
 				public void mouseExit(MouseEvent event) {
 					hideHover();
 				}
@@ -570,6 +574,7 @@ public class DecoratedField {
 	 */
 	private void addControlListeners() {
 		control.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent event) {
 				if (hover != null) {
 					hover.dispose();
@@ -577,10 +582,12 @@ public class DecoratedField {
 			}
 		});
 		control.addFocusListener(new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent event) {
 				controlFocusGained();
 			}
 
+			@Override
 			public void focusLost(FocusEvent event) {
 				controlFocusLost();
 			}

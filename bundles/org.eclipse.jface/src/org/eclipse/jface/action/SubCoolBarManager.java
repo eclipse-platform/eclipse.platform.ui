@@ -37,7 +37,8 @@ public class SubCoolBarManager extends SubContributionManager implements
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.ICoolBarManager#add(org.eclipse.jface.action.IToolBarManager)
      */
-    public void add(IToolBarManager toolBarManager) {
+    @Override
+	public void add(IToolBarManager toolBarManager) {
         Assert.isNotNull(toolBarManager);
         super.add(new ToolBarContributionItem(toolBarManager));
     }
@@ -45,7 +46,8 @@ public class SubCoolBarManager extends SubContributionManager implements
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.ICoolBarManager#getStyle()
      */
-    public int getStyle() {
+    @Override
+	public int getStyle() {
         // It is okay to cast down since we only accept coolBarManager objects in the
         // constructor
         return ((ICoolBarManager) getParent()).getStyle();
@@ -65,34 +67,39 @@ public class SubCoolBarManager extends SubContributionManager implements
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.ICoolBarManager#isLayoutLocked()
      */
-    public boolean getLockLayout() {
+    @Override
+	public boolean getLockLayout() {
         return getParentCoolBarManager().getLockLayout();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.ICoolBarManager#lockLayout(boolean)
      */
-    public void setLockLayout(boolean value) {
+    @Override
+	public void setLockLayout(boolean value) {
     }
 
     /* (non-Javadoc)
      * SubCoolBarManagers do not have control of the global context menu.
      */
-    public IMenuManager getContextMenuManager() {
+    @Override
+	public IMenuManager getContextMenuManager() {
         return null;
     }
 
     /* (non-Javadoc)
      * In SubCoolBarManager we do nothing.
      */
-    public void setContextMenuManager(IMenuManager menuManager) {
+    @Override
+	public void setContextMenuManager(IMenuManager menuManager) {
         // do nothing
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.IContributionManager#update(boolean)
      */
-    public void update(boolean force) {
+    @Override
+	public void update(boolean force) {
         // This method is not governed by visibility.  The client may
         // call <code>setVisible</code> and then force an update.  At that
         // point we need to update the parent.

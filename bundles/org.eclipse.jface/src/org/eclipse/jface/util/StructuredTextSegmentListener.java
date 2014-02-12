@@ -62,6 +62,7 @@ public class StructuredTextSegmentListener implements SegmentListener {
 		expert = StructuredTextExpertFactory.getStatefulExpert(textTypeHandler, StructuredTextEnvironment.DEFAULT);
 	}
 
+	@Override
 	public void getSegments(SegmentEvent event) {
 		int length = event.lineText.length();
 		if (length > 0) {

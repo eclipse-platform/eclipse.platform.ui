@@ -279,7 +279,8 @@ public abstract class ListEditor extends FieldEditor {
             buttonBox.setLayout(layout);
             createButtons(buttonBox);
             buttonBox.addDisposeListener(new DisposeListener() {
-                public void widgetDisposed(DisposeEvent event) {
+                @Override
+				public void widgetDisposed(DisposeEvent event) {
                     addButton = null;
                     removeButton = null;
                     upButton = null;
@@ -309,7 +310,8 @@ public abstract class ListEditor extends FieldEditor {
             list.setFont(parent.getFont());
             list.addSelectionListener(getSelectionListener());
             list.addDisposeListener(new DisposeListener() {
-                public void widgetDisposed(DisposeEvent event) {
+                @Override
+				public void widgetDisposed(DisposeEvent event) {
                     list = null;
                 }
             });

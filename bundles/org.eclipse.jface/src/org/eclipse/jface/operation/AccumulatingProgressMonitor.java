@@ -88,7 +88,8 @@ import org.eclipse.swt.widgets.Display;
         /**
          * Run the collector.
          */
-        public void run() {
+        @Override
+		public void run() {
             clearCollector(this);
             if (subTask != null) {
 				monitor.subTask(subTask);
@@ -122,7 +123,8 @@ import org.eclipse.swt.widgets.Display;
             collector = null;
         }
         display.asyncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 currentTask = name;
                 getWrappedProgressMonitor().beginTask(name, totalWork);
             }
@@ -161,7 +163,8 @@ import org.eclipse.swt.widgets.Display;
             collector = null;
         }
         display.asyncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 getWrappedProgressMonitor().done();
             }
         });
@@ -188,7 +191,8 @@ import org.eclipse.swt.widgets.Display;
             collector = null;
         }
         display.asyncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 currentTask = name;
                 getWrappedProgressMonitor().setTaskName(name);
             }
@@ -233,7 +237,8 @@ import org.eclipse.swt.widgets.Display;
             /* (non-Javadoc)
              * @see java.lang.Runnable#run()
              */
-            public void run() {
+            @Override
+			public void run() {
                 ((IProgressMonitorWithBlocking) pm).clearBlocked();
                 Dialog.getBlockedHandler().clearBlocked();
             }
@@ -257,7 +262,8 @@ import org.eclipse.swt.widgets.Display;
             /* (non-Javadoc)
              * @see java.lang.Runnable#run()
              */
-            public void run() {
+            @Override
+			public void run() {
                 ((IProgressMonitorWithBlocking) pm).setBlocked(reason);
                 //Do not give a shell as we want it to block until it opens.
                 Dialog.getBlockedHandler().showBlocked(pm, reason, currentTask);

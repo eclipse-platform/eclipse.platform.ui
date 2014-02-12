@@ -31,6 +31,7 @@ public class TreeNodeContentProvider implements ITreeContentProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// Do nothing
 	}
@@ -40,6 +41,7 @@ public class TreeNodeContentProvider implements ITreeContentProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(final Object parentElement) {
 		final TreeNode node = (TreeNode) parentElement;
 		return node.getChildren();
@@ -50,6 +52,7 @@ public class TreeNodeContentProvider implements ITreeContentProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
+	@Override
 	public Object[] getElements(final Object inputElement) {
 		if (inputElement instanceof TreeNode[]) {
 			return (TreeNode[]) inputElement;
@@ -62,6 +65,7 @@ public class TreeNodeContentProvider implements ITreeContentProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
+	@Override
 	public Object getParent(final Object element) {
 		final TreeNode node = (TreeNode) element;
 		return node.getParent();
@@ -72,6 +76,7 @@ public class TreeNodeContentProvider implements ITreeContentProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
+	@Override
 	public boolean hasChildren(final Object element) {
 		final TreeNode node = (TreeNode) element;
 		return node.hasChildren();
@@ -83,6 +88,7 @@ public class TreeNodeContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 	 *      java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void inputChanged(final Viewer viewer, final Object oldInput,
 			final Object newInput) {
 		// Do nothing

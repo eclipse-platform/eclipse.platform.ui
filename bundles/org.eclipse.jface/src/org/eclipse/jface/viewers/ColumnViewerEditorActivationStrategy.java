@@ -77,6 +77,7 @@ public class ColumnViewerEditorActivationStrategy {
 			if (keyboardActivationListener == null) {
 				keyboardActivationListener = new KeyListener() {
 
+					@Override
 					public void keyPressed(KeyEvent e) {
 						ViewerCell cell = getFocusCell();
 
@@ -87,6 +88,7 @@ public class ColumnViewerEditorActivationStrategy {
 						}
 					}
 
+					@Override
 					public void keyReleased(KeyEvent e) {
 
 					}

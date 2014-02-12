@@ -41,7 +41,8 @@ public class SubToolBarManager extends SubContributionManager implements
     /* (non-Javadoc)
      * Method declared on IToolBarManager.
      */
-    public void update(boolean force) {
+    @Override
+	public void update(boolean force) {
         // This method is not governed by visibility.  The client may
         // call <code>setVisible</code> and then force an update.  At that
         // point we need to update the parent.

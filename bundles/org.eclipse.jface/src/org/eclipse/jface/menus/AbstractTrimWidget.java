@@ -63,29 +63,34 @@ public abstract class AbstractTrimWidget implements IWidget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.menus.IWidget#dispose()
 	 */
+	@Override
 	public abstract void dispose();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.menus.IWidget#fill(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void fill(Composite parent) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.menus.IWidget#fill(org.eclipse.swt.widgets.Menu, int)
 	 */
+	@Override
 	public void fill(Menu parent, int index) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.menus.IWidget#fill(org.eclipse.swt.widgets.ToolBar, int)
 	 */
+	@Override
 	public void fill(ToolBar parent, int index) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.menus.IWidget#fill(org.eclipse.swt.widgets.CoolBar, int)
 	 */
+	@Override
 	public void fill(CoolBar parent, int index) {
 	}
 }

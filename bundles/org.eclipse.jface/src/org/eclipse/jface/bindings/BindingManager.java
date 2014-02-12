@@ -682,6 +682,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * This method completes in <code>O(1)</code>.
 	 * </p>
 	 */
+	@Override
 	public final void contextManagerChanged(
 			final ContextManagerEvent contextManagerEvent) {
 		if (contextManagerEvent.isActiveContextsChanged()) {
@@ -2113,6 +2114,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * @param schemeEvent
 	 *            An event describing the change in the scheme.
 	 */
+	@Override
 	public final void schemeChanged(final SchemeEvent schemeEvent) {
 		if (schemeEvent.isDefinedChanged()) {
 			final Scheme scheme = schemeEvent.getScheme();

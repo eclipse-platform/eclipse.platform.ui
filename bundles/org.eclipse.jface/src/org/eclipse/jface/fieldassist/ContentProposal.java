@@ -118,6 +118,7 @@ public class ContentProposal implements IContentProposal {
 	 * 
 	 * @see org.eclipse.jface.fieldassist.IContentProposal#getContent()
 	 */
+	@Override
 	public String getContent() {
 		return content;
 	}
@@ -127,6 +128,7 @@ public class ContentProposal implements IContentProposal {
 	 * 
 	 * @see org.eclipse.jface.fieldassist.IContentProposal#getCursorPosition()
 	 */
+	@Override
 	public int getCursorPosition() {
 		return cursorPosition;
 	}
@@ -136,6 +138,7 @@ public class ContentProposal implements IContentProposal {
 	 * 
 	 * @see org.eclipse.jface.fieldassist.IContentProposal#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -145,6 +148,7 @@ public class ContentProposal implements IContentProposal {
 	 * 
 	 * @see org.eclipse.jface.fieldassist.IContentProposal#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return label;
 	}
