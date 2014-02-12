@@ -1418,16 +1418,16 @@
             icon="$nl$/icons/full/etool16/redo_edit.png"/>
       <image
             commandId="org.eclipse.ui.file.save"
-            disabledIcon="$nl$/icons/full/dtool16/save_edit.gif"
-            icon="$nl$/icons/full/etool16/save_edit.gif"/>
+            disabledIcon="$nl$/icons/full/dtool16/save_edit.png"
+            icon="$nl$/icons/full/etool16/save_edit.png"/>
       <image
             commandId="org.eclipse.ui.file.saveAll"
-            disabledIcon="$nl$/icons/full/dtool16/saveall_edit.gif"
-            icon="$nl$/icons/full/etool16/saveall_edit.gif"/>
+            disabledIcon="$nl$/icons/full/dtool16/saveall_edit.png"
+            icon="$nl$/icons/full/etool16/saveall_edit.png"/>
       <image
             commandId="org.eclipse.ui.file.saveAs"
-            disabledIcon="$nl$/icons/full/dtool16/saveas_edit.gif"
-            icon="$nl$/icons/full/etool16/saveas_edit.gif"/>
+            disabledIcon="$nl$/icons/full/dtool16/saveas_edit.png"
+            icon="$nl$/icons/full/etool16/saveas_edit.png"/>
       <image
             commandId="org.eclipse.ui.file.refresh"
             disabledIcon="$nl$/icons/full/dlcl16/refresh_nav.png"

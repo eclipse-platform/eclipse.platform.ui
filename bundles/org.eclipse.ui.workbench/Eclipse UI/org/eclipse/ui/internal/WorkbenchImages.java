@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422040
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 426365
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -30,39 +31,36 @@ import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 import org.eclipse.ui.internal.util.BundleUtility;
 
 /**
- * This class provides convenience access to many of the resources required
- * by the workbench. The class stores some images as descriptors, and
- * some are stored as real Images in the registry.  This is a pure
- * speed-space tradeoff.  The trick for users of this class is that
- * images obtained from the registry (using getImage()), don't require
- * disposal since they are shared, while images obtained using
- * getImageDescriptor() will require disposal.  Consult the declareImages
- * method to see if a given image is declared as a registry image or
- * just as a descriptor.  If you change an image from being stored
- * as a descriptor to a registry image, or vice-versa, make sure to
- * check all users of the image to ensure they are calling
- * the correct getImage... method and handling disposal correctly.
+ * This class provides convenience access to many of the resources required by
+ * the workbench. The class stores some images as descriptors, and some are
+ * stored as real Images in the registry. This is a pure speed-space tradeoff.
+ * The trick for users of this class is that images obtained from the registry
+ * (using getImage()), don't require disposal since they are shared, while
+ * images obtained using getImageDescriptor() will require disposal. Consult the
+ * declareImages method to see if a given image is declared as a registry image
+ * or just as a descriptor. If you change an image from being stored as a
+ * descriptor to a registry image, or vice-versa, make sure to check all users
+ * of the image to ensure they are calling the correct getImage... method and
+ * handling disposal correctly.
  *
- *  Images:
- *      - use getImage(key) to access cached images from the registry.
- *      - Less common images are found by calling getImageDescriptor(key)
- *          where key can be found in IWorkbenchGraphicConstants
+ * Images: - use getImage(key) to access cached images from the registry. - Less
+ * common images are found by calling getImageDescriptor(key) where key can be
+ * found in IWorkbenchGraphicConstants
  *
- *      This class initializes the image registry by declaring all of the required
- *      graphics. This involves creating image descriptors describing
- *      how to create/find the image should it be needed.
- *      The image is not actually allocated until requested.
+ * This class initializes the image registry by declaring all of the required
+ * graphics. This involves creating image descriptors describing how to
+ * create/find the image should it be needed. The image is not actually
+ * allocated until requested.
  *
- *      Some Images are also made available to other plugins by being
- *      placed in the descriptor table of the SharedImages class.
+ * Some Images are also made available to other plugins by being placed in the
+ * descriptor table of the SharedImages class.
  *
- *      Where are the images?
- *          The images (typically gifs) are found the plugins install directory
+ * Where are the images? The images (typically png file) are found the plugins
+ * install directory
  *
- *      How to add a new image
- *          Place the gif file into the appropriate directories.
- *          Add a constant to IWorkbenchGraphicConstants following the conventions
- *          Add the declaration to this file
+ * How to add a new image Place the png file into the appropriate directories.
+ * Add a constant to IWorkbenchGraphicConstants following the conventions Add
+ * the declaration to this file
  */
 public/*final*/class WorkbenchImages {
 
@@ -155,19 +153,19 @@ public/*final*/class WorkbenchImages {
         // other toolbar buttons
 
         declareImage(ISharedImages.IMG_ETOOL_SAVE_EDIT, PATH_ETOOL
-				+ "save_edit.gif", true); //$NON-NLS-1$
+ + "save_edit.png", true); //$NON-NLS-1$
 		declareImage(ISharedImages.IMG_ETOOL_SAVE_EDIT_DISABLED, PATH_DTOOL
-				+ "save_edit.gif", true); //$NON-NLS-1$
+ + "save_edit.png", true); //$NON-NLS-1$
         
 		declareImage(ISharedImages.IMG_ETOOL_SAVEAS_EDIT, PATH_ETOOL
-				+ "saveas_edit.gif", true); //$NON-NLS-1$
+ + "saveas_edit.png", true); //$NON-NLS-1$
 		declareImage(ISharedImages.IMG_ETOOL_SAVEAS_EDIT_DISABLED, PATH_DTOOL
-				+ "saveas_edit.gif", true); //$NON-NLS-1$
+ + "saveas_edit.png", true); //$NON-NLS-1$
         
 		declareImage(ISharedImages.IMG_ETOOL_SAVEALL_EDIT, PATH_ETOOL
-				+ "saveall_edit.gif", true); //$NON-NLS-1$
+ + "saveall_edit.png", true); //$NON-NLS-1$
 		declareImage(ISharedImages.IMG_ETOOL_SAVEALL_EDIT_DISABLED, PATH_DTOOL
-				+ "saveall_edit.gif", true); //$NON-NLS-1$
+ + "saveall_edit.png", true); //$NON-NLS-1$
 
         declareImage(ISharedImages.IMG_TOOL_UNDO,
                 PATH_ETOOL + "undo_edit.png", true); //$NON-NLS-1$
@@ -612,32 +610,24 @@ public/*final*/class WorkbenchImages {
     }
 
     /**
-     *  Initialize the image registry by declaring all of the required
-     *  graphics. This involves creating JFace image descriptors describing
-     *  how to create/find the image should it be needed.
-     *  The image is not actually allocated until requested.
-     *
-     *  Prefix conventions
-     *      Wizard Banners          WIZBAN_
-     *      Preference Banners      PREF_BAN_
-     *      Property Page Banners   PROPBAN_
-     *      Enable toolbar          ETOOL_
-     *      Disable toolbar         DTOOL_
-     *      Local enabled toolbar   ELCL_
-     *      Local Disable toolbar   DLCL_
-     *      Object large            OBJL_
-     *      Object small            OBJS_
-     *      View                    VIEW_
-     *      Product images          PROD_
-     *      Misc images             MISC_
-     *
-     *  Where are the images?
-     *      The images (typically gifs) are found in the same location as this plugin class.
-     *      This may mean the same package directory as the package holding this class.
-     *      The images are declared using this.getClass() to ensure they are looked up via
-     *      this plugin class.
-     *  @see ImageRegistry
-     */
+	 * Initialize the image registry by declaring all of the required graphics.
+	 * This involves creating JFace image descriptors describing how to
+	 * create/find the image should it be needed. The image is not actually
+	 * allocated until requested.
+	 *
+	 * Prefix conventions Wizard Banners WIZBAN_ Preference Banners PREF_BAN_
+	 * Property Page Banners PROPBAN_ Enable toolbar ETOOL_ Disable toolbar
+	 * DTOOL_ Local enabled toolbar ELCL_ Local Disable toolbar DLCL_ Object
+	 * large OBJL_ Object small OBJS_ View VIEW_ Product images PROD_ Misc
+	 * images MISC_
+	 *
+	 * Where are the images? The images (typically png files) are found in the
+	 * same location as this plugin class. This may mean the same package
+	 * directory as the package holding this class. The images are declared
+	 * using this.getClass() to ensure they are looked up via this plugin class.
+	 * 
+	 * @see ImageRegistry
+	 */
     private static void initializeImageRegistry() {
         imageRegistry = new ImageRegistry();
         descriptors = new HashMap();
