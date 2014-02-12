@@ -23,6 +23,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.internal.workbench.OpaqueElementUtil;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.BasicPartList;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
@@ -41,8 +42,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -1535,15 +1534,10 @@ public class StackRenderer extends LazyStackRenderer {
 
 		for (MMenuElement menuElement : viewMenu.getChildren()) {
 			if (menuElement.isToBeRendered() && menuElement.isVisible()) {
-				if (menuElement instanceof MOpaqueMenuItem) {
-					IContributionItem item = (IContributionItem) ((MOpaqueMenuItem) menuElement)
-							.getOpaqueItem();
-					if (item != null && item.isVisible()) {
-						return true;
-					}
-				} else if (menuElement instanceof MOpaqueMenuSeparator) {
-					IContributionItem item = (IContributionItem) ((MOpaqueMenuSeparator) menuElement)
-							.getOpaqueItem();
+				if (OpaqueElementUtil.isOpaqueMenuItem(menuElement)
+						|| OpaqueElementUtil.isOpaqueMenuSeparator(menuElement)) {
+					IContributionItem item = (IContributionItem) OpaqueElementUtil
+							.getOpaqueItem(menuElement);
 					if (item != null && item.isVisible()) {
 						return true;
 					}

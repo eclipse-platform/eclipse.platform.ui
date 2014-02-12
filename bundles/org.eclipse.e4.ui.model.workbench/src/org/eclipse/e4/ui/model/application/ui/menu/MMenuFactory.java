@@ -128,24 +128,6 @@ public interface MMenuFactory {
 	MToolBarSeparator createToolBarSeparator();
 
 	/**
-	 * Returns a new object of class '<em>Rendered Menu</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Rendered Menu</em>'.
-	 * @generated
-	 */
-	MRenderedMenu createRenderedMenu();
-
-	/**
-	 * Returns a new object of class '<em>Rendered Tool Bar</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Rendered Tool Bar</em>'.
-	 * @generated
-	 */
-	MRenderedToolBar createRenderedToolBar();
-
-	/**
 	 * Returns a new object of class '<em>Tool Bar Contribution</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -162,51 +144,6 @@ public interface MMenuFactory {
 	 * @generated
 	 */
 	MTrimContribution createTrimContribution();
-
-	/**
-	 * Returns a new object of class '<em>Rendered Menu Item</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Rendered Menu Item</em>'.
-	 * @generated
-	 */
-	MRenderedMenuItem createRenderedMenuItem();
-
-	/**
-	 * Returns a new object of class '<em>Opaque Tool Item</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Opaque Tool Item</em>'.
-	 * @generated
-	 */
-	MOpaqueToolItem createOpaqueToolItem();
-
-	/**
-	 * Returns a new object of class '<em>Opaque Menu Item</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Opaque Menu Item</em>'.
-	 * @generated
-	 */
-	MOpaqueMenuItem createOpaqueMenuItem();
-
-	/**
-	 * Returns a new object of class '<em>Opaque Menu Separator</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Opaque Menu Separator</em>'.
-	 * @generated
-	 */
-	MOpaqueMenuSeparator createOpaqueMenuSeparator();
-
-	/**
-	 * Returns a new object of class '<em>Opaque Menu</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Opaque Menu</em>'.
-	 * @generated
-	 */
-	MOpaqueMenu createOpaqueMenu();
 
 	/**
 	 * Returns a new object of class '<em>Dynamic Menu Contribution</em>'.

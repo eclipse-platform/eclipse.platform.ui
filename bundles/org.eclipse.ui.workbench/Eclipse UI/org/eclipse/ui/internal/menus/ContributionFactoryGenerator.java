@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 IBM Corporation and others.
+ * Copyright (c) 2012, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,12 +20,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.OpaqueElementUtil;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
-import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.services.ServiceLocator;
@@ -116,16 +116,16 @@ public class ContributionFactoryGenerator extends ContextFunction {
 	}
 
 	private MUIElement createMenuItem(IContributionItem ici) {
-		MOpaqueMenuItem opaqueItem = MenuFactoryImpl.eINSTANCE.createOpaqueMenuItem();
+		MMenuItem opaqueItem = OpaqueElementUtil.createOpaqueMenuItem();
 		opaqueItem.setElementId(ici.getId());
-		opaqueItem.setOpaqueItem(ici);
+		OpaqueElementUtil.setOpaqueItem(opaqueItem, ici);
 		return opaqueItem;
 	}
 
 	private MUIElement createToolItem(IContributionItem ici) {
-		MOpaqueToolItem opaqueItem = MenuFactoryImpl.eINSTANCE.createOpaqueToolItem();
+		MToolItem opaqueItem = OpaqueElementUtil.createOpaqueToolItem();
 		opaqueItem.setElementId(ici.getId());
-		opaqueItem.setOpaqueItem(ici);
+		OpaqueElementUtil.setOpaqueItem(opaqueItem, ici);
 		return opaqueItem;
 	}
 }

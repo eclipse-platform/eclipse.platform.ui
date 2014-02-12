@@ -19,35 +19,6 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.menu.*;
-import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
-import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator;
-import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -316,31 +287,6 @@ public class MenuSwitch<T1> extends Switch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case MenuPackageImpl.RENDERED_MENU: {
-				MRenderedMenu renderedMenu = (MRenderedMenu)theEObject;
-				T1 result = caseRenderedMenu(renderedMenu);
-				if (result == null) result = caseMenu(renderedMenu);
-				if (result == null) result = caseMenuElement(renderedMenu);
-				if (result == null) result = caseElementContainer(renderedMenu);
-				if (result == null) result = caseUIElement(renderedMenu);
-				if (result == null) result = caseUILabel(renderedMenu);
-				if (result == null) result = caseApplicationElement(renderedMenu);
-				if (result == null) result = caseLocalizable(renderedMenu);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case MenuPackageImpl.RENDERED_TOOL_BAR: {
-				MRenderedToolBar renderedToolBar = (MRenderedToolBar)theEObject;
-				T1 result = caseRenderedToolBar(renderedToolBar);
-				if (result == null) result = caseToolBar(renderedToolBar);
-				if (result == null) result = caseElementContainer(renderedToolBar);
-				if (result == null) result = caseTrimElement(renderedToolBar);
-				if (result == null) result = caseUIElement(renderedToolBar);
-				if (result == null) result = caseApplicationElement(renderedToolBar);
-				if (result == null) result = caseLocalizable(renderedToolBar);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
 			case MenuPackageImpl.TOOL_BAR_CONTRIBUTION: {
 				MToolBarContribution toolBarContribution = (MToolBarContribution)theEObject;
 				T1 result = caseToolBarContribution(toolBarContribution);
@@ -370,70 +316,6 @@ public class MenuSwitch<T1> extends Switch<T1> {
 			case MenuPackageImpl.TRIM_CONTRIBUTIONS: {
 				MTrimContributions trimContributions = (MTrimContributions)theEObject;
 				T1 result = caseTrimContributions(trimContributions);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case MenuPackageImpl.RENDERED_MENU_ITEM: {
-				MRenderedMenuItem renderedMenuItem = (MRenderedMenuItem)theEObject;
-				T1 result = caseRenderedMenuItem(renderedMenuItem);
-				if (result == null) result = caseMenuItem(renderedMenuItem);
-				if (result == null) result = caseItem(renderedMenuItem);
-				if (result == null) result = caseMenuElement(renderedMenuItem);
-				if (result == null) result = caseUIElement(renderedMenuItem);
-				if (result == null) result = caseUILabel(renderedMenuItem);
-				if (result == null) result = caseApplicationElement(renderedMenuItem);
-				if (result == null) result = caseLocalizable(renderedMenuItem);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case MenuPackageImpl.OPAQUE_TOOL_ITEM: {
-				MOpaqueToolItem opaqueToolItem = (MOpaqueToolItem)theEObject;
-				T1 result = caseOpaqueToolItem(opaqueToolItem);
-				if (result == null) result = caseToolItem(opaqueToolItem);
-				if (result == null) result = caseItem(opaqueToolItem);
-				if (result == null) result = caseToolBarElement(opaqueToolItem);
-				if (result == null) result = caseUIElement(opaqueToolItem);
-				if (result == null) result = caseUILabel(opaqueToolItem);
-				if (result == null) result = caseApplicationElement(opaqueToolItem);
-				if (result == null) result = caseLocalizable(opaqueToolItem);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case MenuPackageImpl.OPAQUE_MENU_ITEM: {
-				MOpaqueMenuItem opaqueMenuItem = (MOpaqueMenuItem)theEObject;
-				T1 result = caseOpaqueMenuItem(opaqueMenuItem);
-				if (result == null) result = caseMenuItem(opaqueMenuItem);
-				if (result == null) result = caseItem(opaqueMenuItem);
-				if (result == null) result = caseMenuElement(opaqueMenuItem);
-				if (result == null) result = caseUIElement(opaqueMenuItem);
-				if (result == null) result = caseUILabel(opaqueMenuItem);
-				if (result == null) result = caseApplicationElement(opaqueMenuItem);
-				if (result == null) result = caseLocalizable(opaqueMenuItem);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case MenuPackageImpl.OPAQUE_MENU_SEPARATOR: {
-				MOpaqueMenuSeparator opaqueMenuSeparator = (MOpaqueMenuSeparator)theEObject;
-				T1 result = caseOpaqueMenuSeparator(opaqueMenuSeparator);
-				if (result == null) result = caseMenuSeparator(opaqueMenuSeparator);
-				if (result == null) result = caseMenuElement(opaqueMenuSeparator);
-				if (result == null) result = caseUIElement(opaqueMenuSeparator);
-				if (result == null) result = caseUILabel(opaqueMenuSeparator);
-				if (result == null) result = caseApplicationElement(opaqueMenuSeparator);
-				if (result == null) result = caseLocalizable(opaqueMenuSeparator);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case MenuPackageImpl.OPAQUE_MENU: {
-				MOpaqueMenu opaqueMenu = (MOpaqueMenu)theEObject;
-				T1 result = caseOpaqueMenu(opaqueMenu);
-				if (result == null) result = caseMenu(opaqueMenu);
-				if (result == null) result = caseMenuElement(opaqueMenu);
-				if (result == null) result = caseElementContainer(opaqueMenu);
-				if (result == null) result = caseUIElement(opaqueMenu);
-				if (result == null) result = caseUILabel(opaqueMenu);
-				if (result == null) result = caseApplicationElement(opaqueMenu);
-				if (result == null) result = caseLocalizable(opaqueMenu);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -726,36 +608,6 @@ public class MenuSwitch<T1> extends Switch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Rendered Menu</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Rendered Menu</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseRenderedMenu(MRenderedMenu object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Rendered Tool Bar</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Rendered Tool Bar</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseRenderedToolBar(MRenderedToolBar object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Tool Bar Contribution</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -812,81 +664,6 @@ public class MenuSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseTrimContributions(MTrimContributions object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Rendered Menu Item</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Rendered Menu Item</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseRenderedMenuItem(MRenderedMenuItem object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Opaque Tool Item</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Opaque Tool Item</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseOpaqueToolItem(MOpaqueToolItem object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Opaque Menu Item</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Opaque Menu Item</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseOpaqueMenuItem(MOpaqueMenuItem object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Opaque Menu Separator</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Opaque Menu Separator</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseOpaqueMenuSeparator(MOpaqueMenuSeparator object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Opaque Menu</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Opaque Menu</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseOpaqueMenu(MOpaqueMenu object) {
 		return null;
 	}
 

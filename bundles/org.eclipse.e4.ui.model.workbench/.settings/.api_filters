@@ -13,6 +13,62 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenu">
+        <filter comment="Remove MRendered* and MOpaque* from workbench model" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenu"/>
+                <message_argument value="org.eclipse.e4.ui.model.workbench_1.1.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem">
+        <filter comment="Remove MRendered* and MOpaque* from workbench model" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem"/>
+                <message_argument value="org.eclipse.e4.ui.model.workbench_1.1.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator">
+        <filter comment="Remove MRendered* and MOpaque* from workbench model" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator"/>
+                <message_argument value="org.eclipse.e4.ui.model.workbench_1.1.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem">
+        <filter comment="Remove MRendered* and MOpaque* from workbench model" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem"/>
+                <message_argument value="org.eclipse.e4.ui.model.workbench_1.1.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu">
+        <filter comment="Remove MRendered* and MOpaque* from workbench model" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu"/>
+                <message_argument value="org.eclipse.e4.ui.model.workbench_1.1.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem">
+        <filter comment="Remove MRendered* and MOpaque* from workbench model" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem"/>
+                <message_argument value="org.eclipse.e4.ui.model.workbench_1.1.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar">
+        <filter comment="Remove MRendered* and MOpaque* from workbench model" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar"/>
+                <message_argument value="org.eclipse.e4.ui.model.workbench_1.1.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/MAddon.java" type="org.eclipse.e4.ui.model.application.MAddon">
         <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
             <message_arguments>
@@ -468,6 +524,50 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MMenuFactory.java" type="org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory">
+        <filter comment="MOpaque* and MRendered* classes removed, see bug 402764." id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory"/>
+                <message_argument value="createOpaqueMenu()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="MOpaque* and MRendered* classes removed, see bug 402764." id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory"/>
+                <message_argument value="createOpaqueMenuItem()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="MOpaque* and MRendered* classes removed, see bug 402764." id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory"/>
+                <message_argument value="createOpaqueMenuSeparator()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="MOpaque* and MRendered* classes removed, see bug 402764." id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory"/>
+                <message_argument value="createOpaqueToolItem()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="MOpaque* and MRendered* classes removed, see bug 402764." id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory"/>
+                <message_argument value="createRenderedMenu()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="MOpaque* and MRendered* classes removed, see bug 402764." id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory"/>
+                <message_argument value="createRenderedMenuItem()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="MOpaque* and MRendered* classes removed, see bug 402764." id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory"/>
+                <message_argument value="createRenderedToolBar()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MMenuItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MMenuItem">
         <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
             <message_arguments>
@@ -482,131 +582,10 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MOpaqueMenu.java" type="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenu">
-        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenu"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MOpaqueMenuItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem">
-        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem"/>
-                <message_argument value="getOpaqueItem()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem"/>
-                <message_argument value="setOpaqueItem(Object)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MOpaqueMenuSeparator.java" type="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator">
-        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator"/>
-                <message_argument value="getOpaqueItem()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator"/>
-                <message_argument value="setOpaqueItem(Object)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MOpaqueToolItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem">
-        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem"/>
-                <message_argument value="getOpaqueItem()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem"/>
-                <message_argument value="setOpaqueItem(Object)"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MPopupMenu.java" type="org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu">
         <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MRenderedMenu.java" type="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu">
-        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu"/>
-                <message_argument value="getContributionManager()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu"/>
-                <message_argument value="setContributionManager(Object)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MRenderedMenuItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem">
-        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem"/>
-                <message_argument value="getContributionItem()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem"/>
-                <message_argument value="setContributionItem(Object)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MRenderedToolBar.java" type="org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar">
-        <filter comment="Forgot to add @noimplement in 1.0" id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar"/>
-                <message_argument value="getContributionManager()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar"/>
-                <message_argument value="setContributionManager(Object)"/>
             </message_arguments>
         </filter>
     </resource>

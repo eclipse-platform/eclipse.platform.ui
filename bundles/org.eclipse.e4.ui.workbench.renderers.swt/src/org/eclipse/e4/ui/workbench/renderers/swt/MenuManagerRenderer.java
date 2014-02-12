@@ -31,6 +31,8 @@ import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.internal.workbench.OpaqueElementUtil;
+import org.eclipse.e4.ui.internal.workbench.RenderedElementUtil;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -46,12 +48,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
-import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
@@ -659,11 +656,11 @@ MenuManagerEventHelper.getInstance()
 		if (!childME.isToBeRendered()) {
 			return;
 		}
-		if (childME instanceof MRenderedMenuItem) {
-			MRenderedMenuItem itemModel = (MRenderedMenuItem) childME;
+		if (RenderedElementUtil.isRenderedMenuItem(childME)) {
+			MMenuItem itemModel = (MMenuItem) childME;
 			processRenderedItem(menuManager, itemModel);
-		} else if (childME instanceof MOpaqueMenuItem) {
-			MOpaqueMenuItem itemModel = (MOpaqueMenuItem) childME;
+		} else if (OpaqueElementUtil.isOpaqueMenuItem(childME)) {
+			MMenuItem itemModel = (MMenuItem) childME;
 			processOpaqueItem(menuManager, itemModel);
 		} else if (childME instanceof MHandledMenuItem) {
 			MHandledMenuItem itemModel = (MHandledMenuItem) childME;
@@ -691,18 +688,18 @@ MenuManagerEventHelper.getInstance()
 	 * @param itemModel
 	 */
 	void processRenderedItem(MenuManager parentManager,
-			MRenderedMenuItem itemModel) {
+ MMenuItem itemModel) {
 		IContributionItem ici = getContribution(itemModel);
 		if (ici != null) {
 			return;
 		}
 		itemModel.setRenderer(this);
-		Object obj = itemModel.getContributionItem();
+		Object obj = RenderedElementUtil.getContributionManager(itemModel);
 		if (obj instanceof IContextFunction) {
 			final IEclipseContext lclContext = getContext(itemModel);
 			ici = (IContributionItem) ((IContextFunction) obj).compute(
 					lclContext, null);
-			itemModel.setContributionItem(ici);
+			RenderedElementUtil.setContributionManager(itemModel, ici);
 		} else if (obj instanceof IContributionItem) {
 			ici = (IContributionItem) obj;
 		} else {
@@ -715,13 +712,13 @@ MenuManagerEventHelper.getInstance()
 		linkModelToContribution(itemModel, ici);
 	}
 
-	void processOpaqueItem(MenuManager parentManager, MOpaqueMenuItem itemModel) {
+	void processOpaqueItem(MenuManager parentManager, MMenuItem itemModel) {
 		IContributionItem ici = getContribution(itemModel);
 		if (ici != null) {
 			return;
 		}
 		itemModel.setRenderer(this);
-		Object obj = itemModel.getOpaqueItem();
+		Object obj = OpaqueElementUtil.getOpaqueItem(itemModel);
 		if (obj instanceof IContributionItem) {
 			ici = (IContributionItem) obj;
 		} else {
@@ -906,16 +903,16 @@ MenuManagerEventHelper.getInstance()
 	public void reconcileManagerToModel(MenuManager menuManager, MMenu menuModel) {
 		List<MMenuElement> modelChildren = menuModel.getChildren();
 
-		HashSet<MOpaqueMenuItem> oldModelItems = new HashSet<MOpaqueMenuItem>();
-		HashSet<MOpaqueMenu> oldMenus = new HashSet<MOpaqueMenu>();
-		HashSet<MOpaqueMenuSeparator> oldSeps = new HashSet<MOpaqueMenuSeparator>();
+		HashSet<MMenuItem> oldModelItems = new HashSet<MMenuItem>();
+		HashSet<MMenu> oldMenus = new HashSet<MMenu>();
+		HashSet<MMenuSeparator> oldSeps = new HashSet<MMenuSeparator>();
 		for (MMenuElement itemModel : modelChildren) {
-			if (itemModel instanceof MOpaqueMenuSeparator) {
-				oldSeps.add((MOpaqueMenuSeparator) itemModel);
-			} else if (itemModel instanceof MOpaqueMenuItem) {
-				oldModelItems.add((MOpaqueMenuItem) itemModel);
-			} else if (itemModel instanceof MOpaqueMenu) {
-				oldMenus.add((MOpaqueMenu) itemModel);
+			if (OpaqueElementUtil.isOpaqueMenuSeparator(itemModel)) {
+				oldSeps.add((MMenuSeparator) itemModel);
+			} else if (OpaqueElementUtil.isOpaqueMenuItem(itemModel)) {
+				oldModelItems.add((MMenuItem) itemModel);
+			} else if (OpaqueElementUtil.isOpaqueMenu(itemModel)) {
+				oldMenus.add((MMenu) itemModel);
 			}
 		}
 
@@ -926,8 +923,7 @@ MenuManagerEventHelper.getInstance()
 				MenuManager childManager = (MenuManager) item;
 				MMenu childModel = getMenuModel(childManager);
 				if (childModel == null) {
-					MMenu legacyModel = MenuFactoryImpl.eINSTANCE
-							.createOpaqueMenu();
+					MMenu legacyModel = OpaqueElementUtil.createOpaqueMenu();
 					legacyModel.setElementId(childManager.getId());
 					legacyModel.setVisible(childManager.isVisible());
 					linkModelToManager(legacyModel, childManager);
@@ -938,7 +934,7 @@ MenuManagerEventHelper.getInstance()
 					}
 					reconcileManagerToModel(childManager, legacyModel);
 				} else {
-					if (childModel instanceof MOpaqueMenu) {
+					if (OpaqueElementUtil.isOpaqueMenu(childModel)) {
 						oldMenus.remove(childModel);
 					}
 					if (modelChildren.size() > dest) {
@@ -964,19 +960,19 @@ MenuManagerEventHelper.getInstance()
 			} else if (item.isSeparator() || item.isGroupMarker()) {
 				MMenuElement menuElement = getMenuElement(item);
 				if (menuElement == null) {
-					MOpaqueMenuSeparator legacySep = MenuFactoryImpl.eINSTANCE
+					MMenuSeparator legacySep = OpaqueElementUtil
 							.createOpaqueMenuSeparator();
 					legacySep.setElementId(item.getId());
 					legacySep.setVisible(item.isVisible());
-					legacySep.setOpaqueItem(item);
+					OpaqueElementUtil.setOpaqueItem(legacySep, item);
 					linkModelToContribution(legacySep, item);
 					if (modelChildren.size() > dest) {
 						modelChildren.add(dest, legacySep);
 					} else {
 						modelChildren.add(legacySep);
 					}
-				} else if (menuElement instanceof MOpaqueMenuSeparator) {
-					MOpaqueMenuSeparator legacySep = (MOpaqueMenuSeparator) menuElement;
+				} else if (OpaqueElementUtil.isOpaqueMenuSeparator(menuElement)) {
+					MMenuSeparator legacySep = (MMenuSeparator) menuElement;
 					oldSeps.remove(legacySep);
 					if (modelChildren.size() > dest) {
 						if (modelChildren.get(dest) != legacySep) {
@@ -990,19 +986,19 @@ MenuManagerEventHelper.getInstance()
 			} else {
 				MMenuElement menuElement = getMenuElement(item);
 				if (menuElement == null) {
-					MOpaqueMenuItem legacyItem = MenuFactoryImpl.eINSTANCE
+					MMenuItem legacyItem = OpaqueElementUtil
 							.createOpaqueMenuItem();
 					legacyItem.setElementId(item.getId());
 					legacyItem.setVisible(item.isVisible());
-					legacyItem.setOpaqueItem(item);
+					OpaqueElementUtil.setOpaqueItem(legacyItem, item);
 					linkModelToContribution(legacyItem, item);
 					if (modelChildren.size() > dest) {
 						modelChildren.add(dest, legacyItem);
 					} else {
 						modelChildren.add(legacyItem);
 					}
-				} else if (menuElement instanceof MOpaqueMenuItem) {
-					MOpaqueMenuItem legacyItem = (MOpaqueMenuItem) menuElement;
+				} else if (OpaqueElementUtil.isOpaqueMenuItem(menuElement)) {
+					MMenuItem legacyItem = (MMenuItem) menuElement;
 					oldModelItems.remove(legacyItem);
 					if (modelChildren.size() > dest) {
 						if (modelChildren.get(dest) != legacyItem) {
@@ -1017,23 +1013,25 @@ MenuManagerEventHelper.getInstance()
 		}
 		if (!oldModelItems.isEmpty()) {
 			modelChildren.removeAll(oldModelItems);
-			for (MOpaqueMenuItem model : oldModelItems) {
-				clearModelToContribution(model,
-						(IContributionItem) model.getOpaqueItem());
+			for (MMenuItem model : oldModelItems) {
+				IContributionItem ici = (IContributionItem) OpaqueElementUtil
+						.getOpaqueItem(model);
+				clearModelToContribution(model, ici);
 			}
 		}
 		if (!oldMenus.isEmpty()) {
 			modelChildren.removeAll(oldMenus);
-			for (MOpaqueMenu oldMenu : oldMenus) {
+			for (MMenu oldMenu : oldMenus) {
 				MenuManager oldManager = getManager(oldMenu);
 				clearModelToManager(oldMenu, oldManager);
 			}
 		}
 		if (!oldSeps.isEmpty()) {
 			modelChildren.removeAll(oldSeps);
-			for (MOpaqueMenuSeparator model : oldSeps) {
-				clearModelToContribution(model,
-						(IContributionItem) model.getOpaqueItem());
+			for (MMenuSeparator model : oldSeps) {
+				IContributionItem item = (IContributionItem) OpaqueElementUtil
+						.getOpaqueItem(model);
+				clearModelToContribution(model, item);
 			}
 		}
 	}

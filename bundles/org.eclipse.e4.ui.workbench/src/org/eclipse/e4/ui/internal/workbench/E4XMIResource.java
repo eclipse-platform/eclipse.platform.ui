@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,21 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.WeakHashMap;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.xmi.XMLHelper;
+import org.eclipse.emf.ecore.xmi.impl.XMIHelperImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 
 public class E4XMIResource extends XMIResourceImpl {
@@ -91,5 +98,89 @@ public class E4XMIResource extends XMIResourceImpl {
 		id = getUniqueId();
 		setID(eObject, id);
 		return id;
+	}
+
+	/**
+	 * Functional interface for creating objects
+	 */
+	private interface ObjectCreator {
+		MApplicationElement create();
+	}
+
+	static final Map<String, ObjectCreator> deprecatedTypeMappings = new HashMap<String, ObjectCreator>();
+	static {
+		deprecatedTypeMappings.put("OpaqueMenu", new ObjectCreator() { //$NON-NLS-1$
+
+					public MApplicationElement create() {
+						return OpaqueElementUtil.createOpaqueMenu();
+					}
+				});
+		deprecatedTypeMappings.put("OpaqueMenuItem", new ObjectCreator() { //$NON-NLS-1$
+
+					public MApplicationElement create() {
+						return OpaqueElementUtil.createOpaqueMenuItem();
+					}
+				});
+		deprecatedTypeMappings.put("OpaqueMenuSeparator", new ObjectCreator() { //$NON-NLS-1$
+
+					public MApplicationElement create() {
+						return OpaqueElementUtil.createOpaqueMenuSeparator();
+					}
+				});
+		deprecatedTypeMappings.put("OpaqueToolItem", new ObjectCreator() { //$NON-NLS-1$
+
+					public MApplicationElement create() {
+						return OpaqueElementUtil.createOpaqueToolItem();
+					}
+				});
+		deprecatedTypeMappings.put("RenderedMenu", new ObjectCreator() { //$NON-NLS-1$
+
+					public MApplicationElement create() {
+						return RenderedElementUtil.createRenderedMenu();
+					}
+				});
+		deprecatedTypeMappings.put("RenderedMenuItem", new ObjectCreator() { //$NON-NLS-1$
+
+					public MApplicationElement create() {
+						return RenderedElementUtil.createRenderedMenuItem();
+					}
+				});
+		deprecatedTypeMappings.put("RenderedToolBar", new ObjectCreator() { //$NON-NLS-1$
+
+					public MApplicationElement create() {
+						return RenderedElementUtil.createRenderedToolBar();
+					}
+				});
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl#createXMLHelper()
+	 */
+	@Override
+	protected XMLHelper createXMLHelper() {
+		// Handle mapping of deprecated types
+		return new XMIHelperImpl(this) {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.emf.ecore.xmi.impl.XMLHelperImpl#createObject(org.eclipse.emf.ecore.EFactory
+			 * , org.eclipse.emf.ecore.EClassifier)
+			 */
+			@Override
+			public EObject createObject(EFactory eFactory, EClassifier type) {
+				if (MMenuFactory.INSTANCE == eFactory) {
+					final ObjectCreator objectCreator = deprecatedTypeMappings.get(type.getName());
+					if (objectCreator != null) {
+						return (EObject) objectCreator.create();
+					}
+				}
+				return super.createObject(eFactory, type);
+			}
+
+		};
 	}
 }

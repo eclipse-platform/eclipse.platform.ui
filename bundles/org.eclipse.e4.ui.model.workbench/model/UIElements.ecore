@@ -767,30 +767,6 @@
           </eAnnotations>
         </eStructuralFeatures>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="RenderedMenu" eSuperTypes="#//ui/menu/Menu">
-        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenu&#xD;&#xA;@noreference&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
-        </eAnnotations>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionManager"
-            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
-            transient="true">
-          <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
-          </eAnnotations>
-        </eStructuralFeatures>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="RenderedToolBar" eSuperTypes="#//ui/menu/ToolBar">
-        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MToolBar&#xD;&#xA;@noreference&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
-        </eAnnotations>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionManager"
-            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
-            transient="true">
-          <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
-          </eAnnotations>
-        </eStructuralFeatures>
-      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarContribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
           <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This represents a potential extension to some toolbar already&#xD;&#xA;defined in the UI.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
@@ -850,55 +826,6 @@
             <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="RenderedMenuItem" eSuperTypes="#//ui/menu/MenuItem">
-        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
-        </eAnnotations>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
-            transient="true">
-          <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
-          </eAnnotations>
-        </eStructuralFeatures>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="OpaqueToolItem" eSuperTypes="#//ui/menu/ToolItem">
-        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
-        </eAnnotations>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="opaqueItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
-            transient="true">
-          <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
-          </eAnnotations>
-        </eStructuralFeatures>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="OpaqueMenuItem" eSuperTypes="#//ui/menu/MenuItem">
-        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
-        </eAnnotations>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="opaqueItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
-            transient="true">
-          <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
-          </eAnnotations>
-        </eStructuralFeatures>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="OpaqueMenuSeparator" eSuperTypes="#//ui/menu/MenuSeparator">
-        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
-        </eAnnotations>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="opaqueItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
-            transient="true">
-          <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
-          </eAnnotations>
-        </eStructuralFeatures>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="OpaqueMenu" eSuperTypes="#//ui/menu/Menu">
-        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
-        </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DynamicMenuContribution" eSuperTypes="#//ui/menu/MenuItem #//Contribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">

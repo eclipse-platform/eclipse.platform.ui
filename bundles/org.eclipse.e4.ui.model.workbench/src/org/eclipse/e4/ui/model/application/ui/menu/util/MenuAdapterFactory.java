@@ -19,35 +19,6 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.menu.*;
-import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
-import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator;
-import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
@@ -183,14 +154,6 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 				return createMenuContributionsAdapter();
 			}
 			@Override
-			public Adapter caseRenderedMenu(MRenderedMenu object) {
-				return createRenderedMenuAdapter();
-			}
-			@Override
-			public Adapter caseRenderedToolBar(MRenderedToolBar object) {
-				return createRenderedToolBarAdapter();
-			}
-			@Override
 			public Adapter caseToolBarContribution(MToolBarContribution object) {
 				return createToolBarContributionAdapter();
 			}
@@ -205,26 +168,6 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseTrimContributions(MTrimContributions object) {
 				return createTrimContributionsAdapter();
-			}
-			@Override
-			public Adapter caseRenderedMenuItem(MRenderedMenuItem object) {
-				return createRenderedMenuItemAdapter();
-			}
-			@Override
-			public Adapter caseOpaqueToolItem(MOpaqueToolItem object) {
-				return createOpaqueToolItemAdapter();
-			}
-			@Override
-			public Adapter caseOpaqueMenuItem(MOpaqueMenuItem object) {
-				return createOpaqueMenuItemAdapter();
-			}
-			@Override
-			public Adapter caseOpaqueMenuSeparator(MOpaqueMenuSeparator object) {
-				return createOpaqueMenuSeparatorAdapter();
-			}
-			@Override
-			public Adapter caseOpaqueMenu(MOpaqueMenu object) {
-				return createOpaqueMenuAdapter();
 			}
 			@Override
 			public Adapter caseDynamicMenuContribution(MDynamicMenuContribution object) {
@@ -535,34 +478,6 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu <em>Rendered Menu</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu
-	 * @generated
-	 */
-	public Adapter createRenderedMenuAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar <em>Rendered Tool Bar</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar
-	 * @generated
-	 */
-	public Adapter createRenderedToolBarAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution <em>Tool Bar Contribution</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -615,76 +530,6 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createTrimContributionsAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem <em>Rendered Menu Item</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem
-	 * @generated
-	 */
-	public Adapter createRenderedMenuItemAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem <em>Opaque Tool Item</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem
-	 * @generated
-	 */
-	public Adapter createOpaqueToolItemAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem <em>Opaque Menu Item</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem
-	 * @generated
-	 */
-	public Adapter createOpaqueMenuItemAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator <em>Opaque Menu Separator</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator
-	 * @generated
-	 */
-	public Adapter createOpaqueMenuSeparatorAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenu <em>Opaque Menu</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenu
-	 * @generated
-	 */
-	public Adapter createOpaqueMenuAdapter() {
 		return null;
 	}
 
