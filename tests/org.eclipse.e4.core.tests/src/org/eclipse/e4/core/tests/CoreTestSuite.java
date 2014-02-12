@@ -51,6 +51,7 @@ import org.eclipse.e4.core.internal.tests.di.RecursiveObjectCreationTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.ExtendedSupplierInjectionTests;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionEventTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionMixedSuppliersTest;
+import org.eclipse.e4.core.internal.tests.di.extensions.InjectionOSGiHandlerTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionOSGiTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionPreferencesTest;
 import org.eclipse.e4.core.internal.tests.nls.NLSTest;
@@ -66,6 +67,7 @@ public class CoreTestSuite extends TestSuite {
 		addTestSuite(InjectionMixedSuppliersTest.class);
 		addTestSuite(InjectionEventTest.class);
 		addTestSuite(InjectionOSGiTest.class);
+		addTestSuite(InjectionOSGiHandlerTest.class);
 
 		// DI
 		addTestSuite(InjectionOrderTest.class);

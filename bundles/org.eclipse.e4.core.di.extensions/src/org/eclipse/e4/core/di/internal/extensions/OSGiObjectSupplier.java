@@ -42,11 +42,14 @@ public class OSGiObjectSupplier extends ExtendedObjectSupplier {
 			final Bundle bundle = FrameworkUtil.getBundle(requestingObjectClass);
 
 			// Cannot use BundleListener as a BL can only be registered with a BC (which might be null)
+			// Iff track is request and there is no listener yet, lets track the bundle
 			if (track) {
 				if (!requestor2listener.containsKey(requestor)) {
 					track(bundle, requestor);
 				}
-			} else {
+				// Handlers only executed once and thus don't track the BC/Bundle. 
+				// Still guard to now de-register a non-existing listener.
+			} else if (requestor2listener.containsKey(requestor)) {
 				untrack(requestor);
 			}
 
