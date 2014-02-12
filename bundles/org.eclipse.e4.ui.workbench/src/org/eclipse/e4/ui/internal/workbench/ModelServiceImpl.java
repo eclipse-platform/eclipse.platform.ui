@@ -102,7 +102,8 @@ public class ModelServiceImpl implements EModelService {
 	 *             if the given appContext is <code>null</code>
 	 */
 	public ModelServiceImpl(IEclipseContext appContext) {
-		if (appContext == null) {
+		if (appContext == null)
+		 {
 			throw new NullPointerException("No application context given!"); //$NON-NLS-1$
 		}
 
@@ -116,7 +117,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#createModelElement(java.lang.Class)
 	 */
 	@SuppressWarnings("unchecked")
@@ -269,7 +270,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#findElements(org.eclipse.e4.ui.model.
 	 * application.ui.MUIElement, java.lang.String, java.lang.Class, java.util.List)
 	 */
@@ -296,7 +297,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#find(java.lang.String,
 	 * org.eclipse.e4.ui.model.application.MElementContainer)
 	 */
@@ -314,7 +315,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#countRenderableChildren(org.eclipse.e4
 	 * .ui.model.application.ui.MUIElement)
@@ -337,18 +338,18 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#getContainingContext(org.eclipse.e4.ui
 	 * .model .application.MUIElement)
 	 */
-	public IEclipseContext getContainingContext(MApplicationElement element) {
+	public IEclipseContext getContainingContext(MUIElement element) {
 		return ModelUtils.getContainingContext(element);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#cloneElement(org.eclipse.e4.ui.model.
 	 * application.ui.MUIElement, java.lang.String)
 	 */
@@ -384,7 +385,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#cloneSnippet(org.eclipse.e4.ui.model.
 	 * application.MApplication, java.lang.String)
 	 */
@@ -425,7 +426,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#findSnippet(org.eclipse.e4.ui.model.
 	 * application.ui.MSnippetContainer, java.lang.String)
 	 */
@@ -446,7 +447,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#findHandler(org.eclipse.e4.ui.model.
 	 * application.commands.MHandlerContainer, java.lang.String)
 	 */
@@ -466,7 +467,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#bringToTop(org.eclipse.e4.ui.model.application
 	 * .ui.MUIElement)
@@ -527,7 +528,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#findPlaceholderFor(org.eclipse.e4.ui.model
 	 * .application.ui.basic.MWindow, org.eclipse.e4.ui.model.application.ui.MUIElement)
@@ -563,7 +564,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#move(org.eclipse.e4.ui.model.application.
 	 * MUIElement, org.eclipse.e4.ui.model.application.MElementContainer)
@@ -574,7 +575,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#move(org.eclipse.e4.ui.model.application.
 	 * MUIElement, org.eclipse.e4.ui.model.application.MElementContainer, boolean)
@@ -586,7 +587,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#move(org.eclipse.e4.ui.model.application.
 	 * MUIElement, org.eclipse.e4.ui.model.application.MElementContainer, int)
@@ -597,7 +598,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#move(org.eclipse.e4.ui.model.application.
 	 * MUIElement, org.eclipse.e4.ui.model.application.MElementContainer, int, boolean)
@@ -643,7 +644,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#insert(org.eclipse.e4.ui.model.application
 	 * .MPartSashContainerElement, org.eclipse.e4.ui.model.application.MPartSashContainerElement,
@@ -791,7 +792,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#detach(org.eclipse.e4.ui.model.application
 	 * .MPartSashContainerElement)
@@ -852,7 +853,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#getTrim(org.eclipse.e4.ui.model.application
 	 * .ui.basic.MTrimmedWindow, org.eclipse.e4.ui.model.application.ui.SideValue)
@@ -886,7 +887,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#getTopLevelWindowFor(org.eclipse.e4.ui
 	 * .model .application.ui.MUIElement)
@@ -906,7 +907,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#getPerspectiveFor(org.eclipse.e4.ui.model
 	 * .application.ui.MUIElement)
@@ -1027,7 +1028,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#getActivePerspective(org.eclipse.e4.ui
 	 * .model.application.ui.basic.MWindow)
@@ -1043,7 +1044,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#toBeRenderedCount(org.eclipse.e4.ui.model
 	 * .application.ui.MElementContainer)
@@ -1060,7 +1061,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#getContainer(org.eclipse.e4.ui.model.
 	 * application.ui.MUIElement)
 	 */
@@ -1135,7 +1136,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#getPartDescriptor(java.lang.String)
 	 */
 	public MPartDescriptor getPartDescriptor(String id) {
@@ -1155,7 +1156,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#removeLocalPlaceholders(org.eclipse.e4
 	 * .ui.model.application.ui.basic.MWindow,
@@ -1206,7 +1207,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#isLastEditorStack(org.eclipse.e4.ui.model
 	 * .application.ui.MUIElement)
@@ -1239,7 +1240,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#hostElement(org.eclipse.e4.ui.model.
 	 * application.ui.MUIElement, org.eclipse.e4.ui.model.application.ui.basic.MWindow,
 	 * java.lang.Object, org.eclipse.e4.core.contexts.IEclipseContext)
@@ -1256,7 +1257,7 @@ public class ModelServiceImpl implements EModelService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#isHostedElement(org.eclipse.e4.ui.model
 	 * .application.ui.MUIElement, org.eclipse.e4.ui.model.application.ui.basic.MWindow)
