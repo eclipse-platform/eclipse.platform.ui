@@ -21,6 +21,7 @@ import org.eclipse.ui.tests.decorators.DecoratorsTestSuite;
 import org.eclipse.ui.tests.dialogs.UIAutomatedSuite;
 import org.eclipse.ui.tests.encoding.EncodingTestSuite;
 import org.eclipse.ui.tests.fieldassist.FieldAssistTestSuite;
+import org.eclipse.ui.tests.keys.KeysTestSuite;
 import org.eclipse.ui.tests.navigator.NavigatorTestSuite;
 import org.eclipse.ui.tests.operations.OperationsTestSuite;
 import org.eclipse.ui.tests.preferences.PreferencesTestSuite;
@@ -59,7 +60,7 @@ public class UiTestSuite extends TestSuite {
 		addTest(new DataTransferTestSuite());
 		addTest(new PreferencesTestSuite());
 		// addTest(new DynamicPluginsTestSuite());
-		// addTest(new KeysTestSuite());
+		addTest(new KeysTestSuite());
 		// addTest(new MultiPageEditorTestSuite());
 		addTest(new ActivitiesTestSuite());
 		// addTest(new CommandsTestSuite());
