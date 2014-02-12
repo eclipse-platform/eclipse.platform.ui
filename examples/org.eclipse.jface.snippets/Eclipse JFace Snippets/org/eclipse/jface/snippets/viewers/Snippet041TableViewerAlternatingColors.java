@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Tom Schindl and others.
+ * Copyright (c) 2007, 2014 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
+ *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -29,39 +30,42 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * Demonstrate alternating row colors using new Jace 3.3 API 
- * 
+ * Demonstrate alternating row colors using new Jace 3.3 API
+ *
  * @author Tom Schindl <tom.schindl@bestsolution.at>
- * 
+ *
  */
 public class Snippet041TableViewerAlternatingColors {
 
 	private class MyContentProvider implements IStructuredContentProvider {
-		
+
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return (MyModel[]) inputElement;
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
@@ -74,6 +78,7 @@ public class Snippet041TableViewerAlternatingColors {
 			this.counter = counter;
 		}
 
+		@Override
 		public String toString() {
 			return "Item " + this.counter;
 		}
@@ -81,10 +86,10 @@ public class Snippet041TableViewerAlternatingColors {
 
 	private class OptimizedIndexSearcher {
 		private int lastIndex = 0;
-		
+
 		public boolean isEven(TableItem item) {
 			TableItem[] items = item.getParent().getItems();
-			
+
 			// 1. Search the next ten items
 			for( int i = lastIndex; i < items.length && lastIndex + 10 > i; i++ ) {
 				if( items[i] == item ) {
@@ -92,7 +97,7 @@ public class Snippet041TableViewerAlternatingColors {
 					return lastIndex % 2 == 0;
 				}
 			}
-			
+
 			// 2. Search the previous ten items
 			for( int i = lastIndex; i < items.length && lastIndex - 10 > i; i-- ) {
 				if( items[i] == item ) {
@@ -100,7 +105,7 @@ public class Snippet041TableViewerAlternatingColors {
 					return lastIndex % 2 == 0;
 				}
 			}
-			
+
 			// 3. Start from the beginning
 			for( int i = 0; i < items.length; i++ ) {
 				if( items[i] == item ) {
@@ -108,24 +113,25 @@ public class Snippet041TableViewerAlternatingColors {
 					return lastIndex % 2 == 0;
 				}
 			}
-		
+
 			return false;
 		}
 	}
-	
+
 	public Snippet041TableViewerAlternatingColors(Shell shell) {
 		final TableViewer v = new TableViewer(shell, SWT.BORDER
 				| SWT.FULL_SELECTION|SWT.VIRTUAL);
 		v.setContentProvider(new MyContentProvider());
 
 		final OptimizedIndexSearcher searcher = new OptimizedIndexSearcher();
-		
+
 		TableViewerColumn column = new TableViewerColumn(v, SWT.NONE);
 		column.getColumn().setWidth(200);
 		column.getColumn().setText("Column 1");
 		column.setLabelProvider(new ColumnLabelProvider() {
 			boolean even = true;
-			
+
+			@Override
 			public Color getBackground(Object element) {
 				if( even ) {
 					return null;
@@ -133,7 +139,8 @@ public class Snippet041TableViewerAlternatingColors {
 					return v.getTable().getDisplay().getSystemColor(SWT.COLOR_GRAY);
 				}
 			}
-			
+
+			@Override
 			public void update(ViewerCell cell) {
 				even = searcher.isEven((TableItem)cell.getItem());
 				super.update(cell);
@@ -146,6 +153,7 @@ public class Snippet041TableViewerAlternatingColors {
 		column.setLabelProvider(new ColumnLabelProvider() {
 			boolean even = true;
 
+			@Override
 			public Color getBackground(Object element) {
 				if( even ) {
 					return null;
@@ -153,32 +161,35 @@ public class Snippet041TableViewerAlternatingColors {
 					return v.getTable().getDisplay().getSystemColor(SWT.COLOR_GRAY);
 				}
 			}
-			
+
+			@Override
 			public void update(ViewerCell cell) {
 				even = searcher.isEven((TableItem)cell.getItem());
 				super.update(cell);
 			}
-			
+
 		});
 
 		MyModel[] model = createModel();
 		v.setInput(model);
 		v.getTable().setLinesVisible(true);
 		v.getTable().setHeaderVisible(true);
-		
+
 		final ViewerFilter filter = new ViewerFilter() {
 
+			@Override
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
 				return ((MyModel)element).counter % 2 == 0;
 			}
-			
+
 		};
-		
+
 		Button b = new Button(shell,SWT.PUSH);
 		b.addSelectionListener(new SelectionAdapter() {
 			boolean b = true;
-			
+
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if( b ) {
 					v.setFilters(new ViewerFilter[] {filter});
@@ -188,7 +199,7 @@ public class Snippet041TableViewerAlternatingColors {
 					b = true;
 				}
 			}
-			
+
 		});
 	}
 

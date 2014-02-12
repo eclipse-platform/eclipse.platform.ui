@@ -42,6 +42,7 @@ public class Snippet046UpdateViewerFromBackgroundThread {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return (MyModel[])inputElement;
 		}
@@ -49,6 +50,7 @@ public class Snippet046UpdateViewerFromBackgroundThread {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 
 		}
@@ -56,6 +58,7 @@ public class Snippet046UpdateViewerFromBackgroundThread {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 		}
@@ -70,6 +73,7 @@ public class Snippet046UpdateViewerFromBackgroundThread {
 			this.counter = counter;
 		}
 
+		@Override
 		public String toString() {
 			return "Item " + this.counter;
 		}
@@ -77,6 +81,7 @@ public class Snippet046UpdateViewerFromBackgroundThread {
 
 	public class MyLabelProvider extends LabelProvider implements ITableLabelProvider {
 
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if( columnIndex == 0 ) {
 				return images[((MyModel)element).finished?0:1];
@@ -85,6 +90,7 @@ public class Snippet046UpdateViewerFromBackgroundThread {
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			return "Column " + columnIndex + " => " + element.toString();
 		}
@@ -124,9 +130,11 @@ public class Snippet046UpdateViewerFromBackgroundThread {
 		b.setText("Start Long Task");
 		b.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				final Thread t = new Thread() {
 
+					@Override
 					public void run() {
 						for( int i = 0; i < model.length; i++ ) {
 							if( v.getTable().isDisposed()) {
@@ -135,6 +143,7 @@ public class Snippet046UpdateViewerFromBackgroundThread {
 							final int j = i;
 							v.getTable().getDisplay().asyncExec(new Runnable() {
 
+								@Override
 								public void run() {
 									model[j].finished = true;
 									v.update(model[j], null);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 - 2013 Tom Schindl and others.
+ * Copyright (c) 2006 - 2014 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public class Snippet003TableLabelProvider {
 
 	public class MyLabelProvider extends LabelProvider implements ITableLabelProvider {
 
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if( columnIndex == 1 ) {
 				return images[((MyModel)element).counter%4];
@@ -55,6 +56,7 @@ public class Snippet003TableLabelProvider {
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			return "Column " + columnIndex + " => " + element.toString();
 		}

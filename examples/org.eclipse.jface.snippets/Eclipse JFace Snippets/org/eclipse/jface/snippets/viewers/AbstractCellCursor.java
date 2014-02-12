@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 414565
  ******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -29,13 +30,13 @@ import org.eclipse.swt.widgets.Listener;
  */
 public abstract class AbstractCellCursor extends Canvas {
 	private ViewerCell[] cells = new ViewerCell[0];
-	
+
 	private ColumnViewer viewer;
-	
+
 	private int activationTime = 0;
-	
+
 	private boolean inFocusRequest = false;
-	
+
 	/**
 	 * @param viewer
 	 * @param style
@@ -43,9 +44,10 @@ public abstract class AbstractCellCursor extends Canvas {
 	public AbstractCellCursor(ColumnViewer viewer, int style) {
 		super((Composite) viewer.getControl(),style);
 		this.viewer = viewer;
-		
+
 		Listener l = new Listener() {
 
+			@Override
 			public void handleEvent(Event event) {
 				switch (event.type) {
 				case SWT.Paint:
@@ -58,7 +60,7 @@ public abstract class AbstractCellCursor extends Canvas {
 						list.add(cells[i].getElement());
 					}
 					AbstractCellCursor.this.viewer.setSelection(new StructuredSelection(list));
-					
+
 					break;
 				case SWT.MouseDown:
 					if( event.time < activationTime ) {
@@ -85,17 +87,17 @@ public abstract class AbstractCellCursor extends Canvas {
 				}
 			}
 		};
-		
+
 		addListener(SWT.Paint, l);
 		addListener(SWT.KeyDown, l);
 		addListener(SWT.MouseDown, l);
 		addListener(SWT.MouseDoubleClick, l);
 		getParent().addListener(SWT.FocusIn,l);
 	}
-	
+
 	/**
 	 * @param cell
-	 * @param eventTime 
+	 * @param eventTime
 	 */
 	public void setSelection(ViewerCell cell, int eventTime) {
 		this.cells = new ViewerCell[] { cell };
@@ -104,14 +106,14 @@ public abstract class AbstractCellCursor extends Canvas {
 		redraw();
 		activationTime = eventTime + getDisplay().getDoubleClickTime();
 	}
-	
+
 	/**
 	 * @return the cells who should be highlighted
 	 */
 	protected ViewerCell[] getSelectedCells() {
 		return cells;
 	}
-	
+
 	private Event copyEvent(Event event) {
 		Event cEvent = new Event();
 		cEvent.button = event.button;
@@ -137,10 +139,10 @@ public abstract class AbstractCellCursor extends Canvas {
 		Point p = viewer.getControl().toControl(toDisplay(event.x, event.y));
 		cEvent.x = p.x;
 		cEvent.y = p.y;
-		
+
 		return cEvent;
 	}
-	
+
 	/**
 	 * @param event
 	 */

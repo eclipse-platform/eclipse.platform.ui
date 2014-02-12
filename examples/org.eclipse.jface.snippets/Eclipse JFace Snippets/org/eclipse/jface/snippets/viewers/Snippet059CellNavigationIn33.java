@@ -70,13 +70,16 @@ public class Snippet059CellNavigationIn33 {
 
 	private class MyContentProvider implements IStructuredContentProvider {
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return (Person[]) inputElement;
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
@@ -111,14 +114,17 @@ public class Snippet059CellNavigationIn33 {
 			this.editor = editor;
 		}
 
+		@Override
 		protected boolean canEdit(Object element) {
 			return true;
 		}
 
+		@Override
 		protected CellEditor getCellEditor(Object element) {
 			return editor;
 		}
 
+		@Override
 		protected void setValue(Object element, Object value) {
 			doSetValue(element, value);
 			getViewer().update(element, null);
@@ -138,6 +144,7 @@ public class Snippet059CellNavigationIn33 {
 		column.getColumn().setMoveable(true);
 		column.setLabelProvider(new ColumnLabelProvider() {
 
+			@Override
 			public String getText(Object element) {
 				return ((Person) element).givenname;
 			}
@@ -145,10 +152,12 @@ public class Snippet059CellNavigationIn33 {
 
 		column.setEditingSupport(new AbstractEditingSupport(v) {
 
+			@Override
 			protected Object getValue(Object element) {
 				return ((Person) element).givenname;
 			}
 
+			@Override
 			protected void doSetValue(Object element, Object value) {
 				((Person) element).givenname = value.toString();
 			}
@@ -161,6 +170,7 @@ public class Snippet059CellNavigationIn33 {
 		columnA.getColumn().setMoveable(true);
 		columnA.setLabelProvider(new ColumnLabelProvider() {
 
+			@Override
 			public String getText(Object element) {
 				return ((Person) element).surname;
 			}
@@ -169,10 +179,12 @@ public class Snippet059CellNavigationIn33 {
 
 		columnA.setEditingSupport(new AbstractEditingSupport(v) {
 
+			@Override
 			protected Object getValue(Object element) {
 				return ((Person) element).surname;
 			}
 
+			@Override
 			protected void doSetValue(Object element, Object value) {
 				((Person) element).surname = value.toString();
 			}
@@ -185,6 +197,7 @@ public class Snippet059CellNavigationIn33 {
 		column.getColumn().setMoveable(true);
 		column.setLabelProvider(new ColumnLabelProvider() {
 
+			@Override
 			public String getText(Object element) {
 				return ((Person) element).email;
 			}
@@ -193,10 +206,12 @@ public class Snippet059CellNavigationIn33 {
 
 		column.setEditingSupport(new AbstractEditingSupport(v) {
 
+			@Override
 			protected Object getValue(Object element) {
 				return ((Person) element).email;
 			}
 
+			@Override
 			protected void doSetValue(Object element, Object value) {
 				((Person) element).email = value.toString();
 			}
@@ -209,6 +224,7 @@ public class Snippet059CellNavigationIn33 {
 		column.getColumn().setMoveable(true);
 		column.setLabelProvider(new ColumnLabelProvider() {
 
+			@Override
 			public String getText(Object element) {
 				return ((Person) element).gender;
 			}
@@ -219,12 +235,14 @@ public class Snippet059CellNavigationIn33 {
 				.getTable(), new String[] { "M", "F" });
 		column.setEditingSupport(new AbstractEditingSupport(v, editor) {
 
+			@Override
 			protected Object getValue(Object element) {
 				if (((Person) element).gender.equals("M"))
 					return new Integer(0);
 				return new Integer(1);
 			}
 
+			@Override
 			protected void doSetValue(Object element, Object value) {
 				if (((Integer) value).intValue() == 0) {
 					((Person) element).gender = "M";
@@ -269,6 +287,7 @@ public class Snippet059CellNavigationIn33 {
 				return null;
 			}
 
+			@Override
 			public ViewerCell findSelectedCell(ColumnViewer viewer,
 					ViewerCell currentSelectedCell, Event event) {
 				ViewerCell cell = internalFindSelectedCell(viewer,
@@ -304,6 +323,7 @@ public class Snippet059CellNavigationIn33 {
 
 		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(
 				v) {
+			@Override
 			protected boolean isEditorActivationEvent(
 					ColumnViewerEditorActivationEvent event) {
 				return event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL
@@ -322,16 +342,19 @@ public class Snippet059CellNavigationIn33 {
 		v.getColumnViewerEditor().addEditorActivationListener(
 				new ColumnViewerEditorActivationListener() {
 
+					@Override
 					public void afterEditorActivated(
 							ColumnViewerEditorActivationEvent event) {
 
 					}
 
+					@Override
 					public void afterEditorDeactivated(
 							ColumnViewerEditorDeactivationEvent event) {
 
 					}
 
+					@Override
 					public void beforeEditorActivated(
 							ColumnViewerEditorActivationEvent event) {
 						ViewerCell cell = (ViewerCell) event.getSource();
@@ -339,6 +362,7 @@ public class Snippet059CellNavigationIn33 {
 								v.getTable().getColumn(cell.getColumnIndex()));
 					}
 
+					@Override
 					public void beforeEditorDeactivated(
 							ColumnViewerEditorDeactivationEvent event) {
 
@@ -351,6 +375,7 @@ public class Snippet059CellNavigationIn33 {
 		b.setText("Hide");
 		b.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (columnA.getColumn().getWidth() == 0) {
 					b.setText("Hide");
@@ -503,16 +528,19 @@ public class Snippet059CellNavigationIn33 {
 			create(viewer, null, editorActivationStrategy, feature);
 		}
 
+		@Override
 		protected void setEditor(Control w, Item item, int columnNumber) {
 			tableEditor.setEditor(w, (TableItem) item, columnNumber);
 		}
 
+		@Override
 		protected void setLayoutData(LayoutData layoutData) {
 			tableEditor.grabHorizontal = layoutData.grabHorizontal;
 			tableEditor.horizontalAlignment = layoutData.horizontalAlignment;
 			tableEditor.minimumWidth = layoutData.minimumWidth;
 		}
 
+		@Override
 		public ViewerCell getFocusCell() {
 			if (focusCellManager != null) {
 				return focusCellManager.getFocusCell();
@@ -521,6 +549,7 @@ public class Snippet059CellNavigationIn33 {
 			return super.getFocusCell();
 		}
 
+		@Override
 		protected void updateFocusCell(ViewerCell focusCell,
 				ColumnViewerEditorActivationEvent event) {
 			// Update the focus cell when we activated the editor with these 2
@@ -566,6 +595,7 @@ public class Snippet059CellNavigationIn33 {
 			}
 		}
 
+		@Override
 		protected void processTraverseEvent(int columnIndex, ViewerRow row,
 				TraverseEvent event) {
 			ViewerCell cell2edit = null;

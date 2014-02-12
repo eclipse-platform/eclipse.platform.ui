@@ -50,6 +50,7 @@ public class Snippet054NativeControlsInViewers {
 		 *
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return (MyModel[]) inputElement;
 		}
@@ -59,6 +60,7 @@ public class Snippet054NativeControlsInViewers {
 		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 
 		}
@@ -69,6 +71,7 @@ public class Snippet054NativeControlsInViewers {
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 		}
@@ -82,6 +85,7 @@ public class Snippet054NativeControlsInViewers {
 			this.counter = counter;
 		}
 
+		@Override
 		public String toString() {
 			return "Item " + this.counter;
 		}
@@ -98,6 +102,7 @@ public class Snippet054NativeControlsInViewers {
 		column.getColumn().setText("Column 1");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
+			@Override
 			public String getText(Object element) {
 				return element.toString();
 			}
@@ -109,10 +114,12 @@ public class Snippet054NativeControlsInViewers {
 		column.getColumn().setText("Column 2");
 		column.setLabelProvider(new CellLabelProvider() {
 
+			@Override
 			public void update(ViewerCell cell) {
 				final TableItem item = (TableItem) cell.getItem();
 				DisposeListener listener = new DisposeListener() {
 
+					@Override
 					public void widgetDisposed(DisposeEvent e) {
 						if( item.getData("EDITOR") != null ) {
 							TableEditor editor = (TableEditor) item.getData("EDITOR");
@@ -167,6 +174,7 @@ public class Snippet054NativeControlsInViewers {
 		b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				v.setInput(createModel((int)(Math.random() * 10)));
 			}
@@ -178,6 +186,7 @@ public class Snippet054NativeControlsInViewers {
 		b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				v.refresh();
 			}

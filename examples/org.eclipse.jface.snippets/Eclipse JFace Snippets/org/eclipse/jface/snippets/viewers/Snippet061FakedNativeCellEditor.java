@@ -51,8 +51,6 @@ import org.eclipse.swt.widgets.TreeItem;
 /**
  * A simple TreeViewer to demonstrate usage
  * 
- * @author Tom Schindl <tom.schindl@bestsolution.at>
- * 
  */
 public class Snippet061FakedNativeCellEditor {
 	public abstract class EmulatedNativeCheckBoxLabelProvider extends
@@ -131,10 +129,12 @@ public class Snippet061FakedNativeCellEditor {
 			}
 		}
 
+		@Override
 		protected void measure(Event event, Object element) {
 			event.height = getImage(element).getBounds().height;
 		}
 
+		@Override
 		protected void paint(Event event, Object element) {
 
 			Image img = getImage(element);
@@ -178,12 +178,14 @@ public class Snippet061FakedNativeCellEditor {
 
 		FocusCellOwnerDrawHighlighter h = new FocusCellOwnerDrawHighlighter(v) {
 
+			@Override
 			protected Color getSelectedCellBackgroundColorNoFocus(
 					ViewerCell cell) {
 				return shell.getDisplay().getSystemColor(
 						SWT.COLOR_LIST_SELECTION);
 			}
 
+			@Override
 			protected Color getSelectedCellForegroundColorNoFocus(
 					ViewerCell cell) {
 				return shell.getDisplay().getSystemColor(
@@ -213,28 +215,34 @@ public class Snippet061FakedNativeCellEditor {
 		column.getColumn().setText("File");
 		column.setLabelProvider(new OwnerDrawLabelProvider() {
 
+			@Override
 			protected void measure(Event event, Object element) {
 
 			}
 
+			@Override
 			protected void paint(Event event, Object element) {
 				((TreeItem) event.item).setText(element.toString());
 			}
 
 		});
 		column.setEditingSupport(new EditingSupport(v) {
+			@Override
 			protected boolean canEdit(Object element) {
 				return true;
 			}
 
+			@Override
 			protected CellEditor getCellEditor(Object element) {
 				return textCellEditor;
 			}
 
+			@Override
 			protected Object getValue(Object element) {
 				return ((File) element).counter + "";
 			}
 
+			@Override
 			protected void setValue(Object element, Object value) {
 				((File) element).counter = Integer.parseInt(value.toString());
 				v.update(element, null);
@@ -247,24 +255,29 @@ public class Snippet061FakedNativeCellEditor {
 		column.getColumn().setText("Read");
 		column.setLabelProvider(new EmulatedNativeCheckBoxLabelProvider(v) {
 
+			@Override
 			protected boolean isChecked(Object element) {
 				return ((File) element).read;
 			}
 
 		});
 		column.setEditingSupport(new EditingSupport(v) {
+			@Override
 			protected boolean canEdit(Object element) {
 				return true;
 			}
 
+			@Override
 			protected CellEditor getCellEditor(Object element) {
 				return booleanCellEditor;
 			}
 
+			@Override
 			protected Object getValue(Object element) {
 				return new Boolean(((File) element).read);
 			}
 
+			@Override
 			protected void setValue(Object element, Object value) {
 				((File) element).read = ((Boolean) value).booleanValue();
 				v.update(element, null);
@@ -277,24 +290,29 @@ public class Snippet061FakedNativeCellEditor {
 		column.getColumn().setText("Write");
 		column.setLabelProvider(new EmulatedNativeCheckBoxLabelProvider(v) {
 
+			@Override
 			protected boolean isChecked(Object element) {
 				return ((File) element).write;
 			}
 
 		});
 		column.setEditingSupport(new EditingSupport(v) {
+			@Override
 			protected boolean canEdit(Object element) {
 				return true;
 			}
 
+			@Override
 			protected CellEditor getCellEditor(Object element) {
 				return booleanCellEditor;
 			}
 
+			@Override
 			protected Object getValue(Object element) {
 				return new Boolean(((File) element).write);
 			}
 
+			@Override
 			protected void setValue(Object element, Object value) {
 				((File) element).write = ((Boolean) value).booleanValue();
 				v.update(element, null);
@@ -307,24 +325,29 @@ public class Snippet061FakedNativeCellEditor {
 		column.getColumn().setText("Execute");
 		column.setLabelProvider(new EmulatedNativeCheckBoxLabelProvider(v) {
 
+			@Override
 			protected boolean isChecked(Object element) {
 				return ((File) element).execute;
 			}
 
 		});
 		column.setEditingSupport(new EditingSupport(v) {
+			@Override
 			protected boolean canEdit(Object element) {
 				return true;
 			}
 
+			@Override
 			protected CellEditor getCellEditor(Object element) {
 				return booleanCellEditor;
 			}
 
+			@Override
 			protected Object getValue(Object element) {
 				return new Boolean(((File) element).execute);
 			}
 
+			@Override
 			protected void setValue(Object element, Object value) {
 				((File) element).execute = ((Boolean) value).booleanValue();
 				v.update(element, null);
@@ -378,20 +401,25 @@ public class Snippet061FakedNativeCellEditor {
 
 	private class MyContentProvider implements ITreeContentProvider {
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((File) inputElement).child.toArray();
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			return getElements(parentElement);
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			if (element == null) {
 				return null;
@@ -399,6 +427,7 @@ public class Snippet061FakedNativeCellEditor {
 			return ((File) element).parent;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			return ((File) element).child.size() > 0;
 		}
@@ -424,6 +453,7 @@ public class Snippet061FakedNativeCellEditor {
 			this.execute = counter % 4 == 0;
 		}
 
+		@Override
 		public String toString() {
 			String rv = "Item ";
 			if (parent != null) {

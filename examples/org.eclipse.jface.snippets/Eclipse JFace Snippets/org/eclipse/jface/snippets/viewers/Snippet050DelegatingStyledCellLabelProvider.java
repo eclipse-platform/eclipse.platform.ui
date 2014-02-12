@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,6 +101,7 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 		button1.setText("Refresh Viewers"); //$NON-NLS-1$
 		button1.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ownerDrawViewer.refresh();
 				normalViewer.refresh();
@@ -112,6 +113,7 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 		button2.setSelection(true);
 		button2.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean newState= button2.getSelection();
 				styledCellLP1.setOwnerDrawEnabled(newState);
@@ -124,6 +126,7 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 		button3.setSelection(true);
 		button3.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean newState= button3.getSelection();
 				styledCellLP2.setOwnerDrawEnabled(newState);
@@ -179,6 +182,7 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 		private static final Image IMAGE1= new Image(DISPLAY, DISPLAY.getSystemImage(SWT.ICON_WARNING).getImageData().scaledTo(IMAGE_SIZE, IMAGE_SIZE));
 		private static final Image IMAGE2= new Image(DISPLAY, DISPLAY.getSystemImage(SWT.ICON_ERROR).getImageData().scaledTo(IMAGE_SIZE, IMAGE_SIZE));
 
+		@Override
 		public Image getImage(Object element) {
 			if (element instanceof File) {
 				File file= (File) element;
@@ -191,10 +195,12 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 			return null;
 		}
 
+		@Override
 		public String getText(Object element) {
 			return getStyledText(element).toString();
 		}
 
+		@Override
 		public StyledString getStyledText(Object element) {
 			StyledString styledString= new StyledString();
 			if (element instanceof File) {
@@ -214,10 +220,12 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 	}
 
 	private static class ModifiedDateLabelProvider extends ColumnLabelProvider implements IStyledLabelProvider {
+		@Override
 		public String getText(Object element) {
 			return getStyledText(element).toString();
 		}
 
+		@Override
 		public StyledString getStyledText(Object element) {
 			StyledString styledString= new StyledString();
 			if (element instanceof File) {
@@ -237,6 +245,7 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 
 	private static class FileSystemContentProvider implements ITreeContentProvider {
 
+		@Override
 		public Object[] getChildren(Object element) {
 			if (element instanceof File) {
 				File file= (File) element;
@@ -252,6 +261,7 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 			return new Object[0];
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			if (element instanceof File) {
 				File file= (File) element;
@@ -260,17 +270,21 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			return getChildren(element).length > 0;
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}

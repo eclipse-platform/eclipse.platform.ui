@@ -60,6 +60,7 @@ public class Snippet033CellEditorPerRowPre33 {
 		 * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object,
 		 *      java.lang.String)
 		 */
+		@Override
 		public boolean canModify(Object element, String property) {
 			return true;
 		}
@@ -70,6 +71,7 @@ public class Snippet033CellEditorPerRowPre33 {
 		 * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object,
 		 *      java.lang.String)
 		 */
+		@Override
 		public Object getValue(Object element, String property) {
 			if( element instanceof MyModel3 ) {
 				return new Boolean(((MyModel3)element).checked);
@@ -86,6 +88,7 @@ public class Snippet033CellEditorPerRowPre33 {
 		 * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object,
 		 *      java.lang.String, java.lang.Object)
 		 */
+		@Override
 		public void modify(Object element, String property, Object value) {
 			TableItem item = (TableItem) element;
 
@@ -107,6 +110,7 @@ public class Snippet033CellEditorPerRowPre33 {
 		 *
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return (MyModel[]) inputElement;
 		}
@@ -116,6 +120,7 @@ public class Snippet033CellEditorPerRowPre33 {
 		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 
 		}
@@ -126,6 +131,7 @@ public class Snippet033CellEditorPerRowPre33 {
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 		}
@@ -139,6 +145,7 @@ public class Snippet033CellEditorPerRowPre33 {
 			this.counter = counter;
 		}
 
+		@Override
 		public String toString() {
 			return "Item " + this.counter;
 		}
@@ -150,6 +157,7 @@ public class Snippet033CellEditorPerRowPre33 {
 			super(counter);
 		}
 
+		@Override
 		public String toString() {
 			return "Special Item " + this.counter;
 		}
@@ -162,6 +170,7 @@ public class Snippet033CellEditorPerRowPre33 {
 			super(counter);
 		}
 
+		@Override
 		public String toString() {
 			return "Special Item " + this.counter;
 		}
@@ -182,14 +191,17 @@ public class Snippet033CellEditorPerRowPre33 {
 
 		private class DelegatingListener implements ICellEditorListener {
 
+			@Override
 			public void applyEditorValue() {
 				fireApplyEditorValue();
 			}
 
+			@Override
 			public void cancelEditor() {
 				fireCancelEditor();
 			}
 
+			@Override
 			public void editorValueChanged(boolean oldValidState,
 					boolean newValidState) {
 				fireEditorValueChanged(oldValidState, newValidState);
@@ -217,24 +229,29 @@ public class Snippet033CellEditorPerRowPre33 {
 			this.delegatingCheckBoxEditor.addListener(l);
 		}
 
+		@Override
 		protected Control createControl(Composite parent) {
 			return null;
 		}
 
+		@Override
 		protected Object doGetValue() {
 			return activeEditor.getValue();
 		}
 
+		@Override
 		protected void doSetFocus() {
 			activeEditor.setFocus();
 		}
 
+		@Override
 		public void activate() {
 			if( activeEditor != null ) {
 				activeEditor.activate();
 			}
 		}
 
+		@Override
 		protected void doSetValue(Object value) {
 
 			if( ((IStructuredSelection)this.viewer.getSelection()).getFirstElement() instanceof MyModel3 ) {
@@ -248,6 +265,7 @@ public class Snippet033CellEditorPerRowPre33 {
 			activeEditor.setValue(value);
 		}
 
+		@Override
 		public void deactivate() {
 			if( activeEditor != null ) {
 				Control control = activeEditor.getControl();
@@ -257,10 +275,12 @@ public class Snippet033CellEditorPerRowPre33 {
 			}
 		}
 
+		@Override
 		public void dispose() {
 
 		}
 
+		@Override
 		public Control getControl() {
 			return activeEditor.getControl();
 		}
@@ -288,6 +308,7 @@ public class Snippet033CellEditorPerRowPre33 {
 	}
 
 	private class MyLabelProvider extends LabelProvider {
+		@Override
 		public Image getImage(Object element) {
 			if( element instanceof MyModel3 ) {
 				if( ((MyModel3)element).checked ) {

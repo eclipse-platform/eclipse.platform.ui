@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Tom Schindl and others.
+ * Copyright (c) 2006, 2014 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,16 @@
  * Contributors:
  *     Tom Schindl - initial API and implementation
  *     IBM - Improvement for Bug 159625 [Snippets] Update Snippet011CustomTooltips to reflect new API
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 414565
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
@@ -28,28 +28,9 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Explore New API: JFace custom tooltips drawing.
- * 
- * @author Tom Schindl <tom.schindl@bestsolution.at>
- * @since 3.3
+ *
  */
 public class Snippet011CustomTooltips {
-	private static class MyContentProvider implements
-			IStructuredContentProvider {
-
-		public Object[] getElements(Object inputElement) {
-			return new String[] { "one", "two", "three", "four", "five", "six",
-					"seven", "eight", "nine", "ten" };
-		}
-
-		public void dispose() {
-
-		}
-
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
-		}
-	}
-
 	/**
 	 * @param args
 	 */
@@ -61,27 +42,32 @@ public class Snippet011CustomTooltips {
 		TableViewer v = new TableViewer(shell, SWT.FULL_SELECTION);
 		v.getTable().setLinesVisible(true);
 		v.getTable().setHeaderVisible(true);
-		v.setContentProvider(new MyContentProvider());
+		v.setContentProvider(ArrayContentProvider.getInstance());
 		ColumnViewerToolTipSupport.enableFor(v,ToolTip.NO_RECREATE);
-		
+
 		CellLabelProvider labelProvider = new CellLabelProvider() {
 
+			@Override
 			public String getToolTipText(Object element) {
 				return "Tooltip (" + element + ")";
 			}
 
+			@Override
 			public Point getToolTipShift(Object object) {
 				return new Point(5, 5);
 			}
 
+			@Override
 			public int getToolTipDisplayDelayTime(Object object) {
 				return 2000;
 			}
 
+			@Override
 			public int getToolTipTimeDisplayed(Object object) {
 				return 5000;
 			}
 
+			@Override
 			public void update(ViewerCell cell) {
 				cell.setText(cell.getElement().toString());
 
@@ -92,8 +78,9 @@ public class Snippet011CustomTooltips {
 		column.setLabelProvider(labelProvider);
 		column.getColumn().setText("Column 1");
 		column.getColumn().setWidth(100);
-
-		v.setInput("");
+		String[] values = new String[] { "one", "two", "three", "four", "five", "six",
+				"seven", "eight", "nine", "ten" };
+		v.setInput(values);
 
 		shell.setSize(200, 200);
 		shell.open();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
 
@@ -24,15 +25,16 @@ import org.eclipse.swt.widgets.Table;
 
 
 public class TableCursor extends AbstractCellCursor {
-	
+
 	public TableCursor(AbstractTableViewer viewer) {
 		super(viewer,SWT.NONE);
 	}
-	
+
+	@Override
 	protected void paint(Event event) {
 		if (getSelectedCells().length == 1 && getSelectedCells()[0] == null) return;
 		ViewerCell cell = getSelectedCells()[0];
-		
+
 		GC gc = event.gc;
 		Display display = getDisplay();
 		gc.setBackground(getBackground());
@@ -54,7 +56,7 @@ public class TableCursor extends AbstractCellCursor {
 			// Temporary code - need a better way to determine table trim
 			if (Util.isWin32()) {
 				if (((Table)getParent()).getColumnCount() == 0 || cell.getColumnIndex() == 0) {
-					x += 2; 
+					x += 2;
 				} else {
 					int alignmnent = ((Table)getParent()).getColumn(cell.getColumnIndex()).getAlignment();
 					switch (alignmnent) {
@@ -71,7 +73,7 @@ public class TableCursor extends AbstractCellCursor {
 				}
 			}  else {
 				if (((Table)getParent()).getColumnCount() == 0) {
-					x += 5; 
+					x += 5;
 				} else {
 					int alignmnent = ((Table)getParent()).getColumn(cell.getColumnIndex()).getAlignment();
 					switch (alignmnent) {

@@ -55,6 +55,7 @@ public class Snippet048TreeViewerTabWithCheckboxFor3_3 {
 
 		final TreeViewerFocusCellManager mgr = new TreeViewerFocusCellManager(v,new FocusCellOwnerDrawHighlighter(v));
 		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(v) {
+			@Override
 			protected boolean isEditorActivationEvent(
 					ColumnViewerEditorActivationEvent event) {
 				return event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL
@@ -77,24 +78,29 @@ public class Snippet048TreeViewerTabWithCheckboxFor3_3 {
 		column.getColumn().setText("Column 1");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
+			@Override
 			public String getText(Object element) {
 				return "Column 1 => " + element.toString();
 			}
 
 		});
 		column.setEditingSupport(new EditingSupport(v) {
+			@Override
 			protected boolean canEdit(Object element) {
 				return false;
 			}
 
+			@Override
 			protected CellEditor getCellEditor(Object element) {
 				return textCellEditor;
 			}
 
+			@Override
 			protected Object getValue(Object element) {
 				return ((MyModel) element).counter + "";
 			}
 
+			@Override
 			protected void setValue(Object element, Object value) {
 				((MyModel) element).counter = Integer
 						.parseInt(value.toString());
@@ -108,24 +114,29 @@ public class Snippet048TreeViewerTabWithCheckboxFor3_3 {
 		column.getColumn().setText("Column 2");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
+			@Override
 			public String getText(Object element) {
 				return "Column 2 => " + element.toString();
 			}
 
 		});
 		column.setEditingSupport(new EditingSupport(v) {
+			@Override
 			protected boolean canEdit(Object element) {
 				return true;
 			}
 
+			@Override
 			protected CellEditor getCellEditor(Object element) {
 				return textCellEditor;
 			}
 
+			@Override
 			protected Object getValue(Object element) {
 				return ((MyModel) element).counter + "";
 			}
 
+			@Override
 			protected void setValue(Object element, Object value) {
 				((MyModel) element).counter = Integer
 				.parseInt(value.toString());
@@ -139,24 +150,29 @@ public class Snippet048TreeViewerTabWithCheckboxFor3_3 {
 		column.getColumn().setText("Column 3");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
+			@Override
 			public String getText(Object element) {
 				return ((MyModel)element).bool + "";
 			}
 
 		});
 		column.setEditingSupport(new EditingSupport(v) {
+			@Override
 			protected boolean canEdit(Object element) {
 				return true;
 			}
 
+			@Override
 			protected CellEditor getCellEditor(Object element) {
 				return checkboxCellEditor;
 			}
 
+			@Override
 			protected Object getValue(Object element) {
 				return new Boolean(((MyModel) element).bool);
 			}
 
+			@Override
 			protected void setValue(Object element, Object value) {
 				((MyModel) element).bool = ((Boolean)value).booleanValue();
 				v.update(element, null);
@@ -167,6 +183,7 @@ public class Snippet048TreeViewerTabWithCheckboxFor3_3 {
 		v.setInput(createModel());
 		v.getControl().addTraverseListener(new TraverseListener() {
 
+			@Override
 			public void keyTraversed(TraverseEvent e) {
 				if( (e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) && mgr.getFocusCell().getColumnIndex() == 2 ) {
 					ColumnViewerEditor editor = v.getColumnViewerEditor();
@@ -235,20 +252,25 @@ public class Snippet048TreeViewerTabWithCheckboxFor3_3 {
 
 	private class MyContentProvider implements ITreeContentProvider {
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((MyModel) inputElement).child.toArray();
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			return getElements(parentElement);
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			if (element == null) {
 				return null;
@@ -256,6 +278,7 @@ public class Snippet048TreeViewerTabWithCheckboxFor3_3 {
 			return ((MyModel) element).parent;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			return ((MyModel) element).child.size() > 0;
 		}
@@ -276,6 +299,7 @@ public class Snippet048TreeViewerTabWithCheckboxFor3_3 {
 			this.counter = counter;
 		}
 
+		@Override
 		public String toString() {
 			String rv = "Item ";
 			if (parent != null) {

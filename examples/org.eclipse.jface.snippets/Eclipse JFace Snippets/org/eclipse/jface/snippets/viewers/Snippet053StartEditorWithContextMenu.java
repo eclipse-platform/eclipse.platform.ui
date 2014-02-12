@@ -45,6 +45,7 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((MyModel)inputElement).child.toArray();
 		}
@@ -52,6 +53,7 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 
 		}
@@ -59,6 +61,7 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 		}
@@ -66,6 +69,7 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			return getElements(parentElement);
 		}
@@ -73,6 +77,7 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
+		@Override
 		public Object getParent(Object element) {
 			if( element == null) {
 				return null;
@@ -84,6 +89,7 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
+		@Override
 		public boolean hasChildren(Object element) {
 			return ((MyModel)element).child.size() > 0;
 		}
@@ -100,6 +106,7 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 			this.counter = counter;
 		}
 
+		@Override
 		public String toString() {
 			String rv = "Item ";
 			if( parent != null ) {
@@ -122,6 +129,7 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
 			 */
+			@Override
 			public boolean canModify(Object element, String property) {
 				return true;
 			}
@@ -129,6 +137,7 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object, java.lang.String)
 			 */
+			@Override
 			public Object getValue(Object element, String property) {
 				return ((MyModel)element).counter + "";
 			}
@@ -136,6 +145,7 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object, java.lang.String, java.lang.Object)
 			 */
+			@Override
 			public void modify(Object element, String property, Object value) {
 				TreeItem item = (TreeItem)element;
 				((MyModel)item.getData()).counter = Integer.parseInt(value.toString());
@@ -145,6 +155,7 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 		});
 
 		TreeViewerEditor.create(viewer, new ColumnViewerEditorActivationStrategy(viewer) {
+			@Override
 			protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
 				return event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC;
 			}
@@ -159,9 +170,11 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 		viewer.setInput(createModel());
 	}
 
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 	}
 
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 		if (selection != null) {

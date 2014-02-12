@@ -44,6 +44,7 @@ public class Snippet051TableCenteredImage {
 		 *
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return (MyModel[]) inputElement;
 		}
@@ -53,6 +54,7 @@ public class Snippet051TableCenteredImage {
 		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 
 		}
@@ -63,6 +65,7 @@ public class Snippet051TableCenteredImage {
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 		}
@@ -72,9 +75,11 @@ public class Snippet051TableCenteredImage {
 	private abstract class CenterImageLabelProvider extends
 			OwnerDrawLabelProvider {
 
+		@Override
 		protected void measure(Event event, Object element) {
 		}
 
+		@Override
 		protected void paint(Event event, Object element) {
 
 			Image img = getImage(element);
@@ -105,6 +110,7 @@ public class Snippet051TableCenteredImage {
 			this.counter = counter;
 		}
 
+		@Override
 		public String toString() {
 			return "Item " + this.counter;
 		}
@@ -132,6 +138,7 @@ public class Snippet051TableCenteredImage {
 		column.getColumn().setText("Column 1");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
+			@Override
 			public String getText(Object element) {
 				return "Column 1 => " + element.toString();
 			}
@@ -142,6 +149,7 @@ public class Snippet051TableCenteredImage {
 		column.getColumn().setText("Column 2");
 		column.setLabelProvider(new CenterImageLabelProvider() {
 
+			@Override
 			protected Image getImage(Object element) {
 				return images[((MyModel) element).counter % 4];
 			}

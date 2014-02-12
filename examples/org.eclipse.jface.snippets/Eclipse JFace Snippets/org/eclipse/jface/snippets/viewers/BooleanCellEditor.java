@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 414565
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
 
@@ -37,20 +38,22 @@ public class BooleanCellEditor extends CellEditor {
 	private String restoredText;
 	private Image restoredImage;
 	private KeyListener macSelectionListener = new KeyListener(){
-	
+
+		@Override
 		public void keyReleased(KeyEvent e) {
-			
+
 		}
-	
+
+		@Override
 		public void keyPressed(KeyEvent e) {
 			if( e.character == ' ' ) {
-				button.setSelection(!button.getSelection());	
+				button.setSelection(!button.getSelection());
 			}
 		}
 	};
 
 	private boolean changeOnActivation;
-	
+
 	/**
 	 * @param parent
 	 */
@@ -66,6 +69,7 @@ public class BooleanCellEditor extends CellEditor {
 		super(parent, style);
 	}
 
+	@Override
 	public LayoutData getLayoutData() {
 		LayoutData data = super.getLayoutData();
 		data.horizontalAlignment=SWT.CENTER;
@@ -73,6 +77,7 @@ public class BooleanCellEditor extends CellEditor {
 		return data;
 	}
 
+	@Override
 	protected Control createControl(Composite parent) {
 		Font font = parent.getFont();
 		Color bg = parent.getBackground();
@@ -86,6 +91,7 @@ public class BooleanCellEditor extends CellEditor {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
 			 */
+			@Override
 			public void keyReleased(KeyEvent e) {
 				if( e.character == SWT.ESC ) {
 					fireCancelEditor();
@@ -97,21 +103,25 @@ public class BooleanCellEditor extends CellEditor {
 		return button;
 	}
 
+	@Override
 	protected Object doGetValue() {
 		return new Boolean(button.getSelection());
 	}
 
+	@Override
 	protected void doSetValue(Object value) {
 		boolean selection = Boolean.TRUE.equals(value);
 		button.setSelection(selection);
 	}
 
+	@Override
 	protected void doSetFocus() {
 		if (button != null) {
 			button.setFocus();
 		}
 	}
 
+	@Override
 	protected void deactivate(ColumnViewerEditorDeactivationEvent event) {
 		super.deactivate(event);
 		if( event.eventType == ColumnViewerEditorDeactivationEvent.EDITOR_CANCELED ) {
@@ -123,12 +133,13 @@ public class BooleanCellEditor extends CellEditor {
 //		if( Util.isMac() ) {
 //			button.getParent().removeKeyListener(macSelectionListener);
 //		}
-		
+
 		row = null;
 		restoredImage = null;
 		restoredText = null;
 	}
 
+	@Override
 	public void activate(ColumnViewerEditorActivationEvent activationEvent) {
 		ViewerCell cell = (ViewerCell)activationEvent.getSource();
 		index = cell.getColumnIndex();
@@ -137,26 +148,27 @@ public class BooleanCellEditor extends CellEditor {
 		restoredText = row.getText(index);
 		row.setImage(index, null);
 		row.setText(index, ""); //$NON-NLS-1$
-		
+
     	if (activationEvent.eventType != ColumnViewerEditorActivationEvent.TRAVERSAL && changeOnActivation) {
     		button.setSelection(!button.getSelection());
     	}
-    	
+
 //TODO Add a way to enable key traversal when CheckBoxes don't get focus
 //    	if( Util.isMac() ) {
 //    		button.getParent().addKeyListener(macSelectionListener);
 //    	}
-    	
+
     	super.activate(activationEvent);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.CellEditor#getDoubleClickTimeout()
 	 */
+	@Override
 	protected int getDoubleClickTimeout() {
 		return 0;
 	}
-    
+
     public void setChangeOnActivation(boolean changeOnActivation) {
     	this.changeOnActivation = changeOnActivation;
     }

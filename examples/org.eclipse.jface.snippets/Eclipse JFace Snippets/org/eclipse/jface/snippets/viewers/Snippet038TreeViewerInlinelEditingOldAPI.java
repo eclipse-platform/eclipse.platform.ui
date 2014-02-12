@@ -44,6 +44,7 @@ public class Snippet038TreeViewerInlinelEditingOldAPI {
 		 * 
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((MyModel) inputElement).child.toArray();
 		}
@@ -53,6 +54,7 @@ public class Snippet038TreeViewerInlinelEditingOldAPI {
 		 * 
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 
 		}
@@ -63,6 +65,7 @@ public class Snippet038TreeViewerInlinelEditingOldAPI {
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 		}
@@ -72,6 +75,7 @@ public class Snippet038TreeViewerInlinelEditingOldAPI {
 		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			return getElements(parentElement);
 		}
@@ -81,6 +85,7 @@ public class Snippet038TreeViewerInlinelEditingOldAPI {
 		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
+		@Override
 		public Object getParent(Object element) {
 			if (element == null) {
 				return null;
@@ -94,6 +99,7 @@ public class Snippet038TreeViewerInlinelEditingOldAPI {
 		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
+		@Override
 		public boolean hasChildren(Object element) {
 			return ((MyModel) element).child.size() > 0;
 		}
@@ -112,6 +118,7 @@ public class Snippet038TreeViewerInlinelEditingOldAPI {
 			this.counter = counter;
 		}
 
+		@Override
 		public String toString() {
 			String rv = "Item ";
 			if (parent != null) {
@@ -128,10 +135,12 @@ public class Snippet038TreeViewerInlinelEditingOldAPI {
 			ITableLabelProvider {
 		FontRegistry registry = new FontRegistry();
 
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			return "Column " + columnIndex + " => " + element.toString();
 		}
@@ -152,14 +161,17 @@ public class Snippet038TreeViewerInlinelEditingOldAPI {
 		v.setColumnProperties(new String[]{"col1","col2"});
 		v.setCellModifier(new ICellModifier() {
 
+			@Override
 			public boolean canModify(Object element, String property) {
 				return true;
 			}
 
+			@Override
 			public Object getValue(Object element, String property) {
 				return ((MyModel)element).counter+"";
 			}
 
+			@Override
 			public void modify(Object element, String property, Object value) {
 				((MyModel)((TreeItem)element).getData()).counter = Integer.parseInt(value.toString());
 				v.update(((TreeItem)element).getData(), null);

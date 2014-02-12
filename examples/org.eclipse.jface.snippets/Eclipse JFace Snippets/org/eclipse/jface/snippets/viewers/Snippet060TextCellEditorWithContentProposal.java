@@ -1,10 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2008 Software Competence Center Hagenberg (SCCH) GmbH
+ * Copyright (c) 2008, 2014 Software Competence Center Hagenberg (SCCH) GmbH
  * Copyright (c) 2008 Mario Winterer
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Lars Vogel (lars.vogel@gmail.com) - Bug 413427
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
 
@@ -39,7 +41,7 @@ import org.eclipse.swt.widgets.Table;
 
 /**
  * Shows how to attach content assist to a text cell editor.
- * 
+ *
  * @author Mario Winterer
  */
 public class Snippet060TextCellEditorWithContentProposal {
@@ -50,6 +52,7 @@ public class Snippet060TextCellEditorWithContentProposal {
 			this.name = name;
 		}
 
+		@Override
 		public String toString() {
 			return name;
 		}
@@ -75,10 +78,12 @@ public class Snippet060TextCellEditorWithContentProposal {
 			// Listen for popup open/close events to be able to handle focus events correctly
 			contentProposalAdapter.addContentProposalListener(new IContentProposalListener2() {
 
+				@Override
 				public void proposalPopupClosed(ContentProposalAdapter adapter) {
 					popupOpen = false;
 				}
 
+				@Override
 				public void proposalPopupOpened(ContentProposalAdapter adapter) {
 					popupOpen = true;
 				}
@@ -87,13 +92,14 @@ public class Snippet060TextCellEditorWithContentProposal {
 
 		/**
 		 * Return the {@link ContentProposalAdapter} of this cell editor.
-		 * 
+		 *
 		 * @return the {@link ContentProposalAdapter}
 		 */
 		public ContentProposalAdapter getContentProposalAdapter() {
 			return contentProposalAdapter;
 		}
 
+		@Override
 		protected void focusLost() {
 			if (!popupOpen) {
 				// Focus lost deactivates the cell editor.
@@ -103,6 +109,7 @@ public class Snippet060TextCellEditorWithContentProposal {
 			}
 		}
 
+		@Override
 		protected boolean dependsOnExternalFocusListener() {
 			// Always return false;
 			// Otherwise, the ColumnViewerEditor will install an additional focus listener
@@ -123,18 +130,22 @@ public class Snippet060TextCellEditorWithContentProposal {
 			cellEditor = new TextCellEditorWithContentProposal(viewer.getTable(), contentProposalProvider, null, null);
 		}
 
+		@Override
 		protected boolean canEdit(Object element) {
 			return (element instanceof Color);
 		}
 
+		@Override
 		protected CellEditor getCellEditor(Object element) {
 			return cellEditor;
 		}
 
+		@Override
 		protected Object getValue(Object element) {
 			return ((Color) element).name;
 		}
 
+		@Override
 		protected void setValue(Object element, Object value) {
 			((Color) element).name = value.toString();
 			getViewer().update(element, null);
@@ -157,6 +168,7 @@ public class Snippet060TextCellEditorWithContentProposal {
 		viewer.setContentProvider(new ArrayContentProvider());
 
 		ColumnViewerEditorActivationStrategy activationSupport = new ColumnViewerEditorActivationStrategy(viewer) {
+			@Override
 			protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
 				return event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL
 						|| event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Tom Schindl and others.
+ * Copyright (c) 2006, 2014 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 414565
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -24,9 +25,7 @@ import org.eclipse.swt.widgets.Shell;
  * A simple TableViewer to demonstrate usage of an ILazyContentProvider. You can
  * compare this snippet to the Snippet029VirtualTableViewer to see the small but
  * needed difference.
- * 
- * @author Tom Schindl <tom.schindl@bestsolution.at>
- * 
+ *
  */
 public class Snippet030VirtualLazyTableViewer {
 	private class MyContentProvider implements ILazyContentProvider {
@@ -37,14 +36,17 @@ public class Snippet030VirtualLazyTableViewer {
 			this.viewer = viewer;
 		}
 
+		@Override
 		public void dispose() {
 
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			this.elements = (MyModel[]) newInput;
 		}
 
+		@Override
 		public void updateElement(int index) {
 			viewer.replace(elements[index], index);
 		}
@@ -58,6 +60,7 @@ public class Snippet030VirtualLazyTableViewer {
 			this.counter = counter;
 		}
 
+		@Override
 		public String toString() {
 			return "Item " + this.counter;
 		}
@@ -86,9 +89,6 @@ public class Snippet030VirtualLazyTableViewer {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);

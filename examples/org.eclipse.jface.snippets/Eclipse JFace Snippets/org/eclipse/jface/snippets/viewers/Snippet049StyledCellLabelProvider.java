@@ -123,12 +123,14 @@ public class Snippet049StyledCellLabelProvider {
 
 		public ExampleLabelProvider(final Font boldFont) {
 			fBoldStyler= new Styler() {
+				@Override
 				public void applyStyles(TextStyle textStyle) {
 					textStyle.font= boldFont;
 				}
 			};
 		}
 
+		@Override
 		public void update(ViewerCell cell) {
 			Object element= cell.getElement();
 
@@ -157,6 +159,7 @@ public class Snippet049StyledCellLabelProvider {
 			super.update(cell);
 		}
 
+		@Override
 		protected void measure(Event event, Object element) {
 			super.measure(event, element);
 		}
@@ -164,6 +167,7 @@ public class Snippet049StyledCellLabelProvider {
 
 	private static class FileSystemContentProvider implements IStructuredContentProvider {
 
+		@Override
 		public Object[] getElements(Object element) {
 			File[] roots = File.listRoots();
 			for (int i = 0; i < roots.length; i++) {
@@ -175,9 +179,11 @@ public class Snippet049StyledCellLabelProvider {
 			return roots;
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}

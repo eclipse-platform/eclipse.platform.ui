@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Tom Schindl and others.
+ * Copyright (c) 2006, 2014 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
+ *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -39,9 +40,7 @@ import org.eclipse.swt.widgets.TableColumn;
 /**
  * Example usage of none mandatory interfaces of ITableFontProvider and
  * ITableColorProvider
- * 
- * @author Tom Schindl <tom.schindl@bestsolution.at>
- * 
+ *
  */
 public class Snippet035TableCursorCellHighlighter {
 
@@ -49,28 +48,31 @@ public class Snippet035TableCursorCellHighlighter {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return (MyModel[]) inputElement;
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 		}
@@ -78,7 +80,7 @@ public class Snippet035TableCursorCellHighlighter {
 	}
 
 	public static boolean flag = true;
-	
+
 	public class MyModel {
 		public int counter;
 
@@ -86,6 +88,7 @@ public class Snippet035TableCursorCellHighlighter {
 			this.counter = counter;
 		}
 
+		@Override
 		public String toString() {
 			return "Item " + this.counter;
 		}
@@ -95,14 +98,17 @@ public class Snippet035TableCursorCellHighlighter {
 			ITableLabelProvider, ITableFontProvider, ITableColorProvider {
 		FontRegistry registry = new FontRegistry();
 
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			return "Column " + columnIndex + " => " + element.toString();
 		}
 
+		@Override
 		public Font getFont(Object element, int columnIndex) {
 			if (((MyModel) element).counter % 2 == 0) {
 				return registry.getBold(Display.getCurrent().getSystemFont()
@@ -111,6 +117,7 @@ public class Snippet035TableCursorCellHighlighter {
 			return null;
 		}
 
+		@Override
 		public Color getBackground(Object element, int columnIndex) {
 			if (((MyModel) element).counter % 2 == 0) {
 				return Display.getCurrent().getSystemColor(SWT.COLOR_RED);
@@ -118,6 +125,7 @@ public class Snippet035TableCursorCellHighlighter {
 			return null;
 		}
 
+		@Override
 		public Color getForeground(Object element, int columnIndex) {
 			if (((MyModel) element).counter % 2 == 1) {
 				return Display.getCurrent().getSystemColor(SWT.COLOR_RED);
@@ -135,24 +143,28 @@ public class Snippet035TableCursorCellHighlighter {
 		v.setCellEditors(new CellEditor[] { new TextCellEditor(v.getTable()), new TextCellEditor(v.getTable()) });
 		v.setCellModifier(new ICellModifier() {
 
+			@Override
 			public boolean canModify(Object element, String property) {
 				return true;
 			}
 
+			@Override
 			public Object getValue(Object element, String property) {
 				return "Column " + property + " => " + element.toString();
 			}
 
+			@Override
 			public void modify(Object element, String property, Object value) {
-				
+
 			}
-			
+
 		});
-		
+
 		v.setColumnProperties(new String[] {"1","2"});
-		
+
 		TableViewerFocusCellManager focusCellManager = new TableViewerFocusCellManager(v,new CursorCellHighlighter(v,new TableCursor(v)));
 		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(v) {
+			@Override
 			protected boolean isEditorActivationEvent(
 					ColumnViewerEditorActivationEvent event) {
 				return event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL
@@ -161,12 +173,12 @@ public class Snippet035TableCursorCellHighlighter {
 						|| event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC;
 			}
 		};
-		
+
 		TableViewerEditor.create(v, focusCellManager, actSupport, ColumnViewerEditor.TABBING_HORIZONTAL
 				| ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
 				| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION);
 
-		
+
 		TableColumn column = new TableColumn(v.getTable(), SWT.NONE);
 		column.setWidth(200);
 		column.setText("Column 1");
