@@ -19,11 +19,11 @@
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20130827064939/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.nebula.widgets.gallery.feature.feature.group" version="1.0.0.201401291008"/>
+<unit id="org.eclipse.nebula.widgets.gallery.feature.feature.group" version="1.0.0.201402061713"/>
 <repository location="http://download.eclipse.org/technology/nebula/snapshot"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.sdk.ide" version="4.4.0.I20140204-0800"/>
+<unit id="org.eclipse.sdk.ide" version="4.4.0.I20140211-1100"/>
 <repository location="http://download.eclipse.org/eclipse/updates/4.4-I-builds"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
