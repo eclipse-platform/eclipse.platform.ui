@@ -804,6 +804,9 @@ public class FormHeading extends Canvas {
 		if (!isSeparatorVisible() && getBackgroundImage() == null)
 			return;
 		Rectangle carea = getClientArea();
+		if (carea.width == 0 || carea.height == 0) {
+			return;
+		}
 		Image buffer = new Image(getDisplay(), carea.width, carea.height);
 		buffer.setBackground(getBackground());
 		GC igc = new GC(buffer);
