@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,7 +129,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	private EventHandler shellUpdater;
 	private EventHandler visibilityHandler;
 	private EventHandler sizeHandler;
-	private EventHandler themeDefinitionChanged;
+	private ThemeDefinitionChangedHandler themeDefinitionChanged;
 
 	@Inject
 	private EModelService modelService;
@@ -324,6 +324,8 @@ public class WBWRenderer extends SWTPartRenderer {
 		eventBroker.unsubscribe(visibilityHandler);
 		eventBroker.unsubscribe(sizeHandler);
 		eventBroker.unsubscribe(themeDefinitionChanged);
+
+		themeDefinitionChanged.dispose();
 	}
 
 	/**
@@ -842,6 +844,8 @@ public class WBWRenderer extends SWTPartRenderer {
 	@SuppressWarnings("restriction")
 	protected static class ThemeDefinitionChangedHandler implements
 			EventHandler {
+		protected Set<Resource> unusedResources = new HashSet<Resource>();
+
 		public void handleEvent(Event event) {
 			Object element = event.getProperty(IEventBroker.DATA);
 
@@ -849,7 +853,6 @@ public class WBWRenderer extends SWTPartRenderer {
 				return;
 			}
 
-			List<Object> unusedResources = new ArrayList<Object>();
 			Set<CSSEngine> engines = new HashSet<CSSEngine>();
 
 			// In theory we can have multiple engines since API allows it.
@@ -862,13 +865,14 @@ public class WBWRenderer extends SWTPartRenderer {
 			}
 
 			for (CSSEngine engine : engines) {
-				unusedResources.addAll(removeResources(engine
-						.getResourcesRegistry()));
+				for (Object resource : removeResources(engine
+						.getResourcesRegistry())) {
+					if (resource instanceof Resource
+							&& !((Resource) resource).isDisposed()) {
+						unusedResources.add((Resource) resource);
+					}
+				}
 				engine.reapply();
-			}
-
-			for (Object resource : unusedResources) {
-				disposeResource(resource);
 			}
 		}
 
@@ -886,11 +890,13 @@ public class WBWRenderer extends SWTPartRenderer {
 			return Collections.emptyList();
 		}
 
-		protected void disposeResource(Object resource) {
-			if (resource instanceof Resource
-					&& !((Resource) resource).isDisposed()) {
-				((Resource) resource).dispose();
+		public void dispose() {
+			for (Resource resource : unusedResources) {
+				if (!resource.isDisposed()) {
+					resource.dispose();
+				}
 			}
+			unusedResources.clear();
 		}
 	}
 
