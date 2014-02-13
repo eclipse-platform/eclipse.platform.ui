@@ -13,7 +13,7 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.e4.ui.workbench.UIEvents.Selector;
+import org.eclipse.e4.ui.workbench.Selector;
 import org.eclipse.swt.widgets.Display;
 
 public class ToolItemUpdater {
