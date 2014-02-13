@@ -60,6 +60,8 @@ public class UIEvents {
 
 	/**
 	 * Name element for E4 Renderer events
+	 * 
+	 * @since 1.1
 	 */
 	public static final String UIRendererTopicBase = UITopicBase + "/renderer"; //$NON-NLS-1$
 
@@ -73,12 +75,16 @@ public class UIEvents {
 	 * <li>instance of {@link Selector}</li>
 	 * </ul>
 	 * </p>
+	 * 
+	 * @since 1.1
 	 */
 	public static final String REQUEST_ENABLEMENT_UPDATE_TOPIC = UIRendererTopicBase
 			+ "/requestEnablementUpdate"; //$NON-NLS-1$
 
 	/**
 	 * Selector to find element
+	 * 
+	 * @since 1.1
 	 */
 	public interface Selector {
 		/**
@@ -93,6 +99,8 @@ public class UIEvents {
 
 	/**
 	 * Special id passed to force all elements to be checked
+	 * 
+	 * @since 1.1
 	 */
 	public static final String ALL_ELEMENT_ID = "ALL"; //$NON-NLS-1$
 
