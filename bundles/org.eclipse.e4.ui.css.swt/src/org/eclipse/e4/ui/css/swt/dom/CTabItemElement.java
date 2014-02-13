@@ -51,10 +51,10 @@ public class CTabItemElement extends ItemElement {
 
 	@Override
 	public void reset() {
-		super.reset();
 		CTabItem item = getItem();
 		CSSSWTImageHelper.restoreDefaultImage(item);
 		item.setFont(null); // in such case the parent's font will be taken
+		super.reset();
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public class ThemesExtension implements IThemesExtension {
 		FontDefinition definition = new FontDefinition(formatDefaultName(FontDefinition.class,
 				symbolicName), symbolicName, null, null, DEFAULT_CATEGORY_ID, true,
 				getDefaultDescription());
-		definition.setAddedByCss(true);
+		definition.appendState(ThemeElementDefinition.State.ADDED_BY_CSS);
 		definitions.add(definition);
 	}
 
@@ -53,7 +53,7 @@ public class ThemesExtension implements IThemesExtension {
 		ColorDefinition definition = new ColorDefinition(formatDefaultName(ColorDefinition.class,
 				symbolicName), symbolicName, null, null, DEFAULT_CATEGORY_ID, true,
 				getDefaultDescription(), getPluginId());
-		definition.setAddedByCss(true);
+		definition.appendState(ThemeElementDefinition.State.ADDED_BY_CSS);
 		definitions.add(definition);
 	}
 

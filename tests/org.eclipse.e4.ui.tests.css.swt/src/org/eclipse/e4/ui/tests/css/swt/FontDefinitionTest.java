@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,6 @@ public class FontDefinitionTest extends CSSSWTTestCase {
 		assertEquals("categoryId", definition.getCategoryId());
 		assertEquals("name", definition.getName());
 		assertTrue(definition.getDescription().startsWith("description"));
-		assertTrue(definition.getDescription().endsWith(definition.getOverriddenLabel()));
 		assertTrue(definition.isOverridden());
 	}
 
@@ -60,7 +59,7 @@ public class FontDefinitionTest extends CSSSWTTestCase {
 			throws Exception {
 		// given
 		CSSEngine engine = createEngine("FontDefinition#org-eclipse-jface-bannerfont {font-family: 'Times';font-size: 12;font-style: italic;" +
-						" label:'nameOverridden'; category: '#categoryIdOverridden'; description: 'descriptionOverridden'}", display);
+				" label:'nameOverridden'; category: '#categoryIdOverridden'; description: 'descriptionOverridden'}", display);
 		FontDefinition definition = fontDefinition("org.eclipse.jface.bannerfont", "name", "categoryId", "description");
 
 		assertNull(definition.getValue());
@@ -77,7 +76,6 @@ public class FontDefinitionTest extends CSSSWTTestCase {
 		assertEquals("categoryIdOverridden", definition.getCategoryId());
 		assertEquals("nameOverridden", definition.getName());
 		assertTrue(definition.getDescription().startsWith("descriptionOverridden"));
-		assertTrue(definition.getDescription().endsWith(definition.getOverriddenLabel()));
 		assertTrue(definition.isOverridden());
 	}
 

@@ -84,8 +84,8 @@ public class ButtonElement extends ControlElement {
 
 	@Override
 	public void reset() {
-		super.reset();
 		CSSSWTImageHelper.restoreDefaultImage(getButton());
+		super.reset();
 	}
 
 }

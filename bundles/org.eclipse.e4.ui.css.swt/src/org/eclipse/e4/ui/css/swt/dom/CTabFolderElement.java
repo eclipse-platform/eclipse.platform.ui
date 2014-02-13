@@ -81,7 +81,6 @@ public class CTabFolderElement extends CompositeElement {
 
 	@Override
 	public void reset() {
-		super.reset();
 		CTabFolder folder = (CTabFolder) getWidget();
 		folder.setSelectionBackground((Color) null);
 		folder.setSelectionForeground((Color) null);
@@ -98,6 +97,7 @@ public class CTabFolderElement extends CompositeElement {
 			renderer.setOuterKeyline(null);
 			renderer.setShadowColor(null);
 		}
+		super.reset();
 	}
 
 	private void resetChildrenBackground(Composite composite) {

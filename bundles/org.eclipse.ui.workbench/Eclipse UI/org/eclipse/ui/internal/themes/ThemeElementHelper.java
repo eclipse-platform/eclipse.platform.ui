@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,12 @@ package org.eclipse.ui.internal.themes;
 import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -31,6 +31,16 @@ import org.eclipse.ui.themes.IThemeManager;
  * @since 3.0
  */
 public final class ThemeElementHelper {
+	public static void populateDefinition(org.eclipse.e4.ui.css.swt.theme.ITheme cssTheme,
+			ITheme theme, FontRegistry registry, FontDefinition definition, IPreferenceStore store) {
+		String key = createPreferenceKey(cssTheme, theme, definition.getId());
+		String value = store.getString(key);
+		if (!IPreferenceStore.STRING_DEFAULT_DEFAULT.equals(value)) {
+			definition.appendState(ThemeElementDefinition.State.OVERRIDDEN);
+			definition.appendState(ThemeElementDefinition.State.MODIFIED_BY_USER);
+			registry.put(definition.getId(), PreferenceConverter.basicGetFontData(value));
+		}
+	}
 
     public static void populateRegistry(ITheme theme,
             FontDefinition[] definitions, IPreferenceStore store) {
@@ -143,6 +153,17 @@ public final class ThemeElementHelper {
             PreferenceConverter.setDefault(store, key, defaultFont);
         }
     }
+
+	public static void populateDefinition(org.eclipse.e4.ui.css.swt.theme.ITheme cssTheme,
+			ITheme theme, ColorRegistry registry, ColorDefinition definition, IPreferenceStore store) {
+		String key = createPreferenceKey(cssTheme, theme, definition.getId());
+		String value = store.getString(key);
+		if (!IPreferenceStore.STRING_DEFAULT_DEFAULT.equals(value)) {
+			definition.appendState(ThemeElementDefinition.State.OVERRIDDEN);
+			definition.appendState(ThemeElementDefinition.State.MODIFIED_BY_USER);
+			registry.put(definition.getId(), StringConverter.asRGB(value));
+		}
+	}
 
     public static void populateRegistry(ITheme theme,
             ColorDefinition[] definitions, IPreferenceStore store) {
@@ -329,6 +350,12 @@ public final class ThemeElementHelper {
 
         return themeId + '.' + id;
     }
+
+	public static String createPreferenceKey(org.eclipse.e4.ui.css.swt.theme.ITheme cssTheme,
+			ITheme theme, String id) {
+		String cssThemePrefix = cssTheme != null ? cssTheme.getId() + '.' : ""; //$NON-NLS-1$
+		return cssThemePrefix + createPreferenceKey(theme, id);
+	}
 
     /**
      * @param theme
