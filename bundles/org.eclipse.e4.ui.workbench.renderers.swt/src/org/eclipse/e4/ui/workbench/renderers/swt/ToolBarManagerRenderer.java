@@ -77,6 +77,13 @@ import org.osgi.service.event.EventHandler;
  */
 public class ToolBarManagerRenderer extends SWTPartRenderer {
 
+	private static final Selector ALL_SELECTOR = new Selector() {
+
+		public boolean select(MApplicationElement element) {
+			return true;
+		}
+	};
+
 	public static final String POST_PROCESSING_FUNCTION = "ToolBarManagerRenderer.postProcess.func"; //$NON-NLS-1$
 	public static final String POST_PROCESSING_DISPOSE = "ToolBarManagerRenderer.postProcess.dispose"; //$NON-NLS-1$
 	public static final String UPDATE_VARS = "ToolBarManagerRenderer.updateVars"; //$NON-NLS-1$
@@ -245,7 +252,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	@Optional
 	void dirtyChanged(
 			@UIEventTopic(UIEvents.Dirtyable.TOPIC_DIRTY) Event eventData) {
-		updateEnablement();
+		getUpdater().updateContributionItems(ALL_SELECTOR);
 	}
 
 	@Inject
@@ -258,12 +265,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			s = (Selector) v;
 		} else {
 			if (v == null || UIEvents.ALL_ELEMENT_ID.equals(v)) {
-				s = new Selector() {
-
-					public boolean select(MApplicationElement element) {
-						return true;
-					}
-				};
+				s = ALL_SELECTOR;
 			} else {
 				s = new Selector() {
 
@@ -304,7 +306,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 				for (String var : updateVariables) {
 					context.get(var);
 				}
-				updateEnablement();
+				getUpdater().updateContributionItems(ALL_SELECTOR);
 				return true;
 			}
 		};
@@ -424,7 +426,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 						public void run() {
 							manager.update(false);
-							updateEnablement();
+							getUpdater().updateContributionItems(ALL_SELECTOR);
 						}
 					});
 					// disposeToolbarIfNecessary(toolbarModel);
@@ -931,9 +933,5 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 	ToolItemUpdater getUpdater() {
 		return enablementUpdater;
-	}
-
-	void updateEnablement() {
-		enablementUpdater.updateContributionItems();
 	}
 }
