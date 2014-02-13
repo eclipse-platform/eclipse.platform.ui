@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
+
+import static org.eclipse.ui.internal.themes.WorkbenchThemeManager.EMPRY_FONT_DATA_VALUE;
+import static org.eclipse.ui.internal.themes.WorkbenchThemeManager.EMPTY_COLOR_VALUE;
 
 import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
@@ -31,6 +34,7 @@ import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -89,6 +93,8 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.themes.IThemePreview;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 
 /**
@@ -123,6 +129,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	 * Marks font tokens in EXPANDED_ELEMENTS_PREF and SELECTED_ELEMENT_PREF.
 	 */
 	private static final char MARKER_FONT = 'F';
+
+	private static final int DEFINITION_NOT_AVAIL_COLOR = SWT.COLOR_WIDGET_LIGHT_SHADOW;
 			
     private class ThemeContentProvider implements ITreeContentProvider {
 
@@ -355,7 +363,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     }
 
     private class PresentationLabelProvider extends LabelProvider implements
-            IFontProvider {
+ IFontProvider,
+			IColorProvider {
 
         private HashMap fonts = new HashMap();
 
@@ -373,8 +382,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 				} else {
 					// Some theme definition element has been modified and we
 					// need to refresh the viewer
-					tree.getViewer().setContentProvider(new ThemeContentProvider());
-					tree.getViewer().collapseAll();
+					refreshAllLabels();
 				}
             }
         };
@@ -454,8 +462,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                     fonts.put(baseFont, font);
                 }
                 return font;
-            }
-
+			}
             return JFaceResources.getDialogFont();
         }
 
@@ -464,11 +471,16 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
          */
         public Image getImage(Object element) {
             if (element instanceof ColorDefinition) {
+				Display display = tree.getDisplay();
                 Color c = colorRegistry
                         .get(((ColorDefinition) element).getId());
+				Color foregroundColor = tree.getViewer().getControl().getForeground();
+				if (!isAvailableInCurrentTheme((ColorDefinition) element)) {
+					c = display.getSystemColor(SWT.COLOR_WHITE);
+					foregroundColor = display.getSystemColor(DEFINITION_NOT_AVAIL_COLOR);
+				}
                 Image image = (Image) images.get(c);
-                if (image == null) {
-                    Display display = tree.getDisplay();
+				if (image == null) {
                     ensureImageSize();
                     image = new Image(display, imageSize, imageSize);
 
@@ -479,8 +491,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                             .getBackground());
                     gc.drawRectangle(0, 0, imageSize - 1, imageSize - 1);
 
-                    gc.setForeground(tree.getViewer().getControl()
-                            .getForeground());
+					gc.setForeground(foregroundColor);
                     gc.setBackground(c);
 
                     int offset = (imageSize - usableImageSize) / 2;
@@ -559,6 +570,34 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 						&& defaultRGB.equals(colorRegistry.getRGB(colorDef.getId()));
 			}
 			return false;
+		}
+
+		/**
+		 * Returns the DEFINITION_NOT_AVAIL_COLOR color when definition is not
+		 * present in the current theme or null when it is available
+		 * 
+		 * @param def
+		 *            the definition
+		 * @return the DEFINITION_NOT_AVAIL_COLOR color or null
+		 */
+		@Override
+		public Color getForeground(Object element) {
+			if (element instanceof ThemeElementDefinition && !isAvailableInCurrentTheme((ThemeElementDefinition) element)) {
+				return tree.getDisplay().getSystemColor(DEFINITION_NOT_AVAIL_COLOR);
+			}
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.
+		 * Object)
+		 */
+		@Override
+		public Color getBackground(Object element) {
+			return null;
 		}
     }
 
@@ -699,6 +738,15 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	private Text descriptionText;
 
 	private IEventBroker eventBroker;
+
+	private EventHandler themeRegistryRestyledHandler = new EventHandler() {
+		@Override
+		public void handleEvent(Event event) {
+			updateThemeInfo(workbench.getThemeManager());
+			refreshCategory();
+			refreshAllLabels();
+		}
+	};
 
     /**
      * Create a new instance of the receiver.
@@ -969,11 +1017,19 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 					tree.getViewer().setExpandedState(element,
 							!tree.getViewer().getExpandedState(element));
 
-				if (element instanceof FontDefinition)
-					editFont(tree.getDisplay());
-				else if (element instanceof ColorDefinition)
-					editColor(tree.getDisplay());
-				updateControls();
+				if (element instanceof ThemeElementDefinition) {
+					ThemeElementDefinition definition = (ThemeElementDefinition) element;
+					if (definition.isOverridden() || definition.isAddedByCss()
+							|| !isAvailableInCurrentTheme(definition)) {
+						return;
+					}
+					if (element instanceof FontDefinition) {
+						editFont(tree.getDisplay());
+					} else if (element instanceof ColorDefinition) {
+						editColor(tree.getDisplay());
+					}
+					updateControls();
+				}
 			}
 		});
 
@@ -985,12 +1041,12 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
      */
     public void dispose() {
-        super.dispose();
-        
+		eventBroker.unsubscribe(themeRegistryRestyledHandler);
         workbench.getThemeManager().removePropertyChangeListener(themeChangeListener);
         clearPreviews();
         colorRegistry.dispose();
         fontRegistry.dispose();
+		super.dispose();
     }
 
     /**
@@ -1251,13 +1307,17 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                         IThemeManager.CHANGE_CURRENT_THEME)) {
                     updateThemeInfo(themeManager);
                     refreshCategory();
-                    tree.getViewer().refresh(); // refresh all the labels in the tree
+					refreshAllLabels();
                 }
             }
         };
         themeManager.addPropertyChangeListener(themeChangeListener);
 
         updateThemeInfo(themeManager);
+        
+        eventBroker = (IEventBroker) workbench.getService(IEventBroker.class);
+		eventBroker.subscribe(WorkbenchThemeManager.Events.THEME_REGISTRY_RESTYLED,
+				themeRegistryRestyledHandler);
     }
 
     private void updateThemeInfo(IThemeManager manager) {
@@ -1865,26 +1925,36 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	protected void updateControls() {
 		FontDefinition fontDefinition = getSelectedFontDefinition();
         if (fontDefinition != null) {
-			boolean isDefault = isDefault(fontDefinition);
+			boolean isDefault = isAvailableInCurrentTheme(fontDefinition)
+					&& isDefault(fontDefinition);
 			boolean hasDefault = fontDefinition.getDefaultsTo() != null;
-			fontChangeButton.setEnabled(!fontDefinition.isOverridden());
-			fontSystemButton.setEnabled(!fontDefinition.isOverridden());
-			fontResetButton.setEnabled(!isDefault && !fontDefinition.isOverridden());
-			editDefaultButton.setEnabled(hasDefault && isDefault && !fontDefinition.isOverridden());
-			goToDefaultButton.setEnabled(hasDefault && !fontDefinition.isOverridden());
+			fontChangeButton.setEnabled(!fontDefinition.isOverridden()
+					&& isAvailableInCurrentTheme(fontDefinition));
+			fontSystemButton.setEnabled(!fontDefinition.isOverridden()
+					&& isAvailableInCurrentTheme(fontDefinition));
+			fontResetButton.setEnabled(!isDefault && !fontDefinition.isOverridden()
+					&& isAvailableInCurrentTheme(fontDefinition));
+			editDefaultButton.setEnabled(hasDefault && isDefault && !fontDefinition.isOverridden()
+					&& isAvailableInCurrentTheme(fontDefinition));
+			goToDefaultButton.setEnabled(hasDefault && !fontDefinition.isOverridden()
+					&& isAvailableInCurrentTheme(fontDefinition));
             setCurrentFont(fontDefinition);
             return;
         }
         ColorDefinition colorDefinition = getSelectedColorDefinition();
         if (colorDefinition != null) {
-			boolean isDefault = isDefault(getSelectedColorDefinition());
+			boolean isDefault = isAvailableInCurrentTheme(colorDefinition)
+					&& isDefault(getSelectedColorDefinition());
 			boolean hasDefault = colorDefinition.getDefaultsTo() != null;
-			fontChangeButton.setEnabled(!colorDefinition.isOverridden());
+			fontChangeButton.setEnabled(!colorDefinition.isOverridden()
+					&& isAvailableInCurrentTheme(colorDefinition));
             fontSystemButton.setEnabled(false);
-			fontResetButton.setEnabled(!isDefault && !colorDefinition.isOverridden());
-			editDefaultButton
-					.setEnabled(hasDefault && isDefault && !colorDefinition.isOverridden());
-			goToDefaultButton.setEnabled(hasDefault && !colorDefinition.isOverridden());
+			fontResetButton.setEnabled(!isDefault && !colorDefinition.isOverridden()
+					&& isAvailableInCurrentTheme(colorDefinition));
+			editDefaultButton.setEnabled(hasDefault && isDefault && !colorDefinition.isOverridden()
+					&& isAvailableInCurrentTheme(colorDefinition));
+			goToDefaultButton.setEnabled(hasDefault && !colorDefinition.isOverridden()
+					&& isAvailableInCurrentTheme(colorDefinition));
             setCurrentColor(colorDefinition);
             return;
         }
@@ -1911,7 +1981,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	
 	private void setCurrentFont(FontDefinition fontDefinition) {
 		currentFont = fontRegistry.get(fontDefinition.getId());
-		FontData[] fontData = currentFont.getFontData();
+		FontData[] fontData = currentFont != null ? currentFont.getFontData() : new FontData[0];
 
 		// recalculate sample text
 		StringBuffer tmp = new StringBuffer();
@@ -1931,19 +2001,14 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 			}
 		}
 		fontSampleText = tmp.toString();
-
-		String description = fontDefinition.getDescription();
-		descriptionText.setText(description == null ? "" : description); //$NON-NLS-1$
-
+		descriptionText.setText(fomatDescription(fontDefinition));
 		fontSampler.redraw();
 	}
 	
 	public void setCurrentColor(ColorDefinition colorDefinition) {
 		currentColor = colorRegistry.get(colorDefinition.getId());
 		colorSampler.redraw();
-
-		String description = colorDefinition.getDescription();
-		descriptionText.setText(description == null ? "" : description); //$NON-NLS-1$
+		descriptionText.setText(fomatDescription(colorDefinition));
 	}
 	
 	private Composite createFontPreviewControl() {
@@ -2108,5 +2173,29 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 			eventBroker.send(UIEvents.UILifeCycle.THEME_DEFINITION_CHANGED,
 					workbench.getApplication());
 		}
+	}
+
+	private void refreshAllLabels() {
+		tree.getViewer().refresh(); // refresh all the labels in the tree
+	}
+
+	private boolean isAvailableInCurrentTheme(ThemeElementDefinition definition) {
+		if (definition instanceof FontDefinition) {
+			FontData[] value = ((FontDefinition) definition).getValue();
+			return value != null && value != EMPRY_FONT_DATA_VALUE
+					&& fontRegistry.get(definition.getId()) != null;
+		}
+		RGB value = ((ColorDefinition) definition).getValue();
+		return value != null && value != EMPTY_COLOR_VALUE
+				&& colorRegistry.get(definition.getId()) != null;
+	}
+
+	private String fomatDescription(ThemeElementDefinition definition) {
+		String description = definition.getDescription() != null ? definition.getDescription() : ""; //$NON-NLS-1$
+		if (isAvailableInCurrentTheme(definition)) {
+			return description;
+		}
+		return MessageFormat.format(RESOURCE_BUNDLE.getString("definitionNotAvailInTheme"), //$NON-NLS-1$
+				new Object[] { description }).trim();
 	}
 }

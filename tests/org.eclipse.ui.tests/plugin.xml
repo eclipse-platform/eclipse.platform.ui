@@ -4382,4 +4382,9 @@
          </menu>
       </menuContribution>
    </extension>
+   
+   <extension point="org.eclipse.e4.ui.css.swt.theme">
+   		<theme basestylesheeturi="css/mock.css" id="org.eclipse.e4.ui.css.theme.mock" label="mock"/>
+   </extension>
+   
 </plugin>

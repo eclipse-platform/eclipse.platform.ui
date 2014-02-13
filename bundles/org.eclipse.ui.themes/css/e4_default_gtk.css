@@ -12,6 +12,18 @@
 
 @import url("platform:/plugin/org.eclipse.ui.themes/css/e4_basestyle.css");
 
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_START {
+	color: #DCDCDC;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_END {
+	color: #E1E1E1;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTLINE_COLOR {
+	color: #B4B4B4;
+}
+
 .MTrimmedWindow {
 	background-color: #E2E2E2;
 }
@@ -34,24 +46,12 @@
 	handle-image:  url(./gtkHandle.png);
 }
 
-.MPartStack.active {
-	swt-unselected-tabs-color: #DCDCDC #E1E1E1 #FFFFFF 100% 100%;
-	swt-outer-keyline-color: #B4B4B4;
-	swt-tab-outline: #B4B4B4;
-}
-
 #PerspectiveSwitcher {
 	background-color: COLOR-WIDGET-BACKGROUND #E2E2E2 100%;
 	eclipse-perspective-keyline-color: #B4B4B4 #B4B4B4;
 }
 
 #org-eclipse-ui-editorss {
-	swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
-	swt-unselected-tabs-color: #F0F0F0 #F0F0F0 #F0F0F0 100% 100%;
-	swt-outer-keyline-color: #B4B4B4;
-	swt-inner-keyline-color: #F0F0F0;
-	swt-tab-outline: #F0F0F0;
-	color: #F0F0F0;
 	swt-tab-height: 8px;
 	padding: 0px 5px 7px;
 }

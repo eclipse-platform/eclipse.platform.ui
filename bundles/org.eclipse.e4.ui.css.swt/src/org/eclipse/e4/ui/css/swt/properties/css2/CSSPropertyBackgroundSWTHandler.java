@@ -15,6 +15,7 @@ import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyBackgroundHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.dom.CompositeElement;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTImageHelper;
@@ -31,7 +32,6 @@ import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyBackgroundSWTHandler extends
 AbstractCSSPropertyBackgroundHandler {
-
 	public final static ICSSPropertyBackgroundHandler INSTANCE = new CSSPropertyBackgroundSWTHandler();
 
 	@Override
@@ -84,18 +84,26 @@ AbstractCSSPropertyBackgroundHandler {
 			} else if (widget instanceof Control) {
 				GradientBackgroundListener.remove((Control) widget);
 				((Control) widget).setBackground(newColor);
+				CompositeElement.setBackgroundOverriddenByCSSMarker(widget);
 			}
 		} else if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
 			Gradient grad = (Gradient) engine.convert(value, Gradient.class,
 					widget.getDisplay());
-			if (widget instanceof CTabItem && "selected".equals(pseudo)) {
+			if (widget instanceof CTabItem) {
 				CTabFolder folder = ((CTabItem) widget).getParent();
-				folder.setSelectionBackground(
-						CSSSWTColorHelper.getSWTColors(grad, folder.getDisplay(), engine),
-						CSSSWTColorHelper.getPercents(grad),
-						true);
+				Color[] colors = CSSSWTColorHelper.getSWTColors(grad,
+						folder.getDisplay(), engine);
+				int[] percents = CSSSWTColorHelper.getPercents(grad);
+
+				if ("selected".equals(pseudo)) {
+					folder.setSelectionBackground(colors, percents, true);
+				} else {
+					folder.setBackground(colors, percents, true);
+				}
+
 			} else if (widget instanceof Control) {
 				GradientBackgroundListener.handle((Control) widget, grad);
+				CompositeElement.setBackgroundOverriddenByCSSMarker(widget);
 			}
 		}
 	}
@@ -140,11 +148,13 @@ AbstractCSSPropertyBackgroundHandler {
 		}
 	}
 
+	@Override
 	public String retrieveCSSPropertyBackgroundAttachment(Object widget,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBackgroundColor(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = (Widget) element;
@@ -162,17 +172,20 @@ AbstractCSSPropertyBackgroundHandler {
 		return engine.convert(color, Color.class, null);
 	}
 
+	@Override
 	public String retrieveCSSPropertyBackgroundImage(Object widget,
 			String pseudo, CSSEngine engine) throws Exception {
 		// TODO : manage path of Image.
 		return "none";
 	}
 
+	@Override
 	public String retrieveCSSPropertyBackgroundPosition(Object widget,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBackgroundRepeat(Object widget,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,8 @@ import org.osgi.service.event.Event;
 
 import junit.framework.TestCase;
 import static org.mockito.Mockito.*;
+import static org.eclipse.ui.internal.themes.WorkbenchThemeManager.EMPTY_COLOR_VALUE;
+import static org.eclipse.ui.internal.themes.WorkbenchThemeManager.EMPRY_FONT_DATA_VALUE;
 
 /**
  * @since 3.5
@@ -77,9 +79,13 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 		verify(stylingEngine, times(1)).style(fontDefinition2);
 		verify(stylingEngine, times(1)).style(colorDefinition);
 		
-		verify(fontRegistry, times(1)).put(eq("fontDefinition1"), any(FontData[].class));
+		verify(fontRegistry, times(2)).put(eq("fontDefinition1"), any(FontData[].class));
+		verify(fontRegistry, times(1)).put(eq("fontDefinition1"), eq(EMPRY_FONT_DATA_VALUE));
 		verify(fontRegistry, never()).put(eq("fontDefinition2"), any(FontData[].class));
-		verify(colorRegistry, times(1)).put(eq("colorDefinition"), any(RGB.class));
+		verify(colorRegistry, times(2)).put(eq("colorDefinition"), any(RGB.class));
+		verify(colorRegistry, times(1)).put(eq("colorDefinition"), eq(EMPTY_COLOR_VALUE));
+		
+		verify(handler, times(1)).sendThemeRegistryRestyledEvent();
 	}
 
 	public void testAddThemeDefinitions() throws Exception {
@@ -175,10 +181,16 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 		verify(stylingEngine, times(1)).style(colorDefinition1);
 		verify(stylingEngine, times(1)).style(colorDefinition2);
 		
-		verify(fontRegistry, times(1)).put(eq("fontDefinition1"), any(FontData[].class));
-		verify(fontRegistry, times(1)).put(eq("fontDefinition2"), any(FontData[].class));
-		verify(colorRegistry, times(1)).put(eq("colorDefinition1"), any(RGB.class));
-		verify(colorRegistry, times(1)).put(eq("colorDefinition2"), any(RGB.class));
+		verify(fontRegistry, times(2)).put(eq("fontDefinition1"), any(FontData[].class));
+		verify(fontRegistry, times(1)).put(eq("fontDefinition1"), eq(EMPRY_FONT_DATA_VALUE));
+		verify(fontRegistry, times(2)).put(eq("fontDefinition2"), any(FontData[].class));
+		verify(fontRegistry, times(1)).put(eq("fontDefinition2"), eq(EMPRY_FONT_DATA_VALUE));
+		verify(colorRegistry, times(2)).put(eq("colorDefinition1"), any(RGB.class));
+		verify(colorRegistry, times(1)).put(eq("colorDefinition1"), eq(EMPTY_COLOR_VALUE));
+		verify(colorRegistry, times(2)).put(eq("colorDefinition2"), any(RGB.class));
+		verify(colorRegistry, times(1)).put(eq("colorDefinition2"), eq(EMPTY_COLOR_VALUE));
+		
+		verify(handler, times(1)).sendThemeRegistryRestyledEvent();
 	}
 	
 	public static class WorkbenchThemeChangedHandlerTestable extends WorkbenchThemeChangedHandler {
@@ -205,6 +217,10 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 		@Override
 		public ThemesExtension createThemesExtension() {
 			return super.createThemesExtension();
+		}
+		
+		@Override
+		public void sendThemeRegistryRestyledEvent() {
 		}
 	}
 }

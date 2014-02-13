@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,9 @@ import org.osgi.service.event.EventHandler;
  */
 public class WorkbenchThemeManager extends EventManager implements
 		IThemeManager {
+	public static RGB EMPTY_COLOR_VALUE = new RGB(0, 1, 2);
+
+	public static FontData[] EMPRY_FONT_DATA_VALUE = new FontData[0];
 
 	private static final String SYSTEM_DEFAULT_THEME = "org.eclipse.ui.ide.systemDefault";//$NON-NLS-1$
 
@@ -59,6 +62,12 @@ public class WorkbenchThemeManager extends EventManager implements
 	private IEclipseContext context;
 
 	private IEventBroker eventBroker;
+
+	public static interface Events {
+		public static final String TOPIC = "org/eclipse/ui/internal/themes/WorkbenchThemeManager"; //$NON-NLS-1$
+
+		public static final String THEME_REGISTRY_RESTYLED = TOPIC + "/themeRegistryRestyled"; //$NON-NLS-1$
+	}
 
 	/**
 	 * Returns the singelton instance of the WorkbenchThemeManager
@@ -401,9 +410,10 @@ public class WorkbenchThemeManager extends EventManager implements
 			FontRegistry fontRegistry = getFontRegistry();
 			ColorRegistry colorRegistry = getColorRegistry();
 
-			resetThemeRegistries(themeRegistry);
+			resetThemeRegistries(themeRegistry, fontRegistry, colorRegistry);
 			overrideAlreadyExistingDefinitions(engine, themeRegistry, fontRegistry, colorRegistry);
 			addNewDefinitions(engine, themeRegistry, fontRegistry, colorRegistry);
+			sendThemeRegistryRestyledEvent();
 		}
 
 		protected IStylingEngine getStylingEngine() {
@@ -422,6 +432,12 @@ public class WorkbenchThemeManager extends EventManager implements
 			return getCurrentTheme().getColorRegistry();
 		}
 
+		protected void sendThemeRegistryRestyledEvent() {
+			IEventBroker eventBroker = (IEventBroker) getContext()
+					.get(IEventBroker.class.getName());
+			eventBroker.send(Events.THEME_REGISTRY_RESTYLED, null);
+		}
+
 		private ITheme getCurrentTheme() {
 			return WorkbenchThemeManager.getInstance().getCurrentTheme();
 		}
@@ -432,15 +448,20 @@ public class WorkbenchThemeManager extends EventManager implements
 
 		// At this moment we don't remove the definitions added by CSS since we
 		// don't want to modify the 3.x theme registries api
-		private void resetThemeRegistries(ThemeRegistry themeRegistry) {
-			for (FontDefinition fontDefinition : themeRegistry.getFonts()) {
-				if (fontDefinition.isOverridden()) {
-					fontDefinition.resetToDefaultValue();
+		private void resetThemeRegistries(ThemeRegistry themeRegistry, FontRegistry fontRegistry,
+				ColorRegistry colorRegistry) {
+			for (FontDefinition def : themeRegistry.getFonts()) {
+				if (def.isOverridden() || def.isAddedByCss()) {
+					def.resetToDefaultValue();
+					fontRegistry.put(def.getId(), def.getValue() != null ? def.getValue()
+							: EMPRY_FONT_DATA_VALUE);
 				}
 			}
-			for (ColorDefinition colorDefinition : themeRegistry.getColors()) {
-				if (colorDefinition.isOverridden()) {
-					colorDefinition.resetToDefaultValue();
+			for (ColorDefinition def : themeRegistry.getColors()) {
+				if (def.isOverridden() || def.isAddedByCss()) {
+					def.resetToDefaultValue();
+					colorRegistry.put(def.getId(), def.getValue() != null ? def.getValue()
+							: EMPTY_COLOR_VALUE);
 				}
 			}
 		}
