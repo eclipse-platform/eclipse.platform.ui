@@ -206,11 +206,15 @@ public class E4Application implements IApplication {
 		appContext.set(UISynchronize.class, new UISynchronize() {
 
 			public void syncExec(Runnable runnable) {
-				display.syncExec(runnable);
+				if (display != null && !display.isDisposed()) {
+					display.syncExec(runnable);
+				}
 			}
 
 			public void asyncExec(Runnable runnable) {
-				display.asyncExec(runnable);
+				if (display != null && !display.isDisposed()) {
+					display.asyncExec(runnable);
+				}
 			}
 		});
 		appContext.set(IApplicationContext.class, applicationContext);
