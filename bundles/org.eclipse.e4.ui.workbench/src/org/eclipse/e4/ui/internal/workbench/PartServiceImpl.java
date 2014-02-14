@@ -39,6 +39,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
 import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -598,6 +599,19 @@ public class PartServiceImpl implements EPartService {
 			}
 			activePart = part;
 			return;
+		}
+
+		// Delegate activations to a CompositePart's inner part (if any)
+		if (part instanceof MCompositePart) {
+			if (part.getContext() != null) {
+				IEclipseContext pContext = part.getContext();
+				if (pContext.getActiveLeaf() != null) {
+					MPart inner = pContext.getActiveLeaf().get(MPart.class);
+					if (inner != null) {
+						part = inner;
+					}
+				}
+			}
 		}
 
 		// only activate parts that is under our control
