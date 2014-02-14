@@ -531,6 +531,7 @@ public final class BindingPersistenceTest extends UITestCase {
 				null);
 
 		final KeySequence keyCtrlY = KeySequence.getInstance("CTRL+Y");
+		final KeySequence keyCtrlShiftZ = KeySequence.getInstance("CTRL+SHIFT+Z");
 
 		final Binding pasteBinding = bindingService.getPerfectMatch(keyCtrlY);
 		assertNotNull(pasteBinding);
@@ -539,7 +540,12 @@ public final class BindingPersistenceTest extends UITestCase {
 
 		// reset the scheme
 		bindingService.savePreferences(defaultScheme, originalBindings);
-		final Binding redoBinding = bindingService.getPerfectMatch(keyCtrlY);
+		Binding redoBinding = null;
+		if (Util.isGtk()) {
+			redoBinding = bindingService.getPerfectMatch(keyCtrlShiftZ);
+		} else {
+			redoBinding = bindingService.getPerfectMatch(keyCtrlY);
+		}
 		assertNotNull(redoBinding);
 		assertEquals(redoCmd, redoBinding.getParameterizedCommand());
 		assertEquals(IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID,
