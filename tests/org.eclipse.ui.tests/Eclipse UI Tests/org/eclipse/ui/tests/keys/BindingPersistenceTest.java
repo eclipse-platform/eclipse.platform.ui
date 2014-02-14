@@ -10,14 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.keys;
 
+import java.util.HashMap;
+
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -28,14 +34,16 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * Test cases covering the various interaction between bindings. Bindings that
  * have been removed. Bindings that have been added. Inheritance of various
  * properties.
- * 
+ *
  * @since 3.1
  */
 public final class BindingPersistenceTest extends UITestCase {
 
+	private final String EMACS_SCHEME_ID = "org.eclipse.ui.emacsAcceleratorConfiguration";
+
 	/**
 	 * Constructor for <code>BindingPersistenceTest</code>.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the test
 	 */
@@ -48,7 +56,7 @@ public final class BindingPersistenceTest extends UITestCase {
 	 * Tests whether the preference store will be read automatically when a
 	 * change to the preference store is made.
 	 * </p>
-	 * 
+	 *
 	 * @throws ParseException
 	 *             If "ALT+SHIFT+Q A" cannot be parsed by KeySequence.
 	 */
@@ -61,7 +69,7 @@ public final class BindingPersistenceTest extends UITestCase {
 		bindingService.readRegistryAndPreferences(commandService);
 
 		// Check the pre-conditions.
-		final String emacsSchemeId = "org.eclipse.ui.emacsAcceleratorConfiguration";
+		final String emacsSchemeId = EMACS_SCHEME_ID;
 		assertFalse("The active scheme should be Emacs yet", emacsSchemeId
 				.equals(bindingService.getActiveScheme().getId()));
 		final KeySequence formalKeySequence = KeySequence
@@ -268,7 +276,7 @@ public final class BindingPersistenceTest extends UITestCase {
 			}
 		}
 	}
-	
+
 	public void testDifferentPlatform() throws Exception {
 
 		ICommandService commandService = (ICommandService) fWorkbench
@@ -295,9 +303,281 @@ public final class BindingPersistenceTest extends UITestCase {
 		}
 	}
 
-	/* (non-Javadoc)
+	public void testAboutBinding() throws Exception {
+		ICommandService commandService = (ICommandService) fWorkbench
+				.getAdapter(ICommandService.class);
+		IBindingService bindingService = (IBindingService) fWorkbench
+				.getAdapter(IBindingService.class);
+
+		final Scheme activeScheme = bindingService.getActiveScheme();
+		final Binding[] originalBindings = bindingService.getBindings();
+
+		ParameterizedCommand aboutCmd = new ParameterizedCommand(
+				commandService
+						.getCommand(IWorkbenchCommandConstants.HELP_ABOUT),
+				null);
+		ParameterizedCommand activateEditorCmd = new ParameterizedCommand(
+				commandService
+						.getCommand(IWorkbenchCommandConstants.WINDOW_ACTIVATE_EDITOR),
+				null);
+
+		final KeySequence keyF12 = KeySequence.getInstance("F12");
+		final KeySequence keyAltCtrlShiftI = KeySequence
+				.getInstance("ALT+CTRL+SHIFT+I");
+		final Binding editorBinding = bindingService.getPerfectMatch(keyF12);
+		assertNotNull(editorBinding);
+		assertEquals(activateEditorCmd, editorBinding.getParameterizedCommand());
+
+		EBindingService ebs = (EBindingService) fWorkbench
+				.getService(EBindingService.class);
+		HashMap<String, String> attrs = new HashMap<String, String>();
+		attrs.put(EBindingService.TYPE_ATTR_TAG, "user");
+		final Binding localAboutBinding = ebs.createBinding(keyF12, aboutCmd,
+				IContextService.CONTEXT_ID_WINDOW, attrs);
+		assertEquals(Binding.USER, localAboutBinding.getType());
+
+		// test unbinding a system binding and adding a user binding (same
+		// triggers and context)
+		final Binding[] bindings = originalBindings;
+		Binding[] added = new Binding[bindings.length + 2];
+		System.arraycopy(bindings, 0, added, 0, bindings.length);
+
+		Binding del = new KeyBinding(keyF12, null,
+				IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID,
+				IContextService.CONTEXT_ID_WINDOW, null, null, null,
+				Binding.USER);
+		added[bindings.length] = del;
+		added[bindings.length + 1] = localAboutBinding;
+		bindingService.savePreferences(activeScheme, added);
+
+		// the match should be the user binding that we just added
+		final Binding secondMatch = bindingService.getPerfectMatch(keyF12);
+		assertNotNull(secondMatch);
+		assertEquals(aboutCmd, secondMatch.getParameterizedCommand());
+
+		// go back to the defaults
+		bindingService.savePreferences(activeScheme, originalBindings);
+		final Binding thirdMatch = bindingService.getPerfectMatch(keyF12);
+		assertNotNull(thirdMatch);
+		assertEquals(activateEditorCmd, thirdMatch.getParameterizedCommand());
+
+		// try assigning alt-ctrl-shift-i (no other binding uses this for this
+		// context) to the 'about' command
+		final Binding localAboutBinding1 = ebs.createBinding(keyAltCtrlShiftI,
+				aboutCmd, IContextService.CONTEXT_ID_WINDOW, attrs);
+		assertEquals(Binding.USER, localAboutBinding1.getType());
+		Binding[] added1 = new Binding[bindings.length + 1];
+		System.arraycopy(bindings, 0, added1, 0, bindings.length);
+		added1[bindings.length] = localAboutBinding1;
+
+		bindingService.savePreferences(activeScheme, added1);
+		final Binding fourthMatch = bindingService
+				.getPerfectMatch(keyAltCtrlShiftI);
+		assertNotNull(fourthMatch);
+		assertEquals(aboutCmd, fourthMatch.getParameterizedCommand());
+	}
+
+	public void testAboutBindingIn3x() throws Exception {
+		ICommandService commandService = (ICommandService) fWorkbench
+				.getAdapter(ICommandService.class);
+		IBindingService bindingService = (IBindingService) fWorkbench
+				.getAdapter(IBindingService.class);
+
+		final Scheme activeScheme = bindingService.getActiveScheme();
+
+		ParameterizedCommand aboutCmd = new ParameterizedCommand(
+				commandService
+						.getCommand(IWorkbenchCommandConstants.HELP_ABOUT),
+				null);
+		ParameterizedCommand activateEditorCmd = new ParameterizedCommand(
+				commandService
+						.getCommand(IWorkbenchCommandConstants.WINDOW_ACTIVATE_EDITOR),
+				null);
+
+		final KeySequence keyF12 = KeySequence.getInstance("F12");
+		final Binding editorBinding = bindingService.getPerfectMatch(keyF12);
+		assertNotNull(editorBinding);
+		assertEquals(activateEditorCmd, editorBinding.getParameterizedCommand());
+
+		EBindingService ebs = (EBindingService) fWorkbench
+				.getService(EBindingService.class);
+		HashMap<String, String> attrs = new HashMap<String, String>();
+		attrs.put(EBindingService.TYPE_ATTR_TAG, "user");
+		final Binding localAboutBinding = ebs.createBinding(keyF12, aboutCmd,
+				IContextService.CONTEXT_ID_WINDOW, attrs);
+		assertEquals(Binding.USER, localAboutBinding.getType());
+
+		final Binding[] bindings = bindingService.getBindings();
+		Binding[] added = new Binding[bindings.length + 1];
+		System.arraycopy(bindings, 0, added, 0, bindings.length);
+
+		added[bindings.length] = localAboutBinding;
+		bindingService.savePreferences(activeScheme, added);
+
+		final Binding secondMatch = bindingService.getPerfectMatch(keyF12);
+		// fails
+		assertNotNull(secondMatch);
+		assertEquals(aboutCmd, secondMatch.getParameterizedCommand());
+	}
+
+	public void testAboutBindingEmacs() throws Exception {
+
+		ICommandService commandService = (ICommandService) fWorkbench
+				.getAdapter(ICommandService.class);
+		IBindingService bindingService = (IBindingService) fWorkbench
+				.getAdapter(IBindingService.class);
+
+		final Scheme emacsScheme = bindingService.getScheme(EMACS_SCHEME_ID);
+		assertNotNull(emacsScheme);
+		final Binding[] originalBindings = bindingService.getBindings();
+		bindingService.savePreferences(emacsScheme, originalBindings);
+
+		ParameterizedCommand findAndReplaceCmd = new ParameterizedCommand(
+				commandService
+						.getCommand(IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE),
+				null);
+		ParameterizedCommand aboutCmd = new ParameterizedCommand(
+				commandService
+						.getCommand(IWorkbenchCommandConstants.HELP_ABOUT),
+				null);
+
+		final KeySequence keyAltR = KeySequence.getInstance("ALT+R");
+		final KeySequence keyAltCtrlShiftI = KeySequence
+				.getInstance("ALT+CTRL+SHIFT+I");
+		final Binding findAndReplaceBinding = bindingService
+				.getPerfectMatch(keyAltR);
+
+		assertNotNull(findAndReplaceBinding);
+		assertEquals(findAndReplaceCmd,
+				findAndReplaceBinding.getParameterizedCommand());
+		assertEquals(EMACS_SCHEME_ID, findAndReplaceBinding.getSchemeId());
+
+		EBindingService ebs = (EBindingService) fWorkbench
+				.getService(EBindingService.class);
+		HashMap<String, String> attrs = new HashMap<String, String>();
+		attrs.put(EBindingService.TYPE_ATTR_TAG, "user");
+		attrs.put(EBindingService.SCHEME_ID_ATTR_TAG, EMACS_SCHEME_ID);
+		final Binding localAboutBinding = ebs.createBinding(keyAltR, aboutCmd,
+				IContextService.CONTEXT_ID_WINDOW, attrs);
+		assertNotNull(localAboutBinding);
+		assertEquals(Binding.USER, localAboutBinding.getType());
+		assertEquals(EMACS_SCHEME_ID, localAboutBinding.getSchemeId());
+
+		final Binding[] bindings = originalBindings;
+		Binding[] added = new Binding[bindings.length + 2];
+		System.arraycopy(bindings, 0, added, 0, bindings.length);
+
+		Binding del = new KeyBinding(keyAltR, null, EMACS_SCHEME_ID,
+				IContextService.CONTEXT_ID_WINDOW, null, null, null,
+				Binding.USER);
+		added[bindings.length] = del;
+		added[bindings.length + 1] = localAboutBinding;
+		bindingService.savePreferences(emacsScheme, added);
+
+		// the match should be the user binding that we just added
+		final Binding secondMatch = bindingService.getPerfectMatch(keyAltR);
+		assertNotNull(secondMatch);
+		assertEquals(aboutCmd, secondMatch.getParameterizedCommand());
+
+		// go back to the defaults
+		bindingService.savePreferences(emacsScheme, originalBindings);
+		final Binding thirdMatch = bindingService.getPerfectMatch(keyAltR);
+		assertNotNull(thirdMatch);
+		assertEquals(findAndReplaceCmd, thirdMatch.getParameterizedCommand());
+
+		// try assigning alt-ctrl-shift-i (no other binding uses this for this
+		// context) to the 'about' command
+		final Binding localAboutBinding1 = ebs.createBinding(keyAltCtrlShiftI,
+				aboutCmd, IContextService.CONTEXT_ID_WINDOW, attrs);
+		assertNotNull(localAboutBinding1);
+		assertEquals(Binding.USER, localAboutBinding1.getType());
+		assertEquals(EMACS_SCHEME_ID, localAboutBinding.getSchemeId());
+
+		Binding[] added1 = new Binding[bindings.length + 1];
+		System.arraycopy(bindings, 0, added1, 0, bindings.length);
+		added1[bindings.length] = localAboutBinding1;
+
+		bindingService.savePreferences(emacsScheme, added1);
+		final Binding fourthMatch = bindingService
+				.getPerfectMatch(keyAltCtrlShiftI);
+		assertNotNull(fourthMatch);
+		assertEquals(aboutCmd, fourthMatch.getParameterizedCommand());
+		assertEquals(EMACS_SCHEME_ID, fourthMatch.getSchemeId());
+	}
+
+	// the 'paste' key binding overrides the 'redo' key binding on Windows
+	// platforms
+	public void testPasteAndRedoBindingEmacs() throws Exception {
+		ICommandService commandService = (ICommandService) fWorkbench
+				.getAdapter(ICommandService.class);
+		IBindingService bindingService = (IBindingService) fWorkbench
+				.getAdapter(IBindingService.class);
+
+		final Scheme emacsScheme = bindingService.getScheme(EMACS_SCHEME_ID);
+		assertNotNull(emacsScheme);
+		final Scheme defaultScheme = bindingService
+				.getScheme(IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID);
+		assertNotNull(defaultScheme);
+
+		final Binding[] originalBindings = bindingService.getBindings();
+		bindingService.savePreferences(emacsScheme, originalBindings);
+
+		ParameterizedCommand pasteCmd = new ParameterizedCommand(
+				commandService
+						.getCommand(IWorkbenchCommandConstants.EDIT_PASTE),
+				null);
+		ParameterizedCommand redoCmd = new ParameterizedCommand(
+				commandService.getCommand(IWorkbenchCommandConstants.EDIT_REDO),
+				null);
+
+		final KeySequence keyCtrlY = KeySequence.getInstance("CTRL+Y");
+
+		final Binding pasteBinding = bindingService.getPerfectMatch(keyCtrlY);
+		assertNotNull(pasteBinding);
+		assertEquals(pasteCmd, pasteBinding.getParameterizedCommand());
+		assertEquals(EMACS_SCHEME_ID, pasteBinding.getSchemeId());
+
+		// reset the scheme
+		bindingService.savePreferences(defaultScheme, originalBindings);
+		final Binding redoBinding = bindingService.getPerfectMatch(keyCtrlY);
+		assertNotNull(redoBinding);
+		assertEquals(redoCmd, redoBinding.getParameterizedCommand());
+		assertEquals(IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID,
+				redoBinding.getSchemeId());
+	}
+
+	// the 'paste' key binding overrides the 'redo' key binding and can be
+	// put back
+	public void testPasteBindingEmacs() throws Exception {
+		ICommandService commandService = (ICommandService) fWorkbench
+				.getAdapter(ICommandService.class);
+		IBindingService bindingService = (IBindingService) fWorkbench
+				.getAdapter(IBindingService.class);
+
+		final Scheme emacsScheme = bindingService.getScheme(EMACS_SCHEME_ID);
+		assertNotNull(emacsScheme);
+		final Binding[] originalBindings = bindingService.getBindings();
+		bindingService.savePreferences(emacsScheme, originalBindings);
+
+		ParameterizedCommand pasteCmd = new ParameterizedCommand(
+				commandService
+						.getCommand(IWorkbenchCommandConstants.EDIT_PASTE),
+				null);
+
+		final KeySequence keyCtrlY = KeySequence.getInstance("CTRL+Y");
+
+		final Binding pasteBinding = bindingService.getPerfectMatch(keyCtrlY);
+		assertNotNull(pasteBinding);
+		assertEquals(pasteCmd, pasteBinding.getParameterizedCommand());
+		assertEquals(EMACS_SCHEME_ID, pasteBinding.getSchemeId());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doTearDown()
 	 */
+	@Override
 	protected void doTearDown() throws Exception {
 		final IPreferenceStore store = WorkbenchPlugin.getDefault()
 				.getPreferenceStore();
@@ -307,6 +587,15 @@ public final class BindingPersistenceTest extends UITestCase {
 						"<?xml version=\"1.0\" encoding=\"UTF-8\"?><org.eclipse.ui.commands><activeKeyConfiguration keyConfigurationId=\""
 								+ IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID
 								+ "\"/></org.eclipse.ui.commands>");
+		IBindingService bindingService = (IBindingService) fWorkbench
+				.getAdapter(IBindingService.class);
+
+		// reset keybindings
+		bindingService.readRegistryAndPreferences(null);
+		final Scheme activeScheme = bindingService
+				.getScheme(IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID);
+		final Binding[] originalBindings = bindingService.getBindings();
+		bindingService.savePreferences(activeScheme, originalBindings);
 		super.doTearDown();
 	}
 }
