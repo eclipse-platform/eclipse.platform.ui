@@ -32,21 +32,6 @@ public class ToolItemUpdater {
 		itemsToCheck.remove(item);
 	}
 
-	public void updateContributionItems() {
-		for (final HandledContributionItem hci : itemsToCheck) {
-			if (hci.model != null && hci.model.getParent() != null) {
-				hci.updateItemEnablement();
-			} else {
-				orphanedToolItems.add(hci);
-			}
-		}
-		if (!orphanedToolItems.isEmpty()) {
-			itemsToCheck.removeAll(orphanedToolItems);
-			orphanedToolItems.clear();
-		}
-
-	}
-
 	public void updateContributionItems(Selector selector) {
 		for (final HandledContributionItem hci : itemsToCheck) {
 			if (hci.model != null && hci.model.getParent() != null
