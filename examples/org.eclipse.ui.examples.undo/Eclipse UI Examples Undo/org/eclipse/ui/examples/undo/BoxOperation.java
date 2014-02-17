@@ -19,17 +19,17 @@ import org.eclipse.swt.widgets.Canvas;
  * An undoable operation that represents a change to a box.
  */
 public abstract class BoxOperation extends AbstractOperation {
-	
+
 	/*
 	 * The box involved in the operation
 	 */
 	Box box;
-	
+
 	/*
 	 * The group of boxes involved in the operation
 	 */
 	Boxes boxes;
-	
+
 	/*
 	 * The canvas to update or draw on during an operation
 	 */
@@ -42,7 +42,7 @@ public abstract class BoxOperation extends AbstractOperation {
 		this.box = box;
 		this.canvas = canvas;
 	}
-	
+
 	/*
 	 * Show the specified prompt in an info dialog.
 	 */

@@ -29,17 +29,14 @@ public class MoveBoxOperation extends BoxOperation {
 	 */
 	private Point origin;
 	private Point target;
-	
+
 	public MoveBoxOperation(String label, IUndoContext context, Box box, Canvas canvas, Point newOrigin) {
 		super(label, context, null, box, canvas);
 		origin = new Point(box.x1, box.y1);
 		target = new Point(newOrigin.x, newOrigin.y);
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#execute(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
-	 */
+	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		if (box==null) {
@@ -50,19 +47,13 @@ public class MoveBoxOperation extends BoxOperation {
 		return Status.OK_STATUS;
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#redo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
-	 */
+	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		return execute(monitor, info);
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#undo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
-	 */
+	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		if (box==null) {
@@ -72,11 +63,8 @@ public class MoveBoxOperation extends BoxOperation {
 		canvas.redraw();
 		return Status.OK_STATUS;
 	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#getLabel()
-	 */
+
+	@Override
 	public String getLabel() {
 		final StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append(super.getLabel());

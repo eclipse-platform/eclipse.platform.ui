@@ -3,8 +3,8 @@
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: 
+ *
+ * Contributors:
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.ui.examples.undo;
@@ -23,7 +23,7 @@ public class UndoExampleMessages extends NLS {
 	public static String UndoPreferences_ConfirmUndo;
 	public static String UndoPreferences_ShowDebug;
 	public static String UndoPreferences_DoNotConfirm;
-	
+
 	public static String UndoHistoryView_ContextFilterDialog;
 	public static String UndoHistoryView_ChooseContextMessage;
 	public static String UndoHistoryView_FilterText;
@@ -44,7 +44,7 @@ public class UndoExampleMessages extends NLS {
 	public static String BoxView_ConfirmUndo;
 	public static String BoxView_Undo;
 	public static String BoxView_Redo;
-	
+
     static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, UndoExampleMessages.class);

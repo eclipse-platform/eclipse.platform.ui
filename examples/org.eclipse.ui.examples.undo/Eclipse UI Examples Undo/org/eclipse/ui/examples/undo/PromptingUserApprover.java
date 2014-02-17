@@ -40,13 +40,7 @@ public final class PromptingUserApprover implements IOperationApprover {
 		this.context = context;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.operations.IOperationApprover#proceedRedoing(org.eclipse.core.commands.operations.IUndoableOperation,
-	 *      org.eclipse.core.commands.operations.IOperationHistory,
-	 *      org.eclipse.core.runtime.IAdaptable)
-	 */
+	@Override
 	public IStatus proceedRedoing(IUndoableOperation operation,
 			IOperationHistory history, IAdaptable uiInfo) {
 
@@ -62,13 +56,7 @@ public final class PromptingUserApprover implements IOperationApprover {
 		return prompt(false, operation, uiInfo);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.operations.IOperationApprover#proceedUndoing(org.eclipse.core.commands.operations.IUndoableOperation,
-	 *      org.eclipse.core.commands.operations.IOperationHistory,
-	 *      org.eclipse.core.runtime.IAdaptable)
-	 */
+	@Override
 	public IStatus proceedUndoing(IUndoableOperation operation,
 			IOperationHistory history, IAdaptable uiInfo) {
 
