@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1253,12 +1253,12 @@ public class PartRenderingEngine implements IPresentationEngine {
 			appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
 				public void setClassname(Object widget, String classname) {
 					WidgetElement.setCSSClass((Widget) widget, classname);
-					engine.applyStyles((Widget) widget, true);
+					engine.applyStyles(widget, true);
 				}
 
 				public void setId(Object widget, String id) {
 					WidgetElement.setID((Widget) widget, id);
-					engine.applyStyles((Widget) widget, true);
+					engine.applyStyles(widget, true);
 				}
 
 				public void style(Object widget) {
@@ -1266,14 +1266,14 @@ public class PartRenderingEngine implements IPresentationEngine {
 				}
 
 				public CSSStyleDeclaration getStyle(Object widget) {
-					return engine.getStyle((Widget) widget);
+					return engine.getStyle(widget);
 				}
 
 				public void setClassnameAndId(Object widget, String classname,
 						String id) {
 					WidgetElement.setCSSClass((Widget) widget, classname);
 					WidgetElement.setID((Widget) widget, id);
-					engine.applyStyles((Widget) widget, true);
+					engine.applyStyles(widget, true);
 				}
 
 			});
@@ -1291,16 +1291,16 @@ public class PartRenderingEngine implements IPresentationEngine {
 			appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
 				public void setClassname(Object widget, String classname) {
 					WidgetElement.setCSSClass((Widget) widget, classname);
-					engine.applyStyles((Widget) widget, true);
+					engine.applyStyles(widget, true);
 				}
 
 				public void setId(Object widget, String id) {
 					WidgetElement.setID((Widget) widget, id);
-					engine.applyStyles((Widget) widget, true);
+					engine.applyStyles(widget, true);
 				}
 
 				public void style(Object widget) {
-					engine.applyStyles((Widget) widget, true);
+					engine.applyStyles(widget, true);
 				}
 
 				public CSSStyleDeclaration getStyle(Object widget) {
@@ -1316,7 +1316,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 						String id) {
 					WidgetElement.setCSSClass((Widget) widget, classname);
 					WidgetElement.setID((Widget) widget, id);
-					engine.applyStyles((Widget) widget, true);
+					engine.applyStyles(widget, true);
 				}
 
 			});
