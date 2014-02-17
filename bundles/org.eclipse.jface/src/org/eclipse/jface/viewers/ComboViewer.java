@@ -162,9 +162,6 @@ public class ComboViewer extends AbstractListViewer {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on Viewer.
-     */
     @Override
 	public Control getControl() {
         if (combo == null) {
@@ -205,9 +202,7 @@ public class ComboViewer extends AbstractListViewer {
 	public void reveal(Object element) {
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.AbstractListViewer#listSetSelection(int[])
-     */
+
     @Override
 	protected void listSetSelection(int[] ixs) {
         if (combo == null) {
@@ -221,9 +216,6 @@ public class ComboViewer extends AbstractListViewer {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.AbstractListViewer#listDeselectAll()
-     */
     @Override
 	protected void listDeselectAll() {
         if (combo == null) {
@@ -235,9 +227,6 @@ public class ComboViewer extends AbstractListViewer {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.AbstractListViewer#listShowSelection()
-     */
     @Override
 	protected void listShowSelection() {
     }
