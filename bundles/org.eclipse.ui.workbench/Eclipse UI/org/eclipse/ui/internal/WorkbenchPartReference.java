@@ -166,6 +166,11 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     	this.windowContext = windowContext;
 		this.page = page;
 		this.part = part;
+
+		// cache the reference in the MPart's transientData
+		if (part != null) {
+			part.getTransientData().put(IWorkbenchPartReference.class.getName(), this);
+		}
 	}
 
 	private EventHandler createContextEventHandler() {
@@ -554,6 +559,10 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     
 	public IWorkbenchPage getPage() {
 		return page;
+	}
+
+	public void setPage(IWorkbenchPage newPage) {
+		page = newPage;
 	}
 
 	/*

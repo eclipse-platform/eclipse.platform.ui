@@ -1110,6 +1110,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
 	public void addEditorReference(EditorReference editorReference) {
+		WorkbenchPage curPage = (WorkbenchPage) editorReference.getPage();
+
+		// Ensure that the page is up-to-date
+		if (curPage != this) {
+			curPage.editorReferences.remove(editorReference);
+			editorReference.setPage(this);
+		}
+
 		editorReferences.add(editorReference);
 	}
 
@@ -1698,6 +1706,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			broker.unsubscribe(areaWidgetHandler);
 			broker.unsubscribe(referenceRemovalEventHandler);
 			broker.unsubscribe(firingHandler);
+			broker.unsubscribe(childrenHandler);
 			partEvents.clear();
 
 			ISelectionService selectionService = getWorkbenchWindow().getSelectionService();
@@ -2624,6 +2633,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		broker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, areaWidgetHandler);
 		broker.subscribe(UIEvents.UIElement.TOPIC_TOBERENDERED, referenceRemovalEventHandler);
 		broker.subscribe(UIEvents.Contribution.TOPIC_OBJECT, firingHandler);
+		broker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN, childrenHandler);
 
 		MPerspectiveStack perspectiveStack = getPerspectiveStack();
 		if (perspectiveStack != null) {
@@ -4980,6 +4990,41 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					}
 					if ((e & FIRE_PART_BROUGHTTOTOP) == FIRE_PART_BROUGHTTOTOP) {
 						firePartBroughtToTop((MPart) element);
+					}
+				}
+			}
+		}
+	};
+
+	private EventHandler childrenHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
+
+			// ...in this window ?
+			MUIElement changedElement = (MUIElement) changedObj;
+			if (modelService.getTopLevelWindowFor(changedElement) != window)
+				return;
+
+			if (UIEvents.isADD(event)) {
+				for (Object o : UIEvents.asIterable(event, UIEvents.EventTags.NEW_VALUE)) {
+					if (!(o instanceof MUIElement))
+						continue;
+
+					// We have to iterate through the new elements to see if any
+					// contain (or are) MParts (e.g. we may have dragged a split
+					// editor which contains two editors, both with EditorRefs)
+					MUIElement element = (MUIElement) o;
+					List<MPart> addedParts = modelService.findElements(element, null, MPart.class,
+							null);
+					for (MPart part : addedParts) {
+						IWorkbenchPartReference ref = (IWorkbenchPartReference) part
+								.getTransientData().get(
+								IWorkbenchPartReference.class.getName());
+
+						// For now we only check for editors changing pages
+						if (ref instanceof EditorReference && getEditorReference(part) == null) {
+							addEditorReference((EditorReference) ref);
+						}
 					}
 				}
 			}
