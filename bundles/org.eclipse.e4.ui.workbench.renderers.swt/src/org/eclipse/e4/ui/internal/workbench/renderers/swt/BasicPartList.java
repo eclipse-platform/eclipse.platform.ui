@@ -111,6 +111,8 @@ public class BasicPartList extends AbstractTableInformationControl {
 
 	private StackRenderer renderer;
 
+	// private ISaveHandler saveHandler;
+
 	public BasicPartList(Shell parent, int shellStyle, int treeStyler,
 			EPartService partService, MElementContainer<?> input,
 			StackRenderer renderer, ISWTResourceUtilities utils,
@@ -120,6 +122,7 @@ public class BasicPartList extends AbstractTableInformationControl {
 		this.input = input;
 		this.renderer = renderer;
 		this.utils = utils;
+		// this.saveHandler = saveHandler;
 		if (alphabetical && getTableViewer() != null) {
 			getTableViewer().setComparator(new ViewerComparator());
 		}
@@ -194,9 +197,16 @@ public class BasicPartList extends AbstractTableInformationControl {
 	protected boolean deleteSelectedElements() {
 		Object selectedElement = getSelectedElement();
 		if (selectedElement != null) {
-			if (partService.savePart((MPart) selectedElement, false))
+			if (partService.savePart((MPart) selectedElement, true))
 				partService.hidePart((MPart) selectedElement);
 
+			if (getShell() == null) {
+				// Bug 421170: Contract says to return true if there are no
+				// elements left. In this case, there is no shell left because
+				// we popped a save dialog and auto-closed the list. Ergo, there
+				// are no elements left.
+				return true;
+			}
 			if (getInput().isEmpty()) {
 				getShell().dispose();
 				return true;
