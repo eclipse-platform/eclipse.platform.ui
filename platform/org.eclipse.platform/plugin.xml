@@ -49,6 +49,14 @@
 				name="applicationCSSResources"
           value="platform:/plugin/org.eclipse.platform/images/">
 		  </property>
+    <property
+          name="buildIdLocation"
+          value="250,220">
+    </property>
+    <property
+          name="buildIdSize"
+          value="160,40">
+    </property>
       </product> 
    </extension> 
    
