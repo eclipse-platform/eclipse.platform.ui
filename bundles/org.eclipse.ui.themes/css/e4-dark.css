@@ -10,7 +10,7 @@
  *     Lars Vogel - initial API and implementation
  *******************************************************************************/
 
-@import url("platform:/plugin/org.eclipse.platform/css/e4_basestyle.css"); 
+@import url("platform:/plugin/org.eclipse.ui.themes/css/e4_basestyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/e4-dark-config-parts.css");
 
 
