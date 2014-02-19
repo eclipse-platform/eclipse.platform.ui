@@ -29,7 +29,7 @@ import javax.annotation.PostConstruct;
 import org.eclipse.e4.core.services.nls.IMessageFactoryService;
 import org.eclipse.e4.core.services.nls.Message;
 import org.eclipse.e4.core.services.nls.Message.ReferenceType;
-import org.eclipse.osgi.service.localization.BundleLocalization;
+import org.eclipse.e4.core.services.translation.ResourceBundleProvider;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.log.LogService;
@@ -49,7 +49,7 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 
 	@Override
 	public <M> M getMessageInstance(final Locale locale, final Class<M> messages,
-			final BundleLocalization localization) {
+			final ResourceBundleProvider provider) {
 		String key = messages.getName() + "_" + locale; //$NON-NLS-1$
 
 		final Message annotation = messages.getAnnotation(Message.class);
@@ -94,12 +94,12 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 		M instance;
 
 		if (System.getSecurityManager() == null) {
-			instance = createInstance(locale, messages, annotation, localization);
+			instance = createInstance(locale, messages, annotation, provider);
 		} else {
 			instance = AccessController.doPrivileged(new PrivilegedAction<M>() {
 
 				public M run() {
-					return createInstance(locale, messages, annotation, localization);
+					return createInstance(locale, messages, annotation, provider);
 				}
 
 			});
@@ -146,7 +146,7 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 	 * @param annotation
 	 *            The annotation that is used in the message class. If specified it is needed to
 	 *            retrieve the URI of the location to search for the {@link ResourceBundle}.
-	 * @param localization
+	 * @param rbProvider
 	 *            The service that is needed to retrieve {@link ResourceBundle} objects from a
 	 *            bundle with a given locale.
 	 * 
@@ -154,12 +154,12 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 	 *         <code>null</code> if an error occured on creating the instance.
 	 */
 	private static <M> M createInstance(Locale locale, Class<M> messages, Message annotation,
-			BundleLocalization localization) {
+			ResourceBundleProvider rbProvider) {
 
 		ResourceBundle resourceBundle = null;
 		if (annotation != null && annotation.contributorURI().length() > 0) {
 			resourceBundle = ResourceBundleHelper.getResourceBundleForUri(
-					annotation.contributorURI(), locale, localization);
+					annotation.contributorURI(), locale, rbProvider);
 		}
 
 		if (resourceBundle == null) {
@@ -181,7 +181,7 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 		if (resourceBundle == null) {
 			// retrieve the OSGi resource bundle
 			Bundle bundle = FrameworkUtil.getBundle(messages);
-			resourceBundle = localization.getLocalization(bundle, locale.toString());
+			resourceBundle = rbProvider.getResourceBundle(bundle, locale.toString());
 		}
 
 		// always create a provider, if there is no resource bundle found, simply the modified keys

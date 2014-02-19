@@ -42,5 +42,5 @@ Export-Package: org.eclipse.e4.core.internal.services;x-friends:="org.eclipse.e4
 Eclipse-ExtensibleAPI: true
 Bundle-ClassPath: injection_annotations.jar, .
 Bundle-Activator: org.eclipse.e4.core.internal.services.ServicesActivator
-Service-Component: OSGI-INF/translationsupplier.xml,
- OSGI-INF/messagesfactory.xml
+Service-Component: OSGI-INF/translationsupplier.xml,OSGI-INF/messagesfactory.xml,
+ OSGI-INF/resourcebundleprovider.xml

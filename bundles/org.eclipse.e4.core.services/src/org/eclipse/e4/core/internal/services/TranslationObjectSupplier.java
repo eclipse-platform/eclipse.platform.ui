@@ -29,6 +29,7 @@ import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
 import org.eclipse.e4.core.services.nls.IMessageFactoryService;
 import org.eclipse.e4.core.services.nls.Message;
+import org.eclipse.e4.core.services.translation.ResourceBundleProvider;
 import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.osgi.service.localization.BundleLocalization;
 import org.osgi.service.log.LogService;
@@ -47,7 +48,7 @@ public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 	 * The service that gets {@link ResourceBundle} objects from a bundle with a given locale.
 	 */
 	@Inject
-	private BundleLocalization localization;
+	private ResourceBundleProvider provider;
 
 	/**
 	 * The service that creates instances of message classes based on the current active locale, the
@@ -125,8 +126,7 @@ public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 	 * @return The instance of the requested message class
 	 */
 	private Object getMessageInstance(Class<?> descriptorsClass) {
-		return this.factoryService.getMessageInstance(this.locale, descriptorsClass,
-				this.localization);
+		return this.factoryService.getMessageInstance(this.locale, descriptorsClass, this.provider);
 	}
 
 	/**

@@ -25,7 +25,7 @@ import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
-import org.eclipse.osgi.service.localization.BundleLocalization;
+import org.eclipse.e4.core.services.translation.ResourceBundleProvider;
 import org.osgi.framework.Bundle;
 import org.osgi.service.log.LogService;
 import org.osgi.service.packageadmin.PackageAdmin;
@@ -82,13 +82,13 @@ public class ResourceBundleHelper {
 	 *            The URI that points to a {@link ResourceBundle}
 	 * @param locale
 	 *            The {@link Locale} to use for loading the {@link ResourceBundle}
-	 * @param localization
+	 * @param provider
 	 *            The service for retrieving a {@link ResourceBundle} for a given {@link Locale} out
 	 *            of the given {@link Bundle} which is specified by URI.
 	 * @return
 	 */
 	public static ResourceBundle getResourceBundleForUri(String contributorURI, Locale locale,
-			BundleLocalization localization) {
+			ResourceBundleProvider provider) {
 		if (contributorURI == null)
 			return null;
 
@@ -157,10 +157,10 @@ public class ResourceBundleHelper {
 					result = getEquinoxResourceBundle(resourcePath.replace('.', '/'), locale,
 							bundle);
 				} else {
-					// there is no class and no special resource specified within the URI
-					// therefore we load the OSGi resource bundle out of the specified Bundle
-					// for the current Locale
-					result = localization.getLocalization(bundle, locale.toString());
+					// There is no class and no special resource specified within the URI
+					// therefore we load the OSresource bundle out of the specified Bundle
+					// for the current Locale. Typically this will be the OSGi ResourceBundle
+					result = provider.getResourceBundle(bundle, locale.toString());
 				}
 			}
 		}
