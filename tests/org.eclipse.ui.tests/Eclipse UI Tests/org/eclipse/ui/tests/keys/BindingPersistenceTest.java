@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -321,7 +321,7 @@ public final class BindingPersistenceTest extends UITestCase {
 						.getCommand(IWorkbenchCommandConstants.WINDOW_ACTIVATE_EDITOR),
 				null);
 
-		final KeySequence keyF12 = KeySequence.getInstance("F12");
+		final KeySequence keyF12 = Util.isMac() ? KeySequence.getInstance("M1+F12") : KeySequence.getInstance("F12");
 		final KeySequence keyAltCtrlShiftI = KeySequence
 				.getInstance("ALT+CTRL+SHIFT+I");
 		final Binding editorBinding = bindingService.getPerfectMatch(keyF12);
@@ -394,7 +394,7 @@ public final class BindingPersistenceTest extends UITestCase {
 						.getCommand(IWorkbenchCommandConstants.WINDOW_ACTIVATE_EDITOR),
 				null);
 
-		final KeySequence keyF12 = KeySequence.getInstance("F12");
+		final KeySequence keyF12 = Util.isMac() ?  KeySequence.getInstance("M1+F12") : KeySequence.getInstance("F12");
 		final Binding editorBinding = bindingService.getPerfectMatch(keyF12);
 		assertNotNull(editorBinding);
 		assertEquals(activateEditorCmd, editorBinding.getParameterizedCommand());
@@ -532,6 +532,7 @@ public final class BindingPersistenceTest extends UITestCase {
 
 		final KeySequence keyCtrlY = KeySequence.getInstance("CTRL+Y");
 		final KeySequence keyCtrlShiftZ = KeySequence.getInstance("CTRL+SHIFT+Z");
+		final KeySequence keyMacRedo = KeySequence.getInstance("M1+M2+Z");
 
 		final Binding pasteBinding = bindingService.getPerfectMatch(keyCtrlY);
 		assertNotNull(pasteBinding);
@@ -543,6 +544,8 @@ public final class BindingPersistenceTest extends UITestCase {
 		Binding redoBinding = null;
 		if (Util.isGtk()) {
 			redoBinding = bindingService.getPerfectMatch(keyCtrlShiftZ);
+		} else if(Util.isMac()) {
+			redoBinding = bindingService.getPerfectMatch(keyMacRedo);
 		} else {
 			redoBinding = bindingService.getPerfectMatch(keyCtrlY);
 		}
