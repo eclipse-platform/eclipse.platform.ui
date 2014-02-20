@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -277,7 +277,7 @@ public class CreateLinkedResourceGroup {
 		BidiUtils.applyBidiProcessing(linkTargetField, StructuredTextTypeHandlerFactory.FILE);
 		linkTargetField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				linkTarget = linkTargetField.getText();
+				linkTarget = getPathVariableManager().convertFromUserEditableFormat(linkTargetField.getText(), true);
 				resolveVariable();
 				if (updatableResourceName != null) {
 					String value = updatableResourceName.getValue();
