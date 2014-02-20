@@ -21,24 +21,62 @@ import org.eclipse.jface.action.MenuManager;
  */
 public final class MenuManagerEventHelper {
 
+	private IMenuListener2 showHelper;
+
+	private IMenuListener2 hideHelper;
+
+	private static MenuManagerEventHelper INSTANCE;
+	
+	/**
+	 * @return singleton instance
+	 */
+	public static MenuManagerEventHelper getInstance() {
+		if( INSTANCE == null ) {
+			INSTANCE = new MenuManagerEventHelper();
+		}
+		return INSTANCE;
+	}
+	
 	/**
 	 * Uses IMenuListener2 to do some processing before (menuAboutToShow) and
 	 * after (menuAboutToHide) the SWT.Show event.
+	 * 
+	 * @param showHelper
 	 */
-	public static IMenuListener2 showHelper;
-
+	public void setShowHelper(IMenuListener2 showHelper) {
+		this.showHelper = showHelper;
+	}
+	
+	/**
+	 * @return the show helper
+	 */
+	public IMenuListener2 getShowHelper() {
+		return showHelper;
+	}
+	
 	/**
 	 * Uses IMenuListener2 to do some processing before (menuAboutToShow) and
 	 * after (menuAboutToHide) the SWT.Hide event.
+	 * 
+	 * @param hideHelper 
 	 */
-	public static IMenuListener2 hideHelper;
-
+	public void setHideHelper(IMenuListener2 hideHelper) {
+		this.hideHelper = hideHelper;
+	}
+	
+	/**
+	 * @return the hide helper
+	 */
+	public IMenuListener2 getHideHelper() {
+		return this.hideHelper;
+	}
+	
 	/**
 	 * Do show pre-processing.
 	 * 
 	 * @param manager
 	 */
-	public static void showEventPreHelper(MenuManager manager) {
+	public void showEventPreHelper(MenuManager manager) {
 		if (showHelper != null) {
 			showHelper.menuAboutToShow(manager);
 		}
@@ -49,7 +87,7 @@ public final class MenuManagerEventHelper {
 	 * 
 	 * @param manager
 	 */
-	public static void showEventPostHelper(MenuManager manager) {
+	public void showEventPostHelper(MenuManager manager) {
 		if (showHelper != null) {
 			showHelper.menuAboutToHide(manager);
 		}
@@ -60,7 +98,7 @@ public final class MenuManagerEventHelper {
 	 * 
 	 * @param manager
 	 */
-	public static void hideEventPreHelper(MenuManager manager) {
+	public void hideEventPreHelper(MenuManager manager) {
 		if (hideHelper != null) {
 			hideHelper.menuAboutToShow(manager);
 		}
@@ -71,7 +109,7 @@ public final class MenuManagerEventHelper {
 	 * 
 	 * @param manager
 	 */
-	public static void hideEventPostHelper(MenuManager manager) {
+	public void hideEventPostHelper(MenuManager manager) {
 		if (hideHelper != null) {
 			hideHelper.menuAboutToHide(manager);
 		}
@@ -79,4 +117,5 @@ public final class MenuManagerEventHelper {
 
 	private MenuManagerEventHelper() {
 	}
+
 }
