@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
@@ -97,8 +98,12 @@ public class ViewsPreferencePage extends PreferencePage implements
 			public void selectionChanged(SelectionChangedEvent event) {
 				ITheme selection = getSelection();
 				engine.setTheme(selection, false);
-				((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY))
-						.setSelection(selection);
+				try {
+					((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY))
+							.setSelection(selection);
+				} catch (SWTException e) {
+					WorkbenchPlugin.log("Failed to set CSS preferences", e); //$NON-NLS-1$
+				}
 			}
 		});
 
