@@ -23,31 +23,19 @@ import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
 public class FileResourcesLocatorImpl implements IResourceLocator {
 	private static final String FILE_SCHEME = "file:";
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.css.core.util.resources.IURIResolver#resolve(java.lang.String)
-	 */
+	@Override
 	public String resolve(String uri) {
 		File file = toFile(uri);
 		return file.exists() ? uri : null;
 	}
 
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.css.core.util.resources.IResourceLocator#getInputStream(java.lang.String)
-	 */
+	@Override
 	public InputStream getInputStream(String uri) throws Exception {
 		return new FileInputStream(toFile(uri));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.css.core.util.resources.IResourceLocator#getReader(java.lang.String)
-	 */
+	@Override
 	public Reader getReader(String uri) throws Exception {
 		return new FileReader(toFile(uri));
 	}

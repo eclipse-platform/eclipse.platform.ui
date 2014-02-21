@@ -29,13 +29,7 @@ public class OSGiResourceLocator implements IResourceLocator {
 		startLocation = start;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.e4.ui.css.core.util.resources.IURIResolver#resolve(java.lang
-	 * .String)
-	 */
+	@Override
 	public String resolve(String uri) {
 		if (!uri.startsWith("platform:/plugin/")) {
 			uri = startLocation + uri;
@@ -52,24 +46,12 @@ public class OSGiResourceLocator implements IResourceLocator {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.e4.ui.css.core.util.resources.IResourceLocator#getInputStream
-	 * (java.lang.String)
-	 */
+	@Override
 	public InputStream getInputStream(String uri) throws Exception {
 		return FileLocator.resolve(new URL(startLocation + uri)).openStream();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.e4.ui.css.core.util.resources.IResourceLocator#getReader(
-	 * java.lang.String)
-	 */
+	@Override
 	public Reader getReader(String uri) throws Exception {
 		return new InputStreamReader(getInputStream(uri));
 	}
