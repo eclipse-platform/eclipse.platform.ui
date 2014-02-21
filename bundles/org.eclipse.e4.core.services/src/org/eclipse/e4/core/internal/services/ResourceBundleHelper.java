@@ -129,7 +129,14 @@ public class ResourceBundleHelper {
 			}
 			bundleName = uri.getAuthority();
 			// remove the leading /
-			classPath = uri.getPath().substring(1);
+			if (uri.getPath() != null && uri.getPath().length() > 0) {
+				classPath = uri.getPath().substring(1);
+			} else {
+				if (logService != null) {
+					logService.log(LogService.LOG_ERROR, "Called with invalid contributor URI: "
+							+ contributorURI);
+				}
+			}
 		}
 
 		ResourceBundle result = null;
@@ -151,7 +158,7 @@ public class ResourceBundleHelper {
 									.log(LogService.LOG_ERROR,
 											"Failed to load specified ResourceBundle: " + contributorURI, e); //$NON-NLS-1$
 					}
-				} else if (resourcePath.length() > 0) {
+				} else if (resourcePath != null && resourcePath.length() > 0) {
 					// the specified URI points to a resource
 					// therefore we try to load the .properties files into a ResourceBundle
 					result = getEquinoxResourceBundle(resourcePath.replace('.', '/'), locale,
