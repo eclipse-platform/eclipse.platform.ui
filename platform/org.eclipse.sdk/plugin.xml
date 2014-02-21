@@ -37,7 +37,7 @@
 		  </property>
 		  <property
 				name="applicationCSSResources"
-          value="platform:/plugin/org.eclipse.platform/images/">
+          value="platform:/plugin/org.eclipse.ui.themes/images/">
 		  </property>
 
           <property
