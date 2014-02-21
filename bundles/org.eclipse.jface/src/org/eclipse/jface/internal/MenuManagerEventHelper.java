@@ -26,7 +26,7 @@ public final class MenuManagerEventHelper {
 	private IMenuListener2 hideHelper;
 
 	private static MenuManagerEventHelper INSTANCE;
-	
+
 	/**
 	 * @return singleton instance
 	 */
@@ -36,44 +36,44 @@ public final class MenuManagerEventHelper {
 		}
 		return INSTANCE;
 	}
-	
+
 	/**
 	 * Uses IMenuListener2 to do some processing before (menuAboutToShow) and
 	 * after (menuAboutToHide) the SWT.Show event.
-	 * 
+	 *
 	 * @param showHelper
 	 */
 	public void setShowHelper(IMenuListener2 showHelper) {
 		this.showHelper = showHelper;
 	}
-	
+
 	/**
 	 * @return the show helper
 	 */
 	public IMenuListener2 getShowHelper() {
 		return showHelper;
 	}
-	
+
 	/**
 	 * Uses IMenuListener2 to do some processing before (menuAboutToShow) and
 	 * after (menuAboutToHide) the SWT.Hide event.
-	 * 
-	 * @param hideHelper 
+	 *
+	 * @param hideHelper
 	 */
 	public void setHideHelper(IMenuListener2 hideHelper) {
 		this.hideHelper = hideHelper;
 	}
-	
+
 	/**
 	 * @return the hide helper
 	 */
 	public IMenuListener2 getHideHelper() {
 		return this.hideHelper;
 	}
-	
+
 	/**
 	 * Do show pre-processing.
-	 * 
+	 *
 	 * @param manager
 	 */
 	public void showEventPreHelper(MenuManager manager) {
@@ -84,7 +84,7 @@ public final class MenuManagerEventHelper {
 
 	/**
 	 * Do show post-processing.
-	 * 
+	 *
 	 * @param manager
 	 */
 	public void showEventPostHelper(MenuManager manager) {
@@ -95,7 +95,7 @@ public final class MenuManagerEventHelper {
 
 	/**
 	 * Do hide pre-processing.
-	 * 
+	 *
 	 * @param manager
 	 */
 	public void hideEventPreHelper(MenuManager manager) {
@@ -106,7 +106,7 @@ public final class MenuManagerEventHelper {
 
 	/**
 	 * Do hide post-processing.
-	 * 
+	 *
 	 * @param manager
 	 */
 	public void hideEventPostHelper(MenuManager manager) {
