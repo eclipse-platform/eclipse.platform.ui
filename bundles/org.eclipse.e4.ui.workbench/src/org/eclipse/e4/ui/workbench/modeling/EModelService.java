@@ -27,6 +27,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.workbench.Selector;
 
 /**
  * This service is used to find, create and handle model elements
@@ -128,48 +129,23 @@ public interface EModelService {
 	public <T extends MApplicationElement> T createModelElement(Class<T> elementType);
 
 	/**
-	 * Return a list of any elements that match the given search criteria. The search is recursive
-	 * and includes the specified search root. Any of the search parameters may be specified as
-	 * <code>null</code> in which case that field will always 'match'.
-	 * <p>
-	 * NOTE: This is a generically typed method with the List's generic type expected to be the
-	 * value of the 'clazz' parameter. If the 'clazz' parameter is null then the returned list is
-	 * untyped but may safely be assigned to List&lt;MUIElement&gt;.
-	 * </p>
+	 * This is a convenience method that constructs a new Selector based on {@link ElementMatcher}
+	 * and forwards the call on to the base API
+	 * {@link EModelService#findElements(MUIElement, Selector, int)}.
 	 * 
-	 * @param <T>
-	 *            The generic type of the returned list
-	 * @param searchRoot
-	 *            The element at which to start the search. This element must be non-null and is
-	 *            included in the search.
-	 * @param id
-	 *            The ID of the element. May be null to omit the test for this field.
-	 * @param clazz
-	 *            The class specifier determining the 'instanceof' type of the elements to be found.
-	 *            If specified then the returned List will be generically specified as being of this
-	 *            type.
-	 * @param tagsToMatch
-	 *            The list of tags to match. All the tags specified in this list must be defined in
-	 *            the search element's tags in order to be a match.
-	 * @param searchFlags
-	 *            A bitwise combination of the following constants:
-	 *            <ul>
-	 *            <li><b>OUTSIDE_PERSPECTIVE</b> Include the elements in the window's model that are
-	 *            not in a perspective</;i>
-	 *            <li><b>IN_ANY_PERSPECTIVE</b> Include the elements in all perspectives</;i>
-	 *            <li><b>IN_ACTIVE_PERSPECTIVE</b> Include the elements in the currently active
-	 *            perspective only</;i>
-	 *            <li><b>IN_SHARED_AREA</b> Include the elements in the shared area</;i>
-	 *            <li><b>IN_TRIM</b> Include the elements in the window's trim</;i>
-	 *            </ul>
-	 *            Note that you may omit both perspective flags but still define
-	 *            <b>IN_SHARED_AREA</b>; the flags <b>OUTSIDE_PERSPECTIVE | IN_SHARED_AREA</b> for
-	 *            example will search the presentation <i>excluding</i> the elements in perspective
-	 *            stacks.
-	 * @return The generically typed list of matching elements.
+	 * @see EModelService#findElements(MUIElement, Selector, int)
 	 */
 	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
 			List<String> tagsToMatch, int searchFlags);
+
+	/**
+	 * This is a convenience method that forwards the parameters on to
+	 * {@link EModelService#findElements(MUIElement, String, Class, List, int)}, passing
+	 * {@link EModelService#ANYWHERE} as the 'searchFlags'.
+	 * 
+	 */
+	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
+			List<String> tagsToMatch);
 
 	/**
 	 * Return a list of any elements that match the given search criteria. The search is recursive
@@ -186,20 +162,34 @@ public interface EModelService {
 	 * @param searchRoot
 	 *            The element at which to start the search. This element must be non-null and is
 	 *            included in the search.
-	 * @param id
-	 *            The ID of the element. May be null to omit the test for this field.
-	 * @param clazz
-	 *            The class specifier determining the 'instanceof' type of the elements to be found.
-	 *            If specified then the returned List will be generically specified as being of this
-	 *            type.
-	 * @param tagsToMatch
-	 *            The list of tags to match. All the tags specified in this list must be defined in
-	 *            the search element's tags in order to be a match.
-	 * 
+	 * @param matcher
+	 *            An implementation of a Selector that will return true for elements that it wants
+	 *            in the returned list.
+	 * @param searchFlags
+	 *            A bitwise combination of the following constants:
+	 *            <ul>
+	 *            <li><b>OUTSIDE_PERSPECTIVE</b> Include the elements in the window's model that are
+	 *            not in a perspective</;i>
+	 *            <li><b>IN_ANY_PERSPECTIVE</b> Include the elements in all perspectives</;i>
+	 *            <li><b>IN_ACTIVE_PERSPECTIVE</b> Include the elements in the currently active
+	 *            perspective only</;i>
+	 *            <li><b>IN_MAIN_MENU</b> Include elements in an MWindow's main menu</;i>
+	 *            <li><b>IN_PART</b> Include MMenu and MToolbar elements owned by parts</;i>
+	 *            <li><b>IN_ACTIVE_PERSPECTIVE</b> Include the elements in the currently active
+	 *            perspective only</;i>
+	 *            <li><b>IN_SHARED_AREA</b> Include the elements in the shared area</;i>
+	 *            <li><b>IN_TRIM</b> Include the elements in the window's trim</;i>
+	 *            </ul>
+	 *            Note that you may omit both perspective flags but still define
+	 *            <b>IN_SHARED_AREA</b>; the flags <b>OUTSIDE_PERSPECTIVE | IN_SHARED_AREA</b> for
+	 *            example will search the presentation <i>excluding</i> the elements in perspective
+	 *            stacks.
 	 * @return The generically typed list of matching elements.
+	 * 
+	 * @since 1.1
 	 */
-	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
-			List<String> tagsToMatch);
+	public <T> List<T> findElements(MApplicationElement searchRoot, Selector matcher,
+			int searchFlags);
 
 	/**
 	 * Returns the first element, recursively searching under the specified search root (inclusive)
