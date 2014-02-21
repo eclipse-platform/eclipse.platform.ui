@@ -455,7 +455,7 @@ public class SearchPattern {
 			iPattern++;
 			iName++;
 
-			if (iPattern == patternEnd) {
+				if (iPattern == patternEnd) {
 				// We have exhausted pattern, so it's a match
 				return true;
 			}
@@ -497,10 +497,14 @@ public class SearchPattern {
 					continue;
 				}
 
-				if (!isNameCharAllowed(nameChar)) {
+				if (Character.isDigit(nameChar)) {
+					// nameChar is digit => break if the digit is current pattern character otherwise consume it
+					if (patternChar == nameChar) break;
+					iName++;
+				} else if (!isNameCharAllowed(nameChar)) {
 					// nameChar is lowercase
 					iName++;
-					// nameChar is uppercase...
+				// nameChar is uppercase...
 				} else if (patternChar != nameChar) {
 					// .. and it does not match patternChar, so it's not a match
 					return false;
@@ -523,8 +527,8 @@ public class SearchPattern {
 	 * @return true if patternChar is in set of allowed characters for pattern
 	 */
 	protected boolean isPatternCharAllowed(char patternChar) {
-		return Character.isUpperCase(patternChar) || patternChar == END_SYMBOL
-				|| patternChar == BLANK;
+		return patternChar == END_SYMBOL || patternChar == BLANK
+			|| Character.isUpperCase(patternChar) || Character.isDigit(patternChar);
 	}
 
 	/**
