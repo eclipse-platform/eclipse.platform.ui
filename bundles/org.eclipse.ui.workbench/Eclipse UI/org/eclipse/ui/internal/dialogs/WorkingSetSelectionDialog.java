@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -354,22 +353,18 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 			if (multiSelect || typedResult.length <= 1) {
 				setSelection(typedResult);
 				setResult(Arrays.asList(typedResult));
-			}
-			else {
+			} else {
 				String setId = getAggregateIdForSets(typedResult);
-				IWorkingSetManager workingSetManager = workbenchWindow
-						.getWorkbench().getWorkingSetManager();
-				IWorkingSet aggregate = workingSetManager
-						.getWorkingSet(setId);
-				if (aggregate == null) {
-					aggregate = workingSetManager
-							.createAggregateWorkingSet(
-									setId,
-									WorkbenchMessages.WorkbenchPage_workingSet_multi_label,
-									typedResult);
-					workingSetManager.addWorkingSet(aggregate);
+				IWorkingSetManager workingSetManager = workbenchWindow.getWorkbench()
+						.getWorkingSetManager();
+				IWorkingSet aggregate = workingSetManager.getWorkingSet(setId);
+				if (aggregate != null) {
+					workingSetManager.removeWorkingSet(aggregate);
 				}
-				setSelection(new IWorkingSet[] {aggregate});
+				aggregate = workingSetManager.createAggregateWorkingSet(setId,
+						WorkbenchMessages.WorkbenchPage_workingSet_multi_label, typedResult);
+				workingSetManager.addWorkingSet(aggregate);
+				setSelection(new IWorkingSet[] { aggregate });
 				setResult(Collections.singletonList(aggregate));
 			}
     		}
