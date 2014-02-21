@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Angelo Zerr and others.
+ * Copyright (c) 2008, 2014 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     IBM Corporation - ongoing development
  *     Red Hat Inc. (mistria) - Fixes suggested by FindBugs
  *     Red Hat Inc. (mistria) - Bug 413348: fix stream leak
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 428715
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.engine;
 
@@ -177,20 +178,29 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		int counter;
 		for (counter = 0; counter < length; counter++) {
 			CSSRule rule = rules.item(counter);
-			if (rule.getType() !=  CSSRule.IMPORT_RULE) {
+			if (rule.getType() != CSSRule.IMPORT_RULE) {
 				break;
 			}
-			Path p = new Path(source.getURI());
-			IPath trim = p.removeLastSegments(1);
+			// processing an import CSS
+			CSSImportRule importRule = (CSSImportRule) rule;
+			URL url = null;
+			if (importRule.getHref().startsWith("platform")) {
+				url = FileLocator.resolve(new URL(importRule.getHref()));
+			} else {
+				Path p = new Path(source.getURI());
+				IPath trim = p.removeLastSegments(1);
 
-			URL url = FileLocator.resolve(new URL(trim.addTrailingSeparator().toString() + ((CSSImportRule) rule).getHref()));
-			File testFile = new File(url.getFile());
-			if (!testFile.exists()) {
-				//look in platform default
-				String path = getResourcesLocatorManager().resolve(((CSSImportRule) rule).getHref());
-				testFile = new File(new URL(path).getFile());
-				if (testFile.exists()) {
-					url = new URL(path);
+				url = FileLocator.resolve(new URL(trim.addTrailingSeparator()
+						.toString() + ((CSSImportRule) rule).getHref()));
+				File testFile = new File(url.getFile());
+				if (!testFile.exists()) {
+					// look in platform default
+					String path = getResourcesLocatorManager().resolve(
+							(importRule).getHref());
+					testFile = new File(new URL(path).getFile());
+					if (testFile.exists()) {
+						url = new URL(path);
+					}
 				}
 			}
 			InputStream stream = null;
@@ -213,12 +223,12 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			}
 		}
 
-		//add remaining non import rules
+		// add remaining non import rules
 		for (int i = counter; i < length; i++) {
 			masterList.add(rules.item(i));
 		}
 
-		//final stylesheet
+		// final stylesheet
 		CSSStyleSheetImpl s = new CSSStyleSheetImpl();
 		s.setRuleList(masterList);
 		if (!parseImport) {
