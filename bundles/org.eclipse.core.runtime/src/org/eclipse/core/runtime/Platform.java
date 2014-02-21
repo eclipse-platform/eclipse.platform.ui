@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -331,6 +331,7 @@ public final class Platform {
 	 * @deprecated use <code>ARCH_X86_64</code> instead. Note the values
 	 * has been changed to be the value of the <code>ARCH_X86_64</code> constant.
 	 */
+	@Deprecated
 	public static final String ARCH_AMD64 = ARCH_X86_64;
 
 	/**
@@ -475,6 +476,7 @@ public final class Platform {
 	 * Consider using <code>ISecurePreferences#put(String, String, boolean)</code> as a replacement of this method.
 	 * This API will be deleted in a future release. See bug 370248 for details.
 	 */
+	@Deprecated
 	public static void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map<String,String> info) throws CoreException {
 		AuthorizationHandler.addAuthorizationInfo(serverUrl, realm, authScheme, info);
 	}
@@ -517,6 +519,7 @@ public final class Platform {
 	 * for data access and modifications.  
 	 * This API will be deleted in a future release. See bug 370248 for details.
 	 */
+	@Deprecated
 	public static void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
 		AuthorizationHandler.addProtectionSpace(resourceUrl, realm);
 	}
@@ -542,6 +545,7 @@ public final class Platform {
 	 * @see Bundle#getEntry(String)
 	 * @deprecated use {@link FileLocator#toFileURL(URL)} instead
 	 */
+	@Deprecated
 	public static URL asLocalURL(URL url) throws IOException {
 		return FileLocator.toFileURL(url);
 	}
@@ -550,6 +554,7 @@ public final class Platform {
 	 * Takes down the splash screen if one was put up.
 	 * @deprecated use {@link IApplicationContext#applicationRunning()} instead
 	 */
+	@Deprecated
 	public static void endSplash() {
 		InternalPlatform.getDefault().endSplash();
 	}
@@ -580,6 +585,7 @@ public final class Platform {
 	 * Consider using <code>ISecurePreferences#clear()</code> as a replacement of this method.
 	 * This API will be deleted in a future release. See bug 370248 for details.
 	 */
+	@Deprecated
 	public static void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
 		AuthorizationHandler.flushAuthorizationInfo(serverUrl, realm, authScheme);
 	}
@@ -618,6 +624,7 @@ public final class Platform {
 	 * Consider using <code>ISecurePreferences#get(String, String)</code> as a replacement of this method.
 	 * This API will be deleted in a future release. See bug 370248 for details.
 	 */
+	@Deprecated
 	public static Map<String,String> getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
 		return AuthorizationHandler.getAuthorizationInfo(serverUrl, realm, authScheme);
 	}
@@ -724,6 +731,7 @@ public final class Platform {
 	 * This method only works if the compatibility layer is installed and must not be used otherwise.
 	 * See the comments on {@link IPluginDescriptor#getPlugin()} for details.
 	 */
+	@Deprecated
 	public static Plugin getPlugin(String id) {
 		try {
 			IPluginRegistry registry = getPluginRegistry();
@@ -748,6 +756,7 @@ public final class Platform {
 	 * This method only works if the compatibility layer is installed and must not be used otherwise.
 	 * See the comments on {@link IPluginRegistry} and its methods for details.
 	 */
+	@Deprecated
 	public static IPluginRegistry getPluginRegistry() {
 		Bundle compatibility = InternalPlatform.getDefault().getBundle(CompatibilityHelper.PI_RUNTIME_COMPATIBILITY);
 		if (compatibility == null)
@@ -781,6 +790,7 @@ public final class Platform {
 	 * @return a local file system path
 	 * @deprecated clients should call {@link #getStateLocation(Bundle)} instead
 	 */
+	@Deprecated
 	public static IPath getPluginStateLocation(Plugin plugin) {
 		return plugin.getStateLocation();
 	}
@@ -799,6 +809,7 @@ public final class Platform {
 	 * for data access and modifications.  
 	 * This API will be deleted in a future release. See bug 370248 for details.
 	 */
+	@Deprecated
 	public static String getProtectionSpace(URL resourceUrl) {
 		return AuthorizationHandler.getProtectionSpace(resourceUrl);
 	}
@@ -838,6 +849,7 @@ public final class Platform {
 	 * @see Bundle#getEntry(String)
 	 * @deprecated use {@link FileLocator#resolve(URL)} instead
 	 */
+	@Deprecated
 	public static URL resolve(URL url) throws IOException {
 		return FileLocator.resolve(url);
 	}
@@ -850,6 +862,7 @@ public final class Platform {
 	 * @param runnable the runnable to run
 	 * @deprecated clients should use <code>SafeRunner#run</code> instead
 	 */
+	@Deprecated
 	public static void run(ISafeRunnable runnable) {
 		SafeRunner.run(runnable);
 	}
@@ -861,6 +874,7 @@ public final class Platform {
 	 * @since 3.0
 	 * @deprecated The method {@link Job#getJobManager()} should be used instead.
 	 */
+	@Deprecated
 	public static IJobManager getJobManager() {
 		return Job.getJobManager();
 	}
@@ -893,6 +907,7 @@ public final class Platform {
 	 * @since 3.0
 	 * @deprecated use {@link FileLocator#find(Bundle, IPath, Map)}
 	 */
+	@Deprecated
 	public static URL find(Bundle bundle, IPath path) {
 		return FileLocator.find(bundle, path, null);
 	}
@@ -949,6 +964,7 @@ public final class Platform {
 	 * @since 3.0
 	 * @deprecated use {@link FileLocator#find(Bundle, IPath, Map)} instead
 	 */
+	@Deprecated
 	public static URL find(Bundle bundle, IPath path, Map<String,String> override) {
 		return FileLocator.find(bundle, path, override);
 	}

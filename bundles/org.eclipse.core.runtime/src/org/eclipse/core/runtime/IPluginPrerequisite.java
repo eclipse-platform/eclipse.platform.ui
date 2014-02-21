@@ -47,6 +47,7 @@ import org.osgi.framework.Constants;
  * 
  * @noimplement This interface is not intended to be implemented by clients.
  */
+@Deprecated
 public interface IPluginPrerequisite {
 	/**
 	 * Returns the actual version identifier that is used
@@ -63,6 +64,7 @@ public interface IPluginPrerequisite {
 	 *     BundleDescription prereq = spec.getSupplier();
 	 * </pre>
 	 */
+	@Deprecated
 	public PluginVersionIdentifier getResolvedVersionIdentifier();
 
 	/**
@@ -75,6 +77,7 @@ public interface IPluginPrerequisite {
 	 *     element.getValue();
 	 * </pre>
 	 */
+	@Deprecated
 	public String getUniqueIdentifier();
 
 	/**
@@ -92,6 +95,7 @@ public interface IPluginPrerequisite {
 	 *     Version reqMinVersion = spec.getVersionRange().getMinimum();
 	 * </pre>
 	 */
+	@Deprecated
 	public PluginVersionIdentifier getVersionIdentifier();
 
 	/**
@@ -111,6 +115,7 @@ public interface IPluginPrerequisite {
 	 *     element.getAttribute(Constants.REPROVIDE_ATTRIBUTE);
 	 * </pre>
 	 */
+	@Deprecated
 	public boolean isExported();
 
 	/**
@@ -137,6 +142,7 @@ public interface IPluginPrerequisite {
 	 *     return false;
 	 * </pre>
 	 */
+	@Deprecated
 	public boolean isMatchedAsGreaterOrEqual();
 
 	/**
@@ -163,6 +169,7 @@ public interface IPluginPrerequisite {
 	 *     return false;	
 	 * </pre>
 	 */
+	@Deprecated
 	public boolean isMatchedAsCompatible();
 
 	/**
@@ -195,6 +202,7 @@ public interface IPluginPrerequisite {
 	 *     return false;
 	 * </pre>
 	 */
+	@Deprecated
 	public boolean isMatchedAsEquivalent();
 
 	/**
@@ -222,6 +230,7 @@ public interface IPluginPrerequisite {
 	 *     return false;
 	 * </pre>
 	 */
+	@Deprecated
 	public boolean isMatchedAsPerfect();
 
 	/**
@@ -254,6 +263,7 @@ public interface IPluginPrerequisite {
 	 *     return false;
 	 * </pre>
 	 */
+	@Deprecated
 	public boolean isMatchedAsExact();
 
 	/**
@@ -267,5 +277,6 @@ public interface IPluginPrerequisite {
 	 *     "true".equals(element.getAttribute(Constants.OPTIONAL_ATTRIBUTE);
 	 * </pre>
 	 */
+	@Deprecated
 	public boolean isOptional();
 }

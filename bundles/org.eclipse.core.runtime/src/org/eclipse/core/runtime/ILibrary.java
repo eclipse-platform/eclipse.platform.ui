@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,12 +55,14 @@ import org.osgi.framework.Constants;
  * 
  * @noimplement This interface is not intended to be implemented by clients.
  */
+@Deprecated
 public interface ILibrary {
 	/**
 	 * Constant string (value "code") indicating the code library type.
 	 * @deprecated As of Eclipse 3.0 library types are obsolete.
 	 * There is no replacement.
 	 */
+	@Deprecated
 	public static final String CODE = "code"; //$NON-NLS-1$
 
 	/**
@@ -68,6 +70,7 @@ public interface ILibrary {
 	 * @deprecated As of Eclipse 3.0 library types are obsolete.
 	 * There is no replacement.
 	 */
+	@Deprecated
 	public static final String RESOURCE = "resource"; //$NON-NLS-1$
 
 	/**
@@ -83,6 +86,7 @@ public interface ILibrary {
 	 * @deprecated As of Eclipse 3.0 content filters are obsolete.  
 	 * There is no replacement.
 	 */
+	@Deprecated
 	public String[] getContentFilters();
 
 	/**
@@ -99,6 +103,7 @@ public interface ILibrary {
 	 *     element.getValue();   // the jar/dir containing the code
 	 * </pre>
 	 */
+	@Deprecated
 	public IPath getPath();
 
 	/**
@@ -110,6 +115,7 @@ public interface ILibrary {
 	 * @deprecated As of Eclipse 3.0 library types are obsolete.
 	 * There is no replacement.
 	 */
+	@Deprecated
 	public String getType();
 
 	/**
@@ -124,6 +130,7 @@ public interface ILibrary {
 	 * @deprecated As of Eclipse 3.0 exporting an individual library is obsolete.
 	 * There is no replacement.
 	 */
+	@Deprecated
 	public boolean isExported();
 
 	/**
@@ -135,6 +142,7 @@ public interface ILibrary {
 	 * @deprecated As of Eclipse 3.0 exporting an individual library is obsolete.
 	 * There is no replacement.
 	 */
+	@Deprecated
 	public boolean isFullyExported();
 
 	/**
@@ -146,5 +154,6 @@ public interface ILibrary {
 	 * @deprecated As of Eclipse 3.0 package prefix filtering is obsolete.
 	 * There is no replacement.
 	 */
+	@Deprecated
 	public String[] getPackagePrefixes();
 }

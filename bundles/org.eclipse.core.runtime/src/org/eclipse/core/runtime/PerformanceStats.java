@@ -377,6 +377,7 @@ public class PerformanceStats {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals()
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		//count and time are not considered part of equality
 		if (!(obj instanceof PerformanceStats))
@@ -467,6 +468,7 @@ public class PerformanceStats {
 		return value.longValue();
 	}
 
+	@Override
 	public int hashCode() {
 		//count and time are not considered part of equality
 		int hash = event.hashCode() * 37 + getBlameString().hashCode();
@@ -521,6 +523,7 @@ public class PerformanceStats {
 	/**
 	 * For debugging purposes only.
 	 */
+	@Override
 	public String toString() {
 		StringBuffer result = new StringBuffer("PerformanceStats("); //$NON-NLS-1$
 		result.append(event);

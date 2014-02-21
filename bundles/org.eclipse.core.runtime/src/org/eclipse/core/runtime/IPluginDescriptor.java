@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ import java.util.*;
  * @see #getPlugin()
  * @noimplement This interface is not intended to be implemented by clients.
  */
+@Deprecated
 public interface IPluginDescriptor {
 	/**
 	 * Returns the extension with the given simple identifier declared in
@@ -83,6 +84,7 @@ public interface IPluginDescriptor {
 	 * </pre>
 	 * where <code>id</code> is the plug-in id.
 	 */
+	@Deprecated
 	public IExtension getExtension(String extensionName);
 
 	/**
@@ -98,6 +100,7 @@ public interface IPluginDescriptor {
 	 * </pre>
 	 * where <code>id</code> is the plug-in id.
 	 */
+	@Deprecated
 	public IExtensionPoint getExtensionPoint(String extensionPointId);
 
 	/**
@@ -112,6 +115,7 @@ public interface IPluginDescriptor {
 	 * </pre>
 	 * where <code>id</code> is the plug-in id.
 	 */
+	@Deprecated
 	public IExtensionPoint[] getExtensionPoints();
 
 	/**
@@ -126,6 +130,7 @@ public interface IPluginDescriptor {
 	 * </pre>
 	 * where <code>id</code> is the plug-in id.
 	 */
+	@Deprecated
 	public IExtension[] getExtensions();
 
 	/**
@@ -148,6 +153,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in or simply use the <code>getEntry</code> API
 	 * to construct the desired URL.
 	 */
+	@Deprecated
 	public URL getInstallURL();
 
 	/**
@@ -169,6 +175,7 @@ public interface IPluginDescriptor {
 	 * where <code>bundle</code> is the bundle associated with 
 	 * the relevant plug-in.
 	 */
+	@Deprecated
 	public String getLabel();
 
 	/**
@@ -197,6 +204,7 @@ public interface IPluginDescriptor {
 	 * where <code>bundle</code> is the bundle associated with 
 	 * the relevant plug-in.
 	 */
+	@Deprecated
 	public Plugin getPlugin() throws CoreException;
 
 	/**
@@ -244,6 +252,7 @@ public interface IPluginDescriptor {
 	 * where <code>bundle</code> is the bundle associated with 
 	 * the relevant plug-in.
 	 */
+	@Deprecated
 	public ClassLoader getPluginClassLoader();
 
 	/**
@@ -265,6 +274,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.  The resultant elements array contains one
 	 * entry for each required plug-in.
 	 */
+	@Deprecated
 	public IPluginPrerequisite[] getPluginPrerequisites();
 
 	/**
@@ -284,6 +294,7 @@ public interface IPluginDescriptor {
 	 * where <code>bundle</code> is the bundle associated with 
 	 * the relevant plug-in.
 	 */
+	@Deprecated
 	public String getProviderName();
 
 	/**
@@ -305,6 +316,7 @@ public interface IPluginDescriptor {
 	 * where <code>bundle</code> is the bundle associated with 
 	 * the relevant plug-in.
 	 */
+	@Deprecated
 	public ResourceBundle getResourceBundle() throws MissingResourceException;
 
 	/**
@@ -335,6 +347,7 @@ public interface IPluginDescriptor {
 	 * where <code>bundle</code> is the bundle associated with 
 	 * the relevant plug-in.
 	 */
+	@Deprecated
 	public String getResourceString(String value);
 
 	/**
@@ -376,6 +389,7 @@ public interface IPluginDescriptor {
 	 * where <code>bundle</code> is the bundle associated with 
 	 * the relevant plug-in.
 	 */
+	@Deprecated
 	public String getResourceString(String value, ResourceBundle resourceBundle);
 
 	/**
@@ -396,6 +410,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.  The resultant elements array contains one
 	 * entry for each entry on the bundle's classpath..
 	 */
+	@Deprecated
 	public ILibrary[] getRuntimeLibraries();
 
 	/**
@@ -412,6 +427,7 @@ public interface IPluginDescriptor {
 	 * where <code>bundle</code> is the bundle associated with 
 	 * the relevant plug-in.
 	 */
+	@Deprecated
 	public String getUniqueIdentifier();
 
 	/**
@@ -427,6 +443,7 @@ public interface IPluginDescriptor {
 	 * where <code>bundle</code> is the bundle associated with 
 	 * the relevant plug-in.
 	 */
+	@Deprecated
 	public PluginVersionIdentifier getVersionIdentifier();
 
 	/**
@@ -445,6 +462,7 @@ public interface IPluginDescriptor {
 	 * where <code>bundle</code> is the bundle associated with 
 	 * the relevant plug-in.
 	 */
+	@Deprecated
 	public boolean isPluginActivated();
 
 	/**
@@ -464,6 +482,7 @@ public interface IPluginDescriptor {
 	 * where <code>bundle</code> is the bundle associated with 
 	 * the relevant plug-in.
 	 */
+	@Deprecated
 	public URL find(IPath path);
 
 	/**
@@ -519,5 +538,6 @@ public interface IPluginDescriptor {
 	 * where <code>bundle</code> is the bundle associated with 
 	 * the relevant plug-in.
 	 */
+	@Deprecated
 	public URL find(IPath path, Map<String,String> override);
 }

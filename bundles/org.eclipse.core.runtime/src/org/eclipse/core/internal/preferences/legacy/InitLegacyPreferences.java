@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class InitLegacyPreferences implements ILegacyPreferences {
 	 * @deprecated Marked deprecated to suppress warnings. This class is added to support
 	 * backward compatibility only and should not be used in any new code.
 	 */
+	@Deprecated
 	public Object init(Object object, String name) {
 		Plugin plugin = null;
 		if (object instanceof Plugin)

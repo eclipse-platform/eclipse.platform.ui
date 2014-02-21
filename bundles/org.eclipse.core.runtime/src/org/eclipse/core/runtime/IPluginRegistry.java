@@ -33,6 +33,7 @@ package org.eclipse.core.runtime;
  * 
  * @noimplement This interface is not intended to be implemented by clients.
  */
+@Deprecated
 public interface IPluginRegistry {
 	/**
 	 * Returns all configuration elements from all extensions configured
@@ -45,6 +46,7 @@ public interface IPluginRegistry {
 	 * @return the configuration elements
 	 * @deprecated Replaced by {@link IExtensionRegistry#getConfigurationElementsFor(String)}.
 	 */
+	@Deprecated
 	public IConfigurationElement[] getConfigurationElementsFor(String extensionPointId);
 
 	/**
@@ -60,6 +62,7 @@ public interface IPluginRegistry {
 	 * @return the configuration elements
 	 * @deprecated Replaced by {@link IExtensionRegistry#getConfigurationElementsFor(String, String)}.
 	 */
+	@Deprecated
 	public IConfigurationElement[] getConfigurationElementsFor(String pluginId, String extensionPointName);
 
 	/**
@@ -76,6 +79,7 @@ public interface IPluginRegistry {
 	 * @return the configuration elements
 	 * @deprecated Replaced by {@link IExtensionRegistry#getConfigurationElementsFor(String, String, String)}.
 	 */
+	@Deprecated
 	public IConfigurationElement[] getConfigurationElementsFor(String pluginId, String extensionPointName, String extensionId);
 
 	/**
@@ -91,6 +95,7 @@ public interface IPluginRegistry {
 	 * @return the extension, or <code>null</code>
 	 * @deprecated Replaced by {@link IExtensionRegistry#getExtension(String, String)}.
 	 */
+	@Deprecated
 	public IExtension getExtension(String extensionPointId, String extensionId);
 
 	/**
@@ -108,6 +113,7 @@ public interface IPluginRegistry {
 	 * @return the extension, or <code>null</code>
 	 * @deprecated Replaced by {@link IExtensionRegistry#getExtension(String, String, String)}.
 	 */
+	@Deprecated
 	public IExtension getExtension(String pluginId, String extensionPointName, String extensionId);
 
 	/**
@@ -120,6 +126,7 @@ public interface IPluginRegistry {
 	 * @return the extension point, or <code>null</code>
 	 * @deprecated Replaced by {@link IExtensionRegistry#getExtensionPoint(String)}.
 	 */
+	@Deprecated
 	public IExtensionPoint getExtensionPoint(String extensionPointId);
 
 	/**
@@ -134,6 +141,7 @@ public interface IPluginRegistry {
 	 * @return the extension point, or <code>null</code>
 	 * @deprecated Replaced by {@link IExtensionRegistry#getExtensionPoint(String, String)}.
 	 */
+	@Deprecated
 	public IExtensionPoint getExtensionPoint(String pluginId, String extensionPointName);
 
 	/**
@@ -143,6 +151,7 @@ public interface IPluginRegistry {
 	 * @return the extension points known to this plug-in registry
 	 * @deprecated Replaced by {@link IExtensionRegistry#getExtensionPoints()}.
 	 */
+	@Deprecated
 	public IExtensionPoint[] getExtensionPoints();
 
 	/**
@@ -160,6 +169,7 @@ public interface IPluginRegistry {
 	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
 	 * See the comments on {@link IPluginDescriptor} and its methods for details.
 	 */
+	@Deprecated
 	public IPluginDescriptor getPluginDescriptor(String pluginId);
 
 	/**
@@ -179,6 +189,7 @@ public interface IPluginRegistry {
 	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
 	 * See the comments on {@link IPluginDescriptor} and its methods for details.
 	 */
+	@Deprecated
 	public IPluginDescriptor getPluginDescriptor(String pluginId, PluginVersionIdentifier version);
 
 	/**
@@ -192,6 +203,7 @@ public interface IPluginRegistry {
 	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
 	 * See the comments on {@link IPluginDescriptor} and its methods for details.
 	 */
+	@Deprecated
 	public IPluginDescriptor[] getPluginDescriptors();
 
 	/**
@@ -209,5 +221,6 @@ public interface IPluginRegistry {
 	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
 	 * See the comments on {@link IPluginDescriptor} and its methods for details.
 	 */
+	@Deprecated
 	public IPluginDescriptor[] getPluginDescriptors(String pluginId);
 }

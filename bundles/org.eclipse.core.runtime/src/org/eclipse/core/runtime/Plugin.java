@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -140,6 +140,7 @@ public abstract class Plugin implements BundleActivator {
 	/** The plug-in descriptor.
 	 * @deprecated Marked as deprecated to suppress deprecation warnings.
 	 */
+	@Deprecated
 	private IPluginDescriptor descriptor;
 
 	/**
@@ -171,6 +172,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @since 2.0
 	 * @deprecated
 	 */
+	@Deprecated
 	private Preferences preferences = null;
 
 	/**
@@ -218,6 +220,7 @@ public abstract class Plugin implements BundleActivator {
 	 * The <code>MyPlugin(IPluginDescriptor descriptor)</code> constructor is called only for plug-ins 
 	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
 	 */
+	@Deprecated
 	public Plugin(IPluginDescriptor descriptor) {
 		Assert.isNotNull(descriptor);
 		Assert.isTrue(!CompatibilityHelper.hasPluginObject(descriptor), NLS.bind(Messages.plugin_deactivatedLoad, this.getClass().getName(), descriptor.getUniqueIdentifier() + " is not activated")); //$NON-NLS-1$
@@ -242,6 +245,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @return a URL for the given path or <code>null</code>
 	 * @deprecated use {@link FileLocator#find(Bundle, IPath, Map)}
 	 */
+	@Deprecated
 	public final URL find(IPath path) {
 		return FileLocator.find(getBundle(), path, null);
 	}
@@ -260,6 +264,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @return a URL for the given path or <code>null</code>
 	 * @deprecated use {@link FileLocator#find(Bundle, IPath, Map)}
 	 */
+	@Deprecated
 	public final URL find(IPath path, Map<String,String> override) {
 		return FileLocator.find(getBundle(), path, override);
 	}
@@ -274,6 +279,7 @@ public abstract class Plugin implements BundleActivator {
 	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
 	 * See the comments on {@link IPluginDescriptor} and its methods for details.
 	 */
+	@Deprecated
 	public final IPluginDescriptor getDescriptor() {
 		if (descriptor != null)
 			return descriptor;
@@ -350,6 +356,7 @@ public abstract class Plugin implements BundleActivator {
 	 * Similar methods exist on {@link IPreferencesService} for obtaining other kinds
 	 * of preference values (strings, booleans, etc).
 	 */
+	@Deprecated
 	public final Preferences getPluginPreferences() {
 		final Bundle bundleCopy = getBundle();
 		if (preferences != null) {
@@ -387,6 +394,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @since 2.0
 	 * @deprecated Replaced by InstanceScope.getNode(&lt;bundleId&gt;).flush()
 	 */
+	@Deprecated
 	public final void savePluginPreferences() {
 		
 		Location instance = InternalPlatform.getDefault().getInstanceLocation();
@@ -457,6 +465,7 @@ public abstract class Plugin implements BundleActivator {
 	 *		}
 	 * </pre>
 	 */
+	@Deprecated
 	protected void initializeDefaultPluginPreferences() {
 		// default implementation of this method - spec'd to do nothing
 	}
@@ -469,6 +478,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @since 3.0
 	 * @deprecated
 	 */
+	@Deprecated
 	public final void internalInitializeDefaultPluginPreferences() {
 		initializeDefaultPluginPreferences();
 	}
@@ -510,6 +520,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @see #openStream(IPath,boolean)
 	 * @deprecated use {@link FileLocator#openStream(Bundle, IPath, boolean)}
 	 */
+	@Deprecated
 	public final InputStream openStream(IPath file) throws IOException {
 		return FileLocator.openStream(getBundle(), file, false);
 	}
@@ -532,6 +543,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @exception IOException if the given path cannot be found in this plug-in
 	 * @deprecated use {@link FileLocator#openStream(Bundle, IPath, boolean)}
 	 */
+	@Deprecated
 	public final InputStream openStream(IPath file, boolean substituteArgs) throws IOException {
 		return FileLocator.openStream(getBundle(), file, substituteArgs);
 	}
@@ -621,6 +633,7 @@ public abstract class Plugin implements BundleActivator {
 	 * The <code>shutdown()</code> method is called only for plug-ins which explicitly require the 
 	 * org.eclipse.core.runtime.compatibility plug-in.
 	 */
+	@Deprecated
 	public void shutdown() throws CoreException {
 		if (CompatibilityHelper.initializeCompatibility() == null)
 			return;
@@ -691,6 +704,7 @@ public abstract class Plugin implements BundleActivator {
 	 * The <code>startup()</code> method is called only for plug-ins which explicitly require the 
 	 * org.eclipse.core.runtime.compatibility plug-in.
 	 */
+	@Deprecated
 	public void startup() throws CoreException {
 		//default implementation does nothing
 	}
@@ -699,6 +713,7 @@ public abstract class Plugin implements BundleActivator {
 	 * Returns a string representation of the plug-in, suitable 
 	 * for debugging purposes only.
 	 */
+	@Override
 	public String toString() {
 		Bundle myBundle = getBundle();
 		if (myBundle == null)
@@ -756,6 +771,7 @@ public abstract class Plugin implements BundleActivator {
 	/**
 	 * @deprecated Marked as deprecated to suppress deprecation warnings.
 	 */
+	@Deprecated
 	private IPluginDescriptor initializeDescriptor(String symbolicName) {
 		if (CompatibilityHelper.initializeCompatibility() == null)
 			return null;
