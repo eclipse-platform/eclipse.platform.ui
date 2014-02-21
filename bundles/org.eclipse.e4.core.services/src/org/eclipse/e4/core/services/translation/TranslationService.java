@@ -18,6 +18,8 @@ import javax.inject.Named;
 
 /**
  * Provides localization service.
+ * 
+ * @since 1.2
  */
 public abstract class TranslationService {
 

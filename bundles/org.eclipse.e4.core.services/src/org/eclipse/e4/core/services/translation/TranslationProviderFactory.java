@@ -16,6 +16,8 @@ import org.eclipse.e4.core.internal.services.BundleTranslationProvider;
 
 /**
  * Factory for translation providers.
+ * 
+ * @since 1.2
  */
 final public class TranslationProviderFactory {
 
