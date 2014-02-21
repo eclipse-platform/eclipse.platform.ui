@@ -97,10 +97,19 @@ public class NewWizardDropDownAction extends Action implements
          * @see org.eclipse.jface.action.IMenuCreator#dispose()
          */
         public void dispose() {
-            if (dropDownMenuMgr != null) {
-                dropDownMenuMgr.dispose();
-                dropDownMenuMgr = null;
-            }
+			if (dropDownMenuMgr != null) {
+				// remove the wizard menu before disposing the menu manager, the
+				// wizard menu is a workbench action and it should only be
+				// disposed when the workbench window itself is disposed,
+				// IMenuCreators will be disposed when the action is disposed,
+				// we do not want this, the menu's disposal will be handled when
+				// the owning action (NewWizardDropDownAction) is disposed, see
+				// bug 309716
+				dropDownMenuMgr.remove(newWizardMenu);
+
+				dropDownMenuMgr.dispose();
+				dropDownMenuMgr = null;
+			}
         }
     };
 
