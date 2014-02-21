@@ -10,15 +10,6 @@
           <property name="appName" value="Eclipse"/> 
           <property name="preferenceCustomization" value="plugin_customization.ini"/>
           <property
-        		name="startupForegroundColor"
-        		value="969696"/>
-          <property
-                name="startupMessageRect"
-                value="7,265,320,20"/>
-          <property
-                name="startupProgressRect"
-                value="2,290,448,10"/>
-          <property
           		name="introTitle"
           		value="%productIntroTitle"/>
           <property
@@ -48,15 +39,26 @@
 				name="applicationCSSResources"
           value="platform:/plugin/org.eclipse.platform/images/">
 		  </property>
-    <property
-          name="buildIdLocation"
-          value="279,220">
-    </property>
-    <property
-          name="buildIdSize"
-          value="140,40">
-    </property>
-      </product> 
+
+          <property
+        		name="startupForegroundColor"
+        		value="9c9696"/>
+          <property
+                name="startupMessageRect"
+                value="7,265,320,20"/>
+          <property
+                name="startupProgressRect"
+                value="2,290,448,10"/>
+          <property
+                name="buildIdLocation"
+                value="0,220">
+          </property>
+          <property
+                name="buildIdSize"
+                value="419,40">
+          </property>
+
+       </product>
     </extension> 
 
 	<extension
