@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,34 +93,41 @@ class UIUpdateJob extends WorkbenchJob {
 			 * as new input as we would offset the benefits of optimization in
 			 * TreeViewer.
 			 */
-			clone = view.createViewerInputClone();
+			clone= view.createViewerInputClone();
 			if (clone == null) {
 				// do not update yet,we are changing
 				return Status.CANCEL_STATUS;
 			}
-			/*
-			 * we prefer not to check for cancellation beyond this since we
-			 * have to show correct marker counts on UI, not an updating message.
-			 */
-			IContentProvider contentProvider = viewer.getContentProvider();
-			contentProvider.inputChanged(viewer, view.getViewerInput(), clone);
-			viewer.getTree().setRedraw(false);
-			viewer.refresh(true);
-			if (!monitor.isCanceled()) {
-				//do not expand if canceled
-				view.reexpandCategories();
+
+			if (view.isVisible()) {
+				/*
+				 * we prefer not to check for cancellation beyond this since we have to show correct
+				 * marker counts on UI, not an updating message.
+				 */
+				IContentProvider contentProvider= viewer.getContentProvider();
+				contentProvider.inputChanged(viewer, view.getViewerInput(), clone);
+
+				viewer.getTree().setRedraw(false);
+				viewer.refresh(true);
+				if (!monitor.isCanceled()) {
+					//do not expand if canceled
+					view.reexpandCategories();
+				}
+				if (view.getBuilder().readChangeFlags()[0]) {
+					// indicate changes
+				}
 			}
-			if (view.getBuilder().readChangeFlags()[0]) {
-				// indicate changes
-			}
-			//show new counts
+
+			// show new counts
 			view.updateTitle();
 
 			lastUpdateTime = System.currentTimeMillis();
 		} finally {
-			viewer.getTree().setRedraw(true);
-			view.updateStatusLine((IStructuredSelection) viewer.getSelection());
-			//view.updateCategoryLabels();
+			if (view.isVisible()) {
+				viewer.getTree().setRedraw(true);
+				view.updateStatusLine((IStructuredSelection)viewer.getSelection());
+//				view.updateCategoryLabels();
+			}
 			updating = false;
 		}
 		monitor.done();
