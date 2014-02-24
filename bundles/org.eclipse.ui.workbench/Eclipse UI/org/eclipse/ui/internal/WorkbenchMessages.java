@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -555,6 +555,17 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchPreference_noEffectOnAllViews;
 	public static String WorkbenchPreference_HeapStatusButton;
 	public static String WorkbenchPreference_HeapStatusButtonToolTip;
+
+	// --- Globalization -----
+	public static String GlobalizationPreference_nlExtensions;
+	public static String GlobalizationPreference_layoutDirection;
+	public static String GlobalizationPreference_bidiSupport;
+	public static String GlobalizationPreference_textDirection;
+	public static String GlobalizationPreference_defaultDirection;
+	public static String GlobalizationPreference_ltrDirection;
+	public static String GlobalizationPreference_autoDirection;
+	public static String GlobalizationPreference_rtlDirection;
+	public static String GlobalizationPreference_restartWidget;
 
 	// --- Fonts ---
 	public static String FontsPreference_useSystemFont;

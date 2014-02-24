@@ -478,6 +478,9 @@
             id="org.eclipse.ui.ide.editors"
             label="%PreferenceKeywords.Editors"/>
       <keyword
+            id="org.eclipse.ui.ide.globalization"
+            label="%PreferenceKeywords.Globalization"/>
+      <keyword
             id="org.eclipse.ui.ide.reuse"
             label="%PreferenceKeywords.Reuse"/>
       <keyword
@@ -545,6 +548,13 @@
             class="org.eclipse.ui.internal.ide.dialogs.IDEWorkbenchPreferencePage"
             id="org.eclipse.ui.preferencePages.Workbench">
          <keywordReference id="org.eclipse.ui.ide.general"/>
+      </page>
+      <page
+            name="%PreferencePages.Globalization"
+            category="org.eclipse.ui.preferencePages.Workbench"
+            class="org.eclipse.ui.internal.dialogs.GlobalizationPreferencePage"
+            id="org.eclipse.ui.preferencePages.Globalization">
+         <keywordReference id="org.eclipse.ui.ide.globalization"/>
       </page>
       <page
             name="%PreferencePages.Editors"

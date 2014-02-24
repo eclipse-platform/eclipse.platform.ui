@@ -123,6 +123,7 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -1608,6 +1609,9 @@ public final class Workbench extends EventManager implements IWorkbench,
 		// initialize workbench single-click vs double-click behavior
 		initializeSingleClickOption();
 
+		initializeGlobalization();
+		initializeNLExtensions();
+
 		initializeWorkbenchImages();
 
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
@@ -1713,6 +1717,26 @@ public final class Workbench extends EventManager implements IWorkbench,
 			}
 		}
 		OpenStrategy.setOpenMethod(singleClickMethod);
+	}
+
+	private void initializeGlobalization() {
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+
+		if (!store.isDefault(IPreferenceConstants.BIDI_SUPPORT)) {
+			BidiUtils.setBidiSupport(store.getBoolean(IPreferenceConstants.BIDI_SUPPORT));
+		}
+		if (!store.isDefault(IPreferenceConstants.TEXT_DIRECTION)) {
+			BidiUtils.setTextDirection(store.getString(IPreferenceConstants.TEXT_DIRECTION));
+		}
+	}
+
+	private void initializeNLExtensions() {
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		if (!store.isDefault(IPreferenceConstants.NL_EXTENSIONS)) {
+			String nlExtensions = store.getString(IPreferenceConstants.NL_EXTENSIONS);
+			ULocale.setDefault(Category.FORMAT, new ULocale(ULocale.getDefault(Category.FORMAT)
+					.getBaseName() + nlExtensions));
+		}
 	}
 
 	/*

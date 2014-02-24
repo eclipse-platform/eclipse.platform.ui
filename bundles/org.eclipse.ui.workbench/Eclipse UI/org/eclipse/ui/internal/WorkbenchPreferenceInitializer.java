@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -109,6 +110,12 @@ public class WorkbenchPreferenceInitializer extends
 		node.putBoolean(IHeapStatusConstants.PREF_SHOW_MAX, false);
 		node.putBoolean(IPreferenceConstants.OVERRIDE_PRESENTATION, false);
 		
+		// Globalization preferences
+		node.put(IPreferenceConstants.NL_EXTENSIONS, ""); //$NON-NLS-1$
+		node.putInt(IPreferenceConstants.LAYOUT_DIRECTION, SWT.NONE);
+		node.putBoolean(IPreferenceConstants.BIDI_SUPPORT, false);
+		node.put(IPreferenceConstants.TEXT_DIRECTION, ""); //$NON-NLS-1$
+
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()
 				.node(InstanceScope.SCOPE);

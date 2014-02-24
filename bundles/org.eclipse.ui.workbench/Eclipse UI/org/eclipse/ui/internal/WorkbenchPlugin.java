@@ -851,7 +851,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         JFaceUtil.initializeJFace();
 		
 		parseBidiArguments();
-		 Window.setDefaultOrientation(getDefaultOrientation());
+		Window.setDefaultOrientation(getDefaultOrientation());
 
         // The UI plugin needs to be initialized so that it can install the callback in PrefUtil,
         // which needs to be done as early as possible, before the workbench
@@ -931,9 +931,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-     * Get the default orientation from the command line
-     * arguments. If there are no arguments imply the 
-     * orientation.
+	 * Get the default orientation from the preferences or from the command line
+	 * arguments. If there are no arguments imply the orientation.
+	 * 
 	 * @return int
 	 * @see SWT#NONE
 	 * @see SWT#RIGHT_TO_LEFT
@@ -941,6 +941,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 */
     private int getDefaultOrientation() {
 		
+		IPreferenceStore store = getPreferenceStore();
+		if (!store.isDefault(IPreferenceConstants.LAYOUT_DIRECTION)) {
+			return store.getInt(IPreferenceConstants.LAYOUT_DIRECTION);
+		}
+
 		String[] commandLineArgs = Platform.getCommandLineArgs();
 		
 		int orientation = getCommandLineOrientation(commandLineArgs);

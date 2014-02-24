@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -281,6 +281,9 @@ public interface IWorkbenchHelpContextIds {
 
 	public static final String WORKBENCH_PREFERENCE_PAGE = PREFIX
 			+ "workbench_preference_page_context"; //$NON-NLS-1$
+
+	public static final String GLOBALIZATION_PREFERENCE_PAGE = PREFIX
+			+ "globalization_preference_page_context"; //$NON-NLS-1$
 
 	public static final String DECORATORS_PREFERENCE_PAGE = PREFIX
 			+ "decorators_preference_page_context"; //$NON-NLS-1$
