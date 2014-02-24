@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di.osgi;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.e4.core.di.IInjector;
@@ -57,13 +59,21 @@ public class ProviderHelper {
 			BundleContext bundleContext = DIActivator.getDefault().getBundleContext();
 			try {
 				String filter = '(' + ExtendedObjectSupplier.SERVICE_CONTEXT_KEY + '=' + qualifier + ')';
-				ServiceReference[] refs = bundleContext.getServiceReferences(ExtendedObjectSupplier.SERVICE_NAME, filter);
+				ServiceReference<?>[] refs = bundleContext.getServiceReferences(ExtendedObjectSupplier.SERVICE_NAME, filter);
 				if (refs != null && refs.length > 0) {
-					ExtendedObjectSupplier supplier = (ExtendedObjectSupplier) bundleContext.getService(refs[0]);
+					ExtendedObjectSupplier supplier;
+
+					// Explicitly sort by ranking if more than one supplier is found
+					if (refs.length > 1) {
+						Arrays.sort(refs, Collections.reverseOrder());
+					}
+
+					supplier = (ExtendedObjectSupplier) bundleContext.getService(refs[0]);
 					if (objectSupplier != null) {
 						IInjector injector = InjectorFactory.getDefault();
 						injector.inject(supplier, objectSupplier);
 					}
+
 					extendedSuppliers.put(qualifier, supplier);
 					return supplier;
 				}
