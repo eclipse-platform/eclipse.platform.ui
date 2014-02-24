@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,11 +23,17 @@ import org.eclipse.ui.model.AdaptableList;
  * @since 3.0
  */
 public class WizardActivityFilter extends ViewerFilter {
+	private boolean filterPrimaryWizards = false;
+
+	public void setFilterPrimaryWizards(boolean filter) {
+		filterPrimaryWizards = filter;
+	}
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
      */
     public boolean select(Viewer viewer, Object parentElement, Object element) {
-        if (parentElement.getClass().equals(AdaptableList.class)) {
+		if (parentElement.getClass().equals(AdaptableList.class) && !filterPrimaryWizards) {
 			return true; //top-level ("primary") wizards should always be returned
 		}
 
