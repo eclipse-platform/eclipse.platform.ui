@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -178,6 +178,11 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	}
 
 	static class DummyPart implements IWorkbenchPart {
+		public DummyPart(IWorkbenchPartSite site) {
+			fSite= site;
+		}
+
+		private IWorkbenchPartSite fSite;
 		private int fLastActivation= 0;
 		public void setLastActivation(int lastActivation) {
 			fLastActivation= lastActivation;
@@ -185,10 +190,17 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		public int getLastActivation() {
 			return fLastActivation;
 		}
+
+		public void dispose() {
+			fSite= null;
+		}
+
+		public IWorkbenchPartSite getSite() {
+			return fSite;
+		}
+
 		public void addPropertyListener(IPropertyListener listener) {/*dummy*/}
 		public void createPartControl(Composite parent) {/*dummy*/}
-		public void dispose() {/*dummy*/}
-		public IWorkbenchPartSite getSite() { return null; }
 		public String getTitle() { return null; }
 		public Image getTitleImage() { return null; }
 		public String getTitleToolTip() { return null; }
@@ -327,7 +339,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		IPageBookViewPage page= new EmptySearchView();
 		page.createControl(book);
 		initPage(page);
-		DummyPart part= new DummyPart();
+		DummyPart part= new DummyPart(getSite());
 		fPartsToPages.put(part, page);
 		fPagesToParts.put(page, part);
 		fDefaultPart= part;
@@ -394,7 +406,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			if (page != currentPage) {
 				DummyPart part= (DummyPart) fPagesToParts.get(page);
 				if (part == null) {
-					part= new DummyPart();
+					part= new DummyPart(getSite());
 					fPagesToParts.put(page, part);
 					fPartsToPages.put(part, page);
 					page.setViewPart(this);
