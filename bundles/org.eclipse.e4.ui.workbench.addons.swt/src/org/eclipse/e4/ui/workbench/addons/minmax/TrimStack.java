@@ -759,7 +759,7 @@ public class TrimStack {
 		// Use override text if available
 		if (label instanceof MUIElement) {
 			String text = getOverrideTitleToolTip((MUIElement) label);
-			if (text != null)
+			if (text != null && text.length() > 0)
 				return text;
 		}
 
