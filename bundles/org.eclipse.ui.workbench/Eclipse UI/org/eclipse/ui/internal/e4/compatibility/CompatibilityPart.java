@@ -52,7 +52,6 @@ import org.eclipse.ui.internal.ErrorEditorPart;
 import org.eclipse.ui.internal.ErrorViewPart;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.SaveableHelper;
-import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -411,7 +410,6 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 	 * but must call <code>super.disposeSite()</code> in its implementation.
 	 */
 	void disposeSite(PartSite site) {
-		site.deactivateActionBars(site instanceof ViewSite);
 		site.dispose();
 	}
 
