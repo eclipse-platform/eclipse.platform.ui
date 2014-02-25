@@ -931,8 +931,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Get the default orientation from the preferences or from the command line
-	 * arguments. If there are no arguments imply the orientation.
+	 * Get the default orientation from the command line arguments. If there are
+	 * no arguments imply the orientation.
 	 * 
 	 * @return int
 	 * @see SWT#NONE
@@ -941,11 +941,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 */
     private int getDefaultOrientation() {
 		
-		IPreferenceStore store = getPreferenceStore();
-		if (!store.isDefault(IPreferenceConstants.LAYOUT_DIRECTION)) {
-			return store.getInt(IPreferenceConstants.LAYOUT_DIRECTION);
-		}
-
 		String[] commandLineArgs = Platform.getCommandLineArgs();
 		
 		int orientation = getCommandLineOrientation(commandLineArgs);

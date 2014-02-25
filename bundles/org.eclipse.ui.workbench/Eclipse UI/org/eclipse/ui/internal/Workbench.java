@@ -583,6 +583,13 @@ public final class Workbench extends EventManager implements IWorkbench,
 				System.setProperty(org.eclipse.e4.ui.workbench.IWorkbench.XMI_URI_ARG,
 						"org.eclipse.ui.workbench/LegacyIDE.e4xmi"); //$NON-NLS-1$
 				Object obj = getApplication(Platform.getCommandLineArgs());
+
+				IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+				if (!store.isDefault(IPreferenceConstants.LAYOUT_DIRECTION)) {
+					int orientation = store.getInt(IPreferenceConstants.LAYOUT_DIRECTION);
+					Window.setDefaultOrientation(orientation);
+				}
+
 				if (obj instanceof E4Application) {
 					E4Application e4app = (E4Application) obj;
 					E4Workbench e4Workbench = e4app.createE4Workbench(getApplicationContext(),
