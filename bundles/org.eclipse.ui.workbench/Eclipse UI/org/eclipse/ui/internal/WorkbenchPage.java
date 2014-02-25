@@ -834,17 +834,29 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * An event handler that listens for an MArea's widget being set so that we
 	 * can install DND support into its control.
 	 */
-	private EventHandler areaWidgetHandler = new EventHandler() {
+	private EventHandler widgetHandler = new EventHandler() {
 		public void handleEvent(Event event) {
 			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-			// we are only interested in MAreas
+			Object newValue = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+
 			if (element instanceof MArea) {
-				// make sure this area is contained within this window
+				// If it's an MArea in this window install the DND handling
 				if (modelService.findElements(window, null, MArea.class, null).contains(element)) {
-					Object newValue = event.getProperty(UIEvents.EventTags.NEW_VALUE);
 					if (newValue instanceof Control) {
 						installAreaDropSupport((Control) newValue);
 					}
+				}
+			} else if (element instanceof MPart && newValue == null) {
+				// If it's a 'e4' part then remove the reference for it
+				MPart changedPart = (MPart) element;
+				Object impl = changedPart.getObject();
+				if (impl != null && !(impl instanceof CompatibilityPart)) {
+					EditorReference eRef = getEditorReference(changedPart);
+					if (eRef != null)
+						editorReferences.remove(eRef);
+					ViewReference vRef = getViewReference(changedPart);
+					if (vRef != null)
+						viewReferences.remove(eRef);
 				}
 			}
 		}
@@ -1705,7 +1717,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			legacyWindow.setActivePage(null);
 			partService.removePartListener(e4PartListener);
 			broker.unsubscribe(selectionHandler);
-			broker.unsubscribe(areaWidgetHandler);
+			broker.unsubscribe(widgetHandler);
 			broker.unsubscribe(referenceRemovalEventHandler);
 			broker.unsubscribe(firingHandler);
 			broker.unsubscribe(childrenHandler);
@@ -2611,7 +2623,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		broker.subscribe(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT, selectionHandler);
-		broker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, areaWidgetHandler);
+		broker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, widgetHandler);
 		broker.subscribe(UIEvents.UIElement.TOPIC_TOBERENDERED, referenceRemovalEventHandler);
 		broker.subscribe(UIEvents.Contribution.TOPIC_OBJECT, firingHandler);
 		broker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN, childrenHandler);
