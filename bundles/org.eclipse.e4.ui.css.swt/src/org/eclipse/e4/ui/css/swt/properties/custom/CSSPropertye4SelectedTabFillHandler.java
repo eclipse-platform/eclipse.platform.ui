@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
-import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
 import org.eclipse.e4.ui.internal.css.swt.ICTabRendering;
 import org.eclipse.swt.custom.CTabFolder;
@@ -22,7 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertye4SelectedTabFillHandler extends
-AbstractCSSPropertySWTHandler {
+		AbstractCSSPropertySWTHandler {
 
 	@Override
 	protected void applyCSSProperty(Control control, String property,
@@ -30,22 +28,12 @@ AbstractCSSPropertySWTHandler {
 		if (!(control instanceof CTabFolder)) {
 			return;
 		}
-		CTabFolder folder = (CTabFolder) control;
-		CTabFolderRenderer renderer = folder.getRenderer();
-		if (!(renderer instanceof ICTabRendering)) {
-			return;
-		}
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			Color newColor = (Color) engine.convert(value, Color.class,
-					control.getDisplay());
-			((ICTabRendering) renderer).setSelectedTabFill(newColor);
-		} else if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
-			Gradient grad = (Gradient) engine.convert(value, Gradient.class,
-					control.getDisplay());
-			Color[] colors = CSSSWTColorHelper.getSWTColors(grad,
-					folder.getDisplay(), engine);
-			int[] percents = CSSSWTColorHelper.getPercents(grad);
-			((ICTabRendering) renderer).setSelectedTabFill(colors, percents);
+			Color newColor = (Color) engine.convert(value, Color.class, control.getDisplay());
+			CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
+			if (renderer instanceof ICTabRendering) {
+				((ICTabRendering) renderer).setSelectedTabFill(newColor);
+			}
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1353,12 +1353,4 @@ public interface IWorkbenchRegistryConstants {
 	public static final String ATT_FIND = "find"; //$NON-NLS-1$
 
 	public static final String TAG_KEYWORD_REFERENCE = "keywordReference"; //$NON-NLS-1$
-
-	public static final String ATT_THEME_ASSOCIATION = "themeAssociation"; //$NON-NLS-1$
-
-	public static final String ATT_THEME_ID = "themeId"; //$NON-NLS-1$
-
-	public static final String ATT_COLOR_AND_FONT_ID = "colorAndFontId"; //$NON-NLS-1$ 
-
-	public static final String ATT_OS_VERSION = "os_version"; //$NON-NLS-1$
 }

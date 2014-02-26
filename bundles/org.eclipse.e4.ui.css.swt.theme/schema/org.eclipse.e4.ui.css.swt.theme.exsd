@@ -20,7 +20,6 @@
          <sequence>
             <element ref="stylesheet" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="theme" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="themeAssociation" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -164,41 +163,6 @@
       </complexType>
    </element>
 
-   <element name="themeAssociation">
-      <complexType>
-         <attribute name="themeId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  an Eclipse CSS theme id
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.e4.ui.css.swt.theme/theme/@id"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="colorAndFontId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  an Eclipse legacy Color and Font theme id
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.themes/theme/@id"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="os_version" type="string">
-            <annotation>
-               <documentation>
-                  an optional attribute used to better match the themes
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.e4.ui.css.swt.theme/theme/@os_version"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
    <annotation>
       <appinfo>
          <meta.section type="since"/>
@@ -234,12 +198,6 @@ A stylesheet contributed to all Systems:
 &lt;/stylesheet&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
-
-The CSS theme and the legacy Colors and Fonts one association:
-&lt;themeAssociation
- themeId=&quot;org.eclipse.e4.ui.css.theme.e4_classic&quot;
- colorAndFontId=&quot;org.eclipse.ui.defaultTheme&quot;&gt; 
-&lt;/themeassociation&gt;
       </documentation>
    </annotation>
 

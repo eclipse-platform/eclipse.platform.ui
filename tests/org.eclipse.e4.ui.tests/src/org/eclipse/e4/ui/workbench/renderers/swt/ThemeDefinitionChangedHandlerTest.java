@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 IBM Corporation and others.
+ * Copyright (c) 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import junit.framework.TestCase;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -88,11 +87,13 @@ public class ThemeDefinitionChangedHandlerTest extends TestCase {
 		verify(engine, times(1)).reapply();
 
 		verify(handler, times(1)).removeResources(registry);
-		assertEquals(1, handler.getUnusedResources().size());
-		assertTrue(handler.getUnusedResources().contains(resource1));
+		verify(handler, times(3)).disposeResource(any(Object.class));
+		verify(handler, times(1)).disposeResource(resource1);
+		verify(handler, times(1)).disposeResource(resource2);
+		verify(handler, times(1)).disposeResource(resource3);
 
 		verify(resource1, times(1)).isDisposed();
-		verify(resource1, never()).dispose();
+		verify(resource1, times(1)).dispose();
 
 		verify(resource2, times(1)).isDisposed();
 		verify(resource2, never()).dispose();
@@ -116,7 +117,7 @@ public class ThemeDefinitionChangedHandlerTest extends TestCase {
 		// then
 		verify(engine, never()).reapply();
 		verify(handler, never()).removeResources(any(IResourcesRegistry.class));
-		assertEquals(0, handler.getUnusedResources().size());
+		verify(handler, never()).disposeResource(any(Object.class));
 	}
 
 	public void testHandleEventWhenCSSEngineNotFoundForWidget()
@@ -150,32 +151,7 @@ public class ThemeDefinitionChangedHandlerTest extends TestCase {
 		// then
 		verify(engine, times(1)).reapply();
 		verify(handler, times(1)).removeResources(registry);
-		assertEquals(0, handler.getUnusedResources().size());
-	}
-
-	public void testDisposeHandler() throws Exception {
-		// given
-		ThemeDefinitionChangedHandlerTestable handler = spy(new ThemeDefinitionChangedHandlerTestable());
-
-		Resource resource1 = mock(Resource.class);
-		doReturn(false).when(resource1).isDisposed();
-		handler.getUnusedResources().add(resource1);
-
-		Resource resource2 = mock(Resource.class);
-		doReturn(true).when(resource2).isDisposed();
-		handler.getUnusedResources().add(resource2);
-
-		// when
-		handler.dispose();
-
-		// then
-		assertTrue(handler.getUnusedResources().isEmpty());
-
-		verify(resource1, times(1)).isDisposed();
-		verify(resource1, times(1)).dispose();
-
-		verify(resource2, times(1)).isDisposed();
-		verify(resource2, never()).dispose();
+		verify(handler, never()).disposeResource(any(Object.class));
 	}
 
 	protected static class ThemeDefinitionChangedHandlerTestable extends
@@ -192,8 +168,9 @@ public class ThemeDefinitionChangedHandlerTest extends TestCase {
 			return super.removeResources(registry);
 		}
 
-		public Set<Resource> getUnusedResources() {
-			return unusedResources;
+		@Override
+		public void disposeResource(Object resource) {
+			super.disposeResource(resource);
 		}
 	}
 }

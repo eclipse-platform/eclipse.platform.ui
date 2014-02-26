@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,12 +15,6 @@ import org.eclipse.swt.graphics.Color;
 public interface ICTabRendering {
 	void setSelectedTabFill(Color color);
 
-	void setSelectedTabFill(Color[] colors, int[] percents);
-
-	void setUnselectedTabsColor(Color color);
-
-	void setUnselectedTabsColor(Color[] colors, int[] percents);
-
 	void setTabOutline(Color color);
 
 	void setInnerKeyline(Color color);
@@ -28,6 +22,10 @@ public interface ICTabRendering {
 	void setOuterKeyline(Color color);
 
 	void setShadowColor(Color color);
+
+	void setActiveToolbarGradient(Color[] color, int[] percents);
+
+	void setInactiveToolbarGradient(Color[] color, int[] percents);
 
 	void setCornerRadius(int radius);
 

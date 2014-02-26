@@ -10,97 +10,6 @@
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 420836
  *******************************************************************************/
 
-/* New ColorDefinitions for the E4 default theme */ 
-ThemesExtension { color-definition: 
-	'#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START', 
-	'#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_END',
-	'#org-eclipse-ui-workbench-INACTIVE_TAB_OUTER_KEYLINE_COLOR',
-	'#org-eclipse-ui-workbench-INACTIVE_TAB_INNER_KEYLINE_COLOR',
-	'#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR',
-	'#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_START',
-	'#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_END',
-	'#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR',
-	'#org-eclipse-ui-workbench-ACTIVE_TAB_INNER_KEYLINE_COLOR',
-	'#org-eclipse-ui-workbench-ACTIVE_TAB_OUTLINE_COLOR';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START {
-	color: #FFFFFF;
-	category: '#org-eclipse-ui-presentation-default';
-	label: 'Inactive, unselected part color start';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_END {
-	color: #FFFFFF;
-	category: '#org-eclipse-ui-presentation-default';
-	label: 'Inactive, unselected part color end';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTER_KEYLINE_COLOR {
-	color: #FFFFFF;
-	category: '#org-eclipse-ui-presentation-default';
-	label: 'Inactive part outer keyline color';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_INNER_KEYLINE_COLOR {
-	color: #FFFFFF;
-	category: '#org-eclipse-ui-presentation-default';
-	label: 'Inactive part inner keyline color';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR {
-	color: #B6BCCC;
-	category: '#org-eclipse-ui-presentation-default';
-	label: 'Inactive part outline color';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_START {
-	color: #FFFFFF;
-	category: '#org-eclipse-ui-presentation-default';
-	label: 'Active, unselected part color begin';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_END {
-	color: #FFFFFF;
-	category: '#org-eclipse-ui-presentation-default';
-	label: 'Active, unselected part color end';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
-	color: #FFFFFF;
-	category: '#org-eclipse-ui-presentation-default';
-	label: 'Active part outer keyline color';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_INNER_KEYLINE_COLOR {
-	color: #FFFFFF;
-	category: '#org-eclipse-ui-presentation-default';
-	label: 'Active part inner keyline color';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTLINE_COLOR {
-	color: #B6BCCC;
-	category: '#org-eclipse-ui-presentation-default';
-	label: 'Active part outline color';
-}
-
-/* Already existing ColorDefinitions overridden for the E4 default theme */
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_START {
-	color: #D4D0C8;
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END {
-	color: #FFFFFF;
-}
-
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_BG_START{
-	color: #FFFFFF;
-}
-
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END {
-	color: #FFFFFF;
-}
-
 .MTrimmedWindow.topLevel {
 	margin-top: 3px;
 	margin-bottom: 3px;
@@ -122,22 +31,18 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END {
 
 .MPartStack {
 	swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
-	swt-selected-tab-fill: '#org-eclipse-ui-workbench-INACTIVE_TAB_BG_START' '#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END' 100% 100%;
-	swt-unselected-tabs-color: '#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START' '#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_END' 100% 100%;
-	swt-outer-keyline-color: '#org-eclipse-ui-workbench-INACTIVE_TAB_OUTER_KEYLINE_COLOR';
-	swt-inner-keyline-color: '#org-eclipse-ui-workbench-INACTIVE_TAB_INNER_KEYLINE_COLOR';
-	swt-tab-outline: '#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR';
+	swt-unselected-tabs-color: #FFFFFF #FFFFFF #FFFFFF 100% 100%;
+	swt-outer-keyline-color: #FFFFFF;
+	swt-inner-keyline-color: #FFFFFF;
 	padding: 0px 2px 2px;
+	swt-tab-outline: #B6BCCC;
 	swt-shadow-visible: false;
 	swt-mru-visible: false;
 }
 
 .MPartStack.active {
-	swt-selected-tab-fill: '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_START' '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END' 100% 100%;
-	swt-unselected-tabs-color: '#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_START' '#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_END' 100% 100%;
-	swt-outer-keyline-color: '#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR';
-	swt-inner-keyline-color: '#org-eclipse-ui-workbench-ACTIVE_TAB_INNER_KEYLINE_COLOR';
-	swt-tab-outline: '#org-eclipse-ui-workbench-ACTIVE_TAB_OUTLINE_COLOR';
+	swt-inner-keyline-color: #FFFFFF;
+	swt-tab-outline: #B6BCCC;
 	swt-shadow-visible: false;
 }
 
