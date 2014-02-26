@@ -894,7 +894,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		}
 	}
 
-	private static void forceLayout(Shell shell) {
+	private void forceLayout(Shell shell) {
 		int i = 0;
 		while(shell.isLayoutDeferred()) {
 			shell.setLayoutDeferred(false);
