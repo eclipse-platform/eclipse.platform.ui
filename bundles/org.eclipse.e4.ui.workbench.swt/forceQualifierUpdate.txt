@@ -2,4 +2,5 @@
 Bug 403352 - Update all parent versions to match our build stream
 Bug 407961 - Comparator log shows special problem that will require "touches"
 Bug 416898 - Some Platform UI bundles need to be touched to get API descriptions back
+Bug 429184 - [Metadata] comparator errors in most recent I-builds
 
