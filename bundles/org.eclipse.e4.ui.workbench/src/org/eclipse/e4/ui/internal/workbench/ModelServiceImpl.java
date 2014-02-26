@@ -319,7 +319,7 @@ public class ModelServiceImpl implements EModelService {
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#getContainingContext(org.eclipse.e4.ui
 	 * .model .application.MUIElement)
 	 */
-	public IEclipseContext getContainingContext(MApplicationElement element) {
+	public IEclipseContext getContainingContext(MUIElement element) {
 		return ModelUtils.getContainingContext(element);
 	}
 
