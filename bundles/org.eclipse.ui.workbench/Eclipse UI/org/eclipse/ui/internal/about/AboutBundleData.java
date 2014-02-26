@@ -52,9 +52,9 @@ public class AboutBundleData extends AboutData {
     }
 
     /**
-     * Return a string representation of the arugment state. Does not return
-     * null.
-     */
+    * @return a string representation of the argument state. 
+    *         Does not return null.
+    */
     public String getStateName() {
         switch (getState()) {
         case Bundle.INSTALLED:
@@ -83,14 +83,14 @@ public class AboutBundleData extends AboutData {
      * @return the string or null if the string cannot be found
      */
     private static String getResourceString(Bundle bundle, String headerName) {
-        String value = (String) bundle.getHeaders().get(headerName);
+        String value = bundle.getHeaders().get(headerName);
         return value == null ? null : Platform.getResourceString(bundle, value);
     }
-    
+
     public boolean isSignedDetermined() {
     	return isSignedDetermined;
     }
-    
+
     public boolean isSigned() throws IllegalStateException {
 
 		if (isSignedDetermined)
@@ -98,7 +98,7 @@ public class AboutBundleData extends AboutData {
 
 		BundleContext bundleContext = WorkbenchPlugin.getDefault()
 				.getBundleContext();
-		ServiceReference factoryRef = bundleContext
+		ServiceReference<?> factoryRef = bundleContext
 				.getServiceReference(SignedContentFactory.class.getName());
 		if (factoryRef == null)
 			throw new IllegalStateException();
@@ -119,7 +119,7 @@ public class AboutBundleData extends AboutData {
 	}
 
 	/**
-	 * @return
+	 * @return current bundle
 	 */
 	public Bundle getBundle() {
 		return bundle;
