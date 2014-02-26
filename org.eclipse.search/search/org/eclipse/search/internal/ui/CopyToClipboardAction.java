@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,8 @@ import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -38,7 +40,9 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
+
 public class CopyToClipboardAction extends Action {
+
 
 	private StructuredViewer fViewer;
 
@@ -100,7 +104,7 @@ public class CopyToClipboardAction extends Action {
 		if (shell == null || fViewer == null)
 			return;
 
-		ILabelProvider labelProvider= (ILabelProvider)fViewer.getLabelProvider();
+		IBaseLabelProvider labelProvider= fViewer.getLabelProvider();
 		String lineDelim= System.getProperty("line.separator"); //$NON-NLS-1$
 		StringBuffer buf= new StringBuffer();
 		Iterator iter= getSelection();
@@ -108,12 +112,21 @@ public class CopyToClipboardAction extends Action {
 			if (buf.length() > 0) {
 				buf.append(lineDelim);
 			}
-			buf.append(labelProvider.getText(iter.next()));
+			buf.append(getText(labelProvider, iter.next()));
 		}
 
 		if (buf.length() > 0) {
 			copyToClipboard(buf.toString(), shell);
 		}
+	}
+
+	private static String getText(IBaseLabelProvider labelProvider, Object object) {
+		if (labelProvider instanceof ILabelProvider)
+			return ((ILabelProvider)labelProvider).getText(object);
+		else if (labelProvider instanceof DelegatingStyledCellLabelProvider)
+			return ((DelegatingStyledCellLabelProvider)labelProvider).getStyledStringProvider().getStyledText(object).toString();
+		else
+			return object.toString();
 	}
 
 	private void copyToClipboard(String text, Shell shell) {
