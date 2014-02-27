@@ -172,7 +172,7 @@ public class E4XMIResource extends XMIResourceImpl {
 			 */
 			@Override
 			public EObject createObject(EFactory eFactory, EClassifier type) {
-				if (MMenuFactory.INSTANCE == eFactory) {
+				if (MMenuFactory.INSTANCE == eFactory && type != null && type.getName() != null) {
 					final ObjectCreator objectCreator = deprecatedTypeMappings.get(type.getName());
 					if (objectCreator != null) {
 						return (EObject) objectCreator.create();
