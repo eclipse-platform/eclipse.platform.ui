@@ -20,9 +20,11 @@ import java.util.WeakHashMap;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMLHelper;
 import org.eclipse.emf.ecore.xmi.impl.XMIHelperImpl;
@@ -179,6 +181,25 @@ public class E4XMIResource extends XMIResourceImpl {
 					}
 				}
 				return super.createObject(eFactory, type);
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.emf.ecore.xmi.impl.XMLHelperImpl#getType(org.eclipse.emf.ecore.EFactory,
+			 * java.lang.String)
+			 */
+			@Override
+			public EClassifier getType(EFactory eFactory, String typeName) {
+				if (deprecatedTypeMappings.containsKey(typeName)) {
+					// need a temp instance of the now removed EClass so that
+					// createObject, above, can do it's work.
+					final EClass tempEClass = EcoreFactory.eINSTANCE.createEClass();
+					tempEClass.setName(typeName);
+					return tempEClass;
+				}
+				return super.getType(eFactory, typeName);
 			}
 
 		};
