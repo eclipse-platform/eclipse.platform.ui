@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2010 IBM Corporation and others.
+ *  Copyright (c) 2004, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -59,8 +59,8 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		 * @since 3.3.0
 		 */
 		prefs.setDefault(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH, true);
-		prefs.setDefault(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT, true);
-		prefs.setDefault(IInternalDebugUIConstants.PREF_LAUNCH_LAST_IF_NOT_LAUNCHABLE, false);
+		prefs.setDefault(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT, false);
+		prefs.setDefault(IInternalDebugUIConstants.PREF_LAUNCH_LAST_IF_NOT_LAUNCHABLE, true);
 		
 		//View Management preference page
 		prefs.setDefault(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT);
