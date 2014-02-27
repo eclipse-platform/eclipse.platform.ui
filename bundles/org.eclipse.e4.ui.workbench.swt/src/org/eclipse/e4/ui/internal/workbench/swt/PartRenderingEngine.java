@@ -514,12 +514,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (e instanceof Error) {
 					// errors are deadly, we shouldn't ignore these
 					throw (Error) e;
-				} else {
-					// log exceptions otherwise
-					if (logger != null) {
-						String message = "Exception occurred while rendering: {0}"; //$NON-NLS-1$
-						logger.error(e, NLS.bind(message, element));
-					}
+				}
+				// log exceptions otherwise
+				if (logger != null) {
+					String message = "Exception occurred while rendering: {0}"; //$NON-NLS-1$
+					logger.error(e, NLS.bind(message, element));
 				}
 			}
 
@@ -696,12 +695,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (e instanceof Error) {
 					// errors are deadly, we shouldn't ignore these
 					throw (Error) e;
-				} else {
-					// log exceptions otherwise
-					if (logger != null) {
-						String message = "Exception occurred while rendering: {0}"; //$NON-NLS-1$
-						logger.error(e, NLS.bind(message, element));
-					}
+				}
+				// log exceptions otherwise
+				if (logger != null) {
+					String message = "Exception occurred while rendering: {0}"; //$NON-NLS-1$
+					logger.error(e, NLS.bind(message, element));
 				}
 			}
 
@@ -819,12 +817,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (e instanceof Error) {
 					// errors are deadly, we shouldn't ignore these
 					throw (Error) e;
-				} else {
-					// log exceptions otherwise
-					if (logger != null) {
-						String message = "Exception occurred while unrendering: {0}"; //$NON-NLS-1$
-						logger.error(e, NLS.bind(message, element));
-					}
+				}
+				// log exceptions otherwise
+				if (logger != null) {
+					String message = "Exception occurred while unrendering: {0}"; //$NON-NLS-1$
+					logger.error(e, NLS.bind(message, element));
 				}
 			}
 
