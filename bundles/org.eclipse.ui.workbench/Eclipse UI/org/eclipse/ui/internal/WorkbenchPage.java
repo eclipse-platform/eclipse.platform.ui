@@ -1206,8 +1206,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		part = showPart(mode, part);
 
 		ViewReference ref = getViewReference(part);
-		legacyWindow.firePerspectiveChanged(this, getPerspective(), ref, CHANGE_VIEW_SHOW);
-		legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_SHOW);
 
 		return (IViewPart) ref.getPart(true);
 	}
@@ -2551,9 +2549,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     			}
     		}
 		}
-
-		// Notify interested listeners after the hide
-		legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_HIDE);
 	}
 
 	public void hideView(IViewPart view) {
@@ -4884,6 +4879,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (part instanceof IPageChangeProvider) {
 			((IPageChangeProvider) part).addPageChangedListener(pageChangedListener);
 		}
+
+		if (compatibilityPart instanceof CompatibilityView) {
+			legacyWindow.firePerspectiveChanged(this, getPerspective(), partReference,
+					CHANGE_VIEW_SHOW);
+			legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_SHOW);
+		}
 	}
 
 	public void firePartClosed(CompatibilityPart compatibilityPart) {
@@ -4945,6 +4946,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		if (part instanceof IPageChangeProvider) {
 			((IPageChangeProvider) part).removePageChangedListener(pageChangedListener);
+		}
+
+		if (compatibilityPart instanceof CompatibilityView) {
+			legacyWindow.firePerspectiveChanged(this, getPerspective(), partReference,
+					CHANGE_VIEW_HIDE);
+			legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_HIDE);
 		}
 	}
 
