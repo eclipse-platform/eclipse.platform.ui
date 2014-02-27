@@ -78,7 +78,6 @@
     <module>bundles/org.eclipse.core.databinding.observable</module>
     <module>bundles/org.eclipse.core.databinding.property</module>
     <module>bundles/org.eclipse.e4.core.commands</module>
-    <module>bundles/org.eclipse.e4.core.contexts.debug</module>
     <module>bundles/org.eclipse.e4.emf.xpath</module>
     <module>bundles/org.eclipse.e4.ui.bindings</module>
     <module>bundles/org.eclipse.e4.ui.css.core</module>
