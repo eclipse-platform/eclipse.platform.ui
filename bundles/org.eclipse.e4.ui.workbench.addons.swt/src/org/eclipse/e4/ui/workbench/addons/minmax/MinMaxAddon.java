@@ -786,6 +786,9 @@ public class MinMaxAddon {
 		}
 
 		adjustCTFButtons(element);
+
+		// There are more views available to be active...
+		partService.requestActivation();
 	}
 
 	/**
