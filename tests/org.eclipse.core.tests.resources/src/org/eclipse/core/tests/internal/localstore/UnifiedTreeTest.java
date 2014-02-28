@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.*;
 
 /**
  * 
@@ -279,5 +280,36 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 
 		assertTrue("2.0", rf.exists());
+	}
+
+	public void testBug368376() throws CoreException, IOException {
+		IEclipsePreferences instanceNode = InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
+		assertFalse(instanceNode.getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH, false));
+		assertFalse(instanceNode.getBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false));
+
+		IEclipsePreferences defaultNode = DefaultScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
+		assertFalse(defaultNode.getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH, false));
+		assertFalse(defaultNode.getBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false));
+
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(getUniqueString());
+		ensureExistsInWorkspace(project, true);
+
+		String filePath = "a/b/c/file.txt";
+		File javaFile = new File(project.getLocation().toFile(), filePath);
+		assertTrue(javaFile.getParentFile().mkdirs());
+		assertTrue(javaFile.createNewFile());
+
+		IFolder folder = project.getFolder("a");
+		IFile file = project.getFile(filePath);
+		assertFalse(folder.exists());
+		assertFalse(file.exists());
+
+		file.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+
+		assertTrue(folder.exists());
+		assertTrue(file.exists());
+		assertTrue(folder.isSynchronized(IResource.DEPTH_INFINITE));
+
+		project.delete(true, getMonitor());
 	}
 }
