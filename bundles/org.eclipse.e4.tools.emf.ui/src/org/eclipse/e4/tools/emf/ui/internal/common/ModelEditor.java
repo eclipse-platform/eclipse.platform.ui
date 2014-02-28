@@ -10,7 +10,9 @@
  *     Wim Jongman <wim.jongman@remainsoftware.com> - Maintenance
  *     Marco Descher <marco@descher.at> - Bug395982, 426653, 422465
  ******************************************************************************/
-package org.eclipse.e4.tools.emf.ui.internal.common;import java.util.ArrayList;
+package org.eclipse.e4.tools.emf.ui.internal.common;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -93,9 +95,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.PerspectiveEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PerspectiveStackEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PlaceholderEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PopupMenuEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.RenderedMenuEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.RenderedMenuItem;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.RenderedToolBarEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.StringModelFragment;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarContributionEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarEditor;
@@ -234,6 +233,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TreeItem;
+
 ;
 
 public class ModelEditor {
@@ -1229,19 +1229,16 @@ public class ModelEditor {
 		registerEditor(CommandsPackageImpl.Literals.CATEGORY, ContextInjectionFactory.make(CategoryEditor.class, context));
 
 		registerEditor(MenuPackageImpl.Literals.TOOL_BAR, ContextInjectionFactory.make(ToolBarEditor.class, context));
-		registerEditor(MenuPackageImpl.Literals.RENDERED_TOOL_BAR, ContextInjectionFactory.make(RenderedToolBarEditor.class, context));
 		registerEditor(MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, ContextInjectionFactory.make(DirectToolItemEditor.class, context));
 		registerEditor(MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, ContextInjectionFactory.make(HandledToolItemEditor.class, context));
 		registerEditor(MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, ContextInjectionFactory.make(ToolBarSeparatorEditor.class, context));
 		registerEditor(MenuPackageImpl.Literals.TOOL_CONTROL, ContextInjectionFactory.make(ToolControlEditor.class, context));
 
 		registerEditor(MenuPackageImpl.Literals.MENU, ContextInjectionFactory.make(MenuEditor.class, context));
-		registerEditor(MenuPackageImpl.Literals.RENDERED_MENU, ContextInjectionFactory.make(RenderedMenuEditor.class, context));
 		registerEditor(MenuPackageImpl.Literals.POPUP_MENU, ContextInjectionFactory.make(PopupMenuEditor.class, context));
 		registerEditor(MenuPackageImpl.Literals.MENU_SEPARATOR, ContextInjectionFactory.make(MenuSeparatorEditor.class, context));
 		registerEditor(MenuPackageImpl.Literals.HANDLED_MENU_ITEM, ContextInjectionFactory.make(HandledMenuItemEditor.class, context));
 		registerEditor(MenuPackageImpl.Literals.DIRECT_MENU_ITEM, ContextInjectionFactory.make(DirectMenuItemEditor.class, context));
-		registerEditor(MenuPackageImpl.Literals.RENDERED_MENU_ITEM, ContextInjectionFactory.make(RenderedMenuItem.class, context));
 		registerEditor(MenuPackageImpl.Literals.MENU_CONTRIBUTION, ContextInjectionFactory.make(MenuContributionEditor.class, context));
 		registerEditor(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION, ContextInjectionFactory.make(ToolBarContributionEditor.class, context));
 		registerEditor(MenuPackageImpl.Literals.TRIM_CONTRIBUTION, ContextInjectionFactory.make(TrimContributionEditor.class, context));

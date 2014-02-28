@@ -357,13 +357,6 @@ public class Messages {
 	public String PopupMenuEditor_TreeLabel;
 	public String PopupMenuEditor_TreeLabelDescription;
 
-	public String RenderedMenuEditor_TreeLabel;
-
-	public String RenderedMenuItem_TreeLabel;
-	public String RenderedMenuItem_TreeLabelDescription;
-
-	public String RenderedToolBarEditor_TreeLabel;
-
 	public String ToolBarContributionEditor_TreeLabel;
 	public String ToolBarContributionEditor_TreeLabelDescription;
 
