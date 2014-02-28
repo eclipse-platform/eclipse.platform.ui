@@ -1,2 +1,0 @@
-# To force a version qualifier update add the bug here
-Bug 403237 - o.e.e4.tools cannot be build with "mvn clean install"
