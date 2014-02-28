@@ -80,11 +80,12 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	}
 
 	public void setCSSInfo(MUIElement me, Object widget) {
+		// No SWT widget, nothing to style...
+		if (widget == null)
+			return;
+
 		// Set up the CSS Styling parameters; id & class
 		IEclipseContext ctxt = getContext(me);
-		if (ctxt == null) {
-			ctxt = getContext(me);
-		}
 		if (ctxt == null) {
 			return;
 		}
