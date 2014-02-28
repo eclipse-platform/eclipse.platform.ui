@@ -154,7 +154,7 @@ public interface EModelService {
 	 * <p>
 	 * NOTE: This is a generically typed method with the List's generic type expected to be the
 	 * value of the 'clazz' parameter. If the 'clazz' parameter is null then the returned list is
-	 * untyped but may safely be assigned to List&lt;MUIElement&gt;.
+	 * untyped.
 	 * </p>
 	 * 
 	 * @param <T>
@@ -162,9 +162,6 @@ public interface EModelService {
 	 * @param searchRoot
 	 *            The element at which to start the search. This element must be non-null and is
 	 *            included in the search.
-	 * @param matcher
-	 *            An implementation of a Selector that will return true for elements that it wants
-	 *            in the returned list.
 	 * @param searchFlags
 	 *            A bitwise combination of the following constants:
 	 *            <ul>
@@ -184,12 +181,15 @@ public interface EModelService {
 	 *            <b>IN_SHARED_AREA</b>; the flags <b>OUTSIDE_PERSPECTIVE | IN_SHARED_AREA</b> for
 	 *            example will search the presentation <i>excluding</i> the elements in perspective
 	 *            stacks.
+	 * @param matcher
+	 *            An implementation of a Selector that will return true for elements that it wants
+	 *            in the returned list.
 	 * @return The generically typed list of matching elements.
 	 * 
 	 * @since 1.1
 	 */
-	public <T> List<T> findElements(MApplicationElement searchRoot, Selector matcher,
-			int searchFlags);
+	public <T> List<T> findElements(MApplicationElement searchRoot, int searchFlags,
+			Selector matcher);
 
 	/**
 	 * Returns the first element, recursively searching under the specified search root (inclusive)
