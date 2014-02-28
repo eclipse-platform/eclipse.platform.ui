@@ -102,26 +102,17 @@ public class PreferenceStore extends EventManager implements
 		this.filename = filename;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		addListenerObject(listener);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public boolean contains(String name) {
 		return (properties.containsKey(name) || defaultProperties
 				.containsKey(name));
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public void firePropertyChangeEvent(String name, Object oldValue,
 			Object newValue) {
@@ -144,9 +135,6 @@ public class PreferenceStore extends EventManager implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public boolean getBoolean(String name) {
 		return getBoolean(properties, name);
@@ -170,57 +158,36 @@ public class PreferenceStore extends EventManager implements
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public boolean getDefaultBoolean(String name) {
 		return getBoolean(defaultProperties, name);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public double getDefaultDouble(String name) {
 		return getDouble(defaultProperties, name);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public float getDefaultFloat(String name) {
 		return getFloat(defaultProperties, name);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public int getDefaultInt(String name) {
 		return getInt(defaultProperties, name);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public long getDefaultLong(String name) {
 		return getLong(defaultProperties, name);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public String getDefaultString(String name) {
 		return getString(defaultProperties, name);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public double getDouble(String name) {
 		return getDouble(properties, name);
@@ -246,9 +213,6 @@ public class PreferenceStore extends EventManager implements
 		return ival;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public float getFloat(String name) {
 		return getFloat(properties, name);
@@ -274,9 +238,6 @@ public class PreferenceStore extends EventManager implements
 		return ival;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public int getInt(String name) {
 		return getInt(properties, name);
@@ -302,9 +263,6 @@ public class PreferenceStore extends EventManager implements
 		return ival;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public long getLong(String name) {
 		return getLong(properties, name);
@@ -338,9 +296,6 @@ public class PreferenceStore extends EventManager implements
 		return ival;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public String getString(String name) {
 		return getString(properties, name);
@@ -369,9 +324,6 @@ public class PreferenceStore extends EventManager implements
 		return value;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public boolean isDefault(String name) {
 		return (!properties.containsKey(name) && defaultProperties
@@ -429,9 +381,6 @@ public class PreferenceStore extends EventManager implements
 		dirty = false;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public boolean needsSaving() {
 		return dirty;
@@ -452,9 +401,6 @@ public class PreferenceStore extends EventManager implements
 		return list.toArray(new String[list.size()]);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public void putValue(String name, String value) {
 		String oldValue = getString(name);
@@ -464,9 +410,6 @@ public class PreferenceStore extends EventManager implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		removeListenerObject(listener);
@@ -511,49 +454,31 @@ public class PreferenceStore extends EventManager implements
 		dirty = false;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public void setDefault(String name, double value) {
 		setValue(defaultProperties, name, value);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public void setDefault(String name, float value) {
 		setValue(defaultProperties, name, value);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public void setDefault(String name, int value) {
 		setValue(defaultProperties, name, value);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public void setDefault(String name, long value) {
 		setValue(defaultProperties, name, value);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public void setDefault(String name, String value) {
 		setValue(defaultProperties, name, value);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public void setDefault(String name, boolean value) {
 		setValue(defaultProperties, name, value);
@@ -576,9 +501,6 @@ public class PreferenceStore extends EventManager implements
 		filename = name;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public void setToDefault(String name) {
 		if (!properties.containsKey(name))
@@ -593,9 +515,6 @@ public class PreferenceStore extends EventManager implements
 		firePropertyChangeEvent(name, oldValue, newValue);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public void setValue(String name, double value) {
 		double oldValue = getDouble(name);
@@ -607,9 +526,6 @@ public class PreferenceStore extends EventManager implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public void setValue(String name, float value) {
 		float oldValue = getFloat(name);
@@ -620,9 +536,6 @@ public class PreferenceStore extends EventManager implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public void setValue(String name, int value) {
 		int oldValue = getInt(name);
@@ -634,9 +547,6 @@ public class PreferenceStore extends EventManager implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public void setValue(String name, long value) {
 		long oldValue = getLong(name);
@@ -647,9 +557,6 @@ public class PreferenceStore extends EventManager implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public void setValue(String name, String value) {
 		String oldValue = getString(name);
@@ -660,9 +567,6 @@ public class PreferenceStore extends EventManager implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IPreferenceStore.
-	 */
 	@Override
 	public void setValue(String name, boolean value) {
 		boolean oldValue = getBoolean(name);

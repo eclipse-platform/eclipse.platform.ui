@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
  * rather than being tied to a <code>TableViewer</code>.
  * 
  * <p>
- * This is package visiblity since it currently only needs to be used in one place,
+ * This is package visibility since it currently only needs to be used in one place,
  * but it could potentially be made public if there was a need to use the same background
  * sorting algorithm for something other than a TableViewer. 
  * </p>
@@ -89,33 +89,22 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
      * Listener that gets callbacks from the model
      */
     private IConcurrentModelListener listener = new IConcurrentModelListener() {
-    	/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.deferred.IConcurrentModelListener#add(java.lang.Object[])
-		 */
+
 		@Override
 		public void add(Object[] added) {
 			BackgroundContentProvider.this.add(added);
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.deferred.IConcurrentModelListener#remove(java.lang.Object[])
-		 */
 		@Override
 		public void remove(Object[] removed) {
 			BackgroundContentProvider.this.remove(removed);
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.deferred.IConcurrentModelListener#setContents(java.lang.Object[])
-		 */
 		@Override
 		public void setContents(Object[] newContents) {
 			BackgroundContentProvider.this.setContents(newContents);
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.deferred.IConcurrentModelListener#update(java.lang.Object[])
-		 */
 		@Override
 		public void update(Object[] changed) {
 			BackgroundContentProvider.this.update(changed);
@@ -508,7 +497,7 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
     /**
 	 * Cancels any sort in progress. Note that we try to use the
 	 * FastProgresReporter if possible since this is more responsive than
-	 * cancelling the sort job. However, it is not a problem to cancel in both
+	 * canceling the sort job. However, it is not a problem to cancel in both
 	 * ways.
 	 */
     private void cancelSortJob() {

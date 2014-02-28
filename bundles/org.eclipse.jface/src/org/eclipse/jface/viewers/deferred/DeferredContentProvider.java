@@ -58,49 +58,31 @@ public class DeferredContentProvider implements ILazyContentProvider {
 			this.viewer = viewer;
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.deferred.AbstractVirtualTable#flushCache(java.lang.Object)
-		 */
 		@Override
 		public void clear(int index) {
 			viewer.clear(index);
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.deferred.AbstractVirtualTable#replace(java.lang.Object, int)
-		 */
 		@Override
 		public void replace(Object element, int itemIndex) {
 			viewer.replace(element, itemIndex);
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.deferred.AbstractVirtualTable#setItemCount(int)
-		 */
 		@Override
 		public void setItemCount(int total) {
 			viewer.setItemCount(total);
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.deferred.AbstractVirtualTable#getItemCount()
-		 */
 		@Override
 		public int getItemCount() {
 			return viewer.getTable().getItemCount();
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.deferred.AbstractVirtualTable#getTopIndex()
-		 */
 		@Override
 		public int getTopIndex() {
 			return Math.max(viewer.getTable().getTopIndex() - 1, 0);
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.deferred.AbstractVirtualTable#getVisibleItemCount()
-		 */
 		@Override
 		public int getVisibleItemCount() {
 			Table table = viewer.getTable();
@@ -110,9 +92,6 @@ public class DeferredContentProvider implements ILazyContentProvider {
 			return (rect.height - headerHeight + itemHeight - 1) / (itemHeight + table.getGridLineWidth());
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.deferred.AbstractVirtualTable#getControl()
-		 */
 		@Override
 		public Control getControl() {
 			return viewer.getControl();
@@ -128,17 +107,11 @@ public class DeferredContentProvider implements ILazyContentProvider {
 		this.sortOrder = sortOrder;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		setProvider(null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (newInput == null) {
@@ -214,9 +187,6 @@ public class DeferredContentProvider implements ILazyContentProvider {
 		return limit;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILazyContentProvider#updateElement(int)
-	 */
 	@Override
 	public void updateElement(int element) {
 		if (provider != null) {
