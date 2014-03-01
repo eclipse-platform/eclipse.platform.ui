@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tobias Baumann <tobbaumann@gmail.com> - Bug 428323 - Correct lock tool bar action definition
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -627,24 +628,26 @@ public abstract class ActionFactory {
     };
 
 	/**
-	 * Workbench action (id: "lockToolBar"): Lock/unlock the workbench window tool bar. This action
-	 * maintains its enablement state.
+	 * Workbench action (id: "lockToolBar"): Lock/unlock the workbench window
+	 * tool bar. This action maintains its enablement state.
 	 */
-    public static final ActionFactory LOCK_TOOL_BAR = new ActionFactory(
-            "lockToolBar") {//$NON-NLS-1$
+	public static final ActionFactory LOCK_TOOL_BAR = new ActionFactory("lockToolBar", //$NON-NLS-1$
+			IWorkbenchCommandConstants.WINDOW_LOCK_TOOLBAR) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
          */
-        public IWorkbenchAction create(IWorkbenchWindow window) {
-            if (window == null) {
-                throw new IllegalArgumentException();
-            }
-			WorkbenchCommandAction action = new WorkbenchCommandAction(
-					IWorkbenchCommandConstants.HELP_ABOUT, window);
-            action.setId(getId());
-            return action;
-        }
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			WorkbenchCommandAction action = new WorkbenchCommandAction(getCommandId(), window);
+			action.setId(getId());
+			action.setToolTipText(WorkbenchMessages.LockToolBarAction_toolTip);
+			window.getWorkbench().getHelpSystem()
+					.setHelp(action, IWorkbenchHelpContextIds.LOCK_TOOLBAR_ACTION);
+			return action;
+		}
     };
 
 	/**
