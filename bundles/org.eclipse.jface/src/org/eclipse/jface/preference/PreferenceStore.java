@@ -18,13 +18,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Properties;
+import java.util.Set;
 
 import org.eclipse.core.commands.common.EventManager;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
@@ -393,12 +392,8 @@ public class PreferenceStore extends EventManager implements
 	 * @return an array of preference names
 	 */
 	public String[] preferenceNames() {
-		ArrayList<String> list = new ArrayList<String>();
-		Enumeration<String> it = (Enumeration<String>) properties.propertyNames();
-		while (it.hasMoreElements()) {
-			list.add(it.nextElement());
-		}
-		return list.toArray(new String[list.size()]);
+		Set<String> set = properties.stringPropertyNames();
+		return set.toArray(new String[set.size()]);
 	}
 
 	@Override
