@@ -22,6 +22,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -56,22 +57,29 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 		Composite newComp = new Composite((Composite) parent, SWT.NONE);
 		newComp.setLayout(new FillLayout());
 
-		Control refWidget = (Control) ref.getWidget();
-		if (refWidget == null) {
-			ref.setToBeRendered(true);
-			refWidget = (Control) renderingEngine.createGui(ref, newComp,
-					getContextForParent(ref));
-		} else {
-			if (refWidget.getParent() != newComp) {
-				refWidget.setParent(newComp);
+		// if the placeholder is *not* in the currently active perspective
+		// then don't re-parent the current view
+		int phLoc = modelService.getElementLocation(ph);
+		boolean isOutsidePerspective = (phLoc & EModelService.OUTSIDE_PERSPECTIVE) != 0;
+		boolean isInActivePerspective = (phLoc & EModelService.IN_ACTIVE_PERSPECTIVE) != 0;
+		if (isOutsidePerspective || isInActivePerspective) {
+			Control refWidget = (Control) ref.getWidget();
+			if (refWidget == null) {
+				ref.setToBeRendered(true);
+				refWidget = (Control) renderingEngine.createGui(ref, newComp,
+						getContextForParent(ref));
+			} else {
+				if (refWidget.getParent() != newComp) {
+					refWidget.setParent(newComp);
+				}
 			}
-		}
 
-		if (ref instanceof MContext) {
-			IEclipseContext context = ((MContext) ref).getContext();
-			IEclipseContext newParentContext = getContext(ph);
-			if (context.getParent() != newParentContext) {
-				context.setParent(newParentContext);
+			if (ref instanceof MContext) {
+				IEclipseContext context = ((MContext) ref).getContext();
+				IEclipseContext newParentContext = getContext(ph);
+				if (context.getParent() != newParentContext) {
+					context.setParent(newParentContext);
+				}
 			}
 		}
 
