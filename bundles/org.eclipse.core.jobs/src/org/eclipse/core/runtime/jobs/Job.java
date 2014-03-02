@@ -142,6 +142,23 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 
 	/**
+	 * Creates a new Job that will executed the provided function
+	 * when run.
+	 * 
+	 * @param name The name of the job
+	 * @param function The function to execute
+	 * @return A job that encapsulates the provided function
+	 * @since 3.6
+	 */
+	public Job create(String name, final IJobFunction function) {
+		return new Job(name) {
+			protected IStatus run(IProgressMonitor monitor) {
+				return function.run(monitor);
+			}
+		};
+	}
+
+	/**
 	 * Creates a new job with the specified name.  The job name is a human-readable
 	 * value that is displayed to users.  The name does not need to be unique, but it
 	 * must not be <code>null</code>.
