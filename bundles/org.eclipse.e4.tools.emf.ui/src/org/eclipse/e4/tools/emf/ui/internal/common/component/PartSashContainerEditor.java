@@ -149,13 +149,13 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 		}
 
 		// --- Import Actions ---
-		actionsImport.add(new Action("Views", createImageDescriptor(ResourceProvider.IMG_Part)) {
+		actionsImport.add(new Action("Views", createImageDescriptor(ResourceProvider.IMG_Part)) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				handleImportChild(BasicPackageImpl.Literals.PART, RegistryUtil.HINT_VIEW);
 			}
 		});
-		actionsImport.add(new Action("Editors", createImageDescriptor(ResourceProvider.IMG_Part)) {
+		actionsImport.add(new Action("Editors", createImageDescriptor(ResourceProvider.IMG_Part)) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				handleImportChild(BasicPackageImpl.Literals.INPUT_PART, RegistryUtil.HINT_EDITOR);
@@ -302,19 +302,19 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 			childrenDropDown.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {
-					EClass eclass = (EClass) element;
-					return eclass.getName();
+					FeatureClass eFeatureClass = (FeatureClass) element;
+					return eFeatureClass.eClass.getName();
 				}
 			});
 			List<FeatureClass> eClassList = new ArrayList<FeatureClass>();
-			eClassList.add(new FeatureClass("PartSashContainer", BasicPackageImpl.Literals.PART_SASH_CONTAINER));
-			eClassList.add(new FeatureClass("PartStack", BasicPackageImpl.Literals.PART_STACK));
-			eClassList.add(new FeatureClass("Part", BasicPackageImpl.Literals.PART));
-			eClassList.add(new FeatureClass("InputPart", BasicPackageImpl.Literals.INPUT_PART));
-			eClassList.add(new FeatureClass("Area", AdvancedPackageImpl.Literals.AREA));
-			eClassList.add(new FeatureClass("Placeholder", AdvancedPackageImpl.Literals.PLACEHOLDER));
+			eClassList.add(new FeatureClass("PartSashContainer", BasicPackageImpl.Literals.PART_SASH_CONTAINER)); //$NON-NLS-1$
+			eClassList.add(new FeatureClass("PartStack", BasicPackageImpl.Literals.PART_STACK)); //$NON-NLS-1$
+			eClassList.add(new FeatureClass("Part", BasicPackageImpl.Literals.PART)); //$NON-NLS-1$
+			eClassList.add(new FeatureClass("InputPart", BasicPackageImpl.Literals.INPUT_PART)); //$NON-NLS-1$
+			eClassList.add(new FeatureClass("Area", AdvancedPackageImpl.Literals.AREA)); //$NON-NLS-1$
+			eClassList.add(new FeatureClass("Placeholder", AdvancedPackageImpl.Literals.PLACEHOLDER)); //$NON-NLS-1$
 			eClassList.addAll(getEditor().getFeatureClasses(BasicPackageImpl.Literals.PART_SASH_CONTAINER, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN));
-
+			childrenDropDown.setInput(eClassList);
 			childrenDropDown.setSelection(new StructuredSelection(eClassList.get(0)));
 
 			Button b = new Button(buttonCompTop, SWT.PUSH | SWT.FLAT);
