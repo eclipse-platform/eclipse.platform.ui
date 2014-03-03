@@ -142,15 +142,16 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 
 	/**
-	 * Creates a new Job that will executed the provided function
-	 * when run.
+	 * Creates a new Job that will execute the provided function
+	 * when it runs.
 	 * 
 	 * @param name The name of the job
 	 * @param function The function to execute
 	 * @return A job that encapsulates the provided function
+	 * @see IJobFunction
 	 * @since 3.6
 	 */
-	public Job create(String name, final IJobFunction function) {
+	public static Job create(String name, final IJobFunction function) {
 		return new Job(name) {
 			protected IStatus run(IProgressMonitor monitor) {
 				return function.run(monitor);
