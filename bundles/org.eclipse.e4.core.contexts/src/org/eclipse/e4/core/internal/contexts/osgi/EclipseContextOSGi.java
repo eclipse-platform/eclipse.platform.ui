@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.core.internal.contexts.osgi;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +39,8 @@ public class EclipseContextOSGi extends EclipseContext implements ServiceListene
 			// process all IContextFunction services already registered
 			ServiceReference<?>[] existing = bundleContext.getServiceReferences(IContextFunction.SERVICE_NAME, null);
 			if (existing != null) {
+				// Reorder so that lowest is first
+				Arrays.sort(existing);
 				for (int i = 0; i < existing.length; i++) {
 					String name = (String) existing[i].getProperty(IContextFunction.SERVICE_CONTEXT_KEY);
 					refs.put(name, existing[i]);

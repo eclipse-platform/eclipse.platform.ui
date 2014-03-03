@@ -18,6 +18,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
+import org.osgi.framework.FrameworkUtil;
 
 public class EclipseContextTest extends TestCase {
 
@@ -359,6 +360,11 @@ public class EclipseContextTest extends TestCase {
 
 		assertEquals(1, child.get("x"));
 		parent.dispose();
+	}
+	
+	public void testContextFunctionOrdering() {
+		IEclipseContext osgiContext = EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext());
+		assertEquals("High",osgiContext.get("test.contextfunction.ranking"));
 	}
 
 	private int listenersCount(IEclipseContext context) {

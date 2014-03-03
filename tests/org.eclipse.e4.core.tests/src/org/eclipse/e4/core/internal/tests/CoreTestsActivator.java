@@ -10,10 +10,20 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
+
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.e4.core.contexts.IContextFunction;
+import org.eclipse.e4.core.di.extensions.EventTopic;
+import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
+import org.eclipse.e4.core.internal.tests.contexts.ContextFunctionHigh;
+import org.eclipse.e4.core.internal.tests.contexts.ContextFunctionLow;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -35,6 +45,7 @@ public class CoreTestsActivator implements BundleActivator {
 
 	public void start(BundleContext context) throws Exception {
 		bundleContext = context;
+		registerContextFunctions();
 	}
 
 	public void stop(BundleContext context) throws Exception {
@@ -51,6 +62,23 @@ public class CoreTestsActivator implements BundleActivator {
 			eventAdminTracker = null;
 		}
 		bundleContext = null;
+	}
+	
+	private void registerContextFunctions() {
+		{
+			Dictionary<String, Object> properties = new Hashtable<String, Object>();
+			properties.put(IContextFunction.SERVICE_CONTEXT_KEY,"test.contextfunction.ranking");
+			properties.put(Constants.SERVICE_RANKING, 0);
+			bundleContext.registerService(IContextFunction.SERVICE_NAME, new ContextFunctionLow(), properties);			
+		}
+		
+		{
+			Dictionary<String, Object> properties = new Hashtable<String, Object>();
+			properties.put(IContextFunction.SERVICE_CONTEXT_KEY,"test.contextfunction.ranking");
+			properties.put(Constants.SERVICE_RANKING, 100);
+			bundleContext.registerService(IContextFunction.SERVICE_NAME, new ContextFunctionHigh(), properties);			
+		}
+		
 	}
 
 	public BundleContext getBundleContext() {
