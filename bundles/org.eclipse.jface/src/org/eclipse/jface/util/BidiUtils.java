@@ -20,6 +20,7 @@ import org.eclipse.swt.custom.BidiSegmentEvent;
 import org.eclipse.swt.custom.BidiSegmentListener;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SegmentListener;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
@@ -277,16 +278,92 @@ public final class BidiUtils {
 	}
 	
 	/**
-	 * Returns a segment listener for the given <code>handlingType</code> that can e.g. be passed to
-	 * {@link Text#addSegmentListener(SegmentListener)}.
+	 * Applies bidi processing to the given combo.
 	 * 
 	 * <p>
-	 * <strong>Note:</strong> The Structured Text handling only works if the <code>org.eclipse.equinox.bidi</code>
-	 * bundle is on the classpath!
+	 * Possible values for <code>handlingType</code> are:
+	 * <ul>
+	 * <li>{@link BidiUtils#LEFT_TO_RIGHT}</li>
+	 * <li>{@link BidiUtils#RIGHT_TO_LEFT}</li>
+	 * <li>{@link BidiUtils#AUTO}</li>
+	 * <li>{@link BidiUtils#BTD_DEFAULT}</li>
+	 * <li>the <code>String</code> constants in
+	 * {@link StructuredTextTypeHandlerFactory}</li>
+	 * <li>if OSGi is running, the types that have been contributed to the
+	 * <code>org.eclipse.equinox.bidi.bidiTypes</code> extension point.</li>
+	 * </ul>
+	 * <p>
+	 * The 3 values {@link #LEFT_TO_RIGHT}, {@link #RIGHT_TO_LEFT}, and
+	 * {@link #AUTO} are usable whether {@link #getBidiSupport() bidi support}
+	 * is enabled or disabled.
+	 * <p>
+	 * The remaining values only have an effect if bidi support is enabled.
+	 * <p>
+	 * The 4 first values {@link #LEFT_TO_RIGHT}, {@link #RIGHT_TO_LEFT},
+	 * {@link #AUTO}, and {@link #BTD_DEFAULT} are for Base Text Direction (BTD)
+	 * handling. The remaining values are for Structured Text handling.
+	 * <p>
+	 * <strong>Note:</strong> If this method is called on a combo control, then
+	 * {@link #applyTextDirection(Control, String)} must not be called on the
+	 * same control.
+	 * <p>
+	 * <strong>Note:</strong> The Structured Text handling only works if the
+	 * <code>org.eclipse.equinox.bidi</code> bundle is on the classpath!
 	 * </p>
 	 * 
-	 * @param handlingType the handling type as specified in {@link #applyBidiProcessing(Text, String)}
-	 * @return the segment listener, or <code>null</code> if no handling is required
+	 * <p>
+	 * <strong>Note:</strong>
+	 * {@link org.eclipse.swt.widgets.Combo#addSegmentListener(SegmentListener)}
+	 * is currently only implemented on Windows so this method won't have an
+	 * effect on Cocoa and GTK.
+	 * 
+	 * @param combo
+	 *            the combo field
+	 * @param handlingType
+	 *            the type of handling
+	 * @throws IllegalArgumentException
+	 *             if <code>handlingType</code> is not a known type identifier
+	 * @since 3.10
+	 */
+	public static void applyBidiProcessing(Combo combo, String handlingType) {
+		SegmentListener listener = getSegmentListener(handlingType);
+		if (listener != null) {
+			combo.addSegmentListener(listener);
+			if (DEBUG) {
+				int color = 0;
+				if (LEFT_TO_RIGHT.equals(handlingType)) {
+					color = SWT.COLOR_RED;
+				} else if (RIGHT_TO_LEFT.equals(handlingType)) {
+					color = SWT.COLOR_GREEN;
+				} else if (BTD_DEFAULT.equals(handlingType)) {
+					color = SWT.COLOR_YELLOW;
+				} else if (AUTO.equals(handlingType)) {
+					color = SWT.COLOR_MAGENTA;
+				} else {
+					color = SWT.COLOR_CYAN;
+				}
+				combo.setBackground(combo.getDisplay().getSystemColor(color));
+				if (combo.getToolTipText() == null) {
+					combo.setToolTipText('<' + handlingType + '>');
+				}
+			}
+		}
+	}
+
+	/**
+	 * Returns a segment listener for the given <code>handlingType</code> that
+	 * can e.g. be passed to {@link Text#addSegmentListener(SegmentListener)}.
+	 * 
+	 * <p>
+	 * <strong>Note:</strong> The Structured Text handling only works if the
+	 * <code>org.eclipse.equinox.bidi</code> bundle is on the classpath!
+	 * </p>
+	 * 
+	 * @param handlingType
+	 *            the handling type as specified in
+	 *            {@link #applyBidiProcessing(Text, String)}
+	 * @return the segment listener, or <code>null</code> if no handling is
+	 *         required
 	 * @throws IllegalArgumentException
 	 *             if <code>handlingType</code> is not a known type identifier
 	 * @see #applyBidiProcessing(Text, String)
@@ -381,6 +458,8 @@ public final class BidiUtils {
 			applyBidiProcessing((Text) control, textDirection);
 		} else if (control instanceof StyledText && (auto || textDir != 0)) {
 			applyBidiProcessing((StyledText) control, textDirection);
+		} else if (control instanceof Combo && (auto || textDir != 0)) {
+			applyBidiProcessing((Combo) control, textDirection);
 		} else if (textDir != 0) {
 			control.setTextDirection(textDir);
 		}
