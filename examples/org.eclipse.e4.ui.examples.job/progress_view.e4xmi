@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_igBBMG_1EeO3G4cNJzljEA">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_iZEnQIQjEeOJOIhruxA5nw" featurename="addons" parentElementId="org.eclipse.e4.demo.contacts.application">
+    <elements xsi:type="application:Addon" xmi:id="_zd72cIQjEeOJOIhruxA5nw" elementId="org.eclipse.e4.demo.contacts.jobs.addon.progressmanager" contributionURI="bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.ProgressViewAddon"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_8jAhoG_4EeO3G4cNJzljEA" featurename="children" parentElementId="org.eclipse.e4.demo.contacts.partstacks.second" positionInList="first">
+    <elements xsi:type="basic:Part" xmi:id="_j3Yf8G_5EeO3G4cNJzljEA" elementId="org.eclipse.e4.ui.progress.ProgressView" containerData="" contributionURI="bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.ProgressView" label="E4 Progress" iconURI="platform:/plugin/org.eclipse.e4.ui.progress/icons/full/progress/pview.png" closeable="true">
+      <tags>View</tags>
+      <tags>categoryTag:General</tags>
+      <tags>active</tags>
+      <handlers xmi:id="_LA4DQHX1EeOL1rlhtuWd8w" elementId="org.eclipse.e4.ui.views.progress.handlers.clearAll" contributionURI="bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.ClearAllHandler" command="_Cf0oMHX1EeOL1rlhtuWd8w"/>
+      <handlers xmi:id="_BYE10HYdEeOGuo0e7MGxvQ" elementId="org.eclipse.e4.ui.views.progress.handler.showPreferences" contributionURI="bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.OpenPreferenceDialogHandler" command="_IX1dQHYdEeOGuo0e7MGxvQ"/>
+      <menus xmi:id="_rv030HYYEeOGuo0e7MGxvQ" elementId="org.eclipse.e4.ui.views.progress.menu">
+        <tags>ViewMenu</tags>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_FgL3gHYZEeOGuo0e7MGxvQ" elementId="org.eclipse.e4.ui.views.progress.handledmenuitem.0" label="Clear All" iconURI="platform:/plugin/org.eclipse.e4.ui.progress/icons/full/elcl16/progress_remall.png" command="_Cf0oMHX1EeOL1rlhtuWd8w"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_Qe7jYHYhEeOGuo0e7MGxvQ" elementId="org.eclipse.e4.ui.views.progress.handledmenuitem.1" label="Preferences" command="_IX1dQHYdEeOGuo0e7MGxvQ"/>
+      </menus>
+      <toolbar xmi:id="_a-JNsHX0EeOL1rlhtuWd8w" elementId="org.eclipse.e4.ui.views.progress.toolbar">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_hTniAHX0EeOL1rlhtuWd8w" elementId="org.eclipse.e4.ui.views.progress.toolbar.clearAll" label="" iconURI="platform:/plugin/org.eclipse.e4.ui.progress/icons/full/elcl16/progress_remall.png" command="_Cf0oMHX1EeOL1rlhtuWd8w"/>
+      </toolbar>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_8IDN0HX0EeOL1rlhtuWd8w" featurename="commands" parentElementId="org.eclipse.e4.demo.contacts.application">
+    <elements xsi:type="commands:Command" xmi:id="_Cf0oMHX1EeOL1rlhtuWd8w" elementId="org.eclipse.e4.ui.views.progress.commands.clearAll" commandName="Clear All" description="Clear All"/>
+    <elements xsi:type="commands:Command" xmi:id="_IX1dQHYdEeOGuo0e7MGxvQ" elementId="org.eclipse.e4.ui.views.progress.commands.showPreferences" commandName="Show Preferences" description="Show Preferences"/>
+    <elements xsi:type="commands:Command" xmi:id="_726IYJWOEeOLZ7rxqbmDow" elementId="org.eclipse.e4.ui.views.progress.commands.openProgressView" commandName="Open Progress View"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_8jAhoG_4EeO3G4cNJzljEA" featurename="trimBars" parentElementId="org.eclipse.e4.demo.contacts.main" positionInList="">
+    <elements xsi:type="basic:TrimBar" xmi:id="_lcYOoIfxEeOFHvFErFdA4A" elementId="org.eclipse.e4.ui.examples.job.trimbar.0" side="Bottom">
+      <children xsi:type="menu:ToolControl" xmi:id="_peGXoIfxEeOFHvFErFdA4A" elementId="org.eclipse.e4.ui.examples.job.toolcontrol.0" contributionURI="bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.internal.ProgressRegion"/>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_2nrN8JWPEeOLZ7rxqbmDow" featurename="handlers" parentElementId="org.eclipse.e4.demo.contacts.application">
+    <elements xsi:type="commands:Handler" xmi:id="_h2PmYJWPEeOLZ7rxqbmDow" elementId="org.eclipse.e4.ui.views.progress.handlers.openProgressView" contributionURI="bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.OpenProgressViewHandler" command="_726IYJWOEeOLZ7rxqbmDow"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="__pfzwJWPEeOLZ7rxqbmDow" featurename="bindings" parentElementId="_SeXUEO8EEd6FC9cDb6iV7x">
+    <elements xsi:type="commands:KeyBinding" xmi:id="_JKsdMJWQEeOLZ7rxqbmDow" elementId="org.eclipse.e4.ui.views.progress.keybinding.openProgressView" keySequence="M1+P" command="_726IYJWOEeOLZ7rxqbmDow"/>
+  </fragments>
+</fragment:ModelFragments>

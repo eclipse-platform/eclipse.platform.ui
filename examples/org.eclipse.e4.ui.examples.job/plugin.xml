@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+     <extension
+           id="org.eclipse.e4.ui.examples.job.model"
+           point="org.eclipse.e4.workbench.model">
+        <fragment
+              uri="progress_view.e4xmi">
+        </fragment>
+        <fragment
+              uri="job_factory_view.e4xmi">
+        </fragment>
+     </extension>
+
+</plugin>
