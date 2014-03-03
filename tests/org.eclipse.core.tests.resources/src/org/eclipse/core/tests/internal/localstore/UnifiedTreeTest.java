@@ -22,7 +22,6 @@ import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.*;
 
 /**
  * 
@@ -282,15 +281,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		assertTrue("2.0", rf.exists());
 	}
 
-	public void testBug368376() throws CoreException, IOException {
-		IEclipsePreferences instanceNode = InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
-		assertFalse(instanceNode.getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH, false));
-		assertFalse(instanceNode.getBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false));
-
-		IEclipsePreferences defaultNode = DefaultScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
-		assertFalse(defaultNode.getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH, false));
-		assertFalse(defaultNode.getBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false));
-
+	public void test368376() throws CoreException, IOException {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(getUniqueString());
 		ensureExistsInWorkspace(project, true);
 
