@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 IBM Corporation and others.
+ * Copyright (c) 2012, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -45,9 +46,11 @@ public class ScreenshotTest extends TestCase {
 	}
 
 
+	public void testScreenshot() throws Exception {
+		takeScreenshot(ScreenshotTest.class, getName(), System.out);
+	}
+
 	public void testWindowsTaskManagerScreenshots() throws Exception {
-		takeScreenshot(ScreenshotTest.class, getName() + 1, System.out);
-		
 		if (! Util.isWindows())
 			return;
 		
@@ -130,13 +133,16 @@ public class ScreenshotTest extends TestCase {
 			out.println("Shells: ");
 			for (int i = 0; i < shells.length; i++) {
 				Shell shell = shells[i];
-				out.println((shell.isVisible() ? "  visible: " : "  invisible: ") + shell);
+				out.print((shell.isVisible() ? "  visible: " : "  invisible: ") + shell);
+				out.println(" @ " + shell.getBounds().toString());
 			}
 		}
 		
 		// Take a screenshot:
 		GC gc = new GC(display);
-		final Image image = new Image(display, display.getBounds());
+		Rectangle displayBounds= display.getBounds();
+		out.println("Display @ " + displayBounds);
+		final Image image = new Image(display, displayBounds);
 		gc.copyArea(image, 0, 0);
 		gc.dispose();
 
