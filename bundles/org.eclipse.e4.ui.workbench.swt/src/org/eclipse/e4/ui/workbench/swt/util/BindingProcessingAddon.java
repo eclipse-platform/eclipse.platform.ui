@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 429575
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.swt.util;
@@ -24,6 +25,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -156,6 +158,11 @@ public class BindingProcessingAddon {
 	 * @param bindingTable
 	 */
 	private void defineBindingTable(MBindingTable bindingTable) {
+		Assert.isNotNull(
+				bindingTable.getBindingContext(),
+				"Binding context referred to by the binding table \"" + bindingTable.getElementId() + "\""); //$NON-NLS-1$
+		Assert.isNotNull(bindingTable.getBindingContext().getElementId(),
+				"Element ID of binding table \"" + bindingTable.getElementId() + "\"."); //$NON-NLS-1$
 		final Context bindingContext = contextManager.getContext(bindingTable
 				.getBindingContext().getElementId());
 		BindingTable table = bindingTables.getTable(bindingTable
