@@ -744,7 +744,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	private EventHandler themeRegistryRestyledHandler = new EventHandler() {
 		@Override
 		public void handleEvent(Event event) {
-			updateThemeInfo(workbench.getThemeManager());
+			if (isAnyThemeChanged()) {
+				updateThemeInfo(workbench.getThemeManager());
+			}
 			refreshCategory();
 			refreshAllLabels();
 
@@ -752,6 +754,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 			previewMap.clear();
 			restoreTreeSelection();
 			updateControls();
+		}
+
+		private boolean isAnyThemeChanged() {
+			return currentTheme != workbench.getThemeManager().getCurrentTheme()
+					|| currentCSSTheme != themeEngine.getActiveTheme();
 		}
 	};
 
@@ -1193,15 +1200,17 @@ getPreferenceStore(),
 
     protected ColorDefinition getSelectedColorDefinition() {
         Object o = ((IStructuredSelection) tree.getViewer().getSelection()).getFirstElement();
-        if (o instanceof ColorDefinition)
-			return (ColorDefinition) o;
+		if (o instanceof ColorDefinition) {
+			return themeRegistry.findColor(((ColorDefinition) o).getId());
+		}
         return null;
     }
 
     protected FontDefinition getSelectedFontDefinition() {
         Object o = ((IStructuredSelection) tree.getViewer().getSelection()).getFirstElement();
-        if (o instanceof FontDefinition)
-			return (FontDefinition) o;
+		if (o instanceof FontDefinition) {
+			return themeRegistry.findFont(((FontDefinition) o).getId());
+		}
         return null;
     }
     
@@ -1397,7 +1406,8 @@ getPreferenceStore(),
 					return true;
             } else {
                 // a descendant is default if it's the same value as its ancestor
-                if (getColorValue(definition).equals(getColorAncestorValue(definition)))
+				RGB rgb = getColorValue(definition);
+				if (rgb != null && rgb.equals(getColorAncestorValue(definition)))
 					return true;
             }
         }
@@ -1512,8 +1522,7 @@ getPreferenceStore(),
     }
 
 	private String createPreferenceKey(ThemeElementDefinition definition) {
-		if (isAvailableInCurrentTheme(definition)
-				&& (definition.isOverridden() || definition.isAddedByCss())) {
+		if (definition.isOverridden() || definition.isAddedByCss()) {
 			return ThemeElementHelper.createPreferenceKey(currentCSSTheme, currentTheme,
 					definition.getId());
 		}

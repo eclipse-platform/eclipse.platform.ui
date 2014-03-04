@@ -468,7 +468,7 @@ public class WorkbenchThemeManager extends EventManager implements
 
 		// At this moment we don't remove the definitions added by CSS since we
 		// don't want to modify the 3.x theme registries api
-		private void resetThemeRegistries(ThemeRegistry themeRegistry, FontRegistry fontRegistry,
+		protected void resetThemeRegistries(ThemeRegistry themeRegistry, FontRegistry fontRegistry,
 				ColorRegistry colorRegistry) {
 			for (FontDefinition def : themeRegistry.getFonts()) {
 				if (def.isOverridden()) {
@@ -486,7 +486,7 @@ public class WorkbenchThemeManager extends EventManager implements
 			}
 		}
 
-		private void overrideAlreadyExistingDefinitions(org.osgi.service.event.Event event,
+		protected void overrideAlreadyExistingDefinitions(org.osgi.service.event.Event event,
 				IStylingEngine engine, ThemeRegistry themeRegistry, FontRegistry fontRegistry,
 				ColorRegistry colorRegistry) {
 			IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
@@ -569,7 +569,7 @@ public class WorkbenchThemeManager extends EventManager implements
 		}
 	}
 
-	private static class ThemeRegistryModifiedHandler implements EventHandler {
+	public static class ThemeRegistryModifiedHandler implements EventHandler {
 		@Override
 		public void handleEvent(org.osgi.service.event.Event event) {
 			populateThemeRegistries(getThemeRegistry(), getFontRegistry(), getColorRegistry(),
@@ -577,25 +577,25 @@ public class WorkbenchThemeManager extends EventManager implements
 			sendThemeDefinitionChangedEvent();
 		}
 
-		private org.eclipse.e4.ui.css.swt.theme.ITheme getTheme() {
+		protected org.eclipse.e4.ui.css.swt.theme.ITheme getTheme() {
 			IThemeEngine themeEngine = (IThemeEngine) getContext()
 					.get(IThemeEngine.class.getName());
 			return themeEngine != null ? themeEngine.getActiveTheme() : null;
 		}
 
-		private ThemeRegistry getThemeRegistry() {
+		protected ThemeRegistry getThemeRegistry() {
 			return (ThemeRegistry) getContext().get(IThemeRegistry.class.getName());
 		}
 
-		private FontRegistry getFontRegistry() {
+		protected FontRegistry getFontRegistry() {
 			return getColorsAndFontsTheme().getFontRegistry();
 		}
 
-		private ColorRegistry getColorRegistry() {
+		protected ColorRegistry getColorRegistry() {
 			return getColorsAndFontsTheme().getColorRegistry();
 		}
 
-		private ITheme getColorsAndFontsTheme() {
+		protected ITheme getColorsAndFontsTheme() {
 			return WorkbenchThemeManager.getInstance().getCurrentTheme();
 		}
 
@@ -603,14 +603,14 @@ public class WorkbenchThemeManager extends EventManager implements
 			return WorkbenchThemeManager.getInstance().context;
 		}
 
-		private void sendThemeDefinitionChangedEvent() {
+		protected void sendThemeDefinitionChangedEvent() {
 			MApplication application = (MApplication) getContext()
 					.get(MApplication.class.getName());
 			getInternalInstance().eventBroker.send(UIEvents.UILifeCycle.THEME_DEFINITION_CHANGED,
 					application);
 		}
 
-		private void populateThemeRegistries(ThemeRegistry themeRegistry,
+		protected void populateThemeRegistries(ThemeRegistry themeRegistry,
 				FontRegistry fontRegistry, ColorRegistry colorRegistry,
 				org.eclipse.e4.ui.css.swt.theme.ITheme cssTheme, ITheme theme) {
 			IPreferenceStore store = PrefUtil.getInternalPreferenceStore();

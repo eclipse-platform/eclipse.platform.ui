@@ -24,6 +24,7 @@ import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemesExtension;
+import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager.WorkbenchThemeChangedHandler;
 import org.osgi.service.event.Event;
 
@@ -97,7 +98,76 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 		verify(stylingEngine, times(1)).style(fontDefinition2);
 		verify(stylingEngine, times(1)).style(colorDefinition);
 		
+		verify(handler, times(1)).resetThemeRegistries(themeRegistry, fontRegistry, colorRegistry);
+		
 		verify(handler, times(1)).sendThemeRegistryRestyledEvent();
+	}
+	
+	public void testOverrideThemeDefinitionsWhenDefinitionModifiedByUser() throws Exception {
+		//given
+		IStylingEngine stylingEngine = mock(IStylingEngine.class);
+		
+		FontDefinition fontDefinition1 = mock(FontDefinition.class);
+		doReturn("fontDefinition1").when(fontDefinition1).getId();
+		doReturn(true).when(fontDefinition1).isOverridden();
+		doReturn(false).when(fontDefinition1).isModifiedByUser();
+		
+		FontDefinition fontDefinition2 = mock(FontDefinition.class);
+		doReturn("fontDefinition2").when(fontDefinition2).getId();
+		doReturn(true).when(fontDefinition2).isOverridden();	
+		doReturn(true).when(fontDefinition2).isModifiedByUser();
+		
+		ColorDefinition colorDefinition1 = mock(ColorDefinition.class);
+		doReturn("colorDefinition1").when(colorDefinition1).getId();
+		doReturn(true).when(colorDefinition1).isOverridden();
+		doReturn(true).when(colorDefinition1).isModifiedByUser();
+		
+		ColorDefinition colorDefinition2 = mock(ColorDefinition.class);
+		doReturn("colorDefinition2").when(colorDefinition2).getId();
+		doReturn(true).when(colorDefinition2).isOverridden();	
+		doReturn(false).when(colorDefinition2).isModifiedByUser();
+		
+		ThemeRegistry themeRegistry = spy(new ThemeRegistry());
+		doReturn(new FontDefinition[]{fontDefinition1, fontDefinition2}).when(themeRegistry).getFonts();
+		doReturn(new ColorDefinition[] {colorDefinition1, colorDefinition2}).when(themeRegistry).getColors();
+		
+		FontRegistry fontRegistry = mock(FontRegistry.class);
+		
+		ColorRegistry colorRegistry = mock(ColorRegistry.class);
+		
+		ThemesExtension themesExtension = mock(ThemesExtension.class); 
+		
+		WorkbenchThemeChangedHandlerTestable handler = spy(new WorkbenchThemeChangedHandlerTestable());
+		doReturn(stylingEngine).when(handler).getStylingEngine();
+		doReturn(themeRegistry).when(handler).getThemeRegistry();
+		doReturn(fontRegistry).when(handler).getFontRegistry();
+		doReturn(colorRegistry).when(handler).getColorRegistry();
+		doReturn(themesExtension).when(handler).createThemesExtension();
+		
+		
+		//when
+		handler.overrideAlreadyExistingDefinitions(mock(Event.class), stylingEngine, themeRegistry, fontRegistry, colorRegistry);
+		
+		//then
+		verify(stylingEngine, times(1)).style(fontDefinition1);
+		verify(fontRegistry, times(1)).put("fontDefinition1", null);
+		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class), 
+				eq(fontRegistry), eq(fontDefinition1), any(IPreferenceStore.class));
+		
+		verify(stylingEngine, times(1)).style(fontDefinition2);
+		verify(fontRegistry, never()).put(eq("fontDefinition2"), any(FontData[].class));
+		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class), 
+				eq(fontRegistry), eq(fontDefinition2), any(IPreferenceStore.class));
+		
+		verify(stylingEngine, times(1)).style(colorDefinition1);
+		verify(colorRegistry, never()).put(eq("colorDefinition1"), any(RGB.class));
+		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class), 
+				eq(colorRegistry), eq(colorDefinition1), any(IPreferenceStore.class));
+		
+		verify(stylingEngine, times(1)).style(colorDefinition2);
+		verify(colorRegistry, times(1)).put("colorDefinition2", null);
+		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class), 
+				eq(colorRegistry), eq(colorDefinition2), any(IPreferenceStore.class));
 	}
 
 	public void testAddThemeDefinitions() throws Exception {
@@ -142,6 +212,15 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 		assertEquals(1, themeRegistry.getFonts().length);
 		verify(colorRegistry, times(1)).put(eq("colorDefinition"), any(RGB.class));
 		assertEquals(1, themeRegistry.getColors().length);
+		
+		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class), 
+				eq(fontRegistry), eq(fontDefinition), any(IPreferenceStore.class));
+		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class), 
+				eq(colorRegistry), eq(colorDefinition), any(IPreferenceStore.class));
+		
+		verify(handler, times(1)).resetThemeRegistries(themeRegistry, fontRegistry, colorRegistry);
+		
+		verify(handler, times(1)).sendThemeRegistryRestyledEvent();
 	}
 	
 	public void testOverrideAndAddThemeDefinitions() throws Exception {
@@ -211,7 +290,82 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class), 
 				eq(colorRegistry), eq(colorDefinition2), any(IPreferenceStore.class));
 		
+		verify(handler, times(1)).resetThemeRegistries(themeRegistry, fontRegistry, colorRegistry);
+		
 		verify(handler, times(1)).sendThemeRegistryRestyledEvent();
+	}
+	
+	public void testResetThemeRegistries() throws Exception {
+		//given
+		FontData[] fontData = new FontData[0];
+		RGB rgb = new RGB(255, 0, 0);
+		
+		FontDefinition fontDefinition1 = mock(FontDefinition.class);
+		doReturn("fontDefinition1").when(fontDefinition1).getId();
+		doReturn(true).when(fontDefinition1).isOverridden();
+		doReturn(null).when(fontDefinition1).getValue();
+		
+		FontDefinition fontDefinition2 = mock(FontDefinition.class);
+		doReturn("fontDefinition2").when(fontDefinition2).getId();
+		doReturn(true).when(fontDefinition2).isOverridden();	
+		doReturn(fontData).when(fontDefinition2).getValue();
+		
+		FontDefinition fontDefinition3 = mock(FontDefinition.class);
+		doReturn("fontDefinition3").when(fontDefinition2).getId();
+		doReturn(false).when(fontDefinition3).isOverridden();
+		
+		ColorDefinition colorDefinition1 = mock(ColorDefinition.class);
+		doReturn("colorDefinition1").when(colorDefinition1).getId();
+		doReturn(false).when(colorDefinition1).isOverridden();
+		
+		ColorDefinition colorDefinition2 = mock(ColorDefinition.class);
+		doReturn("colorDefinition2").when(colorDefinition2).getId();
+		doReturn(true).when(colorDefinition2).isOverridden();
+		doReturn(rgb).when(colorDefinition2).getValue();
+		
+		ColorDefinition colorDefinition3 = mock(ColorDefinition.class);
+		doReturn("colorDefinition3").when(colorDefinition3).getId();
+		doReturn(true).when(colorDefinition3).isOverridden();
+		doReturn(null).when(colorDefinition3).getValue();
+		
+		ThemeRegistry themeRegistry = spy(new ThemeRegistry());
+		doReturn(new FontDefinition[]{fontDefinition1, fontDefinition2, fontDefinition3}).when(themeRegistry).getFonts();
+		doReturn(new ColorDefinition[] {colorDefinition1, colorDefinition2, colorDefinition3}).when(themeRegistry).getColors();
+		
+		FontRegistry fontRegistry = mock(FontRegistry.class);
+		
+		ColorRegistry colorRegistry = mock(ColorRegistry.class);
+		
+		WorkbenchThemeChangedHandlerTestable handler = spy(new WorkbenchThemeChangedHandlerTestable());
+		
+		
+		//when
+		handler.resetThemeRegistries(themeRegistry, fontRegistry, colorRegistry);
+
+		//then
+		verify(fontDefinition1, times(1)).isOverridden();
+		verify(fontDefinition1, times(1)).resetToDefaultValue();
+		verify(fontRegistry, times(1)).put(fontDefinition1.getId(), WorkbenchThemeManager.EMPRY_FONT_DATA_VALUE);
+		
+		verify(fontDefinition2, times(1)).isOverridden();
+		verify(fontDefinition2, times(1)).resetToDefaultValue();
+		verify(fontRegistry, times(2)).put(fontDefinition2.getId(), fontData);
+		
+		verify(fontDefinition3, times(1)).isOverridden();
+		verify(fontDefinition3, never()).resetToDefaultValue();
+		verify(fontRegistry, never()).put(eq(fontDefinition3.getId()), any(FontData[].class));
+		
+		verify(colorDefinition1, times(1)).isOverridden();
+		verify(colorDefinition1, never()).resetToDefaultValue();
+		verify(colorRegistry, never()).put(eq(colorDefinition1.getId()), any(RGB.class));		
+		
+		verify(colorDefinition2, times(1)).isOverridden();
+		verify(colorDefinition2, times(1)).resetToDefaultValue();
+		verify(colorRegistry, times(1)).put(colorDefinition2.getId(), rgb);
+		
+		verify(colorDefinition3, times(1)).isOverridden();
+		verify(colorDefinition3, times(1)).resetToDefaultValue();
+		verify(colorRegistry, times(1)).put(colorDefinition3.getId(), WorkbenchThemeManager.EMPTY_COLOR_VALUE);
 	}
 	
 	public static class WorkbenchThemeChangedHandlerTestable extends WorkbenchThemeChangedHandler {
@@ -264,6 +418,19 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 		protected void populateDefinition(ITheme cssTheme,
 				org.eclipse.ui.themes.ITheme theme, FontRegistry registry, FontDefinition definition,
 				IPreferenceStore store) {			
+		}
+		
+		@Override
+		public void resetThemeRegistries(ThemeRegistry themeRegistry, FontRegistry fontRegistry,
+				ColorRegistry colorRegistry) {
+			super.resetThemeRegistries(themeRegistry, fontRegistry, colorRegistry);
+		}
+		
+		@Override
+		public void overrideAlreadyExistingDefinitions(org.osgi.service.event.Event event,
+				IStylingEngine engine, ThemeRegistry themeRegistry, FontRegistry fontRegistry,
+				ColorRegistry colorRegistry) {
+			super.overrideAlreadyExistingDefinitions(event, engine, themeRegistry, fontRegistry, colorRegistry);
 		}
 	}
 }
