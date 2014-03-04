@@ -19,20 +19,17 @@ import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 
-public class ConstructorRequestor extends Requestor {
-
-	final private Constructor<?> constructor;
+public class ConstructorRequestor extends Requestor<Constructor<?>> {
 
 	public ConstructorRequestor(Constructor<?> constructor, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier) {
-		super(null, injector, primarySupplier, tempSupplier, null, false /* do not track */);
-		this.constructor = constructor;
+		super(constructor, injector, primarySupplier, tempSupplier, null, false /* do not track */);
 	}
 
 	public Object execute() throws InjectionException {
 		Object result = null;
 		boolean wasAccessible = true;
-		if (!constructor.isAccessible()) {
-			constructor.setAccessible(true);
+		if (!location.isAccessible()) {
+			location.setAccessible(true);
 			wasAccessible = false;
 		}
 		boolean pausedRecording = false;
@@ -41,11 +38,11 @@ public class ConstructorRequestor extends Requestor {
 			pausedRecording = true;
 		}
 		try {
-			result = constructor.newInstance(actualArgs);
+			result = location.newInstance(actualArgs);
 		} catch (IllegalArgumentException e) {
 			throw new InjectionException(e);
 		} catch (InstantiationException e) {
-			throw new InjectionException("Unable to instantiate " + constructor, e); //$NON-NLS-1$
+			throw new InjectionException("Unable to instantiate " + location, e); //$NON-NLS-1$
 		} catch (IllegalAccessException e) {
 			throw new InjectionException(e);
 		} catch (InvocationTargetException e) {
@@ -53,7 +50,7 @@ public class ConstructorRequestor extends Requestor {
 			throw new InjectionException((originalException != null) ? originalException : e);
 		} finally {
 			if (!wasAccessible)
-				constructor.setAccessible(false);
+				location.setAccessible(false);
 			if (pausedRecording)
 				primarySupplier.resumeRecording();
 			clearResolvedArgs();
@@ -62,11 +59,11 @@ public class ConstructorRequestor extends Requestor {
 	}
 
 	public IObjectDescriptor[] calcDependentObjects() {
-		Annotation[][] annotations = constructor.getParameterAnnotations();
-		Type[] logicalParams = constructor.getGenericParameterTypes();
+		Annotation[][] annotations = location.getParameterAnnotations();
+		Type[] logicalParams = location.getGenericParameterTypes();
 		// JDK bug: different methods see / don't see generated args for nested classes
 		// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5087240
-		Class<?>[] compilerParams = constructor.getParameterTypes();
+		Class<?>[] compilerParams = location.getParameterTypes();
 		if (compilerParams.length > logicalParams.length) {
 			Type[] tmp = new Type[compilerParams.length];
 			System.arraycopy(compilerParams, 0, tmp, 0, compilerParams.length - logicalParams.length);
@@ -82,7 +79,7 @@ public class ConstructorRequestor extends Requestor {
 	}
 
 	public Class<?> getRequestingObjectClass() {
-		return constructor.getDeclaringClass();
+		return location.getDeclaringClass();
 	}
 
 	@Override
@@ -92,33 +89,9 @@ public class ConstructorRequestor extends Requestor {
 		if (object != null)
 			tmp.append(object.getClass().getSimpleName());
 		else
-			tmp.append(constructor.getDeclaringClass().getSimpleName());
+			tmp.append(location.getDeclaringClass().getSimpleName());
 		tmp.append('(');
 		tmp.append(')');
 		return tmp.toString();
 	}
-
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((constructor == null) ? 0 : constructor.hashCode());
-		return result;
-	}
-
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ConstructorRequestor other = (ConstructorRequestor) obj;
-		if (constructor == null) {
-			if (other.constructor != null)
-				return false;
-		} else if (!constructor.equals(other.constructor))
-			return false;
-		return true;
-	}
-
 }

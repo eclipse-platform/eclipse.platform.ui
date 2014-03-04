@@ -92,13 +92,13 @@ public class InjectorImpl implements IInjector {
 
 	public void inject(Object object, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier) {
 		// Two stages: first, go and collect {requestor, descriptor[] }
-		ArrayList<Requestor> requestors = new ArrayList<Requestor>();
+		ArrayList<Requestor<?>> requestors = new ArrayList<Requestor<?>>();
 		processClassHierarchy(object, objectSupplier, tempSupplier, true /* track */, true /* normal order */, requestors);
 
 		// if we are not establishing any links to the injected object (nothing to inject,
 		// or constructor only), create a pseudo-link to track supplier's disposal
 		boolean haveLink = false;
-		for (Requestor requestor : requestors) {
+		for (Requestor<?> requestor : requestors) {
 			if (requestor.shouldTrack())
 				haveLink = true;
 		}
@@ -109,7 +109,7 @@ public class InjectorImpl implements IInjector {
 		resolveRequestorArgs(requestors, objectSupplier, tempSupplier, false, true, true);
 
 		// Call requestors in order
-		for (Requestor requestor : requestors) {
+		for (Requestor<?> requestor : requestors) {
 			if (requestor.isResolved())
 				requestor.execute();
 		}
@@ -120,7 +120,7 @@ public class InjectorImpl implements IInjector {
 		processAnnotated(PostConstruct.class, object, object.getClass(), objectSupplier, tempSupplier, new ArrayList<Class<?>>(5));
 
 		// remove references to the temporary suppliers
-		for (Requestor requestor : requestors) {
+		for (Requestor<?> requestor : requestors) {
 			requestor.clearTempSupplier();
 		}
 	}
@@ -179,10 +179,10 @@ public class InjectorImpl implements IInjector {
 				return; // not injected at this time
 			processAnnotated(PreDestroy.class, object, object.getClass(), objectSupplier, null, new ArrayList<Class<?>>(5));
 
-			ArrayList<Requestor> requestors = new ArrayList<Requestor>();
+			ArrayList<Requestor<?>> requestors = new ArrayList<Requestor<?>>();
 			processClassHierarchy(object, objectSupplier, null, true /* track */, false /* inverse order */, requestors);
 
-			for (Requestor requestor : requestors) {
+			for (Requestor<?> requestor : requestors) {
 				// Ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
 				Object[] actualArgs = resolveArgs(requestor, null, null, true, false, false);
 				int unresolved = unresolved(actualArgs);
@@ -355,7 +355,7 @@ public class InjectorImpl implements IInjector {
 	}
 
 	public void resolveArguments(IRequestor requestor, boolean initial) {
-		Requestor internalRequestor = ((Requestor) requestor);
+		Requestor<?> internalRequestor = ((Requestor<?>) requestor);
 		Object[] actualArgs = resolveArgs(internalRequestor, internalRequestor.getPrimarySupplier(), internalRequestor.getTempSupplier(), false, initial, internalRequestor.shouldTrack());
 		int unresolved = unresolved(actualArgs);
 		if (unresolved == -1)
@@ -392,8 +392,8 @@ public class InjectorImpl implements IInjector {
 		forgetSupplier(objectSupplier);
 	}
 
-	private void resolveRequestorArgs(ArrayList<Requestor> requestors, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean uninject, boolean initial, boolean track) {
-		for (Requestor requestor : requestors) {
+	private void resolveRequestorArgs(ArrayList<Requestor<?>> requestors, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean uninject, boolean initial, boolean track) {
+		for (Requestor<?> requestor : requestors) {
 			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, uninject, initial, track);
 			int unresolved = unresolved(actualArgs);
 			if (unresolved == -1) {
@@ -408,7 +408,7 @@ public class InjectorImpl implements IInjector {
 		}
 	}
 
-	private void reportUnresolvedArgument(Requestor requestor, int argIndex) {
+	private void reportUnresolvedArgument(Requestor<?> requestor, int argIndex) {
 		String msg = resolutionError(requestor, argIndex);
 		if (shouldDebug) {
 			LogHelper.logError(msg, null);
@@ -416,7 +416,7 @@ public class InjectorImpl implements IInjector {
 		throw new InjectionException(msg);
 	}
 
-	private String resolutionError(Requestor requestor, int argIndex) {
+	private String resolutionError(Requestor<?> requestor, int argIndex) {
 		StringBuffer tmp = new StringBuffer();
 		tmp.append("Unable to process \""); //$NON-NLS-1$
 		tmp.append(requestor.toString());
@@ -426,7 +426,7 @@ public class InjectorImpl implements IInjector {
 		return tmp.toString();
 	}
 
-	private Object[] resolveArgs(Requestor requestor, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean uninject, boolean initial, boolean track) {
+	private Object[] resolveArgs(Requestor<?> requestor, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean uninject, boolean initial, boolean track) {
 		/* Special indicator for ExtendedObjectSuppliers not having a value */
 		final Object EOS_NOT_A_VALUE = new Object();
 
@@ -586,14 +586,14 @@ public class InjectorImpl implements IInjector {
 		return -1;
 	}
 
-	private void processClassHierarchy(Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean track, boolean normalOrder, List<Requestor> requestors) {
+	private void processClassHierarchy(Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean track, boolean normalOrder, List<Requestor<?>> requestors) {
 		processClass(userObject, objectSupplier, tempSupplier, (userObject == null) ? null : userObject.getClass(), new ArrayList<Class<?>>(5), track, normalOrder, requestors);
 	}
 
 	/**
 	 * Make the processor visit all declared members on the given class and all superclasses
 	 */
-	private void processClass(Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, Class<?> objectsClass, ArrayList<Class<?>> classHierarchy, boolean track, boolean normalOrder, List<Requestor> requestors) {
+	private void processClass(Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, Class<?> objectsClass, ArrayList<Class<?>> classHierarchy, boolean track, boolean normalOrder, List<Requestor<?>> requestors) {
 		// order: superclass, fields, methods
 		if (objectsClass != null) {
 			Class<?> superClass = objectsClass.getSuperclass();
@@ -638,7 +638,7 @@ public class InjectorImpl implements IInjector {
 	/**
 	 * Make the processor visit all declared fields on the given class.
 	 */
-	private boolean processFields(Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, Class<?> objectsClass, boolean track, List<Requestor> requestors) {
+	private boolean processFields(Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, Class<?> objectsClass, boolean track, List<Requestor<?>> requestors) {
 		boolean injectedStatic = false;
 		Field[] fields = objectsClass.getDeclaredFields();
 		for (Field field : fields) {
@@ -657,7 +657,7 @@ public class InjectorImpl implements IInjector {
 	/**
 	 * Make the processor visit all declared methods on the given class.
 	 */
-	private boolean processMethods(final Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, Class<?> objectsClass, ArrayList<Class<?>> classHierarchy, boolean track, List<Requestor> requestors) {
+	private boolean processMethods(final Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, Class<?> objectsClass, ArrayList<Class<?>> classHierarchy, boolean track, List<Requestor<?>> requestors) {
 		boolean injectedStatic = false;
 		Method[] methods = getDeclaredMethods(objectsClass);
 		for (Method method : methods) {

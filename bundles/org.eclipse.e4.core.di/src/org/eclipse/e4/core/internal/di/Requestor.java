@@ -12,7 +12,7 @@ package org.eclipse.e4.core.internal.di;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.AnnotatedElement;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.annotations.GroupUpdates;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -23,8 +23,10 @@ import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
-abstract public class Requestor implements IRequestor {
+abstract public class Requestor<L extends AnnotatedElement> implements IRequestor {
 
+	/** The request location; may be null */
+	final protected L location;
 	final private WeakReference<Object> objectRef;
 	final protected boolean track;
 	final private boolean groupUpdates;
@@ -42,7 +44,8 @@ abstract public class Requestor implements IRequestor {
 
 	protected abstract IObjectDescriptor[] calcDependentObjects();
 
-	public Requestor(AccessibleObject reflectionObject, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier, Object requestingObject, boolean track) {
+	public Requestor(L location, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier, Object requestingObject, boolean track) {
+		this.location = location;
 		this.injector = injector;
 		this.primarySupplier = primarySupplier;
 		this.tempSupplier = tempSupplier;
@@ -57,8 +60,16 @@ abstract public class Requestor implements IRequestor {
 			objectHashcode = 0;
 		}
 		this.track = track;
-		groupUpdates = (reflectionObject == null) ? false : reflectionObject.isAnnotationPresent(GroupUpdates.class);
-		isOptional = (reflectionObject == null) ? false : reflectionObject.isAnnotationPresent(Optional.class);
+		groupUpdates = (location == null) ? false : location.isAnnotationPresent(GroupUpdates.class);
+		isOptional = (location == null) ? false : location.isAnnotationPresent(Optional.class);
+	}
+
+	/**
+	 * Return the injection location described by this requestor
+	 * @return the request location; may be {@code null}
+	 */
+	public L getLocation() {
+		return location;
 	}
 
 	public IInjector getInjector() {
@@ -166,6 +177,7 @@ abstract public class Requestor implements IRequestor {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + (location == null ? 0 : location.hashCode());
 		result = prime * result + (groupUpdates ? 1231 : 1237);
 		result = prime * result + ((injector == null) ? 0 : injector.hashCode());
 		result = prime * result + (isOptional ? 1231 : 1237);
@@ -181,7 +193,12 @@ abstract public class Requestor implements IRequestor {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Requestor other = (Requestor) obj;
+		Requestor<?> other = (Requestor<?>) obj;
+		if (location == null) {
+			if (other.location != null)
+				return false;
+		} else if (!location.equals(other.location))
+			return false;
 		if (groupUpdates != other.groupUpdates)
 			return false;
 		if (injector != other.injector)

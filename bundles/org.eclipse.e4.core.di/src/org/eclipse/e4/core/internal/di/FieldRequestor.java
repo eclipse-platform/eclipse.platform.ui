@@ -16,25 +16,22 @@ import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 
-public class FieldRequestor extends Requestor {
-
-	final private Field field;
+public class FieldRequestor extends Requestor<Field> {
 
 	public FieldRequestor(Field field, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier, Object requestingObject, boolean track) {
 		super(field, injector, primarySupplier, tempSupplier, requestingObject, track);
-		this.field = field;
 	}
 
 	public Object execute() throws InjectionException {
 		if (actualArgs == null)
 			return null; // optional field
-		setField(field, actualArgs[0]);
+		setField(location, actualArgs[0]);
 		clearResolvedArgs();
 		return null;
 	}
 
 	protected IObjectDescriptor[] calcDependentObjects() {
-		IObjectDescriptor objectDescriptor = new ObjectDescriptor(field.getGenericType(), field.getAnnotations());
+		IObjectDescriptor objectDescriptor = new ObjectDescriptor(location.getGenericType(), location.getAnnotations());
 		return new IObjectDescriptor[] {objectDescriptor};
 	}
 
@@ -67,31 +64,7 @@ public class FieldRequestor extends Requestor {
 		if (object != null)
 			tmp.append(object.getClass().getSimpleName());
 		tmp.append('.');
-		tmp.append(field.getName());
+		tmp.append(location.getName());
 		return tmp.toString();
 	}
-
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((field == null) ? 0 : field.hashCode());
-		return result;
-	}
-
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		FieldRequestor other = (FieldRequestor) obj;
-		if (field == null) {
-			if (other.field != null)
-				return false;
-		} else if (!field.equals(other.field))
-			return false;
-		return true;
-	}
-
 }

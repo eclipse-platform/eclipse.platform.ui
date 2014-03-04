@@ -20,21 +20,18 @@ import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 
 /**
  * This requestor is used to establish a link between the object supplier
- * and the injected object. This pseudo-link is useful is no regular links
+ * and the injected object. This pseudo-link is useful if no regular links
  * were created during injection (say, only constructor injection was used)
  * but the injected object needs to be notified on the supplier's disposal. 
  */
-public class ClassRequestor extends Requestor {
+public class ClassRequestor extends Requestor<Class<?>> {
 
 	@Optional
 	@Named("e4.internal.injectionLink")
 	final static public String pseudoVariable = null;
 
-	final private String clazzName;
-
 	public ClassRequestor(Class<?> clazz, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier, Object requestingObject, boolean track) {
-		super(null, injector, primarySupplier, tempSupplier, requestingObject, track);
-		clazzName = (clazz == null) ? null : clazz.getSimpleName();
+		super(clazz, injector, primarySupplier, tempSupplier, requestingObject, track);
 	}
 
 	public Object execute() throws InjectionException {
@@ -60,34 +57,10 @@ public class ClassRequestor extends Requestor {
 	@Override
 	public String toString() {
 		StringBuffer tmp = new StringBuffer();
-		if (clazzName != null)
-			tmp.append(clazzName);
+		if (location != null)
+			tmp.append(location.getSimpleName());
 		tmp.append('.');
 		tmp.append(pseudoVariable);
 		return tmp.toString();
 	}
-
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((clazzName == null) ? 0 : clazzName.hashCode());
-		return result;
-	}
-
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ClassRequestor other = (ClassRequestor) obj;
-		if (clazzName == null) {
-			if (other.clazzName != null)
-				return false;
-		} else if (!clazzName.equals(other.clazzName))
-			return false;
-		return true;
-	}
-
 }

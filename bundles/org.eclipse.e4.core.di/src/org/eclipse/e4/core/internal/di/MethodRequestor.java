@@ -21,21 +21,20 @@ import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 
-public class MethodRequestor extends Requestor {
+public class MethodRequestor extends Requestor<Method> {
 
-	final private Method method;
-
-	// Having a *static* map is valuable as it changes the hit rate from about 60% to about 90%.
+	/**
+	 * The parameters annotation cache.  Having a *static* map is valuable as it changes the hit rate from about 60% to about 90%.
+	 */
 	private static Map<Method, Annotation[][]> annotationCache = new WeakHashMap<Method, Annotation[][]>();
 
 	public MethodRequestor(Method method, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier, Object requestingObject, boolean track) {
 		super(method, injector, primarySupplier, tempSupplier, requestingObject, track);
-		this.method = method;
 	}
 
 	public Object execute() throws InjectionException {
 		if (actualArgs == null) {
-			if (method.getParameterTypes().length > 0)
+			if (location.getParameterTypes().length > 0)
 				return null; // optional method call
 		}
 		Object userObject = getRequestingObject();
@@ -43,8 +42,8 @@ public class MethodRequestor extends Requestor {
 			return null;
 		Object result = null;
 		boolean wasAccessible = true;
-		if (!method.isAccessible()) {
-			method.setAccessible(true);
+		if (!location.isAccessible()) {
+			location.setAccessible(true);
 			wasAccessible = false;
 		}
 		boolean pausedRecording = false;
@@ -53,7 +52,7 @@ public class MethodRequestor extends Requestor {
 			pausedRecording = true;
 		}
 		try {
-			result = method.invoke(userObject, actualArgs);
+			result = location.invoke(userObject, actualArgs);
 		} catch (IllegalArgumentException e) {
 			throw new InjectionException(e);
 		} catch (IllegalAccessException e) {
@@ -63,7 +62,7 @@ public class MethodRequestor extends Requestor {
 			throw new InjectionException((originalException != null) ? originalException : e);
 		} finally {
 			if (!wasAccessible)
-				method.setAccessible(false);
+				location.setAccessible(false);
 			if (pausedRecording)
 				primarySupplier.resumeRecording();
 			clearResolvedArgs();
@@ -73,7 +72,7 @@ public class MethodRequestor extends Requestor {
 
 	@Override
 	protected IObjectDescriptor[] calcDependentObjects() {
-		Type[] parameterTypes = method.getGenericParameterTypes();
+		Type[] parameterTypes = location.getGenericParameterTypes();
 		Annotation[][] annotations = getParameterAnnotations();
 		IObjectDescriptor[] descriptors = new IObjectDescriptor[parameterTypes.length];
 		for (int i = 0; i < parameterTypes.length; i++) {
@@ -82,14 +81,15 @@ public class MethodRequestor extends Requestor {
 		return descriptors;
 	}
 
-	private Annotation[][] getParameterAnnotations() {
+	/** @return the annotations for each of the method parameters */
+	public Annotation[][] getParameterAnnotations() {
 		// We don't synchronize annotationCache to avoid performance overhead.
 		// The code below should be fine non-synchronized; but this needs to be
 		// kept in mind if this method is updated.
-		Annotation[][] result = annotationCache.get(method);
+		Annotation[][] result = annotationCache.get(location);
 		if (result == null) {
-			result = method.getParameterAnnotations();
-			annotationCache.put(method, result);
+			result = location.getParameterAnnotations();
+			annotationCache.put(location, result);
 		}
 		return result;
 	}
@@ -101,33 +101,9 @@ public class MethodRequestor extends Requestor {
 		if (object != null)
 			tmp.append(object.getClass().getSimpleName());
 		tmp.append('#');
-		tmp.append(method.getName());
+		tmp.append(location.getName());
 		tmp.append('(');
 		tmp.append(')');
 		return tmp.toString();
 	}
-
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((method == null) ? 0 : method.hashCode());
-		return result;
-	}
-
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		MethodRequestor other = (MethodRequestor) obj;
-		if (method == null) {
-			if (other.method != null)
-				return false;
-		} else if (!method.equals(other.method))
-			return false;
-		return true;
-	}
-
 }
