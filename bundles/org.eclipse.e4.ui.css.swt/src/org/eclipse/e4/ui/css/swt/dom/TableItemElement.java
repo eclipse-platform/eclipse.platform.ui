@@ -52,15 +52,16 @@ public class TableItemElement extends ItemElement {
 	@Override
 	public void reset() {
 		TableItem tableItem = getTableItem();
-		tableItem.setForeground(null);
-		tableItem.setBackground(null);
-		CSSSWTImageHelper.restoreDefaultImage(tableItem);
-		tableItem.setFont(null); // in such case the parent's font will be taken
 
 		Table parent = tableItem.getParent();
 		parent.setForeground(null);
 		parent.setBackground(null);
 		CSSSWTFontHelper.restoreDefaultFont(parent);
+
+		tableItem.setForeground(null);
+		tableItem.setBackground(null);
+		CSSSWTImageHelper.restoreDefaultImage(tableItem);
+		tableItem.setFont(null); // in such case the parent's font will be taken
 		super.reset();
 	}
 }
