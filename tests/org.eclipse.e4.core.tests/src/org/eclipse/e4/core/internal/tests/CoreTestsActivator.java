@@ -15,15 +15,12 @@ import java.util.Hashtable;
 
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.core.contexts.IContextFunction;
-import org.eclipse.e4.core.di.extensions.EventTopic;
-import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
 import org.eclipse.e4.core.internal.tests.contexts.ContextFunctionHigh;
 import org.eclipse.e4.core.internal.tests.contexts.ContextFunctionLow;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
-import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
