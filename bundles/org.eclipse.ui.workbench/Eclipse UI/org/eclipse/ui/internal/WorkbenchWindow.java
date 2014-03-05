@@ -706,6 +706,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, windowWidgetHandler);
 
 			boolean newWindow = setupPerspectiveStack(windowContext);
+			partService.setPage(page);
 			page.setPerspective(perspective);
 			firePageActivated();
 
@@ -714,7 +715,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			} else {
 				page.updatePerspectiveActionSets();
 			}
-			partService.setPage(page);
 			updateActionSets();
 
 			IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
