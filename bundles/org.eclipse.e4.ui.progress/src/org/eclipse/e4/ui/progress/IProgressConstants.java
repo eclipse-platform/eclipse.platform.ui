@@ -161,5 +161,5 @@ public interface IProgressConstants {
 	public static final QualifiedName SHOW_IN_TASKBAR_ICON_PROPERTY = new QualifiedName(
 			PROPERTY_PREFIX, "inTaskBarIcon"); //$NON-NLS-1$
 
-	public static final String RUN_IN_BACKGROUND = "RUN_IN_BACKGROUND";
+	public static final String RUN_IN_BACKGROUND = "RUN_IN_BACKGROUND"; //$NON-NLS-1$
 }

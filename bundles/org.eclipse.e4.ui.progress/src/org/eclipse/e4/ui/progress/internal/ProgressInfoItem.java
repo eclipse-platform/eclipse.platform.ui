@@ -11,8 +11,6 @@
 
 package org.eclipse.e4.ui.progress.internal;
 
-import com.ibm.icu.text.DateFormat;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,11 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.ui.progress.IProgressConstants;
@@ -52,7 +47,6 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
@@ -61,6 +55,8 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.osgi.framework.FrameworkUtil;
+
+import com.ibm.icu.text.DateFormat;
 
 
 /**

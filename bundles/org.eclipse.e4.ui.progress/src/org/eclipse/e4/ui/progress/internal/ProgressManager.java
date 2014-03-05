@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -113,7 +112,7 @@ public class ProgressManager extends ProgressProvider {
 
 	
 
-	private static final String IMAGE_KEY = "org.eclipse.ui.progress.images"; //$NON-NLS-1$
+//	private static final String IMAGE_KEY = "org.eclipse.ui.progress.images"; //$NON-NLS-1$
 	
 	@Inject
 	@Optional

@@ -24,7 +24,6 @@ import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.di.annotations.Creatable;
-import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.progress.IDisposableAction;
 import org.eclipse.e4.ui.progress.IProgressConstants;

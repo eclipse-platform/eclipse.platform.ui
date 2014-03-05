@@ -4,7 +4,7 @@
     <elements xsi:type="application:Addon" xmi:id="_zd72cIQjEeOJOIhruxA5nw" elementId="org.eclipse.e4.demo.contacts.jobs.addon.progressmanager" contributionURI="bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.ProgressViewAddon"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_8jAhoG_4EeO3G4cNJzljEA" featurename="children" parentElementId="org.eclipse.e4.demo.contacts.partstacks.second" positionInList="first">
-    <elements xsi:type="basic:Part" xmi:id="_j3Yf8G_5EeO3G4cNJzljEA" elementId="org.eclipse.e4.ui.progress.ProgressView" containerData="" contributionURI="bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.ProgrammaticProgressView" label="E4 Progress" iconURI="platform:/plugin/org.eclipse.e4.ui.progress/icons/full/progress/pview.png" closeable="true">
+    <elements xsi:type="basic:Part" xmi:id="_O8pdAKSfEeOHDKia5wdR6A" elementId="org.eclipse.e4.ui.progress.ProgressView" containerData="" contributionURI="bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.ProgrammaticProgressView" label="E4 Progress" iconURI="platform:/plugin/org.eclipse.e4.ui.progress/icons/full/progress/pview.png" closeable="true">
       <tags>View</tags>
       <tags>categoryTag:General</tags>
       <tags>active</tags>

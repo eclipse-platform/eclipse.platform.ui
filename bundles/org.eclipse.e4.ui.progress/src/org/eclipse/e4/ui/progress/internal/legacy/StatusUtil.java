@@ -187,7 +187,7 @@ public class StatusUtil {
 
         //TODO localize
 //        return WorkbenchMessages.StatusUtil_errorOccurred;
-        return "ERROR OCCURRED";
+        return "ERROR OCCURRED"; //$NON-NLS-1$
     }
 
 

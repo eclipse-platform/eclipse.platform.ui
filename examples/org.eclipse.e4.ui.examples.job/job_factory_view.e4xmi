@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_igBBMG_1EeO3G4cNJzljEA">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_8jAhoG_4EeO3G4cNJzljEA" featurename="children" parentElementId="_SeXUC-8EEd6FC9cDb6iV7g" positionInList="first">
-    <elements xsi:type="basic:Part" xmi:id="_j3Yf8G_5EeO3G4cNJzljEA" elementId="org.eclipse.ui.examples.jobs.views.JobsView" contributionURI="bundleclass://org.eclipse.e4.ui.examples.job/org.eclipse.e4.ui.examples.jobs.views.JobsView" label="Job Factory" iconURI="platform:/plugin/org.eclipse.e4.ui.examples.job/icons/job_view.gif" closeable="true">
+    <elements xsi:type="basic:Part" xmi:id="_QMX_gKSfEeOHDKia5wdR6A" elementId="org.eclipse.ui.examples.jobs.views.JobsView" contributionURI="bundleclass://org.eclipse.e4.ui.examples.job/org.eclipse.e4.ui.examples.jobs.views.JobsView" label="Job Factory" iconURI="platform:/plugin/org.eclipse.e4.ui.examples.job/icons/job_view.gif" closeable="true">
       <tags>View</tags>
       <tags>categoryTag:General</tags>
     </elements>

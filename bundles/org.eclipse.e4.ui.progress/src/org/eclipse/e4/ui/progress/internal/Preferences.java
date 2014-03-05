@@ -14,13 +14,10 @@ package org.eclipse.e4.ui.progress.internal;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
-import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.ui.model.application.MApplication;
 
-@Creatable
-@Singleton
+
 public class Preferences {
 	
 	private static Map<String, String> preferences;

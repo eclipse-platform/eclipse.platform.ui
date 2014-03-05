@@ -113,7 +113,7 @@ public class ProgressManagerUtil {
 	 */
 	static void logException(Throwable exception) {
 		Services.getInstance().getLogService().log(LogService.LOG_ERROR,
-		        exception.getMessage() == null ? "" : exception.getMessage(),
+		        exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$
 		        exception);
 	}
 

@@ -10,22 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.progress.internal;
 
-import java.net.URL;
-
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.ui.progress.IProgressConstants;
 import org.eclipse.e4.ui.progress.internal.legacy.PlatformUI;
-import org.eclipse.e4.ui.progress.internal.legacy.StatusAdapter;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Util;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -147,17 +139,8 @@ public class ProgressAnimationItem extends AnimationItem implements
 		prop = job.getProperty(IProgressConstants.COMMAND_PROPERTY);
 		if (prop instanceof ParameterizedCommand) {
 			ParameterizedCommand command = (ParameterizedCommand) prop;
-			Exception exception = null;
 			getEHandlerService().executeHandler(command);
 			removeTopElement(ji);
-
-			if (exception != null) {
-				Status status = new Status(IStatus.ERROR, IProgressConstants.PLUGIN_ID,
-						exception.getMessage(), exception);
-				getStatusReporter().report(status,
-				        StatusReporter.LOG | StatusReporter.SHOW, null);
-			}
-
 		}
 	}
 

@@ -41,7 +41,7 @@ public class Services {
 	@Inject
 	@Optional
 	@Named(IServiceConstants.ACTIVE_SHELL)
-	public Shell shell;
+	private Shell shell;
 
 	@Inject
 	private MApplication mApplication;

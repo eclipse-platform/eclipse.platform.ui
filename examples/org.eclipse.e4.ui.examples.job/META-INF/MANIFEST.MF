@@ -1,11 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Progress Examples Plug-in
+Bundle-Name: e4 Progress Examples Plug-in
 Bundle-SymbolicName: org.eclipse.e4.ui.examples.job;singleton:=true
 Bundle-Version: 0.1.0.qualifier
-Bundle-ClassPath: ProgressExamples.jar
 Bundle-Vendor: Eclipse.org
-Bundle-Localization: plugin
 Export-Package: org.eclipse.e4.ui.examples.jobs,
  org.eclipse.e4.ui.examples.jobs.views
 Require-Bundle: org.eclipse.core.resources,
@@ -15,7 +13,7 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.swt,
  org.eclipse.e4.ui.di,
  org.eclipse.jface;bundle-version="3.10.0"
-Eclipse-AutoStart: true
+Bundle-ActivationPolicy: lazy
 Import-Package: javax.annotation;version="1.1.0",
  javax.inject;version="1.0.0",
  org.eclipse.e4.core.contexts,

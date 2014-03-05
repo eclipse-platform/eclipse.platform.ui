@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class ProgrammaticProgressView {
 	
-	private static final String CLEAR_ALL_ICON_URI = "platform:/plugin/org.eclipse.e4.ui.progress/icons/full/elcl16/progress_remall.png";
+	private static final String CLEAR_ALL_ICON_URI = "platform:/plugin/org.eclipse.e4.ui.progress/icons/full/elcl16/progress_remall.png"; //$NON-NLS-1$
 	
 	DetailedProgressViewer viewer;
 
@@ -104,23 +104,23 @@ public class ProgrammaticProgressView {
 	
 	private void createCommands() {
 		clearAllCommand = modelService.createModelElement(MCommand.class);
-		clearAllCommand.setElementId("clearAllCommand");
-		clearAllCommand.setCommandName("clearAllCommand");
+		clearAllCommand.setElementId("clearAllCommand"); //$NON-NLS-1$
+		clearAllCommand.setCommandName("clearAllCommand"); //$NON-NLS-1$
 		application.getCommands().add(clearAllCommand);
 		
 		showPreferencesCommand = modelService.createModelElement(MCommand.class);
-		showPreferencesCommand.setElementId("showPreferencesCommand");
-		showPreferencesCommand.setCommandName("showPreferencesCommand");
+		showPreferencesCommand.setElementId("showPreferencesCommand"); //$NON-NLS-1$
+		showPreferencesCommand.setCommandName("showPreferencesCommand"); //$NON-NLS-1$
 		application.getCommands().add(showPreferencesCommand);
 		
 		MHandler clearAllHandler = modelService.createModelElement(MHandler.class);
 		clearAllHandler.setCommand(clearAllCommand);
-		clearAllHandler.setContributionURI("bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.ClearAllHandler");
+		clearAllHandler.setContributionURI("bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.ClearAllHandler"); //$NON-NLS-1$
 		part.getHandlers().add(clearAllHandler);
 		
 		MHandler showPreferencesHandler = modelService.createModelElement(MHandler.class);
 		showPreferencesHandler.setCommand(showPreferencesCommand);
-		showPreferencesHandler.setContributionURI("bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.ShowPreferencesHandler");
+		showPreferencesHandler.setContributionURI("bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.ShowPreferencesHandler"); //$NON-NLS-1$
 		part.getHandlers().add(showPreferencesHandler);
 		
 	}
@@ -137,16 +137,16 @@ public class ProgrammaticProgressView {
 		part.setToolbar(toolBar);
 		
 		MHandledMenuItem clearAllMenuItem = modelService.createModelElement(MHandledMenuItem.class);
-		clearAllMenuItem.setLabel("Clear All");
+		clearAllMenuItem.setLabel("Clear All"); //$NON-NLS-1$
 		clearAllMenuItem.setIconURI(CLEAR_ALL_ICON_URI);
 		clearAllMenuItem.setCommand(clearAllCommand);
 		
 		MHandledMenuItem preferencesMenuItem = modelService.createModelElement(MHandledMenuItem.class);
-		preferencesMenuItem.setLabel("Preferences");
+		preferencesMenuItem.setLabel("Preferences"); //$NON-NLS-1$
 		preferencesMenuItem.setCommand(showPreferencesCommand);
 		
 		MMenu menu = modelService.createModelElement(MMenu.class);
-		menu.getTags().add("ViewMenu"); // required
+		menu.getTags().add("ViewMenu"); // required //$NON-NLS-1$
 		menu.getChildren().add(clearAllMenuItem);
 		menu.getChildren().add(preferencesMenuItem);
 		

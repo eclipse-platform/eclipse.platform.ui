@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class ImageTools {
 	
-	private static final String ICONS_LOCATION = "/icons/full/";
+	private static final String ICONS_LOCATION = "/icons/full/"; //$NON-NLS-1$
 	
 	protected static ImageTools instance;
 	

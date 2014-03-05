@@ -27,7 +27,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -103,7 +102,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
-				Rectangle shellPosition = getShell().getBounds();
+				// Rectangle shellPosition = getShell().getBounds();
 				job.setProperty(IProgressConstants.PROPERTY_IN_DIALOG,
 						Boolean.FALSE);
 				finishedRun();
