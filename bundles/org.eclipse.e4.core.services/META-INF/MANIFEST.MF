@@ -37,7 +37,7 @@ Export-Package: org.eclipse.e4.core.internal.services;x-friends:="org.eclipse.e4
    org.eclipse.e4.ui.workbench.swt,
    org.eclipse.ui.workbench",
  org.eclipse.e4.core.services.nls,
- org.eclipse.e4.core.services.statusreporter;x-friends:="org.eclipse.e4.ui.workbench.swt",
+ org.eclipse.e4.core.services.statusreporter;x-friends:="org.eclipse.e4.ui.workbench.swt,org.eclipse.e4.ui.progress",
  org.eclipse.e4.core.services.translation
 Eclipse-ExtensibleAPI: true
 Bundle-ClassPath: injection_annotations.jar, .
