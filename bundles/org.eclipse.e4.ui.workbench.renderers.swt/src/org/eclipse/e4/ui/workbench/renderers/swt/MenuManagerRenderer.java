@@ -927,6 +927,7 @@ MenuManagerEventHelper.getInstance()
 					legacyModel.setElementId(childManager.getId());
 					legacyModel.setVisible(childManager.isVisible());
 					linkModelToManager(legacyModel, childManager);
+					OpaqueElementUtil.setOpaqueItem(legacyModel, childManager);
 					if (modelChildren.size() > dest) {
 						modelChildren.add(dest, legacyModel);
 					} else {

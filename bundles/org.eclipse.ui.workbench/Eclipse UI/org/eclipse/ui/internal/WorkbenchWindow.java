@@ -1191,6 +1191,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				MMenuItem menuItem = OpaqueElementUtil.createOpaqueMenuItem();
 				menuItem.setElementId(item.getId());
 				menuItem.setVisible(item.isVisible());
+				OpaqueElementUtil.setOpaqueItem(menuItem, item);
 				menu.getChildren().add(menuItem);
 				renderer.linkModelToContribution(menuItem, item);
 			}
