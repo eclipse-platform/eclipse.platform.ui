@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 BestSolution.at and others.
+ * Copyright (c) 2010, 2014 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -274,6 +274,10 @@ public class PartEditor extends AbstractComponentEditor {
 		}
 
 		// ------------------------------------------------------------
+		ControlFactory.createTextField(parent, Messages.PartEditor_ContainerData, master, context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__CONTAINER_DATA));
+
+		createSubformElements(parent, context, master);
+
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartEditor_ToolBar);
@@ -293,10 +297,6 @@ public class PartEditor extends AbstractComponentEditor {
 			});
 			createRemoveToolBar.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 2, 1));
 		}
-
-		ControlFactory.createTextField(parent, Messages.PartEditor_ContainerData, master, context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__CONTAINER_DATA));
-
-		createSubformElements(parent, context, master);
 
 		ControlFactory.createCheckBox(parent, Messages.PartEditor_Closeable, Messages.PartEditor_Closeable_Tooltip, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.PART__CLOSEABLE));
 
