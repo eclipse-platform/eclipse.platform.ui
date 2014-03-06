@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2014 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.ui.examples.jobs;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,28 +34,20 @@ public class BusyShowWhileDialog extends IconAndMessageDialog {
 		super(parentShell);
 		message = "Busy While Test"; //$NON-NLS-1$
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IconAndMessageDialog#getImage()
-	 */
+	@Override
 	protected Image getImage() {
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		Button detailsButton = createButton(parent, 4, "Start busy show while", false); //$NON-NLS-1$
 		detailsButton.addSelectionListener(new SelectionListener() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
 					ProgressManager.getInstance().busyCursorWhile(new IRunnableWithProgress() {
-						/* (non-Javadoc)
-						 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-						 */
+						@Override
 						public void run(IProgressMonitor monitor) throws InvocationTargetException,
 								InterruptedException {
 							long time = System.currentTimeMillis();
@@ -53,9 +56,7 @@ public class BusyShowWhileDialog extends IconAndMessageDialog {
 							while (end > System.currentTimeMillis()) {
 								final Shell myShell = BusyShowWhileDialog.this.getShell();
 								myShell.getDisplay().asyncExec(new Runnable() {
-									/* (non-Javadoc)
-									 * @see java.lang.Runnable#run()
-									 */
+									@Override
 									public void run() {
 										if(myShell.isDisposed())
 											return;
@@ -69,12 +70,10 @@ public class BusyShowWhileDialog extends IconAndMessageDialog {
 				} catch (InvocationTargetException error) {
 					error.printStackTrace();
 				} catch (InterruptedException error) {
-					//ignore - in this context it means cancelation
+					//ignore - in this context it means cancellation
 				}
 			}
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				//do nothing
 			}
