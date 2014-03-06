@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 429728
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -100,6 +101,13 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 import org.w3c.dom.css.CSSValue;
 
+/**
+ * SWT default renderer for a MPartStack model elements
+ *
+ * Style bits for the underlying CTabFolder can be set via the
+ * IPresentation.STYLE_OVERRIDE_KEY key
+ *
+ */
 public class StackRenderer extends LazyStackRenderer {
 	/**
 	 * 
@@ -267,13 +275,6 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer#requiresFocus
-	 * (org.eclipse.e4.ui.model.application.ui.basic.MPart)
-	 */
 	@Override
 	protected boolean requiresFocus(MPart element) {
 		MUIElement inStack = element.getCurSharedRef() != null ? element
@@ -588,6 +589,8 @@ public class StackRenderer extends LazyStackRenderer {
 		if (!(element instanceof MPartStack) || !(parent instanceof Composite))
 			return null;
 
+		MPartStack pStack = (MPartStack) element;
+
 		Composite parentComposite = (Composite) parent;
 
 		// Ensure that all rendered PartStacks have an Id
@@ -597,8 +600,9 @@ public class StackRenderer extends LazyStackRenderer {
 			element.setElementId(generatedId);
 		}
 
-		// TBD: need to define attributes to handle this
-		final CTabFolder ctf = new CTabFolder(parentComposite, SWT.BORDER);
+		int styleOverride = getStyleOverride(pStack);
+		int style = styleOverride == -1 ? SWT.BORDER : styleOverride;
+		final CTabFolder ctf = new CTabFolder(parentComposite, style);
 		ctf.setMRUVisible(getInitialMRUValue(ctf));
 
 		// Adjust the minimum chars based on the location
@@ -1645,4 +1649,7 @@ public class StackRenderer extends LazyStackRenderer {
 			return newValue == null && tagName.equals(oldValue);
 		}
 	}
+
+
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 429728
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench.swt;
 
@@ -16,6 +17,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 
@@ -132,5 +134,20 @@ public abstract class AbstractPartRenderer {
 	 */
 	public void forceFocus(MUIElement element) {
 		// Do nothing by default
+	}
+
+	/**
+	 * @param mElement
+	 * @return Returns the style override bits or -1 if there is no override
+	 */
+	public int getStyleOverride(MUIElement mElement) {
+		String overrideStr = mElement.getPersistedState().get(
+				IPresentationEngine.STYLE_OVERRIDE_KEY);
+		if (overrideStr == null || overrideStr.length() == 0)
+			return -1;
+
+		int val = -1;
+		val = Integer.parseInt(overrideStr);
+		return val;
 	}
 }
