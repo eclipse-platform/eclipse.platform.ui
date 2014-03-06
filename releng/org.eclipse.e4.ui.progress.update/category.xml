@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eclipse.e4.ui.progress.feature_0.1.0.qualifier.jar" id="org.eclipse.e4.ui.progress.feature" version="0.1.0.qualifier">
+      <category name="org.eclipse.e4.ui.progress"/>
+   </feature>
+   <category-def name="org.eclipse.e4.ui.progress" label="Eclipse4 Progress View Beta"/>
+</site>
