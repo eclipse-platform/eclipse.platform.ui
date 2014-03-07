@@ -40,7 +40,7 @@
    <extension
          point="org.eclipse.e4.ui.css.swt.theme">
       <theme
-            basestylesheeturi="css/dark-gradient.css"
+            basestylesheeturi="css/dark-include.css"
             id="org.eclipse.e4.demo.contacts.themes.darkgradient"
             label="Dark Gradient Theme">
       </theme>
