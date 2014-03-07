@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2014 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -22,7 +23,6 @@ import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.tools.emf.ui.common.CommandToStringConverter;
-import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -56,6 +56,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -72,7 +73,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 	private Composite composite;
 	private EMFDataBindingContext context;
-	private EStackLayout stackLayout;
+	private StackLayout stackLayout;
 	private List<Action> actions = new ArrayList<Action>();
 
 	private IEMFEditListProperty KEY_BINDING__PARAMETERS = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS);
@@ -116,7 +117,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			if (getEditor().isModelFragment()) {
 				composite = new Composite(parent, SWT.NONE);
-				stackLayout = new EStackLayout();
+				stackLayout = new StackLayout();
 				composite.setLayout(stackLayout);
 				createForm(composite, context, getMaster(), false);
 				createForm(composite, context, getMaster(), true);
@@ -364,7 +365,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 						return new Status(statusCode, "org.eclipse.e4.tools.emf.ui", Messages.KeyBindingEditor_SequenceEmpty); //$NON-NLS-1$
 					}
 					if (!value.toString().toUpperCase().equals(value.toString())) {
-						return new Status(IStatus.ERROR, "org.eclipse.e4.tools.emf.ui", Messages.KeyBindingEditor_SequenceLowercase); //$NON-NLS-1$ 
+						return new Status(IStatus.ERROR, "org.eclipse.e4.tools.emf.ui", Messages.KeyBindingEditor_SequenceLowercase); //$NON-NLS-1$
 					}
 
 					return Status.OK_STATUS;

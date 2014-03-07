@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2014 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Jonas Helming <jhelming@eclipsesource.com>
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 421453
  ******************************************************************************/
 package org.eclipse.e4.tools.compat.parts;
 
@@ -35,9 +36,9 @@ import org.eclipse.ui.part.EditorPart;
  * This class provides an adapter enabling to plug editors, which are
  * implemented following the e4 programming model into a 3.x workbench. This
  * class is supposed to be sub classed by clients.
- * 
+ *
  * @author Jonas
- * 
+ *
  * @param <C>
  */
 public abstract class DIEditorPart<C> extends EditorPart implements
@@ -129,6 +130,7 @@ public abstract class DIEditorPart<C> extends EditorPart implements
 		}
 	}
 
+	@Override
 	public void setDirtyState(boolean dirtyState) {
 		if (dirtyState != this.dirtyState) {
 			this.dirtyState = dirtyState;
@@ -153,5 +155,5 @@ public abstract class DIEditorPart<C> extends EditorPart implements
 		super.dispose();
 	}
 
-	
+
 }

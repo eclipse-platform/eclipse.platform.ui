@@ -17,7 +17,6 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -40,6 +39,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -55,7 +55,7 @@ import org.eclipse.swt.widgets.Text;
 public class PlaceholderEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
-	private EStackLayout stackLayout;
+	private StackLayout stackLayout;
 
 	@Inject
 	@Optional
@@ -122,7 +122,7 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			if (getEditor().isModelFragment()) {
 				composite = new Composite(parent, SWT.NONE);
-				stackLayout = new EStackLayout();
+				stackLayout = new StackLayout();
 				composite.setLayout(stackLayout);
 				createForm(composite, context, getMaster(), false);
 				createForm(composite, context, getMaster(), true);

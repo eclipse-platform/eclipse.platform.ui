@@ -10,13 +10,12 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
-import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory;
 import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;

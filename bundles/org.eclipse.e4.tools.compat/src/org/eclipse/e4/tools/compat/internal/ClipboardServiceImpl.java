@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 421453
  ******************************************************************************/
 package org.eclipse.e4.tools.compat.internal;
 
@@ -14,23 +15,27 @@ import org.eclipse.e4.tools.services.IClipboardService;
 
 public class ClipboardServiceImpl implements IClipboardService {
 	private Handler handler;
-	
+
+	@Override
 	public void copy() {
 		if( handler != null ) {
 			handler.copy();
 		}
 	}
 
+	@Override
 	public void paste() {
 		if( handler != null ) {
 			handler.paste();
 		}
 	}
 
+	@Override
 	public void setHandler(Handler handler) {
 		this.handler = handler;
 	}
 
+	@Override
 	public void cut() {
 		this.handler.cut();
 	}

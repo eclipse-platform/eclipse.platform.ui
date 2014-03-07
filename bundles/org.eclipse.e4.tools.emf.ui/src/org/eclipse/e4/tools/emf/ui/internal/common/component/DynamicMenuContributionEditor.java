@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 MEDEVIT, FHV and others.
+ * Copyright (c) 2013, 2014 MEDEVIT, FHV and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Marco Descher <marco@descher.at> - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -18,7 +19,6 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.ContributionURIValidator;
-import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -40,6 +40,7 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -59,7 +60,7 @@ public class DynamicMenuContributionEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 
-	private EStackLayout stackLayout;
+	private StackLayout stackLayout;
 
 	@Inject
 	@Optional
@@ -103,7 +104,7 @@ public class DynamicMenuContributionEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			if (getEditor().isModelFragment()) {
 				composite = new Composite(parent, SWT.NONE);
-				stackLayout = new EStackLayout();
+				stackLayout = new StackLayout();
 				composite.setLayout(stackLayout);
 				createForm(composite, context, getMaster(), false);
 				createForm(composite, context, getMaster(), true);

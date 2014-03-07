@@ -9,6 +9,7 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Wim Jongman <wim.jongman@remainsoftware.com> - Maintenance
  *     Marco Descher <marco@descher.at> - Bug395982, 426653, 422465
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
@@ -46,7 +47,6 @@ import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.tools.emf.ui.common.AbstractElementEditorContribution;
-import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.common.IEditorDescriptor;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature;
@@ -209,6 +209,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
@@ -234,10 +235,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TreeItem;
 
-;
-
 public class ModelEditor {
-	private static final String ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED = "org.eclipse.e4.tools.modeleditor.filteredtree.enabled.xmitab.disabled";
+	private static final String ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED = "org.eclipse.e4.tools.modeleditor.filteredtree.enabled.xmitab.disabled";//$NON-NLS-1$
 
 	public static final String CSS_CLASS_KEY = "org.eclipse.e4.ui.css.CssClassName"; //$NON-NLS-1$
 
@@ -425,8 +424,8 @@ public class ModelEditor {
 				} while (m != null);
 
 				if (o instanceof MPart) {
-					System.err.println(getClass().getName() + ".findAndHighLight: " + o);
-					System.err.println(getClass().getName() + ".findAndHighLight: " + ((EObject) o).eContainingFeature());
+					System.err.println(getClass().getName() + ".findAndHighLight: " + o); //$NON-NLS-1$
+					System.err.println(getClass().getName() + ".findAndHighLight: " + ((EObject) o).eContainingFeature()); //$NON-NLS-1$
 				}
 
 				viewer.setSelection(new StructuredSelection(o));
@@ -526,29 +525,10 @@ public class ModelEditor {
 		textLabel.setData(CSS_CLASS_KEY, "sectionHeader"); //$NON-NLS-1$
 		textLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		// final ScrolledComposite scrolling = new
-		// ScrolledComposite(editingArea, SWT.H_SCROLL | SWT.V_SCROLL);
-		// scrolling.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		//		scrolling.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
-
-		final EStackLayout layout = new EStackLayout();
+		final StackLayout layout = new StackLayout();
 		final Composite contentContainer = new Composite(editingArea, SWT.NONE);
 		contentContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		//		contentContainer.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
-		// scrolling.setExpandHorizontal(true);
-		// scrolling.setExpandVertical(true);
-		// scrolling.setContent(contentContainer);
-		//
-		// scrolling.addControlListener(new ControlAdapter() {
-		// public void controlResized(ControlEvent e) {
-		// Rectangle r = scrolling.getClientArea();
-		// scrolling.setMinSize(contentContainer.computeSize(r.width,
-		// SWT.DEFAULT));
-		// }
-		// });
-		//
-		// scrolling.setLayoutData(new GridData(GridData.FILL_BOTH));
 		contentContainer.setLayout(layout);
 
 		viewer.getTree().addKeyListener(new KeyAdapter() {
@@ -1033,7 +1013,8 @@ public class ModelEditor {
 		final TreeViewer viewer = tempViewer;
 
 		viewer.setLabelProvider(new ComponentLabelProvider(this, messages));
-		ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(new ObservableFactoryImpl(), new TreeStructureAdvisorImpl());
+		ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(new ObservableFactoryImpl(), new TreeStructureAdvisor() {
+		});
 		viewer.setContentProvider(contentProvider);
 
 		final WritableSet clearedSet = new WritableSet();
@@ -1169,7 +1150,6 @@ public class ModelEditor {
 				AbstractComponentEditor editor = (AbstractComponentEditor) fact.create("bundleclass://" + el.getContributor().getName() + "/" + desc.getEditorClass().getName(), context); //$NON-NLS-1$ //$NON-NLS-2$
 				registerEditor(eClass, editor);
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -1198,7 +1178,6 @@ public class ModelEditor {
 					res.add(contribution);
 				}
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block 1204
 				e.printStackTrace();
 			}
 		}
@@ -1396,7 +1375,6 @@ public class ModelEditor {
 		try {
 			obsManager.dispose();
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}
 
@@ -1531,10 +1509,6 @@ public class ModelEditor {
 				}
 			}
 		}
-	}
-
-	static class TreeStructureAdvisorImpl extends TreeStructureAdvisor {
-
 	}
 
 	class ObservableFactoryImpl implements IObservableFactory {

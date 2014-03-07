@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 EclipseSource München GmbH and others.
+ * Copyright (c) 2012 EclipseSource Mï¿½nchen GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,8 @@ public class DIHandler<C> extends AbstractHandler {
 		return (IEclipseContext) PlatformUI.getWorkbench().getService(
 				IEclipseContext.class);
 	}
-
+	
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		return ContextInjectionFactory.invoke(component, Execute.class,
 				getActiveContext());

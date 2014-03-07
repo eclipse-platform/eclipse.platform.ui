@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2014 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 421453
  ******************************************************************************/
 package org.eclipse.e4.tools.compat.internal;
 
@@ -24,9 +25,10 @@ public class SelectionProviderContextFunction extends ContextFunction {
 	@Override
 	public Object compute(final IEclipseContext context) {
 		return new ISelectionProviderService() {
+			@Override
 			public void setSelection(Object selection) {
 				ISelectionProvider pv = context.get(ISelectionProvider.class);
-				
+
 				if( selection == null ) {
 					pv.setSelection(StructuredSelection.EMPTY);
 				} else if (selection instanceof ISelection) {

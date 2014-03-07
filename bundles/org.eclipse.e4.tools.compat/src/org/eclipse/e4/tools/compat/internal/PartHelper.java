@@ -85,6 +85,7 @@ public class PartHelper {
 		
 		private ListenerList listeners = new ListenerList();
 		
+		@Override
 		public void setSelection(ISelection selection) {
 			currentSelection = selection;
 			SelectionChangedEvent evt = new SelectionChangedEvent(this, selection);
@@ -94,15 +95,18 @@ public class PartHelper {
 			}
 		}
 				
+		@Override
 		public void removeSelectionChangedListener(
 				ISelectionChangedListener listener) {
 			listeners.remove(listener);
 		}
 		
+		@Override
 		public ISelection getSelection() {
 			return currentSelection;
 		}
 		
+		@Override
 		public void addSelectionChangedListener(ISelectionChangedListener listener) {
 			listeners.add(listener);
 		}

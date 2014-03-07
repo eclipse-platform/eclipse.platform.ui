@@ -12,6 +12,7 @@ public class DefaultLoggerProvider implements ILoggerProvider {
 	@Inject
 	private IEclipseContext context;
 
+	@Override
 	public Logger getClassLogger(Class<?> clazz) {
 		IEclipseContext childContext = context.createChild();
 		childContext.set("logger.bundlename", FrameworkUtil.getBundle(clazz).getSymbolicName()); //$NON-NLS-1$
