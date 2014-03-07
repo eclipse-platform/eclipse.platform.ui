@@ -87,13 +87,6 @@ public class VPerspectiveControlEditor extends AbstractComponentEditor {
 			}
 		});
 
-		actions.add(new Action(Messages.VWindowControlEditor_AddInputPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
-			@Override
-			public void run() {
-				handleAdd(BasicPackageImpl.Literals.PART);
-			}
-		});
-
 		actions.add(new Action(Messages.VWindowControlEditor_AddArea, createImageDescriptor(ResourceProvider.IMG_Area_vertical)) {
 			@Override
 			public void run() {

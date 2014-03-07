@@ -103,12 +103,6 @@ public class PartStackEditor extends AbstractComponentEditor {
 				handleAddChild(BasicPackageImpl.Literals.PART);
 			}
 		});
-		actions.add(new Action(Messages.PartStackEditor_AddInputPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
-			@Override
-			public void run() {
-				handleAddChild(BasicPackageImpl.Literals.INPUT_PART);
-			}
-		});
 		actions.add(new Action(Messages.PartStackEditor_AddPlaceholder, createImageDescriptor(ResourceProvider.IMG_Placeholder)) {
 			@Override
 			public void run() {
@@ -257,7 +251,6 @@ public class PartStackEditor extends AbstractComponentEditor {
 			});
 			List<FeatureClass> eClassList = new ArrayList<FeatureClass>();
 			eClassList.add(new FeatureClass("Part", BasicPackageImpl.Literals.PART));
-			eClassList.add(new FeatureClass("Input Part", BasicPackageImpl.Literals.INPUT_PART));
 			eClassList.add(new FeatureClass("Placeholder", AdvancedPackageImpl.Literals.PLACEHOLDER));
 			eClassList.addAll(getEditor().getFeatureClasses(BasicPackageImpl.Literals.PART_STACK, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN));
 			childrenDropDown.setInput(eClassList);

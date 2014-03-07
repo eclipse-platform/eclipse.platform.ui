@@ -118,12 +118,6 @@ public class AreaEditor extends AbstractComponentEditor {
 				handleAddChild(BasicPackageImpl.Literals.PART);
 			}
 		});
-		actions.add(new Action(Messages.PartSashContainerEditor_AddInputPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
-			@Override
-			public void run() {
-				handleAddChild(BasicPackageImpl.Literals.INPUT_PART);
-			}
-		});
 		actions.add(new Action(Messages.PartSashContainerEditor_AddArea, createImageDescriptor(ResourceProvider.IMG_Area)) {
 			@Override
 			public void run() {

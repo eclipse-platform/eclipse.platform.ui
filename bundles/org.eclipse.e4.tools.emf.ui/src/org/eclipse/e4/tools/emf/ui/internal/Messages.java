@@ -118,9 +118,6 @@ public class Messages {
 	public String HandlerEditor_Command;
 	public String HandlerEditor_ClassURI;
 
-	public String InputPartEditor_Label;
-	public String InputPartEditor_InputURI;
-
 	public String KeyBindingEditor_Label;
 	public String KeyBindingEditor_Description;
 	public String KeyBindingEditor_Sequence;
@@ -210,7 +207,6 @@ public class Messages {
 	public String PartSashContainerEditor_AddPartSashContainer;
 	public String PartSashContainerEditor_AddPartStack;
 	public String PartSashContainerEditor_AddPart;
-	public String PartSashContainerEditor_AddInputPart;
 	public String PartSashContainerEditor_AddArea;
 	public String PartSashContainerEditor_AddPlaceholder;
 
@@ -220,7 +216,6 @@ public class Messages {
 	public String PartStackEditor_Parts;
 	public String PartStackEditor_ContainerData;
 	public String PartStackEditor_AddPart;
-	public String PartStackEditor_AddInputPart;
 	public String PartStackEditor_AddPlaceholder;
 
 	public String PerspectiveEditor_Label;
@@ -233,7 +228,6 @@ public class Messages {
 	public String PerspectiveEditor_AddPartSashContainer;
 	public String PerspectiveEditor_AddPartStack;
 	public String PerspectiveEditor_AddPart;
-	public String PerspectiveEditor_AddInputPart;
 	public String PerspectiveEditor_AddArea;
 	public String PerspectiveEditor_AddPlaceholder;
 
@@ -465,7 +459,6 @@ public class Messages {
 	public String VWindowControlEditor_AddPartSashContainer;
 	public String VWindowControlEditor_AddPartStack;
 	public String VWindowControlEditor_AddPart;
-	public String VWindowControlEditor_AddInputPart;
 	public String VWindowControlEditor_AddArea;
 
 	public String VWindowEditor_TreeLabel;
@@ -481,7 +474,6 @@ public class Messages {
 	public String VWindowSharedElementsEditor_Controls;
 	public String VWindowSharedElementsEditor_AddPartSashContainer;
 	public String VWindowSharedElementsEditor_AddPart;
-	public String VWindowSharedElementsEditor_AddInputPart;
 
 	public String VWindowTrimEditor_TreeLabel;
 	public String VWindowTrimEditor_TreeLabelDescription;

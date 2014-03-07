@@ -80,7 +80,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.DynamicMenuContribu
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandledMenuItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandledToolItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandlerEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.InputPartEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.KeyBindingEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuContributionEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuEditor;
@@ -1231,7 +1230,6 @@ public class ModelEditor {
 		registerEditor(BasicPackageImpl.Literals.PART_SASH_CONTAINER, ContextInjectionFactory.make(PartSashContainerEditor.class, context));
 		registerEditor(AdvancedPackageImpl.Literals.AREA, ContextInjectionFactory.make(AreaEditor.class, context));
 		registerEditor(BasicPackageImpl.Literals.PART_STACK, ContextInjectionFactory.make(PartStackEditor.class, context));
-		registerEditor(BasicPackageImpl.Literals.INPUT_PART, ContextInjectionFactory.make(InputPartEditor.class, context));
 		registerEditor(BasicPackageImpl.Literals.TRIM_BAR, ContextInjectionFactory.make(TrimBarEditor.class, context));
 		registerEditor(BasicPackageImpl.Literals.DIALOG, ContextInjectionFactory.make(DialogEditor.class, context));
 		registerEditor(BasicPackageImpl.Literals.WIZARD_DIALOG, ContextInjectionFactory.make(WizardDialogEditor.class, context));

@@ -87,13 +87,6 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 			}
 		});
 
-		actions.add(new Action(Messages.VWindowSharedElementsEditor_AddInputPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
-			@Override
-			public void run() {
-				handleAdd(BasicPackageImpl.Literals.INPUT_PART);
-			}
-		});
-
 		actions.add(new Action(Messages.VWindowSharedElementsEditor_AddPartStack, createImageDescriptor(ResourceProvider.IMG_PartStack)) {
 			@Override
 			public void run() {
