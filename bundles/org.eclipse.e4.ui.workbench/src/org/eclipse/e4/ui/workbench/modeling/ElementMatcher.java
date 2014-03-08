@@ -62,12 +62,7 @@ public class ElementMatcher implements Selector {
 		this.tagsToMatch = tagsToMatch;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.ui.workbench.Selector#select(org.eclipse.e4.ui.model.application.
-	 * MApplicationElement)
-	 */
+	@Override
 	public boolean select(MApplicationElement element) {
 		if (id != null && !id.equals(element.getElementId())) {
 			return false;
