@@ -7,9 +7,15 @@
  *
  * Contributors:
  *     Andrea Guarinoni <andrea.guarinoni.dev@outlook.com> - initial API and implementation
- *     Lars Vogel - initial API and implementation
  *******************************************************************************/
 
+/*******************************************************************************
+ * The following bugs are referred to in this style sheet
+ * 1.) Bug 430052 - Imported rules cannot be overridden
+ *******************************************************************************/
+
+
+/* @import url("platform:/plugin/org.eclipse.ui.themes/css/e4-dark.css"); Bug 430052 */
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_basestyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_globalstyle.css"); /* Remove this to have ONLY the main IDE shell dark */
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_partstyle.css");
@@ -153,7 +159,7 @@ CTabFolder Tree, CTabFolder Canvas {
 }
 
 
-/* ###################### Top Toolbar ########################## */
+/* ####################### Top Toolbar ########################## */
 
 #org-eclipse-ui-main-toolbar, #PerspectiveSwitcher {
     eclipse-perspective-keyline-color: #585858;
@@ -163,7 +169,7 @@ CTabFolder Tree, CTabFolder Canvas {
 }
 
 
-/* #################### Bottom Status Bar ######################## */
+/* ##################### Bottom Status Bar ####################### */
 
 #org-eclipse-ui-StatusLine,
 #org-eclipse-ui-ProgressBar,
@@ -176,4 +182,116 @@ CTabFolder Tree, CTabFolder Canvas {
 
 StatusLine, ImageBasedFrame{
     color: #BDBAB7;
+}
+
+
+
+/* ####################### CSS for .MParts ####################### */
+
+/* Make the content of the Form brighter because the color of
+   the font of some widgets is hard-coded to be black on Window */
+
+.MPart Form,
+.MPart Form Sash,
+.MPart Form Label,
+.MPart Form Section,
+.MPart Form FormText,
+.MPart Form Link,
+.MPart Form Hyperlink,
+.MPart Form ImageHyperlink,
+.MPart Form Button,
+.MPart Form Group,
+.MPart Form SashForm,
+.MPart Form LayoutComposite,
+.MPart Form ScrolledPageBook,
+.MPart Form DependenciesComposite,
+.MPart Form ListEditorComposite,
+.MPart Form Text[style~='SWT.READ_ONLY'],
+.MPart Form > LayoutComposite > LayoutComposite > ToolBar,
+.MPart Form DependenciesComposite > SashForm > Section > *, /* Section > DependenciesComposite$... */
+.MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > *, /*LayoutComposite > MasterDetailBlock$... > LayoutComposite > Section > LayoutComposite > ExtensionsSection$...*/
+.MPartStack.active .MPart Form,
+.MPartStack.active .MPart Form Sash,
+.MPartStack.active .MPart Form Label,
+.MPartStack.active .MPart Form Section,
+.MPartStack.active .MPart Form FormText,
+.MPartStack.active .MPart Form Link,
+.MPartStack.active .MPart Form Hyperlink,
+.MPartStack.active .MPart Form ImageHyperlink,
+.MPartStack.active .MPart Form Button,
+.MPartStack.active .MPart Form Group,
+.MPartStack.active .MPart Form SashForm,
+.MPartStack.active .MPart Form LayoutComposite,
+.MPartStack.active .MPart Form ScrolledPageBook,
+.MPartStack.active .MPart Form DependenciesComposite,
+.MPartStack.active .MPart Form ListEditorComposite,
+.MPartStack.active .MPart Form Text[style~='SWT.READ_ONLY'],
+.MPartStack.active .MPart Form > LayoutComposite > LayoutComposite > ToolBar,
+.MPartStack.active .MPart Form DependenciesComposite > SashForm > Section > *, /* Section > DependenciesComposite$... */
+.MPartStack.active .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > * /*LayoutComposite > MasterDetailBlock$... > LayoutComposite > Section > LayoutComposite > ExtensionsSection$...*/ {
+    background-color: #4f5355;
+    color: #f4f7f7;
+}
+#org-eclipse-help-ui-HelpView Form,
+#org-eclipse-help-ui-HelpView Form Sash,
+#org-eclipse-help-ui-HelpView Form Label,
+#org-eclipse-help-ui-HelpView Form Section,
+#org-eclipse-help-ui-HelpView Form FormText,
+#org-eclipse-help-ui-HelpView Form Hyperlink,
+#org-eclipse-help-ui-HelpView Form Button,
+#org-eclipse-help-ui-HelpView Form Group,
+#org-eclipse-help-ui-HelpView Form LayoutComposite,
+#org-eclipse-help-ui-HelpView Form ScrolledPageBook,
+#org-eclipse-help-ui-HelpView Form Text[style~='SWT.READ_ONLY'] {
+    background-color: #2F2F2F;
+    color: #CCCCCC;
+}
+.MPartStack.active #org-eclipse-help-ui-HelpView Form,
+.MPartStack.active #org-eclipse-help-ui-HelpView Form Sash,
+.MPartStack.active #org-eclipse-help-ui-HelpView Form Label,
+.MPartStack.active #org-eclipse-help-ui-HelpView Form Section,
+.MPartStack.active #org-eclipse-help-ui-HelpView Form FormText,
+.MPartStack.active #org-eclipse-help-ui-HelpView Form Hyperlink,
+.MPartStack.active #org-eclipse-help-ui-HelpView Form Button,
+.MPartStack.active #org-eclipse-help-ui-HelpView Form Group,
+.MPartStack.active #org-eclipse-help-ui-HelpView Form LayoutComposite,
+.MPartStack.active #org-eclipse-help-ui-HelpView Form ScrolledPageBook,
+.MPartStack.active #org-eclipse-help-ui-HelpView Form Text[style~='SWT.READ_ONLY'] {
+    background-color: #262626;
+    color: #BBBBBB;
+}
+.MPart Form Section Tree,
+.MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Tree,
+.MPartStack.active .MPart Form Section Tree,
+.MPartStack.active .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Tree {
+    background-color: #313538;
+    color: #DDDDDD;
+}
+.MPart Form DatePicker > ImageHyperlink,
+.MPart Form ScheduleDatePicker > ImageHyperlink {
+    background-color: #3f4447;
+    color: #BBBBBB;
+}
+.MPartStack.active .MPart Form DatePicker > ImageHyperlink,
+.MPartStack.active .MPart Form ScheduleDatePicker > ImageHyperlink {
+    background-color: #313538;
+    color: #AAAAAA;
+}
+.MPart PageBook > Form > LayoutComposite {
+    background-color: #2F2F2F;
+    color: #CCC;
+}
+.MPartStack.active .MPart PageBook > Form > LayoutComposite {
+    background-color: #262626;
+    color: #BBBBBB;
+}
+.MPart Form FormHeading LayoutComposite,
+.MPart Form FormHeading ImageHyperlink {
+    background-color: #505f70;
+    color: #9ac9d8;
+}
+.MPartStack.active .MPart Form FormHeading LayoutComposite,
+.MPartStack.active .MPart Form FormHeading ImageHyperlink {
+    background-color: #415062;
+    color: #9ac9d8;
 }
