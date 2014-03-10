@@ -46,6 +46,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimmedPartLayout;
@@ -93,6 +94,8 @@ public class TrimStack {
 
 	static final String STATE_YSIZE = "YSize"; //$NON-NLS-1$
 
+	private static final String MINIMIZED_AND_SHOWING = "MinimizzedAndShowing"; //$NON-NLS-1$
+
 	private Image layoutImage;
 
 	private Image restoreImage;
@@ -107,7 +110,7 @@ public class TrimStack {
 	private boolean cachedUseOverlays = true;
 	private boolean isShowing = false;
 	private MUIElement minimizedElement;
-	private Composite clientAreaComposite;
+	// private Composite clientAreaComposite;
 	private Composite hostPane;
 
 	@Inject
@@ -122,7 +125,7 @@ public class TrimStack {
 	ControlListener caResizeListener = new ControlListener() {
 		public void controlResized(ControlEvent e) {
 			if (hostPane != null && hostPane.isVisible())
-				setPaneLocation(hostPane);
+				setPaneLocation();
 		}
 
 		public void controlMoved(ControlEvent e) {
@@ -153,6 +156,26 @@ public class TrimStack {
 
 	@Inject
 	protected IEventBroker eventBroker;
+
+	@Inject
+	@Optional
+	private void subscribeTopicTagsChanged(
+			@UIEventTopic(UIEvents.ApplicationElement.TOPIC_TAGS) org.osgi.service.event.Event event) {
+		Object changedObj = event.getProperty(EventTags.ELEMENT);
+
+		if (!(changedObj instanceof MToolControl))
+			return;
+
+		final MToolControl changedElement = (MToolControl) changedObj;
+		if (changedElement.getObject() != this)
+			return;
+
+		if (UIEvents.isREMOVE(event)) {
+			if (UIEvents.contains(event, UIEvents.EventTags.OLD_VALUE, MINIMIZED_AND_SHOWING)) {
+				showStack(false);
+			}
+		}
+	}
 
 	private Image getOverrideImage(MUIElement element) {
 		Image result = null;
@@ -482,9 +505,11 @@ public class TrimStack {
 		}
 	};
 
-	private MTrimBar bar;
+	// private MTrimBar bar;
 
 	private int fixedSides;
+
+	private Composite originalParent;
 
 	/**
 	 * This is the old way to subscribe to UIEvents. You should consider using the new way as shown
@@ -499,6 +524,20 @@ public class TrimStack {
 		eventBroker.subscribe(UIEvents.UILifeCycle.BRINGTOTOP, openHandler);
 		eventBroker.subscribe(UIEvents.UILifeCycle.ACTIVATE, closeHandler);
 		eventBroker.subscribe(UIEvents.UILifeCycle.APP_SHUTDOWN_STARTED, shutdownHandler);
+	}
+
+	private Composite getCAComposite() {
+		if (trimStackTB == null)
+			return null;
+
+		// Get the shell's client area composite
+		Shell theShell = trimStackTB.getShell();
+		if (theShell.getLayout() instanceof TrimmedPartLayout) {
+			TrimmedPartLayout tpl = (TrimmedPartLayout) theShell.getLayout();
+			if (!tpl.clientArea.isDisposed())
+				return tpl.clientArea;
+		}
+		return null;
 	}
 
 	/**
@@ -524,7 +563,7 @@ public class TrimStack {
 		MUIElement meParent = me.getParent();
 		int orientation = SWT.HORIZONTAL;
 		if (meParent instanceof MTrimBar) {
-			bar = (MTrimBar) meParent;
+			MTrimBar bar = (MTrimBar) meParent;
 			if (bar.getSide() == SideValue.RIGHT || bar.getSide() == SideValue.LEFT)
 				orientation = SWT.VERTICAL;
 		}
@@ -537,13 +576,6 @@ public class TrimStack {
 				trimStackMenu = null;
 			}
 		});
-
-		// Get the shell's client area composite
-		Shell theShell = trimStackTB.getShell();
-		if (theShell.getLayout() instanceof TrimmedPartLayout) {
-			TrimmedPartLayout tpl = (TrimmedPartLayout) theShell.getLayout();
-			clientAreaComposite = tpl.clientArea;
-		}
 
 		trimStackTB.addListener(SWT.MenuDetect, new Listener() {
 			public void handleEvent(Event event) {
@@ -645,7 +677,7 @@ public class TrimStack {
 				doRefresh |= minimizedElement.getTags().remove(
 						IPresentationEngine.ORIENTATION_VERTICAL);
 				if (isShowing && doRefresh) {
-					setPaneLocation(hostPane);
+					setPaneLocation();
 				}
 			}
 		});
@@ -659,7 +691,7 @@ public class TrimStack {
 					minimizedElement.getTags().remove(IPresentationEngine.ORIENTATION_VERTICAL);
 					minimizedElement.getTags().add(IPresentationEngine.ORIENTATION_HORIZONTAL);
 					if (isShowing) {
-						setPaneLocation(hostPane);
+						setPaneLocation();
 					}
 				}
 			}
@@ -673,7 +705,7 @@ public class TrimStack {
 					minimizedElement.getTags().remove(IPresentationEngine.ORIENTATION_HORIZONTAL);
 					minimizedElement.getTags().add(IPresentationEngine.ORIENTATION_VERTICAL);
 					if (isShowing) {
-						setPaneLocation(hostPane);
+						setPaneLocation();
 					}
 				}
 			}
@@ -877,17 +909,21 @@ public class TrimStack {
 	 */
 	public void showStack(boolean show) {
 		Control ctrl = (Control) minimizedElement.getWidget();
+
+		Composite clientAreaComposite = getCAComposite();
 		if (clientAreaComposite == null || clientAreaComposite.isDisposed())
 			return;
 
 		if (show && !isShowing) {
 			if (useOverlays()) {
 				hostPane = getHostPane();
+				originalParent = ctrl.getParent();
 				ctrl.setParent(hostPane);
+
 				clientAreaComposite.addControlListener(caResizeListener);
 
 				// Set the initial location
-				setPaneLocation(hostPane);
+				setPaneLocation();
 
 				hostPane.addListener(SWT.Traverse, escapeListener);
 
@@ -908,6 +944,7 @@ public class TrimStack {
 			}
 
 			isShowing = true;
+			toolControl.getTags().add(MINIMIZED_AND_SHOWING);
 
 			// Activate the part that is being brought up...
 			if (minimizedElement instanceof MPartStack) {
@@ -968,11 +1005,10 @@ public class TrimStack {
 					clientAreaComposite.removeControlListener(caResizeListener);
 				}
 
-				hostPane.removeListener(SWT.Traverse, escapeListener);
+				ctrl.setParent(originalParent);
 
-				if (hostPane != null && hostPane.isVisible()) {
-					hostPane.setVisible(false);
-				}
+				hostPane.dispose();
+				hostPane = null;
 			} else {
 				if (ctrl != null && !ctrl.isDisposed())
 					ctrl.removeListener(SWT.Traverse, escapeListener);
@@ -980,6 +1016,8 @@ public class TrimStack {
 			}
 
 			isShowing = false;
+			toolControl.getTags().remove(MINIMIZED_AND_SHOWING);
+
 			fixToolItemSelection();
 		}
 	}
@@ -998,14 +1036,15 @@ public class TrimStack {
 		return Boolean.parseBoolean(useOverlays);
 	}
 
-	private void setPaneLocation(Composite someShell) {
+	private void setPaneLocation() {
+		Composite clientAreaComposite = getCAComposite();
 		if (clientAreaComposite == null || clientAreaComposite.isDisposed())
 			return;
 
 		Rectangle caRect = clientAreaComposite.getBounds();
 
 		// NOTE: always starts in the persisted (or default) size
-		Point paneSize = getHostPane().getSize();
+		Point paneSize = hostPane.getSize();
 
 		// Ensure it's not clipped
 		if (paneSize.x > caRect.width)
@@ -1029,8 +1068,8 @@ public class TrimStack {
 		else
 			loc.y = (caRect.y + caRect.height) - paneSize.y;
 
-		someShell.setSize(paneSize);
-		someShell.setLocation(loc);
+		hostPane.setSize(paneSize);
+		hostPane.setLocation(loc);
 	}
 
 	private void setHostSize() {
@@ -1049,14 +1088,17 @@ public class TrimStack {
 	}
 
 	private Composite getHostPane() {
-		if (hostPane != null) {
-			setHostSize(); // Always start with the persisted size
-			return hostPane;
-		}
-
 		// Create one
 		hostPane = new Composite(trimStackTB.getShell(), SWT.NONE);
 		hostPane.setData(ShellActivationListener.DIALOG_IGNORE_KEY, Boolean.TRUE);
+
+		hostPane.addDisposeListener(new DisposeListener() {
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				hostPane = null;
+			}
+		});
+
 		setHostSize();
 
 		// Set a special layout that allows resizing
@@ -1067,6 +1109,10 @@ public class TrimStack {
 	}
 
 	private int getFixedSides() {
+		MUIElement tcParent = toolControl.getParent();
+		if (!(tcParent instanceof MTrimBar))
+			return 0;
+		MTrimBar bar = (MTrimBar) tcParent;
 		Composite trimComp = (Composite) bar.getWidget();
 		Rectangle trimBounds = trimComp.getBounds();
 		Point trimCenter = new Point(trimBounds.width / 2, trimBounds.height / 2); // adjusted to
