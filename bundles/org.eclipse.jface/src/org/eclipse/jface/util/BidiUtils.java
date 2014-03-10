@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 IBM Corporation and others.
+ * Copyright (c) 2012, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -415,7 +415,7 @@ public final class BidiUtils {
 	 * The 3 values {@link #LEFT_TO_RIGHT}, {@link #RIGHT_TO_LEFT}, and {@link BidiUtils#AUTO} are
 	 * usable whether {@link #getBidiSupport() bidi support} is enabled or disabled.
 	 * <p>
-	 * {@link BidiUtils#AUTO} currently only works for {@link Text} and {@link StyledText} controls.
+	 * {@link BidiUtils#AUTO} currently only works for {@link Text}, {@link StyledText}, and {@link Combo} controls.
 	 * <p>
 	 * The remaining value {@link BidiUtils#BTD_DEFAULT} only has an effect if bidi support is enabled.
 	 * 
