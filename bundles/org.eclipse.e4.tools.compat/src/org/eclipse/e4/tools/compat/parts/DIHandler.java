@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 EclipseSource M�nchen GmbH and others.
+ * Copyright (c) 2012 EclipseSource München GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Jonas Helming <jhelming@eclipsesource.com> - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 421453
  ******************************************************************************/
 package org.eclipse.e4.tools.compat.parts;
 
@@ -43,7 +44,7 @@ public class DIHandler<C> extends AbstractHandler {
 		return (IEclipseContext) PlatformUI.getWorkbench().getService(
 				IEclipseContext.class);
 	}
-	
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		return ContextInjectionFactory.invoke(component, Execute.class,
