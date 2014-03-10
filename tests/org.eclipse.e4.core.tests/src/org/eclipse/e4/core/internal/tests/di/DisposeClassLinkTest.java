@@ -13,12 +13,15 @@ package org.eclipse.e4.core.internal.tests.di;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.EventTopic;
 
 /**
  * Checks that injected objects that do not have normal links
@@ -60,8 +63,23 @@ public class DisposeClassLinkTest extends TestCase {
 	    void destroy() {
 	        preDestroy++;
 	    }
-
 	}
+	
+	public static class TestBug430041 {
+		int preDestroy = 0;
+		
+		@Inject
+		@Optional
+		public void inject(@EventTopic("Bla") String bla) {
+			
+		}
+		
+		@PreDestroy
+	    void destroy() {
+	        preDestroy++;
+	    }
+	}
+	
 	public void testMake() throws Exception {
 		IEclipseContext context = EclipseContextFactory.create();
 		Test test = (Test) ContextInjectionFactory.make(Test.class, context);
@@ -123,4 +141,10 @@ public class DisposeClassLinkTest extends TestCase {
 	    assertEquals("@PreDestroy should have been called during uninjection", 1, obj.preDestroy);
 	}
 
+	public void testBug430041() {
+		IEclipseContext context = EclipseContextFactory.create();
+		TestBug430041 obj = ContextInjectionFactory.make(TestBug430041.class, context);
+		context.dispose();
+		assertEquals(1, obj.preDestroy);
+	}
 }

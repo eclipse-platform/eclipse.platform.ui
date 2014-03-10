@@ -160,12 +160,16 @@ public class EclipseContext implements IEclipseContext {
 			childContext.dispose();
 		}
 
+		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.DISPOSE, null, null, null);
+
+		Set<Computation> allComputations = new HashSet<Computation>();
+		allComputations.addAll(activeComputations.values());
+		allComputations.addAll(activeRATs);
 		activeComputations.clear();
 		activeRATs.clear();
 
-		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.DISPOSE, null, null, null);
 		Set<Scheduled> scheduled = new LinkedHashSet<Scheduled>();
-		Set<Computation> allComputations = getListeners();
+		allComputations.addAll(getListeners());
 		weakListeners.clear();
 		for (Computation computation : allComputations) {
 			computation.handleInvalid(event, scheduled);

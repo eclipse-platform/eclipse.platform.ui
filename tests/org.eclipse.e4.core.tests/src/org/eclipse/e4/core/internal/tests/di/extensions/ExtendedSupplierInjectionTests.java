@@ -3,6 +3,8 @@ package org.eclipse.e4.core.internal.tests.di.extensions;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import junit.framework.TestCase;
@@ -24,6 +26,7 @@ import org.osgi.framework.ServiceRegistration;
 
 public class ExtendedSupplierInjectionTests extends TestCase {
 	static final String TOPIC = "org/eclipse/e4/core/tests/di/extensions/ExtendedSupplierInjectionTests";
+	static final String TOPIC_430041 = "org/eclipse/e4/core/tests/di/extensions/ExtendedSupplierInjectionTests430041";
 
 	static class EventTestObject {
 		static int count = 0;
@@ -35,6 +38,26 @@ public class ExtendedSupplierInjectionTests extends TestCase {
 		void dontExecute(@EventTopic(TOPIC) Object x) {
 			count++;
 			injectedObject = x;
+		}
+	}
+	
+	static class EventTestObject_430041 {
+		static int count = 0;
+
+		Object injectedObject;
+		
+		private boolean destroyed;
+		
+		@Inject
+		@Optional
+		void dontExecute(@EventTopic(TOPIC_430041) Object x) {
+			count++;
+			injectedObject = x;
+		}
+		
+		@PreDestroy
+		void goDown() {
+			this.destroyed = true;
 		}
 	}
 
@@ -65,6 +88,32 @@ public class ExtendedSupplierInjectionTests extends TestCase {
 		helper.sendEvent(TOPIC, "event1data");
 
 		assertEquals(1, EventTestObject.count);
+		assertEquals("event1data", target.injectedObject);
+	}
+	
+	public void testBug430041() {
+		IEclipseContext context = EclipseContextFactory.create();
+		context.set(Object.class, new Object());
+
+		assertEquals(0, EventTestObject_430041.count);
+
+		EventTestObject_430041 target = ContextInjectionFactory.make(
+				EventTestObject_430041.class, context);
+		context.set(EventTestObject_430041.class, target);
+		// should be 0 since we haven't posted an event with this topic yet
+		assertEquals(0, EventTestObject_430041.count);
+
+		helper.sendEvent(TOPIC_430041, "event1data");
+
+		assertEquals(1, EventTestObject_430041.count);
+		assertEquals("event1data", target.injectedObject);
+		
+		context.dispose();
+		assertTrue(target.destroyed);
+		
+		helper.sendEvent(TOPIC_430041, "event1data_disposed");
+
+		assertEquals(1, EventTestObject_430041.count);
 		assertEquals("event1data", target.injectedObject);
 	}
 

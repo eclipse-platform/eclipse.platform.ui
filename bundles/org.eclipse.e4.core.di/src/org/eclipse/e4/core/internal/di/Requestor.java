@@ -141,7 +141,12 @@ abstract public class Requestor<L extends AnnotatedElement> implements IRequesto
 
 	public void disposed(PrimaryObjectSupplier objectSupplier) {
 		((InjectorImpl) injector).disposed(objectSupplier);
-
+		// Clear the objectRef if the supplier is disposed see 430041 
+		if (objectSupplier == primarySupplier) {
+			if (objectRef != null) {
+				objectRef.clear();
+			}
+		}
 	}
 
 	public boolean uninject(Object object, PrimaryObjectSupplier objectSupplier) {
