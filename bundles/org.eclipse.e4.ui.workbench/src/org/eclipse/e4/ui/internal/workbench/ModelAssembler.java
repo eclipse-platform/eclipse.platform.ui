@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl<tom.schindl@bestsolution.at> - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430075
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430075, 430080
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -78,131 +78,145 @@ public class ModelAssembler {
 		List<MApplicationElement> imports = new ArrayList<MApplicationElement>();
 		List<MApplicationElement> addedElements = new ArrayList<MApplicationElement>();
 
-		E4XMIResource applicationResource = (E4XMIResource) ((EObject) application).eResource();
-		ResourceSet resourceSet = applicationResource.getResourceSet();
-
-		for (IExtension extension : extensions) {
-			IConfigurationElement[] ces = extension.getConfigurationElements();
-			for (IConfigurationElement ce : ces) {
-				if (!"processor".equals(ce.getName()) || !Boolean.parseBoolean(ce.getAttribute("beforefragment"))) { //$NON-NLS-1$ //$NON-NLS-2$
-					continue;
-				}
-				runProcessor(ce);
-			}
-		}
-
-		for (IExtension extension : extensions) {
-			IConfigurationElement[] ces = extension.getConfigurationElements();
-			for (IConfigurationElement ce : ces) {
-				if (!"fragment".equals(ce.getName())) { //$NON-NLS-1$
-					continue;
-				}
-				IContributor contributor = ce.getContributor();
-				String attrURI = ce.getAttribute("uri"); //$NON-NLS-1$
-				if (attrURI == null) {
-					logger.warn("Unable to find location for the model extension \"{0}\"", //$NON-NLS-1$
-							contributor.getName());
-					continue;
-				}
-
-				URI uri;
-
-				try {
-					// check if the attrURI is already a platform URI
-					if (URIHelper.isPlatformURI(attrURI)) {
-						uri = URI.createURI(attrURI);
-					} else {
-						String bundleName = contributor.getName();
-						String path = bundleName + '/' + attrURI;
-						uri = URI.createPlatformPluginURI(path, false);
-					}
-				} catch (RuntimeException e) {
-					logger.warn(e, "Model extension has invalid location"); //$NON-NLS-1$
-					continue;
-				}
-
-				String contributorURI = URIHelper.constructPlatformURI(contributor);
-				Resource resource;
-				try {
-					resource = resourceSet.getResource(uri, true);
-				} catch (RuntimeException e) {
-					logger.warn(e, "Unable to read model extension from " + uri.toString()); //$NON-NLS-1$
-					continue;
-				}
-
-				EList<?> contents = resource.getContents();
-				if (contents.isEmpty()) {
-					continue;
-				}
-
-				Object extensionRoot = contents.get(0);
-
-				if (!(extensionRoot instanceof MModelFragments)) {
-					logger.warn("Unable to create model extension \"{0}\"", //$NON-NLS-1$
-							contributor.getName());
-					continue;
-				}
-
-				MModelFragments fragmentsContainer = (MModelFragments) extensionRoot;
-				List<MModelFragment> fragments = fragmentsContainer.getFragments();
-				boolean evalImports = false;
-				for (MModelFragment fragment : fragments) {
-					List<MApplicationElement> elements = fragment.getElements();
-					if (elements.size() == 0) {
-						continue;
-					}
-
-					for (MApplicationElement el : elements) {
-						EObject o = (EObject) el;
-
-						E4XMIResource r = (E4XMIResource) o.eResource();
-						applicationResource.setID(o, r.getID(o));
-
-						if (contributorURI != null)
-							el.setContributorURI(contributorURI);
-
-						// Remember IDs of subitems
-						TreeIterator<EObject> treeIt = EcoreUtil.getAllContents(o, true);
-						while (treeIt.hasNext()) {
-							EObject eObj = treeIt.next();
-							r = (E4XMIResource) eObj.eResource();
-							if (contributorURI != null && (eObj instanceof MApplicationElement))
-								((MApplicationElement) eObj).setContributorURI(contributorURI);
-							applicationResource.setID(eObj, r.getInternalId(eObj));
-						}
-					}
-
-					List<MApplicationElement> merged = fragment.merge(application);
-
-					if (merged.size() > 0) {
-						evalImports = true;
-						addedElements.addAll(merged);
-					} else {
-						logger.info("Nothing to merge for \"{0}\"", uri); //$NON-NLS-1$				
-					}
-				}
-
-				if (evalImports) {
-					List<MApplicationElement> localImports = fragmentsContainer.getImports();
-					if (localImports != null) {
-						imports.addAll(localImports);
-					}
-				}
-			}
-		}
-
-		for (IExtension extension : extensions) {
-			IConfigurationElement[] ces = extension.getConfigurationElements();
-			for (IConfigurationElement ce : ces) {
-				if (!"processor".equals(ce.getName()) || Boolean.parseBoolean(ce.getAttribute("beforefragment"))) { //$NON-NLS-1$ //$NON-NLS-2$
-					continue;
-				}
-
-				runProcessor(ce);
-			}
-		}
+		// run processors which are marked to run before fragments
+		runProcessors(extensions, false);
+		processFragments(extensions, imports, addedElements);
+		// run processors which are marked to run after fragments
+		runProcessors(extensions, true);
 
 		resolveImports(imports, addedElements);
+	}
+
+	/**
+	 * @param extensions
+	 * @param imports
+	 * @param addedElements
+	 */
+	private void processFragments(IExtension[] extensions, List<MApplicationElement> imports,
+			List<MApplicationElement> addedElements) {
+
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] ces = extension.getConfigurationElements();
+			for (IConfigurationElement ce : ces) {
+				if ("fragment".equals(ce.getName())) { //$NON-NLS-1$
+					processFragment(ce, imports, addedElements);
+				}
+			}
+		}
+	}
+
+	private void processFragment(IConfigurationElement ce, List<MApplicationElement> imports,
+			List<MApplicationElement> addedElements) {
+		E4XMIResource applicationResource = (E4XMIResource) ((EObject) application).eResource();
+		ResourceSet resourceSet = applicationResource.getResourceSet();
+		IContributor contributor = ce.getContributor();
+		String attrURI = ce.getAttribute("uri"); //$NON-NLS-1$
+		if (attrURI == null) {
+			logger.warn("Unable to find location for the model extension \"{0}\"", //$NON-NLS-1$
+					contributor.getName());
+			return;
+		}
+
+		URI uri;
+
+		try {
+			// check if the attrURI is already a platform URI
+			if (URIHelper.isPlatformURI(attrURI)) {
+				uri = URI.createURI(attrURI);
+			} else {
+				String bundleName = contributor.getName();
+				String path = bundleName + '/' + attrURI;
+				uri = URI.createPlatformPluginURI(path, false);
+			}
+		} catch (RuntimeException e) {
+			logger.warn(e, "Model extension has invalid location"); //$NON-NLS-1$
+			return;
+		}
+
+		String contributorURI = URIHelper.constructPlatformURI(contributor);
+		Resource resource;
+		try {
+			resource = resourceSet.getResource(uri, true);
+		} catch (RuntimeException e) {
+			logger.warn(e, "Unable to read model extension from " + uri.toString()); //$NON-NLS-1$
+			return;
+		}
+
+		EList<?> contents = resource.getContents();
+		if (contents.isEmpty()) {
+			return;
+		}
+
+		Object extensionRoot = contents.get(0);
+
+		if (!(extensionRoot instanceof MModelFragments)) {
+			logger.warn("Unable to create model extension \"{0}\"", //$NON-NLS-1$
+					contributor.getName());
+			return;
+		}
+
+		MModelFragments fragmentsContainer = (MModelFragments) extensionRoot;
+		List<MModelFragment> fragments = fragmentsContainer.getFragments();
+		boolean evalImports = false;
+		for (MModelFragment fragment : fragments) {
+			List<MApplicationElement> elements = fragment.getElements();
+			if (elements.size() == 0) {
+				continue;
+			}
+
+			for (MApplicationElement el : elements) {
+				EObject o = (EObject) el;
+
+				E4XMIResource r = (E4XMIResource) o.eResource();
+				applicationResource.setID(o, r.getID(o));
+
+				if (contributorURI != null)
+					el.setContributorURI(contributorURI);
+
+				// Remember IDs of subitems
+				TreeIterator<EObject> treeIt = EcoreUtil.getAllContents(o, true);
+				while (treeIt.hasNext()) {
+					EObject eObj = treeIt.next();
+					r = (E4XMIResource) eObj.eResource();
+					if (contributorURI != null && (eObj instanceof MApplicationElement))
+						((MApplicationElement) eObj).setContributorURI(contributorURI);
+					applicationResource.setID(eObj, r.getInternalId(eObj));
+				}
+			}
+
+			List<MApplicationElement> merged = fragment.merge(application);
+
+			if (merged.size() > 0) {
+				evalImports = true;
+				addedElements.addAll(merged);
+			} else {
+				logger.info("Nothing to merge for \"{0}\"", uri); //$NON-NLS-1$
+			}
+		}
+
+		if (evalImports) {
+			List<MApplicationElement> localImports = fragmentsContainer.getImports();
+			if (localImports != null) {
+				imports.addAll(localImports);
+			}
+		}
+	}
+
+	/**
+	 * @param extensions
+	 * @param b
+	 */
+	private void runProcessors(IExtension[] extensions, Boolean afterFragments) {
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] ces = extension.getConfigurationElements();
+			for (IConfigurationElement ce : ces) {
+				boolean parseBoolean = Boolean.parseBoolean(ce.getAttribute("beforefragment")); //$NON-NLS-1$
+				if ("processor".equals(ce.getName()) && !afterFragments.equals(parseBoolean)) { //$NON-NLS-1$
+					runProcessor(ce);
+				}
+
+			}
+		}
 	}
 
 	private void runProcessor(IConfigurationElement ce) {
