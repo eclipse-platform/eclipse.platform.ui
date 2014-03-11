@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,13 +29,13 @@ public class KeysTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public KeysTestSuite() {
+    	super(KeysTestSuite.class.getName());
     	addTest(new TestSuite(BindingInteractionsTest.class));
     	addTest(new TestSuite(BindingManagerTest.class));
         addTest(new TestSuite(BindingPersistenceTest.class));
         // TODO This no longer works due to focus issues related to key bindings
         //addTest(new TestSuite(Bug36420Test.class));
-        //		TODO This test is broken until JDT fixes Bug 44148
-        //		addTest(new TestSuite(Bug36537Test.class));
+        addTest(new TestSuite(Bug36537Test.class));
         //		TODO Intermittent failure.  SWT Bug 44344.  XGrabPointer?
         //		addTest(new TestSuite(Bug40023Test.class));
         addTest(new TestSuite(Bug42024Test.class));
@@ -52,10 +52,7 @@ public class KeysTestSuite extends TestSuite {
         //		TODO disabled since it refers to the Java builder and nature,
         //      which are not available in an RCP build
         //		addTest(new TestSuite(Bug44460Test.class));
-        /* TODO disabled as it is causing failures in the nightly builds.
-         * focus related?
-         */
-        //addTest(new TestSuite(Bug53489Test.class));
+        addTest(new TestSuite(Bug53489Test.class));
         addTest(new TestSuite(Bug189167Test.class));
         addTest(new TestSuite(KeysPreferenceModelTest.class));
     }
