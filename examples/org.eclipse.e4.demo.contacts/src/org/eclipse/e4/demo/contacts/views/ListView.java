@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Siemens AG and others.
- * 
+ * Copyright (c) 2009, 2014 Siemens AG and others.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Kai Tödter - initial implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 427896
  ******************************************************************************/
 
 package org.eclipse.e4.demo.contacts.views;
@@ -30,6 +31,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -54,14 +57,30 @@ public class ListView {
 		contactsViewer = new TableViewer(tableComposite, SWT.FULL_SELECTION);
 		contactsViewer.getTable().setHeaderVisible(true);
 		// contactsViewer.getTable().setLinesVisible(true);
-		contactsViewer.setComparator(new ContactViewerComparator());
+		contactsViewer.setComparator(new ViewerComparator() {
+			@Override
+			public int compare(final Viewer viewer, final Object obj1,
+					final Object obj2) {
+
+				if (obj1 instanceof Contact && obj2 instanceof Contact) {
+					String lastName1 = ((Contact) obj1).getLastName();
+					String lastName2 = ((Contact) obj2).getLastName();
+					return lastName1.compareTo(lastName2);
+				}
+				throw new IllegalArgumentException(
+						"Can only compare two Contacts.");
+
+			}
+		});
 
 		contactsViewer
 		.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event
 						.getSelection();
-				selectionService.setSelection(selection.getFirstElement());
+				selectionService.setSelection(selection
+						.getFirstElement());
 			}
 		});
 
@@ -79,7 +98,8 @@ public class ListView {
 		tableColumnLayout.setColumnData(lastNameColumn.getColumn(),
 				new ColumnWeightData(60));
 
-		menuService.registerContextMenu(contactsViewer.getControl(), "contacts.popup");
+		menuService.registerContextMenu(contactsViewer.getControl(),
+				"contacts.popup");
 
 		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
 
@@ -91,7 +111,8 @@ public class ListView {
 		contactsViewer.setLabelProvider(new ObservableMapLabelProvider(
 				attributes));
 
-		contactsViewer.setInput(ContactsRepositoryFactory.getContactsRepository().getAllContacts());
+		contactsViewer.setInput(ContactsRepositoryFactory
+				.getContactsRepository().getAllContacts());
 
 		GridLayoutFactory.fillDefaults().generateLayout(parent);
 	}
