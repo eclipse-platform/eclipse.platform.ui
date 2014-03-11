@@ -29,7 +29,7 @@ public class FoldersAsProjectsActionProvider extends CommonActionProvider {
 	public void init(ICommonActionExtensionSite aSite) {
 		viewer = (CommonViewer) aSite.getStructuredViewer();
 	}
-	
+
 	@Override
 	public void fillContextMenu(IMenuManager aMenu) {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
@@ -45,13 +45,13 @@ public class FoldersAsProjectsActionProvider extends CommonActionProvider {
 			for (IProject project : folder.getWorkspace().getRoot().getProjects()) {
 				if (project.getLocation().equals(folder.getLocation())) {
 					// project already in workspace
-					SelectProjectForFolderAction action = new SelectProjectForFolderAction(project, this.viewer); 
+					SelectProjectForFolderAction action = new SelectProjectForFolderAction(project, this.viewer);
 					aMenu.appendToGroup(ICommonMenuConstants.GROUP_OPEN, action);
 					return;
 				}
 			}
-			OpenFolderAsProjectAction action = new OpenFolderAsProjectAction(folder, this.viewer); 
-			aMenu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, action);
+			OpenFolderAsProjectAction action = new OpenFolderAsProjectAction(folder, this.viewer);
+			aMenu.prependToGroup(ICommonMenuConstants.GROUP_PORT, action);
 		}
 	}
 
