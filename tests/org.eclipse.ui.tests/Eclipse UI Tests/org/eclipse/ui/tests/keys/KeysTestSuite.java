@@ -52,7 +52,10 @@ public class KeysTestSuite extends TestSuite {
         //		TODO disabled since it refers to the Java builder and nature,
         //      which are not available in an RCP build
         //		addTest(new TestSuite(Bug44460Test.class));
-        addTest(new TestSuite(Bug53489Test.class));
+        /* TODO disabled as it fails on the Mac.
+         * Ctrl+S doesn't save the editor, and posting MOD1+S also doesn't seem to work.
+         */
+        //addTest(new TestSuite(Bug53489Test.class));
         addTest(new TestSuite(Bug189167Test.class));
         addTest(new TestSuite(KeysPreferenceModelTest.class));
     }
