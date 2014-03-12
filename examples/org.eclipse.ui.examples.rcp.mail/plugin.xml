@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.eclipse.ui.examples.rcp.mail.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="Part3 Perspective"
+            class="org.eclipse.ui.examples.rcp.mail.Perspective"
+            id="org.eclipse.ui.tutorials.rcp.part3.perspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="Message"
+            allowMultiple="true"
+            icon="icons/sample2.gif"
+            class="org.eclipse.ui.examples.rcp.mail.View"
+            id="org.eclipse.ui.tutorials.rcp.part3.view">
+      </view>
+      <view
+            name="Mailboxes"
+            allowMultiple="true"
+            icon="icons/sample3.gif"
+            class="org.eclipse.ui.examples.rcp.mail.NavigationView"
+            id="org.eclipse.ui.tutorials.rcp.part3.navigationView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="Mail"
+            id="org.eclipse.ui.tutorials.rcp.part3.category">
+      </category>
+      <command
+            name="Open Mailbox"
+            description="Opens a mailbox"
+            categoryId="org.eclipse.ui.tutorials.rcp.part3.category"
+            id="org.eclipse.ui.tutorials.rcp.part3.open">
+      </command>
+      <command
+            name="Open Message Dialog"
+            description="Open a message dialog"
+            categoryId="org.eclipse.ui.tutorials.rcp.part3.category"
+            id="org.eclipse.ui.tutorials.rcp.part3.openMessage">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.ui.tutorials.rcp.part3.open"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+2">
+      </key>
+      <key
+            commandId="org.eclipse.ui.tutorials.rcp.part3.openMessage"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+3">
+      </key>
+      <key
+            commandId="org.eclipse.ui.file.exit"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+X">
+      </key>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.ui.tutorials.rcp.part3.application"
+            name="RCP Tutorial 3">
+         <property
+               name="aboutImage"
+               value="product_lg.gif"/>
+         <property
+               name="aboutText"
+               value="RCP Tutorial 3&#x0A;Version 1.0.0&#x0A;by Ed Burnette&#x0A;&#x0A;For more information on Eclipse and the&#x0A;Rich Client Platform visit:&#x0A;http://www.eclipse.org&#x0A;&#x0A;Copyrights and other legal stuff goes here."/>
+      </product>
+   </extension>
+
+</plugin>
