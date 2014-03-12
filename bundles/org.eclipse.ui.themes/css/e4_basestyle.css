@@ -120,6 +120,10 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END {
 	font-family: '#org-eclipse-ui-workbench-TAB_TEXT_FONT';
 }
 
+CTabItem:selected {
+	color: '#org-eclipse-ui-workbench-ACTIVE_TAB_TEXT_COLOR';
+}
+
 .MPartStack {
 	swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
 	swt-selected-tab-fill: '#org-eclipse-ui-workbench-INACTIVE_TAB_BG_START' '#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END' 100% 100%;
@@ -130,6 +134,7 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END {
 	padding: 0px 2px 2px;
 	swt-shadow-visible: false;
 	swt-mru-visible: false;
+	color: '#org-eclipse-ui-workbench-INACTIVE_TAB_TEXT_COLOR';
 }
 
 .MPartStack.active {
