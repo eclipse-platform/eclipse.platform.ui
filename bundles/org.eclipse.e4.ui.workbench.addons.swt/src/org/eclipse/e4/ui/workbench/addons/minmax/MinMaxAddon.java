@@ -593,7 +593,7 @@ public class MinMaxAddon {
 		List<String> maximizeTag = new ArrayList<String>();
 		maximizeTag.add(IPresentationEngine.MAXIMIZED);
 		List<MUIElement> curMax = modelService.findElements(window, null, MUIElement.class,
-				maximizeTag);
+				maximizeTag, EModelService.PRESENTATION);
 		if (curMax.size() > 0) {
 			MUIElement maxElement = curMax.get(0);
 			List<MUIElement> elementsLeftToRestore = getElementsToRestore(maxElement);
