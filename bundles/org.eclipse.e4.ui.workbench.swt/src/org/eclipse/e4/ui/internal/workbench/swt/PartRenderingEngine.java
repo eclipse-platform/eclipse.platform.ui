@@ -1323,7 +1323,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				}
 			});
 
-			themeEngine.restore(cssTheme);
+			setCSSTheme(display, themeEngine, cssTheme);
 
 		} else if (cssURI != null) {
 			String cssResourcesURI = (String) appContext
@@ -1430,6 +1430,15 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 		appContext.set(IThemeEngine.class.getName(), themeEngine);
 		return themeEngine;
+	}
+
+	private static void setCSSTheme(Display display, IThemeEngine themeEngine,
+			String cssTheme) {
+		if (display.getHighContrast()) {
+			themeEngine.setTheme(cssTheme, false);
+		} else {
+			themeEngine.restore(cssTheme);
+		}
 	}
 
 	public static class StylingPreferencesHandler implements EventHandler {

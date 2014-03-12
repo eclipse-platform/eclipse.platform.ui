@@ -36,6 +36,7 @@ import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -90,6 +91,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 	private ControlDecoration colorFontsDecorator;
 	private ColorsAndFontsTheme currentColorsAndFontsTheme;
 	private Map<String, String> themeAssociations;
+	private boolean highContrastMode;
 
 	@Override
 	protected Control createContents(Composite parent) {
@@ -100,6 +102,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 		layout.horizontalSpacing = 10;
 		comp.setLayout(layout);
 		new Label(comp, SWT.NONE).setText(WorkbenchMessages.ViewsPreferencePage_Theme);
+		highContrastMode = parent.getDisplay().getHighContrast();
 
 		themeIdCombo = new ComboViewer(comp, SWT.READ_ONLY);
 		themeIdCombo.setLabelProvider(new LabelProvider() {
@@ -109,7 +112,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 			}
 		});
 		themeIdCombo.setContentProvider(new ArrayContentProvider());
-		themeIdCombo.setInput(engine.getThemes());
+		themeIdCombo.setInput(getCSSThemes(highContrastMode));
+		themeIdCombo.getCombo().setEnabled(!highContrastMode);
 		themeIdCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.currentTheme = engine.getActiveTheme();
 		if (this.currentTheme != null) {
@@ -164,6 +168,29 @@ public class ViewsPreferencePage extends PreferencePage implements
 		return comp;
 	}
 
+	private List<ITheme> getCSSThemes(boolean highContrastMode) {
+		List<ITheme> themes = new ArrayList<ITheme>();
+		for (ITheme theme : engine.getThemes()) {
+			/*
+			 * When we have Win32 OS - when the high contrast mode is enabled on
+			 * the platform, we display the 'high-contrast' special theme only.
+			 * If not, we don't want to mess the themes combo with the theme
+			 * since it is the special variation of the 'classic' one
+			 * 
+			 * When we have GTK - we have to display the entire list of the
+			 * themes since we are not able to figure out if the high contrast
+			 * mode is enabled on the platform. The user has to manually select
+			 * the theme if they need it
+			 */
+			if (!highContrastMode && !Util.isGtk()
+					&& theme.getId().equals(E4Application.HIGH_CONTRAST_THEME_ID)) {
+				continue;
+			}
+			themes.add(theme);
+		}
+		return themes;
+	}
+
 	private void createColoredLabelsPref(Composite composite) {
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
@@ -206,7 +233,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 	public boolean performOk() {
 		ITheme theme = getSelectedTheme();
 		if (theme != null) {
-			engine.setTheme(getSelectedTheme(), true);
+			engine.setTheme(getSelectedTheme(), !highContrastMode);
 		}
 
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
