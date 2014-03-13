@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ltk.ui.refactoring.tests;singleton:=true
 Bundle-Version: 3.7.100.qualifier
-Bundle-ClassPath: refuitests.jar
 Bundle-Activator: org.eclipse.ltk.ui.refactoring.tests.RefactoringUITestPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
