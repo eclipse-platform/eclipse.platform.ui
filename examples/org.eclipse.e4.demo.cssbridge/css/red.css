@@ -1,0 +1,51 @@
+/*******************************************************************************
+ * Copyright (c) 2014 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+ 
+@import url("common.css");
+
+/* for IDs see the class: org.eclipse.e4.demo.cssbridge.ui.views.Theme.Shell */
+ColorDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-shell-background {
+	color: #ffe0c4;
+}
+ColorDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-shell-seletion-foreground {
+	color: yellow;
+}
+ColorDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-shell-seletion-background {
+	color: #f8cd00;
+}
+ColorDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-shell-text-and-label-foreground {
+	color: #ff8900;
+}
+ColorDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-shell-link-foreground {
+	color: #ff8900;
+}
+
+/* for IDs see the class: org.eclipse.e4.demo.cssbridge.ui.views.Theme.FoldersView */
+ColorDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-foldersview-mailbox-name-foreground {
+	color: #ff0000;
+}
+
+ColorDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-foldersview-folder-type-foreground {
+	color: #ff8900;
+}
+
+/* for IDs see the class: org.eclipse.e4.demo.cssbridge.ui.views.Theme.FolderPreviewView */
+ColorDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-folderpreviewview-low-imp-mail-foreground {
+	color: #ffb36e;
+}
+
+ColorDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-folderpreviewview-normal-imp-mail-foreground {
+	color: #ff8900;
+}
+
+ColorDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-folderpreviewview-high-imp-mail-foreground {
+	color: #ff0000;
+}

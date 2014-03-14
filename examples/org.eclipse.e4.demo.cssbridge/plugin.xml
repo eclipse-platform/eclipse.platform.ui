@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.eclipse.e4.demo.cssbridge.ui.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="CSS bridge demo perspective"
+            class="org.eclipse.e4.demo.cssbridge.ui.Perspective"
+            id="org.eclipse.e4.demo.cssbridge.ui.perspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="FolderPreviewView"
+            allowMultiple="false"
+            class="org.eclipse.e4.demo.cssbridge.ui.views.FolderPreviewView"
+            id="org.eclipse.e4.demo.cssbridge.ui.views.folderPreviewView">
+      </view>
+      <view
+            name="FoldersView"
+            allowMultiple="false"
+            class="org.eclipse.e4.demo.cssbridge.ui.views.FoldersView"
+            id="org.eclipse.e4.demo.cssbridge.ui.views.foldersView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="Mail"
+            id="org.eclipse.e4.demo.cssbridge.css.theme.switcher.category">
+      </category>
+	  <command
+            name="Switch to the 'Empty' CSS theme"
+            description="Switching to the 'Empty' CSS theme (without CSS styling)"
+            categoryId="org.eclipse.e4.demo.cssbridge.css.theme.switcher.category"
+            id="org.eclipse.e4.demo.cssbridge.switch.to.empty.css.theme">
+      </command>
+      <command
+            name="Switch to the 'Blue' CSS theme"
+            description="Switching to the 'Blue' CSS theme"
+            categoryId="org.eclipse.e4.demo.cssbridge.css.theme.switcher.category"
+            id="org.eclipse.e4.demo.cssbridge.switch.to.blue.css.theme">
+      </command>
+      <command
+            name="Switch to the 'Green' CSS theme"
+            description="Switching to the 'Green' CSS theme"
+            categoryId="org.eclipse.e4.demo.cssbridge.css.theme.switcher.category"
+            id="org.eclipse.e4.demo.cssbridge.switch.to.green.css.theme">
+      </command>
+      <command
+            name="Switch to the 'Red' CSS theme"
+            description="Switching to the 'Red' CSS theme"
+            categoryId="org.eclipse.e4.demo.cssbridge.css.theme.switcher.category"
+            id="org.eclipse.e4.demo.cssbridge.switch.to.red.css.theme">
+      </command>            
+   </extension>
+   
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.e4.demo.cssbridge.application"
+            name="The CSS bridge demo application">
+         <property
+               name="windowImages"
+               value="icons/app.gif">
+         </property>
+         <property
+               name="cssTheme"
+               value="org.eclipse.e4.demo.cssbridge.empty.theme">
+         </property>
+      </product>
+   </extension>
+   
+   
+   <!-- The CSS theme definition -->
+   <extension point="org.eclipse.e4.ui.css.swt.theme">
+      <theme
+            basestylesheeturi="css/empty.css"
+            id="org.eclipse.e4.demo.cssbridge.empty.theme"
+            label="%org.eclipse.e4.demo.cssbridge.empty.theme">
+      </theme>
+      <theme
+            basestylesheeturi="css/blue.css"
+            id="org.eclipse.e4.demo.cssbridge.blue.theme"
+            label="%org.eclipse.e4.demo.cssbridge.blue.theme">
+      </theme>
+      <theme
+            basestylesheeturi="css/green.css"
+            id="org.eclipse.e4.demo.cssbridge.green.theme"
+            label="%org.eclipse.e4.demo.cssbridge.green.theme">
+      </theme>
+      <theme
+            basestylesheeturi="css/red.css"
+            id="org.eclipse.e4.demo.cssbridge.red.theme"
+            label="%org.eclipse.e4.demo.cssbridge.red.theme">
+      </theme>
+   </extension>
+   
+   <!-- The 3.x theme definition -->
+   <extension point="org.eclipse.ui.themes">
+      <themeElementCategory
+            id="org.eclipse.e4.demo.cssbridge.ui.views.Theme"
+            label="%org.eclipse.e4.demo.cssbridge.ui.views.Theme"/>
+            
+      <!-- for IDs see the class: org.eclipse.e4.demo.cssbridge.ui.views.Shell -->
+      <colorDefinition
+        	id="org.eclipse.e4.demo.cssbridge.ui.views.theme.shell.seletion.foreground"
+        	categoryId="org.eclipse.e4.demo.cssbridge.ui.views.Theme"
+        	label="%org.eclipse.e4.demo.cssbridge.ui.views.theme.shell.seletion.foreground"
+        	value="COLOR_LIST_SELECTION_TEXT">       
+      </colorDefinition>
+      <colorDefinition
+        	id="org.eclipse.e4.demo.cssbridge.ui.views.theme.shell.seletion.background"
+        	categoryId="org.eclipse.e4.demo.cssbridge.ui.views.Theme"
+        	label="%org.eclipse.e4.demo.cssbridge.ui.views.theme.shell.seletion.background"
+        	value="COLOR_LIST_SELECTION">       
+      </colorDefinition>
+      <colorDefinition
+        	id="org.eclipse.e4.demo.cssbridge.ui.views.theme.shell.text.and.label.foreground"
+        	categoryId="org.eclipse.e4.demo.cssbridge.ui.views.Theme"
+        	label="%org.eclipse.e4.demo.cssbridge.ui.views.theme.shell.text.and.label.foreground"
+        	value="COLOR_WIDGET_FOREGROUND">       
+      </colorDefinition>  
+      <colorDefinition
+        	id="org.eclipse.e4.demo.cssbridge.ui.views.theme.shell.link.foreground"
+        	categoryId="org.eclipse.e4.demo.cssbridge.ui.views.Theme"
+        	label="%org.eclipse.e4.demo.cssbridge.ui.views.theme.shell.link.foreground"
+        	value="COLOR_LINK_FOREGROUND">       
+      </colorDefinition>            
+                      
+      <!-- for IDs see the class: org.eclipse.e4.demo.cssbridge.ui.views.Theme.FoldersView -->
+      <fontDefinition
+            id="org.eclipse.e4.demo.cssbridge.ui.views.theme.foldersview.mailbox.name.font"
+            categoryId="org.eclipse.e4.demo.cssbridge.ui.views.Theme"
+            label="%org.eclipse.e4.demo.cssbridge.ui.views.theme.foldersview.mailbox.name.font"
+            defaultsTo="org.eclipse.jface.dialogfont">
+      </fontDefinition>
+      <colorDefinition
+        	id="org.eclipse.e4.demo.cssbridge.ui.views.theme.foldersview.mailbox.name.foreground"
+        	categoryId="org.eclipse.e4.demo.cssbridge.ui.views.Theme"
+        	label="%org.eclipse.e4.demo.cssbridge.ui.views.theme.foldersview.mailbox.name.foreground"
+        	value="COLOR_LIST_FOREGROUND">       
+      </colorDefinition>
+      
+      <fontDefinition
+            id="org.eclipse.e4.demo.cssbridge.ui.views.theme.foldersview.folder.type.font"
+            categoryId="org.eclipse.e4.demo.cssbridge.ui.views.Theme"
+            label="%org.eclipse.e4.demo.cssbridge.ui.views.theme.foldersview.folder.type.font"
+            defaultsTo="org.eclipse.jface.defaultfont">
+      </fontDefinition>
+      <colorDefinition
+        	id="org.eclipse.e4.demo.cssbridge.ui.views.theme.foldersview.folder.type.foreground"
+        	categoryId="org.eclipse.e4.demo.cssbridge.ui.views.Theme"
+        	label="%org.eclipse.e4.demo.cssbridge.ui.views.theme.foldersview.type.foreground"
+        	value="COLOR_LIST_FOREGROUND">       
+      </colorDefinition>
+      
+      <!-- for IDs see the class: org.eclipse.e4.demo.cssbridge.ui.views.Theme.FolderPreviewView -->
+      <fontDefinition
+            id="org.eclipse.e4.demo.cssbridge.ui.views.theme.folderpreviewview.low.imp.mail.font"
+            categoryId="org.eclipse.e4.demo.cssbridge.ui.views.Theme"
+            label="%org.eclipse.e4.demo.cssbridge.ui.views.theme.folderpreviewview.low.imp.mail.font"
+            defaultsTo="org.eclipse.jface.defaultfont">
+      </fontDefinition>
+      <colorDefinition
+        	id="org.eclipse.e4.demo.cssbridge.ui.views.theme.folderpreviewview.low.imp.mail.foreground"
+        	categoryId="org.eclipse.e4.demo.cssbridge.ui.views.Theme"
+        	label="%org.eclipse.e4.demo.cssbridge.ui.views.theme.folderpreviewview.low.imp.mail.foreground"
+        	value="COLOR_LIST_FOREGROUND">       
+      </colorDefinition>
+      
+      <fontDefinition
+            id="org.eclipse.e4.demo.cssbridge.ui.views.theme.folderpreviewview.normal.imp.mail.font"
+            categoryId="org.eclipse.e4.demo.cssbridge.ui.views.Theme"
+            label="%org.eclipse.e4.demo.cssbridge.ui.views.theme.folderpreviewview.normal.imp.mail.font"
+            defaultsTo="org.eclipse.jface.defaultfont">
+      </fontDefinition>
+      <colorDefinition
+        	id="org.eclipse.e4.demo.cssbridge.ui.views.theme.folderpreviewview.normal.imp.mail.foreground"
+        	categoryId="org.eclipse.e4.demo.cssbridge.ui.views.Theme"
+        	label="%org.eclipse.e4.demo.cssbridge.ui.views.theme.folderpreviewview.normal.imp.mail.foreground"
+        	value="COLOR_LIST_FOREGROUND">       
+      </colorDefinition>
+      
+      <fontDefinition
+            id="org.eclipse.e4.demo.cssbridge.ui.views.theme.folderpreviewview.high.imp.mail.font"
+            categoryId="org.eclipse.e4.demo.cssbridge.ui.views.Theme"
+            label="%org.eclipse.e4.demo.cssbridge.ui.views.theme.folderpreviewview.high.imp.mail.font"
+            defaultsTo="org.eclipse.jface.defaultfont">
+      </fontDefinition>
+      <colorDefinition
+        	id="org.eclipse.e4.demo.cssbridge.ui.views.theme.folderpreviewview.high.imp.mail.foreground"
+        	categoryId="org.eclipse.e4.demo.cssbridge.ui.views.Theme"
+        	label="%org.eclipse.e4.demo.cssbridge.ui.views.theme.folderpreviewview.high.imp.mail.foreground"
+        	value="COLOR_LIST_FOREGROUND">       
+      </colorDefinition>
+   </extension>
+
+</plugin>
