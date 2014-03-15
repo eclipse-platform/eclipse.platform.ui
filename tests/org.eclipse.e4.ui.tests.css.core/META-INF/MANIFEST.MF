@@ -9,8 +9,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swt,
  org.eclipse.e4.ui.css.core,
  org.eclipse.e4.ui.css.swt,
- org.w3c.css.sac,
- org.eclipse.core.tests.harness
+ org.w3c.css.sac
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Eclipse-BundleShape: dir
