@@ -27,7 +27,7 @@
 				value="%introDescription-tutorials"/>
 		  <property
 				name="introDescription-samples"
-				value="%introDescription-samples"/>                
+				value="%introDescription-samples"/>
 		  <property
 				name="applicationXMI"
 				value="org.eclipse.platform/LegacyIDE.e4xmi">
@@ -61,7 +61,7 @@
 
       </product> 
    </extension> 
-   
+
    	<extension
 		point="org.eclipse.ui.intro">
       <introProductBinding
