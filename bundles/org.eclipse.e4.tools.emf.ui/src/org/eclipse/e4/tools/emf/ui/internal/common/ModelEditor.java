@@ -496,33 +496,26 @@ public class ModelEditor {
 		viewer = createTreeViewerArea(form);
 
 		Composite parent = new Composite(form, SWT.NONE);
-		parent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		parent.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		// parent.setData("org.eclipse.e4.ui.css.CssClassName","contentContainer");
 		FillLayout l = new FillLayout();
-		l.marginWidth = 5;
 		parent.setLayout(l);
 
 		ShadowComposite editingArea = new ShadowComposite(parent, SWT.NONE);
 		GridLayout gl = new GridLayout();
-		gl.marginTop = 0;
-		gl.marginHeight = 0;
 		editingArea.setLayout(gl);
-		editingArea.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		// editingArea.setData("org.eclipse.e4.ui.css.CssClassName","contentContainer");
 
 		Composite headerContainer = new Composite(editingArea, SWT.NONE);
-		headerContainer.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		headerContainer.setData(CSS_CLASS_KEY, "headerSectionContainer"); //$NON-NLS-1$
 		headerContainer.setLayout(new GridLayout(3, false));
 		headerContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		final Label iconLabel = new Label(headerContainer, SWT.NONE);
 		iconLabel.setLayoutData(new GridData(20, 20));
 
-		final Label textLabel = new Label(headerContainer, SWT.NONE);
-		textLabel.setData(CSS_CLASS_KEY, "sectionHeader"); //$NON-NLS-1$
-		textLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		final Label sectionHeaderLabel = new Label(headerContainer, SWT.NONE);
+		sectionHeaderLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		final Label separatorLabel = new Label(headerContainer, SWT.SEPARATOR | SWT.HORIZONTAL);
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+		separatorLabel.setLayoutData(gridData);
 
 		final StackLayout layout = new StackLayout();
 		final Composite contentContainer = new Composite(editingArea, SWT.NONE);
@@ -558,7 +551,7 @@ public class ModelEditor {
 						final AbstractComponentEditor editor = getEditor(obj.eClass());
 						if (editor != null) {
 							currentEditor = editor;
-							textLabel.setText(editor.getLabel(obj));
+							sectionHeaderLabel.setText(editor.getLabel(obj));
 							iconLabel.setImage(editor.getImage(obj, iconLabel.getDisplay()));
 							obsManager.runAndCollect(new Runnable() {
 
@@ -576,7 +569,7 @@ public class ModelEditor {
 						final AbstractComponentEditor editor = virtualEditors.get(entry.getId());
 						if (editor != null) {
 							currentEditor = editor;
-							textLabel.setText(editor.getLabel(entry));
+							sectionHeaderLabel.setText(editor.getLabel(entry));
 							iconLabel.setImage(editor.getImage(entry, iconLabel.getDisplay()));
 							obsManager.runAndCollect(new Runnable() {
 
