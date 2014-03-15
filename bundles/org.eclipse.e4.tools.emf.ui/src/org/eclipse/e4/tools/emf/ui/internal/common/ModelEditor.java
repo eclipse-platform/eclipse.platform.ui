@@ -62,7 +62,6 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
-import org.eclipse.e4.tools.emf.ui.internal.ShadowComposite;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.AddonsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ApplicationEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.AreaEditor;
@@ -499,7 +498,7 @@ public class ModelEditor {
 		FillLayout l = new FillLayout();
 		parent.setLayout(l);
 
-		ShadowComposite editingArea = new ShadowComposite(parent, SWT.NONE);
+		Composite editingArea = new Composite(parent, SWT.BORDER);
 		GridLayout gl = new GridLayout();
 		editingArea.setLayout(gl);
 
@@ -988,7 +987,7 @@ public class ModelEditor {
 
 	private TreeViewer createTreeViewerArea(Composite parent) {
 
-		final ShadowComposite treeArea = new ShadowComposite(parent, SWT.NONE);
+		final Composite treeArea = new Composite(parent, SWT.BORDER);
 
 		treeArea.setLayout(new FillLayout());
 		treeArea.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
