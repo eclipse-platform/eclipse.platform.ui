@@ -55,7 +55,6 @@ import org.eclipse.e4.tools.emf.ui.common.IExtensionLookup;
 import org.eclipse.e4.tools.emf.ui.common.IModelExtractor;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.IScriptingSupport;
-import org.eclipse.e4.tools.emf.ui.common.ISelectionProviderService;
 import org.eclipse.e4.tools.emf.ui.common.MemoryTransfer;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -154,6 +153,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.e4.ui.workbench.swt.internal.copy.FilteredTree;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFProperties;
@@ -275,7 +275,10 @@ public class ModelEditor {
 	private TreeViewer viewer;
 	private IModelResource modelProvider;
 	private IProject project;
-	private ISelectionProviderService selectionService;
+
+	@Inject
+	ESelectionService selectionService;
+
 	private IEclipseContext context;
 	private boolean fragment;
 	private Handler clipboardHandler;
@@ -973,16 +976,6 @@ public class ModelEditor {
 		}
 
 		return list;
-	}
-
-	@Inject
-	public void setSelectionService(@Optional ISelectionProviderService selectionService) {
-		this.selectionService = selectionService;
-		if (viewer != null && !viewer.getControl().isDisposed()) {
-			if (!viewer.getSelection().isEmpty() && selectionService != null) {
-				selectionService.setSelection(((IStructuredSelection) viewer.getSelection()).getFirstElement());
-			}
-		}
 	}
 
 	private TreeViewer createTreeViewerArea(Composite parent) {
