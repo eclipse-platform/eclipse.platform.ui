@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Table;
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  *
  */
-public class Snippet034CellEditorPerRowNewAPI {
+public class Snippet034CellEditorPerRow {
 	private class MyEditingSupport extends EditingSupport {
 		private CellEditor textEditor;
 
@@ -145,7 +145,7 @@ public class Snippet034CellEditorPerRowNewAPI {
 		}
 	}
 
-	public Snippet034CellEditorPerRowNewAPI(Shell shell) {
+	public Snippet034CellEditorPerRow(Shell shell) {
 		final Table table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
 
 		final TableViewer v = new TableViewer(table);
@@ -191,7 +191,7 @@ public class Snippet034CellEditorPerRowNewAPI {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		new Snippet034CellEditorPerRowNewAPI(shell);
+		new Snippet034CellEditorPerRow(shell);
 		shell.open();
 
 		while (!shell.isDisposed()) {
