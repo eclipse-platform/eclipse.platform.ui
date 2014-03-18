@@ -1,9 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.core.runtime" version="2">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.core.runtime" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="javax.annotation.ManagedBean">
+        <filter comment="Bug 430640: API Tools errors in org.eclipse.core.runtime with 4.3.2 as baseline" id="305422471">
+            <message_arguments>
+                <message_argument value="javax.annotation.ManagedBean"/>
+                <message_argument value="org.eclipse.core.runtime_3.9.100"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.osgi.event.BatchBundleListener">
         <filter comment="Bug 407302: Remove org.eclipse.osgi.event API package" id="305422471">
             <message_arguments>
                 <message_argument value="org.eclipse.osgi.event.BatchBundleListener"/>
-                <message_argument value="org.eclipse.core.runtime_3.9.0"/>
+                <message_argument value="org.eclipse.core.runtime_3.9.100"/>
             </message_arguments>
         </filter>
     </resource>
