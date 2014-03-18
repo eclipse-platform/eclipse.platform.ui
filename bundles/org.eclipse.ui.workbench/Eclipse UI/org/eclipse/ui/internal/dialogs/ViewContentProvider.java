@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 20014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -29,10 +28,10 @@ import org.eclipse.ui.views.IViewRegistry;
 public class ViewContentProvider implements ITreeContentProvider {
 
     /**
-     * Child cache.  Map from Object->Object[].  Our hasChildren() method is 
-     * expensive so it's better to cache the results of getChildren().
-     */
-    private Map childMap = new HashMap();
+	 * Child cache. Map from Object->Object[]. Our hasChildren() method is
+	 * expensive so it's better to cache the results of getChildren().
+	 */
+    private Map<Object, Object[]> childMap = new HashMap<Object, Object[]>();
 
     /**
      * Create a new instance of the ViewContentProvider.
@@ -41,22 +40,14 @@ public class ViewContentProvider implements ITreeContentProvider {
         //no-op
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-     */
-    public void dispose() {
+    @Override
+	public void dispose() {
         childMap.clear();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-     */
-    public Object[] getChildren(Object element) {
-        Object[] children = (Object[]) childMap.get(element);
+    @Override
+	public Object[] getChildren(Object element) {
+        Object[] children = childMap.get(element);
         if (children == null) {
             children = createChildren(element);
             childMap.put(element, children);
@@ -65,16 +56,14 @@ public class ViewContentProvider implements ITreeContentProvider {
     }
 
     /**
-     * Does the actual work of getChildren.
-     * 
-     * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-     */
+	 * Does the actual work of getChildren.
+	 */
     private Object[] createChildren(Object element) {
         if (element instanceof IViewRegistry) {
             IViewRegistry reg = (IViewRegistry) element;
             IViewCategory [] categories = reg.getCategories();
 
-            ArrayList filtered = new ArrayList();
+			ArrayList<IViewCategory> filtered = new ArrayList<IViewCategory>();
             for (int i = 0; i < categories.length; i++) {
                 if (!hasChildren(categories[i])) {
 					continue;
@@ -82,7 +71,7 @@ public class ViewContentProvider implements ITreeContentProvider {
 
                 filtered.add(categories[i]);
             }
-            categories = (IViewCategory[]) filtered.toArray(new IViewCategory[filtered
+			categories = filtered.toArray(new IViewCategory[filtered
                     .size()]);
 
             // if there is only one category, return it's children directly
@@ -93,7 +82,7 @@ public class ViewContentProvider implements ITreeContentProvider {
         } else if (element instanceof IViewCategory) {
             IViewDescriptor [] views = ((IViewCategory) element).getViews();
             if (views != null) {
-                ArrayList filtered = new ArrayList();
+                ArrayList<Object> filtered = new ArrayList<Object>();
                 for (int i = 0; i < views.length; i++) {
                     Object o = views[i];
                     if (WorkbenchActivityHelper.filterItem(o)) {
@@ -109,15 +98,16 @@ public class ViewContentProvider implements ITreeContentProvider {
     }
 
     /**
-     * Removes the temporary intro view from the list so that it cannot be activated except through
-     * the introduction command.
-     *  
-     * @param list the list of view descriptors
-     * @return the modified list.
-     * @since 3.0
-     */
-    private ArrayList removeIntroView(ArrayList list) {
-        for (Iterator i = list.iterator(); i.hasNext();) {
+	 * Removes the temporary intro view from the list so that it cannot be
+	 * activated except through the introduction command.
+	 *
+	 * @param list
+	 *            the list of view descriptors
+	 * @return the modified list.
+	 * @since 3.0
+	 */
+    private ArrayList<Object> removeIntroView(ArrayList<Object> list) {
+        for (Iterator<Object> i = list.iterator(); i.hasNext();) {
             IViewDescriptor view = (IViewDescriptor) i.next();
             if (view.getId().equals(IIntroConstants.INTRO_VIEW_ID)) {
                 i.remove();
@@ -126,30 +116,18 @@ public class ViewContentProvider implements ITreeContentProvider {
         return list;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-     */
-    public Object[] getElements(Object element) {
+    @Override
+	public Object[] getElements(Object element) {
         return getChildren(element);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-     */
-    public Object getParent(Object element) {
+    @Override
+	public Object getParent(Object element) {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-     */
-    public boolean hasChildren(java.lang.Object element) {
+    @Override
+	public boolean hasChildren(java.lang.Object element) {
         if (element instanceof IViewRegistry) {
 			return true;
 		} else if (element instanceof IViewCategory) {
@@ -160,13 +138,8 @@ public class ViewContentProvider implements ITreeContentProvider {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-     *      java.lang.Object, java.lang.Object)
-     */
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    @Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         childMap.clear();
     }
 }
