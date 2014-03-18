@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -163,6 +163,7 @@ public class ViewRegistry implements IViewRegistry {
 		}
 	}
 
+	@Override
 	public IViewDescriptor find(String id) {
 		IViewDescriptor candidate = descriptors.get(id);
 		if (WorkbenchActivityHelper.restrictUseOf(candidate)) {
@@ -171,31 +172,19 @@ public class ViewRegistry implements IViewRegistry {
 		return candidate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.IViewRegistry#getCategories()
-	 */
+	@Override
 	public IViewCategory[] getCategories() {
 		return categories.values().toArray(new IViewCategory[categories.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.IViewRegistry#getViews()
-	 */
+	@Override
 	public IViewDescriptor[] getViews() {
 		Collection<?> allowedViews = WorkbenchActivityHelper.restrictCollection(
 				descriptors.values(), new ArrayList<Object>());
 		return allowedViews.toArray(new IViewDescriptor[allowedViews.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.IViewRegistry#getStickyViews()
-	 */
+	@Override
 	public IStickyViewDescriptor[] getStickyViews() {
 		Collection<?> allowedViews = WorkbenchActivityHelper.restrictCollection(stickyDescriptors,
 				new ArrayList<Object>());
@@ -203,7 +192,7 @@ public class ViewRegistry implements IViewRegistry {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void dispose() {
 
@@ -212,7 +201,7 @@ public class ViewRegistry implements IViewRegistry {
 	/**
 	 * Returns the {@link ViewCategory} for the given id or <code>null</code> if
 	 * one cannot be found or the id is <code>null</code>
-	 * 
+	 *
 	 * @param id
 	 *            the {@link ViewCategory} id
 	 * @return the {@link ViewCategory} with the given id or <code>null</code>
