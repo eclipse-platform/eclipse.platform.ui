@@ -5,6 +5,4 @@
    <extension-point id="org.eclipse.e4.ui.css.core.propertyHandler" name="%extension-point.properties.name" schema="schema/org.eclipse.e4.ui.css.core.propertyHandler.exsd"/>
 
    <!-- Following extension points are deprecated and will be removed -->
-   <extension-point id="org.eclipse.e4.u.css.core.elementProvider" name="DEPRECATED: use org.eclipse.e4.ui.css.core.elementProvider"/>
-   <extension-point id="org.eclipse.e4.ui.css.swt.property.handler" name="DEPRECATED: use org.eclipse.e4.ui.css.core.propertyHandler"/>
 </plugin>
