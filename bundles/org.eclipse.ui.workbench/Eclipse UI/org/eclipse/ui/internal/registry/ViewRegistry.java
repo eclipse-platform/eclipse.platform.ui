@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430616
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -25,7 +26,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
-import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
@@ -45,10 +46,14 @@ public class ViewRegistry implements IViewRegistry {
 	private MApplication application;
 
 	@Inject
+	private EModelService modelService;
+
+	@Inject
 	private IExtensionRegistry extensionRegistry;
 
 	@Inject
 	private IWorkbench workbench;
+
 
 	private Map<String, IViewDescriptor> descriptors = new HashMap<String, IViewDescriptor>();
 
@@ -109,7 +114,7 @@ public class ViewRegistry implements IViewRegistry {
 			}
 		}
 		if (descriptor == null) { // create a new descriptor
-			descriptor = BasicFactoryImpl.eINSTANCE.createPartDescriptor();
+			descriptor = modelService.createModelElement(MPartDescriptor.class);
 			descriptor.setElementId(id);
 			application.getDescriptors().add(descriptor);
 		}
