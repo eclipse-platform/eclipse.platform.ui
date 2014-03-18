@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,7 +105,8 @@ public class ShowViewDialog extends Dialog implements
     /**
      * This method is called if a button has been pressed.
      */
-    protected void buttonPressed(int buttonId) {
+    @Override
+	protected void buttonPressed(int buttonId) {
         if (buttonId == IDialogConstants.OK_ID) {
 			saveWidgetValues();
 		}
@@ -115,17 +116,14 @@ public class ShowViewDialog extends Dialog implements
     /**
      * Notifies that the cancel button of this dialog has been pressed.
      */
-    protected void cancelPressed() {
+    @Override
+	protected void cancelPressed() {
         viewDescs = new IViewDescriptor[0];
         super.cancelPressed();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-     */
-    protected void configureShell(Shell shell) {
+    @Override
+	protected void configureShell(Shell shell) {
         super.configureShell(shell);
         shell.setText(WorkbenchMessages.ShowView_shellTitle);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
@@ -142,7 +140,8 @@ public class ShowViewDialog extends Dialog implements
      * 
      * @param parent the button bar composite
      */
-    protected void createButtonsForButtonBar(Composite parent) {
+    @Override
+	protected void createButtonsForButtonBar(Composite parent) {
         okButton = createButton(parent, IDialogConstants.OK_ID,
 				JFaceResources.getString(IDialogLabelKeys.OK_LABEL_KEY), true);
         createButton(parent, IDialogConstants.CANCEL_ID,
@@ -157,7 +156,8 @@ public class ShowViewDialog extends Dialog implements
      * @param parent the parent composite to contain the dialog area
      * @return the dialog area control
      */
-    protected Control createDialogArea(Composite parent) {
+    @Override
+	protected Control createDialogArea(Composite parent) {
         // Run super.
         Composite composite = (Composite) super.createDialogArea(parent);
         composite.setFont(parent.getFont());
@@ -224,6 +224,7 @@ public class ShowViewDialog extends Dialog implements
 		RGB dimmedRGB = blend(treeControl.getForeground().getRGB(), treeControl.getBackground().getRGB(), 60);
 		dimmedForeground = new Color(treeControl.getDisplay(), dimmedRGB);
 		treeControl.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				dimmedForeground.dispose();
 			}
@@ -237,7 +238,8 @@ public class ShowViewDialog extends Dialog implements
 		treeViewer.addDoubleClickListener(this);
 		treeViewer.addFilter(new CapabilityFilter());
 		treeViewer.getControl().addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
+            @Override
+			public void keyPressed(KeyEvent e) {
                 handleTreeViewerKeyPressed(e);
             }
         });
@@ -271,11 +273,7 @@ public class ShowViewDialog extends Dialog implements
 		return false;
 	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
-     */
+	@Override
     public void doubleClick(DoubleClickEvent event) {
         IStructuredSelection s = (IStructuredSelection) event.getSelection();
         Object element = s.getFirstElement();
@@ -393,7 +391,8 @@ public class ShowViewDialog extends Dialog implements
      * 
      * @param event event object describing the change
      */
-    public void selectionChanged(SelectionChangedEvent event) {
+    @Override
+	public void selectionChanged(SelectionChangedEvent event) {
         updateSelection(event);
         updateButtons();
 		descriptionHint.setVisible(viewDescs.length == 1
@@ -426,11 +425,7 @@ public class ShowViewDialog extends Dialog implements
     }
 
 
-	/* (non-Javadoc)
-     * @see org.eclipse.jface.window.Dialog#getDialogBoundsSettings()
-     * 
-     * @since 3.4
-     */
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
         return getDialogSettings();
 	}
@@ -459,6 +454,7 @@ public class ShowViewDialog extends Dialog implements
 				true, false, false, false, false, null, null) {
 			private static final int CURSOR_SIZE = 15;
 
+			@Override
 			protected Point getInitialLocation(Point initialSize) {
 				//show popup relative to cursor
 				Display display = getShell().getDisplay();
@@ -468,10 +464,12 @@ public class ShowViewDialog extends Dialog implements
 				return location;
 			}
 
+			@Override
 			protected Control createDialogArea(Composite parent) {
 				Label label = new Label(parent, SWT.WRAP);
 				label.setText(description);
 				label.addFocusListener(new FocusAdapter() {
+					@Override
 					public void focusLost(FocusEvent event) {
 						close();
 					}
@@ -486,11 +484,9 @@ public class ShowViewDialog extends Dialog implements
 			}
 		}.open();
 	}
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-     */
-    protected boolean isResizable() {
+
+	@Override
+	protected boolean isResizable() {
     	return true;
     }
 }
