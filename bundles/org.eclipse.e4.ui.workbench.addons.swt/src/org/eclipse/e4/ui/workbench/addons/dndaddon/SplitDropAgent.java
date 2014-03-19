@@ -352,13 +352,8 @@ public class SplitDropAgent extends DropAgent {
 			if (!dndManager.isModified) {
 				relTo = (MPartSashContainerElement) outerRelTo;
 			}
-		} else if (onEdge) {
+		} else if (getModified()) {
 			relTo = (MPartSashContainerElement) outerRelTo;
-			if (outerRelTo instanceof MPerspectiveStack) {
-				if (!getModified())
-					relTo = (MPartSashContainerElement) ((MPerspectiveStack) outerRelTo)
-							.getSelectedElement().getChildren().get(0);
-			}
 		}
 
 		if (dragElement instanceof MPartStack) {
