@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     dakshinamurthy.karra@gmail.com - bug 165371
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430127
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.model;
 
@@ -51,8 +52,8 @@ public class ExternalToolsImages {
 	 */
 	private static void declareImages() {		
 		// Objects
-		declareRegistryImage(IExternalToolConstants.IMG_TAB_MAIN, OBJECT + "main_tab.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolConstants.IMG_TAB_BUILD, OBJECT + "build_tab.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolConstants.IMG_TAB_MAIN, OBJECT + "main_tab.png"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolConstants.IMG_TAB_BUILD, OBJECT + "build_tab.png"); //$NON-NLS-1$
 	}
 
 	/**

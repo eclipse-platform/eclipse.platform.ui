@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430127
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.ui;
 
@@ -28,8 +29,8 @@ import org.eclipse.ui.externaltools.internal.ui.BuilderPropertyPage.ErrorConfig;
 
 
 class BuilderLabelProvider extends LabelProvider {
-		private static final String IMG_BUILDER = "icons/full/obj16/builder.gif"; //$NON-NLS-1$;
-		private static final String IMG_INVALID_BUILD_TOOL = "icons/full/obj16/invalid_build_tool.gif"; //$NON-NLS-1$
+		private static final String IMG_BUILDER = "icons/full/obj16/builder.png"; //$NON-NLS-1$;
+		private static final String IMG_INVALID_BUILD_TOOL = "icons/full/obj16/invalid_build_tool.png"; //$NON-NLS-1$
 		IDebugModelPresentation debugModelPresentation= DebugUITools.newDebugModelPresentation();
 
 		private Image builderImage = ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_BUILDER).createImage();

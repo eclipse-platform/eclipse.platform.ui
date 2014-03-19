@@ -36,7 +36,7 @@
          <action
                label="%Action.externalTools"
                style="pulldown"
-               icon="$nl$/icons/full/obj16/external_tools.gif"
+               icon="$nl$/icons/full/obj16/external_tools.png"
                class="org.eclipse.ui.externaltools.internal.menu.ExternalToolMenuDelegate"
                menubarPath="org.eclipse.ui.run/ExternalToolsGroup"
                id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateMenu">
@@ -45,7 +45,7 @@
                definitionId="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
                label="%Action.externalTools"
                style="pulldown"
-               icon="$nl$/icons/full/obj16/external_tools.gif"
+               icon="$nl$/icons/full/obj16/external_tools.png"
                tooltip="%Action.externalToolsTip"
                class="org.eclipse.ui.externaltools.internal.menu.ExternalToolMenuDelegate"
                toolbarPath="org.eclipse.debug.ui.launchActionSet/debug"
@@ -128,12 +128,12 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            icon="$nl$/icons/full/obj16/external_tools.gif"
+            icon="$nl$/icons/full/obj16/external_tools.png"
             configTypeID="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"
             id="org.eclipse.ui.externaltools.launchConfigurationTypeImage.program">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
-            icon="$nl$/icons/full/obj16/external_tools.gif"
+            icon="$nl$/icons/full/obj16/external_tools.png"
             configTypeID="org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType"
             id="org.eclipse.ui.externaltools.launchConfigurationTypeImage.program.builder">
       </launchConfigurationTypeImage>
@@ -144,7 +144,7 @@
             label="%ExternalToolsLaunchGroup.label"
             bannerImage="$nl$/icons/full/wizban/ext_tools_wiz.png"
             category="org.eclipse.ui.externaltools"
-            image="$nl$/icons/full/obj16/external_tools.gif"
+            image="$nl$/icons/full/obj16/external_tools.png"
             mode="run"
             id="org.eclipse.ui.externaltools.launchGroup"
             title="%ExternalToolsLaunchGroup.title">
@@ -153,7 +153,7 @@
             label="%ExternalToolsLaunchGroup.label"
             bannerImage="$nl$/icons/full/wizban/ext_tools_wiz.png"
             category="org.eclipse.ui.externaltools.builder"
-            image="$nl$/icons/full/obj16/external_tools.gif"
+            image="$nl$/icons/full/obj16/external_tools.png"
             public="false"
             mode="run"
             id="org.eclipse.ui.externaltools.launchGroup.builder">
