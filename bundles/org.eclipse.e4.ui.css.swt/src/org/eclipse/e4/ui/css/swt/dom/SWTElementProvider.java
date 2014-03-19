@@ -7,10 +7,10 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430639
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.dom;
 
-import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.dom.IElementProvider;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.custom.CTabFolder;
@@ -29,24 +29,23 @@ import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.Element;
 
 /**
+ * Returns the CSS class which is responsible for styling a SWT widget
+ *
+ * Registered via the "org.eclipse.e4.ui.css.core.elementProvider" extension
+ * point for the SWT widgets
+ *
+ *
+ *
  * {@link IElementProvider} SWT implementation to retrieve w3c Element
  * {@link SWTElement} linked to SWT widget.
- *
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
  *
  */
 public class SWTElementProvider implements IElementProvider {
 
 	public static final IElementProvider INSTANCE = new SWTElementProvider();
 
-
 	@Override
 	public Element getElement(Object element, CSSEngine engine) {
-		return createElement(element, engine);
-	}
-
-	public CSSStylableElement createElement(Object element, CSSEngine engine) {
 		if (element instanceof Text) {
 			return new TextElement((Text) element, engine);
 		}
