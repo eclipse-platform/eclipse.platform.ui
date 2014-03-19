@@ -184,6 +184,12 @@ public interface IPresentationEngine {
 	 */
 	public static final String CUSTOM_RENDERER_KEY = "Custom Renderer"; //$NON-NLS-1$	
 
+	/* When added to an element's 'tags' it enables the DND support for the element */
+	/**
+	 * @since 1.1
+	 */
+	public static final String DRAGGABLE = "Draggable"; //$NON-NLS-1$
+
 	/**
 	 * Creates and returns the UI element for the given model element.
 	 * 

@@ -48,6 +48,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.Selector;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.ElementContainer;
@@ -335,7 +336,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		Control renderedCtrl = newTB;
 		MUIElement parentElement = element.getParent();
 		if (parentElement instanceof MTrimBar) {
-			element.getTags().add("Draggable"); //$NON-NLS-1$
+			element.getTags().add(IPresentationEngine.DRAGGABLE);
 
 			setCSSInfo(element, newTB);
 

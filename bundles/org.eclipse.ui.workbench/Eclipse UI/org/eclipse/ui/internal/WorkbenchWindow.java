@@ -829,7 +829,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			switcherControl = MenuFactoryImpl.eINSTANCE.createToolControl();
 			switcherControl.setToBeRendered(getWindowConfigurer().getShowPerspectiveBar());
 			switcherControl.setElementId("PerspectiveSwitcher"); //$NON-NLS-1$
-			switcherControl.getTags().add("Draggable"); //$NON-NLS-1$
+			switcherControl.getTags().add(IPresentationEngine.DRAGGABLE);
 			switcherControl
 					.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
 			trimBar.getChildren().add(switcherControl);
@@ -1028,6 +1028,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			hsElement.setElementId("org.eclipse.ui.HeapStatus"); //$NON-NLS-1$
 			hsElement
 					.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.StandardTrim"); //$NON-NLS-1$
+			hsElement.getTags().add(IPresentationEngine.DRAGGABLE);
 			bottomTrim.getChildren().add(hsElement);
 		}
 		hsElement.setToBeRendered(getShowHeapStatus());
@@ -1038,7 +1039,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		if (pbElement == null) {
 			pbElement = MenuFactoryImpl.eINSTANCE.createToolControl();
 			pbElement.setElementId("org.eclipse.ui.ProgressBar"); //$NON-NLS-1$
-			pbElement.getTags().add("Draggable"); //$NON-NLS-1$
+			pbElement.getTags().add(IPresentationEngine.DRAGGABLE);
 			pbElement
 					.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.StandardTrim"); //$NON-NLS-1$
 			bottomTrim.getChildren().add(pbElement);
