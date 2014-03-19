@@ -55,6 +55,7 @@ public class EditorSite extends PartSite implements IEditorSite {
 		// EditorSite.
 		final IDragAndDropService editorDTService = new EditorSiteDragAndDropServiceImpl();
 		serviceLocator.registerService(IDragAndDropService.class, editorDTService);
+		serviceLocator.registerService(IEditorPart.class, (IEditorPart) getPart());
 	}
 	
     public void setActionBars(SubActionBars bars) {

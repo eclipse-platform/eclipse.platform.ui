@@ -236,6 +236,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 						getWorkbenchWindow(), this, null, null, 2));
 		// added back for legacy reasons
 		serviceLocator.registerService(IWorkbenchPartSite.class, this);
+		serviceLocator.registerService(IWorkbenchPart.class, getPart());
 
 		e4Context.set(IWorkbenchSiteProgressService.class.getName(), new ContextFunction() {
 			@Override
