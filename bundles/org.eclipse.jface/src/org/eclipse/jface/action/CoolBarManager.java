@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -100,11 +100,6 @@ public class CoolBarManager extends ContributionManager implements
         itemStyle = style;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.ICoolBarManager#add(org.eclipse.jface.action.IToolBarManager)
-     */
     @Override
 	public void add(IToolBarManager toolBarManager) {
         Assert.isNotNull(toolBarManager);
@@ -159,9 +154,6 @@ public class CoolBarManager extends ContributionManager implements
 
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.ContributionManager#checkDuplication(org.eclipse.jface.action.IContributionItem)
-     */
     @Override
 	protected boolean allowItem(IContributionItem itemToAdd) {
         /* We will allow as many null entries as they like, though there should
@@ -374,11 +366,6 @@ public class CoolBarManager extends ContributionManager implements
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.ICoolBarManager#isLayoutLocked()
-     */
     @Override
 	public IMenuManager getContextMenuManager() {
         return contextMenuManager;
@@ -407,11 +394,6 @@ public class CoolBarManager extends ContributionManager implements
         return list;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.ICoolBarManager#isLayoutLocked()
-     */
     @Override
 	public boolean getLockLayout() {
         if (!coolBarExist()) {
@@ -443,11 +425,6 @@ public class CoolBarManager extends ContributionManager implements
         return numRows;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.ICoolBarManager#getStyle()
-     */
     @Override
 	public int getStyle() {
         return itemStyle;
@@ -775,11 +752,6 @@ public class CoolBarManager extends ContributionManager implements
         setItems(itemsToSet);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.ICoolBarManager#setContextMenuManager(org.eclipse.jface.action.IMenuManager)
-     */
     @Override
 	public void setContextMenuManager(IMenuManager contextMenuManager) {
         this.contextMenuManager = (MenuManager) contextMenuManager;
@@ -808,11 +780,6 @@ public class CoolBarManager extends ContributionManager implements
         update(true);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.ICoolBarManager#lockLayout(boolean)
-     */
     @Override
 	public void setLockLayout(boolean value) {
         if (!coolBarExist()) {
