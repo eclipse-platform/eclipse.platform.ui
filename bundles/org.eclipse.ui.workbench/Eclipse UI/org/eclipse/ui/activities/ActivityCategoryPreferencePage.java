@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 20014 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -193,12 +193,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                     PlatformUI.PLUGIN_ID, "icons/full/ovr16/lock_ovr.png"); //$NON-NLS-1$
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object,
-         *      int)
-         */
+		@Override
         public Image getColumnImage(Object element, int columnIndex) {
             ICategory category = (ICategory) element;
             ImageDescriptor descriptor = PlatformUI.getWorkbench()
@@ -240,9 +235,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
             return name;
         }   
        
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
-         */
+		@Override
         public String getColumnText(Object element, int columnIndex) {
         	return getText(element);
         }
@@ -253,11 +246,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
             manager.dispose();
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.ui.activities.IActivityManagerListener#activityManagerChanged(org.eclipse.ui.activities.ActivityManagerEvent)
-         */
+		@Override
         public void activityManagerChanged(
                 ActivityManagerEvent activityManagerEvent) {
             if (activityManagerEvent.haveEnabledActivityIdsChanged()) {
@@ -269,32 +258,19 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
 
     private class CategoryContentProvider implements IStructuredContentProvider {
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-         */
+		@Override
         public Object[] getElements(Object inputElement) {
             // convert to category objects
             return WorkbenchActivityHelper.resolveCategories(workingCopy,
                     (Set) inputElement);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-         */
+		@Override
         public void dispose() {
 
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-         *      java.lang.Object, java.lang.Object)
-         */
+		@Override
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
         }
@@ -524,11 +500,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         categoryViewer
                 .addSelectionChangedListener(new ISelectionChangedListener() {
 
-                    /*
-                     * (non-Javadoc)
-                     * 
-                     * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-                     */
+                    @Override
                     public void selectionChanged(SelectionChangedEvent event) {
                         ICategory element = (ICategory) ((IStructuredSelection) event
                                 .getSelection()).getFirstElement();
@@ -600,11 +572,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         descriptionText.setText(""); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-     */
+	@Override
     public void init(IWorkbench workbench) {
         this.workbench = workbench;
         workingCopy = workbench.getActivitySupport().createWorkingCopy();
@@ -657,12 +625,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         workingCopy.setEnabledActivityIds(defaultEnabled);
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
-     *      java.lang.String, java.lang.Object)
-     */
+	@Override
     public void setInitializationData(IConfigurationElement config,
             String propertyName, Object data) {
         if (data instanceof Hashtable) {
