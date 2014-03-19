@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 426986
- *     Steven Spungin <steven@spungin.tv> - Bug 430660
+ *     Steven Spungin <steven@spungin.tv> - Bug 430660, 430664
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -99,6 +99,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
 public class ControlFactory {
@@ -339,6 +340,15 @@ public class ControlFactory {
 							if (cmd.canExecute()) {
 								editor.getEditingDomain().getCommandStack().execute(cmd);
 								super.okPressed();
+							}
+
+							// pack the first column
+							if (tableviewer.getTable().getColumns().length > 0) {
+								TableColumn tableColumn = tableviewer.getTable().getColumns()[0];
+								tableColumn.pack();
+								if (tableColumn.getWidth() < 20) {
+									tableColumn.setWidth(20);
+								}
 							}
 						}
 					}
