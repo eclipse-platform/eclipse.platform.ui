@@ -96,14 +96,14 @@
       </appinfo>
       <documentation>
          The following an example of the two forms of marker image providers. The first one is one where the image does not change and is declared directly. For the second one the image must be determined by an instance of IMarkerImageProvider.
- 
+
 &lt;p&gt;
 &lt;pre&gt;
   &lt;extension
          point=&quot;org.eclipse.ui.ide.markerImageProviders&quot;&gt;
       &lt;imageprovider
         markertype=&quot;org.eclipse.core.resources.taskmarker&quot;
-            icon=&quot;taskicon.gif&quot;
+            icon=&quot;taskicon.png&quot;
             id=&quot;myPlugin.declarativeMarkerProvider&quot;&gt;
       &lt;/imageprovider&gt;
       &lt;imageprovider

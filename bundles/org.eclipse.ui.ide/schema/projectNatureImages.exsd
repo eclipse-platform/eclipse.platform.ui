@@ -109,10 +109,10 @@ The supplied image is drawn over the top right corner of the base image.
 &lt;p&gt;
 &lt;pre&gt;
  &lt;extension point=&quot;org.eclipse.ui.ide.projectNatureImages&quot;&gt;
-  &lt;image 
+  &lt;image
     id=&quot;org.eclipse.ui.javaNatureImage&quot;
     natureId=&quot;Resource&quot;
-    icon=&quot;icons/javaNature.gif&quot;&gt;
+    icon=&quot;icons/javaNature.png&quot;&gt;
   &lt;/image&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
