@@ -126,11 +126,7 @@ public class HandlerServiceHandler extends AbstractHandler {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IEclipseContext executionContext = getExecutionContext(event.getApplicationContext());
 		if (executionContext == null) {
