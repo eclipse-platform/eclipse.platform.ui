@@ -8,6 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 426986
+ *     Steven Spungin <steven@spungin.tv> - Bug 430660
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -206,6 +207,35 @@ public class ControlFactory {
 			public String getText(Object element) {
 				Entry<String, String> entry = (Entry<String, String>) element;
 				return entry.getKey();
+			}
+		});
+
+		final TextCellEditor keyEditor = new TextCellEditor(tableviewer.getTable());
+		column.setEditingSupport(new EditingSupport(tableviewer) {
+
+			@Override
+			protected void setValue(Object element, Object value) {
+				Command cmd = SetCommand.create(editor.getEditingDomain(), element, ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP__KEY, value.toString().trim().length() == 0 ? null : value.toString());
+				if (cmd.canExecute()) {
+					editor.getEditingDomain().getCommandStack().execute(cmd);
+					tableviewer.refresh();
+				}
+			}
+
+			@Override
+			protected Object getValue(Object element) {
+				Entry<String, String> entry = (Entry<String, String>) element;
+				return entry.getKey();
+			}
+
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return keyEditor;
+			}
+
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
 			}
 		});
 
