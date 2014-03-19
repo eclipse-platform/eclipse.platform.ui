@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
  *     Helena Halperin (IBM) - bug #299212
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -220,7 +221,7 @@ public class PathVariablesGroup {
      * longer needed.
      * 
      * @param parent the widget parent
-     * @return container of the widgets 
+     * @return container of the widgets
      */
     public Control createContents(Composite parent) {
         Font font = parent.getFont();
@@ -229,7 +230,7 @@ public class PathVariablesGroup {
             ImageDescriptor descriptor = AbstractUIPlugin
                     .imageDescriptorFromPlugin(
                             IDEWorkbenchPlugin.IDE_WORKBENCH,
-                            "$nl$/icons/full/obj16/warning.gif"); //$NON-NLS-1$
+                            "$nl$/icons/full/obj16/warning.png"); //$NON-NLS-1$
             imageUnkown = descriptor.createImage();
         }
         initializeDialogUnits(parent);

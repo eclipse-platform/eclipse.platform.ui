@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  *******************************************************************************/
 
 package org.eclipse.ui.views.markers.internal;
@@ -17,17 +18,17 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
- * The FieldPriority is the field for setting a tasks 
+ * The FieldPriority is the field for setting a tasks
  * priority.
  *
  */
 public class FieldPriority extends AbstractField {
 
-    static final String DESCRIPTION_IMAGE_PATH = "obj16/header_priority.gif"; //$NON-NLS-1$
+    static final String DESCRIPTION_IMAGE_PATH = "obj16/header_priority.png"; //$NON-NLS-1$
 
-    static final String HIGH_PRIORITY_IMAGE_PATH = "obj16/hprio_tsk.gif"; //$NON-NLS-1$
+    static final String HIGH_PRIORITY_IMAGE_PATH = "obj16/hprio_tsk.png"; //$NON-NLS-1$
 
-    static final String LOW_PRIORITY_IMAGE_PATH = "obj16/lprio_tsk.gif"; //$NON-NLS-1$
+    static final String LOW_PRIORITY_IMAGE_PATH = "obj16/lprio_tsk.png"; //$NON-NLS-1$
 
     private String description;
 

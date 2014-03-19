@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  *******************************************************************************/
 
 package org.eclipse.ui.views.markers.internal;
@@ -21,26 +22,18 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  */
 public class FieldDone extends AbstractField {
 
-	static final String DESCRIPTION_IMAGE_PATH = "obj16/header_complete.gif"; //$NON-NLS-1$
+	static final String DESCRIPTION_IMAGE_PATH = "obj16/header_complete.png"; //$NON-NLS-1$
 
-	static final String COMPLETE_IMAGE_PATH = "obj16/complete_tsk.gif"; //$NON-NLS-1$
+	static final String COMPLETE_IMAGE_PATH = "obj16/complete_tsk.png"; //$NON-NLS-1$
 
-	static final String INCOMPLETE_IMAGE_PATH = "obj16/incomplete_tsk.gif"; //$NON-NLS-1$
+	static final String INCOMPLETE_IMAGE_PATH = "obj16/incomplete_tsk.png"; //$NON-NLS-1$
 
 	private String description = MarkerMessages.completion_description;
 
 
-	/**
-	 * Create a new instance of the receiver
-	 *
-	 */
-	public FieldDone() {
-		
-	}
-
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
 	 */
 	public String getDescription() {
@@ -49,7 +42,7 @@ public class FieldDone extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDescriptionImage()
 	 */
 	public Image getDescriptionImage() {

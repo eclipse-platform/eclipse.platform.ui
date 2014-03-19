@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  *******************************************************************************/
 
 package org.eclipse.ui.views.markers.internal;
@@ -27,7 +28,7 @@ class FiltersAction extends Action {
      */
     public FiltersAction(MarkerView view) {
         super(MarkerMessages.filtersAction_title);
-        setImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("elcl16/filter_ps.gif")); //$NON-NLS-1$
+        setImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("elcl16/filter_ps.png")); //$NON-NLS-1$
         setToolTipText(MarkerMessages.filtersAction_tooltip);
         this.view = view;
         setEnabled(true);

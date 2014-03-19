@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  *******************************************************************************/
 
 package org.eclipse.ui.views.markers.internal;
@@ -21,7 +22,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  */
 public class ActionAddGlobalTask extends Action {
 
-    private static final String ENABLED_IMAGE_PATH = "elcl16/addtsk_tsk.gif"; //$NON-NLS-1$
+    private static final String ENABLED_IMAGE_PATH = "elcl16/addtsk_tsk.png"; //$NON-NLS-1$
 
     private IWorkbenchPart part;
 
@@ -30,7 +31,7 @@ public class ActionAddGlobalTask extends Action {
      * @param part
      */
     public ActionAddGlobalTask(IWorkbenchPart part) {
-        setText(MarkerMessages.addGlobalTaskAction_title); 
+        setText(MarkerMessages.addGlobalTaskAction_title);
         setImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor(ENABLED_IMAGE_PATH));
         setToolTipText(MarkerMessages.addGlobalTaskAction_tooltip);
         this.part = part;

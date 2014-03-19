@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -36,16 +37,16 @@ public class ProblemImageProvider implements IMarkerImageProvider {
      *
      */
     public String getImagePath(IMarker marker) {
-        String iconPath = "/icons/full/";//$NON-NLS-1$		
+        String iconPath = "/icons/full/";//$NON-NLS-1$
         if (isMarkerType(marker, IMarker.PROBLEM)) {
             switch (marker.getAttribute(IMarker.SEVERITY,
                     IMarker.SEVERITY_WARNING)) {
             case IMarker.SEVERITY_ERROR:
-                return iconPath + "obj16/error_tsk.gif";//$NON-NLS-1$
+                return iconPath + "obj16/error_tsk.png";//$NON-NLS-1$
             case IMarker.SEVERITY_WARNING:
-                return iconPath + "obj16/warn_tsk.gif";//$NON-NLS-1$
+                return iconPath + "obj16/warn_tsk.png";//$NON-NLS-1$
             case IMarker.SEVERITY_INFO:
-                return iconPath + "obj16/info_tsk.gif";//$NON-NLS-1$
+                return iconPath + "obj16/info_tsk.png";//$NON-NLS-1$
             }
         }
         return null;

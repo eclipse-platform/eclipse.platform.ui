@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application;
 
@@ -673,31 +674,31 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC, PATH_ETOOL
-						+ "build_exec.gif", false); //$NON-NLS-1$
+						+ "build_exec.png", false); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC_HOVER,
-				PATH_ETOOL + "build_exec.gif", false); //$NON-NLS-1$
+				PATH_ETOOL + "build_exec.png", false); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC_DISABLED,
-				PATH_DTOOL + "build_exec.gif", false); //$NON-NLS-1$
+				PATH_DTOOL + "build_exec.png", false); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_SEARCH_SRC, PATH_ETOOL
-						+ "search_src.gif", false); //$NON-NLS-1$
+						+ "search_src.png", false); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_SEARCH_SRC_HOVER,
-				PATH_ETOOL + "search_src.gif", false); //$NON-NLS-1$
+				PATH_ETOOL + "search_src.png", false); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_SEARCH_SRC_DISABLED,
-				PATH_DTOOL + "search_src.gif", false); //$NON-NLS-1$
+				PATH_DTOOL + "search_src.png", false); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_NEXT_NAV, PATH_ETOOL
-						+ "next_nav.gif", false); //$NON-NLS-1$
+						+ "next_nav.png", false); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_PREVIOUS_NAV, PATH_ETOOL
-						+ "prev_nav.gif", false); //$NON-NLS-1$
+						+ "prev_nav.png", false); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_WIZBAN_NEWPRJ_WIZ, PATH_WIZBAN
@@ -736,101 +737,101 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 						+ "quick_fix.png", false); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OBJ_PROJECT,
-				PATH_OBJECT + "prj_obj.gif", true); //$NON-NLS-1$
+				PATH_OBJECT + "prj_obj.png", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDE.SharedImages.IMG_OBJ_PROJECT_CLOSED, PATH_OBJECT
-						+ "cprj_obj.gif", true); //$NON-NLS-1$
+						+ "cprj_obj.png", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OPEN_MARKER,
-				PATH_ELOCALTOOL + "gotoobj_tsk.gif", true); //$NON-NLS-1$
+				PATH_ELOCALTOOL + "gotoobj_tsk.png", true); //$NON-NLS-1$
 
 
 		// Quick fix icons
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ELCL_QUICK_FIX_ENABLED,
-				PATH_ELOCALTOOL + "smartmode_co.gif", true); //$NON-NLS-1$
+				PATH_ELOCALTOOL + "smartmode_co.png", true); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_DLCL_QUICK_FIX_DISABLED,
-				PATH_DLOCALTOOL + "smartmode_co.gif", true); //$NON-NLS-1$
+				PATH_DLOCALTOOL + "smartmode_co.png", true); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_FIXABLE_WARNING,
-				PATH_OBJECT + "quickfix_warning_obj.gif", true); //$NON-NLS-1$
+				PATH_OBJECT + "quickfix_warning_obj.png", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_FIXABLE_ERROR,
-				PATH_OBJECT + "quickfix_error_obj.gif", true); //$NON-NLS-1$
+				PATH_OBJECT + "quickfix_error_obj.png", true); //$NON-NLS-1$
 
 
 		// task objects
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_HPRIO_TSK,
-		// PATH_OBJECT+"hprio_tsk.gif");
+		// PATH_OBJECT+"hprio_tsk.png");
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_MPRIO_TSK,
-		// PATH_OBJECT+"mprio_tsk.gif");
+		// PATH_OBJECT+"mprio_tsk.png");
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_LPRIO_TSK,
-		// PATH_OBJECT+"lprio_tsk.gif");
+		// PATH_OBJECT+"lprio_tsk.png");
 
 		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OBJS_TASK_TSK,
-				PATH_OBJECT + "taskmrk_tsk.gif", true); //$NON-NLS-1$
+				PATH_OBJECT + "taskmrk_tsk.png", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OBJS_BKMRK_TSK,
-				PATH_OBJECT + "bkmrk_tsk.gif", true); //$NON-NLS-1$
+				PATH_OBJECT + "bkmrk_tsk.png", true); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_COMPLETE_TSK, PATH_OBJECT
-						+ "complete_tsk.gif", true); //$NON-NLS-1$
+						+ "complete_tsk.png", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_INCOMPLETE_TSK, PATH_OBJECT
-						+ "incomplete_tsk.gif", true); //$NON-NLS-1$
+						+ "incomplete_tsk.png", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_WELCOME_ITEM, PATH_OBJECT
-						+ "welcome_item.gif", true); //$NON-NLS-1$
+						+ "welcome_item.png", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_WELCOME_BANNER, PATH_OBJECT
-						+ "welcome_banner.gif", true); //$NON-NLS-1$
+						+ "welcome_banner.png", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_ERROR_PATH, PATH_OBJECT
-						+ "error_tsk.gif", true); //$NON-NLS-1$
+						+ "error_tsk.png", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_WARNING_PATH, PATH_OBJECT
-						+ "warn_tsk.gif", true); //$NON-NLS-1$
+						+ "warn_tsk.png", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_INFO_PATH, PATH_OBJECT
-						+ "info_tsk.gif", true); //$NON-NLS-1$
+						+ "info_tsk.png", true); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_LCL_FLAT_LAYOUT, PATH_ELOCALTOOL
-						+ "flatLayout.gif", true); //$NON-NLS-1$
+						+ "flatLayout.png", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_LCL_HIERARCHICAL_LAYOUT,
-				PATH_ELOCALTOOL + "hierarchicalLayout.gif", true); //$NON-NLS-1$
+				PATH_ELOCALTOOL + "hierarchicalLayout.png", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEM_CATEGORY,
-				PATH_ETOOL + "problem_category.gif", true); //$NON-NLS-1$
+				PATH_ETOOL + "problem_category.png", true); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEMS_VIEW,
-				PATH_EVIEW + "problems_view.gif", true); //$NON-NLS-1$
+				PATH_EVIEW + "problems_view.png", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEMS_VIEW_ERROR,
-				PATH_EVIEW + "problems_view_error.gif", true); //$NON-NLS-1$
+				PATH_EVIEW + "problems_view_error.png", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEMS_VIEW_WARNING,
-				PATH_EVIEW + "problems_view_warning.gif", true); //$NON-NLS-1$
+				PATH_EVIEW + "problems_view_warning.png", true); //$NON-NLS-1$
 
 		// synchronization indicator objects
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_WBET_STAT,
-		// PATH_OVERLAY+"wbet_stat.gif");
+		// PATH_OVERLAY+"wbet_stat.png");
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_SBET_STAT,
-		// PATH_OVERLAY+"sbet_stat.gif");
+		// PATH_OVERLAY+"sbet_stat.png");
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_CONFLICT_STAT,
-		// PATH_OVERLAY+"conflict_stat.gif");
+		// PATH_OVERLAY+"conflict_stat.png");
 
 		// content locality indicator objects
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_NOTLOCAL_STAT,
-		// PATH_STAT+"notlocal_stat.gif");
+		// PATH_STAT+"notlocal_stat.png");
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_LOCAL_STAT,
-		// PATH_STAT+"local_stat.gif");
+		// PATH_STAT+"local_stat.png");
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_FILLLOCAL_STAT,
-		// PATH_STAT+"filllocal_stat.gif");
+		// PATH_STAT+"filllocal_stat.png");
 	}
 
 	/**

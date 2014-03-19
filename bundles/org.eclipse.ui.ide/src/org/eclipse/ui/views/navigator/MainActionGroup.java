@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> - Collapse all action (25826)
  *     Sebastian Davids <sdavids@gmx.de> - Images for menu items (27481)
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  *******************************************************************************/
 package org.eclipse.ui.views.navigator;
 
@@ -160,29 +161,28 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
         importAction = new ImportResourcesAction(navigator.getSite()
                 .getWorkbenchWindow());
         importAction
-                .setDisabledImageDescriptor(getImageDescriptor("dtool16/import_wiz.gif")); //$NON-NLS-1$
+                .setDisabledImageDescriptor(getImageDescriptor("dtool16/import_wiz.png")); //$NON-NLS-1$
         importAction
-                .setImageDescriptor(getImageDescriptor("etool16/import_wiz.gif")); //$NON-NLS-1$		
+                .setImageDescriptor(getImageDescriptor("etool16/import_wiz.png")); //$NON-NLS-1$		
 
         exportAction = new ExportResourcesAction(navigator.getSite()
                 .getWorkbenchWindow());
         exportAction
-                .setDisabledImageDescriptor(getImageDescriptor("dtool16/export_wiz.gif")); //$NON-NLS-1$
+                .setDisabledImageDescriptor(getImageDescriptor("dtool16/export_wiz.png")); //$NON-NLS-1$
         exportAction
-                .setImageDescriptor(getImageDescriptor("etool16/export_wiz.gif")); //$NON-NLS-1$		
-        
-        
+                .setImageDescriptor(getImageDescriptor("etool16/export_wiz.png")); //$NON-NLS-1$		
+
         collapseAllAction = new CollapseAllAction(navigator,
                 ResourceNavigatorMessages.CollapseAllAction_title);
         collapseAllAction.setToolTipText(ResourceNavigatorMessages.CollapseAllAction_toolTip);
         collapseAllAction
-                .setImageDescriptor(getImageDescriptor("elcl16/collapseall.gif")); //$NON-NLS-1$
+                .setImageDescriptor(getImageDescriptor("elcl16/collapseall.png")); //$NON-NLS-1$
 
         toggleLinkingAction = new ToggleLinkingAction(navigator,
                 ResourceNavigatorMessages.ToggleLinkingAction_text);
         toggleLinkingAction.setToolTipText(ResourceNavigatorMessages.ToggleLinkingAction_toolTip);
         toggleLinkingAction
-                .setImageDescriptor(getImageDescriptor("elcl16/synced.gif"));//$NON-NLS-1$
+                .setImageDescriptor(getImageDescriptor("elcl16/synced.png"));//$NON-NLS-1$
     }
 
     /**

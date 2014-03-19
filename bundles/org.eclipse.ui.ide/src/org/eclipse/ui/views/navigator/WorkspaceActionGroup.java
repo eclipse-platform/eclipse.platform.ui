@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> - Images for menu items (27481)
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  *******************************************************************************/
 package org.eclipse.ui.views.navigator;
 
@@ -246,9 +247,9 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
         	}
         };
         refreshAction
-                .setDisabledImageDescriptor(getImageDescriptor("dlcl16/refresh_nav.gif"));//$NON-NLS-1$
+                .setDisabledImageDescriptor(getImageDescriptor("dlcl16/refresh_nav.png"));//$NON-NLS-1$
         refreshAction
-                .setImageDescriptor(getImageDescriptor("elcl16/refresh_nav.gif"));//$NON-NLS-1$	
+                .setImageDescriptor(getImageDescriptor("elcl16/refresh_nav.png"));//$NON-NLS-1$
         buildAction = new BuildAction(provider,
                 IncrementalProjectBuilder.INCREMENTAL_BUILD);
     }

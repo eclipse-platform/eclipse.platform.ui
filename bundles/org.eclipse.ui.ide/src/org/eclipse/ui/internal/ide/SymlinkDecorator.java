@@ -1,10 +1,12 @@
 /*******************************************************************************
- * Copyright (C) 2012, 2013 Robin Rosenberg <robin.rosenberg@dewire.com>
+ * Copyright (C) 2012, 2014 Robin Rosenberg <robin.rosenberg@dewire.com>
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -29,7 +31,7 @@ public class SymlinkDecorator implements ILightweightLabelDecorator {
 	static {
         SYMLINK = AbstractUIPlugin.imageDescriptorFromPlugin(
                 IDEWorkbenchPlugin.IDE_WORKBENCH,
-                "$nl$/icons/full/ovr16/symlink_ovr.gif"); //$NON-NLS-1$
+                "$nl$/icons/full/ovr16/symlink_ovr.png"); //$NON-NLS-1$
 
 	}
 

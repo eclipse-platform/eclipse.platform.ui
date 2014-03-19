@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -28,7 +29,7 @@ public class VirtualResourceDecorator implements ILightweightLabelDecorator {
 	static {
 		VIRTUAL_FOLDER = AbstractUIPlugin.imageDescriptorFromPlugin(
 				IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/ovr16/virt_ovr.gif"); //$NON-NLS-1$
+				"$nl$/icons/full/ovr16/virt_ovr.png"); //$NON-NLS-1$
 	}
 
 	/**

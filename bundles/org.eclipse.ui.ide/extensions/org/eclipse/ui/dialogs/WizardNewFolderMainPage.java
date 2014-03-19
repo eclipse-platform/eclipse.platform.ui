@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Leon J. Breedt - Added multiple folder creation support (in WizardNewFolderMainPage)
- * 
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -553,21 +553,21 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
 		} else {
 			Point oldCompositeSize = advancedComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			
+
 			ImageDescriptor folderDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
 	                ISharedImages.IMG_OBJ_FOLDER);
 
 			ImageDescriptor[][] linkedResourceOverlayMap = new ImageDescriptor[4][1];
 			linkedResourceOverlayMap[1]= new ImageDescriptor[] {AbstractUIPlugin.imageDescriptorFromPlugin(
 					IDEWorkbenchPlugin.IDE_WORKBENCH,
-			"$nl$/icons/full/ovr16/link_ovr.gif")}; //$NON-NLS-1$
-			
+			"$nl$/icons/full/ovr16/link_ovr.png")}; //$NON-NLS-1$
+
 			CompositeImageDescriptor linkedFolderDescriptor = new OverlayIcon(folderDescriptor, linkedResourceOverlayMap, new Point(16, 16)); 
 
 			ImageDescriptor[][] virtualFolderOverlayMap = new ImageDescriptor[4][1];
 			virtualFolderOverlayMap[1]= new ImageDescriptor[] {AbstractUIPlugin.imageDescriptorFromPlugin(
 					IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/ovr16/virt_ovr.gif")}; //$NON-NLS-1$
+				"$nl$/icons/full/ovr16/virt_ovr.png")}; //$NON-NLS-1$
 
 			CompositeImageDescriptor virtualFolderDescriptor = new OverlayIcon(folderDescriptor, virtualFolderOverlayMap, new Point(16, 16)); 
 

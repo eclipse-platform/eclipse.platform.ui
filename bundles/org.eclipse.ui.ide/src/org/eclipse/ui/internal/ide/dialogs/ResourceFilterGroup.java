@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2014 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] initial API and implementation
  *     IBM Corporation - ongoing implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -158,42 +159,42 @@ public class ResourceFilterGroup {
 	private IContainer resource = nonExistantResource;
 
 	/**
-	 * 
+	 *
 	 */
 	public ResourceFilterGroup() {
 		ImageDescriptor fileIconDescriptor = AbstractUIPlugin
 		.imageDescriptorFromPlugin(IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/obj16/fileType_filter.gif"); //$NON-NLS-1$
+				"$nl$/icons/full/obj16/fileType_filter.png"); //$NON-NLS-1$
 		if (fileIconDescriptor != null)
 			fileIcon = fileIconDescriptor.createImage();
-		
+
 		ImageDescriptor folderIconDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
 				IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/obj16/folderType_filter.gif"); //$NON-NLS-1$
+				"$nl$/icons/full/obj16/folderType_filter.png"); //$NON-NLS-1$
 		if (folderIconDescriptor != null)
 			folderIcon = folderIconDescriptor.createImage();
-		
+
 		ImageDescriptor fileFolderIconDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
 				IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/obj16/fileFolderType_filter.gif"); //$NON-NLS-1$
+				"$nl$/icons/full/obj16/fileFolderType_filter.png"); //$NON-NLS-1$
 		if (fileFolderIconDescriptor != null)
 			fileFolderIcon = fileFolderIconDescriptor.createImage();
-		
+
 		ImageDescriptor descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
 				IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/obj16/includeMode_filter.gif"); //$NON-NLS-1$
+				"$nl$/icons/full/obj16/includeMode_filter.png"); //$NON-NLS-1$
 		if (descriptor != null)
 			includeIcon = descriptor.createImage();
-		
+
 		descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
 				IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/obj16/excludeMode_filter.gif"); //$NON-NLS-1$
+				"$nl$/icons/full/obj16/excludeMode_filter.png"); //$NON-NLS-1$
 		if (descriptor != null)
 			excludeIcon = descriptor.createImage();
-		
+
 		ImageDescriptor inheritableIconDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
 				IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/obj16/inheritable_filter.gif"); //$NON-NLS-1$
+				"$nl$/icons/full/obj16/inheritable_filter.png"); //$NON-NLS-1$
 		if (inheritableIconDescriptor != null)
 			inheritableIcon = inheritableIconDescriptor.createImage();
 	}

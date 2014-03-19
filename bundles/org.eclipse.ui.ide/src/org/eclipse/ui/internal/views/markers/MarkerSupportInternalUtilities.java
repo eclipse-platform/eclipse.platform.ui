@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 20072008 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  ******************************************************************************/
 
 package org.eclipse.ui.internal.views.markers;
@@ -103,11 +104,11 @@ public class MarkerSupportInternalUtilities {
 	/**
 	 * The markers help decoration.
 	 */
-	public static final String IMG_MARKERS_HELP_DECORATION_PATH = "markers/help_small.gif"; //$NON-NLS-1$
+	public static final String IMG_MARKERS_HELP_DECORATION_PATH = "markers/help_small.png"; //$NON-NLS-1$
 	/**
 	 * The markers quick fix decoration.
 	 */
-	public static final String IMG_MARKERS_QUICK_FIX_DECORATION_PATH = "markers/contassist_ovr.gif"; //$NON-NLS-1$
+	public static final String IMG_MARKERS_QUICK_FIX_DECORATION_PATH = "markers/contassist_ovr.png"; //$NON-NLS-1$
 
 	/**
 	 * The suffix to the view names for the legacy markers views.
