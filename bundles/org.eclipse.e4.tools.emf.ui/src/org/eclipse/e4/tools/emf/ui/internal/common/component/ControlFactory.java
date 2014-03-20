@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 426986
- *     Steven Spungin <steven@spungin.tv> - Bug 430660, 430664
+ *     Steven Spungin <steven@spungin.tv> - Bug 430660, 430664, Bug 430809
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -17,7 +17,9 @@ import java.util.List;
 import java.util.Map.Entry;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
@@ -99,7 +101,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
 public class ControlFactory {
@@ -220,6 +221,7 @@ public class ControlFactory {
 				if (cmd.canExecute()) {
 					editor.getEditingDomain().getCommandStack().execute(cmd);
 					tableviewer.refresh();
+					tableviewer.getTable().getColumn(0).pack();
 				}
 			}
 
@@ -284,7 +286,15 @@ public class ControlFactory {
 		});
 
 		IEMFEditListProperty prop = EMFEditProperties.list(editor.getEditingDomain(), feature);
-		tableviewer.setInput(prop.observeDetail(editor.getMaster()));
+		IObservableList observableList = prop.observeDetail(editor.getMaster());
+		tableviewer.setInput(observableList);
+		observableList.addListChangeListener(new IListChangeListener() {
+
+			@Override
+			public void handleListChange(ListChangeEvent event) {
+				tableviewer.getTable().getColumn(0).pack();
+			}
+		});
 
 		final Composite buttonComp = new Composite(parent, SWT.NONE);
 		buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
@@ -340,15 +350,6 @@ public class ControlFactory {
 							if (cmd.canExecute()) {
 								editor.getEditingDomain().getCommandStack().execute(cmd);
 								super.okPressed();
-							}
-
-							// pack the first column
-							if (tableviewer.getTable().getColumns().length > 0) {
-								TableColumn tableColumn = tableviewer.getTable().getColumns()[0];
-								tableColumn.pack();
-								if (tableColumn.getWidth() < 20) {
-									tableColumn.setWidth(20);
-								}
 							}
 						}
 					}
