@@ -24,6 +24,9 @@ import org.eclipse.e4.ui.bindings.internal.ContextSet;
  * application level context.
  */
 public final class BindingServiceAddon {
+	/**
+	 * @param context
+	 */
 	@PostConstruct
 	public void init(IEclipseContext context) {
 		ContextManager contextManager = context.get(ContextManager.class);
