@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2013 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2014 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -88,7 +88,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 				|| displayString.equals("overwrite - (true | false | on | off | yes | no)") //$NON-NLS-1$
 				|| displayString.equals("filtering - (true | false | on | off | yes | no)") //$NON-NLS-1$
 				|| displayString.equals("flatten - (true | false | on | off | yes | no)") //$NON-NLS-1$
-				|| displayString.equals("includeemptydirs") //$NON-NLS-1$
+				|| displayString.equals("includeemptydirs - (true | false | on | off | yes | no)") //$NON-NLS-1$
 				|| displayString.equals("failonerror - (true | false | on | off | yes | no)") //$NON-NLS-1$
 				|| displayString.equals("verbose - (true | false | on | off | yes | no)") //$NON-NLS-1$
 				|| displayString.equals("encoding") //$NON-NLS-1$
