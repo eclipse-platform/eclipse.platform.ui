@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - Bug 404166
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -19,6 +20,8 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -33,6 +36,8 @@ import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
@@ -60,6 +65,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 public class PartDescriptorEditor extends AbstractComponentEditor {
@@ -67,6 +73,11 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private IProject project;
+	// This was added for BUG 430921. The member 'project' is
+	// never set, and seems to be always null in this class.
+	@Inject
+	@Optional
+	private IProject projectInjected;
 
 	private IListProperty PART__MENUS = EMFProperties.list(BasicPackageImpl.Literals.PART_DESCRIPTOR__MENUS);
 	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
@@ -194,10 +205,38 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		}
 
 		// ------------------------------------------------------------
+		final Link lnk;
 		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PartDescriptorEditor_ClassURI);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			/*
+			 * IContributionClassCreator accepts MContribitions but
+			 * MPartDescriptor does not implement, so we need to be a bit
+			 * creative here
+			 */
+			//
+			final IContributionClassCreator c = getEditor().getContributionCreator(org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.Literals.PART);
+			if (projectInjected != null && c != null) {
+				lnk = new Link(parent, SWT.NONE);
+				lnk.setText("<A>" + Messages.PartEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
+				lnk.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+				final IObservableValue masterFinal = master;
+				lnk.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						MPart dummyPart = MBasicFactory.INSTANCE.createPart();
+						String contributionURI = ((MPartDescriptor) getMaster().getValue()).getContributionURI();
+						dummyPart.setContributionURI(contributionURI);
+						c.createOpen(dummyPart, getEditingDomain(), projectInjected, lnk.getShell());
+						((MPartDescriptor) masterFinal.getValue()).setContributionURI(dummyPart.getContributionURI());
+					}
+				});
+			} else {
+				// Dispose the lnk widget, which is unused in this else branch
+				// and screws up the layout: see https://bugs.eclipse.org/421369
+				lnk = null;
+				Label l = new Label(parent, SWT.NONE);
+				l.setText(Messages.PartDescriptorEditor_ClassURI);
+				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			}
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
