@@ -21,9 +21,9 @@ public class DynamicMenuContributionTemplate
   protected final String TEXT_5 = NL + "import org.eclipse.e4.ui.di.AboutToHide;";
   protected final String TEXT_6 = NL + NL + "import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;" + NL + "" + NL + "public class ";
   protected final String TEXT_7 = " {" + NL + "\t@AboutToShow" + NL + "\tpublic void ";
-  protected final String TEXT_8 = "(List<MMenuElement> items) {" + NL + "\t\t//TODO Your code goes here" + NL + "\t}" + NL + "\t";
+  protected final String TEXT_8 = "(List<MMenuElement> items) {" + NL + "\t\t" + NL + "\t}" + NL + "\t";
   protected final String TEXT_9 = NL + "\t" + NL + "\t@AboutToHide" + NL + "\tpublic void ";
-  protected final String TEXT_10 = "(List<MMenuElement> items) {" + NL + "\t\t//TODO Your code goes here" + NL + "\t}" + NL + "\t";
+  protected final String TEXT_10 = "(List<MMenuElement> items) {" + NL + "\t\t" + NL + "\t}" + NL + "\t";
   protected final String TEXT_11 = "\t" + NL + "}";
 
   public String generate(Object argument)

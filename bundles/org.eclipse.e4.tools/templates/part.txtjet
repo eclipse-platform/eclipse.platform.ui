@@ -22,30 +22,30 @@ import org.eclipse.e4.ui.di.Persist;
 public class <%= domainClass.getName() %> {
 	@Inject
 	public <%= domainClass.getName() %>() {
-		//TODO Your code here
+		
 	}
 	<% if( domainClass.isUsePostConstruct() ) { %>
 	@PostConstruct
 	public void <%= domainClass.getPostConstructMethodName()  %>(Composite parent) {
-		//TODO Your code here
+		
 	}
 	<% } %>
 	<% if( domainClass.isUsePredestroy() ) { %>
 	@PreDestroy
 	public void <%= domainClass.getPreDestroyMethodName()  %>() {
-		//TODO Your code here
+		
 	}
 	<% } %>
 	<% if( domainClass.isUseFocus() ) { %>
 	@Focus
 	public void <%= domainClass.getFocusMethodName() %>() {
-		//TODO Your code here
+		
 	}
 	<% } %>
 	<% if( domainClass.isUsePersist() ) { %>
 	@Persist
 	public void <%= domainClass.getPersistMethodName() %>() {
-		//TODO Your code here
+		
 	}
 	<% } %>
 }

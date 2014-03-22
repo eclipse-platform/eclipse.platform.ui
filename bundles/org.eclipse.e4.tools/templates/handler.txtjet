@@ -12,13 +12,13 @@ import org.eclipse.e4.core.di.annotations.CanExecute;
 public class <%= domainClass.getName() %> {
 	@Execute
 	public void <%= domainClass.getExecuteMethodName() %>() {
-		//TODO Your code goes here
+		
 	}
 	<% if( domainClass.isUseCanExecute() )  { %>
 	
 	@CanExecute
 	public boolean <%= domainClass.getCanExecuteMethodName() %>() {
-		//TODO Your code goes here
+		
 		return true;
 	}
 	<% } %>	

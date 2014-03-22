@@ -16,13 +16,13 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 public class <%= domainClass.getName() %> {
 	@AboutToShow
 	public void <%= domainClass.getAboutToShowMethodName() %>(List<MMenuElement> items) {
-		//TODO Your code goes here
+		
 	}
 	<% if( domainClass.isUseAboutToHide() )  { %>
 	
 	@AboutToHide
 	public void <%= domainClass.getAboutToHideMethodName() %>(List<MMenuElement> items) {
-		//TODO Your code goes here
+		
 	}
 	<% } %>	
 }

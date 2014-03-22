@@ -21,9 +21,9 @@ public class HandlerTemplate
   protected final String TEXT_5 = NL + "import org.eclipse.e4.core.di.annotations.CanExecute;";
   protected final String TEXT_6 = NL + NL + "public class ";
   protected final String TEXT_7 = " {" + NL + "\t@Execute" + NL + "\tpublic void ";
-  protected final String TEXT_8 = "() {" + NL + "\t\t//TODO Your code goes here" + NL + "\t}" + NL + "\t";
+  protected final String TEXT_8 = "() {" + NL + "\t\t" + NL + "\t}" + NL + "\t";
   protected final String TEXT_9 = NL + "\t" + NL + "\t@CanExecute" + NL + "\tpublic boolean ";
-  protected final String TEXT_10 = "() {" + NL + "\t\t//TODO Your code goes here" + NL + "\t\treturn true;" + NL + "\t}" + NL + "\t";
+  protected final String TEXT_10 = "() {" + NL + "\t\t" + NL + "\t\treturn true;" + NL + "\t}" + NL + "\t";
   protected final String TEXT_11 = "\t" + NL + "}";
 
   public String generate(Object argument)

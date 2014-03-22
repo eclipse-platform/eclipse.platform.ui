@@ -24,18 +24,18 @@ public class PartTemplate
   protected final String TEXT_8 = NL + "import org.eclipse.e4.ui.di.Persist;";
   protected final String TEXT_9 = NL + NL + "public class ";
   protected final String TEXT_10 = " {" + NL + "\t@Inject" + NL + "\tpublic ";
-  protected final String TEXT_11 = "() {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";
+  protected final String TEXT_11 = "() {" + NL + "\t\t" + NL + "\t}" + NL + "\t";
   protected final String TEXT_12 = NL + "\t@PostConstruct" + NL + "\tpublic void ";
-  protected final String TEXT_13 = "(Composite parent) {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";
+  protected final String TEXT_13 = "(Composite parent) {" + NL + "\t\t" + NL + "\t}" + NL + "\t";
   protected final String TEXT_14 = NL + "\t";
   protected final String TEXT_15 = NL + "\t@PreDestroy" + NL + "\tpublic void ";
-  protected final String TEXT_16 = "() {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";
+  protected final String TEXT_16 = "() {" + NL + "\t\t" + NL + "\t}" + NL + "\t";
   protected final String TEXT_17 = NL + "\t";
   protected final String TEXT_18 = NL + "\t@Focus" + NL + "\tpublic void ";
-  protected final String TEXT_19 = "() {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";
+  protected final String TEXT_19 = "() {" + NL + "\t\t" + NL + "\t}" + NL + "\t";
   protected final String TEXT_20 = NL + "\t";
   protected final String TEXT_21 = NL + "\t@Persist" + NL + "\tpublic void ";
-  protected final String TEXT_22 = "() {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";
+  protected final String TEXT_22 = "() {" + NL + "\t\t" + NL + "\t}" + NL + "\t";
   protected final String TEXT_23 = NL + "}";
 
   public String generate(Object argument)
