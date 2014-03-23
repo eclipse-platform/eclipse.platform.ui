@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,11 +63,11 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
      */
     class UpdatesInfo {
 
-        Collection additions = new HashSet();
+        Collection<JobTreeElement> additions = new HashSet<JobTreeElement>();
 
-        Collection deletions = new HashSet();
+        Collection<JobTreeElement> deletions = new HashSet<JobTreeElement>();
 
-        Collection refreshes = new HashSet();
+        Collection<JobTreeElement> refreshes = new HashSet<JobTreeElement>();
 
         boolean updateAll = false;
 
@@ -113,9 +113,9 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
         }
 
         void processForUpdate() {
-            HashSet staleAdditions = new HashSet();
+            HashSet<JobTreeElement> staleAdditions = new HashSet<JobTreeElement>();
 
-            Iterator additionsIterator = additions.iterator();
+            Iterator<JobTreeElement> additionsIterator = additions.iterator();
             while (additionsIterator.hasNext()) {
                 JobTreeElement treeElement = (JobTreeElement) additionsIterator
                         .next();
@@ -128,8 +128,8 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
             additions.removeAll(staleAdditions);
 
-            HashSet obsoleteRefresh = new HashSet();
-            Iterator refreshIterator = refreshes.iterator();
+            HashSet<JobTreeElement> obsoleteRefresh = new HashSet<JobTreeElement>();
+            Iterator<JobTreeElement> refreshIterator = refreshes.iterator();
             while (refreshIterator.hasNext()) {
                 JobTreeElement treeElement = (JobTreeElement) refreshIterator
                         .next();
@@ -189,7 +189,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
      * @param provider
      */
     void removeCollector(IProgressUpdateCollector provider) {
-        HashSet newCollectors = new HashSet();
+        HashSet<IProgressUpdateCollector> newCollectors = new HashSet<IProgressUpdateCollector>();
         for (int i = 0; i < collectors.length; i++) {
             if (!collectors[i].equals(provider)) {
 				newCollectors.add(collectors[i]);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -167,21 +167,21 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 		if (!showFinished)
 			return elements;
 
-		Set kept = finishedJobs.getKeptAsSet();
+		Set<JobTreeElement> kept = finishedJobs.getKeptAsSet();
 
 		if (kept.size() == 0)
 			return elements;
 
-		Set all = new HashSet();
+		Set<Object> all = new HashSet<Object>();
 
 		for (int i = 0; i < elements.length; i++) {
 			Object element = elements[i];
 			all.add(element);
 		}
 
-		Iterator keptIterator = kept.iterator();
+		Iterator<JobTreeElement> keptIterator = kept.iterator();
 		while (keptIterator.hasNext()) {
-			JobTreeElement next = (JobTreeElement) keptIterator.next();
+			JobTreeElement next = keptIterator.next();
 			if (next.getParent() != null && all.contains(next.getParent()))
 				continue;
 			all.add(next);
@@ -205,7 +205,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 		if (elements.length == 0) {
 			return elements;
 		}
-		HashSet roots = new HashSet();
+		HashSet<Object> roots = new HashSet<Object>();
 		for (int i = 0; i < elements.length; i++) {
 			JobTreeElement element = (JobTreeElement) elements[i];
 			if (element.isJobInfo()) {

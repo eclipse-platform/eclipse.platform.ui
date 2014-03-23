@@ -47,7 +47,7 @@ public class ProgressServiceImpl implements IProgressService {
 
 	private static final String IMAGE_KEY = "org.eclipse.ui.progress.images"; //$NON-NLS-1$
 	
-	private Hashtable imageKeyTable = new Hashtable();
+	private Hashtable<Object, String> imageKeyTable = new Hashtable<Object, String>();
 	
 	@Inject
 	@Optional
@@ -110,7 +110,7 @@ public class ProgressServiceImpl implements IProgressService {
 
 	@Override
 	public Image getIconFor(Job job) {
-		Enumeration families = imageKeyTable.keys();
+		Enumeration<Object> families = imageKeyTable.keys();
 		while (families.hasMoreElements()) {
 			Object next = families.nextElement();
 			if (job.belongsTo(next)) {

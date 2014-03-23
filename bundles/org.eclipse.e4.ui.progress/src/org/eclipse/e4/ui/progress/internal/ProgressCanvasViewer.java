@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 
     Object[] displayedItems = new Object[0];
 
-    private final static List EMPTY_LIST = new ArrayList();
+    private final static List<Object> EMPTY_LIST = new ArrayList<Object>();
 
     /**
      * Font metrics to use for determining pixel sizes.
@@ -128,7 +128,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
      * 
      * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
      */
-    protected List getSelectionFromWidget() {
+    protected List<Object> getSelectionFromWidget() {
         //No selection on a Canvas
         return EMPTY_LIST;
     }
@@ -158,7 +158,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
      * @see org.eclipse.jface.viewers.StructuredViewer#setSelectionToWidget(java.util.List,
      *      boolean)
      */
-    protected void setSelectionToWidget(List l, boolean reveal) {
+    protected void setSelectionToWidget(@SuppressWarnings("rawtypes") List l, boolean reveal) {
         //Do nothing as there is no selection
     }
 

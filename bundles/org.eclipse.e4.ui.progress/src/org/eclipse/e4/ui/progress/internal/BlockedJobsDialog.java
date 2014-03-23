@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -311,8 +311,9 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 			 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
-			public int compare(Viewer testViewer, Object e1, Object e2) {
-				return ((Comparable) e1).compareTo(e2);
+			@SuppressWarnings("unchecked")
+            public int compare(Viewer testViewer, Object e1, Object e2) {
+				return ((Comparable<Object>) e1).compareTo(e2);
 			}
 		});
 		ProgressViewerContentProvider provider = getContentProvider();

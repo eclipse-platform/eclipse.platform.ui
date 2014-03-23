@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import org.eclipse.osgi.util.NLS;
 
 class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
-	private List infos = new ArrayList();
+	private List<JobInfo> infos = new ArrayList<JobInfo>();
 
 	private Object lock = new Object();
 
@@ -142,9 +142,9 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	 * finished and the receiver is not being kept then remove it.
 	 */
 	private void updateInProgressManager() {
-		Iterator infoIterator = infos.iterator();
+		Iterator<JobInfo> infoIterator = infos.iterator();
 		while (infoIterator.hasNext()) {
-			JobInfo next = (JobInfo) infoIterator.next();
+			JobInfo next = infoIterator.next();
 			if (!(next.getJob().getState() == Job.NONE)) {
 				progressManager.refreshGroup(this);
 				return;

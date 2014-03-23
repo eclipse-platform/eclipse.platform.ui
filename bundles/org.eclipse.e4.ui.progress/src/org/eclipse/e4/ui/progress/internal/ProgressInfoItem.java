@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,7 +87,7 @@ public class ProgressInfoItem extends Composite {
 
 	ToolItem actionButton;
 	
-	List taskEntries = new ArrayList(0);
+	List<Link> taskEntries = new ArrayList<Link>(0);
 
 	private ProgressBar progressBar;
 
@@ -304,7 +304,7 @@ public class ProgressInfoItem extends Composite {
 					IDialogConstants.VERTICAL_SPACING);
 			linkData.left = new FormAttachment(progressLabel, 0, SWT.LEFT);
 			linkData.right = new FormAttachment(actionBar, 0, SWT.LEFT);
-			((Link) taskEntries.get(0)).setLayoutData(linkData);
+			taskEntries.get(0).setLayoutData(linkData);
 
 		}
 	}
@@ -562,7 +562,7 @@ public class ProgressInfoItem extends Composite {
 		// Remove completed tasks
 		if (infos.length < taskEntries.size()) {
 			for (int i = infos.length; i < taskEntries.size(); i++) {
-				((Link) taskEntries.get(i)).dispose();
+				taskEntries.get(i).dispose();
 
 			}
 			if (infos.length > 1)
@@ -716,7 +716,7 @@ public class ProgressInfoItem extends Composite {
 			// Give an initial value so as to constrain the link shortening
 			linkData.width = 20;
 
-			((Link) taskEntries.get(0)).setLayoutData(linkData);
+			taskEntries.get(0).setLayoutData(linkData);
 		}
 	}
 
@@ -743,7 +743,7 @@ public class ProgressInfoItem extends Composite {
 				// Give an initial value so as to constrain the link shortening
 				linkData.width = 20;
 			} else {
-				Link previous = (Link) taskEntries.get(index - 1);
+				Link previous = taskEntries.get(index - 1);
 				linkData.top = new FormAttachment(previous,
 						IDialogConstants.VERTICAL_SPACING);
 				linkData.left = new FormAttachment(previous, 0, SWT.LEFT);
@@ -783,7 +783,7 @@ public class ProgressInfoItem extends Composite {
 			});
 			taskEntries.add(link);
 		} else {
-			link = (Link) taskEntries.get(index);
+			link = taskEntries.get(index);
 		}
 
 		// check for action property
@@ -910,9 +910,9 @@ public class ProgressInfoItem extends Composite {
 		setForeground(color);
 		progressLabel.setForeground(color);
 
-		Iterator taskEntryIterator = taskEntries.iterator();
+		Iterator<Link> taskEntryIterator = taskEntries.iterator();
 		while (taskEntryIterator.hasNext()) {
-			((Link) taskEntryIterator.next()).setForeground(color);
+			taskEntryIterator.next().setForeground(color);
 		}
 
 	}
@@ -928,9 +928,9 @@ public class ProgressInfoItem extends Composite {
 		actionBar.setBackground(color);
 		jobImageLabel.setBackground(color);
 
-		Iterator taskEntryIterator = taskEntries.iterator();
+		Iterator<Link> taskEntryIterator = taskEntries.iterator();
 		while (taskEntryIterator.hasNext()) {
-			((Link) taskEntryIterator.next()).setBackground(color);
+			taskEntryIterator.next().setBackground(color);
 		}
 
 	}

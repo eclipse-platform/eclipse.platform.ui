@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,9 +58,9 @@ public class FinishedJobs extends EventManager {
 
 	private IJobProgressManagerListener listener;
 
-	private HashSet keptjobinfos = new HashSet();
+	private HashSet<JobTreeElement> keptjobinfos = new HashSet<JobTreeElement>();
 
-	private HashMap finishedTime = new HashMap();
+	private HashMap<Object, Long> finishedTime = new HashMap<Object, Long>();
 
 	private static JobTreeElement[] EMPTY_INFOS;
 	
@@ -184,7 +184,7 @@ public class FinishedJobs extends EventManager {
 				long now = System.currentTimeMillis();
 				finishedTime.put(info, new Long(now));
 
-				Object parent = info.getParent();
+				GroupInfo parent = info.getParent();
 				if (!(parent == null || keptjobinfos.contains(parent))) {
 					keptjobinfos.add(parent);
 					finishedTime.put(parent, new Long(now));
@@ -227,10 +227,10 @@ public class FinishedJobs extends EventManager {
 				Object prop = myJob
 						.getProperty(ProgressManagerUtil.KEEPONE_PROPERTY);
 				if (prop instanceof Boolean && ((Boolean) prop).booleanValue()) {
-					ArrayList found = null;
+					ArrayList<JobTreeElement> found = null;
 					JobTreeElement[] all;
 					synchronized (keptjobinfos) {
-						all = (JobTreeElement[]) keptjobinfos
+						all = keptjobinfos
 								.toArray(new JobTreeElement[keptjobinfos.size()]);
 					}
 					for (int i = 0; i < all.length; i++) {
@@ -240,14 +240,14 @@ public class FinishedJobs extends EventManager {
 							if (job != null && job != myJob
 									&& job.belongsTo(myJob)) {
 								if (found == null) {
-									found = new ArrayList();
+									found = new ArrayList<JobTreeElement>();
 								}
 								found.add(jte);
 							}
 						}
 					}
 					if (found != null) {
-						return (JobTreeElement[]) found
+						return found
 								.toArray(new JobTreeElement[found.size()]);
 					}
 				}
@@ -322,8 +322,8 @@ public class FinishedJobs extends EventManager {
 
 				// delete all elements that have jte as their direct or indirect
 				// parent
-				JobTreeElement jtes[] = (JobTreeElement[]) keptjobinfos
-						.toArray(new JobTreeElement[keptjobinfos.size()]);
+				JobTreeElement jtes[] = keptjobinfos
+								.toArray(new JobTreeElement[keptjobinfos.size()]);
 				for (int i = 0; i < jtes.length; i++) {
 					JobTreeElement parent = (JobTreeElement) jtes[i]
 							.getParent();
@@ -361,7 +361,7 @@ public class FinishedJobs extends EventManager {
 		}
 
 		synchronized (keptjobinfos) {
-			all = (JobTreeElement[]) keptjobinfos
+			all = keptjobinfos
 					.toArray(new JobTreeElement[keptjobinfos.size()]);
 		}
 		
@@ -397,7 +397,7 @@ public class FinishedJobs extends EventManager {
 	 */
 	public void clearAll() {
 		synchronized (keptjobinfos) {
-			JobTreeElement[] all = (JobTreeElement[]) keptjobinfos
+			JobTreeElement[] all = keptjobinfos
 					.toArray(new JobTreeElement[keptjobinfos.size()]);
 			for (int i = 0; i < all.length; i++) {
 				disposeAction(all[i]);
@@ -418,7 +418,7 @@ public class FinishedJobs extends EventManager {
 	 * Return the set of kept jobs.
 	 * @return Set
 	 */
-	Set getKeptAsSet() {
+	Set<JobTreeElement> getKeptAsSet() {
 		return keptjobinfos;
 	}
 }

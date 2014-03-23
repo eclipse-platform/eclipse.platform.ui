@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,6 +78,8 @@ public class ProgressMessages extends NLS {
 	public static String WorkbenchPreference_RunInBackgroundToolTip;
 	
 	public static String TrimCommon_Progress_TrimName;
+	
+	public static String StatusUtil_errorOccurred;
 	
 //	public static String ProgressView_ClearAll; //TODO E4
 

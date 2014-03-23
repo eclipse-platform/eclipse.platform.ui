@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -158,7 +158,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		ViewerComparator sorter = getComparator();
 
 		// Use a Set in case we are getting something added that exists
-		Set newItems = new HashSet(elements.length);
+		Set<Object> newItems = new HashSet<Object>(elements.length);
 
 		Control[] existingChildren = control.getChildren();
 		for (int i = 0; i < existingChildren.length; i++) {
@@ -365,8 +365,8 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
 	 */
-	protected List getSelectionFromWidget() {
-		return new ArrayList(0);
+	protected List<Object> getSelectionFromWidget() {
+		return new ArrayList<Object>(0);
 	}
 
 	/*
@@ -465,7 +465,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#setSelectionToWidget(java.util.List,
 	 *      boolean)
 	 */
-	protected void setSelectionToWidget(List l, boolean reveal) {
+	protected void setSelectionToWidget(@SuppressWarnings("rawtypes") List l, boolean reveal) {
 
 	}
 
