@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430981 - Generified API
  *******************************************************************************/
 
 package org.eclipse.ui.services;
@@ -19,8 +20,7 @@ package org.eclipse.ui.services;
  * </p>
  * 
  * <pre>
- * IHandlerService service = (IHandlerService) workbenchWindow
- * 		.getService(IHandlerService.class);
+ * IHandlerService service = workbenchWindow.getService(IHandlerService.class);
  * </pre>
  * 
  * <p>
@@ -40,7 +40,8 @@ public interface IServiceLocator {
 	 * @return The service, or <code>null</code> if no such service could be
 	 *         found.
 	 */
-	public Object getService(Class api);
+
+	public <T> T getService(Class<T> api);
 
 	/**
 	 * Whether this service exists within the scope of this service locator.
@@ -51,8 +52,8 @@ public interface IServiceLocator {
 	 * @param api
 	 *            This is the interface that the service implements. Must not be
 	 *            <code>null</code>.
-	 * @return <code>true</code> iff the service locator can find a service
-	 *         for the given API; <code>false</code> otherwise.
+	 * @return <code>true</code> if the service locator can find a service for
+	 *         the given API; <code>false</code> otherwise.
 	 */
-	public boolean hasService(Class api);
+	public boolean hasService(Class<?> api);
 }
