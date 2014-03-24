@@ -61,8 +61,6 @@ class DnDManager {
 	DnDInfo info;
 	DragAgent dragAgent;
 
-	DropAgent dropAgent;
-
 	private MWindow dragWindow;
 
 	private Shell dragHost;
@@ -393,7 +391,7 @@ class DnDManager {
 			overlayFrame.setAlpha(150);
 
 			IStylingEngine stylingEngine = dragWindow.getContext().get(IStylingEngine.class);
-			stylingEngine.setClassname(overlayFrame, "DragFeedback");
+			stylingEngine.setClassname(overlayFrame, "DragFeedback"); //$NON-NLS-1$
 			stylingEngine.style(overlayFrame);
 
 			overlayFrame.addPaintListener(new PaintListener() {
