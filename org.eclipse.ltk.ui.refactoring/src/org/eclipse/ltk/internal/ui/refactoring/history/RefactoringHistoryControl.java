@@ -413,6 +413,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		createDetailLabel(composite);
 		createSelectionLabel(composite);
 		fDetailField= new Text(composite, SWT.BORDER | SWT.FLAT | SWT.MULTI | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL);
+		fDetailField.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		fDetailField.setText(fControlConfiguration.getCommentCaption());
 		final GridData data= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 		data.horizontalSpan= getDetailColumns();
