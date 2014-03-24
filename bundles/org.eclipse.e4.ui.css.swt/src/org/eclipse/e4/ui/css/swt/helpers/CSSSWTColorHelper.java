@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Angelo Zerr and others.
+ * Copyright (c) 2008, 2014 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,7 +94,7 @@ public class CSSSWTColorHelper {
 
 	/**
 	 * Process the given string and return a corresponding RGB object.
-	 * 
+	 *
 	 * @param value
 	 *            the SWT constant <code>String</code>
 	 * @return the value of the SWT constant, or <code>SWT.COLOR_BLACK</code>
@@ -120,7 +120,7 @@ public class CSSSWTColorHelper {
 
 	/**
 	 * Get the SWT constant fields.
-	 * 
+	 *
 	 * @return the fields
 	 * @since 3.3
 	 */
@@ -282,7 +282,8 @@ public class CSSSWTColorHelper {
 	 */
 	private static int[] getDefaultPercents(Gradient grad) {
 		// Needed to avoid /0 in increment calc
-		if (grad.getRGBs().size() == 1) {
+
+		if (grad.getRGBs().size() <= 1) {
 			return new int[0];
 		}
 
