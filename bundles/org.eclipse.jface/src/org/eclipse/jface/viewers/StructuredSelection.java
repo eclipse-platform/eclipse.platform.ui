@@ -14,8 +14,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.resource.JFaceResources;
 
 /**
  * A concrete implementation of the <code>IStructuredSelection</code> interface,
@@ -150,50 +150,32 @@ public class StructuredSelection implements IStructuredSelection {
         return true;
     }
 
-    /* (non-Javadoc)
-     * Method declared in IStructuredSelection.
-     */
     @Override
 	public Object getFirstElement() {
         return isEmpty() ? null : elements[0];
     }
 
-    /* (non-Javadoc)
-     * Method declared in ISelection.
-     */
     @Override
 	public boolean isEmpty() {
         return elements == null || elements.length == 0;
     }
 
-    /* (non-Javadoc)
-     * Method declared in IStructuredSelection.
-     */
     @Override
 	public Iterator iterator() {
         return Arrays.asList(elements == null ? new Object[0] : elements)
                 .iterator();
     }
 
-    /* (non-Javadoc)
-     * Method declared in IStructuredSelection.
-     */
     @Override
 	public int size() {
         return elements == null ? 0 : elements.length;
     }
 
-    /* (non-Javadoc)
-     * Method declared in IStructuredSelection.
-     */
     @Override
 	public Object[] toArray() {
         return elements == null ? new Object[0] : (Object[]) elements.clone();
     }
 
-    /* (non-Javadoc)
-     * Method declared in IStructuredSelection.
-     */
     @Override
 	public List toList() {
         return Arrays.asList(elements == null ? new Object[0] : elements);

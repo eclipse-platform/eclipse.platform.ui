@@ -612,11 +612,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		return comparator.compare(this, e1, e2);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.viewers.StructuredViewer#getSortedChildren(java.lang.Object)
-	 */
 	@Override
 	protected Object[] getSortedChildren(Object parentElementOrTreePath) {
 		Object[] result = getFilteredChildren(parentElementOrTreePath);
@@ -706,11 +701,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	protected abstract void addTreeListener(Control control,
 			TreeListener listener);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see StructuredViewer#associate(Object, Item)
-	 */
 	@Override
 	protected void associate(Object element, Item item) {
 		Object data = item.getData();
@@ -885,7 +875,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		}
 	}
 
-	/* (non-Javadoc) Method declared on StructuredViewer. */
 	@Override
 	protected Widget doFindInputItem(Object element) {
 		// compare with root
@@ -900,7 +889,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		return null;
 	}
 
-	/* (non-Javadoc) Method declared on StructuredViewer. */
 	@Override
 	protected Widget doFindItem(Object element) {
 		// compare with root
@@ -1017,7 +1005,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 
 
-	/* (non-Javadoc) Method declared on StructuredViewer. */
 	@Override
 	protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 		boolean oldBusy = isBusy();
@@ -1343,7 +1330,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		return null;
 	}
 
-	/* (non-Javadoc) Method declared on StructuredViewer. */
 	@Override
 	protected Object[] getRawChildren(Object parentElementOrTreePath) {
 		boolean oldBusy = isBusy();
@@ -1440,11 +1426,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	protected abstract Item[] getSelection(Control control);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
-	 */
 	@Override
 	protected List getSelectionFromWidget() {
 		Widget[] items = getSelection(getControl());
@@ -1459,12 +1440,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		return list;
 	}
 
-	/*
-	 * Overridden in AbstractTreeViewer to fix bug 108102 (code copied from
-	 * StructuredViewer to avoid introducing new API) (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.viewers.StructuredViewer#handleDoubleSelect(org.eclipse.swt.events.SelectionEvent)
-	 */
 	@Override
 	protected void handleDoubleSelect(SelectionEvent event) {
 		// handle case where an earlier selection listener disposed the control.
@@ -1517,7 +1492,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		}
 	}
 
-	/* (non-Javadoc) Method declared on Viewer. */
 	@Override
 	protected void hookControl(Control control) {
 		super.hookControl(control);
@@ -1534,10 +1508,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		});
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on StructuredViewer. Builds the initial
-	 * tree and handles the automatic expand feature.
-	 */
 	@Override
 	protected void inputChanged(Object input, Object oldInput) {
 		preservingSelection(new Runnable() {
@@ -1855,13 +1825,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		return null;
 	}
 
-	/* (non-Javadoc) Method declared on StructuredViewer. */
 	@Override
 	protected void internalRefresh(Object element) {
 		internalRefresh(element, true);
 	}
 
-	/* (non-Javadoc) Method declared on StructuredViewer. */
 	@Override
 	protected void internalRefresh(Object element, boolean updateLabels) {
 		// If element is null, do a full refresh.
@@ -2197,7 +2165,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		return isExpandable(elementOrTreePath);
 	}
 
-	/* (non-Javadoc) Method declared on Viewer. */
 	@Override
 	protected void labelProviderChanged() {
 		// we have to walk the (visible) tree and update every item
@@ -2348,7 +2315,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		return item;
 	}
 
-	/* (non-Javadoc) Method declared on Viewer. */
 	@Override
 	public Item scrollDown(int x, int y) {
 		Item current = getItem(x, y);
@@ -2360,7 +2326,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		return null;
 	}
 
-	/* (non-Javadoc) Method declared on Viewer. */
 	@Override
 	public Item scrollUp(int x, int y) {
 		Item current = getItem(x, y);
@@ -3109,11 +3074,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.viewers.ColumnViewer#getColumnViewerOwner(int)
-	 */
 	@Override
 	protected Widget getColumnViewerOwner(int columnIndex) {
 		// Return null by default

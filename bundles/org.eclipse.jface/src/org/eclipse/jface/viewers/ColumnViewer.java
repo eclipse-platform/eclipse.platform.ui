@@ -13,6 +13,11 @@
 
 package org.eclipse.jface.viewers;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.internal.InternalPolicy;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -21,13 +26,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-
-import org.eclipse.jface.internal.InternalPolicy;
-import org.eclipse.jface.util.Policy;
 
 /**
  * The ColumnViewer is the abstract superclass of viewers that have columns
@@ -219,13 +217,6 @@ public abstract class ColumnViewer extends StructuredViewer {
 		if (getCellModifier() != null) {
 			viewer.setEditingSupport(new EditingSupport(this) {
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see
-				 * org.eclipse.jface.viewers.EditingSupport#canEdit(java.lang
-				 * .Object)
-				 */
 				@Override
 				public boolean canEdit(Object element) {
 					Object[] properties = getColumnProperties();
@@ -238,13 +229,6 @@ public abstract class ColumnViewer extends StructuredViewer {
 					return false;
 				}
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see
-				 * org.eclipse.jface.viewers.EditingSupport#getCellEditor(java
-				 * .lang.Object)
-				 */
 				@Override
 				public CellEditor getCellEditor(Object element) {
 					CellEditor[] editors = getCellEditors();
@@ -254,13 +238,6 @@ public abstract class ColumnViewer extends StructuredViewer {
 					return null;
 				}
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see
-				 * org.eclipse.jface.viewers.EditingSupport#getValue(java.lang
-				 * .Object)
-				 */
 				@Override
 				public Object getValue(Object element) {
 					Object[] properties = getColumnProperties();
@@ -273,13 +250,6 @@ public abstract class ColumnViewer extends StructuredViewer {
 					return null;
 				}
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see
-				 * org.eclipse.jface.viewers.EditingSupport#setValue(java.lang
-				 * .Object, java.lang.Object)
-				 */
 				@Override
 				public void setValue(Object element, Object value) {
 					Object[] properties = getColumnProperties();
@@ -341,11 +311,6 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 */
 	protected abstract Item getItemAt(Point point);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.StructuredViewer#getItem(int, int)
-	 */
 	@Override
 	protected Item getItem(int x, int y) {
 		return getItemAt(getControl().toControl(x, y));
@@ -687,9 +652,6 @@ public abstract class ColumnViewer extends StructuredViewer {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ContentViewer#handleDispose(org.eclipse.swt.events.DisposeEvent)
-	 */
 	@Override
 	protected void handleDispose(DisposeEvent event) {
 		if (mouseListener != null && event.widget instanceof Control) {

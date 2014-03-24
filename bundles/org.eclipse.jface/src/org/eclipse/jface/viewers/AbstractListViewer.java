@@ -209,10 +209,6 @@ public abstract class AbstractListViewer extends StructuredViewer {
         add(new Object[] { element });
     }
 
-    /* (non-Javadoc)
-     * Method declared on StructuredViewer.
-     * Since SWT.List doesn't use items we always return the List itself.
-     */
     @Override
 	protected Widget doFindInputItem(Object element) {
         if (element != null && equals(element, getRoot())) {
@@ -221,10 +217,6 @@ public abstract class AbstractListViewer extends StructuredViewer {
         return null;
     }
 
-    /* (non-Javadoc)
-     * Method declared on StructuredViewer.
-     * Since SWT.List doesn't use items we always return the List itself.
-     */
     @Override
 	protected Widget doFindItem(Object element) {
         if (element != null) {
@@ -235,9 +227,6 @@ public abstract class AbstractListViewer extends StructuredViewer {
         return null;
     }
 
-	/* (non-Javadoc)
-     * Method declared on StructuredViewer.
-     */
     @Override
 	protected void doUpdateItem(Widget data, Object element, boolean fullMap) {
         if (element != null) {
@@ -274,12 +263,6 @@ public abstract class AbstractListViewer extends StructuredViewer {
         return super.getLabelProvider();
     }
 
-    /* (non-Javadoc)
-     * Method declared on Viewer.
-     */
-    /* (non-Javadoc)
-     * Method declared on StructuredViewer.
-     */
     @Override
 	protected List getSelectionFromWidget() {
         int[] ixs = listGetSelectionIndices();
@@ -329,9 +312,6 @@ public abstract class AbstractListViewer extends StructuredViewer {
         return min;
     }
 
-    /* (non-Javadoc)
-     * Method declared on Viewer.
-     */
     @Override
 	protected void inputChanged(Object input, Object oldInput) {
         listMap.clear();
@@ -349,9 +329,6 @@ public abstract class AbstractListViewer extends StructuredViewer {
         listSetItems(labels);
     }
 
-    /* (non-Javadoc)
-     * Method declared on StructuredViewer.
-     */
     @Override
 	protected void internalRefresh(Object element) {
         Control list = getControl();
@@ -485,23 +462,12 @@ public abstract class AbstractListViewer extends StructuredViewer {
         remove(new Object[] { element });
     }
 
-    /**
-	 * The list viewer implementation of this <code>Viewer</code> framework
-	 * method ensures that the given label provider is an instance of
-	 * <code>ILabelProvider</code>.
-	 * 
-	 * <b>The optional interfaces {@link IColorProvider} and
-	 * {@link IFontProvider} have no effect for this type of viewer</b>
-	 */
     @Override
 	public void setLabelProvider(IBaseLabelProvider labelProvider) {
         Assert.isTrue(labelProvider instanceof ILabelProvider);
         super.setLabelProvider(labelProvider);
     }
 
-    /* (non-Javadoc)
-     * Method declared on StructuredViewer.
-     */
     @Override
 	protected void setSelectionToWidget(List in, boolean reveal) {
         if (in == null || in.size() == 0) { // clear selection

@@ -14,7 +14,9 @@ import java.util.Arrays;
 
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * A <code>DecorationOverlayIcon</code> is an image descriptor that can be used
@@ -133,9 +135,6 @@ public class DecorationOverlayIcon extends CompositeImageDescriptor {
         }
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
 	public boolean equals(Object o) {
         if (!(o instanceof DecorationOverlayIcon)) {
@@ -146,9 +145,6 @@ public class DecorationOverlayIcon extends CompositeImageDescriptor {
                 && Arrays.equals(overlays, other.overlays);
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
 	public int hashCode() {
         int code = System.identityHashCode(base);
@@ -160,9 +156,6 @@ public class DecorationOverlayIcon extends CompositeImageDescriptor {
         return code;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.CompositeImageDescriptor#drawCompositeImage(int, int)
-     */
     @Override
 	protected void drawCompositeImage(int width, int height) {
     	if (overlays.length > IDecoration.UNDERLAY) {
@@ -179,17 +172,11 @@ public class DecorationOverlayIcon extends CompositeImageDescriptor {
         drawOverlays(overlays);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.CompositeImageDescriptor#getSize()
-     */
     @Override
 	protected Point getSize() {
         return size;
     }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.CompositeImageDescriptor#getTransparentPixel()
-     */
+
     @Override
 	protected int getTransparentPixel() {
     	return base.getImageData().transparentPixel;

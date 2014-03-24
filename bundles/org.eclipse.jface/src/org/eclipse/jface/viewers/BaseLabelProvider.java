@@ -22,10 +22,7 @@ import org.eclipse.jface.util.SafeRunnable;
  * 
  */
 public class BaseLabelProvider extends EventManager implements IBaseLabelProvider {
-	
-	/* (non-Javadoc)
-     * Method declared on IBaseLabelProvider.
-     */
+
     @Override
 	public void addListener(ILabelProviderListener listener) {
         addListenerObject(listener);
@@ -40,7 +37,7 @@ public class BaseLabelProvider extends EventManager implements IBaseLabelProvide
 	public void dispose() {
     	clearListeners();
     }
-    
+
     /**
      * The <code>BaseLabelProvider</code> implementation of this 
      * <code>IBaseLabelProvider</code> method returns <code>true</code>. Subclasses may 
@@ -51,15 +48,11 @@ public class BaseLabelProvider extends EventManager implements IBaseLabelProvide
         return true;
     }
 
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-     */
     @Override
 	public void removeListener(ILabelProviderListener listener) {
         removeListenerObject(listener);
     }
-    
+
     /**
 	 * Fires a label provider changed event to all registered listeners Only
 	 * listeners registered at the time this method is called are notified.

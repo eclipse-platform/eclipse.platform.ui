@@ -399,10 +399,7 @@ public class TableViewer extends AbstractTableViewer {
 	public void refresh(boolean updateLabels, boolean reveal) {
 		refresh(getRoot(), updateLabels, reveal);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.AbstractTableViewer#remove(java.lang.Object[])
-	 */
+
 	@Override
 	public void remove(Object[] elements) {
 		assertElementsNotNull(elements);

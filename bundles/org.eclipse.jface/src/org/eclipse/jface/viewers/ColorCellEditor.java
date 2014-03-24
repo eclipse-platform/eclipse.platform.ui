@@ -184,9 +184,6 @@ public class ColorCellEditor extends DialogCellEditor {
         return data;
     }
 
-    /* (non-Javadoc)
-     * Method declared on DialogCellEditor.
-     */
     @Override
 	protected Control createContents(Composite cell) {
         Color bg = cell.getBackground();
@@ -201,9 +198,6 @@ public class ColorCellEditor extends DialogCellEditor {
         return composite;
     }
 
-    /* (non-Javadoc)
-     * Method declared on CellEditor.
-     */
     @Override
 	public void dispose() {
         if (image != null) {
@@ -213,9 +207,6 @@ public class ColorCellEditor extends DialogCellEditor {
         super.dispose();
     }
 
-    /* (non-Javadoc)
-     * Method declared on DialogCellEditor.
-     */
     @Override
 	protected Object openDialogBox(Control cellEditorWindow) {
         ColorDialog dialog = new ColorDialog(cellEditorWindow.getShell());
@@ -227,9 +218,6 @@ public class ColorCellEditor extends DialogCellEditor {
         return dialog.getRGB();
     }
 
-    /* (non-Javadoc)
-     * Method declared on DialogCellEditor.
-     */
     @Override
 	protected void updateContents(Object value) {
         RGB rgb = (RGB) value;

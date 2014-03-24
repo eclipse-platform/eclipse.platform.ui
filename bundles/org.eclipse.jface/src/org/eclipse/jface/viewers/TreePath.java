@@ -94,11 +94,6 @@ public final class TreePath {
 		return segments[segments.length - 1];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof TreePath)) {
@@ -107,11 +102,6 @@ public final class TreePath {
 		return equals((TreePath) other, null);
 	}
 
-	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		if (hash == 0) {

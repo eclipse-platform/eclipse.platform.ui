@@ -99,11 +99,6 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 		this.styledLabelProvider = labelProvider;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
-	 */
 	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();

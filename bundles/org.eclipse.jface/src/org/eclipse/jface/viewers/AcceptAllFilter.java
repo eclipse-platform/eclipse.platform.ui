@@ -27,23 +27,17 @@ public final class AcceptAllFilter implements IFilter {
 	public static IFilter getInstance() {
 		return singleton;
 	}
-	
+
 	/**
 	 * The singleton instance
 	 */
 	private static IFilter singleton = new AcceptAllFilter();
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.deferred.IFilter#select(java.lang.Object)
-	 */
+
 	@Override
 	public boolean select(Object toTest) {
 		return true;
 	}
-	
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+
 	@Override
 	public boolean equals(Object other) {
 		return other == this || other instanceof AcceptAllFilter;

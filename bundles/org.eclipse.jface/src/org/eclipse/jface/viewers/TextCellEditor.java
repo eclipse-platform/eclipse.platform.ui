@@ -138,9 +138,6 @@ public class TextCellEditor extends CellEditor {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on CellEditor.
-     */
     @Override
 	protected Control createControl(Composite parent) {
         text = new Text(parent, getStyle());
@@ -211,9 +208,6 @@ public class TextCellEditor extends CellEditor {
         return text.getText();
     }
 
-    /* (non-Javadoc)
-     * Method declared on CellEditor.
-     */
     @Override
 	protected void doSetFocus() {
         if (text != null) {

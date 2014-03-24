@@ -494,26 +494,16 @@ public class TableTreeViewer extends AbstractTreeViewer {
 		this(new TableTree(parent, style));
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on AbstractTreeViewer.
-	 */
 	@Override
 	protected void addTreeListener(Control c, TreeListener listener) {
 		((TableTree) c).addTreeListener(listener);
 	}
 
-	/**
-	 * Cancels a currently active cell editor. All changes already done in the
-	 * cell editor are lost.
-	 */
 	@Override
 	public void cancelEditing() {
 		tableEditorImpl.cancelEditing();
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on AbstractTreeViewer.
-	 */
 	@Override
 	protected void doUpdateItem(Item item, Object element) {
 		// update icon and label
@@ -570,42 +560,21 @@ public class TableTreeViewer extends AbstractTreeViewer {
 
 	}
 
-	/**
-	 * Starts editing the given element.
-	 * 
-	 * @param element
-	 *            the element
-	 * @param column
-	 *            the column number
-	 */
 	@Override
 	public void editElement(Object element, int column) {
 		tableEditorImpl.editElement(element, column);
 	}
 
-	/**
-	 * Returns the cell editors of this viewer.
-	 * 
-	 * @return the list of cell editors
-	 */
 	@Override
 	public CellEditor[] getCellEditors() {
 		return tableEditorImpl.getCellEditors();
 	}
 
-	/**
-	 * Returns the cell modifier of this viewer.
-	 * 
-	 * @return the cell modifier
-	 */
 	@Override
 	public ICellModifier getCellModifier() {
 		return tableEditorImpl.getCellModifier();
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on AbstractTreeViewer.
-	 */
 	@Override
 	protected Item[] getChildren(Widget o) {
 		if (o instanceof TableTreeItem) {
@@ -617,12 +586,6 @@ public class TableTreeViewer extends AbstractTreeViewer {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getChild(org.eclipse.swt.widgets.Widget,
-	 *      int)
-	 */
 	@Override
 	protected Item getChild(Widget widget, int index) {
 		if (widget instanceof TableTreeItem) {
@@ -634,21 +597,11 @@ public class TableTreeViewer extends AbstractTreeViewer {
 		return null;
 	}
 
-	/**
-	 * Returns the column properties of this viewer. The properties must
-	 * correspond with the columns of the table control. They are used to
-	 * identify the column in a cell modifier.
-	 * 
-	 * @return the list of column properties
-	 */
 	@Override
 	public Object[] getColumnProperties() {
 		return tableEditorImpl.getColumnProperties();
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Viewer.
-	 */
 	@Override
 	public Control getControl() {
 		return tableTree;
@@ -676,43 +629,26 @@ public class TableTreeViewer extends AbstractTreeViewer {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on AbstractTreeViewer.
-	 */
 	@Override
 	protected boolean getExpanded(Item item) {
 		return ((TableTreeItem) item).getExpanded();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ColumnViewer#getItemAt(org.eclipse.swt.graphics.Point)
-	 */
 	@Override
 	protected Item getItemAt(Point p) {
 		return getTableTree().getTable().getItem(p);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on AbstractTreeViewer.
-	 */
 	@Override
 	protected int getItemCount(Control widget) {
 		return ((TableTree) widget).getItemCount();
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on AbstractTreeViewer.
-	 */
 	@Override
 	protected int getItemCount(Item item) {
 		return ((TableTreeItem) item).getItemCount();
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on AbstractTreeViewer.
-	 */
 	@Override
 	protected org.eclipse.swt.widgets.Item[] getItems(
 			org.eclipse.swt.widgets.Item item) {
@@ -734,17 +670,11 @@ public class TableTreeViewer extends AbstractTreeViewer {
 		return super.getLabelProvider();
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on AbstractTreeViewer.
-	 */
 	@Override
 	protected Item getParentItem(Item item) {
 		return ((TableTreeItem) item).getParentItem();
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on AbstractTreeViewer.
-	 */
 	@Override
 	protected Item[] getSelection(Control widget) {
 		return ((TableTree) widget).getSelection();
@@ -759,9 +689,6 @@ public class TableTreeViewer extends AbstractTreeViewer {
 		return tableTree;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on AbstractTreeViewer.
-	 */
 	@Override
 	protected void hookControl(Control control) {
 		super.hookControl(control);
@@ -790,20 +717,11 @@ public class TableTreeViewer extends AbstractTreeViewer {
 		});
 	}
 
-	/**
-	 * Returns whether there is an active cell editor.
-	 * 
-	 * @return <code>true</code> if there is an active cell editor, and
-	 *         <code>false</code> otherwise
-	 */
 	@Override
 	public boolean isCellEditorActive() {
 		return tableEditorImpl.isCellEditorActive();
 	}
 
-	/*
-	 * (non-Javadoc) Method declared in AbstractTreeViewer.
-	 */
 	@Override
 	protected Item newItem(Widget parent, int flags, int ix) {
 		TableTreeItem item;
@@ -823,60 +741,31 @@ public class TableTreeViewer extends AbstractTreeViewer {
 		return item;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared in AbstractTreeViewer.
-	 */
 	@Override
 	protected void removeAll(Control widget) {
 		((TableTree) widget).removeAll();
 	}
 
-	/**
-	 * Sets the cell editors of this table viewer.
-	 * 
-	 * @param editors
-	 *            the list of cell editors
-	 */
 	@Override
 	public void setCellEditors(CellEditor[] editors) {
 		tableEditorImpl.setCellEditors(editors);
 	}
 
-	/**
-	 * Sets the cell modifier of this table viewer.
-	 * 
-	 * @param modifier
-	 *            the cell modifier
-	 */
 	@Override
 	public void setCellModifier(ICellModifier modifier) {
 		tableEditorImpl.setCellModifier(modifier);
 	}
 
-	/**
-	 * Sets the column properties of this table viewer. The properties must
-	 * correspond with the columns of the table control. They are used to
-	 * identify the column in a cell modifier.
-	 * 
-	 * @param columnProperties
-	 *            the list of column properties
-	 */
 	@Override
 	public void setColumnProperties(String[] columnProperties) {
 		tableEditorImpl.setColumnProperties(columnProperties);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared in AbstractTreeViewer.
-	 */
 	@Override
 	protected void setExpanded(Item node, boolean expand) {
 		((TableTreeItem) node).setExpanded(expand);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared in AbstractTreeViewer.
-	 */
 	@Override
 	protected void setSelection(List items) {
 		TableTreeItem[] newItems = new TableTreeItem[items.size()];
@@ -884,9 +773,6 @@ public class TableTreeViewer extends AbstractTreeViewer {
 		getTableTree().setSelection(newItems);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared in AbstractTreeViewer.
-	 */
 	@Override
 	protected void showItem(Item item) {
 		getTableTree().showItem((TableTreeItem) item);

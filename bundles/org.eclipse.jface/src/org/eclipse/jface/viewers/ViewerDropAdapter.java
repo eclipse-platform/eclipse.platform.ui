@@ -83,19 +83,19 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
      * someplace you can't drop).  
      */
     private int lastValidOperation;
-    
+
     /**
      * This is used because we allow the operation 
      * to be temporarily overridden (for example a move to a copy) for a drop that
      * happens immediately after the operation is overridden.
      */
     private int overrideOperation = -1;
-    
+
     /**
      * The current DropTargetEvent, used only during validateDrop()
      */
     private DropTargetEvent currentEvent;
-    
+
     /**
      * The data item currently under the mouse.
      */
@@ -125,7 +125,7 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
      * expanding on or off. Default is <code>true</code>.
      */
     private boolean expandEnabled = true;
-    
+
     /**
      * A flag that allows adapter users to turn selection feedback
      *  on or off. Default is <code>true</code>.
@@ -192,12 +192,6 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
         return event.item == null ? null : event.item.getData();
     }
 
-    /* (non-Javadoc)
-     * Method declared on DropTargetAdapter.
-     * The mouse has moved over the drop target.  If the
-     * target item has changed, notify the action and check
-     * that it is still enabled.
-     */
     private void doDropValidation(DropTargetEvent event) {
     	//always remember what was previously requested, but not if it
     	//was overridden
@@ -219,34 +213,18 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
         currentEvent = null;
     }
 
-    /* (non-Javadoc)
-     * Method declared on DropTargetAdapter.
-     * The drag has entered this widget's region.  See
-     * if the drop should be allowed.
-     */
     @Override
 	public void dragEnter(DropTargetEvent event) {
         currentTarget = determineTarget(event);
         doDropValidation(event);
     }
 
-    /* (non-Javadoc)
-     * Method declared on DropTargetAdapter.
-     * The drop operation has changed, see if the action
-     * should still be enabled.
-     */
     @Override
 	public void dragOperationChanged(DropTargetEvent event) {
         currentTarget = determineTarget(event);
         doDropValidation(event);
     }
 
-    /* (non-Javadoc)
-     * Method declared on DropTargetAdapter.
-     * The mouse has moved over the drop target.  If the
-     * target item has changed, notify the action and check
-     * that it is still enabled.
-     */
     @Override
 	public void dragOver(DropTargetEvent event) {
     	//use newly revealed item as target if scrolling occurs
@@ -264,10 +242,6 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on DropTargetAdapter.
-     * The user has dropped something on the desktop viewer.
-     */
     @Override
 	public void drop(DropTargetEvent event) {
         currentLocation = determineLocation(event);
@@ -286,10 +260,6 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
         currentEvent = null;
     }
 
-    /* (non-Javadoc)
-     * Method declared on DropTargetAdapter.
-     * Last chance for the action to disable itself
-     */
     @Override
 	public void dropAccept(DropTargetEvent event) {
     	currentEvent = event;
@@ -454,13 +424,7 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 	protected void overrideOperation(int operation) {
 		overrideOperation = operation;
 	}
-	
-    /* (non-Javadoc)
-     * Method declared on DropTargetAdapter.
-     * The mouse has moved over the drop target.  If the
-     * target item has changed, notify the action and check
-     * that it is still enabled.
-     */
+
     private void setFeedback(DropTargetEvent event, int location) {
         if (feedbackEnabled) {
             switch (location) {

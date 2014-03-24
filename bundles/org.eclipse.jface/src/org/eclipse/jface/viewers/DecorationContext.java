@@ -22,13 +22,13 @@ import java.util.Map;
  * @since 3.2
  */
 public class DecorationContext implements IDecorationContext {
-	
+
 	/**
 	 * Constant that defines a default decoration context that has
 	 * no context ids associated with it.
 	 */
 	public static final IDecorationContext DEFAULT_CONTEXT = new DecorationContext();
-	
+
 	private Map properties = new HashMap();
 
 	/**
@@ -36,19 +36,12 @@ public class DecorationContext implements IDecorationContext {
 	 */
 	public DecorationContext() {
 	}
-	
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IDecorationContext#getProperty(java.lang.String)
-	 */
 	@Override
 	public Object getProperty(String property) {
 		return properties.get(property);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IDecorationContext#getProperties()
-	 */
 	@Override
 	public String[] getProperties() {
 		return (String[]) properties.keySet().toArray(new String[properties.size()]);

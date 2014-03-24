@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.ListenerList;
-
-import org.eclipse.jface.util.SafeRunnable;
 
 /**
  * A viewer is a model-based adapter on a widget.
@@ -126,9 +124,6 @@ public abstract class Viewer implements IInputSelectionProvider {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionProvider.
-     */
     @Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
         selectionChangedListeners.add(listener);
@@ -205,15 +200,9 @@ public abstract class Viewer implements IInputSelectionProvider {
         return null;
     }
 
-    /* (non-Javadoc)
-     * Copy-down of method declared on <code>IInputProvider</code>.
-     */
     @Override
 	public abstract Object getInput();
 
-    /* (non-Javadoc)
-     * Copy-down of method declared on <code>ISelectionProvider</code>.
-     */
     @Override
 	public abstract ISelection getSelection();
 
@@ -270,9 +259,6 @@ public abstract class Viewer implements IInputSelectionProvider {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionProvider.
-     */
     @Override
 	public void removeSelectionChangedListener(
             ISelectionChangedListener listener) {

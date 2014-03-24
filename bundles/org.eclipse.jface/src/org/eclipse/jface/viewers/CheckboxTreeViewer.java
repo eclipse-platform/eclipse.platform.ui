@@ -93,9 +93,6 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
         super(tree);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ICheckable.
-     */
     @Override
 	public void addCheckStateListener(ICheckStateListener listener) {
         checkStateListeners.add(listener);
@@ -202,9 +199,6 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on ICheckable.
-     */
     @Override
 	public boolean getChecked(Object element) {
         Widget widget = findItem(element);
@@ -268,9 +262,6 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
         return result.toArray();
     }
 
-    /* (non-Javadoc)
-     * Method declared on StructuredViewer.
-     */
     @Override
 	protected void handleDoubleSelect(SelectionEvent event) {
 
@@ -289,9 +280,6 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 		}
     }
 
-    /* (non-Javadoc)
-     * Method declared on StructuredViewer.
-     */
     @Override
 	protected void handleSelect(SelectionEvent event) {
 
@@ -396,9 +384,6 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on Viewer.
-     */
     @Override
 	protected void preservingSelection(Runnable updateCode) {
     	if (!getPreserveSelection()) {
@@ -425,17 +410,11 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
         applyState(checkedNodes, grayedNodes, getControl());
     }
 
-    /* (non-Javadoc)
-     * Method declared on ICheckable.
-     */
     @Override
 	public void removeCheckStateListener(ICheckStateListener listener) {
         checkStateListeners.remove(listener);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ICheckable.
-     */
     @Override
 	public boolean setChecked(Object element, boolean state) {
         Assert.isNotNull(element);

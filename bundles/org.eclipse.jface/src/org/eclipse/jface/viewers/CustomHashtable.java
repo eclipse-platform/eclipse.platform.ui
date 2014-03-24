@@ -406,11 +406,6 @@ import java.util.NoSuchElementException;
         return elementCount;
     }
 
-    /**
-     * Answers the string representation of this Hashtable.
-     *
-     * @return		the string representation of this Hashtable
-     */
     @Override
 	public String toString() {
         if (size() == 0) {

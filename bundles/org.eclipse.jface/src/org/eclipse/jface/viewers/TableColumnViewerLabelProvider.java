@@ -53,11 +53,6 @@ class TableColumnViewerLabelProvider extends WrappedViewerLabelProvider {
 			tableFontProvider = (ITableFontProvider) labelProvider;
 	}
 
-
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.WrappedViewerLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
-	 */
 	@Override
 	public void update(ViewerCell cell) {
 

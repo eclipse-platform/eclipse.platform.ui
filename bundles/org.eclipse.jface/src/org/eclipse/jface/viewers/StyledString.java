@@ -13,12 +13,11 @@ package org.eclipse.jface.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.graphics.TextStyle;
-
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.graphics.TextStyle;
 
 /**
  * A mutable string with styled ranges. All ranges mark substrings of the string
@@ -141,12 +140,7 @@ public class StyledString {
 	public String getString() {
 		return fBuffer.toString();
 	}
-	
-	/**
-	 * Returns the string of this {@link StyledString}.
-	 * 
-	 * @return the current string of this {@link StyledString}.
-	 */
+
 	@Override
 	public String toString() {
 		return getString();

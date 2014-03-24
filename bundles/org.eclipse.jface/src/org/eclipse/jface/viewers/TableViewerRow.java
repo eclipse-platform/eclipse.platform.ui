@@ -37,25 +37,16 @@ public class TableViewerRow extends ViewerRow {
 		this.item = item;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerRow#getBounds(int)
-	 */
 	@Override
 	public Rectangle getBounds(int columnIndex) {
 		return item.getBounds(columnIndex);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerRow#getBounds()
-	 */
 	@Override
 	public Rectangle getBounds() {
 		return item.getBounds();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerRow#getItem()
-	 */
 	@Override
 	public Widget getItem() {
 		return item;
@@ -65,81 +56,51 @@ public class TableViewerRow extends ViewerRow {
 		this.item = item;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerRow#getColumnCount()
-	 */
 	@Override
 	public int getColumnCount() {
 		return item.getParent().getColumnCount();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerRow#getBackground(int)
-	 */
 	@Override
 	public Color getBackground(int columnIndex) {
 		return item.getBackground(columnIndex);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerRow#getFont(int)
-	 */
 	@Override
 	public Font getFont(int columnIndex) {
 		return item.getFont(columnIndex);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerRow#getForeground(int)
-	 */
 	@Override
 	public Color getForeground(int columnIndex) {
 		return item.getForeground(columnIndex);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerRow#getImage(int)
-	 */
 	@Override
 	public Image getImage(int columnIndex) {
 		return item.getImage(columnIndex);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerRow#getText(int)
-	 */
 	@Override
 	public String getText(int columnIndex) {
 		return item.getText(columnIndex);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerRow#setBackground(int, org.eclipse.swt.graphics.Color)
-	 */
 	@Override
 	public void setBackground(int columnIndex, Color color) {
 		item.setBackground(columnIndex, color);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerRow#setFont(int, org.eclipse.swt.graphics.Font)
-	 */
 	@Override
 	public void setFont(int columnIndex, Font font) {
 		item.setFont(columnIndex, font);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerRow#setForeground(int, org.eclipse.swt.graphics.Color)
-	 */
 	@Override
 	public void setForeground(int columnIndex, Color color) {
 		item.setForeground(columnIndex, color);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerRow#setImage(int, org.eclipse.swt.graphics.Image)
-	 */
 	@Override
 	public void setImage(int columnIndex, Image image) {
 		Image oldImage = item.getImage(columnIndex);
@@ -148,17 +109,11 @@ public class TableViewerRow extends ViewerRow {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerRow#setText(int, java.lang.String)
-	 */
 	@Override
 	public void setText(int columnIndex, String text) {
 		item.setText(columnIndex, text == null ? "" : text); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerRow#getControl()
-	 */
 	@Override
 	public Control getControl() {
 		return item.getParent();
@@ -236,17 +191,11 @@ public class TableViewerRow extends ViewerRow {
 		return super.getCreationIndex(visualIndex);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerRow#getTextBounds(int)
-	 */
 	@Override
 	public Rectangle getTextBounds(int index) {
 		return item.getTextBounds(index);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerRow#getImageBounds(int)
-	 */
+
 	@Override
 	public Rectangle getImageBounds(int index) {
 		return item.getImageBounds(index);
@@ -259,12 +208,12 @@ public class TableViewerRow extends ViewerRow {
 	private boolean isValidOrderIndex(int currentIndex) {
 		return currentIndex < this.item.getParent().getColumnOrder().length;
 	}
-	
+
 	@Override
 	int getWidth(int columnIndex) {
 		return item.getParent().getColumn(columnIndex).getWidth();
 	}
-	
+
 	@Override
 	protected boolean scrollCellIntoView(int columnIndex) {
 		item.getParent().showItem(item);
