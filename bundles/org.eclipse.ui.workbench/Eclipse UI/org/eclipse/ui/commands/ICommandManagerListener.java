@@ -23,6 +23,8 @@ package org.eclipse.ui.commands;
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  * @see org.eclipse.core.commands.ICommandManagerListener
  */
+@Deprecated
+@SuppressWarnings("all")
 public interface ICommandManagerListener {
 
     /**
@@ -34,5 +36,6 @@ public interface ICommandManagerListener {
      *            the commandManager event. Guaranteed not to be
      *            <code>null</code>.
      */
+	@Deprecated
     void commandManagerChanged(CommandManagerEvent commandManagerEvent);
 }

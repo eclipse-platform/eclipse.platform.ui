@@ -27,6 +27,8 @@ import java.util.Collection;
  * @see org.eclipse.ui.handlers.IHandlerService
  * @noimplement This interface is not intended to be implemented by clients.
  */
+@Deprecated
+@SuppressWarnings("all")
 public interface IWorkbenchCommandSupport {
 
 	/**
@@ -39,6 +41,7 @@ public interface IWorkbenchCommandSupport {
 	 * @param handlerSubmission
 	 *            The submission to be added; must not be <code>null</code>.
 	 */
+	@Deprecated
 	void addHandlerSubmission(HandlerSubmission handlerSubmission);
 
 	/**
@@ -54,6 +57,7 @@ public interface IWorkbenchCommandSupport {
 	 *            and must contain zero or more instances of
 	 *            <code>HandlerSubmission</code>.
 	 */
+	@Deprecated
 	void addHandlerSubmissions(Collection handlerSubmissions);
 
 	/**
@@ -62,6 +66,7 @@ public interface IWorkbenchCommandSupport {
 	 * @return the command manager for the workbench. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
+	@Deprecated
 	ICommandManager getCommandManager();
 
 	/**
@@ -73,6 +78,7 @@ public interface IWorkbenchCommandSupport {
 	 * @param handlerSubmission
 	 *            The submission to be removed; must not be <code>null</code>.
 	 */
+	@Deprecated
 	void removeHandlerSubmission(HandlerSubmission handlerSubmission);
 
 	/**
@@ -86,5 +92,6 @@ public interface IWorkbenchCommandSupport {
 	 *            and must contain instances of <code>HandlerSubmission</code>
 	 *            only.
 	 */
+	@Deprecated
 	void removeHandlerSubmissions(Collection handlerSubmissions);
 }

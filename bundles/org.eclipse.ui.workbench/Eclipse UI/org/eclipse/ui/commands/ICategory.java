@@ -46,6 +46,8 @@ package org.eclipse.ui.commands;
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  * @noimplement This interface is not intended to be implemented by clients.
  */
+@Deprecated
+@SuppressWarnings("all")
 public interface ICategory extends Comparable {
 
     /**
@@ -59,6 +61,7 @@ public interface ICategory extends Comparable {
      *            which is already registered with this instance, no operation
      *            is performed.
      */
+	@Deprecated
     void addCategoryListener(ICategoryListener categoryListener);
 
     /**
@@ -76,6 +79,7 @@ public interface ICategory extends Comparable {
      * @throws NotDefinedException
      *             if the category represented by this handle is not defined.
      */
+	@Deprecated
     String getDescription() throws NotDefinedException;
 
     /**
@@ -83,6 +87,7 @@ public interface ICategory extends Comparable {
      * 
      * @return the identifier of this handle. Guaranteed not to be <code>null</code>.
      */
+	@Deprecated
     String getId();
 
     /**
@@ -100,6 +105,7 @@ public interface ICategory extends Comparable {
      * @throws NotDefinedException
      *             if the category represented by this handle is not defined.
      */
+	@Deprecated
     String getName() throws NotDefinedException;
 
     /**
@@ -115,6 +121,7 @@ public interface ICategory extends Comparable {
      * @return <code>true</code>, iff the category represented by this
      *         handle is defined.
      */
+	@Deprecated
     boolean isDefined();
 
     /**
@@ -128,5 +135,6 @@ public interface ICategory extends Comparable {
      *            which is not already registered with this instance, no
      *            operation is performed.
      */
+	@Deprecated
     void removeCategoryListener(ICategoryListener categoryListener);
 }

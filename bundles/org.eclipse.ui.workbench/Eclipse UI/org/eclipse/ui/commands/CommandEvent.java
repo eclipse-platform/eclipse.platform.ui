@@ -12,7 +12,6 @@ package org.eclipse.ui.commands;
 
 import java.util.Collections;
 import java.util.Map;
-
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -27,6 +26,8 @@ import org.eclipse.ui.internal.util.Util;
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  * @see org.eclipse.core.commands.CommandEvent
  */
+@Deprecated
+@SuppressWarnings("all")
 public final class CommandEvent {
 
     /**
@@ -143,6 +144,7 @@ public final class CommandEvent {
      * @return the instance of the interface that changed. Guaranteed not to be
      *         <code>null</code>.
      */
+	@Deprecated
     public ICommand getCommand() {
         return command;
     }
@@ -158,6 +160,7 @@ public final class CommandEvent {
      *         guaranteed to not be null if haveAttributeValuesByNameChanged()
      *         is <code>true</code>.
      */
+	@Deprecated
     public Map getPreviousAttributeValuesByName() {
         return previousAttributeValuesByName;
     }
@@ -167,6 +170,7 @@ public final class CommandEvent {
      * 
      * @return true, iff the categoryId property changed.
      */
+	@Deprecated
     public boolean hasCategoryIdChanged() {
         return categoryIdChanged;
     }
@@ -176,6 +180,7 @@ public final class CommandEvent {
      * 
      * @return true, iff the defined property changed.
      */
+	@Deprecated
     public boolean hasDefinedChanged() {
         return definedChanged;
     }
@@ -185,6 +190,7 @@ public final class CommandEvent {
      * 
      * @return true, iff the description property changed.
      */
+	@Deprecated
     public boolean hasDescriptionChanged() {
         return descriptionChanged;
     }
@@ -194,6 +200,7 @@ public final class CommandEvent {
      * 
      * @return true, iff the handled property changed.
      */
+	@Deprecated
     public boolean hasHandledChanged() {
         return handledChanged;
     }
@@ -203,6 +210,7 @@ public final class CommandEvent {
      * 
      * @return true, iff the name property changed.
      */
+	@Deprecated
     public boolean hasNameChanged() {
         return nameChanged;
     }
@@ -212,6 +220,7 @@ public final class CommandEvent {
      * 
      * @return true, iff the attributeValuesByName property changed.
      */
+	@Deprecated
     public boolean haveAttributeValuesByNameChanged() {
         return attributeValuesByNameChanged;
     }
@@ -221,6 +230,7 @@ public final class CommandEvent {
      * 
      * @return true, iff the keySequenceBindings property changed.
      */
+	@Deprecated
     public boolean haveKeySequenceBindingsChanged() {
         return keySequenceBindingsChanged;
     }

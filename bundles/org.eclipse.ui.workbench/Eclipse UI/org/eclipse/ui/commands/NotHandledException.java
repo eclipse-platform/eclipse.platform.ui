@@ -21,6 +21,8 @@ package org.eclipse.ui.commands;
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  * @see org.eclipse.core.commands.NotHandledException
  */
+@Deprecated
+@SuppressWarnings("all")
 public final class NotHandledException extends CommandException {
 
     /**
@@ -36,6 +38,7 @@ public final class NotHandledException extends CommandException {
      * @param s
      *            the detail message.
      */
+	@Deprecated
     public NotHandledException(String s) {
         super(s);
     }
@@ -49,6 +52,7 @@ public final class NotHandledException extends CommandException {
      *            must not be <code>null</code>.
      * @since 3.1
      */
+	@Deprecated
     public NotHandledException(final org.eclipse.core.commands.NotHandledException e) {
         super(e.getMessage(), e);
     }

@@ -23,6 +23,7 @@ package org.eclipse.ui.commands;
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  * @see org.eclipse.core.commands.CategoryEvent
  */
+@Deprecated
 public final class CategoryEvent {
 
     /**
@@ -50,6 +51,7 @@ public final class CategoryEvent {
      * @param nameChanged
      *            true, iff the name property changed.
      */
+	@Deprecated
     public CategoryEvent(ICategory category, boolean definedChanged,
             boolean nameChanged) {
         if (category == null) {
@@ -67,6 +69,7 @@ public final class CategoryEvent {
      * @return the instance of the interface that changed. Guaranteed not to be
      *         <code>null</code>.
      */
+	@Deprecated
     public ICategory getCategory() {
         return category;
     }
@@ -76,6 +79,7 @@ public final class CategoryEvent {
      * 
      * @return true, iff the defined property changed.
      */
+	@Deprecated
     public boolean hasDefinedChanged() {
         return definedChanged;
     }
@@ -85,6 +89,7 @@ public final class CategoryEvent {
      * 
      * @return true, iff the name property changed.
      */
+	@Deprecated
     public boolean hasNameChanged() {
         return nameChanged;
     }

@@ -23,6 +23,8 @@ package org.eclipse.ui.commands;
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  * @see org.eclipse.core.commands.IHandlerListener
  */
+@Deprecated
+@SuppressWarnings("all")
 public interface IHandlerListener {
 
     /**
@@ -33,5 +35,6 @@ public interface IHandlerListener {
      * @param handlerEvent
      *            the handler event. Guaranteed not to be <code>null</code>.
      */
+	@Deprecated
     void handlerChanged(HandlerEvent handlerEvent);
 }

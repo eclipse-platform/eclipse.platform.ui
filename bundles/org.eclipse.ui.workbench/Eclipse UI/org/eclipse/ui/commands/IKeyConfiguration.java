@@ -43,6 +43,8 @@ package org.eclipse.ui.commands;
  * plug-in instead.
  * @noimplement This interface is not intended to be implemented by clients.
  */
+@Deprecated
+@SuppressWarnings("all")
 public interface IKeyConfiguration extends Comparable {
 
     /**
@@ -56,6 +58,7 @@ public interface IKeyConfiguration extends Comparable {
      *            which is already registered with this instance, no operation
      *            is performed.
      */
+	@Deprecated
     void addKeyConfigurationListener(
             IKeyConfigurationListener keyConfigurationListener);
 
@@ -75,6 +78,7 @@ public interface IKeyConfiguration extends Comparable {
      *             if the key configuration represented by this handle is not
      *             defined.
      */
+	@Deprecated
     String getDescription() throws NotDefinedException;
 
     /**
@@ -83,6 +87,7 @@ public interface IKeyConfiguration extends Comparable {
      * @return the identifier of this handle. Guaranteed not to be
      *         <code>null</code>.
      */
+	@Deprecated
     String getId();
 
     /**
@@ -101,6 +106,7 @@ public interface IKeyConfiguration extends Comparable {
      *             if the key configuration represented by this handle is not
      *             defined.
      */
+	@Deprecated
     String getName() throws NotDefinedException;
 
     /**
@@ -119,6 +125,7 @@ public interface IKeyConfiguration extends Comparable {
      *             if the key configuration represented by this handle is not
      *             defined.
      */
+	@Deprecated
     String getParentId() throws NotDefinedException;
 
     /**
@@ -134,6 +141,7 @@ public interface IKeyConfiguration extends Comparable {
      * 
      * @return <code>true</code>, iff this command is active.
      */
+	@Deprecated
     boolean isActive();
 
     /**
@@ -149,6 +157,7 @@ public interface IKeyConfiguration extends Comparable {
      * @return <code>true</code>, iff the key configuration represented by
      *         this handle is defined.
      */
+	@Deprecated
     boolean isDefined();
 
     /**
@@ -162,6 +171,7 @@ public interface IKeyConfiguration extends Comparable {
      *            <code>IKeyConfigurationListener</code> which is not already
      *            registered with this instance, no operation is performed.
      */
+	@Deprecated
     void removeKeyConfigurationListener(
             IKeyConfigurationListener keyConfigurationListener);
 }

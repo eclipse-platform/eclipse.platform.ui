@@ -21,6 +21,8 @@ package org.eclipse.ui.commands;
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  * @see org.eclipse.core.commands.common.NotDefinedException
  */
+@Deprecated
+@SuppressWarnings("all")
 public final class NotDefinedException extends CommandException {
 
     /**
@@ -36,6 +38,7 @@ public final class NotDefinedException extends CommandException {
      * @param s
      *            the detail message.
      */
+	@Deprecated
     public NotDefinedException(String s) {
         super(s);
     }
@@ -49,6 +52,7 @@ public final class NotDefinedException extends CommandException {
      *            must not be <code>null</code>.
      * @since 3.1
      */
+	@Deprecated
     public NotDefinedException(
             final org.eclipse.core.commands.common.NotDefinedException e) {
         super(e.getMessage(), e);

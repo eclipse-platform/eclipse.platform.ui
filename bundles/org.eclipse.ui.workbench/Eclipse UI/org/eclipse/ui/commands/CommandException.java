@@ -21,6 +21,8 @@ package org.eclipse.ui.commands;
  * @see org.eclipse.core.commands.common.CommandException
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
+@SuppressWarnings("all")
 public abstract class CommandException extends Exception {
 
 	/**
@@ -39,6 +41,7 @@ public abstract class CommandException extends Exception {
      * @param message
      *            the detail message.
      */
+	@Deprecated
     public CommandException(String message) {
         super(message);
     }
@@ -52,6 +55,7 @@ public abstract class CommandException extends Exception {
      * @param cause
      *            the cause.
      */
+	@Deprecated
     public CommandException(String message, Throwable cause) {
         super(message);
         // don't pass the cause to super, to allow compilation against JCL Foundation
@@ -65,6 +69,7 @@ public abstract class CommandException extends Exception {
      * @return the cause or <code>null</code>
      * @since 3.1
      */
+	@Deprecated
     public Throwable getCause() {
         return cause;
     }

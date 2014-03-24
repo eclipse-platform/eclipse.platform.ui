@@ -24,6 +24,8 @@ package org.eclipse.ui.commands;
  * plug-in instead.
  * @see org.eclipse.jface.bindings.SchemeEvent
  */
+@Deprecated
+@SuppressWarnings("all")
 public final class KeyConfigurationEvent {
 
     /**
@@ -66,6 +68,7 @@ public final class KeyConfigurationEvent {
      * @param parentIdChanged
      *            true, iff the parentId property changed.
      */
+	@Deprecated
     public KeyConfigurationEvent(IKeyConfiguration keyConfiguration,
             boolean activeChanged, boolean definedChanged, boolean nameChanged,
             boolean parentIdChanged) {
@@ -86,6 +89,7 @@ public final class KeyConfigurationEvent {
      * @return the instance of the interface that changed. Guaranteed not to be
      *         <code>null</code>.
      */
+	@Deprecated
     public IKeyConfiguration getKeyConfiguration() {
         return keyConfiguration;
     }
@@ -95,6 +99,7 @@ public final class KeyConfigurationEvent {
      * 
      * @return true, iff the active property changed.
      */
+	@Deprecated
     public boolean hasActiveChanged() {
         return activeChanged;
     }
@@ -104,6 +109,7 @@ public final class KeyConfigurationEvent {
      * 
      * @return true, iff the defined property changed.
      */
+	@Deprecated
     public boolean hasDefinedChanged() {
         return definedChanged;
     }
@@ -113,6 +119,7 @@ public final class KeyConfigurationEvent {
      * 
      * @return true, iff the name property changed.
      */
+	@Deprecated
     public boolean hasNameChanged() {
         return nameChanged;
     }
@@ -122,6 +129,7 @@ public final class KeyConfigurationEvent {
      * 
      * @return true, iff the parentId property changed.
      */
+	@Deprecated
     public boolean hasParentIdChanged() {
         return parentIdChanged;
     }

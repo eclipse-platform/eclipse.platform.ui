@@ -30,6 +30,8 @@ import org.eclipse.ui.keys.KeySequence;
  * @see org.eclipse.jface.bindings.keys.KeyBinding
  * @noimplement This interface is not intended to be implemented by clients.
  */
+@Deprecated
+@SuppressWarnings("all")
 public interface IKeySequenceBinding extends Comparable {
 
     /**
@@ -37,5 +39,6 @@ public interface IKeySequenceBinding extends Comparable {
      * 
      * @return the key sequence. Guaranteed not to be <code>null</code>.
      */
+	@Deprecated
     KeySequence getKeySequence();
 }

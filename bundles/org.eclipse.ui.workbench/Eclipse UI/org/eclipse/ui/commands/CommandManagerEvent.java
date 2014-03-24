@@ -11,7 +11,6 @@
 package org.eclipse.ui.commands;
 
 import java.util.Set;
-
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -26,6 +25,8 @@ import org.eclipse.ui.internal.util.Util;
  * @see org.eclipse.core.commands.CommandManagerEvent
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  */
+@Deprecated
+@SuppressWarnings("all")
 public final class CommandManagerEvent {
 
     /**
@@ -193,6 +194,7 @@ public final class CommandManagerEvent {
      * @return the instance of the interface that changed. Guaranteed not to be
      *         <code>null</code>.
      */
+	@Deprecated
     public ICommandManager getCommandManager() {
         return commandManager;
     }
@@ -208,6 +210,7 @@ public final class CommandManagerEvent {
      *         guaranteed to not be null if haveDefinedCategoryIdsChanged() is
      *         <code>true</code>.
      */
+	@Deprecated
     public Set getPreviouslyDefinedCategoryIds() {
         return previouslyDefinedCategoryIds;
     }
@@ -223,6 +226,7 @@ public final class CommandManagerEvent {
      *         guaranteed to not be null if haveDefinedCommandIdsChanged() is
      *         <code>true</code>.
      */
+	@Deprecated
     public Set getPreviouslyDefinedCommandIds() {
         return previouslyDefinedCommandIds;
     }
@@ -238,6 +242,7 @@ public final class CommandManagerEvent {
      *         and is guaranteed to not be null if
      *         haveDefinedKeyConfigurationIdsChanged() is <code>true</code>.
      */
+	@Deprecated
     public Set getPreviouslyDefinedKeyConfigurationIds() {
         return previouslyDefinedKeyConfigurationIds;
     }
@@ -247,6 +252,7 @@ public final class CommandManagerEvent {
      * 
      * @return true, iff the activeKeyConfigurationId property changed.
      */
+	@Deprecated
     public boolean hasActiveKeyConfigurationIdChanged() {
         return activeKeyConfigurationIdChanged;
     }
@@ -256,6 +262,7 @@ public final class CommandManagerEvent {
      * 
      * @return true, iff the activeLocale property changed.
      */
+	@Deprecated
     public boolean hasActiveLocaleChanged() {
         return activeLocaleChanged;
     }
@@ -265,6 +272,7 @@ public final class CommandManagerEvent {
      * 
      * @return true, iff the activePlatform property changed.
      */
+	@Deprecated
     public boolean hasActivePlatformChanged() {
         return activePlatformChanged;
     }
@@ -274,6 +282,7 @@ public final class CommandManagerEvent {
      * 
      * @return true, iff the activeContextIds property changed.
      */
+	@Deprecated
     public boolean haveActiveContextIdsChanged() {
         return activeContextIdsChanged;
     }
@@ -283,6 +292,7 @@ public final class CommandManagerEvent {
      * 
      * @return true, iff the definedCategoryIds property changed.
      */
+	@Deprecated
     public boolean haveDefinedCategoryIdsChanged() {
         return definedCategoryIdsChanged;
     }
@@ -292,6 +302,7 @@ public final class CommandManagerEvent {
      * 
      * @return true, iff the definedCommandIds property changed.
      */
+	@Deprecated
     public boolean haveDefinedCommandIdsChanged() {
         return definedCommandIdsChanged;
     }
@@ -301,6 +312,7 @@ public final class CommandManagerEvent {
      * 
      * @return true, iff the definedKeyConfigurationIds property changed.
      */
+	@Deprecated
     public boolean haveDefinedKeyConfigurationIdsChanged() {
         return definedKeyConfigurationIdsChanged;
     }
