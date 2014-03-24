@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,24 +30,12 @@ public class ViewPatternFilter extends PatternFilter {
 		this.context = context;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.internal.dialogs.PatternFilter#isElementSelectable(java
-	 * .lang.Object)
-	 */
+	@Override
 	public boolean isElementSelectable(Object element) {
 		return element instanceof MPartDescriptor;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.dialogs.PatternFilter#isElementMatch(org.eclipse.jface
-	 * .viewers.Viewer, java.lang.Object)
-	 */
+	@Override
 	protected boolean isLeafMatch(Viewer viewer, Object element) {
 		if (element instanceof String) {
 			return false;

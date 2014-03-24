@@ -40,23 +40,28 @@ public class ViewContentProvider implements ITreeContentProvider {
 		this.application = application;
 	}
 
+	@Override
 	public void dispose() {
 		childMap.clear();
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		return null;
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		childMap.clear();
 		application = (MApplication) newInput;
 	}
 
+	@Override
 	public Object[] getElements(Object element) {
 		return getChildren(element);
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof MApplication) {
 			return true;
@@ -66,6 +71,7 @@ public class ViewContentProvider implements ITreeContentProvider {
 		return false;
 	}
 
+	@Override
 	public Object[] getChildren(Object element) {
 		Object[] children = (Object[]) childMap.get(element);
 		if (children == null) {

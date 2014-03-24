@@ -35,6 +35,7 @@ public class ViewComparator extends ViewerComparator {
 	 * Returns a negative, zero, or positive number depending on whether the
 	 * first element is less than, equal to, or greater than the second element.
 	 */
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		// place "General" category first
 		if (WorkbenchSWTMessages.ICategory_general.equals(e1))
