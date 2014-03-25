@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -717,8 +718,8 @@ public class TableTreeViewer extends AbstractTreeViewer {
 				// activation
 				org.eclipse.swt.widgets.TableItem[] items = tableTree
 						.getTable().getItems();
-				for (int i = 0; i < items.length; i++) {
-					Rectangle rect = items[i].getImageBounds(0);
+				for (TableItem item : items) {
+					Rectangle rect = item.getImageBounds(0);
 					if (rect.contains(e.x, e.y)) {
 						return;
 					}

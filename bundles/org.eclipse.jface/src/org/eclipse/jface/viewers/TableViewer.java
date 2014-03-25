@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *                                                 fix for 159597, refactoring (bug 153993),
  *                                                 widget-independency (bug 154329), fix for 187826, 191468
  *     Peter Centgraf - bug 251575
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430873
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -417,14 +418,12 @@ public class TableViewer extends AbstractTableViewer {
 			elementToBeRemoved = elements[0];
 		} else {
 			elementsToBeRemoved = new CustomHashtable(getComparer());
-			for (int i = 0; i < elements.length; i++) {
-				Object element = elements[i];
+			for (Object element : elements) {
 				elementsToBeRemoved.put(element, element);
 			}
 		}
 		int[] selectionIndices = doGetSelectionIndices();
-		for (int i = 0; i < selectionIndices.length; i++) {
-			int index = selectionIndices[i];
+		for (int index : selectionIndices) {
 			Item item = doGetItem(index);
 			Object data = item.getData();
 			if (data != null) {
