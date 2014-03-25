@@ -131,9 +131,9 @@ public interface EModelService {
 	/**
 	 * This is a convenience method that constructs a new Selector based on {@link ElementMatcher}
 	 * and forwards the call on to the base API
-	 * {@link EModelService#findElements(MUIElement, Selector, int)}.
+	 * {@link EModelService#findElements(MApplicationElement, int, Selector)}.
 	 * 
-	 * @see EModelService#findElements(MUIElement, Selector, int)
+	 * @see EModelService#findElements(MApplicationElement, int, Selector)
 	 */
 	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
 			List<String> tagsToMatch, int searchFlags);
