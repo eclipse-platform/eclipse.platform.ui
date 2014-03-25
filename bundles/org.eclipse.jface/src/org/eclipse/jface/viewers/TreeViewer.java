@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *                                                 refactoring (bug 153993), bug 167323, 191468, 205419
  *     Matthew Hall - bug 221988
  *     Pawel Piech, WindRiver - bug 296573
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430873
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -391,8 +392,8 @@ public class TreeViewer extends AbstractTreeViewer {
 					return;
 				}
 				Widget[] items = internalFindItems(elementOrTreePath);
-				for (int i = 0; i < items.length; i++) {
-					TreeItem treeItem = (TreeItem) items[i];
+				for (Widget item : items) {
+					TreeItem treeItem = (TreeItem) item;
 					treeItem.setItemCount(count);
 				}
 			}
@@ -443,9 +444,9 @@ public class TreeViewer extends AbstractTreeViewer {
 				selection = adjustSelectionForReplace(selectedItems, selection, item, element, getRoot());
 				// disassociate any different item that represents the
 				// same element under the same parent (the tree)
-				for (int i = 0; i < itemsToDisassociate.length; i++) {
-					if (itemsToDisassociate[i] instanceof TreeItem) {
-						TreeItem itemToDisassociate = (TreeItem) itemsToDisassociate[i];
+				for (Widget widget : itemsToDisassociate) {
+					if (widget instanceof TreeItem) {
+						TreeItem itemToDisassociate = (TreeItem) widget;
 						if (itemToDisassociate != item
 								&& itemToDisassociate.getParentItem() == null) {
 							int indexToDisassociate = getTree().indexOf(
@@ -463,16 +464,16 @@ public class TreeViewer extends AbstractTreeViewer {
 			}
 		} else {
 			Widget[] parentItems = internalFindItems(parentElementOrTreePath);
-			for (int i = 0; i < parentItems.length; i++) {
-				TreeItem parentItem = (TreeItem) parentItems[i];
+			for (Widget widget : parentItems) {
+				TreeItem parentItem = (TreeItem) widget;
 				if (index < parentItem.getItemCount()) {
 					TreeItem item = parentItem.getItem(index);
 					selection = adjustSelectionForReplace(selectedItems, selection, item, element, parentItem.getData());
 					// disassociate any different item that represents the
 					// same element under the same parent (the tree)
-					for (int j = 0; j < itemsToDisassociate.length; j++) {
-						if (itemsToDisassociate[j] instanceof TreeItem) {
-							TreeItem itemToDisassociate = (TreeItem) itemsToDisassociate[j];
+					for (Widget widgetToDisassociate : itemsToDisassociate) {
+						if (widgetToDisassociate instanceof TreeItem) {
+							TreeItem itemToDisassociate = (TreeItem) widgetToDisassociate;
 							if (itemToDisassociate != item
 									&& itemToDisassociate.getParentItem() == parentItem) {
 								int indexToDisaccociate = parentItem
@@ -519,8 +520,8 @@ public class TreeViewer extends AbstractTreeViewer {
 			// Don't do anything - we are not seeing an instance of bug 185673
 			return selection;
 		}
-		for (int i = 0; i < selectedItems.length; i++) {
-			if (item == selectedItems[i]) {
+		for (Item selectedItem : selectedItems) {
+			if (item == selectedItem) {
 				// The current item was selected, but its data is null.
 				// The data will be replaced by the given element, so to keep
 				// it selected, we have to add it to the selection.
@@ -832,8 +833,8 @@ public class TreeViewer extends AbstractTreeViewer {
 					}
 				} else {
 					Widget[] parentItems = internalFindItems(parentOrTreePath);
-					for (int i = 0; i < parentItems.length; i++) {
-						TreeItem parentItem = (TreeItem) parentItems[i];
+					for (Widget parentWidget : parentItems) {
+						TreeItem parentItem = (TreeItem) parentWidget;
 						if (parentItem.isDisposed())
 							continue;
 						if (index < parentItem.getItemCount()) {
@@ -948,8 +949,8 @@ public class TreeViewer extends AbstractTreeViewer {
 					return;
 				}
 				Widget[] items = internalFindItems(elementOrTreePath);
-				for (int i = 0; i < items.length; i++) {
-					TreeItem item = (TreeItem) items[i];
+				for (Widget widget : items) {
+					TreeItem item = (TreeItem) widget;
 					if (!hasChildren) {
 						item.setItemCount(0);
 					} else {
