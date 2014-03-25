@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010 - 2014 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Dmitry Spiridenok <d.spiridenok@gmail.com> - Bug 408712
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.model;
 
@@ -18,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -44,6 +46,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -191,6 +196,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 							//
 							Map<Object, Object> options = new HashMap<Object, Object>();
 							resource.save(options);
+							adjustBuildPropertiesFile( modelFile );
 						}
 						catch (Exception exception) {
 							throw new RuntimeException(exception);
@@ -269,5 +275,19 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.workbench = workbench;
 		this.selection = selection;
+	}
+	/**
+	 * Adds other file to the build.properties file.
+	 */
+	private void adjustBuildPropertiesFile(IFile file)
+			throws CoreException {
+		IProject project = file.getProject();
+		IFile buildPropertiesFile = PDEProject.getBuildProperties(project);
+		if (buildPropertiesFile.exists()) {
+			WorkspaceBuildModel model = new WorkspaceBuildModel(buildPropertiesFile);
+			IBuildEntry entry = model.getBuild().getEntry(IBuildEntry.BIN_INCLUDES);
+			entry.addToken(file.getProjectRelativePath().toString());
+			model.save();
+		}
 	}
 }
