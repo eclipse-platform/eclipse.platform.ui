@@ -469,6 +469,10 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		copyCheckbox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				copyFiles = copyCheckbox.getSelection();
+				// need to refresh the project list as projects already
+				// in the workspace directory are treated as conflicts
+				// and should be hidden too
+				projectsList.refresh(true);
 			}
 		});
 
@@ -1524,10 +1528,9 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	public ProjectRecord[] getProjectRecords() {
 		List projectRecords = new ArrayList();
 		for (int i = 0; i < selectedProjects.length; i++) {
-			if ( (isProjectInWorkspacePath(selectedProjects[i].getProjectName()) && copyFiles)||
-					isProjectInWorkspace(selectedProjects[i].getProjectName())) {
-				selectedProjects[i].hasConflicts = true;
-			}
+			String projectName = selectedProjects[i].getProjectName();
+			selectedProjects[i].hasConflicts = (isProjectInWorkspacePath(projectName) && copyFiles)
+					|| isProjectInWorkspace(projectName);
 			projectRecords.add(selectedProjects[i]);
 		}
 		return (ProjectRecord[]) projectRecords
