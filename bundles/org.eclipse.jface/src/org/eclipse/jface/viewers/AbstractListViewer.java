@@ -462,6 +462,14 @@ public abstract class AbstractListViewer extends StructuredViewer {
         remove(new Object[] { element });
     }
 
+    /**
+	 * The list viewer implementation of this <code>Viewer</code> framework
+	 * method ensures that the given label provider is an instance of
+	 * <code>ILabelProvider</code>.
+	 *
+	 * <b>The optional interfaces {@link IColorProvider} and
+	 * {@link IFontProvider} have no effect for this type of viewer</b>
+	 */
     @Override
 	public void setLabelProvider(IBaseLabelProvider labelProvider) {
         Assert.isTrue(labelProvider instanceof ILabelProvider);
