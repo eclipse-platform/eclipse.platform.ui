@@ -61,17 +61,26 @@ public class SplitHandler extends AbstractHandler {
 
 		window.getShell().setRedraw(false);
 		try {
+			// Determine which part has the tags
 			MStackElement stackSelElement = stack.getSelectedElement();
+			MPart taggedEditor = editorPart;
 			if (stackSelElement instanceof MCompositePart) {
 				List<MPart> innerElements = modelService.findElements(stackSelElement, null, MPart.class, null);
-				MPart originalEditor = innerElements.get(1); // '0' is the composite part
-				
-				originalEditor.getTags().remove(IPresentationEngine.SPLIT_HORIZONTAL);
-				originalEditor.getTags().remove(IPresentationEngine.SPLIT_VERTICAL);
-			} else {
-				if ("false".equals(event.getParameter("Splitter.isHorizontal"))) { //$NON-NLS-1$ //$NON-NLS-2$
-					editorPart.getTags().add(IPresentationEngine.SPLIT_VERTICAL);
+				taggedEditor = innerElements.get(1); // '0' is the composite part
+			}
+
+			if ("false".equals(event.getParameter("Splitter.isHorizontal"))) { //$NON-NLS-1$ //$NON-NLS-2$
+				if (taggedEditor.getTags().contains(IPresentationEngine.SPLIT_VERTICAL)) {
+					taggedEditor.getTags().remove(IPresentationEngine.SPLIT_VERTICAL);
 				} else {
+					editorPart.getTags().remove(IPresentationEngine.SPLIT_HORIZONTAL);
+					editorPart.getTags().add(IPresentationEngine.SPLIT_VERTICAL);
+				}
+			} else {
+				if (taggedEditor.getTags().contains(IPresentationEngine.SPLIT_HORIZONTAL)) {
+					taggedEditor.getTags().remove(IPresentationEngine.SPLIT_HORIZONTAL);
+				} else {
+					editorPart.getTags().remove(IPresentationEngine.SPLIT_VERTICAL);
 					editorPart.getTags().add(IPresentationEngine.SPLIT_HORIZONTAL);
 				}
 			}
