@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,11 +25,11 @@ import org.eclipse.help.IHelpContentProducer;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.MissingContentManager;
 import org.eclipse.help.internal.base.remote.RemoteStatusData;
+import org.eclipse.help.internal.base.util.ProxyUtil;
 import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.help.internal.webapp.data.WebappPreferences;
-
 import org.eclipse.core.runtime.Platform;
 
 
@@ -114,7 +114,7 @@ public class StatusProducer implements IHelpContentProducer {
 					helpURL = new URL("help", //$NON-NLS-1$
 								null, -1, errorPage,
 								HelpURLStreamHandler.getDefault());
-					return helpURL.openStream();
+					return ProxyUtil.getStream(helpURL);
 				} catch (MalformedURLException e) {
 					HelpWebappPlugin.logError("Unable to locate error page: "+errorPage, e); //$NON-NLS-1$
 				} catch (IOException e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import javax.xml.parsers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.base.util.ProxyUtil;
 import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
 import org.eclipse.help.search.ISearchEngine;
 import org.eclipse.help.search.ISearchEngineResult;
@@ -158,7 +159,7 @@ public final class InfoCenter implements ISearchEngine {
 		InputStream is = null;
 		tocs.clear();
 		try {
-			URLConnection connection = url.openConnection();
+			URLConnection connection = ProxyUtil.getConnection(url);
 			monitor.beginTask(HelpBaseResources.InfoCenter_connecting, 5);
 			is = connection.getInputStream();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(

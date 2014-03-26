@@ -17,6 +17,7 @@ import java.util.Properties;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.help.internal.base.util.ProxyUtil;
 import org.eclipse.help.internal.webapp.utils.JSonHelper;
 import org.eclipse.help.internal.webapp.utils.XMLHelper;
 import org.xml.sax.Attributes;
@@ -36,7 +37,7 @@ public class TocFragmentParser extends ResultParser {
 	public void parse(URL tocURL, int level) 
 		throws ParserConfigurationException, SAXException, IOException
 	{
-		parse(tocURL.openStream(), level);
+		parse(ProxyUtil.getStream(tocURL), level);
 	}
 	
 	public void parse(InputStream in, int level) 

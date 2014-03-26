@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.net.URL;
 import org.eclipse.help.AbstractContextProvider;
 import org.eclipse.help.IContext;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.util.ProxyUtil;
 import org.eclipse.help.internal.context.Context;
 import org.eclipse.help.internal.dynamic.DocumentReader;
 
@@ -59,7 +60,7 @@ public class RemoteContextProvider extends AbstractContextProvider {
 						if(protocols[i].equals(PROTOCOL))
 						{
 							url = new URL(PROTOCOL, host[i], new Integer(port[i]).intValue(), path[i]+ PATH_CONTEXT + '?' + PARAM_ID + '=' + id + '&' + PARAM_LANG + '=' + locale);
-							connection = (HttpURLConnection) url.openConnection();
+							connection = (HttpURLConnection)ProxyUtil.getConnection(url);
 							if (connection.getResponseCode() == 200) {
 								in = connection.getInputStream();
 								

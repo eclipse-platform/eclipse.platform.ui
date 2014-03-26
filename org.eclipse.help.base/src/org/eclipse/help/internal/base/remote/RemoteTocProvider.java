@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChange
 import org.eclipse.help.AbstractTocProvider;
 import org.eclipse.help.ITocContribution;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.util.ProxyUtil;
 
 /*
  * Provides the TOC data that is located on the remote infocenter, if the system
@@ -88,7 +89,7 @@ public class RemoteTocProvider extends AbstractTocProvider {
 							url = new URL(protocol[i], host[i], new Integer(port[i]) .intValue(), 
 									path[i] + PATH_TOC + '?' + PARAM_LANG + '=' + locale);
 							
-							in = url.openStream();
+							in = ProxyUtil.getStream(url);
 							urlStr = PROTOCOL + "://"+host[i] + ":" + port[i] + path[i]; //$NON-NLS-1$ //$NON-NLS-2$
 						}
 						else

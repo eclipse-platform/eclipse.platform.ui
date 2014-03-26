@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescriber;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.util.ProxyUtil;
 import org.eclipse.help.internal.xhtml.XHTMLContentDescriber;
 import org.eclipse.help.search.IHelpSearchIndex;
 import org.eclipse.help.search.ISearchDocument;
@@ -105,7 +106,7 @@ public class HTMLSearchParticipant extends SearchParticipant {
 		}
 		InputStream in = null;
 		try {
-			in = url.openStream();
+			in = ProxyUtil.getStream(url);
 			return (xhtmlDescriber.describe(in, null) == IContentDescriber.VALID);
 		} catch (Exception e) {
 			// if anything goes wrong, treat it as not xhtml

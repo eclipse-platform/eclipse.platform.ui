@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import java.util.Properties;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
+
+import org.eclipse.help.internal.base.util.ProxyUtil;
 
 /**
  * This program is used to start or stop Eclipse Infocenter application. It
@@ -49,8 +51,7 @@ public class EclipseConnection {
 
 	public void connect(URL url) throws InterruptedException, Exception {
 		try {
-			HttpURLConnection connection = (HttpURLConnection) url
-					.openConnection();
+			HttpURLConnection connection = (HttpURLConnection)ProxyUtil.getConnection(url);
 			if (connection instanceof HttpsURLConnection) {
 				HttpsURLConnection secureConnection = (HttpsURLConnection) connection;
 				// The following allows the connection to

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.util.ProxyUtil;
 import org.eclipse.help.internal.dynamic.DocumentReader;
 import org.eclipse.help.internal.dynamic.ExtensionHandler;
 import org.eclipse.help.internal.dynamic.IncludeHandler;
@@ -292,7 +293,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 			hasFilters = false;
 			ParsedXMLContent parsed = new ParsedXMLContent(index.getLocale());
 			XMLHandler handler = new XMLHandler(parsed);
-			stream = url.openStream();
+			stream = ProxyUtil.getStream(url);
 			stream = preprocess(stream, name, index.getLocale());
 			parser.parse(stream, handler);
 			doc.addContents(parsed.getContent());

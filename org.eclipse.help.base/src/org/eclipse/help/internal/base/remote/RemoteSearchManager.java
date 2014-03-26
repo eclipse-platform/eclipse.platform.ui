@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2006, 2014 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.util.ProxyUtil;
 import org.eclipse.help.internal.search.ISearchHitCollector;
 import org.eclipse.help.internal.search.ISearchQuery;
 import org.eclipse.help.internal.search.QueryTooComplexException;
@@ -61,7 +62,7 @@ public class RemoteSearchManager {
 							if(protocols[i].equals(PROTOCOL_HTTP))
 							{
 								url = new URL("http", host[i], new Integer(port[i]).intValue(), path[i] + PATH_SEARCH + '?' + PARAM_PHRASE + '=' + URLCoder.encode(searchQuery.getSearchWord()) + '&' + PARAM_LANG + '=' + searchQuery.getLocale()); //$NON-NLS-1$
-								in = url.openStream();
+								in = ProxyUtil.getStream(url);
 							}
 							else
 							{

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.help.internal.base.util.ProxyUtil;
 import org.eclipse.help.internal.webapp.utils.Utils;
 
 /**
@@ -54,7 +55,7 @@ public class ContentService extends HttpServlet {
 			contentURL += '?' + query;
 		
 		URL url = new URL(contentURL);
-		URLConnection con = url.openConnection();
+		URLConnection con = ProxyUtil.getConnection(url);
 		con.setAllowUserInteraction(false);
 		con.setDoInput(true);
 		con.connect();
@@ -78,7 +79,7 @@ public class ContentService extends HttpServlet {
 			Utils.transferContent(is, out);
 			out.flush();
 		} else {
-			String response = Utils.convertStreamToString(url.openStream());
+			String response = Utils.convertStreamToString(ProxyUtil.getStream(url));
 			response = Utils.updateResponse(response);
 			PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8")); //$NON-NLS-1$
 			writer.write(response);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.StringTokenizer;
 
 import org.apache.lucene.demo.html.HTMLParser;
+import org.eclipse.help.internal.base.util.ProxyUtil;
 
 /**
  * Parser HTML documents. Extracts document encoding from header, and delegates
@@ -62,14 +63,14 @@ public class HTMLDocParser {
 	 * @throws IOException
 	 */
 	public void openDocument(URL url) throws IOException {
-		inputStream = url.openStream();
+		inputStream = ProxyUtil.getStream(url);
 
 		String encoding = getCharsetFromHTML(inputStream);
 		try {
 			inputStream.close();
 		} catch (IOException closeIOE) {
 		}
-		inputStream = url.openStream();
+		inputStream = ProxyUtil.getStream(url);
 		if (encoding != null) {
 			try {
 				htmlParser = new HTMLParser(new InputStreamReader(inputStream,

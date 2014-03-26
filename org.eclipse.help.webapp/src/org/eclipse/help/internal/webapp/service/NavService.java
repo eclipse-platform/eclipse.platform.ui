@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.base.scope.ScopeUtils;
+import org.eclipse.help.internal.base.util.ProxyUtil;
 import org.eclipse.help.internal.webapp.data.RequestScope;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.help.internal.webapp.parser.NavParser;
@@ -104,7 +105,7 @@ public class NavService extends NavServlet {
 		if (query != null)
 			navURL += '?' + query;
 		URL url = new URL(navURL);
-		String response = Utils.convertStreamToString(url.openStream());
+		String response = Utils.convertStreamToString(ProxyUtil.getStream(url));
 		response = Utils.updateResponse(response);
 		
 		OutputStream out = resp.getOutputStream();
