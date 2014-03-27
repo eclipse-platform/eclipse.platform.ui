@@ -39,7 +39,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%DebugPerspective.name"
-            icon="$nl$/icons/full/eview16/debug_persp.gif"
+            icon="$nl$/icons/full/eview16/debug_persp.png"
             class="org.eclipse.debug.internal.ui.DebugPerspectiveFactory"
             id="org.eclipse.debug.ui.DebugPerspective">
          <description>
@@ -70,7 +70,7 @@
       </category>
       <view
             name="%DebugView.name"
-            icon="$nl$/icons/full/eview16/debug_view.gif"
+            icon="$nl$/icons/full/eview16/debug_view.png"
             category="org.eclipse.debug.ui"
             class="org.eclipse.debug.internal.ui.views.launch.LaunchView"
             id="org.eclipse.debug.ui.DebugView">
@@ -377,11 +377,11 @@
          </action>
          <action
                id="org.eclipse.debug.ui.actions.Terminate"
-               hoverIcon="$nl$/icons/full/elcl16/terminate_co.gif"
+               hoverIcon="$nl$/icons/full/elcl16/terminate_co.png"
                class="org.eclipse.debug.internal.ui.commands.actions.TerminateCommandActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.Terminate"
-               disabledIcon="$nl$/icons/full/dlcl16/terminate_co.gif"
-               icon="$nl$/icons/full/elcl16/terminate_co.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/terminate_co.png"
+               icon="$nl$/icons/full/elcl16/terminate_co.png"
                helpContextId="terminate_action_context"
                label="%TerminateAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup"
@@ -517,10 +517,10 @@
          <action
                id="org.eclipse.debug.internal.ui.actions.DebugDropDownAction"
                toolbarPath="org.eclipse.debug.ui.launchActionSet/debug"
-               hoverIcon="$nl$/icons/full/etool16/debug_exc.gif"
+               hoverIcon="$nl$/icons/full/etool16/debug_exc.png"
                class="org.eclipse.debug.internal.ui.actions.DebugToolbarAction"
-               disabledIcon="$nl$/icons/full/dtool16/debug_exc.gif"
-               icon="$nl$/icons/full/etool16/debug_exc.gif"
+               disabledIcon="$nl$/icons/full/dtool16/debug_exc.png"
+               icon="$nl$/icons/full/etool16/debug_exc.png"
                helpContextId="debug_action_context"
                label="%DebugDropDownAction.label"
                style="pulldown">
@@ -1650,7 +1650,7 @@
       <launchGroup
             label="%DebugLaunchGroup.label"
             bannerImage="$nl$/icons/full/wizban/debug_wiz.png"
-            image="$nl$/icons/full/etool16/debug_exc.gif"
+            image="$nl$/icons/full/etool16/debug_exc.png"
             mode="debug"
             id="org.eclipse.debug.ui.launchGroup.debug"
             title="%DebugLaunchGroup.title">
@@ -2171,8 +2171,8 @@ M4 = Platform-specific fourth key
        </image>
        <image
              commandId="org.eclipse.debug.ui.commands.Terminate"
-             disabledIcon="$nl$/icons/full/dlcl16/terminate_co.gif"
-             icon="$nl$/icons/full/elcl16/terminate_co.gif">
+             disabledIcon="$nl$/icons/full/dlcl16/terminate_co.png"
+             icon="$nl$/icons/full/elcl16/terminate_co.png">
        </image>
        <image
              commandId="org.eclipse.debug.ui.commands.DebugLast"
