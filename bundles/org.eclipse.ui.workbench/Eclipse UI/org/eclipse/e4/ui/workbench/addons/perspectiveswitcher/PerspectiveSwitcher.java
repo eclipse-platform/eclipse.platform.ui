@@ -7,10 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sopot Cela <sopotcela@gmail.com> - Bug 391961
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.addons.perspectiveswitcher;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -26,6 +29,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
@@ -114,6 +118,9 @@ public class PerspectiveSwitcher {
 
 	@Inject
 	private MWindow window;
+
+	@Inject
+	private Logger logger;
 
 	private MToolControl psME;
 	private ToolBar psTB;
@@ -225,6 +232,24 @@ public class PerspectiveSwitcher {
 			} else if (UIEvents.UILabel.TOOLTIP.equals(attName)) {
 				String newTTip = (String) newValue;
 				ti.setToolTipText(newTTip);
+			} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
+				Image currentImage = ti.getImage();
+				String uri = (String) newValue;
+				URL url = null;
+				try {
+					url = new URL(uri);
+					ImageDescriptor descriptor = ImageDescriptor.createFromURL(url);
+					if (descriptor == null) {
+						ti.setImage(null);
+					} else
+						ti.setImage(descriptor.createImage());
+				} catch (IOException e) {
+					ti.setImage(null);
+					logger.warn(e);
+				} finally {
+					if (currentImage != null)
+						currentImage.dispose();
+				}
 			}
 		}
 	};
@@ -568,7 +593,9 @@ public class PerspectiveSwitcher {
 					psItem.addListener(SWT.Dispose, new Listener() {
 						@Override
 						public void handleEvent(org.eclipse.swt.widgets.Event event) {
-							image.dispose();
+							Image currentImage = psItem.getImage();
+							if (currentImage != null)
+								currentImage.dispose();
 						}
 					});
 					foundImage = true;
