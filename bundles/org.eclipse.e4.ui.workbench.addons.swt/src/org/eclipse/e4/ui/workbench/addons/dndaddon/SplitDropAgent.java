@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin (Google) - bug 430662
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
@@ -157,7 +156,7 @@ public class SplitDropAgent extends DropAgent {
 		}
 
 		getDockLocation(info);
-		showFeedback(dragElement, curDockLocation);
+		showFeedback(curDockLocation);
 	}
 
 	/*
@@ -203,7 +202,7 @@ public class SplitDropAgent extends DropAgent {
 		int dockLocation = getDockLocation(info);
 
 		if (feedback != null) {
-			feedback.setFeedback(getEnclosed(dragElement), getModified());
+			feedback.setFeedback(getEnclosed(), getModified());
 		}
 
 		if (dockLocation == curDockLocation && wasOnEdge == onEdge)
@@ -215,7 +214,7 @@ public class SplitDropAgent extends DropAgent {
 		curDockLocation = dockLocation;
 
 		if (curDockLocation != NOWHERE) {
-			showFeedback(dragElement, curDockLocation);
+			showFeedback(curDockLocation);
 			dndManager.setCursor(Display.getCurrent().getSystemCursor(SWT.CURSOR_HAND));
 		} else {
 			unDock(dragElement);
@@ -233,44 +232,30 @@ public class SplitDropAgent extends DropAgent {
 	 * @return Whether this is a 'modified' drop.
 	 */
 	private boolean getModified() {
+		if (!onEdge)
+			return false;
 		return dndManager.isModified;
 	}
 
 	/**
-	 * @param dragElement
-	 *            the element being dragged
 	 * @return Whether the feedback should show an outer 'enclosing' rectangle or two separate
 	 *         rectangles.
 	 */
-	private boolean getEnclosed(MUIElement dragElement) {
-		return !willCreateNewStack(dragElement);
+	private boolean getEnclosed() {
+		if (onEdge) {
+			if (outerRelTo instanceof MPerspectiveStack)
+				return !getModified();
+			return getModified(); // 'Inner' drop
+		}
+
+		return true;
 	}
 
 	/**
-	 * @param dragElement
-	 *            the element being dragged
-	 * @return Whether a new stack will be created on drop.
+	 * @param curDockLocation2
+	 * @return
 	 */
-	private boolean willCreateNewStack(MUIElement dragElement) {
-		if (outerRelTo instanceof MPerspectiveStack) {
-			// Dropping outside of the shared area always creates a new stack.
-			return true;
-		}
-		if (crossSharedAreaBoundary(dragElement, dropStack)) {
-			// Dragging into the shared area from outside. Without the Ctrl key creating a new
-			// stack, with the Ctrl key dropping into the existing shared area stack.
-			return !getModified();
-		}
-		// Dragging within the shared area. Without the Ctrl key dropping into the existing shared
-		// area stack, otherwise creating a new stack.
-		return getModified();
-	}
-
-	/**
-	 * @param dragElement
-	 * @param location
-	 */
-	private void showFeedback(MUIElement dragElement, int location) {
+	private void showFeedback(int location) {
 		if (location == NOWHERE)
 			return;
 
@@ -305,7 +290,7 @@ public class SplitDropAgent extends DropAgent {
 		clearFeedback();
 
 		feedback = new SplitFeedbackOverlay(dropCTF.getShell(), feedbackBounds, side, pct,
-				getEnclosed(dragElement), getModified());
+				getEnclosed(), getModified());
 		feedback.setVisible(true);
 	}
 
@@ -351,10 +336,6 @@ public class SplitDropAgent extends DropAgent {
 		return dy < dyr ? EModelService.ABOVE : EModelService.BELOW;
 	}
 
-	/**
-	 * @param dragElement
-	 *            the element being dragged
-	 */
 	protected void unDock(MUIElement dragElement) {
 		dndManager.clearOverlay();
 		clearFeedback();
@@ -367,7 +348,11 @@ public class SplitDropAgent extends DropAgent {
 		MPartSashContainerElement relTo = dropStack;
 		MPartStack toInsert;
 
-		if (willCreateNewStack(dragElement)) {
+		if (crossSharedAreaBoundary(dragElement, dropStack)) {
+			if (!dndManager.isModified) {
+				relTo = (MPartSashContainerElement) outerRelTo;
+			}
+		} else if (getModified()) {
 			relTo = (MPartSashContainerElement) outerRelTo;
 		}
 
@@ -396,10 +381,8 @@ public class SplitDropAgent extends DropAgent {
 
 	/**
 	 * @param dragElement
-	 *            the element being dragged
-	 * @param dropStack
-	 *            the stack occupying the drop location
-	 * @return Whether dragged into the shared area from outside
+	 * @param dropStack2
+	 * @return
 	 */
 	private boolean crossSharedAreaBoundary(MUIElement dragElement, MPartStack dropStack) {
 		EModelService ms = dndManager.getModelService();
