@@ -38,6 +38,9 @@ public interface IWorkbenchConstants {
     @Deprecated
 	public static final String DEFAULT_ACCELERATOR_SCOPE_ID = "org.eclipse.ui.globalScope"; //$NON-NLS-1$
 
+	// ID of the MPerspectiveStack in the IDE e4 model
+	public static final String PERSPECTIVE_STACK_ID = "org.eclipse.ui.ide.perspectivestack"; //$NON-NLS-1$
+
     //mappings for type/extension to an editor - backward compatibility only.
     public final static String EDITOR_FILE_NAME = "editors.xml"; //$NON-NLS-1$
 

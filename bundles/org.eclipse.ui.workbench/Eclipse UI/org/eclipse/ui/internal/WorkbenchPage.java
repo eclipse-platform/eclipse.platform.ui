@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Christian Janz  - <christian.janz@gmail.com> Fix for Bug 385592
  *     Marc-Andre Laperle (Ericsson) - Fix for Bug 413590
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431340
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431340, 431348
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -3953,6 +3953,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		MPerspectiveStack perspectiveStack = modelService
 				.createModelElement(MPerspectiveStack.class);
+		perspectiveStack.setElementId(IWorkbenchConstants.PERSPECTIVE_STACK_ID);
 		perspectiveStack.setContainerData("7500"); //$NON-NLS-1$
 
 		MPartStack stickyFolder = modelService.createModelElement(MPartStack.class);
