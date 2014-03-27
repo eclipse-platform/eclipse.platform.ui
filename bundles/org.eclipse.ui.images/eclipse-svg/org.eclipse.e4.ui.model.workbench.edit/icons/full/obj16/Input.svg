@@ -14,8 +14,8 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
-   sodipodi:docname="blank - Copy (2).svg">
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="Input.svg">
   <defs
      id="defs4">
     <linearGradient
@@ -114,7 +114,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="20.48"
-     inkscape:cx="2.9255652"
+     inkscape:cx="3.0232215"
      inkscape:cy="12.766785"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -177,13 +177,6 @@
        height="1"
        x="6"
        y="1050.3622" />
-    <rect
-       style="fill:#4b6ea2;fill-opacity:1;stroke:none;display:inline"
-       id="rect4115-1-4-0"
-       width="0.99999976"
-       height="10.000125"
-       x="5"
-       y="1040.3622" />
     <g
        style="display:inline"
        id="layer1-2"
@@ -217,5 +210,12 @@
          d="m 5,1048.3622 8,0 0,-2 -10,0 z"
          style="fill:url(#linearGradient4975-2-1);fill-opacity:1;stroke:none;display:inline" />
     </g>
+    <rect
+       style="fill:#4b6ea2;fill-opacity:1;stroke:none;display:inline"
+       id="rect4115-1-4-0"
+       width="0.99999976"
+       height="10.000125"
+       x="5"
+       y="1040.3622" />
   </g>
 </svg>
