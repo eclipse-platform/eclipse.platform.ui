@@ -146,20 +146,24 @@ public class WorkbenchProperties {
 			this.adapterManager = adapterManager;
 		}
 
+		@Override
 		public Object getValueType() {
 			return adapter;
 		}
 
+		@Override
 		protected Object doGetValue(Object source) {
 			if (adapter.isInstance(source))
 				return source;
 			return adapterManager.getAdapter(source, adapter);
 		}
 
+		@Override
 		protected void doSetValue(Object source, Object value) {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public INativePropertyListener adaptListener(
 				ISimplePropertyListener listener) {
 			return null;
@@ -175,11 +179,13 @@ public class WorkbenchProperties {
 			this.post = post;
 		}
 
+		@Override
 		public INativePropertyListener adaptListener(
 				ISimplePropertyListener listener) {
 			return new SelectionServiceListener(this, listener, partId, post);
 		}
 
+		@Override
 		protected Object doGetValue(Object source) {
 			ISelection selection;
 			if (partId != null) {
@@ -193,10 +199,12 @@ public class WorkbenchProperties {
 			return null;
 		}
 
+		@Override
 		protected void doSetValue(Object source, Object value) {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public Object getValueType() {
 			return Object.class;
 		}
@@ -211,15 +219,18 @@ public class WorkbenchProperties {
 			this.post = post;
 		}
 
+		@Override
 		public INativePropertyListener adaptListener(
 				ISimplePropertyListener listener) {
 			return new SelectionServiceListener(this, listener, partId, post);
 		}
 
+		@Override
 		public Object getElementType() {
 			return Object.class;
 		}
 
+		@Override
 		protected List doGetList(Object source) {
 			ISelection selection;
 			if (partId != null) {
@@ -234,6 +245,7 @@ public class WorkbenchProperties {
 			return Collections.EMPTY_LIST;
 		}
 
+		@Override
 		protected void doSetList(Object source, List list, ListDiff diff) {
 			throw new UnsupportedOperationException();
 		}
@@ -251,6 +263,7 @@ public class WorkbenchProperties {
 			this.post = post;
 		}
 
+		@Override
 		protected void doAddTo(Object source) {
 			ISelectionService selectionService = (ISelectionService) source;
 			if (post) {
@@ -268,6 +281,7 @@ public class WorkbenchProperties {
 			}
 		}
 
+		@Override
 		protected void doRemoveFrom(Object source) {
 			ISelectionService selectionService = (ISelectionService) source;
 			if (post) {
@@ -285,6 +299,7 @@ public class WorkbenchProperties {
 			}
 		}
 
+		@Override
 		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 			fireChange(part, null);
 		}

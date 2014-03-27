@@ -106,21 +106,25 @@ public final class CommandService implements ICommandService, IUpdateService {
 		this.context = context;
 	}
 
+	@Override
 	public final void addExecutionListener(final IExecutionListener listener) {
 		commandManager.addExecutionListener(listener);
 	}
 
+	@Override
 	public final void defineUncategorizedCategory(final String name,
 			final String description) {
 		commandManager.defineUncategorizedCategory(name, description);
 	}
 
+	@Override
 	public final ParameterizedCommand deserialize(
 			final String serializedParameterizedCommand)
 			throws NotDefinedException, SerializationException {
 		return commandManager.deserialize(serializedParameterizedCommand);
 	}
 
+	@Override
 	public final void dispose() {
 		commandPersistence.dispose();
 
@@ -148,61 +152,75 @@ public final class CommandService implements ICommandService, IUpdateService {
 		commandCallbacks = null;
 	}
 
+	@Override
 	public final Category getCategory(final String categoryId) {
 		return commandManager.getCategory(categoryId);
 	}
 
+	@Override
 	public final Command getCommand(final String commandId) {
 		return commandManager.getCommand(commandId);
 	}
 
+	@Override
 	public final Category[] getDefinedCategories() {
 		return commandManager.getDefinedCategories();
 	}
 
+	@Override
 	public final Collection getDefinedCategoryIds() {
 		return commandManager.getDefinedCategoryIds();
 	}
 
+	@Override
 	public final Collection getDefinedCommandIds() {
 		return commandManager.getDefinedCommandIds();
 	}
 
+	@Override
 	public final Command[] getDefinedCommands() {
 		return commandManager.getDefinedCommands();
 	}
 
+	@Override
 	public Collection getDefinedParameterTypeIds() {
 		return commandManager.getDefinedParameterTypeIds();
 	}
 
+	@Override
 	public ParameterType[] getDefinedParameterTypes() {
 		return commandManager.getDefinedParameterTypes();
 	}
 
+	@Override
 	public final String getHelpContextId(final Command command)
 			throws NotDefinedException {
 		return commandManager.getHelpContextId(command);
 	}
 
+	@Override
 	public final String getHelpContextId(final String commandId)
 			throws NotDefinedException {
 		final Command command = getCommand(commandId);
 		return commandManager.getHelpContextId(command);
 	}
 
+	@Override
 	public ParameterType getParameterType(final String parameterTypeId) {
 		return commandManager.getParameterType(parameterTypeId);
 	}
 
+	@Override
 	public final void readRegistry() {
 		commandPersistence.reRead();
 	}
 
+	@Override
 	public final void removeExecutionListener(final IExecutionListener listener) {
 		commandManager.removeExecutionListener(listener);
 	}
 
+	@Override
 	public final void setHelpContextId(final IHandler handler,
 			final String helpContextId) {
 		commandManager.setHelpContextId(handler, helpContextId);
@@ -220,6 +238,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 	 * @see org.eclipse.ui.commands.ICommandService#refreshElements(java.lang.String,
 	 *      java.util.Map)
 	 */
+	@Override
 	public final void refreshElements(String commandId, Map filter) {
 		Command cmd = getCommand(commandId);
 
@@ -242,11 +261,13 @@ public final class CommandService implements ICommandService, IUpdateService {
 			final Map parms = Collections.unmodifiableMap(callbackRef
 					.getParameters());
 			ISafeRunnable run = new ISafeRunnable() {
+				@Override
 				public void handleException(Throwable exception) {
 					WorkbenchPlugin.log("Failed to update callback: "  //$NON-NLS-1$
 							+ callbackRef.getCommandId(), exception);
 				}
 
+				@Override
 				public void run() throws Exception {
 					updater.updateElement(callbackRef.getElement(), parms);
 				}
@@ -276,6 +297,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 	 * @see org.eclipse.ui.commands.ICommandService#registerElementForCommand(org.eclipse.core.commands.ParameterizedCommand,
 	 *      org.eclipse.ui.menus.UIElement)
 	 */
+	@Override
 	public final IElementReference registerElementForCommand(
 			ParameterizedCommand command, UIElement element)
 			throws NotDefinedException {
@@ -300,6 +322,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 	 * 
 	 * @see org.eclipse.ui.commands.ICommandService#registerElement(org.eclipse.ui.commands.IElementReference)
 	 */
+	@Override
 	public void registerElement(IElementReference elementReference) {
 		List parameterizedCommands = (List) commandCallbacks
 				.get(elementReference.getCommandId());
@@ -327,6 +350,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 	 * 
 	 * @see org.eclipse.ui.commands.ICommandService#unregisterElement(org.eclipse.ui.commands.IElementReference)
 	 */
+	@Override
 	public void unregisterElement(IElementReference elementReference) {
 		if (commandCallbacks == null)
 			return;
@@ -354,6 +378,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 	 * registerElementForUpdate(org.eclipse.core.commands.ParameterizedCommand,
 	 * org.eclipse.e4.ui.model.application.ui.MUILabel)
 	 */
+	@Override
 	public Runnable registerElementForUpdate(ParameterizedCommand parameterizedCommand,
 			final MItem item) {
 		UIElement element = new UIElement(context.get(IWorkbench.class)) {
@@ -394,6 +419,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 			final IElementReference reference = registerElementForCommand(parameterizedCommand,
 					element);
 			return new Runnable() {
+				@Override
 				public void run() {
 					unregisterElement(reference);
 				}

@@ -79,6 +79,7 @@ public class WindowTrimProxy implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.internal.IWindowTrim#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return fTrimControl;
 	}
@@ -88,6 +89,7 @@ public class WindowTrimProxy implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.internal.IWindowTrim#getValidSides()
 	 */
+	@Override
 	public int getValidSides() {
 		return fValidSides;
 	}
@@ -98,6 +100,7 @@ public class WindowTrimProxy implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.internal.layout.IWindowTrim#dock(int)
 	 */
+	@Override
 	public void dock(int dropSide) {
 	}
 
@@ -106,6 +109,7 @@ public class WindowTrimProxy implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.internal.IWindowTrim#getId()
 	 */
+	@Override
 	public String getId() {
 		return fId;
 	}
@@ -115,6 +119,7 @@ public class WindowTrimProxy implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.internal.IWindowTrim#getDisplayName()
 	 */
+	@Override
 	public String getDisplayName() {
 		return fDisplayName;
 	}
@@ -124,6 +129,7 @@ public class WindowTrimProxy implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.internal.IWindowTrim#isCloseable()
 	 */
+	@Override
 	public boolean isCloseable() {
 		return false;
 	}
@@ -133,6 +139,7 @@ public class WindowTrimProxy implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.internal.IWindowTrim#handleClose()
 	 */
+	@Override
 	public void handleClose() {
 		// nothing to do...
 	}
@@ -142,6 +149,7 @@ public class WindowTrimProxy implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.IWindowTrim#getWidthHint()
 	 */
+	@Override
 	public int getWidthHint() {
 		return fWidthHint;
 	}
@@ -159,6 +167,7 @@ public class WindowTrimProxy implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.IWindowTrim#getHeightHint()
 	 */
+	@Override
 	public int getHeightHint() {
 		return fHeightHint;
 	}
@@ -176,6 +185,7 @@ public class WindowTrimProxy implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.IWindowTrim#isResizeable()
 	 */
+	@Override
 	public boolean isResizeable() {
 		return fIsResizeable;
 	}

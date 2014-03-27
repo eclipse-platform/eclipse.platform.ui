@@ -29,23 +29,28 @@ public class ModeledViewLayout implements IViewLayout {
 		viewME = placeholder;
 	}
 
+	@Override
 	public boolean getShowTitle() {
 		return !viewME.getTags().contains(IPresentationEngine.NO_TITLE);
 	}
 
+	@Override
 	public boolean isCloseable() {
 		return !viewME.getTags().contains(IPresentationEngine.NO_CLOSE);
 	}
 
+	@Override
 	public boolean isMoveable() {
 		return !viewME.getTags().contains(IPresentationEngine.NO_MOVE);
 	}
 
+	@Override
 	public boolean isStandalone() {
 		MUIElement parentElement = viewME.getParent();
 		return !(parentElement instanceof MPartStack);
 	}
 
+	@Override
 	public void setCloseable(boolean closeable) {
 		if (closeable)
 			viewME.getTags().remove(IPresentationEngine.NO_CLOSE);
@@ -53,6 +58,7 @@ public class ModeledViewLayout implements IViewLayout {
 			viewME.getTags().add(IPresentationEngine.NO_CLOSE);
 	}
 
+	@Override
 	public void setMoveable(boolean moveable) {
 		if (moveable)
 			viewME.getTags().remove(IPresentationEngine.NO_MOVE);

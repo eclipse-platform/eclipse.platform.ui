@@ -153,6 +153,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 * @see #getAreaIds()
 	 * @deprecated
 	 */
+	@Deprecated
 	public void addTrim(IWindowTrim control, int areaId) {
 		addTrim(areaId, control, null);
 	}
@@ -170,6 +171,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 * @see #getAreaIds()
 	 * @deprecated
 	 */
+	@Deprecated
 	public void addTrim(IWindowTrim trim, int areaId, IWindowTrim beforeMe) {
 		addTrim(areaId, trim, beforeMe);
 	}
@@ -180,6 +182,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 * @see org.eclipse.ui.internal.layout.ITrimManager#addTrim(int,
 	 *      org.eclipse.ui.internal.IWindowTrim)
 	 */
+	@Override
 	public void addTrim(int areaId, IWindowTrim trim) {
 		// If we're adding trim to the same side that it's
 		// already on then don't change its order
@@ -204,6 +207,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 *      org.eclipse.ui.internal.IWindowTrim,
 	 *      org.eclipse.ui.internal.IWindowTrim)
 	 */
+	@Override
 	public void addTrim(int areaId, IWindowTrim trim, IWindowTrim beforeMe) {
 		TrimArea area = (TrimArea) fTrimArea.get(new Integer(areaId));
 		if (area == null) {
@@ -231,6 +235,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 		
 		// Add a dispose listener so we can clean up if the Client disposes the trim
 		trim.getControl().addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				Control control = (Control) e.widget;
 				if (control.getLayoutData() instanceof IWindowTrim) {
@@ -261,6 +266,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	/**
 	 * Force a layout of the trim
 	 */
+	@Override
 	public void forceLayout() {
 		removeDisposed();
 
@@ -281,6 +287,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 * 
 	 * @see org.eclipse.ui.internal.layout.ITrimManager#removeTrim(org.eclipse.ui.internal.IWindowTrim)
 	 */
+	@Override
 	public void removeTrim(IWindowTrim toRemove) {
 		TrimDescriptor desc = (TrimDescriptor) fTrimDescriptors.remove(toRemove
 				.getId());
@@ -311,6 +318,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 * 
 	 * @see org.eclipse.ui.internal.layout.ITrimManager#getTrim(java.lang.String)
 	 */
+	@Override
 	public IWindowTrim getTrim(String id) {
 		TrimDescriptor desc = (TrimDescriptor) fTrimDescriptors.get(id);
 		if (desc != null) {
@@ -357,6 +365,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite,
 	 *      int, int, boolean)
 	 */
+	@Override
 	protected Point computeSize(Composite composite, int wHint, int hHint,
 			boolean flushCache) {
 		return new Point(0, 0);
@@ -368,6 +377,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite,
 	 *      boolean)
 	 */
+	@Override
 	protected void layout(Composite composite, boolean flushCache) {
 		//long startTime = System.currentTimeMillis();
 		removeDisposed();
@@ -435,6 +445,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 * 
 	 * @see org.eclipse.ui.internal.layout.ICachingLayout#flush(org.eclipse.swt.widgets.Control)
 	 */
+	@Override
 	public void flush(Control dirtyControl) {
 		if (dirtyControl == centerArea.getControl()) {
 			centerArea.flush();
@@ -451,6 +462,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 * 
 	 * @see org.eclipse.ui.internal.layout.ITrimManager#getAreaIds()
 	 */
+	@Override
 	public int[] getAreaIds() {
 		return (int[]) TRIM_ID_INFO.clone();
 	}
@@ -460,6 +472,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 * 
 	 * @see org.eclipse.ui.internal.layout.ITrimManager#getAreaTrim(int)
 	 */
+	@Override
 	public List getAreaTrim(int areaId) {
 		TrimArea area = (TrimArea) fTrimArea.get(new Integer(areaId));
 		if (area == null) {
@@ -474,6 +487,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 * @see org.eclipse.ui.internal.layout.ITrimManager#updateAreaTrim(int,
 	 *      java.util.List, boolean)
 	 */
+	@Override
 	public void updateAreaTrim(int id, List trim, boolean removeExtra) {
 		TrimArea area = (TrimArea) fTrimArea.get(new Integer(id));
 		if (area == null) {
@@ -523,6 +537,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 * 
 	 * @see org.eclipse.ui.internal.layout.ITrimManager#getAllTrim()
 	 */
+	@Override
 	public List getAllTrim() {
 		List trimList = new ArrayList(fTrimDescriptors.size());
 
@@ -541,6 +556,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 * @see org.eclipse.ui.internal.layout.ITrimManager#setTrimVisible(org.eclipse.ui.internal.IWindowTrim,
 	 *      boolean)
 	 */
+	@Override
 	public void setTrimVisible(IWindowTrim trim, boolean visible) {
 		TrimDescriptor desc = findTrimDescription(trim.getControl());
 

@@ -144,7 +144,8 @@ public interface IProgressService extends IRunnableContext {
      * 
      * @since 3.2
      */
-    public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException;
+    @Override
+	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException;
     
     /**
      * Open a dialog on job when it starts to run and close it 

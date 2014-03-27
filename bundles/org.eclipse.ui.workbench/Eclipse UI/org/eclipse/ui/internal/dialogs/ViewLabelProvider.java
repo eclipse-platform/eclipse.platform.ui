@@ -44,6 +44,7 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 		this.dimmedForeground = dimmedForeground;
 	}
 
+	@Override
 	protected void initialize(ColumnViewer viewer, ViewerColumn column) {
 		super.initialize(viewer, column);
 	}
@@ -60,7 +61,8 @@ public class ViewLabelProvider extends ColumnLabelProvider {
         return image;
     }
 
-    public void dispose() {
+    @Override
+	public void dispose() {
         if (images != null) {
 			for (Image i : images.values()) {
 				i.dispose();
@@ -70,7 +72,8 @@ public class ViewLabelProvider extends ColumnLabelProvider {
         super.dispose();
     }
 
-    public Image getImage(Object element) {
+    @Override
+	public Image getImage(Object element) {
         if (element instanceof IViewDescriptor) {
             ImageDescriptor desc = ((IViewDescriptor) element)
                     .getImageDescriptor();
@@ -85,7 +88,8 @@ public class ViewLabelProvider extends ColumnLabelProvider {
         return null;
     }
 
-    public String getText(Object element) {
+    @Override
+	public String getText(Object element) {
         String label = WorkbenchMessages.ViewLabel_unknown;
         if (element instanceof IViewCategory) {
 			label = ((IViewCategory) element).getLabel();
@@ -95,10 +99,12 @@ public class ViewLabelProvider extends ColumnLabelProvider {
         return DialogUtil.removeAccel(label);
     }
 
+	@Override
 	public Color getBackground(Object element) {
 		return null;
 	}
 
+	@Override
 	public Color getForeground(Object element) {
 		if (element instanceof IViewDescriptor) {
 			IWorkbenchPage activePage = window.getActivePage();

@@ -143,6 +143,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
     private static final Comparator comparer = new Comparator() {
         private Collator collator = Collator.getInstance();
 
+		@Override
 		public int compare(Object arg0, Object arg1) {
 			String s1 = ((IEditorDescriptor) arg0).getLabel();
 			String s2 = ((IEditorDescriptor) arg1).getLabel();
@@ -295,14 +296,16 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
     /*
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
-    public void addPropertyListener(IPropertyListener l) {
+    @Override
+	public void addPropertyListener(IPropertyListener l) {
         addListenerObject(l);
     }
 
     /*
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
-    public IEditorDescriptor findEditor(String id) {
+    @Override
+	public IEditorDescriptor findEditor(String id) {
         Object desc = mapIDtoEditor.get(id);
         if (WorkbenchActivityHelper.restrictUseOf(desc)) {
         	return null;
@@ -321,7 +324,8 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
         for (int nX = 0; nX < array.length; nX++) {
             final IPropertyListener l = (IPropertyListener) array[nX];
             Platform.run(new SafeRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     l.propertyChanged(EditorRegistry.this, type);
                 }
             });
@@ -333,7 +337,8 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
      * 
      * @deprecated
      */
-    public IEditorDescriptor getDefaultEditor() {
+    @Override
+	public IEditorDescriptor getDefaultEditor() {
         // the default editor will always be the system external editor
         // this should never return null
         return findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
@@ -342,7 +347,8 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
     /*
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
-    public IEditorDescriptor getDefaultEditor(String filename) {
+    @Override
+	public IEditorDescriptor getDefaultEditor(String filename) {
 		IEditorDescriptor defaultEditor = getDefaultEditor(filename, guessAtContentType(filename));
 		if (defaultEditor != null) {
 			return defaultEditor;
@@ -383,14 +389,16 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
     /*
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
-    public IEditorDescriptor[] getEditors(String filename) {
+    @Override
+	public IEditorDescriptor[] getEditors(String filename) {
 		return getEditors(filename, guessAtContentType(filename));
 	}
 
     /*
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
-    public IFileEditorMapping[] getFileEditorMappings() {
+    @Override
+	public IFileEditorMapping[] getFileEditorMappings() {
         FileEditorMapping[] array = typeEditorMappings.allMappings();
         final Collator collator = Collator.getInstance();
         Arrays.sort(array, new Comparator() {
@@ -398,7 +406,8 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
             /* (non-Javadoc)
              * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
              */
-            public int compare(Object o1, Object o2) {
+            @Override
+			public int compare(Object o1, Object o2) {
                 String s1 = ((FileEditorMapping) o1).getLabel();
                 String s2 = ((FileEditorMapping) o2).getLabel();
                 return collator.compare(s1, s2);
@@ -410,7 +419,8 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
     /*
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
-    public ImageDescriptor getImageDescriptor(String filename) {
+    @Override
+	public ImageDescriptor getImageDescriptor(String filename) {
 		return getImageDescriptor(filename, guessAtContentType(filename));
 	}
 
@@ -991,7 +1001,8 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
     /*
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
-    public void removePropertyListener(IPropertyListener l) {
+    @Override
+	public void removePropertyListener(IPropertyListener l) {
         removeListenerObject(l);
     }
 
@@ -1121,7 +1132,8 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
     /*
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
-    public void setDefaultEditor(String fileName, String editorId) {
+    @Override
+	public void setDefaultEditor(String fileName, String editorId) {
         EditorDescriptor desc = (EditorDescriptor) findEditor(editorId);
         FileEditorMapping[] mapping = getMappingForFilename(fileName);
         if (mapping[0] != null) {
@@ -1241,7 +1253,8 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
      * 
      * @see org.eclipse.ui.IEditorRegistry#isSystemInPlaceEditorAvailable(String)
      */
-    public boolean isSystemInPlaceEditorAvailable(String filename) {
+    @Override
+	public boolean isSystemInPlaceEditorAvailable(String filename) {
         return ComponentSupport.inPlaceEditorAvailable(filename);
     }
 
@@ -1250,7 +1263,8 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
      * 
      * @see org.eclipse.ui.IEditorRegistry#isSystemExternalEditorAvailable(String)
      */
-    public boolean isSystemExternalEditorAvailable(String filename) {
+    @Override
+	public boolean isSystemExternalEditorAvailable(String filename) {
         int nDot = filename.lastIndexOf('.');
         if (nDot >= 0) {
             String strName = filename.substring(nDot);
@@ -1264,7 +1278,8 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
      * 
      * @see org.eclipse.ui.IEditorRegistry#getSystemExternalEditorImageDescriptor(java.lang.String)
      */
-    public ImageDescriptor getSystemExternalEditorImageDescriptor(
+    @Override
+	public ImageDescriptor getSystemExternalEditorImageDescriptor(
             String filename) {
         Program externalProgram = null;
         int extensionIndex = filename.lastIndexOf('.');
@@ -1313,7 +1328,8 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
      */
-    public void removeExtension(IExtension source, Object[] objects) {
+    @Override
+	public void removeExtension(IExtension source, Object[] objects) {
         for (int i = 0; i < objects.length; i++) {
             if (objects[i] instanceof EditorDescriptor) {
                 EditorDescriptor desc = (EditorDescriptor) objects[i];
@@ -1380,6 +1396,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
 	 */
+	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
         EditorRegistryReader eReader = new EditorRegistryReader();
         IConfigurationElement[] elements = extension.getConfigurationElements();
@@ -1399,6 +1416,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorRegistry#getDefaultEditor(java.lang.String, org.eclipse.core.runtime.content.IContentType)
 	 */
+	@Override
 	public IEditorDescriptor getDefaultEditor(String fileName, IContentType contentType) {
         return getEditorForContentType(fileName, contentType);
 	}
@@ -1424,6 +1442,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorRegistry#getEditors(java.lang.String, org.eclipse.core.runtime.content.IContentType)
 	 */
+	@Override
 	public IEditorDescriptor[] getEditors(String fileName, IContentType contentType) {
 		return findRelatedObjects(contentType, fileName, relatedRegistry);
 	}
@@ -1431,6 +1450,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorRegistry#getImageDescriptor(java.lang.String, org.eclipse.core.runtime.content.IContentType)
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(String filename, IContentType contentType) {
         if (filename == null) {
 			return getDefaultImage();
@@ -1705,6 +1725,7 @@ class MockMapping implements IFileEditorMapping {
 		this.extension = ext;
 	}
 
+	@Override
 	public IEditorDescriptor getDefaultEditor() {
 		IEditorDescriptor[] candidates = ((EditorRegistry) PlatformUI
 				.getWorkbench().getEditorRegistry())
@@ -1716,6 +1737,7 @@ class MockMapping implements IFileEditorMapping {
 		return candidates[0];
 	}
 
+	@Override
 	public IEditorDescriptor[] getEditors() {
 		IEditorDescriptor[] editorsForContentType = ((EditorRegistry) PlatformUI
 				.getWorkbench().getEditorRegistry())
@@ -1724,14 +1746,17 @@ class MockMapping implements IFileEditorMapping {
 				.restrictArray(editorsForContentType);
 	}
 
+	@Override
 	public IEditorDescriptor[] getDeletedEditors() {
 		return new IEditorDescriptor[0];
 	}
 
+	@Override
 	public String getExtension() {
 		return extension;
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		IEditorDescriptor editor = getDefaultEditor();
 		if (editor == null) {
@@ -1742,10 +1767,12 @@ class MockMapping implements IFileEditorMapping {
 		return editor.getImageDescriptor();
 	}
 
+	@Override
 	public String getLabel() {
 		return filename + '.' + extension; 
 	}
 
+	@Override
 	public String getName() {
 		return filename;
     }	
@@ -1753,6 +1780,7 @@ class MockMapping implements IFileEditorMapping {
     /* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;

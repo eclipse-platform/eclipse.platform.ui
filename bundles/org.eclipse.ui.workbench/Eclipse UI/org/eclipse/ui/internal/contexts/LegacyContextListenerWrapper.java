@@ -87,6 +87,7 @@ public class LegacyContextListenerWrapper implements IContextListener,
 	 * 
 	 * @see org.eclipse.core.commands.contexts.IContextListener#contextChanged(org.eclipse.core.commands.contexts.ContextEvent)
 	 */
+	@Override
 	public final void contextChanged(final ContextEvent contextEvent) {
 		wrappedListener
 				.contextChanged(new org.eclipse.ui.contexts.ContextEvent(
@@ -97,6 +98,7 @@ public class LegacyContextListenerWrapper implements IContextListener,
 								.isParentIdChanged()));
 	}
 
+	@Override
 	public final void contextManagerChanged(final ContextManagerEvent event) {
 		final String contextId = context.getId();
 		final boolean enabledChanged;
@@ -125,6 +127,7 @@ public class LegacyContextListenerWrapper implements IContextListener,
 						context, false, enabledChanged, false, false));
 	}
 
+	@Override
 	public final boolean equals(final Object object) {
 		if (object instanceof LegacyContextListenerWrapper) {
 			final LegacyContextListenerWrapper other = (LegacyContextListenerWrapper) object;
@@ -139,6 +142,7 @@ public class LegacyContextListenerWrapper implements IContextListener,
 		return false;
 	}
 
+	@Override
 	public final int hashCode() {
 		return wrappedListener.hashCode();
 	}

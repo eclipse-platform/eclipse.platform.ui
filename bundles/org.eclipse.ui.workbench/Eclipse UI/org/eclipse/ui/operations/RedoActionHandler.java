@@ -50,35 +50,43 @@ public final class RedoActionHandler extends OperationHistoryActionHandler {
 		setActionDefinitionId(IWorkbenchCommandConstants.EDIT_REDO);
 	}
 
+	@Override
 	void flush() {
 		getHistory().dispose(getUndoContext(), false, true, false);
 	}
 
+	@Override
 	String getCommandString() {
 		return WorkbenchMessages.Operations_redoCommand;
 	}
 	
+	@Override
 	String getTooltipString() {
 		return WorkbenchMessages.Operations_redoTooltipCommand;
 	}
 	
+	@Override
 	String getSimpleCommandString() {
 		return WorkbenchMessages.Workbench_redo;
 	}
 	
+	@Override
 	String getSimpleTooltipString() {
 		return WorkbenchMessages.Workbench_redoToolTip;
 	}
 
 
+	@Override
 	IUndoableOperation getOperation() {
 		return getHistory().getRedoOperation(getUndoContext());
 	}
 
+	@Override
 	IStatus runCommand(IProgressMonitor pm) throws ExecutionException {
 		return getHistory().redo(getUndoContext(), pm, this);
 	}
 
+	@Override
 	boolean shouldBeEnabled() {
 		return getHistory().canRedo(getUndoContext());
 	}

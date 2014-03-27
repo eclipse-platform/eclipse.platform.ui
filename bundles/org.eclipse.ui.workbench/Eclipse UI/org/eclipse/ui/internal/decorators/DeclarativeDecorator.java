@@ -39,13 +39,15 @@ public class DeclarativeDecorator implements ILightweightLabelDecorator {
     /**
      * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
      */
-    public void addListener(ILabelProviderListener listener) {
+    @Override
+	public void addListener(ILabelProviderListener listener) {
     }
 
     /**
      * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
     	//Nothing to do here
     }
 
@@ -53,21 +55,24 @@ public class DeclarativeDecorator implements ILightweightLabelDecorator {
      * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
      *      java.lang.String)
      */
-    public boolean isLabelProperty(Object element, String property) {
+    @Override
+	public boolean isLabelProperty(Object element, String property) {
         return false;
     }
 
     /**
      * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
      */
-    public void removeListener(ILabelProviderListener listener) {
+    @Override
+	public void removeListener(ILabelProviderListener listener) {
     }
 
     /**
      * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object,
      *      org.eclipse.jface.viewers.IDecoration)
      */
-    public void decorate(Object element, IDecoration decoration) {
+    @Override
+	public void decorate(Object element, IDecoration decoration) {
         if (descriptor == null) {
             URL url = BundleUtility.find(configElement.getDeclaringExtension()
                     .getNamespace(), iconLocation);

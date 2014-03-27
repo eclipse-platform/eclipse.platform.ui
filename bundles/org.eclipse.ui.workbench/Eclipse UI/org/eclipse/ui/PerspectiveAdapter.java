@@ -34,6 +34,7 @@ public class PerspectiveAdapter implements IPerspectiveListener4 {
 	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveOpened(org.eclipse.ui.IWorkbenchPage,
 	 *      org.eclipse.ui.IPerspectiveDescriptor)
 	 */
+	@Override
 	public void perspectiveOpened(IWorkbenchPage page,
 			IPerspectiveDescriptor perspective) {
 		// do nothing
@@ -45,6 +46,7 @@ public class PerspectiveAdapter implements IPerspectiveListener4 {
 	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveClosed(org.eclipse.ui.IWorkbenchPage,
 	 *      org.eclipse.ui.IPerspectiveDescriptor)
 	 */
+	@Override
 	public void perspectiveClosed(IWorkbenchPage page,
 			IPerspectiveDescriptor perspective) {
 		// do nothing
@@ -57,6 +59,7 @@ public class PerspectiveAdapter implements IPerspectiveListener4 {
 	 *      org.eclipse.ui.IPerspectiveDescriptor,
 	 *      org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
 	 */
+	@Override
 	public void perspectiveChanged(IWorkbenchPage page,
 			IPerspectiveDescriptor perspective,
 			IWorkbenchPartReference partRef, String changeId) {
@@ -69,6 +72,7 @@ public class PerspectiveAdapter implements IPerspectiveListener4 {
 	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage,
 	 *      org.eclipse.ui.IPerspectiveDescriptor)
 	 */
+	@Override
 	public void perspectiveActivated(IWorkbenchPage page,
 			IPerspectiveDescriptor perspective) {
 		// do nothing
@@ -80,6 +84,7 @@ public class PerspectiveAdapter implements IPerspectiveListener4 {
 	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage,
 	 *      org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
 	 */
+	@Override
 	public void perspectiveChanged(IWorkbenchPage page,
 			IPerspectiveDescriptor perspective, String changeId) {
 		// do nothing
@@ -91,6 +96,7 @@ public class PerspectiveAdapter implements IPerspectiveListener4 {
 	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveDeactivated(org.eclipse.ui.IWorkbenchPage,
 	 *      org.eclipse.ui.IPerspectiveDescriptor)
 	 */
+	@Override
 	public void perspectiveDeactivated(IWorkbenchPage page,
 			IPerspectiveDescriptor perspective) {
 		// do nothing
@@ -103,6 +109,7 @@ public class PerspectiveAdapter implements IPerspectiveListener4 {
 	 *      org.eclipse.ui.IPerspectiveDescriptor,
 	 *      org.eclipse.ui.IPerspectiveDescriptor)
 	 */
+	@Override
 	public void perspectiveSavedAs(IWorkbenchPage page,
 			IPerspectiveDescriptor oldPerspective,
 			IPerspectiveDescriptor newPerspective) {
@@ -113,6 +120,7 @@ public class PerspectiveAdapter implements IPerspectiveListener4 {
 	 * {@inheritDoc}
 	 * @since 3.2
 	 */
+	@Override
 	public void perspectivePreDeactivate(IWorkbenchPage page,
 			IPerspectiveDescriptor perspective) {
 		// do nothing

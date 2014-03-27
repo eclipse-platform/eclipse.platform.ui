@@ -30,6 +30,7 @@ public class ColorAndFontProviderImpl implements IColorAndFontProvider {
 	 * org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider#getFont
 	 * (java.lang.String)
 	 */
+	@Override
 	public FontData[] getFont(String symbolicName) {
 		return getCurrentTheme().getFontRegistry().getFontData(symbolicName);
 	}
@@ -41,6 +42,7 @@ public class ColorAndFontProviderImpl implements IColorAndFontProvider {
 	 * org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider#getColor
 	 * (java.lang.String)
 	 */
+	@Override
 	public RGB getColor(String symbolicName) {
 		return getCurrentTheme().getColorRegistry().getRGB(symbolicName);
 	}

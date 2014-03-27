@@ -298,6 +298,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private IPerspectiveDescriptor perspective;
 
 	private EventHandler windowWidgetHandler = new EventHandler() {
+		@Override
 		public void handleEvent(Event event) {
 			if (event.getProperty(UIEvents.EventTags.ELEMENT) == model
 					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
@@ -488,6 +489,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					.getService(IServiceLocatorCreator.class);
 			this.serviceLocator = (ServiceLocator) slc.createServiceLocator(workbench, null,
 					new IDisposable() {
+						@Override
 						public void dispose() {
 							final Shell shell = getShell();
 							if (shell != null && !shell.isDisposed()) {
@@ -507,6 +509,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			});
 
 			windowContext.set(IWindowCloseHandler.class.getName(), new IWindowCloseHandler() {
+				@Override
 				public boolean close(MWindow window) {
 					return getWindowAdvisor().preWindowShellClose() && WorkbenchWindow.this.close();
 				}
@@ -514,6 +517,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 			final ISaveHandler defaultSaveHandler = windowContext.get(ISaveHandler.class);
 			final PartServiceSaveHandler localSaveHandler = new PartServiceSaveHandler() {
+				@Override
 				public Save promptToSave(MPart dirtyPart) {
 					Object object = dirtyPart.getObject();
 					if (object instanceof CompatibilityPart) {
@@ -528,6 +532,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					return defaultSaveHandler.promptToSave(dirtyPart);
 				}
 
+				@Override
 				public Save[] promptToSave(Collection<MPart> dirtyParts) {
 					LabelProvider labelProvider = new LabelProvider() {
 						@Override
@@ -560,6 +565,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					return retSaves;
 				}
 
+				@Override
 				public boolean save(MPart dirtyPart, boolean confirm) {
 					Object object = dirtyPart.getObject();
 					if (object instanceof CompatibilityPart) {
@@ -572,6 +578,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					return super.save(dirtyPart, confirm);
 				}
 
+				@Override
 				public boolean saveParts(Collection<MPart> dirtyParts, boolean confirm) {
 					ArrayList<ISaveablePart> saveables = new ArrayList<ISaveablePart>();
 					for (MPart part : dirtyParts) {
@@ -667,6 +674,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				shell.setMenuBar(menu);
 
 				menuUpdater = new Runnable() {
+					@Override
 					public void run() {
 						try {
 							if (model.getMainMenu() == null || model.getWidget() == null
@@ -1417,6 +1425,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	/*
 	 * Adds an listener to the part service.
 	 */
+	@Override
 	public void addPageListener(IPageListener l) {
 		pageListeners.addPageListener(l);
 	}
@@ -1424,6 +1433,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	/**
 	 * @see org.eclipse.ui.IPageService
 	 */
+	@Override
 	public void addPerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
 		perspectiveListeners.addPerspectiveListener(l);
 	}
@@ -1488,6 +1498,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return windowClosed;
 	}
 
+	@Override
 	public Shell getShell() {
 		return (Shell) model.getWidget();
 	}
@@ -1495,6 +1506,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	public boolean close(final boolean remove) {
 		final boolean[] ret = new boolean[1];
 		BusyIndicator.showWhile(null, new Runnable() {
+			@Override
 			public void run() {
 				ret[0] = busyClose(remove);
 			}
@@ -1505,6 +1517,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	/**
 	 * @see IWorkbenchWindow
 	 */
+	@Override
 	public boolean close() {
 		return close(true);
 	}
@@ -1539,6 +1552,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	void fireWindowRestored() throws WorkbenchException {
 		StartupThreading.runWithWorkbenchExceptions(new StartupRunnable() {
+			@Override
 			public void runWithException() throws Throwable {
 				getWindowAdvisor().postWindowRestore();
 			}
@@ -1687,10 +1701,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return actionBars;
 	}
 
+	@Override
 	public IWorkbenchPage getActivePage() {
 		return page;
 	}
 
+	@Override
 	public IWorkbenchPage[] getPages() {
 		return page == null ? new IWorkbenchPage[0] : new IWorkbenchPage[] { page };
 	}
@@ -1698,6 +1714,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	/**
 	 * @see IWorkbenchWindow
 	 */
+	@Override
 	public IPartService getPartService() {
 		return partService;
 	}
@@ -1714,6 +1731,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	/**
 	 * @see IWorkbenchWindow
 	 */
+	@Override
 	public ISelectionService getSelectionService() {
 		return selectionService;
 	}
@@ -1732,6 +1750,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	/**
 	 * @see IWorkbenchWindow
 	 */
+	@Override
 	public IWorkbench getWorkbench() {
 		return PlatformUI.getWorkbench();
 	}
@@ -1861,6 +1880,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	/**
 	 * @see IWorkbenchWindow
 	 */
+	@Override
 	public boolean isApplicationMenu(String menuID) {
 		// delegate this question to the action bar advisor
 		return getActionBarAdvisor().isApplicationMenu(menuID);
@@ -1890,10 +1910,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IWorkbenchWindow#openPage(java.lang.String,
 	 * org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	public IWorkbenchPage openPage(final String perspectiveId, final IAdaptable input)
 			throws WorkbenchException {
 		final Object[] result = new Object[1];
 		BusyIndicator.showWhile(null, new Runnable() {
+			@Override
 			public void run() {
 				try {
 					result[0] = busyOpenPage(perspectiveId, input);
@@ -1953,6 +1975,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * org.eclipse.ui.IWorkbenchWindow#openPage(org.eclipse.core.runtime.IAdaptable
 	 * )
 	 */
+	@Override
 	public IWorkbenchPage openPage(IAdaptable input) throws WorkbenchException {
 		return openPage(workbench.getPerspectiveRegistry().getDefaultPerspective(), input);
 	}
@@ -1960,6 +1983,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	/*
 	 * Removes an listener from the part service.
 	 */
+	@Override
 	public void removePageListener(IPageListener l) {
 		pageListeners.removePageListener(l);
 	}
@@ -1967,6 +1991,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	/**
 	 * @see org.eclipse.ui.IPageService
 	 */
+	@Override
 	public void removePerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
 		perspectiveListeners.removePerspectiveListener(l);
 	}
@@ -1981,6 +2006,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	/*
 	 * (non-Javadoc) Method declared on IRunnableContext.
 	 */
+	@Override
 	public void run(final boolean fork, boolean cancelable, final IRunnableWithProgress runnable)
 			throws InvocationTargetException, InterruptedException {
 		final StatusLineManager manager = getStatusLineManager();
@@ -2043,6 +2069,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				final InterruptedException[] ie = new InterruptedException[1];
 
 				BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+					@Override
 					public void run() {
 						try {
 							ModalContext.run(runnable, fork, manager.getProgressMonitor(),
@@ -2097,6 +2124,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		}
 	}
 
+	@Override
 	public void setActivePage(final IWorkbenchPage in) {
 		if (getActivePage() != in) {
 			if (in == null) {
@@ -2167,6 +2195,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	private void trackShellActivation() {
 		getShell().addShellListener(new ShellAdapter() {
+			@Override
 			public void shellActivated(ShellEvent event) {
 				shellActivated = true;
 				serviceLocator.activate();
@@ -2176,6 +2205,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				liftRestrictions();
 			}
 
+			@Override
 			public void shellDeactivated(ShellEvent event) {
 				shellActivated = false;
 				imposeRestrictions();
@@ -2654,6 +2684,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#getExtensionTracker()
 	 */
+	@Override
 	public IExtensionTracker getExtensionTracker() {
 		return (IExtensionTracker) model.getContext().get(IExtensionTracker.class.getName());
 	}
@@ -2679,37 +2710,47 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			// to prevent an NPE when using Intro's 'Go to Workbench' handling
 			// See Bug 365625 for details...
 			trimManager = new ITrimManager() {
+				@Override
 				public void addTrim(int areaId, IWindowTrim trim) {
 				}
 
+				@Override
 				public void addTrim(int areaId, IWindowTrim trim, IWindowTrim beforeMe) {
 				}
 
+				@Override
 				public void removeTrim(IWindowTrim toRemove) {
 				}
 
+				@Override
 				public IWindowTrim getTrim(String id) {
 					return null;
 				}
 
+				@Override
 				public int[] getAreaIds() {
 					return null;
 				}
 
+				@Override
 				public List getAreaTrim(int areaId) {
 					return null;
 				}
 
+				@Override
 				public void updateAreaTrim(int id, List trim, boolean removeExtra) {
 				}
 
+				@Override
 				public List getAllTrim() {
 					return null;
 				}
 
+				@Override
 				public void setTrimVisible(IWindowTrim trim, boolean visible) {
 				}
 
+				@Override
 				public void forceLayout() {
 				}
 			};
@@ -2757,10 +2798,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		serviceLocator.registerService(IMenuService.class, msvs);
 	}
 
+	@Override
 	public final Object getService(final Class key) {
 		return serviceLocator.getService(key);
 	}
 
+	@Override
 	public final boolean hasService(final Class key) {
 		return serviceLocator.hasService(key);
 	}
@@ -2857,22 +2900,27 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private IContributionManagerOverrides toolbarOverride = new IContributionManagerOverrides() {
 
+		@Override
 		public Integer getAccelerator(IContributionItem item) {
 			return null;
 		}
 
+		@Override
 		public String getAcceleratorText(IContributionItem item) {
 			return null;
 		}
 
+		@Override
 		public Boolean getEnabled(IContributionItem item) {
 			return null;
 		}
 
+		@Override
 		public String getText(IContributionItem item) {
 			return null;
 		}
 
+		@Override
 		public Boolean getVisible(IContributionItem item) {
 			if (page == null)
 				return null;
@@ -2906,22 +2954,27 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private IContributionManagerOverrides menuOverride = new IContributionManagerOverrides() {
 
+		@Override
 		public Integer getAccelerator(IContributionItem item) {
 			return null;
 		}
 
+		@Override
 		public String getAcceleratorText(IContributionItem item) {
 			return null;
 		}
 
+		@Override
 		public Boolean getEnabled(IContributionItem item) {
 			return null;
 		}
 
+		@Override
 		public String getText(IContributionItem item) {
 			return null;
 		}
 
+		@Override
 		public Boolean getVisible(IContributionItem item) {
 			if (page == null)
 				return null;

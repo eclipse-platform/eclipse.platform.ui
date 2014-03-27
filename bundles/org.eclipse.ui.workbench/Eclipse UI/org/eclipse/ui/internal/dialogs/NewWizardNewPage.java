@@ -352,7 +352,8 @@ class NewWizardNewPage implements ISelectionChangedListener {
              * 
              * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
              */
-            public void doubleClick(DoubleClickEvent event) {
+            @Override
+			public void doubleClick(DoubleClickEvent event) {
             	    IStructuredSelection s = (IStructuredSelection) event
 						.getSelection();
 				selectionChanged(new SelectionChangedEvent(event.getViewer(), s));
@@ -398,7 +399,8 @@ class NewWizardNewPage implements ISelectionChangedListener {
                 // and the current 'no show all'
                 private Object[] delta = new Object[0];
 
-                public void widgetSelected(SelectionEvent e) {
+                @Override
+				public void widgetSelected(SelectionEvent e) {
                     boolean showAll = showAllCheck.getSelection();
 
                     if (showAll) {
@@ -478,7 +480,8 @@ class NewWizardNewPage implements ISelectionChangedListener {
             /* (non-Javadoc)
              * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
              */
-            public void widgetDisposed(DisposeEvent e) {
+            @Override
+			public void widgetDisposed(DisposeEvent e) {
                 for (Iterator i = imageTable.values().iterator(); i.hasNext();) {
                     ((Image) i.next()).dispose();
                 }
@@ -552,7 +555,8 @@ class NewWizardNewPage implements ISelectionChangedListener {
      * 
      * @param selectionEvent ISelection
      */
-    public void selectionChanged(SelectionChangedEvent selectionEvent) {
+    @Override
+	public void selectionChanged(SelectionChangedEvent selectionEvent) {
         page.setErrorMessage(null);
         page.setMessage(null);
 
@@ -603,7 +607,8 @@ class NewWizardNewPage implements ISelectionChangedListener {
         //work around for 62039
         final StructuredSelection selection = new StructuredSelection(selected);
         filteredTree.getViewer().getControl().getDisplay().asyncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
             	filteredTree.getViewer().setSelection(selection, true);
             }
         });
@@ -735,7 +740,8 @@ class NewWizardNewPage implements ISelectionChangedListener {
                     .get(selectedObject);
         } else {
             selectedNode = new WorkbenchWizardNode(page, selectedObject) {
-                public IWorkbenchWizard createWizard() throws CoreException {
+                @Override
+				public IWorkbenchWizard createWizard() throws CoreException {
                     return wizardElement.createWizard();
                 }
             };

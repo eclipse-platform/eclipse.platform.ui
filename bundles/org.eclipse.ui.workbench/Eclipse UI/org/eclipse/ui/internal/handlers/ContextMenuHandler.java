@@ -28,6 +28,7 @@ public class ContextMenuHandler extends AbstractHandler {
 	 * @throws ExecutionException
 	 *             {@inheritDoc}
 	 */
+	@Override
 	public Object execute(ExecutionEvent exEvent) throws ExecutionException {
 		Shell shell = HandlerUtil.getActiveShell(exEvent);
 		Display display = shell == null ? Display.getCurrent() : shell.getDisplay();

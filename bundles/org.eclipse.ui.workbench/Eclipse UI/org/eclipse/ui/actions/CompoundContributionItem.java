@@ -26,7 +26,8 @@ import org.eclipse.swt.widgets.Menu;
 public abstract class CompoundContributionItem extends ContributionItem {
 
     private IMenuListener menuListener = new IMenuListener() {
-        public void menuAboutToShow(IMenuManager manager) {
+        @Override
+		public void menuAboutToShow(IMenuManager manager) {
             manager.markDirty();
         }
     };
@@ -52,7 +53,8 @@ public abstract class CompoundContributionItem extends ContributionItem {
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu, int)
      */
-    public void fill(Menu menu, int index) {
+    @Override
+	public void fill(Menu menu, int index) {
         if (index == -1) {
 			index = menu.getItemCount();
 		}
@@ -101,14 +103,16 @@ public abstract class CompoundContributionItem extends ContributionItem {
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.ContributionItem#isDirty()
      */
-    public boolean isDirty() {
+    @Override
+	public boolean isDirty() {
 		return true;
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.ContributionItem#isDynamic()
      */
-    public boolean isDynamic() {
+    @Override
+	public boolean isDynamic() {
         return true;
     }
     
@@ -116,7 +120,8 @@ public abstract class CompoundContributionItem extends ContributionItem {
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.ContributionItem#setParent(org.eclipse.jface.action.IContributionManager)
      */
-    public void setParent(IContributionManager parent) {
+    @Override
+	public void setParent(IContributionManager parent) {
         if (getParent() instanceof IMenuManager) {
             IMenuManager menuMgr = (IMenuManager) getParent();
             menuMgr.removeMenuListener(menuListener);

@@ -23,6 +23,7 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class ServiceLocatorCreator implements IServiceLocatorCreator {
 
+	@Override
 	public IServiceLocator createServiceLocator(IServiceLocator parent,
 			AbstractServiceFactory factory, IDisposable owner) {
 		ServiceLocator serviceLocator = new ServiceLocator(parent, factory, owner);
@@ -36,6 +37,7 @@ public class ServiceLocatorCreator implements IServiceLocatorCreator {
 		return serviceLocator;
 	}
 
+	@Override
 	public IServiceLocator createServiceLocator(IServiceLocator parent,
 			AbstractServiceFactory factory, IDisposable owner, IEclipseContext context) {
 		ServiceLocator serviceLocator = new ServiceLocator(parent, factory, owner);

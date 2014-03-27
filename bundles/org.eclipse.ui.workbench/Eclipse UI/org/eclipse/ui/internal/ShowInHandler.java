@@ -48,6 +48,7 @@ public class ShowInHandler extends AbstractHandler implements IElementUpdater {
 	 * 
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchPage p = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		WorkbenchPartReference r = (WorkbenchPartReference) p.getActivePartReference();
@@ -128,6 +129,7 @@ public class ShowInHandler extends AbstractHandler implements IElementUpdater {
 	 * @see org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.menus.UIElement,
 	 *      java.util.Map)
 	 */
+	@Override
 	public void updateElement(UIElement element, Map parameters) {
 		String targetId = (String) parameters
 				.get(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_PARM_TARGET);

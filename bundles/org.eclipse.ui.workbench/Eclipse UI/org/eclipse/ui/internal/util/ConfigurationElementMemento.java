@@ -27,15 +27,18 @@ public final class ConfigurationElementMemento implements IMemento {
         this.configurationElement = configurationElement;
     }
 
-    public IMemento createChild(String type) {
+    @Override
+	public IMemento createChild(String type) {
         return null;
     }
 
-    public IMemento createChild(String type, String id) {
+    @Override
+	public IMemento createChild(String type, String id) {
         return null;
     }
 
-    public IMemento getChild(String type) {
+    @Override
+	public IMemento getChild(String type) {
         IConfigurationElement[] configurationElements = configurationElement
                 .getChildren(type);
 
@@ -46,13 +49,15 @@ public final class ConfigurationElementMemento implements IMemento {
         return null;
     }
 
+	@Override
 	public IMemento[] getChildren() {
 		IConfigurationElement[] configurationElements = configurationElement.getChildren();
 
 		return getMementoArray(configurationElements);
 	}
 
-    public IMemento[] getChildren(String type) {
+    @Override
+	public IMemento[] getChildren(String type) {
         IConfigurationElement[] configurationElements = configurationElement
                 .getChildren(type);
 
@@ -74,7 +79,8 @@ public final class ConfigurationElementMemento implements IMemento {
         return new IMemento[0];
 	}
 
-    public Float getFloat(String key) {
+    @Override
+	public Float getFloat(String key) {
         String string = configurationElement.getAttribute(key);
 
         if (string != null) {
@@ -87,15 +93,18 @@ public final class ConfigurationElementMemento implements IMemento {
         return null;
     }
 
-    public String getType() {
+    @Override
+	public String getType() {
         return configurationElement.getName();
     }
 
-    public String getID() {
+    @Override
+	public String getID() {
         return configurationElement.getAttribute(TAG_ID);
     }
 
-    public Integer getInteger(String key) {
+    @Override
+	public Integer getInteger(String key) {
         String string = configurationElement.getAttribute(key);
 
         if (string != null) {
@@ -108,11 +117,13 @@ public final class ConfigurationElementMemento implements IMemento {
         return null;
     }
 
-    public String getString(String key) {
+    @Override
+	public String getString(String key) {
         return configurationElement.getAttribute(key);
     }
 
-    public Boolean getBoolean(String key) {
+    @Override
+	public Boolean getBoolean(String key) {
         String string = configurationElement.getAttribute(key);
         if (string==null) {
         	return null;
@@ -120,30 +131,38 @@ public final class ConfigurationElementMemento implements IMemento {
         return Boolean.valueOf(string);
     }
 
-    public String getTextData() {
+    @Override
+	public String getTextData() {
         return configurationElement.getValue();
     }
     
-    public String[] getAttributeKeys() {
+    @Override
+	public String[] getAttributeKeys() {
     	return configurationElement.getAttributeNames();
     }
 
-    public void putFloat(String key, float value) {
+    @Override
+	public void putFloat(String key, float value) {
     }
 
-    public void putInteger(String key, int value) {
+    @Override
+	public void putInteger(String key, int value) {
     }
 
-    public void putMemento(IMemento memento) {
+    @Override
+	public void putMemento(IMemento memento) {
     }
 
-    public void putString(String key, String value) {
+    @Override
+	public void putString(String key, String value) {
     }
     
-    public void putBoolean(String key, boolean value) {
+    @Override
+	public void putBoolean(String key, boolean value) {
     }
 
-    public void putTextData(String data) {
+    @Override
+	public void putTextData(String data) {
     }
     
     public String getContributorName() {

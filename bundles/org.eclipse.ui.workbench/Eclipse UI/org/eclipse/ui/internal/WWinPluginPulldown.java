@@ -113,6 +113,7 @@ public class WWinPluginPulldown extends WWinPluginAction {
 			/**
 			 * @see ISafeRunnable#handleException(java.lang.Throwable)
 			 */
+			@Override
 			public void handleException(Throwable exception) {
 				// Do nothing
 			}
@@ -120,6 +121,7 @@ public class WWinPluginPulldown extends WWinPluginAction {
 			/**
 			 * @see ISafeRunnable#run()
 			 */
+			@Override
 			public void run() throws Exception {
 				if (parent == null) {
 					menu = delegate.getMenu(control);
@@ -133,6 +135,7 @@ public class WWinPluginPulldown extends WWinPluginAction {
 		/**
 		 * @see IMenuCreator#getMenu(Control)
 		 */
+		@Override
 		public Menu getMenu(Control parent) {
 			IWorkbenchWindowPulldownDelegate delegate = getPulldownDelegate();
 			if (delegate != null) {
@@ -147,6 +150,7 @@ public class WWinPluginPulldown extends WWinPluginAction {
 		/**
 		 * @see IMenuCreator#getMenu(Menu)
 		 */
+		@Override
 		public Menu getMenu(Menu parent) {
 			IWorkbenchWindowPulldownDelegate delegate = getPulldownDelegate();
 
@@ -163,6 +167,7 @@ public class WWinPluginPulldown extends WWinPluginAction {
 		/**
 		 * @see IMenuCreator#dispose()
 		 */
+		@Override
 		public void dispose() {
 			// do nothing
 		}
@@ -193,6 +198,7 @@ public class WWinPluginPulldown extends WWinPluginAction {
 	/*
 	 * (non-Javadoc) Method declared on PluginAction.
 	 */
+	@Override
 	protected IActionDelegate validateDelegate(Object obj)
 			throws WorkbenchException {
 		if (obj instanceof IWorkbenchWindowPulldownDelegate) {

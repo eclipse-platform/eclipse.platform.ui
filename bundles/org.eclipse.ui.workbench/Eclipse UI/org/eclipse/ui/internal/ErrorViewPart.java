@@ -47,6 +47,7 @@ public class ErrorViewPart extends ViewPart {
 	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		parentControl = parent;
 		if (error != null) {
@@ -59,6 +60,7 @@ public class ErrorViewPart extends ViewPart {
 	 * 
 	 * @see org.eclipse.ui.part.ViewPart#setPartName(java.lang.String)
 	 */
+	@Override
 	public void setPartName(String newName) {
 		super.setPartName(newName);
 	}
@@ -68,6 +70,7 @@ public class ErrorViewPart extends ViewPart {
 	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		parentControl.setFocus();
 	}
@@ -77,6 +80,7 @@ public class ErrorViewPart extends ViewPart {
 	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		parentControl = null;

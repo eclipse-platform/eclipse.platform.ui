@@ -161,7 +161,8 @@ public final class WorkbenchWindowConfigurer implements
         /* (non-Javadoc)
          * @see org.eclipse.ui.application.IActionBarConfigurer#getWindowConfigurer()
          */
-        public IWorkbenchWindowConfigurer getWindowConfigurer() {
+        @Override
+		public IWorkbenchWindowConfigurer getWindowConfigurer() {
             return window.getWindowConfigurer();
         }
         
@@ -188,7 +189,8 @@ public final class WorkbenchWindowConfigurer implements
         /* (non-Javadoc)
          * @see org.eclipse.ui.application.IActionBarConfigurer
          */
-        public IStatusLineManager getStatusLineManager() {
+        @Override
+		public IStatusLineManager getStatusLineManager() {
             if (proxy != null) {
                 return proxy.getStatusLineManager();
             }
@@ -198,7 +200,8 @@ public final class WorkbenchWindowConfigurer implements
         /* (non-Javadoc)
          * @see org.eclipse.ui.application.IActionBarConfigurer
          */
-        public IMenuManager getMenuManager() {
+        @Override
+		public IMenuManager getMenuManager() {
             if (proxy != null) {
                 return proxy.getMenuManager();
             }
@@ -208,7 +211,8 @@ public final class WorkbenchWindowConfigurer implements
         /* (non-Javadoc)
          * @see org.eclipse.ui.internal.AbstractActionBarConfigurer
          */
-        public ICoolBarManager getCoolBarManager() {
+        @Override
+		public ICoolBarManager getCoolBarManager() {
             if (proxy != null) {
                 return proxy.getCoolBarManager();
             }
@@ -218,7 +222,8 @@ public final class WorkbenchWindowConfigurer implements
         /* (non-Javadoc)
          * @see org.eclipse.ui.application.IActionBarConfigurer
          */
-        public void registerGlobalAction(IAction action) {
+        @Override
+		public void registerGlobalAction(IAction action) {
             if (proxy != null) {
                 proxy.registerGlobalAction(action);
             }
@@ -228,6 +233,7 @@ public final class WorkbenchWindowConfigurer implements
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.application.IActionBarConfigurer#createToolBarManager()
 		 */
+		@Override
 		public IToolBarManager createToolBarManager() {
 			if (proxy != null) {
 				return proxy.createToolBarManager();
@@ -238,6 +244,7 @@ public final class WorkbenchWindowConfigurer implements
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.application.IActionBarConfigurer#createToolBarContributionItem(org.eclipse.jface.action.IToolBarManager, java.lang.String)
 		 */
+		@Override
 		public IToolBarContributionItem createToolBarContributionItem(IToolBarManager toolBarManager, String id) {
 			if (proxy != null) {
 				return proxy.createToolBarContributionItem(toolBarManager, id);
@@ -271,14 +278,16 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getWindow
      */
-    public IWorkbenchWindow getWindow() {
+    @Override
+	public IWorkbenchWindow getWindow() {
         return window;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getWorkbenchConfigurer()
      */
-    public IWorkbenchConfigurer getWorkbenchConfigurer() {
+    @Override
+	public IWorkbenchConfigurer getWorkbenchConfigurer() {
         return Workbench.getInstance().getWorkbenchConfigurer();
     }
 
@@ -294,7 +303,8 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getTitle
      */
-    public String getTitle() {
+    @Override
+	public String getTitle() {
         Shell shell = window.getShell();
         if (shell != null) {
             // update the cached title
@@ -306,7 +316,8 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setTitle
      */
-    public void setTitle(String title) {
+    @Override
+	public void setTitle(String title) {
         if (title == null) {
             throw new IllegalArgumentException();
         }
@@ -320,14 +331,16 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getShowMenuBar
      */
-    public boolean getShowMenuBar() {
+    @Override
+	public boolean getShowMenuBar() {
         return showMenuBar;
     }
 
     /* (non-javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setShowMenuBar
      */
-    public void setShowMenuBar(boolean show) {
+    @Override
+	public void setShowMenuBar(boolean show) {
         showMenuBar = show;
         WorkbenchWindow win = (WorkbenchWindow) getWindow();
         Shell shell = win.getShell();
@@ -346,14 +359,16 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getShowToolBar
      */
-    public boolean getShowCoolBar() {
+    @Override
+	public boolean getShowCoolBar() {
         return showToolBar;
     }
 
     /* (non-javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public void setShowCoolBar(boolean show) {
+    @Override
+	public void setShowCoolBar(boolean show) {
         showToolBar = show;
         // @issue need to be able to reconfigure after window's controls created
     }
@@ -361,14 +376,16 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public boolean getShowFastViewBars() {
+    @Override
+	public boolean getShowFastViewBars() {
         return showFastViewBars;
     }
 
     /* (non-javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public void setShowFastViewBars(boolean show) {
+    @Override
+	public void setShowFastViewBars(boolean show) {
         showFastViewBars = show;
         window.setFastViewBarVisible(show);
         // @issue need to be able to reconfigure after window's controls created
@@ -377,14 +394,16 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public boolean getShowPerspectiveBar() {
+    @Override
+	public boolean getShowPerspectiveBar() {
         return showPerspectiveBar;
     }
 
     /* (non-javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public void setShowPerspectiveBar(boolean show) {
+    @Override
+	public void setShowPerspectiveBar(boolean show) {
         showPerspectiveBar = show;
         // @issue need to be able to reconfigure after window's controls created
     }
@@ -392,14 +411,16 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getShowStatusLine
      */
-    public boolean getShowStatusLine() {
+    @Override
+	public boolean getShowStatusLine() {
         return showStatusLine;
     }
 
     /* (non-javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setShowStatusLine
      */
-    public void setShowStatusLine(boolean show) {
+    @Override
+	public void setShowStatusLine(boolean show) {
         showStatusLine = show;
         window.setStatusLineVisible(show);
         // @issue need to be able to reconfigure after window's controls created
@@ -408,14 +429,16 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public boolean getShowProgressIndicator() {
+    @Override
+	public boolean getShowProgressIndicator() {
         return showProgressIndicator;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public void setShowProgressIndicator(boolean show) {
+    @Override
+	public void setShowProgressIndicator(boolean show) {
         showProgressIndicator = show;
         // @issue need to be able to reconfigure after window's controls created
     }
@@ -423,7 +446,8 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getData
      */
-    public Object getData(String key) {
+    @Override
+	public Object getData(String key) {
         if (key == null) {
             throw new IllegalArgumentException();
         }
@@ -433,7 +457,8 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setData
      */
-    public void setData(String key, Object data) {
+    @Override
+	public void setData(String key, Object data) {
         if (key == null) {
             throw new IllegalArgumentException();
         }
@@ -447,7 +472,8 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#addEditorAreaTransfer
      */
-    public void addEditorAreaTransfer(Transfer tranfer) {
+    @Override
+	public void addEditorAreaTransfer(Transfer tranfer) {
 		if (tranfer != null && !transferTypes.contains(tranfer)) {
 			transferTypes.add(tranfer);
 		}
@@ -456,7 +482,8 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public void configureEditorAreaDropListener(
+    @Override
+	public void configureEditorAreaDropListener(
             DropTargetListener dropTargetListener) {
 		this.dropTargetListener = dropTargetListener;
     }
@@ -480,7 +507,8 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public IActionBarConfigurer getActionBarConfigurer() {
+    @Override
+	public IActionBarConfigurer getActionBarConfigurer() {
         if (actionBarConfigurer == null) {
             // lazily initialize
             actionBarConfigurer = new WindowActionBarConfigurer();
@@ -504,35 +532,40 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public int getShellStyle() {
+    @Override
+	public int getShellStyle() {
         return shellStyle;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public void setShellStyle(int shellStyle) {
+    @Override
+	public void setShellStyle(int shellStyle) {
         this.shellStyle = shellStyle;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public Point getInitialSize() {
+    @Override
+	public Point getInitialSize() {
         return initialSize;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public void setInitialSize(Point size) {
+    @Override
+	public void setInitialSize(Point size) {
         initialSize = size;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public AbstractPresentationFactory getPresentationFactory() {
+    @Override
+	public AbstractPresentationFactory getPresentationFactory() {
         if (presentationFactory == null) {
             presentationFactory = createDefaultPresentationFactory();
         }
@@ -553,6 +586,7 @@ public final class WorkbenchWindowConfigurer implements
             final AbstractPresentationFactory [] factory = new AbstractPresentationFactory[1];
             StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
+				@Override
 				public void runWithException() throws Throwable {
 					factory[0] = WorkbenchPlugin.getDefault()
 							.getPresentationFactory(factoryId);
@@ -573,7 +607,8 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public void setPresentationFactory(AbstractPresentationFactory factory) {
+    @Override
+	public void setPresentationFactory(AbstractPresentationFactory factory) {
         if (factory == null) {
             throw new IllegalArgumentException();
         }
@@ -592,14 +627,16 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public Menu createMenuBar() {
+    @Override
+	public Menu createMenuBar() {
 		return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public Control createCoolBarControl(Composite parent) {
+    @Override
+	public Control createCoolBarControl(Composite parent) {
 
         return null;
     }
@@ -607,20 +644,23 @@ public final class WorkbenchWindowConfigurer implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public Control createStatusLineControl(Composite parent) {
+    @Override
+	public Control createStatusLineControl(Composite parent) {
 		return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
-    public Control createPageComposite(Composite parent) {
+    @Override
+	public Control createPageComposite(Composite parent) {
 		return null;
     }
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#saveState(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public IStatus saveState(IMemento memento) {
 		return null;
 	}

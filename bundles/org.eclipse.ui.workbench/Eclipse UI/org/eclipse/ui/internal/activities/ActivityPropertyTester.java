@@ -34,6 +34,7 @@ public class ActivityPropertyTester extends PropertyTester {
 	 * @see org.eclipse.core.expressions.PropertyTester#test(java.lang.Object,
 	 *      java.lang.String, java.lang.Object[], java.lang.Object)
 	 */
+	@Override
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
 		if (args.length == 1 && receiver instanceof IWorkbench && args[0] instanceof String) {

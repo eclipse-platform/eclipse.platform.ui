@@ -58,7 +58,8 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 
         this.extensionRegistry
                 .addRegistryChangeListener(new IRegistryChangeListener() {
-                    public void registryChanged(
+                    @Override
+					public void registryChanged(
                             IRegistryChangeEvent registryChangeEvent) {
                         IExtensionDelta[] extensionDeltas = registryChangeEvent
                                 .getExtensionDeltas(Persistence.PACKAGE_PREFIX,

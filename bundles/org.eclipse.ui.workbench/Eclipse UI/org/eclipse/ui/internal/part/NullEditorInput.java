@@ -45,21 +45,24 @@ public class NullEditorInput implements IEditorInput {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorInput#exists()
      */
-    public boolean exists() {
+    @Override
+	public boolean exists() {
         return false;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
      */
-    public ImageDescriptor getImageDescriptor() {
+    @Override
+	public ImageDescriptor getImageDescriptor() {
         return ImageDescriptor.getMissingImageDescriptor();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorInput#getName()
      */
-    public String getName() {
+    @Override
+	public String getName() {
 		String result = null;
 		if (editorReference != null) {
 			result = editorReference.getName();
@@ -73,14 +76,16 @@ public class NullEditorInput implements IEditorInput {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorInput#getPersistable()
      */
-    public IPersistableElement getPersistable() {
+    @Override
+	public IPersistableElement getPersistable() {
         return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorInput#getToolTipText()
      */
-    public String getToolTipText() {
+    @Override
+	public String getToolTipText() {
 		if (editorReference != null)
 			return editorReference.getTitleToolTip();
         return ""; //$NON-NLS-1$
@@ -89,7 +94,8 @@ public class NullEditorInput implements IEditorInput {
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
-    public Object getAdapter(Class adapter) {
+    @Override
+	public Object getAdapter(Class adapter) {
         return null;
     }
 

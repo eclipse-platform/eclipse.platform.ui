@@ -64,10 +64,12 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 		}
 	}
 
+	@Override
 	public String getPartName() {
 		return descriptor.getLabel();
 	}
 
+	@Override
 	public String getSecondaryId() {
 		MPart part = getModel();
 
@@ -78,10 +80,12 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 		return part.getElementId().substring(colonIndex + 1);
 	}
 
+	@Override
 	public IViewPart getView(boolean restore) {
 		return (IViewPart) getPart(restore);
 	}
 
+	@Override
 	public boolean isFastView() {
 		// TODO Auto-generated method stub
 		return false;

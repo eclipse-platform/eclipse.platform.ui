@@ -58,7 +58,8 @@ public class DecoratorsPreferencePage extends PreferencePage implements
     /**
      * @see PreferencePage#createContents(Composite)
      */
-    protected Control createContents(Composite parent) {
+    @Override
+	protected Control createContents(Composite parent) {
 
         Font font = parent.getFont();
 
@@ -111,7 +112,8 @@ public class DecoratorsPreferencePage extends PreferencePage implements
                 new GridData(GridData.FILL_BOTH));
         checkboxViewer.getTable().setFont(decoratorsComposite.getFont());
         checkboxViewer.setLabelProvider(new LabelProvider() {
-            public String getText(Object element) {
+            @Override
+			public String getText(Object element) {
                 return ((DecoratorDefinition) element).getName();
             }
         });
@@ -121,22 +123,26 @@ public class DecoratorsPreferencePage extends PreferencePage implements
             private final Comparator comparer = new Comparator() {
                 private Collator collator = Collator.getInstance();
 
-                public int compare(Object arg0, Object arg1) {
+                @Override
+				public int compare(Object arg0, Object arg1) {
                     String s1 = ((DecoratorDefinition) arg0).getName();
                     String s2 = ((DecoratorDefinition) arg1).getName();
                     return collator.compare(s1, s2);
                 }
             };
 
-            public void dispose() {
+            @Override
+			public void dispose() {
                 //Nothing to do on dispose
             }
 
-            public void inputChanged(Viewer viewer, Object oldInput,
+            @Override
+			public void inputChanged(Viewer viewer, Object oldInput,
                     Object newInput) {
             }
 
-            public Object[] getElements(Object inputElement) {
+            @Override
+			public Object[] getElements(Object inputElement) {
                 //Make an entry for each decorator definition
                 Object[] elements = (Object[]) inputElement;
                 Object[] results = new Object[elements.length];
@@ -149,7 +155,8 @@ public class DecoratorsPreferencePage extends PreferencePage implements
 
         checkboxViewer
                 .addSelectionChangedListener(new ISelectionChangedListener() {
-                    public void selectionChanged(SelectionChangedEvent event) {
+                    @Override
+					public void selectionChanged(SelectionChangedEvent event) {
                         if (event.getSelection() instanceof IStructuredSelection) {
                             IStructuredSelection sel = (IStructuredSelection) event
                                     .getSelection();
@@ -165,7 +172,8 @@ public class DecoratorsPreferencePage extends PreferencePage implements
                 });
 
         checkboxViewer.addCheckStateListener(new ICheckStateListener() {
-            public void checkStateChanged(CheckStateChangedEvent event) {
+            @Override
+			public void checkStateChanged(CheckStateChangedEvent event) {
                 checkboxViewer.setSelection(new StructuredSelection(event
                         .getElement()));
             }
@@ -236,7 +244,8 @@ public class DecoratorsPreferencePage extends PreferencePage implements
     /**
      * @see PreferencePage#performDefaults()
      */
-    protected void performDefaults() {
+    @Override
+	protected void performDefaults() {
         super.performDefaults();
         DecoratorManager manager = WorkbenchPlugin.getDefault()
 				.getDecoratorManager();
@@ -251,7 +260,8 @@ public class DecoratorsPreferencePage extends PreferencePage implements
     /**
      * @see IPreferencePage#performOk()
      */
-    public boolean performOk() {
+    @Override
+	public boolean performOk() {
         if (super.performOk()) {
             DecoratorManager manager = getDecoratorManager();
             //Clear the caches first to avoid unneccessary updates
@@ -275,7 +285,8 @@ public class DecoratorsPreferencePage extends PreferencePage implements
     /**
      * @see IWorkbenchPreferencePage#init(IWorkbench)
      */
-    public void init(IWorkbench workbench) {
+    @Override
+	public void init(IWorkbench workbench) {
     }
 
     /**

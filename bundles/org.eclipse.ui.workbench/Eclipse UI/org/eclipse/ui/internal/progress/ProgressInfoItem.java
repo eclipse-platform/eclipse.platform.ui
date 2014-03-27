@@ -241,6 +241,7 @@ public class ProgressInfoItem extends Composite {
 		actionButton
 				.setToolTipText(ProgressMessages.NewProgressView_CancelJobToolTip);
 		actionButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				actionButton.setEnabled(false);
 				cancelOrRemove();
@@ -252,6 +253,7 @@ public class ProgressInfoItem extends Composite {
 			 * 
 			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 			 */
+			@Override
 			public void handleEvent(Event event) {
 				if (indexListener == null) {
 					return;
@@ -283,6 +285,7 @@ public class ProgressInfoItem extends Composite {
 			 * 
 			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 			 */
+			@Override
 			public void mouseDown(MouseEvent e) {
 				if (indexListener != null) {
 					indexListener.select();
@@ -780,6 +783,7 @@ public class ProgressInfoItem extends Composite {
 				 * 
 				 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 				 */
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					executeTrigger();
 				}
@@ -791,6 +795,7 @@ public class ProgressInfoItem extends Composite {
 				 * 
 				 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 				 */
+				@Override
 				public void handleEvent(Event event) {
 
 					Object text = link.getData(TEXT_KEY);
@@ -1051,6 +1056,7 @@ public class ProgressInfoItem extends Composite {
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Widget#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		if(resourceManager != null)

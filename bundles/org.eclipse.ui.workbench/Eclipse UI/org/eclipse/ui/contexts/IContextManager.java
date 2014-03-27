@@ -29,6 +29,7 @@ import java.util.SortedSet;
  * @see org.eclipse.core.commands.contexts.ContextManager
  * @noimplement This interface is not intended to be implemented by clients.
  */
+@Deprecated
 public interface IContextManager {
 
     /**

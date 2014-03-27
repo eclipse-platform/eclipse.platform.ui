@@ -86,6 +86,7 @@ public final class BasicWorkingSetElementAdapter implements
 	 * @see org.eclipse.core.runtime.IAdapterManager#getAdapter(Object, String)
 	 * @see org.osgi.service.packageadmin.PackageAdmin#getExportedPackage(String)
 	 */
+	@Override
 	public IAdaptable[] adaptElements(IWorkingSet ws, IAdaptable[] elements) {
 		List adaptedElements = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
@@ -180,6 +181,7 @@ public final class BasicWorkingSetElementAdapter implements
 	 * 
 	 * @see org.eclipse.ui.IWorkingSetElementAdapter#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (packageTracker != null)
 			packageTracker.close();
@@ -191,6 +193,7 @@ public final class BasicWorkingSetElementAdapter implements
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
 	 *      java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) {
 

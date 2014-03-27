@@ -24,34 +24,42 @@ class PreviousPicksProvider extends QuickAccessProvider {
 		this.previousPicksList = previousPicksList;
 	}
 
+	@Override
 	public QuickAccessElement getElementForId(String id) {
 		return null;
 	}
 
+	@Override
 	public QuickAccessElement[] getElements() {
 		return previousPicksList.toArray(new QuickAccessElement[previousPicksList.size()]);
 	}
 
+	@Override
 	public QuickAccessElement[] getElementsSorted() {
 		return getElements();
 	}
 
+	@Override
 	public String getId() {
 		return "org.eclipse.ui.previousPicks"; //$NON-NLS-1$
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_NODE);
 	}
 
+	@Override
 	public String getName() {
 		return QuickAccessMessages.QuickAccess_Previous;
 	}
 
+	@Override
 	protected void doReset() {
 		// operation not applicable for this provider
 	}
 
+	@Override
 	public boolean isAlwaysPresent() {
 		return true;
 	}

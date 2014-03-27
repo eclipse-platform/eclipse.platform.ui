@@ -39,6 +39,7 @@ public class ContributionComparator extends ViewerComparator implements
 	 * This implementation of {@link Comparator#compare(Object, Object)} does a
 	 * blind cast on each element to {@link IComparableContribution}.
 	 */
+	@Override
 	public int compare(Object o1, Object o2) {
 		IComparableContribution c1 = null, c2 = null;
 		
@@ -128,6 +129,7 @@ public class ContributionComparator extends ViewerComparator implements
 	 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
 	 *      java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		return compare(e1, e2);
 	}
@@ -156,6 +158,7 @@ public class ContributionComparator extends ViewerComparator implements
 	 * 
 	 * @see org.eclipse.jface.viewers.ViewerComparator#category(java.lang.Object)
 	 */
+	@Override
 	public int category(Object element) {
 		return category((IComparableContribution) element);
 	}

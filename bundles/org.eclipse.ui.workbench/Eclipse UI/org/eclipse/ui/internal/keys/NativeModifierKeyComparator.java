@@ -35,7 +35,8 @@ class NativeModifierKeyComparator implements Comparator {
      * 
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
-    public int compare(Object left, Object right) {
+    @Override
+	public int compare(Object left, Object right) {
         ModifierKey modifierKeyLeft = (ModifierKey) left;
         ModifierKey modifierKeyRight = (ModifierKey) right;
         int modifierKeyLeftRank = rank(modifierKeyLeft);

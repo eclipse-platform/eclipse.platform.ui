@@ -287,10 +287,12 @@ public abstract class DecoratorDefinition implements IPluginContribution {
        
     }
 
+	@Override
 	public String getPluginId() {
 		return getConfigurationElement().getContributor().getName();
 	}
 
+	@Override
 	public String getLocalId() {
 		return getId();
 	}

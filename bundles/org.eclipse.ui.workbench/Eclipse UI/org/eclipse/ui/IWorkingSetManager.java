@@ -232,7 +232,8 @@ public interface IWorkingSetManager {
      * @return the dialog
      * @deprecated use createWorkingSetSelectionDialog(parent, true) instead
      */
-    public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
+    @Deprecated
+	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
             Shell parent);
 
     /**

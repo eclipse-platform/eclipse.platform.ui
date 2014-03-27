@@ -151,7 +151,8 @@ public class PerspectiveSwitcher implements IWindowTrim {
     private IPropertyChangeListener propertyChangeListener;
 
     private Listener popupListener = new Listener() {
-        public void handleEvent(Event event) {
+        @Override
+		public void handleEvent(Event event) {
             if (event.type == SWT.MenuDetect) {
                 showPerspectiveBarPopup(new Point(event.x, event.y));
             }
@@ -159,13 +160,15 @@ public class PerspectiveSwitcher implements IWindowTrim {
     };
 
     class ChangeListener extends PerspectiveAdapter implements IPageListener {
-        public void perspectiveOpened(IWorkbenchPage page,
+        @Override
+		public void perspectiveOpened(IWorkbenchPage page,
                 IPerspectiveDescriptor perspective) {
         	if (findPerspectiveShortcut(perspective, page) == null) {
 				addPerspectiveShortcut(perspective, page);
 			}
         }
-        public void perspectiveClosed(IWorkbenchPage page,
+        @Override
+		public void perspectiveClosed(IWorkbenchPage page,
                 IPerspectiveDescriptor perspective) {
         	// Don't remove the shortcut if the workbench is
         	// closing. This causes a spurious 'layout' on the
@@ -174,23 +177,29 @@ public class PerspectiveSwitcher implements IWindowTrim {
         		removePerspectiveShortcut(perspective, page);
         	}
         }
-        public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+        @Override
+		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
             selectPerspectiveShortcut(perspective, page, true);
         }
-        public void perspectiveDeactivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+        @Override
+		public void perspectiveDeactivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
             selectPerspectiveShortcut(perspective, page, false);
         }
-        public void perspectiveSavedAs(IWorkbenchPage page,
+        @Override
+		public void perspectiveSavedAs(IWorkbenchPage page,
                 IPerspectiveDescriptor oldPerspective,
                 IPerspectiveDescriptor newPerspective) {
             updatePerspectiveShortcut(oldPerspective, newPerspective, page);
         }
+		@Override
 		public void pageActivated(IWorkbenchPage page) {
 		}
 
+		@Override
 		public void pageClosed(IWorkbenchPage page) {
 		}
 
+		@Override
 		public void pageOpened(IWorkbenchPage page) {
 		}
     }
@@ -219,6 +228,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 		// this listener will only be run when the Shell is being disposed
 		// and each WorkbenchWindow has its own PerspectiveSwitcher
 		toolBarListener = new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				dispose();
 			}
@@ -578,6 +588,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
         	/* (non-Javadoc)
 			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 			 */
+			@Override
 			public void handleEvent(Event event) {
 				ToolBar toolbar = perspectiveBar.getControl();
                 ToolItem item = toolbar.getItem(new Point(event.x, event.y));
@@ -638,6 +649,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 				 * 
 				 * @see org.eclipse.ui.internal.dnd.IDropTarget#drop()
 				 */
+				@Override
 				public void drop() {
 					ToolBar toolBar = perspectiveBar.getControl();
 					ToolItem item = toolBar.getItem(toolBar.getDisplay().map(
@@ -673,6 +685,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 				 * 
 				 * @see org.eclipse.ui.internal.dnd.IDropTarget#getCursor()
 				 */
+				@Override
 				public Cursor getCursor() {
 					return DragCursors.getCursor(DragCursors.CENTER);
 				}
@@ -681,6 +694,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 					return perspective.getToolItem().getParent().getShell().equals(perspectiveBar.getControl().getShell());
 				}
 				
+				@Override
 				public Rectangle getSnapRectangle() {
 					ToolBar toolBar = perspectiveBar.getControl();
 					ToolItem item = toolBar.getItem(toolBar.getDisplay().map(
@@ -696,6 +710,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 				}
 			}
 
+			@Override
 			public IDropTarget drag(Control currentControl,
 					Object draggedObject, Point position,
 					Rectangle dragRectangle) {
@@ -729,7 +744,8 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	private void setPropertyChangeListener() {
         propertyChangeListener = new IPropertyChangeListener() {
 
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+            @Override
+			public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 if (IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR
                         .equals(propertyChangeEvent.getProperty())) {
                     if (perspectiveBar == null) {
@@ -782,13 +798,15 @@ public class PerspectiveSwitcher implements IWindowTrim {
 
         // adjust the toolbar size to display as many items as possible
         perspectiveCoolBar.addControlListener(new ControlAdapter() {
-            public void controlResized(ControlEvent e) {
+            @Override
+			public void controlResized(ControlEvent e) {
                 setCoolItemSize(coolItem);
             }
         });
 
         coolItem.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 if (e.detail == SWT.ARROW) {
                     if (perspectiveBar != null) {
                         perspectiveBar.handleChevron(e);
@@ -946,6 +964,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
         		IWorkbenchHelpContextIds.CLOSE_PAGE_ACTION);
         menuItem.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
                 ToolItem perspectiveToolItem = (ToolItem) popupMenu
                         .getData();
@@ -1063,7 +1082,8 @@ public class PerspectiveSwitcher implements IWindowTrim {
         		IWorkbenchHelpContextIds.DOCK_ON_PERSPECTIVE_ACTION);
 
         SelectionListener listener = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 MenuItem item = (MenuItem) e.widget;
                 String pref = null;
                 if (item.equals(menuItemLeft)) {
@@ -1103,7 +1123,8 @@ public class PerspectiveSwitcher implements IWindowTrim {
         		IWorkbenchHelpContextIds.SHOW_TEXT_PERSPECTIVE_ACTION);
 
         showtextMenuItem.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 if (perspectiveBar == null) {
 					return;
 				}
@@ -1136,6 +1157,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 		window.getWorkbench().getHelpSystem().setHelp(customizeMenuItem,
 				IWorkbenchHelpContextIds.EDIT_ACTION_SETS_ACTION);
 		customizeMenuItem.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (perspectiveBar == null) {
 					return;
@@ -1160,6 +1182,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
         window.getWorkbench().getHelpSystem().setHelp(saveasMenuItem,
         		IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
         saveasMenuItem.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				if (perspectiveBar == null) {
 					return;
@@ -1191,6 +1214,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
         window.getWorkbench().getHelpSystem().setHelp(resetMenuItem,
         		IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
         resetMenuItem.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				if (perspectiveBar == null) {
 					return;
@@ -1254,6 +1278,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
             final Integer x = size.getInteger(IWorkbenchConstants.TAG_X);
             StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
+				@Override
 				public void runWithException() {
 					if (x != null) {
 						topBar.setRightWidth(x.intValue());
@@ -1322,12 +1347,14 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWindowTrim#dock(int)
 	 */
+	@Override
 	public void dock(int dropSide) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWindowTrim#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return trimControl;
 	}
@@ -1335,6 +1362,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWindowTrim#getId()
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.ui.internal.PerspectiveSwitcher"; //$NON-NLS-1$
 	}
@@ -1342,6 +1370,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWindowTrim#getDisplayName()
 	 */
+	@Override
 	public String getDisplayName() {
 		return WorkbenchMessages.TrimCommon_PerspectiveSwitcher_TrimName;
 	}
@@ -1349,6 +1378,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWindowTrim#getValidSides()
 	 */
+	@Override
 	public int getValidSides() {
 		return SWT.NONE;
 	}
@@ -1356,6 +1386,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWindowTrim#isCloseable()
 	 */
+	@Override
 	public boolean isCloseable() {
 		return false;
 	}
@@ -1363,6 +1394,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWindowTrim#handleClose()
 	 */
+	@Override
 	public void handleClose() {
 		// nothing to do...
 	}
@@ -1370,6 +1402,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowTrim#getWidthHint()
 	 */
+	@Override
 	public int getWidthHint() {
 		return SWT.DEFAULT;
 	}
@@ -1377,6 +1410,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowTrim#getHeightHint()
 	 */
+	@Override
 	public int getHeightHint() {
 		return SWT.DEFAULT;
 	}
@@ -1384,6 +1418,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowTrim#isResizeable()
 	 */
+	@Override
 	public boolean isResizeable() {
 		return false;
 	}

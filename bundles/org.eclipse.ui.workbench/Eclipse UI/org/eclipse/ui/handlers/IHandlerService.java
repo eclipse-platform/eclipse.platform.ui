@@ -205,6 +205,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 *             {@link IHandlerService#activateHandler(String, IHandler, Expression)}
 	 *             instead.
 	 */
+	@Deprecated
 	public IHandlerActivation activateHandler(String commandId,
 			IHandler handler, Expression expression, int sourcePriorities);
 

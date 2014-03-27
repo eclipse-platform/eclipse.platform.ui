@@ -115,7 +115,8 @@ public abstract class AbstractPartSelectionTracker {
             if ((part != null && sel != null)
                     || l instanceof INullSelectionListener) {
                 Platform.run(new SafeRunnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         l.selectionChanged(part, sel);
                     }
                 });
@@ -138,7 +139,8 @@ public abstract class AbstractPartSelectionTracker {
             if ((part != null && sel != null)
                     || l instanceof INullSelectionListener) {
                 Platform.run(new SafeRunnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         l.selectionChanged(part, sel);
                     }
                 });

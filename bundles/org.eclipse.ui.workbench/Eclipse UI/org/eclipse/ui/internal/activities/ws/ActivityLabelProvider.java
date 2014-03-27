@@ -54,7 +54,8 @@ public class ActivityLabelProvider extends LabelProvider {
      * 
      * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
      */
-    public Image getImage(Object element) {
+    @Override
+	public Image getImage(Object element) {
         return null;
     }
 
@@ -63,7 +64,8 @@ public class ActivityLabelProvider extends LabelProvider {
      * 
      * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
      */
-    public String getText(Object element) {
+    @Override
+	public String getText(Object element) {
         if (element instanceof String) {
             return getActivityText(activityManager
                     .getActivity((String) element));

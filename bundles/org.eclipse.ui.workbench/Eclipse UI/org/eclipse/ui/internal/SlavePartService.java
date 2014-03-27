@@ -56,34 +56,41 @@ public class SlavePartService implements IPartService, IDisposable {
 		this.parent = parentPartService;
 	}
 
+	@Override
 	public void addPartListener(IPartListener listener) {
 		listeners.add(listener);
 		parent.addPartListener(listener);
 	}
 
+	@Override
 	public void addPartListener(IPartListener2 listener) {
 		listeners.add(listener);
 		parent.addPartListener(listener);
 	}
 
+	@Override
 	public IWorkbenchPart getActivePart() {
 		return parent.getActivePart();
 	}
 
+	@Override
 	public IWorkbenchPartReference getActivePartReference() {
 		return parent.getActivePartReference();
 	}
 
+	@Override
 	public void removePartListener(IPartListener listener) {
 		listeners.remove(listener);
 		parent.removePartListener(listener);
 	}
 
+	@Override
 	public void removePartListener(IPartListener2 listener) {
 		listeners.remove(listener);
 		parent.removePartListener(listener);
 	}
 
+	@Override
 	public void dispose() {
 		Object list[] = listeners.getListeners();
 		for (int i = 0; i < list.length; i++) {

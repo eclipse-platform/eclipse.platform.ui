@@ -64,6 +64,7 @@ public final class SchemeLegacyWrapper implements IKeyConfiguration {
 	 * 
 	 * @see org.eclipse.ui.commands.IKeyConfiguration#addKeyConfigurationListener(org.eclipse.ui.commands.IKeyConfigurationListener)
 	 */
+	@Override
 	public void addKeyConfigurationListener(
 			IKeyConfigurationListener keyConfigurationListener) {
 		scheme.addSchemeListener(new LegacySchemeListenerWrapper(
@@ -75,6 +76,7 @@ public final class SchemeLegacyWrapper implements IKeyConfiguration {
 	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public int compareTo(Object o) {
 		return scheme.compareTo(o);
 	}
@@ -84,6 +86,7 @@ public final class SchemeLegacyWrapper implements IKeyConfiguration {
 	 * 
 	 * @see org.eclipse.ui.commands.IKeyConfiguration#getDescription()
 	 */
+	@Override
 	public String getDescription() throws NotDefinedException {
 		try {
 			return scheme.getDescription();
@@ -97,6 +100,7 @@ public final class SchemeLegacyWrapper implements IKeyConfiguration {
 	 * 
 	 * @see org.eclipse.ui.commands.IKeyConfiguration#getId()
 	 */
+	@Override
 	public String getId() {
 		return scheme.getId();
 	}
@@ -106,6 +110,7 @@ public final class SchemeLegacyWrapper implements IKeyConfiguration {
 	 * 
 	 * @see org.eclipse.ui.commands.IKeyConfiguration#getName()
 	 */
+	@Override
 	public String getName() throws NotDefinedException {
 		try {
 			return scheme.getName();
@@ -119,6 +124,7 @@ public final class SchemeLegacyWrapper implements IKeyConfiguration {
 	 * 
 	 * @see org.eclipse.ui.commands.IKeyConfiguration#getParentId()
 	 */
+	@Override
 	public String getParentId() throws NotDefinedException {
 		try {
 			return scheme.getParentId();
@@ -132,6 +138,7 @@ public final class SchemeLegacyWrapper implements IKeyConfiguration {
 	 * 
 	 * @see org.eclipse.ui.commands.IKeyConfiguration#isActive()
 	 */
+	@Override
 	public boolean isActive() {
 		return scheme.getId().equals(bindingManager.getActiveScheme().getId());
 	}
@@ -141,6 +148,7 @@ public final class SchemeLegacyWrapper implements IKeyConfiguration {
 	 * 
 	 * @see org.eclipse.ui.commands.IKeyConfiguration#isDefined()
 	 */
+	@Override
 	public boolean isDefined() {
 		return scheme.isDefined();
 	}
@@ -150,6 +158,7 @@ public final class SchemeLegacyWrapper implements IKeyConfiguration {
 	 * 
 	 * @see org.eclipse.ui.commands.IKeyConfiguration#removeKeyConfigurationListener(org.eclipse.ui.commands.IKeyConfigurationListener)
 	 */
+	@Override
 	public void removeKeyConfigurationListener(
 			IKeyConfigurationListener keyConfigurationListener) {
 		scheme.removeSchemeListener(new LegacySchemeListenerWrapper(

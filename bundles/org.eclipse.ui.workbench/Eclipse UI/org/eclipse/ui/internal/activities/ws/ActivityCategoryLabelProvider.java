@@ -45,7 +45,8 @@ public class ActivityCategoryLabelProvider extends LabelProvider {
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
      */
-    public Image getImage(Object element) {
+    @Override
+	public Image getImage(Object element) {
     	try {
     		ImageDescriptor descriptor = getDescriptor(element);	        
 	        if (descriptor != null) {
@@ -85,7 +86,8 @@ public class ActivityCategoryLabelProvider extends LabelProvider {
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
      */
-    public String getText(Object element) {
+    @Override
+	public String getText(Object element) {
         if (element instanceof IActivity) {
             IActivity activity = (IActivity) element;
             try {
@@ -107,7 +109,8 @@ public class ActivityCategoryLabelProvider extends LabelProvider {
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
      */
-    public void dispose() {    	
+    @Override
+	public void dispose() {    	
     	manager.dispose();
     	descriptorMap.clear();
     }

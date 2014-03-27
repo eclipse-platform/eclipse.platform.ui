@@ -44,6 +44,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * @deprecated  See IWorkbench.showPerspective methods.
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class OpenPerspectiveMenu extends PerspectiveMenu {
     private IAdaptable pageInput;
 
@@ -119,7 +120,8 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
      *
      * @param desc the selected perspective
      */
-    protected void run(IPerspectiveDescriptor desc) {
+    @Override
+	protected void run(IPerspectiveDescriptor desc) {
         openPage(desc, 0);
     }
 
@@ -130,7 +132,8 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
      * @param desc the selected perspective
      * @param event the event sent along with the selection callback
      */
-    protected void run(IPerspectiveDescriptor desc, SelectionEvent event) {
+    @Override
+	protected void run(IPerspectiveDescriptor desc, SelectionEvent event) {
         openPage(desc, event.stateMask);
     }
 

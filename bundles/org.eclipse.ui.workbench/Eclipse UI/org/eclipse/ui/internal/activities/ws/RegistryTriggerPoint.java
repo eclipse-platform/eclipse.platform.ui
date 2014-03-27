@@ -44,7 +44,8 @@ public class RegistryTriggerPoint extends AbstractTriggerPoint {
      * 
      * @see org.eclipse.ui.activities.ITriggerPoint#getId()
      */
-    public String getId() {
+    @Override
+	public String getId() {
         return id;
     }
 
@@ -53,7 +54,8 @@ public class RegistryTriggerPoint extends AbstractTriggerPoint {
      * 
      * @see org.eclipse.ui.activities.ITriggerPoint#getStringHint(java.lang.String)
      */
-    public String getStringHint(String key) {
+    @Override
+	public String getStringHint(String key) {
         return (String) getHints().get(key);
     }
 
@@ -62,7 +64,8 @@ public class RegistryTriggerPoint extends AbstractTriggerPoint {
      * 
      * @see org.eclipse.ui.activities.ITriggerPoint#getBooleanHint(java.lang.String)
      */
-    public boolean getBooleanHint(String key) {
+    @Override
+	public boolean getBooleanHint(String key) {
         return Boolean.valueOf(getStringHint(key)).booleanValue();
     }
 

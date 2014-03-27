@@ -166,7 +166,8 @@ public abstract class AbstractUIPlugin extends Plugin {
      * org.eclipse.core.runtime.compatibility plug-in (or, as in this case,
      * subclasses which might).
      */
-    public AbstractUIPlugin(IPluginDescriptor descriptor) {
+    @Deprecated
+	public AbstractUIPlugin(IPluginDescriptor descriptor) {
         super(descriptor);
     }
 
@@ -322,7 +323,8 @@ public abstract class AbstractUIPlugin extends Plugin {
      * @deprecated this is only called if the runtime compatibility layer is
      *             present. See {@link #initializeDefaultPluginPreferences}.
      */
-    protected void initializeDefaultPreferences(IPreferenceStore store) {
+    @Deprecated
+	protected void initializeDefaultPreferences(IPreferenceStore store) {
         // spec'ed to do nothing
     }
 
@@ -347,7 +349,9 @@ public abstract class AbstractUIPlugin extends Plugin {
      * @see #initializeDefaultPreferences
      * @since 2.0
      */
-    protected void initializeDefaultPluginPreferences() {
+    @Deprecated
+	@Override
+	protected void initializeDefaultPluginPreferences() {
         // N.B. by the time this method is called, the plug-in has a 
         // core runtime preference store (no default values)
 
@@ -460,7 +464,8 @@ public abstract class AbstractUIPlugin extends Plugin {
      * The plug-ins preferences are loaded from the file regardless of what
      * this method does.
      */
-    protected void loadPreferenceStore() {
+    @Deprecated
+	protected void loadPreferenceStore() {
         // do nothing by default 
     }
 
@@ -482,7 +487,8 @@ public abstract class AbstractUIPlugin extends Plugin {
         // but refreshPluginActions must run in the UI thread, 
         // so use asyncExec.  See bug 6623 for more details.
         Display.getDefault().asyncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 WWinPluginAction.refreshActionList();
             }
         });
@@ -522,7 +528,8 @@ public abstract class AbstractUIPlugin extends Plugin {
      * This method now calls <code>savePluginPreferences</code>, and exists only for
      * backwards compatibility.
      */
-    protected void savePreferenceStore() {
+    @Deprecated
+	protected void savePreferenceStore() {
         savePluginPreferences();
     }
 
@@ -544,7 +551,9 @@ public abstract class AbstractUIPlugin extends Plugin {
      * org.eclipse.core.runtime.compatibility plug-in; in contrast,
      * the <code>start</code> method is always called.
      */
-    public void startup() throws CoreException {
+    @Deprecated
+	@Override
+	public void startup() throws CoreException {
         // this method no longer does anything
         // the code that used to be here in 2.1 has moved to start(BundleContext)
         super.startup();
@@ -565,7 +574,9 @@ public abstract class AbstractUIPlugin extends Plugin {
      * org.eclipse.core.runtime.compatibility plug-in; 
      * in contrast, the <code>stop</code> method is always called.
      */
-    public void shutdown() throws CoreException {
+    @Deprecated
+	@Override
+	public void shutdown() throws CoreException {
         // this method no longer does anything interesting
         // the code that used to be here in 2.1 has moved to stop(BundleContext),
         //   which is called regardless of whether the plug-in being instantiated
@@ -581,7 +592,8 @@ public abstract class AbstractUIPlugin extends Plugin {
      * 
      * @since 3.0
      */
-    public void start(BundleContext context) throws Exception {
+    @Override
+	public void start(BundleContext context) throws Exception {
         super.start(context);
 		final BundleContext fc = context;
         // Should only attempt refreshPluginActions() once the bundle
@@ -592,7 +604,8 @@ public abstract class AbstractUIPlugin extends Plugin {
         // We don't want to have created any delegates if this happens.
         // See bug 63324 for more details.
         bundleListener = new BundleListener() {
-            public void bundleChanged(BundleEvent event) {
+            @Override
+			public void bundleChanged(BundleEvent event) {
                 if (event.getBundle() == getBundle()) {
                     if (event.getType() == BundleEvent.STARTED) {
                         // We're getting notified that the bundle has been started.
@@ -621,7 +634,8 @@ public abstract class AbstractUIPlugin extends Plugin {
      * 
      * @since 3.0
      */
-    public void stop(BundleContext context) throws Exception {
+    @Override
+	public void stop(BundleContext context) throws Exception {
         try {
             if (bundleListener != null) {
                 context.removeBundleListener(bundleListener);

@@ -54,6 +54,7 @@ public abstract class ProductInfoDialog extends InstallationDialog {
 		this.helpContextId = helpContextId;
 	}
 
+	@Override
 	protected void createFolderItems(TabFolder folder) {
 		TabItem item = new TabItem(folder, SWT.NONE);
 		item.setText(title);
@@ -66,6 +67,7 @@ public abstract class ProductInfoDialog extends InstallationDialog {
 		page.setPageContainer(this);
 		item.addDisposeListener(new DisposeListener() {
 
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				page.dispose();
 			}
@@ -73,6 +75,7 @@ public abstract class ProductInfoDialog extends InstallationDialog {
 		control.layout(true, true);
 	}
 	
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		createButtons(page);
@@ -85,6 +88,7 @@ public abstract class ProductInfoDialog extends InstallationDialog {
 	 * org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets
 	 * .Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(title);
@@ -93,6 +97,7 @@ public abstract class ProductInfoDialog extends InstallationDialog {
 					helpContextId);
 	}
 	
+	@Override
 	protected String pageToId(InstallationPage page) {
 		Assert.isLegal(page == this.page);
 		return this.page.getId();

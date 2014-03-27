@@ -197,6 +197,7 @@ public final class SelectionEnabler {
 		parseClasses(configElement);
 	}
 
+	@Override
 	public final boolean equals(final Object object) {
 		if (object instanceof SelectionEnabler) {
 			final SelectionEnabler that = (SelectionEnabler) object;
@@ -214,6 +215,7 @@ public final class SelectionEnabler {
 	 * 
 	 * @return The hash code for this object.
 	 */
+	@Override
 	public final int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(classes);

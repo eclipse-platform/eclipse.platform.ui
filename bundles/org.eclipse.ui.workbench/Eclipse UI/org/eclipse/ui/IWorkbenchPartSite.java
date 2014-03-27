@@ -122,7 +122,8 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
 	 * @see IContextService
 	 * @see IHandlerService
 	 */
-    public IKeyBindingService getKeyBindingService();
+    @Deprecated
+	public IKeyBindingService getKeyBindingService();
     
     /**
      * Returns the part associated with this site 

@@ -36,6 +36,7 @@ public class CycleViewHandler extends CycleBaseHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.CycleBaseHandler#addItems(org.eclipse.swt.widgets.Table, org.eclipse.ui.internal.WorkbenchPage)
 	 */
+	@Override
 	protected void addItems(Table table, WorkbenchPage page) {
 		IWorkbenchPartReference refs[] = page.getSortedParts();
 		boolean includeEditor = true;
@@ -62,6 +63,7 @@ public class CycleViewHandler extends CycleBaseHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.CycleBaseHandler#getBackwardCommand()
 	 */
+	@Override
 	protected ParameterizedCommand getBackwardCommand() {
 		// TODO Auto-generated method stub
 		final ICommandService commandService = (ICommandService) window.getWorkbench().getService(ICommandService.class);
@@ -73,6 +75,7 @@ public class CycleViewHandler extends CycleBaseHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.CycleBaseHandler#getForwardCommand()
 	 */
+	@Override
 	protected ParameterizedCommand getForwardCommand() {
 		// TODO Auto-generated method stub
 		final ICommandService commandService = (ICommandService) window.getWorkbench().getService(ICommandService.class);
@@ -84,6 +87,7 @@ public class CycleViewHandler extends CycleBaseHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.CycleBaseHandler#getTableHeader()
 	 */
+	@Override
 	protected String getTableHeader(IWorkbenchPart activePart) {
 		// TODO Auto-generated method stub
 		return WorkbenchMessages.CyclePartAction_header;

@@ -103,6 +103,7 @@ public final class CommandImageService implements ICommandImageService {
 		commandImageManager.bind(commandId, type, style, url);
 	}
 
+	@Override
 	public final void dispose() {
 		commandImagePersistence.dispose();
 	}
@@ -121,20 +122,24 @@ public final class CommandImageService implements ICommandImageService {
 		return commandImageManager.generateUnusedStyle(commandId);
 	}
 
+	@Override
 	public final ImageDescriptor getImageDescriptor(final String commandId) {
 		return commandImageManager.getImageDescriptor(commandId);
 	}
 
+	@Override
 	public final ImageDescriptor getImageDescriptor(final String commandId,
 			final int type) {
 		return commandImageManager.getImageDescriptor(commandId, type);
 	}
 
+	@Override
 	public final ImageDescriptor getImageDescriptor(final String commandId,
 			final int type, final String style) {
 		return commandImageManager.getImageDescriptor(commandId, type, style);
 	}
 
+	@Override
 	public final ImageDescriptor getImageDescriptor(final String commandId,
 			final String style) {
 		return commandImageManager.getImageDescriptor(commandId, style);

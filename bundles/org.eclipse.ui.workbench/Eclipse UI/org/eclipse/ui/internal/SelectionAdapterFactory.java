@@ -34,6 +34,7 @@ public class SelectionAdapterFactory implements IAdapterFactory {
 		 * 
 		 * @see org.eclipse.core.expressions.ICountable#count()
 		 */
+		@Override
 		public int count() {
 			return 0;
 		}
@@ -44,6 +45,7 @@ public class SelectionAdapterFactory implements IAdapterFactory {
 		 * 
 		 * @see org.eclipse.core.expressions.ICountable#count()
 		 */
+		@Override
 		public int count() {
 			return 1;
 		}
@@ -54,6 +56,7 @@ public class SelectionAdapterFactory implements IAdapterFactory {
 		 * 
 		 * @see org.eclipse.core.expressions.IIterable#iterator()
 		 */
+		@Override
 		public Iterator iterator() {
 			return Collections.EMPTY_LIST.iterator();
 		}
@@ -65,6 +68,7 @@ public class SelectionAdapterFactory implements IAdapterFactory {
 	private static final Class[] CLASSES = new Class[] { IIterable.class,
 			ICountable.class };
 
+	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adaptableObject instanceof ISelection) {
 			if (adapterType == IIterable.class) {
@@ -82,6 +86,7 @@ public class SelectionAdapterFactory implements IAdapterFactory {
 		}
 		if (sel instanceof IStructuredSelection) {
 			return new IIterable() {
+				@Override
 				public Iterator iterator() {
 					return ((IStructuredSelection) sel).iterator();
 				}
@@ -90,6 +95,7 @@ public class SelectionAdapterFactory implements IAdapterFactory {
 		final List list = Arrays.asList(new Object[] { sel });
 		return new IIterable() {
 
+			@Override
 			public Iterator iterator() {
 				return list.iterator();
 			}
@@ -103,6 +109,7 @@ public class SelectionAdapterFactory implements IAdapterFactory {
 		if (sel instanceof IStructuredSelection) {
 			final IStructuredSelection ss = (IStructuredSelection) sel;
 			return new ICountable() {
+				@Override
 				public int count() {
 					return ss.size();
 				}
@@ -111,6 +118,7 @@ public class SelectionAdapterFactory implements IAdapterFactory {
 		return ICOUNT_1;
 	}
 
+	@Override
 	public Class[] getAdapterList() {
 		return CLASSES;
 	}

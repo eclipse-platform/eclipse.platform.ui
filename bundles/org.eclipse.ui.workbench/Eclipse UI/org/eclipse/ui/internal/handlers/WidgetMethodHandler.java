@@ -46,6 +46,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 		display = Display.getCurrent();
 		if (display != null) {
 			focusListener = new Listener() {
+				@Override
 				public void handleEvent(Event event) {
 					updateEnablement();
 				}
@@ -69,6 +70,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 	private Listener focusListener;
 	private Display display;
 
+	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final Method methodToExecute = getMethodToExecute();
 		if (methodToExecute != null) {
@@ -94,6 +96,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 						final Object focusComponent = getFocusComponent();
 						if (focusComponent != null) {
 							Runnable methodRunnable = new Runnable() {
+								@Override
 								public void run() {
 									try {
 										methodToExecute.invoke(focusComponent);
@@ -110,6 +113,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 										 */
 										focusControl.getDisplay().asyncExec(
 												new Runnable() {
+													@Override
 													public void run() {
 														ExceptionHandler
 																.getInstance()
@@ -233,6 +237,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 
 	}
 	
+	@Override
 	public final boolean isHandled() {
 		return getMethodToExecute() != null;
 	}
@@ -306,6 +311,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 	 * .eclipse.core.runtime.IConfigurationElement, java.lang.String,
 	 * java.lang.Object)
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) {
 		// The data is really just a string (i.e., the method name).
@@ -315,6 +321,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.AbstractHandler#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (display!=null && !display.isDisposed()) {
 			display.removeFilter(SWT.FocusIn, focusListener);

@@ -48,7 +48,8 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
      * The property that is sent with busy notifications.
      * @deprecated this property is no longer in use in the Eclipse SDK
      */
-    public static final String BUSY_PROPERTY = "SITE_BUSY"; //$NON-NLS-1$
+    @Deprecated
+	public static final String BUSY_PROPERTY = "SITE_BUSY"; //$NON-NLS-1$
 
 	/**
 	 * Jobs scheduled with this method will cause the part's presentation to be

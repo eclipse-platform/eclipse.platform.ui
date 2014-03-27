@@ -22,6 +22,7 @@ import com.ibm.icu.text.Collator;
 public class WorkingSetComparator implements Comparator {
 	
 	private static ThreadLocal INSTANCES = new ThreadLocal() {
+		@Override
 		protected synchronized Object initialValue() {
 			return new WorkingSetComparator();
 		}
@@ -38,7 +39,8 @@ public class WorkingSetComparator implements Comparator {
      * 
      * @see Comparator#compare(Object, Object)
      */
-    public int compare(Object o1, Object o2) {
+    @Override
+	public int compare(Object o1, Object o2) {
 		String name1 = null;
 		String name2 = null;
 

@@ -32,6 +32,7 @@ public abstract class WorkbenchWindowHandlerDelegate extends
 	 *            the window that provides the context for this delegate
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
+	@Override
 	public void init(final IWorkbenchWindow window) {
 		// Do nothing by default.
 	}
@@ -46,6 +47,7 @@ public abstract class WorkbenchWindowHandlerDelegate extends
 	 *            action
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
 	 */
+	@Override
 	public void run(final IAction action) {
 		try {
 			execute(new ExecutionEvent());
@@ -66,6 +68,7 @@ public abstract class WorkbenchWindowHandlerDelegate extends
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// Do nothing be default.
 	}

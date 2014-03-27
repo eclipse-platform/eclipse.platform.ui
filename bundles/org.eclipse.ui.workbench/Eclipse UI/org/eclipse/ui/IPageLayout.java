@@ -83,7 +83,8 @@ public interface IPageLayout {
 	 * @deprecated this has been replaced by the Common Navigator Framework as
 	 *             of release 3.5.
 	 */
-    public static String ID_RES_NAV = "org.eclipse.ui.views.ResourceNavigator"; //$NON-NLS-1$
+    @Deprecated
+	public static String ID_RES_NAV = "org.eclipse.ui.views.ResourceNavigator"; //$NON-NLS-1$
 
     /**
      * The view id for the Project Explorer.
@@ -406,7 +407,8 @@ public interface IPageLayout {
      * 
      * @deprecated this always returns -1 as of Eclipse 2.1
      */
-    public int getEditorReuseThreshold();
+    @Deprecated
+	public int getEditorReuseThreshold();
 
     /**
      * Sets the number of open editors before reusing editors.
@@ -416,7 +418,8 @@ public interface IPageLayout {
      * 
      * @deprecated this method has no effect, as of Eclipse 2.1
      */
-    public void setEditorReuseThreshold(int openEditors);
+    @Deprecated
+	public void setEditorReuseThreshold(int openEditors);
 
     /**
      * Sets whether this layout is fixed.

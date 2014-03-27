@@ -37,6 +37,7 @@ import org.eclipse.ui.progress.UIJob;
 public class QuickMenuHandler extends AbstractHandler implements IMenuListener2 {
 	private QuickMenuCreator creator = new QuickMenuCreator() {
 
+		@Override
 		protected void fillMenu(IMenuManager menu) {
 			if (!(menu instanceof ContributionManager)) {
 				return;
@@ -57,6 +58,7 @@ public class QuickMenuHandler extends AbstractHandler implements IMenuListener2 
 	 * 
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		locationURI = event.getParameter("org.eclipse.ui.window.quickMenu.uri"); //$NON-NLS-1$
 		if (locationURI == null) {
@@ -71,6 +73,7 @@ public class QuickMenuHandler extends AbstractHandler implements IMenuListener2 
 	 * 
 	 * @see org.eclipse.core.commands.AbstractHandler#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (creator != null) {
 			creator.dispose();
@@ -83,9 +86,11 @@ public class QuickMenuHandler extends AbstractHandler implements IMenuListener2 
 	 * 
 	 * @see org.eclipse.jface.action.IMenuListener2#menuAboutToHide(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void menuAboutToHide(final IMenuManager managerM) {
 		new UIJob("quickMenuCleanup") { //$NON-NLS-1$
 
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				IMenuService service = (IMenuService) PlatformUI.getWorkbench()
 						.getService(IMenuService.class);
@@ -101,6 +106,7 @@ public class QuickMenuHandler extends AbstractHandler implements IMenuListener2 
 	 * 
 	 * @see org.eclipse.jface.action.IMenuListener#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void menuAboutToShow(IMenuManager manager) {
 		// no-op
 	}

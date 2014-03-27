@@ -86,6 +86,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 						.getKeyFormatterForPlatform());
 	}
 
+	@Override
 	public final void addHandlerSubmission(
 			final HandlerSubmission handlerSubmission) {
 		final IHandlerActivation activation = handlerService.activateHandler(
@@ -100,6 +101,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 		activationsBySubmission.put(handlerSubmission, activation);
 	}
 
+	@Override
 	public final void addHandlerSubmissions(final Collection handlerSubmissions) {
 		final Iterator submissionItr = handlerSubmissions.iterator();
 		while (submissionItr.hasNext()) {
@@ -107,10 +109,12 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 		}
 	}
 
+	@Override
 	public ICommandManager getCommandManager() {
 		return commandManagerWrapper;
 	}
 
+	@Override
 	public final void removeHandlerSubmission(
 			final HandlerSubmission handlerSubmission) {
 		if (activationsBySubmission == null) {
@@ -124,6 +128,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 		}
 	}
 
+	@Override
 	public final void removeHandlerSubmissions(
 			final Collection handlerSubmissions) {
 		final Iterator submissionItr = handlerSubmissions.iterator();

@@ -233,7 +233,8 @@ public interface ISharedImages {
      * only in IDE configurations. IDE-specific tools should use 
      * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJ_PROJECT</code> instead.
      */
-    public final static String IMG_OBJ_PROJECT = "IMG_OBJ_PROJECT"; //$NON-NLS-1$
+    @Deprecated
+	public final static String IMG_OBJ_PROJECT = "IMG_OBJ_PROJECT"; //$NON-NLS-1$
 
     /**
      * Identifies a closed project image.
@@ -242,7 +243,8 @@ public interface ISharedImages {
      * only in IDE configurations. IDE-specific tools should use 
      * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJ_PROJECT_CLOSED</code> instead.
      */
-    public final static String IMG_OBJ_PROJECT_CLOSED = "IMG_OBJ_PROJECT_CLOSED"; //$NON-NLS-1$
+    @Deprecated
+	public final static String IMG_OBJ_PROJECT_CLOSED = "IMG_OBJ_PROJECT_CLOSED"; //$NON-NLS-1$
 
     /**
      * Identifies the default image used to indicate a bookmark.
@@ -251,7 +253,8 @@ public interface ISharedImages {
      * only in IDE configurations. IDE-specific tools should use 
      * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_BKMRK_TSK</code> instead.
      */
-    public final static String IMG_OBJS_BKMRK_TSK = "IMG_OBJS_BKMRK_TSK"; //$NON-NLS-1$
+    @Deprecated
+	public final static String IMG_OBJS_BKMRK_TSK = "IMG_OBJS_BKMRK_TSK"; //$NON-NLS-1$
 
     /**
      * Identifies the default image used to indicate errors.
@@ -270,7 +273,8 @@ public interface ISharedImages {
      * only in IDE configurations. IDE-specific tools should use 
      * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_TASK_TSK</code> instead.
      */
-    public final static String IMG_OBJS_TASK_TSK = "IMG_OBJS_TASK_TSK"; //$NON-NLS-1$
+    @Deprecated
+	public final static String IMG_OBJS_TASK_TSK = "IMG_OBJS_TASK_TSK"; //$NON-NLS-1$
 
     /**
      * Identifies the default image used to indicate warnings.
@@ -284,7 +288,8 @@ public interface ISharedImages {
      * only in IDE configurations. IDE-specific tools should use 
      * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OPEN_MARKER</code> instead.
      */
-    public final static String IMG_OPEN_MARKER = "IMG_OPEN_MARKER"; //$NON-NLS-1$
+    @Deprecated
+	public final static String IMG_OPEN_MARKER = "IMG_OPEN_MARKER"; //$NON-NLS-1$
 
     /**
      * Identifies the back image in the enabled state.
@@ -302,7 +307,8 @@ public interface ISharedImages {
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_BACK</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
-    public final static String IMG_TOOL_BACK_HOVER = "IMG_TOOL_BACK_HOVER"; //$NON-NLS-1$
+    @Deprecated
+	public final static String IMG_TOOL_BACK_HOVER = "IMG_TOOL_BACK_HOVER"; //$NON-NLS-1$
 
     /**
      * Identifies the copy image in the enabled state.
@@ -320,7 +326,8 @@ public interface ISharedImages {
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_COPY</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
-    public final static String IMG_TOOL_COPY_HOVER = "IMG_TOOL_COPY_HOVER"; //$NON-NLS-1$
+    @Deprecated
+	public final static String IMG_TOOL_COPY_HOVER = "IMG_TOOL_COPY_HOVER"; //$NON-NLS-1$
 
     /**
      * Identifies the cut image in the enabled state.
@@ -338,7 +345,8 @@ public interface ISharedImages {
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_CUT</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
-    public final static String IMG_TOOL_CUT_HOVER = "IMG_TOOL_CUT_HOVER"; //$NON-NLS-1$
+    @Deprecated
+	public final static String IMG_TOOL_CUT_HOVER = "IMG_TOOL_CUT_HOVER"; //$NON-NLS-1$
 
     /**
      * Identifies the delete image in the enabled state.
@@ -358,7 +366,8 @@ public interface ISharedImages {
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_DELETE</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
-    public final static String IMG_TOOL_DELETE_HOVER = "IMG_TOOL_DELETE_HOVER"; //$NON-NLS-1$
+    @Deprecated
+	public final static String IMG_TOOL_DELETE_HOVER = "IMG_TOOL_DELETE_HOVER"; //$NON-NLS-1$
 
     /**
      * Identifies the forward image in the enabled state.
@@ -376,7 +385,8 @@ public interface ISharedImages {
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_FORWARD</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
-    public final static String IMG_TOOL_FORWARD_HOVER = "IMG_TOOL_FORWARD_HOVER"; //$NON-NLS-1$
+    @Deprecated
+	public final static String IMG_TOOL_FORWARD_HOVER = "IMG_TOOL_FORWARD_HOVER"; //$NON-NLS-1$
 
     /**
      * Identifies the new wizard image in the enabled state.
@@ -394,7 +404,8 @@ public interface ISharedImages {
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_NEW_WIZARD</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
-    public final static String IMG_TOOL_NEW_WIZARD_HOVER = "IMG_TOOL_NEW_WIZARD_HOVER"; //$NON-NLS-1$
+    @Deprecated
+	public final static String IMG_TOOL_NEW_WIZARD_HOVER = "IMG_TOOL_NEW_WIZARD_HOVER"; //$NON-NLS-1$
 
     /**
      * Identifies the paste image in the enabled state.
@@ -412,7 +423,8 @@ public interface ISharedImages {
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_PASTE</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
-    public final static String IMG_TOOL_PASTE_HOVER = "IMG_TOOL_PASTE_HOVER"; //$NON-NLS-1$
+    @Deprecated
+	public final static String IMG_TOOL_PASTE_HOVER = "IMG_TOOL_PASTE_HOVER"; //$NON-NLS-1$
 
     /**
      * Identifies the redo image in the enabled state.
@@ -430,7 +442,8 @@ public interface ISharedImages {
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_REDO</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
-    public final static String IMG_TOOL_REDO_HOVER = "IMG_TOOL_REDO_HOVER"; //$NON-NLS-1$
+    @Deprecated
+	public final static String IMG_TOOL_REDO_HOVER = "IMG_TOOL_REDO_HOVER"; //$NON-NLS-1$
 
     /**
      * Identifies the undo image in the enabled state.
@@ -448,7 +461,8 @@ public interface ISharedImages {
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_UNDO</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
-    public final static String IMG_TOOL_UNDO_HOVER = "IMG_TOOL_UNDO_HOVER"; //$NON-NLS-1$
+    @Deprecated
+	public final static String IMG_TOOL_UNDO_HOVER = "IMG_TOOL_UNDO_HOVER"; //$NON-NLS-1$
 
     /**
      * Identifies the up image in the enabled state.
@@ -466,7 +480,8 @@ public interface ISharedImages {
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_UP</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
-    public final static String IMG_TOOL_UP_HOVER = "IMG_TOOL_UP_HOVER"; //$NON-NLS-1$
+    @Deprecated
+	public final static String IMG_TOOL_UP_HOVER = "IMG_TOOL_UP_HOVER"; //$NON-NLS-1$
 
     // The following set of constants represent the image pairs that are used
     // to construct cursors for drag and drop operations within the workbench

@@ -61,7 +61,8 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
      * @since 2.1 
      * @deprecated use {@link #getImageDescriptor()} instead
      */
-    public ImageDescriptor getImage();
+    @Deprecated
+	public ImageDescriptor getImage();
     
     /**
      * Returns the working set icon.

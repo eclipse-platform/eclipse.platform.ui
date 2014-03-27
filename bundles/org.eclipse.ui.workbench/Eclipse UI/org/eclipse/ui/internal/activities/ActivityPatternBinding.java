@@ -78,7 +78,8 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
         this.patternString = null;
     }
 
-    public int compareTo(Object object) {
+    @Override
+	public int compareTo(Object object) {
         ActivityPatternBinding castedObject = (ActivityPatternBinding) object;
         int compareTo = Util.compare(activityId, castedObject.activityId);
 
@@ -94,7 +95,8 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
         return compareTo;
     }
 
-    public boolean equals(Object object) {
+    @Override
+	public boolean equals(Object object) {
         if (!(object instanceof ActivityPatternBinding)) {
 			return false;
 		}
@@ -111,7 +113,8 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
         return Util.equals(getPattern(), castedObject.getPattern());
     }
 
-    public String getActivityId() {
+    @Override
+	public String getActivityId() {
         return activityId;
     }
     
@@ -120,7 +123,8 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
 	 * 
 	 * @see org.eclipse.ui.activities.IActivityPatternBinding#getPattern()
 	 */
-    public Pattern getPattern() {
+    @Override
+	public Pattern getPattern() {
     	if (pattern == null) {
     		pattern = Pattern.compile(PatternUtil.quotePattern(patternString));    		
     	}
@@ -131,7 +135,8 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
      * (non-Javadoc)
      * @see org.eclipse.ui.activities.IActivityPatternBinding#getString()
      */
-    public String getString() {
+    @Override
+	public String getString() {
     	if (isEqualityPattern) {
     		return patternString;
     	}
@@ -141,12 +146,14 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.activities.IActivityPatternBinding#isEqualityPattern()
 	 */
+	@Override
 	public boolean isEqualityPattern() {
 		return isEqualityPattern;
 	}
     
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         if (hashCode == HASH_INITIAL) {
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(pattern);
@@ -158,7 +165,8 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
         return hashCode;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         if (string == null) {
             final StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append('[');

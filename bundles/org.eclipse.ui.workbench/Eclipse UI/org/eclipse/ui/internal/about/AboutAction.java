@@ -68,7 +68,8 @@ public class AboutAction extends Action implements
     /*
      * (non-Javadoc) Method declared on IAction.
      */
-    public void run() {
+    @Override
+	public void run() {
         // make sure action is not disposed
         if (workbenchWindow != null) {
 			new AboutDialog(workbenchWindow.getShell()).open();
@@ -78,7 +79,8 @@ public class AboutAction extends Action implements
     /*
      * (non-Javadoc) Method declared on ActionFactory.IWorkbenchAction.
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         workbenchWindow = null;
     }
 }

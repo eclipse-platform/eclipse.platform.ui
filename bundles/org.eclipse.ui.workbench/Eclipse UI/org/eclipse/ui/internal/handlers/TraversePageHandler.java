@@ -33,6 +33,7 @@ public class TraversePageHandler extends WidgetMethodHandler {
 	 */
 	private static final Class[] METHOD_PARAMETERS = { int.class };
 
+	@Override
 	public final Object execute(final ExecutionEvent event) {
 		Control focusControl = Display.getCurrent().getFocusControl();
 		if (focusControl != null) {
@@ -55,6 +56,7 @@ public class TraversePageHandler extends WidgetMethodHandler {
 	 * 
 	 * @return The method on the focus control; <code>null</code> if none.
 	 */
+	@Override
 	protected Method getMethodToExecute() {
 		final Control focusControl = Display.getCurrent().getFocusControl();
 		if (focusControl != null) {

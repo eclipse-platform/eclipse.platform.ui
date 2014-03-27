@@ -256,7 +256,8 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * 
      * @return the id
      */
-    public String getId() {        
+    @Override
+	public String getId() {        
         if (program == null) {
         	if (configurationElement == null) {
         		return Util.safeString(id);
@@ -272,7 +273,8 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * 
      * @return the image descriptor
      */
-    public ImageDescriptor getImageDescriptor() {
+    @Override
+	public ImageDescriptor getImageDescriptor() {
     	ImageDescriptor tempDescriptor = null;
 
     	synchronized (imageDescLock) {
@@ -346,7 +348,8 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * 
      * @return the label
      */
-    public String getLabel() {
+    @Override
+	public String getLabel() {
         if (program == null) {
         	if (configurationElement == null) {
         		return editorName;        		
@@ -391,21 +394,24 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorDescriptor#isInternal
      */
-    public boolean isInternal() {
+    @Override
+	public boolean isInternal() {
         return getOpenMode() == OPEN_INTERNAL;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorDescriptor#isOpenInPlace
      */
-    public boolean isOpenInPlace() {
+    @Override
+	public boolean isOpenInPlace() {
         return getOpenMode() == OPEN_INPLACE;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorDescriptor#isOpenExternal
      */
-    public boolean isOpenExternal() {
+    @Override
+	public boolean isOpenExternal() {
         return getOpenMode() == OPEN_EXTERNAL;
     }
 
@@ -598,28 +604,32 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
     /**
      * For debugging purposes only.
      */
-    public String toString() {
+    @Override
+	public String toString() {
         return "EditorDescriptor(id=" + getId() + ", label=" + getLabel() + ")"; //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
      */
-    public String getLocalId() {
+    @Override
+	public String getLocalId() {
         return getId();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
      */
-    public String getPluginId() {
+    @Override
+	public String getPluginId() {
         return getPluginID();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorDescriptor#getEditorManagementPolicy()
      */
-    public IEditorMatchingStrategy getEditorMatchingStrategy() {
+    @Override
+	public IEditorMatchingStrategy getEditorMatchingStrategy() {
         if (matchingStrategy == null && !matchingStrategyChecked) {
             matchingStrategyChecked = true;
             if (program == null && configurationElement != null) {

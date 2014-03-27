@@ -134,6 +134,7 @@ public abstract class Saveable extends InternalSaveable implements IAdaptable {
 	 * @param object
 	 * @return true if this Saveable is equal to the given object
 	 */
+	@Override
 	public abstract boolean equals(Object object);
 
 	/**
@@ -158,6 +159,7 @@ public abstract class Saveable extends InternalSaveable implements IAdaptable {
 	 * 
 	 * @return a hash code
 	 */
+	@Override
 	public abstract int hashCode();
 
 	/**
@@ -301,6 +303,7 @@ public abstract class Saveable extends InternalSaveable implements IAdaptable {
 	 * 
 	 * @since 3.3
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		return null;
 	}

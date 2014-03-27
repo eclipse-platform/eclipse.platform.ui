@@ -39,7 +39,8 @@ public class PageBook extends Composite {
      */
     public class PageBookLayout extends Layout {
 
-        protected Point computeSize(Composite composite, int wHint, int hHint,
+        @Override
+		protected Point computeSize(Composite composite, int wHint, int hHint,
                 boolean flushCache) {
             if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
 				return new Point(wHint, hHint);
@@ -62,7 +63,8 @@ public class PageBook extends Composite {
             return result;
         }
 
-        protected void layout(Composite composite, boolean flushCache) {
+        @Override
+		protected void layout(Composite composite, boolean flushCache) {
 			if (currentPage != null && !currentPage.isDisposed()) {
                 currentPage.setBounds(composite.getClientArea());
             }

@@ -41,6 +41,7 @@ public class SelectWorkingSetsAction extends AbstractWorkingSetPulldownDelegate 
 			super(WorkbenchMessages.Edit);
 		}
 
+		@Override
 		public void run() {
 			SelectWorkingSetsAction.this.run(this);
 		}
@@ -56,6 +57,7 @@ public class SelectWorkingSetsAction extends AbstractWorkingSetPulldownDelegate 
 			setChecked(isWorkingSetEnabled(set));
 		}
 
+		@Override
 		public void runWithEvent(Event event) {
 			
 			Set newList = new HashSet(Arrays.asList(getWindow().getActivePage()
@@ -81,6 +83,7 @@ public class SelectWorkingSetsAction extends AbstractWorkingSetPulldownDelegate 
 		}
 	}
 
+	@Override
 	protected void fillMenu(Menu menu) {
 		IWorkingSet[][] typedSets = splitSets();
 
@@ -120,6 +123,7 @@ public class SelectWorkingSetsAction extends AbstractWorkingSetPulldownDelegate 
 		return false;
 	}
 
+	@Override
 	public void run(IAction action) {
 		ConfigureWindowWorkingSetsDialog dialog = new ConfigureWindowWorkingSetsDialog(
 				getWindow());
@@ -141,6 +145,7 @@ class ConfigureWindowWorkingSetsDialog extends SimpleWorkingSetSelectionDialog {
 		setMessage(WorkbenchMessages.WorkingSetSelectionDialog_message_multiSelect);
 	}
 	
+	@Override
 	protected void okPressed() {
 		super.okPressed();
 		window.getActivePage().setWorkingSets(getSelection());

@@ -31,7 +31,8 @@ public class TestPartListener implements IPartListener {
      * @param part the part that was activated
      * @see IPerspective#activate
      */
-    public void partActivated(IWorkbenchPart part) {
+    @Override
+	public void partActivated(IWorkbenchPart part) {
         System.out.println("partActivated(" + part + ")");//$NON-NLS-2$//$NON-NLS-1$
     }
 
@@ -48,7 +49,8 @@ public class TestPartListener implements IPartListener {
      * @param part the part that was surfaced
      * @see IPerspective#bringToTop
      */
-    public void partBroughtToTop(IWorkbenchPart part) {
+    @Override
+	public void partBroughtToTop(IWorkbenchPart part) {
         System.out.println("partBroughtToTop(" + part + ")");//$NON-NLS-2$//$NON-NLS-1$
     }
 
@@ -58,7 +60,8 @@ public class TestPartListener implements IPartListener {
      * @param part the part that was closed
      * @see IPerspective#close
      */
-    public void partClosed(IWorkbenchPart part) {
+    @Override
+	public void partClosed(IWorkbenchPart part) {
         System.out.println("partClosed(" + part + ")");//$NON-NLS-2$//$NON-NLS-1$
     }
 
@@ -68,7 +71,8 @@ public class TestPartListener implements IPartListener {
      * @param part the part that was deactivated
      * @see IPerspective#activate
      */
-    public void partDeactivated(IWorkbenchPart part) {
+    @Override
+	public void partDeactivated(IWorkbenchPart part) {
         System.out.println("partDeactivated(" + part + ")");//$NON-NLS-2$//$NON-NLS-1$
     }
 
@@ -77,7 +81,8 @@ public class TestPartListener implements IPartListener {
      *
      * @param part the part that was opened
      */
-    public void partOpened(IWorkbenchPart part) {
+    @Override
+	public void partOpened(IWorkbenchPart part) {
         System.out.println("partOpened(" + part + ")");//$NON-NLS-2$//$NON-NLS-1$
     }
 }

@@ -32,6 +32,7 @@ public class WizardElement extends QuickAccessElement {
 		this.wizardDescriptor = wizardDescriptor;
 	}
 
+	@Override
 	public void execute() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
@@ -42,19 +43,23 @@ public class WizardElement extends QuickAccessElement {
 		}
 	}
 
+	@Override
 	public String getId() {
 		return wizardDescriptor.getId();
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return wizardDescriptor.getImageDescriptor();
 	}
 
+	@Override
 	public String getLabel() {
 		return wizardDescriptor.getLabel() + separator
 				+ wizardDescriptor.getDescription();
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -64,6 +69,7 @@ public class WizardElement extends QuickAccessElement {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

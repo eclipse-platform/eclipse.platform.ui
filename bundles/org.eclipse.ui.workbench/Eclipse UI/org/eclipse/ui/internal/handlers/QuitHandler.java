@@ -30,6 +30,7 @@ public class QuitHandler extends AbstractHandler {
 	 * 
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IEvaluationContext context = (IEvaluationContext) event.getApplicationContext();
 		IWorkbench workbench = (IWorkbench) context.getVariable(IWorkbench.class.getName());

@@ -25,6 +25,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public final class PerspectiveParameterValues implements IParameterValues {
 
+	@Override
 	public final Map getParameterValues() {
 		final Map values = new HashMap();
 

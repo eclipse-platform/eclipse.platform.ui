@@ -46,14 +46,16 @@ public class ShellPool {
     private boolean isDisposed = false;
     
     private DisposeListener disposeListener = new DisposeListener() {
-        public void widgetDisposed(DisposeEvent e) {
+        @Override
+		public void widgetDisposed(DisposeEvent e) {
             WorkbenchPlugin.log(new RuntimeException("Widget disposed too early!")); //$NON-NLS-1$
         }  
     };
     
     private ShellListener closeListener = new ShellAdapter() {
         
-        public void shellClosed(ShellEvent e) {
+        @Override
+		public void shellClosed(ShellEvent e) {
                 if (isDisposed) {
                     return;
                 }

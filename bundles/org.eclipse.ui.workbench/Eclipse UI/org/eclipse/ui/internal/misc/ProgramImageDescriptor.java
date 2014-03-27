@@ -36,7 +36,8 @@ public class ProgramImageDescriptor extends ImageDescriptor {
     /**
      * @see Object#equals
      */
-    public boolean equals(Object o) {
+    @Override
+	public boolean equals(Object o) {
         if (!(o instanceof ProgramImageDescriptor)) {
             return false;
         }
@@ -56,7 +57,8 @@ public class ProgramImageDescriptor extends ImageDescriptor {
      * Returns an SWT Image that is described by the information
      * in this descriptor. 
      */
-    public ImageData getImageData() {
+    @Override
+	public ImageData getImageData() {
         /*This is a user defined offset into the file which always
          *returns us the defualt - return the default regardless*/
 
@@ -67,7 +69,8 @@ public class ProgramImageDescriptor extends ImageDescriptor {
     /**
      * @see Object#hashCode
      */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return filename.hashCode() + offset;
     }
 }

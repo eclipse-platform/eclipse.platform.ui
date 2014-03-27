@@ -89,6 +89,7 @@ public final class Priority implements Comparable {
 	/**
 	 * @see Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	@Deprecated
 	public int compareTo(Object object) {
 		Priority castedObject = (Priority) object;
@@ -110,6 +111,7 @@ public final class Priority implements Comparable {
 	/**
 	 * @see Object#toString()
 	 */
+	@Override
 	@Deprecated
 	public String toString() {
 		if (string == null) {

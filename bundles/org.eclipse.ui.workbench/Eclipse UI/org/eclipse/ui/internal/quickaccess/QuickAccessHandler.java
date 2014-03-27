@@ -35,6 +35,7 @@ public class QuickAccessHandler extends AbstractHandler {
 	public QuickAccessHandler() {
 	}
 
+	@Override
 	public Object execute(ExecutionEvent executionEvent) {
 
 		window = HandlerUtil.getActiveWorkbenchWindow(executionEvent);

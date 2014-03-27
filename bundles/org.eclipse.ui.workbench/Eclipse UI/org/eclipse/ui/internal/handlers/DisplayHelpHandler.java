@@ -28,6 +28,7 @@ public final class DisplayHelpHandler extends AbstractHandler {
 	 */
 	private static final String PARAM_ID_HREF = "href"; //$NON-NLS-1$
 
+	@Override
 	public final Object execute(final ExecutionEvent event) {
 		final IWorkbenchHelpSystem helpSystem = PlatformUI.getWorkbench()
 				.getHelpSystem();

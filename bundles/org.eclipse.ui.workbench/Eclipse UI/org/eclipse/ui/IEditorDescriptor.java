@@ -41,21 +41,24 @@ public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
      *
      * @return the id of the editor
      */
-    public String getId();
+    @Override
+	public String getId();
 
     /**
      * Returns the descriptor of the image for this editor.
      *
      * @return the descriptor of the image to display next to this editor
      */
-    public ImageDescriptor getImageDescriptor();
+    @Override
+	public ImageDescriptor getImageDescriptor();
 
     /**
      * Returns the label to show for this editor.
      *
      * @return the editor label
      */
-    public String getLabel();
+    @Override
+	public String getLabel();
 
     /**
      * Returns whether this editor descriptor will open a regular editor

@@ -31,18 +31,22 @@ public class ActionElement extends QuickAccessElement {
 		this.item = item;
 	}
 
+	@Override
 	public void execute() {
 		item.getAction().run();
 	}
 
+	@Override
 	public String getId() {
 		return item.getId();
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return item.getAction().getImageDescriptor();
 	}
 
+	@Override
 	public String getLabel() {
 		IAction action = item.getAction();
 		if (action.getToolTipText() != null
@@ -53,6 +57,7 @@ public class ActionElement extends QuickAccessElement {
 		return LegacyActionTools.removeMnemonics(action.getText());
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -60,6 +65,7 @@ public class ActionElement extends QuickAccessElement {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

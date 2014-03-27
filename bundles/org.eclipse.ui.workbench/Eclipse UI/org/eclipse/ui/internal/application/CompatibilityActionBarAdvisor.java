@@ -36,12 +36,14 @@ public class CompatibilityActionBarAdvisor extends ActionBarAdvisor {
         this.wbAdvisor = wbAdvisor;
     }
 
-    public void fillActionBars(int flags) {
+    @Override
+	public void fillActionBars(int flags) {
         IActionBarConfigurer abc = getActionBarConfigurer();
         wbAdvisor.fillActionBars(abc.getWindowConfigurer().getWindow(), abc, flags);
     }
     
-    public boolean isApplicationMenu(String menuId) {
+    @Override
+	public boolean isApplicationMenu(String menuId) {
         IActionBarConfigurer abc = getActionBarConfigurer();
         return wbAdvisor.isApplicationMenu(abc.getWindowConfigurer(), menuId);
     }

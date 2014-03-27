@@ -48,7 +48,8 @@ public class ShowViewAction extends Action implements IPluginContribution {
     /**
      * Implementation of method defined on <code>IAction</code>.
      */
-    public void run() {
+    @Override
+	public void run() {
         IWorkbenchPage page = window.getActivePage();
         if (page != null) {
             try {
@@ -67,7 +68,8 @@ public class ShowViewAction extends Action implements IPluginContribution {
      * 
      * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
      */
-    public String getLocalId() {
+    @Override
+	public String getLocalId() {
         return desc.getId();
     }
 
@@ -76,7 +78,8 @@ public class ShowViewAction extends Action implements IPluginContribution {
      * 
      * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
      */
-    public String getPluginId() {
+    @Override
+	public String getPluginId() {
         return desc instanceof IPluginContribution ? ((IPluginContribution) desc)
                 .getPluginId()
                 : null;

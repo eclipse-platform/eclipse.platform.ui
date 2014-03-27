@@ -21,19 +21,22 @@ public interface IWorkbenchConstants {
     /**
      * @deprecated
      */
-    public static final String ACCELERATOR_CONFIGURATION_ID = "acceleratorConfigurationId"; //$NON-NLS-1$
+    @Deprecated
+	public static final String ACCELERATOR_CONFIGURATION_ID = "acceleratorConfigurationId"; //$NON-NLS-1$
 
     public static final String DEFAULT_PRESENTATION_ID = "org.eclipse.ui.presentations.default"; //$NON-NLS-1$
     
     /**
      * @deprecated 
      */
-    public static final String DEFAULT_ACCELERATOR_CONFIGURATION_ID = "org.eclipse.ui.defaultAcceleratorConfiguration"; //$NON-NLS-1$
+    @Deprecated
+	public static final String DEFAULT_ACCELERATOR_CONFIGURATION_ID = "org.eclipse.ui.defaultAcceleratorConfiguration"; //$NON-NLS-1$
 
     /**
      * @deprecated 
      */
-    public static final String DEFAULT_ACCELERATOR_SCOPE_ID = "org.eclipse.ui.globalScope"; //$NON-NLS-1$
+    @Deprecated
+	public static final String DEFAULT_ACCELERATOR_SCOPE_ID = "org.eclipse.ui.globalScope"; //$NON-NLS-1$
 
     //mappings for type/extension to an editor - backward compatibility only.
     public final static String EDITOR_FILE_NAME = "editors.xml"; //$NON-NLS-1$

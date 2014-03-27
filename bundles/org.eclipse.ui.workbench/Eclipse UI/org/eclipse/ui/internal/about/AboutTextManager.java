@@ -118,7 +118,8 @@ public class AboutTextManager {
         handCursor = new Cursor(styledText.getDisplay(), SWT.CURSOR_HAND);
         busyCursor = new Cursor(styledText.getDisplay(), SWT.CURSOR_WAIT);
         styledText.addDisposeListener(new DisposeListener() {
-            public void widgetDisposed(DisposeEvent e) {
+            @Override
+			public void widgetDisposed(DisposeEvent e) {
                 handCursor.dispose();
                 handCursor = null;
                 busyCursor.dispose();
@@ -133,14 +134,16 @@ public class AboutTextManager {
      */
     protected void addListeners() {
         styledText.addMouseListener(new MouseAdapter() {
-            public void mouseDown(MouseEvent e) {
+            @Override
+			public void mouseDown(MouseEvent e) {
                 if (e.button != 1) {
                     return;
                 }
                 mouseDown = true;
             }
 
-            public void mouseUp(MouseEvent e) {
+            @Override
+			public void mouseUp(MouseEvent e) {
                 mouseDown = false;
                 int offset = styledText.getCaretOffset();
                 if (dragEvent) {
@@ -161,7 +164,8 @@ public class AboutTextManager {
         });
 
         styledText.addMouseMoveListener(new MouseMoveListener() {
-            public void mouseMove(MouseEvent e) {
+            @Override
+			public void mouseMove(MouseEvent e) {
                 // Do not change cursor on drag events
                 if (mouseDown) {
                     if (!dragEvent) {
@@ -189,7 +193,8 @@ public class AboutTextManager {
         });
 
         styledText.addTraverseListener(new TraverseListener() {
-            public void keyTraversed(TraverseEvent e) {
+            @Override
+			public void keyTraversed(TraverseEvent e) {
                 switch (e.detail) {
                 case SWT.TRAVERSE_ESCAPE:
                     e.doit = true;
@@ -245,7 +250,8 @@ public class AboutTextManager {
 
         //Listen for Tab and Space to allow keyboard navigation
         styledText.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent event) {
+            @Override
+			public void keyPressed(KeyEvent event) {
                 StyledText text = (StyledText) event.widget;
                 if (event.character == ' ' || event.character == SWT.CR) {
                     if (item != null) {

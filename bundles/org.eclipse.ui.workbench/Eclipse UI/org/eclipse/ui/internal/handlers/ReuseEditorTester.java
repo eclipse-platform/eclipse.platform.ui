@@ -28,6 +28,7 @@ public class ReuseEditorTester extends PropertyTester {
 	 * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object,
 	 * java.lang.String, java.lang.Object[], java.lang.Object)
 	 */
+	@Override
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
 		IPreferenceStore store = WorkbenchPlugin.getDefault()

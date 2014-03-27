@@ -35,6 +35,7 @@ public abstract class AbstractWorkbenchBrowserSupport implements
 	 * 
 	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#getExternalBrowser()
 	 */
+	@Override
 	public IWebBrowser getExternalBrowser() throws PartInitException {
 		return createBrowser(AS_EXTERNAL, SHARED_EXTERNAL_BROWSER_ID, null,
 				null);
@@ -43,6 +44,7 @@ public abstract class AbstractWorkbenchBrowserSupport implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#isInternalWebBrowserAvailable()
 	 */
+	@Override
 	public boolean isInternalWebBrowserAvailable() {
 		return false;
 	}

@@ -87,9 +87,11 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
      * tab traversal order.  Defeating it here is more self-contained then 
      * setting the tab list on the shell or other parent composite.
      */
-    protected void hookControl(Control control) {
+    @Override
+	protected void hookControl(Control control) {
         control.addDisposeListener(new DisposeListener() {
-            public void widgetDisposed(DisposeEvent event) {
+            @Override
+			public void widgetDisposed(DisposeEvent event) {
                 handleDispose(event);
             }
         });
@@ -100,7 +102,8 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
      * 
      * @see org.eclipse.jface.viewers.StructuredViewer#doFindInputItem(java.lang.Object)
      */
-    protected Widget doFindInputItem(Object element) {
+    @Override
+	protected Widget doFindInputItem(Object element) {
         return null; // No widgets associated with items
     }
 
@@ -109,7 +112,8 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
      * 
      * @see org.eclipse.jface.viewers.StructuredViewer#doFindItem(java.lang.Object)
      */
-    protected Widget doFindItem(Object element) {
+    @Override
+	protected Widget doFindItem(Object element) {
         return null; // No widgets associated with items
     }
 
@@ -119,7 +123,8 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
      * @see org.eclipse.jface.viewers.StructuredViewer#doUpdateItem(org.eclipse.swt.widgets.Widget,
      *      java.lang.Object, boolean)
      */
-    protected void doUpdateItem(Widget item, Object element, boolean fullMap) {
+    @Override
+	protected void doUpdateItem(Widget item, Object element, boolean fullMap) {
         canvas.redraw();
     }
 
@@ -128,7 +133,8 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
      * 
      * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
      */
-    protected List getSelectionFromWidget() {
+    @Override
+	protected List getSelectionFromWidget() {
         //No selection on a Canvas
         return EMPTY_LIST;
     }
@@ -138,7 +144,8 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
      * 
      * @see org.eclipse.jface.viewers.StructuredViewer#internalRefresh(java.lang.Object)
      */
-    protected void internalRefresh(Object element) {
+    @Override
+	protected void internalRefresh(Object element) {
         displayedItems = getSortedChildren(getRoot());
         canvas.redraw();
     }
@@ -148,7 +155,8 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
      * 
      * @see org.eclipse.jface.viewers.StructuredViewer#reveal(java.lang.Object)
      */
-    public void reveal(Object element) {
+    @Override
+	public void reveal(Object element) {
         //Nothing to do here as we do not scroll
     }
 
@@ -158,7 +166,8 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
      * @see org.eclipse.jface.viewers.StructuredViewer#setSelectionToWidget(java.util.List,
      *      boolean)
      */
-    protected void setSelectionToWidget(List l, boolean reveal) {
+    @Override
+	protected void setSelectionToWidget(List l, boolean reveal) {
         //Do nothing as there is no selection
     }
 
@@ -167,7 +176,8 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
      * 
      * @see org.eclipse.jface.viewers.Viewer#getControl()
      */
-    public Control getControl() {
+    @Override
+	public Control getControl() {
         return canvas;
     }
 
@@ -178,7 +188,8 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
              * 
              * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
              */
-            public void paintControl(PaintEvent event) {
+            @Override
+			public void paintControl(PaintEvent event) {
 
                 GC gc = event.gc;
                 Transform transform = null;
@@ -227,7 +238,8 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ContentViewer#setLabelProvider(org.eclipse.jface.viewers.IBaseLabelProvider)
      */
-    public void setLabelProvider(IBaseLabelProvider labelProvider) {
+    @Override
+	public void setLabelProvider(IBaseLabelProvider labelProvider) {
         Assert.isTrue(labelProvider instanceof ILabelProvider);
         super.setLabelProvider(labelProvider);
     }
@@ -262,6 +274,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.AbstractProgressViewer#add(java.lang.Object[])
 	 */
+	@Override
 	public void add(Object[] elements) {
 		refresh(true);
 		
@@ -270,6 +283,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.AbstractProgressViewer#remove(java.lang.Object[])
 	 */
+	@Override
 	public void remove(Object[] elements) {
 		refresh(true);
 		

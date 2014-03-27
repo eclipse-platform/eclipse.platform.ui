@@ -81,6 +81,7 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 	 * This handler will be notified when the part's widget has been un/set.
 	 */
 	private EventHandler widgetSetHandler = new EventHandler() {
+		@Override
 		public void handleEvent(Event event) {
 			// check that we're looking at our own part and that the widget is
 			// being unset
@@ -103,6 +104,7 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 	 * un/set.
 	 */
 	private EventHandler objectSetHandler = new EventHandler() {
+		@Override
 		public void handleEvent(Event event) {
 			// check that we're looking at our own part and that the object is
 			// being set
@@ -117,6 +119,7 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 
 	private ISelectionChangedListener postListener = new ISelectionChangedListener() {
 
+		@Override
 		public void selectionChanged(SelectionChangedEvent e) {
 			ESelectionService selectionService = (ESelectionService) part.getContext().get(
 					ESelectionService.class.getName());
@@ -333,6 +336,7 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 		}
 
 		wrapped.addPropertyListener(new IPropertyListener() {
+			@Override
 			public void propertyChanged(Object source, int propId) {
 				switch (propId) {
 				case IWorkbenchPartConstants.PROP_TITLE:
@@ -407,6 +411,7 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 		return part;
 	}
 	
+	@Override
 	public void selectionChanged(SelectionChangedEvent e) {
 		ESelectionService selectionService = (ESelectionService) part.getContext().get(
 				ESelectionService.class.getName());

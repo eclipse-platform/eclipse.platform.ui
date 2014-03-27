@@ -64,7 +64,8 @@ public class PageListenerList extends EventManager {
         for (int i = 0; i < array.length; i++) {
             final IPageListener l = (IPageListener) array[i];
             fireEvent(new SafeRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     l.pageActivated(page);
                 }
             }, l, page, "activated::"); //$NON-NLS-1$
@@ -79,7 +80,8 @@ public class PageListenerList extends EventManager {
         for (int i = 0; i < array.length; i++) {
             final IPageListener l = (IPageListener) array[i];
             fireEvent(new SafeRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     l.pageClosed(page);
                 }
             }, l, page, "closed::"); //$NON-NLS-1$
@@ -94,7 +96,8 @@ public class PageListenerList extends EventManager {
         for (int i = 0; i < listeners.length; i++) {
             final IPageListener l = (IPageListener) listeners[i];
             fireEvent(new SafeRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     l.pageOpened(page);
                 }
             }, l, page, "opened::"); //$NON-NLS-1$

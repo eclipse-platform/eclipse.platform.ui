@@ -29,7 +29,8 @@ public class CascadingFontRegistry extends FontRegistry {
     private FontRegistry parent;
 
     private IPropertyChangeListener listener = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
         	// check to see if we have an override for the given key. If so,
 			// then a change in our parent registry shouldn't cause a change in
 			// us. Without this check we will propagate a new value
@@ -56,7 +57,8 @@ public class CascadingFontRegistry extends FontRegistry {
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.FontRegistry#get(java.lang.String)
      */
-    public Font get(String symbolicName) {
+    @Override
+	public Font get(String symbolicName) {
         if (super.hasValueFor(symbolicName)) {
 			return super.get(symbolicName);
 		}
@@ -66,13 +68,15 @@ public class CascadingFontRegistry extends FontRegistry {
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.FontRegistry#getKeySet()
      */
-    public Set getKeySet() {
+    @Override
+	public Set getKeySet() {
         Set keyUnion = new HashSet(super.getKeySet());
         keyUnion.addAll(parent.getKeySet());
         return keyUnion;
     }
 
-    public FontData[] getFontData(String symbolicName) {
+    @Override
+	public FontData[] getFontData(String symbolicName) {
         if (super.hasValueFor(symbolicName)) {
 			return super.getFontData(symbolicName);
 		}
@@ -82,7 +86,8 @@ public class CascadingFontRegistry extends FontRegistry {
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.ColorRegistry#hasValueFor(java.lang.String)
      */
-    public boolean hasValueFor(String colorKey) {
+    @Override
+	public boolean hasValueFor(String colorKey) {
         return super.hasValueFor(colorKey) || parent.hasValueFor(colorKey);
     }
 

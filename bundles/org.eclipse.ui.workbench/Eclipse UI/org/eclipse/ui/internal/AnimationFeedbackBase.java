@@ -38,6 +38,7 @@ public abstract class AnimationFeedbackBase {
 		baseShell = parentShell;
 		
 		baseShell.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				if (engine != null)
 					engine.cancelAnimation();
@@ -96,6 +97,7 @@ public abstract class AnimationFeedbackBase {
 			animationShell = new Shell(getBaseShell(), SWT.NO_TRIM | SWT.ON_TOP);			
 			
 			animationShell.addDisposeListener(new DisposeListener() {
+				@Override
 				public void widgetDisposed(DisposeEvent e) {
 					if (engine != null)
 						engine.cancelAnimation();

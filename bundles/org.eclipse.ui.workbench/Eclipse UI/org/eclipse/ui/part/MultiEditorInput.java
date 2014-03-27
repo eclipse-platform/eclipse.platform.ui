@@ -57,21 +57,24 @@ public class MultiEditorInput implements IEditorInput {
     /*
      * @see IEditorInput#exists()
      */
-    public boolean exists() {
+    @Override
+	public boolean exists() {
         return true;
     }
 
     /*
      * @see IEditorInput#getImageDescriptor()
      */
-    public ImageDescriptor getImageDescriptor() {
+    @Override
+	public ImageDescriptor getImageDescriptor() {
         return null;
     }
 
     /*
      * @see IEditorInput#getName()
      */
-    public String getName() {
+    @Override
+	public String getName() {
         String name = ""; //$NON-NLS-1$
         for (int i = 0; i < (input.length - 1); i++) {
             name = name + input[i].getName() + "/"; //$NON-NLS-1$
@@ -83,21 +86,24 @@ public class MultiEditorInput implements IEditorInput {
     /*
      * @see IEditorInput#getPersistable()
      */
-    public IPersistableElement getPersistable() {
+    @Override
+	public IPersistableElement getPersistable() {
         return null;
     }
 
     /*
      * @see IEditorInput#getToolTipText()
      */
-    public String getToolTipText() {
+    @Override
+	public String getToolTipText() {
         return getName();
     }
 
     /*
      * @see IAdaptable#getAdapter(Class)
      */
-    public Object getAdapter(Class adapter) {
+    @Override
+	public Object getAdapter(Class adapter) {
         return null;
     }
     
@@ -105,7 +111,8 @@ public class MultiEditorInput implements IEditorInput {
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if (this == obj) {
 			return true;
 		}
@@ -120,7 +127,8 @@ public class MultiEditorInput implements IEditorInput {
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         int hash = 0;
         for (int i = 0; i < editors.length; i++) {
             hash = hash * 37 + editors[i].hashCode();

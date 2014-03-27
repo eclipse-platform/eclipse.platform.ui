@@ -108,6 +108,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 	 * @see org.eclipse.ui.internal.dialogs.IPropertyPageContributor#contributePropertyPage(org.eclipse.ui.internal.dialogs.PropertyPageManager,
 	 *      java.lang.Object)
 	 */
+	@Override
 	public PreferenceNode contributePropertyPage(PropertyPageManager mng,
 			Object element) {
 		PropertyPageNode node = new PropertyPageNode(this, element);
@@ -241,6 +242,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 	 * For multipleSelection pages, considers all elements in the selection for
 	 * enablement.
 	 */
+	@Override
 	public boolean isApplicableTo(Object object) {
 		Object[] objs = getObjects(object);
 
@@ -375,6 +377,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 	/*
 	 * @see IObjectContributor#canAdapt()
 	 */
+	@Override
 	public boolean canAdapt() {
 		return adaptable;
 	}
@@ -461,6 +464,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 * @since 3.1
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IConfigurationElement.class)) {
 			return getConfigurationElement();
@@ -484,11 +488,13 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 		return pageElement;
 	}
 
+	@Override
 	public String getLocalId() {
 		return pageId;
 	}
 
-    public String getPluginId() {
+    @Override
+	public String getPluginId() {
     	return pageElement.getContributor().getName();
     }
 }

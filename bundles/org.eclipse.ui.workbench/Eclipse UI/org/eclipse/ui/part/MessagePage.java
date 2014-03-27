@@ -42,7 +42,8 @@ public class MessagePage extends Page {
     /* (non-Javadoc)
      * Method declared on IPage.
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         // Message in default page of Outline should have margins
         pgComp = new Composite(parent, SWT.NULL);
         pgComp.setLayout(new FillLayout());
@@ -54,14 +55,16 @@ public class MessagePage extends Page {
     /* (non-Javadoc)
      * Method declared on IPage.
      */
-    public Control getControl() {
+    @Override
+	public Control getControl() {
         return pgComp;
     }
 
     /**
      * Sets focus to a part in the page.
      */
-    public void setFocus() {
+    @Override
+	public void setFocus() {
         // important to give focus to the composite rather than the label
         // as the composite will actually take focus (though hidden),
         // but setFocus on a Label is a no-op

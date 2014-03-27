@@ -175,6 +175,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	/**
 	 * (non-Javadoc) Method declared on IDialogPage.
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		Composite composite = new Composite(parent, SWT.NULL);
@@ -291,6 +292,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		descText.setLayoutData(descriptionData);
 		
 		transferAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (transferAllButton.getSelection()) {
 					viewer.setAllChecked(false);
@@ -302,12 +304,14 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateDescription();
 			}
 		});
 
 		viewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				transferAllButton.setSelection(false);
 				updateEnablement();
@@ -336,6 +340,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		int style = SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
 		FilteredTree transfersTree = new FilteredTree(group, style,
 				new PatternFilter(), true) {
+			@Override
 			protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
 				return new CheckboxTreeViewer(parent, style);
 			}
@@ -369,6 +374,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 				PreferencesMessages.SelectionDialog_selectLabel, false);
 
 		SelectionListener listener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				viewer.setAllChecked(true);
 				updatePageCompletion();
@@ -382,6 +388,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 				PreferencesMessages.SelectionDialog_deselectLabel, false);
 
 		listener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				viewer.setAllChecked(false);
 				updatePageCompletion();
@@ -501,6 +508,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 				PreferencesMessages.Question, (Image) null, message,
 				MessageDialog.NONE, new String[] { IDialogConstants.YES_LABEL,
 						IDialogConstants.NO_LABEL }, 0) {
+			@Override
 			protected int getShellStyle() {
 				return super.getShellStyle() | SWT.SHEET;
 			}
@@ -604,11 +612,13 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 			// all nodes of the Instance and Configuration scopes
 			transfers[0] = new IPreferenceFilter() {
 
+				@Override
 				public String[] getScopes() {
 					return new String[] { InstanceScope.SCOPE,
 							ConfigurationScope.SCOPE };
 				}
 
+				@Override
 				public Map getMapping(String scope) {
 					return null;
 				}
@@ -801,6 +811,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 * @param e
 	 *            Event
 	 */
+	@Override
 	public void handleEvent(Event e) {
 		Widget source = e.widget;
 
@@ -942,6 +953,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 * 
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		transfers = null;
@@ -965,6 +977,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 * @return the user's reply: one of <code>"YES"</code>, <code>"NO"</code>,
 	 *         <code>"ALL"</code>, or <code>"CANCEL"</code>
 	 */
+	@Override
 	public String queryOverwrite(String pathString) {
 
 		Path path = new Path(pathString);
@@ -992,6 +1005,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 						IDialogConstants.NO_LABEL,
 						IDialogConstants.NO_TO_ALL_LABEL,
 						IDialogConstants.CANCEL_LABEL }, 0) {
+			@Override
 			protected int getShellStyle() {
 				return super.getShellStyle() | SWT.SHEET;
 			}
@@ -1000,6 +1014,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		// run in syncExec because callback is from an operation,
 		// which is probably not running in the UI thread.
 		getControl().getDisplay().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				dialog.open();
 			}

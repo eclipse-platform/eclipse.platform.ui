@@ -88,30 +88,35 @@ final class WidgetProxy implements IWorkbenchWidget {
 		this.widgetAttributeName = widgetAttributeName;
 	}
 
+	@Override
 	public final void dispose() {
 		if (loadWidget()) {
 			widget.dispose();
 		}
 	}
 
+	@Override
 	public final void fill(final Composite parent) {
 		if (loadWidget()) {
 			widget.fill(parent);
 		}
 	}
 
+	@Override
 	public final void fill(final CoolBar parent, final int index) {
 		if (loadWidget()) {
 			widget.fill(parent, index);
 		}
 	}
 
+	@Override
 	public final void fill(final Menu parent, final int index) {
 		if (loadWidget()) {
 			widget.fill(parent, index);
 		}
 	}
 
+	@Override
 	public final void fill(final ToolBar parent, final int index) {
 		if (loadWidget()) {
 			widget.fill(parent, index);
@@ -121,6 +126,7 @@ final class WidgetProxy implements IWorkbenchWidget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.menus.IWorkbenchWidget#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow workbenchWindow) {
 		if (loadWidget()) {
 			widget.init(workbenchWindow);
@@ -198,6 +204,7 @@ final class WidgetProxy implements IWorkbenchWidget {
 		return false;
 	}
 	
+	@Override
 	public final String toString() {
 		if (widget == null) {
 			return configurationElement.getAttribute(widgetAttributeName);

@@ -42,7 +42,8 @@ public abstract class MultiPageEditorActionBarContributor extends
      * editor action redirection when the active page is changed, and sets
      * the active page.
      */
-    public void setActiveEditor(IEditorPart part) {
+    @Override
+	public void setActiveEditor(IEditorPart part) {
         IEditorPart activeNestedEditor = null;
         if (part instanceof MultiPageEditorPart) {
             activeNestedEditor = ((MultiPageEditorPart) part).getActiveEditor();

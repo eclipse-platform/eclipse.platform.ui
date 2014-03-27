@@ -40,20 +40,24 @@ public class AnimatedTabFeedback extends ImageCycleFeedbackBase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.AnimationFeedbackBase#initialize(org.eclipse.ui.internal.AnimationEngine)
 	 */
+	@Override
 	public void initialize(AnimationEngine engine) {
 		// TODO Auto-generated method stub
 		background = tabItem.getParent().getBackground();
 		display = tabItem.getParent().getDisplay();
 	}
 
+	@Override
 	public void saveStoppedImage() {
 		stoppedImage = tabItem.getImage();
 	}
 
+	@Override
 	public void setStoppedImage(Image image) {
 		tabItem.setImage(image);
 	}
 
+	@Override
 	public void showImage(Image image) {
 		if (tabItem.isDisposed())
 			return;

@@ -57,6 +57,7 @@ import org.eclipse.swt.widgets.TabFolder;
  * 
  * @deprecated Use the class <code>MultiPageEditorPart</code> instead
  */
+@Deprecated
 public abstract class MultiPageEditor extends EditorPart {
     private List syncVector;
 
@@ -67,7 +68,8 @@ public abstract class MultiPageEditor extends EditorPart {
      * 
      * @deprecated Use the class <code>MultiPageEditorPart</code> instead
      */
-    public MultiPageEditor() {
+    @Deprecated
+	public MultiPageEditor() {
         super();
     }
 
@@ -93,10 +95,12 @@ public abstract class MultiPageEditor extends EditorPart {
      * The <code>MultiPageEditor</code> implementation of this <code>IWorkbenchPart</code>
      * method creates a <code>TabFolder</code> control.
      */
-    public void createPartControl(Composite parent) {
+    @Override
+	public void createPartControl(Composite parent) {
         tabFolder = new TabFolder(parent, SWT.NONE);
         tabFolder.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 sync();
             }
         });

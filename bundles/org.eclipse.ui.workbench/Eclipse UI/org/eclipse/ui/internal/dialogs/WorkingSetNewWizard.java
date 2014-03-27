@@ -59,7 +59,8 @@ public class WorkingSetNewWizard extends Wizard implements IWorkingSetNewWizard 
      * 
      * @see org.eclipse.jface.wizard.Wizard#addPages()
      */
-    public void addPages() {
+    @Override
+	public void addPages() {
         super.addPages();
 
         IWizardPage page;
@@ -81,7 +82,8 @@ public class WorkingSetNewWizard extends Wizard implements IWorkingSetNewWizard 
      * 
      * @see org.eclipse.jface.wizard.Wizard#canFinish()
      */
-    public boolean canFinish() {
+    @Override
+	public boolean canFinish() {
         return (workingSetEditPage != null && workingSetEditPage
                 .isPageComplete());
     }
@@ -94,7 +96,8 @@ public class WorkingSetNewWizard extends Wizard implements IWorkingSetNewWizard 
      * 
      * @see org.eclipse.jface.wizard.Wizard#getNextPage(IWizardPage)
      */
-    public IWizardPage getNextPage(IWizardPage page) {
+    @Override
+	public IWizardPage getNextPage(IWizardPage page) {
         if (workingSetTypePage != null && page == workingSetTypePage) {
             String pageId = workingSetTypePage.getSelection();
             if (pageId != null) {
@@ -118,7 +121,8 @@ public class WorkingSetNewWizard extends Wizard implements IWorkingSetNewWizard 
      * @return the new working set or null if the wizard has been 
      * 	cancelled.
      */
-    public IWorkingSet getSelection() {
+    @Override
+	public IWorkingSet getSelection() {
         return workingSet;
     }
 
@@ -129,7 +133,8 @@ public class WorkingSetNewWizard extends Wizard implements IWorkingSetNewWizard 
      * 
      * @see org.eclipse.jface.wizard.Wizard#performFinish()
      */
-    public boolean performFinish() {
+    @Override
+	public boolean performFinish() {
         workingSetEditPage.finish();
         workingSet = workingSetEditPage.getSelection();
         workingSet.setId(editPageId);

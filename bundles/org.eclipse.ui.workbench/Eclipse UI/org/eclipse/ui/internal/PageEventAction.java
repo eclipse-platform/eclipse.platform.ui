@@ -118,7 +118,8 @@ public abstract class PageEventAction extends PartEventAction implements
      * Subclasses may extend this method if action availability has to be
      * recalculated.
      */
-    public void pageActivated(IWorkbenchPage page) {
+    @Override
+	public void pageActivated(IWorkbenchPage page) {
         this.activePage = page;
     }
 
@@ -128,7 +129,8 @@ public abstract class PageEventAction extends PartEventAction implements
      * Subclasses may extend this method if action availability has to be
      * recalculated.
      */
-    public void pageClosed(IWorkbenchPage page) {
+    @Override
+	public void pageClosed(IWorkbenchPage page) {
         if (page == activePage) {
             activePage = null;
         }
@@ -139,7 +141,8 @@ public abstract class PageEventAction extends PartEventAction implements
      * <code>IPageListener</code> method does nothing. Subclasses should extend
      * this method if action availability has to be recalculated.
      */
-    public void pageOpened(IWorkbenchPage page) {
+    @Override
+	public void pageOpened(IWorkbenchPage page) {
         // do nothing
     }
 
@@ -152,7 +155,8 @@ public abstract class PageEventAction extends PartEventAction implements
      * 
      * @since 3.0
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         if (workbenchWindow == null) {
             // action has already been disposed
             return;

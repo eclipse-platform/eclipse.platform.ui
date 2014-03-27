@@ -57,6 +57,7 @@ public class LightColorFactory implements IColorFactory,
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
 	 *      java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) {
 
@@ -148,6 +149,7 @@ public class LightColorFactory implements IColorFactory,
 	 * 
 	 * @see org.eclipse.ui.themes.IColorFactory#createColor()
 	 */
+	@Override
 	public RGB createColor() {
 		//should have base, otherwise error in the xml
 		if (baseColorName == null || definitionId == null) 

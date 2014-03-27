@@ -102,6 +102,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 				setPriority(Job.SHORT);
 			}
 
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				while (true) {
 					// If the UI has not been created, nothing to do.
@@ -154,6 +155,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 			 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.
 			 * runtime.IProgressMonitor)
 			 */
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				while (true) {
 					Control page = getControl();
@@ -183,6 +185,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java
 		 * .lang.Object, int)
 		 */
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex == 0) {
 				if (element instanceof AboutBundleData) {
@@ -212,6 +215,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.
 		 * lang.Object, int)
 		 */
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			if (element instanceof AboutBundleData) {
 				AboutBundleData data = (AboutBundleData) element;
@@ -279,6 +283,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 		this.helpContextId = id;
 	}
 
+	@Override
 	public void setMessage(String message) {
 		this.message = message;
 	}
@@ -308,6 +313,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 		}
 	}
 
+	@Override
 	public void createPageButtons(Composite parent) {
 
 		moreInfo = createButton(parent, MORE_ID,
@@ -322,6 +328,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 				WorkbenchMessages.AboutPluginsDialog_columns);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 
@@ -381,6 +388,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 		vendorInfo.getTable().setFont(parent.getFont());
 		vendorInfo.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				checkEnablement();
 			}
@@ -406,6 +414,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 			column.setText(columnTitles[i]);
 			final int columnIndex = i;
 			column.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					updateTableSorting(columnIndex);
 				}
@@ -417,6 +426,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 
 		final BundlePatternFilter searchFilter = new BundlePatternFilter();
 		filterText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				searchFilter.setPattern(filterText.getText());
 				vendorInfo.refresh();
@@ -505,6 +515,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 	 * 
 	 * @see org.eclipse.ui.internal.about.ProductInfoPage#getId()
 	 */
+	@Override
 	String getId() {
 		return ID;
 	}
@@ -528,6 +539,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 		}
 	}
 
+	@Override
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 		case MORE_ID:
@@ -616,6 +628,7 @@ class TableComparator extends ViewerComparator {
 	 * org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.
 	 * viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		if (sortColumn == 0 && e1 instanceof AboutBundleData
 				&& e2 instanceof AboutBundleData) {

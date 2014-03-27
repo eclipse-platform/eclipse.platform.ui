@@ -57,14 +57,17 @@ public final class ActivePartExpression extends Expression {
 		this.activePart = activePart;
 	}
 
+	@Override
 	public final void collectExpressionInfo(final ExpressionInfo info) {
 		info.addVariableNameAccess(ISources.ACTIVE_PART_NAME);
 	}
 
+	@Override
 	protected final int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + hashCode(activePart);
 	}
 
+	@Override
 	public final boolean equals(final Object object) {
 		if (object instanceof ActivePartExpression) {
 			final ActivePartExpression that = (ActivePartExpression) object;
@@ -74,6 +77,7 @@ public final class ActivePartExpression extends Expression {
 		return false;
 	}
 
+	@Override
 	public final EvaluationResult evaluate(final IEvaluationContext context) {
 		final Object variable = context.getVariable(ISources.ACTIVE_PART_NAME);
 		if (equals(activePart, variable)) {
@@ -82,6 +86,7 @@ public final class ActivePartExpression extends Expression {
 		return EvaluationResult.FALSE;
 	}
 
+	@Override
 	public final String toString() {
 		final StringBuffer buffer = new StringBuffer();
 		buffer.append("ActivePartExpression("); //$NON-NLS-1$

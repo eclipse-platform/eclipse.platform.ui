@@ -34,6 +34,7 @@ public abstract class WizardParameterValues implements IParameterValues {
 	 * Provides the parameter values for export wizards.
 	 */
 	public static final class Export extends WizardParameterValues {
+		@Override
 		protected IWizardRegistry getWizardRegistry() {
 			return PlatformUI.getWorkbench().getExportWizardRegistry();
 		}
@@ -43,6 +44,7 @@ public abstract class WizardParameterValues implements IParameterValues {
 	 * Provides the parameter values for import wizards.
 	 */
 	public static final class Import extends WizardParameterValues {
+		@Override
 		protected IWizardRegistry getWizardRegistry() {
 			return PlatformUI.getWorkbench().getImportWizardRegistry();
 		}
@@ -52,6 +54,7 @@ public abstract class WizardParameterValues implements IParameterValues {
 	 * Provides the parameter values for new wizards.
 	 */
 	public static final class New extends WizardParameterValues {
+		@Override
 		protected IWizardRegistry getWizardRegistry() {
 			return PlatformUI.getWorkbench().getNewWizardRegistry();
 		}
@@ -86,6 +89,7 @@ public abstract class WizardParameterValues implements IParameterValues {
 		}
 	}
 
+	@Override
 	public Map getParameterValues() {
 		final Map values = new HashMap();
 

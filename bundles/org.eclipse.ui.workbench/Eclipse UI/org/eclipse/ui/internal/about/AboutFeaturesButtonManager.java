@@ -36,7 +36,8 @@ public class AboutFeaturesButtonManager {
             this.crc = crc;
         }
 
-        public boolean equals(Object o) {
+        @Override
+		public boolean equals(Object o) {
             if (!(o instanceof Key)) {
 				return false;
 			}
@@ -47,7 +48,8 @@ public class AboutFeaturesButtonManager {
             return crc.equals(other.crc);
         }
 
-        public int hashCode() {
+        @Override
+		public int hashCode() {
             return providerName.hashCode();
         }
     }

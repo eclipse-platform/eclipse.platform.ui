@@ -70,7 +70,8 @@ public class PerspectiveListenerList extends EventManager {
         for (int nX = 0; nX < array.length; nX++) {
             final IPerspectiveListener l = (IPerspectiveListener) array[nX];
             fireEvent(new SafeRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     l.perspectiveActivated(page, perspective);
                 }
             }, l, perspective, "activated::"); //$NON-NLS-1$
@@ -89,7 +90,8 @@ public class PerspectiveListenerList extends EventManager {
             if (array[nX] instanceof IPerspectiveListener4) {
                 final IPerspectiveListener4 l4 = (IPerspectiveListener4) array[nX];
                 fireEvent(new SafeRunnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         l4.perspectivePreDeactivate(page, perspective);
                     }
                 }, l4, perspective, "pre-deactivate::"); //$NON-NLS-1$
@@ -109,7 +111,8 @@ public class PerspectiveListenerList extends EventManager {
             if (array[nX] instanceof IPerspectiveListener3) {
                 final IPerspectiveListener3 l3 = (IPerspectiveListener3) array[nX];
                 fireEvent(new SafeRunnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         l3.perspectiveDeactivated(page, perspective);
                     }
                 }, l3, perspective, "deactivated::"); //$NON-NLS-1$
@@ -126,7 +129,8 @@ public class PerspectiveListenerList extends EventManager {
         for (int nX = 0; nX < array.length; nX++) {
             final IPerspectiveListener l = (IPerspectiveListener) array[nX];
             fireEvent(new SafeRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     l.perspectiveChanged(page, perspective, changeId);
                 }
             }, l, perspective, "changed::"); //$NON-NLS-1$
@@ -147,7 +151,8 @@ public class PerspectiveListenerList extends EventManager {
             if (array[nX] instanceof IPerspectiveListener2) {
                 final IPerspectiveListener2 l2 = (IPerspectiveListener2) array[nX];
                 fireEvent(new SafeRunnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         l2.perspectiveChanged(page, perspective, partRef,
                                 changeId);
                     }
@@ -168,7 +173,8 @@ public class PerspectiveListenerList extends EventManager {
             if (array[nX] instanceof IPerspectiveListener3) {
                 final IPerspectiveListener3 l3 = (IPerspectiveListener3) array[nX];
                 fireEvent(new SafeRunnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         l3.perspectiveClosed(page, perspective);
                     }
                 }, l3, perspective, "closed::"); //$NON-NLS-1$
@@ -188,7 +194,8 @@ public class PerspectiveListenerList extends EventManager {
             if (array[nX] instanceof IPerspectiveListener3) {
                 final IPerspectiveListener3 l3 = (IPerspectiveListener3) array[nX];
                 fireEvent(new SafeRunnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         l3.perspectiveOpened(page, perspective);
                     }
                 }, l3, perspective, "opened::"); //$NON-NLS-1$
@@ -209,7 +216,8 @@ public class PerspectiveListenerList extends EventManager {
             if (array[nX] instanceof IPerspectiveListener3) {
                 final IPerspectiveListener3 l3 = (IPerspectiveListener3) array[nX];
                 fireEvent(new SafeRunnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         l3.perspectiveSavedAs(page, oldPerspective, newPerspective);
                     }
                 }, l3, newPerspective, "saveAs::"); //$NON-NLS-1$

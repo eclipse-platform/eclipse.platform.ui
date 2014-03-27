@@ -154,7 +154,8 @@ public class DrillDownAdapter implements ISelectionChangedListener {
 
         // Home.	
         homeAction = new Action(WorkbenchMessages.GoHome_text) {
-            public void run() {
+            @Override
+			public void run() {
                 goHome();
             }
         };
@@ -167,7 +168,8 @@ public class DrillDownAdapter implements ISelectionChangedListener {
         // Back.
         ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
         backAction = new Action(WorkbenchMessages.GoBack_text) {
-            public void run() {
+            @Override
+			public void run() {
                 goBack();
             }
         };
@@ -180,7 +182,8 @@ public class DrillDownAdapter implements ISelectionChangedListener {
 
         // Forward.
         forwardAction = new Action(WorkbenchMessages.GoInto_text) { 
-            public void run() {
+            @Override
+			public void run() {
                 goInto();
             }
         };
@@ -325,7 +328,8 @@ public class DrillDownAdapter implements ISelectionChangedListener {
      * Updates the navigation buttons when a selection change occurs
      * in the tree.
      */
-    public void selectionChanged(SelectionChangedEvent event) {
+    @Override
+	public void selectionChanged(SelectionChangedEvent event) {
         updateNavigationButtons();
     }
 

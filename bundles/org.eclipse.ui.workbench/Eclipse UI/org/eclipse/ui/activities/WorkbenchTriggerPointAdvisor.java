@@ -81,6 +81,7 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.activities.ITriggerPointAdvisor#allow(org.eclipse.ui.activities.ITriggerPoint, org.eclipse.ui.activities.IIdentifier)
 	 */
+	@Override
 	public Set allow(ITriggerPoint triggerPoint, IIdentifier identifier) {
 		
 		if (triggerPoint.getBooleanHint(ITriggerPoint.HINT_PRE_UI)) {
@@ -133,6 +134,7 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 		if (data instanceof Hashtable) {
 			strings.putAll((Hashtable)data);
@@ -164,6 +166,7 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 	 * @see WorkbenchTriggerPointAdvisor#doComputeEnablement(IActivityManager,
 	 *      IIdentifier, boolean)
 	 */
+	@Override
 	public boolean computeEnablement(IActivityManager activityManager, IIdentifier identifier) {
 		return doComputeEnablement(activityManager, identifier, false);
 	}

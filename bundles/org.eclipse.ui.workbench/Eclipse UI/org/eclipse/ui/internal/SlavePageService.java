@@ -37,30 +37,36 @@ public class SlavePageService implements IPageService, IDisposable {
 		this.parent = parent;
 	}
 
+	@Override
 	public void addPageListener(IPageListener listener) {
 		pageListeners.add(listener);
 		parent.addPageListener(listener);
 	}
 
+	@Override
 	public void addPerspectiveListener(IPerspectiveListener listener) {
 		perspectiveListeners.add(listener);
 		parent.addPerspectiveListener(listener);
 	}
 
+	@Override
 	public IWorkbenchPage getActivePage() {
 		return parent.getActivePage();
 	}
 
+	@Override
 	public void removePageListener(IPageListener listener) {
 		pageListeners.remove(listener);
 		parent.removePageListener(listener);
 	}
 
+	@Override
 	public void removePerspectiveListener(IPerspectiveListener listener) {
 		perspectiveListeners.remove(listener);
 		parent.removePerspectiveListener(listener);
 	}
 
+	@Override
 	public void dispose() {
 		Object[] listeners = pageListeners.getListeners();
 		

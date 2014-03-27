@@ -77,7 +77,8 @@ public class PartTester {
      */
     private static void testWorkbenchPart(IWorkbenchPart part) throws Exception {
         IPropertyListener testListener = new IPropertyListener() {
-            public void propertyChanged(Object source, int propId) {
+            @Override
+			public void propertyChanged(Object source, int propId) {
                 
             }
         };

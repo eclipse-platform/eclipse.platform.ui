@@ -453,7 +453,8 @@ public/*final*/class WorkbenchImages {
      * 
      * @deprecated As of 3.0, since the workbench itself no longer uses the hover image variants
      */
-    private final static void declareHoverImages() {
+    @Deprecated
+	private final static void declareHoverImages() {
         declareImage(ISharedImages.IMG_TOOL_UNDO_HOVER, PATH_ETOOL
         		+ "undo_edit.png", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_TOOL_REDO_HOVER, PATH_ETOOL

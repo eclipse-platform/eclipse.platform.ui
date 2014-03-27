@@ -83,6 +83,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 		PreferenceTransferElement[] transfers = new PreferenceTransferElement[preferenceTransfers
 				.size()];
 		Collections.sort(preferenceTransfers, new Comparator() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				String name1 = ((PreferenceTransferElement) o1).getName();
 				String name2 = ((PreferenceTransferElement) o2).getName();
@@ -99,6 +100,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 	 * 
 	 * @see org.eclipse.ui.internal.registry.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
 	 */
+	@Override
 	protected boolean readElement(IConfigurationElement element) {
 		if (element.getName().equals(IWorkbenchRegistryConstants.TAG_TRANSFER)) {
 

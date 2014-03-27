@@ -82,22 +82,27 @@ final class ContextActivation extends EvaluationResultCache implements
 		this.contextService = contextService;
 	}
 
+	@Override
 	public final void clearActive() {
 		clearResult();
 	}
 
+	@Override
 	public final String getContextId() {
 		return contextId;
 	}
 
+	@Override
 	public final IContextService getContextService() {
 		return contextService;
 	}
 
+	@Override
 	public final boolean isActive(final IEvaluationContext context) {
 		return evaluate(context);
 	}
 
+	@Override
 	public final String toString() {
 		final StringBuffer buffer = new StringBuffer();
 

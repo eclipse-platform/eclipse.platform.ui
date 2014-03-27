@@ -21,6 +21,7 @@ package org.eclipse.ui.contexts;
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  * @see org.eclipse.core.commands.common.NotDefinedException
  */
+@Deprecated
 public final class NotDefinedException extends ContextException {
 
 	/**

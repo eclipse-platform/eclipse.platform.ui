@@ -49,6 +49,7 @@ public class RectangleAnimationImageFeedback extends
 			this.image = image;
 
 			addPaintListener(new PaintListener() {
+				@Override
 				public void paintControl(PaintEvent e) {
 					paintImage(e.gc);
 				}
@@ -67,6 +68,7 @@ public class RectangleAnimationImageFeedback extends
 		/* (non-Javadoc)
 		 * @see org.eclipse.swt.widgets.Widget#dispose()
 		 */
+		@Override
 		public void dispose() {
 			super.dispose();
 			image.dispose();
@@ -84,6 +86,7 @@ public class RectangleAnimationImageFeedback extends
 		super(parentShell, start, end);
 	}
 
+	@Override
 	public void dispose() {
 		backingStore.dispose();
 		for (Iterator ctrlIter = controls.iterator(); ctrlIter.hasNext();) {
@@ -95,6 +98,7 @@ public class RectangleAnimationImageFeedback extends
 		theShell.dispose();
 	}
 
+	@Override
 	public void initialize(AnimationEngine engine) {
 		display = getAnimationShell().getDisplay();
 
@@ -118,12 +122,14 @@ public class RectangleAnimationImageFeedback extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.RectangleAnimationFeedbackBase#jobInit(org.eclipse.ui.internal.AnimationEngine)
 	 */
+	@Override
 	public boolean jobInit(AnimationEngine engine) {
 		changeCoordinates();
 		captureImages();
 		return super.jobInit(engine);
 	}
 	
+	@Override
 	public void addStartRect(Rectangle rect) {
 		if (rect == null)
 			return;
@@ -133,6 +139,7 @@ public class RectangleAnimationImageFeedback extends
 
 	}
 
+	@Override
 	public void addEndRect(Rectangle rect) {
 		if (rect != null) {
 			//	Rectangle end = Geometry.toControl(getAnimationShell(), rect);
@@ -140,6 +147,7 @@ public class RectangleAnimationImageFeedback extends
 		}
 	}
 
+	@Override
 	public void renderStep(AnimationEngine engine) {
 		Iterator ctrlIter = controls.iterator();
 		Iterator currentRects = getCurrentRects(engine.amount()).iterator();

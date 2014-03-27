@@ -340,7 +340,8 @@ public class CellLayout extends Layout {
     /* (non-Javadoc)
      * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite, int, int, boolean)
      */
-    protected Point computeSize(Composite composite, int wHint, int hHint,
+    @Override
+	protected Point computeSize(Composite composite, int wHint, int hHint,
             boolean flushCache) {
         Control[] children = composite.getChildren();
         initGrid(children);
@@ -808,7 +809,8 @@ public class CellLayout extends Layout {
     /* (non-Javadoc)
      * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite, boolean)
      */
-    protected void layout(Composite composite, boolean flushCache) {
+    @Override
+	protected void layout(Composite composite, boolean flushCache) {
         Control[] children = composite.getChildren();
         
         // If there are no children then this is a NO-OP

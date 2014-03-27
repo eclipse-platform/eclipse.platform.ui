@@ -21,7 +21,8 @@ public class NullPersistable implements IPersistable {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.part.components.interfaces.IPersistable#saveState(org.eclipse.ui.IMemento)
      */
-    public void saveState(IMemento memento) {
+    @Override
+	public void saveState(IMemento memento) {
     }
 
 }

@@ -60,6 +60,7 @@ public final class LegacyHandlerListenerWrapper implements IHandlerListener {
 	 * 
 	 * @see org.eclipse.ui.commands.IHandlerListener#handlerChanged(org.eclipse.ui.commands.HandlerEvent)
 	 */
+	@Override
 	public void handlerChanged(HandlerEvent event) {
 		final boolean enabledChanged = ((Boolean) event
 				.getPreviousAttributeValuesByName().get(

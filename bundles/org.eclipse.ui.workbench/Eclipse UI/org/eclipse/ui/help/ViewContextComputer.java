@@ -26,6 +26,7 @@ import org.eclipse.ui.IViewPart;
  * @deprecated nested contexts are no longer supported by the help support system
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class ViewContextComputer implements IContextComputer {
     private IViewPart view;
 
@@ -98,7 +99,8 @@ public class ViewContextComputer implements IContextComputer {
     /* (non-Javadoc)
      * Method declared on IContextComputer.
      */
-    public Object[] computeContexts(HelpEvent event) {
+    @Override
+	public Object[] computeContexts(HelpEvent event) {
         contextList = new ArrayList();
 
         // Add the local context
@@ -114,7 +116,8 @@ public class ViewContextComputer implements IContextComputer {
     /* (non-Javadoc)
      * Method declared on IContextComputer.
      */
-    public Object[] getLocalContexts(HelpEvent event) {
+    @Override
+	public Object[] getLocalContexts(HelpEvent event) {
         return new Object[] { context };
     }
 }

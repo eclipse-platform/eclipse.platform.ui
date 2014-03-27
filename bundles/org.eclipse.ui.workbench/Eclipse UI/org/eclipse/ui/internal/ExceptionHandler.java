@@ -40,7 +40,8 @@ public final class ExceptionHandler implements Window.IExceptionHandler {
     /* (non-javadoc)
      * @see org.eclipse.jface.window.Window.IExceptionHandler#handleException
      */
-    public void handleException(Throwable t) {
+    @Override
+	public void handleException(Throwable t) {
         try {
             // Ignore ThreadDeath error as its normal to get this when thread dies
             if (t instanceof ThreadDeath) {

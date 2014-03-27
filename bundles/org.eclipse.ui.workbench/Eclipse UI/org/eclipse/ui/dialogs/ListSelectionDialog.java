@@ -118,7 +118,8 @@ public class ListSelectionDialog extends SelectionDialog {
                 IDialogConstants.SELECT_ALL_ID, SELECT_ALL_TITLE, false);
 
         SelectionListener listener = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 listViewer.setAllChecked(true);
             }
         };
@@ -128,7 +129,8 @@ public class ListSelectionDialog extends SelectionDialog {
                 IDialogConstants.DESELECT_ALL_ID, DESELECT_ALL_TITLE, false);
 
         listener = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 listViewer.setAllChecked(false);
             }
         };
@@ -151,7 +153,8 @@ public class ListSelectionDialog extends SelectionDialog {
      *  (non-Javadoc)
      * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
      */
-    protected void configureShell(Shell shell) {
+    @Override
+	protected void configureShell(Shell shell) {
         super.configureShell(shell);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
 				IWorkbenchHelpContextIds.LIST_SELECTION_DIALOG);
@@ -160,7 +163,8 @@ public class ListSelectionDialog extends SelectionDialog {
     /* (non-Javadoc)
      * Method declared on Dialog.
      */
-    protected Control createDialogArea(Composite parent) {
+    @Override
+	protected Control createDialogArea(Composite parent) {
         // page group
         Composite composite = (Composite) super.createDialogArea(parent);
         
@@ -212,7 +216,8 @@ public class ListSelectionDialog extends SelectionDialog {
      * <code>Dialog</code> method builds a list of the selected elements for later
      * retrieval by the client and closes this dialog.
      */
-    protected void okPressed() {
+    @Override
+	protected void okPressed() {
 
         // Get the input children.
         Object[] children = contentProvider.getElements(inputElement);

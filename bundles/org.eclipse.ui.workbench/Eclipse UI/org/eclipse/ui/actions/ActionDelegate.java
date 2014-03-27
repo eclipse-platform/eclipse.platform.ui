@@ -34,7 +34,8 @@ public abstract class ActionDelegate implements IActionDelegate2 {
      * by the default implementation of <code>runWithEvent</code> of this
      * abstract class.
      */
-    public void run(IAction action) {
+    @Override
+	public void run(IAction action) {
     }
 
     /**
@@ -42,7 +43,8 @@ public abstract class ActionDelegate implements IActionDelegate2 {
      * <code>IActionDelegate</code> method does nothing. Subclasses may
      * reimplement.
      */
-    public void selectionChanged(IAction action, ISelection selection) {
+    @Override
+	public void selectionChanged(IAction action, ISelection selection) {
     }
 
     /**
@@ -50,7 +52,8 @@ public abstract class ActionDelegate implements IActionDelegate2 {
      * <code>IActionDelegate2</code> method does nothing. Subclasses may
      * reimplement.
      */
-    public void init(IAction action) {
+    @Override
+	public void init(IAction action) {
     }
 
     /**
@@ -58,7 +61,8 @@ public abstract class ActionDelegate implements IActionDelegate2 {
      * <code>IActionDelegate2</code> method does nothing. Subclasses may
      * reimplement.
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
     }
 
     /**
@@ -66,7 +70,8 @@ public abstract class ActionDelegate implements IActionDelegate2 {
      * <code>IActionDelegate2</code> method redirects to the <code>run</code>
      * method. Subclasses may reimplement.
      */
-    public void runWithEvent(IAction action, Event event) {
+    @Override
+	public void runWithEvent(IAction action, Event event) {
         run(action);
     }
 }

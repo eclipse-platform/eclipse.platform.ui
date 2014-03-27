@@ -142,6 +142,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
+	@Override
 	public boolean close() {
 		instance = null;
 		return super.close();
@@ -156,6 +157,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * 
 	 * @see org.eclipse.jface.preference.PreferenceDialog#findNodeMatching(java.lang.String)
 	 */
+	@Override
 	protected IPreferenceNode findNodeMatching(String nodeId) {
 		IPreferenceNode node = super.findNodeMatching(nodeId);
 		if (WorkbenchActivityHelper.filterItem(node)) {
@@ -167,6 +169,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		super.okPressed();
 	}
@@ -176,6 +179,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
      * 
      * @since 3.2
      */
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
         IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
         IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
@@ -192,6 +196,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
      * page dictates the most appropriate size for the dialog.
      * @since 3.2
      */
+	@Override
 	protected int getDialogBoundsStrategy() {
 		return DIALOG_PERSISTLOCATION;
 	}
@@ -201,6 +206,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * Overrides to set focus to the specific page if it a specific page was requested. 
 	 * @since 3.5
 	 */
+	@Override
 	public int open() {
 		IPreferencePage selectedPage = getCurrentPage();
 		if ((initialPageId != null) && (selectedPage != null)) {

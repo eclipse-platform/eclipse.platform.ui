@@ -100,7 +100,8 @@ public interface IEditorRegistry {
      * Use <code>findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID)</code>
      * instead.
      */
-    public IEditorDescriptor getDefaultEditor();
+    @Deprecated
+	public IEditorDescriptor getDefaultEditor();
 
     /**
 	 * Returns the default editor for a given file name. This method assumes an

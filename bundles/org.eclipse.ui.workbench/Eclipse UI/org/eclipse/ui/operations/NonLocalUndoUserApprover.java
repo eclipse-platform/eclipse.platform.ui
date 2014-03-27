@@ -107,6 +107,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 	 *      org.eclipse.core.commands.operations.IOperationHistory,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	public IStatus proceedRedoing(IUndoableOperation operation,
 			IOperationHistory history, IAdaptable uiInfo) {
 
@@ -128,6 +129,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 	 *      org.eclipse.core.commands.operations.IOperationHistory,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	public IStatus proceedUndoing(IUndoableOperation operation,
 			IOperationHistory history, IAdaptable uiInfo) {
 
@@ -210,6 +212,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 		// a background thread.
 		final int[] answer = new int[1];
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				MessageDialog dialog = new MessageDialog(part.getSite().getShell(), title,
 						null, message, MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL,

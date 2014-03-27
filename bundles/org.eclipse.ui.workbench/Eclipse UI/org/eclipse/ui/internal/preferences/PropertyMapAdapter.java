@@ -24,7 +24,8 @@ public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.IDynamicPropertyMap#addListener(org.eclipse.ui.internal.preferences.IPropertyMapListener)
      */
-    public final void addListener(IPropertyMapListener listener) {
+    @Override
+	public final void addListener(IPropertyMapListener listener) {
         if (listeners == null) {
             listeners = new PropertyListenerList();
             attachListener();
@@ -35,7 +36,8 @@ public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.IDynamicPropertyMap#removeListener(org.eclipse.ui.internal.preferences.IPropertyMapListener)
      */
-    public final void removeListener(IPropertyMapListener listener) {
+    @Override
+	public final void removeListener(IPropertyMapListener listener) {
         if (listeners != null) {
             listeners.remove(listener);
             if (listeners.isEmpty()) {
@@ -48,7 +50,8 @@ public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.IPropertyMap#isCommonProperty(java.lang.String)
      */
-    public final boolean isCommonProperty(String propertyId) {
+    @Override
+	public final boolean isCommonProperty(String propertyId) {
         return true;
     }
 
@@ -75,7 +78,8 @@ public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
         }
     }
     
-    public final void addListener(String[] eventsOfInterest, IPropertyMapListener listener) {
+    @Override
+	public final void addListener(String[] eventsOfInterest, IPropertyMapListener listener) {
         if (listeners == null) {
             listeners = new PropertyListenerList();
             attachListener();
@@ -110,7 +114,8 @@ public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
         }
     }
     
-    public boolean equals(Object toCompare) {
+    @Override
+	public boolean equals(Object toCompare) {
         return toCompare instanceof IPropertyMap && PropertyUtil.isEqual(this, (IPropertyMap)toCompare);
     }
     

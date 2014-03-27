@@ -52,6 +52,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
 	private IEventBroker eventBroker;
 
 	private EventHandler zoomChangeListener = new EventHandler() {
+		@Override
 		public void handleEvent(Event event) {
 			if (!handleZoomEvents)
 				return;
@@ -108,7 +109,8 @@ public final class ViewIntroAdapterPart extends ViewPart {
     public void setStandby(final boolean standby) {
 		final Control control = (Control) ((PartSite) getSite()).getModel().getWidget();
         BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 try {
                     control.setRedraw(false);
                     introPart.standbyStateChanged(standby);
@@ -133,7 +135,8 @@ public final class ViewIntroAdapterPart extends ViewPart {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createPartControl(Composite parent) {
+    @Override
+	public void createPartControl(Composite parent) {
         addZoomListener();
         introPart.createPartControl(parent);
 
@@ -150,7 +153,8 @@ public final class ViewIntroAdapterPart extends ViewPart {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
 		eventBroker.unsubscribe(zoomChangeListener);
 
     	setBarVisibility(true);
@@ -163,21 +167,24 @@ public final class ViewIntroAdapterPart extends ViewPart {
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
-    public Object getAdapter(Class adapter) {
+    @Override
+	public Object getAdapter(Class adapter) {
         return introPart.getAdapter(adapter);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#getTitleImage()
      */
-    public Image getTitleImage() {
+    @Override
+	public Image getTitleImage() {
         return introPart.getTitleImage();
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.ui.part.WorkbenchPart#getTitle()
      */
-    public String getTitle() {
+    @Override
+	public String getTitle() {
     	// this method is called eagerly before our init method is called (and
     	// therefore before our intropart is created).  By default return 
     	// the view title from the view declaration.  We will fire a property
@@ -188,7 +195,8 @@ public final class ViewIntroAdapterPart extends ViewPart {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
      */
-    public void init(IViewSite site, IMemento memento) throws PartInitException {
+    @Override
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
         super.init(site);
         Workbench workbench = (Workbench) site.getWorkbenchWindow()
                 .getWorkbench();
@@ -198,7 +206,8 @@ public final class ViewIntroAdapterPart extends ViewPart {
             // reset the part name of this view to be that of the intro title
             setPartName(introPart.getTitle());
             introPart.addPropertyListener(new IPropertyListener() {
-                public void propertyChanged(Object source, int propId) {
+                @Override
+				public void propertyChanged(Object source, int propId) {
                     firePropertyChange(propId);
                 }
             });
@@ -218,14 +227,16 @@ public final class ViewIntroAdapterPart extends ViewPart {
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
-    public void setFocus() {
+    @Override
+	public void setFocus() {
         introPart.setFocus();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
      */
-    public void saveState(IMemento memento) {
+    @Override
+	public void saveState(IMemento memento) {
         introPart.saveState(memento);
     }
 

@@ -57,7 +57,8 @@ public class SelectWorkingSetAction extends Action {
      * 
      * @see Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         IWorkingSetManager manager = PlatformUI.getWorkbench()
                 .getWorkingSetManager();
         IWorkingSetSelectionDialog dialog = manager

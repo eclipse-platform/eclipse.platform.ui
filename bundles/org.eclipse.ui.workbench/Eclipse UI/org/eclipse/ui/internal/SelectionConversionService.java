@@ -45,6 +45,7 @@ public class SelectionConversionService implements ISelectionConversionService {
 	 *            the original selection
 	 * @return the converted selection or an empty selection.
 	 */
+	@Override
 	public IStructuredSelection convertToResources(
 			IStructuredSelection originalSelection) {
 		// @issue resource-specific code should be pushed into IDE

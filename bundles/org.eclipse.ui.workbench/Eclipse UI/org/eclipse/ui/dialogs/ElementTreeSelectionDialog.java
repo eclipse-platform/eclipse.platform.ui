@@ -156,7 +156,8 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
      * @param sorter
      * @deprecated as of 3.3, use {@link ElementTreeSelectionDialog#setComparator(ViewerComparator)} instead
      */
-    public void setSorter(ViewerSorter sorter) {
+    @Deprecated
+	public void setSorter(ViewerSorter sorter) {
         fComparator = sorter;
     }
     
@@ -233,7 +234,8 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
      *  (non-Javadoc)
      * @see org.eclipse.jface.window.Window#open()
      */
-    public int open() {
+    @Override
+	public int open() {
         fIsEmpty = evaluateIfTreeEmpty(fInput);
         super.open();
         return getReturnCode();
@@ -246,7 +248,8 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
     /**
      * Handles cancel button pressed event.
      */
-    protected void cancelPressed() {
+    @Override
+	protected void cancelPressed() {
         setResult(null);
         super.cancelPressed();
     }
@@ -254,7 +257,8 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
     /*
      * @see SelectionStatusDialog#computeResult()
      */
-    protected void computeResult() {
+    @Override
+	protected void computeResult() {
         setResult(((IStructuredSelection) fViewer.getSelection()).toList());
     }
 
@@ -262,9 +266,11 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
      *  (non-Javadoc)
      * @see org.eclipse.jface.window.Window#create()
      */
-    public void create() {
+    @Override
+	public void create() {
         BusyIndicator.showWhile(null, new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 access$superCreate();
                 fViewer.setSelection(new StructuredSelection(
                         getInitialElementSelections()), true);
@@ -276,7 +282,8 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
     /*
      * @see Dialog#createDialogArea(Composite)
      */
-    protected Control createDialogArea(Composite parent) {
+    @Override
+	protected Control createDialogArea(Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);
 
         Label messageLabel = createMessageArea(composite);
@@ -312,7 +319,8 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
         fViewer.setContentProvider(fContentProvider);
         fViewer.setLabelProvider(fLabelProvider);
         fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-            public void selectionChanged(SelectionChangedEvent event) {
+            @Override
+			public void selectionChanged(SelectionChangedEvent event) {
                 access$setResult(((IStructuredSelection) event.getSelection())
                         .toList());
                 updateOKStatus();
@@ -329,7 +337,8 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
         if (fDoubleClickSelects) {
             Tree tree = fViewer.getTree();
             tree.addSelectionListener(new SelectionAdapter() {
-                public void widgetDefaultSelected(SelectionEvent e) {
+                @Override
+				public void widgetDefaultSelected(SelectionEvent e) {
                     updateOKStatus();
                     if (fCurrStatus.isOK()) {
 						access$superButtonPressed(IDialogConstants.OK_ID);
@@ -338,7 +347,8 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
             });
         }
         fViewer.addDoubleClickListener(new IDoubleClickListener() {
-            public void doubleClick(DoubleClickEvent event) {
+            @Override
+			public void doubleClick(DoubleClickEvent event) {
                 updateOKStatus();
 
                 //If it is not OK or if double click does not
@@ -420,7 +430,8 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
     /**
      * @see org.eclipse.jface.window.Window#handleShellCloseEvent()
      */
-    protected void handleShellCloseEvent() {
+    @Override
+	protected void handleShellCloseEvent() {
         super.handleShellCloseEvent();
 
         //Handle the closing of the shell by selecting the close icon

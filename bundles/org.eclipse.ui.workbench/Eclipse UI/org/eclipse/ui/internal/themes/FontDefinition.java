@@ -72,7 +72,8 @@ public class FontDefinition extends ThemeElementDefinition implements
      * that this font defualts to.
      * @return String or <pre>null</pre>.
      */
-    public String getDefaultsTo() {
+    @Override
+	public String getDefaultsTo() {
         return defaultsTo;
     }
 
@@ -81,7 +82,8 @@ public class FontDefinition extends ThemeElementDefinition implements
      * 
      * @return FontData []
      */
-    public FontData[] getValue() {
+    @Override
+	public FontData[] getValue() {
         if (value == null) {
 			return null;
 		}
@@ -104,14 +106,16 @@ public class FontDefinition extends ThemeElementDefinition implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IEditable#isEditable()
      */
-    public boolean isEditable() {
+    @Override
+	public boolean isEditable() {
         return isEditable;
     }
     
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if (obj instanceof FontDefinition) {
             return getId().equals(((FontDefinition)obj).getId());
         }
@@ -121,7 +125,8 @@ public class FontDefinition extends ThemeElementDefinition implements
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
 		return getId().hashCode();
 	}
 
@@ -132,6 +137,7 @@ public class FontDefinition extends ThemeElementDefinition implements
 	 * org.eclipse.e4.ui.css.swt.definition.IDefinitionOverridable#setData(java
 	 * .lang.Object)
 	 */
+	@Override
 	public void setValue(FontData[] data) {
 		if (data != null && data.length > 0) {
 			if (defaultValue == null) {

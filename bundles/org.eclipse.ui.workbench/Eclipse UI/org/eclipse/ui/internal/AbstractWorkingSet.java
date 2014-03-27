@@ -77,6 +77,7 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 	 * @return the receiver if the requested type is either IWorkingSet 
 	 * 	or IPersistableElement.
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 	    if (adapter == IWorkingSet.class
 	            || adapter == IPersistableElement.class) {
@@ -85,10 +86,12 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 	    return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
+	@Override
 	public String getName() {
 	    return name;
 	}
 
+	@Override
 	public void setName(String newName) {
 	    Assert.isNotNull(newName, "Working set name must not be null"); //$NON-NLS-1$
 		if (manager != null) {
@@ -148,6 +151,7 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 	    }
 	}
 
+	@Override
 	public IAdaptable[] getElements() {
 	    ArrayList list = getElementsArray();
 	    return (IAdaptable[]) list.toArray(new IAdaptable[list.size()]);
@@ -173,14 +177,17 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 		return manager;
 	}
 
+	@Override
 	public String getFactoryId() {
 	    return FACTORY_ID;
 	}
 
+	@Override
 	public String getLabel() {
 		return label;
 	}
 
+	@Override
 	public void setLabel(String label) {
 		this.label = label == null ? getName() : label;
 		labelBoundToName = Util.equals(label, name);  // rebind the label to the name
@@ -189,6 +196,7 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 				IWorkingSetManager.CHANGE_WORKING_SET_LABEL_CHANGE, null);
 	}
 	
+	@Override
 	public boolean isEmpty() {
 		return getElementsArray().isEmpty();
 	}
@@ -197,7 +205,8 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
      * (non-Javadoc)
      * @see org.eclipse.ui.IWorkingSet#getImage()
      */
-    public final ImageDescriptor getImage() {
+    @Override
+	public final ImageDescriptor getImage() {
         return getImageDescriptor();
     }
 

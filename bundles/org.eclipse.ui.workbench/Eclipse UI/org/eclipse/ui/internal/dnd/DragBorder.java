@@ -69,6 +69,7 @@ public class DragBorder {
 		
 		if (provideFrame) {
 			border.addPaintListener(new PaintListener() {
+				@Override
 				public void paintControl(PaintEvent e) {
 					if (isHighlight) {
 						e.gc.setForeground(hilightColor);

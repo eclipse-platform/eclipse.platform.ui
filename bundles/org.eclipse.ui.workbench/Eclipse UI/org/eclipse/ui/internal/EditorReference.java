@@ -191,6 +191,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		return descriptorId;
 	}
 
+	@Override
 	public String getFactoryId() {
 		IEditorPart editor = getEditor(false);
 		if (editor == null) {
@@ -219,6 +220,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		return persistable == null ? null : persistable.getFactoryId();
 	}
 
+	@Override
 	public String getName() {
 		IEditorPart editor = getEditor(false);
 		if (input == null) {
@@ -228,6 +230,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		return editor == null ? input.getName() : editor.getEditorInput().getName();
 	}
 
+	@Override
 	public String getTitle() {
 		String label = Util.safeString(getModel().getLocalizedLabel());
 		if (label.length() == 0) {
@@ -290,6 +293,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	 * 
 	 * @see org.eclipse.ui.IEditorReference#getEditor(boolean)
 	 */
+	@Override
 	public IEditorPart getEditor(boolean restore) {
 		return (IEditorPart) getPart(restore);
 	}
@@ -299,6 +303,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	 * 
 	 * @see org.eclipse.ui.IEditorReference#getEditorInput()
 	 */
+	@Override
 	public IEditorInput getEditorInput() throws PartInitException {
 		IEditorPart editor = getEditor(false);
 		if (editor != null) {

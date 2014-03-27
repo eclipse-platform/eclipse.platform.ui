@@ -34,6 +34,7 @@ public class EditorElement extends QuickAccessElement {
 		this.editorReference = editorReference;
 	}
 
+	@Override
 	public void execute() {
 		IWorkbenchPart part = editorReference.getPart(true);
 		if (part != null) {
@@ -45,23 +46,28 @@ public class EditorElement extends QuickAccessElement {
 		}
 	}
 
+	@Override
 	public String getId() {
 		return editorReference.getId() + editorReference.getTitleToolTip();
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return ImageDescriptor.createFromImage(editorReference.getTitleImage());
 	}
 
+	@Override
 	public String getLabel() {
 		boolean dirty = editorReference.isDirty();
 		return (dirty ? DIRTY_MARK : "") + editorReference.getTitle() + separator + editorReference.getTitleToolTip(); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getSortLabel() {
 		return editorReference.getTitle();
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -70,6 +76,7 @@ public class EditorElement extends QuickAccessElement {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

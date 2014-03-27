@@ -51,6 +51,7 @@ public abstract class InstallationPage extends DialogPage {
 	 * @param newMessage
 	 *            the message, or <code>null</code> to clear the message
 	 */
+	@Override
 	public void setMessage(String newMessage) {
 		super.setMessage(newMessage);
 	}
@@ -72,6 +73,7 @@ public abstract class InstallationPage extends DialogPage {
 	 * @param newType
 	 *            the message type
 	 */
+	@Override
 	public void setMessage(String newMessage, int newType) {
 		super.setMessage(newMessage, newType);
 	}
@@ -129,6 +131,7 @@ public abstract class InstallationPage extends DialogPage {
 		button.setText(label);
 		button.setData(new Integer(id));
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				buttonPressed(((Integer) event.widget.getData()).intValue());
 			}

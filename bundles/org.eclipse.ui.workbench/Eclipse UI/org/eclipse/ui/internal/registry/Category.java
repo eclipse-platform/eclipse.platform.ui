@@ -111,7 +111,8 @@ public class Category implements IWorkbenchAdapter, IPluginContribution, IAdapta
     /* (non-Javadoc)
      * Method declared on IAdaptable.
      */
-    public Object getAdapter(Class adapter) {
+    @Override
+	public Object getAdapter(Class adapter) {
         if (adapter == IWorkbenchAdapter.class) {
 			return this;
 		} else if (adapter == IConfigurationElement.class) {
@@ -124,21 +125,24 @@ public class Category implements IWorkbenchAdapter, IPluginContribution, IAdapta
     /* (non-Javadoc)
      * Method declared on IWorkbenchAdapter.
      */
-    public Object[] getChildren(Object o) {
+    @Override
+	public Object[] getChildren(Object o) {
         return getElements().toArray();
     }
 
     /* (non-Javadoc)
      * Method declared on IWorkbenchAdapter.
      */
-    public ImageDescriptor getImageDescriptor(Object object) {
+    @Override
+	public ImageDescriptor getImageDescriptor(Object object) {
         return WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
     }
 
     /* (non-Javadoc)
      * Method declared on IWorkbenchAdapter.
      */
-    public String getLabel(Object o) {
+    @Override
+	public String getLabel(Object o) {
         return getLabel();
     }
 
@@ -247,21 +251,24 @@ public class Category implements IWorkbenchAdapter, IPluginContribution, IAdapta
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
      */
-    public Object getParent(Object o) {
+    @Override
+	public Object getParent(Object o) {
         return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
      */
-    public String getLocalId() {
+    @Override
+	public String getLocalId() {
         return id;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
      */
-    public String getPluginId() {
+    @Override
+	public String getPluginId() {
         return configurationElement == null ? pluginId : configurationElement
 				.getNamespace();
     }

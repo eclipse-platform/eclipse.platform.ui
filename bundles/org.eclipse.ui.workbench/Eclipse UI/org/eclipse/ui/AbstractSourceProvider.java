@@ -43,6 +43,7 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 	private final ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
 
 
+	@Override
 	public final void addSourceProviderListener(
 			final ISourceProviderListener listener) {
 		if (listener == null) {
@@ -106,6 +107,7 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 		}
 	}
 
+	@Override
 	public final void removeSourceProviderListener(
 			final ISourceProviderListener listener) {
 		if (listener == null) {

@@ -86,6 +86,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
+		@Override
 		public void handleException(Throwable exception) {
 			StatusManager.getManager().handle(
 					StatusUtil.newStatus(PlatformUI.PLUGIN_ID, exception));
@@ -93,6 +94,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 	}
 
 	private SortedSet workingSets = new TreeSet(new Comparator() {
+		@Override
 		public int compare(Object o1, Object o2) {
 			// Cast and compare directly
 			return ((AbstractWorkingSet) o1).getUniqueId().compareTo(
@@ -108,24 +110,30 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 	private Map/*<String, IWorkingSetElementAdapter>*/ elementAdapters = new HashMap();
     
     private static final IWorkingSetUpdater NULL_UPDATER= new IWorkingSetUpdater() {
+		@Override
 		public void add(IWorkingSet workingSet) {
 		}
+		@Override
 		public boolean remove(IWorkingSet workingSet) {
 			return true;
 		}
+		@Override
 		public boolean contains(IWorkingSet workingSet) {
 			return true;
 		}
+		@Override
 		public void dispose() {
 		}
 	};
 	
 	private static final IWorkingSetElementAdapter IDENTITY_ADAPTER = new IWorkingSetElementAdapter() {
 
+		@Override
 		public IAdaptable[] adaptElements(IWorkingSet ws, IAdaptable[] elements) {
 			return elements;
 		}
 
+		@Override
 		public void dispose() {
 		}
 	};
@@ -180,11 +188,13 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 				IWorkbenchRegistryConstants.PL_WORKINGSETS);
 	}
     
-    public void dispose() {
+    @Override
+	public void dispose() {
     	bundleContext.removeBundleListener(this);
     	for (final Iterator iter= updaters.values().iterator(); iter.hasNext();) {
 			SafeRunner.run(new WorkingSetRunnable() {
 
+				@Override
 				public void run() throws Exception {
 					((IWorkingSetUpdater) iter.next()).dispose();
 				}
@@ -194,6 +204,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     	for (final Iterator iter= elementAdapters.values().iterator(); iter.hasNext();) {
 			SafeRunner.run(new WorkingSetRunnable() {
 
+				@Override
 				public void run() throws Exception {
 					((IWorkingSetElementAdapter)iter.next()).dispose();
 				}
@@ -206,11 +217,13 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkingSetManager
      */
-    public IWorkingSet createWorkingSet(String name, IAdaptable[] elements) {
+    @Override
+	public IWorkingSet createWorkingSet(String name, IAdaptable[] elements) {
         return new WorkingSet(name, name, elements);
     }
     
-    public IWorkingSet createAggregateWorkingSet(String name, String label,
+    @Override
+	public IWorkingSet createAggregateWorkingSet(String name, String label,
 			IWorkingSet[] components) {
 		return new AggregateWorkingSet(name, label, components);
 	}
@@ -220,7 +233,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 	 * 
 	 * @see org.eclipse.ui.IWorkingSetManager
 	 */
-    public IWorkingSet createWorkingSet(IMemento memento) {
+    @Override
+	public IWorkingSet createWorkingSet(IMemento memento) {
         return restoreWorkingSet(memento);
     }
 
@@ -229,7 +243,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkingSetManager
      */
-    public void addWorkingSet(IWorkingSet workingSet) {
+    @Override
+	public void addWorkingSet(IWorkingSet workingSet) {
     	IWorkingSet wSet=getWorkingSet(workingSet.getName());
     	Assert.isTrue(wSet==null,"working set with same name already registered"); //$NON-NLS-1$
         internalAddWorkingSet(workingSet);
@@ -260,7 +275,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkingSetManager
      */
-    public IWorkingSet[] getWorkingSets() {
+    @Override
+	public IWorkingSet[] getWorkingSets() {
 		SortedSet visibleSubset = new TreeSet(WorkingSetComparator
 				.getInstance());
     		for (Iterator i = workingSets.iterator(); i.hasNext();) {
@@ -272,6 +288,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
         return (IWorkingSet[]) visibleSubset.toArray(new IWorkingSet[visibleSubset.size()]);
     }
     
+	@Override
 	public IWorkingSet[] getAllWorkingSets() {
 		IWorkingSet[] sets = (IWorkingSet[]) workingSets
 					.toArray(new IWorkingSet[workingSets.size()]);
@@ -282,7 +299,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkingSetManager
      */
-    public IWorkingSet getWorkingSet(String name) {
+    @Override
+	public IWorkingSet getWorkingSet(String name) {
         if (name == null || workingSets == null) {
 			return null;
 		}
@@ -302,7 +320,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkingSetManager
      */
-    public IWorkingSet[] getRecentWorkingSets() {
+    @Override
+	public IWorkingSet[] getRecentWorkingSets() {
         return (IWorkingSet[]) recentWorkingSets.toArray(new IWorkingSet[recentWorkingSets.size()]);
     }
 
@@ -331,7 +350,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
      * @return true=the object equals the receiver, it has the same
      * 	working sets. false otherwise
      */
-    public boolean equals(Object object) {
+    @Override
+	public boolean equals(Object object) {
         if (this == object) {
             return true;
         }
@@ -347,7 +367,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
      * 
      * @return the hash code.
      */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return workingSets.hashCode();
     }
 
@@ -356,14 +377,16 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkingSetManager
      */
-    public void addPropertyChangeListener(IPropertyChangeListener listener) {
+    @Override
+	public void addPropertyChangeListener(IPropertyChangeListener listener) {
         addListenerObject(listener);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkingSetManager
      */
-    public void removePropertyChangeListener(IPropertyChangeListener listener) {
+    @Override
+	public void removePropertyChangeListener(IPropertyChangeListener listener) {
         removeListenerObject(listener);
     }
 
@@ -392,15 +415,18 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
         final PropertyChangeEvent event = new PropertyChangeEvent(this,
                 changeId, oldValue, newValue);
 		Runnable notifier = new Runnable() {
+			@Override
 			public void run() {
 				for (int i = 0; i < listeners.length; i++) {
 					final IPropertyChangeListener listener = (IPropertyChangeListener) listeners[i];
 					ISafeRunnable safetyWrapper = new ISafeRunnable() {
 
+						@Override
 						public void run() throws Exception {
 							listener.propertyChange(event);
 						}
 
+						@Override
 						public void handleException(Throwable exception) {
 							// logged by the runner
 						}
@@ -477,6 +503,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
             final IPersistableElement persistable = (IWorkingSet) i.next();
 			SafeRunner.run(new WorkingSetRunnable() {
 
+				@Override
 				public void run() throws Exception {
 					// create a dummy node to write too - the write could fail so we
 					// shouldn't soil the final memento until we're sure it succeeds.
@@ -539,6 +566,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 		final IAdaptable[] adaptable = new IAdaptable[1];
 		SafeRunner.run(new WorkingSetRunnable() {
 
+			@Override
 			public void run() throws Exception {
 				adaptable[0] = factory.createElement(memento);
 			}
@@ -603,7 +631,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
      * @see org.eclipse.ui.IWorkingSetManager#createWorkingSetEditWizard(org.eclipse.ui.IWorkingSet)
      * @since 2.1
      */
-    public IWorkingSetEditWizard createWorkingSetEditWizard(
+    @Override
+	public IWorkingSetEditWizard createWorkingSetEditWizard(
             IWorkingSet workingSet) {
         String editPageId = workingSet.getId();
         WorkingSetRegistry registry = WorkbenchPlugin.getDefault()
@@ -632,7 +661,9 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     /**
      * @deprecated use createWorkingSetSelectionDialog(parent, true) instead
      */
-    public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
+    @Deprecated
+	@Override
+	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
             Shell parent) {
         return createWorkingSetSelectionDialog(parent, true);
     }
@@ -640,7 +671,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkingSetManager
      */
-    public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
+    @Override
+	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
             Shell parent, boolean multi) {
         return createWorkingSetSelectionDialog(parent, multi, null);
     }
@@ -648,7 +680,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     /**
 	 * {@inheritDoc}
 	 */
-    public IWorkingSetNewWizard createWorkingSetNewWizard(String[] workingSetIds) {
+    @Override
+	public IWorkingSetNewWizard createWorkingSetNewWizard(String[] workingSetIds) {
          WorkingSetDescriptor[] descriptors= getSupportedEditableDescriptors(workingSetIds);
          if (descriptors.length == 0) {
 			return null;
@@ -658,6 +691,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 
     //---- working set delta handling -------------------------------------------------
     
+	@Override
 	public void bundleChanged(BundleEvent event) {
 		String symbolicName = event.getBundle().getSymbolicName();
 		if (symbolicName == null)
@@ -678,6 +712,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 									WorkbenchMessages.AbstractWorkingSetManager_updatersActivating,
 									symbolicName)) {
 
+				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					synchronized (updaters) {
 						for (int i = 0; i < descriptors.length; i++) {
@@ -694,6 +729,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 										.next();
 								SafeRunner.run(new WorkingSetRunnable() {
 
+									@Override
 									public void run() throws Exception {
 										if (!updater.contains(workingSet)) {
 											updater.add(workingSet);
@@ -732,6 +768,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 	    	final IWorkingSetUpdater updater= getUpdater(descriptor);
 	    	SafeRunner.run(new WorkingSetRunnable() {
 
+				@Override
 				public void run() throws Exception {
 					if (!updater.contains(workingSet)) {
 						updater.add(workingSet);
@@ -780,6 +817,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 			if (updater != null) {
 				SafeRunner.run(new WorkingSetRunnable() {
 
+					@Override
 					public void run() throws Exception {
 						updater.remove(workingSet);
 					}});
@@ -791,7 +829,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkingSetManager#createWorkingSetSelectionDialog(org.eclipse.swt.widgets.Shell, boolean, java.lang.String[])
      */
-    public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent, boolean multi, String[] workingsSetIds) {
+    @Override
+	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent, boolean multi, String[] workingsSetIds) {
         return new WorkingSetSelectionDialog(parent, multi, workingsSetIds);
     }
 
@@ -817,6 +856,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamichelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
 	 */
+	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		// nothing - this is handled lazily.  These items are only created as needed by the getUpdater() and getElementAdapter() methods
 		
@@ -825,6 +865,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
 	 */
+	@Override
 	public void removeExtension(IExtension extension, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
@@ -848,6 +889,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 			final IWorkingSetElementAdapter elementAdapter) {
 		SafeRunner.run(new WorkingSetRunnable() {
 
+			@Override
 			public void run() throws Exception {
 				elementAdapter.dispose();
 
@@ -867,6 +909,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 	private void removeUpdater(final IWorkingSetUpdater updater) {
 		SafeRunner.run(new WorkingSetRunnable() {
 
+			@Override
 			public void run() throws Exception {
 				updater.dispose();
 
@@ -884,6 +927,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 	 * @see org.eclipse.ui.IWorkingSetManager#addToWorkingSets(org.eclipse.core.runtime.IAdaptable,
 	 *      org.eclipse.ui.IWorkingSet[])
 	 */
+	@Override
 	public void addToWorkingSets(final IAdaptable element, IWorkingSet[] workingSets) {
 		// ideally this method would be in a static util class of some kind but
 		// we dont have any such beast for working sets and making one for one
@@ -892,6 +936,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 			final IWorkingSet workingSet = workingSets[i];
 			SafeRunner.run(new WorkingSetRunnable() {
 
+				@Override
 				public void run() throws Exception {
 					IAdaptable[] adaptedNewElements = workingSet
 							.adaptElements(new IAdaptable[] { element });
@@ -907,6 +952,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 		}
 	}
 
+	@Override
 	public void setRecentWorkingSetsLength(int length) {
 		if (length < 1 || length > 99)
 			throw new IllegalArgumentException("Invalid recent working sets length: " + length); //$NON-NLS-1$
@@ -924,6 +970,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 		}
 	}
 
+	@Override
 	public int getRecentWorkingSetsLength() {
 		IPreferenceStore store = PrefUtil.getAPIPreferenceStore();
 		return store.getInt(IWorkbenchPreferenceConstants.RECENTLY_USED_WORKINGSETS_SIZE);

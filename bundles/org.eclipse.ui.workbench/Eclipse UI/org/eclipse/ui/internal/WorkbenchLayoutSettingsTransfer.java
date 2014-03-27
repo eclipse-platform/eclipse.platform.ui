@@ -43,6 +43,7 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 	 * 
 	 * @see org.eclipse.ui.preferences.SettingsTransfer#transferSettings(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public IStatus transferSettings(IPath newWorkspaceRoot) {
 		try {
 			IPath currentLocation = getNewWorkbenchStateLocation(Platform.getLocation());
@@ -116,6 +117,7 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 	 * 
 	 * @see org.eclipse.ui.preferences.SettingsTransfer#getName()
 	 */
+	@Override
 	public String getName() {
 		return WorkbenchMessages.WorkbenchLayoutSettings_Name;
 	}
@@ -126,6 +128,7 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 	 * @param newWorkspaceRoot
 	 * @return IPath or <code>null</code> if it can't be determined.
 	 */
+	@Override
 	protected IPath getNewWorkbenchStateLocation(IPath newWorkspaceRoot) {
 		return newWorkspaceRoot.append(new Path(".metadata/.plugins/org.eclipse.e4.workbench")); //$NON-NLS-1$
 	}

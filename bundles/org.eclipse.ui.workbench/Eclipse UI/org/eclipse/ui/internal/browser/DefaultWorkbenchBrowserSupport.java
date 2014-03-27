@@ -60,6 +60,7 @@ public class DefaultWorkbenchBrowserSupport extends
 	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#createBrowser(int,
 	 *      java.lang.String, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public IWebBrowser createBrowser(int style, String browserId, String name,
 			String tooltip) throws PartInitException {
 		IWebBrowser browser = findBrowser(browserId == null? getDefaultId():browserId);
@@ -76,6 +77,7 @@ public class DefaultWorkbenchBrowserSupport extends
 	 * 
 	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#createBrowser(java.lang.String)
 	 */
+	@Override
 	public IWebBrowser createBrowser(String browserId) throws PartInitException {
 		return createBrowser(AS_EXTERNAL, browserId, null, null);
 	}

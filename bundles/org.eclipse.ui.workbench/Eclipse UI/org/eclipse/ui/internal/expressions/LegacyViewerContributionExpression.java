@@ -82,6 +82,7 @@ public final class LegacyViewerContributionExpression extends
 		this.expression = childExpression;
 	}
 
+	@Override
 	public final void collectExpressionInfo(final ExpressionInfo info) {
 		super.collectExpressionInfo(info);
 		info.addVariableNameAccess(ISources.ACTIVE_MENU_NAME);
@@ -90,6 +91,7 @@ public final class LegacyViewerContributionExpression extends
 		}
 	}
 
+	@Override
 	protected final int computeHashCode() {
 		int hashCode = HASH_INITIAL * HASH_FACTOR + hashCode(getWindow());
 		hashCode = hashCode * HASH_FACTOR + hashCode(expression);
@@ -97,6 +99,7 @@ public final class LegacyViewerContributionExpression extends
 		return hashCode;
 	}
 
+	@Override
 	public final boolean equals(final Object object) {
 		if (object instanceof LegacyViewerContributionExpression) {
 			final LegacyViewerContributionExpression that = (LegacyViewerContributionExpression) object;
@@ -108,6 +111,7 @@ public final class LegacyViewerContributionExpression extends
 		return false;
 	}
 
+	@Override
 	public final EvaluationResult evaluate(final IEvaluationContext context)
 			throws CoreException {
 		final EvaluationResult result = super.evaluate(context);
@@ -139,6 +143,7 @@ public final class LegacyViewerContributionExpression extends
 		return EvaluationResult.FALSE;
 	}
 
+	@Override
 	public final String toString() {
 		final StringBuffer buffer = new StringBuffer();
 		buffer.append("ViewerContributionExpression("); //$NON-NLS-1$

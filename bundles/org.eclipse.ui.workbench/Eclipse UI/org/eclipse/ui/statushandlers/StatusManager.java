@@ -302,6 +302,7 @@ public class StatusManager {
 		 * @see org.eclipse.core.runtime.ILogListener#logging(org.eclipse.core.runtime.IStatus,
 		 *      java.lang.String)
 		 */
+		@Override
 		public void logging(IStatus status, String plugin) {
 			if (!loggedStatuses.contains(status)) {
 				handle(status, StatusManager.NONE);

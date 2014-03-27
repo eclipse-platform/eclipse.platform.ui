@@ -83,6 +83,7 @@ public class AnimationEngine extends Job {
 		display = feedbackRenderer.getAnimationShell().getDisplay();
 		
 		animationFeedback.getAnimationShell().addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				cancelAnimation();
 			}			
@@ -108,6 +109,7 @@ public class AnimationEngine extends Job {
 
 	private Runnable animationStep = new Runnable() {
 
+		@Override
 		public void run() {
 			if (animationCanceled)
 				return;
@@ -165,6 +167,7 @@ public class AnimationEngine extends Job {
 		return amount;
 	}
 
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		// We use preference value to indicate that the animation should be skipped on this platform.
 		if (!enableAnimations) {
@@ -173,6 +176,7 @@ public class AnimationEngine extends Job {
 
 		// We're starting, initialize
 		display.syncExec(new Runnable() {
+			@Override
 			public void run() {
 				// 'jobInit' returns 'false' if it doesn't want to run...
 				if (!animationCanceled)
@@ -201,6 +205,7 @@ public class AnimationEngine extends Job {
 
 		// We're done, clean up
 		display.syncExec(new Runnable() {
+			@Override
 			public void run() {
 				feedbackRenderer.dispose();
 			}

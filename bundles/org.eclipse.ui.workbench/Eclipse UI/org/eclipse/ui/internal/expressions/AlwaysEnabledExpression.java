@@ -38,6 +38,7 @@ public final class AlwaysEnabledExpression extends Expression {
 	 * 
 	 * @see org.eclipse.core.expressions.Expression#evaluate(org.eclipse.core.expressions.IEvaluationContext)
 	 */
+	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) {
 		return EvaluationResult.TRUE;
 	}

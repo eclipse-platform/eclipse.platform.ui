@@ -66,6 +66,7 @@ public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 	 * @return the workbench operation context.
 	 * @since 3.1
 	 */
+	@Override
 	public IUndoContext getUndoContext() {
 		if (undoContext == null) {
 			undoContext = new ObjectUndoContext(PlatformUI.getWorkbench(),
@@ -80,6 +81,7 @@ public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 	 * @return the operation history for workbench operations.
 	 * @since 3.1
 	 */
+	@Override
 	public IOperationHistory getOperationHistory() {
 		IOperationHistory history = OperationHistoryFactory.getOperationHistory();
 		/*

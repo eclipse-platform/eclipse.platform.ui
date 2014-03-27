@@ -632,6 +632,7 @@ public class MenuHelper {
 							return (IWorkbenchWindowPulldownDelegate) handlerProxy.getDelegate();
 						}
 
+						@Override
 						public Menu getMenu(Menu parent) {
 							IWorkbenchWindowPulldownDelegate2 delegate = (IWorkbenchWindowPulldownDelegate2) getDelegate();
 							if (delegate == null) {
@@ -640,10 +641,12 @@ public class MenuHelper {
 							return delegate.getMenu(parent);
 						}
 
+						@Override
 						public Menu getMenu(Control parent) {
 							return getDelegate() == null ? null : getDelegate().getMenu(parent);
 						}
 
+						@Override
 						public void dispose() {
 							if (handlerProxy != null) {
 								handlerProxy.dispose();
@@ -730,6 +733,7 @@ public class MenuHelper {
 				ActionDescriptor desc = getDescriptor(context);
 				final IAction action = desc.getAction();
 				final IPropertyChangeListener propListener = new IPropertyChangeListener() {
+					@Override
 					public void propertyChange(PropertyChangeEvent event) {
 						if (IAction.CHECKED.equals(event.getProperty())) {
 							boolean checked = false;
@@ -742,6 +746,7 @@ public class MenuHelper {
 				};
 				action.addPropertyChangeListener(propListener);
 				Runnable obj = new Runnable() {
+					@Override
 					@Execute
 					public void run() {
 						action.removePropertyChangeListener(propListener);
@@ -956,6 +961,7 @@ public class MenuHelper {
 			toolItem.setEnabled(action.isEnabled());
 
 			final IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
+				@Override
 				public void propertyChange(PropertyChangeEvent event) {
 					String property = event.getProperty();
 					if (property.equals(IAction.ENABLED)) {
@@ -973,6 +979,7 @@ public class MenuHelper {
 			// DirectContributionItem#handleWidgetDispose()
 			action.addPropertyChangeListener(propertyListener);
 			toolItem.getTransientData().put(DirectContributionItem.DISPOSABLE, new Runnable() {
+						@Override
 						public void run() {
 							action.removePropertyChangeListener(propertyListener);
 						}

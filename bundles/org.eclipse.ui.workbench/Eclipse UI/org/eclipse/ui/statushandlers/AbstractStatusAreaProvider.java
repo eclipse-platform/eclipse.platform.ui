@@ -53,6 +53,7 @@ public abstract class AbstractStatusAreaProvider extends ErrorSupportProvider {
 	 * @see org.eclipse.jface.dialogs.ErrorSupportProvider#createSupportArea(org.eclipse.swt.widgets.Composite,
 	 *      org.eclipse.core.runtime.IStatus)
 	 */
+	@Override
 	public final Control createSupportArea(Composite parent, IStatus status) {
 		return createSupportArea(parent, new StatusAdapter(status));
 	}

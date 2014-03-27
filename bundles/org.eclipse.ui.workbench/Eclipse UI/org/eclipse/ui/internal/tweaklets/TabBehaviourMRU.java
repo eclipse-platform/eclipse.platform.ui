@@ -34,10 +34,12 @@ import org.eclipse.ui.internal.registry.EditorDescriptor;
  */
 public class TabBehaviourMRU extends TabBehaviour {
 
+	@Override
 	public boolean alwaysShowPinAction() {
 		return false;
 	}
 
+	@Override
 	public IEditorReference findReusableEditor(WorkbenchPage page) {
 		boolean reuse = WorkbenchPlugin.getDefault().getPreferenceStore()
 				.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
@@ -114,6 +116,7 @@ public class TabBehaviourMRU extends TabBehaviour {
 				MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL,
 						IDialogConstants.NO_LABEL,
 						WorkbenchMessages.EditorManager_openNewEditorLabel }, 0) {
+			@Override
 			protected int getShellStyle() {
 				return super.getShellStyle() | SWT.SHEET;
 			}
@@ -130,6 +133,7 @@ public class TabBehaviourMRU extends TabBehaviour {
 		return dirtyEditor;
 	}
 
+	@Override
 	public IEditorReference reuseInternalEditor(WorkbenchPage page,
  Object manager,
 			Object editorPresentation,

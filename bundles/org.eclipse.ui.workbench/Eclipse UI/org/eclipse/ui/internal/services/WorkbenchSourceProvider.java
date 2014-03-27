@@ -83,6 +83,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 	 * org.eclipse.ui.AbstractSourceProvider#initialize(org.eclipse.ui.services
 	 * .IServiceLocator)
 	 */
+	@Override
 	public void initialize(IServiceLocator locator) {
 //		this.locator = locator;
 		super.initialize(locator);
@@ -100,6 +101,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 	 * 
 	 * @see org.eclipse.ui.ISourceProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (lastWindow != null)
 			lastWindow.getSelectionService().removeSelectionListener(this);
@@ -117,6 +119,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 	 * 
 	 * @see org.eclipse.ui.ISourceProvider#getProvidedSourceNames()
 	 */
+	@Override
 	public String[] getProvidedSourceNames() {
 		return PROVIDED_SOURCE_NAMES;
 	}
@@ -126,6 +129,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 	 * 
 	 * @see org.eclipse.ui.ISourceProvider#getCurrentState()
 	 */
+	@Override
 	public Map getCurrentState() {
 
 		final Map currentState = new HashMap();
@@ -161,6 +165,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 		return sources;
 	}
 
+	@Override
 	public final void selectionChanged(final IWorkbenchPart part,
 			final ISelection newSelection) {
 
@@ -231,22 +236,27 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 
 	private final IPartListener partListener = new IPartListener() {
 
+		@Override
 		public final void partActivated(final IWorkbenchPart part) {
 			checkActivePart();
 		}
 
+		@Override
 		public final void partBroughtToTop(final IWorkbenchPart part) {
 			checkActivePart();
 		}
 
+		@Override
 		public final void partClosed(final IWorkbenchPart part) {
 			checkActivePart();
 		}
 
+		@Override
 		public final void partDeactivated(final IWorkbenchPart part) {
 			checkActivePart();
 		}
 
+		@Override
 		public final void partOpened(final IWorkbenchPart part) {
 			checkActivePart();
 		}
@@ -255,10 +265,12 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 
 	private final IWindowListener windowListener = new IWindowListener() {
 
+		@Override
 		public final void windowActivated(final IWorkbenchWindow window) {
 			checkActivePart();
 		}
 
+		@Override
 		public final void windowClosed(final IWorkbenchWindow window) {
 			if (window != null) {
 				window.getPartService().removePartListener(partListener);
@@ -266,10 +278,12 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 			checkActivePart();
 		}
 
+		@Override
 		public final void windowDeactivated(final IWorkbenchWindow window) {
 			checkActivePart();
 		}
 
+		@Override
 		public final void windowOpened(final IWorkbenchWindow window) {
 			if (window != null) {
 				window.getPartService().addPartListener(partListener);
@@ -588,6 +602,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 	 */
 	private final IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
 
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			if (WorkbenchWindow.PROP_COOLBAR_VISIBLE
 					.equals(event.getProperty())) {
@@ -631,6 +646,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 	};
 
 	IPerspectiveListener perspectiveListener = new IPerspectiveListener() {
+		@Override
 		public void perspectiveActivated(IWorkbenchPage page,
 				IPerspectiveDescriptor perspective) {
 			String id = perspective == null ? null : perspective.getId();
@@ -648,12 +664,14 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 			lastPerspectiveId = id;
 		}
 
+		@Override
 		public void perspectiveChanged(IWorkbenchPage page,
 				IPerspectiveDescriptor perspective, String changeId) {
 		}
 	};
 	
 	private IPropertyListener editorListener = new IPropertyListener() {
+		@Override
 		public void propertyChanged(Object source, int propId) {
 			if (propId == IEditorPart.PROP_INPUT) {
 				handleInputChanged((IEditorPart) source);
@@ -669,6 +687,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 		/**
 		 * Notifies all listeners that the source has changed.
 		 */
+		@Override
 		public final void handleEvent(final Event event) {
 			if (!(event.widget instanceof Shell)) {
 				if (DEBUG) {

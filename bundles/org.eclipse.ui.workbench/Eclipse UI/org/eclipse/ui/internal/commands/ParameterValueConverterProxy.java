@@ -57,11 +57,13 @@ public final class ParameterValueConverterProxy extends
 		this.converterConfigurationElement = converterConfigurationElement;
 	}
 
+	@Override
 	public final Object convertToObject(final String parameterValue)
 			throws ParameterValueConversionException {
 		return getConverter().convertToObject(parameterValue);
 	}
 
+	@Override
 	public final String convertToString(final Object parameterValue)
 			throws ParameterValueConversionException {
 		return getConverter().convertToString(parameterValue);

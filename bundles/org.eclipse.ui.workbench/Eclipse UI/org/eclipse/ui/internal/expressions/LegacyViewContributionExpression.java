@@ -67,17 +67,20 @@ public final class LegacyViewContributionExpression extends
 		this.activePartId = activePartId;
 	}
 
+	@Override
 	public final void collectExpressionInfo(final ExpressionInfo info) {
 		super.collectExpressionInfo(info);
 		info.addVariableNameAccess(ISources.ACTIVE_PART_ID_NAME);
 	}
 
+	@Override
 	protected final int computeHashCode() {
 		int hashCode = HASH_INITIAL * HASH_FACTOR + hashCode(getWindow());
 		hashCode = hashCode * HASH_FACTOR + hashCode(activePartId);
 		return hashCode;
 	}
 
+	@Override
 	public final boolean equals(final Object object) {
 		if (object instanceof LegacyViewContributionExpression) {
 			final LegacyViewContributionExpression that = (LegacyViewContributionExpression) object;
@@ -88,6 +91,7 @@ public final class LegacyViewContributionExpression extends
 		return false;
 	}
 
+	@Override
 	public final EvaluationResult evaluate(final IEvaluationContext context)
 			throws CoreException {
 		final EvaluationResult result = super.evaluate(context);
@@ -103,6 +107,7 @@ public final class LegacyViewContributionExpression extends
 		return EvaluationResult.FALSE;
 	}
 
+	@Override
 	public final String toString() {
 		final StringBuffer buffer = new StringBuffer();
 		buffer.append("LegacyViewContributionExpression("); //$NON-NLS-1$

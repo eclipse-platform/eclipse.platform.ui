@@ -161,7 +161,8 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	 *             {@link CheckedTreeSelectionDialog#setComparator(ViewerComparator)}
 	 *             instead
 	 */
-    public void setSorter(ViewerSorter sorter) {
+    @Deprecated
+	public void setSorter(ViewerSorter sorter) {
         fComparator = sorter;
     }
     
@@ -269,7 +270,8 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
      *  (non-Javadoc)
      * @see org.eclipse.jface.window.Window#open()
      */
-    public int open() {
+    @Override
+	public int open() {
         fIsEmpty = evaluateIfTreeEmpty(fInput);
         super.open();
         return getReturnCode();
@@ -282,7 +284,8 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
     /**
      * Handles cancel button pressed event.
      */
-    protected void cancelPressed() {
+    @Override
+	protected void cancelPressed() {
         setResult(null);
         super.cancelPressed();
     }
@@ -290,7 +293,8 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
     /*
      * @see SelectionStatusDialog#computeResult()
      */
-    protected void computeResult() {
+    @Override
+	protected void computeResult() {
         setResult(Arrays.asList(fViewer.getCheckedElements()));
     }
 
@@ -298,9 +302,11 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
      *  (non-Javadoc)
      * @see org.eclipse.jface.window.Window#create()
      */
-    public void create() {
+    @Override
+	public void create() {
         BusyIndicator.showWhile(null, new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 access$superCreate();
                 fViewer.setCheckedElements(getInitialElementSelections()
                         .toArray());
@@ -316,7 +322,8 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
      *  (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createDialogArea(Composite parent) {
+    @Override
+	protected Control createDialogArea(Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);
         Label messageLabel = createMessageArea(composite);
         CheckboxTreeViewer treeViewer = createTreeViewer(composite);
@@ -351,7 +358,8 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
         fViewer.setContentProvider(fContentProvider);
         fViewer.setLabelProvider(fLabelProvider);
         fViewer.addCheckStateListener(new ICheckStateListener() {
-            public void checkStateChanged(CheckStateChangedEvent event) {
+            @Override
+			public void checkStateChanged(CheckStateChangedEvent event) {
                 updateOKStatus();
             }
         });
@@ -397,7 +405,8 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
                 IDialogConstants.SELECT_ALL_ID, WorkbenchMessages.CheckedTreeSelectionDialog_select_all,
                 false);
         SelectionListener listener = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 Object[] viewerElements = fContentProvider.getElements(fInput);
                 if (fContainerMode) {
 					fViewer.setCheckedElements(viewerElements);
@@ -414,7 +423,8 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
                 IDialogConstants.DESELECT_ALL_ID, WorkbenchMessages.CheckedTreeSelectionDialog_deselect_all,
                 false);
         listener = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 fViewer.setCheckedElements(new Object[0]);
                 updateOKStatus();
             }

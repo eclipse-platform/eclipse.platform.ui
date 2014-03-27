@@ -110,6 +110,7 @@ public final class CommandStateProxy extends PersistentState {
 		this.preferenceStore = preferenceStore;
 	}
 
+	@Override
 	public final void addListener(final IStateListener listener) {
 		if (state == null) {
 			addListenerObject(listener);
@@ -118,6 +119,7 @@ public final class CommandStateProxy extends PersistentState {
 		}
 	}
 
+	@Override
 	public final void dispose() {
 		if (state != null) {
 			state.dispose();
@@ -131,6 +133,7 @@ public final class CommandStateProxy extends PersistentState {
 		}
 	}
 
+	@Override
 	public final Object getValue() {
 		if (loadState()) {
 			return state.getValue();
@@ -139,6 +142,7 @@ public final class CommandStateProxy extends PersistentState {
 		return null;
 	}
 
+	@Override
 	public final void load(final IPreferenceStore store,
 			final String preferenceKey) {
 		if (loadState() && state instanceof PersistentState) {
@@ -216,6 +220,7 @@ public final class CommandStateProxy extends PersistentState {
 		return true;
 	}
 
+	@Override
 	public final void removeListener(final IStateListener listener) {
 		if (state == null) {
 			removeListenerObject(listener);
@@ -224,6 +229,7 @@ public final class CommandStateProxy extends PersistentState {
 		}
 	}
 
+	@Override
 	public final void save(final IPreferenceStore store,
 			final String preferenceKey) {
 		if (loadState() && state instanceof PersistentState) {
@@ -231,6 +237,7 @@ public final class CommandStateProxy extends PersistentState {
 		}
 	}
 
+	@Override
 	public final void setId(final String id) {
 		super.setId(id);
 		if (state != null) {
@@ -238,18 +245,21 @@ public final class CommandStateProxy extends PersistentState {
 		}
 	}
 
+	@Override
 	public final void setShouldPersist(final boolean persisted) {
 		if (loadState(persisted) && state instanceof PersistentState) {
 			((PersistentState) state).setShouldPersist(persisted);
 		}
 	}
 
+	@Override
 	public final void setValue(final Object value) {
 		if (loadState()) {
 			state.setValue(value);
 		}
 	}
 
+	@Override
 	public final boolean shouldPersist() {
 		if (loadState() && state instanceof PersistentState) {
 			return ((PersistentState) state).shouldPersist();
@@ -258,6 +268,7 @@ public final class CommandStateProxy extends PersistentState {
 		return false;
 	}
 
+	@Override
 	public final String toString() {
 		if (state == null) {
 			return configurationElement.getAttribute(stateAttributeName);

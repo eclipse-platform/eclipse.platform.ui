@@ -55,6 +55,7 @@ public abstract class AbstractWorkingSetPulldownDelegate implements
 		super();
 	}
 
+	@Override
 	public void dispose() {
 		if (menubarMenu != null) {
 			menubarMenu.dispose();
@@ -66,6 +67,7 @@ public abstract class AbstractWorkingSetPulldownDelegate implements
 		}
 	}
 
+	@Override
 	public Menu getMenu(Control parent) {
 		if (toolbarMenu != null) {
 			toolbarMenu.dispose();
@@ -75,6 +77,7 @@ public abstract class AbstractWorkingSetPulldownDelegate implements
 		return toolbarMenu;
 	}
 
+	@Override
 	public Menu getMenu(Menu parent) {
 		if (menubarMenu != null) {
 			menubarMenu.dispose();
@@ -89,6 +92,7 @@ public abstract class AbstractWorkingSetPulldownDelegate implements
 	 */
 	private void initMenu(Menu menu) {
 		menu.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuShown(MenuEvent e) {
 				Menu m = (Menu) e.widget;
 				MenuItem[] items = m.getItems();
@@ -144,6 +148,7 @@ public abstract class AbstractWorkingSetPulldownDelegate implements
 		return typedSets;
 	}
 
+	@Override
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
 	}
@@ -152,6 +157,7 @@ public abstract class AbstractWorkingSetPulldownDelegate implements
 		return window;
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		this.selection = selection;
 	}

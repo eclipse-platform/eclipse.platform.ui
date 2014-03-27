@@ -68,17 +68,20 @@ public final class LegacyActionExpressionWrapper extends
 		this.expression = expression;
 	}
 
+	@Override
 	public final void collectExpressionInfo(final ExpressionInfo info) {
 		super.collectExpressionInfo(info);
 		info.markDefaultVariableAccessed();
 	}
 
+	@Override
 	protected final int computeHashCode() {
 		int hashCode = HASH_INITIAL * HASH_FACTOR + hashCode(getWindow());
 		hashCode = hashCode * HASH_FACTOR + hashCode(expression);
 		return hashCode;
 	}
 
+	@Override
 	public final boolean equals(final Object object) {
 		if (object instanceof LegacyActionExpressionWrapper) {
 			final LegacyActionExpressionWrapper that = (LegacyActionExpressionWrapper) object;
@@ -89,6 +92,7 @@ public final class LegacyActionExpressionWrapper extends
 		return false;
 	}
 
+	@Override
 	public final EvaluationResult evaluate(final IEvaluationContext context)
 			throws CoreException {
 		final EvaluationResult result = super.evaluate(context);
@@ -110,6 +114,7 @@ public final class LegacyActionExpressionWrapper extends
 		return EvaluationResult.FALSE;
 	}
 
+	@Override
 	public final String toString() {
 		final StringBuffer buffer = new StringBuffer();
 		buffer.append("LegacyActionExpressionWrapper("); //$NON-NLS-1$

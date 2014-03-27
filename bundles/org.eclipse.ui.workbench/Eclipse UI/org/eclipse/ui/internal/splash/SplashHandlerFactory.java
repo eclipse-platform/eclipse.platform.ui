@@ -136,6 +136,7 @@ public final class SplashHandlerFactory {
 			 * 
 			 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 			 */
+			@Override
 			public void run() throws Exception {
 				handler[0] = (AbstractSplashHandler) WorkbenchPlugin
 						.createExtension(splashElement,
@@ -147,6 +148,7 @@ public final class SplashHandlerFactory {
 			 * 
 			 * @see org.eclipse.jface.util.SafeRunnable#handleException(java.lang.Throwable)
 			 */
+			@Override
 			public void handleException(Throwable e) {
 				WorkbenchPlugin
 						.log("Problem creating splash implementation", e); //$NON-NLS-1$

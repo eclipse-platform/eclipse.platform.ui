@@ -24,7 +24,8 @@ public class EmptyPropertyPage extends PropertyPage {
      * Creates empty composite for this page content.
      */
 
-    protected Control createContents(Composite parent) {
+    @Override
+	protected Control createContents(Composite parent) {
         return new Composite(parent, SWT.NULL);
     }
 }

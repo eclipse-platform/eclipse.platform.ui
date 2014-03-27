@@ -74,10 +74,12 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 	 * Used as the global service locator's parent.
 	 */
 	public static final IServiceLocator GLOBAL_PARENT = new IServiceLocator() {
+		@Override
 		public Object getService(Class api) {
 			return null;
 		}
 
+		@Override
 		public boolean hasService(Class api) {
 			return false;
 		}
@@ -232,12 +234,14 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 		}
 	}
 
+	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		// we don't need to react to adds because we are not caching the extensions we find -
 		// next time a service is requested, we will look at all extensions again in
 		// loadFromRegistry
 	}
 
+	@Override
 	public void removeExtension(IExtension extension, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
@@ -246,6 +250,7 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 				Set locatorSet = handle.serviceLocators.keySet();
 				ServiceLocator[] locators = (ServiceLocator[]) locatorSet.toArray(new ServiceLocator[locatorSet.size()]);
 				Arrays.sort(locators, new Comparator(){
+					@Override
 					public int compare(Object o1, Object o2) {
 						ServiceLocator loc1 = (ServiceLocator) o1;
 						ServiceLocator loc2 = (ServiceLocator) o2;

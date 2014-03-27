@@ -130,6 +130,7 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceNode#disposeResources()
 	 */
+	@Override
 	public void disposeResources() {
         if (image != null) {
             image.dispose();
@@ -141,6 +142,7 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelImage()
 	 */
+	@Override
 	public Image getLabelImage() {		
         if (image == null) {
         	ImageDescriptor desc = getImageDescriptor();
@@ -155,6 +157,7 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelText()
 	 */
+	@Override
 	public String getLabelText() {
 		return getConfigurationElement().getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 	}
@@ -164,7 +167,8 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
      * 
      * @return the image descriptor
      */
-    public ImageDescriptor getImageDescriptor() {
+    @Override
+	public ImageDescriptor getImageDescriptor() {
     	if (imageDescriptor != null) {
 			return imageDescriptor;
 		}
@@ -189,6 +193,7 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
 	 */
+	@Override
 	public String getLocalId() {
 		return getId();
 	}
@@ -196,6 +201,7 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
 	 */
+	@Override
 	public String getPluginId() {
 		return pluginId;
 	}
@@ -203,7 +209,8 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IComparableContribution#getAdapter(java.lang.Class)
      */
-    public Object getAdapter(Class adapter)
+    @Override
+	public Object getAdapter(Class adapter)
     {
         if (adapter == IConfigurationElement.class)
             return getConfigurationElement();
@@ -213,7 +220,8 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IComparableContribution#getLabel()
      */
-    public String getLabel()
+    @Override
+	public String getLabel()
     {
         return getLabelText();
     }
@@ -221,7 +229,8 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IComparableContribution#getPriority()
      */
-    public int getPriority()
+    @Override
+	public int getPriority()
     {
         return priority;
     }

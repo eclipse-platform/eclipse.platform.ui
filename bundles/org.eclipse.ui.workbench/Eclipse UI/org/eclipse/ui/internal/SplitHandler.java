@@ -40,6 +40,7 @@ public class SplitHandler extends AbstractHandler {
 	public SplitHandler() {
 	}
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		// Only works for the active editor
 		IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);

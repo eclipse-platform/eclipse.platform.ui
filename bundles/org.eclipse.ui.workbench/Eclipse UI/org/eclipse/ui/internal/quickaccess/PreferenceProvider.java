@@ -31,15 +31,18 @@ public class PreferenceProvider extends QuickAccessProvider {
 	private QuickAccessElement[] cachedElements;
 	private Map<String, PreferenceElement> idToElement = new HashMap<String, PreferenceElement>();
 
+	@Override
 	public String getId() {
 		return "org.eclipse.ui.preferences"; //$NON-NLS-1$
 	}
 
+	@Override
 	public QuickAccessElement getElementForId(String id) {
 		getElements();
 		return idToElement.get(id);
 	}
 
+	@Override
 	public QuickAccessElement[] getElements() {
 		if (cachedElements == null) {
 			List<PreferenceElement> list = new ArrayList<PreferenceElement>();
@@ -68,15 +71,18 @@ public class PreferenceProvider extends QuickAccessProvider {
 		}
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return WorkbenchImages
 				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_NODE);
 	}
 
+	@Override
 	public String getName() {
 		return QuickAccessMessages.QuickAccess_Preferences;
 	}
 
+	@Override
 	protected void doReset() {
 		cachedElements = null;
 		idToElement.clear();

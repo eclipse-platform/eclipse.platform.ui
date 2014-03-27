@@ -56,6 +56,7 @@ public abstract class AbstractWizardRegistry implements IWizardRegistry {
 	 * 
 	 * @see org.eclipse.ui.wizards.IWizardRegistry#findCategory(java.lang.String)
 	 */
+	@Override
 	public IWizardCategory findCategory(String id) {
 		initialize();
 		return wizardElements.findCategory(id);
@@ -66,6 +67,7 @@ public abstract class AbstractWizardRegistry implements IWizardRegistry {
 	 * 
 	 * @see org.eclipse.ui.wizards.IWizardRegistry#findWizard(java.lang.String)
 	 */
+	@Override
 	public IWizardDescriptor findWizard(String id) {
 		initialize();
 		return wizardElements.findWizard(id, true);
@@ -76,6 +78,7 @@ public abstract class AbstractWizardRegistry implements IWizardRegistry {
 	 * 
 	 * @see org.eclipse.ui.wizards.IWizardRegistry#getPrimaryWizards()
 	 */
+	@Override
 	public IWizardDescriptor[] getPrimaryWizards() {
 		initialize();
 		return primaryWizards;
@@ -86,6 +89,7 @@ public abstract class AbstractWizardRegistry implements IWizardRegistry {
 	 * 
 	 * @see org.eclipse.ui.wizards.IWizardRegistry#getRootCategory()
 	 */
+	@Override
 	public IWizardCategory getRootCategory() {
 		initialize();
 		return wizardElements;

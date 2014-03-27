@@ -44,7 +44,8 @@ public abstract class DefaultStackPresentationSite implements
         return presentation;
     }
 
-    public int getState() {
+    @Override
+	public int getState() {
         return state;
     }
 
@@ -64,7 +65,8 @@ public abstract class DefaultStackPresentationSite implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.skins.IStackPresentationSite#selectPart(org.eclipse.ui.internal.skins.IPresentablePart)
      */
-    public void selectPart(IPresentablePart toSelect) {
+    @Override
+	public void selectPart(IPresentablePart toSelect) {
 
         if (presentation != null) {
             presentation.selectPart(toSelect);
@@ -81,7 +83,8 @@ public abstract class DefaultStackPresentationSite implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.skins.IPresentationSite#setState(int)
      */
-    public void setState(int newState) {
+    @Override
+	public void setState(int newState) {
         setPresentationState(newState);
     }
 
@@ -95,14 +98,16 @@ public abstract class DefaultStackPresentationSite implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.skins.IPresentablePart#isClosable()
      */
-    public boolean isCloseable(IPresentablePart part) {
+    @Override
+	public boolean isCloseable(IPresentablePart part) {
         return part.isCloseable();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.skins.IPresentationSite#dragStart(org.eclipse.ui.internal.skins.IPresentablePart, boolean)
      */
-    public void dragStart(IPresentablePart beingDragged, Point initialPosition,
+    @Override
+	public void dragStart(IPresentablePart beingDragged, Point initialPosition,
             boolean keyboard) {
     }
 
@@ -115,27 +120,33 @@ public abstract class DefaultStackPresentationSite implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.skins.IPresentationSite#dragStart(boolean)
      */
-    public void dragStart(Point initialPosition, boolean keyboard) {
+    @Override
+	public void dragStart(Point initialPosition, boolean keyboard) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.IStackPresentationSite#supportsState(int)
      */
-    public boolean supportsState(int state) {
+    @Override
+	public boolean supportsState(int state) {
         return true;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.IStackPresentationSite#getSelectedPart()
      */
-    public abstract IPresentablePart getSelectedPart();
+    @Override
+	public abstract IPresentablePart getSelectedPart();
 
-    public void addSystemActions(IMenuManager menuManager) {
+    @Override
+	public void addSystemActions(IMenuManager menuManager) {
 
     }
 
-    public abstract boolean isPartMoveable(IPresentablePart toMove);
+    @Override
+	public abstract boolean isPartMoveable(IPresentablePart toMove);
 
-    public abstract boolean isStackMoveable();
+    @Override
+	public abstract boolean isStackMoveable();
 
 }

@@ -83,7 +83,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements
      * 
      * @see org.eclipse.jface.preference.PreferencePage
      */
-    protected Control createContents(Composite parent) {
+    @Override
+	protected Control createContents(Composite parent) {
 
         // @issue if the product subclasses this page, then it should provide
         // the help content
@@ -203,6 +204,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
 
 		saveInterval.setPropertyChangeListener(new IPropertyChangeListener() {
 
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals(FieldEditor.IS_VALID)) {
 					setValid(saveInterval.isValid());
@@ -228,7 +230,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         doubleClickButton = createRadioButton(buttonComposite, label);
         doubleClickButton.addSelectionListener(new SelectionAdapter() {
 
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 selectClickMode(singleClickButton.getSelection());
             }
         });
@@ -238,7 +241,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         singleClickButton = createRadioButton(buttonComposite, label);
         singleClickButton.addSelectionListener(new SelectionAdapter() {
 
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 selectClickMode(singleClickButton.getSelection());
             }
         });
@@ -251,7 +255,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         selectOnHoverButton.setSelection(selectOnHover);
         selectOnHoverButton.addSelectionListener(new SelectionAdapter() {
 
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 selectOnHover = selectOnHoverButton.getSelection();
             }
         });
@@ -266,7 +271,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         openAfterDelayButton.setSelection(openAfterDelay);
         openAfterDelayButton.addSelectionListener(new SelectionAdapter() {
 
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 openAfterDelay = openAfterDelayButton.getSelection();
             }
         });
@@ -357,14 +363,16 @@ public class WorkbenchPreferencePage extends PreferencePage implements
      * 
      * @return the preference store for this plugin
      */
-    protected IPreferenceStore doGetPreferenceStore() {
+    @Override
+	protected IPreferenceStore doGetPreferenceStore() {
         return WorkbenchPlugin.getDefault().getPreferenceStore();
     }
 
     /**
      * @see IWorkbenchPreferencePage
      */
-    public void init(IWorkbench aWorkbench) {
+    @Override
+	public void init(IWorkbench aWorkbench) {
         IPreferenceStore store = getPreferenceStore();
         openOnSingleClick = store
                 .getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK);
@@ -376,7 +384,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements
     /**
      * The default button has been pressed.
      */
-    protected void performDefaults() {
+    @Override
+	protected void performDefaults() {
         IPreferenceStore store = getPreferenceStore();
 		saveInterval.loadDefault();
         stickyCycleButton.setSelection(store
@@ -406,7 +415,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements
     /**
      * The user has pressed Ok. Store/apply this page's values appropriately.
      */
-    public boolean performOk() {
+    @Override
+	public boolean performOk() {
         IPreferenceStore store = getPreferenceStore();
 
         // store the keep cycle part dialogs sticky preference

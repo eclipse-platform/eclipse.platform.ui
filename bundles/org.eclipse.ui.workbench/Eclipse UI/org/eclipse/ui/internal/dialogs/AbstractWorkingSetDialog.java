@@ -121,6 +121,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 				WorkbenchMessages.WorkingSetSelectionDialog_newButton_label,
 				false);
 		newButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				createWorkingSet();
 			}
@@ -134,6 +135,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 					false);
 			detailsButton.setEnabled(false);
 			detailsButton.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					editSelectedWorkingSet();
 				}
@@ -146,6 +148,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 					false);
 			removeButton.setEnabled(false);
 			removeButton.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					removeSelectedWorkingSets();
 				}
@@ -175,6 +178,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 				WorkbenchMessages.SelectionDialog_selectLabel,
 				false);
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				selectAllSets();
 			}
@@ -186,6 +190,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 				WorkbenchMessages.SelectionDialog_deselectLabel,
 				false);
 		deselectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				deselectAllSets();
 			}
@@ -293,6 +298,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.IWorkingSetSelectionDialog#getSelection()
 	 */
+	@Override
 	public IWorkingSet[] getSelection() {
 		return result;
 	}
@@ -300,6 +306,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.IWorkingSetSelectionDialog#setSelection(org.eclipse.ui.IWorkingSet[])
 	 */
+	@Override
 	public void setSelection(IWorkingSet[] selection) {
 		result = selection;
 	}
@@ -309,6 +316,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#open()
 	 */
+	@Override
 	public int open() {
 		addedWorkingSets = new ArrayList();
 		removedWorkingSets = new ArrayList();

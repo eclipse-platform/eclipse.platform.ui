@@ -56,6 +56,7 @@ public final class SourceProviderService implements ISourceProviderService,
 		this.locator = locator;
 	}
 
+	@Override
 	public final void dispose() {
 		final Iterator sourceProviderItr = sourceProviders.iterator();
 		while (sourceProviderItr.hasNext()) {
@@ -67,10 +68,12 @@ public final class SourceProviderService implements ISourceProviderService,
 		sourceProvidersByName.clear();
 	}
 
+	@Override
 	public final ISourceProvider getSourceProvider(final String sourceName) {
 		return (ISourceProvider) sourceProvidersByName.get(sourceName);
 	}
 
+	@Override
 	public final ISourceProvider[] getSourceProviders() {
 		return (ISourceProvider[]) sourceProviders
 				.toArray(new ISourceProvider[sourceProviders.size()]);

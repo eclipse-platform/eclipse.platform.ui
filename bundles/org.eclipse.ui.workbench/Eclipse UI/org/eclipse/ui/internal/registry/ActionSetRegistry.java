@@ -229,7 +229,8 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamichelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
      */
-    public void addExtension(IExtensionTracker tracker, IExtension extension) {
+    @Override
+	public void addExtension(IExtensionTracker tracker, IExtension extension) {
         String extensionPointUniqueIdentifier = extension.getExtensionPointUniqueIdentifier();
         if (extensionPointUniqueIdentifier.equals(getActionSetExtensionPoint().getUniqueIdentifier())) {
             addActionSets(tracker, extension);
@@ -307,7 +308,8 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
      */
-    public void removeExtension(IExtension extension, Object[] objects) {
+    @Override
+	public void removeExtension(IExtension extension, Object[] objects) {
         String extensionPointUniqueIdentifier = extension.getExtensionPointUniqueIdentifier();
         if (extensionPointUniqueIdentifier.equals(getActionSetExtensionPoint().getUniqueIdentifier())) {
             removeActionSets(objects);

@@ -58,7 +58,8 @@ public class WorkbenchTestable extends TestableObject {
         if (getTestHarness() != null) {
         	// don't use a job, since tests often wait for all jobs to complete before proceeding
             Runnable runnable = new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
 					// disable workbench auto-save during tests
 					if ("true".equalsIgnoreCase(System.getProperty(PlatformUI.PLUGIN_ID + ".testsDisableWorkbenchAutoSave"))) { //$NON-NLS-1$ //$NON-NLS-2$
 						if (WorkbenchTestable.this.workbench instanceof Workbench) {
@@ -97,7 +98,8 @@ public class WorkbenchTestable extends TestableObject {
      * <code>TestableObject</code> method ensures that the workbench
      * has been set.
      */
-    public void testingStarting() {
+    @Override
+	public void testingStarting() {
         Assert.isNotNull(workbench);
         oldAutomatedMode = ErrorDialog.AUTOMATED_MODE;
         ErrorDialog.AUTOMATED_MODE = true;
@@ -111,7 +113,8 @@ public class WorkbenchTestable extends TestableObject {
      * runs the test in a <code>syncExec</code>, then flushes the
      * event queue again.
      */
-    public void runTest(Runnable testRunnable) {
+    @Override
+	public void runTest(Runnable testRunnable) {
         Assert.isNotNull(workbench);
         display.syncExec(testRunnable);
     }
@@ -121,10 +124,12 @@ public class WorkbenchTestable extends TestableObject {
      * <code>TestableObject</code> method flushes the event queue,
      * then closes the workbench.
      */
-    public void testingFinished() {
+    @Override
+	public void testingFinished() {
         // force events to be processed, and ensure the close is done in the UI thread
         display.syncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 Assert.isTrue(workbench.close());
             }
         });

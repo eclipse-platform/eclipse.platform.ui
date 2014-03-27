@@ -61,6 +61,7 @@ public class WorkbenchStatusDialogManagerImpl {
 
 	private final class StatusDialogDisposeListener implements DisposeListener {
 
+		@Override
 		public void widgetDisposed(org.eclipse.swt.events.DisposeEvent e) {
 			cleanUp();
 		}
@@ -347,6 +348,7 @@ public class WorkbenchStatusDialogManagerImpl {
 	 * @param labelProvider
 	 *            a label provider to be used when displaying status adapters.
 	 */
+	@Deprecated
 	public void setStatusListLabelProvider(ITableLabelProvider labelProvider) {
 		Assert.isLegal(labelProvider != null, "Label Provider cannot be null"); //$NON-NLS-1$
 		dialogState.put(IStatusDialogConstants.CUSTOM_LABEL_PROVIDER,

@@ -109,7 +109,8 @@ public class RGBContrastFactory implements IColorFactory, IExecutableExtension {
         return (0.4000 * lp) + (0.4000 * mp) + (0.2000 * sp);
     }
 
-    public RGB createColor() {
+    @Override
+	public RGB createColor() {
         /**
          * Determine which pair has a higher contrast by selecting
          * the colour with the furthest distance in lightness.
@@ -153,7 +154,8 @@ public class RGBContrastFactory implements IColorFactory, IExecutableExtension {
      * 
      * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
      */
-    public void setInitializationData(IConfigurationElement config,
+    @Override
+	public void setInitializationData(IConfigurationElement config,
             String propertyName, Object data) throws CoreException {
         if (data instanceof Hashtable) {
             Hashtable table = (Hashtable) data;

@@ -120,11 +120,13 @@ public final class HandlerPersistence extends RegistryPersistence {
 		handlerActivations.clear();
 	}
 
+	@Override
 	public final void dispose() {
 		super.dispose();
 		clearActivations(handlerService);
 	}
 
+	@Override
 	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
 		return false;
 	}
@@ -162,6 +164,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 	 *            The handler service which should be populated with the values
 	 *            from the registry; must not be <code>null</code>.
 	 */
+	@Override
 	protected final void read() {
 		super.read();
 		reRead();

@@ -64,6 +64,7 @@ public class ModifyWorkingSetDelegate extends
 			super(WorkbenchMessages.NewWorkingSet);
 		}
 
+		@Override
 		public void run() {
 			IWorkingSetManager manager = WorkbenchPlugin.getDefault()
 			.getWorkingSetManager();
@@ -105,6 +106,7 @@ public class ModifyWorkingSetDelegate extends
 			setImageDescriptor(set.getImageDescriptor());
 		}
 
+		@Override
 		public void run() {
 
 			Collection oldElements = Arrays.asList(set.getElements());
@@ -123,6 +125,7 @@ public class ModifyWorkingSetDelegate extends
 	}
 	
 	private QuickMenuCreator contextMenuCreator = new QuickMenuCreator() {
+		@Override
 		protected void fillMenu(IMenuManager menu) {
 			ModifyWorkingSetDelegate.this.fillMenu(menu);
 		}
@@ -132,6 +135,7 @@ public class ModifyWorkingSetDelegate extends
 
 	private IPropertyChangeListener listener = new IPropertyChangeListener() {
 
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			refreshEnablement();
 		}
@@ -157,6 +161,7 @@ public class ModifyWorkingSetDelegate extends
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		contextMenuCreator.createMenu();
 	}
@@ -164,6 +169,7 @@ public class ModifyWorkingSetDelegate extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		if (event.type == SWT.KeyDown || event.type == SWT.KeyUp)
 			run(action);
@@ -174,6 +180,7 @@ public class ModifyWorkingSetDelegate extends
 	 * 
 	 * @see org.eclipse.ui.internal.actions.AbstractWorkingSetPulldownDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		super.init(window);
 		getWindow().getWorkbench().getWorkingSetManager()
@@ -185,6 +192,7 @@ public class ModifyWorkingSetDelegate extends
 	 * 
 	 * @see org.eclipse.ui.internal.actions.AbstractWorkingSetPulldownDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {
 		getWindow().getWorkbench().getWorkingSetManager()
 				.removePropertyChangeListener(listener);
@@ -192,6 +200,7 @@ public class ModifyWorkingSetDelegate extends
 		contextMenuCreator.dispose();
 	}
 	
+	@Override
 	public void fillMenu(Menu menu) {
 		List menuItems = getItems();
 		for (int i = 0; i < menuItems.size(); i++) {
@@ -322,6 +331,7 @@ public class ModifyWorkingSetDelegate extends
 	 * @see org.eclipse.ui.internal.actions.AbstractWorkingSetPulldownDelegate#selectionChanged(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction actionProxy, ISelection selection) {
 		super.selectionChanged(actionProxy, selection);
 		if (selection instanceof IStructuredSelection) {
@@ -349,6 +359,7 @@ public class ModifyWorkingSetDelegate extends
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
 	 *      java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) {
 		if (data instanceof String) {
@@ -359,6 +370,7 @@ public class ModifyWorkingSetDelegate extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 		this.actionProxy = action;
 	}

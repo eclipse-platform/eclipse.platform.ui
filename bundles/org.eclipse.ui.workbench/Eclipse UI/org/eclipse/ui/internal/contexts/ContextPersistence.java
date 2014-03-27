@@ -121,6 +121,7 @@ public final class ContextPersistence extends RegistryPersistence {
 		this.contextManager = contextManager;
 	}
 
+	@Override
 	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
 		final IExtensionDelta[] acceleratorScopeDeltas = event
 				.getExtensionDeltas(PlatformUI.PLUGIN_ID,
@@ -149,6 +150,7 @@ public final class ContextPersistence extends RegistryPersistence {
 	 *            The context manager which should be populated with the values
 	 *            from the registry; must not be <code>null</code>.
 	 */
+	@Override
 	protected final void read() {
 		super.read();
 		reRead();

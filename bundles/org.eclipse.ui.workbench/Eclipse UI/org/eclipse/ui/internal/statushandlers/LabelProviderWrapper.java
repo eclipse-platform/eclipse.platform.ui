@@ -60,6 +60,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 		 * org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse
 		 * .jface.viewers.ILabelProviderListener)
 		 */
+		@Override
 		public void addListener(ILabelProviderListener listener) {
 			// Do nothing
 		}
@@ -69,6 +70,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 		 * 
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 			manager.dispose();
 		}
@@ -80,6 +82,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java
 		 * .lang.Object, int)
 		 */
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			Image result = null;
 			if (element != null) {
@@ -103,6 +106,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.
 		 * lang.Object, int)
 		 */
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			StatusAdapter statusAdapter = (StatusAdapter) element;
 			String text = WorkbenchMessages.WorkbenchStatusDialog_ProblemOccurred;
@@ -163,6 +167,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 		 * org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java
 		 * .lang.Object, java.lang.String)
 		 */
+		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}
@@ -174,6 +179,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 		 * org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse
 		 * .jface.viewers.ILabelProviderListener)
 		 */
+		@Override
 		public void removeListener(ILabelProviderListener listener) {
 			// Do nothing
 		}
@@ -203,6 +209,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang
 	 * .Object, int)
 	 */
+	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		return labelProvider.getColumnImage(element, columnIndex);
 	}
@@ -214,6 +221,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang
 	 * .Object, int)
 	 */
+	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		return getLabelProvider().getColumnText(element, columnIndex);
 	}
@@ -225,6 +233,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	 * org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.
 	 * jface.viewers.ILabelProviderListener)
 	 */
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 		getLabelProvider().addListener(listener);
 	}
@@ -235,6 +244,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		boolean modalitySwitch = ((Boolean) dialogState.get(IStatusDialogConstants.MODALITY_SWITCH))
 				.booleanValue();
@@ -250,6 +260,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	 * org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang
 	 * .Object, java.lang.String)
 	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return getLabelProvider().isLabelProperty(element, property);
 	}
@@ -261,6 +272,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	 * org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse
 	 * .jface.viewers.ILabelProviderListener)
 	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		getLabelProvider().removeListener(listener);
 	}
@@ -506,6 +518,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	 * org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.
 	 * viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public int compare(Viewer testViewer, Object o1, Object o2) {
 		if (o1 instanceof StatusAdapter && o2 instanceof StatusAdapter) {
 			return compare((StatusAdapter) o1, (StatusAdapter) o2);

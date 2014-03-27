@@ -72,7 +72,8 @@ public class ThemeElementCategory implements IPluginContribution,
     /**
      * @return Returns the description.
      */
-    public String getDescription() {
+    @Override
+	public String getDescription() {
         return description;
     }
 
@@ -86,28 +87,32 @@ public class ThemeElementCategory implements IPluginContribution,
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IThemeElementDefinition#getId()
      */
-    public String getId() {
+    @Override
+	public String getId() {
         return id;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IThemeElementDefinition#getLabel()
      */
-    public String getName() {
+    @Override
+	public String getName() {
         return label;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPluginContribution#getLocalId()
      */
-    public String getLocalId() {
+    @Override
+	public String getLocalId() {
         return id;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPluginContribution#getPluginId()
      */
-    public String getPluginId() {
+    @Override
+	public String getPluginId() {
         return pluginId;
     }
 
@@ -121,7 +126,8 @@ public class ThemeElementCategory implements IPluginContribution,
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if (obj instanceof ThemeElementCategory) {
             return getId().equals(((ThemeElementCategory)obj).getId());
         }
@@ -131,7 +137,8 @@ public class ThemeElementCategory implements IPluginContribution,
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return id.hashCode();
     }    
 }

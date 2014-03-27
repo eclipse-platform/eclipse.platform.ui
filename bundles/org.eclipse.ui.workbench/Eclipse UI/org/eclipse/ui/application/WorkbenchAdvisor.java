@@ -123,6 +123,7 @@ public abstract class WorkbenchAdvisor {
 	 * 
 	 * @deprecated use {@link ActionBarAdvisor#FILL_PROXY instead}
 	 */
+	@Deprecated
 	public static final int FILL_PROXY = ActionBarAdvisor.FILL_PROXY;
 
 	/**
@@ -132,6 +133,7 @@ public abstract class WorkbenchAdvisor {
 	 * 
 	 * @deprecated use {@link ActionBarAdvisor#FILL_MENU_BAR instead}
 	 */
+	@Deprecated
 	public static final int FILL_MENU_BAR = ActionBarAdvisor.FILL_MENU_BAR;
 
 	/**
@@ -141,6 +143,7 @@ public abstract class WorkbenchAdvisor {
 	 * 
 	 * @deprecated use {@link ActionBarAdvisor#FILL_COOL_BAR instead}
 	 */
+	@Deprecated
 	public static final int FILL_COOL_BAR = ActionBarAdvisor.FILL_COOL_BAR;
 
 	/**
@@ -150,6 +153,7 @@ public abstract class WorkbenchAdvisor {
 	 * 
 	 * @deprecated use {@link ActionBarAdvisor#FILL_STATUS_LINE instead}
 	 */
+	@Deprecated
 	public static final int FILL_STATUS_LINE = ActionBarAdvisor.FILL_STATUS_LINE;
 
 	/**
@@ -406,6 +410,7 @@ public abstract class WorkbenchAdvisor {
 	 *             {@link WorkbenchWindowAdvisor#preWindowOpen()} instead
 	 * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
 	 */
+	@Deprecated
 	public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
 		// do nothing
 	}
@@ -456,6 +461,7 @@ public abstract class WorkbenchAdvisor {
 	 * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
 	 * @see WorkbenchWindowAdvisor#createActionBarAdvisor(IActionBarConfigurer)
 	 */
+	@Deprecated
 	public void fillActionBars(IWorkbenchWindow window,
 			IActionBarConfigurer configurer, int flags) {
 		// do nothing by default
@@ -482,6 +488,7 @@ public abstract class WorkbenchAdvisor {
 	 *             {@link WorkbenchWindowAdvisor#postWindowRestore()} instead
 	 * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
 	 */
+	@Deprecated
 	public void postWindowRestore(IWorkbenchWindowConfigurer configurer)
 			throws WorkbenchException {
 		// do nothing
@@ -508,6 +515,7 @@ public abstract class WorkbenchAdvisor {
 	 *             {@link WorkbenchWindowAdvisor#openIntro()} instead
 	 * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
 	 */
+	@Deprecated
 	public void openIntro(IWorkbenchWindowConfigurer configurer) {
 		if (introOpened) {
 			return;
@@ -552,6 +560,7 @@ public abstract class WorkbenchAdvisor {
 	 *             {@link WorkbenchWindowAdvisor#postWindowCreate()} instead
 	 * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
 	 */
+	@Deprecated
 	public void postWindowCreate(IWorkbenchWindowConfigurer configurer) {
 		// do nothing
 	}
@@ -575,6 +584,7 @@ public abstract class WorkbenchAdvisor {
 	 *             {@link WorkbenchWindowAdvisor#postWindowOpen()} instead
 	 * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
 	 */
+	@Deprecated
 	public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
 		// do nothing
 	}
@@ -605,6 +615,7 @@ public abstract class WorkbenchAdvisor {
 	 *             {@link WorkbenchWindowAdvisor#preWindowShellClose()} instead
 	 * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
 	 */
+	@Deprecated
 	public boolean preWindowShellClose(IWorkbenchWindowConfigurer configurer) {
 		// do nothing, but allow the close() to proceed
 		return true;
@@ -628,6 +639,7 @@ public abstract class WorkbenchAdvisor {
 	 *             {@link WorkbenchWindowAdvisor#postWindowClose()} instead
 	 * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
 	 */
+	@Deprecated
 	public void postWindowClose(IWorkbenchWindowConfigurer configurer) {
 		// do nothing
 	}
@@ -652,6 +664,7 @@ public abstract class WorkbenchAdvisor {
 	 *             {@link ActionBarAdvisor#isApplicationMenu(String)} instead
 	 * @see WorkbenchWindowAdvisor#createActionBarAdvisor(IActionBarConfigurer)
 	 */
+	@Deprecated
 	public boolean isApplicationMenu(IWorkbenchWindowConfigurer configurer,
 			String menuId) {
 		// default: not an application menu
@@ -736,6 +749,7 @@ public abstract class WorkbenchAdvisor {
 	 *             instead
 	 * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
 	 */
+	@Deprecated
 	public void createWindowContents(IWorkbenchWindowConfigurer configurer,
 			Shell shell) {
 		((WorkbenchWindowConfigurer) configurer).createDefaultContents(shell);
@@ -766,6 +780,7 @@ public abstract class WorkbenchAdvisor {
 			/* (non-Javadoc)
 			 * @see java.lang.Thread#run()
 			 */
+			@Override
 			public void run() {
 				try {
 					//declare us to be a startup thread so that our syncs will be executed 
@@ -773,6 +788,7 @@ public abstract class WorkbenchAdvisor {
 					final IWorkbenchConfigurer [] myConfigurer = new IWorkbenchConfigurer[1];
 					StartupThreading.runWithoutExceptions(new StartupRunnable() {
 	
+						@Override
 						public void runWithException() throws Throwable {
 							myConfigurer[0] = getWorkbenchConfigurer();
 							

@@ -42,6 +42,7 @@ public class ViewSite extends PartSite implements IViewSite {
 	 * 
 	 * @see org.eclipse.ui.IViewSite#getSecondaryId()
 	 */
+	@Override
 	public String getSecondaryId() {
 		MPart part = getModel();
 

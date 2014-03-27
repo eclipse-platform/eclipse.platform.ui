@@ -39,7 +39,8 @@ public abstract class AbstractBooleanListener extends AbstractPropertyListener {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.AbstractPropertyListener#update()
      */
-    protected void update() {
+    @Override
+	protected void update() {
         handleValue(PropertyUtil.get(map, propertyId, defaultValue));
     }
 

@@ -157,7 +157,8 @@ public final class Descriptors {
     }
     
     private static DisposeListener disposeListener = new DisposeListener() {
-        public void widgetDisposed(DisposeEvent e) {
+        @Override
+		public void widgetDisposed(DisposeEvent e) {
             doDispose(e.widget);
         }
     };

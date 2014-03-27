@@ -58,7 +58,8 @@ public class EditorSite extends PartSite implements IEditorSite {
 		serviceLocator.registerService(IEditorPart.class, (IEditorPart) getPart());
 	}
 	
-    public void setActionBars(SubActionBars bars) {
+    @Override
+	public void setActionBars(SubActionBars bars) {
         super.setActionBars(bars);
         
         if (bars instanceof IActionBars2) {
@@ -68,14 +69,16 @@ public class EditorSite extends PartSite implements IEditorSite {
         }
     }
     
-    public void activateActionBars(boolean forceVisibility) {
+    @Override
+	public void activateActionBars(boolean forceVisibility) {
         if (ab != null) {
             ab.activate(forceVisibility);
         }
         super.activateActionBars(forceVisibility);
     }
 
-    public void deactivateActionBars(boolean forceHide) {
+    @Override
+	public void deactivateActionBars(boolean forceHide) {
         if (ab != null) {
             ab.deactivate(forceHide);
         }
@@ -93,7 +96,8 @@ public class EditorSite extends PartSite implements IEditorSite {
      *
      * @return the editor action bar contributor
      */
-    public IEditorActionBarContributor getActionBarContributor() {
+    @Override
+	public IEditorActionBarContributor getActionBarContributor() {
         EditorActionBars bars = (EditorActionBars) getActionBars();
         if (bars != null) {
 			return bars.getEditorContributor();
@@ -121,11 +125,13 @@ public class EditorSite extends PartSite implements IEditorSite {
         return (IEditorPart) getPart();
     }
 
-    protected String getInitialScopeId() {
+    @Override
+	protected String getInitialScopeId() {
         return "org.eclipse.ui.textEditorScope"; //$NON-NLS-1$
     }
     
-    public void dispose() {
+    @Override
+	public void dispose() {
         super.dispose();
         
         if (ab != null) {
@@ -134,14 +140,16 @@ public class EditorSite extends PartSite implements IEditorSite {
         }
     }
     
-    public final void registerContextMenu(final MenuManager menuManager,
+    @Override
+	public final void registerContextMenu(final MenuManager menuManager,
             final ISelectionProvider selectionProvider,
             final boolean includeEditorInput) {
         registerContextMenu(getId(), menuManager, selectionProvider,
                 includeEditorInput);
     }
     
-    public final void registerContextMenu(final String menuId,
+    @Override
+	public final void registerContextMenu(final String menuId,
             final MenuManager menuManager,
             final ISelectionProvider selectionProvider,
             final boolean includeEditorInput) {

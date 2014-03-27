@@ -24,14 +24,16 @@ public class ProgressLabelProvider extends LabelProvider {
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
      */
-    public Image getImage(Object element) {
+    @Override
+	public Image getImage(Object element) {
         return ((JobTreeElement) element).getDisplayImage();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
      */
-    public String getText(Object element) {
+    @Override
+	public String getText(Object element) {
         return ((JobTreeElement) element).getDisplayString();
     }
 

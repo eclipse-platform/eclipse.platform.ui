@@ -64,7 +64,8 @@ public class MultiPageSelectionProvider implements IPostSelectionProvider {
     /* (non-Javadoc)
      * Method declared on <code>ISelectionProvider</code>.
      */
-    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+    @Override
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
         listeners.add(listener);
     }
 
@@ -74,7 +75,8 @@ public class MultiPageSelectionProvider implements IPostSelectionProvider {
      * @param listener a selection changed listener
      * @since 3.2
      */
-    public void addPostSelectionChangedListener(ISelectionChangedListener listener) {
+    @Override
+	public void addPostSelectionChangedListener(ISelectionChangedListener listener) {
     	postListeners.add(listener);
 	}
 
@@ -106,7 +108,8 @@ public class MultiPageSelectionProvider implements IPostSelectionProvider {
 		for (int i = 0; i < listeners.length; ++i) {
             final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
             SafeRunner.run(new SafeRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     l.selectionChanged(event);
                 }
             });
@@ -124,7 +127,8 @@ public class MultiPageSelectionProvider implements IPostSelectionProvider {
     /* (non-Javadoc)
      * Method declared on <code>ISelectionProvider</code>.
      */
-    public ISelection getSelection() {
+    @Override
+	public ISelection getSelection() {
         IEditorPart activeEditor = multiPageEditor.getActiveEditor();
         if (activeEditor != null) {
             ISelectionProvider selectionProvider = activeEditor.getSite()
@@ -139,7 +143,8 @@ public class MultiPageSelectionProvider implements IPostSelectionProvider {
     /* (non-JavaDoc)
      * Method declaed on <code>ISelectionProvider</code>.
      */
-    public void removeSelectionChangedListener(
+    @Override
+	public void removeSelectionChangedListener(
             ISelectionChangedListener listener) {
         listeners.remove(listener);
     }
@@ -150,14 +155,16 @@ public class MultiPageSelectionProvider implements IPostSelectionProvider {
      * @param listener a selection changed listener
      * @since 3.2
      */
-    public void removePostSelectionChangedListener(ISelectionChangedListener listener) {
+    @Override
+	public void removePostSelectionChangedListener(ISelectionChangedListener listener) {
     	postListeners.remove(listener);
 	}
 
 	/* (non-Javadoc)
      * Method declared on <code>ISelectionProvider</code>.
      */
-    public void setSelection(ISelection selection) {
+    @Override
+	public void setSelection(ISelection selection) {
         IEditorPart activeEditor = multiPageEditor.getActiveEditor();
         if (activeEditor != null) {
             ISelectionProvider selectionProvider = activeEditor.getSite()

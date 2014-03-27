@@ -37,6 +37,7 @@ import org.eclipse.ui.keys.IBindingService;
  *             {@link org.eclipse.jface.fieldassist.ControlDecoration} and
  *             {@link ContentAssistCommandAdapter} instead of this class.
  */
+@Deprecated
 public class ContentAssistField extends DecoratedField {
 
 	private ContentAssistCommandAdapter adapter;

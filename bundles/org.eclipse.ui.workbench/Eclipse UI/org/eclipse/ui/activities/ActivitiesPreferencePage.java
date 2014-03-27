@@ -94,7 +94,8 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createContents(Composite parent) {
+    @Override
+	protected Control createContents(Composite parent) {
     	initializeDialogUnits(parent);
     	
         Composite composite = new Composite(parent, SWT.NONE);
@@ -122,7 +123,8 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
      */
-    public void init(IWorkbench aWorkbench) {
+    @Override
+	public void init(IWorkbench aWorkbench) {
         this.workbench = aWorkbench;
         setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
     }
@@ -130,7 +132,8 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.IPreferencePage#performOk()
      */
-    public boolean performOk() {
+    @Override
+	public boolean performOk() {
         enabler.updateActivityStates();
         workbench.getActivitySupport().setEnabledActivityIds(workingCopy.getEnabledActivityIds());
         
@@ -144,7 +147,8 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
      */
-    protected void performDefaults() {
+    @Override
+	protected void performDefaults() {
         enabler.restoreDefaults();
         activityPromptButton.setSelection(getPreferenceStore()
                 .getDefaultBoolean(
@@ -155,6 +159,7 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 		if (data instanceof Hashtable) {
 			strings.putAll((Hashtable)data);

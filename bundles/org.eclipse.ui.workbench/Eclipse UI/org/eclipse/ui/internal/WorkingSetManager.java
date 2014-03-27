@@ -52,6 +52,7 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements
 	 * 
 	 * @see org.eclipse.ui.IWorkingSetManager
 	 */
+	@Override
 	public void addRecentWorkingSet(IWorkingSet workingSet) {
 		internalAddRecentWorkingSet(workingSet);
 		saveState();
@@ -62,6 +63,7 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements
 	 * 
 	 * @see org.eclipse.ui.IWorkingSetManager
 	 */
+	@Override
 	public void addWorkingSet(IWorkingSet workingSet) {
 		super.addWorkingSet(workingSet);
 		saveState();
@@ -87,6 +89,7 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements
 	 * 
 	 * @see org.eclipse.ui.IWorkingSetManager
 	 */
+	@Override
 	public void removeWorkingSet(IWorkingSet workingSet) {
 		if (internalRemoveWorkingSet(workingSet)) {
 			saveState();
@@ -153,6 +156,7 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements
 	 *            the changed property. one of CHANGE_WORKING_SET_CONTENT_CHANGE
 	 *            and CHANGE_WORKING_SET_NAME_CHANGE
 	 */
+	@Override
 	public void workingSetChanged(IWorkingSet changedWorkingSet,
 			String propertyChangeId, Object oldValue) {
 		saveState();

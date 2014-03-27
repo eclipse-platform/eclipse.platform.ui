@@ -55,7 +55,8 @@ public class WorkbenchPreview implements IThemePreview {
     private ViewForm viewForm;
 
     private IPropertyChangeListener fontAndColorListener = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             if (!disposed) {
                 setColorsAndFonts();
                 //viewMessage.setSize(viewMessage.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
@@ -67,7 +68,8 @@ public class WorkbenchPreview implements IThemePreview {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPresentationPreview#createControl(org.eclipse.swt.widgets.Composite, org.eclipse.ui.themes.ITheme)
      */
-    public void createControl(Composite parent, ITheme currentTheme) {
+    @Override
+	public void createControl(Composite parent, ITheme currentTheme) {
         this.theme = currentTheme;
         folder = new CTabFolder(parent, SWT.BORDER);
         folder.setUnselectedCloseVisible(false);
@@ -162,7 +164,8 @@ public class WorkbenchPreview implements IThemePreview {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPresentationPreview#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         disposed = true;
         theme.removePropertyChangeListener(fontAndColorListener);
     }

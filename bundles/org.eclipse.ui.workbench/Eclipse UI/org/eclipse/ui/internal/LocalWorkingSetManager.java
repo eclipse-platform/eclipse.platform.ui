@@ -26,6 +26,7 @@ public class LocalWorkingSetManager extends AbstractWorkingSetManager implements
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void removeWorkingSet(IWorkingSet workingSet) {
 		internalRemoveWorkingSet(workingSet);
 	}
@@ -33,6 +34,7 @@ public class LocalWorkingSetManager extends AbstractWorkingSetManager implements
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void addRecentWorkingSet(IWorkingSet workingSet) {
 		internalAddRecentWorkingSet(workingSet);
 	}
@@ -40,6 +42,7 @@ public class LocalWorkingSetManager extends AbstractWorkingSetManager implements
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void saveState(IMemento memento) {
         saveWorkingSetState(memento);
         saveMruList(memento);
@@ -48,6 +51,7 @@ public class LocalWorkingSetManager extends AbstractWorkingSetManager implements
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void restoreState(IMemento memento) {
 		Assert.isNotNull(memento);
 		Assert.isTrue(getWorkingSets().length == 0);

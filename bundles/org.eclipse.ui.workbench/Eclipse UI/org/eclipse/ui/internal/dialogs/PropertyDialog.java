@@ -158,6 +158,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 	/**
 	 * Get the name of the selected item preference
 	 */
+	@Override
 	protected String getSelectedNodePreference() {
 		return lastPropertyId;
 	}
@@ -165,6 +166,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 	/**
 	 * Get the name of the selected item preference
 	 */
+	@Override
 	protected void setSelectedNodePreference(String pageId) {
 		lastPropertyId = pageId;
 	}
@@ -176,6 +178,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 	 * 
 	 * @return a string, the contributionType
 	 */
+	@Override
 	protected String getContributionType() {
 		return IContributionService.TYPE_PROPERTY;
 	}

@@ -98,7 +98,8 @@ public class WizardsRegistryReader extends RegistryReader {
     private static final Comparator comparer = new Comparator() {
         private Collator collator = Collator.getInstance();
 
-        public int compare(Object arg0, Object arg1) {
+        @Override
+		public int compare(Object arg0, Object arg1) {
             String s1 = ((CategoryNode) arg0).getPath();
             String s2 = ((CategoryNode) arg1).getPath();
             return collator.compare(s1, s2);
@@ -421,7 +422,8 @@ public class WizardsRegistryReader extends RegistryReader {
     /**
      * Implement this method to read element attributes.
      */
-    public boolean readElement(IConfigurationElement element) {
+    @Override
+	public boolean readElement(IConfigurationElement element) {
         if (element.getName().equals(IWorkbenchRegistryConstants.TAG_CATEGORY)) {
             deferCategory(element);
             return true;

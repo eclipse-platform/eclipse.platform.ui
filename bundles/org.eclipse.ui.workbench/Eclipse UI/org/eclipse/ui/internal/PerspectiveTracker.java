@@ -68,19 +68,23 @@ public class PerspectiveTracker extends PerspectiveAdapter implements
         }
     }
 
-    public void pageActivated(IWorkbenchPage page) {
+    @Override
+	public void pageActivated(IWorkbenchPage page) {
         update();
     }
 
-    public void pageClosed(IWorkbenchPage page) {
+    @Override
+	public void pageClosed(IWorkbenchPage page) {
         update();
     }
 
-    public void pageOpened(IWorkbenchPage page) {
+    @Override
+	public void pageOpened(IWorkbenchPage page) {
         // ignore
     }
 
-    public void perspectiveActivated(IWorkbenchPage page,
+    @Override
+	public void perspectiveActivated(IWorkbenchPage page,
             IPerspectiveDescriptor perspective) {
         update();
     }

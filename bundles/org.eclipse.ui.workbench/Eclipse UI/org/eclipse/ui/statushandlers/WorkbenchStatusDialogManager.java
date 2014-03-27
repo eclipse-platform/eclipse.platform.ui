@@ -96,6 +96,7 @@ public class WorkbenchStatusDialogManager {
 	 * @deprecated As of 3.4 the <code>parentShell<code> is ignored
 	 * @see #WorkbenchStatusDialogManager(int, String)
 	 */
+	@Deprecated
 	public WorkbenchStatusDialogManager(Shell parentShell, int displayMask,
 			String dialogTitle) {
 		this(displayMask, dialogTitle);
@@ -122,6 +123,7 @@ public class WorkbenchStatusDialogManager {
 	 * @deprecated As of 3.4 the <code>parentShell<code> is ignored
 	 * @see #WorkbenchStatusDialogManager(String)
 	 */
+	@Deprecated
 	public WorkbenchStatusDialogManager(Shell parentShell, String dialogTitle) {
 		this(dialogTitle);
 	}
@@ -205,6 +207,7 @@ public class WorkbenchStatusDialogManager {
 	 * @param labelProvider
 	 *            a label provider to be used when displaying status adapters.
 	 */
+	@Deprecated
 	public void setStatusListLabelProvider(ITableLabelProvider labelProvider) {
 		manager.setStatusListLabelProvider(labelProvider);
 	}

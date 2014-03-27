@@ -77,6 +77,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
      * @since 3.4
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#PERSPECTIVES_SHOW_PERSPECTIVE}
 	 */
+	@Deprecated
 	protected static final String SHOW_PERSP_ID = IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE;
 
 	private IPerspectiveRegistry reg;
@@ -88,7 +89,8 @@ public abstract class PerspectiveMenu extends ContributionItem {
     private boolean dirty = true;
 
     private IMenuListener menuListener = new IMenuListener() {
-        public void menuAboutToShow(IMenuManager manager) {
+        @Override
+		public void menuAboutToShow(IMenuManager manager) {
             manager.markDirty();
             dirty = true;
         }
@@ -97,7 +99,8 @@ public abstract class PerspectiveMenu extends ContributionItem {
     private Comparator comparator = new Comparator() {
         private Collator collator = Collator.getInstance();
 
-        public int compare(Object ob1, Object ob2) {
+        @Override
+		public int compare(Object ob1, Object ob2) {
             IPerspectiveDescriptor d1 = (IPerspectiveDescriptor) ob1;
             IPerspectiveDescriptor d2 = (IPerspectiveDescriptor) ob2;
             return collator.compare(d1.getLabel(), d2.getLabel());
@@ -126,7 +129,8 @@ public abstract class PerspectiveMenu extends ContributionItem {
      * @since 3.1
      */
     private Action openOtherAction = new Action(WorkbenchMessages.PerspectiveMenu_otherItem) {
-        public final void runWithEvent(final Event event) {
+        @Override
+		public final void runWithEvent(final Event event) {
             runOther(new SelectionEvent(event));
         }
     };
@@ -149,7 +153,8 @@ public abstract class PerspectiveMenu extends ContributionItem {
     /*
      * (non-Javadoc) Fills the menu with perspective items.
      */
-    public void fill(Menu menu, int index) {
+    @Override
+	public void fill(Menu menu, int index) {
         if (getParent() instanceof MenuManager) {
 			((MenuManager) getParent()).addMenuListener(menuListener);
 		}
@@ -328,14 +333,16 @@ public abstract class PerspectiveMenu extends ContributionItem {
     /* (non-Javadoc)
      * Returns whether this menu is dynamic.
      */
-    public boolean isDirty() {
+    @Override
+	public boolean isDirty() {
         return dirty;
     }
 
     /* (non-Javadoc)
      * Returns whether this menu is dynamic.
      */
-    public boolean isDynamic() {
+    @Override
+	public boolean isDynamic() {
         return true;
     }
 

@@ -62,19 +62,22 @@ public interface IViewDescriptor extends IWorkbenchPartDescriptor, IAdaptable {
      * 
      * @return the id
      */
-    public String getId();
+    @Override
+	public String getId();
 
     /**
      * Returns the descriptor for the icon to show for this view.
      */
-    public ImageDescriptor getImageDescriptor();
+    @Override
+	public ImageDescriptor getImageDescriptor();
 
     /**
      * Returns the label to show for this view.
      * 
      * @return the label
      */
-    public String getLabel();
+    @Override
+	public String getLabel();
 
     /**
      * Returns the default fast view width ratio for this view.

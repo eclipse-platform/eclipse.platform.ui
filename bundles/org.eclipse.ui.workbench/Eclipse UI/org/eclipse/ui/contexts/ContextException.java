@@ -21,6 +21,7 @@ package org.eclipse.ui.contexts;
  * @see org.eclipse.core.commands.common.CommandException
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public abstract class ContextException extends Exception {
 	
 	/**
@@ -65,7 +66,8 @@ public abstract class ContextException extends Exception {
      * @return the cause or <code>null</code>
      * @since 3.1
      */
-    public Throwable getCause() {
+    @Override
+	public Throwable getCause() {
         return cause;
     }
 

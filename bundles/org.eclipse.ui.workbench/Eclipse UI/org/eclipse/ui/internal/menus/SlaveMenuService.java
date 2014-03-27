@@ -29,6 +29,7 @@ public class SlaveMenuService implements IMenuService {
 	 * @param provider
 	 * @see org.eclipse.ui.services.IServiceWithSources#addSourceProvider(org.eclipse.ui.ISourceProvider)
 	 */
+	@Override
 	public void addSourceProvider(ISourceProvider provider) {
 		parentService.addSourceProvider(provider);
 	}
@@ -37,6 +38,7 @@ public class SlaveMenuService implements IMenuService {
 	 * @param provider
 	 * @see org.eclipse.ui.services.IServiceWithSources#removeSourceProvider(org.eclipse.ui.ISourceProvider)
 	 */
+	@Override
 	public void removeSourceProvider(ISourceProvider provider) {
 		parentService.removeSourceProvider(provider);
 	}
@@ -45,6 +47,7 @@ public class SlaveMenuService implements IMenuService {
 	 * @param factory
 	 * @see org.eclipse.ui.menus.IMenuService#addContributionFactory(org.eclipse.ui.menus.AbstractContributionFactory)
 	 */
+	@Override
 	public void addContributionFactory(AbstractContributionFactory factory) {
 		parentService.addContributionFactory(factory);
 	}
@@ -53,6 +56,7 @@ public class SlaveMenuService implements IMenuService {
 	 * 
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// nothing to do here yet.
 	}
@@ -61,6 +65,7 @@ public class SlaveMenuService implements IMenuService {
 	 * @param factory
 	 * @see org.eclipse.ui.menus.IMenuService#removeContributionFactory(org.eclipse.ui.menus.AbstractContributionFactory)
 	 */
+	@Override
 	public void removeContributionFactory(AbstractContributionFactory factory) {
 		parentService.removeContributionFactory(factory);
 	}
@@ -71,6 +76,7 @@ public class SlaveMenuService implements IMenuService {
 	 * @see org.eclipse.ui.menus.IMenuService#populateContributionManager(org.eclipse.jface.action.ContributionManager,
 	 *      java.lang.String)
 	 */
+	@Override
 	public void populateContributionManager(ContributionManager mgr, String location) {
 		populateContributionManager(model, mgr, location);
 	}
@@ -88,6 +94,7 @@ public class SlaveMenuService implements IMenuService {
 	 * @param mgr
 	 * @see org.eclipse.ui.menus.IMenuService#releaseContributions(org.eclipse.jface.action.ContributionManager)
 	 */
+	@Override
 	public void releaseContributions(ContributionManager mgr) {
 		parentService.releaseContributions(mgr);
 	}
@@ -96,6 +103,7 @@ public class SlaveMenuService implements IMenuService {
 	 * @return
 	 * @see org.eclipse.ui.menus.IMenuService#getCurrentState()
 	 */
+	@Override
 	public IEvaluationContext getCurrentState() {
 		return parentService.getCurrentState();
 	}

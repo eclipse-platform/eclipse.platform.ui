@@ -32,7 +32,8 @@ public class CascadingTheme extends EventManager implements ITheme {
 
     private IPropertyChangeListener listener = new IPropertyChangeListener() {
 
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             fire(event);
         }
     };
@@ -65,49 +66,56 @@ public class CascadingTheme extends EventManager implements ITheme {
     /* (non-Javadoc)
      * @see org.eclipse.ui.themes.ITheme#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
      */
-    public void addPropertyChangeListener(IPropertyChangeListener listener) {
+    @Override
+	public void addPropertyChangeListener(IPropertyChangeListener listener) {
         addListenerObject(listener);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.themes.ITheme#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
      */
-    public void removePropertyChangeListener(IPropertyChangeListener listener) {
+    @Override
+	public void removePropertyChangeListener(IPropertyChangeListener listener) {
         removeListenerObject(listener);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.themes.ITheme#getId()
      */
-    public String getId() {
+    @Override
+	public String getId() {
         return currentTheme.getId();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.themes.ITheme#getLabel()
      */
-    public String getLabel() {
+    @Override
+	public String getLabel() {
         return currentTheme.getLabel();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.themes.ITheme#getColorRegistry()
      */
-    public ColorRegistry getColorRegistry() {
+    @Override
+	public ColorRegistry getColorRegistry() {
         return colorRegistry;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.themes.ITheme#getFontRegistry()
      */
-    public FontRegistry getFontRegistry() {
+    @Override
+	public FontRegistry getFontRegistry() {
         return fontRegistry;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.themes.ITheme#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         colorRegistry.removeListener(listener);
         fontRegistry.removeListener(listener);
     }
@@ -115,28 +123,32 @@ public class CascadingTheme extends EventManager implements ITheme {
     /* (non-Javadoc)
      * @see org.eclipse.ui.themes.ITheme#getString(java.lang.String)
      */
-    public String getString(String key) {
+    @Override
+	public String getString(String key) {
         return currentTheme.getString(key);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.themes.ITheme#getInt(java.lang.String)
      */
-    public int getInt(String key) {
+    @Override
+	public int getInt(String key) {
         return currentTheme.getInt(key);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.themes.ITheme#getBoolean(java.lang.String)
      */
-    public boolean getBoolean(String key) {
+    @Override
+	public boolean getBoolean(String key) {
         return currentTheme.getBoolean(key);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.themes.ITheme#keySet()
      */
-    public Set keySet() {
+    @Override
+	public Set keySet() {
         return currentTheme.keySet();
     }
 

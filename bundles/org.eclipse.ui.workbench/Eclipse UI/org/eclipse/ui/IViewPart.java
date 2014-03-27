@@ -102,5 +102,6 @@ public interface IViewPart extends IWorkbenchPart, IPersistable {
      *
      * @param memento a memento to receive the object state
      */
-    public void saveState(IMemento memento);
+    @Override
+	public void saveState(IMemento memento);
 }

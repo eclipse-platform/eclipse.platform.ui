@@ -60,10 +60,12 @@ public abstract class EvaluationResultCache implements IEvaluationResultCache {
 				.computeSourcePriority(expression);
 	}
 
+	@Override
 	public final void clearResult() {
 		evaluationResult = null;
 	}
 
+	@Override
 	public final boolean evaluate(final IEvaluationContext context) {
 		if (expression == null) {
 			return true;
@@ -88,14 +90,17 @@ public abstract class EvaluationResultCache implements IEvaluationResultCache {
 		return evaluationResult != EvaluationResult.FALSE;
 	}
 
+	@Override
 	public final Expression getExpression() {
 		return expression;
 	}
 
+	@Override
 	public final int getSourcePriority() {
 		return sourcePriority;
 	}
 
+	@Override
 	public final void setResult(final boolean result) {
 		if (result) {
 			evaluationResult = EvaluationResult.TRUE;

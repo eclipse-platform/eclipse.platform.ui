@@ -24,7 +24,8 @@ public class ThemeManagerAdapter extends PropertyMapAdapter {
     private IThemeManager manager;
     
     private IPropertyChangeListener listener = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             firePropertyChange(event.getProperty());
         }
     };
@@ -36,21 +37,24 @@ public class ThemeManagerAdapter extends PropertyMapAdapter {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.PropertyMapAdapter#attachListener()
      */
-    protected void attachListener() {
+    @Override
+	protected void attachListener() {
         manager.addPropertyChangeListener(listener);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.PropertyMapAdapter#detachListener()
      */
-    protected void detachListener() {
+    @Override
+	protected void detachListener() {
         manager.removePropertyChangeListener(listener);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.IPropertyMap#keySet()
      */
-    public Set keySet() {
+    @Override
+	public Set keySet() {
         Set result = ThemeAdapter.getKeySet(manager.getCurrentTheme());
         
         return result;
@@ -59,21 +63,24 @@ public class ThemeManagerAdapter extends PropertyMapAdapter {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.IPropertyMap#getValue(java.lang.String, java.lang.Class)
      */
-    public Object getValue(String propertyId, Class propertyType) {
+    @Override
+	public Object getValue(String propertyId, Class propertyType) {
         return ThemeAdapter.getValue(manager.getCurrentTheme(), propertyId, propertyType);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.IPropertyMap#propertyExists(java.lang.String)
      */
-    public boolean propertyExists(String propertyId) {
+    @Override
+	public boolean propertyExists(String propertyId) {
         return keySet().contains(propertyId);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.IPropertyMap#setValue(java.lang.String, java.lang.Object)
      */
-    public void setValue(String propertyId, Object newValue) {
+    @Override
+	public void setValue(String propertyId, Object newValue) {
         throw new UnsupportedOperationException();
     }
 

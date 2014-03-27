@@ -60,7 +60,8 @@ public abstract class PropertyPage extends PreferencePage implements IWorkbenchP
      *  (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
      */
-    public IAdaptable getElement() {
+    @Override
+	public IAdaptable getElement() {
         return element;
     }
 
@@ -70,7 +71,8 @@ public abstract class PropertyPage extends PreferencePage implements IWorkbenchP
      * @param element
      *            the element
      */
-    public void setElement(IAdaptable element) {
+    @Override
+	public void setElement(IAdaptable element) {
         this.element = element;
     }
 }

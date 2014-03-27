@@ -53,7 +53,8 @@ public class RGBBlendColorFactory implements IColorFactory,
     /* (non-Javadoc)
      * @see org.eclipse.ui.themes.IColorFactory#createColor()
      */
-    public RGB createColor() {
+    @Override
+	public RGB createColor() {
         if (color1 == null && color2 == null) {
             return new RGB(0, 0, 0);
         } else if (color1 != null && color2 == null) {
@@ -76,7 +77,8 @@ public class RGBBlendColorFactory implements IColorFactory,
      * 
      * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
      */
-    public void setInitializationData(IConfigurationElement config,
+    @Override
+	public void setInitializationData(IConfigurationElement config,
             String propertyName, Object data) throws CoreException {
 
         if (data instanceof Hashtable) {

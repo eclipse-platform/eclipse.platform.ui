@@ -45,7 +45,8 @@ public class SaveAction extends BaseSaveAction implements IBackgroundSaveListene
         ((WorkbenchWindow)window).addBackgroundSaveListener(this);
     }
     
-    public void dispose() {
+    @Override
+	public void dispose() {
     	((WorkbenchWindow)getWorkbenchWindow()).removeBackgroundSaveListener(this);
     	super.dispose();
     }
@@ -55,7 +56,8 @@ public class SaveAction extends BaseSaveAction implements IBackgroundSaveListene
      * Performs the <code>Save</code> action by calling the
      * <code>IEditorPart.doSave</code> method on the active editor.
      */
-    public void run() {
+    @Override
+	public void run() {
         if (getWorkbenchWindow() == null) {
             // action has been disposed
             return;
@@ -87,7 +89,8 @@ public class SaveAction extends BaseSaveAction implements IBackgroundSaveListene
 	/* (non-Javadoc)
      * Method declared on ActiveEditorAction.
      */
-    protected void updateState() {
+    @Override
+	protected void updateState() {
         /* **********************************************************************************
          * The code below was added to track the view with focus
          * in order to support save actions from a view (see bug 10234). 
@@ -105,10 +108,12 @@ public class SaveAction extends BaseSaveAction implements IBackgroundSaveListene
         setEnabled(saveable != null && saveable.isDirty());
     }
 
+	@Override
 	public void handleBackgroundSaveStarted() {
 		updateState();
 	}
 
+	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 		IWorkbenchWindow window = getWorkbenchWindow();

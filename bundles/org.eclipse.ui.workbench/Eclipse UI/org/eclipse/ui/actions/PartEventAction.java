@@ -85,7 +85,8 @@ public abstract class PartEventAction extends Action implements IPartListener {
      * Subclasses may extend this method if action availability has to be
      * recalculated.
      */
-    public void partActivated(IWorkbenchPart part) {
+    @Override
+	public void partActivated(IWorkbenchPart part) {
         activePart = part;
     }
 
@@ -94,7 +95,8 @@ public abstract class PartEventAction extends Action implements IPartListener {
      * <code>IPartListener</code> method does nothing. Subclasses should extend
      * this method if action availability has to be recalculated.
      */
-    public void partBroughtToTop(IWorkbenchPart part) {
+    @Override
+	public void partBroughtToTop(IWorkbenchPart part) {
         // do nothing
     }
 
@@ -104,7 +106,8 @@ public abstract class PartEventAction extends Action implements IPartListener {
      * Subclasses may extend this method if action availability has to be
      * recalculated.
      */
-    public void partClosed(IWorkbenchPart part) {
+    @Override
+	public void partClosed(IWorkbenchPart part) {
         if (part == activePart) {
 			activePart = null;
 		}
@@ -116,7 +119,8 @@ public abstract class PartEventAction extends Action implements IPartListener {
      * Subclasses may extend this method if action availability has to be
      * recalculated.
      */
-    public void partDeactivated(IWorkbenchPart part) {
+    @Override
+	public void partDeactivated(IWorkbenchPart part) {
         activePart = null;
     }
 
@@ -125,7 +129,8 @@ public abstract class PartEventAction extends Action implements IPartListener {
      * <code>IPartListener</code> method does nothing. Subclasses should extend
      * this method if action availability has to be recalculated.
      */
-    public void partOpened(IWorkbenchPart part) {
+    @Override
+	public void partOpened(IWorkbenchPart part) {
         // do nothing
     }
 }

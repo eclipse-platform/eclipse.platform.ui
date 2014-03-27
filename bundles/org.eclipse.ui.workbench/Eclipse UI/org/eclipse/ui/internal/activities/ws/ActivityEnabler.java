@@ -72,6 +72,7 @@ public class ActivityEnabler {
 		 * 
 		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 		 */
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			Object element = ((IStructuredSelection) event.getSelection())
 					.getFirstElement();
@@ -99,6 +100,7 @@ public class ActivityEnabler {
 		 * 
 		 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
 		 */
+		@Override
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			Set checked = new HashSet(Arrays.asList(dualViewer
 					.getCheckedElements()));
@@ -312,6 +314,7 @@ public class ActivityEnabler {
 			 * 
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				toggleTreeEnablement(true);
 			}
@@ -326,6 +329,7 @@ public class ActivityEnabler {
 			 * 
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				toggleTreeEnablement(false);
 			}

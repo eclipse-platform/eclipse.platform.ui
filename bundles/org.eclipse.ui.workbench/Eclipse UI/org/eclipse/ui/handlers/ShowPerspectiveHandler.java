@@ -41,6 +41,7 @@ import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 public final class ShowPerspectiveHandler extends AbstractHandler {
 
 
+	@Override
 	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil

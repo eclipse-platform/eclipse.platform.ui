@@ -78,6 +78,7 @@ public abstract class CompositeExpression extends Expression {
 		return result;
 	}
 
+	@Override
 	public void collectExpressionInfo(ExpressionInfo info) {
 		if (fExpressions == null) {
 			return;

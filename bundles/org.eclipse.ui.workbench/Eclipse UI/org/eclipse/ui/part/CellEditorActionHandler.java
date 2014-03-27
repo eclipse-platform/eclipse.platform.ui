@@ -112,7 +112,8 @@ public class CellEditorActionHandler {
     private HashMap controlToEditor = new HashMap();
 
     private class ControlListener implements Listener {
-        public void handleEvent(Event event) {
+        @Override
+		public void handleEvent(Event event) {
             switch (event.type) {
             case SWT.Activate:
                 activeEditor = (CellEditor) controlToEditor.get(event.widget);
@@ -143,7 +144,8 @@ public class CellEditorActionHandler {
             this.actionHandler = actionHandler;
         }
 
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             if (activeEditor != null) {
 				return;
 			}
@@ -169,7 +171,8 @@ public class CellEditorActionHandler {
     }
 
     private class CellChangeListener implements IPropertyChangeListener {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             if (activeEditor == null) {
 				return;
 			}
@@ -216,7 +219,8 @@ public class CellEditorActionHandler {
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.CELL_CUT_ACTION);
         }
 
-        public void runWithEvent(Event event) {
+        @Override
+		public void runWithEvent(Event event) {
             if (activeEditor != null) {
                 activeEditor.performCut();
                 return;
@@ -247,7 +251,8 @@ public class CellEditorActionHandler {
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.CELL_COPY_ACTION);
         }
 
-        public void runWithEvent(Event event) {
+        @Override
+		public void runWithEvent(Event event) {
             if (activeEditor != null) {
                 activeEditor.performCopy();
                 return;
@@ -278,7 +283,8 @@ public class CellEditorActionHandler {
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.CELL_PASTE_ACTION);
         }
 
-        public void runWithEvent(Event event) {
+        @Override
+		public void runWithEvent(Event event) {
             if (activeEditor != null) {
                 activeEditor.performPaste();
                 return;
@@ -309,7 +315,8 @@ public class CellEditorActionHandler {
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.CELL_DELETE_ACTION);
         }
 
-        public void runWithEvent(Event event) {
+        @Override
+		public void runWithEvent(Event event) {
             if (activeEditor != null) {
                 activeEditor.performDelete();
                 return;
@@ -340,7 +347,8 @@ public class CellEditorActionHandler {
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.CELL_SELECT_ALL_ACTION);
         }
 
-        public void runWithEvent(Event event) {
+        @Override
+		public void runWithEvent(Event event) {
             if (activeEditor != null) {
                 activeEditor.performSelectAll();
                 return;
@@ -371,7 +379,8 @@ public class CellEditorActionHandler {
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.CELL_FIND_ACTION);
         }
 
-        public void runWithEvent(Event event) {
+        @Override
+		public void runWithEvent(Event event) {
             if (activeEditor != null) {
                 activeEditor.performFind();
                 return;
@@ -402,7 +411,8 @@ public class CellEditorActionHandler {
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.CELL_UNDO_ACTION);
         }
 
-        public void runWithEvent(Event event) {
+        @Override
+		public void runWithEvent(Event event) {
             if (activeEditor != null) {
                 activeEditor.performUndo();
                 return;
@@ -437,7 +447,8 @@ public class CellEditorActionHandler {
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.CELL_REDO_ACTION);
         }
 
-        public void runWithEvent(Event event) {
+        @Override
+		public void runWithEvent(Event event) {
             if (activeEditor != null) {
                 activeEditor.performRedo();
                 return;

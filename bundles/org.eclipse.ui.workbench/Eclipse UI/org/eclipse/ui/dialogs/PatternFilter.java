@@ -67,7 +67,8 @@ public class PatternFilter extends ViewerFilter {
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ViewerFilter#filter(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object[])
      */
-    public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
+    @Override
+	public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
     	// we don't want to optimize if we've extended the filter ... this
     	// needs to be addressed in 3.4
     	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=186404
@@ -142,7 +143,8 @@ public class PatternFilter extends ViewerFilter {
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
      */
-    public final boolean select(Viewer viewer, Object parentElement,
+    @Override
+	public final boolean select(Viewer viewer, Object parentElement,
 			Object element) {
         return isElementVisible(viewer, element);
     }

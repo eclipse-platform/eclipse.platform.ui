@@ -214,9 +214,11 @@ public class DragUtil {
         tracker.setStippled(true);
 
         tracker.addListener(SWT.Move, new Listener() {
-            public void handleEvent(final Event event) {
+            @Override
+			public void handleEvent(final Event event) {
                 display.syncExec(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                     	// Get the curslor location as a point
                         Point location = new Point(event.x, event.y);
 

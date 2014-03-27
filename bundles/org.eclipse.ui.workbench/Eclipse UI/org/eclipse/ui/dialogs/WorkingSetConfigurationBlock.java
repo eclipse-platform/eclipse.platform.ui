@@ -171,6 +171,7 @@ public class WorkingSetConfigurationBlock {
 	 *             {@link #setWorkingSets(IWorkingSet[])} and {@link #findApplicableWorkingSets(IStructuredSelection)}
 	 *             instead.
 	 */
+	@Deprecated
 	public void setSelection(IStructuredSelection selection) {
 		selectedWorkingSets = findApplicableWorkingSets(selection);
 		
@@ -292,6 +293,7 @@ public class WorkingSetConfigurationBlock {
 		setButtonLayoutData(selectButton);
 		selectButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				SimpleWorkingSetSelectionDialog dialog = new SimpleWorkingSetSelectionDialog(
 						parent.getShell(), workingSetTypeIds,
@@ -314,6 +316,7 @@ public class WorkingSetConfigurationBlock {
 		});
 
 		enableButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateEnableState(enableButton.getSelection());
 			}
@@ -321,6 +324,7 @@ public class WorkingSetConfigurationBlock {
 		updateEnableState(enableButton.getSelection());
 
 		workingSetCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateSelectedWorkingSets();
 			}
@@ -375,6 +379,7 @@ public class WorkingSetConfigurationBlock {
 		String[] history = (String[]) selectionHistory
 				.toArray(new String[selectionHistory.size()]);
 		Arrays.sort(history, new Comparator() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				return Collator.getInstance().compare(o1, o2);
 			}

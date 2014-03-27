@@ -41,7 +41,8 @@ public final class ViewPluginAction extends PartPluginAction {
     /* (non-Javadoc)
      * Method declared on PluginAction.
      */
-    protected IActionDelegate validateDelegate(Object obj)
+    @Override
+	protected IActionDelegate validateDelegate(Object obj)
             throws WorkbenchException {
         if (obj instanceof IViewActionDelegate) {
 			return (IViewActionDelegate) obj;
@@ -54,7 +55,8 @@ public final class ViewPluginAction extends PartPluginAction {
     /* (non-Javadoc)
      * Method declared on PluginAction.
      */
-    protected void initDelegate() {
+    @Override
+	protected void initDelegate() {
         super.initDelegate();
         ((IViewActionDelegate) getDelegate()).init(viewPart);
     }
@@ -65,13 +67,15 @@ public final class ViewPluginAction extends PartPluginAction {
      * before the view is stored.  We cannot create the delegate
      * at that time.
      */
-    public boolean isOkToCreateDelegate() {
+    @Override
+	public boolean isOkToCreateDelegate() {
         return super.isOkToCreateDelegate() && viewPart != null;
     }
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.PluginAction#dispose()
 	 */
+	@Override
 	public void dispose() {
 		unregisterSelectionListener(viewPart);
 		super.dispose();

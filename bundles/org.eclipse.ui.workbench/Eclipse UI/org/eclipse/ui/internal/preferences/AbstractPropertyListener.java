@@ -18,14 +18,16 @@ public abstract class AbstractPropertyListener implements IPropertyMapListener {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.IPropertyMapListener#propertyChanged(java.lang.String[])
      */
-    public void propertyChanged(String[] propertyIds) {
+    @Override
+	public void propertyChanged(String[] propertyIds) {
         update();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.IPropertyMapListener#listenerAttached()
      */
-    public void listenerAttached() {
+    @Override
+	public void listenerAttached() {
         update();
     }
 

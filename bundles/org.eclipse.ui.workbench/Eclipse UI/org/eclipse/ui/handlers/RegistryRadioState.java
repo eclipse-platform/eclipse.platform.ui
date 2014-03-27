@@ -75,6 +75,7 @@ public final class RegistryRadioState extends RadioState implements
 		setShouldPersist(true);
 	}
 
+	@Override
 	public final void setInitializationData(
 			final IConfigurationElement configurationElement,
 			final String propertyName, final Object data) {

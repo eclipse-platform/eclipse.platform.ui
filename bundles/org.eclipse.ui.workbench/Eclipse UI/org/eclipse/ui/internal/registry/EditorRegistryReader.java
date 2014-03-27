@@ -47,7 +47,8 @@ public class EditorRegistryReader extends RegistryReader {
      * Implementation of the abstract method that
      * processes one configuration element.
      */
-    protected boolean readElement(IConfigurationElement element) {
+    @Override
+	protected boolean readElement(IConfigurationElement element) {
         if (!element.getName().equals(IWorkbenchRegistryConstants.TAG_EDITOR)) {
 			return false;
 		}

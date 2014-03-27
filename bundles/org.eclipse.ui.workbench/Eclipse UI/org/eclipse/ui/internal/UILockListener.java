@@ -107,13 +107,15 @@ public class UILockListener extends LockListener {
         this.display = display;
     }
 
-    public void aboutToRelease() {
+    @Override
+	public void aboutToRelease() {
         if (isUI()) {
 			ui = null;
 		}
     }
 
-    public boolean aboutToWait(Thread lockOwner) {
+    @Override
+	public boolean aboutToWait(Thread lockOwner) {
         if (isUI()) {
             // If a syncExec was executed from the current operation, it
             // has already acquired the lock. So, just return true.
@@ -142,6 +144,7 @@ public class UILockListener extends LockListener {
 	 * 
 	 * @see org.eclipse.core.runtime.jobs.LockListener#canBlock()
 	 */
+	@Override
 	public boolean canBlock() {
 		return !isUI();
 	}

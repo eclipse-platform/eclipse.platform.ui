@@ -22,7 +22,8 @@ public final class PreferencesAdapter extends PropertyMapAdapter {
     private Preferences store;
     
     private Preferences.IPropertyChangeListener listener = new Preferences.IPropertyChangeListener() {
-        public void propertyChange(Preferences.PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(Preferences.PropertyChangeEvent event) {
             firePropertyChange(event.getProperty());
         }
     };
@@ -34,21 +35,24 @@ public final class PreferencesAdapter extends PropertyMapAdapter {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.PropertyMapAdapter#attachListener()
      */
-    protected void attachListener() {
+    @Override
+	protected void attachListener() {
         store.addPropertyChangeListener(listener);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.PropertyMapAdapter#detachListener()
      */
-    protected void detachListener() {
+    @Override
+	protected void detachListener() {
         store.removePropertyChangeListener(listener);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.IPropertyMap#keySet()
      */
-    public Set keySet() {
+    @Override
+	public Set keySet() {
         Set result = new HashSet();
         
         String[] names = store.propertyNames();
@@ -65,7 +69,8 @@ public final class PreferencesAdapter extends PropertyMapAdapter {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.IPropertyMap#getValue(java.lang.String, java.lang.Class)
      */
-    public Object getValue(String propertyId, Class propertyType) {
+    @Override
+	public Object getValue(String propertyId, Class propertyType) {
         if (propertyType.isAssignableFrom(String.class)) {
             return store.getString(propertyId);
         }
@@ -96,14 +101,16 @@ public final class PreferencesAdapter extends PropertyMapAdapter {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.IPropertyMap#propertyExists(java.lang.String)
      */
-    public boolean propertyExists(String propertyId) {
+    @Override
+	public boolean propertyExists(String propertyId) {
         return store.contains(propertyId);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.IPropertyMap#setValue(java.lang.String, java.lang.Object)
      */
-    public void setValue(String propertyId, Object newValue) {
+    @Override
+	public void setValue(String propertyId, Object newValue) {
         if (newValue instanceof String) {
             store.setValue(propertyId, (String)newValue);
         } else if (newValue instanceof Integer) {

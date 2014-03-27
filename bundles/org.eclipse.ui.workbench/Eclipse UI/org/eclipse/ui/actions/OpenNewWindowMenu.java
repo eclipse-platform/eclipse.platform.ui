@@ -38,6 +38,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * @deprecated See IWorkbench.showPerspective methods.
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class OpenNewWindowMenu extends PerspectiveMenu {
     private IAdaptable pageInput;
 
@@ -73,7 +74,8 @@ public class OpenNewWindowMenu extends PerspectiveMenu {
     /* (non-Javadoc)
      * Opens a new window with a particular perspective and input.
      */
-    protected void run(IPerspectiveDescriptor desc) {
+    @Override
+	protected void run(IPerspectiveDescriptor desc) {
         // Verify page input.
         if (pageInput == null) {
         	StatusUtil.handleStatus(

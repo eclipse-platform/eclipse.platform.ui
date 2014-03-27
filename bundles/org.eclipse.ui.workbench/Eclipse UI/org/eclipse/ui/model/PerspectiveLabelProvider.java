@@ -70,7 +70,8 @@ public final class PerspectiveLabelProvider extends LabelProvider implements
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ILabelProvider
      */
-    public final Image getImage(Object element) {
+    @Override
+	public final Image getImage(Object element) {
         if (element instanceof IPerspectiveDescriptor) {
             IPerspectiveDescriptor desc = (IPerspectiveDescriptor) element;
             ImageDescriptor imageDescriptor = desc.getImageDescriptor();
@@ -91,7 +92,8 @@ public final class PerspectiveLabelProvider extends LabelProvider implements
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ILabelProvider
      */
-    public final void dispose() {
+    @Override
+	public final void dispose() {
         for (Iterator i = imageCache.values().iterator(); i.hasNext();) {
             ((Image) i.next()).dispose();
         }
@@ -101,7 +103,8 @@ public final class PerspectiveLabelProvider extends LabelProvider implements
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ILabelProvider
      */
-    public final String getText(Object element) {
+    @Override
+	public final String getText(Object element) {
         if (element instanceof IPerspectiveDescriptor) {
             IPerspectiveDescriptor desc = (IPerspectiveDescriptor) element;
             String label = desc.getLabel();
@@ -120,14 +123,16 @@ public final class PerspectiveLabelProvider extends LabelProvider implements
     /**
      * @see ITableLabelProvider#getColumnImage
      */
-    public final Image getColumnImage(Object element, int columnIndex) {
+    @Override
+	public final Image getColumnImage(Object element, int columnIndex) {
         return getImage(element);
     }
 
     /**
      * @see ITableLabelProvider#getColumnText
      */
-    public final String getColumnText(Object element, int columnIndex) {
+    @Override
+	public final String getColumnText(Object element, int columnIndex) {
         return getText(element);
     }
 }

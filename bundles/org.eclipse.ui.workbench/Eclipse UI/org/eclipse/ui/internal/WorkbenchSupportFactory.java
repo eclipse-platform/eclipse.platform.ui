@@ -31,6 +31,7 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class WorkbenchSupportFactory extends AbstractServiceFactory {
 
+	@Override
 	public Object create(Class serviceInterface, IServiceLocator parentLocator,
 			IServiceLocator locator) {
 

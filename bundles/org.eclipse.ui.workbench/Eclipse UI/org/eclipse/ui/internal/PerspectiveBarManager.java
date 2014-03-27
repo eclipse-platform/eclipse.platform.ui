@@ -36,7 +36,8 @@ public class PerspectiveBarManager extends ToolBarManager {
         super(style);
     }
 
-    public ToolBar createControl(Composite parent) {
+    @Override
+	public ToolBar createControl(Composite parent) {
         ToolBar control = super.createControl(parent);
 
         return control;
@@ -118,7 +119,8 @@ public class PerspectiveBarManager extends ToolBarManager {
             menuItem.setData("IContributionItem", tool.getData()); //$NON-NLS-1$
 
             menuItem.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e) {
+                @Override
+				public void widgetSelected(SelectionEvent e) {
                     //rotate the selected item in and the other items right
                     // don't touch the "Open" item
                     MenuItem menuItem = (MenuItem) e.widget;
@@ -145,7 +147,8 @@ public class PerspectiveBarManager extends ToolBarManager {
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.ToolBarManager#relayout(org.eclipse.swt.widgets.ToolBar, int, int)
      */
-    protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
+    @Override
+	protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
         super.relayout(toolBar, oldCount, newCount);
 
         if (getControl() != null) {

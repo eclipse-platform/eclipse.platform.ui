@@ -39,6 +39,7 @@ import org.eclipse.ui.internal.util.Util;
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public abstract class Key implements Comparable {
 
 	/**
@@ -62,6 +63,7 @@ public abstract class Key implements Comparable {
 	/**
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public final int compareTo(final Object object) {
 		return Util.compare(key, ((Key) object).key);
 	}
@@ -69,6 +71,7 @@ public abstract class Key implements Comparable {
 	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public final boolean equals(final Object object) {
 		if (!(object instanceof Key)) {
 			return false;
@@ -80,6 +83,7 @@ public abstract class Key implements Comparable {
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public final int hashCode() {
 		return Util.hashCode(key);
 	}
@@ -91,6 +95,7 @@ public abstract class Key implements Comparable {
 	 *         be <code>null</code>.
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public final String toString() {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();
 		return lookup.formalNameLookup(key);

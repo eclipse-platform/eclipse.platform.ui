@@ -62,10 +62,12 @@ public final class ExtensionParameterValues implements IParameterValues,
 	 */
 	private Map parameterValues = null;
 
+	@Override
 	public Map getParameterValues() {
 		return parameterValues;
 	}
 
+	@Override
 	public final void setInitializationData(final IConfigurationElement config,
 			final String propertyName, final Object data) {
 		if (data == null) {

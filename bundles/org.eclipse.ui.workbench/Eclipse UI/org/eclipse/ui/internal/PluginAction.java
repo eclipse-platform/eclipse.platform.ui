@@ -210,14 +210,16 @@ public abstract class PluginAction extends Action implements
     /* (non-Javadoc)
      * Method declared on IAction.
      */
-    public void run() {
+    @Override
+	public void run() {
         runWithEvent(null);
     }
 
     /* (non-Javadoc)
      * Method declared on IAction.
      */
-    public void runWithEvent(Event event) {
+    @Override
+	public void runWithEvent(Event event) {
         // this message dialog is problematic.
         if (delegate == null) {
             createDelegate();
@@ -284,7 +286,8 @@ public abstract class PluginAction extends Action implements
      * <code>selectionChanged(IStructuredSelection)</code> when the selection is
      * a structured one.
      */
-    public void selectionChanged(SelectionChangedEvent event) {
+    @Override
+	public void selectionChanged(SelectionChangedEvent event) {
         ISelection sel = event.getSelection();
         selectionChanged(sel);
     }
@@ -295,7 +298,8 @@ public abstract class PluginAction extends Action implements
      * <code>selectionChanged(IStructuredSelection)</code> when the selection is
      * a structured one. Subclasses may extend this method to react to the change.
      */
-    public void selectionChanged(IWorkbenchPart part, ISelection sel) {
+    @Override
+	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
         selectionChanged(sel);
     }
 
@@ -331,14 +335,16 @@ public abstract class PluginAction extends Action implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPluginContribution#getLocalId()
      */
-    public String getLocalId() {
+    @Override
+	public String getLocalId() {
         return getId();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPluginContribution#getPluginId()
      */
-    public String getPluginId() {
+    @Override
+	public String getPluginId() {
         return pluginId;
     }
 
@@ -372,7 +378,8 @@ public abstract class PluginAction extends Action implements
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.Action#getMenuCreator()
      */
-    public IMenuCreator getMenuCreator() {
+    @Override
+	public IMenuCreator getMenuCreator() {
     	// now that action contribution item defers asking for the menu
     	// creator until its ready o show the menu, asking for the menu
     	// creator is time to instantiate the delegate

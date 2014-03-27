@@ -120,7 +120,8 @@ public abstract class PluginActionBuilder extends RegistryReader {
      * Implements abstract method to handle the provided XML element
      * in the registry.
      */
-    protected boolean readElement(IConfigurationElement element) {
+    @Override
+	protected boolean readElement(IConfigurationElement element) {
         String tag = element.getName();
 
         // Ignore all object contributions element as these

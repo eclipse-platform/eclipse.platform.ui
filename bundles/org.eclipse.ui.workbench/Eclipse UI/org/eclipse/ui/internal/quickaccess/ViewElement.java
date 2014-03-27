@@ -100,6 +100,7 @@ public class ViewElement extends QuickAccessElement {
 		return LocalizationHelper.getLocalized(viewDescriptor.getLabel(), viewDescriptor, window.getContext());
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -108,6 +109,7 @@ public class ViewElement extends QuickAccessElement {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

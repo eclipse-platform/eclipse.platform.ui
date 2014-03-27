@@ -25,6 +25,7 @@ public class ModeledFolderLayout extends ModeledPlaceholderFolderLayout
 		super(layout, application, stackModel);
 	}
 
+	@Override
 	public void addView(String viewId) {
 		MStackElement viewModel = ModeledPageLayout.createViewModel(application, viewId, true,
 				layout.page,

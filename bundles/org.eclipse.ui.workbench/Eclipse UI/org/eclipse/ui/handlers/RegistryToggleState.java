@@ -78,6 +78,7 @@ public final class RegistryToggleState extends ToggleState implements
 		}
 	}
 
+	@Override
 	public final void setInitializationData(
 			final IConfigurationElement configurationElement,
 			final String propertyName, final Object data) {

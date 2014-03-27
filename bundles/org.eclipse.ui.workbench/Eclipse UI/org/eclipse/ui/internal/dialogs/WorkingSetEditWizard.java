@@ -47,7 +47,8 @@ public class WorkingSetEditWizard extends Wizard implements
      * 
      * @see org.eclipse.jface.wizard.Wizard#addPages
      */
-    public void addPages() {
+    @Override
+	public void addPages() {
         super.addPages();
         addPage(workingSetEditPage);
     }
@@ -57,7 +58,8 @@ public class WorkingSetEditWizard extends Wizard implements
      * 
      * @see org.eclipse.jface.wizard.Wizard#canFinish()
      */
-    public boolean canFinish() {
+    @Override
+	public boolean canFinish() {
         return workingSetEditPage.isPageComplete();
     }
 
@@ -66,7 +68,8 @@ public class WorkingSetEditWizard extends Wizard implements
      * 
      * @return the working set that is being edited.
      */
-    public IWorkingSet getSelection() {
+    @Override
+	public IWorkingSet getSelection() {
         return workingSet;
     }
 
@@ -76,7 +79,8 @@ public class WorkingSetEditWizard extends Wizard implements
      * 
      * @see org.eclipse.jface.wizard.Wizard#performFinish
      */
-    public boolean performFinish() {
+    @Override
+	public boolean performFinish() {
         workingSetEditPage.finish();
         return true;
     }

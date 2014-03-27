@@ -36,7 +36,8 @@ public class ExternalProgramImageDescriptor extends ImageDescriptor {
     /**
      * @see Object#equals
      */
-    public boolean equals(Object o) {
+    @Override
+	public boolean equals(Object o) {
         if (!(o instanceof ExternalProgramImageDescriptor)) {
             return false;
         }
@@ -63,7 +64,8 @@ public class ExternalProgramImageDescriptor extends ImageDescriptor {
      * Returns an SWT Image that is described by the information
      * in this descriptor.  Each call returns a new Image.
      */
-    public ImageData getImageData() {
+    @Override
+	public ImageData getImageData() {
         ImageData data = null;
         ImageData defaultImage = WorkbenchImages.getImageDescriptor(
                 ISharedImages.IMG_OBJ_FILE).getImageData();
@@ -87,7 +89,8 @@ public class ExternalProgramImageDescriptor extends ImageDescriptor {
     /**
      * @see Object#hashCode
      */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         String programName = program.getName();
         if (programName == null) {
 			return program.hashCode();

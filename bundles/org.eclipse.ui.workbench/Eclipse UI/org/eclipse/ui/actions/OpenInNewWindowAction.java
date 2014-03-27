@@ -89,7 +89,8 @@ public class OpenInNewWindowAction extends Action implements
      * the active perspective in the window which this
      * action is running in.
      */
-    public void run() {
+    @Override
+	public void run() {
         if (workbenchWindow == null) {
             // action has been disposed
             return;
@@ -119,7 +120,8 @@ public class OpenInNewWindowAction extends Action implements
      * Method declared on ActionFactory.IWorkbenchAction.
      * @since 3.0
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         workbenchWindow = null;
     }
 }

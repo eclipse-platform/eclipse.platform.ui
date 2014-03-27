@@ -35,6 +35,7 @@ class SubTaskInfo extends JobTreeElement {
 	 * 
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getChildren()
 	 */
+	@Override
 	Object[] getChildren() {
 		return ProgressManagerUtil.EMPTY_OBJECT_ARRAY;
 	}
@@ -44,6 +45,7 @@ class SubTaskInfo extends JobTreeElement {
 	 * 
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 	 */
+	@Override
 	String getDisplayString() {
 		if (taskName == null) {
 			return ProgressMessages.SubTaskInfo_UndefinedTaskName;
@@ -56,6 +58,7 @@ class SubTaskInfo extends JobTreeElement {
 	 * 
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#hasChildren()
 	 */
+	@Override
 	boolean hasChildren() {
 		return false;
 	}
@@ -84,6 +87,7 @@ class SubTaskInfo extends JobTreeElement {
 	 * 
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getParent()
 	 */
+	@Override
 	public Object getParent() {
 		return jobInfo;
 	}
@@ -93,6 +97,7 @@ class SubTaskInfo extends JobTreeElement {
 	 * 
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isJobInfo()
 	 */
+	@Override
 	boolean isJobInfo() {
 		return false;
 	}
@@ -102,6 +107,7 @@ class SubTaskInfo extends JobTreeElement {
 	 * 
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isActive()
 	 */
+	@Override
 	boolean isActive() {
 		return jobInfo.isActive();
 	}

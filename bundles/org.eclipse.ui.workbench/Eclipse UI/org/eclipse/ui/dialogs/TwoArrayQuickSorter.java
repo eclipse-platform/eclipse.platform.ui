@@ -34,7 +34,8 @@ import org.eclipse.core.runtime.Assert;
             fIgnoreCase = ignoreCase;
         }
 
-        public int compare(Object left, Object right) {
+        @Override
+		public int compare(Object left, Object right) {
             return fIgnoreCase ? ((String) left)
                     .compareToIgnoreCase((String) right) : ((String) left)
                     .compareTo((String) right);

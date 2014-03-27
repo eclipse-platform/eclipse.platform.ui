@@ -84,6 +84,7 @@ public class TreeManager {
 			manager.addListener(this);
 		}
 		
+		@Override
 		public void checkChanged(TreeItem changedItem) {
 			treeViewer.update(changedItem, null);
 		}
@@ -100,12 +101,14 @@ public class TreeManager {
 			manager.addListener(this);
 		}
 		
+		@Override
 		public void checkChanged(TreeItem changedItem) {
 			tableViewer.update(changedItem, null);
 		}
 	}
 
 	public static class ViewerCheckStateListener implements ICheckStateListener {
+		@Override
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			Object checked = event.getElement();
 			if(checked instanceof TreeItem) {
@@ -120,10 +123,12 @@ public class TreeManager {
 	 * {@link TreeManager.TreeItem}s.
 	 */
 	public static class CheckStateProvider implements ICheckStateProvider {
+		@Override
 		public boolean isChecked(Object element) {
 			return ((TreeItem)element).checkState != CHECKSTATE_UNCHECKED;
 		}
 		
+		@Override
 		public boolean isGrayed(Object element) {
 			return ((TreeItem)element).checkState == CHECKSTATE_GRAY;
 		}
@@ -133,10 +138,12 @@ public class TreeManager {
 	 * A {@link IBaseLabelProvider} for {@link TreeManager.TreeItem}s.
 	 */
 	public static class TreeItemLabelProvider extends LabelProvider {
+		@Override
 		public String getText(Object element) {
 			return ((TreeItem)element).getLabel();
 		}
 
+		@Override
 		public Image getImage(Object element) {
 			return ((TreeItem)element).getImage();
 		}
@@ -147,24 +154,30 @@ public class TreeManager {
 	 * tree structure represented by {@link TreeManager.TreeItem}s.
 	 */
 	public static class TreeItemContentProvider implements ITreeContentProvider {
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			return ((TreeItem)parentElement).getChildren().toArray();
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			return ((TreeItem)element).getParent();
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			return getChildren(element).length > 0;
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
 		}
 
+		@Override
 		public void dispose() {}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 	}
 

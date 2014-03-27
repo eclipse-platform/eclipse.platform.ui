@@ -68,6 +68,7 @@ public class ContextLegacyWrapper implements IContext {
 	 * 
 	 * @see org.eclipse.ui.contexts.IContext#addContextListener(org.eclipse.ui.contexts.IContextListener)
 	 */
+	@Override
 	public void addContextListener(IContextListener contextListener) {
 		final LegacyContextListenerWrapper wrapper = new LegacyContextListenerWrapper(
 				contextListener, contextManager, this);
@@ -85,6 +86,7 @@ public class ContextLegacyWrapper implements IContext {
 	 * 
 	 * @see java.lang.Comparable#compareTo(T)
 	 */
+	@Override
 	public int compareTo(Object o) {
 		return Util
 				.compare(wrappedContext, ((ContextLegacyWrapper) o).wrappedContext);
@@ -95,6 +97,7 @@ public class ContextLegacyWrapper implements IContext {
 	 * 
 	 * @see org.eclipse.ui.contexts.IContext#getId()
 	 */
+	@Override
 	public String getId() {
 		return wrappedContext.getId();
 	}
@@ -104,6 +107,7 @@ public class ContextLegacyWrapper implements IContext {
 	 * 
 	 * @see org.eclipse.ui.contexts.IContext#getName()
 	 */
+	@Override
 	public String getName() throws NotDefinedException {
 		try {
 			return wrappedContext.getName();
@@ -117,6 +121,7 @@ public class ContextLegacyWrapper implements IContext {
 	 * 
 	 * @see org.eclipse.ui.contexts.IContext#getParentId()
 	 */
+	@Override
 	public String getParentId() throws NotDefinedException {
 		try {
 			return wrappedContext.getParentId();
@@ -130,6 +135,7 @@ public class ContextLegacyWrapper implements IContext {
 	 * 
 	 * @see org.eclipse.ui.contexts.IContext#isDefined()
 	 */
+	@Override
 	public boolean isDefined() {
 		return wrappedContext.isDefined();
 	}
@@ -139,6 +145,7 @@ public class ContextLegacyWrapper implements IContext {
 	 * 
 	 * @see org.eclipse.ui.contexts.IContext#isEnabled()
 	 */
+	@Override
 	public boolean isEnabled() {
 		return contextManager.getActiveContextIds().contains(
 				wrappedContext.getId());
@@ -149,6 +156,7 @@ public class ContextLegacyWrapper implements IContext {
 	 * 
 	 * @see org.eclipse.ui.contexts.IContext#removeContextListener(org.eclipse.ui.contexts.IContextListener)
 	 */
+	@Override
 	public void removeContextListener(IContextListener contextListener) {
 		final LegacyContextListenerWrapper wrapper = new LegacyContextListenerWrapper(
 				contextListener, contextManager, this);

@@ -41,6 +41,7 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class SpyHandler extends AbstractHandler {
 
+	@Override
 	public Object execute(ExecutionEvent event) {
 		Shell shell = HandlerUtil.getActiveShell(event);
 		if (shell != null) {
@@ -111,6 +112,7 @@ public class SpyHandler extends AbstractHandler {
 			final ContributionInfo contributionInfo) {
 		ToolTip toolTip = new ToolTip(control, ToolTip.NO_RECREATE, true) {
 
+			@Override
 			protected Composite createToolTipContentArea(Event event, Composite parent) {
 				// Create the content area
 				Composite composite = new Composite(parent, SWT.NONE);

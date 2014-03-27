@@ -57,7 +57,8 @@ public interface IIntroSite extends IWorkbenchSite {
      * @deprecated Use IServiceLocator#getService(*) to retrieve
      * IContextService and IHandlerService instead.
      */
-    public IKeyBindingService getKeyBindingService();
+    @Deprecated
+	public IKeyBindingService getKeyBindingService();
 
     /**
      * Returns the action bars for this part site.

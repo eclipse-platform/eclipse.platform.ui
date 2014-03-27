@@ -91,6 +91,7 @@ public class ProgressRegion implements IWindowTrim {
 			 * @see org.eclipse.swt.widgets.Composite#computeSize(int, int,
 			 *      boolean)
 			 */
+			@Override
 			public Point computeSize(int wHint, int hHint, boolean changed) {
 				Point size = super.computeSize(wHint, hHint, changed);
 				if (isHorizontal(side))
@@ -132,7 +133,8 @@ public class ProgressRegion implements IWindowTrim {
             /* (non-Javadoc)
              * @see org.eclipse.ui.internal.progress.AnimationItem.IAnimationContainer#animationDone()
              */
-            public void animationDone() {
+            @Override
+			public void animationDone() {
                 //Add an extra refresh to the viewer in case
                 //of stale input if the controls are not disposed
                 if (viewer.getControl().isDisposed()) {
@@ -144,7 +146,8 @@ public class ProgressRegion implements IWindowTrim {
             /* (non-Javadoc)
              * @see org.eclipse.ui.internal.progress.AnimationItem.IAnimationContainer#animationStart()
              */
-            public void animationStart() {
+            @Override
+			public void animationStart() {
                 // Nothing by default here.
 
             }
@@ -165,7 +168,8 @@ public class ProgressRegion implements IWindowTrim {
              * 
              * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
              */
-            public void mouseDoubleClick(MouseEvent e) {
+            @Override
+			public void mouseDoubleClick(MouseEvent e) {
                 processDoubleClick();
             }
         });
@@ -178,7 +182,8 @@ public class ProgressRegion implements IWindowTrim {
         viewer.setLabelProvider(new ProgressViewerLabelProvider(viewerControl));
         viewer.setComparator(ProgressManagerUtil.getProgressViewerComparator());
         viewer.addFilter(new ViewerFilter() {
-            public boolean select(Viewer viewer, Object parentElement, Object element) {
+            @Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
                 if (element instanceof JobInfo) {
                     JobInfo info= (JobInfo)element;
                     if (info.isBlocked() || info.getJob().getState() == Job.WAITING) {
@@ -206,7 +211,8 @@ public class ProgressRegion implements IWindowTrim {
      * 
      * @return Control
      */
-    public Control getControl() {
+    @Override
+	public Control getControl() {
         return region;
     }
 
@@ -220,6 +226,7 @@ public class ProgressRegion implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWindowTrim#dock(int)
 	 */
+	@Override
 	public void dock(int dropSide) {
 		int oldSide = side;
 		side = dropSide;
@@ -272,10 +279,12 @@ public class ProgressRegion implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWindowTrim#getId()
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.ui.internal.progress.ProgressRegion"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getDisplayName() {
 		return WorkbenchMessages.TrimCommon_Progress_TrimName;
 	}
@@ -283,6 +292,7 @@ public class ProgressRegion implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWindowTrim#getValidSides()
 	 */
+	@Override
 	public int getValidSides() {
 		return SWT.BOTTOM | SWT.TOP | SWT.LEFT | SWT.RIGHT ;
 	}
@@ -290,6 +300,7 @@ public class ProgressRegion implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWindowTrim#isCloseable()
 	 */
+	@Override
 	public boolean isCloseable() {
 		return false;
 	}
@@ -297,6 +308,7 @@ public class ProgressRegion implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWindowTrim#handleClose()
 	 */
+	@Override
 	public void handleClose() {
 		// nothing to do...
 	}
@@ -306,6 +318,7 @@ public class ProgressRegion implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.IWindowTrim#getWidthHint()
 	 */
+	@Override
 	public int getWidthHint() {
 		return fWidthHint;
 	}
@@ -323,6 +336,7 @@ public class ProgressRegion implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.IWindowTrim#getHeightHint()
 	 */
+	@Override
 	public int getHeightHint() {
 		return fHeightHint;
 	}
@@ -338,6 +352,7 @@ public class ProgressRegion implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowTrim#isResizeable()
 	 */
+	@Override
 	public boolean isResizeable() {
 		return false;
 	}

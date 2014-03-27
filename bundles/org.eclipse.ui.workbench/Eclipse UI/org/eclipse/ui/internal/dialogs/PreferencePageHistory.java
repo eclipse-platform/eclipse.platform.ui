@@ -169,10 +169,12 @@ class PreferencePageHistory {
 				super("", IAction.AS_DROP_DOWN_MENU); //$NON-NLS-1$
 			}
 
+			@Override
 			public IMenuCreator getMenuCreator() {
 				return this;
 			}
 
+			@Override
 			public void dispose() {
 				if (lastMenu != null) {
 					lastMenu.dispose();
@@ -180,6 +182,7 @@ class PreferencePageHistory {
 				}
 			}
 
+			@Override
 			public Menu getMenu(Control parent) {
 				if (lastMenu != null) {
 					lastMenu.dispose();
@@ -190,6 +193,7 @@ class PreferencePageHistory {
 
 			}
 
+			@Override
 			public Menu getMenu(Menu parent) {
 				return null;
 			}
@@ -215,16 +219,19 @@ class PreferencePageHistory {
 				this.index = index;
 			}
 
+			@Override
 			public void run() {
 				jumpToHistory(index);
 			}
 		}
 
 		HistoryNavigationAction backward = new HistoryNavigationAction() {
+			@Override
 			public void run() {
 				jumpToHistory(historyIndex - 1);
 			}
 
+			@Override
 			public boolean isEnabled() {
 				boolean enabled = historyIndex > 0;
 				if (enabled) {
@@ -233,6 +240,7 @@ class PreferencePageHistory {
 				return enabled;
 			}
 
+			@Override
 			protected void createEntries(Menu menu) {
 				int limit = Math.max(0, historyIndex - MAX_ENTRIES);
 				for (int i = historyIndex - 1; i >= limit; i--) {
@@ -255,10 +263,12 @@ class PreferencePageHistory {
 		historyToolbar.add(backward);
 
 		HistoryNavigationAction forward = new HistoryNavigationAction() {
+			@Override
 			public void run() {
 				jumpToHistory(historyIndex + 1);
 			}
 
+			@Override
 			public boolean isEnabled() {
 				boolean enabled = historyIndex < history.size() - 1;
 				if (enabled) {
@@ -267,6 +277,7 @@ class PreferencePageHistory {
 				return enabled;
 			}
 
+			@Override
 			protected void createEntries(Menu menu) {
 				int limit = Math.min(history.size(), historyIndex + MAX_ENTRIES
 						+ 1);

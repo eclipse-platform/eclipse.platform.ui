@@ -51,35 +51,43 @@ public final class UndoActionHandler extends OperationHistoryActionHandler {
 		setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
 	}
 
+	@Override
 	void flush() {
 		getHistory().dispose(getUndoContext(), true, false, false);
 	}
 
+	@Override
 	String getCommandString() {
 		return WorkbenchMessages.Operations_undoCommand;
 	}
 	
+	@Override
 	String getTooltipString() {
 		return WorkbenchMessages.Operations_undoTooltipCommand;
 	}
 	
+	@Override
 	String getSimpleCommandString() {
 		return WorkbenchMessages.Workbench_undo;
 	}
 	
+	@Override
 	String getSimpleTooltipString() {
 		return WorkbenchMessages.Workbench_undoToolTip;		
 	}
 
+	@Override
 	IUndoableOperation getOperation() {
 		return getHistory().getUndoOperation(getUndoContext());
 
 	}
 
+	@Override
 	IStatus runCommand(IProgressMonitor pm) throws ExecutionException  {
 		return getHistory().undo(getUndoContext(), pm, this);
 	}
 
+	@Override
 	boolean shouldBeEnabled() {
 		return getHistory().canUndo(getUndoContext());
 	}

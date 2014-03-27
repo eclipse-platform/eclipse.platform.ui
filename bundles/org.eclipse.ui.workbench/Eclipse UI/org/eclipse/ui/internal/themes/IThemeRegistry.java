@@ -45,7 +45,8 @@ public interface IThemeRegistry {
         /* (non-Javadoc)
          * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
          */
-        public int compare(Object arg0, Object arg1) {
+        @Override
+		public int compare(Object arg0, Object arg1) {
             String def0 = arg0 == null ? null
                     : ((IHierarchalThemeElementDefinition) arg0)
                             .getDefaultsTo();
@@ -95,7 +96,8 @@ public interface IThemeRegistry {
         /* (non-Javadoc)
          * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
          */
-        public int compare(Object arg0, Object arg1) {
+        @Override
+		public int compare(Object arg0, Object arg1) {
             String str0 = getCompareString(arg0);
             String str1 = getCompareString(arg1);
             return str0.compareTo(str1);

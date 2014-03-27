@@ -21,6 +21,7 @@ import org.eclipse.swt.events.HelpEvent;
  * @deprecated nested contexts are no longer supported by the help support system
  * 
  */
+@Deprecated
 public interface IContextComputer {
     /**
      * Computes contexts for the help system.

@@ -39,6 +39,7 @@ public interface IContextActivation extends IEvaluationResultCache {
 	 * 
 	 * @deprecated Use {@link IEvaluationResultCache#clearResult()} instead.
 	 */
+	@Deprecated
 	public void clearActive();
 
 	/**
@@ -71,5 +72,6 @@ public interface IContextActivation extends IEvaluationResultCache {
 	 *             {@link IEvaluationResultCache#evaluate(IEvaluationContext)}
 	 *             instead.
 	 */
+	@Deprecated
 	public boolean isActive(IEvaluationContext context);
 }

@@ -18,6 +18,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 public class InstallationHandler extends AbstractHandler{
 
+	@Override
 	public Object execute(ExecutionEvent event) {		
 		IWorkbenchWindow workbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
 		if (workbenchWindow == null)

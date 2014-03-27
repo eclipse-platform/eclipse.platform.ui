@@ -52,6 +52,7 @@ public final class PreferencePageParameterValues implements IParameterValues {
 					 * 
 					 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
 					 */
+					@Override
 					public void registryChanged(IRegistryChangeEvent event) {
 						if (event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
 								IWorkbenchRegistryConstants.PL_PREFERENCES).length > 0) {
@@ -98,6 +99,7 @@ public final class PreferencePageParameterValues implements IParameterValues {
 		}
 	}
 
+	@Override
 	public final Map getParameterValues() {
 		if (preferenceMap == null) {
 			preferenceMap = new TreeMap();

@@ -64,7 +64,8 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
         /* (non-Javadoc)
          * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
          */
-        public void removeExtension(IExtension source, Object[] objects) {
+        @Override
+		public void removeExtension(IExtension source, Object[] objects) {
             for (int i = 0; i < objects.length; i++) {
                 if (objects[i] instanceof NewWizardShortcutAction) {
                     actions.values().remove(objects[i]);
@@ -75,7 +76,8 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
         /* (non-Javadoc)
          * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
          */
-        public void addExtension(IExtensionTracker tracker, IExtension extension) {
+        @Override
+		public void addExtension(IExtensionTracker tracker, IExtension extension) {
             // Do nothing
         }
     };
@@ -85,7 +87,8 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
      */
     private final IRegistryChangeListener registryListener = new IRegistryChangeListener() {
 
-        public void registryChanged(IRegistryChangeEvent event) {
+        @Override
+		public void registryChanged(IRegistryChangeEvent event) {
             // reset the reader.
             // TODO This is expensive.  Can we be more selective?
             if (getParent() != null) {
@@ -164,7 +167,8 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
      * 
      * @see org.eclipse.jface.action.IContributionItem#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         if (workbenchWindow != null) {
             super.dispose();
             unregisterListeners();
@@ -206,7 +210,8 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
      * 
      * @see org.eclipse.ui.actions.CompoundContributionItem#getContributionItems()
      */
-    protected IContributionItem[] getContributionItems() {
+    @Override
+	protected IContributionItem[] getContributionItems() {
         ArrayList list = new ArrayList();
         if (workbenchWindow != null && workbenchWindow.getActivePage() != null
                 && workbenchWindow.getActivePage().getPerspective() != null) {

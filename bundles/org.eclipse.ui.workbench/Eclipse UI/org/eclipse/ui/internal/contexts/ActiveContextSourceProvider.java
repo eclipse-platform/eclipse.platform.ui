@@ -45,6 +45,7 @@ public final class ActiveContextSourceProvider extends AbstractSourceProvider
 	 */
 	private IContextService contextService;
 
+	@Override
 	public final void contextManagerChanged(final ContextManagerEvent event) {
 		if (event.isActiveContextsChanged()) {
 			final Map currentState = getCurrentState();
@@ -58,10 +59,12 @@ public final class ActiveContextSourceProvider extends AbstractSourceProvider
 		}
 	}
 
+	@Override
 	public final void dispose() {
 		contextService.removeContextManagerListener(this);
 	}
 
+	@Override
 	public final Map getCurrentState() {
 		final Map currentState = new TreeMap();
 		final Collection activeContextIds = contextService
@@ -70,6 +73,7 @@ public final class ActiveContextSourceProvider extends AbstractSourceProvider
 		return currentState;
 	}
 
+	@Override
 	public final String[] getProvidedSourceNames() {
 		return PROVIDED_SOURCE_NAMES;
 	}
@@ -79,6 +83,7 @@ public final class ActiveContextSourceProvider extends AbstractSourceProvider
 	 * 
 	 * @see org.eclipse.ui.AbstractSourceProvider#initialize(org.eclipse.ui.services.IServiceLocator)
 	 */
+	@Override
 	public void initialize(IServiceLocator locator) {
 		contextService = (IContextService) locator
 				.getService(IContextService.class);

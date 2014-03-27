@@ -44,7 +44,8 @@ public class PresentationUtil {
     private static Control dragSource;
 
     private static Listener dragListener = new Listener() {
-        public void handleEvent(Event event) {
+        @Override
+		public void handleEvent(Event event) {
             dragEvent = event;
             if (dragSource != event.widget) {
                 dragSource = null;
@@ -63,19 +64,22 @@ public class PresentationUtil {
     }
 
     private static Listener moveListener = new Listener() {
-        public void handleEvent(Event event) {
+        @Override
+		public void handleEvent(Event event) {
             handleMouseMove(event);
         }
     };
 
     private static Listener clickListener = new Listener() {
-        public void handleEvent(Event e) {
+        @Override
+		public void handleEvent(Event e) {
             handleMouseClick(e);
         }
     };
 
     private static Listener mouseDownListener = new Listener() {
-        public void handleEvent(Event event) {
+        @Override
+		public void handleEvent(Event event) {
             if (event.widget instanceof Control) {
             	// Remember the button that started the drag so we
             	// can forward it on the call to the 'externalDragListener'

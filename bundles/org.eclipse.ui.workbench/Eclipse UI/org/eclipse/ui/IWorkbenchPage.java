@@ -55,6 +55,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 *             applicable. Use the IDE-specific constant
 	 *             <code>IDE.EDITOR_ID_ATTR</code>.
 	 */
+	@Deprecated
 	public static final String EDITOR_ID_ATTR = "org.eclipse.ui.editorID"; //$NON-NLS-1$
 
 	/**
@@ -253,6 +254,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 *             {@link org.eclipse.ui.IWorkbench#getWorkingSetManager()}
 	 *             instead.
 	 */
+	@Deprecated
 	public void addPropertyChangeListener(IPropertyChangeListener listener);
 
 	/**
@@ -424,6 +426,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 *             all the editors in the page which can cause plug-in
 	 *             activation.
 	 */
+	@Deprecated
 	public IEditorPart[] getEditors();
 
 	/**
@@ -493,6 +496,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 *             instead. Calling this method has the side effect of restoring
 	 *             all the views in the page which can cause plug-in activation.
 	 */
+	@Deprecated
 	public IViewPart[] getViews();
 
 	/**
@@ -509,6 +513,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * @since 2.0
 	 * @deprecated individual views should store a working set if needed
 	 */
+	@Deprecated
 	public IWorkingSet getWorkingSet();
 
 	/**
@@ -869,6 +874,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * 
 	 * @deprecated
 	 */
+	@Deprecated
 	public int getEditorReuseThreshold();
 
 	/**
@@ -880,6 +886,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * @deprecated use IPageLayout.setEditorReuseThreshold(int openEditors)
 	 *             instead.
 	 */
+	@Deprecated
 	public void setEditorReuseThreshold(int openEditors);
 
 	/**

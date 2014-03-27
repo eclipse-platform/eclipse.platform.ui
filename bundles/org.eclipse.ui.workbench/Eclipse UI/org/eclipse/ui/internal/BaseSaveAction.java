@@ -40,7 +40,8 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
     private List partsWithListeners = new ArrayList(1);
 
     private final IPropertyListener propListener = new IPropertyListener() {
-        public void propertyChanged(Object source, int propId) {
+        @Override
+		public void propertyChanged(Object source, int propId) {
             if (source == getActiveEditor()) {
                 if (propId == IEditorPart.PROP_DIRTY) {
 					updateState();
@@ -64,7 +65,8 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
     /* (non-Javadoc)
      * Method declared on ActiveEditorAction.
      */
-    protected void editorActivated(IEditorPart part) {
+    @Override
+	protected void editorActivated(IEditorPart part) {
         if (part != null) {
             part.addPropertyListener(propListener);
             partsWithListeners.add(part);
@@ -74,7 +76,8 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
     /* (non-Javadoc)
      * Method declared on ActiveEditorAction.
      */
-    protected void editorDeactivated(IEditorPart part) {
+    @Override
+	protected void editorDeactivated(IEditorPart part) {
         if (part != null) {
             part.removePropertyListener(propListener);
             partsWithListeners.remove(part);
@@ -84,7 +87,8 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
     private IViewPart activeView;
 
     private final IPropertyListener propListener2 = new IPropertyListener() {
-        public void propertyChanged(Object source, int propId) {
+        @Override
+		public void propertyChanged(Object source, int propId) {
             if (source == activeView) {
                 if (propId == IEditorPart.PROP_DIRTY) {
 					updateState();
@@ -97,7 +101,8 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
     private ISaveablePart activeSaveablePart;
     
     private final IPropertyListener propListener3 = new IPropertyListener() {
-    	public void propertyChanged(Object source, int propId) {
+    	@Override
+		public void propertyChanged(Object source, int propId) {
     		if (source == activeSaveablePart) {
     			if (propId == IEditorPart.PROP_DIRTY) {
     				updateState();
@@ -109,7 +114,8 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
     /* (non-Javadoc)
      * Method declared on PageEventAction.
      */
-    public void pageActivated(IWorkbenchPage page) {
+    @Override
+	public void pageActivated(IWorkbenchPage page) {
         super.pageActivated(page);
         updateActiveView();
         updateState();
@@ -118,7 +124,8 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
     /* (non-Javadoc)
      * Method declared on PageEventAction.
      */
-    public void pageClosed(IWorkbenchPage page) {
+    @Override
+	public void pageClosed(IWorkbenchPage page) {
         super.pageClosed(page);
         updateActiveView();
         updateState();
@@ -127,7 +134,8 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
     /* (non-Javadoc)
      * Method declared on PartEventAction.
      */
-    public void partActivated(IWorkbenchPart part) {
+    @Override
+	public void partActivated(IWorkbenchPart part) {
         super.partActivated(part);
         if (part instanceof IViewPart) {
             updateActiveView();
@@ -138,7 +146,8 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
     /* (non-Javadoc)
      * Method declared on PartEventAction.
      */
-    public void partClosed(IWorkbenchPart part) {
+    @Override
+	public void partClosed(IWorkbenchPart part) {
         super.partClosed(part);
         if (part instanceof IViewPart) {
             updateActiveView();
@@ -149,7 +158,8 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
     /* (non-Javadoc)
      * Method declared on PartEventAction.
      */
-    public void partDeactivated(IWorkbenchPart part) {
+    @Override
+	public void partDeactivated(IWorkbenchPart part) {
         super.partDeactivated(part);
         if (part instanceof IViewPart) {
             updateActiveView();
@@ -222,7 +232,8 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
     /* (non-Javadoc)
      * Method declared on PageEventAction.
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         super.dispose();
         for (Iterator it = partsWithListeners.iterator(); it.hasNext();) {
             IWorkbenchPart part = (IWorkbenchPart) it.next();

@@ -103,14 +103,16 @@ public abstract class StackPresentation implements ISizeProvider {
      * 
      * @deprecated replaced by computePreferredSize
      */
-    public Point computeMinimumSize() {
+    @Deprecated
+	public Point computeMinimumSize() {
         return new Point(0,0);
     }
     
     /*
      * @see ISizeProvider#getSizeFlags(boolean) 
      */
-    public int getSizeFlags(boolean width) {
+    @Override
+	public int getSizeFlags(boolean width) {
         boolean hasMaximumSize = getSite().getState() == IStackPresentationSite.STATE_MINIMIZED; 
         
         return SWT.MIN | (hasMaximumSize ? SWT.MAX : 0);
@@ -119,7 +121,8 @@ public abstract class StackPresentation implements ISizeProvider {
     /*
      * @see ISizeProvider#computePreferredSize(boolean, int, int, int)
      */
-    public int computePreferredSize(boolean width, int availableParallel, int availablePerpendicular, int preferredResult) {
+    @Override
+	public int computePreferredSize(boolean width, int availableParallel, int availablePerpendicular, int preferredResult) {
         int minSize = Geometry.getCoordinate(computeMinimumSize(), width);
         
     	if (getSite().getState() == IStackPresentationSite.STATE_MINIMIZED || preferredResult < minSize) {

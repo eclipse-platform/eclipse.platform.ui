@@ -58,7 +58,8 @@ class FullDecoratorDefinition extends DecoratorDefinition {
             Platform
                     .run(new SafeRunnable(
                             NLS.bind(WorkbenchMessages.DecoratorManager_ErrorActivatingDecorator, getName() )) { 
-                        public void run() {
+                        @Override
+						public void run() {
                             try {
                                 decorator = (ILabelDecorator) WorkbenchPlugin
                                         .createExtension(
@@ -90,7 +91,8 @@ class FullDecoratorDefinition extends DecoratorDefinition {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#refreshDecorator()
      */
-    protected void refreshDecorator() {
+    @Override
+	protected void refreshDecorator() {
         //Only do something if disabled so as to prevent
         //gratutitous activation
         if (!this.enabled && decorator != null) {
@@ -151,7 +153,8 @@ class FullDecoratorDefinition extends DecoratorDefinition {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#internalGetLabelProvider()
      */
-    protected IBaseLabelProvider internalGetLabelProvider()
+    @Override
+	protected IBaseLabelProvider internalGetLabelProvider()
             throws CoreException {
         return internalGetDecorator();
     }
@@ -159,7 +162,8 @@ class FullDecoratorDefinition extends DecoratorDefinition {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#isFull()
      */
-    public boolean isFull() {
+    @Override
+	public boolean isFull() {
         return true;
     }
 

@@ -49,7 +49,8 @@ public class StartupPreferencePage extends PreferencePage implements
     /**
      * @see PreferencePage#createContents(Composite)
      */
-    protected Control createContents(Composite parent) {
+    @Override
+	protected Control createContents(Composite parent) {
     	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 				IWorkbenchHelpContextIds.STARTUP_PREFERENCE_PAGE);
 
@@ -87,6 +88,7 @@ public class StartupPreferencePage extends PreferencePage implements
         pluginsList.setLayoutData(data);
 		TableViewer viewer = new TableViewer(pluginsList);
 		viewer.setLabelProvider(new LabelProvider() {
+			@Override
 			public String getText(Object element) {
 				return (String) Platform.getBundle(((ContributionInfo) element).getBundleId())
 						.getHeaders().get(
@@ -110,14 +112,16 @@ public class StartupPreferencePage extends PreferencePage implements
     /**
      * @see IWorkbenchPreferencePage
      */
-    public void init(IWorkbench workbench) {
+    @Override
+	public void init(IWorkbench workbench) {
         this.workbench = (Workbench) workbench;
     }
 
     /**
      * @see PreferencePage
      */
-    protected void performDefaults() {
+    @Override
+	protected void performDefaults() {
         TableItem items[] = pluginsList.getItems();
         for (int i = 0; i < items.length; i++) {
             items[i].setChecked(true);
@@ -127,7 +131,8 @@ public class StartupPreferencePage extends PreferencePage implements
     /**
      * @see PreferencePage
      */
-    public boolean performOk() {
+    @Override
+	public boolean performOk() {
         StringBuffer preference = new StringBuffer();
         TableItem items[] = pluginsList.getItems();
         for (int i = 0; i < items.length; i++) {

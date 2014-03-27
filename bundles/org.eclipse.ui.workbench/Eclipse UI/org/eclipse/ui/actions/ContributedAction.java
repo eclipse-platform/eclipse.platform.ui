@@ -188,6 +188,7 @@ public final class ContributedAction extends CommandAction {
 	 * 
 	 * @see org.eclipse.ui.internal.actions.CommandAction#runWithEvent(org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(Event event) {
 		if (partHandler != null && getParameterizedCommand() != null) {
 			IHandler oldHandler = getParameterizedCommand().getCommand()
@@ -216,6 +217,7 @@ public final class ContributedAction extends CommandAction {
 	 * 
 	 * @see org.eclipse.jface.action.Action#isEnabled()
 	 */
+	@Override
 	public boolean isEnabled() {
 		if (partHandler != null) {
 			if (partHandler instanceof IHandler2) {
@@ -239,21 +241,26 @@ public final class ContributedAction extends CommandAction {
 			}
 
 			partListener = new IPartListener() {
+				@Override
 				public void partActivated(IWorkbenchPart part) {
 				}
 
+				@Override
 				public void partBroughtToTop(IWorkbenchPart part) {
 				}
 
+				@Override
 				public void partClosed(IWorkbenchPart part) {
 					if (part == currentPart) {
 						ContributedAction.this.disposeAction();
 					}
 				}
 
+				@Override
 				public void partDeactivated(IWorkbenchPart part) {
 				}
 
+				@Override
 				public void partOpened(IWorkbenchPart part) {
 				}
 			};

@@ -65,6 +65,7 @@ public abstract class WorkbenchWindowControlContribution extends InternalControl
 	 * @return Returns the workbench window currently hosting
 	 * the control.
 	 */
+	@Override
 	public final IWorkbenchWindow getWorkbenchWindow() {
 		return super.getWorkbenchWindow();
 	}
@@ -74,10 +75,12 @@ public abstract class WorkbenchWindowControlContribution extends InternalControl
 	 * control is currently being display on. This allows derivatives
 	 * to tailor their created control based on the orientation...
 	 */
+	@Override
 	public final int getCurSide() {
 		return super.getCurSide();
 	}
 	
+	@Override
 	public final int getOrientation() {
 		if (getCurSide() == SWT.LEFT || getCurSide() == SWT.RIGHT)
 			return SWT.VERTICAL;

@@ -242,6 +242,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		parent2.setLayout(new FillLayout());
 		editor.createPartControl(parent2);
 		editor.addPropertyListener(new IPropertyListener() {
+			@Override
 			public void propertyChanged(Object source, int propertyId) {
 				MultiPageEditorPart.this.handlePropertyChange(propertyId);
 			}
@@ -287,6 +288,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		final CTabFolder newContainer = new CTabFolder(parent, SWT.BOTTOM
 				| SWT.FLAT);
 		newContainer.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int newPageIndex = newContainer.indexOf((CTabItem) e.item);
 				pageChange(newPageIndex);
@@ -294,6 +296,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		});
 		newContainer.addTraverseListener(new TraverseListener() { 
 			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=199499 : Switching tabs by Ctrl+PageUp/PageDown must not be caught on the inner tab set
+			@Override
 			public void keyTraversed(TraverseEvent e) {
 				switch (e.detail) {
 					case SWT.TRAVERSE_PAGE_NEXT:
@@ -352,6 +355,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 *            The parent in which the editor should be created; must not be
 	 *            <code>null</code>.
 	 */
+	@Override
 	public final void createPartControl(Composite parent) {
 		Composite pageContainer = createPageContainer(parent);
 		this.container = createContainer(pageContainer);
@@ -382,6 +386,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 */
 	protected void initializePageSwitching() {
 		new PageSwitcher(this) {
+			@Override
 			public Object[] getPages() {
 				int pageCount = getPageCount();
 				Object[] result = new Object[pageCount];
@@ -391,10 +396,12 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 				return result;
 			}
 
+			@Override
 			public String getName(Object page) {
 				return getPageText(((Integer) page).intValue());
 			}
 
+			@Override
 			public ImageDescriptor getImageDescriptor(Object page) {
 				Image image = getPageImage(((Integer) page).intValue());
 				if (image == null)
@@ -403,10 +410,12 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 				return ImageDescriptor.createFromImage(image);
 			}
 
+			@Override
 			public void activatePage(Object page) {
 				setActivePage(((Integer) page).intValue());
 			}
 
+			@Override
 			public int getCurrentPageIndex() {
 				return getActivePage();
 			}
@@ -426,6 +435,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 			 * @throws ExecutionException
 			 *             if an exception occurred during execution
 			 */
+			@Override
 			public Object execute(ExecutionEvent event) throws ExecutionException {
 				int n= getPageCount();
 				if (n == 0)
@@ -445,6 +455,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 			 * @throws ExecutionException
 			 *             if an exception occurred during execution
 			 */
+			@Override
 			public Object execute(ExecutionEvent event) throws ExecutionException {
 				int n= getPageCount();
 				if (n == 0)
@@ -497,6 +508,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * <code>IWorkbenchPart</code> method disposes all nested editors.
 	 * Subclasses may extend.
 	 */
+	@Override
 	public void dispose() {
 		deactivateSite(true, false);
 
@@ -648,6 +660,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 				IServiceLocatorCreator slc = (IServiceLocatorCreator) getSite()
 						.getService(IServiceLocatorCreator.class);
 				IServiceLocator sl = slc.createServiceLocator(getSite(), null, new IDisposable(){
+					@Override
 					public void dispose() {
 						close();
 					}
@@ -682,6 +695,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 			IServiceLocatorCreator slc = (IServiceLocatorCreator) getSite()
 					.getService(IServiceLocatorCreator.class);
 			pageContainerSite = slc.createServiceLocator(getSite(), null, new IDisposable(){
+				@Override
 				public void dispose() {
 					close();
 				}
@@ -787,6 +801,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * @throws PartInitException
 	 *             If the initialization of the part fails -- currently never.
 	 */
+	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
 		setSite(site);
@@ -806,6 +821,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * @return <code>true</code> if any of the nested editors are dirty;
 	 *         <code>false</code> otherwise.
 	 */
+	@Override
 	public boolean isDirty() {
 		// use nestedEditors to avoid SWT requests; see bug 12996
 		for (Iterator i = nestedEditors.iterator(); i.hasNext();) {
@@ -1013,6 +1029,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 */
 	private void disposePart(final IWorkbenchPart part) {
 		SafeRunner.run(new ISafeRunnable() {
+			@Override
 			public void run() {
 				IWorkbenchPartSite partSite = part.getSite();
 				part.dispose();
@@ -1021,6 +1038,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 				}
 			}
 
+			@Override
 			public void handleException(Throwable e) {
 				// Exception has already being logged by Core. Do nothing.
 			}
@@ -1104,6 +1122,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * Subclasses may extend or reimplement.
 	 * </p>
 	 */
+	@Override
 	public void setFocus() {
 		setFocus(getActivePage());
 	}
@@ -1167,6 +1186,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		Object result = super.getAdapter(adapter);
 		// restrict delegating to the UI thread for bug 144851
@@ -1235,6 +1255,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * @since 3.5
 	 * @see #getActivePage()
 	 */
+	@Override
 	public Object getSelectedPage() {
 		int index = getActivePage();
 		if (index == -1) {
@@ -1260,6 +1281,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * 
 	 * @since 3.5
 	 */
+	@Override
 	public void addPageChangedListener(IPageChangedListener listener) {
 		pageChangeListeners.add(listener);
 	}
@@ -1274,6 +1296,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * 
 	 * @since 3.5
 	 */
+	@Override
 	public void removePageChangedListener(IPageChangedListener listener) {
 		pageChangeListeners.remove(listener);
 	}
@@ -1283,6 +1306,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		for (int i = 0; i < listeners.length; ++i) {
 			final IPageChangedListener l = (IPageChangedListener) listeners[i];
 			SafeRunnable.run(new SafeRunnable() {
+				@Override
 				public void run() {
 					l.pageChanged(event);
 				}

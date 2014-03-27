@@ -263,6 +263,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 					 * 
 					 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
 					 */
+					@Override
 					public void widgetDisposed(DisposeEvent e) {
 						registeredWindows.remove(null);
 						if (!newShell.isDisposed()) {
@@ -568,6 +569,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 			 * 
 			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
 			 */
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				registeredWindows.remove(shell);
 				if (!shell.isDisposed()) {
@@ -603,6 +605,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 * @param sourcePriority
 	 *            A bit mask of all the source priorities that have changed.
 	 */
+	@Override
 	protected final void sourceChanged(final int sourcePriority) {
 		// If tracing, then track how long it takes to process the activations.
 		long startTime = 0L;
@@ -773,6 +776,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 *            The new value of the variable. If this value is
 	 *            <code>null</code>, then the variable is removed.
 	 */
+	@Override
 	protected final void updateEvaluationContext(final String name,
 			final Object value) {
 		/*

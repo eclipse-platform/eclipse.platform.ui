@@ -56,6 +56,7 @@ public class OpenPreferencesAction extends Action implements ActionFactory.IWork
 	/* (non-Javadoc)
 	 * Method declared on Action.
 	 */
+	@Override
 	public void run() {
 		if (workbenchWindow == null) {
 			// action has been dispose
@@ -68,6 +69,7 @@ public class OpenPreferencesAction extends Action implements ActionFactory.IWork
 	/* (non-Javadoc)
 	 * Method declared on ActionFactory.IWorkbenchAction.
 	 */
+	@Override
 	public void dispose() {
 		workbenchWindow = null;
 	}

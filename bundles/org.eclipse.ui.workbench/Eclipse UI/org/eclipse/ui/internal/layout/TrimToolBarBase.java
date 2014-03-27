@@ -90,7 +90,8 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 	 */
 
     private Listener tbListener = new Listener() {
-        public void handleEvent(Event event) {
+        @Override
+		public void handleEvent(Event event) {
             Point loc = new Point(event.x, event.y);
             if (event.type == SWT.MenuDetect) {
                 showToolBarPopup(loc);
@@ -102,7 +103,8 @@ public abstract class TrimToolBarBase implements IWindowTrim {
      * This listener brings up the context menu
      */
     private Listener cbListener = new Listener() {
-        public void handleEvent(Event event) {
+        @Override
+		public void handleEvent(Event event) {
             Point loc = new Point(event.x, event.y);
             if (event.type == SWT.MenuDetect) {
                 showDockTrimPopup(loc);
@@ -270,7 +272,8 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 	private ContributionItem getDockingContribution() {
     	if (dockContributionItem == null) {
     		dockContributionItem = new ContributionItem() {
-    			public void fill(Menu menu, int index) {
+    			@Override
+				public void fill(Menu menu, int index) {
     				// populate from superclass
     				super.fill(menu, index);
     				
@@ -280,10 +283,12 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 	    				closeItem.setText(WorkbenchMessages.TrimCommon_Close);
 	    				
 	    				closeItem.addSelectionListener(new SelectionListener() {
+							@Override
 							public void widgetSelected(SelectionEvent e) {
 								handleCloseTrim();
 							}
 
+							@Override
 							public void widgetDefaultSelected(SelectionEvent e) {
 							}
 	    				});
@@ -325,7 +330,8 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 
     		    	// if the radioVal changes it means that the User wants to change the docking location
     		    	radioVal.addChangeListener(new IChangeListener() {
-    					public void update(boolean changed) {
+    					@Override
+						public void update(boolean changed) {
     						if (changed) {
 								handleShowOnChange();
 							}
@@ -433,6 +439,7 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.layout.IWindowTrim#dock(int)
 	 */
+	@Override
 	public void dock(int dropSide) {
 		createControl(dropSide);
 	}
@@ -440,6 +447,7 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.layout.IWindowTrim#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		if (frame == null)
 			return null;
@@ -450,6 +458,7 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.layout.IWindowTrim#getDisplayName()
 	 */
+	@Override
 	public String getDisplayName() {
 		return id;
 	}
@@ -457,6 +466,7 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.layout.IWindowTrim#getHeightHint()
 	 */
+	@Override
 	public int getHeightHint() {
 		return getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
 	}
@@ -464,6 +474,7 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.layout.IWindowTrim#getId()
 	 */
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -471,6 +482,7 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.layout.IWindowTrim#getValidSides()
 	 */
+	@Override
 	public int getValidSides() {
 		return SWT.BOTTOM | SWT.TOP | SWT.LEFT | SWT.RIGHT;
 	}
@@ -478,6 +490,7 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.layout.IWindowTrim#getWidthHint()
 	 */
+	@Override
 	public int getWidthHint() {
 		return getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
 	}
@@ -485,12 +498,14 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.layout.IWindowTrim#handleClose()
 	 */
+	@Override
 	public void handleClose() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.layout.IWindowTrim#isCloseable()
 	 */
+	@Override
 	public boolean isCloseable() {
 		return false;
 	}
@@ -498,6 +513,7 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.layout.IWindowTrim#isResizeable()
 	 */
+	@Override
 	public boolean isResizeable() {
 		return false;
 	}	    

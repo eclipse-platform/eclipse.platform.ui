@@ -60,6 +60,7 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 	 * 
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_CONTENT_ASSIST}
 	 */
+	@Deprecated
 	public static final String CONTENT_PROPOSAL_COMMAND= IWorkbenchCommandConstants.EDIT_CONTENT_ASSIST;
 
 	// Default autoactivation delay in milliseconds
@@ -72,6 +73,7 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 	private IHandlerActivation activeHandler;
 
 	private IHandler proposalHandler = new AbstractHandler() {
+		@Override
 		public Object execute(ExecutionEvent event) {
 			openProposalPopup();
 			return null;
@@ -197,10 +199,12 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 	 */
 	private void addListeners(Control control) {
 		control.addFocusListener(new FocusListener() {
+			@Override
 			public void focusLost(FocusEvent e) {
 				deactivateHandler();
 			}
 
+			@Override
 			public void focusGained(FocusEvent e) {
 				if (isEnabled()) {
 					activateHandler();
@@ -210,6 +214,7 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 			}
 		});
 		control.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				deactivateHandler();
 			}
@@ -274,6 +279,7 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 	 * @see org.eclipse.jface.fieldassist.ContentProposalAdapter#setEnabled(boolean)
 	 * @since 3.3
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 		if (decoration != null) {

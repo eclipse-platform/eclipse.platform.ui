@@ -63,6 +63,7 @@ public class HelpSearchContributionItem extends ControlContribution {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.ControlContribution#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createControl(Composite parent) {
 		combo = new Combo(parent, SWT.NONE);
 		combo.setToolTipText(WorkbenchMessages.WorkbenchWindow_searchCombo_toolTip); 
@@ -73,6 +74,7 @@ public class HelpSearchContributionItem extends ControlContribution {
 		}
 		combo.setText(WorkbenchMessages.WorkbenchWindow_searchCombo_text); 
 		combo.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				if (e.character == SWT.CR) {
 					doSearch(combo.getText(), true);
@@ -80,6 +82,7 @@ public class HelpSearchContributionItem extends ControlContribution {
 			}
 		});
 		combo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int index = combo.getSelectionIndex();
 				if (index != -1) {
@@ -93,6 +96,7 @@ public class HelpSearchContributionItem extends ControlContribution {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.ControlContribution#computeWidth(org.eclipse.swt.widgets.Control)
 	 */
+	@Override
 	protected int computeWidth(Control control) {
 		return control.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
 	}

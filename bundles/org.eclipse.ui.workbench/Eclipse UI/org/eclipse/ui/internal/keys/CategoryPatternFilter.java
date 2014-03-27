@@ -47,6 +47,7 @@ class CategoryPatternFilter extends PatternFilter {
 	 * @see org.eclipse.ui.dialogs.PatternFilter#isLeafMatch(org.eclipse.jface.viewers.Viewer,
 	 *      java.lang.Object)
 	 */
+	@Override
 	protected boolean isLeafMatch(Viewer viewer, Object element) {
 		if (filterCategories) {
 			final ParameterizedCommand cmd = getCommand(element);

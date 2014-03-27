@@ -37,7 +37,8 @@ public final class CategoryActivityBinding implements ICategoryActivityBinding {
         this.categoryId = categoryId;
     }
 
-    public int compareTo(Object object) {
+    @Override
+	public int compareTo(Object object) {
         CategoryActivityBinding castedObject = (CategoryActivityBinding) object;
         int compareTo = Util.compare(activityId, castedObject.activityId);
 
@@ -48,7 +49,8 @@ public final class CategoryActivityBinding implements ICategoryActivityBinding {
         return compareTo;
     }
 
-    public boolean equals(Object object) {
+    @Override
+	public boolean equals(Object object) {
         if (!(object instanceof CategoryActivityBinding)) {
 			return false;
 		}
@@ -61,15 +63,18 @@ public final class CategoryActivityBinding implements ICategoryActivityBinding {
         return Util.equals(categoryId, castedObject.categoryId);
     }
 
-    public String getActivityId() {
+    @Override
+	public String getActivityId() {
         return activityId;
     }
 
-    public String getCategoryId() {
+    @Override
+	public String getCategoryId() {
         return categoryId;
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         if (hashCode == HASH_INITIAL){
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
@@ -81,7 +86,8 @@ public final class CategoryActivityBinding implements ICategoryActivityBinding {
         return hashCode;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         if (string == null) {
             final StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append('[');

@@ -40,6 +40,7 @@ import org.eclipse.ui.internal.util.Util;
  *             instead.
  * @see org.eclipse.ui.contexts.IContextService
  */
+@Deprecated
 public final class EnabledSubmission implements Comparable {
 
     /**
@@ -106,7 +107,8 @@ public final class EnabledSubmission implements Comparable {
     /**
      * @see Comparable#compareTo(java.lang.Object)
      */
-    public int compareTo(Object object) {
+    @Override
+	public int compareTo(Object object) {
         EnabledSubmission castedObject = (EnabledSubmission) object;
         int compareTo = Util.compare(activeWorkbenchPartSite,
                 castedObject.activeWorkbenchPartSite);
@@ -171,7 +173,8 @@ public final class EnabledSubmission implements Comparable {
     /**
      * @see Object#toString()
      */
-    public String toString() {
+    @Override
+	public String toString() {
         if (string == null) {
             final StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append("[activePartId="); //$NON-NLS-1$

@@ -28,6 +28,7 @@ public class EvaluationServiceFactory extends AbstractServiceFactory {
 	 *      org.eclipse.ui.services.IServiceLocator,
 	 *      org.eclipse.ui.services.IServiceLocator)
 	 */
+	@Override
 	public Object create(Class serviceInterface, IServiceLocator parentLocator,
 			IServiceLocator locator) {
 		if (!IEvaluationService.class.equals(serviceInterface)) {

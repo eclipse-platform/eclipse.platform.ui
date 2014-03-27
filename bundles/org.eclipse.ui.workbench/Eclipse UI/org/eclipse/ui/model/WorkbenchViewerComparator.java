@@ -45,7 +45,8 @@ public class WorkbenchViewerComparator extends ViewerComparator {
     /* (non-Javadoc)
      * Method declared on ViewerComparator.
      */
-    public boolean isSorterProperty(Object element, String propertyId) {
+    @Override
+	public boolean isSorterProperty(Object element, String propertyId) {
         return propertyId.equals(IBasicPropertyConstants.P_TEXT);
     }
 }

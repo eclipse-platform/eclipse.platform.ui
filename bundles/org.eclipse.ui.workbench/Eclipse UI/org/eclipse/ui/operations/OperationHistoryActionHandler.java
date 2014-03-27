@@ -80,18 +80,21 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		/**
 		 * @see IPartListener#partActivated(IWorkbenchPart)
 		 */
+		@Override
 		public void partActivated(IWorkbenchPart part) {
 		}
 
 		/**
 		 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
 		 */
+		@Override
 		public void partBroughtToTop(IWorkbenchPart part) {
 		}
 
 		/**
 		 * @see IPartListener#partClosed(IWorkbenchPart)
 		 */
+		@Override
 		public void partClosed(IWorkbenchPart part) {
 			if (site != null && part.equals(site.getPart())) {
 				dispose();
@@ -107,18 +110,21 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		/**
 		 * @see IPartListener#partDeactivated(IWorkbenchPart)
 		 */
+		@Override
 		public void partDeactivated(IWorkbenchPart part) {
 		}
 
 		/**
 		 * @see IPartListener#partOpened(IWorkbenchPart)
 		 */
+		@Override
 		public void partOpened(IWorkbenchPart part) {
 		}
 
 	}
 
 	private class HistoryListener implements IOperationHistoryListener {
+		@Override
 		public void historyNotification(final OperationHistoryEvent event) {
 			IWorkbenchWindow workbenchWindow = getWorkbenchWindow();
 			if (workbenchWindow == null)
@@ -135,6 +141,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			case OperationHistoryEvent.REDONE:
 				if (event.getOperation().hasContext(undoContext)) {
 					display.asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							update();
 						}
@@ -144,6 +151,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			case OperationHistoryEvent.OPERATION_NOT_OK:
 				if (event.getOperation().hasContext(undoContext)) {
 					display.asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							if (pruning) {
 								IStatus status = event.getStatus();
@@ -169,6 +177,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			case OperationHistoryEvent.OPERATION_CHANGED:
 				if (event.getOperation() == getOperation()) {
 					display.asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							update();
 						}
@@ -217,6 +226,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * 
 	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
 	 */
+	@Override
 	public void dispose() {
 
 		IOperationHistory history = getHistory();
@@ -290,6 +300,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * 
 	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#run()
 	 */
+	@Override
 	public final void run() {
 		if (isInvalid()) {
 			return;
@@ -300,6 +311,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 				getWorkbenchWindow().getWorkbench().getProgressService()
 						.getLongOperationTime());
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor pm)
 					throws InvocationTargetException {
 				try {
@@ -344,6 +356,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IUndoContext.class)) {
 			return undoContext;

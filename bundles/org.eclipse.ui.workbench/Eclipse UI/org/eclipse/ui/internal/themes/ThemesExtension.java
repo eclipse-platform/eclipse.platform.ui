@@ -35,6 +35,7 @@ public class ThemesExtension implements IThemesExtension {
 	 * @see org.eclipse.e4.ui.internal.css.swt.definition.IThemesExtension#
 	 * addFontDefinition(java.lang.String)
 	 */
+	@Override
 	public void addFontDefinition(String symbolicName) {
 		FontDefinition definition = new FontDefinition(formatDefaultName(FontDefinition.class,
 				symbolicName), symbolicName, null, null, DEFAULT_CATEGORY_ID, true,
@@ -49,6 +50,7 @@ public class ThemesExtension implements IThemesExtension {
 	 * @see org.eclipse.e4.ui.internal.css.swt.definition.IThemesExtension#
 	 * addColorDefinition(java.lang.String)
 	 */
+	@Override
 	public void addColorDefinition(String symbolicName) {
 		ColorDefinition definition = new ColorDefinition(formatDefaultName(ColorDefinition.class,
 				symbolicName), symbolicName, null, null, DEFAULT_CATEGORY_ID, true,

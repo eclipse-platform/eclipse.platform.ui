@@ -69,7 +69,8 @@ public class NewWizardDropDownAction extends Action implements
         /* (non-Javadoc)
          * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
          */
-        public Menu getMenu(Control parent) {
+        @Override
+		public Menu getMenu(Control parent) {
             createDropDownMenuMgr();
             return dropDownMenuMgr.createContextMenu(parent);
         }
@@ -77,7 +78,8 @@ public class NewWizardDropDownAction extends Action implements
         /* (non-Javadoc)
          * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
          */
-        public Menu getMenu(Menu parent) {
+        @Override
+		public Menu getMenu(Menu parent) {
             createDropDownMenuMgr();
             Menu menu = new Menu(parent);
             IContributionItem[] items = dropDownMenuMgr.getItems();
@@ -96,7 +98,8 @@ public class NewWizardDropDownAction extends Action implements
         /* (non-Javadoc)
          * @see org.eclipse.jface.action.IMenuCreator#dispose()
          */
-        public void dispose() {
+        @Override
+		public void dispose() {
 			if (dropDownMenuMgr != null) {
 				// remove the wizard menu before disposing the menu manager, the
 				// wizard menu is a workbench action and it should only be
@@ -160,7 +163,8 @@ public class NewWizardDropDownAction extends Action implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         if (workbenchWindow == null) {
             // action has already been disposed
             return;
@@ -175,7 +179,8 @@ public class NewWizardDropDownAction extends Action implements
     /**
      * Runs the action, which opens the New wizard dialog.
      */
-    public void run() {
+    @Override
+	public void run() {
         if (workbenchWindow == null) {
             // action has been disposed
             return;

@@ -82,6 +82,7 @@ public class ShowFastViewContribution extends ContributionItem {
 	 * The default implementation of this <code>IContributionItem</code> method
 	 * does nothing. Subclasses may override.
 	 */
+	@Override
 	public void fill(ToolBar parent, int index) {
 		// Get page.
 		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
@@ -101,6 +102,7 @@ public class ShowFastViewContribution extends ContributionItem {
 
 			final IPropertyListener propertyListener = new IPropertyListener() {
 
+				@Override
 				public void propertyChanged(Object source, int propId) {
 					if (propId == IWorkbenchPartConstants.PROP_TITLE) {
 						if (!item.isDisposed()) {
@@ -121,6 +123,7 @@ public class ShowFastViewContribution extends ContributionItem {
 				 * org.eclipse.swt.events.DisposeListener#widgetDisposed(org
 				 * .eclipse.swt.events.DisposeEvent)
 				 */
+				@Override
 				public void widgetDisposed(DisposeEvent e) {
 					ref.removePropertyListener(propertyListener);
 				}
@@ -130,6 +133,7 @@ public class ShowFastViewContribution extends ContributionItem {
 			item.setSelection(false);
 
 			item.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					showView(ref);
 				}
@@ -141,6 +145,7 @@ public class ShowFastViewContribution extends ContributionItem {
 	/**
 	 * Returns whether the contribution is dynamic.
 	 */
+	@Override
 	public boolean isDynamic() {
 		return true;
 	}

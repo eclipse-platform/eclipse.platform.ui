@@ -42,6 +42,7 @@ public abstract class AbstractExtensionWizardRegistry extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
 	 */
+	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		WizardsRegistryReader reader = new WizardsRegistryReader(getPlugin(),
 				getExtensionPoint());
@@ -77,6 +78,7 @@ public abstract class AbstractExtensionWizardRegistry extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.wizards.AbstractWizardRegistry#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		PlatformUI.getWorkbench().getExtensionTracker()
@@ -88,6 +90,7 @@ public abstract class AbstractExtensionWizardRegistry extends
 	 * 
 	 * @see org.eclipse.ui.internal.wizards.AbstractWizardRegistry#doInitialize()
 	 */
+	@Override
 	protected void doInitialize() {
         
 		PlatformUI.getWorkbench().getExtensionTracker().registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
@@ -170,6 +173,7 @@ public abstract class AbstractExtensionWizardRegistry extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
 	 */
+	@Override
 	public void removeExtension(IExtension extension, Object[] objects) {
 		if (!extension.getExtensionPointUniqueIdentifier().equals(
 				getExtensionPointFilter().getUniqueIdentifier())) {

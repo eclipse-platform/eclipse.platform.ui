@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Shell;
  * @see org.eclipse.ui.keys.IBindingService
  * @noimplement This interface is not intended to be implemented by clients.
  */
+@Deprecated
 public interface IWorkbenchContextSupport {
 
 	/**

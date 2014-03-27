@@ -143,12 +143,14 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
         /* (non-Javadoc)
          * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
          */
-        public void propertyChanged(Object source, int propId) {
+        @Override
+		public void propertyChanged(Object source, int propId) {
             partPropertyChanged(source, propId);
         }
     };
     
     private IPropertyChangeListener partPropertyChangeListener = new IPropertyChangeListener() {
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			partPropertyChanged(event);
 		}
@@ -176,6 +178,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	private EventHandler createContextEventHandler() {
 		if (contextEventHandler == null) {
 			contextEventHandler = new EventHandler() {
+				@Override
 				public void handleEvent(Event event) {
 					Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 					MPart part = getModel();
@@ -263,7 +266,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     /**
      * @see IWorkbenchPart
      */
-    public void addPropertyListener(IPropertyListener listener) {
+    @Override
+	public void addPropertyListener(IPropertyListener listener) {
         // The properties of a disposed reference will never change, so don't
         // add listeners
         if (isDisposed()) {
@@ -276,7 +280,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     /**
      * @see IWorkbenchPart
      */
-    public void removePropertyListener(IPropertyListener listener) {
+    @Override
+	public void removePropertyListener(IPropertyListener listener) {
         // Currently I'm not calling checkReference here for fear of breaking things late in 3.1, but it may
         // make sense to do so later. For now we just turn it into a NOP if the reference is disposed.
         if (isDisposed()) {
@@ -291,6 +296,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getTitle()
 	 */
+	@Override
 	public String getTitle() {
 		String title = legacyPart == null ? part.getLocalizedLabel() : legacyPart.getTitle();
 		return Util.safeString(title);
@@ -301,6 +307,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getTitleToolTip()
 	 */
+	@Override
 	public String getTitleToolTip() {
 		String toolTip = (String) part.getTransientData().get(
 				IPresentationEngine.OVERRIDE_TITLE_TOOL_TIP_KEY);
@@ -314,6 +321,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getId()
 	 */
+	@Override
 	public String getId() {
 		String id = part.getElementId();
 
@@ -340,6 +348,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 		return Util.safeString(legacyPart.getTitle());
     }
 
+	@Override
 	public final Image getTitleImage() {
 		if (isDisposed()) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEF_VIEW);
@@ -394,7 +403,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 		}
 	}
 
-    public final IWorkbenchPart getPart(boolean restore) {
+    @Override
+	public final IWorkbenchPart getPart(boolean restore) {
         if (isDisposed()) {
             return null;
         }
@@ -484,7 +494,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPartReference#getPartProperty(java.lang.String)
      */
-    public String getPartProperty(String key) {
+    @Override
+	public String getPartProperty(String key) {
 		if (legacyPart != null) {
 			if (legacyPart instanceof IWorkbenchPart3) {
 				return ((IWorkbenchPart3) legacyPart).getPartProperty(key);
@@ -498,7 +509,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPartReference#addPartPropertyListener(org.eclipse.jface.util.IPropertyChangeListener)
      */
-    public void addPartPropertyListener(IPropertyChangeListener listener) {
+    @Override
+	public void addPartPropertyListener(IPropertyChangeListener listener) {
     	if (isDisposed()) {
     		return;
     	}
@@ -508,7 +520,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPartReference#removePartPropertyListener(org.eclipse.jface.util.IPropertyChangeListener)
      */
-    public void removePartPropertyListener(IPropertyChangeListener listener) {
+    @Override
+	public void removePartPropertyListener(IPropertyChangeListener listener) {
     	if (isDisposed()) {
     		return;
     	}
@@ -533,7 +546,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     /* (non-Javadoc)
      * @see org.eclipse.ui.ISizeProvider#computePreferredSize(boolean, int, int, int)
      */
-    public int computePreferredSize(boolean width, int availableParallel,
+    @Override
+	public int computePreferredSize(boolean width, int availableParallel,
             int availablePerpendicular, int preferredResult) {
 
 		ISizeProvider sizeProvider = (ISizeProvider) Util.getAdapter(legacyPart,
@@ -548,7 +562,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     /* (non-Javadoc)
      * @see org.eclipse.ui.ISizeProvider#getSizeFlags(boolean)
      */
-    public int getSizeFlags(boolean width) {
+    @Override
+	public int getSizeFlags(boolean width) {
 		ISizeProvider sizeProvider = (ISizeProvider) Util.getAdapter(legacyPart,
 				ISizeProvider.class);
         if (sizeProvider != null) {
@@ -557,6 +572,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
         return 0;
     }
     
+	@Override
 	public IWorkbenchPage getPage() {
 		return page;
 	}
@@ -570,6 +586,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getPartName()
 	 */
+	@Override
 	public String getPartName() {
 		return part.getLocalizedLabel();
 	}
@@ -579,6 +596,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getContentDescription()
 	 */
+	@Override
 	public String getContentDescription() {
 		IWorkbenchPart workbenchPart = getPart(false);
 		if (workbenchPart instanceof IWorkbenchPart2) {
@@ -592,6 +610,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPartReference#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		IWorkbenchPart part = getPart(false);
 		if (part instanceof ISaveablePart) {

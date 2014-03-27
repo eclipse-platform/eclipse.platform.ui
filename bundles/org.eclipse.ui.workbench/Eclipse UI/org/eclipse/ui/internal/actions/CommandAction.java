@@ -89,6 +89,7 @@ public class CommandAction extends Action {
 	protected ICommandListener getCommandListener() {
 		if (commandListener == null) {
 			commandListener = new ICommandListener() {
+				@Override
 				public void commandChanged(CommandEvent commandEvent) {
 					if (commandEvent.isHandledChanged()
 							|| commandEvent.isEnabledChanged()) {
@@ -144,6 +145,7 @@ public class CommandAction extends Action {
 	 * 
 	 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(Event event) {
 		if (handlerService == null) {
 			String commandId = (parameterizedCommand == null ? "unknownCommand" //$NON-NLS-1$
@@ -166,6 +168,7 @@ public class CommandAction extends Action {
 	 * 
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		// hopefully this is never called
 		runWithEvent(null);
@@ -211,6 +214,7 @@ public class CommandAction extends Action {
 		return parameterizedCommand;
 	}
 
+	@Override
 	public String getActionDefinitionId() {
 		return super.getActionDefinitionId();
 	}

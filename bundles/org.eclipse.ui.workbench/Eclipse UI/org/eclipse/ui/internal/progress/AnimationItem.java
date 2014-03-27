@@ -44,14 +44,16 @@ public abstract class AnimationItem {
         /* (non-Javadoc)
          * @see org.eclipse.ui.internal.progress.AnimationItem.IAnimationContainer#animationDone()
          */
-        public void animationDone() {
+        @Override
+		public void animationDone() {
             //Do nothing by default
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.ui.internal.progress.AnimationItem.IAnimationContainer#animationStart()
          */
-        public void animationStart() {
+        @Override
+		public void animationStart() {
             //Do nothing by default
         }
     };
@@ -81,7 +83,8 @@ public abstract class AnimationItem {
              * 
              * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
              */
-            public void mouseDoubleClick(MouseEvent arg0) {
+            @Override
+			public void mouseDoubleClick(MouseEvent arg0) {
                 ProgressManagerUtil.openProgressView(AnimationItem.this.window);
             }
 
@@ -90,7 +93,8 @@ public abstract class AnimationItem {
              * 
              * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
              */
-            public void mouseDown(MouseEvent arg0) {
+            @Override
+			public void mouseDown(MouseEvent arg0) {
                 //Do nothing
             }
 
@@ -99,12 +103,14 @@ public abstract class AnimationItem {
              * 
              * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
              */
-            public void mouseUp(MouseEvent arg0) {
+            @Override
+			public void mouseUp(MouseEvent arg0) {
                 //Do nothing
             }
         });
         animationItem.addDisposeListener(new DisposeListener() {
-            public void widgetDisposed(DisposeEvent e) {
+            @Override
+			public void widgetDisposed(DisposeEvent e) {
                 AnimationManager.getInstance().removeItem(AnimationItem.this);
             }
         });

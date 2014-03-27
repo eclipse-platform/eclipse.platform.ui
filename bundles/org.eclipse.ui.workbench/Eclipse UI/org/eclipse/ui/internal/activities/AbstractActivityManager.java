@@ -22,7 +22,8 @@ public abstract class AbstractActivityManager implements IActivityManager {
     protected AbstractActivityManager() {
     }
 
-    public void addActivityManagerListener(
+    @Override
+	public void addActivityManagerListener(
             IActivityManagerListener activityManagerListener) {
         if (activityManagerListener == null) {
 			throw new NullPointerException();
@@ -50,7 +51,8 @@ public abstract class AbstractActivityManager implements IActivityManager {
 		}
     }
 
-    public void removeActivityManagerListener(
+    @Override
+	public void removeActivityManagerListener(
             IActivityManagerListener activityManagerListener) {
         if (activityManagerListener == null) {
 			throw new NullPointerException();

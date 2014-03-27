@@ -105,6 +105,7 @@ public interface IWorkbenchPreferenceConstants {
 	 *             <code>org.eclipse.ui.ide.IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE</code>
 	 *             instead.
 	 */
+	@Deprecated
 	public static final String PROJECT_OPEN_NEW_PERSPECTIVE = "PROJECT_OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
 
 	/**
@@ -123,6 +124,7 @@ public interface IWorkbenchPreferenceConstants {
 	 * @deprecated Opening a Perspective in a new page is no longer supported
 	 *             functionality as of 2.0.
 	 */
+	@Deprecated
 	public static final String OPEN_PERSPECTIVE_PAGE = "OPEN_PERSPECTIVE_PAGE"; //$NON-NLS-1$
 
 	/**

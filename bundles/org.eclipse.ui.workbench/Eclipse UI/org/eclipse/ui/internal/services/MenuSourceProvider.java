@@ -80,12 +80,14 @@ public final class MenuSourceProvider extends AbstractSourceProvider {
 		fireSourceChanged(ISources.ACTIVE_MENU, m);
 	}
 
+	@Override
 	public final void dispose() {
 		menuIds.clear();
 		selection = null;
 		input = null;
 	}
 
+	@Override
 	public final Map getCurrentState() {
 		final Map state = new HashMap();
 		state.put(ISources.ACTIVE_MENU_NAME, menuIds);
@@ -97,6 +99,7 @@ public final class MenuSourceProvider extends AbstractSourceProvider {
 		return state;
 	}
 
+	@Override
 	public final String[] getProvidedSourceNames() {
 		return PROVIDED_SOURCE_NAMES;
 	}

@@ -55,13 +55,15 @@ public class WorkbenchIntroManager implements IIntroManager {
             /* (non-Javadoc)
              * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
              */
-            public void addExtension(IExtensionTracker tracker,IExtension extension) {
+            @Override
+			public void addExtension(IExtensionTracker tracker,IExtension extension) {
                 //Do nothing
             }
             
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
 			 */
+			@Override
 			public void removeExtension(IExtension source, Object[] objects) {
                 for (int i = 0; i < objects.length; i++) {
                     if (objects[i] instanceof IIntroPart) {
@@ -81,7 +83,8 @@ public class WorkbenchIntroManager implements IIntroManager {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbench#closeIntro(org.eclipse.ui.intro.IIntroPart)
      */
-    public boolean closeIntro(IIntroPart part) {
+    @Override
+	public boolean closeIntro(IIntroPart part) {
         if (introPart == null || !introPart.equals(part)) {
 			return false;
 		}
@@ -110,7 +113,8 @@ public class WorkbenchIntroManager implements IIntroManager {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbench#showIntro(org.eclipse.ui.IWorkbenchWindow)
      */
-    public IIntroPart showIntro(IWorkbenchWindow preferredWindow,
+    @Override
+	public IIntroPart showIntro(IWorkbenchWindow preferredWindow,
             boolean standby) {
         if (preferredWindow == null) {
 			preferredWindow = this.workbench.getActiveWorkbenchWindow();
@@ -186,7 +190,8 @@ public class WorkbenchIntroManager implements IIntroManager {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbench#setIntroStandby(org.eclipse.ui.intro.IIntroPart, boolean)
      */
-    public void setIntroStandby(IIntroPart part, boolean standby) {
+    @Override
+	public void setIntroStandby(IIntroPart part, boolean standby) {
         if (introPart == null || !introPart.equals(part)) {
 			return;
 		}
@@ -231,7 +236,8 @@ public class WorkbenchIntroManager implements IIntroManager {
 	 * 
 	 * @see org.eclipse.ui.IWorkbench#isIntroStandby(org.eclipse.ui.intro.IIntroPart)
 	 */
-    public boolean isIntroStandby(IIntroPart part) {
+    @Override
+	public boolean isIntroStandby(IIntroPart part) {
         if (introPart == null || !introPart.equals(part)) {
 			return false;
 		}
@@ -247,7 +253,8 @@ public class WorkbenchIntroManager implements IIntroManager {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbench#findIntro()
      */
-    public IIntroPart getIntro() {
+    @Override
+	public IIntroPart getIntro() {
         return introPart;
     }
 
@@ -296,11 +303,13 @@ public class WorkbenchIntroManager implements IIntroManager {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbench#hasIntro()
      */
-    public boolean hasIntro() {
+    @Override
+	public boolean hasIntro() {
         return workbench.getIntroDescriptor() != null;
     }
     
-    public boolean isNewContentAvailable() {
+    @Override
+	public boolean isNewContentAvailable() {
 		IntroDescriptor introDescriptor = workbench.getIntroDescriptor();
 		if (introDescriptor == null) {
 			return false;

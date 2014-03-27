@@ -66,15 +66,18 @@ public final class ActiveShellExpression extends Expression {
 	 * 
 	 * @since 3.2
 	 */
+	@Override
 	public final void collectExpressionInfo(final ExpressionInfo info) {
 		info.addVariableNameAccess(ISources.ACTIVE_SHELL_NAME);
 		info.addVariableNameAccess(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
 	}
 
+	@Override
 	protected final int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + hashCode(activeShell);
 	}
 
+	@Override
 	public final boolean equals(final Object object) {
 		if (object instanceof ActiveShellExpression) {
 			final ActiveShellExpression that = (ActiveShellExpression) object;
@@ -97,6 +100,7 @@ public final class ActiveShellExpression extends Expression {
 	 * @return <code>EvaluationResult.TRUE</code> if the shell is active;
 	 *         <code>EvaluationResult.FALSE</code> otherwise.
 	 */
+	@Override
 	public final EvaluationResult evaluate(final IEvaluationContext context) {
 		if (activeShell != null) {
 			Object value = context.getVariable(ISources.ACTIVE_SHELL_NAME);
@@ -112,6 +116,7 @@ public final class ActiveShellExpression extends Expression {
 		return EvaluationResult.TRUE;
 	}
 
+	@Override
 	public final String toString() {
 		final StringBuffer buffer = new StringBuffer();
 		buffer.append("ActiveShellExpression("); //$NON-NLS-1$

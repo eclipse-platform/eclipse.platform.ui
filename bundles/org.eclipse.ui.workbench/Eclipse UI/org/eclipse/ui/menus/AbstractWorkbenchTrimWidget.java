@@ -44,6 +44,7 @@ public abstract class AbstractWorkbenchTrimWidget extends AbstractTrimWidget imp
 	 * 
 	 * @see org.eclipse.ui.menus.IWorkbenchWidget#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow workbenchWindow) {
 		wbWindow = workbenchWindow;
 	}

@@ -108,6 +108,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		this.bundleGroupInfos = bundleGroupInfos;
 	}
 
+	@Override
 	String getId() {
 		return ID;
 	}
@@ -169,6 +170,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		d.open();
 	}
 
+	@Override
 	public void createPageButtons(Composite parent) {
 		moreButton = createButton(parent, MORE_ID,
 				WorkbenchMessages.AboutFeaturesDialog_moreInfo);
@@ -182,9 +184,11 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		}
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		parent.getShell().addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent arg0) {
 				disposeImages();
 			}
@@ -269,6 +273,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		table.setLinesVisible(true);
 		table.setFont(parent.getFont());
 		table.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// If there is no item, nothing we can do.
 				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=266177
@@ -292,6 +297,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 			tableColumn.setText(columnTitles[i]);
 			final int columnIndex = i;
 			tableColumn.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					sort(columnIndex);
 				}
@@ -523,6 +529,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	/*
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 		case MORE_ID:

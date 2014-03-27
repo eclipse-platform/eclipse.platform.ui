@@ -57,6 +57,7 @@ public class EditorAction extends ActionSet {
 				MAIN_TOOLBAR);
 	}
 
+	@Override
 	protected Expression createExpression(IConfigurationElement configElement) {
 		String idContrib = MenuHelper.getId(configElement);
 		return new ActiveEditorContextExpression(

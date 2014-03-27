@@ -76,7 +76,8 @@ public class StickyViewDescriptor implements IStickyViewDescriptor,
     /* (non-Javadoc)
      * @see org.eclipse.ui.views.IStickyViewDescriptor#getLocation()
      */
-    public int getLocation() {
+    @Override
+	public int getLocation() {
     	int direction = IPageLayout.RIGHT;
     	
     	String location = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_LOCATION);
@@ -96,15 +97,18 @@ public class StickyViewDescriptor implements IStickyViewDescriptor,
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.registry.IStickyViewDescriptor#getId()
      */
-    public String getId() {
+    @Override
+	public String getId() {
         return id;
     }
     
-    public String getLocalId() {
+    @Override
+	public String getLocalId() {
     	return id;
     }
 
-    public String getPluginId() {
+    @Override
+	public String getPluginId() {
     	return configurationElement.getContributor().getName();
     }
     
@@ -112,7 +116,8 @@ public class StickyViewDescriptor implements IStickyViewDescriptor,
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.registry.IStickyViewDescriptor#isFixed()
      */
-    public boolean isCloseable() {
+    @Override
+	public boolean isCloseable() {
     	boolean closeable = true;
     	String closeableString = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_CLOSEABLE);
         if (closeableString != null) {
@@ -124,7 +129,8 @@ public class StickyViewDescriptor implements IStickyViewDescriptor,
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.registry.IStickyViewDescriptor#isMoveable()
      */
-    public boolean isMoveable() {
+    @Override
+	public boolean isMoveable() {
     	boolean moveable = true;
     	String moveableString = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_MOVEABLE);
         if (moveableString != null) {

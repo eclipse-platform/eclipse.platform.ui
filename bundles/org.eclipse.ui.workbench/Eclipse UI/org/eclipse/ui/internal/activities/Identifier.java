@@ -50,7 +50,8 @@ final class Identifier implements IIdentifier {
         this.id = id;
     }
 
-    public void addIdentifierListener(IIdentifierListener identifierListener) {
+    @Override
+	public void addIdentifierListener(IIdentifierListener identifierListener) {
         if (identifierListener == null) {
 			throw new NullPointerException();
 		}
@@ -63,7 +64,8 @@ final class Identifier implements IIdentifier {
         strongReferences.add(this);
     }
 
-    public int compareTo(Object object) {
+    @Override
+	public int compareTo(Object object) {
         Identifier castedObject = (Identifier) object;
         int compareTo = Util.compare(activityIdsAsArray,
                 castedObject.activityIdsAsArray);
@@ -79,7 +81,8 @@ final class Identifier implements IIdentifier {
         return compareTo;
     }
 
-    public boolean equals(Object object) {
+    @Override
+	public boolean equals(Object object) {
         if (!(object instanceof Identifier)) {
 			return false;
 		}
@@ -110,15 +113,18 @@ final class Identifier implements IIdentifier {
 		}
     }
 
+	@Override
 	public Set<String> getActivityIds() {
         return activityIds;
     }
 
-    public String getId() {
+    @Override
+	public String getId() {
         return id;
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         if (hashCode == HASH_INITIAL) {
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityIds);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
@@ -131,11 +137,13 @@ final class Identifier implements IIdentifier {
         return hashCode;
     }
 
-    public boolean isEnabled() {
+    @Override
+	public boolean isEnabled() {
         return enabled;
     }
 
-    public void removeIdentifierListener(IIdentifierListener identifierListener) {
+    @Override
+	public void removeIdentifierListener(IIdentifierListener identifierListener) {
         if (identifierListener == null) {
 			throw new NullPointerException();
 		}
@@ -173,7 +181,8 @@ final class Identifier implements IIdentifier {
         return false;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         if (string == null) {
             final StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append('[');

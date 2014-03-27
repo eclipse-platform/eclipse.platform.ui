@@ -56,7 +56,8 @@ public class ImportExportWizard extends Wizard {
      * Subclasses must implement this <code>IWizard</code> method 
      * to perform any special finish processing for their wizard.
      */
-    public boolean performFinish() {
+    @Override
+	public boolean performFinish() {
     	importExportPage.saveWidgetValues();
         return true;
     }
@@ -64,7 +65,8 @@ public class ImportExportWizard extends Wizard {
     /**
      * Creates the wizard's pages lazily.
      */
-    public void addPages() {
+    @Override
+	public void addPages() {
     	if (page.equals(IMPORT)) {
 			importExportPage = new ImportPage(this.workbench, this.selection);
 		} else if (page.equals(EXPORT)) {

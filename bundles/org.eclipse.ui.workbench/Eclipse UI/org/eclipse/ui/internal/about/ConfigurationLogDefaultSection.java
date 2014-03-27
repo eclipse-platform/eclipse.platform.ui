@@ -50,7 +50,8 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
     /* (non-Javadoc)
      * @see org.eclipse.ui.about.ISystemSummarySection#write(java.io.PrintWriter)
      */
-    public void write(PrintWriter writer) {
+    @Override
+	public void write(PrintWriter writer) {
         appendProperties(writer);
         appendFeatures(writer);
         appendRegistry(writer);
@@ -65,7 +66,8 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
         writer.println(WorkbenchMessages.SystemSummary_systemProperties);
         Properties properties = System.getProperties();
         SortedSet set = new TreeSet(new Comparator() {
-            public int compare(Object o1, Object o2) {
+            @Override
+			public int compare(Object o1, Object o2) {
                 String s1 = (String) o1;
                 String s2 = (String) o2;
                 return s1.compareTo(s2);

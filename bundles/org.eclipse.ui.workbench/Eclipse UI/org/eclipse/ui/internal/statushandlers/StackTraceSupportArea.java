@@ -61,6 +61,7 @@ public class StackTraceSupportArea extends AbstractStatusAreaProvider {
 	 * @see org.eclipse.ui.statushandlers.AbstractStatusAreaProvider#createSupportArea(org.eclipse.swt.widgets.Composite,
 	 *      org.eclipse.ui.statushandlers.StatusAdapter)
 	 */
+	@Override
 	public Control createSupportArea(final Composite parent,
 			StatusAdapter statusAdapter) {
 
@@ -79,6 +80,7 @@ public class StackTraceSupportArea extends AbstractStatusAreaProvider {
 			 * 
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				list.selectAll();
 				super.widgetSelected(e);
@@ -98,16 +100,19 @@ public class StackTraceSupportArea extends AbstractStatusAreaProvider {
 		DragSource ds = new DragSource(list, DND.DROP_COPY);
 		ds.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 		ds.addDragListener(new DragSourceListener() {
+			@Override
 			public void dragFinished(DragSourceEvent event) {
 
 			}
 
+			@Override
 			public void dragSetData(DragSourceEvent event) {
 				if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
 					event.data = prepareCopyString();
 				}
 			}
 
+			@Override
 			public void dragStart(DragSourceEvent event) {
 				list.selectAll();
 			}
@@ -126,6 +131,7 @@ public class StackTraceSupportArea extends AbstractStatusAreaProvider {
 			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse
 			 * .swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Clipboard clipboard = null;
 				try {
@@ -179,6 +185,7 @@ public class StackTraceSupportArea extends AbstractStatusAreaProvider {
 		return list;
 	}
 
+	@Override
 	public boolean validFor(StatusAdapter statusAdapter) {
 		return statusAdapter.getStatus().getException() != null;
 	}

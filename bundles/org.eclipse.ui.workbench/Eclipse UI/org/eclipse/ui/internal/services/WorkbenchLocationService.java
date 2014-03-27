@@ -51,6 +51,7 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 	 * @seeorg.eclipse.ui.internal.services.IWorkbenchLocationService#
 	 * getMultiPageEditorSite()
 	 */
+	@Override
 	public IEditorSite getMultiPageEditorSite() {
 		return mpepSite;
 	}
@@ -61,6 +62,7 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 	 * @see
 	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getPageSite()
 	 */
+	@Override
 	public IPageSite getPageSite() {
 		return pageSite;
 	}
@@ -71,6 +73,7 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 	 * @see
 	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getPartSite()
 	 */
+	@Override
 	public IWorkbenchPartSite getPartSite() {
 		return partSite;
 	}
@@ -82,6 +85,7 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getServiceScope
 	 * ()
 	 */
+	@Override
 	public String getServiceScope() {
 		return serviceScope;
 	}
@@ -92,6 +96,7 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 	 * @see
 	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getWorkbench()
 	 */
+	@Override
 	public IWorkbench getWorkbench() {
 		return workbench;
 	}
@@ -103,6 +108,7 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getWorkbenchWindow
 	 * ()
 	 */
+	@Override
 	public IWorkbenchWindow getWorkbenchWindow() {
 		return window;
 	}
@@ -112,6 +118,7 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 	 * 
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
+	@Override
 	public void dispose() {
 		mpepSite = null;
 		pageSite = null;
@@ -124,6 +131,7 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.services.IWorkbenchLocationService#getServiceLevel()
 	 */
+	@Override
 	public int getServiceLevel() {
 		return level;
 	}

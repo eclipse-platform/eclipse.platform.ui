@@ -45,6 +45,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 
 	private class Filter extends ViewerFilter {
 
+		@Override
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
 			return isCompatible((IWorkingSet) element);
@@ -107,6 +108,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		setMessage(WorkbenchMessages.WorkingSetSelectionDialog_message_multiSelect);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		initializeDialogUnits(parent);
 
@@ -131,6 +133,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		viewer.setFilters(new ViewerFilter[] { new Filter() });
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleSelectionChanged();
 			}
@@ -155,6 +158,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		return composite;
 	}
 
+	@Override
 	protected void okPressed() {
 		Object[] checked = viewer.getCheckedElements();
 		IWorkingSet[] workingSets = new IWorkingSet[checked.length];
@@ -163,6 +167,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		super.okPressed();
 	}
 
+	@Override
 	protected List getSelectedWorkingSets() {
 		ISelection selection = viewer.getSelection();
 		if (selection instanceof IStructuredSelection) {
@@ -171,6 +176,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		return null;
 	}
 
+	@Override
 	protected void availableWorkingSetsChanged() {
 		viewer.setInput(PlatformUI.getWorkbench().getWorkingSetManager()
 				.getWorkingSets());
@@ -184,12 +190,14 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		updateButtonAvailability();
 	}
 
+	@Override
 	protected void selectAllSets() {
 		viewer.setCheckedElements(PlatformUI.getWorkbench()
 				.getWorkingSetManager().getWorkingSets());
 		updateButtonAvailability();
 	}
 
+	@Override
 	protected void deselectAllSets() {
 		viewer.setCheckedElements(new Object[0]);
 		updateButtonAvailability();

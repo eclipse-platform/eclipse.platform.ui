@@ -191,7 +191,8 @@ public class ReopenEditorMenu extends ContributionItem {
      * Fills the given menu with
      * menu items for all windows.
      */
-    public void fill(final Menu menu, int index) {
+    @Override
+	public void fill(final Menu menu, int index) {
         if (window.getActivePage() == null
                 || window.getActivePage().getPerspective() == null) {
             return;
@@ -222,19 +223,22 @@ public class ReopenEditorMenu extends ContributionItem {
             final EditorHistoryItem item = historyItems[i];
             final int historyIndex = i;
             SafeRunner.run(new SafeRunnable() {
-                public void run() throws Exception {
+                @Override
+				public void run() throws Exception {
                     String text = calcText(historyIndex, item);
                     MenuItem mi = new MenuItem(menu, SWT.PUSH, menuIndex[0]);
                     ++menuIndex[0];
                     mi.setText(text);
                     mi.addSelectionListener(new SelectionAdapter() {
-                        public void widgetSelected(SelectionEvent e) {
+                        @Override
+						public void widgetSelected(SelectionEvent e) {
                             open(item);
                         }
                     });
                 }
 
-                public void handleException(Throwable e) {
+                @Override
+				public void handleException(Throwable e) {
                     // just skip the item if there's an error,
                     // e.g. in the calculation of the shortened name
                     WorkbenchPlugin.log(getClass(), "fill", e); //$NON-NLS-1$
@@ -246,7 +250,8 @@ public class ReopenEditorMenu extends ContributionItem {
     /**
      * Overridden to always return true and force dynamic menu building.
      */
-    public boolean isDynamic() {
+    @Override
+	public boolean isDynamic() {
         return true;
     }
 
