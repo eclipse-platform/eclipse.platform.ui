@@ -94,27 +94,29 @@ final public class LocalizationHelper {
 	 * Returns localized string for the key using locale information specified
 	 * in the element's context.
 	 * <p>
-	 * This method may return <code>null</code> if the context can not be found
-	 * for the model element.
+	 * This method will return the key itself if the context can not be found
+	 * for the model element or there is no translation service registered in 
+	 * that context.
 	 * </p>
 	 * 
 	 * @param key
 	 *            the key
 	 * @param element
 	 *            the model element
-	 * @return localized key, or <code>null</code> if context information can
-	 *         not be found for the model element
+	 * @return localized key
 	 */
 	public static String getLocalized(String key, MApplicationElement element) {
 		IEclipseContext context = ModelUtils.getContainingContext(element);
-		if (context == null)
-			return null;
 		return getLocalized(key, element, context);
 	}
 
 	/**
 	 * Returns localized string for the key from the application element using
 	 * translation service from the context.
+	 * <p>
+	 * This method will return the key itself if the context is <code>null</code> 
+	 * or there is no translation service registered in the given context.
+	 * </p>
 	 * 
 	 * @param key
 	 *            the key
@@ -126,8 +128,8 @@ final public class LocalizationHelper {
 	 */
 	public static String getLocalized(String key, MApplicationElement element,
 			IEclipseContext context) {
-		if (key == null)
-			return null;
+		if (key == null || context == null)
+			return key;
 		TranslationService translation = context.get(TranslationService.class);
 		if (translation == null)
 			return key;
