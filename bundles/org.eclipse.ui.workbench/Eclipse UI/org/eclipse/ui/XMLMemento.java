@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -249,9 +249,6 @@ public final class XMLMemento implements IMemento {
         return new XMLMemento(factory, newElement);
     }
 
-    /* (non-Javadoc)
-     * Method declared in IMemento.
-     */
     @Override
 	public IMemento getChild(String type) {
 
@@ -277,9 +274,6 @@ public final class XMLMemento implements IMemento {
         return null;
     }
 
-	/*
-	 * (non-Javadoc) Method declared in IMemento.
-	 */
 	@Override
 	public IMemento[] getChildren() {
 
@@ -307,9 +301,6 @@ public final class XMLMemento implements IMemento {
 		return results;
 	}
 
-    /* (non-Javadoc)
-     * Method declared in IMemento.
-     */
     @Override
 	public IMemento[] getChildren(String type) {
 
@@ -341,9 +332,6 @@ public final class XMLMemento implements IMemento {
         return results;
     }
 
-    /* (non-Javadoc)
-     * Method declared in IMemento.
-     */
     @Override
 	public Float getFloat(String key) {
         Attr attr = element.getAttributeNode(key);
@@ -368,17 +356,11 @@ public final class XMLMemento implements IMemento {
 		return element.getNodeName();
 	}
 
-    /* (non-Javadoc)
-     * Method declared in IMemento.
-     */
     @Override
 	public String getID() {
         return element.getAttribute(TAG_ID);
     }
 
-    /* (non-Javadoc)
-     * Method declared in IMemento.
-     */
     @Override
 	public Integer getInteger(String key) {
         Attr attr = element.getAttributeNode(key);
@@ -396,9 +378,6 @@ public final class XMLMemento implements IMemento {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared in IMemento.
-     */
     @Override
 	public String getString(String key) {
         Attr attr = element.getAttributeNode(key);
@@ -630,11 +609,6 @@ public final class XMLMemento implements IMemento {
     	}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		try {
