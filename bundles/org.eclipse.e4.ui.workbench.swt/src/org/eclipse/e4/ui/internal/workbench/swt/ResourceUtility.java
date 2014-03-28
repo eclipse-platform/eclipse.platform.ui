@@ -26,6 +26,7 @@ public class ResourceUtility implements ISWTResourceUtilities {
 		super();
 	}
 
+	@Override
 	public ImageDescriptor imageDescriptorFromURI(URI iconPath) {
 		try {
 			return ImageDescriptor.createFromURL(new URL(iconPath.toString()));
@@ -36,6 +37,7 @@ public class ResourceUtility implements ISWTResourceUtilities {
 		}
 	}
 
+	@Override
 	public Image adornImage(Image toAdorn, Image adornment) {
 		if (toAdorn == null)
 			return null;

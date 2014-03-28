@@ -311,6 +311,7 @@ public class BindingProcessingAddon {
 
 	private void registerModelListeners() {
 		additionHandler = new EventHandler() {
+			@Override
 			public void handleEvent(Event event) {
 				Object elementObj = event
 						.getProperty(UIEvents.EventTags.ELEMENT);
@@ -451,6 +452,7 @@ public class BindingProcessingAddon {
 				additionHandler);
 
 		contextHandler = new EventHandler() {
+			@Override
 			public void handleEvent(Event event) {
 				Object elementObj = event
 						.getProperty(UIEvents.EventTags.ELEMENT);
