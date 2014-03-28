@@ -17,6 +17,7 @@ import org.w3c.dom.css.CSSValue;
 public abstract class AbstractConvertedCSSPropertySWTHandler extends
 		AbstractCSSPropertySWTHandler {
 
+	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		Object toType = getToType(value);

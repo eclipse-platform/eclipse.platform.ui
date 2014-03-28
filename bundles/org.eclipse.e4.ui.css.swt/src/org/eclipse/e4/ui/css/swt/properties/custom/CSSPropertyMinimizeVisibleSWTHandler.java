@@ -20,6 +20,7 @@ public class CSSPropertyMinimizeVisibleSWTHandler extends
 
 	public static final ICSSPropertyHandler INSTANCE = new CSSPropertyMinimizeVisibleSWTHandler();
 
+	@Override
 	public void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		boolean isMinVisible = (Boolean) engine.convert(value, Boolean.class,
@@ -30,6 +31,7 @@ public class CSSPropertyMinimizeVisibleSWTHandler extends
 		}
 	}
 
+	@Override
 	public String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
 		if (control instanceof CTabFolder) {

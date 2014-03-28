@@ -19,6 +19,7 @@ public class CSSPropertyMruVisibleSWTHandler extends AbstractCSSPropertySWTHandl
 
 	public static final ICSSPropertyHandler INSTANCE = new CSSPropertyMruVisibleSWTHandler();
 	
+	@Override
 	public void applyCSSProperty(Control control, String property,
 		    CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		boolean isMruVisible = (Boolean)engine.convert(value, Boolean.class, null);
@@ -28,6 +29,7 @@ public class CSSPropertyMruVisibleSWTHandler extends AbstractCSSPropertySWTHandl
 		}
 	}
 
+	@Override
 	public String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
 		if (control instanceof CTabFolder){

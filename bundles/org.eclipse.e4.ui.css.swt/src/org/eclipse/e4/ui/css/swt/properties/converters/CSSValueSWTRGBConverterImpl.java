@@ -39,11 +39,13 @@ public class CSSValueSWTRGBConverterImpl extends AbstractCSSValueConverter {
 		super(RGB.class);
 	}
 
+	@Override
 	public Object convert(CSSValue value, CSSEngine engine, Object context)
 			throws Exception {
 		return CSSSWTColorHelper.getRGB(value);
 	}
 
+	@Override
 	public String convert(Object value, CSSEngine engine, Object context,
 			ICSSValueConverterConfig config) throws Exception {
 		RGB color = (RGB) value;

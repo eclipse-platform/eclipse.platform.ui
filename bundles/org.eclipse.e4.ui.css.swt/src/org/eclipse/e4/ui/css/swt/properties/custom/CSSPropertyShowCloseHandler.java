@@ -30,6 +30,7 @@ public class CSSPropertyShowCloseHandler extends CTabETabHelper implements ICSSP
 
 	private static final String CSS_CTABITEM_SELECTED_SHOW_CLOSE_LISTENER_KEY = "CSS_CTABFOLDER_SELECTED_SHOW_CLOSE_LISTENER_KEY"; //$NON-NLS-1$
 
+	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = SWTElementHelpers.getWidget(element);
@@ -65,6 +66,7 @@ public class CSSPropertyShowCloseHandler extends CTabETabHelper implements ICSSP
 		return false;
 	}
 
+	@Override
 	public String retrieveCSSProperty(Object element, String property,
 			String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = SWTElementHelpers.getWidget(element);
@@ -93,6 +95,7 @@ public class CSSPropertyShowCloseHandler extends CTabETabHelper implements ICSSP
 			this.engine = engine;
 		}
 
+		@Override
 		public void handleEvent(Event e) {
 			
 			Item selection = getSelection(e.widget);

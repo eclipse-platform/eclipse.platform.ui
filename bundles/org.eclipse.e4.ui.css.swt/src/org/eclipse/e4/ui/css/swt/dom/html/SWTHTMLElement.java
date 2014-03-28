@@ -41,12 +41,14 @@ public class SWTHTMLElement extends WidgetElement {
 		attributeType = computeAttributeType();
 	}
 
+	@Override
 	public String getAttribute(String attr) {
 		if ("type".equals(attr))
 			return attributeType;
 		return super.getAttribute(attr);
 	}
 
+	@Override
 	protected String computeLocalName() {
 		Widget widget = getWidget();
 		// HTML name

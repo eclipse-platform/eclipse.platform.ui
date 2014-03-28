@@ -30,6 +30,7 @@ public abstract class AbstractCSSPropertySWTHandler implements
 	 *      java.lang.String, org.w3c.dom.css.CSSValue, java.lang.String,
 	 *      org.eclipse.e4.ui.core.css.engine.CSSEngine)
 	 */
+	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		Control control = SWTElementHelpers.getControl(element);
@@ -48,6 +49,7 @@ public abstract class AbstractCSSPropertySWTHandler implements
 	 * @see org.eclipse.e4.ui.core.css.dom.properties.ICSSPropertyHandler#retrieveCSSProperty(java.lang.Object,
 	 *      java.lang.String, org.eclipse.e4.ui.core.css.engine.CSSEngine)
 	 */
+	@Override
 	public String retrieveCSSProperty(Object element, String property, String pseudo, 
 			CSSEngine engine) throws Exception {
 		Control control = SWTElementHelpers.getControl(element);

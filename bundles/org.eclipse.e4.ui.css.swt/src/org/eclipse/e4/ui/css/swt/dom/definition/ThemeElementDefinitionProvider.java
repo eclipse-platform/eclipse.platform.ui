@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.internal.css.swt.definition.IThemesExtension;
 import org.w3c.dom.Element;
 
 public class ThemeElementDefinitionProvider implements IElementProvider {
+	@Override
 	public Element getElement(Object element, CSSEngine engine) {
 		if (element instanceof IFontDefinitionOverridable) {
 			return new FontDefinitionElement((IFontDefinitionOverridable) element, engine);

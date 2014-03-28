@@ -30,6 +30,7 @@ public class CSSPropertyBorderSWTHandler extends
 
 	public final static ICSSPropertyBorderHandler INSTANCE = new CSSPropertyBorderSWTHandler();
 
+	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		
@@ -68,6 +69,7 @@ public class CSSPropertyBorderSWTHandler extends
 
 	}
 	
+	@Override
 	public void onAllCSSPropertiesApplyed(Object element, CSSEngine engine)
 			throws Exception {
 		Control control = SWTElementHelpers.getControl(element);

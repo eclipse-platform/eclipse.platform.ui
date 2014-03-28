@@ -220,22 +220,27 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 		return localName;
 	}
 
+	@Override
 	public String getNamespaceURI() {
 		return namespaceURI;
 	}
 
+	@Override
 	public Node getParentNode() {
 		return null;
 	}
 
+	@Override
 	public NodeList getChildNodes() {
 		return this;
 	}
 
+	@Override
 	public int getLength() {
 		return 0;
 	}
 
+	@Override
 	public Node item(int index) {
 		return null;
 	}
@@ -244,6 +249,7 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 		return (Widget) getNativeWidget();
 	}
 
+	@Override
 	public String getCSSId() {
 		Widget widget = getWidget();
 		Object id = getID(widget);
@@ -258,6 +264,7 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 	 * 
 	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#getCSSClass()
 	 */
+	@Override
 	public String getCSSClass() {
 		Widget widget = getWidget();
 		Object id = getCSSClass(widget);
@@ -272,6 +279,7 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 	 * 
 	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#getCSSStyle()
 	 */
+	@Override
 	public String getCSSStyle() {
 		Widget widget = getWidget();
 		// TODO should have key in CSSSWT

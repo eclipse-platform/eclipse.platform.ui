@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Text;
 public class TextElement extends ControlElement {
 	
 	ModifyListener modifyListener = new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			doApplyStyles();
 		}
@@ -33,6 +34,7 @@ public class TextElement extends ControlElement {
 		super(text, engine);
 	}
 
+	@Override
 	public void initialize() {
 		super.initialize();
 
@@ -42,6 +44,7 @@ public class TextElement extends ControlElement {
 		text.addModifyListener(modifyListener);
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 

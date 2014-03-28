@@ -25,6 +25,7 @@ public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHan
 	
 	private final static String DESCRIPTION_PROP = "description";
 	
+	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		if (!(element instanceof ThemeDefinitionElement<?>)) {
@@ -46,6 +47,7 @@ public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHan
 		return true;
 	}
 
+	@Override
 	public String retrieveCSSProperty(Object element, String property,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;

@@ -20,6 +20,7 @@ public class CSSPropertyUnselectedCloseVisibleSWTHandler extends
 
 	public static final ICSSPropertyHandler INSTANCE = new CSSPropertyUnselectedCloseVisibleSWTHandler();
 
+	@Override
 	public void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		boolean isUnselectedClose = (Boolean) engine.convert(value,
@@ -30,6 +31,7 @@ public class CSSPropertyUnselectedCloseVisibleSWTHandler extends
 		}
 	}
 
+	@Override
 	public String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
 		if (control instanceof CTabFolder) {

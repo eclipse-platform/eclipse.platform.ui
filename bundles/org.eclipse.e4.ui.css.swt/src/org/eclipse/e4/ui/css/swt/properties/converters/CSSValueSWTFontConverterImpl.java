@@ -28,6 +28,7 @@ public class CSSValueSWTFontConverterImpl extends
 		super(Font.class);
 	}
 
+	@Override
 	public Object convert(CSSValue value, CSSEngine engine, Object context)
 			throws Exception {
 		FontData fontData = (FontData) super.convert(value, engine, context);
@@ -38,6 +39,7 @@ public class CSSValueSWTFontConverterImpl extends
 		return null;
 	}
 
+	@Override
 	public String convert(Object value, CSSEngine engine, Object context,
 			ICSSValueConverterConfig config) throws Exception {
 		Font font = (Font) value;

@@ -29,6 +29,7 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 	public static final ICSSPropertyHandler INSTANCE = new CSSPropertyTabRendererSWTHandler();
 	private boolean backwardsCompatURIsLogged = false;
 	
+	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		if (!(control instanceof CTabFolder)) return;
@@ -79,6 +80,7 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 		}
 	}
 	
+	@Override
 	protected String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;

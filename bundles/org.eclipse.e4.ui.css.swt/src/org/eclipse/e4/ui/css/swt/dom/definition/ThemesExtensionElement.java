@@ -27,10 +27,12 @@ public class ThemesExtensionElement extends ElementAdapter {
 		super(themesExtension, engine);
 	}
 	
+	@Override
 	public NodeList getChildNodes() {
 		return null;
 	}
 
+	@Override
 	public String getNamespaceURI() {
 		if (namespaceURI == null) {
 			namespaceURI = ClassUtils.getPackageName(getNativeWidget().getClass());
@@ -38,18 +40,22 @@ public class ThemesExtensionElement extends ElementAdapter {
 		return namespaceURI;
 	}
 
+	@Override
 	public Node getParentNode() {
 		return null;
 	}
 
+	@Override
 	public String getCSSId() {
 		return null;
 	}
 
+	@Override
 	public String getCSSClass() {
 		return null;
 	}
 
+	@Override
 	public String getCSSStyle() {
 		return null;
 	}

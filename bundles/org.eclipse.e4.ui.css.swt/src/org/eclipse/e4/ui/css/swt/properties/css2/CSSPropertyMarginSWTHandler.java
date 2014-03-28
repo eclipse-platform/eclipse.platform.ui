@@ -35,6 +35,7 @@ public class CSSPropertyMarginSWTHandler extends
 	private final static int BOTTOM = 2;
 	private final static int LEFT = 3;
 
+	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		
@@ -50,6 +51,7 @@ public class CSSPropertyMarginSWTHandler extends
 	 * If three values then assigned top=v1, left=v2, right=v2, bottom=v3
 	 * If two values then assigned top/bottom=v1, left/right=v2
 	 */
+	@Override
 	public void applyCSSPropertyMargin(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		
@@ -95,50 +97,59 @@ public class CSSPropertyMarginSWTHandler extends
 		}
 	}
 
+	@Override
 	public void applyCSSPropertyMarginTop(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		setMargin(element, TOP, value, pseudo);
 	}
 
+	@Override
 	public void applyCSSPropertyMarginRight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		setMargin(element, RIGHT, value, pseudo);
 	}
 
+	@Override
 	public void applyCSSPropertyMarginBottom(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		setMargin(element, BOTTOM, value, pseudo);
 	}
 
+	@Override
 	public void applyCSSPropertyMarginLeft(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		setMargin(element, LEFT, value, pseudo);
 	}
 
+	@Override
 	public String retrieveCSSPropertyMargin(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyMarginTop(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyMarginRight(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyMarginBottom(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyMarginLeft(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub

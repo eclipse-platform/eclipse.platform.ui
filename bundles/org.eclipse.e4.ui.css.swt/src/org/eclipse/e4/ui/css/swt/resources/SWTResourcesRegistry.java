@@ -38,6 +38,7 @@ public class SWTResourcesRegistry extends AbstractResourcesRegistry {
 		// When SWT Display will dispose, all SWT resources stored
 		// into cache will be dispose it too.
 		display.addListener(SWT.Dispose, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				dispose();
 			}

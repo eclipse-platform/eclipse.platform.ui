@@ -43,6 +43,7 @@ public class CSSValueSWTFontDataConverterImpl extends AbstractCSSValueConverter 
 		super(FontData.class);
 	}
 
+	@Override
 	public Object convert(CSSValue value, CSSEngine engine, Object context)
 			throws Exception {
 		FontData fontData = null;
@@ -76,6 +77,7 @@ public class CSSValueSWTFontDataConverterImpl extends AbstractCSSValueConverter 
 		return null;
 	}
 
+	@Override
 	public String convert(Object value, CSSEngine engine, Object context,
 			ICSSValueConverterConfig config) throws Exception {
 		FontData fontData = (FontData) value;

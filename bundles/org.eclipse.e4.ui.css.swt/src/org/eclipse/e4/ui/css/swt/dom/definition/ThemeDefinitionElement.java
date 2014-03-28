@@ -30,10 +30,12 @@ public class ThemeDefinitionElement<T extends IThemeElementDefinitionOverridable
 		super(definition, engine);
 	}
 
+	@Override
 	public NodeList getChildNodes() {
 		return null;
 	}
 
+	@Override
 	public String getNamespaceURI() {
 		if (namespaceURI == null) {
 			namespaceURI = ClassUtils.getPackageName(getNativeWidget().getClass());
@@ -41,10 +43,12 @@ public class ThemeDefinitionElement<T extends IThemeElementDefinitionOverridable
 		return namespaceURI;
 	}
 
+	@Override
 	public Node getParentNode() {
 		return null;
 	}
 
+	@Override
 	public String getCSSId() {
 		if (id == null) {
 			id = escapeId(((IThemeElementDefinitionOverridable<?>) getNativeWidget()).getId());
@@ -52,10 +56,12 @@ public class ThemeDefinitionElement<T extends IThemeElementDefinitionOverridable
 		return id;
 	}
 
+	@Override
 	public String getCSSClass() {
 		return null;
 	}
 
+	@Override
 	public String getCSSStyle() {
 		return null;
 	}

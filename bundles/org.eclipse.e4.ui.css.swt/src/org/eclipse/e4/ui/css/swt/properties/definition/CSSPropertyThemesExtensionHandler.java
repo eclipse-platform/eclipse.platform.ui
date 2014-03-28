@@ -25,6 +25,7 @@ public class CSSPropertyThemesExtensionHandler implements ICSSPropertyHandler {
 
 	private final static String COLOR_DEFINITION_PROP = "color-definition";
 
+	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		if (element instanceof ThemesExtensionElement) {
@@ -38,6 +39,7 @@ public class CSSPropertyThemesExtensionHandler implements ICSSPropertyHandler {
 		return true;
 	}
 
+	@Override
 	public String retrieveCSSProperty(Object element, String property,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;

@@ -30,10 +30,12 @@ public class ToolBarElement extends CompositeElement {
 		return (ToolBar)getNativeWidget();
 	}
 	
+	@Override
 	public Node item(int index) {
 		return getElement(getToolBar().getItem(index));
 	}
 	
+	@Override
 	public int getLength() {
 		return getToolBar().getItemCount();
 	}

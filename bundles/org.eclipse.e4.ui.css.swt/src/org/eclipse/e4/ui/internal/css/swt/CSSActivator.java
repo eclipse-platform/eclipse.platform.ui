@@ -68,11 +68,13 @@ public class CSSActivator implements BundleActivator {
 		return context;
 	}
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		activator = this;
 		this.context = context;
 	}
 
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (pkgAdminTracker != null) {
 			pkgAdminTracker.close();

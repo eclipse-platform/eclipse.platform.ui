@@ -27,12 +27,14 @@ public class CSSValueSWTCursorConverterImpl extends AbstractCSSValueConverter {
 		super(Cursor.class);
 	}
 
+	@Override
 	public Object convert(CSSValue value, CSSEngine engine, Object context) {
 		Display display = (Display) context;
 		return CSSSWTCursorHelper.getSWTCursor(value, display);
 
 	}
 
+	@Override
 	public String convert(Object value, CSSEngine engine, Object context,
 			ICSSValueConverterConfig config) throws Exception {
 		Cursor cursor = (Cursor) value;
