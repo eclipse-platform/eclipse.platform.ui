@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <scholzsimon@arcor.de> - Bug 193095
  *******************************************************************************/
 
 package org.eclipse.ui.views.markers.internal;
@@ -22,36 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.help.HelpSystem;
-import org.eclipse.help.IContext;
-import org.eclipse.help.IContextProvider;
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSourceAdapter;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DragSourceListener;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.HelpEvent;
-import org.eclipse.swt.events.HelpListener;
-import org.eclipse.swt.events.TreeAdapter;
-import org.eclipse.swt.events.TreeEvent;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Tree;
-
 import org.eclipse.core.commands.operations.IUndoContext;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -61,7 +33,17 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.help.HelpSystem;
+import org.eclipse.help.IContext;
+import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -78,7 +60,20 @@ import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
+import org.eclipse.swt.events.TreeAdapter;
+import org.eclipse.swt.events.TreeEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -1138,10 +1133,9 @@ public abstract class MarkerView extends TableView {
 				for (Iterator iterator = ((IStructuredSelection) selection)
 						.iterator(); iterator.hasNext();) {
 					Object object = iterator.next();
-					if (object instanceof IAdaptable) {
 						ITaskListResourceAdapter taskListResourceAdapter;
-						Object adapter = ((IAdaptable) object)
-								.getAdapter(ITaskListResourceAdapter.class);
+						Object adapter = org.eclipse.ui.internal.util.Util.
+								getAdapter(object, ITaskListResourceAdapter.class);
 						if (adapter != null
 								&& adapter instanceof ITaskListResourceAdapter) {
 							taskListResourceAdapter = (ITaskListResourceAdapter) adapter;
@@ -1150,11 +1144,12 @@ public abstract class MarkerView extends TableView {
 									.getDefault();
 						}
 
+					if (object instanceof IAdaptable) {
 						IResource resource = taskListResourceAdapter
 								.getAffectedResource((IAdaptable) object);
 						if (resource == null) {
-							Object mapping = ((IAdaptable) object)
-									.getAdapter(ResourceMapping.class);
+							Object mapping = org.eclipse.ui.internal.util.Util.
+									getAdapter(object, ResourceMapping.class);
 							if (mapping != null) {
 								selectedElements.add(mapping);
 							}
