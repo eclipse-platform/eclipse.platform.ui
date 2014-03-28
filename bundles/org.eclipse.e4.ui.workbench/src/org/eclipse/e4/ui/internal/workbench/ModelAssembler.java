@@ -72,10 +72,14 @@ public class ModelAssembler {
 
 	final private static String extensionPointID = "org.eclipse.e4.workbench.model"; //$NON-NLS-1$
 
+	//	private static final String ALWAYS = "always"; //$NON-NLS-1$
+	private static final String INITIAL = "initial"; //$NON-NLS-1$ 
+	private static final String NOTEXISTS = "notexists"; //$NON-NLS-1$ 
+
 	/**
 	 * Process the model
 	 */
-	public void processModel() {
+	public void processModel(boolean initial) {
 		IExtensionPoint extPoint = registry.getExtensionPoint(extensionPointID);
 		IExtension[] extensions = topoSort(extPoint.getExtensions());
 
@@ -83,10 +87,10 @@ public class ModelAssembler {
 		List<MApplicationElement> addedElements = new ArrayList<MApplicationElement>();
 
 		// run processors which are marked to run before fragments
-		runProcessors(extensions, false);
-		processFragments(extensions, imports, addedElements);
+		runProcessors(extensions, initial, false);
+		processFragments(extensions, imports, addedElements, initial);
 		// run processors which are marked to run after fragments
-		runProcessors(extensions, true);
+		runProcessors(extensions, initial, true);
 
 		resolveImports(imports, addedElements);
 	}
@@ -97,20 +101,22 @@ public class ModelAssembler {
 	 * @param addedElements
 	 */
 	private void processFragments(IExtension[] extensions, List<MApplicationElement> imports,
-			List<MApplicationElement> addedElements) {
+			List<MApplicationElement> addedElements, boolean initial) {
 
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] ces = extension.getConfigurationElements();
 			for (IConfigurationElement ce : ces) {
 				if ("fragment".equals(ce.getName())) { //$NON-NLS-1$
-					processFragment(ce, imports, addedElements);
+					if (initial || !INITIAL.equals(ce.getAttribute("apply"))) { //$NON-NLS-1$ 
+						processFragment(ce, imports, addedElements, initial);
+					}
 				}
 			}
 		}
 	}
 
 	private void processFragment(IConfigurationElement ce, List<MApplicationElement> imports,
-			List<MApplicationElement> addedElements) {
+			List<MApplicationElement> addedElements, boolean initial) {
 		E4XMIResource applicationResource = (E4XMIResource) ((EObject) application).eResource();
 		ResourceSet resourceSet = applicationResource.getResourceSet();
 		IContributor contributor = ce.getContributor();
@@ -158,6 +164,7 @@ public class ModelAssembler {
 					contributor.getName());
 			return;
 		}
+		boolean checkExist = !initial && NOTEXISTS.equals(ce.getAttribute("apply")); //$NON-NLS-1$ 
 
 		MModelFragments fragmentsContainer = (MModelFragments) extensionRoot;
 		List<MModelFragment> fragments = fragmentsContainer.getFragments();
@@ -172,6 +179,11 @@ public class ModelAssembler {
 				EObject o = (EObject) el;
 
 				E4XMIResource r = (E4XMIResource) o.eResource();
+
+				if (checkExist && applicationResource.getIDToEObjectMap().containsKey(r.getID(o))) {
+					continue;
+				}
+
 				applicationResource.setID(o, r.getID(o));
 
 				if (contributorURI != null)
@@ -210,15 +222,16 @@ public class ModelAssembler {
 	 * @param extensions
 	 * @param afterFragments
 	 */
-	private void runProcessors(IExtension[] extensions, Boolean afterFragments) {
+	private void runProcessors(IExtension[] extensions, boolean initial, Boolean afterFragments) {
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] ces = extension.getConfigurationElements();
 			for (IConfigurationElement ce : ces) {
 				boolean parseBoolean = Boolean.parseBoolean(ce.getAttribute("beforefragment")); //$NON-NLS-1$
 				if ("processor".equals(ce.getName()) && !afterFragments.equals(parseBoolean)) { //$NON-NLS-1$
-					runProcessor(ce);
+					if (initial || !INITIAL.equals(ce.getAttribute("apply"))) { //$NON-NLS-1$ 
+						runProcessor(ce);
+					}
 				}
-
 			}
 		}
 	}
