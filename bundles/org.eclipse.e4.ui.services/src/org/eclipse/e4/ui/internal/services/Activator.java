@@ -36,6 +36,7 @@ public class Activator implements BundleActivator {
 		return singleton;
 	}
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		bundleContext = context;
 		singleton = this;
@@ -52,6 +53,7 @@ public class Activator implements BundleActivator {
 		return (EventAdmin) eventAdminTracker.getService();
 	}
 
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (contextServiceReg != null) {
 			contextServiceReg.unregister();

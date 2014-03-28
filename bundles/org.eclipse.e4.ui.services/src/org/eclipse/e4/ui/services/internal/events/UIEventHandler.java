@@ -19,22 +19,23 @@ import org.osgi.service.event.EventHandler;
  * The helper will properly place UI-aware consumers on the main thread.
  */
 public class UIEventHandler implements EventHandler {
-	
+
 	final private EventHandler eventHandler;
 	final private UISynchronize uiSync;
-	
+
 	public UIEventHandler(EventHandler eventHandler, UISynchronize uiSync) {
 		this.eventHandler = eventHandler;
 		this.uiSync = uiSync;
 	}
-	
+
 	@Override
 	public void handleEvent(final Event event) {
 		if (uiSync == null)
 			eventHandler.handleEvent(event);
 		else {
 			uiSync.syncExec(new Runnable() {
-				
+
+				@Override
 				public void run() {
 					eventHandler.handleEvent(event);
 				}
