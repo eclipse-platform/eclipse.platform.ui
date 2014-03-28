@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Display;
 public class ThemeEngineManager implements IThemeManager {
 	private static final String KEY = "org.eclipse.e4.ui.css.swt.theme";
 	
+	@Override
 	public IThemeEngine getEngineForDisplay(Display display) {
 		IThemeEngine engine = (IThemeEngine) display.getData(KEY);
 		
@@ -39,6 +40,7 @@ public class ThemeEngineManager implements IThemeManager {
 		}
 		cssEngine = new CSSSWTEngineImpl(display, true);
 		cssEngine.setErrorHandler(new CSSErrorHandler() {
+			@Override
 			public void error(Exception e) {
 				// TODO Use the logger
 				e.printStackTrace();
