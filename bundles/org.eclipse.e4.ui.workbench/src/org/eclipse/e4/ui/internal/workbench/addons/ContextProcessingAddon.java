@@ -91,6 +91,7 @@ public class ContextProcessingAddon {
 
 	private void registerModelListeners() {
 		additionHandler = new EventHandler() {
+			@Override
 			public void handleEvent(Event event) {
 				Object elementObj = event.getProperty(UIEvents.EventTags.ELEMENT);
 				if (elementObj instanceof MBindingContext) {

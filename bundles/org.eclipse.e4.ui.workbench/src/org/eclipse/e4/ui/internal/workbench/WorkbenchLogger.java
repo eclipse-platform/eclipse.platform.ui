@@ -40,14 +40,17 @@ public final class WorkbenchLogger extends Logger {
 		this.bundleName = bundleName == null ? Activator.PI_WORKBENCH : bundleName;
 	}
 
+	@Override
 	public void debug(Throwable t) {
 		debug(t, null);
 	}
 
+	@Override
 	public void debug(Throwable t, String message) {
 		trace(t, message);
 	}
 
+	@Override
 	public void error(Throwable t, String message) {
 		log(new Status(IStatus.ERROR, bundleName, message, t));
 	}
@@ -82,26 +85,32 @@ public final class WorkbenchLogger extends Logger {
 				status.getMessage(), stackCode, t, children);
 	}
 
+	@Override
 	public void info(Throwable t, String message) {
 		log(new Status(IStatus.INFO, bundleName, message, t));
 	}
 
+	@Override
 	public boolean isDebugEnabled() {
 		return false;
 	}
 
+	@Override
 	public boolean isErrorEnabled() {
 		return true;
 	}
 
+	@Override
 	public boolean isInfoEnabled() {
 		return true;
 	}
 
+	@Override
 	public boolean isTraceEnabled() {
 		return false;
 	}
 
+	@Override
 	public boolean isWarnEnabled() {
 		return true;
 	}
@@ -137,6 +146,7 @@ public final class WorkbenchLogger extends Logger {
 		this.log = log;
 	}
 
+	@Override
 	public void trace(Throwable t, String message) {
 		if (trace != null) {
 			trace.trace(null, message, t);
@@ -147,6 +157,7 @@ public final class WorkbenchLogger extends Logger {
 		}
 	}
 
+	@Override
 	public void warn(Throwable t, String message) {
 		log(new Status(IStatus.WARNING, bundleName, message, t));
 	}

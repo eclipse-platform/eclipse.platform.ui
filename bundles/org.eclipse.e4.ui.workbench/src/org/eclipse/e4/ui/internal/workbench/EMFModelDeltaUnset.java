@@ -26,6 +26,7 @@ public final class EMFModelDeltaUnset extends ModelDelta {
 		this.feature = feature;
 	}
 
+	@Override
 	public IStatus apply() {
 		EObject eObject = (EObject) getObject();
 		eObject.eUnset(feature);

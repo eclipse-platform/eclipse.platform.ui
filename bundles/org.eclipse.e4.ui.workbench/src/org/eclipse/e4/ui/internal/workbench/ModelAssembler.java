@@ -302,6 +302,7 @@ public class ModelAssembler {
 
 					commands.add(new Runnable() {
 
+						@Override
 						public void run() {
 							if (internalFeature.isMany()) {
 								System.err.println("Replacing"); //$NON-NLS-1$
@@ -406,6 +407,7 @@ public class ModelAssembler {
 		// to explicitly resort anyways
 		List<String> sortedByOutdegree = new ArrayList<String>(requires.keySet());
 		Comparator<String> outdegreeSorter = new Comparator<String>() {
+			@Override
 			public int compare(String o1, String o2) {
 				assert requires.containsKey(o1) && requires.containsKey(o2);
 				return requires.get(o1).size() - requires.get(o2).size();

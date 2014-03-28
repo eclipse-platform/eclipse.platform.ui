@@ -100,6 +100,7 @@ public class Activator implements BundleActivator {
 		return locationTracker.getService();
 	}
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		activator = this;
 		this.context = context;
@@ -110,6 +111,7 @@ public class Activator implements BundleActivator {
 		resolvedBundles.open();
 	}
 
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (locationTracker != null) {
 			locationTracker.close();
@@ -175,18 +177,22 @@ public class Activator implements BundleActivator {
 		}
 		if (logService == null) {
 			logService = new LogService() {
+				@Override
 				public void log(int level, String message) {
 					log(null, level, message, null);
 				}
 
+				@Override
 				public void log(int level, String message, Throwable exception) {
 					log(null, level, message, exception);
 				}
 
+				@Override
 				public void log(ServiceReference sr, int level, String message) {
 					log(sr, level, message, null);
 				}
 
+				@Override
 				public void log(ServiceReference sr, int level, String message, Throwable exception) {
 					if (level == LogService.LOG_ERROR) {
 						System.err.print("ERROR: "); //$NON-NLS-1$

@@ -156,14 +156,17 @@ public class XMLModelReconciler extends ModelReconciler {
 		}
 	}
 
+	@Override
 	public void recordChanges(Object object) {
 		Assert.isNotNull(object);
 		rootObject = (EObject) object;
 		changeRecorder = new ChangeRecorder(rootObject) {
+			@Override
 			protected boolean shouldRecord(EStructuralFeature feature, EObject eObject) {
 				return !feature.isTransient() && super.shouldRecord(feature, eObject);
 			}
 
+			@Override
 			protected boolean shouldRecord(EStructuralFeature feature, EReference containment,
 					Notification notification, EObject eObject) {
 				return !feature.isTransient()
@@ -184,6 +187,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		return references;
 	}
 
+	@Override
 	public Collection<ModelDelta> constructDeltas(Object object, Object serializedState) {
 		rootObject = (EObject) object;
 		List<Object> references = getReferences(rootObject);
@@ -843,6 +847,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		return changeDescription;
 	}
 
+	@Override
 	public Object serialize() {
 		calculateDeltas();
 

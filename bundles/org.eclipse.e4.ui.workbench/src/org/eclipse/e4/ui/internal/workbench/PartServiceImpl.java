@@ -63,6 +63,7 @@ import org.osgi.service.event.EventHandler;
 public class PartServiceImpl implements EPartService {
 
 	private EventHandler selectedHandler = new EventHandler() {
+		@Override
 		public void handleEvent(Event event) {
 			// no need to do anything if we have no listeners
 			if (!listeners.isEmpty()) {
@@ -103,6 +104,7 @@ public class PartServiceImpl implements EPartService {
 	};
 
 	private EventHandler minimizedPartHandler = new EventHandler() {
+		@Override
 		public void handleEvent(Event event) {
 			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 			if (!(element instanceof MPartStack)) {
@@ -227,10 +229,12 @@ public class PartServiceImpl implements EPartService {
 	private void firePartActivated(final MPart part) {
 		for (final Object listener : listeners.getListeners()) {
 			SafeRunner.run(new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					((IPartListener) listener).partActivated(part);
 				}
 
+				@Override
 				public void handleException(Throwable throwable) {
 					logger.error(throwable, "An exception occurred while notifying part listeners"); //$NON-NLS-1$
 				}
@@ -241,10 +245,12 @@ public class PartServiceImpl implements EPartService {
 	private void firePartDeactivated(final MPart part) {
 		for (final Object listener : listeners.getListeners()) {
 			SafeRunner.run(new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					((IPartListener) listener).partDeactivated(part);
 				}
 
+				@Override
 				public void handleException(Throwable throwable) {
 					logger.error(throwable, "An exception occurred while notifying part listeners"); //$NON-NLS-1$
 				}
@@ -255,10 +261,12 @@ public class PartServiceImpl implements EPartService {
 	private void firePartHidden(final MPart part) {
 		for (final Object listener : listeners.getListeners()) {
 			SafeRunner.run(new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					((IPartListener) listener).partHidden(part);
 				}
 
+				@Override
 				public void handleException(Throwable throwable) {
 					logger.error(throwable, "An exception occurred while notifying part listeners"); //$NON-NLS-1$
 				}
@@ -269,10 +277,12 @@ public class PartServiceImpl implements EPartService {
 	private void firePartVisible(final MPart part) {
 		for (final Object listener : listeners.getListeners()) {
 			SafeRunner.run(new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					((IPartListener) listener).partVisible(part);
 				}
 
+				@Override
 				public void handleException(Throwable throwable) {
 					logger.error(throwable, "An exception occurred while notifying part listeners"); //$NON-NLS-1$
 				}
@@ -283,10 +293,12 @@ public class PartServiceImpl implements EPartService {
 	private void firePartBroughtToTop(final MPart part) {
 		for (final Object listener : listeners.getListeners()) {
 			SafeRunner.run(new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					((IPartListener) listener).partBroughtToTop(part);
 				}
 
+				@Override
 				public void handleException(Throwable throwable) {
 					logger.error(throwable, "An exception occurred while notifying part listeners"); //$NON-NLS-1$
 				}
@@ -294,10 +306,12 @@ public class PartServiceImpl implements EPartService {
 		}
 	}
 
+	@Override
 	public void addPartListener(IPartListener listener) {
 		listeners.add(listener);
 	}
 
+	@Override
 	public void removePartListener(IPartListener listener) {
 		listeners.remove(listener);
 	}
@@ -341,6 +355,7 @@ public class PartServiceImpl implements EPartService {
 		return null;
 	}
 
+	@Override
 	public void bringToTop(MPart part) {
 		if (isInContainer(part)) {
 			MUIElement currentElement = part;
@@ -419,6 +434,7 @@ public class PartServiceImpl implements EPartService {
 		}
 	}
 
+	@Override
 	public MPart findPart(String id) {
 		List<MPart> parts = getParts(MPart.class, id);
 		return parts.size() > 0 ? parts.get(0) : null;
@@ -430,10 +446,12 @@ public class PartServiceImpl implements EPartService {
 						| EModelService.IN_SHARED_AREA);
 	}
 
+	@Override
 	public Collection<MPart> getParts() {
 		return getParts(MPart.class, null);
 	}
 
+	@Override
 	public boolean isPartVisible(MPart part) {
 		if (isInContainer(part)) {
 			MUIElement element = part;
@@ -523,6 +541,7 @@ public class PartServiceImpl implements EPartService {
 		return modelService.findPlaceholderFor(getWindow(), part);
 	}
 
+	@Override
 	public void switchPerspective(MPerspective perspective) {
 		Assert.isNotNull(perspective);
 		MWindow window = getWindow();
@@ -577,6 +596,7 @@ public class PartServiceImpl implements EPartService {
 	 * org.eclipse.e4.ui.workbench.modeling.EPartService#activate(org.eclipse.e4.ui.model.application
 	 * .MPart)
 	 */
+	@Override
 	public void activate(MPart part) {
 		activate(part, true);
 	}
@@ -588,6 +608,7 @@ public class PartServiceImpl implements EPartService {
 	 * org.eclipse.e4.ui.workbench.modeling.EPartService#activate(org.eclipse.e4.ui.model.application
 	 * .MPart,boolean)
 	 */
+	@Override
 	public void activate(MPart part, boolean requiresFocus) {
 		activate(part, requiresFocus, true);
 	}
@@ -719,6 +740,7 @@ public class PartServiceImpl implements EPartService {
 	 * 
 	 * @see org.eclipse.e4.ui.workbench.modeling.EPartService#getActivePart()
 	 */
+	@Override
 	public MPart getActivePart() {
 		return activePart;
 	}
@@ -746,15 +768,18 @@ public class PartServiceImpl implements EPartService {
 		return part;
 	}
 
+	@Override
 	public MPart createPart(String id) {
 		MPartDescriptor descriptor = modelService.getPartDescriptor(id);
 		return createPart(descriptor);
 	}
 
+	@Override
 	public MPlaceholder createSharedPart(String id) {
 		return createSharedPart(id, false);
 	}
 
+	@Override
 	public MPlaceholder createSharedPart(String id, boolean force) {
 		MWindow sharedWindow = getWindow();
 		// Do we already have the part to share?
@@ -1060,6 +1085,7 @@ public class PartServiceImpl implements EPartService {
 		return addPart(part, localPart == null ? part : localPart);
 	}
 
+	@Override
 	public MPart showPart(String id, PartState partState) {
 		Assert.isNotNull(id);
 		Assert.isNotNull(partState);
@@ -1075,6 +1101,7 @@ public class PartServiceImpl implements EPartService {
 		return showPart(addPart(part), partState);
 	}
 
+	@Override
 	public MPart showPart(MPart part, PartState partState) {
 		Assert.isNotNull(part);
 		Assert.isNotNull(partState);
@@ -1148,6 +1175,7 @@ public class PartServiceImpl implements EPartService {
 		}
 	}
 
+	@Override
 	public void requestActivation() {
 		if (activePart == null) {
 			MPart candidate = partActivationHistory.getActivationCandidate(getParts());
@@ -1163,10 +1191,12 @@ public class PartServiceImpl implements EPartService {
 		}
 	}
 
+	@Override
 	public void hidePart(MPart part) {
 		hidePart(part, false);
 	}
 
+	@Override
 	public void hidePart(MPart part, boolean force) {
 		if (isInContainer(part)) {
 			MPlaceholder sharedRef = part.getCurSharedRef();
@@ -1256,6 +1286,7 @@ public class PartServiceImpl implements EPartService {
 	 * 
 	 * @see org.eclipse.e4.ui.workbench.modeling.EPartService#getDirtyParts()
 	 */
+	@Override
 	public Collection<MPart> getDirtyParts() {
 		List<MPart> dirtyParts = new ArrayList<MPart>();
 		for (MPart part : getParts()) {
@@ -1273,6 +1304,7 @@ public class PartServiceImpl implements EPartService {
 	 * org.eclipse.e4.ui.workbench.modeling.EPartService#save(org.eclipse.e4.ui.model.application.
 	 * MSaveablePart, boolean)
 	 */
+	@Override
 	public boolean savePart(MPart part, boolean confirm) {
 		if (!part.isDirty()) {
 			return true;
@@ -1297,6 +1329,7 @@ public class PartServiceImpl implements EPartService {
 		return true;
 	}
 
+	@Override
 	public boolean saveAll(boolean confirm) {
 		Collection<MPart> dirtyParts = getDirtyParts();
 		if (dirtyParts.isEmpty()) {
@@ -1314,6 +1347,7 @@ public class PartServiceImpl implements EPartService {
 		return true;
 	}
 
+	@Override
 	public Collection<MInputPart> getInputParts(String inputUri) {
 		Assert.isNotNull(inputUri, "Input uri must not be null"); //$NON-NLS-1$
 

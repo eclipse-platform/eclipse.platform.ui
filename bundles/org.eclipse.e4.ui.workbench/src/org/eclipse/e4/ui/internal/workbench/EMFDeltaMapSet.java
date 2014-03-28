@@ -30,6 +30,7 @@ class EMFDeltaMapSet extends ModelDelta {
 		this.deltaMap = deltaMap;
 	}
 
+	@Override
 	public IStatus apply() {
 		EMap map = (EMap) ((EObject) getObject()).eGet(feature);
 		map.clear();

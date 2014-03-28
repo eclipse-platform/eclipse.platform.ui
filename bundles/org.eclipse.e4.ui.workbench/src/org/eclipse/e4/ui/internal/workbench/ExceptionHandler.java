@@ -14,6 +14,7 @@ import org.eclipse.e4.ui.workbench.IExceptionHandler;
 
 public class ExceptionHandler implements IExceptionHandler {
 
+	@Override
 	public void handleException(Throwable e) {
 		e.printStackTrace();
 	}

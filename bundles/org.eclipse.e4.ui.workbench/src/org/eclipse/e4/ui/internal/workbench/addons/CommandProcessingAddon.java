@@ -119,6 +119,7 @@ public class CommandProcessingAddon {
 
 	private void registerModelListeners() {
 		additionHandler = new EventHandler() {
+			@Override
 			public void handleEvent(Event event) {
 				if (application == event.getProperty(UIEvents.EventTags.ELEMENT)) {
 					if (UIEvents.isADD(event)) {
@@ -144,6 +145,7 @@ public class CommandProcessingAddon {
 
 	private void registerCommandListener() {
 		cmListener = new ICommandManagerListener() {
+			@Override
 			public void commandManagerChanged(CommandManagerEvent commandManagerEvent) {
 				if (commandManagerEvent.isCommandChanged()) {
 					if (commandManagerEvent.isCommandDefined()) {

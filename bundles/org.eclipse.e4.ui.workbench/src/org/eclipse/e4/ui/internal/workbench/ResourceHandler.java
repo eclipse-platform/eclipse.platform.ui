@@ -128,6 +128,7 @@ public class ResourceHandler implements IModelResourceHandler {
 
 	}
 
+	@Override
 	public Resource loadMostRecentModel() {
 		// This is temporary code to migrate existing delta files into full models
 		if (deltaRestore && saveAndRestore && !clearPersistedState) {
@@ -228,6 +229,7 @@ public class ResourceHandler implements IModelResourceHandler {
 		return resource;
 	}
 
+	@Override
 	public void save() throws IOException {
 		if (saveAndRestore)
 			resource.save(null);
@@ -240,6 +242,7 @@ public class ResourceHandler implements IModelResourceHandler {
 	 *            the application model to add to the resource
 	 * @return a resource with a proper save path with the model as contents
 	 */
+	@Override
 	public Resource createResourceWithApp(MApplication theApp) {
 		Resource res = createResource();
 		res.getContents().add((EObject) theApp);

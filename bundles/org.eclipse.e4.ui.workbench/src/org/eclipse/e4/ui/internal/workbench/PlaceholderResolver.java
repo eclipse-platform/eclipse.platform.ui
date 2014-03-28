@@ -39,6 +39,7 @@ public class PlaceholderResolver implements EPlaceholderResolver {
 	 * .e4.ui.model.application.ui.advanced.MPlaceholder,
 	 * org.eclipse.e4.ui.model.application.ui.basic.MWindow)
 	 */
+	@Override
 	public void resolvePlaceholderRef(MPlaceholder ph, MWindow refWin) {
 		if (ph.getRef() != null)
 			return;

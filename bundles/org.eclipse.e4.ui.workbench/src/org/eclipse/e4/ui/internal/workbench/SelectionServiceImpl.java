@@ -26,50 +26,62 @@ public class SelectionServiceImpl implements ESelectionService {
 		this.context = context;
 	}
 
+	@Override
 	public void setSelection(Object selection) {
 		context.set(SelectionAggregator.OUT_SELECTION, selection);
 	}
 
+	@Override
 	public void setPostSelection(Object selection) {
 		context.set(SelectionAggregator.OUT_POST_SELECTION, selection);
 	}
 
+	@Override
 	public Object getSelection() {
 		return getServiceAggregator().getSelection();
 	}
 
+	@Override
 	public Object getSelection(String partId) {
 		return getServiceAggregator().getSelection(partId);
 	}
 
+	@Override
 	public void addSelectionListener(ISelectionListener listener) {
 		getServiceAggregator().addSelectionListener(listener);
 	}
 
+	@Override
 	public void removeSelectionListener(ISelectionListener listener) {
 		getServiceAggregator().removeSelectionListener(listener);
 	}
 
+	@Override
 	public void addSelectionListener(String partId, ISelectionListener listener) {
 		getServiceAggregator().addSelectionListener(partId, listener);
 	}
 
+	@Override
 	public void removeSelectionListener(String partId, ISelectionListener listener) {
 		getServiceAggregator().removeSelectionListener(partId, listener);
 	}
 
+	@Override
 	public void addPostSelectionListener(ISelectionListener listener) {
 		getServiceAggregator().addPostSelectionListener(listener);
 	}
 
+	@Override
 	public void removePostSelectionListener(ISelectionListener listener) {
 		getServiceAggregator().removePostSelectionListener(listener);
 	}
 
+	@Override
 	public void addPostSelectionListener(String partId, ISelectionListener listener) {
 		getServiceAggregator().addPostSelectionListener(partId, listener);
 	}
 
+	@Override
 	public void removePostSelectionListener(String partId, ISelectionListener listener) {
 		getServiceAggregator().removePostSelectionListener(partId, listener);
 	}

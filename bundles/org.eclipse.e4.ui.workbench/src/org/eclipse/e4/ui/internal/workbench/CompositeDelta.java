@@ -30,6 +30,7 @@ public class CompositeDelta implements IDelta {
 		deltas.add(delta);
 	}
 
+	@Override
 	public IStatus apply() {
 		for (IDelta delta : deltas) {
 			delta.apply();
@@ -37,6 +38,7 @@ public class CompositeDelta implements IDelta {
 		return Status.OK_STATUS;
 	}
 
+	@Override
 	public Object getObject() {
 		return object;
 	}

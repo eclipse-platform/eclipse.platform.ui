@@ -31,6 +31,7 @@ public class EMFDeltaEntrySet extends ModelDelta {
 		this.value = value;
 	}
 
+	@Override
 	public IStatus apply() {
 		EMap map = (EMap) ((EObject) getObject()).eGet(feature);
 		map.put(key, value);

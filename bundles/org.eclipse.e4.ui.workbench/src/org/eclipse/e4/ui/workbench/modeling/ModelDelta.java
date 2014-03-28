@@ -34,6 +34,7 @@ public abstract class ModelDelta implements IDelta {
 		this.attributeValue = attributeValue;
 	}
 
+	@Override
 	public Object getObject() {
 		return object;
 	}

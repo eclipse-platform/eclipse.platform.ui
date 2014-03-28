@@ -56,6 +56,7 @@ public class LocaleChangeServiceImpl implements ILocaleChangeService {
 		this.application = application;
 	}
 
+	@Override
 	public void changeApplicationLocale(Locale locale) {
 
 		// the TranslationService.LOCALE context parameter is specified as String
@@ -69,6 +70,7 @@ public class LocaleChangeServiceImpl implements ILocaleChangeService {
 		broker.post(LOCALE_CHANGE, locale);
 	}
 
+	@Override
 	public void changeApplicationLocale(String localeString) {
 		try {
 			Locale locale = ResourceBundleHelper.toLocale(localeString);
