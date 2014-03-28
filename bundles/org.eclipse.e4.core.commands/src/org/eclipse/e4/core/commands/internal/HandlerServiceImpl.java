@@ -158,6 +158,7 @@ public class HandlerServiceImpl implements EHandlerService {
 		context.set(handlerId, handler);
 	}
 
+	@Override
 	public boolean canExecute(ParameterizedCommand command) {
 		final IEclipseContext staticContext = EclipseContextFactory.create(TMP_STATIC_CONTEXT);
 		try {
