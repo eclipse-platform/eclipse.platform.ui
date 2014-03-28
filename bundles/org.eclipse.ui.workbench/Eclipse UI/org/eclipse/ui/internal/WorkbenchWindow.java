@@ -73,7 +73,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.model.internal.Position;
 import org.eclipse.e4.ui.model.internal.PositionInfo;
 import org.eclipse.e4.ui.services.EContextService;
@@ -1020,7 +1019,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		MToolControl slElement = (MToolControl) modelService.find(
 				"org.eclipse.ui.StatusLine", model); //$NON-NLS-1$
 		if (slElement == null) {
-			slElement = MenuFactoryImpl.eINSTANCE.createToolControl();
+			slElement = modelService.createModelElement(MToolControl.class);
 			slElement.setElementId("org.eclipse.ui.StatusLine"); //$NON-NLS-1$
 			slElement
 					.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.StandardTrim"); //$NON-NLS-1$
@@ -1138,7 +1137,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				insertIndex++;
 		}
 
-		MToolControl newTrimElement = MenuFactoryImpl.eINSTANCE.createToolControl();
+		MToolControl newTrimElement = modelService.createModelElement(MToolControl.class);
 		newTrimElement.setElementId(id);
 		newTrimElement.setToBeRendered(classSpec != null);
 		if (classSpec != null) {
@@ -1189,7 +1188,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					menu.getChildren().add(menuItem);
 				}
 			} else if (item instanceof AbstractGroupMarker) {
-				MMenuSeparator separator = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+				MMenuSeparator separator = modelService.createModelElement(MMenuSeparator.class);
 				separator.setVisible(item.isVisible());
 				separator.setElementId(item.getId());
 				if (item instanceof GroupMarker) {
