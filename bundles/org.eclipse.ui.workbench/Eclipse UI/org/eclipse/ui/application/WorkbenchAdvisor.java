@@ -22,10 +22,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.StartupThreading;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.UISynchronizer;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindowConfigurer;
-import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.application.CompatibilityWorkbenchWindowAdvisor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.model.ContributionComparator;
@@ -810,6 +810,7 @@ public abstract class WorkbenchAdvisor {
 				}
 				finally {
 					initDone[0] = true;
+					yield();
 					display.wake();
 				}
 			}};

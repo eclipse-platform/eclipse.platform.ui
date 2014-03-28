@@ -2846,6 +2846,7 @@ UIEvents.Context.TOPIC_CONTEXT,
 							error[0] = e;
 						} finally {
 							initDone[0] = true;
+							yield();
 							display.wake();
 						}
 					}
