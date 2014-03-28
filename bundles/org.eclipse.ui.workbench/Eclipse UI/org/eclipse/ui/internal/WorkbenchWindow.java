@@ -8,10 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Zhongwei Zhao - Bug 379495 - Two "Run" on top menu
- *     Patrick Chuong - Bug 391481 - Contributing perspectiveExtension, hiddenMenuItem 
+ *     Patrick Chuong - Bug 391481 - Contributing perspectiveExtension, hiddenMenuItem
  *     								 removes a menu from multiple perspectives
  *     René Brandstetter - Bug 411821 - [QuickAccess] Contribute SearchField
  *                                      through a fragment or other means
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431446
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -661,7 +662,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 			Shell shell = (Shell) model.getWidget();
 			if (model.getMainMenu() == null) {
-				final MMenu mainMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+				final MMenu mainMenu = modelService.createModelElement(MMenu.class);
 				mainMenu.setElementId("org.eclipse.ui.main.menu"); //$NON-NLS-1$
 
 				final MenuManagerRenderer renderer = (MenuManagerRenderer) rendererFactory
@@ -823,7 +824,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		 */
 		MToolControl spacerControl = (MToolControl) modelService.find("PerspectiveSpacer", model); //$NON-NLS-1$
 		if (spacerControl == null) {
-			spacerControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+			spacerControl = modelService.createModelElement(MToolControl.class);
 			spacerControl.setElementId("PerspectiveSpacer"); //$NON-NLS-1$
 			spacerControl
 					.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
@@ -834,7 +835,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		MToolControl switcherControl = (MToolControl) modelService.find(
 				"PerspectiveSwitcher", model); //$NON-NLS-1$
 		if (switcherControl == null) {
-			switcherControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+			switcherControl = modelService.createModelElement(MToolControl.class);
 			switcherControl.setToBeRendered(getWindowConfigurer().getShowPerspectiveBar());
 			switcherControl.setElementId("PerspectiveSwitcher"); //$NON-NLS-1$
 			switcherControl.getTags().add(IPresentationEngine.DRAGGABLE);
@@ -1032,7 +1033,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		MToolControl hsElement = (MToolControl) modelService.find(
 				"org.eclipse.ui.HeapStatus", model); //$NON-NLS-1$
 		if (hsElement == null) {
-			hsElement = MenuFactoryImpl.eINSTANCE.createToolControl();
+			hsElement = modelService.createModelElement(MToolControl.class);
 			hsElement.setElementId("org.eclipse.ui.HeapStatus"); //$NON-NLS-1$
 			hsElement
 					.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.StandardTrim"); //$NON-NLS-1$
@@ -1045,7 +1046,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		MToolControl pbElement = (MToolControl) modelService.find(
 				"org.eclipse.ui.ProgressBar", model); //$NON-NLS-1$
 		if (pbElement == null) {
-			pbElement = MenuFactoryImpl.eINSTANCE.createToolControl();
+			pbElement = modelService.createModelElement(MToolControl.class);
 			pbElement.setElementId("org.eclipse.ui.ProgressBar"); //$NON-NLS-1$
 			pbElement.getTags().add(IPresentationEngine.DRAGGABLE);
 			pbElement
