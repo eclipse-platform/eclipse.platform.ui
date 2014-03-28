@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,9 +54,6 @@ public abstract class AbstractConsole implements IConsole {
 	 */
 	class Lifecycle implements IConsoleListener {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.console.IConsoleListener#consolesAdded(org.eclipse.ui.console.IConsole[])
-		 */
 		@Override
 		public void consolesAdded(IConsole[] consoles) {
 			for (int i = 0; i < consoles.length; i++) {
@@ -68,9 +65,6 @@ public abstract class AbstractConsole implements IConsole {
 
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.console.IConsoleListener#consolesRemoved(org.eclipse.ui.console.IConsole[])
-		 */
 		@Override
 		public void consolesRemoved(IConsole[] consoles) {
 			for (int i = 0; i < consoles.length; i++) {
@@ -91,18 +85,12 @@ public abstract class AbstractConsole implements IConsole {
 		private IPropertyChangeListener fListener;
 		private PropertyChangeEvent fEvent;
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
 		@Override
 		public void handleException(Throwable exception) {
 			IStatus status = new Status(IStatus.ERROR, ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.INTERNAL_ERROR, ConsoleMessages.AbstractConsole_0, exception);
 			ConsolePlugin.log(status);
 		}
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
 		@Override
 		public void run() throws Exception {
 			fListener.propertyChange(fEvent);
@@ -175,9 +163,6 @@ public abstract class AbstractConsole implements IConsole {
 		this(name, imageDescriptor, true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsole#getName()
-	 */
 	@Override
 	public String getName() {
 		return fName;
@@ -197,9 +182,6 @@ public abstract class AbstractConsole implements IConsole {
         }
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsole#getImageDescriptor()
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return fImageDescriptor;
@@ -217,9 +199,6 @@ public abstract class AbstractConsole implements IConsole {
 		firePropertyChange(this, IBasicPropertyConstants.P_IMAGE, old, imageDescriptor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsole#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
-	 */
 	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		if (fListeners == null) {
@@ -228,9 +207,6 @@ public abstract class AbstractConsole implements IConsole {
 		fListeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsole#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
-	 */
 	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		if (fListeners != null) {
@@ -321,7 +297,6 @@ public abstract class AbstractConsole implements IConsole {
     }
 
     /**
-     * @see org.eclipse.ui.console.IConsole#getType()
      * @since 3.1
      */
     @Override
