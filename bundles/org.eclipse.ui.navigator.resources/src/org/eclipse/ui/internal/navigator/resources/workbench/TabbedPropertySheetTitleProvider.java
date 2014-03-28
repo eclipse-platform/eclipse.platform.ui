@@ -60,6 +60,7 @@ public class TabbedPropertySheetTitleProvider extends LabelProvider {
 	/**
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object object) {
 		return labelProvider != null ? labelProvider.getImage(object) : null;
 	}
@@ -67,6 +68,7 @@ public class TabbedPropertySheetTitleProvider extends LabelProvider {
 	/**
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object object) {
 		return descriptionProvider != null ? descriptionProvider
 				.getDescription(object) : null;

@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
  */
 public class WorkingSetSorter extends ViewerSorter {
   
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		if(viewer instanceof StructuredViewer) {			
 			 ILabelProvider labelProvider = (ILabelProvider) ((StructuredViewer)viewer).getLabelProvider();

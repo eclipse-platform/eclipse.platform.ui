@@ -56,6 +56,7 @@ public class EditActionGroup extends ActionGroup {
 		makeActions();
 	}
 
+	@Override
 	public void dispose() {
 		if (clipboard != null) {
 			clipboard.dispose();
@@ -64,6 +65,7 @@ public class EditActionGroup extends ActionGroup {
 		super.dispose();
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 
@@ -83,6 +85,7 @@ public class EditActionGroup extends ActionGroup {
 		}
 	}
 
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 
 		if (textActionHandler == null) {
@@ -130,6 +133,7 @@ public class EditActionGroup extends ActionGroup {
 		copyAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
 
 		IShellProvider sp = new IShellProvider() {
+			@Override
 			public Shell getShell() {
 				return shell;
 			}
@@ -141,6 +145,7 @@ public class EditActionGroup extends ActionGroup {
 		deleteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);
 	}
 
+	@Override
 	public void updateActionBars() {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 

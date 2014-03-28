@@ -31,24 +31,29 @@ public class GoIntoActionProvider extends CommonActionProvider {
 
 	private GoIntoAction goIntoAction;
 
+	@Override
 	public void init(ICommonActionExtensionSite anActionSite) {
 		anActionSite.getViewSite().getShell();
 		CommonViewer viewer = (CommonViewer) anActionSite.getStructuredViewer();
 		goIntoAction = new GoIntoAction(viewer.getFrameList());
 	}
 
+	@Override
 	public void dispose() {
 		goIntoAction.dispose();
 	}
 
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.GO_INTO, goIntoAction);
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		menu.appendToGroup("group.new", goIntoAction); //$NON-NLS-1$
 	}
 
+	@Override
 	public void updateActionBars() {
 		goIntoAction.update();
 	}

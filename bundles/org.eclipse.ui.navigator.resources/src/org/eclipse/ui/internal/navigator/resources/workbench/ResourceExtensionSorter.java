@@ -44,7 +44,8 @@ public class ResourceExtensionSorter extends ResourceSorter {
 		icuCollator = Collator.getInstance();
 	}
 	
-    protected int compareNames(IResource resource1, IResource resource2) {
+    @Override
+	protected int compareNames(IResource resource1, IResource resource2) {
     	return icuCollator.compare(resource1.getName(), resource2.getName());
     }
 

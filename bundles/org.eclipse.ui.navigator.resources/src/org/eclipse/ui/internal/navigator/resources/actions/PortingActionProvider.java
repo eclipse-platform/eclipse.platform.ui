@@ -70,6 +70,7 @@ public class PortingActionProvider extends CommonActionProvider {
 
 	private boolean contribute= false;
 
+	@Override
 	public void init(ICommonActionExtensionSite anExtensionSite) {
 
 		Assert.isTrue(!disposed);
@@ -93,6 +94,7 @@ public class PortingActionProvider extends CommonActionProvider {
 	/**
 	 * Extends the superclass implementation to dispose the subgroups.
 	 */
+	@Override
 	public void dispose() {
 		if(!contribute) {
 			return;
@@ -104,6 +106,7 @@ public class PortingActionProvider extends CommonActionProvider {
 		disposed = true;
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager aMenu) {
 		if(!contribute) {
 			return;

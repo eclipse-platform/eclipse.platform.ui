@@ -66,6 +66,7 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 		 */
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			if(SHOW_TOP_LEVEL_WORKING_SETS.equals(event.getProperty())) {
 				updateRootMode();
@@ -78,6 +79,7 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.ICommonContentProvider#init(org.eclipse.ui.navigator.ICommonContentExtensionSite)
 	 */
+	@Override
 	public void init(ICommonContentExtensionSite aConfig) {
 		NavigatorContentService cs = (NavigatorContentService) aConfig.getService();
 		viewer = (CommonViewer) cs.getViewer();
@@ -92,6 +94,7 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.IMementoAware#restoreState(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void restoreState(IMemento aMemento) {
 		
 	}
@@ -99,10 +102,12 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.IMementoAware#saveState(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void saveState(IMemento aMemento) {
 		
 	}
 
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IWorkingSet) {
 			IWorkingSet workingSet = (IWorkingSet) parentElement;
@@ -129,25 +134,30 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 		return children;
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		if (helper != null)
 			return helper.getParent(element);
 		return null;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		return true;
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
 
+	@Override
 	public void dispose() {
 		helper = null;
 		extensionStateModel.removePropertyChangeListener(rootModeListener);
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (newInput instanceof IWorkingSet) {
 			IWorkingSet rootSet = (IWorkingSet) newInput;

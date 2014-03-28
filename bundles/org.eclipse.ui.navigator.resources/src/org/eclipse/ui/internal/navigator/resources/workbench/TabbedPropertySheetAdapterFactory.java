@@ -31,7 +31,8 @@ public class TabbedPropertySheetAdapterFactory
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object,
      *      java.lang.Class)
      */
-    public Object getAdapter(Object adaptableObject, Class adapterType) {
+    @Override
+	public Object getAdapter(Object adaptableObject, Class adapterType) {
         if (adaptableObject instanceof ProjectExplorer) {
         	if (IPropertySheetPage.class == adapterType)
                 return new TabbedPropertySheetPage(
@@ -46,7 +47,8 @@ public class TabbedPropertySheetAdapterFactory
      * 
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
      */
-    public Class[] getAdapterList() {
+    @Override
+	public Class[] getAdapterList() {
         return new Class[] {IPropertySheetPage.class};
     }
 

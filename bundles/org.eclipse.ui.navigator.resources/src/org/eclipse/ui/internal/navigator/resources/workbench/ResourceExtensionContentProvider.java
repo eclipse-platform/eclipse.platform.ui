@@ -46,6 +46,7 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 	 * 
 	 * @see org.eclipse.ui.model.BaseWorkbenchContentProvider#getElements(java.lang.Object)
 	 */
+	@Override
 	public Object[] getElements(Object element) {
 		return super.getChildren(element);
 	}
@@ -55,6 +56,7 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 	 * 
 	 * @see org.eclipse.ui.model.BaseWorkbenchContentProvider#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(Object element) {
 		if(element instanceof IResource)
 			return super.getChildren(element);
@@ -64,6 +66,7 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.BaseWorkbenchContentProvider#hasChildren(java.lang.Object)
 	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		try {
 			if (element instanceof IContainer) {
@@ -84,6 +87,7 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.WorkbenchContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { 
 		super.inputChanged(viewer, oldInput, newInput);
 		this.viewer = viewer;
@@ -95,6 +99,7 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 	 * 
 	 * @param delta
 	 */
+	@Override
 	protected void processDelta(IResourceDelta delta) {		
 
 		Control ctrl = viewer.getControl();
@@ -118,6 +123,7 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 				/* (non-Javadoc)
 				 * @see java.lang.Runnable#run()
 				 */
+				@Override
 				public void run() {
 					//Abort if this happens after disposes
 					Control ctrl = viewer.getControl();
@@ -250,6 +256,7 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 		final boolean hasRename = numMovedFrom > 0 && numMovedTo > 0;
 		
 		Runnable addAndRemove = new Runnable(){
+			@Override
 			public void run() {
 				if (viewer instanceof AbstractTreeViewer) {
 					AbstractTreeViewer treeViewer = (AbstractTreeViewer) viewer;
@@ -289,6 +296,7 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 	 */
 	private Runnable getRefreshRunnable(final IResource resource) {
 		return new Runnable(){
+			@Override
 			public void run() {
 				((StructuredViewer) viewer).refresh(resource);
 			}

@@ -49,6 +49,7 @@ public class ResourceToItemsMapper implements ICommonViewerMapper {
 		viewer.setMapper(this);
 	}
 
+	@Override
 	public void addToMap(Object element, Item item) {
 		IResource resource = getCorrespondingResource(element);
 		if (resource != null) {
@@ -72,6 +73,7 @@ public class ResourceToItemsMapper implements ICommonViewerMapper {
 		}
 	}
 
+	@Override
 	public void removeFromMap(Object element, Item item) {
 		IResource resource = getCorrespondingResource(element);
 		if (resource != null) {
@@ -92,10 +94,12 @@ public class ResourceToItemsMapper implements ICommonViewerMapper {
 		}
 	}
 
+	@Override
 	public void clearMap() {
 		_resourceToItem.clear();
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return _resourceToItem.isEmpty();
 	}
@@ -113,6 +117,7 @@ public class ResourceToItemsMapper implements ICommonViewerMapper {
 		}
 	}
 
+	@Override
 	public boolean handlesObject(Object object) {
 		return object instanceof IResource;
 	}
@@ -124,6 +129,7 @@ public class ResourceToItemsMapper implements ICommonViewerMapper {
 	 * @param changedResource
 	 *            Changed resource
 	 */
+	@Override
 	public void objectChanged(Object changedResource) {
 		Object obj = _resourceToItem.get(changedResource);
 		if (obj == null) {

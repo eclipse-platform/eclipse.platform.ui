@@ -45,6 +45,7 @@ public class OpenActionProvider extends CommonActionProvider {
 
 	private boolean contribute = false;
 
+	@Override
 	public void init(ICommonActionExtensionSite aConfig) {
 		if (aConfig.getViewSite() instanceof ICommonViewerWorkbenchSite) {
 			viewSite = (ICommonViewerWorkbenchSite) aConfig.getViewSite();
@@ -53,6 +54,7 @@ public class OpenActionProvider extends CommonActionProvider {
 		}
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager aMenu) {
 		if (!contribute || getContext().getSelection().isEmpty()) {
 			return;
@@ -68,6 +70,7 @@ public class OpenActionProvider extends CommonActionProvider {
 		addOpenWithMenu(aMenu);
 	}
 
+	@Override
 	public void fillActionBars(IActionBars theActionBars) {
 		if (!contribute) {
 			return;

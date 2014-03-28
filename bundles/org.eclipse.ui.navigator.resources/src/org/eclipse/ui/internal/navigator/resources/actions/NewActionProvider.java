@@ -64,6 +64,7 @@ public class NewActionProvider extends CommonActionProvider {
 
 	private boolean contribute = false;
 
+	@Override
 	public void init(ICommonActionExtensionSite anExtensionSite) {
 
 		if (anExtensionSite.getViewSite() instanceof ICommonViewerWorkbenchSite) {
@@ -92,6 +93,7 @@ public class NewActionProvider extends CommonActionProvider {
 	 * <li>a generic "Other" new wizard shortcut action</li>
 	 * </ul>
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		IMenuManager submenu = new MenuManager(
 				WorkbenchNavigatorMessages.NewActionProvider_NewMenu_label,
@@ -138,6 +140,7 @@ public class NewActionProvider extends CommonActionProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (showDlgAction!=null) {
 			showDlgAction.dispose();

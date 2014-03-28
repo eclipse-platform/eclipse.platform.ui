@@ -55,6 +55,7 @@ public class RefactorActionGroup extends ActionGroup {
 		makeActions();
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 
@@ -69,6 +70,7 @@ public class RefactorActionGroup extends ActionGroup {
 		}
 	}
 
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 
 		// renameAction.setTextActionHandler(textActionHandler);
@@ -98,6 +100,7 @@ public class RefactorActionGroup extends ActionGroup {
 
 	protected void makeActions() {
 		IShellProvider sp = new IShellProvider() {
+			@Override
 			public Shell getShell() {
 				return shell;
 			}
@@ -110,6 +113,7 @@ public class RefactorActionGroup extends ActionGroup {
 		renameAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_RENAME);
 	}
 
+	@Override
 	public void updateActionBars() {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 
