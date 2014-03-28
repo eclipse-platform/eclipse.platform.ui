@@ -16,10 +16,8 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -84,7 +82,9 @@ import org.osgi.service.event.EventHandler;
 /**
  * Create a contribute part.
  */
-public class ToolBarManagerRenderer extends SWTPartRenderer {
+public class ToolBarManagerRenderer
+		extends
+		ContributionManagerRenderer<MToolBar, MToolBarElement, ToolBarManager, ToolBarContributionRecord> {
 
 	private static final Selector ALL_SELECTOR = new Selector() {
 
@@ -108,16 +108,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	// TODO migrate to IPresentationEngine after the Luna release
 	public static final String HIDDEN_BY_USER = "HIDDEN_BY_USER"; //$NON-NLS-1$
 
-	private Map<MToolBar, ToolBarManager> modelToManager = new HashMap<MToolBar, ToolBarManager>();
-	private Map<ToolBarManager, MToolBar> managerToModel = new HashMap<ToolBarManager, MToolBar>();
-
-	private Map<MToolBarElement, IContributionItem> modelToContribution = new HashMap<MToolBarElement, IContributionItem>();
-	private Map<IContributionItem, MToolBarElement> contributionToModel = new HashMap<IContributionItem, MToolBarElement>();
-
-	private Map<MToolBarElement, ToolBarContributionRecord> modelContributionToRecord = new HashMap<MToolBarElement, ToolBarContributionRecord>();
-
-	private Map<MToolBarElement, ArrayList<ToolBarContributionRecord>> sharedElementToRecord = new HashMap<MToolBarElement, ArrayList<ToolBarContributionRecord>>();
-
 	private ToolItemUpdater enablementUpdater = new ToolItemUpdater();
 
 	/**
@@ -125,17 +115,12 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	 */
 	private Menu toolbarMenu;
 
-	// @Inject
-	// private Logger logger;
-
 	@Inject
 	private MApplication application;
 
 	@Inject
 	EModelService modelService;
 
-	@Inject
-	IEventBroker eventBroker;
 	private EventHandler itemUpdater = new EventHandler() {
 		@Override
 		public void handleEvent(Event event) {
@@ -194,8 +179,9 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 						}
 					}
 				} else {
-					IContributionItem ici = modelToContribution
-							.remove(itemModel);
+					IContributionItem ici = getContribution(itemModel);
+					clearModelToContribution(itemModel, ici);
+
 					if (ici != null && parent != null) {
 						parent.remove(ici);
 					}
@@ -354,8 +340,10 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
+	@Override
 	@PostConstruct
 	public void init() {
+		super.init();
 		eventBroker.subscribe(UIEvents.UILabel.TOPIC_ALL, itemUpdater);
 		eventBroker.subscribe(UIEvents.Item.TOPIC_SELECTED, selectionUpdater);
 		eventBroker.subscribe(UIEvents.Item.TOPIC_ENABLED, enabledUpdater);
@@ -388,6 +376,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		context.runAndTrack(enablementUpdater);
 	}
 
+	@Override
 	@PreDestroy
 	public void contextDisposed() {
 		eventBroker.unsubscribe(itemUpdater);
@@ -395,6 +384,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		eventBroker.unsubscribe(enabledUpdater);
 		eventBroker.unsubscribe(toBeRenderedUpdater);
 		eventBroker.unsubscribe(childAdditionUpdater);
+		super.contextDisposed();
 	}
 
 	@Override
@@ -606,8 +596,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	 * @param element
 	 */
 	protected void cleanUp(MToolBar toolbarModel) {
-		Collection<ToolBarContributionRecord> vals = modelContributionToRecord
-				.values();
+		Collection<ToolBarContributionRecord> vals = getList(toolbarModel);
 		for (ToolBarContributionRecord record : vals
 				.toArray(new ToolBarContributionRecord[vals.size()])) {
 			if (record.toolbarModel == toolbarModel) {
@@ -626,7 +615,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 	public void cleanUpCopy(ToolBarContributionRecord record,
 			MToolBarElement copy) {
-		modelContributionToRecord.remove(copy);
+		removeContributionRecord(copy);
 		IContributionItem ici = getContribution(copy);
 		clearModelToContribution(copy, ici);
 		if (ici != null) {
@@ -923,62 +912,12 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
-	public ToolBarManager getManager(MToolBar model) {
-		return modelToManager.get(model);
-	}
-
 	public MToolBar getToolBarModel(ToolBarManager manager) {
-		return managerToModel.get(manager);
-	}
-
-	public void linkModelToManager(MToolBar model, ToolBarManager manager) {
-		modelToManager.put(model, manager);
-		managerToModel.put(manager, model);
-	}
-
-	public void clearModelToManager(MToolBar model, ToolBarManager manager) {
-		modelToManager.remove(model);
-		managerToModel.remove(manager);
-	}
-
-	public IContributionItem getContribution(MToolBarElement element) {
-		return modelToContribution.get(element);
+		return getModel(manager);
 	}
 
 	public MToolBarElement getToolElement(IContributionItem item) {
-		return contributionToModel.get(item);
-	}
-
-	public void linkModelToContribution(MToolBarElement model,
-			IContributionItem item) {
-		modelToContribution.put(model, item);
-		contributionToModel.put(item, model);
-	}
-
-	public void clearModelToContribution(MToolBarElement model,
-			IContributionItem item) {
-		modelToContribution.remove(model);
-		contributionToModel.remove(item);
-	}
-
-	public ArrayList<ToolBarContributionRecord> getList(MToolBarElement item) {
-		ArrayList<ToolBarContributionRecord> tmp = sharedElementToRecord
-				.get(item);
-		if (tmp == null) {
-			tmp = new ArrayList<ToolBarContributionRecord>();
-			sharedElementToRecord.put(item, tmp);
-		}
-		return tmp;
-	}
-
-	public void linkElementToContributionRecord(MToolBarElement element,
-			ToolBarContributionRecord record) {
-		modelContributionToRecord.put(element, record);
-	}
-
-	public ToolBarContributionRecord getContributionRecord(
-			MToolBarElement element) {
-		return modelContributionToRecord.get(element);
+		return getModelElement(item);
 	}
 
 	public void reconcileManagerToModel(IToolBarManager menuManager,
