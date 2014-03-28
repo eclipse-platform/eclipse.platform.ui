@@ -30,22 +30,26 @@ public class CSSElementContextImpl implements CSSElementContext {
 
 	}
 
+	@Override
 	public void setData(Object key, Object value) {
 		if (datas == null)
 			datas = new HashMap();
 		datas.put(key, value);
 	}
 
+	@Override
 	public Object getData(Object key) {
 		if (datas == null)
 			return null;
 		return datas.get(key);
 	}
 
+	@Override
 	public Element getElement() {
 		return element;
 	}
 
+	@Override
 	public void setElement(Element newElement) {
 		if (element != null && element instanceof CSSStylableElement
 				&& newElement instanceof CSSStylableElement) {
@@ -55,12 +59,14 @@ public class CSSElementContextImpl implements CSSElementContext {
 		this.element = newElement;
 	}
 
+	@Override
 	public boolean elementMustBeRefreshed(IElementProvider elementProvider) {
 		if (this.elementProvider == null)
 			return (elementProvider != null);
 		return !this.elementProvider.equals(elementProvider);
 	}
 
+	@Override
 	public void setElementProvider(IElementProvider elementProvider) {
 		this.elementProvider = elementProvider;
 	}

@@ -33,6 +33,7 @@ public class CSSValueBooleanConverterImpl extends AbstractCSSValueConverter {
 		super(Boolean.class);
 	}
 
+	@Override
 	public Object convert(CSSValue value, CSSEngine engine, Object context)
 			throws Exception {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
@@ -43,6 +44,7 @@ public class CSSValueBooleanConverterImpl extends AbstractCSSValueConverter {
 		return Boolean.FALSE;
 	}
 
+	@Override
 	public String convert(Object value, CSSEngine engine, Object context,
 			ICSSValueConverterConfig config) throws Exception {
 		if (value instanceof Boolean) {

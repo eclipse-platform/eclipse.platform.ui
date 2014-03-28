@@ -37,6 +37,7 @@ public class CSSClassConditionImpl extends CSSAttributeConditionImpl {
 		super(localName, namespaceURI, true, value);
 	}
 
+	@Override
 	public boolean match(Element e, String pseudoE) {
 		String attr = null;
 		if ((e instanceof CSSStylableElement))

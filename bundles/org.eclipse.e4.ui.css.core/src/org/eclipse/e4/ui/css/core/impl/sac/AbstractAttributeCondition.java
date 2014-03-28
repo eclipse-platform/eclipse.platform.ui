@@ -47,6 +47,7 @@ public abstract class AbstractAttributeCondition implements AttributeCondition,
 	 * @param obj
 	 *            the reference object with which to compare.
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || (obj.getClass() != getClass())) {
 			return false;
@@ -60,6 +61,7 @@ public abstract class AbstractAttributeCondition implements AttributeCondition,
 	 *
 	 * @return hashCode of this AbstractAttributeCondition
 	 */
+	@Override
 	public int hashCode() {
 		return value == null ? -1 : value.hashCode();
 	}
@@ -67,6 +69,7 @@ public abstract class AbstractAttributeCondition implements AttributeCondition,
 	/**
 	 * Returns the specificity of this condition.
 	 */
+	@Override
 	public int getSpecificity() {
 		return 1 << 8;
 	}
@@ -75,6 +78,7 @@ public abstract class AbstractAttributeCondition implements AttributeCondition,
 	 * <b>SAC</b>: Implements {@link
 	 * org.w3c.css.sac.AttributeCondition#getValue()}.
 	 */
+	@Override
 	public String getValue() {
 		return value;
 	}

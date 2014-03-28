@@ -71,6 +71,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	 * <b>SAC</b>: Implements {@link
 	 * ConditionFactory#createAndCondition(Condition,Condition)}.
 	 */
+	@Override
 	public CombinatorCondition createAndCondition(Condition first,
 			Condition second) throws CSSException {
 		return new CSSAndConditionImpl(first, second);
@@ -80,6 +81,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	 * <b>SAC</b>: Implements {@link
 	 * ConditionFactory#createOrCondition(Condition,Condition)}.
 	 */
+	@Override
 	public CombinatorCondition createOrCondition(Condition first,
 			Condition second) throws CSSException {
 		throw new CSSException("Not implemented in CSS2");
@@ -89,6 +91,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	 * <b>SAC</b>: Implements {@link
 	 * org.w3c.css.sac.ConditionFactory#createNegativeCondition(Condition)}.
 	 */
+	@Override
 	public NegativeCondition createNegativeCondition(Condition condition)
 			throws CSSException {
 		throw new CSSException("Not implemented in CSS2");
@@ -98,6 +101,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	 * <b>SAC</b>: Implements {@link
 	 * ConditionFactory#createPositionalCondition(int,boolean,boolean)}.
 	 */
+	@Override
 	public PositionalCondition createPositionalCondition(int position,
 			boolean typeNode, boolean type) throws CSSException {
 		throw new CSSException("Not implemented in CSS2");
@@ -107,6 +111,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	 * <b>SAC</b>: Implements {@link
 	 * ConditionFactory#createAttributeCondition(String,String,boolean,String)}.
 	 */
+	@Override
 	public AttributeCondition createAttributeCondition(String localName,
 			String namespaceURI, boolean specified, String value)
 			throws CSSException {
@@ -118,6 +123,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	 * <b>SAC</b>: Implements {@link
 	 * org.w3c.css.sac.ConditionFactory#createIdCondition(String)}.
 	 */
+	@Override
 	public AttributeCondition createIdCondition(String value)
 			throws CSSException {
 		return new CSSIdConditionImpl(idNamespaceURI, idLocalName, value);
@@ -127,6 +133,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	 * <b>SAC</b>: Implements {@link
 	 * org.w3c.css.sac.ConditionFactory#createLangCondition(String)}.
 	 */
+	@Override
 	public LangCondition createLangCondition(String lang) throws CSSException {
 		return new CSSLangConditionImpl(lang);
 	}
@@ -135,6 +142,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	 * <b>SAC</b>: Implements {@link
 	 * ConditionFactory#createOneOfAttributeCondition(String,String,boolean,String)}.
 	 */
+	@Override
 	public AttributeCondition createOneOfAttributeCondition(String localName,
 			String nsURI, boolean specified, String value) throws CSSException {
 		return new CSSOneOfAttributeConditionImpl(localName, nsURI, specified,
@@ -145,6 +153,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	 * <b>SAC</b>: Implements {@link
 	 * ConditionFactory#createBeginHyphenAttributeCondition(String,String,boolean,String)}.
 	 */
+	@Override
 	public AttributeCondition createBeginHyphenAttributeCondition(
 			String localName, String namespaceURI, boolean specified,
 			String value) throws CSSException {
@@ -156,6 +165,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	 * <b>SAC</b>: Implements {@link
 	 * org.w3c.css.sac.ConditionFactory#createClassCondition(String,String)}.
 	 */
+	@Override
 	public AttributeCondition createClassCondition(String namespaceURI,
 			String value) throws CSSException {
 		return new CSSClassConditionImpl(classLocalName, classNamespaceURI, value);
@@ -165,6 +175,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	 * <b>SAC</b>: Implements {@link
 	 * ConditionFactory#createPseudoClassCondition(String,String)}.
 	 */
+	@Override
 	public AttributeCondition createPseudoClassCondition(String namespaceURI,
 			String value) throws CSSException {
 		return new CSSPseudoClassConditionImpl(namespaceURI, value);
@@ -174,6 +185,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	 * <b>SAC</b>: Implements {@link
 	 * org.w3c.css.sac.ConditionFactory#createOnlyChildCondition()}.
 	 */
+	@Override
 	public Condition createOnlyChildCondition() throws CSSException {
 		throw new CSSException("Not implemented in CSS2");
 	}
@@ -182,6 +194,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	 * <b>SAC</b>: Implements {@link
 	 * org.w3c.css.sac.ConditionFactory#createOnlyTypeCondition()}.
 	 */
+	@Override
 	public Condition createOnlyTypeCondition() throws CSSException {
 		throw new CSSException("Not implemented in CSS2");
 	}
@@ -190,6 +203,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	 * <b>SAC</b>: Implements {@link
 	 * org.w3c.css.sac.ConditionFactory#createContentCondition(String)}.
 	 */
+	@Override
 	public ContentCondition createContentCondition(String data)
 			throws CSSException {
 		throw new CSSException("Not implemented in CSS2");

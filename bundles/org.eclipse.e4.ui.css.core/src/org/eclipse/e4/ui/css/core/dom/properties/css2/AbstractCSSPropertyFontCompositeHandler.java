@@ -31,6 +31,7 @@ public abstract class AbstractCSSPropertyFontCompositeHandler extends
 	private static final String[] FONT_CSSPROPERTIES = { "font-style",
 			"font-variant", "font-weight", "font-size", "font-family" };
 
+	@Override
 	public void applyCSSProperty(Object element, CSSValue value, String pseudo,
 			CSSEngine engine) throws Exception {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
@@ -42,10 +43,12 @@ public abstract class AbstractCSSPropertyFontCompositeHandler extends
 		}
 	}
 
+	@Override
 	public boolean isCSSPropertyComposite(String property) {
 		return "font".equals(property);
 	}
 
+	@Override
 	public String[] getCSSPropertiesNames(String property) {
 		if ("font".equals(property))
 			return FONT_CSSPROPERTIES;

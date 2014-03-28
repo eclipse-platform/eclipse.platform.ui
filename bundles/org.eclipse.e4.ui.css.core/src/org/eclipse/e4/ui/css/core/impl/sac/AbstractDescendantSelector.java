@@ -55,7 +55,8 @@ public abstract class AbstractDescendantSelector
      * Indicates whether some other object is "equal to" this one.
      * @param obj the reference object with which to compare.
      */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if (obj == null || (obj.getClass() != getClass())) {
             return false;
         }
@@ -66,7 +67,8 @@ public abstract class AbstractDescendantSelector
     /**
      * Returns the specificity of this selector.
      */
-    public int getSpecificity() {
+    @Override
+	public int getSpecificity() {
         return ((ExtendedSelector)ancestorSelector).getSpecificity() +
                ((ExtendedSelector)simpleSelector).getSpecificity();
     }
@@ -75,7 +77,8 @@ public abstract class AbstractDescendantSelector
      * <b>SAC</b>: Implements {@link
      * org.w3c.css.sac.DescendantSelector#getAncestorSelector()}.
      */
-    public Selector getAncestorSelector() {
+    @Override
+	public Selector getAncestorSelector() {
         return ancestorSelector;
     }
 
@@ -83,7 +86,8 @@ public abstract class AbstractDescendantSelector
      * <b>SAC</b>: Implements {@link
      * org.w3c.css.sac.DescendantSelector#getSimpleSelector()}.
      */
-    public SimpleSelector getSimpleSelector() {
+    @Override
+	public SimpleSelector getSimpleSelector() {
         return simpleSelector;
     }
 }

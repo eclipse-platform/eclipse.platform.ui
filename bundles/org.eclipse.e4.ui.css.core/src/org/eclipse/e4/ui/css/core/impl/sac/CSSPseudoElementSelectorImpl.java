@@ -38,28 +38,32 @@ public class CSSPseudoElementSelectorImpl extends AbstractElementSelector {
      * <b>SAC</b>: Implements {@link
      * org.w3c.css.sac.Selector#getSelectorType()}.
      */
-    public short getSelectorType() {
+    @Override
+	public short getSelectorType() {
         return SAC_PSEUDO_ELEMENT_SELECTOR;
     }
 
     /**
      * Tests whether this selector matches the given element.
      */
-    public boolean match(Element e, String pseudoE) {
+    @Override
+	public boolean match(Element e, String pseudoE) {
         return getLocalName().equalsIgnoreCase(pseudoE);
     }
 
     /**
      * Returns the specificity of this selector.
      */
-    public int getSpecificity() {
+    @Override
+	public int getSpecificity() {
         return 0;
     }
 
     /**
      * Returns a representation of the selector.
      */
-    public String toString() {
+    @Override
+	public String toString() {
         return ":" + getLocalName();
     }
 }

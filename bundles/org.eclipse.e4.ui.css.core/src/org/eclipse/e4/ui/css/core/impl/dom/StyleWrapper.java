@@ -23,6 +23,7 @@ final class StyleWrapper {
 
 	private static class StyleWrapperComparator implements Comparator<StyleWrapper> {
 
+		@Override
 		public int compare(final StyleWrapper object1, final StyleWrapper object2) {
 			int result = 0;
 			StyleWrapper wrapper1 = object1;

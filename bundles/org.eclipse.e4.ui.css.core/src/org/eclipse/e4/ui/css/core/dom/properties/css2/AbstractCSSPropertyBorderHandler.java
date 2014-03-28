@@ -25,6 +25,7 @@ public abstract class AbstractCSSPropertyBorderHandler extends
 		AbstractCSSPropertyBorderCompositeHandler implements
 		ICSSPropertyBorderHandler {
 
+	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		// Border
@@ -78,6 +79,7 @@ public abstract class AbstractCSSPropertyBorderHandler extends
 		return false;
 	}
 
+	@Override
 	public String retrieveCSSProperty(Object element, String property,
 			String pseudo, CSSEngine engine) throws Exception {
 		// Border
@@ -131,32 +133,38 @@ public abstract class AbstractCSSPropertyBorderHandler extends
 		return null;
 	}
 
+	@Override
 	public void applyCSSPropertyBorder(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		super.applyCSSPropertyComposite(element, "border", value, pseudo,
 				engine);
 	}
 
+	@Override
 	public void applyCSSPropertyBorderBottom(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("border-bottom");
 	}
 
+	@Override
 	public void applyCSSPropertyBorderBottomColor(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("border-bottom-color");
 	}
 
+	@Override
 	public void applyCSSPropertyBorderBottomStyle(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("border-bottom-style");
 	}
 
+	@Override
 	public void applyCSSPropertyBorderBottomWidth(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("border-bottom-width");
 	}
 
+	@Override
 	public void applyCSSPropertyBorderColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		if (element instanceof CSSBorderProperties) {
@@ -174,46 +182,55 @@ public abstract class AbstractCSSPropertyBorderHandler extends
 		}
 	}
 
+	@Override
 	public void applyCSSPropertyBorderLeft(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("border-left");
 	}
 
+	@Override
 	public void applyCSSPropertyBorderLeftColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("border-left-color");
 	}
 
+	@Override
 	public void applyCSSPropertyBorderLeftStyle(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("border-left-style");
 	}
 
+	@Override
 	public void applyCSSPropertyBorderLeftWidth(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("border-left-width");
 	}
 
+	@Override
 	public void applyCSSPropertyBorderRight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("border-right");
 	}
 
+	@Override
 	public void applyCSSPropertyBorderRightColor(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("border-right-color");
 	}
 
+	@Override
 	public void applyCSSPropertyBorderRightStyle(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("border-right-style");
 	}
 
+	@Override
 	public void applyCSSPropertyBorderRightWidth(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("border-right-width");
 	}
 
+	@Override
 	public void applyCSSPropertyBorderStyle(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		if (element instanceof CSSBorderProperties) {
@@ -231,28 +248,33 @@ public abstract class AbstractCSSPropertyBorderHandler extends
 		}
 	}
 
+	@Override
 	public void applyCSSPropertyBorderTop(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("border-top");
 
 	}
 
+	@Override
 	public void applyCSSPropertyBorderTopColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("border-top-color");
 	}
 
+	@Override
 	public void applyCSSPropertyBorderTopStyle(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("border-top-style");
 
 	}
 
+	@Override
 	public void applyCSSPropertyBorderTopWidth(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("border-top-width");
 	}
 
+	@Override
 	public void applyCSSPropertyBorderWidth(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		if (element instanceof CSSBorderProperties) {
@@ -271,101 +293,121 @@ public abstract class AbstractCSSPropertyBorderHandler extends
 		}
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorder(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderBottom(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderBottomColor(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderBottomStyle(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderBottomWidth(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderColor(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderLeft(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderLeftColor(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderLeftStyle(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderLeftWidth(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderRight(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderRightColor(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderRightStyle(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderRightWidth(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderStyle(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderTop(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderTopColor(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderTopStyle(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderTopWidth(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 
+	@Override
 	public String retrieveCSSPropertyBorderWidth(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		return "0";

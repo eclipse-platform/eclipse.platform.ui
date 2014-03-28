@@ -54,7 +54,8 @@ public abstract class AbstractElementSelector
      * Indicates whether some other object is "equal to" this one.
      * @param obj the reference object with which to compare.
      */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if (obj == null || (obj.getClass() != getClass())) {
             return false;
         }
@@ -67,7 +68,8 @@ public abstract class AbstractElementSelector
      * <b>SAC</b>: Implements {@link
      * org.w3c.css.sac.ElementSelector#getNamespaceURI()}.
      */
-    public String getNamespaceURI() {
+    @Override
+	public String getNamespaceURI() {
         return namespaceURI;
     }
 
@@ -75,13 +77,15 @@ public abstract class AbstractElementSelector
      * <b>SAC</b>: Implements {@link
      * org.w3c.css.sac.ElementSelector#getLocalName()}.
      */
-    public String getLocalName() {
+    @Override
+	public String getLocalName() {
         return localName;
     }
 
     /**
      * Fills the given set with the attribute names found in this selector.
      */
-    public void fillAttributeSet(Set attrSet) {
+    @Override
+	public void fillAttributeSet(Set attrSet) {
     }
 }

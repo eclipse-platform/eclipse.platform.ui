@@ -32,6 +32,7 @@ public class CSSRuleListImpl implements CSSRuleList {
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSRuleList#getLength()
 	 */
+	@Override
 	public int getLength() {
 		return ruleList.size();
 	}
@@ -40,6 +41,7 @@ public class CSSRuleListImpl implements CSSRuleList {
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSRuleList#item(int)
 	 */
+	@Override
 	public CSSRule item(int position) {
 		return ruleList.get(position);
 	}

@@ -30,70 +30,87 @@ public class CSS2FontPropertiesImpl implements CSS2FontProperties {
 
 	private CSSPrimitiveValue stretch;
 
+	@Override
 	public CSSPrimitiveValue getFamily() {
 		return family;
 	}
 
+	@Override
 	public void setFamily(CSSPrimitiveValue family) {
 		this.family = family;
 	}
 
+	@Override
 	public CSSPrimitiveValue getSize() {
 		return size;
 	}
 
+	@Override
 	public void setSize(CSSPrimitiveValue size) {
 		this.size = size;
 	}
 
+	@Override
 	public CSSPrimitiveValue getSizeAdjust() {
 		return sizeAdjust;
 	}
 
+	@Override
 	public void setSizeAdjust(CSSPrimitiveValue sizeAdjust) {
 		this.sizeAdjust = sizeAdjust;
 	}
 
+	@Override
 	public CSSPrimitiveValue getWeight() {
 		return weight;
 	}
 
+	@Override
 	public void setWeight(CSSPrimitiveValue weight) {
 		this.weight = weight;
 	}
 
+	@Override
 	public CSSPrimitiveValue getStyle() {
 		return style;
 	}
 
+	@Override
 	public void setStyle(CSSPrimitiveValue style) {
 		this.style = style;
 	}
 
+	@Override
 	public CSSPrimitiveValue getVariant() {
 		return variant;
 	}
 
+	@Override
 	public void setVariant(CSSPrimitiveValue variant) {
 		this.variant = variant;
 	}
 
+	@Override
 	public CSSPrimitiveValue getStretch() {
 		return stretch;
 	}
 
+	@Override
 	public void setStretch(CSSPrimitiveValue stretch) {
 		this.stretch = stretch;
 	}
 
+	@Override
 	public String getCssText() {
 		return null;
 	}
 
+	@Override
 	public short getCssValueType() {
 		return CSSValue.CSS_CUSTOM;
 	}
 
+	@Override
 	public void setCssText(String arg0) throws DOMException {
 	}
 

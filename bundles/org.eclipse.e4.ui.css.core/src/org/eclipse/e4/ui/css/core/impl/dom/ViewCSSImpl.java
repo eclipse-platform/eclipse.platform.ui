@@ -48,6 +48,7 @@ public class ViewCSSImpl implements ViewCSS {
 	 * <b>DOM</b>: Implements {@link
 	 * org.w3c.dom.views.AbstractView#getDocument()}.
 	 */
+	@Override
 	public DocumentView getDocument() {
 		return null;
 	}
@@ -56,6 +57,7 @@ public class ViewCSSImpl implements ViewCSS {
 	 * <b>DOM</b>: Implements {@link
 	 * org.w3c.dom.css.ViewCSS#getComputedStyle(Element,String)}.
 	 */
+	@Override
 	public CSSStyleDeclaration getComputedStyle(Element elt, String pseudoElt) {
 		// Loop for CSS StyleSheet list parsed
 		StyleSheetList styleSheetList = documentCSS.getStyleSheets();

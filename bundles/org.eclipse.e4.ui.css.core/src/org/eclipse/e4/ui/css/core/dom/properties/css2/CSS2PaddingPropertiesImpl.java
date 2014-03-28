@@ -23,15 +23,18 @@ public class CSS2PaddingPropertiesImpl implements CSSValue {
 
 	public CSSValue right;
 
+	@Override
 	public String getCssText() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public short getCssValueType() {
 		return CSSValue.CSS_CUSTOM;
 	}
 
+	@Override
 	public void setCssText(String arg0) throws DOMException {
 		// TODO Auto-generated method stub
 	}

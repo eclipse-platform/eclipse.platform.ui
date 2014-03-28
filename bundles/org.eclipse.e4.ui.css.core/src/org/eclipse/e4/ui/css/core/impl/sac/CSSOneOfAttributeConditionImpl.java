@@ -39,6 +39,7 @@ public class CSSOneOfAttributeConditionImpl extends CSSAttributeConditionImpl {
 	 * <b>SAC</b>: Implements {@link
 	 * org.w3c.css.sac.Condition#getConditionType()}.
 	 */
+	@Override
 	public short getConditionType() {
 		return SAC_ONE_OF_ATTRIBUTE_CONDITION;
 	}
@@ -46,6 +47,7 @@ public class CSSOneOfAttributeConditionImpl extends CSSAttributeConditionImpl {
 	/**
 	 * Tests whether this condition matches the given element.
 	 */
+	@Override
 	public boolean match(Element e, String pseudoE) {
 		String attr = e.getAttribute(getLocalName());
 		String val = getValue();
@@ -64,6 +66,7 @@ public class CSSOneOfAttributeConditionImpl extends CSSAttributeConditionImpl {
 	/**
 	 * Returns a text representation of this object.
 	 */
+	@Override
 	public String toString() {
 		return "[" + getLocalName() + "~=\"" + getValue() + "\"]";
 	}

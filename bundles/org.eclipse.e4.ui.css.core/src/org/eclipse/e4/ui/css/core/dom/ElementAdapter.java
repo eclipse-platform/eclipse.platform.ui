@@ -65,6 +65,7 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#isStaticPseudoInstance(java.lang.String)
 	 */
+	@Override
 	public boolean isStaticPseudoInstance(String s) {
 		if (staticPseudoInstances == null)
 			return false;
@@ -76,6 +77,7 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#copyDefaultStyleDeclarations(org.eclipse.e4.ui.css.core.dom.CSSStylableElement)
 	 */
+	@Override
 	public void copyDefaultStyleDeclarations(CSSStylableElement stylableElement) {
 		// Copy default style decalaration
 		this.setDefaultStyleDeclaration(null, stylableElement
@@ -98,6 +100,7 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 	 *
 	 * @see org.w3c.dom.Node#getLocalName()
 	 */
+	@Override
 	public abstract String getLocalName();
 
 	/*
@@ -105,228 +108,285 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 	 *
 	 * @see org.w3c.dom.Element#getAttribute(java.lang.String)
 	 */
+	@Override
 	public abstract String getAttribute(String arg0);
 
+	@Override
 	public String getAttributeNS(String namespace, String attr)
 			throws DOMException {
 		return getAttribute(attr);
 	};
 
+	@Override
 	public Attr getAttributeNode(String arg0) {
 		return null;
 	}
 
+	@Override
 	public Attr getAttributeNodeNS(String arg0, String arg1)
 			throws DOMException {
 		return null;
 	}
 
+	@Override
 	public NodeList getElementsByTagName(String arg0) {
 		return null;
 	}
 
+	@Override
 	public NodeList getElementsByTagNameNS(String arg0, String arg1)
 			throws DOMException {
 		return null;
 	}
 
+	@Override
 	public boolean hasAttribute(String arg0) {
 		return false;
 	}
 
+	@Override
 	public boolean hasAttributeNS(String namespace, String attr)
 			throws DOMException {
 		return hasAttribute(attr);
 	}
 
+	@Override
 	public void removeAttribute(String arg0) throws DOMException {
 	}
 
+	@Override
 	public void removeAttributeNS(String arg0, String arg1) throws DOMException {
 	}
 
+	@Override
 	public Attr removeAttributeNode(Attr arg0) throws DOMException {
 		return null;
 	}
 
+	@Override
 	public void setAttribute(String arg0, String arg1) throws DOMException {
 	}
 
+	@Override
 	public void setAttributeNS(String arg0, String arg1, String arg2)
 			throws DOMException {
 	}
 
+	@Override
 	public Attr setAttributeNode(Attr arg0) throws DOMException {
 		return null;
 	}
 
+	@Override
 	public Attr setAttributeNodeNS(Attr arg0) throws DOMException {
 		return null;
 	}
 
+	@Override
 	public Node appendChild(Node newChild) throws DOMException {
 		return insertBefore(newChild, null);
 	}
 
+	@Override
 	public Node cloneNode(boolean arg0) {
 		return null;
 	}
 
+	@Override
 	public NamedNodeMap getAttributes() {
 		return null;
 	}
 
+	@Override
 	public Node getFirstChild() {
 		return null;
 	}
 
+	@Override
 	public Node getLastChild() {
 		return null;
 	}
 
+	@Override
 	public String getTagName() {
 		return getLocalName();
 	}
 
+	@Override
 	public Node getNextSibling() {
 		return null;
 	}
 
+	@Override
 	public String getNodeName() {
 		// By default Node name is the same thing like localName
 		return getLocalName();
 	}
 
+	@Override
 	public short getNodeType() {
 		return ELEMENT_NODE;
 	}
 
+	@Override
 	public String getNodeValue() throws DOMException {
 		return null;
 	}
 
+	@Override
 	public Document getOwnerDocument() {
 		return null;
 	}
 
+	@Override
 	public String getPrefix() {
 		return null;
 	}
 
+	@Override
 	public Node getPreviousSibling() {
 		return null;
 	}
 
+	@Override
 	public boolean hasAttributes() {
 		return false;
 	}
 
+	@Override
 	public boolean hasChildNodes() {
 		return false;
 	}
 
+	@Override
 	public Node insertBefore(Node newChild, Node refChild) throws DOMException {
 
 		return null;
 	}
 
+	@Override
 	public boolean isSupported(String arg0, String arg1) {
 		return false;
 	}
 
+	@Override
 	public void normalize() {
 	}
 
+	@Override
 	public Node removeChild(Node arg0) throws DOMException {
 		return null;
 	}
 
+	@Override
 	public Node replaceChild(Node arg0, Node arg1) throws DOMException {
 		return null;
 	}
 
+	@Override
 	public void setNodeValue(String arg0) throws DOMException {
 	}
 
+	@Override
 	public void setPrefix(String arg0) throws DOMException {
 	}
 
+	@Override
 	public void setIdAttribute(String name, boolean isId) throws DOMException {
 	}
 
+	@Override
 	public void setIdAttributeNS(String namespaceURI, String localName,
 			boolean isId) throws DOMException {
 	}
 
+	@Override
 	public void setIdAttributeNode(Attr idAttr, boolean isId)
 			throws DOMException {
 	}
 
+	@Override
 	public short compareDocumentPosition(Node other) throws DOMException {
 		return 0;
 	}
 
+	@Override
 	public String getBaseURI() {
 		return null;
 	}
 
+	@Override
 	public Object getFeature(String feature, String version) {
 		return null;
 	}
 
+	@Override
 	public String getTextContent() throws DOMException {
 		return null;
 	}
 
+	@Override
 	public Object getUserData(String key) {
 		return null;
 	}
 
+	@Override
 	public boolean isDefaultNamespace(String namespaceURI) {
 		return false;
 	}
 
+	@Override
 	public boolean isEqualNode(Node arg) {
 		return false;
 	}
 
+	@Override
 	public boolean isSameNode(Node other) {
 		return false;
 	}
 
+	@Override
 	public String lookupNamespaceURI(String prefix) {
 		return null;
 	}
 
+	@Override
 	public String lookupPrefix(String namespaceURI) {
 		return null;
 	}
 
+	@Override
 	public void setTextContent(String textContent) throws DOMException {
 
 	}
 
+	@Override
 	public Object getNativeWidget() {
 		return nativeWidget;
 	}
 
+	@Override
 	public Object setUserData(String key, Object data, UserDataHandler handler) {
 		return null;
 	}
 
+	@Override
 	public TypeInfo getSchemaTypeInfo() {
 		return null;
 	}
 
+	@Override
 	public CSSStyleDeclaration getDefaultStyleDeclaration(String pseudoE) {
 		return (CSSStyleDeclaration) defaultStyleDeclarationMap.get(pseudoE);
 	}
 
+	@Override
 	public void setDefaultStyleDeclaration(String pseudoE,
 			CSSStyleDeclaration declaration) {
 		this.defaultStyleDeclarationMap.put(pseudoE, declaration);
 	}
 
+	@Override
 	public void onStylesApplied(NodeList nodes) {
 		// Do Nothing
 
@@ -341,6 +401,7 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#getStyle()
 	 */
+	@Override
 	public CSSExtendedProperties getStyle() {
 		if (style == null)
 			style = new CSSExtendedPropertiesImpl(nativeWidget, engine);
@@ -352,6 +413,7 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#getStaticPseudoInstances()
 	 */
+	@Override
 	public String[] getStaticPseudoInstances() {
 		if (staticPseudoInstances == null)
 			return EMPTY_STRING;
@@ -363,16 +425,19 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 	 *
 	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#isPseudoInstanceOf(java.lang.String)
 	 */
+	@Override
 	public boolean isPseudoInstanceOf(String s) {
 		if (staticPseudoInstances == null)
 			return false;
 		return staticPseudoInstances.contains(s);
 	}
 
+	@Override
 	public void initialize() {
 
 	}
 
+	@Override
 	public void dispose() {
 
 	}

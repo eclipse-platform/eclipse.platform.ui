@@ -18,7 +18,8 @@ import java.util.ListResourceBundle;
  */
 public class ExceptionResource extends ListResourceBundle {
 
-    public Object[][] getContents() {
+    @Override
+	public Object[][] getContents() {
         return contents;
     }
 

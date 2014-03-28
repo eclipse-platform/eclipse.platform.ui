@@ -54,7 +54,8 @@ public class CSSLangConditionImpl
      * Indicates whether some other object is "equal to" this one.
      * @param obj the reference object with which to compare.
      */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if (obj == null || (obj.getClass() != getClass())) {
             return false;
         }
@@ -66,28 +67,32 @@ public class CSSLangConditionImpl
      * <b>SAC</b>: Implements {@link
      * org.w3c.css.sac.Condition#getConditionType()}.
      */
-    public short getConditionType() {
+    @Override
+	public short getConditionType() {
         return SAC_LANG_CONDITION;
     }
 
     /**
      * <b>SAC</b>: Implements {@link org.w3c.css.sac.LangCondition#getLang()}.
      */
-    public String getLang() {
+    @Override
+	public String getLang() {
         return lang;
     }
 
     /**
      * Returns the specificity of this condition.
      */
-    public int getSpecificity() {
+    @Override
+	public int getSpecificity() {
         return 1 << 8;
     }
 
     /**
      * Tests whether this condition matches the given element.
      */
-    public boolean match(Element e, String pseudoE) {
+    @Override
+	public boolean match(Element e, String pseudoE) {
         String s = e.getAttribute("lang").toLowerCase();
         if (s.equals(lang) || s.startsWith(langHyphen)) {
             return true;
@@ -100,14 +105,16 @@ public class CSSLangConditionImpl
     /**
      * Fills the given set with the attribute names found in this selector.
      */
-    public void fillAttributeSet(Set attrSet) {
+    @Override
+	public void fillAttributeSet(Set attrSet) {
         attrSet.add("lang");
     }
 
     /**
      * Returns a text representation of this object.
      */
-    public String toString() {
+    @Override
+	public String toString() {
         return ":lang(" + lang + ')';
     }
 }

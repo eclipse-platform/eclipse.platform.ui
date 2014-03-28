@@ -30,6 +30,7 @@ public abstract class AbstractCSSPropertyBackgroundCompositeHandler extends
 			"background-attachment", "background-color", "background-image",
 			"background-position", "background-repeat" };
 
+	@Override
 	public void applyCSSProperty(Object element, CSSValue value, String pseudo,
 			CSSEngine engine) throws Exception {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
@@ -49,10 +50,12 @@ public abstract class AbstractCSSPropertyBackgroundCompositeHandler extends
 		}
 	}
 
+	@Override
 	public boolean isCSSPropertyComposite(String property) {
 		return "background".equals(property);
 	}
 
+	@Override
 	public String[] getCSSPropertiesNames(String property) {
 		if ("background".equals(property))
 			return BACKROUND_CSSPROPERTIES;

@@ -30,6 +30,7 @@ public class CSSPageRuleImpl extends CSSRuleImpl implements CSSPageRule {
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSRule#getType()
 	 */
+	@Override
 	public short getType() {
 		return CSSRule.PAGE_RULE;
 	}
@@ -40,6 +41,7 @@ public class CSSPageRuleImpl extends CSSRuleImpl implements CSSPageRule {
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSPageRule#getSelectorText()
 	 */
+	@Override
 	public String getSelectorText() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
@@ -49,6 +51,7 @@ public class CSSPageRuleImpl extends CSSRuleImpl implements CSSPageRule {
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSPageRule#getStyle()
 	 */
+	@Override
 	public CSSStyleDeclaration getStyle() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
@@ -58,6 +61,7 @@ public class CSSPageRuleImpl extends CSSRuleImpl implements CSSPageRule {
 	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSPageRule#setSelectorText(String)
 	 */
+	@Override
 	public void setSelectorText(String arg0) throws DOMException {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");

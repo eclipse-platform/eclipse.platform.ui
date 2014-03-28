@@ -57,7 +57,8 @@ public class CSSConditionalSelectorImpl
      * Indicates whether some other object is "equal to" this one.
      * @param obj the reference object with which to compare.
      */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if (obj == null || (obj.getClass() != getClass())) {
             return false;
         }
@@ -70,14 +71,16 @@ public class CSSConditionalSelectorImpl
      * <b>SAC</b>: Implements {@link
      * org.w3c.css.sac.Selector#getSelectorType()}.
      */
-    public short getSelectorType() {
+    @Override
+	public short getSelectorType() {
         return SAC_CONDITIONAL_SELECTOR;
     }
 
     /**
      * Tests whether this selector matches the given element.
      */
-    public boolean match(Element e, String pseudoE) {
+    @Override
+	public boolean match(Element e, String pseudoE) {
         return ((ExtendedSelector)getSimpleSelector()).match(e, pseudoE) &&
                ((ExtendedCondition)getCondition()).match(e, pseudoE);
     }
@@ -85,7 +88,8 @@ public class CSSConditionalSelectorImpl
     /**
      * Fills the given set with the attribute names found in this selector.
      */
-    public void fillAttributeSet(Set attrSet) {
+    @Override
+	public void fillAttributeSet(Set attrSet) {
         ((ExtendedSelector)getSimpleSelector()).fillAttributeSet(attrSet);
         ((ExtendedCondition)getCondition()).fillAttributeSet(attrSet);
     }
@@ -93,7 +97,8 @@ public class CSSConditionalSelectorImpl
     /**
      * Returns the specificity of this selector.
      */
-    public int getSpecificity() {
+    @Override
+	public int getSpecificity() {
         return ((ExtendedSelector)getSimpleSelector()).getSpecificity() +
                ((ExtendedCondition)getCondition()).getSpecificity();
     }
@@ -102,7 +107,8 @@ public class CSSConditionalSelectorImpl
      * <b>SAC</b>: Implements {@link
      * org.w3c.css.sac.ConditionalSelector#getSimpleSelector()}.
      */
-    public SimpleSelector getSimpleSelector() {
+    @Override
+	public SimpleSelector getSimpleSelector() {
         return simpleSelector;
     }
 
@@ -110,14 +116,16 @@ public class CSSConditionalSelectorImpl
      * <b>SAC</b>: Implements {@link
      * org.w3c.css.sac.ConditionalSelector#getCondition()}.
      */
-    public Condition getCondition() {
+    @Override
+	public Condition getCondition() {
         return condition;
     }
 
     /**
      * Returns a representation of the selector.
      */
-    public String toString() {
+    @Override
+	public String toString() {
         return String.valueOf( simpleSelector ) + condition;
     }
 }

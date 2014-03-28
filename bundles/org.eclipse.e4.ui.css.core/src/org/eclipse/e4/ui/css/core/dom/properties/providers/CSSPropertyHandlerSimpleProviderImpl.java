@@ -184,6 +184,7 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 				ICSSPropertyPaddingHandler.class);
 	}
 
+	@Override
 	public Collection<ICSSPropertyHandler> getCSSPropertyHandlers(
 			String property) throws Exception {
 		Class<? extends ICSSPropertyHandler> cl = getCSSPropertyHandlerClass(property);
@@ -241,6 +242,7 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 	 *      org.eclipse.e4.ui.css.core.dom.CSSStylableElement,
 	 *      org.w3c.dom.css.CSSStyleDeclaration, java.lang.String)
 	 */
+	@Override
 	public CSSStyleDeclaration getDefaultCSSStyleDeclaration(CSSEngine engine,
 			CSSStylableElement stylableElement, CSSStyleDeclaration newStyle,
 			String pseudoE) throws Exception {
@@ -273,11 +275,13 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 		return null;
 	}
 
+	@Override
 	public Collection<ICSSPropertyHandler> getCSSPropertyHandlers(
 			Object element, String property) throws Exception {
 		return getCSSPropertyHandlers(property);
 	}
 
+	@Override
 	public Collection<String> getCSSProperties(Object element) {
 		return getAllCSSPropertyNames();
 	}

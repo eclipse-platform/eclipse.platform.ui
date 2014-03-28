@@ -32,14 +32,17 @@ public class CSS2RGBColorImpl implements RGBColor {
 		blue = new CSS2PrimitiveValueImpl(b);
 	}
 
+	@Override
 	public CSSPrimitiveValue getBlue() {
 		return blue;
 	}
 
+	@Override
 	public CSSPrimitiveValue getGreen() {
 		return green;
 	}
 
+	@Override
 	public CSSPrimitiveValue getRed() {
 		return red;
 	}

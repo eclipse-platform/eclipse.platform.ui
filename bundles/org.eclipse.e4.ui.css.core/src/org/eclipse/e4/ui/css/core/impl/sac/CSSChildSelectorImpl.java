@@ -44,14 +44,16 @@ public class CSSChildSelectorImpl extends AbstractDescendantSelector {
      * <b>SAC</b>: Implements {@link
      * org.w3c.css.sac.Selector#getSelectorType()}.
      */
-    public short getSelectorType() {
+    @Override
+	public short getSelectorType() {
         return SAC_CHILD_SELECTOR;
     }
 
     /**
      * Tests whether this selector matches the given element.
      */
-    public boolean match(Element e, String pseudoE) {
+    @Override
+	public boolean match(Element e, String pseudoE) {
         Node n = e.getParentNode();
         if (n != null && n.getNodeType() == Node.ELEMENT_NODE) {
             return ((ExtendedSelector)getAncestorSelector()).match((Element)n,
@@ -64,7 +66,8 @@ public class CSSChildSelectorImpl extends AbstractDescendantSelector {
     /**
      * Fills the given set with the attribute names found in this selector.
      */
-    public void fillAttributeSet(Set attrSet) {
+    @Override
+	public void fillAttributeSet(Set attrSet) {
         ((ExtendedSelector)getAncestorSelector()).fillAttributeSet(attrSet);
         ((ExtendedSelector)getSimpleSelector()).fillAttributeSet(attrSet);
     }
@@ -72,7 +75,8 @@ public class CSSChildSelectorImpl extends AbstractDescendantSelector {
     /**
      * Returns a representation of the selector.
      */
-    public String toString() {
+    @Override
+	public String toString() {
         SimpleSelector s = getSimpleSelector();
         if (s.getSelectorType() == SAC_PSEUDO_ELEMENT_SELECTOR) {
             return String.valueOf( getAncestorSelector() ) + s;

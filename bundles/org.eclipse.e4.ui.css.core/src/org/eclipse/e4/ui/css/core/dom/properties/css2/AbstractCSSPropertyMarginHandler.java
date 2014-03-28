@@ -16,6 +16,7 @@ import org.w3c.dom.css.CSSValue;
 
 public abstract class AbstractCSSPropertyMarginHandler implements ICSSPropertyMarginHandler {
 
+	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		if ("margin".equals(property))
@@ -31,6 +32,7 @@ public abstract class AbstractCSSPropertyMarginHandler implements ICSSPropertyMa
 		return false;
 	}
 
+	@Override
 	public String retrieveCSSProperty(Object element, String property,
 			String pseudo, CSSEngine engine) throws Exception {
 		if ("margin".equals(property)) {

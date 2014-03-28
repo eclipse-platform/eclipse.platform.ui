@@ -49,6 +49,7 @@ public class CSSPseudoClassConditionImpl extends AbstractAttributeCondition {
 	 * @param obj
 	 *            the reference object with which to compare.
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (!super.equals(obj)) {
 			return false;
@@ -62,6 +63,7 @@ public class CSSPseudoClassConditionImpl extends AbstractAttributeCondition {
 	 *
 	 * @return hashCode of this CSSPseudoClassCondition
 	 */
+	@Override
 	public int hashCode() {
 		return namespaceURI.hashCode();
 	}
@@ -70,6 +72,7 @@ public class CSSPseudoClassConditionImpl extends AbstractAttributeCondition {
 	 * <b>SAC</b>: Implements {@link
 	 * org.w3c.css.sac.Condition#getConditionType()}.
 	 */
+	@Override
 	public short getConditionType() {
 		return SAC_PSEUDO_CLASS_CONDITION;
 	}
@@ -78,6 +81,7 @@ public class CSSPseudoClassConditionImpl extends AbstractAttributeCondition {
 	 * <b>SAC</b>: Implements {@link
 	 * org.w3c.css.sac.AttributeCondition#getNamespaceURI()}.
 	 */
+	@Override
 	public String getNamespaceURI() {
 		return namespaceURI;
 	}
@@ -86,6 +90,7 @@ public class CSSPseudoClassConditionImpl extends AbstractAttributeCondition {
 	 * <b>SAC</b>: Implements {@link
 	 * org.w3c.css.sac.AttributeCondition#getLocalName()}.
 	 */
+	@Override
 	public String getLocalName() {
 		return null;
 	}
@@ -94,6 +99,7 @@ public class CSSPseudoClassConditionImpl extends AbstractAttributeCondition {
 	 * <b>SAC</b>: Implements {@link
 	 * org.w3c.css.sac.AttributeCondition#getSpecified()}.
 	 */
+	@Override
 	public boolean getSpecified() {
 		return false;
 	}
@@ -101,6 +107,7 @@ public class CSSPseudoClassConditionImpl extends AbstractAttributeCondition {
 	/**
 	 * Tests whether this selector matches the given element.
 	 */
+	@Override
 	public boolean match(Element e, String pseudoE) {
 		if (pseudoE != null && !pseudoE.equals(getValue()))
 			// pseudo instance is filled, it is not valid.
@@ -123,12 +130,14 @@ public class CSSPseudoClassConditionImpl extends AbstractAttributeCondition {
 	/**
 	 * Fills the given set with the attribute names found in this selector.
 	 */
+	@Override
 	public void fillAttributeSet(Set attrSet) {
 	}
 
 	/**
 	 * Returns a text representation of this object.
 	 */
+	@Override
 	public String toString() {
 		return ":" + getValue();
 	}

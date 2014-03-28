@@ -41,14 +41,16 @@ public class CSSAndConditionImpl extends AbstractCombinatorCondition {
      * <b>SAC</b>: Implements {@link
      * org.w3c.css.sac.Condition#getConditionType()}.
      */
-    public short getConditionType() {
+    @Override
+	public short getConditionType() {
         return SAC_AND_CONDITION;
     }
 
     /**
      * Tests whether this condition matches the given element.
      */
-    public boolean match(Element e, String pseudoE) {
+    @Override
+	public boolean match(Element e, String pseudoE) {
         return ((ExtendedCondition)getFirstCondition()).match(e, pseudoE) &&
                ((ExtendedCondition)getSecondCondition()).match(e, pseudoE);
     }
@@ -56,7 +58,8 @@ public class CSSAndConditionImpl extends AbstractCombinatorCondition {
     /**
      * Fills the given set with the attribute names found in this selector.
      */
-    public void fillAttributeSet(Set attrSet) {
+    @Override
+	public void fillAttributeSet(Set attrSet) {
         ((ExtendedCondition)getFirstCondition()).fillAttributeSet(attrSet);
         ((ExtendedCondition)getSecondCondition()).fillAttributeSet(attrSet);
     }
@@ -64,7 +67,8 @@ public class CSSAndConditionImpl extends AbstractCombinatorCondition {
     /**
      * Returns a text representation of this object.
      */
-    public String toString() {
+    @Override
+	public String toString() {
         return String.valueOf( getFirstCondition() ) + getSecondCondition();
     }
 }
