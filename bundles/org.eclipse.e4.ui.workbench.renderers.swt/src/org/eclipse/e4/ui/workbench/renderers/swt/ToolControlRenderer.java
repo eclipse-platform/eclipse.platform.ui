@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class ToolControlRenderer extends SWTPartRenderer {
 
+	@Override
 	public Object createWidget(final MUIElement element, Object parent) {
 		if (!(element instanceof MToolControl)
 				|| !(parent instanceof ToolBar || parent instanceof Composite))

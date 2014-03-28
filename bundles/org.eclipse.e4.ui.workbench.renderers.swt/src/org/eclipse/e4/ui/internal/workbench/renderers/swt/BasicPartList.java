@@ -71,6 +71,7 @@ public class BasicPartList extends AbstractTableInformationControl {
 			return super.getFont(element);
 		}
 
+		@Override
 		public String getText(Object element) {
 			if (element instanceof MDirtyable
 					&& ((MDirtyable) element).isDirty()) {
@@ -79,6 +80,7 @@ public class BasicPartList extends AbstractTableInformationControl {
 			return ((MUILabel) element).getLocalizedLabel();
 		}
 
+		@Override
 		public Image getImage(Object element) {
 			String iconURI = ((MUILabel) element).getIconURI();
 			if (iconURI == null) {
@@ -87,10 +89,12 @@ public class BasicPartList extends AbstractTableInformationControl {
 			return getLabelImage(iconURI);
 		}
 
+		@Override
 		public String getToolTipText(Object element) {
 			return ((MUILabel) element).getLocalizedTooltip();
 		}
 
+		@Override
 		public boolean useNativeToolTip(Object object) {
 			return true;
 		}
@@ -139,6 +143,7 @@ public class BasicPartList extends AbstractTableInformationControl {
 		return image;
 	}
 
+	@Override
 	protected TableViewer createTableViewer(Composite parent, int style) {
 		Table table = new Table(parent, SWT.SINGLE | (style & ~SWT.MULTI));
 		table.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false,
@@ -150,6 +155,7 @@ public class BasicPartList extends AbstractTableInformationControl {
 
 		ColumnViewerToolTipSupport.enableFor(tableViewer);
 		table.addListener(SWT.Dispose, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				for (Image image : images.values()) {
 					image.dispose();
@@ -183,6 +189,7 @@ public class BasicPartList extends AbstractTableInformationControl {
 		selectFirstMatch();
 	}
 
+	@Override
 	protected void gotoSelectedElement() {
 		Object selectedElement = getSelectedElement();
 
@@ -194,6 +201,7 @@ public class BasicPartList extends AbstractTableInformationControl {
 		}
 	}
 
+	@Override
 	protected boolean deleteSelectedElements() {
 		Object selectedElement = getSelectedElement();
 		if (selectedElement != null) {

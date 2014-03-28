@@ -79,6 +79,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 	IEventBroker eventBroker;
 
 	private EventHandler itemUpdater = new EventHandler() {
+		@Override
 		public void handleEvent(Event event) {
 			// Ensure that this event is for a MToolItem
 			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolItem))
@@ -108,6 +109,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 	};
 
 	private EventHandler selectionUpdater = new EventHandler() {
+		@Override
 		public void handleEvent(Event event) {
 			// Ensure that this event is for a MToolItem
 			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolItem))
@@ -123,6 +125,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 	};
 
 	private EventHandler enabledUpdater = new EventHandler() {
+		@Override
 		public void handleEvent(Event event) {
 			// Ensure that this event is for a MToolItem
 			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolItem))
@@ -205,6 +208,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 		return text;
 	}
 
+	@Override
 	public Object createWidget(final MUIElement element, Object parent) {
 		if (!(element instanceof MToolItem) || !(parent instanceof ToolBar))
 			return null;
@@ -277,10 +281,12 @@ public class ToolItemRenderer extends SWTPartRenderer {
 					|| item.getType() == ItemType.RADIO) {
 				ToolItem ti = (ToolItem) me.getWidget();
 				ti.addSelectionListener(new SelectionListener() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						item.setSelected(((ToolItem) e.widget).getSelection());
 					}
 
+					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
 						item.setSelected(((ToolItem) e.widget).getSelection());
 					}
@@ -290,6 +296,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 				if (mmenu != null) {
 					final ToolItem ti = (ToolItem) me.getWidget();
 					ti.addSelectionListener(new SelectionAdapter() {
+						@Override
 						public void widgetSelected(SelectionEvent e) {
 							if (e.detail == SWT.ARROW) {
 								Menu menu = getMenu(mmenu, ti);
@@ -322,6 +329,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 			final IEclipseContext lclContext = getContext(me);
 			ToolItem ti = (ToolItem) me.getWidget();
 			ti.addSelectionListener(new SelectionListener() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (contrib.getObject() == null) {
 						IContributionFactory cf = (IContributionFactory) lclContext
@@ -335,6 +343,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 					lclContext.remove(MItem.class.getName());
 				}
 
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 			});
@@ -346,11 +355,13 @@ public class ToolItemRenderer extends SWTPartRenderer {
 			display.timerExec(500, new Runnable() {
 				boolean logged = false;
 
+				@Override
 				public void run() {
 					if (ti.isDisposed()) {
 						return;
 					}
 					SafeRunner.run(new ISafeRunnable() {
+						@Override
 						public void run() throws Exception {
 							EHandlerService service = lclContext
 									.get(EHandlerService.class);
@@ -379,6 +390,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 							}
 						}
 
+						@Override
 						public void handleException(Throwable exception) {
 							if (!logged) {
 								logged = true;
@@ -393,6 +405,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 				}
 			});
 			ti.addSelectionListener(new SelectionListener() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (e.detail != SWT.ARROW) {
 						EHandlerService service = (EHandlerService) lclContext
@@ -415,6 +428,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 					}
 				}
 
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 			});
@@ -445,6 +459,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 						.getShell());
 				if (menu != null) {
 					toolItem.addDisposeListener(new DisposeListener() {
+						@Override
 						public void widgetDisposed(DisposeEvent e) {
 							if (menu != null && !menu.isDisposed()) {
 								creator.dispose();

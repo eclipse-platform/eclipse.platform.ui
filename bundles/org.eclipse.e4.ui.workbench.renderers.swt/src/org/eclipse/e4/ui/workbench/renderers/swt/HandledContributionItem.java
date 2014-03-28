@@ -135,6 +135,7 @@ public class HandledContributionItem extends ContributionItem {
 	private ISWTResourceUtilities resUtils = null;
 
 	private IStateListener stateListener = new IStateListener() {
+		@Override
 		public void handleStateChange(State state, Object oldValue) {
 			updateState();
 		}
@@ -148,6 +149,7 @@ public class HandledContributionItem extends ContributionItem {
 	private ISafeRunnable getUpdateRunner() {
 		if (updateRunner == null) {
 			updateRunner = new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					boolean shouldEnable = canExecuteItem(null);
 					if (shouldEnable != model.isEnabled()) {
@@ -156,6 +158,7 @@ public class HandledContributionItem extends ContributionItem {
 					}
 				}
 
+				@Override
 				public void handleException(Throwable exception) {
 					if (!logged) {
 						logged = true;
@@ -183,6 +186,7 @@ public class HandledContributionItem extends ContributionItem {
 	}
 
 	private IMenuListener menuListener = new IMenuListener() {
+		@Override
 		public void menuAboutToShow(IMenuManager manager) {
 			update(null);
 		}
@@ -585,6 +589,7 @@ public class HandledContributionItem extends ContributionItem {
 	private Listener getItemListener() {
 		if (menuItemListener == null) {
 			menuItemListener = new Listener() {
+				@Override
 				public void handleEvent(Event event) {
 					switch (event.type) {
 					case SWT.Dispose:
@@ -733,6 +738,7 @@ public class HandledContributionItem extends ContributionItem {
 						.getShell());
 				if (menu != null) {
 					toolItem.addDisposeListener(new DisposeListener() {
+						@Override
 						public void widgetDisposed(DisposeEvent e) {
 							if (menu != null && !menu.isDisposed()) {
 								creator.dispose();
@@ -802,6 +808,7 @@ public class HandledContributionItem extends ContributionItem {
 		return service.canExecute(cmd, staticContext);
 	}
 
+	@Override
 	public void setParent(IContributionManager parent) {
 		if (getParent() instanceof IMenuManager) {
 			IMenuManager menuMgr = (IMenuManager) getParent();

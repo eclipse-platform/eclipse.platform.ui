@@ -302,6 +302,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// TODO: Refactor using findItemForPart(MPart) method
 		itemUpdater = new EventHandler() {
+			@Override
 			public void handleEvent(Event event) {
 				MUIElement element = (MUIElement) event
 						.getProperty(UIEvents.EventTags.ELEMENT);
@@ -354,6 +355,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// TODO: Refactor using findItemForPart(MPart) method
 		dirtyUpdater = new EventHandler() {
+			@Override
 			public void handleEvent(Event event) {
 				Object objElement = event
 						.getProperty(UIEvents.EventTags.ELEMENT);
@@ -404,6 +406,7 @@ public class StackRenderer extends LazyStackRenderer {
 				UIEvents.Dirtyable.DIRTY), dirtyUpdater);
 
 		viewMenuUpdater = new EventHandler() {
+			@Override
 			public void handleEvent(Event event) {
 				Object objElement = event
 						.getProperty(UIEvents.EventTags.ELEMENT);
@@ -445,6 +448,7 @@ public class StackRenderer extends LazyStackRenderer {
 				viewMenuUpdater);
 
 		childrenHandler = new EventHandler() {
+			@Override
 			public void handleEvent(Event event) {
 				Object changedObj = event
 						.getProperty(UIEvents.EventTags.ELEMENT);
@@ -476,6 +480,7 @@ public class StackRenderer extends LazyStackRenderer {
 				childrenHandler);
 
 		stylingHandler = new EventHandler() {
+			@Override
 			public void handleEvent(Event event) {
 				MUIElement changed = (MUIElement) event
 						.getProperty(UIEvents.EventTags.ELEMENT);
@@ -588,6 +593,7 @@ public class StackRenderer extends LazyStackRenderer {
 				: LegacyActionTools.escapeMnemonics(newToolTip);
 	}
 
+	@Override
 	public Object createWidget(MUIElement element, Object parent) {
 		if (!(element instanceof MPartStack) || !(parent instanceof Composite))
 			return null;
@@ -674,15 +680,18 @@ public class StackRenderer extends LazyStackRenderer {
 		menuTB.setVisible(false);
 
 		ti.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				showMenu((ToolItem) e.widget);
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				showMenu((ToolItem) e.widget);
 			}
 		});
 		menuTB.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				if (e.childID != ACC.CHILDID_SELF) {
 					Accessible accessible = (Accessible) e.getSource();
@@ -787,6 +796,7 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 	}
 
+	@Override
 	protected void createTab(MElementContainer<MUIElement> stack,
 			MUIElement element) {
 		MPart part = null;
@@ -959,6 +969,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// Handle traverse events for accessibility
 		ctf.addTraverseListener(new TraverseListener() {
+			@Override
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_ARROW_NEXT
 						|| e.detail == SWT.TRAVERSE_ARROW_PREVIOUS) {
@@ -985,6 +996,7 @@ public class StackRenderer extends LazyStackRenderer {
 		// Detect activation...picks up cases where the user clicks on the
 		// (already active) tab
 		ctf.addListener(SWT.Activate, new org.eclipse.swt.widgets.Listener() {
+			@Override
 			public void handleEvent(org.eclipse.swt.widgets.Event event) {
 				if (event.detail == SWT.MouseDown) {
 					CTabFolder ctf = (CTabFolder) event.widget;
@@ -1011,9 +1023,11 @@ public class StackRenderer extends LazyStackRenderer {
 		});
 
 		ctf.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// prevent recursions
 				if (ignoreTabSelChanges)
@@ -1079,6 +1093,7 @@ public class StackRenderer extends LazyStackRenderer {
 		ctf.addMouseListener(mouseListener);
 
 		CTabFolder2Adapter closeListener = new CTabFolder2Adapter() {
+			@Override
 			public void close(CTabFolderEvent event) {
 				event.doit = closePart(event.item, true);
 			}
@@ -1092,6 +1107,7 @@ public class StackRenderer extends LazyStackRenderer {
 		ctf.addCTabFolder2Listener(closeListener);
 
 		ctf.addMenuDetectListener(new MenuDetectListener() {
+			@Override
 			public void menuDetected(MenuDetectEvent e) {
 				Point absolutePoint = new Point(e.x, e.y);
 				Point relativePoint = ctf.getDisplay().map(null, ctf,
@@ -1143,8 +1159,10 @@ public class StackRenderer extends LazyStackRenderer {
 		editorList.setVisible(true);
 		editorList.setFocus();
 		editorList.getShell().addListener(SWT.Deactivate, new Listener() {
+			@Override
 			public void handleEvent(org.eclipse.swt.widgets.Event event) {
 				editorList.getShell().getDisplay().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						editorList.dispose();
 					}
@@ -1212,6 +1230,7 @@ public class StackRenderer extends LazyStackRenderer {
 		return false;
 	}
 
+	@Override
 	protected void showTab(MUIElement element) {
 		super.showTab(element);
 
@@ -1267,6 +1286,7 @@ public class StackRenderer extends LazyStackRenderer {
 			return;
 
 		ctrl.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				if (!swtMenu.isDisposed()) {
 					swtMenu.dispose();
@@ -1339,6 +1359,7 @@ public class StackRenderer extends LazyStackRenderer {
 			MenuItem menuItemClose = new MenuItem(menu, SWT.NONE);
 			menuItemClose.setText(SWTRenderersMessages.menuClose);
 			menuItemClose.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
 					EPartService partService = getContextForParent(part).get(
@@ -1359,6 +1380,7 @@ public class StackRenderer extends LazyStackRenderer {
 				MenuItem menuItemOthers = new MenuItem(menu, SWT.NONE);
 				menuItemOthers.setText(SWTRenderersMessages.menuCloseOthers);
 				menuItemOthers.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
 						closeSiblingParts(part, true);
@@ -1368,6 +1390,7 @@ public class StackRenderer extends LazyStackRenderer {
 				MenuItem menuItemAll = new MenuItem(menu, SWT.NONE);
 				menuItemAll.setText(SWTRenderersMessages.menuCloseAll);
 				menuItemAll.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
 						closeSiblingParts(part, false);
@@ -1565,6 +1588,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 	@SuppressWarnings("javadoc")
 	public class TabStateHandler implements EventHandler {
+		@Override
 		public void handleEvent(Event event) {
 			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 			Object newValue = event.getProperty(UIEvents.EventTags.NEW_VALUE);

@@ -25,6 +25,7 @@ class DynamicContributionContributionItem extends ContributionItem {
 	private MDynamicMenuContribution model;
 
 	private IMenuListener menuListener = new IMenuListener() {
+		@Override
 		public void menuAboutToShow(IMenuManager manager) {
 			manager.markDirty();
 		}
@@ -45,6 +46,7 @@ class DynamicContributionContributionItem extends ContributionItem {
 	 * 
 	 * @see org.eclipse.jface.action.ContributionItem#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		return true;
 	}
@@ -54,6 +56,7 @@ class DynamicContributionContributionItem extends ContributionItem {
 	 * 
 	 * @see org.eclipse.jface.action.ContributionItem#isDynamic()
 	 */
+	@Override
 	public boolean isDynamic() {
 		return true;
 	}
@@ -72,6 +75,7 @@ class DynamicContributionContributionItem extends ContributionItem {
 	 * org.eclipse.jface.action.ContributionItem#setParent(org.eclipse.jface
 	 * .action.IContributionManager)
 	 */
+	@Override
 	public void setParent(IContributionManager parent) {
 		if (getParent() instanceof IMenuManager) {
 			IMenuManager menuMgr = (IMenuManager) getParent();

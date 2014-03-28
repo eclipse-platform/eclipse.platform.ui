@@ -71,6 +71,7 @@ public class MenuManagerRendererFilter implements Listener {
 	private class SafeWrapper implements ISafeRunnable {
 		Event event;
 
+		@Override
 		public void handleException(Throwable e) {
 			if (e instanceof Error) {
 				// errors are deadly, we shouldn't ignore these
@@ -82,6 +83,7 @@ public class MenuManagerRendererFilter implements Listener {
 			}
 		}
 
+		@Override
 		public void run() throws Exception {
 			safeHandleEvent(event);
 		}
@@ -89,6 +91,7 @@ public class MenuManagerRendererFilter implements Listener {
 
 	private SafeWrapper safeWrapper = new SafeWrapper();
 
+	@Override
 	public void handleEvent(final Event event) {
 		// wrap the handling in a SafeRunner so that exceptions do not prevent
 		// the menu from being shown

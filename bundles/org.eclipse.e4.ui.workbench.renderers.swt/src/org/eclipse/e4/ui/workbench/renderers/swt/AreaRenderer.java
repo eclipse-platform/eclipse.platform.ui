@@ -42,6 +42,7 @@ public class AreaRenderer extends SWTPartRenderer {
 	IEventBroker eventBroker;
 
 	private EventHandler itemUpdater = new EventHandler() {
+		@Override
 		public void handleEvent(Event event) {
 			// Ensure that this event is for a MArea
 			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MArea))
@@ -71,6 +72,7 @@ public class AreaRenderer extends SWTPartRenderer {
 	};
 
 	private EventHandler widgetListener = new EventHandler() {
+		@Override
 		public void handleEvent(Event event) {
 			final MUIElement changedElement = (MUIElement) event
 					.getProperty(EventTags.ELEMENT);
@@ -105,6 +107,7 @@ public class AreaRenderer extends SWTPartRenderer {
 		eventBroker.unsubscribe(widgetListener);
 	}
 
+	@Override
 	public Object createWidget(final MUIElement element, Object parent) {
 		if (!(element instanceof MArea) || !(parent instanceof Composite))
 			return null;

@@ -44,6 +44,7 @@ public class TrimBarRenderer extends SWTPartRenderer {
 	private class LayoutJob implements Runnable {
 		public List<MTrimBar> barsToLayout = new ArrayList<MTrimBar>();
 
+		@Override
 		public void run() {
 			layoutJob = null;
 			if (barsToLayout.size() == 0)
@@ -121,6 +122,7 @@ public class TrimBarRenderer extends SWTPartRenderer {
 				return null;
 			}
 			trimComposite.addDisposeListener(new DisposeListener() {
+				@Override
 				public void widgetDisposed(DisposeEvent e) {
 					cleanUp(trimModel);
 				}

@@ -106,12 +106,14 @@ public class TrimmedPartLayout extends Layout {
 	 * org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite
 	 * , int, int, boolean)
 	 */
+	@Override
 	protected Point computeSize(Composite composite, int wHint, int hHint,
 			boolean flushCache) {
 		// We can't actually compute a size so return a default
 		return new Point(SWT.DEFAULT, SWT.DEFAULT);
 	}
 
+	@Override
 	protected void layout(Composite composite, boolean flushCache) {
 		Rectangle ca = composite.getClientArea();
 		Rectangle caRect = new Rectangle(ca.x, ca.y, ca.width, ca.height);
@@ -196,6 +198,7 @@ public class TrimmedPartLayout extends Layout {
 				top = new Composite(parent, SWT.NONE);
 				top.setLayout(new TrimBarLayout(true));
 				top.addDisposeListener(new DisposeListener() {
+					@Override
 					public void widgetDisposed(DisposeEvent e) {
 						top = null;
 					}
@@ -207,6 +210,7 @@ public class TrimmedPartLayout extends Layout {
 				bottom = new Composite(parent, SWT.NONE);
 				bottom.setLayout(new TrimBarLayout(true));
 				bottom.addDisposeListener(new DisposeListener() {
+					@Override
 					public void widgetDisposed(DisposeEvent e) {
 						bottom = null;
 					}
@@ -218,6 +222,7 @@ public class TrimmedPartLayout extends Layout {
 				left = new Composite(parent, SWT.NONE);
 				left.setLayout(new TrimBarLayout(false));
 				left.addDisposeListener(new DisposeListener() {
+					@Override
 					public void widgetDisposed(DisposeEvent e) {
 						left = null;
 					}
@@ -229,6 +234,7 @@ public class TrimmedPartLayout extends Layout {
 				right = new Composite(parent, SWT.NONE);
 				right.setLayout(new TrimBarLayout(false));
 				right.addDisposeListener(new DisposeListener() {
+					@Override
 					public void widgetDisposed(DisposeEvent e) {
 						right = null;
 					}

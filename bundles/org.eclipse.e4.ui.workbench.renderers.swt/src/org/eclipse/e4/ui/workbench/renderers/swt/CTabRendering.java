@@ -97,6 +97,7 @@ public class CTabRendering extends CTabFolderRenderer implements
 		rendererWrapper = new CTabFolderRendererWrapper(this);
 	}
 
+	@Override
 	protected Rectangle computeTrim(int part, int state, int x, int y,
 			int width, int height) {
 		boolean onBottom = parent.getTabPosition() == SWT.BOTTOM;
@@ -179,6 +180,7 @@ public class CTabRendering extends CTabFolderRenderer implements
 		return new Rectangle(x, y, width, height);
 	}
 
+	@Override
 	protected Point computeSize(int part, int state, GC gc, int wHint, int hHint) {
 		wHint += paddingLeft + paddingRight;
 		hHint += paddingTop + paddingBottom;
@@ -190,6 +192,7 @@ public class CTabRendering extends CTabFolderRenderer implements
 		return super.computeSize(part, state, gc, wHint, hHint);
 	}
 
+	@Override
 	protected void dispose() {
 		if (shadowImage != null && !shadowImage.isDisposed()) {
 			shadowImage.dispose();
@@ -198,6 +201,7 @@ public class CTabRendering extends CTabFolderRenderer implements
 		super.dispose();
 	}
 
+	@Override
 	protected void draw(int part, int state, Rectangle bounds, GC gc) {
 
 		switch (part) {
@@ -961,22 +965,26 @@ public class CTabRendering extends CTabFolderRenderer implements
 		parent.redraw();
 	}
 
+	@Override
 	public void setCornerRadius(int radius) {
 		cornerSize = radius;
 		parent.redraw();
 	}
 
+	@Override
 	public void setShadowVisible(boolean visible) {
 		this.shadowEnabled = visible;
 		parent.redraw();
 	}
 
+	@Override
 	public void setShadowColor(Color color) {
 		this.shadowColor = color;
 		createShadow(parent.getDisplay());
 		parent.redraw();
 	}
 
+	@Override
 	public void setOuterKeyline(Color color) {
 		this.outerKeyline = color;
 		// TODO: HACK! Should be set based on pseudo-state.
@@ -987,31 +995,37 @@ public class CTabRendering extends CTabFolderRenderer implements
 		parent.redraw();
 	}
 
+	@Override
 	public void setSelectedTabFill(Color color) {
 		setSelectedTabFill(new Color[] { color }, new int[] { 100 });
 	}
 
+	@Override
 	public void setSelectedTabFill(Color[] colors, int[] percents) {
 		selectedTabFillColors = colors;
 		selectedTabFillPercents = percents;
 		parent.redraw();
 	}
 
+	@Override
 	public void setUnselectedTabsColor(Color color) {
 		setUnselectedTabsColor(new Color[] { color }, new int[] { 100 });
 	}
 
+	@Override
 	public void setUnselectedTabsColor(Color[] colors, int[] percents) {
 		unselectedTabsColors = colors;
 		unselectedTabsPercents = percents;
 		parent.redraw();
 	}
 
+	@Override
 	public void setTabOutline(Color color) {
 		this.tabOutlineColor = color;
 		parent.redraw();
 	}
 
+	@Override
 	public void setInnerKeyline(Color color) {
 		this.innerKeyline = color;
 		parent.redraw();

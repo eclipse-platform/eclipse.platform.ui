@@ -43,6 +43,7 @@ import org.osgi.service.event.EventHandler;
  */
 public abstract class LazyStackRenderer extends SWTPartRenderer {
 	private EventHandler lazyLoader = new EventHandler() {
+		@Override
 		public void handleEvent(Event event) {
 			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 
@@ -86,6 +87,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		eventBroker.unsubscribe(lazyLoader);
 	}
 
+	@Override
 	public void postProcess(MUIElement element) {
 		if (!(element instanceof MGenericStack<?>))
 			return;

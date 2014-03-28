@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class SeparatorRenderer extends SWTPartRenderer {
 
+	@Override
 	public Object createWidget(final MUIElement element, Object parent) {
 		Widget newSep = null;
 		if (!element.isVisible()) {

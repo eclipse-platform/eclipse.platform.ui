@@ -46,6 +46,7 @@ public class SashRenderer extends SWTPartRenderer {
 	@PostConstruct
 	void postConstruct() {
 		sashOrientationHandler = new EventHandler() {
+			@Override
 			public void handleEvent(Event event) {
 				// Ensure that this event is for a MPartSashContainer
 				MUIElement element = (MUIElement) event
@@ -61,6 +62,7 @@ public class SashRenderer extends SWTPartRenderer {
 				sashOrientationHandler);
 
 		sashWeightHandler = new EventHandler() {
+			@Override
 			public void handleEvent(Event event) {
 				// Ensure that this event is for a MPartSashContainer
 				MUIElement element = (MUIElement) event
@@ -101,6 +103,7 @@ public class SashRenderer extends SWTPartRenderer {
 		eventBroker.unsubscribe(sashWeightHandler);
 	}
 
+	@Override
 	public Object createWidget(final MUIElement element, Object parent) {
 		MUIElement elementParent = element.getParent();
 		if (elementParent == null && element.getCurSharedRef() != null)
@@ -112,6 +115,7 @@ public class SashRenderer extends SWTPartRenderer {
 			// If my layout's container gets disposed 'unbind' the sash elements
 			if (parent instanceof Composite) {
 				((Composite) parent).addDisposeListener(new DisposeListener() {
+					@Override
 					public void widgetDisposed(DisposeEvent e) {
 						element.setWidget(null);
 						element.setRenderer(null);

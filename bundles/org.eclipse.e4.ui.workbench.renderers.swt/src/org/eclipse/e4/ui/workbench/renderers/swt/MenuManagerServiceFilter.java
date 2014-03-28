@@ -64,10 +64,12 @@ public class MenuManagerServiceFilter implements Listener {
 	@Inject
 	EModelService modelService;
 
+	@Override
 	public void handleEvent(final Event event) {
 		// wrap the handling in a SafeRunner so that exceptions do not prevent
 		// the menu from being shown
 		SafeRunner.run(new ISafeRunnable() {
+			@Override
 			public void handleException(Throwable e) {
 				if (e instanceof Error) {
 					// errors are deadly, we shouldn't ignore these
@@ -80,6 +82,7 @@ public class MenuManagerServiceFilter implements Listener {
 				}
 			}
 
+			@Override
 			public void run() throws Exception {
 				safeHandleEvent(event);
 			}
@@ -149,6 +152,7 @@ public class MenuManagerServiceFilter implements Listener {
 		popupContext.remove(TMP_ORIGINAL_CONTEXT);
 		if (!menu.isDisposed()) {
 			menu.getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (originalChild == null) {
 						popupContext.deactivate();
