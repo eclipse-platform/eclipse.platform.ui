@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,9 +56,7 @@ public abstract class WorkbenchJob extends UIJob {
      */
     private void addDefaultJobChangeListener() {
         addJobChangeListener(new JobChangeAdapter() {
-            /* (non-Javadoc)
-             * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-             */
+
             @Override
 			public void done(IJobChangeEvent event) {
 
@@ -85,17 +83,11 @@ public abstract class WorkbenchJob extends UIJob {
         //Do nothing by default.
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.internal.jobs.InternalJob#shouldSchedule()
-     */
     @Override
 	public boolean shouldSchedule() {
         return super.shouldSchedule() && PlatformUI.isWorkbenchRunning();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
-     */
     @Override
 	public boolean shouldRun() {
         return super.shouldRun() && PlatformUI.isWorkbenchRunning();
