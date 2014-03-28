@@ -53,6 +53,7 @@ public class CleanupAddon {
 	MApplication app;
 
 	private EventHandler childrenHandler = new EventHandler() {
+		@Override
 		public void handleEvent(Event event) {
 			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
 			if (UIEvents.isREMOVE(event)) {
@@ -76,6 +77,7 @@ public class CleanupAddon {
 				// Stall the removal to handle cases where the container is only transiently empty
 				if (display != null) {
 					Display.getCurrent().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							// Remove it from the display if no visible children
 							int tbrCount = modelService.toBeRenderedCount(container);
@@ -141,6 +143,7 @@ public class CleanupAddon {
 	};
 
 	private EventHandler visibilityChangeHandler = new EventHandler() {
+		@Override
 		public void handleEvent(Event event) {
 			MUIElement changedObj = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 			if (changedObj instanceof MTrimBar
@@ -234,6 +237,7 @@ public class CleanupAddon {
 	};
 
 	private EventHandler renderingChangeHandler = new EventHandler() {
+		@Override
 		public void handleEvent(Event event) {
 			MUIElement changedObj = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 			MElementContainer<MUIElement> container = null;
@@ -279,6 +283,7 @@ public class CleanupAddon {
 				final MElementContainer<MUIElement> theContainer = container;
 				if (visCount == 0) {
 					Display.getCurrent().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							int visCount = modelService.countRenderableChildren(theContainer);
 							if (!isLastEditorStack(theContainer) && visCount == 0)

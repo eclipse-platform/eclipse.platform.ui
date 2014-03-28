@@ -125,6 +125,7 @@ public class TrimPaneLayout extends Layout {
 			return;
 
 		composite.addMouseMoveListener(new MouseMoveListener() {
+			@Override
 			public void mouseMove(MouseEvent e) {
 				Point p = e.display.getCursorLocation();
 				if (trackState == NOT_SIZING) {
@@ -141,6 +142,7 @@ public class TrimPaneLayout extends Layout {
 
 		composite.addMouseListener(new MouseListener() {
 
+			@Override
 			public void mouseUp(MouseEvent e) {
 				composite.setCapture(false);
 
@@ -154,6 +156,7 @@ public class TrimPaneLayout extends Layout {
 				trackState = NOT_SIZING;
 			}
 
+			@Override
 			public void mouseDown(MouseEvent e) {
 				Point p = new Point(e.x, e.y);
 				if (hSizingRect.contains(p)) {
@@ -171,19 +174,23 @@ public class TrimPaneLayout extends Layout {
 				}
 			}
 
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 			}
 		});
 
 		composite.addMouseTrackListener(new MouseTrackListener() {
+			@Override
 			public void mouseHover(MouseEvent e) {
 			}
 
+			@Override
 			public void mouseExit(MouseEvent e) {
 				Composite comp = (Composite) e.widget;
 				comp.setCursor(null);
 			}
 
+			@Override
 			public void mouseEnter(MouseEvent e) {
 			}
 		});

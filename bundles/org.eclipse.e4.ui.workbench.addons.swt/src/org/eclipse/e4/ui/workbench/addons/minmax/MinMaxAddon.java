@@ -103,23 +103,28 @@ public class MinMaxAddon {
 			return parentElement != null ? parentElement.getCurSharedRef() : element;
 		}
 
+		@Override
 		public void maximize(CTabFolderEvent event) {
 			setState(getElementToChange(event), MAXIMIZED);
 		}
 
+		@Override
 		public void minimize(CTabFolderEvent event) {
 			setState(getElementToChange(event), MINIMIZED);
 		}
 
+		@Override
 		public void restore(CTabFolderEvent event) {
 			setState(getElementToChange(event), null);
 		}
 	};
 
 	private MouseListener CTFDblClickListener = new MouseListener() {
+		@Override
 		public void mouseUp(MouseEvent e) {
 		}
 
+		@Override
 		public void mouseDown(MouseEvent e) {
 			// HACK! If this is an empty stack treat it as though it was the editor area
 			// and tear down any open trim stacks (see bug 384814)
@@ -155,6 +160,7 @@ public class MinMaxAddon {
 			return parentElement != null ? parentElement.getCurSharedRef() : element;
 		}
 
+		@Override
 		public void mouseDoubleClick(MouseEvent e) {
 			// only maximize if the primary mouse button was used
 			if (e.button == 1) {
@@ -318,6 +324,7 @@ public class MinMaxAddon {
 
 		final Shell winShell = (Shell) window.getWidget();
 		winShell.getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (!winShell.isDisposed()) {
 					winShell.layout(true, true);

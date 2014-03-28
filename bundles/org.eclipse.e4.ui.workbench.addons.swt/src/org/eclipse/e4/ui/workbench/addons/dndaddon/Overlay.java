@@ -126,6 +126,7 @@ class Overlay {
 
 		blue = new Color(baseShell.getDisplay(), 0, 0, 128);
 		overlayShell.addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent e) {
 				e.gc.setForeground(blue);
 				e.gc.setBackground(blue);

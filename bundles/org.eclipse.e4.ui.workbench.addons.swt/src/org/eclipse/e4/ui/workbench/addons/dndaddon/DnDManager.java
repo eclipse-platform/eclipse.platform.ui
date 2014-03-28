@@ -73,6 +73,7 @@ class DnDManager {
 	private List<Rectangle> frames = new ArrayList<Rectangle>();
 
 	DragDetectListener dragDetector = new DragDetectListener() {
+		@Override
 		public void dragDetected(DragDetectEvent e) {
 			if (dragging || e.widget.isDisposed())
 				return;
@@ -126,6 +127,7 @@ class DnDManager {
 		hookWidgets();
 
 		getDragShell().addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				dispose();
 			}
@@ -138,6 +140,7 @@ class DnDManager {
 	 */
 	private void hookWidgets() {
 		EventHandler stackWidgetHandler = new EventHandler() {
+			@Override
 			public void handleEvent(org.osgi.service.event.Event event) {
 				MUIElement element = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 
@@ -184,6 +187,7 @@ class DnDManager {
 
 	private void track() {
 		Display.getCurrent().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				info.update();
 				dragAgent.track(info);
@@ -201,6 +205,7 @@ class DnDManager {
 		setRectangle(offScreenRect);
 
 		tracker.addKeyListener(new KeyListener() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				if (e.keyCode == SWT.MOD1) {
 					isModified = false;
@@ -208,6 +213,7 @@ class DnDManager {
 				}
 			}
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.MOD1) {
 					isModified = true;
@@ -217,6 +223,7 @@ class DnDManager {
 		});
 
 		tracker.addListener(SWT.Move, new Listener() {
+			@Override
 			public void handleEvent(final Event event) {
 				track();
 			}
@@ -395,6 +402,7 @@ class DnDManager {
 			stylingEngine.style(overlayFrame);
 
 			overlayFrame.addPaintListener(new PaintListener() {
+				@Override
 				public void paintControl(PaintEvent e) {
 					for (int i = 0; i < images.size(); i++) {
 						Image image = images.get(i);
