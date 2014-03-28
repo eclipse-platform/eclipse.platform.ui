@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -414,13 +414,6 @@ public class CommandContributionItem extends ContributionItem {
 		command = ParameterizedCommand.generateCommand(cmd, parameters);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets
-	 * .Menu, int)
-	 */
 	@Override
 	public void fill(Menu parent, int index) {
 		if (command == null) {
@@ -454,10 +447,7 @@ public class CommandContributionItem extends ContributionItem {
 
 		establishReferences();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Composite)
-	 */
+
 	@Override
 	public void fill(Composite parent) {
 		if (command == null) {
@@ -487,13 +477,6 @@ public class CommandContributionItem extends ContributionItem {
 		establishReferences();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets
-	 * .ToolBar, int)
-	 */
 	@Override
 	public void fill(ToolBar parent, int index) {
 		if (command == null) {
@@ -522,21 +505,11 @@ public class CommandContributionItem extends ContributionItem {
 		establishReferences();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.ContributionItem#update()
-	 */
 	@Override
 	public void update() {
 		update(null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.ContributionItem#update(java.lang.String)
-	 */
 	@Override
 	public void update(String id) {
 		if (widget != null) {
@@ -787,11 +760,6 @@ public class CommandContributionItem extends ContributionItem {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.ContributionItem#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (widget != null) {
@@ -1004,11 +972,6 @@ public class CommandContributionItem extends ContributionItem {
 		updateIcons();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.ContributionItem#isEnabled()
-	 */
 	@Override
 	public boolean isEnabled() {
 		if (command != null) {
