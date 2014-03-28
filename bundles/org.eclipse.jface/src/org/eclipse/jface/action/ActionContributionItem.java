@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -622,9 +622,6 @@ public class ActionContributionItem extends ContributionItem {
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Object.
-	 */
 	@Override
 	public int hashCode() {
 		return action.hashCode();
@@ -684,9 +681,6 @@ public class ActionContributionItem extends ContributionItem {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IContributionItem.
-	 */
 	@Override
 	public boolean isEnabled() {
 		return action != null && action.isEnabled();
@@ -1198,11 +1192,6 @@ public class ActionContributionItem extends ContributionItem {
 		return textValue;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.ContributionItem#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (widget != null) {
