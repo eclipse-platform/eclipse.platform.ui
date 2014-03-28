@@ -60,6 +60,7 @@ public class BindingTable {
 			return this.activeSchemeIds;
 		}
 
+		@Override
 		public int compare(Binding o1, Binding o2) {
 			int rc = compareSchemes(activeSchemeIds, o1.getSchemeId(), o2.getSchemeId());
 			if (rc != 0) {

@@ -83,6 +83,7 @@ final class OutOfOrderVerifyListener implements VerifyKeyListener {
 	 *            The verify event after it has been processed by all other verify listeners; must
 	 *            not be <code>null</code>.
 	 */
+	@Override
 	public void verifyKey(VerifyEvent event) {
 		// Always remove the listener.
 		final Widget widget = event.widget;

@@ -130,6 +130,7 @@ public class KeyAssistDialog extends PopupDialog {
 	 * 
 	 * @return Whether the shell was already closed.
 	 */
+	@Override
 	public boolean close() {
 		return close(false);
 	}
@@ -256,6 +257,7 @@ public class KeyAssistDialog extends PopupDialog {
 	 * @param parent
 	 *            The parent composite to contain the dialog area; must not be <code>null</code>.
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 
 		// Create a composite for the dialog area.
@@ -354,6 +356,7 @@ public class KeyAssistDialog extends PopupDialog {
 		 * If you double-click on the table, it should execute the selected command.
 		 */
 		completionsTable.addListener(SWT.DefaultSelection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				executeKeyBinding(event);
 			}
@@ -391,6 +394,7 @@ public class KeyAssistDialog extends PopupDialog {
 		Collection<Binding> activeBindings = bindingService.getActiveBindings();
 		Collection<Binding> conflictBindings = bindingService.getAllConflicts();
 		Collection<Binding> sortedMatches = new TreeSet<Binding>(new Comparator<Binding>() {
+			@Override
 			public int compare(Binding binding1, Binding binding2) {
 				ParameterizedCommand cmdA = binding1.getParameterizedCommand();
 				ParameterizedCommand cmdB = binding2.getParameterizedCommand();
@@ -455,6 +459,7 @@ public class KeyAssistDialog extends PopupDialog {
 	 * 
 	 * @return The return code from this dialog.
 	 */
+	@Override
 	public int open() {
 		// If the dialog is already open, dispose the shell and recreate it.
 		Shell shell = getShell();
@@ -482,6 +487,7 @@ public class KeyAssistDialog extends PopupDialog {
 	 */
 	public int open(Collection<Binding> bindings) {
 		matches = new TreeSet<Binding>(new Comparator<Binding>() {
+			@Override
 			public int compare(Binding a, Binding b) {
 				Binding bindingA = a;
 				Binding bindingB = b;
@@ -521,6 +527,7 @@ public class KeyAssistDialog extends PopupDialog {
 	 *            The new parent shell; this value may be <code>null</code> if there is to be no
 	 *            parent.
 	 */
+	@Override
 	public void setParentShell(Shell newParentShell) {
 		super.setParentShell(newParentShell);
 	}

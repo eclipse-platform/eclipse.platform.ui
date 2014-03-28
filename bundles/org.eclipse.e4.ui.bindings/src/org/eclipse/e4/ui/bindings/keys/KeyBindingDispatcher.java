@@ -77,6 +77,7 @@ public class KeyBindingDispatcher {
 		 * @param event
 		 *            The event to process; must not be <code>null</code>.
 		 */
+		@Override
 		public final void handleEvent(final Event event) {
 			if (!enabled) {
 				return;
@@ -434,6 +435,7 @@ public class KeyBindingDispatcher {
 		final long myStartTime = startTime;
 		final Display display = getDisplay();
 		display.timerExec(DELAY, new Runnable() {
+			@Override
 			public void run() {
 				if ((System.currentTimeMillis() > (myStartTime - DELAY))
 						&& (startTime == myStartTime)) {
