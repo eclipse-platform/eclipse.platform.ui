@@ -8,6 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
+ *     Dmitry Spiridenok <d.spiridenok@gmail.com> - Bug 412672
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -16,6 +17,7 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
@@ -28,6 +30,7 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -49,6 +52,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 public class ToolControlEditor extends AbstractComponentEditor {
@@ -154,9 +158,22 @@ public class ToolControlEditor extends AbstractComponentEditor {
 
 		// ------------------------------------------------------------
 		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.ToolControlEditor_ClassURI);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			final IContributionClassCreator c = getEditor().getContributionCreator(MenuPackageImpl.Literals.TOOL_CONTROL);
+			if (project != null && c != null) {
+				final Link lnk = new Link(parent, SWT.NONE);
+				lnk.setText("<A>" + Messages.ToolControlEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
+				lnk.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+				lnk.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						c.createOpen((MContribution) getMaster().getValue(), getEditingDomain(), project, lnk.getShell());
+					}
+				});
+			} else {
+				Label l = new Label(parent, SWT.NONE);
+				l.setText(Messages.ToolControlEditor_ClassURI);
+				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			}
 
 			Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);

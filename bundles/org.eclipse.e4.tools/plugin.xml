@@ -60,6 +60,12 @@
             id="org.eclipse.e4.tools.newaddon"
             name="%wizard.name.4">
       </wizard>
+      <wizard
+            category="org.eclipse.e4.tools/org.eclipse.e4.tools.classes"
+            class="org.eclipse.e4.internal.tools.wizards.classes.NewToolControlClassWizard"
+            icon="icons/full/obj16/ToolControl.gif"
+            id="org.eclipse.e4.tools.newtoolcontrol"
+            name="%wizard.name.5">
+      </wizard>
    </extension>
-
 </plugin>

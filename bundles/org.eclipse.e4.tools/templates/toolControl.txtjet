@@ -1,0 +1,23 @@
+<%@ jet package="org.eclipse.e4.internal.tools.wizards.classes.templates" class="ToolControlTemplate" imports="org.eclipse.e4.internal.tools.wizards.classes.NewToolControlClassWizard.ToolControlClass" %>
+<% ToolControlClass domainClass = (ToolControlClass)argument; %>
+<% if( domainClass.getPackageFragment() != null && domainClass.getPackageFragment().getElementName().trim().length() > 0 ) { %>
+package <%= domainClass.getPackageFragment().getElementName() %>;
+<% } %>
+
+import javax.annotation.PostConstruct;
+<% if( domainClass.isCreateDefaultConstructor() )  { %>
+import javax.inject.Inject;
+<% } %>
+
+public class <%= domainClass.getName() %> {
+	<% if( domainClass.isCreateDefaultConstructor() )  { %>
+	@Inject
+	public <%= domainClass.getName() %>() {
+		
+	}
+	<% } %>
+	@PostConstruct
+	public void <%= domainClass.getCreateGuiMethodName() %>() {
+		
+	}
+}
