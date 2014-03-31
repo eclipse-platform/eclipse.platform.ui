@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -29,7 +30,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ConfigurationInfo;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Displays system information about the eclipse application. The content of
@@ -152,13 +152,21 @@ public final class AboutSystemPage extends ProductInfoPage {
 
 	private void fetchConfigurationInfo(final Text text) {
 		text.setText(WorkbenchMessages.AboutSystemPage_RetrievingSystemInfo);
-		WorkbenchJob job = new WorkbenchJob(
+		Job job = new Job(
 				WorkbenchMessages.AboutSystemPage_FetchJobTitle) {
 			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				String info = ConfigurationInfo.getSystemSummary();
-				if (!text.isDisposed())
-					text.setText(info);
+			public IStatus run(IProgressMonitor monitor) {
+				final String info = ConfigurationInfo.getSystemSummary();
+				if (!text.isDisposed()) {
+					text.getDisplay().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							if (!text.isDisposed()) {
+								text.setText(info);
+							}
+						}
+					});
+				}
 				return Status.OK_STATUS;
 			}
 		};
