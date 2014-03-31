@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431667
  ******************************************************************************/
 package org.eclipse.e4.core.commands.tests;
 
@@ -61,13 +62,13 @@ public class HandlerTest extends TestCase {
 
 	public void testCallHandler() throws Exception {
 		EHandlerService hs = (EHandlerService) workbenchContext
-				.get(EHandlerService.class.getName());
+				.get(EHandlerService.class);
 		CallHandler handler = new CallHandler();
 		hs.activateHandler(TEST_ID1, handler);
 		assertFalse(handler.q1);
 		assertFalse(handler.q2);
 		ECommandService cs = (ECommandService) workbenchContext
-				.get(ECommandService.class.getName());
+				.get(ECommandService.class);
 		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
 		assertTrue(hs.canExecute(cmd));
 		assertFalse(handler.q2);
@@ -78,13 +79,13 @@ public class HandlerTest extends TestCase {
 
 	public void testDeactivateHandler() throws Exception {
 		EHandlerService hs = (EHandlerService) workbenchContext
-				.get(EHandlerService.class.getName());
+				.get(EHandlerService.class);
 		CallHandler handler = new CallHandler();
 		hs.activateHandler(TEST_ID1, handler);
 		assertFalse(handler.q1);
 		assertFalse(handler.q2);
 		ECommandService cs = (ECommandService) workbenchContext
-				.get(ECommandService.class.getName());
+				.get(ECommandService.class);
 		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
 		assertTrue(hs.canExecute(cmd));
 		assertFalse(handler.q2);
@@ -98,35 +99,35 @@ public class HandlerTest extends TestCase {
 		IEclipseContext c1 = workbenchContext.createChild("c1");
 		c1.activate();
 		EHandlerService h1 = (EHandlerService) c1.get(EHandlerService.class
-				.getName());
+				);
 		CallHandler handler1 = new CallHandler();
 		h1.activateHandler(TEST_ID1, handler1);
 		ECommandService cs = (ECommandService) c1.get(ECommandService.class
-				.getName());
+				);
 		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
 		assertTrue(h1.canExecute(cmd));
 		EHandlerService wHS = (EHandlerService) workbenchContext
-				.get(EHandlerService.class.getName());
+				.get(EHandlerService.class);
 		assertTrue(wHS.canExecute(cmd));
 	}
 
 	public void testQueryTwoHandlers() throws Exception {
 		ECommandService cs = (ECommandService) workbenchContext
-				.get(ECommandService.class.getName());
+				.get(ECommandService.class);
 		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
 		EHandlerService wHS = (EHandlerService) workbenchContext
-				.get(EHandlerService.class.getName());
+				.get(EHandlerService.class);
 
 		IEclipseContext c1 = workbenchContext.createChild("c1");
 		c1.activate();
 		EHandlerService h1 = (EHandlerService) c1.get(EHandlerService.class
-				.getName());
+				);
 		CallHandler handler1 = new CallHandler();
 		h1.activateHandler(TEST_ID1, handler1);
 
 		IEclipseContext c2 = workbenchContext.createChild("c2");
 		EHandlerService h2 = (EHandlerService) c2.get(EHandlerService.class
-				.getName());
+				);
 		CallHandler handler2 = new CallHandler();
 		h2.activateHandler(TEST_ID1, handler2);
 
@@ -141,21 +142,21 @@ public class HandlerTest extends TestCase {
 
 	public void testExecuteTwoActiveHandlers() throws Exception {
 		ECommandService cs = (ECommandService) workbenchContext
-				.get(ECommandService.class.getName());
+				.get(ECommandService.class);
 		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
 		EHandlerService wHS = (EHandlerService) workbenchContext
-				.get(EHandlerService.class.getName());
+				.get(EHandlerService.class);
 
 		IEclipseContext c1 = workbenchContext.createChild("c1");
 		c1.activate();
 		EHandlerService h1 = (EHandlerService) c1.get(EHandlerService.class
-				.getName());
+				);
 		CallHandler handler1 = new CallHandler();
 		h1.activateHandler(TEST_ID1, handler1);
 
 		IEclipseContext c2 = workbenchContext.createChild("c2");
 		EHandlerService h2 = (EHandlerService) c2.get(EHandlerService.class
-				.getName());
+				);
 		CallHandler handler2 = new CallHandler();
 		h2.activateHandler(TEST_ID1, handler2);
 
@@ -175,21 +176,21 @@ public class HandlerTest extends TestCase {
 
 	public void testSwitchActivationTwoHandlers() throws Exception {
 		ECommandService cs = (ECommandService) workbenchContext
-				.get(ECommandService.class.getName());
+				.get(ECommandService.class);
 		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
 		EHandlerService wHS = (EHandlerService) workbenchContext
-				.get(EHandlerService.class.getName());
+				.get(EHandlerService.class);
 
 		IEclipseContext c1 = workbenchContext.createChild("c1");
 		c1.activate();
 		EHandlerService h1 = (EHandlerService) c1.get(EHandlerService.class
-				.getName());
+				);
 		CallHandler handler1 = new CallHandler();
 		h1.activateHandler(TEST_ID1, handler1);
 
 		IEclipseContext c2 = workbenchContext.createChild("c2");
 		EHandlerService h2 = (EHandlerService) c2.get(EHandlerService.class
-				.getName());
+				);
 		CallHandler handler2 = new CallHandler();
 		h2.activateHandler(TEST_ID1, handler2);
 
@@ -257,12 +258,12 @@ public class HandlerTest extends TestCase {
 
 	public void testMethodInfo() throws Exception {
 		Info helloInfo = new Info("Hello");
-		workbenchContext.set(Info.class.getName(), helloInfo);
+		workbenchContext.set(Info.class, helloInfo);
 		ECommandService cs = (ECommandService) workbenchContext
-				.get(ECommandService.class.getName());
+				.get(ECommandService.class);
 		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
 		EHandlerService wHS = (EHandlerService) workbenchContext
-				.get(EHandlerService.class.getName());
+				.get(EHandlerService.class);
 		HandlerWithInfo handler = new HandlerWithInfo();
 		wHS.activateHandler(TEST_ID1, handler);
 
@@ -272,17 +273,17 @@ public class HandlerTest extends TestCase {
 	public void testMethodWithAnnocation() throws Exception {
 		Info helloInfo = new Info("Hello");
 		ECommandService cs = (ECommandService) workbenchContext
-				.get(ECommandService.class.getName());
+				.get(ECommandService.class);
 		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
 		EHandlerService wHS = (EHandlerService) workbenchContext
-				.get(EHandlerService.class.getName());
+				.get(EHandlerService.class);
 		HandlerWithAnnotations handler = new HandlerWithAnnotations();
 		wHS.activateHandler(TEST_ID1, handler);
 
-		workbenchContext.set(Info.class.getName(), helloInfo);
+		workbenchContext.set(Info.class, helloInfo);
 		assertNull(wHS.executeHandler(cmd));
 		
-		workbenchContext.remove(Info.class.getName());
+		workbenchContext.remove(Info.class);
 		assertNull(wHS.executeHandler(cmd));
 		
 		workbenchContext.set(ACTIVE_INFO_ID, helloInfo);
@@ -294,9 +295,9 @@ public class HandlerTest extends TestCase {
 
 	public void testBug314847() {
 		ECommandService cs = (ECommandService) workbenchContext
-				.get(ECommandService.class.getName());
+				.get(ECommandService.class);
 		EHandlerService wHS = (EHandlerService) workbenchContext
-				.get(EHandlerService.class.getName());
+				.get(EHandlerService.class);
 
 		ParameterizedCommand nonparameterizedCmd = cs.createCommand(TEST_ID3, null);
 		ParameterizedCommand parameterizedCmd = cs.createCommand(TEST_ID3,
@@ -331,7 +332,7 @@ public class HandlerTest extends TestCase {
 
 	private void defineCommands(IEclipseContext context) {
 		ECommandService cs = (ECommandService) workbenchContext
-				.get(ECommandService.class.getName());
+				.get(ECommandService.class);
 		Category category = cs.defineCategory(TEST_CAT1, "CAT1", null);
 		cs.defineCommand(TEST_ID1, "ID1", null, category, null);
 		cs.defineCommand(TEST_ID2, "ID2", null, category, null);

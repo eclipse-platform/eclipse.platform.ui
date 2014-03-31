@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431667
  *******************************************************************************/
 package org.eclipse.e4.core.commands.tests;
 
@@ -26,8 +27,7 @@ public class DefineCommandsTest extends TestCase {
 	private static final String TEST_CAT1 = "test.cat1";
 
 	public void testCreateCommands() throws Exception {
-		ECommandService cs = (ECommandService) workbenchContext
-				.get(ECommandService.class.getName());
+		ECommandService cs = workbenchContext.get(ECommandService.class);
 		assertNotNull(cs);
 		assertNotNull(cs.defineCategory(TEST_CAT1, "CAT1", null));
 		Category category = cs.getCategory(TEST_CAT1);
@@ -48,7 +48,7 @@ public class DefineCommandsTest extends TestCase {
 	public void testCreateWithSecondContexts() throws Exception {
 		IEclipseContext localContext = workbenchContext.createChild();
 		ECommandService cs = (ECommandService) localContext
-				.get(ECommandService.class.getName());
+				.get(ECommandService.class);
 		assertNotNull(cs);
 		assertNotNull(cs.defineCategory(TEST_CAT1, "CAT1", null));
 		Category category = cs.getCategory(TEST_CAT1);
@@ -67,7 +67,7 @@ public class DefineCommandsTest extends TestCase {
 	public void testCreateWithTwoContexts() throws Exception {
 		IEclipseContext localContext = workbenchContext.createChild("Level1");
 		ECommandService cs = (ECommandService) localContext
-				.get(ECommandService.class.getName());
+				.get(ECommandService.class);
 		assertNotNull(cs);
 		assertNotNull(cs.defineCategory(TEST_CAT1, "CAT1", null));
 		Category category = cs.getCategory(TEST_CAT1);
