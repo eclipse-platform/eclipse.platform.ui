@@ -570,8 +570,8 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 				if (item instanceof AbstractGroupMarker) {
 					toolItem.setVisible(item.isVisible());
 				}
-				container.getChildren().add(toolItem);
 				renderer.linkModelToContribution(toolItem, item);
+				container.getChildren().add(toolItem);
 			}
 		}
 	}
