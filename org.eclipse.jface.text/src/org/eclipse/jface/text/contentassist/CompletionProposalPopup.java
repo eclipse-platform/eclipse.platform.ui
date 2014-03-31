@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sean Montgomery, sean_montgomery@comcast.net - https://bugs.eclipse.org/bugs/show_bug.cgi?id=116454
  *     Marcel Bruch, bruch@cs.tu-darmstadt.de - [content assist] Allow to re-sort proposals - https://bugs.eclipse.org/bugs/show_bug.cgi?id=350991
+ *     Terry Parker, tparker@google.com - Protect against poorly behaved completion proposers - http://bugs.eclipse.org/429925
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
@@ -61,6 +62,10 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
@@ -839,18 +844,34 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 			String displayString;
 			StyleRange[] styleRanges= null;
-			if (fIsColoredLabelsSupportEnabled && current instanceof ICompletionProposalExtension6) {
-				StyledString styledString= ((ICompletionProposalExtension6)current).getStyledDisplayString();
-				displayString= styledString.getString();
-				styleRanges= styledString.getStyleRanges();
-			} else
-				displayString= current.getDisplayString();
+			Image image= null;
+			try {
+				if (fIsColoredLabelsSupportEnabled && current instanceof ICompletionProposalExtension6) {
+					StyledString styledString= ((ICompletionProposalExtension6)current).getStyledDisplayString();
+					displayString= styledString.getString();
+					styleRanges= styledString.getStyleRanges();
+				} else
+					displayString= current.getDisplayString();
+			} catch (RuntimeException e) {
+				// On failures to retrieve the proposal's text, insert a dummy entry and log the error.
+				displayString= JFaceTextMessages.getString("CompletionProposalPopup.error_retrieving_proposal"); //$NON-NLS-1$
+
+				String PLUGIN_ID= "org.eclipse.jface.text"; //$NON-NLS-1$
+				ILog log= Platform.getLog(Platform.getBundle(PLUGIN_ID));
+				log.log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, JFaceTextMessages.getString("CompletionProposalPopup.unexpected_error"), e)); //$NON-NLS-1$
+			}
+
+			try {
+				image= current.getImage();
+			} catch (RuntimeException e) {
+				// If we are unable to retrieve the proposal's image, leave it blank.
+			}
 
 			item.setText(displayString);
 			if (fIsColoredLabelsSupportEnabled)
 				TableOwnerDrawSupport.storeStyleRanges(item, 0, styleRanges);
 
-			item.setImage(current.getImage());
+			item.setImage(image);
 			item.setData(current);
 		} else {
 			// this should not happen, but does on win32
@@ -1485,15 +1506,21 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (proposals[i] instanceof ICompletionProposalExtension2) {
 
 				ICompletionProposalExtension2 p= (ICompletionProposalExtension2) proposals[i];
-				if (p.validate(document, offset, event))
-					filtered.add(p);
-
+				try {
+					if (p.validate(document, offset, event))
+						filtered.add(p);
+				} catch (RuntimeException e) {
+					// Make sure that poorly behaved completion proposers do not break filtering.
+				}
 			} else if (proposals[i] instanceof ICompletionProposalExtension) {
 
 				ICompletionProposalExtension p= (ICompletionProposalExtension) proposals[i];
-				if (p.isValidFor(document, offset))
-					filtered.add(p);
-
+				try {
+					if (p.isValidFor(document, offset))
+						filtered.add(p);
+				} catch (RuntimeException e) {
+					// Make sure that poorly behaved completion proposers do not break filtering.
+				}
 			} else {
 				// restore original behavior
 				fIsFilteredSubset= false;
