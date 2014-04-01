@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!-- ====================================================================== -->
-<!-- Copyright (c) 2002, 2012 IBM Corporation and others.                   -->
+<!-- Copyright (c) 2002, 2014 IBM Corporation and others.                   -->
 <!-- All rights reserved. This program and the accompanying materials       -->
 <!-- are made available under the terms of the Eclipse Public License v1.0  -->
 <!-- which accompanies this distribution, and is available at               -->
@@ -223,6 +223,7 @@
             <keywordReference id="org.eclipse.ui.editors.general"/>
             <keywordReference id="org.eclipse.ui.editors.tabWidth"/>
             <keywordReference id="org.eclipse.ui.editors.lineNumber"/>
+            <keywordReference id="org.eclipse.ui.editors.printMargin"/>
       </page>
       <page
             name="%PreferencePages.Annotations"
@@ -279,6 +280,9 @@
       <keyword
             label="%preferenceKeywords.lineNumber"
             id="org.eclipse.ui.editors.lineNumber"/>
+      <keyword
+            label="%preferenceKeywords.printMargin"
+            id="org.eclipse.ui.editors.printMargin"/>
       <keyword
             label="%preferenceKeywords.annotations"
             id="org.eclipse.ui.editors.annotations"/>
