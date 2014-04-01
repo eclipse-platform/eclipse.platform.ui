@@ -10,6 +10,7 @@
  *     Wim Jongman <wim.jongman@remainsoftware.com> - Maintenance
  *     Marco Descher <marco@descher.at> - Bug395982, 426653, 422465
  *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
+ *     Steven Spungin <steven@spungin.tv> - Bug 431755
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
@@ -529,16 +530,19 @@ public class ModelEditor {
 			@Override
 			public void keyReleased(final KeyEvent e) {
 				if (e.keyCode == SWT.DEL) {
+					List<EObject> list = new ArrayList<EObject>();
 					final IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-					if (selection.getFirstElement() instanceof EObject) {
-						EObject o = (EObject) selection.getFirstElement();
-
-						Command cmd = DeleteCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), o);
+					for (Object o : ((StructuredSelection) selection).toList()) {
+						if (o instanceof EObject) {
+							list.add((EObject) o);
+						}
+					}
+					if (list.isEmpty() == false) {
+						Command cmd = DeleteCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), list);
 						if (cmd.canExecute()) {
 							ModelEditor.this.modelProvider.getEditingDomain().getCommandStack().execute(cmd);
 						}
 					}
-
 				}
 			}
 		});
