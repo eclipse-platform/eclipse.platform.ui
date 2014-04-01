@@ -15,8 +15,10 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -25,6 +27,8 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -38,6 +42,7 @@ import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
+import org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.di.Focus;
@@ -72,12 +77,16 @@ import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.bindings.keys.formatting.KeyFormatterFactory;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.PlatformAdmin;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.testing.TestableObject;
@@ -340,6 +349,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 		}
 	};
 
+	private CSSThemeChangedHandler cssThemeChangedHandler;
+
 	private IEclipseContext appContext;
 
 	protected Shell testShell;
@@ -470,6 +481,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 					windowsHandler);
 			eventBroker.subscribe(UIEvents.TrimmedWindow.TOPIC_TRIMBARS,
 					trimHandler);
+
+			cssThemeChangedHandler = new CSSThemeChangedHandler(
+					context.get(Display.class));
+			eventBroker.subscribe(IThemeEngine.Events.THEME_CHANGED,
+					cssThemeChangedHandler);
 		}
 	}
 
@@ -481,6 +497,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		eventBroker.unsubscribe(visibilityHandler);
 		eventBroker.unsubscribe(childrenHandler);
 		eventBroker.unsubscribe(trimHandler);
+		eventBroker.unsubscribe(cssThemeChangedHandler);
 	}
 
 	private static void populateModelInterfaces(MContext contextModel,
@@ -1233,7 +1250,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			IEclipseContext appContext) {
 		String cssTheme = (String) appContext.get(E4Application.THEME_ID);
 		String cssURI = (String) appContext.get(IWorkbench.CSS_URI_ARG);
-
+		IThemeEngine themeEngineForEvent = null;
 		if ("none".equals(cssTheme)) {
 			appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
 				@Override
@@ -1265,6 +1282,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		} else if (cssTheme != null) {
 			final IThemeEngine themeEngine = createThemeEngine(display,
 					appContext);
+			themeEngineForEvent = themeEngine;
 			String cssResourcesURI = (String) appContext
 					.get(IWorkbench.CSS_RESOURCE_URI_ARG);
 
@@ -1401,6 +1419,16 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 		IEventBroker broker = appContext.get(IEventBroker.class);
 		if (broker != null) {
+			Map<String, Object> data = null;
+			if (themeEngineForEvent != null) {
+				data = new HashMap<String, Object>();
+				data.put(IThemeEngine.Events.THEME_ENGINE, themeEngineForEvent);
+				data.put(IThemeEngine.Events.THEME,
+						themeEngineForEvent.getActiveTheme());
+				data.put(IThemeEngine.Events.DEVICE, display);
+				data.put(IThemeEngine.Events.RESTORE, false);
+			}
+			broker.send(IThemeEngine.Events.THEME_CHANGED, data);
 			broker.send(UIEvents.UILifeCycle.THEME_CHANGED, null);
 		}
 	}
@@ -1418,5 +1446,72 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 		appContext.set(IThemeEngine.class.getName(), themeEngine);
 		return themeEngine;
+	}
+
+	private static class CSSThemeChangedHandler implements EventHandler {
+		private HashSet<IEclipsePreferences> prefs = null;
+
+		public CSSThemeChangedHandler(Display display) {
+			if (display != null) {
+				display.addListener(SWT.Dispose, new Listener() {
+					@Override
+					public void handleEvent(org.eclipse.swt.widgets.Event event) {
+						resetOverriddenPreferences();
+					}
+				});
+			}
+		}
+
+		@Override
+		public void handleEvent(Event event) {
+			resetOverriddenPreferences();
+			overridePreferences(getThemeEngine(event));
+		}
+
+		private void resetOverriddenPreferences() {
+			for (IEclipsePreferences preferences : getPreferences()) {
+				resetOverriddenPreferences(preferences);
+			}
+		}
+
+		private void resetOverriddenPreferences(IEclipsePreferences preferences) {
+			for (String name : EclipsePreferencesHelper
+					.getOverriddenPropertyNames(preferences)) {
+				preferences.remove(name);
+			}
+			EclipsePreferencesHelper
+					.removeOverriddenPropertyNames(preferences);
+		}
+
+		private Set<IEclipsePreferences> getPreferences() {
+			if (prefs == null) {
+				prefs = new HashSet<IEclipsePreferences>();
+				PlatformAdmin admin = WorkbenchSWTActivator.getDefault()
+						.getPlatformAdmin();
+
+				State state = admin.getState(false);
+				BundleDescription[] bundles = state.getBundles();
+
+				for (BundleDescription desc : bundles) {
+					if (desc.getName() != null) {
+						prefs.add(InstanceScope.INSTANCE.getNode(desc.getName()));
+					}
+				}
+			}
+			return prefs;
+		}
+
+		private void overridePreferences(IThemeEngine themeEngine) {
+			if (themeEngine != null) {
+				for (IEclipsePreferences preferences : getPreferences()) {
+					themeEngine.applyStyles(preferences, false);
+				}
+			}
+		}
+
+		private IThemeEngine getThemeEngine(Event event) {
+			return (IThemeEngine) event
+					.getProperty(IThemeEngine.Events.THEME_ENGINE);
+		}
 	}
 }

@@ -43,7 +43,13 @@
 		 <widget class="org.eclipse.ui.internal.themes.FontDefinition"/>
 		 <widget class="org.eclipse.ui.internal.themes.ColorDefinition"/>
 		 <widget class="org.eclipse.ui.internal.themes.ThemesExtension"/>
-      </provider> 
+      </provider>
+
+	  <!-- IEclipsePreferences -->
+      <provider
+			class="org.eclipse.e4.ui.css.swt.dom.preference.EclipsePreferencesProvider">
+		 <widget class="org.eclipse.core.runtime.preferences.IEclipsePreferences"/>
+      </provider>
    </extension>
    
    
@@ -499,6 +505,13 @@
             handler="org.eclipse.e4.ui.css.swt.properties.definition.CSSPropertyThemesExtensionHandler">
        	 <property-name name="font-definition"/>
        	 <property-name name="color-definition"/>
+      </handler>
+
+      <!-- IEclipsePreferences -->
+      <handler
+          adapter="org.eclipse.e4.ui.css.swt.dom.preference.EclipsePreferencesElement"
+          handler="org.eclipse.e4.ui.css.swt.properties.preference.EclipsePreferencesHandler">
+          <property-name name="preferences"/>
       </handler>
    </extension>
                
