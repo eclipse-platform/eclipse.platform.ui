@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431683
  *******************************************************************************/
 
 package org.eclipse.help.ui.internal.preferences;
@@ -232,12 +233,10 @@ public class ICDialog extends StatusDialog implements IShellProvider, Listener, 
 
 
 		updateStatus(status);
-
-		this.getOKButton().setEnabled(areFieldsValid());
-		this.getCancelButton().setEnabled(true);
-		
+		this.getButton(IDialogConstants.OK_ID).setEnabled(areFieldsValid());
+		this.getButton(IDialogConstants.CANCEL_ID).setEnabled(true);
 	}
-	
+
 	public IC getIC()
 	{
 		return ic;
