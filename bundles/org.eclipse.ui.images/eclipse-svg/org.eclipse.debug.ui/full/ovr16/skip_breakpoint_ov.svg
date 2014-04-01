@@ -32,27 +32,31 @@
   </defs>
   <sodipodi:namedview
      id="base"
-     pagecolor="#ffffff"
+     pagecolor="#000000"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="0.0"
+     inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="8"
-     inkscape:cx="6.3649561"
-     inkscape:cy="4.4167901"
+     inkscape:zoom="32"
+     inkscape:cx="6.3805833"
+     inkscape:cy="7.1750151"
      inkscape:document-units="px"
      inkscape:current-layer="g8472"
      showgrid="true"
      inkscape:window-width="980"
      inkscape:window-height="793"
      inkscape:window-x="215"
-     inkscape:window-y="25"
+     inkscape:window-y="34"
      inkscape:window-maximized="0"
      showguides="true"
      inkscape:guide-bbox="true">
     <inkscape:grid
        type="xygrid"
-       id="grid2984" />
+       id="grid2984"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true" />
   </sodipodi:namedview>
   <metadata
      id="metadata7">
@@ -77,6 +81,11 @@
        id="g8472"
        transform="matrix(0.9346781,0,0,0.9346781,-14.571811,69.044514)">
       <path
+         style="fill:none;stroke:#ffffff;stroke-width:1.33735883000000011;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+         d="m 16.526343,1035.0879 16.148608,16.1486"
+         id="path4175-84"
+         inkscape:connector-curvature="0" />
+      <path
          style="fill:none;stroke:#ffffff;stroke-width:2.13977408000000002;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline;filter:url(#filter3776);opacity:0.5"
          d="M 15.590192,1036.0241 31.7388,1052.1727"
          id="path4175-8"
@@ -85,6 +94,11 @@
          style="fill:none;stroke:#000e6f;stroke-width:1.33735883;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
          d="M 15.590192,1036.0241 31.7388,1052.1727"
          id="path4175"
+         inkscape:connector-curvature="0" />
+      <path
+         style="fill:none;stroke:#ffffff;stroke-width:1.33735883;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+         d="m 14.620607,1036.9268 16.148608,16.1486"
+         id="path4175-84-0"
          inkscape:connector-curvature="0" />
     </g>
   </g>
