@@ -134,8 +134,8 @@ public class ModelServiceImpl implements EModelService {
 				"Unsupported model object type: " + elementType.getCanonicalName()); //$NON-NLS-1$
 	}
 
-	private <T> void findElementsRecursive(MApplicationElement searchRoot, Selector matcher,
-			List<T> elements, int searchFlags) {
+	private <T> void findElementsRecursive(MApplicationElement searchRoot, Class<T> clazz,
+			Selector matcher, List<T> elements, int searchFlags) {
 		Assert.isLegal(searchRoot != null);
 		if (searchFlags == 0) {
 			return;
@@ -156,27 +156,27 @@ public class ModelServiceImpl implements EModelService {
 					MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) searchRoot;
 					List<MUIElement> children = container.getChildren();
 					for (MUIElement child : children) {
-						findElementsRecursive(child, matcher, elements, searchFlags);
+						findElementsRecursive(child, clazz, matcher, elements, searchFlags);
 					}
 				} else if ((searchFlags & IN_ACTIVE_PERSPECTIVE) != 0) {
 					// Only search the currently active perspective, if any
 					MPerspective active = ((MPerspectiveStack) searchRoot).getSelectedElement();
 					if (active != null) {
-						findElementsRecursive(active, matcher, elements, searchFlags);
+						findElementsRecursive(active, clazz, matcher, elements, searchFlags);
 					}
 				} else if ((searchFlags & IN_SHARED_AREA) != 0 && searchRoot instanceof MUIElement) {
 					// Only recurse through the shared areas
 					List<MArea> areas = findElements((MUIElement) searchRoot, null, MArea.class,
 							null);
 					for (MArea area : areas) {
-						findElementsRecursive(area, matcher, elements, searchFlags);
+						findElementsRecursive(area, clazz, matcher, elements, searchFlags);
 					}
 				}
 			} else {
 				MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) searchRoot;
 				List<MUIElement> children = container.getChildren();
 				for (MUIElement child : children) {
-					findElementsRecursive(child, matcher, elements, searchFlags);
+					findElementsRecursive(child, clazz, matcher, elements, searchFlags);
 				}
 			}
 		}
@@ -186,7 +186,7 @@ public class ModelServiceImpl implements EModelService {
 			MTrimmedWindow tw = (MTrimmedWindow) searchRoot;
 			List<MTrimBar> bars = tw.getTrimBars();
 			for (MTrimBar bar : bars) {
-				findElementsRecursive(bar, matcher, elements, searchFlags);
+				findElementsRecursive(bar, clazz, matcher, elements, searchFlags);
 			}
 		}
 
@@ -194,19 +194,19 @@ public class ModelServiceImpl implements EModelService {
 		if (searchRoot instanceof MWindow) {
 			MWindow window = (MWindow) searchRoot;
 			for (MWindow dw : window.getWindows()) {
-				findElementsRecursive(dw, matcher, elements, searchFlags);
+				findElementsRecursive(dw, clazz, matcher, elements, searchFlags);
 			}
 
 			MMenu menu = window.getMainMenu();
 			if (menu != null && (searchFlags & IN_MAIN_MENU) != 0) {
-				findElementsRecursive(menu, matcher, elements, searchFlags);
+				findElementsRecursive(menu, clazz, matcher, elements, searchFlags);
 			}
 		}
 
 		if (searchRoot instanceof MPerspective) {
 			MPerspective persp = (MPerspective) searchRoot;
 			for (MWindow dw : persp.getWindows()) {
-				findElementsRecursive(dw, matcher, elements, searchFlags);
+				findElementsRecursive(dw, clazz, matcher, elements, searchFlags);
 			}
 		}
 		// Search shared elements
@@ -216,7 +216,7 @@ public class ModelServiceImpl implements EModelService {
 			// Don't search in shared areas unless the flag is set
 			if (ph.getRef() != null
 					&& (!(ph.getRef() instanceof MArea) || (searchFlags & IN_SHARED_AREA) != 0)) {
-				findElementsRecursive(ph.getRef(), matcher, elements, searchFlags);
+				findElementsRecursive(ph.getRef(), clazz, matcher, elements, searchFlags);
 			}
 		}
 
@@ -224,12 +224,12 @@ public class ModelServiceImpl implements EModelService {
 			MPart part = (MPart) searchRoot;
 
 			for (MMenu menu : part.getMenus()) {
-				findElementsRecursive(menu, matcher, elements, searchFlags);
+				findElementsRecursive(menu, clazz, matcher, elements, searchFlags);
 			}
 
 			MToolBar toolBar = part.getToolbar();
 			if (toolBar != null) {
-				findElementsRecursive(toolBar, matcher, elements, searchFlags);
+				findElementsRecursive(toolBar, clazz, matcher, elements, searchFlags);
 			}
 		}
 	}
@@ -238,21 +238,21 @@ public class ModelServiceImpl implements EModelService {
 	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
 			List<String> tagsToMatch) {
 		ElementMatcher matcher = new ElementMatcher(id, clazz, tagsToMatch);
-		return findElements(searchRoot, ANYWHERE, matcher);
+		return findElements(searchRoot, clazz, ANYWHERE, matcher);
 	}
 
 	@Override
 	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
 			List<String> tagsToMatch, int searchFlags) {
 		ElementMatcher matcher = new ElementMatcher(id, clazz, tagsToMatch);
-		return findElements(searchRoot, searchFlags, matcher);
+		return findElements(searchRoot, clazz, searchFlags, matcher);
 	}
 
 	@Override
-	public <T> List<T> findElements(MApplicationElement searchRoot, int searchFlags,
-			Selector matcher) {
+	public <T> List<T> findElements(MApplicationElement searchRoot, Class<T> clazz,
+			int searchFlags, Selector matcher) {
 		List<T> elements = new ArrayList<T>();
-		findElementsRecursive(searchRoot, matcher, elements, searchFlags);
+		findElementsRecursive(searchRoot, clazz, matcher, elements, searchFlags);
 		return elements;
 	}
 
@@ -261,7 +261,7 @@ public class ModelServiceImpl implements EModelService {
 			List<String> tagsToMatch) {
 		List<T> elements = new ArrayList<T>();
 		ElementMatcher matcher = new ElementMatcher(id, clazz, tagsToMatch);
-		findElementsRecursive(searchRoot, matcher, elements, PRESENTATION);
+		findElementsRecursive(searchRoot, clazz, matcher, elements, PRESENTATION);
 		return elements;
 	}
 

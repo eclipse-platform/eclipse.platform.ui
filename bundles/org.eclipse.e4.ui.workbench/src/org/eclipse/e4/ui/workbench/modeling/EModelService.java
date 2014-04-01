@@ -162,6 +162,9 @@ public interface EModelService {
 	 * @param searchRoot
 	 *            The element at which to start the search. This element must be non-null and is
 	 *            included in the search.
+	 * @param clazz
+	 *            The type of element to be searched for. If non-null this also defines the return
+	 *            type of the List.
 	 * @param searchFlags
 	 *            A bitwise combination of the following constants:
 	 *            <ul>
@@ -188,8 +191,8 @@ public interface EModelService {
 	 * 
 	 * @since 1.1
 	 */
-	public <T> List<T> findElements(MApplicationElement searchRoot, int searchFlags,
-			Selector matcher);
+	public <T> List<T> findElements(MApplicationElement searchRoot, Class<T> clazz,
+			int searchFlags, Selector matcher);
 
 	/**
 	 * Returns the first element, recursively searching under the specified search root (inclusive)
