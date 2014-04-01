@@ -19,8 +19,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.commands.MHandler;
-import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
@@ -377,21 +375,6 @@ public class ModelServiceImpl implements EModelService {
 		for (MUIElement snippet : snippets) {
 			if (id.equals(snippet.getElementId())) {
 				return snippet;
-			}
-		}
-
-		return null;
-	}
-
-	@Override
-	public MHandler findHandler(MHandlerContainer handlerContainer, String id) {
-		if (handlerContainer == null || id == null || id.length() == 0) {
-			return null;
-		}
-
-		for (MHandler handler : handlerContainer.getHandlers()) {
-			if (id.equals(handler.getElementId())) {
-				return handler;
 			}
 		}
 
