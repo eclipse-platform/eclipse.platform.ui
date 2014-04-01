@@ -133,8 +133,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	private Map<Object, ICSSValueConverter> valueConverters = null;
 
-	protected HashMap widgetsMap = new HashMap();
-
 	private boolean parseImport;
 
 	private ResourceRegistryKeyFactory keyFactory;
@@ -821,16 +819,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			elt = (Element) element;
 		} else if (elementProvider != null) {
 			elt = elementProvider.getElement(element, this);
-		} else if (elementProvider == null) {
-			Object tmp = widgetsMap.get(element.getClass().getName());
-			Class parent = element.getClass();
-			while (tmp == null && parent != Object.class) {
-				parent = parent.getSuperclass();
-				tmp = widgetsMap.get(parent.getName());
-			}
-			if(tmp != null && tmp instanceof IElementProvider) {
-				elt = ((IElementProvider)tmp).getElement(element, this);
-			}
 		}
 		if (elt != null) {
 			if (elementContext == null) {
@@ -871,9 +859,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	 * classes must call the super implementation.
 	 */
 	protected void handleWidgetDisposed(Object widget) {
-		if (widgetsMap != null) {
-			widgetsMap.remove(widget);
-		}
 		if (elementsContext != null) {
 			elementsContext.remove(widget);
 		}
@@ -986,8 +971,9 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				((CSSStylableElement) element).dispose();
 			}
 		}
+		// FIXME: should dispose element provider and the property handler
+		// providers
 		elementsContext = null;
-		widgetsMap = null;
 		if (resourcesRegistry != null) {
 			resourcesRegistry.dispose();
 		}

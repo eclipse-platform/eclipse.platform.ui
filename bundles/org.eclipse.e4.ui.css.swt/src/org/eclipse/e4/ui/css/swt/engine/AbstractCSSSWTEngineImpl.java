@@ -67,6 +67,7 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 			new CSSSWTApplyStylesListener(display, this);
 		}
 
+		initializeCSSElementProvider();
 		initializeCSSPropertyHandlers();
 		//		SWTElement.setEngine(display, this);
 
@@ -74,6 +75,8 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 	}
 
 	protected abstract void initializeCSSPropertyHandlers();
+
+	protected abstract void initializeCSSElementProvider();
 
 	@Override
 	public IResourcesRegistry getResourcesRegistry() {

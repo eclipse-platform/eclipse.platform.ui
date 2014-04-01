@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -613,6 +614,10 @@ public class ThemeEngine implements IThemeEngine {
 	public void addCSSEngine(CSSEngine cssEngine) {
 		cssEngines.add(cssEngine);
 		resetCurrentTheme();
+	}
+
+	public Collection<CSSEngine> getCSSEngines() {
+		return cssEngines;
 	}
 
 	@Override
