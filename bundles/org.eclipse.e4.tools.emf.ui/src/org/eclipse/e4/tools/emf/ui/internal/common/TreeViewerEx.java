@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 396902
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 396902, Bug 431847
  ******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common;
@@ -48,12 +48,13 @@ public class TreeViewerEx extends TreeViewer {
 					E4XMIResource xmiResource = (E4XMIResource) ((EObject) modelProvider.getRoot().get(0)).eResource();
 					ArrayList<Object> newElements = new ArrayList<Object>();
 					ObservableListTreeContentProvider provider = (ObservableListTreeContentProvider) getContentProvider();
+					Object[] children = new Object[] { modelProvider.getRoot().get(0) };
 					for (String id : elementsIds) {
 						EObject eObject = xmiResource.getEObject(id);
 						if (eObject != null) {
 							newElements.add(eObject);
 							// force tree node creation
-							getFirstMatchingItem(eObject, provider, provider.getChildren(getInput()));
+							getFirstMatchingItem(eObject, provider, children);
 						}
 					}
 					ArrayList<Object> newSelected = new ArrayList<Object>();
@@ -62,14 +63,14 @@ public class TreeViewerEx extends TreeViewer {
 						if (eObject != null) {
 							newSelected.add(eObject);
 							// force tree node creation
-							getFirstMatchingItem(eObject, provider, provider.getChildren(getInput()));
+							getFirstMatchingItem(eObject, provider, children);
 						}
 					}
 					setExpandedElements(newElements.toArray(new Object[0]));
 					setSelection(new StructuredSelection(newSelected));
 
 					// update our stored id values
-					documentAboutToBeChanged(event);
+					reloadIds(modelProvider);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -78,6 +79,10 @@ public class TreeViewerEx extends TreeViewer {
 
 			@Override
 			public void documentAboutToBeChanged(DocumentEvent event) {
+				reloadIds(modelProvider);
+			}
+
+			private void reloadIds(final IModelResource modelProvider) {
 				try {
 					// Stash XmiIds
 					Object[] elements = getExpandedElements();
