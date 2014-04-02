@@ -10,7 +10,7 @@
  *     Wim Jongman <wim.jongman@remainsoftware.com> - Maintenance
  *     Marco Descher <marco@descher.at> - Bug395982, 426653, 422465
  *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
- *     Steven Spungin <steven@spungin.tv> - Bug 431755
+ *     Steven Spungin <steven@spungin.tv> - Bug 396902, 431755
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
@@ -390,13 +390,14 @@ public class ModelEditor {
 
 		fragment = modelProvider.getRoot().get(0) instanceof MModelFragments;
 
+		// For Bug 396902, create this before creating the Form tab
+		emfDocumentProvider = new EMFDocumentResourceMediator(modelProvider);
+
 		editorTabFolder = new CTabFolder(composite, SWT.BOTTOM);
 		CTabItem item = new CTabItem(editorTabFolder, SWT.NONE);
 		item.setText(messages.ModelEditor_Form);
 		item.setControl(createFormTab(editorTabFolder));
 		item.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_application_form));
-
-		emfDocumentProvider = new EMFDocumentResourceMediator(modelProvider);
 
 		item = new CTabItem(editorTabFolder, SWT.NONE);
 		item.setText(messages.ModelEditor_XMI);
@@ -996,7 +997,7 @@ public class ModelEditor {
 			FilteredTree viewParent = new FilteredTree(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter(), true);
 			tempViewer = viewParent.getViewer();
 		} else {
-			tempViewer = new TreeViewer(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+			tempViewer = new TreeViewerEx(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL, emfDocumentProvider, modelProvider);
 		}
 		final TreeViewer viewer = tempViewer;
 
