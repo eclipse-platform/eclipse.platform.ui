@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Maxime Porhel <maxime.porhel@obeo.fr> Obeo - Bug 410426
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 426535
+ *     Maxime Porhel <maxime.porhel@obeo.fr> Obeo - Bug 431778
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -96,12 +97,13 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	public static final String POST_PROCESSING_FUNCTION = "ToolBarManagerRenderer.postProcess.func"; //$NON-NLS-1$
 	public static final String POST_PROCESSING_DISPOSE = "ToolBarManagerRenderer.postProcess.dispose"; //$NON-NLS-1$
 	public static final String UPDATE_VARS = "ToolBarManagerRenderer.updateVars"; //$NON-NLS-1$
+	private static final String DISPOSE_ADDED = "ToolBarManagerRenderer.disposeAdded"; //$NON-NLS-1$
 
 	/**
 	 * This is a persistedState 'key' which can be used by the renderer
 	 * implementation to decide that a user interface element has been hidden by
 	 * the user
-	 *
+	 * 
 	 */
 	// TODO migrate to IPresentationEngine after the Luna release
 	public static final String HIDDEN_BY_USER = "HIDDEN_BY_USER"; //$NON-NLS-1$
@@ -459,10 +461,36 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	 * @param elementId
 	 */
 	public void processContribution(MToolBar toolbarModel, String elementId) {
+
+		ToolBarManager manager = getManager(toolbarModel);
+		if (manager != null && manager.getControl() != null) {
+			addCleanupDisposeListener(toolbarModel, manager.getControl());
+		}
+
 		final ArrayList<MToolBarContribution> toContribute = new ArrayList<MToolBarContribution>();
 		ContributionsAnalyzer.XXXgatherToolBarContributions(toolbarModel,
 				application.getToolBarContributions(), elementId, toContribute);
 		generateContributions(toolbarModel, toContribute);
+	}
+
+	/**
+	 * @param manager
+	 * @param control
+	 */
+	private void addCleanupDisposeListener(final MToolBar toolbarModel,
+			ToolBar control) {
+
+		if (!toolbarModel.getTags().contains(DISPOSE_ADDED)) {
+			toolbarModel.getTags().add(DISPOSE_ADDED);
+			control.addDisposeListener(new DisposeListener() {
+				@Override
+				public void widgetDisposed(DisposeEvent e) {
+					cleanUp(toolbarModel);
+					toolbarModel.getTags().remove(DISPOSE_ADDED);
+				}
+			});
+		}
+
 	}
 
 	/**
@@ -571,13 +599,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		bar.setData(manager);
 		bar.setData(AbstractPartRenderer.OWNING_ME, element);
 		bar.getShell().layout(new Control[] { bar }, SWT.DEFER);
-		bar.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				cleanUp((MToolBar) element);
-				toolbarMenu = null;
-			}
-		});
 		return bar;
 	}
 
@@ -1040,7 +1061,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 	/**
 	 * Removes the IPresentationEngine.HIDDEN_BY_USER from the toolbars
-	 *
+	 * 
 	 * @param toolbarModel
 	 */
 	private void removeHiddenByUserTags(MToolBar toolbarModel) {
