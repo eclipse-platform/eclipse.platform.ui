@@ -105,6 +105,14 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 	}
 
 	private void add(MTrimBar trimBar, int idx, IContributionItem item) {
+		// Special check to make sure that new additions are *before* the SPACER
+		if (idx == -1) {
+			MUIElement spacer = modelService.find(WorkbenchWindow.PERSPECTIVE_SPACER_ID, trimBar);
+			if (spacer != null) {
+				idx = trimBar.getChildren().indexOf(spacer);
+			}
+		}
+
 		if (item instanceof IToolBarContributionItem) {
 			IToolBarManager mgr = ((IToolBarContributionItem) item).getToolBarManager();
 			if (!(mgr instanceof ToolBarManager)) {

@@ -202,6 +202,11 @@ import org.osgi.service.event.EventHandler;
  */
 public class WorkbenchWindow implements IWorkbenchWindow {
 
+	/**
+	 * The 'elementId' of the spacer used to right-align it in the trim
+	 */
+	public static final String PERSPECTIVE_SPACER_ID = "PerspectiveSpacer"; //$NON-NLS-1$
+
 	private static final String MAIN_TOOLBAR_ID = "org.eclipse.ui.main.toolbar"; //$NON-NLS-1$
 	private static final String COMMAND_ID_TOGGLE_COOLBAR = "org.eclipse.ui.ToggleCoolbarAction"; //$NON-NLS-1$
 
@@ -806,6 +811,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	void populateTopTrimContributions() {
 		getCoolBarManager2().update(true);
+		getCoolBarManager2().add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 
 		final MTrimBar trimBar = getTopTrim();
 		// TODO why aren't these added as trim contributions
@@ -821,10 +827,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		 * and so on, buttons which are normally placed at the beginning of the
 		 * trimbar (left) would be moved to the end of it (right).)
 		 */
-		MToolControl spacerControl = (MToolControl) modelService.find("PerspectiveSpacer", model); //$NON-NLS-1$
+		MToolControl spacerControl = (MToolControl) modelService.find(PERSPECTIVE_SPACER_ID, model);
 		if (spacerControl == null) {
 			spacerControl = modelService.createModelElement(MToolControl.class);
-			spacerControl.setElementId("PerspectiveSpacer"); //$NON-NLS-1$
+			spacerControl.setElementId(PERSPECTIVE_SPACER_ID);
 			spacerControl
 					.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
 			spacerControl.getTags().add(TrimBarLayout.SPACER);
@@ -833,7 +839,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		MToolControl switcherControl = (MToolControl) modelService.find(
 				"PerspectiveSwitcher", model); //$NON-NLS-1$
-		if (switcherControl == null) {
+		if (switcherControl == null && getWindowConfigurer().getShowPerspectiveBar()) {
 			switcherControl = modelService.createModelElement(MToolControl.class);
 			switcherControl.setToBeRendered(getWindowConfigurer().getShowPerspectiveBar());
 			switcherControl.setElementId("PerspectiveSwitcher"); //$NON-NLS-1$
@@ -841,6 +847,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			switcherControl
 					.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
 			trimBar.getChildren().add(switcherControl);
+		} else if (switcherControl != null && !getWindowConfigurer().getShowPerspectiveBar()) {
+			trimBar.getChildren().remove(switcherControl);
 		}
 
 		// render now after everything has been added so contributions can be
