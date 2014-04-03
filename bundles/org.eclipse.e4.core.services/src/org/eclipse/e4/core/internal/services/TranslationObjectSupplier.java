@@ -34,7 +34,6 @@ import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.osgi.service.localization.BundleLocalization;
 import org.osgi.service.log.LogService;
 
-@SuppressWarnings({ "restriction" })
 public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 
 	private static LogService logService = ServicesActivator.getDefault().getLogService();
@@ -88,17 +87,11 @@ public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 		try {
 			this.locale = locale == null ? Locale.getDefault() : ResourceBundleHelper
 					.toLocale(locale);
-		} catch (IllegalArgumentException e) {
-			// parsing the locale String to a Locale failed because of invalid String, use the
-			// default locale
-			if (logService != null)
-				logService.log(LogService.LOG_ERROR, e.getMessage()
-						+ " - Default Locale will be used instead."); //$NON-NLS-1$
-			this.locale = Locale.getDefault();
 		} catch (Exception e) {
 			// parsing the locale String to a Locale failed, so we use the default Locale
 			if (logService != null)
-				logService.log(LogService.LOG_ERROR, "Invalid locale", e); //$NON-NLS-1$
+				logService.log(LogService.LOG_ERROR, "Invalid locale format: " + locale //$NON-NLS-1$
+						+ " - Default Locale will be used instead.", e); //$NON-NLS-1$
 			this.locale = Locale.getDefault();
 		}
 

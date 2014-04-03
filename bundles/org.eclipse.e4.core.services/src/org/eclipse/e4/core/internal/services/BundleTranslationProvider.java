@@ -15,6 +15,7 @@ import java.util.ResourceBundle;
 import javax.inject.Inject;
 import org.eclipse.e4.core.services.translation.ResourceBundleProvider;
 import org.eclipse.e4.core.services.translation.TranslationService;
+import org.osgi.service.log.LogService;
 
 public class BundleTranslationProvider extends TranslationService {
 
@@ -26,9 +27,21 @@ public class BundleTranslationProvider extends TranslationService {
 		if (provider == null)
 			return key;
 
-		ResourceBundle resourceBundle = ResourceBundleHelper.getResourceBundleForUri(
-				contributorURI, ResourceBundleHelper.toLocale(locale), provider);
-		return getResourceString(key, resourceBundle);
+		try {
+			ResourceBundle resourceBundle = ResourceBundleHelper.getResourceBundleForUri(
+					contributorURI, ResourceBundleHelper.toLocale(locale), provider);
+			return getResourceString(key, resourceBundle);
+		} catch (Exception e) {
+			// an error occurred on trying to retrieve the translation for the given key
+			// for improved fault tolerance we will log the error and return the key
+			LogService logService = ServicesActivator.getDefault().getLogService();
+			if (logService != null)
+				logService.log(LogService.LOG_ERROR,
+						"Error retrieving the translation for key=" + key //$NON-NLS-1$
+								+ " and contributorURI=" + contributorURI, e); //$NON-NLS-1$
+
+			return key;
+		}
 	}
 
 }

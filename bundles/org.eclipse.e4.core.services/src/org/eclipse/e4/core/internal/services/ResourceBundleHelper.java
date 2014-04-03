@@ -477,14 +477,18 @@ public class ResourceBundleHelper {
 	 * 
 	 * @param str
 	 *            the locale String to convert
-	 * @return a Locale that matches the specified locale String or <code>null</code> if the
-	 *         specified String is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if the String is an invalid format
+	 * @return a Locale that matches the specified locale String. If the given input String is
+	 *         <code>null</code> or can not be parsed because of an invalid format,
+	 *         {@link Locale#getDefault()} will be returned.
 	 */
 	public static Locale toLocale(String str) {
+		LogService logService = ServicesActivator.getDefault().getLogService();
+
 		if (str == null) {
-			return null;
+			if (logService != null)
+				logService.log(LogService.LOG_ERROR, "Given locale String is null"
+						+ " - Default Locale will be used instead."); //$NON-NLS-1$
+			return Locale.getDefault();
 		}
 
 		String language = ""; //$NON-NLS-1$
@@ -494,15 +498,24 @@ public class ResourceBundleHelper {
 		String[] localeParts = str.split("_"); //$NON-NLS-1$
 		if (localeParts.length == 0 || localeParts.length > 3
 				|| (localeParts.length == 1 && localeParts[0].length() == 0)) {
-			throw new IllegalArgumentException("Invalid locale format: " + str); //$NON-NLS-1$
+			if (logService != null)
+				logService.log(LogService.LOG_ERROR, "Invalid locale format: " + str
+						+ " - Default Locale will be used instead."); //$NON-NLS-1$
+			return Locale.getDefault();
 		} else {
 			if (localeParts[0].length() == 1 || localeParts[0].length() > 2) {
-				throw new IllegalArgumentException("Invalid locale format: " + str); //$NON-NLS-1$
+				if (logService != null)
+					logService.log(LogService.LOG_ERROR, "Invalid locale format: " + str
+							+ " - Default Locale will be used instead."); //$NON-NLS-1$
+				return Locale.getDefault();
 			} else if (localeParts[0].length() == 2) {
 				char ch0 = localeParts[0].charAt(0);
 				char ch1 = localeParts[0].charAt(1);
 				if (ch0 < 'a' || ch0 > 'z' || ch1 < 'a' || ch1 > 'z') {
-					throw new IllegalArgumentException("Invalid locale format: " + str); //$NON-NLS-1$
+					if (logService != null)
+						logService.log(LogService.LOG_ERROR, "Invalid locale format: " + str
+								+ " - Default Locale will be used instead."); //$NON-NLS-1$
+					return Locale.getDefault();
 				}
 			}
 
@@ -510,12 +523,18 @@ public class ResourceBundleHelper {
 
 			if (localeParts.length > 1) {
 				if (localeParts[1].length() == 1 || localeParts[1].length() > 2) {
-					throw new IllegalArgumentException("Invalid locale format: " + str); //$NON-NLS-1$
+					if (logService != null)
+						logService.log(LogService.LOG_ERROR, "Invalid locale format: " + str
+								+ " - Only language part will be used to create the Locale."); //$NON-NLS-1$
+					return new Locale(language);
 				} else if (localeParts[1].length() == 2) {
 					char ch3 = localeParts[1].charAt(0);
 					char ch4 = localeParts[1].charAt(1);
 					if (ch3 < 'A' || ch3 > 'Z' || ch4 < 'A' || ch4 > 'Z') {
-						throw new IllegalArgumentException("Invalid locale format: " + str); //$NON-NLS-1$
+						if (logService != null)
+							logService.log(LogService.LOG_ERROR, "Invalid locale format: " + str
+									+ " - Only language part will be used to create the Locale."); //$NON-NLS-1$
+						return new Locale(language);
 					}
 				}
 
@@ -524,7 +543,13 @@ public class ResourceBundleHelper {
 
 			if (localeParts.length == 3) {
 				if (localeParts[0].length() == 0 && localeParts[1].length() == 0) {
-					throw new IllegalArgumentException("Invalid locale format: " + str); //$NON-NLS-1$
+					if (logService != null)
+						logService
+								.log(LogService.LOG_ERROR,
+										"Invalid locale format: "
+												+ str
+												+ " - Only language and country part will be used to create the Locale."); //$NON-NLS-1$
+					return new Locale(language, country);
 				}
 				variant = localeParts[2];
 			}
