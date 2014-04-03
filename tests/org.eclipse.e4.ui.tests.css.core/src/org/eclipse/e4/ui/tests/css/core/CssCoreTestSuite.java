@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Winkler <stefan@winklerweb.net> - Bug 430052 
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.core;
 
@@ -15,6 +16,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.e4.ui.tests.css.core.parser.CascadeTest;
 import org.eclipse.e4.ui.tests.css.core.parser.FontFaceRulesTest;
+import org.eclipse.e4.ui.tests.css.core.parser.ImportTest;
 import org.eclipse.e4.ui.tests.css.core.parser.RGBColorImplTest;
 import org.eclipse.e4.ui.tests.css.core.parser.SelectorTest;
 import org.eclipse.e4.ui.tests.css.core.parser.StyleRuleTest;
@@ -38,6 +40,7 @@ public class CssCoreTestSuite extends TestSuite {
 		addTestSuite(ValueTest.class);
 		addTestSuite(SelectorTest.class);
 		addTestSuite(CSSEngineTest.class);
+		addTestSuite(ImportTest.class);
 		// $JUnit-END$
 	}
 }
