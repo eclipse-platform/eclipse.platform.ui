@@ -83,9 +83,9 @@ public class LocaleChangeServiceImpl implements ILocaleChangeService {
 
 			// fire event
 			broker.post(LOCALE_CHANGE, locale);
-		} catch (IllegalArgumentException e) {
-			// parsing the locale String to a Locale failed because of invalid
-			// String - there is no locale change performed
+		} catch (Exception e) {
+			// performing a locale update failed
+			// there is no locale change performed
 			if (logService != null)
 				logService.log(LogService.LOG_ERROR, e.getMessage()
 						+ " - No Locale change will be performed."); //$NON-NLS-1$
