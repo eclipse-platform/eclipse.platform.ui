@@ -109,6 +109,14 @@ public class Java7Handler extends NativeHandler {
 
 		else if (DOS) {
 			try {
+				if (!exists) {
+					return info;
+				}
+
+				// use canonical file to get the correct case of filename
+				String canonicalName = new File(fileName).getCanonicalFile().getName();
+				info.setName(canonicalName);
+
 				// To be consistent with the native implementation we do not follow a symbolic link
 				//  and return back the information about the target. Instead, we provide the information
 				//  about the symbolic link itself whether it exists or not.
