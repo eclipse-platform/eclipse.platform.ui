@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Hochstein (Freescale) - Bug 407522 - Perspective reset not working correctly
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422040
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422040, 431992
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -335,8 +335,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		public void setActionSet(ActionSet actionSet) {
 			this.actionSet = actionSet;
-			if (actionSet != null)
+			if (actionSet != null) {
 				actionSet.addItem(this);
+			}
 		}
 
 		public ActionSet getActionSet() {
@@ -597,15 +598,17 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			TreeManager.TreeItemLabelProvider implements ITableLabelProvider {
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
-			if (columnIndex == 0)
+			if (columnIndex == 0) {
 				return this.getImage(element);
+			}
 			return null;
 		}
 
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			if (columnIndex == 1)
+			if (columnIndex == 1) {
 				return ((ShortcutItem) element).getDescription();
+			}
 			return this.getText(element);
 		}
 
@@ -638,22 +641,25 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			Category category = (Category) element;
 
 			if (category.getChildren().isEmpty()
-					&& category.getContributionItems().isEmpty())
+					&& category.getContributionItems().isEmpty()) {
 				return false;
+			}
 
 			// To be checked, any sub-Category can be checked.
 			for (Iterator i = category.getChildren().iterator(); i.hasNext();) {
 				Category child = (Category) i.next();
-				if (isChecked(child))
+				if (isChecked(child)) {
 					return true;
+				}
 			}
 
 			// To be checked, any ShortcutItem can be checked.
 			for (Iterator i = category.getContributionItems().iterator(); i
 					.hasNext();) {
 				DisplayItem item = (DisplayItem) i.next();
-				if (item.getState())
+				if (item.getState()) {
 					return true;
+				}
 			}
 
 			return false;
@@ -670,25 +676,30 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 			for (Iterator i = category.getChildren().iterator(); i.hasNext();) {
 				Category child = (Category) i.next();
-				if (isGrayed(child))
+				if (isGrayed(child)) {
 					return true;
-				if (isChecked(child))
+				}
+				if (isChecked(child)) {
 					hasChecked = true;
-				else
+				} else {
 					hasUnchecked = true;
-				if (hasChecked && hasUnchecked)
+				}
+				if (hasChecked && hasUnchecked) {
 					return true;
+				}
 			}
 
 			for (Iterator i = category.getContributionItems().iterator(); i
 					.hasNext();) {
 				DisplayItem item = (DisplayItem) i.next();
-				if (item.getState())
+				if (item.getState()) {
 					hasChecked = true;
-				else
+				} else {
 					hasUnchecked = true;
-				if (hasChecked && hasUnchecked)
+				}
+				if (hasChecked && hasUnchecked) {
 					return true;
+				}
 			}
 
 			return false;
@@ -858,8 +869,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		@Override
 		protected Object getModelElement(Event event) {
 			TableItem tableItem = table.getItem(new Point(event.x, event.y));
-			if (tableItem == null)
+			if (tableItem == null) {
 				return null;
+			}
 			return tableItem.getData();
 		}
 	}
@@ -976,11 +988,12 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 										new Object[] { actionSet.descriptor.getId(),
 												actionSet.descriptor.getLabel() });
 		
-								if (commandGroupList == null)
+								if (commandGroupList == null) {
 									commandGroupList = commandGroupLink;
-								else
+								} else {
 									commandGroupList = Util.createList(
 											commandGroupList, commandGroupLink);
+								}
 							}
 							
 							commandGroupList = NLS.bind(
@@ -1035,20 +1048,22 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 							|| (item.getActionSet().isActive());
 
 					if (bindings.length > 0) {
-						if (available)
+						if (available) {
 							text = NLS.bind(
 									WorkbenchMessages.HideItems_keyBindings,
 									keybindings);
-						else
+						} else {
 							text = NLS
 									.bind(
 											WorkbenchMessages.HideItems_keyBindingsActionSetUnavailable,
 											keybindings);
+						}
 					} else {
-						if (available)
+						if (available) {
 							text = WorkbenchMessages.HideItems_noKeyBindings;
-						else
+						} else {
 							text = WorkbenchMessages.HideItems_noKeyBindingsActionSetUnavailable;
+						}
 					}
 
 					// Construct link to go to the preferences page for key
@@ -1132,8 +1147,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		protected Object getModelElement(Event event) {
 			org.eclipse.swt.widgets.TreeItem treeItem = tree.getItem(new Point(
 					event.x, event.y));
-			if (treeItem == null)
+			if (treeItem == null) {
 				return null;
+			}
 			return treeItem.getData();
 		}
 	}
@@ -1153,10 +1169,12 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		@Override
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
-			if (!(element instanceof DisplayItem))
+			if (!(element instanceof DisplayItem)) {
 				return false;
-			if (actionSet == null)
+			}
+			if (actionSet == null) {
 				return false;
+			}
 			return includeInSetStructure((DisplayItem) element, actionSet);
 		}
 	}
@@ -1694,9 +1712,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				.setContentProvider(new TreeManager.TreeItemContentProvider() {
 					@Override
 					public Object[] getChildren(Object parentElement) {
-						if (parentElement instanceof Category)
+						if (parentElement instanceof Category) {
 							return ((Category) parentElement)
 									.getContributionItems().toArray();
+						}
 						return super.getChildren(parentElement);
 					}
 				});
@@ -1821,8 +1840,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
-				if (selectedActionSet[0] == null)
+				if (selectedActionSet[0] == null) {
 					return false;
+				}
 				return includeInSetStructure((DisplayItem) element,
 						selectedActionSet[0]);
 			}
@@ -2020,12 +2040,15 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		treeManager.addListener(new CheckListener() {
 			@Override
 			public void checkChanged(TreeItem changedItem) {
-				if (!(changedItem instanceof DisplayItem))
+				if (!(changedItem instanceof DisplayItem)) {
 					return;
-				if (!changedItem.getState())
+				}
+				if (!changedItem.getState()) {
 					return;
-				if (isAvailable((DisplayItem) changedItem))
+				}
+				if (isAvailable((DisplayItem) changedItem)) {
 					return;
+				}
 				changedItem.setCheckState(false);
 			}
 		});
@@ -2172,12 +2195,15 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		treeManager.addListener(new CheckListener() {
 			@Override
 			public void checkChanged(TreeItem changedItem) {
-				if (!(changedItem instanceof DisplayItem))
+				if (!(changedItem instanceof DisplayItem)) {
 					return;
-				if (!changedItem.getState())
+				}
+				if (!changedItem.getState()) {
 					return;
-				if (isAvailable((DisplayItem) changedItem))
+				}
+				if (isAvailable((DisplayItem) changedItem)) {
 					return;
+				}
 				changedItem.setCheckState(false);
 			}
 		});
@@ -2345,12 +2371,14 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 */
 	private static boolean includeInSetStructure(DisplayItem item,
 			ActionSet set) {
-		if (item.actionSet != null && item.actionSet.equals(set))
+		if (item.actionSet != null && item.actionSet.equals(set)) {
 			return true;
+		}
 		for (Iterator i = item.getChildren().iterator(); i.hasNext();) {
 			DisplayItem child = (DisplayItem) i.next();
-			if (includeInSetStructure(child, set))
+			if (includeInSetStructure(child, set)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -2361,12 +2389,14 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 *         set, that that action set is available
 	 */
 	private static boolean isAvailable(DisplayItem item) {
-		if (item.getActionSet() != null && item.getActionSet().isActive())
+		if (item.getActionSet() != null && item.getActionSet().isActive()) {
 			return true;
+		}
 		for (Iterator i = item.getChildren().iterator(); i.hasNext();) {
 			DisplayItem child = (DisplayItem) i.next();
-			if (isAvailable(child))
+			if (isAvailable(child)) {
 				return true;
+			}
 		}
 		return item.getIContributionItem() != null && item.getIContributionItem().isVisible();
 	}
@@ -2378,23 +2408,27 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 *         be displayed in order to display the child
 	 */
 	private static boolean isEffectivelyAvailable(DisplayItem item, ViewerFilter filter) {
-		if (!isAvailable(item))
+		if (!isAvailable(item)) {
 			return false;
+		}
 		final List children = item.getChildren();
-		if (children.isEmpty())
+		if (children.isEmpty()) {
 			return true;
+		}
 		for (Iterator i = children.iterator(); i.hasNext();) {
 			DisplayItem child = (DisplayItem) i.next();
-			if(filter != null && !filter.select(null, null, child))
+			if(filter != null && !filter.select(null, null, child)) {
 				continue;
+			}
 			if (isAvailable(child)) {
 				return true;
 			}
 		}
 		for (Iterator i = children.iterator(); i.hasNext();) {
 			DisplayItem child = (DisplayItem) i.next();
-			if(filter != null && !filter.select(null, null, child))
+			if(filter != null && !filter.select(null, null, child)) {
 				continue;
+			}
 			if (isEffectivelyAvailable(child, filter)) {
 				return true;
 			}
@@ -2431,8 +2465,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		IBindingService bindingService = (IBindingService) window
 				.getService(IBindingService.class);
 
-		if (!(bindingService instanceof BindingService))
+		if (!(bindingService instanceof BindingService)) {
 			return new Binding[0];
+		}
 
 		String id = getCommandID(item);
 		String param = getParamID(item);
@@ -2447,10 +2482,12 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		for (Iterator i = allBindings.iterator(); i.hasNext();) {
 			Binding binding = (Binding) i.next();
-			if (binding.getParameterizedCommand() == null)
+			if (binding.getParameterizedCommand() == null) {
 				continue;
-			if (binding.getParameterizedCommand().getId() == null)
+			}
+			if (binding.getParameterizedCommand().getId() == null) {
 				continue;
+			}
 			if (binding.getParameterizedCommand().getId().equals(id)) {
 				if (param == null) {
 					// We found it!
@@ -2530,8 +2567,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				.getActivePage()).getActionSets();
 		List initiallyAvailableActionSets = Arrays.asList(actionSetDescriptors);
 
-		for (int i = 0; i < sets.length; i++) {
-			ActionSetDescriptor actionSetDesc = (ActionSetDescriptor) sets[i];
+		for (IActionSetDescriptor set : sets) {
+			ActionSetDescriptor actionSetDesc = (ActionSetDescriptor) set;
 			if (WorkbenchActivityHelper.filterItem(actionSetDesc)) {
 				continue;
 			}
@@ -2544,7 +2581,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	public String getToolbarLabel(String actionSetId) {
 		if (actionSetId == null)
+		 {
 			return ""; //$NON-NLS-1$
+		}
 		ActionSetRegistry registry = WorkbenchPlugin.getDefault().getActionSetRegistry();
 		IActionSetDescriptor findActionSet = registry.findActionSet(actionSetId);
 		if (findActionSet != null) {
@@ -2586,8 +2625,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		parentCategory.addChild(category);
 
 		Object[] wizards = element.getWizards();
-		for (int i = 0; i < wizards.length; i++) {
-			WorkbenchWizardElement wizard = (WorkbenchWizardElement) wizards[i];
+		for (Object wizard2 : wizards) {
+			WorkbenchWizardElement wizard = (WorkbenchWizardElement) wizard2;
 
 			ShortcutItem item = new ShortcutItem(wizard.getLabel(), wizard);
 			item.setLabel(wizard.getLabel());
@@ -2601,8 +2640,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		}
 		// @issue should not pass in null
 		IWizardCategory[] children = element.getCategories();
-		for (int i = 0; i < children.length; i++) {
-			initializeNewWizardsMenu(menu, category, children[i], activeIds);
+		for (IWizardCategory element2 : children) {
+			initializeNewWizardsMenu(menu, category, element2, activeIds);
 		}
 	}
 
@@ -2616,8 +2655,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		IWizardCategory[] wizardCategories = wizardCollection.getCategories();
 		List activeIDs = Arrays.asList(perspective.getNewWizardShortcuts());
 
-		for (int i = 0; i < wizardCategories.length; i++) {
-			IWizardCategory element = wizardCategories[i];
+		for (IWizardCategory element : wizardCategories) {
 			if (WorkbenchActivityHelper.filterItem(element)) {
 				continue;
 			}
@@ -2638,8 +2676,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		List activeIds = Arrays.asList(perspective.getPerspectiveShortcuts());
 
-		for (int i = 0; i < persps.length; i++) {
-			IPerspectiveDescriptor perspective = persps[i];
+		for (IPerspectiveDescriptor perspective : persps) {
 			if (WorkbenchActivityHelper.filterItem(perspective)) {
 				continue;
 			}
@@ -2666,8 +2703,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		List activeIds = Arrays.asList(perspective.getShowViewShortcuts());
 
-		for (int i = 0; i < categories.length; i++) {
-			IViewCategory category = categories[i];
+		for (IViewCategory category : categories) {
 			if (WorkbenchActivityHelper.filterItem(category)) {
 				continue;
 			}
@@ -2678,8 +2714,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			IViewDescriptor[] views = category.getViews();
 
 			if (views != null) {
-				for (int j = 0; j < views.length; j++) {
-					IViewDescriptor view = views[j];
+				for (IViewDescriptor view : views) {
 					if (view.getId().equals(IIntroConstants.INTRO_VIEW_ID)) {
 						continue;
 					}
@@ -2807,8 +2842,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		if (object instanceof ActionContributionItem) {
 			ActionContributionItem item = (ActionContributionItem) object;
 			IAction action = item.getAction();
-			if (action == null)
+			if (action == null) {
 				return null;
+			}
 			if (action instanceof NewWizardShortcutAction) {
 				return IWorkbenchCommandConstants.FILE_NEW;
 			}
@@ -2845,8 +2881,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		}
 		if (object instanceof IContributionItem) {
 			String id = ((IContributionItem) object).getId();
-			if (id != null)
+			if (id != null) {
 				return id;
+			}
 			return object.getClass().getName();
 		}
 		return null;	//couldn't determine the id
@@ -2897,8 +2934,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		if (item instanceof ActionContributionItem) {
 			ActionContributionItem aci = (ActionContributionItem) item;
 			IAction action = aci.getAction();
-			if (action == null)
+			if (action == null) {
 				return null;
+			}
 			return action.getDescription();
 		}
 		if (item instanceof ActionSetContributionItem) {
@@ -2940,20 +2978,23 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	private static boolean isNewWizard(DisplayItem item) {
-		if (!(item instanceof ShortcutItem))
+		if (!(item instanceof ShortcutItem)) {
 			return false;
+		}
 		return ((ShortcutItem) item).getDescriptor() instanceof IWizardDescriptor;
 	}
 
 	private static boolean isShowPerspective(DisplayItem item) {
-		if (!(item instanceof ShortcutItem))
+		if (!(item instanceof ShortcutItem)) {
 			return false;
+		}
 		return ((ShortcutItem) item).getDescriptor() instanceof IPerspectiveDescriptor;
 	}
 
 	private static boolean isShowView(DisplayItem item) {
-		if (!(item instanceof ShortcutItem))
+		if (!(item instanceof ShortcutItem)) {
 			return false;
+		}
 		return ((ShortcutItem) item).getDescriptor() instanceof IViewDescriptor;
 	}
 
@@ -2981,8 +3022,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	private static void makeAllContributionsVisible(IContributionManager manager) {
 		IContributionItem[] items = manager.getItems();
 
-		for (int i = 0; i < items.length; i++) {
-			makeContributionVisible(items[i]);
+		for (IContributionItem item : items) {
+			makeContributionVisible(item);
 		}
 	}
 
@@ -3197,8 +3238,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	private void createToolbarEntries(MTrimBar toolbar, DisplayItem parent) {
-		if (toolbar == null)
+		if (toolbar == null) {
 			return;
+		}
 		for (MTrimElement trimElement : toolbar.getChildren()) {
 			if (trimElement instanceof MToolBar) {
 				MToolBar toolBar = (MToolBar) trimElement;
@@ -3226,8 +3268,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	private void createToolbarEntries(MToolBar toolbar, DisplayItem parent) {
-		if (toolbar == null)
+		if (toolbar == null) {
 			return;
+		}
 		for (MToolBarElement element : toolbar.getChildren()) {
 			IContributionItem contributionItem = toolbarMngrRenderer.getContribution(element);
 			if (element instanceof MToolBarSeparator
@@ -3375,8 +3418,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	private void getChangedIds(DisplayItem item, List invisible, List visible) {
-		if (item instanceof ShortcutItem)
+		if (item instanceof ShortcutItem) {
 			return;
+		}
 
 		if (item == wizards || item == perspectives || item == views) {
 			// We always want the top-level wizard/perspective/view shortcuts to
@@ -3385,20 +3429,22 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		} else if (item.getChildren().size() > 0) {
 			if (item.isChangedByUser()) {
 				String id = getCommandID(item);
-				if (item.getState())
+				if (item.getState()) {
 					visible.add(id);
-				else
+				} else {
 					invisible.add(id);
+				}
 			}
 			for (Iterator i = item.getChildren().iterator(); i.hasNext();) {
 				getChangedIds((DisplayItem) i.next(), invisible, visible);
 			}
 		} else if (item.isChangedByUser()) {
 			String id = getCommandID(item);
-			if (item.getState())
+			if (item.getState()) {
 				visible.add(id);
-			else
+			} else {
 				invisible.add(id);
+			}
 		}
 	}
 
@@ -3410,8 +3456,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		getChangedIds(items, changedAndInvisible, changedAndVisible);
 
 		// Remove explicitly 'visible' elements from the current list
-		for (Iterator<String> iterator = changedAndVisible.iterator(); iterator.hasNext();) {
-			String id = iterator.next();
+		for (String id : changedAndVisible) {
 			if (id != null && currentHidden.contains(prefix + id)) {
 				hasChanges = true;
 				((WorkbenchPage) window.getActivePage()).removeHiddenItems(prefix + id);
@@ -3419,8 +3464,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		}
 
 		// Add explicitly 'hidden' elements to the current list
-		for (Iterator<String> iterator = changedAndInvisible.iterator(); iterator.hasNext();) {
-			String id = iterator.next();
+		for (String id : changedAndInvisible) {
 			if (id != null && !currentHidden.contains(prefix + id)) {
 				hasChanges = true;
 				((WorkbenchPage) window.getActivePage()).addHiddenItems(prefix + id);
@@ -3449,8 +3493,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		for (Iterator i = actionSets.iterator(); i.hasNext();) {
 			ActionSet actionSet = (ActionSet) i.next();
-			if (!actionSet.wasChanged())
+			if (!actionSet.wasChanged()) {
 				continue;
+			}
 			
 			// Something has changed
 			requiresUpdate = true;
@@ -3578,9 +3623,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		boolean checkedFound = false;
 		boolean uncheckedFound = false;
 
-		for (int i = 0; i < children.length; i++) {
-			if (filter.select(null, null, children[i])) {
-				TreeItem child = (TreeItem) children[i];
+		for (Object element : children) {
+			if (filter.select(null, null, element)) {
+				TreeItem child = (TreeItem) element;
 				switch (getLeafStates(child, provider, filter)) {
 				case TreeManager.CHECKSTATE_CHECKED: {
 					checkedFound = true;
@@ -3601,9 +3646,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			}
 		}
 
-		if (!checkedFound && !uncheckedFound)
+		if (!checkedFound && !uncheckedFound) {
 			return item.getState() ? TreeManager.CHECKSTATE_CHECKED
 					: TreeManager.CHECKSTATE_UNCHECKED;
+		}
 		return checkedFound ? TreeManager.CHECKSTATE_CHECKED
 				: TreeManager.CHECKSTATE_UNCHECKED;
 	}
@@ -3631,10 +3677,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		Object[] children = provider.getChildren(item);
 		boolean isLeaf = true;
 
-		for (int i = 0; i < children.length; i++) {
+		for (Object element : children) {
 			isLeaf = false;
-			if (filter.select(null, null, children[i])) {
-				DisplayItem child = (DisplayItem) children[i];
+			if (filter.select(null, null, element)) {
+				DisplayItem child = (DisplayItem) element;
 				setAllLeafs(child, value, provider, filter);
 			}
 		}
