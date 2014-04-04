@@ -99,6 +99,12 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		// Breakpoints view default settings
 		prefs.setDefault(IDebugPreferenceConstants.BREAKPOINTS_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
 		
+		// Expression View
+		prefs.setDefault(IDebugPreferenceConstants.EXPRESSIONS_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
+
+		// Module View
+		prefs.setDefault(IDebugPreferenceConstants.MODULES_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
+
 		// Variable/Expression view default settings
 		prefs.setDefault(IDebugUIConstants.ID_VARIABLE_VIEW + '+' + "org.eclipse.debug.ui.ShowDetailPaneAction", true); //$NON-NLS-1$
 		prefs.setDefault(IDebugUIConstants.ID_EXPRESSION_VIEW + '+' + "org.eclipse.debug.ui.ShowDetailPaneAction", true); //$NON-NLS-1$
