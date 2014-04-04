@@ -185,7 +185,8 @@ public interface IPresentationEngine {
 	public static final String CUSTOM_RENDERER_KEY = "Custom Renderer"; //$NON-NLS-1$	
 
 	/**
-	 * It enables the DND support for the element when it is added to the element's tags list
+	 * This is the tag name that enables the DND support for the element. The element's tags list
+	 * has to be updated with the tag in order to enable the DND processing.
 	 *
 	 * @since 1.1
 	 */
