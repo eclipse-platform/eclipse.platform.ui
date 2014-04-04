@@ -512,17 +512,17 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		/**
 		 * Changes the state of all pseudo-descendant ShortcutItems, causing the
 		 * effective state of this Category and all its sub-Categories to match.
-		 * 
+		 *
 		 * @param state
 		 *            The state to set this branch to.
 		 */
 		public void setItemsState(boolean state) {
-			for (Iterator<ShortcutItem> i = contributionItems.iterator(); i.hasNext();) {
-				DisplayItem item = i.next();
-				item.setCheckState(state);
+			for (ShortcutItem shortcutItem : contributionItems) {
+				shortcutItem.setCheckState(state);
 			}
-			for (Iterator i = getChildren().iterator(); i.hasNext();) {
-				Category category = (Category) i.next();
+
+			for (Object o : getChildren()) {
+				Category category = (Category) o;
 				category.setItemsState(state);
 			}
 		}
@@ -532,7 +532,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * Represents an action set, under which ContributionItems exist. There is
 	 * no inherent hierarchy in action sets - they exist independent of one
 	 * another, simply contribution menu items and tool bar items.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	private class ActionSet {
