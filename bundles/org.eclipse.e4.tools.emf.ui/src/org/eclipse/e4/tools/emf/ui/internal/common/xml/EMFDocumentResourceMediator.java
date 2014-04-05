@@ -1,3 +1,8 @@
+/*******************************************************************************
+ * Contributors:
+ *     Steven Spungin <steven@spungin.tv> - Bug 431735
+ *******************************************************************************/
+
 package org.eclipse.e4.tools.emf.ui.internal.common.xml;
 
 import java.io.IOException;
@@ -10,9 +15,12 @@ import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IRegion;
 import org.xml.sax.InputSource;
 
 public class EMFDocumentResourceMediator {
@@ -92,4 +100,27 @@ public class EMFDocumentResourceMediator {
 		}
 		return writer.toString();
 	}
+
+	/**
+	 * @param object
+	 * @return The region for the start tag of the EObject, or null if not found.
+	 */
+	public IRegion findStartTag(EObject object) {
+		if (object == null){
+			return null;
+		}
+		E4XMIResource root = (E4XMIResource) ((EObject) modelResource.getRoot().get(0)).eResource();
+		String xmiId = root.getID(object);
+
+		FindReplaceDocumentAdapter find = new FindReplaceDocumentAdapter(document);
+		IRegion region;
+		try {
+			//TODO This will not work if the element has '<' or '>' in an attribute value
+			region = find.find(0, "<.*?" + xmiId + ".*?>", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+			return region;
+		} catch (BadLocationException e) {
+			return null;
+		}
+	}
+
 }

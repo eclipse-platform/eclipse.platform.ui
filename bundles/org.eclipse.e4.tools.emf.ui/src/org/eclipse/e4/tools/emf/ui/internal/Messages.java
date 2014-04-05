@@ -8,6 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Marco Descher <marco@descher.at> - Bug 395982, 396975, 426653
+ *     Steven Spungin <steven@spungin.tv> - Bug 431735
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal;
 
@@ -644,4 +645,22 @@ public class Messages {
 	public String ModelEditor_ExtractFragment_NoParentId;
 	public String KeyBindingEditor_SequenceLowercase;
 	public String ModelTooling_CommandId_tooltip;
+
+	public static String ModelEditor_goto_list;
+	public static String ModelEditor_goto_xmi;
+	public static String EmfUtil_ex_attribute_not_found;
+	public static String ListTab_0;
+	public static String ListTab_1;
+	public static String ListTab_2;
+	public static String ListTab_3;
+	public static String ListTab_4;
+	public static String ListTab_5;
+	public static String ListTab_6;
+	public static String ListTab_7;
+	public static String ListTab_8;
+	public static String ListTab_9;
+	public static String ListTab_col_id;
+	public static String ListTab_col_item;
+	public static String ListTab_col_label;
+	public static String ListTab_col_go;
 }

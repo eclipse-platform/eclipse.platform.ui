@@ -10,11 +10,12 @@
  *     Wim Jongman <wim.jongman@remainsoftware.com> - Maintenance
  *     Marco Descher <marco@descher.at> - Bug395982, 426653, 422465
  *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
- *     Steven Spungin <steven@spungin.tv> - Bug 396902, 431755
+ *     Steven Spungin <steven@spungin.tv> - Bug 396902, 431755, 431735
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +41,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -103,6 +105,9 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.TrimContributionEdi
 import org.eclipse.e4.tools.emf.ui.internal.common.component.TrimmedWindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.WizardDialogEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.EmfUtil;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.IGotoObject;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.ListTab;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationAddons;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationCategoriesEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationWindowEditor;
@@ -186,7 +191,9 @@ import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
@@ -234,7 +241,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TreeItem;
 
-public class ModelEditor {
+public class ModelEditor implements IGotoObject {
 	private static final String ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED = "org.eclipse.e4.tools.modeleditor.filteredtree.enabled.xmitab.disabled";//$NON-NLS-1$
 
 	public static final String CSS_CLASS_KEY = "org.eclipse.e4.ui.css.CssClassName"; //$NON-NLS-1$
@@ -265,6 +272,10 @@ public class ModelEditor {
 	public static final String VIRTUAL_SNIPPETS = ModelEditor.class.getName() + "VIRTUAL_SNIPPETS"; //$NON-NLS-1$
 
 	private static final int VERTICAL_RULER_WIDTH = 20;
+
+	public static final int TAB_FORM = 0;
+	public static final int TAB_XMI = 1;
+	public static final int TAB_LIST = 2;
 
 	private Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
 	private Map<String, AbstractComponentEditor> virtualEditors = new HashMap<String, AbstractComponentEditor>();
@@ -297,6 +308,10 @@ public class ModelEditor {
 	private boolean showXMIId;
 
 	@Inject
+	@Preference(nodePath = "org.eclipse.e4.tools.emf.ui")
+	IEclipsePreferences preferences;
+
+	@Inject
 	@Optional
 	private IExtensionLookup extensionLookup;
 
@@ -325,6 +340,8 @@ public class ModelEditor {
 	private boolean mod1Down = false;
 
 	private boolean saving;
+
+	private ListTab listTab;
 
 	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project, final IResourcePool resourcePool) {
 		this.resourcePool = resourcePool;
@@ -412,6 +429,8 @@ public class ModelEditor {
 			}
 		});
 
+		tab_list_show(preferences.getBoolean("tab-list-show", false)); //$NON-NLS-1$
+
 		editorTabFolder.setSelection(0);
 	}
 
@@ -485,7 +504,7 @@ public class ModelEditor {
 		});
 
 		String property = System.getProperty(ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED);
-		if (property != null) {
+		if (property != null || preferences.getBoolean("tab-form-search-show", false)) { //$NON-NLS-1$
 			sourceViewer.setEditable(false);
 			sourceViewer.getTextWidget().setEnabled(false);
 		}
@@ -852,6 +871,31 @@ public class ModelEditor {
 				};
 
 				manager.add(expandAction);
+
+				if (s.getFirstElement() instanceof EObject) {
+					manager.add(new Separator());
+					final EObject el = (EObject) s.getFirstElement();
+					Action gotoXmiAction = new Action(Messages.ModelEditor_goto_xmi) {
+						@Override
+						public void run() {
+							gotoEObject(TAB_XMI, el);
+						}
+					};
+					manager.add(gotoXmiAction);
+
+					if (listTab != null) {
+						if (EmfUtil.getAttribute(el, "elementId") != null) { //$NON-NLS-1$
+							Action gotoListAction = new Action(Messages.ModelEditor_goto_list) {
+								@Override
+								public void run() {
+									gotoEObject(TAB_LIST, el);
+								}
+							};
+							manager.add(gotoListAction);
+						}
+					}
+
+				}
 			}
 		});
 
@@ -993,7 +1037,7 @@ public class ModelEditor {
 
 		TreeViewer tempViewer = null;
 		String property = System.getProperty(ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED);
-		if (property != null) {
+		if (property != null || preferences.getBoolean("tab-form-search-show", false)) { //$NON-NLS-1$
 			FilteredTree viewParent = new FilteredTree(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter(), true);
 			tempViewer = viewParent.getViewer();
 		} else {
@@ -1232,6 +1276,29 @@ public class ModelEditor {
 
 		registerEditor(FragmentPackageImpl.Literals.MODEL_FRAGMENTS, ContextInjectionFactory.make(ModelFragmentsEditor.class, context));
 		registerEditor(FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT, ContextInjectionFactory.make(StringModelFragment.class, context));
+	}
+
+	@Inject
+	public void tab_list_show(@Preference("tab-list-show") Boolean show) {
+		if (editorTabFolder == null) {
+			return;
+		}
+		if (show == false) {
+			if (listTab != null) {
+				// remove the tab from the folder
+				listTab.getTabItem().dispose();
+				ContextInjectionFactory.uninject(listTab, listTab.getContext());
+				listTab = null;
+			}
+		} else {
+			if (listTab == null) {
+				IEclipseContext child = context.createChild();
+				child.set(CTabFolder.class, editorTabFolder);
+				child.set(EMFDocumentResourceMediator.class, emfDocumentProvider);
+				child.set(IGotoObject.class, this);
+				listTab = ContextInjectionFactory.make(ListTab.class, child);
+			}
+		}
 	}
 
 	@Inject
@@ -1719,6 +1786,82 @@ public class ModelEditor {
 
 			return false;
 		}
+	}
+
+	@Override
+	public void gotoEObject(int targetHint, EObject object) {
+		if (object == null) {
+			// do nothing
+		} else {
+			switch (targetHint) {
+			case TAB_FORM:
+				// make sure tree node has been instantiated
+				ObservableListTreeContentProvider provider = (ObservableListTreeContentProvider) viewer.getContentProvider();
+				getFirstMatchingItem(object, provider, provider.getChildren(viewer.getInput()));
+
+				viewer.reveal(object);
+				viewer.setSelection(new StructuredSelection(object));
+				editorTabFolder.setSelection(0);
+				break;
+			case TAB_XMI:
+				editorTabFolder.setSelection(1);
+				// model was not updating in xmi document (selection listener
+				// was not firing from programatic setSelection()
+				emfDocumentProvider.updateFromEMF();
+
+				try {
+					// select the entire start tag
+					IRegion region = emfDocumentProvider.findStartTag(object);
+					if (region != null) {
+						sourceViewer.setSelection(new TextSelection(region.getOffset(), region.getLength()), true);
+					} else {
+						sourceViewer.setSelection(new TextSelection(0, 0), true);
+					}
+					//					String elementId = (String) EmfUtil.getAttributeValue(object, "elementId"); //$NON-NLS-1$
+					// if (elementId != null && elementId.isEmpty() == false) {
+					// int loc2 = emfDocumentProvider.indexOf(object);
+					// loc = emfDocumentProvider.getDocument().search(0,
+					// elementId, true, true, true);
+					// if (loc >= 0) {
+					// ISelection selection = new TextSelection(loc,
+					// elementId.length());
+					// sourceViewer.setSelection(selection, true);
+					// } else {
+					// sourceViewer.setSelection(new TextSelection(0, 0));
+					// }
+					// } else {
+					// sourceViewer.setSelection(new TextSelection(0, 0));
+					// }
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
+			case TAB_LIST:
+				if (listTab != null) {
+					editorTabFolder.setSelection(Arrays.asList(editorTabFolder.getItems()).indexOf(listTab.getTabItem()));
+					listTab.getViewer().setSelection(new StructuredSelection(object), true);
+				}
+				break;
+			default:
+				break;
+			}
+			// }
+		}
+	}
+
+	// This will ensure the provider has created the tree node (so we can reveal
+	// it).
+	private Object getFirstMatchingItem(EObject target, ObservableListTreeContentProvider provider, Object[] items) {
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] == target) {
+				return items[i];
+			}
+			Object found = getFirstMatchingItem(target, provider, provider.getChildren(items[i]));
+			if (found != null) {
+				return found;
+			}
+		}
+		return null;
 	}
 
 }
