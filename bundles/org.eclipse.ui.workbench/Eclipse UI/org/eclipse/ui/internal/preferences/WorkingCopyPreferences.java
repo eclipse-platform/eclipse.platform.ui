@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Timo Kinnunen <timo.kinnunen@gmail.com> - Bug 431924
  *******************************************************************************/
 
 package org.eclipse.ui.internal.preferences;
@@ -14,9 +15,8 @@ package org.eclipse.ui.internal.preferences;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-
+import java.util.Map.Entry;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferenceNodeVisitor;
@@ -39,7 +39,7 @@ public class WorkingCopyPreferences extends EventManager implements
 
 	private static final String TRUE = "true"; //$NON-NLS-1$
 
-	private final Map temporarySettings;
+	private final Map<String, Object> temporarySettings;
 	private final IEclipsePreferences original;
 	private boolean removed = false;
 	private org.eclipse.ui.preferences.WorkingCopyManager manager;
@@ -52,7 +52,7 @@ public class WorkingCopyPreferences extends EventManager implements
 		super();
 		this.original = original;
 		this.manager = manager;
-		this.temporarySettings = new HashMap();
+		this.temporarySettings = new HashMap<String, Object>();
 	}
 
 	/*
@@ -228,9 +228,9 @@ public class WorkingCopyPreferences extends EventManager implements
 	@Override
 	public void clear() {
 		checkRemoved();
-		for (Iterator i = temporarySettings.keySet().iterator(); i.hasNext();) {
-			String key = (String) i.next();
-			Object value = temporarySettings.get(key);
+		for (Entry<String, Object> entry : temporarySettings.entrySet()) {
+			String key = entry.getKey();
+			Object value = entry.getValue();
 			if (value != null) {
 				temporarySettings.put(key, null);
 				firePropertyChangeEvent(key, value, null);
@@ -468,9 +468,16 @@ public class WorkingCopyPreferences extends EventManager implements
 	@Override
 	public String[] keys() throws BackingStoreException {
 		checkRemoved();
-		HashSet allKeys = new HashSet(Arrays.asList(getOriginal().keys()));
-		allKeys.addAll(temporarySettings.keySet());
-		return (String[]) allKeys.toArray(new String[allKeys.size()]);
+		HashSet<String> allKeys = new HashSet<String>(Arrays.asList(getOriginal().keys()));
+		for (Entry<String, Object> entry : temporarySettings.entrySet()) {
+			String key = entry.getKey();
+			if (entry.getValue() != null) {
+				allKeys.add(key);
+			} else {
+				allKeys.remove(key);
+			}
+		}
+		return allKeys.toArray(new String[allKeys.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -530,9 +537,9 @@ public class WorkingCopyPreferences extends EventManager implements
 		}
 		checkRemoved();
 		// update underlying preferences
-		for (Iterator i = temporarySettings.keySet().iterator(); i.hasNext();) {
-			String key = (String) i.next();
-			String value = (String) temporarySettings.get(key);
+		for (Entry<String, Object> entry : temporarySettings.entrySet()) {
+			String key = entry.getKey();
+			String value = (String) entry.getValue();
 			if (value == null) {
 				getOriginal().remove(key);
 			} else {
