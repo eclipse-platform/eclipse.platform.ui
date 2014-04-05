@@ -277,6 +277,7 @@ public interface IJobManager {
 	 * and can result in concurrency problems in all clients that use the suspended rule.
 	 * @see #suspend(ISchedulingRule, IProgressMonitor)
 	 */
+	@Deprecated
 	public void resume(ISchedulingRule rule);
 
 	/**
@@ -377,6 +378,7 @@ public interface IJobManager {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #resume(ISchedulingRule)
 	 */
+	@Deprecated
 	public void suspend(ISchedulingRule rule, IProgressMonitor monitor);
 
 	/**

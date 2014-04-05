@@ -358,6 +358,7 @@ class ThreadJob extends Job {
 	/** (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public IStatus run(IProgressMonitor monitor) {
 		synchronized (this) {
 			isRunning = true;
@@ -386,6 +387,7 @@ class ThreadJob extends Job {
 	/* (non-javadoc)
 	 * For debugging purposes only
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer("ThreadJob"); //$NON-NLS-1$
 		buf.append('(').append(realJob).append(',').append(getRuleStack()).append(')');
@@ -442,6 +444,7 @@ class ThreadJob extends Job {
 	/**
 	 * ThreadJobs are one-shot jobs, and they must ignore all attempts to schedule them. 
 	 */
+	@Override
 	public boolean shouldSchedule() {
 		return false;
 	}

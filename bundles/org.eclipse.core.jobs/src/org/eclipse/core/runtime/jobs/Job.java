@@ -153,6 +153,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 */
 	public static Job create(String name, final IJobFunction function) {
 		return new Job(name) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				return function.run(monitor);
 			}
@@ -176,6 +177,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * @param listener the listener to be added.
 	 */
+	@Override
 	public final void addJobChangeListener(IJobChangeListener listener) {
 		super.addJobChangeListener(listener);
 	}
@@ -195,6 +197,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @return <code>true</code> if this job belongs to the given family, and 
 	 * <code>false</code> otherwise.
 	 */
+	@Override
 	public boolean belongsTo(Object family) {
 		return false;
 	}
@@ -209,6 +212,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @return <code>false</code> if the job is currently running (and thus may not
 	 * respond to cancelation), and <code>true</code> in all other cases.
 	 */
+	@Override
 	public final boolean cancel() {
 		return super.cancel();
 	}
@@ -221,6 +225,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * a cancelation request is made.  This default implementation does nothing.
 	 * @since 3.3
 	 */
+	@Override
 	protected void canceling() {
 		//default implementation does nothing
 	}
@@ -240,6 +245,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @see #ASYNC_FINISH
 	 * @see #run(IProgressMonitor)
 	 */
+	@Override
 	public final void done(IStatus result) {
 		super.done(result);
 	}
@@ -250,6 +256,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * @return the name of this job
 	 */
+	@Override
 	public final String getName() {
 		return super.getName();
 	}
@@ -261,6 +268,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @return the priority of the job.  One of INTERACTIVE, SHORT, LONG, BUILD, 
 	 * 	or DECORATE.
 	 */
+	@Override
 	public final int getPriority() {
 		return super.getPriority();
 	}
@@ -274,6 +282,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 *     or <code>null</code> if this job has no such property
 	 * @see #setProperty(QualifiedName, Object)
 	 */
+	@Override
 	public final Object getProperty(QualifiedName key) {
 		return super.getProperty(key);
 	}
@@ -284,6 +293,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @return the result of this job's last run, or <code>null</code> if this
 	 * job has never finished running.
 	 */
+	@Override
 	public final IStatus getResult() {
 		return super.getResult();
 	}
@@ -296,6 +306,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @see ISchedulingRule
 	 * @see #setRule(ISchedulingRule)
 	 */
+	@Override
 	public final ISchedulingRule getRule() {
 		return super.getRule();
 	}
@@ -318,6 +329,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * @return the job state
 	 */
+	@Override
 	public final int getState() {
 		return super.getState();
 	}
@@ -328,6 +340,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @return the thread this job is running in, or <code>null</code>
 	 * if this job is not running or the thread is unknown.
 	 */
+	@Override
 	public final Thread getThread() {
 		return super.getThread();
 	}
@@ -342,6 +355,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @see #getRule()
 	 * @see #isSystem()
 	 */
+	@Override
 	public final boolean isBlocking() {
 		return super.isBlocking();
 	}
@@ -356,6 +370,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * <code>false</code> otherwise.
 	 * @see #setSystem(boolean)
 	 */
+	@Override
 	public final boolean isSystem() {
 		return super.isSystem();
 	}
@@ -369,6 +384,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * <code>false</code> otherwise.
 	 * @see #setUser(boolean)
 	 */
+	@Override
 	public final boolean isUser() {
 		return super.isUser();
 	}
@@ -399,6 +415,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @see ILock
 	 * @see IJobManager#suspend()
 	 */
+	@Override
 	public final void join() throws InterruptedException {
 		super.join();
 	}
@@ -409,6 +426,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * @param listener the listener to be removed
 	 */
+	@Override
 	public final void removeJobChangeListener(IJobChangeListener listener) {
 		super.removeJobChangeListener(listener);
 	}
@@ -439,6 +457,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @see #ASYNC_FINISH
 	 * @see #done(IStatus)
 	 */
+	@Override
 	protected abstract IStatus run(IProgressMonitor monitor);
 
 	/**
@@ -476,6 +495,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @param delay a time delay in milliseconds before the job should run
 	 * @see ISchedulingRule
 	 */
+	@Override
 	public final void schedule(long delay) {
 		super.schedule(delay);
 	}
@@ -490,6 +510,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * @param name the name of the job.
 	 */
+	@Override
 	public final void setName(String name) {
 		super.setName(name);
 	}
@@ -502,6 +523,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @param priority the new job priority.  One of
 	 * INTERACTIVE, SHORT, LONG, BUILD, or DECORATE.
 	 */
+	@Override
 	public final void setPriority(int priority) {
 		super.setPriority(priority);
 	}
@@ -523,6 +545,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @param ticks the number of work ticks allocated from the
 	 *    parent monitor, or {@link IProgressMonitor#UNKNOWN}
 	 */
+	@Override
 	public final void setProgressGroup(IProgressMonitor group, int ticks) {
 		super.setProgressGroup(group, ticks);
 	}
@@ -546,6 +569,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 *     or <code>null</code> if the property is to be removed
 	 * @see #getProperty(QualifiedName)
 	 */
+	@Override
 	public void setProperty(QualifiedName key, Object value) {
 		super.setProperty(key, value);
 	}
@@ -558,6 +582,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * should have no scheduling rule
 	 * @see #getRule()
 	 */
+	@Override
 	public final void setRule(ISchedulingRule rule) {
 		super.setRule(rule);
 	}
@@ -573,6 +598,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * <code>false</code> otherwise.
 	 * @see #isSystem()
 	 */
+	@Override
 	public final void setSystem(boolean value) {
 		super.setSystem(value);
 	}
@@ -586,6 +612,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * <code>false</code> otherwise.
 	 * @see #isUser()
 	 */
+	@Override
 	public final void setUser(boolean value) {
 		super.setUser(value);
 	}
@@ -602,6 +629,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @see #ASYNC_FINISH
 	 * @see #run(IProgressMonitor)
 	 */
+	@Override
 	public final void setThread(Thread thread) {
 		super.setThread(thread);
 	}
@@ -643,6 +671,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @return <code>true</code> if the job manager should schedule this job
 	 *   and <code>false</code> otherwise
 	 */
+	@Override
 	public boolean shouldSchedule() {
 		return true;
 	}
@@ -659,6 +688,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * be put to sleep), and <code>true</code> in all other cases
 	 * @see #wakeUp()
 	 */
+	@Override
 	public final boolean sleep() {
 		return super.sleep();
 	}
@@ -667,6 +697,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * Returns a string representation of this job to be used for debugging purposes only.
 	 * @since org.eclipse.core.jobs 3.5
 	 */
+	@Override
 	public String toString() {
 		return super.toString();
 	}
@@ -694,6 +725,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @param delay the number of milliseconds to delay
 	 * @see #sleep()
 	 */
+	@Override
 	public final void wakeUp(long delay) {
 		super.wakeUp(delay);
 	}
@@ -723,6 +755,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @see Job#getRule()
 	 * @see Job#isBlocking()
 	 */
+	@Override
 	public Job yieldRule(IProgressMonitor monitor) {
 		return super.yieldRule(monitor);
 	}

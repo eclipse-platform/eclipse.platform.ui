@@ -25,31 +25,37 @@ class JobListeners {
 	}
 
 	private final IListenerDoit aboutToRun = new IListenerDoit() {
+		@Override
 		public void notify(IJobChangeListener listener, IJobChangeEvent event) {
 			listener.aboutToRun(event);
 		}
 	};
 	private final IListenerDoit awake = new IListenerDoit() {
+		@Override
 		public void notify(IJobChangeListener listener, IJobChangeEvent event) {
 			listener.awake(event);
 		}
 	};
 	private final IListenerDoit done = new IListenerDoit() {
+		@Override
 		public void notify(IJobChangeListener listener, IJobChangeEvent event) {
 			listener.done(event);
 		}
 	};
 	private final IListenerDoit running = new IListenerDoit() {
+		@Override
 		public void notify(IJobChangeListener listener, IJobChangeEvent event) {
 			listener.running(event);
 		}
 	};
 	private final IListenerDoit scheduled = new IListenerDoit() {
+		@Override
 		public void notify(IJobChangeListener listener, IJobChangeEvent event) {
 			listener.scheduled(event);
 		}
 	};
 	private final IListenerDoit sleeping = new IListenerDoit() {
+		@Override
 		public void notify(IJobChangeListener listener, IJobChangeEvent event) {
 			listener.sleeping(event);
 		}

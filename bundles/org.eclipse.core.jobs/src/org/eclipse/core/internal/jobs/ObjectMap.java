@@ -53,6 +53,7 @@ public class ObjectMap implements Map {
 	/**
 	 * @see Map#clear()
 	 */
+	@Override
 	public void clear() {
 		elements = null;
 		count = 0;
@@ -61,6 +62,7 @@ public class ObjectMap implements Map {
 	/**
 	 * @see java.lang.Object#clone()
 	 */
+	@Override
 	public Object clone() {
 		return new ObjectMap(this);
 	}
@@ -68,6 +70,7 @@ public class ObjectMap implements Map {
 	/**
 	 * @see Map#containsKey(java.lang.Object)
 	 */
+	@Override
 	public boolean containsKey(Object key) {
 		if (elements == null || count == 0)
 			return false;
@@ -80,6 +83,7 @@ public class ObjectMap implements Map {
 	/**
 	 * @see Map#containsValue(java.lang.Object)
 	 */
+	@Override
 	public boolean containsValue(Object value) {
 		if (elements == null || count == 0)
 			return false;
@@ -96,6 +100,7 @@ public class ObjectMap implements Map {
 	 * specification in the Map interface. The returned collection will not
 	 * be bound to this map and will not remain in sync with this map.
 	 */
+	@Override
 	public Set entrySet() {
 		return count == 0 ? Collections.EMPTY_SET : toHashMap().entrySet();
 	}
@@ -103,6 +108,7 @@ public class ObjectMap implements Map {
 	/**
 	 * @see Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof Map))
 			return false;
@@ -124,6 +130,7 @@ public class ObjectMap implements Map {
 	/**
 	 * @see Map#get(java.lang.Object)
 	 */
+	@Override
 	public Object get(Object key) {
 		if (elements == null || count == 0)
 			return null;
@@ -146,6 +153,7 @@ public class ObjectMap implements Map {
 	/**
 	 * @see Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		int hash = 0;
 		for (int i = 0; i < elements.length; i = i + 2) {
@@ -159,6 +167,7 @@ public class ObjectMap implements Map {
 	/**
 	 * @see Map#isEmpty()
 	 */
+	@Override
 	public boolean isEmpty() {
 		return count == 0;
 	}
@@ -170,6 +179,7 @@ public class ObjectMap implements Map {
 	 * specification in the Map interface. The returned collection will not
 	 * be bound to this map and will not remain in sync with this map.
 	 */
+	@Override
 	public Set keySet() {
 		Set result = new HashSet(size());
 		for (int i = 0; i < elements.length; i = i + 2) {
@@ -183,6 +193,7 @@ public class ObjectMap implements Map {
 	/**
 	 * @see Map#put(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public Object put(Object key, Object value) {
 		if (key == null)
 			throw new NullPointerException();
@@ -231,6 +242,7 @@ public class ObjectMap implements Map {
 	/**
 	 * @see Map#putAll(java.util.Map)
 	 */
+	@Override
 	public void putAll(Map map) {
 		for (Iterator i = map.keySet().iterator(); i.hasNext();) {
 			Object key = i.next();
@@ -242,6 +254,7 @@ public class ObjectMap implements Map {
 	/**
 	 * @see Map#remove(java.lang.Object)
 	 */
+	@Override
 	public Object remove(Object key) {
 		if (elements == null || count == 0)
 			return null;
@@ -260,6 +273,7 @@ public class ObjectMap implements Map {
 	/**
 	 * @see Map#size()
 	 */
+	@Override
 	public int size() {
 		return count;
 	}
@@ -284,6 +298,7 @@ public class ObjectMap implements Map {
 	 * specification in the Map interface. The returned collection will not
 	 * be bound to this map and will not remain in sync with this map.
 	 */
+	@Override
 	public Collection values() {
 		Set result = new HashSet(size());
 		for (int i = 1; i < elements.length; i = i + 2) {

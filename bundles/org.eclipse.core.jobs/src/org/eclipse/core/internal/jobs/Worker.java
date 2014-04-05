@@ -44,6 +44,7 @@ public class Worker extends Thread {
 		return new Status(IStatus.ERROR, JobManager.PI_JOBS, JobManager.PLUGIN_ERROR, message, t);
 	}
 
+	@Override
 	public void run() {
 		setPriority(Thread.NORM_PRIORITY);
 		try {

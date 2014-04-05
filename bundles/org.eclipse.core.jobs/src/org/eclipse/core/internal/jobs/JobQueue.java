@@ -46,6 +46,7 @@ public final class JobQueue {
 		this.allowPriorityOvertaking = allowPriorityOvertaking;
 		//compareTo on dummy is never called
 		dummy = new InternalJob("Queue-Head") {//$NON-NLS-1$
+			@Override
 			public IStatus run(IProgressMonitor m) {
 				return Status.OK_STATUS;
 			}
@@ -146,6 +147,7 @@ public final class JobQueue {
 		return new Iterator() {
 			InternalJob pointer = dummy;
 
+			@Override
 			public boolean hasNext() {
 				if (pointer.previous() == dummy)
 					pointer = null;
@@ -154,10 +156,12 @@ public final class JobQueue {
 				return pointer != null;
 			}
 
+			@Override
 			public Object next() {
 				return pointer;
 			}
 
+			@Override
 			public void remove() {
 				throw new UnsupportedOperationException();
 			}

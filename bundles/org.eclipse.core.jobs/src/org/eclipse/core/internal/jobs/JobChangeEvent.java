@@ -37,6 +37,7 @@ public class JobChangeEvent implements IJobChangeEvent {
 	/* (non-Javadoc)
 	 * Method declared on IJobChangeEvent
 	 */
+	@Override
 	public long getDelay() {
 		return delay;
 	}
@@ -44,6 +45,7 @@ public class JobChangeEvent implements IJobChangeEvent {
 	/* (non-Javadoc)
 	 * Method declared on IJobChangeEvent
 	 */
+	@Override
 	public Job getJob() {
 		return job;
 	}
@@ -51,6 +53,7 @@ public class JobChangeEvent implements IJobChangeEvent {
 	/* (non-Javadoc)
 	 * Method declared on IJobChangeEvent
 	 */
+	@Override
 	public IStatus getResult() {
 		return result;
 	}

@@ -200,6 +200,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	/* (on-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public final int compareTo(Object otherJob) {
 		return ((InternalJob) otherJob).startTime >= startTime ? 1 : -1;
 	}
@@ -606,6 +607,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * Prints a string-based representation of this job instance. 
 	 * For debugging purposes only.
 	 */
+	@Override
 	public String toString() {
 		return getName() + "(" + jobNumber + ")"; //$NON-NLS-1$//$NON-NLS-2$
 	}

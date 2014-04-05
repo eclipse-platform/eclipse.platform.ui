@@ -74,6 +74,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	/* (non-Javadoc)
 	 * @see Locks.ILock#acquire()
 	 */
+	@Override
 	public void acquire() {
 		//spin until the lock is successfully acquired
 		//NOTE: spinning here allows the UI thread to service pending syncExecs
@@ -95,6 +96,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	/* (non-Javadoc)
 	 * @see Locks.ILock#acquire(long)
 	 */
+	@Override
 	public boolean acquire(long delay) throws InterruptedException {
 		if (Thread.interrupted())
 			throw new InterruptedException();
@@ -135,6 +137,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 */
+	@Override
 	public boolean contains(ISchedulingRule rule) {
 		return rule == this;
 	}
@@ -223,6 +226,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	/* (non-Javadoc)
 	 * @see Locks.ILock#getDepth()
 	 */
+	@Override
 	public int getDepth() {
 		return depth;
 	}
@@ -230,6 +234,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 */
+	@Override
 	public boolean isConflicting(ISchedulingRule rule) {
 		return rule == this;
 	}
@@ -237,6 +242,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	/* (non-Javadoc)
 	 * @see Locks.ILock#release()
 	 */
+	@Override
 	public void release() {
 		if (depth == 0)
 			return;
@@ -283,6 +289,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	/**
 	 * For debugging purposes only.
 	 */
+	@Override
 	public String toString() {
 		return "OrderedLock (" + number + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}

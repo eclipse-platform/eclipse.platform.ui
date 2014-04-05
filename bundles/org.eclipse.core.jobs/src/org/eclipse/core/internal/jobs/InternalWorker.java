@@ -34,6 +34,7 @@ public class InternalWorker extends Thread {
 	* registered, it will check cancelation every 250ms, and if it is canceled it will
 	* interrupt the ThreadJob that is performing a blocking wait. 
 	*/
+	@Override
 	public void run() {
 		int timeout = 0;
 		synchronized (manager.monitorStack) {

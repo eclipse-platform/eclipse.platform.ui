@@ -82,10 +82,12 @@ public class JobManager implements IJobManager {
 	 * Scheduling rule used for validation of client-defined rules.
 	 */
 	private static final ISchedulingRule nullRule = new ISchedulingRule() {
+		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
 
+		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
 		}
@@ -274,6 +276,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#addJobListener(org.eclipse.core.runtime.jobs.IJobChangeListener)
 	 */
+	@Override
 	public void addJobChangeListener(IJobChangeListener listener) {
 		jobListeners.add(listener);
 	}
@@ -281,6 +284,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#beginRule(org.eclipse.core.runtime.jobs.ISchedulingRule, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void beginRule(ISchedulingRule rule, IProgressMonitor monitor) {
 		validateRule(rule);
 		implicitJobs.begin(rule, monitorFor(monitor), false);
@@ -329,6 +333,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#cancel(java.lang.String)
 	 */
+	@Override
 	public void cancel(Object family) {
 		//don't synchronize because cancel calls listeners
 		for (Iterator it = select(family).iterator(); it.hasNext();)
@@ -460,6 +465,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#createProgressGroup()
 	 */
+	@Override
 	public IProgressMonitor createProgressGroup() {
 		if (progressProvider != null)
 			return progressProvider.createProgressGroup();
@@ -469,6 +475,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#currentJob()
 	 */
+	@Override
 	public Job currentJob() {
 		Thread current = Thread.currentThread();
 		if (current instanceof Worker)
@@ -483,6 +490,7 @@ public class JobManager implements IJobManager {
 		return null;
 	}
 
+	@Override
 	public ISchedulingRule currentRule() {
 		//check thread job first, because actual current job may have null rule
 		Job currentJob = implicitJobs.getThreadJob(Thread.currentThread());
@@ -656,6 +664,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#endRule(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 */
+	@Override
 	public void endRule(ISchedulingRule rule) {
 		implicitJobs.end(rule, false);
 	}
@@ -663,6 +672,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#find(java.lang.String)
 	 */
+	@Override
 	public Job[] find(Object family) {
 		List members = select(family);
 		return (Job[]) members.toArray(new Job[members.size()]);
@@ -796,6 +806,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#isIdle()
 	 */
+	@Override
 	public boolean isIdle() {
 		synchronized (lock) {
 			return running.isEmpty() && waiting.isEmpty();
@@ -805,6 +816,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#isSuspended()
 	 */
+	@Override
 	public boolean isSuspended() {
 		synchronized (lock) {
 			return suspended;
@@ -830,6 +842,7 @@ public class JobManager implements IJobManager {
 			//the semaphore will be released when the job is done
 			barrier = new Semaphore(null);
 			listener = new JobChangeAdapter() {
+				@Override
 				public void done(IJobChangeEvent event) {
 					barrier.release();
 				}
@@ -863,6 +876,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see IJobManager#join(String, IProgressMonitor)
 	 */
+	@Override
 	public void join(final Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
 		monitor = monitorFor(monitor);
 		IJobChangeListener listener = null;
@@ -879,6 +893,7 @@ public class JobManager implements IJobManager {
 				if (jobCount == 1)
 					blocking = (Job) jobs.iterator().next();
 				listener = new JobChangeAdapter() {
+					@Override
 					public void done(IJobChangeEvent event) {
 						//don't remove from list if job is being rescheduled
 						if (!((JobChangeEvent) event).reschedule)
@@ -886,6 +901,7 @@ public class JobManager implements IJobManager {
 					}
 
 					//update the list of jobs if new ones are started during the join
+					@Override
 					public void running(IJobChangeEvent event) {
 						Job job = event.getJob();
 						if (job.belongsTo(family))
@@ -893,6 +909,7 @@ public class JobManager implements IJobManager {
 					}
 
 					//update the list of jobs if new ones are scheduled during the join
+					@Override
 					public void scheduled(IJobChangeEvent event) {
 						//don't add to list if job is being rescheduled
 						if (((JobChangeEvent) event).reschedule)
@@ -971,6 +988,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see IJobManager#newLock(java.lang.String)
 	 */
+	@Override
 	public ILock newLock() {
 		return lockManager.newLock();
 	}
@@ -1020,6 +1038,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#removeJobListener(org.eclipse.core.runtime.jobs.IJobChangeListener)
 	 */
+	@Override
 	public void removeJobChangeListener(IJobChangeListener listener) {
 		jobListeners.remove(listener);
 	}
@@ -1060,6 +1079,7 @@ public class JobManager implements IJobManager {
 	/*(non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#resume()
 	 */
+	@Override
 	public final void resume() {
 		synchronized (lock) {
 			suspended = false;
@@ -1072,6 +1092,8 @@ public class JobManager implements IJobManager {
 	 * @deprecated this method should not be used
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#resume(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 */
+	@Deprecated
+	@Override
 	public final void resume(ISchedulingRule rule) {
 		implicitJobs.resume(rule);
 	}
@@ -1190,6 +1212,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see IJobManager#setLockListener(LockListener)
 	 */
+	@Override
 	public void setLockListener(LockListener listener) {
 		lockManager.setLockListener(listener);
 	}
@@ -1215,6 +1238,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see IJobManager#setProgressProvider(IProgressProvider)
 	 */
+	@Override
 	public void setProgressProvider(ProgressProvider provider) {
 		progressProvider = provider;
 	}
@@ -1265,6 +1289,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see IJobManager#sleep(String)
 	 */
+	@Override
 	public void sleep(Object family) {
 		//don't synchronize because sleep calls listeners
 		for (Iterator it = select(family).iterator(); it.hasNext();) {
@@ -1377,6 +1402,7 @@ public class JobManager implements IJobManager {
 		// throwing the OperationCanceledException will return execution to the caller. 
 		IProgressMonitor mon = monitorFor(monitor);
 		ProgressMonitorWrapper nonCanceling = new ProgressMonitorWrapper(mon) {
+			@Override
 			public boolean isCanceled() {
 				// pass-through request
 				getWrappedProgressMonitor().isCanceled();
@@ -1395,6 +1421,7 @@ public class JobManager implements IJobManager {
 			// notifications, and via IJobManager API usage like find(). 
 			// Set a flag to differentiate it from regular ThreadJobs. 
 			ThreadJob threadJob = new ThreadJob(job.getRule()) {
+				@Override
 				boolean isResumingAfterYield() {
 					return true;
 				}
@@ -1531,6 +1558,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#suspend()
 	 */
+	@Override
 	public final void suspend() {
 		synchronized (lock) {
 			suspended = true;
@@ -1541,6 +1569,8 @@ public class JobManager implements IJobManager {
 	 * @deprecated this method should not be used
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#suspend(org.eclipse.core.runtime.jobs.ISchedulingRule, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Deprecated
+	@Override
 	public final void suspend(ISchedulingRule rule, IProgressMonitor monitor) {
 		Assert.isNotNull(rule);
 		implicitJobs.suspend(rule, monitorFor(monitor));
@@ -1549,6 +1579,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#transferRule()
 	 */
+	@Override
 	public void transferRule(ISchedulingRule rule, Thread destinationThread) {
 		implicitJobs.transfer(rule, destinationThread);
 	}
@@ -1601,6 +1632,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see IJobFamily#wakeUp(String)
 	 */
+	@Override
 	public void wakeUp(Object family) {
 		//don't synchronize because wakeUp calls listeners
 		for (Iterator it = select(family).iterator(); it.hasNext();) {

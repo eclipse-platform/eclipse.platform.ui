@@ -34,6 +34,7 @@ public class JobStatus extends Status implements IJobStatus {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobStatus#getJob()
 	 */
+	@Override
 	public Job getJob() {
 		return job;
 	}

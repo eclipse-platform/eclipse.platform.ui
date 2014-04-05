@@ -38,6 +38,7 @@ public class JobActivator implements BundleActivator {
 	/**
 	 * This method is called upon plug-in activation
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		bundleContext = context;
 		JobOSGiUtils.getDefault().openServices();
@@ -50,6 +51,7 @@ public class JobActivator implements BundleActivator {
 	/**
 	 * This method is called when the plug-in is stopped
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		unregisterServices();
 		JobManager.shutdown();

@@ -128,6 +128,7 @@ public class MultiRule implements ISchedulingRule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 */
+	@Override
 	public boolean contains(ISchedulingRule rule) {
 		if (this == rule)
 			return true;
@@ -152,6 +153,7 @@ public class MultiRule implements ISchedulingRule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 */
+	@Override
 	public boolean isConflicting(ISchedulingRule rule) {
 		if (this == rule)
 			return true;
@@ -172,6 +174,7 @@ public class MultiRule implements ISchedulingRule {
 	/*
 	 * For debugging purposes only.
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("MultiRule["); //$NON-NLS-1$

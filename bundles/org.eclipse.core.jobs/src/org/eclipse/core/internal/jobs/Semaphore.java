@@ -53,10 +53,12 @@ public class Semaphore {
 		return false;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		return (runnable == ((Semaphore) obj).runnable);
 	}
 
+	@Override
 	public int hashCode() {
 		return runnable == null ? 0 : runnable.hashCode();
 	}
@@ -67,6 +69,7 @@ public class Semaphore {
 	}
 
 	// for debug only
+	@Override
 	public String toString() {
 		return "Semaphore(" + runnable + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}

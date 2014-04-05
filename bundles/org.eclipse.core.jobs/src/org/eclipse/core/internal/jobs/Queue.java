@@ -167,6 +167,7 @@ public class Queue {
 		return tail > head ? (tail - head) : ((elements.length - head) + tail);
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("["); //$NON-NLS-1$
