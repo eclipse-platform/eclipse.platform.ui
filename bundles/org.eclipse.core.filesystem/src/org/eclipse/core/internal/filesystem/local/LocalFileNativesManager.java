@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
+import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.internal.filesystem.local.unix.UnixFileHandler;
@@ -44,9 +45,8 @@ public class LocalFileNativesManager {
 			DELEGATE = new LocalFileHandler();
 		} else {
 			try {
-				Class c = LocalFileNativesManager.class.getClassLoader().loadClass("org.eclipse.core.internal.filesystem.java7.Java7Handler"); //$NON-NLS-1$
-
-				DELEGATE = (NativeHandler) c.newInstance();
+				Class c = LocalFileNativesManager.class.getClassLoader().loadClass("org.eclipse.core.internal.filesystem.java7.HandlerFactory"); //$NON-NLS-1$
+				DELEGATE = (NativeHandler) c.getMethod("getHandler", null).invoke(null, null); //$NON-NLS-1$
 			} catch (ClassNotFoundException e) {
 				// Class was missing?
 				// Leave the delegate as default
@@ -56,11 +56,14 @@ public class LocalFileNativesManager {
 			} catch (IllegalAccessException e) {
 				// We could not instantiate the object because we have no access
 				// Leave delegate as default
-			} catch (InstantiationException e) {
-				// We could not instantiate the object because of something unexpected
-				// Leave delegate as default
 			} catch (ClassCastException e) {
 				// The handler does not inherit from the correct class
+				// Leave delegate as default
+			} catch (InvocationTargetException e) {
+				// Exception was thrown from the getHandler method
+				// Leave delegate as default
+			} catch (NoSuchMethodException e) {
+				// The getHandler method was not found
 				// Leave delegate as default
 			}
 		}
