@@ -4,13 +4,14 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Stephan Wahlbrink  - Fix for bug 200997.
  *     Danail Nachev - Fix for bug 109898
  *     Mike Moreaty - Fix for bug 289790
  *     Oracle Corporation - Fix for bug 316839
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 432079
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -571,8 +572,8 @@ public class JobManager implements IJobManager {
 
 		// Give running jobs a chance to finish. Wait 0.1 seconds for up to 3 times.
 		if (toCancel != null && toCancel.length > 0) {
-			for (int i = 0; i < toCancel.length; i++) {
-				cancel(toCancel[i]); // cancel jobs outside sync block to avoid deadlock
+			for (Job element : toCancel) {
+				cancel(element); // cancel jobs outside sync block to avoid deadlock
 			}
 
 			for (int waitAttempts = 0; waitAttempts < 3; waitAttempts++) {
@@ -588,8 +589,8 @@ public class JobManager implements IJobManager {
 						stillRunning = (Job[]) running.toArray(new Job[running.size()]);
 					}
 					if (stillRunning != null) {
-						for (int j = 0; j < stillRunning.length; j++) {
-							JobManager.debug("\tJob: " + printJobName(stillRunning[j])); //$NON-NLS-1$
+						for (Job element : stillRunning) {
+							JobManager.debug("\tJob: " + printJobName(element)); //$NON-NLS-1$
 						}
 					}
 				}
@@ -607,8 +608,8 @@ public class JobManager implements IJobManager {
 		}
 		internalWorker.cancel();
 		if (toCancel != null) {
-			for (int i = 0; i < toCancel.length; i++) {
-				String jobName = printJobName(toCancel[i]);
+			for (Job element : toCancel) {
+				String jobName = printJobName(element);
 				//this doesn't need to be translated because it's just being logged
 				String msg = "Job found still running after platform shutdown.  Jobs should be canceled by the plugin that scheduled them during shutdown: " + jobName; //$NON-NLS-1$
 				RuntimeLog.log(new Status(IStatus.WARNING, JobManager.PI_JOBS, JobManager.PLUGIN_ERROR, msg, null));
@@ -1595,9 +1596,9 @@ public class JobManager implements IJobManager {
 			return;
 		if (rule instanceof MultiRule) {
 			ISchedulingRule[] children = ((MultiRule) rule).getChildren();
-			for (int i = 0; i < children.length; i++) {
-				Assert.isLegal(children[i] != rule);
-				validateRule(children[i]);
+			for (ISchedulingRule element : children) {
+				Assert.isLegal(element != rule);
+				validateRule(element);
 			}
 		}
 		//contains method must be reflexive

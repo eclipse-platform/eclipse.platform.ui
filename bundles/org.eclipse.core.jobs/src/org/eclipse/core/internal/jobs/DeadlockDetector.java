@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 432079
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -92,18 +93,18 @@ class DeadlockDetector {
 		if (blocking.length == 0)
 			return false;
 		boolean inCycle = false;
-		for (int i = 0; i < blocking.length; i++) {
+		for (Thread element : blocking) {
 			//if we have already visited the given thread, then we found a cycle
-			if (deadlockedThreads.contains(blocking[i])) {
+			if (deadlockedThreads.contains(element)) {
 				inCycle = true;
 			} else {
 				//otherwise, add the thread to our list and recurse deeper
-				deadlockedThreads.add(blocking[i]);
+				deadlockedThreads.add(element);
 				//if the thread is not part of a cycle, remove it from the list
-				if (addCycleThreads(deadlockedThreads, blocking[i]))
+				if (addCycleThreads(deadlockedThreads, element))
 					inCycle = true;
 				else
-					deadlockedThreads.remove(blocking[i]);
+					deadlockedThreads.remove(element);
 			}
 		}
 		return inCycle;
@@ -406,8 +407,8 @@ class DeadlockDetector {
 		// Update the graph to indicate that the locks will now be suspended.
 		// To indicate that the lock will be suspended, we set the thread to wait for the lock.
 		// When the lock is forced to be released, the entry will be cleared.
-		for (int i = 0; i < locksToSuspend.length; i++)
-			setToWait(deadlock.getCandidate(), locksToSuspend[i], true);
+		for (ISchedulingRule element : locksToSuspend)
+			setToWait(deadlock.getCandidate(), element, true);
 		return deadlock;
 	}
 
@@ -533,8 +534,8 @@ class DeadlockDetector {
 		 * the index of the remaining locks is unchanged. Store the number of empty columns.
 		 */
 		for (int j = emptyColumns.length - 1; j >= 0; j--) {
-			for (int i = 0; i < graph.length; i++) {
-				if (emptyColumns[j] && (graph[i][j] != NO_STATE)) {
+			for (int[] element : graph) {
+				if (emptyColumns[j] && (element[j] != NO_STATE)) {
 					emptyColumns[j] = false;
 					break;
 				}
@@ -598,11 +599,11 @@ class DeadlockDetector {
 		String msg = "Deadlock detected. All locks owned by thread " + deadlock.getCandidate().getName() + " will be suspended."; //$NON-NLS-1$ //$NON-NLS-2$
 		MultiStatus main = new MultiStatus(JobManager.PI_JOBS, JobManager.PLUGIN_ERROR, msg, new IllegalStateException());
 		Thread[] threads = deadlock.getThreads();
-		for (int i = 0; i < threads.length; i++) {
-			Object[] ownedLocks = getOwnedLocks(threads[i]);
-			Object waitLock = getWaitingLock(threads[i]);
+		for (Thread thread : threads) {
+			Object[] ownedLocks = getOwnedLocks(thread);
+			Object waitLock = getWaitingLock(thread);
 			StringBuffer buf = new StringBuffer("Thread "); //$NON-NLS-1$
-			buf.append(threads[i].getName());
+			buf.append(thread.getName());
 			buf.append(" has locks: "); //$NON-NLS-1$
 			for (int j = 0; j < ownedLocks.length; j++) {
 				buf.append(ownedLocks[j]);
@@ -649,9 +650,9 @@ class DeadlockDetector {
 				return candidates[i];
 		}
 		//next look for any candidate with a real lock (a lock that can be suspended)
-		for (int i = 0; i < candidates.length; i++) {
-			if (ownsRealLocks(candidates[i]))
-				return candidates[i];
+		for (Thread candidate : candidates) {
+			if (ownsRealLocks(candidate))
+				return candidate;
 		}
 		//unnecessary, return the first entry in the array by default
 		return candidates[0];

@@ -1,12 +1,13 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2012 IBM Corporation and others.
+ *  Copyright (c) 2003, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 432079
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -304,8 +305,8 @@ public class LockManager {
 			if (prevLocks.empty())
 				suspendedLocks.remove(owner);
 		}
-		for (int i = 0; i < toResume.length; i++)
-			toResume[i].resume();
+		for (LockState element : toResume)
+			element.resume();
 	}
 
 	public void setLockListener(LockListener listener) {
