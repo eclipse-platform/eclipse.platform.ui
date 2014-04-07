@@ -127,13 +127,13 @@ public class JobManager implements IJobManager {
 	 * Jobs that are currently running. Should only be modified from changeState
 	 * @GuardedBy("lock")
 	 */
-	private final HashSet running;
+	private final HashSet<InternalJob> running;
 
 	/**
 	 * Jobs that are currently yielding. Should only be modified from changeState
 	 * @GuardedBy("lock")
 	 */
-	private final HashSet yielding;
+	private final HashSet<InternalJob> yielding;
 
 	/**
 	 * Jobs that are sleeping.  Some sleeping jobs are scheduled to wake
@@ -173,7 +173,7 @@ public class JobManager implements IJobManager {
 	 * A set of progress monitors we must track cancellation requests for.
 	 * @GuardedBy("itself")
 	 */
-	final List monitorStack = new ArrayList();
+	final List<Object[]> monitorStack = new ArrayList<Object[]>();
 
 	private final InternalWorker internalWorker;
 
@@ -264,8 +264,8 @@ public class JobManager implements IJobManager {
 			waiting = new JobQueue(false);
 			waitingThreadJobs = new JobQueue(false, false);
 			sleeping = new JobQueue(true);
-			running = new HashSet(10);
-			yielding = new HashSet(10);
+			running = new HashSet<InternalJob>(10);
+			yielding = new HashSet<InternalJob>(10);
 			pool = new WorkerPool(this);
 		}
 		pool.setDaemon(JobOSGiUtils.getDefault().useDaemonThreads());
@@ -337,7 +337,7 @@ public class JobManager implements IJobManager {
 	@Override
 	public void cancel(Object family) {
 		//don't synchronize because cancel calls listeners
-		for (Iterator it = select(family).iterator(); it.hasNext();)
+		for (Iterator<InternalJob> it = select(family).iterator(); it.hasNext();)
 			cancel((Job) it.next());
 	}
 
@@ -482,7 +482,7 @@ public class JobManager implements IJobManager {
 		if (current instanceof Worker)
 			return ((Worker) current).currentJob();
 		synchronized (lock) {
-			for (Iterator it = running.iterator(); it.hasNext();) {
+			for (Iterator<InternalJob> it = running.iterator(); it.hasNext();) {
 				Job job = (Job) it.next();
 				if (job.getThread() == current)
 					return job;
@@ -564,7 +564,7 @@ public class JobManager implements IJobManager {
 				return;
 			active = false;
 			//cancel all running jobs
-			toCancel = (Job[]) running.toArray(new Job[running.size()]);
+			toCancel = running.toArray(new Job[running.size()]);
 			//discard any jobs that have not yet started running
 			sleeping.clear();
 			waiting.clear();
@@ -586,7 +586,7 @@ public class JobManager implements IJobManager {
 					JobManager.debug("Shutdown - job wait cycle #" + (waitAttempts + 1)); //$NON-NLS-1$
 					Job[] stillRunning = null;
 					synchronized (lock) {
-						stillRunning = (Job[]) running.toArray(new Job[running.size()]);
+						stillRunning = running.toArray(new Job[running.size()]);
 					}
 					if (stillRunning != null) {
 						for (Job element : stillRunning) {
@@ -603,7 +603,7 @@ public class JobManager implements IJobManager {
 			}
 
 			synchronized (lock) { // retrieve list of the jobs that are still running
-				toCancel = (Job[]) running.toArray(new Job[running.size()]);
+				toCancel = running.toArray(new Job[running.size()]);
 			}
 		}
 		internalWorker.cancel();
@@ -675,8 +675,8 @@ public class JobManager implements IJobManager {
 	 */
 	@Override
 	public Job[] find(Object family) {
-		List members = select(family);
-		return (Job[]) members.toArray(new Job[members.size()]);
+		List<InternalJob> members = select(family);
+		return members.toArray(new Job[members.size()]);
 	}
 
 	/**
@@ -693,8 +693,8 @@ public class JobManager implements IJobManager {
 				return null;
 			//check the running jobs
 			boolean hasBlockedJobs = false;
-			for (Iterator it = running.iterator(); it.hasNext();) {
-				InternalJob job = (InternalJob) it.next();
+			for (Iterator<InternalJob> it = running.iterator(); it.hasNext();) {
+				InternalJob job = it.next();
 				if (waitingJob.isConflicting(job))
 					return job;
 				if (!hasBlockedJobs)
@@ -704,8 +704,8 @@ public class JobManager implements IJobManager {
 			if (!hasBlockedJobs)
 				return null;
 			//check all jobs blocked by running jobs
-			for (Iterator it = running.iterator(); it.hasNext();) {
-				InternalJob job = (InternalJob) it.next();
+			for (Iterator<InternalJob> it = running.iterator(); it.hasNext();) {
+				InternalJob job = it.next();
 				while (true) {
 					job = job.previous();
 					if (job == null)
@@ -881,13 +881,13 @@ public class JobManager implements IJobManager {
 	public void join(final Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
 		monitor = monitorFor(monitor);
 		IJobChangeListener listener = null;
-		final Set jobs;
+		final Set<InternalJob> jobs;
 		int jobCount;
 		Job blocking = null;
 		synchronized (lock) {
 			//don't join a waiting or sleeping job when suspended (deadlock risk)
 			int states = suspended ? Job.RUNNING : Job.RUNNING | Job.WAITING | Job.SLEEPING;
-			jobs = Collections.synchronizedSet(new HashSet(select(family, states)));
+			jobs = Collections.synchronizedSet(new HashSet<InternalJob>(select(family, states)));
 			jobCount = jobs.size();
 			if (jobCount > 0) {
 				//if there is only one blocking job, use it in the blockage callback below
@@ -1167,7 +1167,7 @@ public class JobManager implements IJobManager {
 	/**
 	 * Adds all family members in the list of jobs to the collection
 	 */
-	private void select(List members, Object family, InternalJob firstJob, int stateMask) {
+	private void select(List<InternalJob> members, Object family, InternalJob firstJob, int stateMask) {
 		if (firstJob == null)
 			return;
 		InternalJob job = firstJob;
@@ -1182,7 +1182,7 @@ public class JobManager implements IJobManager {
 	/**
 	 * Returns a list of all jobs known to the job manager that belong to the given family.
 	 */
-	private List select(Object family) {
+	private List<InternalJob> select(Object family) {
 		return select(family, Job.WAITING | Job.SLEEPING | Job.RUNNING);
 	}
 
@@ -1190,18 +1190,18 @@ public class JobManager implements IJobManager {
 	 * Returns a list of all jobs known to the job manager that belong to the given 
 	 * family and are in one of the provided states.
 	 */
-	private List select(Object family, int stateMask) {
-		List members = new ArrayList();
+	private List<InternalJob> select(Object family, int stateMask) {
+		List<InternalJob> members = new ArrayList<InternalJob>();
 		synchronized (lock) {
 			if ((stateMask & Job.RUNNING) != 0) {
-				for (Iterator it = running.iterator(); it.hasNext();) {
-					select(members, family, (InternalJob) it.next(), stateMask);
+				for (Iterator<InternalJob> it = running.iterator(); it.hasNext();) {
+					select(members, family, it.next(), stateMask);
 				}
 			}
 			if ((stateMask & Job.WAITING) != 0) {
 				select(members, family, waiting.peek(), stateMask);
-				for (Iterator it = yielding.iterator(); it.hasNext();) {
-					select(members, family, (InternalJob) it.next(), stateMask);
+				for (Iterator<InternalJob> it = yielding.iterator(); it.hasNext();) {
+					select(members, family, it.next(), stateMask);
 				}
 			}
 			if ((stateMask & Job.SLEEPING) != 0)
@@ -1293,8 +1293,8 @@ public class JobManager implements IJobManager {
 	@Override
 	public void sleep(Object family) {
 		//don't synchronize because sleep calls listeners
-		for (Iterator it = select(family).iterator(); it.hasNext();) {
-			sleep((InternalJob) it.next());
+		for (Iterator<InternalJob> it = select(family).iterator(); it.hasNext();) {
+			sleep(it.next());
 		}
 	}
 
@@ -1446,8 +1446,8 @@ public class JobManager implements IJobManager {
 		if (DEBUG_YIELDING) {
 			// extra assert: make sure no other conflicting jobs are running now
 			synchronized (lock) {
-				for (Iterator it = running.iterator(); it.hasNext();) {
-					InternalJob other = (InternalJob) it.next();
+				for (Iterator<InternalJob> it = running.iterator(); it.hasNext();) {
+					InternalJob other = it.next();
 					if (other == job)
 						continue;
 					Assert.isTrue(!other.isConflicting(job), other + " conflicts and ran simultaneously with " + job); //$NON-NLS-1$
@@ -1636,15 +1636,15 @@ public class JobManager implements IJobManager {
 	@Override
 	public void wakeUp(Object family) {
 		//don't synchronize because wakeUp calls listeners
-		for (Iterator it = select(family).iterator(); it.hasNext();) {
-			wakeUp((InternalJob) it.next(), 0L);
+		for (Iterator<InternalJob> it = select(family).iterator(); it.hasNext();) {
+			wakeUp(it.next(), 0L);
 		}
 	}
 
 	void endMonitoring(ThreadJob threadJob) {
 		synchronized (monitorStack) {
 			for (int i = monitorStack.size() - 1; i >= 0; i--) {
-				if (((Object[]) monitorStack.get(i))[0] == threadJob) {
+				if (monitorStack.get(i)[0] == threadJob) {
 					monitorStack.remove(i);
 					monitorStack.notifyAll();
 					break;
