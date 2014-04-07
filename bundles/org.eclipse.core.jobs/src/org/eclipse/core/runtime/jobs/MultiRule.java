@@ -87,7 +87,7 @@ public class MultiRule implements ISchedulingRule {
 	 * array in which no rules are MultiRules.
 	 */
 	private static ISchedulingRule[] flatten(ISchedulingRule[] nestedRules) {
-		ArrayList myRules = new ArrayList(nestedRules.length);
+		ArrayList<ISchedulingRule> myRules = new ArrayList<ISchedulingRule>(nestedRules.length);
 		for (int i = 0; i < nestedRules.length; i++) {
 			if (nestedRules[i] instanceof MultiRule) {
 				ISchedulingRule[] children = ((MultiRule) nestedRules[i]).getChildren();
@@ -97,7 +97,7 @@ public class MultiRule implements ISchedulingRule {
 				myRules.add(nestedRules[i]);
 			}
 		}
-		return (ISchedulingRule[]) myRules.toArray(new ISchedulingRule[myRules.size()]);
+		return myRules.toArray(new ISchedulingRule[myRules.size()]);
 	}
 
 	/**
@@ -122,7 +122,7 @@ public class MultiRule implements ISchedulingRule {
 	 * @return the child rules
 	 */
 	public ISchedulingRule[] getChildren() {
-		return (ISchedulingRule[]) rules.clone();
+		return rules.clone();
 	}
 
 	/* (non-Javadoc)
