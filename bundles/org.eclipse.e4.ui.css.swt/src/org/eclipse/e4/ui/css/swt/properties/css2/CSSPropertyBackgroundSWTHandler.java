@@ -89,6 +89,9 @@ AbstractCSSPropertyBackgroundHandler {
 		} else if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
 			Gradient grad = (Gradient) engine.convert(value, Gradient.class,
 					widget.getDisplay());
+			if (grad == null) {
+				return; // warn?
+			}
 			if (widget instanceof CTabItem) {
 				CTabFolder folder = ((CTabItem) widget).getParent();
 				Color[] colors = CSSSWTColorHelper.getSWTColors(grad,

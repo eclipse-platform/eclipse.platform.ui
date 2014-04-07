@@ -38,11 +38,14 @@ AbstractCSSPropertySWTHandler {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			Color newColor = (Color) engine.convert(value, Color.class,
 					control.getDisplay());
+			if (newColor == null) {
+				return;
+			}
 			((ICTabRendering) renderer).setSelectedTabFill(newColor);
 		} else if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
 			Gradient grad = (Gradient) engine.convert(value, Gradient.class,
 					control.getDisplay());
-			if (grad.getRGBs().isEmpty()) {
+			if (grad == null || grad.getRGBs().isEmpty()) {
 				return;
 			}
 			Color[] colors = CSSSWTColorHelper.getSWTColors(grad,
