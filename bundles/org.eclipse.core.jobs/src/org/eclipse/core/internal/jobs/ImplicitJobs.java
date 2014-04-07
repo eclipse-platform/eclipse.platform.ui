@@ -35,14 +35,14 @@ class ImplicitJobs {
 	 * Set of suspended scheduling rules.
 	 * @GuardedBy("this")
 	 */
-	private final Set suspendedRules = new HashSet(20);
+	private final Set<ISchedulingRule> suspendedRules = new HashSet<ISchedulingRule>(20);
 
 	/**
 	 * Maps (Thread->ThreadJob), threads to the currently running job for that
 	 * thread.
 	 * @GuardedBy("this")
 	 */
-	private final Map threadJobs = new HashMap(20);
+	private final Map<Thread, ThreadJob> threadJobs = new HashMap<Thread, ThreadJob>(20);
 
 	ImplicitJobs(JobManager manager) {
 		this.manager = manager;
@@ -57,7 +57,7 @@ class ImplicitJobs {
 		final Thread currentThread = Thread.currentThread();
 		ThreadJob threadJob;
 		synchronized (this) {
-			threadJob = (ThreadJob) threadJobs.get(currentThread);
+			threadJob = threadJobs.get(currentThread);
 			if (threadJob != null) {
 				//nested rule, just push on stack and return
 				threadJob.push(rule);
@@ -109,7 +109,7 @@ class ImplicitJobs {
 	synchronized void end(ISchedulingRule rule, boolean resume) {
 		if (JobManager.DEBUG_BEGIN_END)
 			JobManager.debug("End rule: " + rule); //$NON-NLS-1$
-		ThreadJob threadJob = (ThreadJob) threadJobs.get(Thread.currentThread());
+		ThreadJob threadJob = threadJobs.get(Thread.currentThread());
 		if (threadJob == null)
 			Assert.isLegal(rule == null, "endRule without matching beginRule: " + rule); //$NON-NLS-1$
 		else if (threadJob.pop(rule)) {
@@ -126,7 +126,7 @@ class ImplicitJobs {
 		final Thread currentThread = Thread.currentThread();
 		IStatus error;
 		synchronized (this) {
-			ThreadJob threadJob = (ThreadJob) threadJobs.get(currentThread);
+			ThreadJob threadJob = threadJobs.get(currentThread);
 			if (threadJob == null) {
 				if (lastJob.getRule() != null)
 					notifyWaitingThreadJobs(lastJob);
@@ -174,8 +174,8 @@ class ImplicitJobs {
 	private boolean isSuspended(ISchedulingRule rule) {
 		if (suspendedRules.size() == 0)
 			return false;
-		for (Iterator it = suspendedRules.iterator(); it.hasNext();)
-			if (((ISchedulingRule) it.next()).contains(rule))
+		for (Iterator<ISchedulingRule> it = suspendedRules.iterator(); it.hasNext();)
+			if (it.next().contains(rule))
 				return true;
 		return false;
 	}
@@ -254,10 +254,10 @@ class ImplicitJobs {
 		if (currentThread == destinationThread)
 			return;
 		//ensure destination thread doesn't already have a rule
-		ThreadJob target = (ThreadJob) threadJobs.get(destinationThread);
+		ThreadJob target = threadJobs.get(destinationThread);
 		Assert.isLegal(target == null, "Transfer rule to job that already owns a rule"); //$NON-NLS-1$
 		//ensure calling thread owns the job being transferred
-		ThreadJob source = (ThreadJob) threadJobs.get(currentThread);
+		ThreadJob source = threadJobs.get(currentThread);
 		Assert.isNotNull(source, "transferRule without beginRule"); //$NON-NLS-1$
 		Assert.isLegal(source.getRule() == rule, "transferred rule " + rule + " does not match beginRule: " + source.getRule()); //$NON-NLS-1$ //$NON-NLS-2$		// transfer the thread job without ending it
 		source.setThread(destinationThread);
@@ -292,7 +292,7 @@ class ImplicitJobs {
 	}
 
 	synchronized ThreadJob getThreadJob(Thread thread) {
-		return (ThreadJob) threadJobs.get(thread);
+		return threadJobs.get(thread);
 	}
 
 }
