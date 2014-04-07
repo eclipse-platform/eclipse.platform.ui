@@ -31,7 +31,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%Perspective.resourcePerspective"
-            icon="$nl$/icons/full/eview16/resource_persp.gif"
+            icon="$nl$/icons/full/eview16/resource_persp.png"
             class="org.eclipse.ui.internal.ide.application.ResourcePerspective"
             id="org.eclipse.ui.resourcePerspective">
          <description>

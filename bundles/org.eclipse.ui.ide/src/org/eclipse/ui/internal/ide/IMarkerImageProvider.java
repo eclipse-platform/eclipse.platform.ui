@@ -26,7 +26,7 @@ import org.eclipse.core.resources.IMarker;
  *      &LT;imageprovider
  *		   id="com.example.myplugin.myprofiderID"
  *         makertype="com.example.myMarkerType"
- *         icon="icons/basic/view16/myGIF.png"/&GT;
+ *         icon="icons/basic/view16/myimage.png"/&GT;
  * &LT;/extension&GT;
  * </pre>
  * It can also define the image provider using the tag <code>class</code>
