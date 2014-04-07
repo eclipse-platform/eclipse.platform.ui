@@ -47,6 +47,7 @@ import org.eclipse.e4.core.internal.tests.di.InjectBaseTypeTest;
 import org.eclipse.e4.core.internal.tests.di.InjectionOrderTest;
 import org.eclipse.e4.core.internal.tests.di.InjectionResultLeakTest;
 import org.eclipse.e4.core.internal.tests.di.InvokeTest;
+import org.eclipse.e4.core.internal.tests.di.InvokeTestMissingAnnotation;
 import org.eclipse.e4.core.internal.tests.di.RecursiveObjectCreationTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.ExtendedSupplierInjectionTests;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionEventTest;
@@ -73,6 +74,7 @@ public class CoreTestSuite extends TestSuite {
 		addTestSuite(InjectionOrderTest.class);
 		addTestSuite(InvokeTest.class);
 		addTestSuite(InjectBaseTypeTest.class);
+		addTestSuite(InvokeTestMissingAnnotation.class);
 		addTestSuite(InjectionResultLeakTest.class);
 		addTest(AtInjectTest.suite());
 		addTestSuite(AutoConstructTest.class);

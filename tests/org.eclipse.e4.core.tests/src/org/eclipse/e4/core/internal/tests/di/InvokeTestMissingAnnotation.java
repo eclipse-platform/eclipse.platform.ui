@@ -17,17 +17,17 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.di.annotations.Execute;
 
 /**
-* Tests that that no method is called, it the @Execute
-* annotation is not present and that an exception is thrown from the DI
-* framework
-*/
-public class InvokeTestNegative extends TestCase {
+ * Tests that that no method is called, it the @Execute annotation is not
+ * present and that an exception is thrown from the DI framework
+ */
+public class InvokeTestMissingAnnotation extends TestCase {
 
 	/**
 	 * Class to invoke for the test
 	 */
 	class TestSuperclass {
 		public int saveCount = 0;
+
 		// @Execute annotation missing on purpose
 		void execute() {
 			saveCount++;
@@ -35,17 +35,28 @@ public class InvokeTestNegative extends TestCase {
 	}
 
 	/**
-	 * Checks that no methods is called
+	 * Checks that no methods is called and that an execution is thrown
 	 */
-	public void testSuperclassMethods() {
+	public void testCallMethodsWithMissingAnnotation() {
 		TestSuperclass editor = new TestSuperclass();
 		try {
-			ContextInjectionFactory.invoke(editor, Execute.class, EclipseContextFactory
-					.create());
-			   fail("Exception should have been thrown "); //$NON-NLS-1$
-			} catch (Exception e) {
-			   // expected
-			}
+			ContextInjectionFactory.invoke(editor, Execute.class,
+					EclipseContextFactory.create());
+			fail("Exception should have been thrown "); //$NON-NLS-1$
+		} catch (Exception e) {
+			// expected
+		}
+	}
+
+	/**
+	 * Checks that no methods is called and that no execution is thrown if a
+	 * default is provide
+	 */
+	public void testCallMethodsWithMissingAnnotationNoExecution() {
+		TestSuperclass editor = new TestSuperclass();
+		ContextInjectionFactory.invoke(editor, Execute.class,
+				EclipseContextFactory.create(), this);
+
 	}
 
 }
