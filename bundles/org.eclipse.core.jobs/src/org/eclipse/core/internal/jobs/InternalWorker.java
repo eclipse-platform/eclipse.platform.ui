@@ -45,7 +45,7 @@ public class InternalWorker extends Thread {
 					timeout = 250;
 				}
 				for (int i = 0; i < manager.monitorStack.size(); i++) {
-					Object[] o = (Object[]) manager.monitorStack.get(i);
+					Object[] o = manager.monitorStack.get(i);
 					IProgressMonitor monitor = (IProgressMonitor) o[1];
 					if (monitor.isCanceled()) {
 						Job job = (Job) o[0];

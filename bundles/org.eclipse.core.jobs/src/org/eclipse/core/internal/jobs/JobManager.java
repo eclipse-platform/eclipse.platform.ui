@@ -337,7 +337,7 @@ public class JobManager implements IJobManager {
 	public void cancel(Object family) {
 		//don't synchronize because cancel calls listeners
 		for (Iterator<InternalJob> it = select(family).iterator(); it.hasNext();)
-			cancel((Job) it.next());
+			cancel(it.next());
 	}
 
 	/**
