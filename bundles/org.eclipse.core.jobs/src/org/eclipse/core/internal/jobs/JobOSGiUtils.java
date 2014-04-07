@@ -48,6 +48,7 @@ class JobOSGiUtils {
 		super();
 	}
 
+	@SuppressWarnings("unchecked")
 	void openServices() {
 		BundleContext context = JobActivator.getContext();
 		if (context == null) {
