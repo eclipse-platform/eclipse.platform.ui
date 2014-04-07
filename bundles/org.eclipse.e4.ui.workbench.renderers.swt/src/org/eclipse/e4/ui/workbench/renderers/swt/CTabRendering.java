@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import static org.eclipse.e4.ui.css.swt.dom.CTabFolderElement.setBackgroundOverriddenDuringRenderering;
-import static org.eclipse.e4.ui.css.swt.dom.CompositeElement.hasBackgroundOverriddenByCSS;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import javax.inject.Inject;
@@ -1059,30 +1056,35 @@ public class CTabRendering extends CTabFolderRenderer implements
 				defaultBackground);
 		drawTabBackground(gc, partHeaderBounds, state, vertical,
 				defaultBackground);
-		drawChildrenBackground(partHeaderBounds);
+		redrawChildren();
 	}
 
 	private void drawUnselectedTabBackground(GC gc, Rectangle partHeaderBounds,
 			int state, boolean vertical, Color defaultBackground) {
-		if (unselectedTabsColors == null) {
-			boolean selected = (state & SWT.SELECTED) != 0;
-			unselectedTabsColors = selected ? parentWrapper
-					.getSelectionGradientColors() : parentWrapper
-					.getGradientColors();
-			unselectedTabsPercents = selected ? parentWrapper
-					.getSelectionGradientPercents() :
-				parentWrapper.getGradientPercents();
-		}
-		if (unselectedTabsColors == null) {
-			unselectedTabsColors = new Color[] { gc.getDevice().getSystemColor(
-					SWT.COLOR_WHITE) };
-			unselectedTabsPercents = new int[] { 100 };
-		}
-
 		rendererWrapper.drawBackground(gc, partHeaderBounds.x,
 				partHeaderBounds.y - 1, partHeaderBounds.width,
 				partHeaderBounds.height, defaultBackground,
-				unselectedTabsColors, unselectedTabsPercents, vertical);
+				getUnselectedTabsColors(state),
+				getUnselectedTabsPercents(state),
+				vertical);
+	}
+
+	private Color[] getUnselectedTabsColors(int state) {
+		if (unselectedTabsColors == null) {
+			return (state & SWT.SELECTED) != 0 ? parentWrapper
+					.getSelectionGradientColors() : parentWrapper
+					.getGradientColors();
+		}
+		return unselectedTabsColors;
+	}
+
+	private int[] getUnselectedTabsPercents(int state) {
+		if (unselectedTabsPercents == null) {
+			return (state & SWT.SELECTED) != 0 ? parentWrapper
+					.getSelectionGradientPercents() : parentWrapper
+					.getGradientPercents();
+		}
+		return unselectedTabsPercents;
 	}
 
 	private void drawTabBackground(GC gc, Rectangle partHeaderBounds,
@@ -1095,42 +1097,42 @@ public class CTabRendering extends CTabFolderRenderer implements
 		}
 		if (colors == null) {
 			boolean selected = (state & SWT.SELECTED) != 0;
-			colors = selected ? parentWrapper.getSelectionGradientColors() : 
-				parentWrapper.getGradientColors();
-			percents = selected ? parentWrapper.getSelectionGradientPercents() : 
-				parentWrapper.getGradientPercents();
+			colors = selected ? parentWrapper.getSelectionGradientColors()
+					: parentWrapper.getGradientColors();
+			percents = selected ? parentWrapper.getSelectionGradientPercents()
+					: parentWrapper.getGradientPercents();
 		}
 		if (colors == null) {
-			colors = new Color[] { gc.getDevice().getSystemColor(SWT.COLOR_WHITE) };
+			colors = new Color[] { gc.getDevice().getSystemColor(
+					SWT.COLOR_WHITE) };
 			percents = new int[] { 100 };
 		}
-		rendererWrapper.drawBackground(gc, partHeaderBounds.x,  partHeaderBounds.height - 1, partHeaderBounds.width,
+
+		rendererWrapper.drawBackground(gc, partHeaderBounds.x,
+				partHeaderBounds.height - 1, partHeaderBounds.width,
 				parent.getBounds().height, defaultBackground, colors, percents,
 				vertical);
+
+		int selectedItemWidth = parent.getSelectionIndex() > -1 ? parent
+				.getSelection().getControl().getBounds().width : parent
+				.getBounds().width;
+		int leftRightBorder = (parent.getBounds().width - selectedItemWidth) / 2;
+		int topBorder = INNER_KEYLINE + OUTER_KEYLINE;
+
+		rendererWrapper.drawBackground(gc,
+				partHeaderBounds.x + leftRightBorder, partHeaderBounds.height
+						+ topBorder, partHeaderBounds.width - leftRightBorder
+						* 2, partHeaderBounds.height,
+				defaultBackground, getUnselectedTabsColors(state),
+				getUnselectedTabsPercents(state), vertical);
 	}
 
-	private void drawChildrenBackground(Rectangle partHeaderBounds) {
-		for (Control control : parent.getChildren()) {
-			if (control instanceof Composite
-					&& !hasBackgroundOverriddenByCSS(control)) {
-				drawChildBackground((Composite) control, partHeaderBounds);
+	private void redrawChildren() {
+		for (Control child : parent.getChildren()) {
+			if (child instanceof Composite) {
+				child.reskin(SWT.ALL);
 			}
 		}
-	}
-
-	private void drawChildBackground(Composite composite,
-			Rectangle partHeaderBounds) {
-		Rectangle rec = composite.getBounds();
-		Color background = null;
-		boolean partOfHeader = rec.y >= partHeaderBounds.y
-				&& rec.y < partHeaderBounds.height;
-
-		if (!partOfHeader && selectedTabFillColors != null) {
-			background = selectedTabFillColors.length == 2 ? selectedTabFillColors[1]
-						: selectedTabFillColors[0];
-		}
-
-		setBackgroundOverriddenDuringRenderering(composite, background);
 	}
 
 	private static class CTabFolderRendererWrapper extends

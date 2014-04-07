@@ -12,9 +12,7 @@ package org.eclipse.e4.ui.css.swt.dom;
 
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.Node;
 
@@ -23,8 +21,6 @@ import org.w3c.dom.Node;
  *
  */
 public class CompositeElement extends ControlElement {
-	private final static String BACKGROUND_OVERRIDDEN_BY_CSS_MARKER = "bgOverriddenByCSS";
-
 	public CompositeElement(Composite composite, CSSEngine engine) {
 		super(composite, engine);
 	}
@@ -43,25 +39,4 @@ public class CompositeElement extends ControlElement {
 	protected Composite getComposite() {
 		return (Composite) getNativeWidget();
 	}
-
-	@Override
-	public void reset() {
-		Composite composite = getComposite();
-
-		if (composite.getData(BACKGROUND_OVERRIDDEN_BY_CSS_MARKER) != null) {
-			composite.setData(BACKGROUND_OVERRIDDEN_BY_CSS_MARKER, null);
-		}
-		super.reset();
-	}
-
-	public static boolean hasBackgroundOverriddenByCSS(Control control) {
-		return control.getData(BACKGROUND_OVERRIDDEN_BY_CSS_MARKER) != null;
-	}
-
-	public static void setBackgroundOverriddenByCSSMarker(Widget widget) {
-		if (widget instanceof Composite && !(widget instanceof CTabFolder)) {
-			widget.setData(BACKGROUND_OVERRIDDEN_BY_CSS_MARKER, true);
-		}
-	}
-
 }

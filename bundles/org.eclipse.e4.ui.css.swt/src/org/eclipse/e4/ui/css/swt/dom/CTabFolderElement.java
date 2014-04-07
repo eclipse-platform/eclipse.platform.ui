@@ -37,8 +37,6 @@ import org.w3c.dom.NodeList;
  *
  */
 public class CTabFolderElement extends CompositeElement implements ChildVisibilityAwareElement {
-	private final static String BACKGROUND_SET_BY_TAB_RENDERER = "bgSetByTabRenderer"; //$NON-NLS-1$
-
 	private SelectionListener selectionListener = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
@@ -119,9 +117,7 @@ public class CTabFolderElement extends CompositeElement implements ChildVisibili
 		folder.setSelectionBackground((Color) null);
 		folder.setSelectionForeground((Color) null);
 		folder.setSelectionBackground((Image) null);
-
 		folder.setBackground(null, null);
-		resetChildrenBackground(folder);
 
 		if (folder.getRenderer() instanceof ICTabRendering) {
 			ICTabRendering renderer = (ICTabRendering) folder
@@ -134,39 +130,6 @@ public class CTabFolderElement extends CompositeElement implements ChildVisibili
 			renderer.setShadowColor(null);
 		}
 		super.reset();
-	}
-
-	private void resetChildrenBackground(Composite composite) {
-		for (Control control : composite.getChildren()) {
-			resetChildBackground(control);
-			if (control instanceof Composite) {
-				resetChildrenBackground((Composite) control);
-			}
-		}
-	}
-
-	private void resetChildBackground(Control control) {
-		Color backgroundSetByRenderer = (Color) control
-				.getData(BACKGROUND_SET_BY_TAB_RENDERER);
-		if (backgroundSetByRenderer != null) {
-			if (control.getBackground() == backgroundSetByRenderer) {
-				control.setBackground(null);
-			}
-			control.setData(BACKGROUND_SET_BY_TAB_RENDERER, null);
-		}
-	}
-
-	public static void setBackgroundOverriddenDuringRenderering(
-			Composite composite, Color background) {
-		composite.setBackground(background);
-		composite.setData(BACKGROUND_SET_BY_TAB_RENDERER, background);
-
-		for (Control control : composite.getChildren()) {
-			if (!CompositeElement.hasBackgroundOverriddenByCSS(control)) {
-				control.setBackground(background);
-				control.setData(BACKGROUND_SET_BY_TAB_RENDERER, background);
-			}
-		}
 	}
 
 	@Override
