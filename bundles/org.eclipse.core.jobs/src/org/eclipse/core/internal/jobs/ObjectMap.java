@@ -142,7 +142,7 @@ public class ObjectMap implements Map {
 
 	/**
 	 * The capacity of the map has been exceeded, grow the array by GROW_SIZE to
-	 * accomodate more entries.
+	 * accommodate more entries.
 	 */
 	protected void grow() {
 		Object[] expanded = new Object[elements.length + GROW_SIZE];
@@ -181,7 +181,7 @@ public class ObjectMap implements Map {
 	 */
 	@Override
 	public Set keySet() {
-		Set result = new HashSet(size());
+		Set<Object> result = new HashSet<Object>(size());
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
 				result.add(elements[i]);
@@ -281,8 +281,8 @@ public class ObjectMap implements Map {
 	/**
 	 * Creates a new hash map with the same contents as this map.
 	 */
-	private HashMap toHashMap() {
-		HashMap result = new HashMap(size());
+	private HashMap<Object, Object> toHashMap() {
+		HashMap<Object, Object> result = new HashMap<Object, Object>(size());
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
 				result.put(elements[i], elements[i + 1]);
@@ -300,7 +300,7 @@ public class ObjectMap implements Map {
 	 */
 	@Override
 	public Collection values() {
-		Set result = new HashSet(size());
+		Set<Object> result = new HashSet<Object>(size());
 		for (int i = 1; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
 				result.add(elements[i]);
