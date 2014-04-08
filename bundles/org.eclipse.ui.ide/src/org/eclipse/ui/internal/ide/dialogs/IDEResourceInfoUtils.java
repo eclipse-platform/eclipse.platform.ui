@@ -365,8 +365,7 @@ public class IDEResourceInfoUtils {
 			if (resource instanceof IFile) {
 				String contentType = getContentTypeString(description);
 				if (contentType != null) {
-					return MessageFormat.format(FILE_TYPE_FORMAT,
-							new String[] { contentType });
+					return MessageFormat.format(FILE_TYPE_FORMAT, contentType );
 				}
 			}
 			return FILE_LABEL;

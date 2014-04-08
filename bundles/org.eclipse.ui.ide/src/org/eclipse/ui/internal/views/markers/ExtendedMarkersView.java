@@ -1029,15 +1029,16 @@ public class ExtendedMarkersView extends ViewPart {
 				new Integer(counts[2].intValue() + counts[3].intValue()) };
 		if (filteredCount < 0 || filteredCount >= totalCount)
 			return MessageFormat.format(
-					MarkerMessages.errorsAndWarningsSummaryBreakdown, counts);
+					MarkerMessages.errorsAndWarningsSummaryBreakdown,
+					counts[0], counts[1], counts[2] + counts[3]);
 		return NLS
 				.bind(
 						MarkerMessages.problem_filter_matchedMessage,
 						new Object[] {
 								MessageFormat
 										.format(
-												MarkerMessages.errorsAndWarningsSummaryBreakdown,
-												counts),
+												MarkerMessages.errorsAndWarningsSummaryBreakdown, 
+												counts[0], counts[1], counts[2] + counts[3]),
 								new Integer(filteredCount),
 								new Integer(totalCount) });
 	}
@@ -1517,7 +1518,7 @@ public class ExtendedMarkersView extends ViewPart {
 								MessageFormat
 										.format(
 												MarkerMessages.errorsAndWarningsSummaryBreakdown,
-												counts) });
+												counts[0], counts[1], counts[2] + counts[3]) });
 	}
 
 	/**
