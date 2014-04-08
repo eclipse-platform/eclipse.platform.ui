@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.engine;
 
+import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.e4.ui.css.core.impl.engine.CSSEngineImpl;
 import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
@@ -85,6 +86,36 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 			super.setResourcesRegistry(new SWTResourcesRegistry(display));
 		}
 		return super.getResourcesRegistry();
+	}
+
+	@Override
+	public Element getElement(Object element) {
+		if (element instanceof CSSStylableElement
+				&& ((CSSStylableElement) element).getNativeWidget() instanceof Widget) {
+			return (CSSStylableElement) element;
+		} else if (element instanceof Widget) {
+			if (isStylable((Widget) element)) {
+				return super.getElement(element);
+			}
+		} else {
+			// FIXME: we need to pass through the ThemeElementDefinitions;
+			// perhaps they should be handled by a separate engine
+			return super.getElement(element);
+		}
+		return null;
+	}
+
+	/**
+	 * Return true if the given widget can be styled
+	 *
+	 * @param widget
+	 *            the widget
+	 * @return true if the widget can be styled
+	 */
+	protected boolean isStylable(Widget widget) {
+		// allows widgets to be selectively excluded from styling
+		return !Boolean.TRUE.equals(widget
+				.getData("org.eclipse.e4.ui.css.disabled")); //$NON-NLS-1$
 	}
 
 	@Override
