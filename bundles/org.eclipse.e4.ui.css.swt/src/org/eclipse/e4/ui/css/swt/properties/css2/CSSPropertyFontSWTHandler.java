@@ -50,37 +50,25 @@ implements ICSSPropertyHandler2 {
 
 		if (widget instanceof CTabItem) {
 			CTabItem item = (CTabItem) widget;
-			if (item.getFont() != font) {
-				CSSSWTFontHelper.storeDefaultFont(item);
-				item.setFont(font);
-			}
+			CSSSWTFontHelper.setFont(item, font);
 		} else if (widget instanceof CTabFolder) {
 			CTabFolder folder = (CTabFolder) widget;
 			try {
 				folder.setRedraw(false);
-				if (folder.getFont() != font) {
-					CSSSWTFontHelper.storeDefaultFont(folder);
-					folder.setFont(font);
-				}
+				CSSSWTFontHelper.setFont(folder, font);
 				updateChildrenFonts(folder, font);
 			} finally {
 				folder.setRedraw(true);
 			}
 		} else if (widget instanceof Control) {
 			Control control = (Control) widget;
-			if (control.getFont() != font) {
-				CSSSWTFontHelper.storeDefaultFont(control);
-				control.setFont(font);
-			}
+			CSSSWTFontHelper.setFont(control, font);
 		}
 	}
 
 	private static void updateChildrenFonts(CTabFolder folder, Font font) {
 		for (CTabItem item : folder.getItems()) {
-			if (item.getFont() != font) {
-				CSSSWTFontHelper.storeDefaultFont(item);
-				item.setFont(font);
-			}
+			CSSSWTFontHelper.setFont(item, font);
 		}
 	}
 

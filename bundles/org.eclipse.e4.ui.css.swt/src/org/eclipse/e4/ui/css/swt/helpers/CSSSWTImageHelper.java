@@ -17,6 +17,7 @@ import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
@@ -134,6 +135,21 @@ public class CSSSWTImageHelper {
 			Image image) {
 		if (widget.getData(imageName) == null) {
 			widget.setData(imageName, image);
+		}
+	}
+
+	/** Helper function to avoid setting images unnecessarily */
+	public static void setImage(Button button, Image image) {
+		if (button.getImage() != image) {
+			storeDefaultImage(button);
+			button.setImage(image);
+		}
+	}
+
+	/** Helper function to avoid setting images unnecessarily */
+	public static void setBackgroundImage(Control control, Image image) {
+		if (control instanceof Control && control.getBackgroundImage() != image) {
+			control.setBackgroundImage(image);
 		}
 	}
 }

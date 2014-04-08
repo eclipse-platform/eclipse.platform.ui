@@ -26,8 +26,10 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.internal.css.swt.CSSActivator;
 import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
@@ -316,5 +318,44 @@ public class CSSSWTColorHelper {
 			return provider.getColor(normalizeId(name.substring(1)));
 		}
 		return null;
+	}
+
+	/** Simplify testing for color equality */
+	public static boolean equals(Color c1, Color c2) {
+		if (c1 == c2) {
+			return true;
+		}
+		if (c1 == null || c2 == null) {
+			return false;
+		}
+		return c1.equals(c2);
+	}
+
+	/** Helper function to avoid setting colors unnecessarily */
+	public static void setForeground(Control control, Color newColor) {
+		if (!equals(control.getForeground(), newColor)) {
+			control.setForeground(newColor);
+		}
+	}
+
+	/** Helper function to avoid setting colors unnecessarily */
+	public static void setBackground(Control control, Color newColor) {
+		if (!equals(control.getBackground(), newColor)) {
+			control.setBackground(newColor);
+		}
+	}
+
+	/** Helper function to avoid setting colors unnecessarily */
+	public static void setSelectionForeground(CTabFolder folder, Color newColor) {
+		if (!equals(folder.getSelectionForeground(), newColor)) {
+			folder.setSelectionForeground(newColor);
+		}
+	}
+
+	/** Helper function to avoid setting colors unnecessarily */
+	public static void setSelectionBackground(CTabFolder folder, Color newColor) {
+		if (!equals(folder.getSelectionBackground(), newColor)) {
+			folder.setSelectionBackground(newColor);
+		}
 	}
 }

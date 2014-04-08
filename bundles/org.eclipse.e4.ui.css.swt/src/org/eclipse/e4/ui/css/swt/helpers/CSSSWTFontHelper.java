@@ -485,16 +485,68 @@ public class CSSSWTFontHelper {
 	public static void restoreDefaultFont(Control control) {
 		Font defaultFont = (Font) control.getData(DEFAULT_FONT);
 		if (defaultFont != null) {
-			control.setFont(defaultFont.isDisposed() ? control.getDisplay()
-					.getSystemFont() : defaultFont);
+			if (defaultFont.isDisposed()) {
+				defaultFont = control.getDisplay().getSystemFont();
+			}
+			if (!equals(defaultFont, control.getFont())) {
+				control.setFont(defaultFont);
+			}
 		}
 	}
 
 	public static void restoreDefaultFont(CTabItem item) {
 		Font defaultFont = (Font) item.getData(DEFAULT_FONT);
 		if (defaultFont != null) {
-			item.setFont(defaultFont.isDisposed() ? item.getDisplay()
-					.getSystemFont() : defaultFont);
+			if (defaultFont.isDisposed()) {
+				defaultFont = item.getDisplay().getSystemFont();
+			}
+			if (!equals(defaultFont, item.getFont())) {
+				item.setFont(defaultFont);
+			}
 		}
 	}
+
+	/** Helper function to avoid setting fonts unnecessarily */
+	public static void setFont(Control control, Font font) {
+		if (!equals(control.getFont(), font)) {
+			storeDefaultFont(control);
+			control.setFont(font);
+		}
+	}
+
+	/** Helper function to avoid setting fonts unnecessarily */
+	public static void setFont(CTabItem item, Font font) {
+		if (!equals(item.getFont(), font)) {
+			storeDefaultFont(item);
+			item.setFont(font);
+		}
+	}
+
+	/**
+	 * On certain platforms, may have two font instances that actually are the
+	 * same
+	 */
+	public static boolean equals(Font f1, Font f2) {
+		if (f1 == f2) {
+			return true;
+		}
+		if (f1 == null || f2 == null) {
+			return false;
+		}
+		if (f1.equals(f2)) {
+			return true;
+		}
+		FontData[] fd1 = f1.getFontData();
+		FontData[] fd2 = f2.getFontData();
+		if (fd1.length != fd2.length) {
+			return false;
+		}
+		for (int i = 0; i < fd1.length; i++) {
+			if (!fd1[i].equals(fd2[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 }
