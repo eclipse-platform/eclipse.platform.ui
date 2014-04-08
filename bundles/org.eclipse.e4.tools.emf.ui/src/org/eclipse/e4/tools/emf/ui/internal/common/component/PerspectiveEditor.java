@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - Bug 424730
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -19,6 +20,7 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
@@ -78,6 +80,9 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 	@Inject
 	@Optional
 	private IProject project;
+
+	@Inject
+	IEclipseContext eclipseContext;
 
 	@Inject
 	public PerspectiveEditor() {
@@ -242,7 +247,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					PerspectiveIconDialogEditor dialog = new PerspectiveIconDialogEditor(b.getShell(), project, getEditingDomain(), (MPerspective) getMaster().getValue(), Messages);
+					PerspectiveIconDialogEditor dialog = new PerspectiveIconDialogEditor(b.getShell(), eclipseContext, project, getEditingDomain(), (MPerspective) getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});

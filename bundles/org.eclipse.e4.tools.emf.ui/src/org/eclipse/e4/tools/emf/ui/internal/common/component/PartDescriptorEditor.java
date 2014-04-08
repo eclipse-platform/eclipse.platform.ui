@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steven@spungin.tv> - Bug 404166
+ *     Steven Spungin <steven@spungin.tv> - Bug 404166, 424730
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -20,6 +20,7 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
@@ -76,6 +77,9 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 	@Inject
 	@Optional
 	private IProject project;
+
+	@Inject
+	IEclipseContext eclipseContext;
 
 	private IListProperty PART__MENUS = EMFProperties.list(BasicPackageImpl.Literals.PART_DESCRIPTOR__MENUS);
 	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
@@ -196,7 +200,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					PartDescriptorIconDialogEditor dialog = new PartDescriptorIconDialogEditor(b.getShell(), project, getEditingDomain(), (MPartDescriptor) getMaster().getValue(), Messages);
+					PartDescriptorIconDialogEditor dialog = new PartDescriptorIconDialogEditor(b.getShell(), eclipseContext, project, getEditingDomain(), (MPartDescriptor) getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});
@@ -248,7 +252,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), project, getEditingDomain(), (MPartDescriptor) getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR__CONTRIBUTION_URI, Messages);
+					ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), eclipseContext, project, getEditingDomain(), (MPartDescriptor) getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR__CONTRIBUTION_URI, Messages);
 					dialog.open();
 				}
 			});

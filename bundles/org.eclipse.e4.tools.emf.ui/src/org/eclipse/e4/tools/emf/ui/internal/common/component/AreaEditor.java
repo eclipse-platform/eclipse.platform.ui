@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
- *     Steven Spungin <steven@spungin.tv> - Bug 433408
+ *     Steven Spungin <steven@spungin.tv> - Bug 433408, 424730
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -20,6 +20,7 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
@@ -93,6 +94,9 @@ public class AreaEditor extends AbstractComponentEditor {
 	@Inject
 	@Optional
 	private IProject project;
+
+	@Inject
+	IEclipseContext eclipseContext;
 
 	@Inject
 	public AreaEditor() {
@@ -256,7 +260,7 @@ public class AreaEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					AreaIconDialogEditor dialog = new AreaIconDialogEditor(b.getShell(), project, getEditingDomain(), (MApplicationElement) getMaster().getValue(), Messages);
+					AreaIconDialogEditor dialog = new AreaIconDialogEditor(b.getShell(), eclipseContext, project, getEditingDomain(), (MApplicationElement) getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});

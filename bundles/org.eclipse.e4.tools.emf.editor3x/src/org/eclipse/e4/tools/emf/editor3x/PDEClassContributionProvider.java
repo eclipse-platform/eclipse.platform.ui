@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - Bug 424730
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor3x;
 
@@ -20,7 +21,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.tools.emf.ui.common.FilterEx;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider;
+import org.eclipse.e4.tools.emf.ui.common.ResourceSearchScope;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
@@ -34,14 +40,34 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 	public PDEClassContributionProvider() {
 		searchEngine = new SearchEngine();
 	}
-	
+
 	@SuppressWarnings("restriction")
 	public void findContribution(final Filter filter,  final ContributionResultHandler handler) {
-		// filter.project may be null in the live editor
-		IJavaSearchScope scope = filter.project != null ? PDEJavaHelper
-				.getSearchScope(filter.project) : SearchEngine
-				.createWorkspaceScope();
-		
+		boolean followReferences = true;
+		if (filter instanceof FilterEx) {
+			FilterEx filterEx = (FilterEx) filter;
+			if (filterEx.getSearchScope().contains(ResourceSearchScope.PROJECT) &&
+					!filterEx.getSearchScope().contains(ResourceSearchScope.REFERENCES)) {
+				followReferences = false;
+			}
+
+		}
+		IJavaSearchScope scope = null;
+		if (followReferences == false){
+			IJavaProject javaProject = JavaCore.create(filter.project);
+			IPackageFragmentRoot[] roots;
+			try {
+				roots = javaProject.getPackageFragmentRoots();
+				scope = SearchEngine.createJavaSearchScope(roots, false);
+			} catch (JavaModelException e) {
+				e.printStackTrace();
+			}
+		}else{
+			// filter.project may be null in the live editor
+			scope = filter.project != null ? PDEJavaHelper
+					.getSearchScope(filter.project) : SearchEngine
+					.createWorkspaceScope();
+		}
 		char[] packageName = null;
 		char[] typeName = null;
 		String currentContent = filter.namePattern;

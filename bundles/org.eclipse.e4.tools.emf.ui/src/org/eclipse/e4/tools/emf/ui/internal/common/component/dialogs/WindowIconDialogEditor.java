@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - Bug 424730
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
@@ -19,8 +21,8 @@ import org.eclipse.swt.widgets.Shell;
 
 public class WindowIconDialogEditor extends AbstractIconDialog {
 
-	public WindowIconDialogEditor(Shell parentShell, IProject project, EditingDomain editingDomain, MWindow element, Messages Messages) {
-		super(parentShell, project, editingDomain, element, UiPackageImpl.Literals.UI_LABEL__ICON_URI, Messages);
+	public WindowIconDialogEditor(Shell parentShell, IEclipseContext context, IProject project, EditingDomain editingDomain, MWindow element, Messages Messages) {
+		super(parentShell, context, project, editingDomain, element, UiPackageImpl.Literals.UI_LABEL__ICON_URI, Messages);
 	}
 
 	@Override

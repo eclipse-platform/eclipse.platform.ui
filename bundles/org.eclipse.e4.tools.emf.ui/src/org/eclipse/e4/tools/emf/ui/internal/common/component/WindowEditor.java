@@ -8,6 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
+ *     Steven Spungin <steven@spungin.tv> - Bug 424730
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -23,6 +24,7 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
@@ -87,6 +89,9 @@ public class WindowEditor extends AbstractComponentEditor {
 	@Inject
 	@Optional
 	private IProject project;
+
+	@Inject
+	IEclipseContext eclipseContext;
 
 	@Inject
 	public WindowEditor() {
@@ -253,7 +258,7 @@ public class WindowEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					WindowIconDialogEditor dialog = new WindowIconDialogEditor(b.getShell(), project, getEditingDomain(), (MWindow) getMaster().getValue(), Messages);
+					WindowIconDialogEditor dialog = new WindowIconDialogEditor(b.getShell(), eclipseContext, project, getEditingDomain(), (MWindow) getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});

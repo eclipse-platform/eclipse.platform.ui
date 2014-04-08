@@ -6,32 +6,29 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 404136
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555
  *******************************************************************************/
 
-package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
+package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty;
 
 /**
- * Specifies the scope when searching for a resource
+ * Options for working with empty values in filters. <br />
+ * An empty value is a null object, empty string, or empty collection.
  *
  * @author Steven Spungin
  *
  */
-public enum SearchScope {
+public enum EmptyFilterOption {
 	/**
-	 * Resources in the current project
+	 * Do not include empty values
 	 */
-	PROJECT,
+	EXCLUDE,
 	/**
-	 * Opened projects in the current workspace
+	 * Include empty values
 	 */
-	WORKSPACE,
+	INCLUDE,
 	/**
-	 * The current project, and projects the current project depends on
+	 * Include only empty values
 	 */
-	DEPENDENT,
-	/**
-	 * All projects in the current workspace and bundles in the target platform
-	 */
-	TARGET_PLATFORM
+	ONLY
 }

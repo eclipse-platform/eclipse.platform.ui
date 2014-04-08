@@ -9,6 +9,7 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Marco Descher <marco@descher.at> - Bug 395982
  *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
+ *     Steven Spungin <steven@spungin.tv> - Bug 424730
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -27,6 +28,7 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
@@ -106,6 +108,9 @@ public class MenuEditor extends AbstractComponentEditor {
 	@Inject
 	@Optional
 	private IProject project;
+
+	@Inject
+	IEclipseContext eclipseContext;
 
 	private Action addExpression;
 
@@ -415,7 +420,7 @@ public class MenuEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					MenuIconDialogEditor dialog = new MenuIconDialogEditor(b.getShell(), project, getEditingDomain(), (MMenu) getMaster().getValue(), Messages);
+					MenuIconDialogEditor dialog = new MenuIconDialogEditor(b.getShell(), eclipseContext, project, getEditingDomain(), (MMenu) getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});

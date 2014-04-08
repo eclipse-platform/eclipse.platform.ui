@@ -6,13 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
 
 import java.util.Collection;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.domain.EditingDomain;
 
 /**
  * This interface provides a common API for editing trees, lists, and xml
@@ -54,4 +55,10 @@ public interface IViewEObjects {
 	 *            are ignored.
 	 */
 	void deleteEObjects(Collection<EObject> list);
+
+	/**
+	 *
+	 * @return The editing domain for the implementor's model.
+	 */
+	EditingDomain getEditingDomain();
 }

@@ -487,6 +487,12 @@ public class Messages {
 	public String AbstractIconDialog_current_project;
 	public String AbstractIconDialog_scope;
 
+	public static String AbstractIconDialogWithScopeAndFilter_details;
+	public static String AbstractIconDialogWithScopeAndFilter_icon;
+	public static String AbstractIconDialogWithScopeAndFilter_iconName;
+	public static String AbstractIconDialogWithScopeAndFilter_maxDisplayedImageSize;
+	public static String AbstractIconDialogWithScopeAndFilter_typeToStartSearch;
+
 	public String BindingContextSelectionDialog_ShellTitle;
 	public String BindingContextSelectionDialog_Title;
 	public String BindingContextSelectionDialog_Message;
@@ -677,4 +683,14 @@ public class Messages {
 	public static String ListTab_col_item;
 	public static String ListTab_col_label;
 	public static String ListTab_col_go;
+
+	public static String ListTab_addColumn;
+	public static String ListTab_filterByAttribute;
+	public static String ListTab_filterByItem;
+	public static String ListTab_mark;
+	public static String ListTab_markAttribute;
+	public static String ListTab_removeFilter;
+	public static String ListTab_resetColumns;
+	public static String ListTab_selectAnAttribute;
+	public static String ListTab_selectAType;
 }

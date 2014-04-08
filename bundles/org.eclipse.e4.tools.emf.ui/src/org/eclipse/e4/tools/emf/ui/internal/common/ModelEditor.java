@@ -10,7 +10,7 @@
  *     Wim Jongman <wim.jongman@remainsoftware.com> - Maintenance
  *     Marco Descher <marco@descher.at> - Bug395982, 426653, 422465
  *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
- *     Steven Spungin <steven@spungin.tv> - Bug 396902, 431755, 431735
+ *     Steven Spungin <steven@spungin.tv> - Bug 396902, 431755, 431735, 424730, 424730
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
@@ -291,6 +291,9 @@ public class ModelEditor implements IGotoObject {
 	@Inject
 	ESelectionService selectionService;
 
+	@Inject
+	MApplication app;
+
 	private IEclipseContext context;
 	private boolean fragment;
 	private Handler clipboardHandler;
@@ -342,6 +345,12 @@ public class ModelEditor implements IGotoObject {
 	private boolean saving;
 
 	private ListTab listTab;
+
+	private CTabItem tabItemXmi;
+
+	private CTabItem tabItemList;
+
+	private CTabItem tabItemTree;
 
 	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project, final IResourcePool resourcePool) {
 		this.resourcePool = resourcePool;
@@ -411,15 +420,17 @@ public class ModelEditor implements IGotoObject {
 		emfDocumentProvider = new EMFDocumentResourceMediator(modelProvider);
 
 		editorTabFolder = new CTabFolder(composite, SWT.BOTTOM);
-		CTabItem item = new CTabItem(editorTabFolder, SWT.NONE);
-		item.setText(messages.ModelEditor_Form);
-		item.setControl(createFormTab(editorTabFolder));
-		item.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_application_form));
+		tabItemTree = new CTabItem(editorTabFolder, SWT.NONE);
+		tabItemTree.setText(messages.ModelEditor_Form);
+		tabItemTree.setControl(createFormTab(editorTabFolder));
+		tabItemTree.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_application_form));
 
-		item = new CTabItem(editorTabFolder, SWT.NONE);
-		item.setText(messages.ModelEditor_XMI);
-		item.setControl(createXMITab(editorTabFolder));
-		item.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_chart_organisation));
+		tab_list_show(preferences.getBoolean("tab-list-show", false)); //$NON-NLS-1$
+
+		tabItemXmi = new CTabItem(editorTabFolder, SWT.NONE);
+		tabItemXmi.setText(messages.ModelEditor_XMI);
+		tabItemXmi.setControl(createXMITab(editorTabFolder));
+		tabItemXmi.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_chart_organisation));
 		editorTabFolder.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -429,9 +440,32 @@ public class ModelEditor implements IGotoObject {
 			}
 		});
 
-		tab_list_show(preferences.getBoolean("tab-list-show", false)); //$NON-NLS-1$
+		editorTabFolder.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// When the list tab is visible, register the IViewEObjects
+				// interface
+				// This allows external commands to interact with the view.
+				// Eventually, all 3 tabs, or even the ModelEditor itself, could
+				// implement the interface.
+				String key = "org.eclipse.e4.tools.active-object-viewer"; //$NON-NLS-1$
+				if (editorTabFolder.getSelectionIndex() == getTabIndex(listTab.getTabItem())) {
+					app.getContext().set(key, listTab);
+				} else {
+					app.getContext().set(key, null);
+				}
+			}
+		});
 
 		editorTabFolder.setSelection(0);
+	}
+
+	/**
+	 * @param tabItem
+	 * @return The index of the tab item. Should never return -1.
+	 */
+	static public int getTabIndex(CTabItem tabItem) {
+		return Arrays.asList(tabItem.getParent().getItems()).indexOf(tabItem);
 	}
 
 	private void findAndHighlight(Control control) {
@@ -1296,7 +1330,9 @@ public class ModelEditor implements IGotoObject {
 				child.set(CTabFolder.class, editorTabFolder);
 				child.set(EMFDocumentResourceMediator.class, emfDocumentProvider);
 				child.set(IGotoObject.class, this);
+				child.set(Messages.class, messages);
 				listTab = ContextInjectionFactory.make(ListTab.class, child);
+				tabItemList = listTab.getTabItem();
 			}
 		}
 	}
@@ -1422,7 +1458,8 @@ public class ModelEditor implements IGotoObject {
 		if (clipboardService != null) {
 			clipboardService.setHandler(clipboardHandler);
 		}
-		viewer.getControl().setFocus();
+		// See bug 432095.
+		// viewer.getControl().setFocus();
 	}
 
 	@PreDestroy
@@ -1801,12 +1838,12 @@ public class ModelEditor implements IGotoObject {
 
 				viewer.reveal(object);
 				viewer.setSelection(new StructuredSelection(object));
-				editorTabFolder.setSelection(0);
+				editorTabFolder.setSelection(getTabIndex(tabItemTree));
 				break;
 			case TAB_XMI:
-				editorTabFolder.setSelection(1);
-				// model was not updating in xmi document (selection listener
-				// was not firing from programatic setSelection()
+				editorTabFolder.setSelection(getTabIndex(tabItemXmi));
+				// model was not updating in XMI document (selection listener
+				// was not firing from programmatic setSelection()
 				emfDocumentProvider.updateFromEMF();
 
 				try {
@@ -1817,28 +1854,13 @@ public class ModelEditor implements IGotoObject {
 					} else {
 						sourceViewer.setSelection(new TextSelection(0, 0), true);
 					}
-					//					String elementId = (String) EmfUtil.getAttributeValue(object, "elementId"); //$NON-NLS-1$
-					// if (elementId != null && elementId.isEmpty() == false) {
-					// int loc2 = emfDocumentProvider.indexOf(object);
-					// loc = emfDocumentProvider.getDocument().search(0,
-					// elementId, true, true, true);
-					// if (loc >= 0) {
-					// ISelection selection = new TextSelection(loc,
-					// elementId.length());
-					// sourceViewer.setSelection(selection, true);
-					// } else {
-					// sourceViewer.setSelection(new TextSelection(0, 0));
-					// }
-					// } else {
-					// sourceViewer.setSelection(new TextSelection(0, 0));
-					// }
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				break;
 			case TAB_LIST:
-				if (listTab != null) {
-					editorTabFolder.setSelection(Arrays.asList(editorTabFolder.getItems()).indexOf(listTab.getTabItem()));
+				if (tabItemList != null) {
+					editorTabFolder.setSelection(getTabIndex(tabItemList));
 					listTab.getViewer().setSelection(new StructuredSelection(object), true);
 				}
 				break;

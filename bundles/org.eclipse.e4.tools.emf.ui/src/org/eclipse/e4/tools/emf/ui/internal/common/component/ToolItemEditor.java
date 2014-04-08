@@ -8,6 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
+ *     Steven Spungin <steven@spungin.tv> - Bug 424730
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -24,6 +25,7 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
@@ -83,6 +85,9 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 	@Inject
 	@Optional
 	protected IProject project;
+
+	@Inject
+	IEclipseContext eclipseContext;
 
 	private Button createRemoveMenu;
 
@@ -231,7 +236,7 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					ToolItemIconDialogEditor dialog = new ToolItemIconDialogEditor(b.getShell(), project, getEditingDomain(), (MToolItem) getMaster().getValue(), Messages);
+					ToolItemIconDialogEditor dialog = new ToolItemIconDialogEditor(b.getShell(), eclipseContext, project, getEditingDomain(), (MToolItem) getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});

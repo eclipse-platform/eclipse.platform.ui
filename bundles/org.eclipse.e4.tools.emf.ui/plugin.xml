@@ -15,5 +15,12 @@
             class="org.eclipse.e4.tools.emf.ui.internal.PreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         id="id1"
+         point="org.eclipse.e4.workbench.model">
+      <fragment
+            uri="fragment.e4xmi">
+      </fragment>
+   </extension>
 
 </plugin>
