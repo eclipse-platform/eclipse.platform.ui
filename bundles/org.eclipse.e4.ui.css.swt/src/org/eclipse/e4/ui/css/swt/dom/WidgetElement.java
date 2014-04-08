@@ -96,9 +96,29 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 	}
 
 	/**
+	 * Convenience method for requesting the CSS engine to re-apply styles to a
+	 * widget.
+	 *
+	 * @param widget
+	 *            widget to be restyled
+	 * @param applyStylesToChildNodes
+	 *            if true, apply styles to the child nodes
+	 */
+	public static void applyStyles(Widget widget,
+			boolean applyStylesToChildNodes) {
+		CSSEngine engine = getEngine(widget);
+		if (engine != null) {
+			engine.applyStyles(widget, applyStylesToChildNodes);
+		}
+	}
+
+	/**
 	 * Convenience method for setting the CSS engine responsible for a display.
-	 * @param widget SWT display which is styled by an engine
-	 * @param engine Engine to be associated with the display
+	 *
+	 * @param widget
+	 *            SWT display which is styled by an engine
+	 * @param engine
+	 *            Engine to be associated with the display
 	 */
 	public static void setEngine(Display display, CSSEngine engine) {
 		display.setData(CSSSWTConstants.CSS_ENGINE_KEY, engine);
