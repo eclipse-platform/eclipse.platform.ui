@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,7 +108,7 @@ public class SubProgressTest extends TestCase {
 
 		int[] styles = new int[] {0, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK | SubProgressMonitor.SUPPRESS_SUBTASK_LABEL};
 
-		HashMap expected = new HashMap();
+		HashMap<String, String[]> expected = new HashMap<String, String[]>();
 		expected.put("style 0 below style 2", new String[] {"setTaskName0", "", "setTaskName1"});
 		expected.put("style 2 below style 0", new String[] {"setTaskName1", "beginTask1 ", "setTaskName1"});
 		expected.put("style 6 below style 0", new String[] {"setTaskName1", "beginTask1 ", "setTaskName1"});
@@ -129,7 +129,7 @@ public class SubProgressTest extends TestCase {
 		expected.put("style 2 as top-level monitor", new String[] {"", "", "setTaskName0"});
 		expected.put("style 6 below style 4", new String[] {"setTaskName1", "beginTask0 beginTask1 ", "setTaskName1"});
 		expected.put("style 4 below style 4", new String[] {"setTaskName1", "beginTask0 beginTask1 subTask1", "setTaskName1"});
-		HashMap results = new HashMap();
+		HashMap<String, String[]> results = new HashMap<String, String[]>();
 
 		for (int i = 0; i < styles.length; i++) {
 			int style = styles[i];
@@ -152,21 +152,20 @@ public class SubProgressTest extends TestCase {
 
 		String failure = null;
 		// Output the code for the observed results, in case one of them has changed intentionally
-		for (Iterator iter = results.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry next = (Map.Entry) iter.next();
-			String[] expectedResult = (String[]) expected.get(next.getKey());
-			String[] value = (String[]) next.getValue();
+		for (Map.Entry<String, String[]> entry : results.entrySet()) {
+			String[] expectedResult = expected.get(entry.getKey());
+			String[] value = entry.getValue();
 			if (compareArray(value, expectedResult))
 				continue;
 
-			System.out.print("expected.put(\"" + next.getKey() + "\", new String[] {");
-			failure = (String) next.getKey();
+			System.out.print("expected.put(\"" + entry.getKey() + "\", new String[] {");
+			failure = entry.getKey();
 			String list = concatArray(value);
 			System.out.println(list + "});");
 		}
 
 		if (failure != null) // Now actually throw an assertation if one of the results failed
-			Assert.assertEquals(failure, concatArray((String[]) expected.get(failure)), concatArray((String[]) results.get(failure)));
+			Assert.assertEquals(failure, concatArray(expected.get(failure)), concatArray(results.get(failure)));
 	}
 
 	private boolean compareArray(String[] value, String[] expectedResult) {
@@ -195,14 +194,14 @@ public class SubProgressTest extends TestCase {
 	}
 
 	private String[] runChildTest(int depth, TestProgressMonitor root, IProgressMonitor child, int ticks) {
-		ArrayList results = new ArrayList();
+		ArrayList<String> results = new ArrayList<String>();
 		child.beginTask("beginTask" + depth, ticks);
 		results.add(root.getTaskName());
 		child.subTask("subTask" + depth);
 		results.add(root.getSubTaskName());
 		child.setTaskName("setTaskName" + depth);
 		results.add(root.getTaskName());
-		return (String[]) results.toArray(new String[results.size()]);
+		return results.toArray(new String[results.size()]);
 	}
 
 	/**

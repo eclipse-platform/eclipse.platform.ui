@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -573,9 +573,9 @@ public class PathTest extends RuntimeTest {
 	}
 
 	public void testMakeUNC() {
-		ArrayList inputs = new ArrayList();
-		ArrayList expected = new ArrayList();
-		ArrayList expectedNon = new ArrayList();
+		ArrayList<Path> inputs = new ArrayList<Path>();
+		ArrayList<String> expected = new ArrayList<String>();
+		ArrayList<String> expectedNon = new ArrayList<String>();
 
 		inputs.add(Path.ROOT);
 		expected.add("//");
@@ -641,13 +641,13 @@ public class PathTest extends RuntimeTest {
 		assertEquals("0.1", inputs.size(), expectedNon.size());
 
 		for (int i = 0; i < inputs.size(); i++) {
-			IPath path = (IPath) inputs.get(i);
+			IPath path = inputs.get(i);
 			IPath result = path.makeUNC(true);
 			assertTrue("1.0." + path + " (" + result + ")", result.isUNC());
-			assertEquals("1.1." + path, (String) expected.get(i), result.toString());
+			assertEquals("1.1." + path, expected.get(i), result.toString());
 			result = path.makeUNC(false);
 			assertTrue("1.3." + path, !result.isUNC());
-			assertEquals("1.4." + path, (String) expectedNon.get(i), result.toString());
+			assertEquals("1.4." + path, expectedNon.get(i), result.toString());
 		}
 	}
 

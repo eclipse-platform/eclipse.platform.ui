@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,8 +36,8 @@ public class Bug_211799 extends AbstractJobManagerTest {
 
 		protected IStatus run(IProgressMonitor monitor) {
 			synchronized (list) {
-				Long val = (Long) list.getFirst();
-				if (val.longValue() != id) 
+				Long val = list.getFirst();
+				if (val.longValue() != id)
 					failure = new RuntimeException("We broke, running should have been: " + val.longValue());
 				list.remove(new Long(id));
 			}
@@ -49,13 +49,14 @@ public class Bug_211799 extends AbstractJobManagerTest {
 			return Status.OK_STATUS;
 		}
 	}
+
 	static final ISchedulingRule rule = new IdentityRule();
 	long counter = 0;
 	Exception failure = null;
 	final int JOBS_TO_SCHEDULE = 500;
-	LinkedList list = new LinkedList();
-	
-	List runList = new ArrayList(JOBS_TO_SCHEDULE);
+	LinkedList<Long> list = new LinkedList<Long>();
+
+	List<Long> runList = new ArrayList<Long>(JOBS_TO_SCHEDULE);
 
 	public void testBug() {
 		for (int i = 0; i < JOBS_TO_SCHEDULE; i++) {

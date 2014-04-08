@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,9 +111,9 @@ public class PlatformTest extends RuntimeTest {
 	}
 
 	public void testRunnable() {
-		final Vector exceptions = new Vector();
+		final Vector<Throwable> exceptions = new Vector<Throwable>();
 
-		final List collected = new ArrayList();
+		final List<IStatus> collected = new ArrayList<IStatus>();
 
 		// add a log listener to ensure that we report using the right plug-in id
 		ILogListener logListener = new ILogListener() {
@@ -143,7 +143,7 @@ public class PlatformTest extends RuntimeTest {
 
 		// ensures the status object produced has the right plug-in id (bug 83614)
 		assertEquals("2.0", collected.size(), 1);
-		assertEquals("2.1", RuntimeTest.PI_RUNTIME_TESTS, ((IStatus) collected.get(0)).getPlugin());
+		assertEquals("2.1", RuntimeTest.PI_RUNTIME_TESTS, collected.get(0).getPlugin());
 	}
 
 }

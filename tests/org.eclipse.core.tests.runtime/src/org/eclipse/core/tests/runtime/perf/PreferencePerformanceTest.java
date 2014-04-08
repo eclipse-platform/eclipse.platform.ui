@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -45,15 +45,15 @@ public class PreferencePerformanceTest extends RuntimeTest {
 	 * and the second being the values. All the keys will have the given prefix.
 	 */
 	private String[][] getCommonPrefixKeys(int size, String prefix) {
-		ArrayList keyList = new ArrayList();
-		ArrayList valueList = new ArrayList();
+		ArrayList<String> keyList = new ArrayList<String>();
+		ArrayList<String> valueList = new ArrayList<String>();
 		for (int i = 0; i < size; i++) {
 			keyList.add(prefix + '.' + Integer.toString(i) + getUniqueString());
 			valueList.add(Integer.toString(i));
 		}
 		String[][] result = new String[2][];
-		result[0] = (String[]) keyList.toArray(new String[keyList.size()]);
-		result[1] = (String[]) valueList.toArray(new String[valueList.size()]);
+		result[0] = keyList.toArray(new String[keyList.size()]);
+		result[1] = valueList.toArray(new String[valueList.size()]);
 		return result;
 	}
 
@@ -66,15 +66,15 @@ public class PreferencePerformanceTest extends RuntimeTest {
 	 * and the second being the values. The keys will be integers in sequential order.
 	 */
 	private String[][] getSequentialKeys(int size) {
-		ArrayList keyList = new ArrayList();
-		ArrayList valueList = new ArrayList();
+		ArrayList<String> keyList = new ArrayList<String>();
+		ArrayList<String> valueList = new ArrayList<String>();
 		for (int i = 0; i < size; i++) {
 			keyList.add(Integer.toString(i));
 			valueList.add(Integer.toString(i));
 		}
 		String[][] result = new String[2][];
-		result[0] = (String[]) keyList.toArray(new String[keyList.size()]);
-		result[1] = (String[]) valueList.toArray(new String[valueList.size()]);
+		result[0] = keyList.toArray(new String[keyList.size()]);
+		result[1] = valueList.toArray(new String[valueList.size()]);
 		return result;
 	}
 
@@ -83,15 +83,15 @@ public class PreferencePerformanceTest extends RuntimeTest {
 	 * and the second being the values. All the keys will have a unique prefix.
 	 */
 	private String[][] getUniqueKeys(int size) {
-		ArrayList keyList = new ArrayList();
-		ArrayList valueList = new ArrayList();
+		ArrayList<String> keyList = new ArrayList<String>();
+		ArrayList<String> valueList = new ArrayList<String>();
 		for (int i = 0; i < size; i++) {
 			keyList.add(Integer.toString(i) + getUniqueString());
 			valueList.add(Integer.toString(i));
 		}
 		String[][] result = new String[2][];
-		result[0] = (String[]) keyList.toArray(new String[keyList.size()]);
-		result[1] = (String[]) valueList.toArray(new String[valueList.size()]);
+		result[0] = keyList.toArray(new String[keyList.size()]);
+		result[1] = valueList.toArray(new String[valueList.size()]);
 		return result;
 	}
 
@@ -261,14 +261,14 @@ public class PreferencePerformanceTest extends RuntimeTest {
 
 		// setup outside the timed block
 		final String qualifier = getUniqueString();
-		final ArrayList keyList = new ArrayList();
-		final ArrayList valueList = new ArrayList();
+		final ArrayList<String> keyList = new ArrayList<String>();
+		final ArrayList<String> valueList = new ArrayList<String>();
 		for (int i = 0; i < KEYS_PER_NODE; i++) {
 			keyList.add(getUniqueString() + Integer.toString(i));
 			valueList.add(Integer.toString(i));
 		}
-		final String[] keys = (String[]) keyList.toArray(new String[keyList.size()]);
-		final String[] values = (String[]) valueList.toArray(new String[valueList.size()]);
+		final String[] keys = keyList.toArray(new String[keyList.size()]);
+		final String[] values = valueList.toArray(new String[valueList.size()]);
 
 		// run the test
 		new PerformanceTestRunner() {
@@ -302,14 +302,14 @@ public class PreferencePerformanceTest extends RuntimeTest {
 
 		// gather the key/value pairs before so we don't time it
 		final String qualifier = getUniqueString();
-		final ArrayList keyList = new ArrayList();
-		final ArrayList valueList = new ArrayList();
+		final ArrayList<String> keyList = new ArrayList<String>();
+		final ArrayList<String> valueList = new ArrayList<String>();
 		for (int i = 0; i < KEYS_PER_NODE; i++) {
 			keyList.add(getUniqueString() + Integer.toString(i));
 			valueList.add(Integer.toString(i));
 		}
-		final String[] keys = (String[]) keyList.toArray(new String[keyList.size()]);
-		final String[] values = (String[]) valueList.toArray(new String[valueList.size()]);
+		final String[] keys = keyList.toArray(new String[keyList.size()]);
+		final String[] values = valueList.toArray(new String[valueList.size()]);
 
 		// run the performance test
 		new PerformanceTestRunner() {

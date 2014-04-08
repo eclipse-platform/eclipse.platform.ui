@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,11 +70,11 @@ public class AbstractJobManagerTest extends AbstractJobTest {
 	 * @param family
 	 *            The job family to search for, or null for all jobs.
 	 */
-	protected List getRunningJobs(Object family) {
-		List jobs = new ArrayList();
+	protected List<Job> getRunningJobs(Object family) {
+		List<Job> jobs = new ArrayList<Job>();
 		jobs.addAll(Arrays.asList(Job.getJobManager().find(family)));
-		for (Iterator iterator = jobs.iterator(); iterator.hasNext();) {
-			Job job = (Job) iterator.next();
+		for (Iterator<Job> iterator = jobs.iterator(); iterator.hasNext();) {
+			Job job = iterator.next();
 			if (job.getState() != Job.RUNNING || job.getThread() == Thread.currentThread()) {
 				iterator.remove();
 			}
@@ -82,22 +82,20 @@ public class AbstractJobManagerTest extends AbstractJobTest {
 		return jobs;
 	}
 
-	protected List getJobs(String[] families) {
+	protected List<Job> getJobs(String[] families) {
 		if (families == null) {
 			return getRunningJobs(null);
 		}
-		List j = new ArrayList();
-		for (int i = 0; i < families.length; i++) {
-			String family = families[i];
+		List<Job> j = new ArrayList<Job>();
+		for (String family : families)
 			j.addAll(getRunningJobs(family));
-		}
 		return j;
 	}
 
-	protected List getFinishedJobs(Job[] jobs) {
-		List joblist = new ArrayList(Arrays.asList(jobs));
-		for (Iterator iterator = joblist.iterator(); iterator.hasNext();) {
-			Job job = (Job) iterator.next();
+	protected List<Job> getFinishedJobs(Job[] jobs) {
+		List<Job> joblist = new ArrayList<Job>(Arrays.asList(jobs));
+		for (Iterator<Job> iterator = joblist.iterator(); iterator.hasNext();) {
+			Job job = iterator.next();
 			if (job.getState() != Job.NONE) {
 				iterator.remove();
 			}
@@ -125,7 +123,7 @@ public class AbstractJobManagerTest extends AbstractJobTest {
 	}
 
 	protected void waitForJobsCompletion(String[] families, int waitTime) {
-		List jobs = getJobs(families);
+		List<Job> jobs = getJobs(families);
 		int i = 0;
 		int tickLength = 10;
 		int ticks = waitTime / tickLength;

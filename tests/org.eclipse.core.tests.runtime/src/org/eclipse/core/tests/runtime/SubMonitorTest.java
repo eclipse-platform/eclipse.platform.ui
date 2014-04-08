@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -328,14 +328,14 @@ public class SubMonitorTest extends TestCase {
 	}
 
 	private String[] runChildTest(int depth, TestProgressMonitor root, IProgressMonitor child, int ticks) {
-		ArrayList results = new ArrayList();
+		ArrayList<String> results = new ArrayList<String>();
 		child.beginTask("beginTask" + depth, ticks);
 		results.add(root.getTaskName());
 		child.subTask("subTask" + depth);
 		results.add(root.getSubTaskName());
 		child.setTaskName("setTaskName" + depth);
 		results.add(root.getTaskName());
-		return (String[]) results.toArray(new String[results.size()]);
+		return results.toArray(new String[results.size()]);
 	}
 
 	/**
@@ -345,7 +345,7 @@ public class SubMonitorTest extends TestCase {
 
 		int[] styles = new int[] {SubMonitor.SUPPRESS_NONE, SubMonitor.SUPPRESS_BEGINTASK, SubMonitor.SUPPRESS_SETTASKNAME, SubMonitor.SUPPRESS_SUBTASK, SubMonitor.SUPPRESS_BEGINTASK | SubMonitor.SUPPRESS_SETTASKNAME, SubMonitor.SUPPRESS_BEGINTASK | SubMonitor.SUPPRESS_SUBTASK, SubMonitor.SUPPRESS_SETTASKNAME | SubMonitor.SUPPRESS_SUBTASK, SubMonitor.SUPPRESS_ALL_LABELS};
 
-		HashMap expected = new HashMap();
+		HashMap<String, String[]> expected = new HashMap<String, String[]>();
 		expected.put("style 5 below style 7", new String[] {"", "", ""});
 		expected.put("style 7 below style 5", new String[] {"beginTask0", "", "beginTask0"});
 		expected.put("style 7 below style 4", new String[] {"beginTask0", "subTask0", "beginTask0"});
@@ -418,7 +418,7 @@ public class SubMonitorTest extends TestCase {
 		expected.put("style 4 as top-level monitor", new String[] {"beginTask0", "subTask0", "beginTask0"});
 		expected.put("style 7 below style 7", new String[] {"", "", ""});
 		expected.put("style 7 below style 6", new String[] {"", "subTask0", ""});
-		HashMap results = new HashMap();
+		HashMap<String, String[]> results = new HashMap<String, String[]>();
 
 		for (int i = 0; i < styles.length; i++) {
 			int style = styles[i];
@@ -454,24 +454,23 @@ public class SubMonitorTest extends TestCase {
 
 		String failure = null;
 		// Output the code for the observed results, in case one of them has changed intentionally
-		for (Iterator iter = results.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry next = (Map.Entry) iter.next();
-			String[] expectedResult = (String[]) expected.get(next.getKey());
+		for (Map.Entry<String, String[]> entry : results.entrySet()) {
+			String[] expectedResult = expected.get(entry.getKey());
 			if (expectedResult == null)
 				expectedResult = new String[0];
 
-			String[] value = (String[]) next.getValue();
+			String[] value = entry.getValue();
 			if (compareArray(value, expectedResult))
 				continue;
 
-			System.out.print("expected.put(\"" + next.getKey() + "\", new String[] {");
-			failure = (String) next.getKey();
+			System.out.print("expected.put(\"" + entry.getKey() + "\", new String[] {");
+			failure = entry.getKey();
 			String list = concatArray(value);
 			System.out.println(list + "});");
 		}
 
 		if (failure != null) // Now actually throw an assertation if one of the results failed
-			Assert.assertEquals(failure, concatArray((String[]) expected.get(failure)), concatArray((String[]) results.get(failure)));
+			Assert.assertEquals(failure, concatArray(expected.get(failure)), concatArray(results.get(failure)));
 	}
 
 	private boolean compareArray(String[] value, String[] expectedResult) {

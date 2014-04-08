@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class BenchPath extends RuntimeTest {
 	public void testHash() {
 		final int REPEAT = 500000;
 		final IPath[] paths = generateVariousPaths();
-		final HashMap map = new HashMap(32);
+		final HashMap<IPath, String> map = new HashMap<IPath, String>(32);
 		for (int i = 0; i < paths.length; i++)
 			map.put(paths[i], "");
 		final int numPaths = paths.length;

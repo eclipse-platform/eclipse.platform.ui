@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import org.eclipse.osgi.util.NLS;
  * status is returned mentioned that there were problems.
  */
 public class PlatformLogReader {
-	private ArrayList list = null;
+	private ArrayList<IStatus> list = null;
 	private String currentLine = "";
 	private BufferedReader reader;
 
@@ -66,7 +66,7 @@ public class PlatformLogReader {
 	 * is returned.
 	 */
 	public synchronized IStatus[] readLogFile(String path) {
-		list = new ArrayList();
+		list = new ArrayList<IStatus>();
 		InputStream input = null;
 		try {
 			input = new FileInputStream(path);
@@ -100,7 +100,7 @@ public class PlatformLogReader {
 				log(e);
 			}
 		}
-		return (IStatus[]) list.toArray(new IStatus[list.size()]);
+		return list.toArray(new IStatus[list.size()]);
 	}
 
 	protected int getLineType() {

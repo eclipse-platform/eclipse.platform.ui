@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.jobs.ILock;
  * Multiple readers are allowed to perform simultaneously.
  */
 public class ReadWriteMonitor {
-	private final Set blockedThreads = Collections.synchronizedSet(new HashSet());
+	private final Set<Thread> blockedThreads = Collections.synchronizedSet(new HashSet<Thread>());
 	private ILock lock;
 	/**
 	 * <0 : writing (cannot go beyond -1, i.e one concurrent writer)
@@ -133,7 +133,7 @@ public class ReadWriteMonitor {
 	 * Wake up all waiting threads so they can compete for the counter again.
 	 */
 	private void interruptBlockedThreads() {
-		for (Iterator it = blockedThreads.iterator(); it.hasNext();)
-			((Thread) it.next()).interrupt();
+		for (Thread thread : blockedThreads)
+			thread.interrupt();
 	}
 }
