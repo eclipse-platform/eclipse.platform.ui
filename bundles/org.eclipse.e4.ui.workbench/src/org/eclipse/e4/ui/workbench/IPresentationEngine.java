@@ -64,6 +64,14 @@ public interface IPresentationEngine {
 	public static final String NO_MOVE = "NoMove"; //$NON-NLS-1$
 
 	/**
+	 * This tag can be used by the renderer implementation to decide that the user interface element
+	 * has been hidden.
+	 *
+	 * @since 1.2
+	 */
+	public static final String HIDDEN_EXPLICITLY = "HIDDEN_EXPLICITLY"; //$NON-NLS-1$
+
+	/**
 	 * This key is used to store information in the 'persistentData' map which will be used to
 	 * override the initial style of an element at rendering time. For example the SWT renderer will
 	 * expect to see an integer (as a string) which defines the initial SWT style bits.
