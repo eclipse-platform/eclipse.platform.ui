@@ -1024,23 +1024,15 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 			return status;
 		}
-		// combine counts for infos and others
-		counts = new Integer[] { counts[0], counts[1],
-				new Integer(counts[2].intValue() + counts[3].intValue()) };
+		String message= MessageFormat.format(
+				MarkerMessages.errorsAndWarningsSummaryBreakdown,
+				counts[0], counts[1], /* combine infos and others */ counts[2] + counts[3]);
 		if (filteredCount < 0 || filteredCount >= totalCount)
-			return MessageFormat.format(
-					MarkerMessages.errorsAndWarningsSummaryBreakdown,
-					counts[0], counts[1], counts[2] + counts[3]);
+			return message;
 		return NLS
 				.bind(
 						MarkerMessages.problem_filter_matchedMessage,
-						new Object[] {
-								MessageFormat
-										.format(
-												MarkerMessages.errorsAndWarningsSummaryBreakdown, 
-												counts[0], counts[1], counts[2] + counts[3]),
-								new Integer(filteredCount),
-								new Integer(totalCount) });
+						new Object[] {message, new Integer(filteredCount), new Integer(totalCount) });
 	}
 
 	/**
@@ -1500,9 +1492,6 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	private String getStatusSummary(MarkerEntry[] entries) {
 		Integer[] counts = Markers.getMarkerCounts(entries);
-		// combine counts for infos and others
-		counts = new Integer[] { counts[0], counts[1],
-				new Integer(counts[2].intValue() + counts[3].intValue()) };
 		if (counts[0].intValue() == 0 && counts[1].intValue() == 0) {
 			// In case of tasks view and bookmarks view, show only selection
 			// count
@@ -1518,7 +1507,7 @@ public class ExtendedMarkersView extends ViewPart {
 								MessageFormat
 										.format(
 												MarkerMessages.errorsAndWarningsSummaryBreakdown,
-												counts[0], counts[1], counts[2] + counts[3]) });
+												counts[0], counts[1], /* combine infos and others */ counts[2] + counts[3])});
 	}
 
 	/**
