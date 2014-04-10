@@ -11,6 +11,7 @@
  *     Red Hat Inc. (mistria) - Fixes suggested by FindBugs
  *     Red Hat Inc. (mistria) - Bug 413348: fix stream leak
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 428715
+ *     Brian de Alwis (MTI) - Performance tweaks (Bug 430829)
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.engine;
 
@@ -31,6 +32,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
+import org.eclipse.e4.ui.css.core.dom.ChildVisibilityAwareElement;
 import org.eclipse.e4.ui.css.core.dom.ExtendedCSSRule;
 import org.eclipse.e4.ui.css.core.dom.ExtendedDocumentCSS;
 import org.eclipse.e4.ui.css.core.dom.IElementProvider;
@@ -62,6 +64,7 @@ import org.w3c.css.sac.InputSource;
 import org.w3c.css.sac.Selector;
 import org.w3c.css.sac.SelectorList;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.css.CSSImportRule;
 import org.w3c.dom.css.CSSRule;
@@ -356,6 +359,10 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			boolean computeDefaultStyle) {
 		Element elt = getElement(element);
 		if (elt != null) {
+			if (!isVisible(elt)) {
+				return;
+			}
+
 			/*
 			 * Compute new Style to apply.
 			 */
@@ -416,7 +423,8 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				/*
 				 * Style all children recursive.
 				 */
-				NodeList nodes = elt.getChildNodes();
+				NodeList nodes = elt instanceof ChildVisibilityAwareElement ? ((ChildVisibilityAwareElement) elt)
+						.getVisibleChildNodes() : elt.getChildNodes();
 				if (nodes != null) {
 					for (int k = 0; k < nodes.getLength(); k++) {
 						applyStyles(nodes.item(k), applyStylesToChildNodes);
@@ -426,6 +434,30 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			}
 		}
 
+	}
+
+	/**
+	 * Allow the CSS engine to skip particular elements if they are not visible.
+	 * Elements need to be restyled when they become visible.
+	 *
+	 * @param elt
+	 * @return true if the element is visible, false if not visible.
+	 */
+	protected boolean isVisible(Element elt) {
+		Node parentNode = elt.getParentNode();
+		if (parentNode instanceof ChildVisibilityAwareElement) {
+			NodeList l = ((ChildVisibilityAwareElement) parentNode)
+					.getVisibleChildNodes();
+			if (l != null) {
+				for (int i = 0; i < l.getLength(); i++) {
+					if (l.item(i) == elt) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		return true;
 	}
 
 	private void applyConditionalPseudoStyle(ExtendedCSSRule parentRule, String pseudoInstance, Object element, CSSStyleDeclaration styleWithPseudoInstance) {

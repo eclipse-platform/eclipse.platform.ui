@@ -56,5 +56,4 @@ public class CTabItemElement extends ItemElement {
 		item.setFont(null); // in such case the parent's font will be taken
 		super.reset();
 	}
-
 }
