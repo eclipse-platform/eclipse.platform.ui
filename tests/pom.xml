@@ -50,6 +50,7 @@
     <module>org.eclipse.e4.ui.tests</module>
     <module>org.eclipse.e4.ui.tests.css.core</module>
     <module>org.eclipse.e4.ui.tests.css.swt</module>
+	<module>org.eclipse.e4.ui.workbench.addons.swt.test</module>
   </modules>
   <properties>
     <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>

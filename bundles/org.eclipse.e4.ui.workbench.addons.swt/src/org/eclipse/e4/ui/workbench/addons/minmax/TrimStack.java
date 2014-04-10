@@ -45,6 +45,7 @@ import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
+import org.eclipse.e4.ui.workbench.addons.minmax.TrimStackIdHelper.TrimStackIdPart;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimmedPartLayout;
@@ -800,15 +801,18 @@ public class TrimStack {
 			result = modelService.find(stackId, window);
 		} else {
 			String toolControlId = toolControl.getElementId();
-			int index = toolControlId.indexOf('(');
-			String stackId = toolControlId.substring(0, index);
-			String perspId = toolControlId.substring(index + 1, toolControlId.length() - 1);
+			Map<TrimStackIdPart, String> parsedIds = TrimStackIdHelper.parseTrimStackId(toolControlId);
+
+			String stackId = parsedIds.get(TrimStackIdPart.ELEMENT_ID);
+			String perspId = parsedIds.get(TrimStackIdPart.PERSPECTIVE_ID);
 
 			MPerspective persp = null;
-			List<MPerspective> perspectives = modelService.findElements(ps.get(0), perspId,
-					MPerspective.class, null);
-			if (perspectives != null && !perspectives.isEmpty()) {
-				persp = perspectives.get(0);
+			if (perspId != null) {
+				List<MPerspective> perspectives = modelService.findElements(ps.get(0), perspId, MPerspective.class,
+						null);
+				if (perspectives != null && !perspectives.isEmpty()) {
+					persp = perspectives.get(0);
+				}
 			}
 
 			if (persp != null) {
