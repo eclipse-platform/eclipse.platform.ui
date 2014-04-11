@@ -24,7 +24,7 @@ public class Messages extends NLS {
 	public static String TrimStack_Horizontal;
 	public static String TrimStack_OrientationMenu;
 	public static String TrimStack_Vertical;
-	public static String TrimStack_Use_Overlays;
+	public static String TrimStack_Show_In_Original_Location;
 
 	private static final String BUNDLE_NAME = "org.eclipse.e4.ui.workbench.addons.minmax.messages";//$NON-NLS-1$
 

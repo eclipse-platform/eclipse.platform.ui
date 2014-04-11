@@ -24,8 +24,6 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSRenderingUtils;
 import org.eclipse.e4.ui.internal.workbench.swt.ShellActivationListener;
-import org.eclipse.e4.ui.model.application.MAddon;
-import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -303,18 +301,6 @@ public class TrimStack {
 			showStack(false);
 		}
 	};
-
-	private MAddon minMaxAddon;
-
-	@Inject
-	private void setMinMaxElement(MApplication theApp) {
-		for (MAddon addon : theApp.getAddons()) {
-			String uri = addon.getContributionURI();
-			if (uri != null && uri.contains("MinMaxAddon")) { //$NON-NLS-1$
-				minMaxAddon = addon;
-			}
-		}
-	}
 
 	private void fixToolItemSelection() {
 		if (trimStackTB == null || trimStackTB.isDisposed())
@@ -669,13 +655,13 @@ public class TrimStack {
 	 */
 	private void createUseOverlaysMenu() {
 		MenuItem useOverlaysItem = new MenuItem(trimStackMenu, SWT.CHECK);
-		useOverlaysItem.setText(Messages.TrimStack_Use_Overlays);
-		useOverlaysItem.setSelection(useOverlays());
+		useOverlaysItem.setText(Messages.TrimStack_Show_In_Original_Location);
+		useOverlaysItem.setSelection(!useOverlays());
 		useOverlaysItem.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
-				if (minMaxAddon != null) {
-					minMaxAddon.getPersistedState().put(USE_OVERLAYS_KEY,
+				if (toolControl != null) {
+					toolControl.getPersistedState().put(USE_OVERLAYS_KEY,
 							Boolean.toString(!useOverlays()));
 				}
 			}
@@ -1061,10 +1047,10 @@ public class TrimStack {
 	 *         to temporarily restore the stack into the current presentation.
 	 */
 	private boolean useOverlays() {
-		if (minMaxAddon == null)
+		if (toolControl == null)
 			return true;
 
-		String useOverlays = minMaxAddon.getPersistedState().get(USE_OVERLAYS_KEY);
+		String useOverlays = toolControl.getPersistedState().get(USE_OVERLAYS_KEY);
 		if (useOverlays == null)
 			useOverlays = "true"; //$NON-NLS-1$
 		return Boolean.parseBoolean(useOverlays);
