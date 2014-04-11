@@ -220,7 +220,7 @@
                definitionId="org.eclipse.debug.ui.commands.SkipAllBreakpoints"
                label="%SkipAllBreakpointsAction.label"
                tooltip="%SkipAllBreakpointsAction.tooltip"
-               icon="$nl$/icons/full/elcl16/skip_brkp.png"
+               icon="$nl$/icons/full/elcl16/skip_brkp.gif"
                helpContextId="skip_all_breakpoints_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsAction"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
