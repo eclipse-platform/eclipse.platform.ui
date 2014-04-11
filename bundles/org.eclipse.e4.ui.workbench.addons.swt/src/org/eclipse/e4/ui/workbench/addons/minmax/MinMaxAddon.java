@@ -183,7 +183,6 @@ public class MinMaxAddon {
 	};
 
 	private void setState(MUIElement element, String state) {
-		element.getTags().remove(MINIMIZED_BY_ZOOM);
 		if (MINIMIZED.equals(state)) {
 			element.getTags().remove(MAXIMIZED);
 			element.getTags().add(MINIMIZED);
@@ -595,7 +594,6 @@ public class MinMaxAddon {
 		ts.restoreStack();
 
 		adjustCTFButtons(element);
-		element.getTags().remove(MINIMIZED_BY_ZOOM);
 
 		List<String> maximizeTag = new ArrayList<String>();
 		maximizeTag.add(IPresentationEngine.MAXIMIZED);
@@ -781,6 +779,7 @@ public class MinMaxAddon {
 
 		List<MUIElement> elementsToRestore = getElementsToRestore(element);
 		for (MUIElement toRestore : elementsToRestore) {
+			toRestore.getTags().remove(IPresentationEngine.MINIMIZED_BY_ZOOM);
 			toRestore.getTags().remove(IPresentationEngine.MINIMIZED);
 		}
 
