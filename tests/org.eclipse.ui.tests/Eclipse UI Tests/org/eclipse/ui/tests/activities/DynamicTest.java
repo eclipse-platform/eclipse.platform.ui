@@ -263,9 +263,9 @@ public class DynamicTest extends UITestCase {
      *  
      */
     public void testActivityListener() {
+        final String activity_to_listen_name = "Activity 18"; //$NON-NLS-1$
         final IActivity activity_to_listen = activityManager
-                .getActivity((String) activityManager.getDefinedActivityIds()
-                        .toArray()[0]);
+                .getActivity("org.eclipse.activity18"); //$NON-NLS-1$
         activity_to_listen.addActivityListener(new IActivityListener() {
             public void activityChanged(ActivityEvent activityEvent) {
                 switch (listenerType) {
@@ -297,17 +297,13 @@ public class DynamicTest extends UITestCase {
             }
         });
         // Remove activity and change name consequently
-        try {
-            fixedModelRegistry.removeActivity(activity_to_listen.getId(),
-                    activity_to_listen.getName());
-        } catch (NotDefinedException e) {
-            e.printStackTrace(System.err);
-        }
+        fixedModelRegistry.removeActivity(activity_to_listen.getId(),
+                activity_to_listen_name);
         assertTrue(listenerType == -1);
         // Add activity
         listenerType = 5;
         fixedModelRegistry.addActivity(activity_to_listen.getId(),
-                "Activity 18"); //$NON-NLS-1$ //$NON-NLS-2$
+                activity_to_listen_name);
         assertTrue(listenerType == -1);
         // Add to enabled activity
         listenerType = 6;
