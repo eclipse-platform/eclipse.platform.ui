@@ -72,12 +72,10 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 
 	private Composite composite;
 	private EMFDataBindingContext context;
-	private IProject project;
-	// This was added for BUG 430921. The member 'project' is
-	// never set, and seems to be always null in this class.
+
 	@Inject
 	@Optional
-	private IProject projectInjected;
+	private IProject project;
 
 	private IListProperty PART__MENUS = EMFProperties.list(BasicPackageImpl.Literals.PART_DESCRIPTOR__MENUS);
 	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
@@ -214,7 +212,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 			 */
 			//
 			final IContributionClassCreator c = getEditor().getContributionCreator(org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.Literals.PART);
-			if (projectInjected != null && c != null) {
+			if (project != null && c != null) {
 				lnk = new Link(parent, SWT.NONE);
 				lnk.setText("<A>" + Messages.PartEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
 				lnk.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -225,7 +223,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 						MPart dummyPart = MBasicFactory.INSTANCE.createPart();
 						String contributionURI = ((MPartDescriptor) getMaster().getValue()).getContributionURI();
 						dummyPart.setContributionURI(contributionURI);
-						c.createOpen(dummyPart, getEditingDomain(), projectInjected, lnk.getShell());
+						c.createOpen(dummyPart, getEditingDomain(), project, lnk.getShell());
 						((MPartDescriptor) masterFinal.getValue()).setContributionURI(dummyPart.getContributionURI());
 					}
 				});
