@@ -221,7 +221,7 @@ public class HandledContributionItem extends ContributionItem {
 		if (model.getCommand() != null && model.getWbCommand() == null) {
 			String cmdId = model.getCommand().getElementId();
 			List<MParameter> modelParms = model.getParameters();
-			Map<String, String> parameters = new HashMap<String, String>(4);
+			Map<String, Object> parameters = new HashMap<String, Object>(4);
 			for (MParameter mParm : modelParms) {
 				parameters.put(mParm.getName(), mParm.getValue());
 			}
