@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - 427887 Added method to order working sets
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -15,15 +16,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
@@ -90,14 +86,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 		}
 	}
 
-	private SortedSet workingSets = new TreeSet(new Comparator() {
-		@Override
-		public int compare(Object o1, Object o2) {
-			// Cast and compare directly
-			return ((AbstractWorkingSet) o1).getUniqueId().compareTo(
-					((AbstractWorkingSet) o2).getUniqueId());
-		}
-	});
+	private List<IWorkingSet> workingSets = new ArrayList<IWorkingSet>();
     
     private List recentWorkingSets = new ArrayList();
 
@@ -257,22 +246,18 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 
     @Override
 	public IWorkingSet[] getWorkingSets() {
-		SortedSet visibleSubset = new TreeSet(WorkingSetComparator
-				.getInstance());
-    		for (Iterator i = workingSets.iterator(); i.hasNext();) {
-				IWorkingSet workingSet = (IWorkingSet) i.next();
-				if (workingSet.isVisible()) {
-					visibleSubset.add(workingSet);
-				}
+		List<IWorkingSet> visibleSubset = new ArrayList<IWorkingSet>();
+		for (IWorkingSet workingSet : this.workingSets) {
+			if (workingSet.isVisible()) {
+				visibleSubset.add(workingSet);
 			}
-        return (IWorkingSet[]) visibleSubset.toArray(new IWorkingSet[visibleSubset.size()]);
+		}
+		return visibleSubset.toArray(new IWorkingSet[visibleSubset.size()]);
     }
     
 	@Override
 	public IWorkingSet[] getAllWorkingSets() {
-		IWorkingSet[] sets = (IWorkingSet[]) workingSets
-					.toArray(new IWorkingSet[workingSets.size()]);
-		Arrays.sort(sets, WorkingSetComparator.getInstance());
+		IWorkingSet[] sets = workingSets.toArray(new IWorkingSet[workingSets.size()]);
 		return sets;
 	}
 
@@ -924,5 +909,19 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 	public int getRecentWorkingSetsLength() {
 		IPreferenceStore store = PrefUtil.getAPIPreferenceStore();
 		return store.getInt(IWorkbenchPreferenceConstants.RECENTLY_USED_WORKINGSETS_SIZE);
+	}
+
+	@Override
+	public void swapIndex(IWorkingSet one, IWorkingSet other) {
+		int indexOne = this.workingSets.indexOf(one);
+		int indexOther = this.workingSets.indexOf(other);
+		if (indexOne < 0) {
+			throw new IllegalArgumentException("Working set " + one.getId() + " doesn't exist"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if (indexOther < 0) {
+			throw new IllegalArgumentException("Working set " + other.getId() + " doesn't exist"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		this.workingSets.set(indexOne, other);
+		this.workingSets.set(indexOther, one);
 	}
 }

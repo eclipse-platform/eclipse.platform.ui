@@ -12,6 +12,7 @@
  * Tristan Hume - <trishume@gmail.com> -
  * 		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
  * 		Implemented workbench auto-save to correctly restore state in case of crash.
+ * Mickael Istria (Red Hat Inc.) - 427887 Up and down for working set
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -876,6 +877,8 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkingSetSelectionDialog_detailsButton_label;
 	public static String WorkingSetSelectionDialog_newButton_label;
 	public static String WorkingSetSelectionDialog_removeButton_label;
+	public static String WorkingSetSelectionDialog_upButton_label;
+	public static String WorkingSetSelectionDialog_downButton_label;
 	
 	public static String WorkbenchPage_workingSet_default_label;
 	public static String WorkbenchPage_workingSet_multi_label;

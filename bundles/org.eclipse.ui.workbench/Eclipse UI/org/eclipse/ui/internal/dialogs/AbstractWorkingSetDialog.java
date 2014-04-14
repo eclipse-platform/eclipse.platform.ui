@@ -8,7 +8,8 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation 
  * 		Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font
- *   	should be activated and used by other components.
+ *   	    should be activated and used by other components.
+ *      Mickael Istria (Red Hat Inc.) - 427887 Up/Down to order working sets
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -56,30 +57,31 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 	private static final int ID_REMOVE = ID_DETAILS + 1;
 	private static final int ID_SELECTALL = ID_REMOVE + 1;
 	private static final int ID_DESELECTALL = ID_SELECTALL + 1;
-	
+	private static final int ID_UP = ID_DESELECTALL + 1;
+	private static final int ID_DOWN = ID_UP + 1;
+
 	private Button newButton;
-
 	private Button detailsButton;
-
 	private Button removeButton;
+	protected Button upButton;
+	protected Button downButton;
 	
 	private Button selectAllButton;
-	
 	private Button deselectAllButton;
 
 	private IWorkingSet[] result;
 
-	private List addedWorkingSets;
+	private List<IWorkingSet> addedWorkingSets;
 
-	private List removedWorkingSets;
+	private List<IWorkingSet> removedWorkingSets;
 
-	private Map editedWorkingSets;
+	private Map<IWorkingSet, IWorkingSet> editedWorkingSets;
 
-	private List removedMRUWorkingSets;
+	private List<IWorkingSet> removedMRUWorkingSets;
 
-	private Set workingSetIds;
+	private Set<String> workingSetIds;
 	
-	private boolean canEdit;
+	protected boolean canEdit;
 
 	protected AbstractWorkingSetDialog(Shell parentShell, String[] workingSetIds, boolean canEdit) {
 		super(parentShell);
@@ -152,6 +154,28 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 					removeSelectedWorkingSets();
 				}
 			});
+
+			this.upButton = createButton(buttonComposite, ID_UP,
+					WorkbenchMessages.WorkingSetSelectionDialog_upButton_label, false);
+			this.upButton.setEnabled(false);
+			this.upButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					upSelectedWorkingSet();
+					updateButtonAvailability();
+				}
+			});
+
+			this.downButton = createButton(buttonComposite, ID_DOWN,
+					WorkbenchMessages.WorkingSetSelectionDialog_downButton_label, false);
+			this.downButton.setEnabled(false);
+			this.downButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					downSelectedWorkingSet();
+					updateButtonAvailability();
+				}
+			});
 		}
 		
 		layout.numColumns = 1; // must manually reset the number of columns because createButton increments it - we want these buttons to be laid out vertically.
@@ -205,6 +229,10 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 	 * Deselect all working sets.
 	 */
 	protected abstract void deselectAllSets();
+
+	protected abstract void upSelectedWorkingSet();
+
+	protected abstract void downSelectedWorkingSet();
 
 	/**
 	 * Opens a working set wizard for editing the currently selected working
@@ -365,9 +393,6 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 
 		newButton.setEnabled(registry.hasNewPageWorkingSetDescriptor());
 
-		if (canEdit)
-			removeButton.setEnabled(hasSelection);
-
 		IWorkingSet selectedWorkingSet = null;
 		if (hasSelection) {
 			hasSingleSelection = selection.size() == 1;
@@ -376,9 +401,11 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 						.get(0);
 			}
 		}
-		if (canEdit)
-			detailsButton.setEnabled(hasSingleSelection
+		if (canEdit) {
+			this.removeButton.setEnabled(hasSelection);
+			this.detailsButton.setEnabled(hasSingleSelection
 				&& selectedWorkingSet.isEditable());
+		}
 
 		getOkButton().setEnabled(true);
 	}
