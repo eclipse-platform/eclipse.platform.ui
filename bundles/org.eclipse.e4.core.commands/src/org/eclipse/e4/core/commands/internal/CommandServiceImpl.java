@@ -33,7 +33,7 @@ public class CommandServiceImpl implements ECommandService {
 	}
 
 	@Override
-	public ParameterizedCommand createCommand(String id, Map parameters) {
+	public ParameterizedCommand createCommand(String id, Map<String, Object> parameters) {
 		Command command = getCommand(id);
 		if (command == null) {
 			return null;

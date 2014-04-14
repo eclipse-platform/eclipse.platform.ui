@@ -20,7 +20,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
  * @noimplement
  */
 public interface ECommandService {
-	public ParameterizedCommand createCommand(String id, Map parameters);
+	public ParameterizedCommand createCommand(String id, Map<String, Object> parameters);
 
 	/**
 	 * @param id
