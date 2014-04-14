@@ -132,7 +132,7 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 
 	}
 
-	private Map<Subscriber, ServiceRegistration> registrations = new HashMap<Subscriber, ServiceRegistration>();
+	private Map<Subscriber, ServiceRegistration<EventHandler>> registrations = new HashMap<Subscriber, ServiceRegistration<EventHandler>>();
 
 	protected void addCurrentEvent(String topic, Event event) {
 		synchronized (currentEvents) {
@@ -184,7 +184,7 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 		Dictionary<String, Object> d = new Hashtable<String, Object>();
 		d.put(EventConstants.EVENT_TOPIC, topics);
 		EventHandler wrappedHandler = makeHandler(topic, requestor);
-		ServiceRegistration registration = bundleContext.registerService(EventHandler.class.getName(), wrappedHandler, d);
+		ServiceRegistration<EventHandler> registration = bundleContext.registerService(EventHandler.class, wrappedHandler, d);
 		// due to the way requestors are constructed this limited synch should be OK
 		synchronized (registrations) {
 			registrations.put(subscriber, registration);
@@ -210,24 +210,25 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 		if (requestor == null)
 			return;
 		synchronized (registrations) {
-			Iterator<Entry<Subscriber, ServiceRegistration>> i = registrations.entrySet().iterator();
+			Iterator<Entry<Subscriber, ServiceRegistration<EventHandler>>> i = registrations.entrySet().iterator();
 			while (i.hasNext()) {
-				Entry<Subscriber, ServiceRegistration> entry = i.next();
+				Entry<Subscriber, ServiceRegistration<EventHandler>> entry = i.next();
 				Subscriber key = entry.getKey();
 				if (!requestor.equals(key.getRequestor()))
 					continue;
-				ServiceRegistration registration = entry.getValue();
+				ServiceRegistration<EventHandler> registration = entry.getValue();
 				registration.unregister();
 				i.remove();
 			}
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	@PreDestroy
 	public void dispose() {
 		ServiceRegistration[] array;
 		synchronized (registrations) {
-			Collection<ServiceRegistration> values = registrations.values();
+			Collection<ServiceRegistration<EventHandler>> values = registrations.values();
 			array = values.toArray(new ServiceRegistration[values.size()]);
 			registrations.clear();
 		}

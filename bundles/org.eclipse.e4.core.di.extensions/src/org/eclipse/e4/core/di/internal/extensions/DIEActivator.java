@@ -24,8 +24,8 @@ public class DIEActivator implements BundleActivator {
 
 	private BundleContext bundleContext;
 
-	private ServiceTracker preferencesTracker;
-	private ServiceTracker eventAdminTracker;
+	private ServiceTracker<IPreferencesService, IPreferencesService> preferencesTracker;
+	private ServiceTracker<EventAdmin, EventAdmin> eventAdminTracker;
 
 	private Set<PreferencesObjectSupplier> preferenceSuppliers = new HashSet<PreferencesObjectSupplier>();
 
@@ -66,20 +66,20 @@ public class DIEActivator implements BundleActivator {
 		if (preferencesTracker == null) {
 			if (bundleContext == null)
 				return null;
-			preferencesTracker = new ServiceTracker(bundleContext, IPreferencesService.class.getName(), null);
+			preferencesTracker = new ServiceTracker<IPreferencesService, IPreferencesService>(bundleContext, IPreferencesService.class, null);
 			preferencesTracker.open();
 		}
-		return (IPreferencesService) preferencesTracker.getService();
+		return preferencesTracker.getService();
 	}
 
 	public EventAdmin getEventAdmin() {
 		if (eventAdminTracker == null) {
 			if (bundleContext == null)
 				return null;
-			eventAdminTracker = new ServiceTracker(bundleContext, EventAdmin.class.getName(), null);
+			eventAdminTracker = new ServiceTracker<EventAdmin, EventAdmin>(bundleContext, EventAdmin.class, null);
 			eventAdminTracker.open();
 		}
-		return (EventAdmin) eventAdminTracker.getService();
+		return eventAdminTracker.getService();
 	}
 
 	public void registerPreferencesSupplier(PreferencesObjectSupplier supplier) {
