@@ -20,8 +20,8 @@ public class DIActivator implements BundleActivator {
 
 	static private DIActivator defaultInstance;
 	private BundleContext bundleContext;
-	private ServiceTracker debugTracker = null;
-	private ServiceTracker logTracker = null;
+	private ServiceTracker<DebugOptions, DebugOptions> debugTracker = null;
+	private ServiceTracker<FrameworkLog, FrameworkLog> logTracker = null;
 
 	public DIActivator() {
 		defaultInstance = this;
@@ -54,10 +54,10 @@ public class DIActivator implements BundleActivator {
 
 	public boolean getBooleanDebugOption(String option, boolean defaultValue) {
 		if (debugTracker == null) {
-			debugTracker = new ServiceTracker(bundleContext, DebugOptions.class.getName(), null);
+			debugTracker = new ServiceTracker<DebugOptions, DebugOptions>(bundleContext, DebugOptions.class, null);
 			debugTracker.open();
 		}
-		DebugOptions options = (DebugOptions) debugTracker.getService();
+		DebugOptions options = debugTracker.getService();
 		if (options != null) {
 			String value = options.getOption(option);
 			if (value != null)
@@ -70,10 +70,10 @@ public class DIActivator implements BundleActivator {
 		if (logTracker == null) {
 			if (bundleContext == null)
 				return null;
-			logTracker = new ServiceTracker(bundleContext, FrameworkLog.class.getName(), null);
+			logTracker = new ServiceTracker<FrameworkLog, FrameworkLog>(bundleContext, FrameworkLog.class, null);
 			logTracker.open();
 		}
-		return (FrameworkLog) logTracker.getService();
+		return logTracker.getService();
 	}
 
 }
