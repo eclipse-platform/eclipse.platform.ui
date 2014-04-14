@@ -301,7 +301,7 @@ public class HandlerTest extends TestCase {
 
 		ParameterizedCommand nonparameterizedCmd = cs.createCommand(TEST_ID3, null);
 		ParameterizedCommand parameterizedCmd = cs.createCommand(TEST_ID3,
-				Collections.singletonMap(ACTIVE_INFO_ID, "param"));
+				Collections.singletonMap(ACTIVE_INFO_ID, (Object)"param"));
 		
 		HandlerWithParams handler = new HandlerWithParams();
 		wHS.activateHandler(TEST_ID3, handler);
