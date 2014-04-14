@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %fragmentName
 Bundle-SymbolicName: org.eclipse.core.filesystem.java7;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Localization: fragment
+Bundle-Localization: java7Fragment
 Fragment-Host: org.eclipse.core.filesystem;bundle-version="[1.4.100,2.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: %providerName
