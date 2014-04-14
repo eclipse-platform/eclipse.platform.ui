@@ -5,7 +5,7 @@
      <extension id="ide" point="org.eclipse.core.runtime.products"> 
       <product name="%productName" application="org.eclipse.ui.ide.workbench" description="%productBlurb"> 
           <!-- For documentation on updating icons, see http://wiki.eclipse.org/Platform-releng/Updating_Branding -->
-          <property name="windowImages" value="eclipse16.png,eclipse32.png,eclipse48.png,eclipse64.png,eclipse128.png,eclipse256.png,eclipse16.gif,eclipse32.gif,eclipse48.gif,eclipse256.gif"/> 
+          <property name="windowImages" value="eclipse16.png,eclipse32.png,eclipse48.png"/> 
           <property name="aboutImage" value="eclipse_lg.gif"/> 
           <property name="aboutText" value="%productBlurb"/> 
           <property name="appName" value="Eclipse"/> 
