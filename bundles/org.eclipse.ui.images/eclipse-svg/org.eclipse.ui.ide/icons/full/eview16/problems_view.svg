@@ -14,7 +14,7 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="problems_view.svg">
   <defs
      id="defs4">
@@ -87,6 +87,64 @@
        y1="727.80212"
        x2="738.31683"
        y2="732.9353" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3852"
+       id="linearGradient3858"
+       x1="385.98376"
+       y1="462.57028"
+       x2="385.98376"
+       y2="471.69949"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       id="linearGradient3852">
+      <stop
+         style="stop-color:#ff4949;stop-opacity:1"
+         offset="0"
+         id="stop3854" />
+      <stop
+         style="stop-color:#cb3e44;stop-opacity:1"
+         offset="1"
+         id="stop3856" />
+    </linearGradient>
+    <linearGradient
+       y2="471.69949"
+       x2="385.98376"
+       y1="462.57028"
+       x1="385.98376"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3077"
+       xlink:href="#linearGradient3852"
+       inkscape:collect="always" />
+    <linearGradient
+       y2="471.69949"
+       x2="385.98376"
+       y1="462.57028"
+       x1="385.98376"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3077-2"
+       xlink:href="#linearGradient3852-1"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient3852-1">
+      <stop
+         style="stop-color:#ff4949;stop-opacity:1"
+         offset="0"
+         id="stop3854-7" />
+      <stop
+         style="stop-color:#cb3e44;stop-opacity:1"
+         offset="1"
+         id="stop3856-4" />
+    </linearGradient>
+    <linearGradient
+       y2="471.69949"
+       x2="385.98376"
+       y1="462.57028"
+       x1="385.98376"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3048"
+       xlink:href="#linearGradient3852-1"
+       inkscape:collect="always" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -103,7 +161,7 @@
      showgrid="true"
      inkscape:window-width="1638"
      inkscape:window-height="1174"
-     inkscape:window-x="398"
+     inkscape:window-x="395"
      inkscape:window-y="172"
      inkscape:window-maximized="0"
      showguides="true"
@@ -228,16 +286,6 @@
                transform="scale(-1,1)" />
           </g>
         </g>
-        <path
-           transform="matrix(0,0.21244553,0.21244553,0,-79.15609,958.59591)"
-           d="m 398.75,468.23718 c 0,5.86803 -4.75697,10.625 -10.625,10.625 -5.86803,0 -10.625,-4.75697 -10.625,-10.625 0,-5.86802 4.75697,-10.625 10.625,-10.625 5.86803,0 10.625,4.75698 10.625,10.625 z"
-           sodipodi:ry="10.625"
-           sodipodi:rx="10.625"
-           sodipodi:cy="468.23718"
-           sodipodi:cx="388.125"
-           id="path10796-2-6-2"
-           style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#d34a50;fill-opacity:1;stroke:#a81d24;stroke-width:2.16621375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline;font-family:Sans"
-           sodipodi:type="arc" />
         <rect
            style="fill:#5c6884;fill-opacity:1;stroke:none"
            id="rect21127"
@@ -247,6 +295,16 @@
            y="15.551206"
            transform="matrix(0,1,1,0,0,0)"
            ry="0" />
+        <path
+           transform="matrix(0,0.21244553,0.21244553,0,-79.109194,958.55579)"
+           d="m 398.75,468.23718 a 10.625,10.625 0 1 1 -21.25,0 10.625,10.625 0 1 1 21.25,0 z"
+           sodipodi:ry="10.625"
+           sodipodi:rx="10.625"
+           sodipodi:cy="468.23718"
+           sodipodi:cx="388.125"
+           id="path10796-2-6-2-1"
+           style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:url(#linearGradient3048);fill-opacity:1;stroke:#a81d24;stroke-width:2.16621375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline;font-family:Sans"
+           sodipodi:type="arc" />
       </g>
     </g>
   </g>
