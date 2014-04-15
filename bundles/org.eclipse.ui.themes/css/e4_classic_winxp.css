@@ -78,3 +78,7 @@ CTabItem:selected {
 .ModifiedDragFeedback {
 	background-color: #A0A000;
 }
+
+#org-eclipse-ui-editorss {
+	swt-tab-height: 8px;
+}
