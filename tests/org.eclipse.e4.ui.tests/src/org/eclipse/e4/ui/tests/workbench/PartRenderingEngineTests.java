@@ -2171,6 +2171,8 @@ public class PartRenderingEngineTests extends TestCase {
 		window.setSelectedElement(partStack);
 
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
 		partStack.getChildren().add(partA);
 		partStack.setSelectedElement(partA);
 
@@ -2178,6 +2180,8 @@ public class PartRenderingEngineTests extends TestCase {
 		partA.setToolbar(toolBarA);
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
 		partStack.getChildren().add(partB);
 
 		MToolBar toolBarB = MenuFactoryImpl.eINSTANCE.createToolBar();
@@ -2214,6 +2218,8 @@ public class PartRenderingEngineTests extends TestCase {
 		application.setSelectedElement(window);
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
 		window.getSharedElements().add(part);
 
 		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
@@ -2297,6 +2303,8 @@ public class PartRenderingEngineTests extends TestCase {
 		window.setSelectedElement(partStack);
 
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
 		partStack.getChildren().add(partA);
 		partStack.setSelectedElement(partA);
 
@@ -2304,6 +2312,8 @@ public class PartRenderingEngineTests extends TestCase {
 		partA.setToolbar(toolBarA);
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
 		partStack.getChildren().add(partB);
 
 		MToolBar toolBarB = MenuFactoryImpl.eINSTANCE.createToolBar();
@@ -2500,6 +2510,7 @@ public class PartRenderingEngineTests extends TestCase {
 		application.setSelectedElement(window);
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		window.getSharedElements().add(part);
 
 		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
@@ -2569,6 +2580,7 @@ public class PartRenderingEngineTests extends TestCase {
 		application.setSelectedElement(window);
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		window.getSharedElements().add(part);
 
 		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();

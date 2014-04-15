@@ -765,7 +765,7 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 
 			ToolBar newViewTB = null;
-			if (needsTB) {
+			if (needsTB && part != null && part.getObject() != null) {
 				part.getToolbar().setVisible(true);
 				newViewTB = (ToolBar) renderer.createGui(part.getToolbar(),
 						ctf.getTopRight(), part.getContext());
