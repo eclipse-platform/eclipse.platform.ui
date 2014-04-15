@@ -287,7 +287,7 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 			targetedPostSelectionListeners.put(partId, listeners);
 		}
 		if (listeners.size() == 0 && selectionService != null) {
-			selectionService.addPostSelectionListener(partId, postListener);
+			selectionService.addPostSelectionListener(partId, targetedPostListener);
 		}
 		listeners.add(listener);
 	}
@@ -351,7 +351,7 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 		if (listeners != null) {
 			listeners.remove(listener);
 			if (listeners.size() == 0 && selectionService != null) {
-				selectionService.removeSelectionListener(partId, this.listener);
+				selectionService.removeSelectionListener(partId, this.targetedListener);
 			}
 		}
 	}
@@ -381,7 +381,7 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 		if (listeners != null) {
 			listeners.remove(listener);
 			if (listeners.size() == 0 && selectionService != null) {
-				selectionService.removePostSelectionListener(partId, postListener);
+				selectionService.removePostSelectionListener(partId, targetedPostListener);
 			}
 		}
 	}
