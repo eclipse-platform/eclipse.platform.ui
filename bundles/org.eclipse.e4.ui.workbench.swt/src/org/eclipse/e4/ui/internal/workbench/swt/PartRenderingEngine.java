@@ -349,7 +349,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		}
 	};
 
-	private CSSThemeChangedHandler cssThemeChangedHandler;
+	private StylingPreferencesHandler cssThemeChangedHandler;
 
 	private IEclipseContext appContext;
 
@@ -482,7 +482,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			eventBroker.subscribe(UIEvents.TrimmedWindow.TOPIC_TRIMBARS,
 					trimHandler);
 
-			cssThemeChangedHandler = new CSSThemeChangedHandler(
+			cssThemeChangedHandler = new StylingPreferencesHandler(
 					context.get(Display.class));
 			eventBroker.subscribe(IThemeEngine.Events.THEME_CHANGED,
 					cssThemeChangedHandler);
@@ -1448,10 +1448,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 		return themeEngine;
 	}
 
-	private static class CSSThemeChangedHandler implements EventHandler {
+	public static class StylingPreferencesHandler implements EventHandler {
 		private HashSet<IEclipsePreferences> prefs = null;
 
-		public CSSThemeChangedHandler(Display display) {
+		public StylingPreferencesHandler(Display display) {
 			if (display != null) {
 				display.addListener(SWT.Dispose, new Listener() {
 					@Override
@@ -1468,22 +1468,32 @@ public class PartRenderingEngine implements IPresentationEngine {
 			overridePreferences(getThemeEngine(event));
 		}
 
-		private void resetOverriddenPreferences() {
+		protected void resetOverriddenPreferences() {
 			for (IEclipsePreferences preferences : getPreferences()) {
 				resetOverriddenPreferences(preferences);
 			}
 		}
 
-		private void resetOverriddenPreferences(IEclipsePreferences preferences) {
-			for (String name : EclipsePreferencesHelper
-					.getOverriddenPropertyNames(preferences)) {
+		protected void resetOverriddenPreferences(
+				IEclipsePreferences preferences) {
+			for (String name : getOverriddenPropertyNames(preferences)) {
 				preferences.remove(name);
 			}
-			EclipsePreferencesHelper
-					.removeOverriddenPropertyNames(preferences);
+			removeOverriddenPropertyNames(preferences);
 		}
 
-		private Set<IEclipsePreferences> getPreferences() {
+		protected void removeOverriddenPropertyNames(
+				IEclipsePreferences preferences) {
+			EclipsePreferencesHelper.removeOverriddenPropertyNames(preferences);
+		}
+
+		protected List<String> getOverriddenPropertyNames(
+				IEclipsePreferences preferences) {
+			return EclipsePreferencesHelper
+					.getOverriddenPropertyNames(preferences);
+		}
+
+		protected Set<IEclipsePreferences> getPreferences() {
 			if (prefs == null) {
 				prefs = new HashSet<IEclipsePreferences>();
 				PlatformAdmin admin = WorkbenchSWTActivator.getDefault()

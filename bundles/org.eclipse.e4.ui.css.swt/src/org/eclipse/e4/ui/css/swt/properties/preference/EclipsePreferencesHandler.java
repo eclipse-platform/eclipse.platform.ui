@@ -21,7 +21,7 @@ import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.css.CSSValueList;
 
 public class EclipsePreferencesHandler implements ICSSPropertyHandler {
-	private final static String PREFERENCES_PROP = "preferences";
+	public final static String PREFERENCES_PROP = "preferences";
 
 	private final static Pattern PROPERTY_NAME_AND_VALUE_PATTERN = Pattern
 			.compile("(.+)\\s*=\\s*(.*)");
@@ -55,7 +55,7 @@ public class EclipsePreferencesHandler implements ICSSPropertyHandler {
 		return null;
 	}
 
-	private void overrideProperty(IEclipsePreferences preferences,
+	protected void overrideProperty(IEclipsePreferences preferences,
 			CSSValue value) {
 		Matcher matcher = PROPERTY_NAME_AND_VALUE_PATTERN.matcher(value
 				.getCssText());
@@ -65,8 +65,8 @@ public class EclipsePreferencesHandler implements ICSSPropertyHandler {
 		}
 	}
 
-	private void overrideProperty(IEclipsePreferences preferences, String name,
-			String value) {
+	protected void overrideProperty(IEclipsePreferences preferences,
+			String name, String value) {
 		// when pref is not already set, either by the user or by the CSS
 		if (preferences.get(name, null) == null) {
 			preferences.put(name, value);

@@ -18,6 +18,8 @@ import org.eclipse.e4.ui.css.core.resources.SWTResourceRegistryKeyFactoryTest;
 import org.eclipse.e4.ui.css.core.resources.SWTResourcesRegistryTest;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelperTest;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelperTest;
+import org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelperTest;
+import org.eclipse.e4.ui.css.swt.properties.preference.EclipsePreferencesHandlerTest;
 
 public class CssSwtTestSuite extends TestSuite {
 	/**
@@ -39,6 +41,8 @@ public class CssSwtTestSuite extends TestSuite {
 		addTestSuite(FontDefinitionTest.class);
 		addTestSuite(ColorDefinitionTest.class);
 		addTestSuite(ThemesExtensionTest.class);
+		addTestSuite(IEclipsePreferencesTest.class);
+		addTestSuite(EclipsePreferencesHelperTest.class);
 		addTestSuite(CSSSWTWidgetTest.class);
 		addTestSuite(LabelTest.class);
 		addTestSuite(CTabFolderTest.class);
@@ -52,6 +56,7 @@ public class CssSwtTestSuite extends TestSuite {
 		addTestSuite(GradientTest.class);
 		addTestSuite(MarginTest.class);
 		addTestSuite(InnerClassElementTest.class);
+		addTestSuite(EclipsePreferencesHandlerTest.class);
 
 		// text-transform tests
 		addTestSuite(ButtonTextTransformTest.class);

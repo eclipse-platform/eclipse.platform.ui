@@ -16,9 +16,9 @@ import java.util.List;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 
 public class EclipsePreferencesHelper {
-	private final static String PROPS_OVERRIDDEN_BY_CSS_PROP = "overriddenByCSS";
+	public final static String PROPS_OVERRIDDEN_BY_CSS_PROP = "overriddenByCSS";
 
-	private final static String SEPARATOR = ",";
+	public final static String SEPARATOR = ",";
 
 	private final static String MULTI_VALUE_FORMATTER = "%s%s" + SEPARATOR;
 
