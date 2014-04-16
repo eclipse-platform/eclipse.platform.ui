@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1156,8 +1156,20 @@ class CompletionProposalPopup implements IContentAssistListener {
 				for (int i= 0; i < items.length; i++) {
 					TableItem item= items[i];
 					ICompletionProposal proposal= proposals[i];
-					item.setText(proposal.getDisplayString());
-					item.setImage(proposal.getImage());
+					Image image= null;
+					String displayString= null;
+					try {
+						displayString= proposal.getDisplayString();
+						image= proposal.getImage();
+					} catch (RuntimeException e) {
+						// On failures to retrieve the proposal's text, insert a dummy entry and log the error.
+						String PLUGIN_ID= "org.eclipse.jface.text"; //$NON-NLS-1$
+						ILog log= Platform.getLog(Platform.getBundle(PLUGIN_ID));
+						log.log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, JFaceTextMessages.getString("CompletionProposalPopup.unexpected_error"), e)); //$NON-NLS-1$
+						displayString= JFaceTextMessages.getString("CompletionProposalPopup.error_retrieving_proposal"); //$NON-NLS-1$
+					}
+					item.setText(displayString);
+					item.setImage(image);
 					item.setData(proposal);
 				}
 				fProposalTable.setRedraw(true);
