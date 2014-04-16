@@ -67,7 +67,7 @@ public interface IPresentationEngine {
 	 * This tag can be used by the renderer implementation to decide that the user interface element
 	 * has been hidden.
 	 *
-	 * @since 1.2
+	 * @since 1.1
 	 */
 	public static final String HIDDEN_EXPLICITLY = "HIDDEN_EXPLICITLY"; //$NON-NLS-1$
 
