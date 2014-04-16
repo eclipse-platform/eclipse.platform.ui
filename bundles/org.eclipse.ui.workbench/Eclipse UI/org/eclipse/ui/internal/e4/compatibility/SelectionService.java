@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.ListenerList;
@@ -204,6 +205,11 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 			this.selectionService = selectionService;
 		}
 	 }
+
+	@PreDestroy
+	public void dispose() {
+		selectionService = null;
+	}
 
 	private void notifyListeners(IWorkbenchPart workbenchPart, ISelection selection,
 			ListenerList listenerList) {
