@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - Bug 391061
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
@@ -37,17 +38,24 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 
 		final private IRequestor requestor;
 		final private IEclipsePreferences node;
+		final private String key;
 
-		public PrefInjectionListener(IEclipsePreferences node, IRequestor requestor) {
+		public PrefInjectionListener(IEclipsePreferences node, String key, IRequestor requestor) {
 			this.node = node;
+			this.key = key;
 			this.requestor = requestor;
 		}
 
-		public void preferenceChange(PreferenceChangeEvent event) {
+		public void preferenceChange(final PreferenceChangeEvent event) {
 			if (!requestor.isValid()) {
 				node.removePreferenceChangeListener(this);
 				return;
 			}
+
+			if (!event.getKey().equals(key)) {
+				return;
+			}
+
 			requestor.resolveArguments(false);
 			requestor.execute();
 		}
@@ -61,7 +69,8 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 		}
 	}
 
-	private Map<String, List<PrefInjectionListener>> listenerCache = new HashMap<String, List<PrefInjectionListener>>();
+	// Hash (nodePath -> Hash (key -> list))
+	private Map<String, HashMap<String, List<PrefInjectionListener>>> listenerCache = new HashMap<String, HashMap<String, List<PrefInjectionListener>>>();
 
 	public PreferencesObjectSupplier() {
 		DIEActivator.getDefault().registerPreferencesSupplier(this);
@@ -81,7 +90,7 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 		if (key == null || nodePath == null || key.length() == 0 || nodePath.length() == 0)
 			return IInjector.NOT_A_VALUE;
 		if (track)
-			addListener(nodePath, requestor);
+			addListener(nodePath, key, requestor);
 
 		if (descriptorsClass.isPrimitive()) {
 			if (descriptorsClass.equals(boolean.class))
@@ -150,40 +159,49 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 		return DIEActivator.getDefault().getPreferencesService();
 	}
 
-	private void addListener(String nodePath, final IRequestor requestor) {
+	private void addListener(String nodePath, String key, final IRequestor requestor) {
 		if (requestor == null)
 			return;
 		synchronized (listenerCache) {
 			if (listenerCache.containsKey(nodePath)) {
-				for (PrefInjectionListener listener : listenerCache.get(nodePath)) {
-					IRequestor previousRequestor = listener.getRequestor();
-					if (previousRequestor.equals(requestor))
-						return; // avoid adding duplicate listeners
+				HashMap<String, List<PrefInjectionListener>> map = listenerCache.get(nodePath);
+				if (map.containsKey(key)) {
+					for (PrefInjectionListener listener : map.get(key)) {
+						IRequestor previousRequestor = listener.getRequestor();
+						if (previousRequestor.equals(requestor))
+							return; // avoid adding duplicate listeners
+					}
 				}
 			}
 		}
 		final IEclipsePreferences node = InstanceScope.INSTANCE.getNode(nodePath);
-		PrefInjectionListener listener = new PrefInjectionListener(node, requestor);
+		PrefInjectionListener listener = new PrefInjectionListener(node, key, requestor);
 		node.addPreferenceChangeListener(listener);
 
 		synchronized (listenerCache) {
-			if (listenerCache.containsKey(nodePath))
-				listenerCache.get(nodePath).add(listener);
-			else {
-				List<PrefInjectionListener> listeningRequestors = new ArrayList<PrefInjectionListener>();
-				listeningRequestors.add(listener);
-				listenerCache.put(nodePath, listeningRequestors);
+			HashMap<String, List<PrefInjectionListener>> map = listenerCache.get(nodePath);
+			if (map == null) {
+				map = new HashMap<String, List<PrefInjectionListener>>();
+				listenerCache.put(nodePath, map);
 			}
+			List<PrefInjectionListener> listeningRequestors = map.get(key);
+			if (listeningRequestors == null) {
+				listeningRequestors = new ArrayList<PrefInjectionListener>();
+				map.put(key, listeningRequestors);
+			}
+			listeningRequestors.add(listener);
 		}
 	}
 
 	public void removeAllListeners() {
 		synchronized (listenerCache) {
-			for (List<PrefInjectionListener> listeners : listenerCache.values()) {
-				if (listeners == null)
-					continue;
-				for (PrefInjectionListener listener : listeners) {
-					listener.stopListening();
+			for (HashMap<String, List<PrefInjectionListener>> map : listenerCache.values()) {
+				for (List<PrefInjectionListener> listeners : map.values()) {
+					if (listeners == null)
+						continue;
+					for (PrefInjectionListener listener : listeners) {
+						listener.stopListening();
+					}
 				}
 			}
 			listenerCache.clear();
