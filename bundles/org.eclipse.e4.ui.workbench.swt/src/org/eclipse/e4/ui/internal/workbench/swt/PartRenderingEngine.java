@@ -1453,13 +1453,18 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 		public StylingPreferencesHandler(Display display) {
 			if (display != null) {
-				display.addListener(SWT.Dispose, new Listener() {
+				display.addListener(SWT.Dispose,
+						createOnDisplayDisposedListener());
+			}
+		}
+
+		protected Listener createOnDisplayDisposedListener() {
+			return new Listener() {
 					@Override
 					public void handleEvent(org.eclipse.swt.widgets.Event event) {
 						resetOverriddenPreferences();
 					}
-				});
-			}
+			};
 		}
 
 		@Override
