@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
+import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -40,16 +40,21 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
     }
 
     /**
-     * Contributes submenus and/or actions applicable to the selection in the
-     * provided viewer into the provided popup menu.
-     * 
-     * @param part the part being contributed to
-     * @param popupMenu the menu being contributed to
-     * @param selProv the selection provider
-     * @return whether anything was contributed
-     */
-    public boolean contributeObjectActions(IWorkbenchPart part,
-            IMenuManager popupMenu, ISelectionProvider selProv) {
+	 * Contributes submenus and/or actions applicable to the selection in the
+	 * provided viewer into the provided popup menu.
+	 * 
+	 * @param part
+	 *            the part being contributed to
+	 * @param popupMenu
+	 *            the menu being contributed to
+	 * @param selProv
+	 *            the selection provider
+	 * @param alreadyContributed
+	 *            the set of contributors that already contributed to the menu
+	 * @return whether anything was contributed
+	 */
+	public boolean contributeObjectActions(IWorkbenchPart part, IMenuManager popupMenu,
+			ISelectionProvider selProv, Set<IObjectActionContributor> alreadyContributed) {
         // Get a selection.	
         ISelection selection = selProv.getSelection();
         if (selection == null) {
@@ -68,7 +73,8 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
             elements.add(selection);
         }
 
-        List contributors = getContributors(elements);
+		List<IObjectActionContributor> contributors = getContributors(elements);
+		contributors.removeAll(alreadyContributed);
        
         if (contributors.isEmpty()) {
 			return false;
@@ -78,25 +84,27 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
         // list any non-applicable contributions.
         boolean actualContributions = false;
         ArrayList overrides = new ArrayList(4);
-        for (Iterator it = contributors.iterator(); it.hasNext();) {
-			IObjectActionContributor contributor = (IObjectActionContributor) it.next();
+		for (Iterator<IObjectActionContributor> it = contributors.iterator(); it.hasNext();) {
+			IObjectActionContributor contributor = it.next();
             if (!isApplicableTo(elements, contributor)) {
             	it.remove();            
                 continue;
             }
             if (contributor.contributeObjectMenus(popupMenu, selProv)) {
 				actualContributions = true;
+				alreadyContributed.add(contributor);
 			}
             contributor.contributeObjectActionIdOverrides(overrides);
         }
         
         // Second pass, add the contributions that are applicable to
         // the selection.
-        for (Iterator it = contributors.iterator(); it.hasNext();) {
-			IObjectActionContributor contributor = (IObjectActionContributor) it.next();        
+		for (Iterator<IObjectActionContributor> it = contributors.iterator(); it.hasNext();) {
+			IObjectActionContributor contributor = it.next();
             if (contributor.contributeObjectActions(part, popupMenu, selProv,
                     overrides)) {
 				actualContributions = true;
+				alreadyContributed.add(contributor);
 			}
         }
         return actualContributions;
