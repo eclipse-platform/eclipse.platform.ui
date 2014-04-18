@@ -112,7 +112,8 @@ public class MenuIdDialog extends TitleAreaDialog {
 			// include Window main-menu instances
 			MApplication ma = ((MApplication) resource.getRoot().get(0));
 			for (MWindow m : ma.getChildren()) {
-				list.add(m.getMainMenu());
+				if (m.getMainMenu() != null)
+					list.add(m.getMainMenu());
 			}
 			// include menu elements located within parts
 			List<MPart> mp = modelService.findElements(ma, null, MPart.class, null);
