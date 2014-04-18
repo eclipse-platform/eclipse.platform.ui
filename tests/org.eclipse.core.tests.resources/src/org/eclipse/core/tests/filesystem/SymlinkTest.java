@@ -475,7 +475,7 @@ public class SymlinkTest extends FileSystemTest {
 
 	public void testSymlinkRemove() throws Exception {
 		//removing a symlink keeps the link target intact.
-		//symlinks being broken due to remove are set to non-existant.
+		//symlinks being broken due to remove are set to non-existent.
 		if (!isTestablePlatform()) {
 			return;
 		}
@@ -486,11 +486,16 @@ public class SymlinkTest extends FileSystemTest {
 		iFile = aFile.fetchInfo();
 		assertTrue(iFile.exists());
 
+		IFileStore childFile = aDir.getChild("subFile");
+		ensureExists(childFile, false);
 		lDir.delete(EFS.NONE, getMonitor());
 		illDir = lDir.fetchInfo();
 		assertFalse(illFile.exists());
 		iDir = aDir.fetchInfo();
 		assertTrue(iDir.exists());
+		// Check that the contents of the directory are preserved.
+		IFileInfo iFileInsideDir = childFile.fetchInfo();
+		assertTrue(iFileInsideDir.exists());
 	}
 
 }

@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
@@ -253,34 +254,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * Even if an exception occurs, a best effort is made to continue deleting.
 	 */
 	public static boolean clear(java.io.File root) {
-		boolean result = clearChildren(root);
+		IFileStore fileStore = EFS.getLocalFileSystem().fromLocalFile(root);
 		try {
-			if (root.exists())
-				result &= root.delete();
-		} catch (Exception e) {
-			result = false;
+			fileStore.delete(EFS.NONE, new NullProgressMonitor());
+		} catch (CoreException e) {
+			return false;
 		}
-		return result;
-	}
-
-	/**
-	 * Deletes all the files and directories from the given root down, except for 
-	 * the root itself.
-	 * Returns false if we could not delete some file or an exception occurred
-	 * at any point in the deletion.
-	 * Even if an exception occurs, a best effort is made to continue deleting.
-	 */
-	public static boolean clearChildren(java.io.File root) {
-		boolean result = true;
-		if (root.isDirectory()) {
-			String[] list = root.list();
-			// for some unknown reason, list() can return null.  
-			// Just skip the children If it does.
-			if (list != null)
-				for (int i = 0; i < list.length; i++)
-					result &= clear(new java.io.File(root, list[i]));
-		}
-		return result;
+		return true;
 	}
 
 	public static WorkspaceDescription defaultWorkspaceDescription() {
