@@ -50,6 +50,7 @@ import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.ServiceLocator;
+import org.eclipse.ui.menus.CommandContributionItem;
 
 public class MenuAdditionCacheEntry {
 	final static String MAIN_TOOLBAR = "org.eclipse.ui.main.toolbar"; //$NON-NLS-1$
@@ -510,6 +511,12 @@ public class MenuAdditionCacheEntry {
 			item.setMenu(element);
 		}
 		item.setVisibleWhen(MenuHelper.getVisibleWhen(commandAddition));
+
+		if (MenuHelper.getMode(commandAddition) == CommandContributionItem.MODE_FORCE_TEXT) {
+			item.getTags().add("FORCE_TEXT"); //$NON-NLS-1$
+			item.setLabel(MenuHelper.getLabel(commandAddition));
+		}
+
 		createIdentifierTracker(item);
 		return item;
 	}
