@@ -482,6 +482,9 @@ public class Messages {
 	public String VWindowTrimEditor_AddWindowTrim;
 
 	public String AbstractIconDialog_IconName;
+	public String AbstractIconDialog_all_workspace_bundles;
+	public String AbstractIconDialog_current_project;
+	public String AbstractIconDialog_scope;
 
 	public String BindingContextSelectionDialog_ShellTitle;
 	public String BindingContextSelectionDialog_Title;

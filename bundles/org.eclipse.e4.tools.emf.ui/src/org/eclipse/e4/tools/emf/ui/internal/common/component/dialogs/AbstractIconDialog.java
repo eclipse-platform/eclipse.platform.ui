@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - Bug 404136
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
@@ -14,8 +15,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -47,11 +50,16 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -63,8 +71,10 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 	private EStructuralFeature feature;
 	private EditingDomain editingDomain;
 	private Map<IFile, Image> icons = Collections.synchronizedMap(new HashMap<IFile, Image>());
+	private SearchScope searchScope = SearchScope.PROJECT;
 
 	protected Messages Messages;
+	private Text textFilter;
 
 	public AbstractIconDialog(Shell parentShell, IProject project, EditingDomain editingDomain, MApplicationElement element, EStructuralFeature feature, Messages Messages) {
 		super(parentShell);
@@ -93,11 +103,44 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		container.setLayout(new GridLayout(2, false));
 
+		Label lblScope = new Label(container, SWT.NONE);
+		lblScope.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		lblScope.setText(Messages.AbstractIconDialog_scope);
+
+		Composite compOptions = new Composite(container, SWT.NONE);
+		compOptions.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		compOptions.setLayout(new RowLayout());
+
+		Button btnProject = new Button(compOptions, SWT.RADIO);
+		btnProject.setText(Messages.AbstractIconDialog_current_project);
+		btnProject.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				searchScope = SearchScope.PROJECT;
+				textFilter.notifyListeners(SWT.Modify, new Event());
+
+			}
+		});
+		btnProject.setSelection(true);
+
+		Button btnWorkspace = new Button(compOptions, SWT.RADIO);
+		btnWorkspace.setText(Messages.AbstractIconDialog_all_workspace_bundles);
+		btnWorkspace.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				searchScope = SearchScope.WORKSPACE;
+				textFilter.notifyListeners(SWT.Modify, new Event());
+			}
+		});
+
+		btnWorkspace.setSelection(searchScope == SearchScope.WORKSPACE);
+		btnProject.setSelection(searchScope == SearchScope.PROJECT);
+
 		Label l = new Label(container, SWT.NONE);
 		l.setText(Messages.AbstractIconDialog_IconName);
 
-		final Text t = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
-		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		textFilter = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
+		textFilter.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		new Label(container, SWT.NONE);
 
@@ -135,7 +178,7 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 
 				String bundle = getBundle(file);
 				if (bundle != null) {
-					styledString.append(" - " + bundle, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$	
+					styledString.append(" - " + bundle, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 				}
 
 				cell.setImage(img);
@@ -154,7 +197,7 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 			}
 		});
 
-		t.addModifyListener(new ModifyListener() {
+		textFilter.addModifyListener(new ModifyListener() {
 			private IconMatchCallback callback;
 			private Timer timer = new Timer(true);
 			private TimerTask task;
@@ -172,7 +215,7 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 				clearImages();
 
 				callback = new IconMatchCallback(list);
-				task = new SearchThread(callback, t.getText(), project);
+				task = new SearchThread(callback, textFilter.getText(), project, searchScope);
 				timer.schedule(task, 500);
 			}
 		});
@@ -282,38 +325,56 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 		private final StringMatcher matcherGif;
 		private final StringMatcher matcherJpg;
 		private final StringMatcher matcherPng;
+		private SearchScope searchScope;
 
-		public SearchThread(IconMatchCallback callback, String pattern, IProject project) {
+		public SearchThread(IconMatchCallback callback, String pattern, IProject project, SearchScope searchScope) {
 			this.matcherGif = new StringMatcher("*" + pattern + "*.gif", true, false); //$NON-NLS-1$//$NON-NLS-2$
 			this.matcherJpg = new StringMatcher("*" + pattern + "*.jpg", true, false); //$NON-NLS-1$//$NON-NLS-2$
 			this.matcherPng = new StringMatcher("*" + pattern + "*.png", true, false); //$NON-NLS-1$//$NON-NLS-2$
 			this.callback = callback;
 			this.project = project;
+			this.searchScope = searchScope;
 		}
 
 		@Override
 		public void run() {
+			List<IProject> projects;
+			switch (searchScope) {
+			case WORKSPACE:
+				projects = Arrays.asList(project.getWorkspace().getRoot().getProjects());
+				break;
+			case PROJECT:
+			default:
+				projects = Arrays.asList(project);
+				break;
+			}
 			try {
-				project.accept(new IResourceVisitor() {
+				for (IProject project : projects) {
+					// Only search bundles
+					if (project.getFile("/META-INF/MANIFEST.MF").exists() == false) { //$NON-NLS-1$
+						continue;
+					}
+					project.accept(new IResourceVisitor() {
 
-					@Override
-					public boolean visit(IResource resource) throws CoreException {
-						if (callback.cancel) {
+						@Override
+						public boolean visit(IResource resource) throws CoreException {
+							if (callback.cancel) {
+								return false;
+							}
+
+							if (resource.getType() == IResource.FOLDER || resource.getType() == IResource.PROJECT) {
+								return true;
+							} else if (resource.getType() == IResource.FILE && !resource.isLinked()) {
+								String path = resource.getProjectRelativePath().toString();
+								if (matcherGif.match(path) || matcherPng.match(path) || matcherJpg.match(path)) {
+									callback.match((IFile) resource);
+								}
+							}
 							return false;
 						}
 
-						if (resource.getType() == IResource.FOLDER || resource.getType() == IResource.PROJECT) {
-							return true;
-						} else if (resource.getType() == IResource.FILE && !resource.isLinked()) {
-							String path = resource.getProjectRelativePath().toString();
-							if (matcherGif.match(path) || matcherPng.match(path) || matcherJpg.match(path)) {
-								callback.match((IFile) resource);
-							}
-						}
-						return false;
-					}
-
-				});
+					});
+				}
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
