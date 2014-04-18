@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import java.util.HashSet;
 import java.util.Random;
 
 import junit.framework.TestSuite;
@@ -25,6 +26,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.IObjectActionContributor;
 import org.eclipse.ui.internal.ObjectActionContributorManager;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
@@ -144,17 +146,17 @@ public class ObjectContributionTests extends DynamicTestCase {
 			
 		};
 
-		manager.contributeObjectActions(part, menu, provider);		
+		manager.contributeObjectActions(part, menu, provider, new HashSet<IObjectActionContributor>());
 		assertNull(menu.find(OBJECT_ACTION_ID));
 		menu.removeAll();
 		getBundle();
 		
-		manager.contributeObjectActions(part, menu, provider);
+		manager.contributeObjectActions(part, menu, provider, new HashSet<IObjectActionContributor>());
 		assertNotNull(menu.find(OBJECT_ACTION_ID));
 		menu.removeAll();
 		removeBundle();
 		
-		manager.contributeObjectActions(part, menu, provider);		
+		manager.contributeObjectActions(part, menu, provider, new HashSet<IObjectActionContributor>());
 		assertNull(menu.find(OBJECT_ACTION_ID));
 		menu.removeAll();
 	}
