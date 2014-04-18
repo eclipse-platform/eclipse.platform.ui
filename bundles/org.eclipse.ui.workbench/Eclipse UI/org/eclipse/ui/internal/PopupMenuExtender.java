@@ -14,6 +14,7 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -265,7 +266,7 @@ public class PopupMenuExtender implements IMenuListener2,
     /**
      * Contributes items registered for the currently active editor.
      */
-    private void addEditorActions(IMenuManager mgr) {
+	private void addEditorActions(IMenuManager mgr, Set<IObjectActionContributor> alreadyContributed) {
         ISelectionProvider activeEditor = new ISelectionProvider() {
 
             /* (non-Javadoc)
@@ -312,21 +313,21 @@ public class PopupMenuExtender implements IMenuListener2,
             }
         };
         
-        if (ObjectActionContributorManager.getManager()
-                .contributeObjectActions(part, mgr, activeEditor)) {
-            mgr.add(new Separator());
-        }
+		if (ObjectActionContributorManager.getManager().contributeObjectActions(part, mgr,
+				activeEditor, alreadyContributed)) {
+			mgr.add(new Separator());
+		}
     }
 
     /**
      * Contributes items registered for the object type(s) in
      * the current selection.
      */
-    private void addObjectActions(IMenuManager mgr) {
+	private void addObjectActions(IMenuManager mgr, Set<IObjectActionContributor> alreadyContributed) {
         if (selProvider != null) {
-            if (ObjectActionContributorManager.getManager()
-                    .contributeObjectActions(part, mgr, selProvider)) {
-                mgr.add(new Separator());
+			if (ObjectActionContributorManager.getManager().contributeObjectActions(part, mgr,
+					selProvider, alreadyContributed)) {
+				mgr.add(new Separator());
             }
         }
     }
@@ -397,10 +398,11 @@ public class PopupMenuExtender implements IMenuListener2,
             mgr = menuWrapper;
             menuWrapper.removeAll();
         }
+		Set<IObjectActionContributor> contributedItems = new HashSet<IObjectActionContributor>();
         if ((bitSet & INCLUDE_EDITOR_INPUT) != 0) {
-            addEditorActions(mgr);
+			addEditorActions(mgr, contributedItems);
         }
-        addObjectActions(mgr);
+		addObjectActions(mgr, contributedItems);
         addStaticActions(mgr);
     }
     
