@@ -711,6 +711,18 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		}
 
 		element = getElement(element); // in case we're passed a node
+		if ("inherit".equals(value.getCssText())) {
+			// go to parent node
+			Element actualElement = (Element) element;
+			Node parentNode = actualElement.getParentNode();
+			// get CSS property value
+			String parentValueString = retrieveCSSProperty(parentNode,
+					property, pseudo);
+			// and convert it to a CSS value, overriding the "inherit" setting
+			// with the parent value
+			value = parsePropertyValue(parentValueString);
+		}
+
 		for (ICSSPropertyHandlerProvider provider : propertyHandlerProviders) {
 			Collection<ICSSPropertyHandler> handlers = provider
 					.getCSSPropertyHandlers(element, property);
