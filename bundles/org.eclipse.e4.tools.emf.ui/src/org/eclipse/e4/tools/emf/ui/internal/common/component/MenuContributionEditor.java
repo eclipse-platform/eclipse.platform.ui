@@ -9,6 +9,7 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Marco Descher <marco@descher.at> - Bug 397650, Bug 395982, Bug 396975
  *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
+ *     Nicolaj Hoess <nicohoess@gmail.com> - Bug 396975
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -235,6 +236,7 @@ public class MenuContributionEditor extends AbstractComponentEditor {
 			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {

@@ -587,6 +587,16 @@ public class Messages {
 	public String MenuIdDialog_DialogMessage;
 	public String MenuIdDialog_Id;
 
+	public String ToolBarIdDialog_ShellTitle;
+	public String ToolBarIdDialog_DialogTitle;
+	public String ToolBarIdDialog_DialogMessage;
+	public String ToolBarIdDialog_Id;
+
+	public String TrimBarIdDialog_ShellTitle;
+	public String TrimBarIdDialog_DialogTitle;
+	public String TrimBarIdDialog_DialogMessage;
+	public String TrimBarIdDialog_Id;
+
 	public String CommandToStringConverter_None;
 
 	public String VRootBindingContexts_AddContext;
