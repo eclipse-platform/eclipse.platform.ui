@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Remain Software, Industrial-TSI and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Wim Jongman <wim.jongman@remainsoftware.com> - Bug 395174: e4xmi should participate in package renaming 
+ *                                                    Bug 432892: Eclipse 4 Application does not work after renaming the project name
+ ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor3x;
 
 import org.eclipse.core.resources.IFile;
@@ -16,33 +27,31 @@ import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
 
 public class ModelMoveParticipant extends MoveParticipant {
-	private IType _type;
-	private IPackageFragment _pckage;
-	private IFile _file;
-	private IFolder _folder;
+	private IType fType;
+	private IPackageFragment fPckage;
+	private IFile fFile;
+	private RefactorModel fModel;
 
 	@Override
-	protected boolean initialize(Object element) {
+	protected boolean initialize(Object pElement) {
 
-		if (element instanceof IType) {
-			_type = (IType) element;
+		fModel = RefactorModel.getModel(this);
+
+		if (pElement instanceof IType) {
+			fType = (IType) pElement;
 			return true;
 		}
 
-		if (element instanceof IPackageFragment) {
-			_pckage = (IPackageFragment) element;
+		if (pElement instanceof IPackageFragment) {
+			fPckage = (IPackageFragment) pElement;
 			return true;
 		}
 
-		if (element instanceof IFile) {
-			_file = (IFile) element;
+		if (pElement instanceof IFile) {
+			fFile = (IFile) pElement;
 			return true;
 		}
 
-		if (element instanceof IFolder) {
-			_folder = (IFolder) element;
-			return true;
-		}
 		return false;
 	}
 
@@ -52,42 +61,37 @@ public class ModelMoveParticipant extends MoveParticipant {
 	}
 
 	@Override
-	public RefactoringStatus checkConditions(IProgressMonitor pm,
-			CheckConditionsContext context) throws OperationCanceledException {
+	public RefactoringStatus checkConditions(IProgressMonitor pMonitor,
+			CheckConditionsContext pContext) throws OperationCanceledException {
 		return new RefactoringStatus();
 	}
 
 	@Override
-	public Change createChange(IProgressMonitor pm) throws CoreException,
+	public Change createChange(IProgressMonitor pMonitor) throws CoreException,
 			OperationCanceledException {
 
-		pm.beginTask("Creating Change ..", IProgressMonitor.UNKNOWN);
+		pMonitor.beginTask("Creating Change ..", IProgressMonitor.UNKNOWN);
 
 		Change change = null;
 
-		if (_type != null) {
-			change = createClassChange(pm, _type);
+		if (fType != null) {
+			change = createClassChange(pMonitor, fType);
 		}
 
-		else if (_pckage != null) {
-			change = createPackageChange(pm, _pckage);
+		else if (fPckage != null) {
+			change = createPackageChange(pMonitor, fPckage);
 		}
 
-		else if (_file != null) {
-			change = createFileChange(pm, _file);
+		else if (fFile != null) {
+			change = createFileChange(pMonitor, fFile);
 		}
 
-		//
-		// if (_folder != null) {
-		// return createFolderChange(pm, _folder);
-		// }
-
-		pm.done();
+		pMonitor.done();
 
 		return change;
 	}
 
-	private Change createFileChange(IProgressMonitor pm, IFile file)
+	private Change createFileChange(IProgressMonitor pMonitor, IFile file)
 			throws CoreException {
 
 		String newUrl = "platform:/plugin/";
@@ -104,14 +108,15 @@ public class ModelMoveParticipant extends MoveParticipant {
 
 		String oldUrl = "platform:/plugin" + file.getFullPath();
 
-		return RefactorParticipantDelegate.createChange(pm, this, oldUrl,
-				newUrl);
+		fModel.addTextRename(oldUrl, newUrl);
+
+		return RefactorParticipantDelegate.createChange(pMonitor, fModel);
 	}
 
-	private Change createPackageChange(IProgressMonitor pm,
-			IPackageFragment pckage) throws CoreException,
+	private Change createPackageChange(IProgressMonitor pMonitor,
+			IPackageFragment pPckage) throws CoreException,
 			OperationCanceledException {
-		String fromBundle = Util.getBundleSymbolicName(pckage.getJavaProject()
+		String fromBundle = Util.getBundleSymbolicName(pPckage.getJavaProject()
 				.getProject());
 
 		IPackageFragmentRoot fragmentRoot = (IPackageFragmentRoot) getArguments()
@@ -120,32 +125,35 @@ public class ModelMoveParticipant extends MoveParticipant {
 				.getJavaProject().getProject());
 
 		final String newUrl = "bundleclass://" + toBundle + "/"
-				+ pckage.getElementName();
+				+ pPckage.getElementName();
 
 		String oldUrl = "bundleclass://" + fromBundle + "/"
-				+ pckage.getElementName();
+				+ pPckage.getElementName();
 
-		return RefactorParticipantDelegate.createChange(pm, this, oldUrl,
-				newUrl);
+		fModel.addTextRename(oldUrl, newUrl);
+
+		return RefactorParticipantDelegate.createChange(pMonitor, fModel);
 	}
 
-	private Change createClassChange(IProgressMonitor pm, IType type)
+	private Change createClassChange(IProgressMonitor pMonitor, IType pType)
 			throws CoreException, OperationCanceledException {
-		String fromBundle = Util.getBundleSymbolicName(_type.getJavaProject()
+		String fromBundle = Util.getBundleSymbolicName(fType.getJavaProject()
 				.getProject());
-		String fromClassname = type.getFullyQualifiedName();
+		String fromClassname = pType.getFullyQualifiedName();
 
 		IPackageFragment fragment = (IPackageFragment) getArguments()
 				.getDestination();
 		String toBundle = Util.getBundleSymbolicName(fragment.getJavaProject()
 				.getProject());
-		String toClassName = fragment.getElementName().length() == 0 ? type
+		String toClassName = fragment.getElementName().length() == 0 ? pType
 				.getElementName() : fragment.getElementName() + "."
-				+ type.getElementName();
+				+ pType.getElementName();
 
-		return RefactorParticipantDelegate.createChange(pm, this,
-				"bundleclass://" + fromBundle + "/" + fromClassname,
-				"bundleclass://" + toBundle + "/" + toClassName);
+		return RefactorParticipantDelegate.createChange(
+				pMonitor,
+				fModel.addTextRename("bundleclass://" + fromBundle + "/"
+						+ fromClassname, "bundleclass://" + toBundle + "/"
+						+ toClassName));
 	}
 
 }

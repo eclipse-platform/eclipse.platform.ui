@@ -64,6 +64,9 @@
             <instanceof
                   value="org.eclipse.core.resources.IFolder">
             </instanceof>
+            <instanceof
+                  value="org.eclipse.core.resources.IProject">
+            </instanceof>
          </or>
 	  	  </with>
 	  	</enablement>
