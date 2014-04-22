@@ -98,7 +98,7 @@ public class ToolBarContributionRecord {
 			MToolBarElement item, ExpressionContext exprContext) {
 		boolean currentVisibility = isVisible;
 		if (item instanceof MToolBarSeparator) {
-			List<ToolBarContributionRecord> list = renderer.getList(item);
+			ArrayList<ToolBarContributionRecord> list = renderer.getList(item);
 			if (list != null) {
 				Iterator<ToolBarContributionRecord> cr = list.iterator();
 				while (!currentVisibility && cr.hasNext()) {
@@ -203,7 +203,7 @@ public class ToolBarContributionRecord {
 				toolbarModel.getChildren().add(idx++, copy);
 			}
 			if (copy instanceof MToolBarSeparator) {
-				List<ToolBarContributionRecord> array = renderer
+				ArrayList<ToolBarContributionRecord> array = renderer
 						.getList(copy);
 				array.add(this);
 			}
@@ -259,7 +259,7 @@ public class ToolBarContributionRecord {
 			toolbarModel.getChildren().remove(copy);
 		}
 		for (MToolBarElement shared : sharedElements) {
-			List<ToolBarContributionRecord> array = renderer
+			ArrayList<ToolBarContributionRecord> array = renderer
 					.getList(shared);
 			array.remove(this);
 			if (array.isEmpty()) {
