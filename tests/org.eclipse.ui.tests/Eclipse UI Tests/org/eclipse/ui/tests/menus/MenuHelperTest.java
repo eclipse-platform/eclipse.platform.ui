@@ -50,7 +50,7 @@ public class MenuHelperTest extends TestCase {
 		assertNotNull(uri);
 		// contribution specifies "IMG_OBJ_FOLDER"
 		assertEquals(
-				"platform:/plugin/org.eclipse.ui/icons/full/obj16/fldr_obj.gif",
+				"platform:/plugin/org.eclipse.ui/icons/full/obj16/fldr_obj.png",
 				uri);
 	}
 }
