@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Maxime Porhel <maxime.porhel@obeo.fr> Obeo - Bug 410426
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 426535
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 426535, 433234
  *     Maxime Porhel <maxime.porhel@obeo.fr> Obeo - Bug 431778
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
@@ -98,15 +98,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	public static final String POST_PROCESSING_DISPOSE = "ToolBarManagerRenderer.postProcess.dispose"; //$NON-NLS-1$
 	public static final String UPDATE_VARS = "ToolBarManagerRenderer.updateVars"; //$NON-NLS-1$
 	private static final String DISPOSE_ADDED = "ToolBarManagerRenderer.disposeAdded"; //$NON-NLS-1$
-
-	/**
-	 * This is a persistedState 'key' which can be used by the renderer
-	 * implementation to decide that a user interface element has been hidden by
-	 * the user
-	 * 
-	 */
-	// TODO migrate to IPresentationEngine after the Luna release
-	public static final String HIDDEN_BY_USER = "HIDDEN_BY_USER"; //$NON-NLS-1$
 
 	private Map<MToolBar, ToolBarManager> modelToManager = new HashMap<MToolBar, ToolBarManager>();
 	private Map<ToolBarManager, MToolBar> managerToModel = new HashMap<ToolBarManager, MToolBar>();
@@ -327,13 +318,13 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 		if (UIEvents.isADD(event)) {
 			if (UIEvents.contains(event, UIEvents.EventTags.NEW_VALUE,
-					HIDDEN_BY_USER)) {
+					IPresentationEngine.HIDDEN_EXPLICITLY)) {
 				changedElement.setVisible(false);
 				changedElement.setToBeRendered(false);
 			}
 		} else if (UIEvents.isREMOVE(event)) {
 			if (UIEvents.contains(event, UIEvents.EventTags.OLD_VALUE,
-					HIDDEN_BY_USER)) {
+					IPresentationEngine.HIDDEN_EXPLICITLY)) {
 				changedElement.setVisible(true);
 				changedElement.setToBeRendered(true);
 			}
@@ -347,7 +338,8 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		List<MToolBar> toolBars = modelService.findElements(application, null,
 				MToolBar.class, null);
 		for (MToolBar mToolBar : toolBars) {
-			if (mToolBar.getTags().contains(HIDDEN_BY_USER)) {
+			if (mToolBar.getTags().contains(
+					IPresentationEngine.HIDDEN_EXPLICITLY)) {
 				mToolBar.setVisible(false);
 				mToolBar.setToBeRendered(false);
 			}
@@ -439,7 +431,8 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		hideItem.setText(Messages.ToolBarManagerRenderer_MenuCloseText);
 		hideItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(org.eclipse.swt.widgets.Event event) {
-				toolbarModel.getTags().add(HIDDEN_BY_USER);
+				toolbarModel.getTags().add(
+						IPresentationEngine.HIDDEN_EXPLICITLY);
 			}
 		});
 
@@ -450,7 +443,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 				.setText(Messages.ToolBarManagerRenderer_MenuRestoreText);
 		restoreHiddenItems.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(org.eclipse.swt.widgets.Event event) {
-				removeHiddenByUserTags(toolbarModel);
+				removeHiddenTags(toolbarModel);
 			}
 		});
 		renderedCtrl.setMenu(toolbarMenu);
@@ -1060,16 +1053,16 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	}
 
 	/**
-	 * Removes the IPresentationEngine.HIDDEN_BY_USER from the toolbars
-	 * 
+	 * Removes the IPresentationEngine.HIDDEN_EXPLICITLY from the toolbar entres
+	 *
 	 * @param toolbarModel
 	 */
-	private void removeHiddenByUserTags(MToolBar toolbarModel) {
+	private void removeHiddenTags(MToolBar toolbarModel) {
 		MWindow mWindow = modelService.getTopLevelWindowFor(toolbarModel);
 		List<MToolBar> toolBars = modelService.findElements(mWindow, null,
 				MToolBar.class, null);
 		for (MToolBar mToolBar : toolBars) {
-			mToolBar.getTags().remove(HIDDEN_BY_USER);
+			mToolBar.getTags().remove(IPresentationEngine.HIDDEN_EXPLICITLY);
 		}
 	}
 
