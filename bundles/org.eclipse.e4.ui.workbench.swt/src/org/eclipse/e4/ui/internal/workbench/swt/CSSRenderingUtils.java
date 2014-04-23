@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 IBM Corporation and others.
+ * Copyright (c) 2012, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.ControlElement;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.widgets.ImageBasedFrame;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -26,12 +27,17 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.css.CSSValueList;
 
 public class CSSRenderingUtils {
+	private final static String FRAME_IMAGE_PROP = "frame-image";
+
+	private final static String HANDLE_IMAGE_PROP = "handle-image";
 
 	// NOTE: The CSS engine 'owns' the image it returns (it caches it)
 	// so we have to cache any rotated versions to match
@@ -40,13 +46,14 @@ public class CSSRenderingUtils {
 	public Control frameMeIfPossible(Control toFrame, String classId,
 			boolean vertical, boolean draggable) {
 		Integer[] frameInts = new Integer[4];
-		Image frameImage = createImage(toFrame, classId, "frame-image",
+		Image frameImage = createImage(toFrame, classId, FRAME_IMAGE_PROP,
 				frameInts);
 		if (vertical && frameImage != null)
 			frameImage = rotateImage(toFrame.getDisplay(), frameImage,
 					frameInts);
 
-		Image handleImage = createImage(toFrame, classId, "handle-image", null);
+		Image handleImage = createImage(toFrame, classId, HANDLE_IMAGE_PROP,
+				null);
 		if (vertical && handleImage != null)
 			handleImage = rotateImage(toFrame.getDisplay(), handleImage, null);
 
@@ -54,11 +61,13 @@ public class CSSRenderingUtils {
 			ImageBasedFrame frame = new ImageBasedFrame(toFrame.getParent(),
 					toFrame, vertical, draggable);
 			frame.setImages(frameImage, frameInts, handleImage);
+			addFrameImageDisposedListener(toFrame, classId, vertical);
 			return frame;
 		} else if (handleImage != null) {
 			ImageBasedFrame frame = new ImageBasedFrame(toFrame.getParent(),
 					toFrame, vertical, draggable);
 			frame.setImages(null, null, handleImage);
+			addHandleImageDisposedListener(toFrame, classId, vertical);
 			return frame;
 		}
 
@@ -208,5 +217,59 @@ public class CSSRenderingUtils {
 			}
 		}
 		return image;
+	}
+
+	private void addHandleImageDisposedListener(final Control toFrame,
+			final String classId, final boolean vertical) {
+		toFrame.getDisplay().addListener(SWT.Skin, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				if (!(event.widget instanceof ImageBasedFrame)) {
+					return;
+				}
+
+				Image handleImage = createImage(toFrame, classId,
+						HANDLE_IMAGE_PROP, null);
+				if (vertical && handleImage != null) {
+					handleImage = rotateImage(toFrame.getDisplay(),
+							handleImage, null);
+				}
+				if (handleImage != null) {
+					((ImageBasedFrame) event.widget).setImages(null, null,
+							handleImage);
+				}
+			}
+		});
+	}
+
+	private void addFrameImageDisposedListener(final Control toFrame,
+			final String classId, final boolean vertical) {
+		toFrame.getDisplay().addListener(SWT.Skin, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				if (!(event.widget instanceof ImageBasedFrame)) {
+					return;
+				}
+
+				ImageBasedFrame frame = (ImageBasedFrame) event.widget;
+				Integer[] frameInts = new Integer[4];
+				Image frameImage = createImage(toFrame, classId,
+						FRAME_IMAGE_PROP, frameInts);
+				if (vertical && frameImage != null) {
+					frameImage = rotateImage(toFrame.getDisplay(), frameImage,
+							frameInts);
+				}
+
+				Image handleImage = createImage(toFrame, classId,
+						HANDLE_IMAGE_PROP, null);
+				if (vertical && handleImage != null) {
+					handleImage = rotateImage(toFrame.getDisplay(),
+							handleImage, null);
+				}
+				if (frameImage != null) {
+					frame.setImages(frameImage, frameInts, handleImage);
+				}
+			}
+		});
 	}
 }
