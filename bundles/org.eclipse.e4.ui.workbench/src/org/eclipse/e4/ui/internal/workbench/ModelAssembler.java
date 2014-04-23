@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl<tom.schindl@bestsolution.at> - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430075, 430080, 431464
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430075, 430080, 431464, 433336
  *     René Brandstetter - Bug 419749 - [Workbench] [e4 Workbench] - Remove the deprecated PackageAdmin
  *     Brian de Alwis (MTI) - Bug 433053
  ******************************************************************************/
@@ -214,13 +214,13 @@ public class ModelAssembler {
 	 * @param extensions
 	 * @param afterFragments
 	 */
-	private void runProcessors(IExtension[] extensions, boolean initial, Boolean afterFragments) {
+	private void runProcessors(IExtension[] extensions, boolean initial, boolean afterFragments) {
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] ces = extension.getConfigurationElements();
 			for (IConfigurationElement ce : ces) {
 				boolean parseBoolean = Boolean.parseBoolean(ce.getAttribute("beforefragment")); //$NON-NLS-1$
-				if ("processor".equals(ce.getName()) && !afterFragments.equals(parseBoolean)) { //$NON-NLS-1$
-					if (initial || !INITIAL.equals(ce.getAttribute("apply"))) { //$NON-NLS-1$ 
+				if ("processor".equals(ce.getName()) && afterFragments == parseBoolean) { //$NON-NLS-1$
+					if (initial || !INITIAL.equals(ce.getAttribute("apply"))) { //$NON-NLS-1$
 						runProcessor(ce);
 					}
 				}
