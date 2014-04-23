@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="org.eclipse.e4.ui.css.swt.theme">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.eclipse.e4.ui.css.swt.theme">
    <implementation class="org.eclipse.e4.ui.css.swt.internal.theme.ThemeEngineManager"/>
    <service>
       <provide interface="org.eclipse.e4.ui.css.swt.theme.IThemeManager"/>
