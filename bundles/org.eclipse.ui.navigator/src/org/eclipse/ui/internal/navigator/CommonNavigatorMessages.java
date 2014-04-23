@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -78,6 +78,14 @@ public class CommonNavigatorMessages extends NLS {
 
 	/** */
 	public static String CommonFilterSelectionDialog_Select_the_filters_to_apply;
+	/** */
+	public static String CommonFilterSelectionDialog_User_Resource_Filters;
+	/** */
+	public static String CommonFilterSelectionDialog_RegexpFilter_New;
+	/** */
+	public static String CommonFilterSelectionDialog_RegexpFilter_Edit;
+	/** */
+	public static String CommonFilterSelectionDialog_RegexpFilter_Remove;
 
 	/** */
 	public static String SelectFiltersActionDelegate_0;
@@ -120,6 +128,12 @@ public class CommonNavigatorMessages extends NLS {
 
 	/** */
 	public static String CommonSorterDescriptorManager_A_navigatorContent_extension_in_0_;
+
+	/** */
+	public static String CommonFilterSelectionDialog_Set_custom_filters_to_apply;
+
+	/** */
+	public static String CommonSorterDescriptorManager_A_navigatorContent_extesnion_in_0_;
 
 	/** */
 	public static String CommonSorterDescriptorManager_A_navigatorContent_extension_does_n_;

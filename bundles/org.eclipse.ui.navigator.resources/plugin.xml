@@ -348,7 +348,14 @@
                class="org.eclipse.ui.internal.navigator.workingsets.WorkingSetSorter"
                id="org.eclipse.ui.navigator.resources.workingSets.sorter"/>
       </navigatorContent>
-
+      <commonFilter
+            class="org.eclipse.ui.internal.navigator.resources.ResourceNameRegexpFilter"
+            description="%filters.userDefined.description"
+            id="org.eclipse.ui.navigator.resources.filters.userDefined"
+            name="%filters.userDefined.name"
+            visibleInUI="false"
+            activeByDefault="true">
+      </commonFilter>
    </extension>
     <extension
           point="org.eclipse.core.runtime.adapters">

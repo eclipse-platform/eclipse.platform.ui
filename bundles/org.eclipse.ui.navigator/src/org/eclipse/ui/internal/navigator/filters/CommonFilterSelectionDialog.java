@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,14 +11,9 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Feb 9, 2004
- *
- */
 package org.eclipse.ui.internal.navigator.filters;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -77,6 +72,8 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 
 	private String helpContext;
 
+	private UserFiltersTab userFiltersTab;
+
 	/**
 	 * Public only for tests.
 	 *
@@ -123,6 +120,11 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 				CommonNavigatorMessages.CommonFilterSelectionDialog_Available_Filters,
 				commonFiltersTab, FILTER_ICON);
 
+		this.userFiltersTab = new UserFiltersTab(customizationsTabFolder, this.commonViewer);
+		createTabItem(
+				customizationsTabFolder,
+				CommonNavigatorMessages.CommonFilterSelectionDialog_User_Resource_Filters,
+				userFiltersTab, FILTER_ICON);
 
 		boolean hideExtensionsTab = contentService.getViewerDescriptor()
 				.getBooleanConfigProperty(
@@ -241,21 +243,22 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 			updateExtensions.execute(null, null);
 		}
 
+		List<String> filterIdsToActivate = new ArrayList<>();
 		if (commonFiltersTab != null) {
-			Set checkedFilters = commonFiltersTab.getCheckedItems();
-
-			String[] filterIdsToActivate = new String[checkedFilters.size()];
-			int indx = 0;
-			for (Iterator iterator = checkedFilters.iterator(); iterator
-					.hasNext();) {
-				ICommonFilterDescriptor descriptor = (ICommonFilterDescriptor) iterator
-						.next();
-
-				filterIdsToActivate[indx++] = descriptor.getId();
-
+			Set<ICommonFilterDescriptor> checkedFilters = commonFiltersTab.getCheckedItems();
+			for (ICommonFilterDescriptor descriptor : checkedFilters) {
+				filterIdsToActivate.add(descriptor.getId());
 			}
+		}
+		if (this.userFiltersTab != null) {
+			this.commonViewer.setData(NavigatorPlugin.RESOURCE_REGEXP_FILTER_DATA, this.userFiltersTab.getUserFilters());
+			if (!this.userFiltersTab.getUserFilters().isEmpty()) {
+				filterIdsToActivate.add(NavigatorPlugin.RESOURCE_REGEXP_FILTER_FILTER_ID);
+			}
+		}
+		if (this.userFiltersTab != null || this.commonFiltersTab != null) {
 			UpdateActiveFiltersOperation updateFilters = new UpdateActiveFiltersOperation(
-					commonViewer, filterIdsToActivate);
+					commonViewer, filterIdsToActivate.toArray(new String[filterIdsToActivate.size()]));
 			updateFilters.execute(null, null);
 		}
 
