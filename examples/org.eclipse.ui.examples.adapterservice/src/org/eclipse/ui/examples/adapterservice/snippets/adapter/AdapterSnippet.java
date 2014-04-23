@@ -9,15 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.e4.examples.services.snippets.adapter;
+package org.eclipse.ui.examples.adapterservice.snippets.adapter;
 
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.e4.core.services.adapter.Adapter;
-import org.eclipse.e4.examples.services.snippets.SnippetSetup;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.ui.examples.adapterservice.snippets.SnippetSetup;
 
 /**
  * This snippet demonstrates user of the Adapter service.
@@ -59,6 +59,7 @@ public class AdapterSnippet implements IApplication{
 
 	}
 
+	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		// Inject services into this snippet
 		SnippetSetup.setup(this);
@@ -67,6 +68,7 @@ public class AdapterSnippet implements IApplication{
 		return IApplication.EXIT_OK;
 	}
 
+	@Override
 	public void stop() {
 		// TODO Auto-generated method stub
 		

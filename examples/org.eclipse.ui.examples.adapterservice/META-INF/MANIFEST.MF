@@ -1,12 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Services Snippets (Incubation)
-Bundle-SymbolicName: org.eclipse.e4.examples.services;singleton:=true
+Bundle-SymbolicName: org.eclipse.ui.examples.adapterservice;singleton:=true
 Bundle-Version: 0.9.1.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Eclipse.org
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bundle-Activator: org.eclipse.e4.examples.services.snippets.SnippetActivator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Activator: org.eclipse.ui.examples.adapterservice.snippets.SnippetActivator
 Import-Package: javax.inject;version="1.0.0",
  org.osgi.framework;version="1.5.0"
 Require-Bundle: org.eclipse.equinox.app,

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+  	<extension id="org.eclipse.ui.examples.adapterservice.snippets.adapter" point="org.eclipse.core.runtime.applications"> 
+		<application>
+ 			<run class="org.eclipse.ui.examples.adapterservice.snippets.adapter.AdapterSnippet"/> 
+ 	    </application> 
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="java.lang.Object"
+            class="org.eclipse.ui.examples.adapterservice.snippets.adapter.IDAssigner">
+         <adapter
+               type="org.eclipse.ui.examples.adapterservice.snippets.adapter.ThingWithId">
+         </adapter>
+      </factory>
+   </extension>
+</plugin>
