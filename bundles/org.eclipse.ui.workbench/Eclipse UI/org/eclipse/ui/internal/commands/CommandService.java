@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.eclipse.core.commands.State;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.e4.core.commands.internal.ICommandHelpService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
@@ -89,6 +90,8 @@ public final class CommandService implements ICommandService, IUpdateService {
 
 	private IEclipseContext context;
 
+	private ICommandHelpService commandHelpService;
+
 	/**
 	 * Constructs a new instance of <code>CommandService</code> using a
 	 * command manager.
@@ -104,6 +107,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 		this.commandManager = commandManager;
 		this.commandPersistence = new CommandPersistence(commandManager);
 		this.context = context;
+		this.commandHelpService = context.get(ICommandHelpService.class);
 	}
 
 	@Override
@@ -193,16 +197,17 @@ public final class CommandService implements ICommandService, IUpdateService {
 	}
 
 	@Override
+	@SuppressWarnings("unused")
 	public final String getHelpContextId(final Command command)
 			throws NotDefinedException {
-		return commandManager.getHelpContextId(command);
+		return commandHelpService.getHelpContextId(command.getId(), context);
 	}
 
 	@Override
 	public final String getHelpContextId(final String commandId)
 			throws NotDefinedException {
 		final Command command = getCommand(commandId);
-		return commandManager.getHelpContextId(command);
+		return getHelpContextId(command);
 	}
 
 	@Override
@@ -221,9 +226,8 @@ public final class CommandService implements ICommandService, IUpdateService {
 	}
 
 	@Override
-	public final void setHelpContextId(final IHandler handler,
-			final String helpContextId) {
-		commandManager.setHelpContextId(handler, helpContextId);
+	public final void setHelpContextId(final IHandler handler, final String helpContextId) {
+		commandHelpService.setHelpContextId(handler, helpContextId);
 	}
 
 	/**

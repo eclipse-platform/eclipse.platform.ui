@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 
 package org.eclipse.core.internal.commands.util;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +22,8 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import org.eclipse.core.commands.Command;
 
 /**
  * A class providing utility functions for the commands plug-in.
@@ -347,6 +350,37 @@ public final class Util {
 
         return set;
     }
+
+	/**
+	 * Returns context help ID which is directly assigned to the command.
+	 * Context help IDs assigned to related handlers are ignored.
+	 *
+	 * @param command
+	 *            The command from which the context help ID is retrieved.
+	 * @return The help context ID assigned to the command; may be
+	 *         <code>null</code>.
+	 */
+	public static final String getHelpContextId(Command command) {
+		Method method = null;
+		try {
+			method = Command.class.getDeclaredMethod("getHelpContextId", null); //$NON-NLS-1$
+		} catch (Exception e) {
+			// do nothing
+		}
+
+		String contextId = null;
+		if (method != null) {
+			boolean accessible = method.isAccessible();
+			method.setAccessible(true);
+			try {
+				contextId = (String) method.invoke(command, null);
+			} catch (Exception e) {
+				// do nothing
+			}
+			method.setAccessible(accessible);
+		}
+		return contextId;
+	}
 
     /**
      * The utility class is meant to just provide static members.

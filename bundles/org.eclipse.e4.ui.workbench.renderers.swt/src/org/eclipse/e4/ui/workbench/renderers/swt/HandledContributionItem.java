@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.commands.internal.ICommandHelpService;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -35,6 +36,7 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.internal.workbench.IHelpService;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.internal.workbench.RenderedElementUtil;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService;
@@ -129,6 +131,15 @@ public class HandledContributionItem extends ContributionItem {
 	@Inject
 	@Optional
 	private IUpdateService updateService;
+
+	@Inject
+	@Optional
+	private IHelpService helpService;
+
+	@Inject
+	@Optional
+	@SuppressWarnings("restriction")
+	private ICommandHelpService commandHelpService;
 
 	private Runnable unreferenceRunnable;
 
@@ -301,6 +312,7 @@ public class HandledContributionItem extends ContributionItem {
 		item.addListener(SWT.Dispose, getItemListener());
 		item.addListener(SWT.Selection, getItemListener());
 		item.addListener(SWT.DefaultSelection, getItemListener());
+		item.addListener(SWT.Help, getItemListener());
 
 		widget = item;
 		model.setWidget(widget);
@@ -601,6 +613,9 @@ public class HandledContributionItem extends ContributionItem {
 							handleWidgetSelection(event);
 						}
 						break;
+					case SWT.Help:
+						handleHelpRequest();
+						break;
 					}
 				}
 			};
@@ -626,6 +641,7 @@ public class HandledContributionItem extends ContributionItem {
 			widget.removeListener(SWT.Selection, getItemListener());
 			widget.removeListener(SWT.Dispose, getItemListener());
 			widget.removeListener(SWT.DefaultSelection, getItemListener());
+			widget.removeListener(SWT.Help, getItemListener());
 			widget = null;
 			model.setWidget(null);
 			disposeOldImages();
@@ -684,6 +700,21 @@ public class HandledContributionItem extends ContributionItem {
 			if (canExecuteItem(event)) {
 				executeItem(event);
 			}
+		}
+	}
+
+	@SuppressWarnings("restriction")
+	private void handleHelpRequest() {
+		MCommand command = model.getCommand();
+		if (command == null || helpService == null
+				|| commandHelpService == null) {
+			return;
+		}
+
+		String contextHelpId = commandHelpService.getHelpContextId(
+				command.getElementId(), getContext(model));
+		if (contextHelpId != null) {
+			helpService.displayHelp(contextHelpId);
 		}
 	}
 
