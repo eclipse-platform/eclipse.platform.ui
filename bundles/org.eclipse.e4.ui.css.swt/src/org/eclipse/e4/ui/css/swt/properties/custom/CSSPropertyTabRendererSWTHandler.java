@@ -28,18 +28,20 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 
 	public static final ICSSPropertyHandler INSTANCE = new CSSPropertyTabRendererSWTHandler();
 	private boolean backwardsCompatURIsLogged = false;
-	
+
 	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (!(control instanceof CTabFolder)) return;
+		if (!(control instanceof CTabFolder)) {
+			return;
+		}
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			if (((CSSPrimitiveValue) value).getPrimitiveType() == CSSPrimitiveValue.CSS_URI) {
 				String rendURL = ((CSSPrimitiveValue) value).getStringValue();
 				// translate old-style platform:/plugin/ class specifiers into new-style bundleclass:// URIs
 				if (rendURL.startsWith("platform:/plugin/")) { //$NON-NLS-1$
 					if(!backwardsCompatURIsLogged) {
-						CSSActivator.getDefault().log(LogService.LOG_ERROR, 
+						CSSActivator.getDefault().log(LogService.LOG_ERROR,
 								"platform-style URIs deprecated for referencing types: use bundleclass://<bundlename>/<typename>"); //$NON-NLS-1$
 						backwardsCompatURIsLogged = true;
 					}
@@ -57,10 +59,13 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 						try {
 							Class<?> targetClass = bundle.loadClass(clazz);
 							//check to see if the folder already has an instance of the same renderer
-							
+
 							CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
-							if (renderer != null && renderer.getClass() == targetClass) return;
-							Constructor constructor = targetClass.getConstructor(CTabFolder.class);
+							if (renderer != null && renderer.getClass() == targetClass) {
+								return;
+							}
+							Constructor<?> constructor = targetClass
+									.getConstructor(CTabFolder.class);
 							if (constructor != null) {
 								Object rend = constructor.newInstance(control);
 								if (rend != null && rend instanceof CTabFolderRenderer) {
@@ -71,7 +76,7 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 							String message = "Unable to load class '" + clazz + "' from bundle '" //$NON-NLS-1$ //$NON-NLS-2$
 									+ bundle.getBundleId() + "'"; //$NON-NLS-1$
 							CSSActivator.getDefault().log(LogService.LOG_ERROR, message);
-						} 
+						}
 					}
 				}
 			} else {
@@ -79,7 +84,7 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 			}
 		}
 	}
-	
+
 	@Override
 	protected String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {

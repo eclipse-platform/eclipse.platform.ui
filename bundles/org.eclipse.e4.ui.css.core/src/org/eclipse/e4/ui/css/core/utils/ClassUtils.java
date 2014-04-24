@@ -21,7 +21,7 @@ public class ClassUtils {
 	 * @param c
 	 * @return
 	 */
-	public static String getSimpleName(Class c) {
+	public static String getSimpleName(Class<?> c) {
 		String name = c.getName();
 		int index = name.lastIndexOf(".");
 		if (index > 0) {
@@ -41,7 +41,7 @@ public class ClassUtils {
 	 * @param c
 	 * @return
 	 */
-	public static String getPackageName(Class c) {
+	public static String getPackageName(Class<?> c) {
 		String name = c.getName();
 		int index = name.lastIndexOf(".");
 		if (index > 0) {

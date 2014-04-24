@@ -139,7 +139,6 @@ public class SWTResourcesRegistry extends AbstractResourcesRegistry {
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Object> removeResourcesByKeyTypeAndType(Class<?> keyType,
 			Class<?>... types) {
 		List<Object> removedResources = new ArrayList<Object>();

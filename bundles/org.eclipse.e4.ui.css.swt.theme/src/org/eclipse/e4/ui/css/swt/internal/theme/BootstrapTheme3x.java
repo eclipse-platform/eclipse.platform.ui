@@ -29,13 +29,13 @@ public class BootstrapTheme3x {
 	public BootstrapTheme3x(Display display) {
 		this(display, null);
 	}
-	
+
 	public BootstrapTheme3x(Display display, String themeId) {
 		Bundle bundle = FrameworkUtil.getBundle(BootstrapTheme3x.class);
 		BundleContext context = bundle.getBundleContext();
-		ServiceReference ref = context.getServiceReference(IThemeManager.class
-				.getName());
-		IThemeManager mgr = (IThemeManager) context.getService(ref);
+		ServiceReference<IThemeManager> ref = context
+				.getServiceReference(IThemeManager.class);
+		IThemeManager mgr = context.getService(ref);
 		final IThemeEngine engine = mgr.getEngineForDisplay(display);
 		ITheme theme = engine.registerTheme(IThemeEngine.DEFAULT_THEME_ID, "Default Theme", "platform:/plugin/org.eclipse.e4.ui.css.swt.theme/css/dummy.css");
 		if( themeId == null ) {

@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.bindings.keys;
 
 import java.util.List;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
@@ -67,7 +68,7 @@ final class OutOfOrderListener implements Listener {
 		 * If the event is still up for grabs, then re-route through the global key filter.
 		 */
 		if (event.doit) {
-			List keyStrokes = KeyBindingDispatcher.generatePossibleKeyStrokes(event);
+			List<KeyStroke> keyStrokes = KeyBindingDispatcher.generatePossibleKeyStrokes(event);
 			keyboard.processKeyEvent(keyStrokes, event);
 		}
 	}

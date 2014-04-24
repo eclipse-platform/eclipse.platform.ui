@@ -154,7 +154,7 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 		// for inner classes, the hyphen is used, e.g., for Outer$Inner,
 		// the selector is Outer-Inner {background-color:red;}
 		Widget widget = getWidget();
-		Class clazz = widget.getClass();
+		Class<?> clazz = widget.getClass();
 		return ClassUtils.getSimpleName(clazz);
 	}
 
@@ -172,7 +172,7 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 		// @namespace eclipse org.eclipse.swt.widgets.Label
 		// ex : eclipse|Label {background-color:red;}
 		Widget widget = getWidget();
-		Class clazz = widget.getClass();
+		Class<?> clazz = widget.getClass();
 		return ClassUtils.getPackageName(clazz);
 	}
 
