@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<fragment>
+   <extension
+         point="org.eclipse.ui.internalTweaklets">
+      <tweaklet
+            definition="org.eclipse.ui.internal.tweaklets.TitlePathUpdater"
+            id="org.eclipse.ui.cocoa.titlePathUpdaterTweaklet"
+            implementation="org.eclipse.ui.internal.cocoa.CocoaTitlePathUpdater"
+            name="Cocoa Title Path Updater">
+      </tweaklet>
+   </extension>
+</fragment>

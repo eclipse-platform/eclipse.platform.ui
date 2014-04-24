@@ -109,6 +109,7 @@
     <module>bundles/org.eclipse.ui.ide</module>
     <module>bundles/org.eclipse.ui.ide.application</module>
     <module>bundles/org.eclipse.ui.win32</module>
+    <module>bundles/org.eclipse.ui.cocoa</module>
     <module>bundles/org.eclipse.ui.navigator.resources</module>
     <module>bundles/org.eclipse.ui.workbench.compatibility</module>
 

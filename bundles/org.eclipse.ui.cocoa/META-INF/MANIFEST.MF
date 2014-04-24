@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %fragmentName
+Bundle-SymbolicName: org.eclipse.ui.cocoa;singleton:=true
+Bundle-Version: 1.1.100.qualifier
+Bundle-Vendor: %providerName
+Fragment-Host: org.eclipse.ui;bundle-version="[3.5.0,4.0.0)"
+Bundle-Localization: fragment-cocoa
+Eclipse-PlatformFilter: (osgi.ws=cocoa)
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Export-Package: org.eclipse.ui.internal.cocoa
