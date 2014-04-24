@@ -3,4 +3,5 @@ Bug 403352 - Update all parent versions to match our build stream
 Bug 424909 - Adopt latest Orbit I-build for javax.annotation 1.2
 Bug 430284 - Update Orbit pre-reqs to latest Orbit I-build
 Bug 429661 - Update ICU4J to 52.1.v20140218 from Orbit
+Bug 399749 - update to Orbit M7 S-build URL
 
