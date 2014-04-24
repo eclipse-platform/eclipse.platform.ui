@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 426986
- *     Steven Spungin <steven@spungin.tv> - Bug 430660, 430664, Bug 430809
+ *     Steven Spungin <steven@spungin.tv> - Bug 430660, 430664, Bug 430809, 430717
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -78,8 +78,10 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -716,13 +718,13 @@ public class ControlFactory {
 
 		TextPasteHandler.createFor(t);
 
-		Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ModelTooling_Common_Add);
-		b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_table_add));
+		final Button btnAdd = new Button(parent, SWT.PUSH | SWT.FLAT);
+		btnAdd.setText(Messages.ModelTooling_Common_Add);
+		btnAdd.setImage(editor.createImage(ResourceProvider.IMG_Obj16_table_add));
 		gd = new GridData(GridData.FILL, GridData.CENTER, false, false);
 		gd.verticalIndent = vIndent;
-		b.setLayoutData(gd);
-		b.addSelectionListener(new SelectionAdapter() {
+		btnAdd.setLayoutData(gd);
+		btnAdd.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleAddText(editor, feature, t);
@@ -740,21 +742,43 @@ public class ControlFactory {
 
 		IEMFListProperty prop = EMFProperties.list(feature);
 		viewer.setInput(prop.observeDetail(editor.getMaster()));
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
-		Composite buttonComp = new Composite(parent, SWT.NONE);
-		buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				String strSelected = (String) ((StructuredSelection) event.getSelection()).getFirstElement();
+				t.setText(strSelected != null ? strSelected : ""); //$NON-NLS-1$
+			}
+		});
+
+		Composite compButton = new Composite(parent, SWT.NONE);
+		compButton.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
 		GridLayout gl = new GridLayout();
 		gl.marginLeft = 0;
 		gl.marginRight = 0;
 		gl.marginWidth = 0;
 		gl.marginHeight = 0;
-		buttonComp.setLayout(gl);
+		compButton.setLayout(gl);
 
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ModelTooling_Common_Up);
-		b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_arrow_up));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		b.addSelectionListener(new SelectionAdapter() {
+		final Button btnReplace = new Button(compButton, SWT.PUSH | SWT.FLAT);
+		// TODO need to add icon for replace
+		btnReplace.setText(Messages.ModelTooling_Common_Replace);
+		btnReplace.setImage(editor.createImage(ResourceProvider.IMG_Obj16_table_add));
+		gd = new GridData(GridData.FILL, GridData.CENTER, false, false);
+		gd.verticalIndent = vIndent;
+		btnReplace.setLayoutData(gd);
+		btnReplace.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				handleReplaceText(editor, feature, t, viewer);
+			}
+		});
+
+		final Button btnUp = new Button(compButton, SWT.PUSH | SWT.FLAT);
+		btnUp.setText(Messages.ModelTooling_Common_Up);
+		btnUp.setImage(editor.createImage(ResourceProvider.IMG_Obj16_arrow_up));
+		btnUp.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		btnUp.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!viewer.getSelection().isEmpty()) {
@@ -778,11 +802,11 @@ public class ControlFactory {
 			}
 		});
 
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ModelTooling_Common_Down);
-		b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_arrow_down));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		b.addSelectionListener(new SelectionAdapter() {
+		final Button btnDown = new Button(compButton, SWT.PUSH | SWT.FLAT);
+		btnDown.setText(Messages.ModelTooling_Common_Down);
+		btnDown.setImage(editor.createImage(ResourceProvider.IMG_Obj16_arrow_down));
+		btnDown.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		btnDown.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!viewer.getSelection().isEmpty()) {
@@ -806,11 +830,11 @@ public class ControlFactory {
 			}
 		});
 
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ModelTooling_Common_Remove);
-		b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_table_delete));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		b.addSelectionListener(new SelectionAdapter() {
+		final Button btnDelete = new Button(compButton, SWT.PUSH | SWT.FLAT);
+		btnDelete.setText(Messages.ModelTooling_Common_Remove);
+		btnDelete.setImage(editor.createImage(ResourceProvider.IMG_Obj16_table_delete));
+		btnDelete.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		btnDelete.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!viewer.getSelection().isEmpty()) {
@@ -826,6 +850,38 @@ public class ControlFactory {
 				}
 			}
 		});
+
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateUiState(viewer, t, btnAdd, btnReplace, btnDelete, btnDown, btnUp);
+			}
+		});
+
+		t.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				updateUiState(viewer, t, btnAdd, btnReplace, btnDelete, btnDown, btnUp);
+			}
+		});
+
+		updateUiState(viewer, t, btnAdd, btnReplace, btnDelete, btnDown, btnUp);
+	}
+
+	private static void updateUiState(TableViewer viewer, Text t, Button btnAdd, Button btnReplace, Button btnDelete, Button btnDown, Button btnUp) {
+		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
+		Object firstViewerElement = sel.getFirstElement();
+		boolean diff = !t.getText().equals(firstViewerElement);
+
+		btnReplace.setEnabled(firstViewerElement != null && !t.getText().isEmpty() && diff);
+		// TODO check valid value and not already in list
+		btnAdd.setEnabled(!t.getText().isEmpty());
+
+		btnUp.setEnabled(firstViewerElement != null);
+		btnDown.setEnabled(firstViewerElement != null);
+		btnDelete.setEnabled(firstViewerElement != null);
 	}
 
 	private static void handleAddText(AbstractComponentEditor editor, EStructuralFeature feature, Text tagText) {
@@ -841,6 +897,34 @@ public class ControlFactory {
 				editor.getEditingDomain().getCommandStack().execute(cmd);
 			}
 			tagText.setText(""); //$NON-NLS-1$
+		}
+	}
+
+	private static void handleReplaceText(AbstractComponentEditor editor, EStructuralFeature feature, Text tagText, TableViewer viewer) {
+		if (tagText.getText().trim().length() > 0) {
+			if (!viewer.getSelection().isEmpty()) {
+				String[] tags = tagText.getText().split(";"); //$NON-NLS-1$
+				for (int i = 0; i < tags.length; i++) {
+					tags[i] = tags[i].trim();
+				}
+
+				MApplicationElement appEl = (MApplicationElement) editor.getMaster().getValue();
+				EObject el = (EObject) editor.getMaster().getValue();
+				List<?> ids = ((IStructuredSelection) viewer.getSelection()).toList();
+				Object curVal = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
+				EObject container = (EObject) editor.getMaster().getValue();
+				List<?> l = (List<?>) container.eGet(feature);
+				int idx = l.indexOf(curVal);
+				if (idx >= 0) {
+					Command cmdRemove = RemoveCommand.create(editor.getEditingDomain(), el, feature, ids);
+					Command cmdInsert = AddCommand.create(editor.getEditingDomain(), appEl, feature, Arrays.asList(tags), idx);
+					if (cmdRemove.canExecute() && cmdInsert.canExecute()) {
+						editor.getEditingDomain().getCommandStack().execute(cmdRemove);
+						editor.getEditingDomain().getCommandStack().execute(cmdInsert);
+					}
+					tagText.setText(""); //$NON-NLS-1$
+				}
+			}
 		}
 	}
 

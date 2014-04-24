@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Marco Descher <marco@descher.at> - Bug 395982, 396975, 426653
- *     Steven Spungin <steven@spungin.tv> - Bug 431735
+ *     Steven Spungin <steven@spungin.tv> - Bug 431735, 430717
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal;
 
@@ -20,6 +20,7 @@ public class Messages {
 	public String ModelTooling_Common_AddEllipsis;
 	public String ModelTooling_Common_Add;
 	public String ModelTooling_Common_Remove;
+	public String ModelTooling_Common_Replace;
 	public String ModelTooling_Common_Id;
 	public String ModelTooling_Common_RefId;
 	public String ModelTooling_Common_FindEllipsis;
