@@ -45,7 +45,6 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.WorkbenchSourceProvider;
@@ -167,7 +166,10 @@ public class ShowInMenu extends ContributionItem implements
 	 * Fills the menu with Show In actions.
 	 */
 	private void fillMenu(IMenuManager innerMgr) {
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IWorkbenchPage page = (IWorkbenchPage) locator.getService(IWorkbenchPage.class);
+		if (page == null) {
+			return;
+		}
 		WorkbenchPartReference r = (WorkbenchPartReference) page.getActivePartReference();
 		if (page != null && r != null && r.getModel() != null) {
 			((WorkbenchPage) page).updateShowInSources(r.getModel());
