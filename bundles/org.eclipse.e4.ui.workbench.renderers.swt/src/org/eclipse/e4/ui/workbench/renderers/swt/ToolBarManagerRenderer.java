@@ -474,13 +474,15 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	private void addCleanupDisposeListener(final MToolBar toolbarModel,
 			ToolBar control) {
 
-		if (!toolbarModel.getTags().contains(DISPOSE_ADDED)) {
-			toolbarModel.getTags().add(DISPOSE_ADDED);
+		final Map<String, Object> transientData = toolbarModel
+				.getTransientData();
+		if (!transientData.containsKey(DISPOSE_ADDED)) {
+			transientData.put(DISPOSE_ADDED, Boolean.TRUE);
 			control.addDisposeListener(new DisposeListener() {
 				@Override
 				public void widgetDisposed(DisposeEvent e) {
 					cleanUp(toolbarModel);
-					toolbarModel.getTags().remove(DISPOSE_ADDED);
+					transientData.remove(DISPOSE_ADDED);
 				}
 			});
 		}
