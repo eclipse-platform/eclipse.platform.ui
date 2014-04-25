@@ -19,6 +19,10 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
+import org.eclipse.e4.ui.model.application.commands.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
@@ -145,6 +149,38 @@ public class ModelServiceImpl implements EModelService {
 				elements.add((T) searchRoot);
 			}
 		}
+		if (searchRoot instanceof MApplication && (searchFlags == ANYWHERE)) {
+			MApplication app = (MApplication) searchRoot;
+
+			List<MApplicationElement> children = new ArrayList<MApplicationElement>();
+			if (clazz != null) {
+				if (clazz.equals(MHandler.class)) {
+					children.addAll(app.getHandlers());
+				} else if (clazz.equals(MCommand.class)) {
+					children.addAll(app.getCommands());
+				} else if (clazz.equals(MBindingContext.class)) {
+					children.addAll(app.getBindingContexts());
+				} else if (clazz.equals(MBindingTable.class)) {
+					children.addAll(app.getBindingTables());
+				}
+				// } else { only look for these if specifically asked.
+				// children.addAll(app.getHandlers());
+				// children.addAll(app.getCommands());
+				// children.addAll(app.getBindingContexts());
+				// children.addAll(app.getBindingTables());
+			}
+
+			for (MApplicationElement child : children) {
+				findElementsRecursive(child, clazz, matcher, elements, searchFlags);
+			}
+		}
+
+		if (searchRoot instanceof MBindingContext && (searchFlags == ANYWHERE)) {
+			MBindingContext bindingContext = (MBindingContext) searchRoot;
+			for (MBindingContext child : bindingContext.getChildren()) {
+				findElementsRecursive(child, clazz, matcher, elements, searchFlags);
+			}
+		}
 
 		// Check regular containers
 		if (searchRoot instanceof MElementContainer<?>) {
@@ -199,6 +235,12 @@ public class ModelServiceImpl implements EModelService {
 			if (menu != null && (searchFlags & IN_MAIN_MENU) != 0) {
 				findElementsRecursive(menu, clazz, matcher, elements, searchFlags);
 			}
+			// Check for Handlers
+			if (searchFlags == ANYWHERE && MHandler.class.equals(clazz)) {
+				for (MHandler child : window.getHandlers()) {
+					findElementsRecursive(child, clazz, matcher, elements, searchFlags);
+				}
+			}
 		}
 
 		if (searchRoot instanceof MPerspective) {
@@ -228,6 +270,11 @@ public class ModelServiceImpl implements EModelService {
 			MToolBar toolBar = part.getToolbar();
 			if (toolBar != null) {
 				findElementsRecursive(toolBar, clazz, matcher, elements, searchFlags);
+			}
+			if (MHandler.class.equals(clazz)) {
+				for (MHandler child : part.getHandlers()) {
+					findElementsRecursive(child, clazz, matcher, elements, searchFlags);
+				}
 			}
 		}
 	}
