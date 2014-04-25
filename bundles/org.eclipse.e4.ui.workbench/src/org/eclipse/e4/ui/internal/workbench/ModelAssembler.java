@@ -219,7 +219,7 @@ public class ModelAssembler {
 			IConfigurationElement[] ces = extension.getConfigurationElements();
 			for (IConfigurationElement ce : ces) {
 				boolean parseBoolean = Boolean.parseBoolean(ce.getAttribute("beforefragment")); //$NON-NLS-1$
-				if ("processor".equals(ce.getName()) && afterFragments == parseBoolean) { //$NON-NLS-1$
+				if ("processor".equals(ce.getName()) && afterFragments != parseBoolean) { //$NON-NLS-1$
 					if (initial || !INITIAL.equals(ce.getAttribute("apply"))) { //$NON-NLS-1$
 						runProcessor(ce);
 					}
