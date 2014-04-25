@@ -231,6 +231,11 @@ public class CSSRenderingUtils {
 					return;
 				}
 
+				ImageBasedFrame frame = (ImageBasedFrame) event.widget;
+				if (!isImagesRefreshRequired(frame)) {
+					return;
+				}
+
 				Image handleImage = createImage(toFrame, classId,
 						HANDLE_IMAGE_PROP, null);
 				if (vertical && handleImage != null) {
@@ -238,8 +243,7 @@ public class CSSRenderingUtils {
 							handleImage, null);
 				}
 				if (handleImage != null) {
-					((ImageBasedFrame) event.widget).setImages(null, null,
-							handleImage);
+					frame.setImages(null, null, handleImage);
 				}
 			}
 		};
@@ -264,6 +268,10 @@ public class CSSRenderingUtils {
 				}
 
 				ImageBasedFrame frame = (ImageBasedFrame) event.widget;
+				if (!isImagesRefreshRequired(frame)) {
+					return;
+				}
+
 				Integer[] frameInts = new Integer[4];
 				Image frameImage = createImage(toFrame, classId,
 						FRAME_IMAGE_PROP, frameInts);
@@ -292,5 +300,19 @@ public class CSSRenderingUtils {
 				e.widget.getDisplay().removeListener(SWT.Skin, listener);
 			}
 		});
+	}
+
+	private boolean isImagesRefreshRequired(ImageBasedFrame frame) {
+		Object handleImage = frame.getData("handleImage");
+		if (handleImage instanceof Image && ((Image) handleImage).isDisposed()) {
+			return true;
+		}
+
+		Object frameImage = frame.getData("frameImage");
+		if (frameImage instanceof Image && ((Image) frameImage).isDisposed()) {
+			return true;
+		}
+
+		return false;
 	}
 }
