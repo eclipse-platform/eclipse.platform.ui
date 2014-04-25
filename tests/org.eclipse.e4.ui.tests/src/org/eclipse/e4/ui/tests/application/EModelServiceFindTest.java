@@ -15,15 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.internal.workbench.ModelServiceImpl;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.commands.MBindingContext;
-import org.eclipse.e4.ui.model.application.commands.MBindingTable;
-import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
+import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -33,15 +31,15 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.Selector;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.e4.ui.workbench.modeling.ElementMatcher;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 public class EModelServiceFindTest extends TestCase {
 
@@ -65,38 +63,67 @@ public class EModelServiceFindTest extends TestCase {
 	}
 
 	private MApplication createApplication() {
-		URI uri = URI.createPlatformPluginURI(
-				"org.eclipse.e4.ui.tests/xmi/SearchModelElement.e4xmi", true);
-		ResourceSet set = new ResourceSetImpl();
-		Resource resource = set.getResource(uri, true);
-
-		assertNotNull(resource);
-		assertEquals(E4XMIResource.class, resource.getClass());
-		assertEquals(1, resource.getContents().size());
-		MApplication app = (MApplication) resource.getContents().get(0);
+		MApplication app = ApplicationFactoryImpl.eINSTANCE.createApplication();
 		app.setContext(applicationContext);
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		window.setElementId("singleValidId");
+		app.getChildren().add(window);
+
+		MMenu mainMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		window.setMainMenu(mainMenu);
+
+		MMenu mainMenuItem = MenuFactoryImpl.eINSTANCE.createMenu();
+		mainMenu.getChildren().add(mainMenuItem);
+
+		MPartSashContainer psc = BasicFactoryImpl.eINSTANCE
+				.createPartSashContainer();
+		psc.setElementId("twoValidIds");
+		psc.getTags().add("oneValidTag");
+		window.getChildren().add(psc);
+
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		stack.getTags().add("twoValidTags");
+		psc.getChildren().add(stack);
+
+		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
+		part1.setElementId("twoValidIds");
+		stack.getChildren().add(part1);
+
+		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
+		part2.getTags().add("twoValidTags");
+		part2.getTags().add("secondTag");
+		stack.getChildren().add(part2);
+
+		MPart part3 = BasicFactoryImpl.eINSTANCE.createPart();
+		psc.getChildren().add(part3);
+
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		menu.setElementId("menuId");
+		part1.getMenus().add(menu);
+
+		MMenu menuItem1 = MenuFactoryImpl.eINSTANCE.createMenu();
+		menuItem1.setElementId("menuItem1Id");
+		menu.getChildren().add(menuItem1);
+
+		MMenu menuItem2 = MenuFactoryImpl.eINSTANCE.createMenu();
+		menuItem2.setElementId("menuItem2Id");
+		menu.getChildren().add(menuItem2);
+
+		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		toolBar.setElementId("toolBarId");
+		part2.setToolbar(toolBar);
+
+		MToolControl toolControl1 = MenuFactoryImpl.eINSTANCE
+				.createToolControl();
+		toolControl1.setElementId("toolControl1Id");
+		toolBar.getChildren().add(toolControl1);
+
+		MToolControl toolControl2 = MenuFactoryImpl.eINSTANCE
+				.createToolControl();
+		toolControl2.setElementId("toolControl2Id");
+		toolBar.getChildren().add(toolControl2);
 
 		return app;
-	}
-
-	private Selector getSelector(String id, Class<?> clazz, List<String> tags) {
-		return new ElementMatcher(id, clazz, tags);
-	}
-
-	private Selector getSelector(String id) {
-		return getSelector(id, null, null);
-	}
-
-	private Selector getSelector(Class<?> clazz) {
-		return getSelector(null, clazz, null);
-	}
-
-	private Selector getSelector() {
-		return getSelector(null, null, null);
-	}
-
-	private Selector getSelector(List<String> tags) {
-		return getSelector(null, null, tags);
 	}
 
 	public void testFindElementsIdOnly() {
@@ -106,29 +133,27 @@ public class EModelServiceFindTest extends TestCase {
 				.get(EModelService.class.getName());
 		assertNotNull(modelService);
 
-		List<? extends MApplicationElement> elements;
+		List<MUIElement> elements1 = modelService.findElements(application,
+				"singleValidId", null, null);
+		assertEquals(elements1.size(), 1);
 
-		elements = modelService.findElements(application, null,
-				EModelService.ANYWHERE, getSelector("singleValidId"));
-		assertEquals(1, elements.size());
+		List<MUIElement> elements2 = modelService.findElements(application,
+				"twoValidIds", null, null);
+		assertEquals(elements2.size(), 2);
 
-		elements = modelService.findElements(application, null,
-				EModelService.ANYWHERE, getSelector("twoValidIds"));
-		assertEquals(2, elements.size());
+		List<MUIElement> elements3 = modelService.findElements(application,
+				"invalidId", null, null);
+		assertEquals(elements3.size(), 0);
 
-		elements = modelService.findElements(application, null,
-				EModelService.ANYWHERE, getSelector("invalidId"));
-		assertEquals(0, elements.size());
+		List<MUIElement> elements4 = modelService.findElements(application,
+				"menuItem1Id", null, null, EModelService.ANYWHERE
+						| EModelService.IN_MAIN_MENU | EModelService.IN_PART);
+		assertEquals(1, elements4.size());
 
-		elements = modelService.findElements(application, null,
-				EModelService.ANYWHERE | EModelService.IN_MAIN_MENU
-						| EModelService.IN_PART, getSelector("menuItem1Id"));
-		assertEquals(1, elements.size());
-
-		elements = modelService.findElements(application, null,
-				EModelService.ANYWHERE | EModelService.IN_MAIN_MENU
-						| EModelService.IN_PART, getSelector("toolControl1Id"));
-		assertEquals(1, elements.size());
+		List<MUIElement> elements5 = modelService.findElements(application,
+				"toolControl1Id", null, null, EModelService.ANYWHERE
+						| EModelService.IN_MAIN_MENU | EModelService.IN_PART);
+		assertEquals(1, elements5.size());
 	}
 
 	public void testFindElementsTypeOnly() {
@@ -138,38 +163,35 @@ public class EModelServiceFindTest extends TestCase {
 				.get(EModelService.class.getName());
 		assertNotNull(modelService);
 
-		List<? extends MApplicationElement> elements;
+		List<MPart> parts = modelService.findElements(application, null,
+				MPart.class, null);
+		assertEquals(parts.size(), 3);
 
-		elements = modelService.findElements(application, MPart.class,
-				EModelService.ANYWHERE, getSelector(MPart.class));
-		assertEquals(5, elements.size());
-
-		elements = modelService.findElements(application, MPartStack.class,
-				EModelService.ANYWHERE, getSelector(MPartStack.class));
-		assertEquals(3, elements.size());
+		List<MPartStack> stacks = modelService.findElements(application, null,
+				MPartStack.class, null);
+		assertEquals(stacks.size(), 1);
 
 		List<MDirtyable> dirtyableElements = modelService.findElements(
-				application, MDirtyable.class, EModelService.ANYWHERE,
-				getSelector(MDirtyable.class));
-		assertEquals(5, dirtyableElements.size());
+				application, null, MDirtyable.class, null);
+		assertEquals(dirtyableElements.size(), 3);
 
-		elements = modelService.findElements(application, MMenuElement.class,
+		List<MMenuElement> menuElements = modelService.findElements(
+				application, null, MMenuElement.class, null,
 				EModelService.ANYWHERE | EModelService.IN_MAIN_MENU
-						| EModelService.IN_PART,
-				getSelector(MMenuElement.class));
-		assertEquals(13, elements.size());
+						| EModelService.IN_PART);
+		assertEquals(5, menuElements.size());
 
-		elements = modelService.findElements(application,
-				MToolBarElement.class, EModelService.ANYWHERE
-						| EModelService.IN_MAIN_MENU | EModelService.IN_PART,
-				getSelector(MToolBarElement.class));
-		assertEquals(2, elements.size());
+		List<MToolBarElement> toolBarElements = modelService.findElements(
+				application, null, MToolBarElement.class, null,
+				EModelService.ANYWHERE | EModelService.IN_MAIN_MENU
+						| EModelService.IN_PART);
+		assertEquals(2, toolBarElements.size());
 
 		// Should find all the elements
-		elements = modelService.findElements(application, null,
-				EModelService.ANYWHERE | EModelService.IN_MAIN_MENU
-						| EModelService.IN_PART, getSelector());
-		assertEquals(40, elements.size());
+		List<MUIElement> uiElements = modelService.findElements(application,
+				null, null, null, EModelService.ANYWHERE
+						| EModelService.IN_MAIN_MENU | EModelService.IN_PART);
+		assertEquals(15, uiElements.size());
 
 		// Should match 0 since String is not an MUIElement
 		List<String> strings = modelService.findElements(application, null,
@@ -188,33 +210,33 @@ public class EModelServiceFindTest extends TestCase {
 		tags.add("oneValidTag");
 
 		List<MUIElement> oneTags = modelService.findElements(application, null,
-				EModelService.ANYWHERE, getSelector(tags));
+				null, tags);
 		assertEquals(oneTags.size(), 1);
 
 		tags.clear();
 		tags.add("twoValidTags");
 		List<MUIElement> twoTags = modelService.findElements(application, null,
-				EModelService.ANYWHERE, getSelector(tags));
+				null, tags);
 		assertEquals(twoTags.size(), 2);
 
 		tags.clear();
 		tags.add("invalidTag");
 		List<MUIElement> invalidTags = modelService.findElements(application,
-				null, EModelService.ANYWHERE, getSelector(tags));
+				null, null, tags);
 		assertEquals(invalidTags.size(), 0);
 
 		tags.clear();
 		tags.add("twoValidTags");
 		tags.add("secondTag");
 		List<MUIElement> combinedTags = modelService.findElements(application,
-				null, EModelService.ANYWHERE, getSelector(tags));
+				null, null, tags);
 		assertEquals(combinedTags.size(), 1);
 
 		tags.clear();
 		tags.add("oneValidTag");
 		tags.add("secondTag");
 		List<MUIElement> unmatchedTags = modelService.findElements(application,
-				null, EModelService.ANYWHERE, getSelector(tags));
+				null, null, tags);
 		assertEquals(unmatchedTags.size(), 0);
 	}
 
@@ -228,36 +250,26 @@ public class EModelServiceFindTest extends TestCase {
 		List<String> tags = new ArrayList<String>();
 		tags.add("oneValidTag");
 
-		List<? extends MApplicationElement> elements;
-
-		elements = modelService.findElements(application, null,
-				EModelService.IN_PART, getSelector("singleValidId"));
-		assertEquals(0, elements.size());
-
-		elements = modelService.findElements(application,
-				MPartSashContainer.class, EModelService.ANYWHERE,
-				getSelector("twoValidIds", MPartSashContainer.class, tags));
-		assertEquals(1, elements.size());
+		List<MPartSashContainer> idAndType = modelService.findElements(
+				application, "twoValidIds", MPartSashContainer.class, tags);
+		assertEquals(idAndType.size(), 1);
 
 		List<MPartSashContainer> typeAndTag = modelService.findElements(
-				application, MPartSashContainer.class, EModelService.ANYWHERE,
-				getSelector(tags));
-		assertEquals(1, typeAndTag.size());
+				application, null, MPartSashContainer.class, tags);
+		assertEquals(typeAndTag.size(), 1);
 
 		List<MUIElement> idAndTag = modelService.findElements(application,
-				null, EModelService.ANYWHERE,
-				getSelector("twoValidIds", null, tags));
-		assertEquals(1, idAndTag.size());
+				"twoValidIds", null, tags);
+		assertEquals(idAndTag.size(), 1);
 
 		List<MPartSashContainer> idAndTypeAndTags = modelService.findElements(
-				application, MPartSashContainer.class, EModelService.ANYWHERE,
-				getSelector("twoValidIds", MPartSashContainer.class, null));
-		assertEquals(1, idAndTypeAndTags.size());
+				application, "twoValidIds", MPartSashContainer.class, null);
+		assertEquals(idAndTypeAndTags.size(), 1);
 
 		List<MPartSashContainer> badIdAndTypeAndTags = modelService
-				.findElements(application, MPartSashContainer.class,
-						EModelService.ANYWHERE, getSelector("invalidId"));
-		assertEquals(0, badIdAndTypeAndTags.size());
+				.findElements(application, "invalidId",
+						MPartSashContainer.class, null);
+		assertEquals(badIdAndTypeAndTags.size(), 0);
 	}
 
 	public void testFindElements_NullCheck() {
@@ -296,50 +308,49 @@ public class EModelServiceFindTest extends TestCase {
 				.get(EModelService.class.getName());
 		assertNotNull(modelService);
 
-		Class<? extends MApplicationElement> clazz;
-		List<? extends MApplicationElement> elements;
+		List<MToolBarElement> toolBarElements = modelService.findElements(
+				application, null, MToolBarElement.class, null,
+				EModelService.IN_ANY_PERSPECTIVE);
+		assertEquals(0, toolBarElements.size());
 
-		clazz = MToolBarElement.class;
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_ANY_PERSPECTIVE, getSelector(clazz));
-		assertEquals(0, elements.size());
+		toolBarElements = modelService.findElements(application, null,
+				MToolBarElement.class, null, EModelService.IN_ANY_PERSPECTIVE
+						| EModelService.IN_PART);
+		assertEquals(2, toolBarElements.size());
 
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_ANY_PERSPECTIVE | EModelService.IN_PART,
-				getSelector(clazz));
-		assertEquals(0, elements.size());
+		List<MMenuElement> menuElements = modelService.findElements(
+				application, null, MMenuElement.class, null,
+				EModelService.IN_ANY_PERSPECTIVE);
+		assertEquals(0, menuElements.size());
 
-		elements = modelService.findElements(application, clazz,
-				EModelService.ANYWHERE, getSelector(clazz));
-		assertEquals(2, elements.size());
+		menuElements = modelService.findElements(application, null,
+				MMenuElement.class, null, EModelService.IN_ANY_PERSPECTIVE
+						| EModelService.IN_PART);
+		assertEquals(3, menuElements.size());
 
-		clazz = MMenuElement.class;
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_ANY_PERSPECTIVE, getSelector(clazz));
-		assertEquals(4, elements.size());
+		menuElements = modelService.findElements(application, null,
+				MMenuElement.class, null, EModelService.IN_ANY_PERSPECTIVE
+						| EModelService.IN_MAIN_MENU);
+		assertEquals(2, menuElements.size());
+	}
 
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_ANY_PERSPECTIVE | EModelService.IN_PART,
-				getSelector(clazz));
-		assertEquals(4, elements.size());
+	private MHandler findHandler(EModelService ms,
+			MApplicationElement searchRoot, final String id) {
+		if (searchRoot == null || id == null)
+			return null;
 
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_ACTIVE_PERSPECTIVE, getSelector(clazz));
-		assertEquals(3, elements.size());
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_ACTIVE_PERSPECTIVE | EModelService.IN_PART,
-				getSelector(clazz));
-		assertEquals(3, elements.size());
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_ANY_PERSPECTIVE | EModelService.IN_MAIN_MENU,
-				getSelector(clazz));
-		assertEquals(13, elements.size());
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_MAIN_MENU, getSelector(clazz));
-		assertEquals(9, elements.size());
+		List<MHandler> handlers = ms.findElements(searchRoot, MHandler.class,
+				EModelService.ANYWHERE, new Selector() {
+					@Override
+					public boolean select(MApplicationElement element) {
+						return element instanceof MHandler
+								&& id.equals(element.getElementId());
+					}
+				});
+		if (handlers.size() > 0) {
+			return handlers.get(0);
+		}
+		return null;
 	}
 
 	public void testFindHandler() {
@@ -349,48 +360,31 @@ public class EModelServiceFindTest extends TestCase {
 				.get(EModelService.class.getName());
 		assertNotNull(modelService);
 
-		Class<? extends MApplicationElement> clazz = MHandler.class;
-		List<? extends MApplicationElement> elements;
+		MHandler handler1 = CommandsFactoryImpl.eINSTANCE.createHandler();
+		handler1.setElementId("handler1");
+		application.getHandlers().add(handler1);
 
-		elements = modelService.findElements(application, clazz,
-				EModelService.ANYWHERE, getSelector("handler1", clazz, null));
-		assertEquals(1, elements.size());
+		MHandler handler2 = CommandsFactoryImpl.eINSTANCE.createHandler();
+		handler2.setElementId("handler2");
+		application.getHandlers().add(handler2);
 
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_PART, getSelector("handler1", clazz, null));
-		assertEquals(0, elements.size());
+		MHandler foundHandler = null;
 
-		elements = modelService.findElements(application, clazz,
-				EModelService.ANYWHERE, getSelector("invalidId", clazz, null));
-		assertEquals(0, elements.size());
+		foundHandler = findHandler(modelService, application, "handler1");
+		assertNotNull(foundHandler);
+		assertSame(handler1, foundHandler);
 
-		elements = modelService.findElements(application, null, MHandler.class,
-				null);
-		assertEquals(8, elements.size());
+		foundHandler = findHandler(modelService, application, "invalidId");
+		assertNull(foundHandler);
 
-		elements = modelService.findElements(application, clazz,
-				EModelService.ANYWHERE, getSelector(clazz));
-		assertEquals(8, elements.size());
+		foundHandler = findHandler(modelService, null, "handler1");
+		assertNull(foundHandler);
 
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_PART, getSelector(clazz));
-		assertEquals(4, elements.size());
+		foundHandler = findHandler(modelService, application, "");
+		assertNull(foundHandler);
 
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_ANY_PERSPECTIVE, getSelector(clazz));
-		assertEquals(4, elements.size());
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_ACTIVE_PERSPECTIVE, getSelector(clazz));
-		assertEquals(3, elements.size());
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_TRIM, getSelector(clazz));
-		assertEquals(0, elements.size());
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_SHARED_AREA, getSelector(clazz));
-		assertEquals(1, elements.size());
+		foundHandler = findHandler(modelService, application, null);
+		assertNull(foundHandler);
 	}
 
 	public void testBug314685() {
@@ -438,115 +432,5 @@ public class EModelServiceFindTest extends TestCase {
 		assertNotNull(elements);
 		assertEquals(1, elements.size());
 		assertEquals(part, elements.get(0));
-	}
-
-	public void testFind_MCommands() {
-		MApplication application = createApplication();
-
-		EModelService modelService = (EModelService) application.getContext()
-				.get(EModelService.class.getName());
-		assertNotNull(modelService);
-
-		Class<MCommand> clazz = MCommand.class;
-		List<MCommand> elements = null;
-
-		elements = modelService.findElements(application, null, clazz, null,
-				EModelService.ANYWHERE);
-		assertEquals(1, elements.size());
-
-		elements = modelService.findElements(application, null, clazz, null,
-				EModelService.IN_PART);
-		assertEquals(0, elements.size());
-
-		elements = modelService.findElements(application, null, clazz, null,
-				EModelService.IN_ANY_PERSPECTIVE);
-		assertEquals(0, elements.size());
-
-		elements = modelService.findElements(application, null, clazz, null,
-				EModelService.IN_ACTIVE_PERSPECTIVE);
-		assertEquals(0, elements.size());
-
-		elements = modelService.findElements(application, null, clazz, null,
-				EModelService.IN_TRIM);
-		assertEquals(0, elements.size());
-
-		elements = modelService.findElements(application, null, clazz, null,
-				EModelService.IN_SHARED_AREA);
-		assertEquals(0, elements.size());
-	}
-
-	public void testFind_MBindingContext() {
-		MApplication application = createApplication();
-
-		EModelService modelService = (EModelService) application.getContext()
-				.get(EModelService.class.getName());
-		assertNotNull(modelService);
-
-		Class<MBindingContext> clazz = MBindingContext.class;
-		List<MBindingContext> elements = null;
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.ANYWHERE,
-				getSelector("org.eclipse.ui.contexts.window", clazz, null));
-		assertEquals(1, elements.size());
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.ANYWHERE, getSelector(clazz));
-		assertEquals(3, elements.size());
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_PART, getSelector(clazz));
-		assertEquals(0, elements.size());
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_ANY_PERSPECTIVE, getSelector(clazz));
-		assertEquals(0, elements.size());
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_ACTIVE_PERSPECTIVE, getSelector(clazz));
-		assertEquals(0, elements.size());
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_TRIM, getSelector(clazz));
-		assertEquals(0, elements.size());
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_SHARED_AREA, getSelector(clazz));
-		assertEquals(0, elements.size());
-	}
-
-	public void testFind_MBindingTable() {
-		MApplication application = createApplication();
-
-		EModelService modelService = (EModelService) application.getContext()
-				.get(EModelService.class.getName());
-		assertNotNull(modelService);
-
-		Class<MBindingTable> clazz = MBindingTable.class;
-		List<MBindingTable> elements = null;
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.ANYWHERE, getSelector(clazz));
-		assertEquals(1, elements.size());
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_PART, getSelector(clazz));
-		assertEquals(0, elements.size());
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_ANY_PERSPECTIVE, getSelector(clazz));
-		assertEquals(0, elements.size());
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_ACTIVE_PERSPECTIVE, getSelector(clazz));
-		assertEquals(0, elements.size());
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_TRIM, getSelector(clazz));
-		assertEquals(0, elements.size());
-
-		elements = modelService.findElements(application, clazz,
-				EModelService.IN_SHARED_AREA, getSelector(clazz));
-		assertEquals(0, elements.size());
 	}
 }

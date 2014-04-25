@@ -76,7 +76,7 @@ public interface EModelService {
 	public static final int IN_MAIN_MENU = 0x20;
 
 	/**
-	 * Returned Location if the element is in a MPart
+	 * Returned Location if the element is in a menu or a tool bar of an MPart
 	 * 
 	 * @since 1.1
 	 */
