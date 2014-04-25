@@ -113,25 +113,23 @@ public class ModelAssembler {
 		ResourceSet resourceSet = applicationResource.getResourceSet();
 		IContributor contributor = ce.getContributor();
 		String attrURI = ce.getAttribute("uri"); //$NON-NLS-1$
+		String bundleName = contributor.getName();
 		if (attrURI == null) {
-			logger.warn("Unable to find location for the model extension \"{0}\"", //$NON-NLS-1$
-					contributor.getName());
+			logger.warn("Unable to find location for the model extension \"{0}\"", bundleName); //$NON-NLS-1$
 			return;
 		}
 
 		URI uri;
-
 		try {
 			// check if the attrURI is already a platform URI
 			if (URIHelper.isPlatformURI(attrURI)) {
 				uri = URI.createURI(attrURI);
 			} else {
-				String bundleName = contributor.getName();
 				String path = bundleName + '/' + attrURI;
 				uri = URI.createPlatformPluginURI(path, false);
 			}
 		} catch (RuntimeException e) {
-			logger.warn(e, "Model extension has invalid location"); //$NON-NLS-1$
+			logger.warn(e, "Invalid location \"" + attrURI + "\" of model extension \"" + bundleName + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return;
 		}
 
@@ -140,7 +138,7 @@ public class ModelAssembler {
 		try {
 			resource = resourceSet.getResource(uri, true);
 		} catch (RuntimeException e) {
-			logger.warn(e, "Unable to read model extension from " + uri.toString()); //$NON-NLS-1$
+			logger.warn(e, "Unable to read model extension from \"" + uri.toString() +"\" of \"" + bundleName + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return;
 		}
 
@@ -152,8 +150,7 @@ public class ModelAssembler {
 		Object extensionRoot = contents.get(0);
 
 		if (!(extensionRoot instanceof MModelFragments)) {
-			logger.warn("Unable to create model extension \"{0}\"", //$NON-NLS-1$
-					contributor.getName());
+			logger.warn("Unable to create model extension \"{0}\"", bundleName); //$NON-NLS-1$
 			return;
 		}
 		boolean checkExist = !initial && NOTEXISTS.equals(ce.getAttribute("apply")); //$NON-NLS-1$ 
@@ -311,7 +308,7 @@ public class ModelAssembler {
 						@Override
 						public void run() {
 							if (internalFeature.isMany()) {
-								System.err.println("Replacing"); //$NON-NLS-1$
+								logger.error("Replacing"); //$NON-NLS-1$
 								@SuppressWarnings("unchecked")
 								List<Object> l = (List<Object>) interalTarget.eGet(internalFeature);
 								int index = l.indexOf(internalImportObject);
