@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Andreas Buchen <andreas.buchen@sap.com> - Bug 206584
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 180308
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -368,9 +367,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             fileToolBar.add(saveAllAction);
             fileToolBar
                     .add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
-            IContributionItem printItem = getPrintItem();
-            fileToolBar.add(printItem);
-			printItem.setVisible(false);
+            fileToolBar.add(getPrintItem());
             fileToolBar
                     .add(new GroupMarker(IWorkbenchActionConstants.PRINT_EXT));
 
