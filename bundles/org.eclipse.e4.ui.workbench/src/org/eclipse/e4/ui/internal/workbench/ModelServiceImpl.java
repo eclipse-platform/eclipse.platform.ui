@@ -274,22 +274,19 @@ public class ModelServiceImpl implements EModelService {
 		if (searchRoot instanceof MPart) {
 			MPart part = (MPart) searchRoot;
 
-			if ((searchFlags & IN_PART) != 0) {
+			if (searchFlags != IN_MAIN_MENU) {
 				for (MMenu menu : part.getMenus()) {
 					findElementsRecursive(menu, clazz, matcher, elements, searchFlags);
 				}
-
-				MToolBar toolBar = part.getToolbar();
-				if (toolBar != null) {
-					findElementsRecursive(toolBar, clazz, matcher, elements, searchFlags);
-				}
 			}
 
-			if ((searchFlags & PRESENTATION) != 0 || (searchFlags & IN_PART) != 0
-					|| (searchFlags & IN_ANY_PERSPECTIVE) != 0) {
-				for (MHandler child : part.getHandlers()) {
-					findElementsRecursive(child, clazz, matcher, elements, searchFlags);
-				}
+			MToolBar toolBar = part.getToolbar();
+			if (toolBar != null) {
+				findElementsRecursive(toolBar, clazz, matcher, elements, searchFlags);
+			}
+
+			for (MHandler child : part.getHandlers()) {
+				findElementsRecursive(child, clazz, matcher, elements, searchFlags);
 			}
 		}
 	}

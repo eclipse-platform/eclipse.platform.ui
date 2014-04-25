@@ -316,7 +316,7 @@ public class EModelServiceFindTest extends TestCase {
 		clazz = MMenuElement.class;
 		elements = modelService.findElements(application, clazz,
 				EModelService.IN_ANY_PERSPECTIVE, getSelector(clazz));
-		assertEquals(0, elements.size());
+		assertEquals(4, elements.size());
 
 		elements = modelService.findElements(application, clazz,
 				EModelService.IN_ANY_PERSPECTIVE | EModelService.IN_PART,
@@ -325,7 +325,7 @@ public class EModelServiceFindTest extends TestCase {
 
 		elements = modelService.findElements(application, clazz,
 				EModelService.IN_ACTIVE_PERSPECTIVE, getSelector(clazz));
-		assertEquals(0, elements.size());
+		assertEquals(3, elements.size());
 
 		elements = modelService.findElements(application, clazz,
 				EModelService.IN_ACTIVE_PERSPECTIVE | EModelService.IN_PART,
@@ -335,7 +335,7 @@ public class EModelServiceFindTest extends TestCase {
 		elements = modelService.findElements(application, clazz,
 				EModelService.IN_ANY_PERSPECTIVE | EModelService.IN_MAIN_MENU,
 				getSelector(clazz));
-		assertEquals(9, elements.size());
+		assertEquals(13, elements.size());
 
 		elements = modelService.findElements(application, clazz,
 				EModelService.IN_MAIN_MENU, getSelector(clazz));
