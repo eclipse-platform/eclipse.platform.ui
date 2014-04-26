@@ -46,12 +46,9 @@ public class FieldAssistAPITests extends AbstractFieldAssistTestCase {
 			// expected
 		}
 
-
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.tests.fieldassist.AbstractFieldAssistTestCase#createFieldAssistWindow()
-	 */
+
+	@Override
 	protected AbstractFieldAssistWindow createFieldAssistWindow() {
 		return new TextFieldAssistWindow();
 	}
