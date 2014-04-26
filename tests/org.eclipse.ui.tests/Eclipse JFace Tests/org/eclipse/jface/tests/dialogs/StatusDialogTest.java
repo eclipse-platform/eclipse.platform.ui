@@ -47,15 +47,15 @@ public class StatusDialogTest extends TestCase {
 	private CLabel findStatusLabel(Composite parent) {
 		CLabel result = null;
 		Control[] children = parent.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof CLabel) {
-				result = (CLabel) children[i];
+		for (Control child : children) {
+			if (child instanceof CLabel) {
+				result = (CLabel) child;
 			}
 		}
 		if (result == null) {
-			for (int i = 0; i < children.length; i++) {
-				if (children[i] instanceof Composite) {
-					result = findStatusLabel((Composite) children[i]);
+			for (Control child : children) {
+				if (child instanceof Composite) {
+					result = findStatusLabel((Composite) child);
 				}
 			}
 		}

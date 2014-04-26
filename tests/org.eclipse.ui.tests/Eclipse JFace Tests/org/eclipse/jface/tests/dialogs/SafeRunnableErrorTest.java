@@ -64,10 +64,11 @@ public class SafeRunnableErrorTest extends TestCase {
 		};
 
 		// Make sure these don't block
-		SafeRunnable.run(runnable);
-		SafeRunnable.run(runnable);
-		SafeRunnable.run(runnable);
-		assertEquals(3, count);
+		int expectedRuns = 3;
+		for (int run = 0; run < expectedRuns; run++) {
+			SafeRunnable.run(runnable);
+		}
+		assertEquals(expectedRuns, count);
 	}
 
 }

@@ -35,8 +35,8 @@ public class DialogSettingsTest extends TestCase {
 			"\rvalue\rwith\rreturn\r", };
 
 	public void testDialogSettings() throws IOException {
-		for (int i = 0; i < TEST_STRINGS.length; i++) {
-			final String name = TEST_STRINGS[i];
+		for (String testString : TEST_STRINGS) {
+			final String name = testString;
 			testPutAndGetWithTitle(new DialogSettingsChecker() {
 				public void prepareAndCheckBeforeSerialization(
 						IDialogSettings dialogSettingsToSerialize) {
@@ -52,8 +52,8 @@ public class DialogSettingsTest extends TestCase {
 	}
 
 	public void testAddNewSection() throws IOException {
-		for (int i = 0; i < TEST_STRINGS.length; i++) {
-			final String name = TEST_STRINGS[i];
+		for (String testString : TEST_STRINGS) {
+			final String name = testString;
 			testPutAndGet(new DialogSettingsChecker() {
 
 				public void prepareAndCheckBeforeSerialization(
@@ -205,8 +205,8 @@ public class DialogSettingsTest extends TestCase {
 	}
 
 	public void testKeys() throws IOException {
-		for (int i = 0; i < TEST_STRINGS.length; i++) {
-			final String key = TEST_STRINGS[i];
+		for (String testString : TEST_STRINGS) {
+			final String key = testString;
 			testPutAndGet(new DialogSettingsChecker() {
 				public void prepareAndCheckBeforeSerialization(
 						IDialogSettings dialogSettingsToSerialize) {
@@ -226,8 +226,8 @@ public class DialogSettingsTest extends TestCase {
 	}
 
 	public void testGet() throws IOException {
-		for (int i = 0; i < TEST_STRINGS.length; i++) {
-			final String value = TEST_STRINGS[i];
+		for (String testString : TEST_STRINGS) {
+			final String value = testString;
 			testPutAndGet(new DialogSettingsChecker() {
 
 				public void prepareAndCheckBeforeSerialization(
@@ -247,10 +247,10 @@ public class DialogSettingsTest extends TestCase {
 	}
 
 	public void testGetArray() throws IOException {
-		for (int i = 0; i < TEST_STRINGS.length; i++) {
-			final String value1 = TEST_STRINGS[i];
-			for (int j = 0; j < TEST_STRINGS.length; j++) {
-				final String value2 = TEST_STRINGS[j];
+		for (String testString : TEST_STRINGS) {
+			final String value1 = testString;
+			for (String otherTestString : TEST_STRINGS) {
+				final String value2 = otherTestString;
 				final String[] value = new String[] { value1, value2 };
 				testPutAndGet(new DialogSettingsChecker() {
 
@@ -336,8 +336,8 @@ public class DialogSettingsTest extends TestCase {
 				Double.MAX_VALUE, Double.MIN_VALUE, Double.NaN,
 				Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY };
 
-		for (int i = 0; i < values.length; i++) {
-			final double value = values[i];
+		for (double testValue : values) {
+			final double value = testValue;
 			testPutAndGet(new DialogSettingsChecker() {
 				public void prepareAndCheckBeforeSerialization(
 						IDialogSettings dialogSettingsToSerialize) {
@@ -370,8 +370,8 @@ public class DialogSettingsTest extends TestCase {
 				Float.MAX_VALUE, Float.MIN_VALUE, Float.NaN,
 				Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY };
 
-		for (int i = 0; i < values.length; i++) {
-			final float value = values[i];
+		for (float testValue : values) {
+			final float value = testValue;
 			testPutAndGet(new DialogSettingsChecker() {
 				public void prepareAndCheckBeforeSerialization(
 						IDialogSettings dialogSettingsToSerialize) {
@@ -403,8 +403,8 @@ public class DialogSettingsTest extends TestCase {
 		int[] values = new int[] { 36254, 0, 1, -36254, Integer.MAX_VALUE,
 				Integer.MIN_VALUE };
 
-		for (int i = 0; i < values.length; i++) {
-			final int value = values[i];
+		for (int testValue : values) {
+			final int value = testValue;
 			testPutAndGet(new DialogSettingsChecker() {
 
 				public void prepareAndCheckBeforeSerialization(
@@ -427,8 +427,8 @@ public class DialogSettingsTest extends TestCase {
 		long[] values = new long[] { 36254L, 0L, 1L, -36254L, Long.MAX_VALUE,
 				Long.MIN_VALUE };
 
-		for (int i = 0; i < values.length; i++) {
-			final long value = values[i];
+		for (long testValue : values) {
+			final long value = testValue;
 			testPutAndGet(new DialogSettingsChecker() {
 
 				public void prepareAndCheckBeforeSerialization(
