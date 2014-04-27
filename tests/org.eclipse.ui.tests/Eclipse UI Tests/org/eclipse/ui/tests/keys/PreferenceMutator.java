@@ -64,7 +64,7 @@ public abstract class PreferenceMutator {
         String[] pluginIds = Platform.getExtensionRegistry().getNamespaces();
 		for (int i = 0; i < pluginIds.length; i++) {
 			preferences.put(pluginIds[i], new PluginVersionIdentifier(
-					(String) Platform.getBundle(pluginIds[i]).getHeaders().get(
+					Platform.getBundle(pluginIds[i]).getHeaders().get(
 							org.osgi.framework.Constants.BUNDLE_VERSION)));
 		}
 

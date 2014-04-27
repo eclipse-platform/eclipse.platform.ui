@@ -317,9 +317,8 @@ public class AdaptedResourceNavigator extends ViewPart {
             Object o = selection.getFirstElement();
             if (o instanceof IResource) {
                 return ((IResource) o).getFullPath().makeRelative().toString();
-            } else {
-                return ResourceNavigatorMessages.ResourceNavigator_oneItemSelected;
             }
+			return ResourceNavigatorMessages.ResourceNavigator_oneItemSelected;
         }
         if (selection.size() > 1) {
             return NLS.bind(ResourceNavigatorMessages.ResourceNavigator_statusLine, new Integer(selection.size()));
@@ -335,13 +334,11 @@ public class AdaptedResourceNavigator extends ViewPart {
             IPath path = ((IResource) element).getFullPath();
             if (path.isRoot()) {
                 return ResourceNavigatorMessages.ResourceManager_toolTip;
-            } else {
-                return path.makeRelative().toString();
             }
-        } else {
-            return ((ILabelProvider) getViewer().getLabelProvider())
-                    .getText(element);
+			return path.makeRelative().toString();
         }
+		return ((ILabelProvider) getViewer().getLabelProvider())
+		        .getText(element);
     }
 
     /**
