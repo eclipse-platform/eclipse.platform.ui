@@ -92,6 +92,11 @@
 		themeId="org.eclipse.e4.ui.css.theme.e4_classic"
 		colorAndFontId="org.eclipse.ui.defaultTheme">
    </themeAssociation>
+   <stylesheet
+         uri="css/dark/e4-dark_preferencestyle.css">
+      <themeid
+            refid="org.eclipse.e4.ui.css.theme.e4_dark"></themeid>
+   </stylesheet>
 
    </extension>
 
