@@ -196,8 +196,11 @@ public final class CommandService implements ICommandService, IUpdateService {
 		return commandManager.getDefinedParameterTypes();
 	}
 
+	/**
+	 * @throws NotDefinedException
+	 *             if the given command is not defined
+	 */
 	@Override
-	@SuppressWarnings("unused")
 	public final String getHelpContextId(final Command command)
 			throws NotDefinedException {
 		return commandHelpService.getHelpContextId(command.getId(), context);
