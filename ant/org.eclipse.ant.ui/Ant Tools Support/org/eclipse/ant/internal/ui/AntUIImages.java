@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -87,7 +88,7 @@ public class AntUIImages {
 		declareRegistryImage(IAntUIConstants.IMG_ANT_TASKDEF, OBJECT + "taskdef_obj.png"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_ANT_MACRODEF, OBJECT + "macrodef_obj.png"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_ANT_IMPORT, OBJECT + "import_obj.png"); //$NON-NLS-1$
-		declareRegistryImage(IAntUIConstants.IMG_ANT_ECLIPSE_RUNTIME_OBJECT, OBJECT + "eclipse_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IAntUIConstants.IMG_ANT_ECLIPSE_RUNTIME_OBJECT, OBJECT + "eclipse16.png"); //$NON-NLS-1$
 
 		declareRegistryImage(IAntUIConstants.IMG_WIZARD_BANNER, WIZ + "ant_wiz.png"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_EXPORT_WIZARD_BANNER, WIZ + "export_ant_wiz.png"); //$NON-NLS-1$
