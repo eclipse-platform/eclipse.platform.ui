@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433603
  *******************************************************************************/
 package org.eclipse.ui.tests.adaptable;
 
@@ -57,6 +58,7 @@ public class AdaptableDecoratorTestCase extends UITestCase implements
 		ts.addTest(new AdaptableDecoratorTestCase("testRefreshLightContributor"));
 		return ts;
 	}
+
 	/**
 	 * Constructor for DecoratorTestCase.
 	 * 
@@ -66,9 +68,7 @@ public class AdaptableDecoratorTestCase extends UITestCase implements
 		super(testName);
 	}
 
-	/**
-	 * Sets up the hierarchy.
-	 */
+	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		createTestFile();
@@ -92,9 +92,7 @@ public class AdaptableDecoratorTestCase extends UITestCase implements
 		return WorkbenchPlugin.getDefault().getDecoratorManager();
 	}
 
-	/**
-	 * Remove the listener.
-	 */
+	@Override
 	protected void doTearDown() throws Exception {
 
 		if (testProject != null) {
@@ -115,7 +113,7 @@ public class AdaptableDecoratorTestCase extends UITestCase implements
 	/**
 	 * Test enabling the contributor
 	 */
-	public void testEnableDecorator() throws CoreException {
+	public void testEnableDecorator() {
 		getDecoratorManager().updateForEnablementChange();
 		fullDefinition.setEnabled(true);
 		lightDefinition.setEnabled(true);
@@ -151,7 +149,7 @@ public class AdaptableDecoratorTestCase extends UITestCase implements
 	/**
 	 * Refresh the full decorator.
 	 */
-	public void testRefreshLightContributor() throws CoreException {
+	public void testRefreshLightContributor() {
 
 		updated = false;
 		getDecoratorManager().updateForEnablementChange();
@@ -163,9 +161,7 @@ public class AdaptableDecoratorTestCase extends UITestCase implements
 
 	}
 
-	/*
-	 * @see ILabelProviderListener#labelProviderChanged(LabelProviderChangedEvent)
-	 */
+	@Override
 	public void labelProviderChanged(LabelProviderChangedEvent event) {
 		updated = true;
 	}
