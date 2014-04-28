@@ -116,7 +116,7 @@ class DnDManager {
 		dragAgents.add(new PartDragAgent(this));
 
 		dropAgents.add(new StackDropAgent(this));
-		dropAgents.add(new SplitDropAgent(this));
+		dropAgents.add(new SplitDropAgent2(this));
 		dropAgents.add(new DetachedDropAgent(this));
 
 		// dragging trim
