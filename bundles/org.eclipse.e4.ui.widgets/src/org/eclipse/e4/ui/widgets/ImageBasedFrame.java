@@ -8,14 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-
 package org.eclipse.e4.ui.widgets;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -30,11 +27,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
 
+
 public class ImageBasedFrame extends Canvas {
 	//TODO: Change to the public after API freeze
-	private static final String HANDLE_IMAGE = "handleImage";
+	private static final String HANDLE_IMAGE= "handleImage"; //$NON-NLS-1$
 
-	private static final String FRAME_IMAGE = "frameImage";
+	private static final String FRAME_IMAGE= "frameImage"; //$NON-NLS-1$
 	
 	private Control framedControl;
 
@@ -111,7 +109,7 @@ public class ImageBasedFrame extends Canvas {
 		setSize(computeSize(-1, -1));
 
 		if (toWrap instanceof ToolBar) {
-			id = "TB";// ((ToolBar) toWrap).getItem(0).getToolTipText();
+			id = "TB";// ((ToolBar) toWrap).getItem(0).getToolTipText(); //$NON-NLS-1$
 		}
 	}
 
