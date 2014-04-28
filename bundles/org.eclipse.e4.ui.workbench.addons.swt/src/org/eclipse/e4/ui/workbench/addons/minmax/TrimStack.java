@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-
 package org.eclipse.e4.ui.workbench.addons.minmax;
 
 import java.util.HashMap;
@@ -35,7 +34,6 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
@@ -71,6 +69,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.osgi.service.event.EventHandler;
+
 
 /**
  * Class for representing window trim containing minimized views and shared areas
@@ -983,8 +982,9 @@ public class TrimStack {
 
 				// See if we can find an element to activate...
 				MPart partToActivate = null;
-				MElementContainer<MPartSashContainerElement> curContainer = area;
-				while (partToActivate == null && curContainer.getSelectedElement() != null) {
+				MElementContainer<?> curContainer = area;
+				MUIElement selectedElement = curContainer.getSelectedElement();
+				while (partToActivate == null && selectedElement != null) {
 					if (curContainer.getSelectedElement() instanceof MPart) {
 						partToActivate = (MPart) curContainer.getSelectedElement();
 					} else if (curContainer.getSelectedElement() instanceof MPlaceholder) {
@@ -993,8 +993,7 @@ public class TrimStack {
 							partToActivate = (MPart) ph.getRef();
 						}
 					} else if (curContainer.getSelectedElement() instanceof MElementContainer<?>) {
-						curContainer = (MElementContainer<MPartSashContainerElement>) curContainer
-								.getSelectedElement();
+						curContainer = (MElementContainer<?>) curContainer.getSelectedElement();
 					}
 				}
 
