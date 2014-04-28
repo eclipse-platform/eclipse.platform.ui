@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433603
  *******************************************************************************/
 package org.eclipse.ui.tests.manual;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.Diffs;
@@ -25,7 +25,6 @@ import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
@@ -54,8 +53,8 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 	IObservableValue dirty = new ComputedValue() {
 		@Override
 		protected Object calculate() {
-			for (Iterator it = saveables.iterator(); it.hasNext();) {
-				MySaveable saveable = (MySaveable) it.next();
+			for (Object obj : saveables) {
+				MySaveable saveable = (MySaveable) obj;
 				if (saveable.isDirty()) {
 					return Boolean.TRUE;
 				}
@@ -72,8 +71,11 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TableViewer(parent, SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, true).span(4,1).applyTo(viewer.getControl());
+
+		GridDataFactory.fillDefaults().grab(true, true).span(4, 1)
+				.applyTo(viewer.getControl());
 		ObservableListContentProvider observableListContentProvider = new ObservableListContentProvider();
+
 		viewer.setContentProvider(observableListContentProvider);
 		viewer.setLabelProvider(new ObservableMapLabelProvider(
 				new DirtyObservableMap(observableListContentProvider
@@ -153,7 +155,8 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 				firePropertyChange(ISaveablePart.PROP_DIRTY);
 			}
 		});
-		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).generateLayout(parent);
+		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false)
+				.generateLayout(parent);
 	}
 
 	void removeSaveable() {
@@ -227,7 +230,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 				Boolean.TYPE);
 
 		@Override
-		public void doSave(IProgressMonitor monitor) throws CoreException {
+		public void doSave(IProgressMonitor monitor) {
 			setDirty(false);
 		}
 
@@ -274,13 +277,13 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 	class DirtyObservableMap extends ComputedObservableMap {
 
 		Map writableValueToElement = new HashMap();
-		
+
 		private IValueChangeListener valueChangeListener = new IValueChangeListener() {
 			@Override
 			public void handleValueChange(ValueChangeEvent event) {
-					fireMapChange(Diffs.createMapDiffSingleChange(writableValueToElement.get(event
-							.getSource()), event.diff.getOldValue(), event.diff
-							.getNewValue()));
+				fireMapChange(Diffs.createMapDiffSingleChange(
+						writableValueToElement.get(event.getSource()),
+						event.diff.getOldValue(), event.diff.getNewValue()));
 			}
 		};
 
@@ -297,11 +300,11 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 
 		@Override
 		protected Object doPut(Object key, Object value) {
-				MySaveable saveable = (MySaveable) key;
-				Boolean oldValue = Boolean.valueOf(saveable.isDirty());
-				saveable.setDirty(((Boolean) value).booleanValue());
-				keySet().add(key);
-				return oldValue;
+			MySaveable saveable = (MySaveable) key;
+			Boolean oldValue = Boolean.valueOf(saveable.isDirty());
+			saveable.setDirty(((Boolean) value).booleanValue());
+			keySet().add(key);
+			return oldValue;
 		}
 
 		@Override

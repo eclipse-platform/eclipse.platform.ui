@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433603
  ******************************************************************************/
 
 package org.eclipse.ui.tests.commands;
@@ -16,7 +17,6 @@ import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -39,11 +39,6 @@ public class CommandActionTest extends UITestCase {
 	private VerifyHandler2 cmd2Handler;
 	private IHandlerActivation cmd2Activation;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doSetUp()
-	 */
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
@@ -56,11 +51,6 @@ public class CommandActionTest extends UITestCase {
 		cmd2Activation = handlerService.activateHandler(CMD2_ID, cmd2Handler);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doTearDown()
-	 */
 	@Override
 	protected void doTearDown() throws Exception {
 		if (cmd1Activation != null) {
@@ -79,15 +69,8 @@ public class CommandActionTest extends UITestCase {
 		public String paramValue1 = null;
 		public String paramValue2 = null;
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-		 */
-
 		@Override
-		public Object execute(ExecutionEvent event) throws ExecutionException {
-
+		public Object execute(ExecutionEvent event) {
 			paramValue1 = event.getParameter("protocol");
 			paramValue2 = event.getParameter("host");
 			count++;
@@ -98,13 +81,8 @@ public class CommandActionTest extends UITestCase {
 	private static class VerifyHandler extends AbstractHandler {
 		public int count = 0;
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-		 */
 		@Override
-		public Object execute(ExecutionEvent event) throws ExecutionException {
+		public Object execute(ExecutionEvent event) {
 
 			count++;
 			return null;
@@ -121,8 +99,8 @@ public class CommandActionTest extends UITestCase {
 	public void testCommandId() throws Exception {
 
 		// create a command action for CMD1_ID, which takes no parameters.
-		CommandAction action1 = new CommandAction(PlatformUI
-				.getWorkbench(), CMD1_ID);
+		CommandAction action1 = new CommandAction(PlatformUI.getWorkbench(),
+				CMD1_ID);
 		assertEquals(0, cmd1Handler.count);
 		action1.run();
 		assertEquals(1, cmd1Handler.count);
@@ -140,8 +118,8 @@ public class CommandActionTest extends UITestCase {
 		map.put("protocol", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		map.put("host", "true");
 
-		CommandAction action2 = new CommandAction(PlatformUI
-				.getWorkbench(), CMD2_ID, map);//$NON-NLS-1$
+		CommandAction action2 = new CommandAction(PlatformUI.getWorkbench(),
+				CMD2_ID, map);//$NON-NLS-1$
 		action2.run();
 		assertEquals(1, cmd2Handler.count);
 		assertNotNull(cmd2Handler.paramValue1);

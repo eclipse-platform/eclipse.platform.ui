@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433603
  ******************************************************************************/
 
 package org.eclipse.ui.tests.commands;
@@ -17,7 +18,6 @@ import java.util.Map;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -40,17 +40,8 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class CommandCallbackTest extends UITestCase {
 
-	/**
-	 * 
-	 */
 	private static final String HOST_PARAM_ID = "host";
-	/**
-	 * 
-	 */
 	private static final String PROT_PARAM_ID = "protocol";
-	/**
-	 * 
-	 */
 	private static final String PREFIX = "tests.commands.CCT.";
 	private static final String CMD1_ID = PREFIX + "cmd1";
 	private static final String CMD2_ID = PREFIX + "cmd2";
@@ -71,11 +62,6 @@ public class CommandCallbackTest extends UITestCase {
 		super(testName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doSetUp()
-	 */
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
@@ -91,11 +77,6 @@ public class CommandCallbackTest extends UITestCase {
 		cmd2Activation = handlerService.activateHandler(CMD2_ID, cmd2Handler);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doTearDown()
-	 */
 	@Override
 	protected void doTearDown() throws Exception {
 		if (cmd1Activation != null) {
@@ -113,97 +94,53 @@ public class CommandCallbackTest extends UITestCase {
 			IElementUpdater {
 		public int callbacks = 0;
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.commands.ICallbackUpdater#updateCallback(org.eclipse.core.runtime.IAdaptable,
-		 *      java.util.Map)
-		 */
 		@Override
 		public void updateElement(UIElement callback, Map parameters) {
 			callbacks++;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-		 */
 		@Override
-		public Object execute(ExecutionEvent event) throws ExecutionException {
+		public Object execute(ExecutionEvent event) {
 			return null;
 		}
 	}
 
 	private static class MyElement extends UIElement {
-		
-		/**
-		 * 
-		 */
+
 		public MyElement(IServiceLocator locator) {
 			super(locator);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.menus.UIElement#setChecked(boolean)
-		 */
 		@Override
 		public void setChecked(boolean checked) {
 			// TODO Auto-generated method stub
 
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.menus.UIElement#setDisabledIcon(org.eclipse.jface.resource.ImageDescriptor)
-		 */
 		@Override
 		public void setDisabledIcon(ImageDescriptor desc) {
 			// TODO Auto-generated method stub
 
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.menus.UIElement#setHoverIcon(org.eclipse.jface.resource.ImageDescriptor)
-		 */
 		@Override
 		public void setHoverIcon(ImageDescriptor desc) {
 			// TODO Auto-generated method stub
 
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.menus.UIElement#setIcon(org.eclipse.jface.resource.ImageDescriptor)
-		 */
 		@Override
 		public void setIcon(ImageDescriptor desc) {
 			// TODO Auto-generated method stub
 
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.menus.UIElement#setText(java.lang.String)
-		 */
 		@Override
 		public void setText(String text) {
 			// TODO Auto-generated method stub
 
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.menus.UIElement#setTooltip(java.lang.String)
-		 */
 		@Override
 		public void setTooltip(String text) {
 			// TODO Auto-generated method stub

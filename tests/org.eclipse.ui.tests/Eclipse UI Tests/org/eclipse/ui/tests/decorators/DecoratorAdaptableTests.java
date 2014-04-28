@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433603
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
@@ -52,7 +53,8 @@ public class DecoratorAdaptableTests extends UITestCase {
         return result.decorateWithText("Default label");
     }
     
-    private void assertDecorated(String testSubName, String[] expectedSuffixes, Object[] elements, Class adaptedClass, boolean shouldHaveMatches) throws CoreException {
+	private void assertDecorated(String testSubName, String[] expectedSuffixes,
+			Object[] elements, Class adaptedClass, boolean shouldHaveMatches) {
         for (int i = 0; i < elements.length; i++) {
             Object object = elements[i];
             String text = getDecorationTextFor(object);
@@ -91,7 +93,7 @@ public class DecoratorAdaptableTests extends UITestCase {
      * 
      * @since 3.1
      */
-    public final void testAdaptables() throws CoreException {
+	public final void testAdaptables() {
         // Assert that decorators contributed to ICommon are applied to the given object
         assertDecorated("1", 
                 new String[] {TestAdaptableDecoratorContributor.SUFFIX}, 
@@ -120,7 +122,7 @@ public class DecoratorAdaptableTests extends UITestCase {
      * 
      * @since 3.1
      */
-    public final void testNonAdaptableContributions() throws CoreException {
+	public final void testNonAdaptableContributions() {
         assertDecorated("1",
                 new String[] {TestUnadaptableDecoratorContributor.SUFFIX}, 
                 new Object[] {

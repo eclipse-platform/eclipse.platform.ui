@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433603
  *******************************************************************************/
 package org.eclipse.ui.tests.multipageeditor;
 
@@ -26,11 +27,6 @@ import org.eclipse.ui.part.MultiPageEditorPart;
  */
 public final class TestMultiPageEditor extends MultiPageEditorPart {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.part.MultiPageEditorPart#createPages()
-     */
     @Override
 	protected void createPages() {
         try {
@@ -44,42 +40,22 @@ public final class TestMultiPageEditor extends MultiPageEditorPart {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-     */
-    @Override
+	@Override
 	public void doSave(IProgressMonitor monitor) {
         // Do nothing.
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.part.EditorPart#doSaveAs()
-     */
-    @Override
+	@Override
 	public void doSaveAs() {
         throw new UnsupportedOperationException("Not implemented in this test."); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.part.EditorPart#gotoMarker(org.eclipse.core.resources.IMarker)
-     */
     public void gotoMarker(IMarker marker) {
         // Do nothing.
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
-     */
-    @Override
+	@Override
 	public boolean isSaveAsAllowed() {
         return false;
     }

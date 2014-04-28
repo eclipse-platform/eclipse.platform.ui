@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433603
  *******************************************************************************/
 package org.eclipse.ui.tests.keys;
 
@@ -21,7 +22,6 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.IParameterValues;
-import org.eclipse.core.commands.ParameterValuesException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
@@ -59,8 +59,8 @@ public final class BindingManagerTest extends UITestCase {
 	private BindingManager bindingManager = null;
 
 	/**
-	 * The command manager for the currently running test. <code>null</code>
-	 * if no test is running.
+	 * The command manager for the currently running test. <code>null</code> if
+	 * no test is running.
 	 */
 	private CommandManager commandManager = null;
 
@@ -143,8 +143,8 @@ public final class BindingManagerTest extends UITestCase {
 		final Binding binding = new TestBinding("conflict1", "na", "na", null,
 				null, Binding.SYSTEM, null);
 		bindingManager.addBinding(binding);
-		assertSame("The binding should be active", binding, bindingManager
-				.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertSame("The binding should be active", binding,
+				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 	}
 
 	/**
@@ -159,14 +159,14 @@ public final class BindingManagerTest extends UITestCase {
 				.getActiveBindingsDisregardingContext();
 		assertNotNull("The active bindings should never be null",
 				activeBindings);
-		assertTrue("The active bindings should start empty", activeBindings
-				.isEmpty());
+		assertTrue("The active bindings should start empty",
+				activeBindings.isEmpty());
 	}
 
 	/**
-	 * Tests that <code>getActiveBindingsDisregardingContextFlat()</code>
-	 * never returns <code>null</code>. The rest of the functionality is
-	 * tested in <code>BindingInteractionsTest</code>.
+	 * Tests that <code>getActiveBindingsDisregardingContextFlat()</code> never
+	 * returns <code>null</code>. The rest of the functionality is tested in
+	 * <code>BindingInteractionsTest</code>.
 	 * 
 	 * @see BindingInteractionsTest
 	 */
@@ -175,8 +175,8 @@ public final class BindingManagerTest extends UITestCase {
 				.getActiveBindingsDisregardingContextFlat();
 		assertNotNull("The active bindings should never be null",
 				activeBindings);
-		assertTrue("The active bindings should start empty", activeBindings
-				.isEmpty());
+		assertTrue("The active bindings should start empty",
+				activeBindings.isEmpty());
 	}
 
 	/**
@@ -227,18 +227,18 @@ public final class BindingManagerTest extends UITestCase {
 	 * @see BindingManagerTest#testSetActiveScheme()
 	 */
 	public final void testGetActiveScheme() {
-		assertNull("The active scheme should start null", bindingManager
-				.getActiveScheme());
+		assertNull("The active scheme should start null",
+				bindingManager.getActiveScheme());
 	}
 
 	/**
-	 * Tests that <code>getBindings</code> first returns <code>null</code>.
-	 * It then verifies that an added binding is return from this method.
+	 * Tests that <code>getBindings</code> first returns <code>null</code>. It
+	 * then verifies that an added binding is return from this method.
 	 */
 	public final void testGetBindings() {
 		// Check the starting condition.
-		assertNull("The bindings should start off null", bindingManager
-				.getBindings());
+		assertNull("The bindings should start off null",
+				bindingManager.getBindings());
 
 		// Check that an added binding is included.
 		final Binding binding = new TestBinding(null, "schemeId", "contextId",
@@ -295,8 +295,8 @@ public final class BindingManagerTest extends UITestCase {
 	 * Tests that the active locale is never <code>null</code>.
 	 */
 	public final void testGetLocale() {
-		assertNotNull("The locale should never be null", bindingManager
-				.getLocale());
+		assertNotNull("The locale should never be null",
+				bindingManager.getLocale());
 	}
 
 	/**
@@ -362,8 +362,8 @@ public final class BindingManagerTest extends UITestCase {
 		bindings[1] = partialMatchBinding2;
 		bindingManager.setBindings(bindings);
 		partialMatches = bindingManager.getPartialMatches(perfectMatch);
-		assertEquals("There should be two partial matches", 2, partialMatches
-				.size());
+		assertEquals("There should be two partial matches", 2,
+				partialMatches.size());
 		assertSame("The partial match should be the one defined",
 				partialMatchBinding1, partialMatches.get(partialMatch1));
 		assertSame("The partial match should be the one defined",
@@ -373,8 +373,8 @@ public final class BindingManagerTest extends UITestCase {
 		bindingManager.addBinding(perfectMatchBinding);
 		partialMatches = bindingManager.getPartialMatches(KeySequence
 				.getInstance());
-		assertEquals("There should be three partial matches", 3, partialMatches
-				.size());
+		assertEquals("There should be three partial matches", 3,
+				partialMatches.size());
 		assertSame("The partial match should be the one defined",
 				perfectMatchBinding, partialMatches.get(perfectMatch));
 		assertSame("The partial match should be the one defined",
@@ -458,8 +458,8 @@ public final class BindingManagerTest extends UITestCase {
 	 * Tests that the platform is never <code>null</code>.
 	 */
 	public final void testGetPlatform() {
-		assertNotNull("The platform can never be null", bindingManager
-				.getPlatform());
+		assertNotNull("The platform can never be null",
+				bindingManager.getPlatform());
 	}
 
 	/**
@@ -588,8 +588,8 @@ public final class BindingManagerTest extends UITestCase {
 		bindings[0] = perfectMatchBinding;
 		bindings[1] = partialMatchBinding1;
 		bindingManager.setBindings(bindings);
-		assertTrue("This should be a perfect match", bindingManager
-				.isPerfectMatch(perfectMatch));
+		assertTrue("This should be a perfect match",
+				bindingManager.isPerfectMatch(perfectMatch));
 
 		// SCENARIO 2
 		final KeySequence partialMatch2 = KeySequence
@@ -603,13 +603,13 @@ public final class BindingManagerTest extends UITestCase {
 		bindings[0] = partialMatchBinding1;
 		bindings[1] = partialMatchBinding2;
 		bindingManager.setBindings(bindings);
-		assertTrue("This should be no perfect matches", !bindingManager
-				.isPerfectMatch(perfectMatch));
+		assertTrue("This should be no perfect matches",
+				!bindingManager.isPerfectMatch(perfectMatch));
 
 		// SCENARIO 3
 		bindingManager.addBinding(perfectMatchBinding);
-		assertTrue("This should be no perfect matches", !bindingManager
-				.isPerfectMatch(KeySequence.getInstance()));
+		assertTrue("This should be no perfect matches",
+				!bindingManager.isPerfectMatch(KeySequence.getInstance()));
 	}
 
 	/**
@@ -646,26 +646,33 @@ public final class BindingManagerTest extends UITestCase {
 		final Binding binding5 = new TestBinding("command5", "na", "na", "zh",
 				"gtk", Binding.USER, null);
 		bindingManager.addBinding(binding5);
-		assertNotNull("There should be three active bindings", bindingManager
-				.getActiveBindingsFor(binding1.getParameterizedCommand()));
-		assertNotNull("There should be three active bindings", bindingManager
-				.getActiveBindingsFor(binding2.getParameterizedCommand()));
-		assertNotNull("There should be three active bindings", bindingManager
-				.getActiveBindingsFor(binding4.getParameterizedCommand()));
+		assertNotNull("There should be three active bindings",
+				bindingManager.getActiveBindingsFor(binding1
+						.getParameterizedCommand()));
+		assertNotNull("There should be three active bindings",
+				bindingManager.getActiveBindingsFor(binding2
+						.getParameterizedCommand()));
+		assertNotNull("There should be three active bindings",
+				bindingManager.getActiveBindingsFor(binding4
+						.getParameterizedCommand()));
 
 		// REMOVE SOME BINDINGS
 		bindingManager.removeBindings(TestBinding.TRIGGER_SEQUENCE, "na", "na",
 				"zh", "gtk", null, Binding.USER);
-		assertEquals("There should be four bindings left", 4, bindingManager
-				.getBindings().length);
-		assertNotNull("There should be four active bindings", bindingManager
-				.getActiveBindingsFor(binding1.getParameterizedCommand()));
-		assertNotNull("There should be four active bindings", bindingManager
-				.getActiveBindingsFor(binding2.getParameterizedCommand()));
-		assertNotNull("There should be four active bindings", bindingManager
-				.getActiveBindingsFor(binding3.getParameterizedCommand()));
-		assertNotNull("There should be four active bindings", bindingManager
-				.getActiveBindingsFor(binding4.getParameterizedCommand()));
+		assertEquals("There should be four bindings left", 4,
+				bindingManager.getBindings().length);
+		assertNotNull("There should be four active bindings",
+				bindingManager.getActiveBindingsFor(binding1
+						.getParameterizedCommand()));
+		assertNotNull("There should be four active bindings",
+				bindingManager.getActiveBindingsFor(binding2
+						.getParameterizedCommand()));
+		assertNotNull("There should be four active bindings",
+				bindingManager.getActiveBindingsFor(binding3
+						.getParameterizedCommand()));
+		assertNotNull("There should be four active bindings",
+				bindingManager.getActiveBindingsFor(binding4
+						.getParameterizedCommand()));
 	}
 
 	/**
@@ -688,20 +695,21 @@ public final class BindingManagerTest extends UITestCase {
 		scheme.define("name", "description", null);
 		try {
 			bindingManager.setActiveScheme(scheme);
-			assertSame("The schemes should match", scheme, bindingManager
-					.getActiveScheme());
+			assertSame("The schemes should match", scheme,
+					bindingManager.getActiveScheme());
 		} catch (final NotDefinedException e) {
 			fail("Should be able to activate a scheme");
 		}
 
 		// UNDEFINE SELECTED
 		scheme.undefine();
-		assertNull("The scheme should have become unselected", bindingManager
-				.getActiveScheme());
+		assertNull("The scheme should have become unselected",
+				bindingManager.getActiveScheme());
 	}
 
-	public void testGetCurrentConflicts() throws NotDefinedException, ParseException {
-		
+	public void testGetCurrentConflicts() throws NotDefinedException,
+			ParseException {
+
 		final Context context = contextManager.getContext("na");
 		context.define("name", "description", null);
 		final Scheme scheme = bindingManager.getScheme("na");
@@ -710,41 +718,47 @@ public final class BindingManagerTest extends UITestCase {
 		contextManager.setActiveContextIds(null);
 
 		Command command1 = commandManager.getCommand("conflictCommand1");
-		ParameterizedCommand parameterizedCommand1 = ParameterizedCommand.generateCommand(command1, null);
+		ParameterizedCommand parameterizedCommand1 = ParameterizedCommand
+				.generateCommand(command1, null);
 		Command command2 = commandManager.getCommand("conflictCommand2");
-		ParameterizedCommand parameterizedCommand2 = ParameterizedCommand.generateCommand(command2, null);
+		ParameterizedCommand parameterizedCommand2 = ParameterizedCommand
+				.generateCommand(command2, null);
 		Command command3 = commandManager.getCommand("conflictCommand3");
-		ParameterizedCommand parameterizedCommand3 = ParameterizedCommand.generateCommand(command3, null);
+		ParameterizedCommand parameterizedCommand3 = ParameterizedCommand
+				.generateCommand(command3, null);
 		KeySequence conflict = KeySequence.getInstance("M1+M2+9");
 		KeySequence noConflict = KeySequence.getInstance("M1+M2+8");
-		Binding binding1 = new KeyBinding(conflict, parameterizedCommand1, "na", "na", null, null, null,
-				Binding.SYSTEM);
-		Binding binding2 = new KeyBinding(conflict, parameterizedCommand2, "na", "na", null, null, null,
-				Binding.SYSTEM);
-		Binding binding3 = new KeyBinding(noConflict, parameterizedCommand3, "na", "na", null, null, null,
-				Binding.SYSTEM);
-		final Binding[] bindings = new Binding[] {binding1, binding2, binding3};
+		Binding binding1 = new KeyBinding(conflict, parameterizedCommand1,
+				"na", "na", null, null, null, Binding.SYSTEM);
+		Binding binding2 = new KeyBinding(conflict, parameterizedCommand2,
+				"na", "na", null, null, null, Binding.SYSTEM);
+		Binding binding3 = new KeyBinding(noConflict, parameterizedCommand3,
+				"na", "na", null, null, null, Binding.SYSTEM);
+		final Binding[] bindings = new Binding[] { binding1, binding2, binding3 };
 		bindingManager.setBindings(bindings);
 
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
 
-		Map activeBindingsDisregardingContext = bindingManager.getActiveBindingsDisregardingContext();// force a recompute
+		Map activeBindingsDisregardingContext = bindingManager
+				.getActiveBindingsDisregardingContext();// force a recompute
 		assertNotNull(activeBindingsDisregardingContext);
-		
+
 		Map currentConflicts = bindingManager.getCurrentConflicts();
 		assertEquals(1, currentConflicts.size()); // we have only one conflict
-		
-		Collection conflictsCollection = bindingManager.getConflictsFor(noConflict);
+
+		Collection conflictsCollection = bindingManager
+				.getConflictsFor(noConflict);
 		assertNull(conflictsCollection); // no conflict for this keybinding
-		
+
 		conflictsCollection = bindingManager.getConflictsFor(conflict);
-		assertNotNull(conflictsCollection); // this has one conflict with 2 commands
+		assertNotNull(conflictsCollection); // this has one conflict with 2
+											// commands
 		assertEquals(2, conflictsCollection.size());
 
 	}
-	
+
 	/**
 	 * Verifies that you can set the bindings to null. Verifies that setting the
 	 * bindings clears the cache.
@@ -765,8 +779,10 @@ public final class BindingManagerTest extends UITestCase {
 
 		// SET NULL
 		bindingManager.setBindings(null);
-		assertTrue("There should be no active bindings", bindingManager
-				.getActiveBindingsFor((ParameterizedCommand) null).length == 0);
+		assertTrue(
+				"There should be no active bindings",
+				bindingManager
+						.getActiveBindingsFor((ParameterizedCommand) null).length == 0);
 
 		// ADD BINDING
 		final String commandId = "commandId";
@@ -916,7 +932,7 @@ public final class BindingManagerTest extends UITestCase {
 			}
 
 			@Override
-			public IParameterValues getValues() throws ParameterValuesException {
+			public IParameterValues getValues() {
 				return null;
 			}
 
@@ -953,11 +969,13 @@ public final class BindingManagerTest extends UITestCase {
 		final TriggerSequence[] bindings = bindingManager
 				.getActiveBindingsFor(binding.getParameterizedCommand());
 		assertEquals(2, bindings.length);
-		
-		final TriggerSequence bestBinding = bindingManager.getBestActiveBindingFor(outline);
+
+		final TriggerSequence bestBinding = bindingManager
+				.getBestActiveBindingFor(outline);
 		assertEquals(binding.getTriggerSequence(), bestBinding);
-		
-		final TriggerSequence bestBinding2 = bindingManager.getBestActiveBindingFor(console);
+
+		final TriggerSequence bestBinding2 = bindingManager
+				.getBestActiveBindingFor(console);
 		assertEquals(b3.getTriggerSequence(), bestBinding2);
 	}
 }

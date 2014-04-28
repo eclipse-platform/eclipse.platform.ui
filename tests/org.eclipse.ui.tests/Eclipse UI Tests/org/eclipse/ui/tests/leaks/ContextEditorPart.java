@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433603
  ******************************************************************************/
 
 package org.eclipse.ui.tests.leaks;
@@ -23,7 +24,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
 /**
@@ -36,30 +36,20 @@ public class ContextEditorPart extends EditorPart {
 	private ISelectionProvider selectionProvider = null;
 	private Menu contextMenu;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void doSave(IProgressMonitor arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
-	 */
 	@Override
 	public void doSaveAs() {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
-	 */
 	@Override
-	public void init(IEditorSite arg0, IEditorInput arg1)
-			throws PartInitException {
+	public void init(IEditorSite arg0, IEditorInput arg1) {
 		setSite(arg0);
 		setInput(arg1);
 		selectionProvider = new ISelectionProvider() {
@@ -85,42 +75,30 @@ public class ContextEditorPart extends EditorPart {
 		getSite().setSelectionProvider(selectionProvider);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#isDirty()
-	 */
 	@Override
 	public boolean isDirty() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
-	 */
 	@Override
 	public boolean isSaveAsAllowed() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
-		text = new Text(parent, SWT.MULTI|SWT.WRAP);
+		text = new Text(parent, SWT.MULTI | SWT.WRAP);
 		text.setText("Hi there");
 		MenuManager manager = new MenuManager();
 		manager.setRemoveAllWhenShown(true);
 		contextMenu = manager.createContextMenu(text);
 		text.setMenu(contextMenu);
-		
+
 		getSite().registerContextMenu(manager, selectionProvider);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		text.setFocus();
@@ -129,11 +107,11 @@ public class ContextEditorPart extends EditorPart {
 	public void showMenu() {
 		contextMenu.notifyListeners(SWT.Show, null);
 	}
-	
+
 	public void hideMenu() {
 		contextMenu.notifyListeners(SWT.Hide, null);
 	}
-	
+
 	public Menu getMenu() {
 		return contextMenu;
 	}

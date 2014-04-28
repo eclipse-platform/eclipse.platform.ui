@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433603
  *******************************************************************************/
 package org.eclipse.ui.tests.multipageeditor;
 
@@ -53,11 +54,6 @@ public class MultiPageResourceEditor extends MultiPageEditorPart {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.MultiPageEditorPart#getAdapter(java.lang.Class)
-	 */
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == IPropertySheetPage.class) {
@@ -116,8 +112,7 @@ public class MultiPageResourceEditor extends MultiPageEditorPart {
 		}
 
 		@Override
-		public void init(IEditorSite site, IEditorInput input)
-				throws PartInitException {
+		public void init(IEditorSite site, IEditorInput input) {
 			setSite(site);
 			setInput(input);
 		}

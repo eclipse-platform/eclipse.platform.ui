@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433603
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
@@ -83,8 +84,8 @@ public class Bug99858Test extends TestCase {
 		view.setFocus();
 
 		// get a testing version of the delete action, and set it up.
-		MyDeleteResourceAction newDel = new MyDeleteResourceAction(view
-				.getViewSite());
+		MyDeleteResourceAction newDel = new MyDeleteResourceAction(
+				view.getViewSite());
 		newDel.setEnabled(true);
 		TextActionHandler tmpHandler = new TextActionHandler(view.getViewSite()
 				.getActionBars());
@@ -116,14 +117,12 @@ public class Bug99858Test extends TestCase {
 		// the delete even ran
 		assertTrue(newDel.fRan);
 
-		//Join twice as there are two jobs now
+		// Join twice as there are two jobs now
 		boolean joined = false;
 		while (!joined) {
 			try {
-				Platform
-						.getJobManager()
-						.join(
-								IDEWorkbenchMessages.DeleteResourceAction_jobName,
+				Platform.getJobManager()
+						.join(IDEWorkbenchMessages.DeleteResourceAction_jobName,
 								null);
 				joined = true;
 			} catch (InterruptedException ex) {
@@ -137,10 +136,8 @@ public class Bug99858Test extends TestCase {
 		joined = false;
 		while (!joined) {
 			try {
-				Platform
-						.getJobManager()
-						.join(
-								IDEWorkbenchMessages.DeleteResourceAction_jobName,
+				Platform.getJobManager()
+						.join(IDEWorkbenchMessages.DeleteResourceAction_jobName,
 								null);
 				joined = true;
 			} catch (InterruptedException ex) {
@@ -192,26 +189,26 @@ public class Bug99858Test extends TestCase {
 	private void createProjectFile(IProject testProject, String name,
 			String contents) throws CoreException {
 		IFile textFile = testProject.getFile(name);
-		ByteArrayInputStream inputStream = new ByteArrayInputStream(contents
-				.getBytes());
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(
+				contents.getBytes());
 		textFile.create(inputStream, true, null);
 	}
 
 	/**
 	 * After an internal action, see if there are any outstanding SWT events.
 	 */
-	private void chewUpEvents() throws InterruptedException {
+	private void chewUpEvents() {
 		Display display = Display.getCurrent();
 		while (display.readAndDispatch())
 			;
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		AdvancedValidationUserApprover.AUTOMATED_MODE = true;
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		AdvancedValidationUserApprover.AUTOMATED_MODE = false;
