@@ -32,7 +32,7 @@ public class DosHandler extends NativeHandler {
 	@Override
 	public FileInfo fetchFileInfo(String fileName) {
 		Path path = Paths.get(fileName);
-		boolean exists = Files.exists(path);
+		boolean exists = Files.exists(path, LinkOption.NOFOLLOW_LINKS);
 
 		FileInfo info = new FileInfo();
 		info.setExists(exists);
