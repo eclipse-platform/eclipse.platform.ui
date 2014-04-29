@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Tom Schindl and others.
+ * Copyright (c) 2006, 2014 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.layout;
@@ -30,59 +31,39 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * A simple TreeViewer to demonstrate usage
- * 
+ *
  * @author Tom Schindl <tom.schindl@bestsolution.at>
- * 
+ *
  */
 public class Snippet027TreeLayout {
 	private class MyContentProvider implements ITreeContentProvider {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((MyModel) inputElement).child.toArray();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
+		@Override
 		public void dispose() {
 
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-		 *      java.lang.Object, java.lang.Object)
-		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-		 */
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			return getElements(parentElement);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-		 */
+		@Override
 		public Object getParent(Object element) {
 			if (element == null) {
 				return null;
@@ -91,11 +72,7 @@ public class Snippet027TreeLayout {
 			return ((MyModel) element).parent;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-		 */
+		@Override
 		public boolean hasChildren(Object element) {
 			return ((MyModel) element).child.size() > 0;
 		}
@@ -105,7 +82,7 @@ public class Snippet027TreeLayout {
 	public class MyModel {
 		public MyModel parent;
 
-		public ArrayList child = new ArrayList();
+		public ArrayList<MyModel> child = new ArrayList<MyModel>();
 
 		public int counter;
 
@@ -114,6 +91,7 @@ public class Snippet027TreeLayout {
 			this.counter = counter;
 		}
 
+		@Override
 		public String toString() {
 			String rv = "Item ";
 			if (parent != null) {
@@ -130,14 +108,17 @@ public class Snippet027TreeLayout {
 			ITableLabelProvider, ITableFontProvider, ITableColorProvider {
 		FontRegistry registry = new FontRegistry();
 
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			return "Column " + columnIndex + " => " + element.toString();
 		}
 
+		@Override
 		public Font getFont(Object element, int columnIndex) {
 			if (((MyModel) element).counter % 2 == 0) {
 				return registry.getBold(Display.getCurrent().getSystemFont()
@@ -146,6 +127,7 @@ public class Snippet027TreeLayout {
 			return null;
 		}
 
+		@Override
 		public Color getBackground(Object element, int columnIndex) {
 			if (((MyModel) element).counter % 2 == 0) {
 				return Display.getCurrent().getSystemColor(SWT.COLOR_RED);
@@ -153,6 +135,7 @@ public class Snippet027TreeLayout {
 			return null;
 		}
 
+		@Override
 		public Color getForeground(Object element, int columnIndex) {
 			if (((MyModel) element).counter % 2 == 1) {
 				return Display.getCurrent().getSystemColor(SWT.COLOR_RED);
@@ -166,25 +149,26 @@ public class Snippet027TreeLayout {
 		final TreeViewer v = new TreeViewer(shell);
 		v.getTree().setHeaderVisible(true);
 		v.getTree().setLinesVisible(true);
-		
+
 		TreeColumnLayout ad = new TreeColumnLayout();
 		shell.setLayout(ad);
-		
-		TreeColumn column = new TreeColumn(v.getTree(),SWT.NONE);
-		column.setWidth(200);
-		column.setText("Column 1");
-		ad.setColumnData(column, new ColumnWeightData(50, 100));
-		
-		column = new TreeColumn(v.getTree(),SWT.NONE);
-		column.setWidth(200);
-		column.setText("Column 2");
-		ad.setColumnData(column,new ColumnWeightData(50, 100));
-		
 
-		
+		TreeColumn column1 = createTreeColumn(v.getTree(), "Column 1");
+		TreeColumn column2 = createTreeColumn(v.getTree(), "Column 2");
+
+		ad.setColumnData(column1, new ColumnWeightData(50, 100));
+		ad.setColumnData(column2, new ColumnWeightData(50, 100));
+
 		v.setLabelProvider(new MyLabelProvider());
 		v.setContentProvider(new MyContentProvider());
 		v.setInput(createModel());
+	}
+
+	private TreeColumn createTreeColumn(Tree tree, String textColumn) {
+		TreeColumn column = new TreeColumn(tree, SWT.NONE);
+		column.setText(textColumn);
+		column.setWidth(200);
+		return column;
 	}
 
 	private MyModel createModel() {

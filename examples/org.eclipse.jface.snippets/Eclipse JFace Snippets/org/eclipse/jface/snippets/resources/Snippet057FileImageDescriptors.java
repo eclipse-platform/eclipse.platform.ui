@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Tom Schindl and others.
+ * Copyright (c) 2006, 2014 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *******************************************************************************/
 package org.eclipse.jface.snippets.resources;
 
@@ -24,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * A snippet to demonstrate a dialog with image buttons.
- * 
+ *
  */
 public class Snippet057FileImageDescriptors {
 	private ImageRegistry registry;
@@ -33,11 +34,7 @@ public class Snippet057FileImageDescriptors {
 
 		Dialog dia = new Dialog(shell) {
 			private ImageDescriptor getImageDescriptorFromClass(String path) {
-				if (registry == null) {
-					registry = new ImageRegistry(shell.getDisplay());
-				}
-
-				ImageDescriptor desc = registry.getDescriptor(path);
+				ImageDescriptor desc = getDescriptorBasedOn(shell, path);
 				if (desc == null) {
 					desc = ImageDescriptor.createFromFile(
 							Snippet057FileImageDescriptors.class, path);
@@ -48,36 +45,38 @@ public class Snippet057FileImageDescriptors {
 			}
 
 			private ImageDescriptor getImageDescriptorFromFile(String path) {
-				if (registry == null) {
-					registry = new ImageRegistry(shell.getDisplay());
-				}
-
-				ImageDescriptor desc = registry.getDescriptor(path);
+				ImageDescriptor desc = getDescriptorBasedOn(shell, path);
 				if (desc == null) {
 					URL classPath = Snippet057FileImageDescriptors.class
 							.getResource(path);
-					Class bogus = null;
-					desc = ImageDescriptor.createFromFile(bogus, classPath
-							.getFile());
+					Class<?> bogus = null;
+					desc = ImageDescriptor.createFromFile(bogus,
+							classPath.getFile());
 
 					registry.put(path, desc);
 				}
-
 				return desc;
 			}
 
+			private ImageDescriptor getDescriptorBasedOn(final Shell shell,
+					String path) {
+				if (registry == null) {
+					registry = new ImageRegistry(shell.getDisplay());
+				}
+				ImageDescriptor desc = registry.getDescriptor(path);
+				return desc;
+			}
+
+			@Override
 			protected Button createButton(Composite parent, int id,
 					String label, boolean defaultButton) {
 				Button b = super.createButton(parent, id, label, defaultButton);
 				if (id == IDialogConstants.OK_ID) {
-					b
-							.setImage(getImageDescriptorFromClass(
-									"filesave.png").createImage()); //$NON-NLS-1$
+					b.setImage(getImageDescriptorFromClass("filesave.png").createImage()); //$NON-NLS-1$
 					// reset the button layout
 					setButtonLayoutData(b);
 				} else {
-					b
-							.setImage(getImageDescriptorFromFile("cancel.png").createImage()); //$NON-NLS-1$
+					b.setImage(getImageDescriptorFromFile("cancel.png").createImage()); //$NON-NLS-1$
 					// reset the button layout
 					setButtonLayoutData(b);
 					return b;
