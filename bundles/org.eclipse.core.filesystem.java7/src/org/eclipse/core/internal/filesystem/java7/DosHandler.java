@@ -65,7 +65,8 @@ public class DosHandler extends NativeHandler {
 
 			info.setLastModified(attrs.lastModifiedTime().toMillis());
 			info.setLength(attrs.size());
-			info.setDirectory(attrs.isDirectory());
+			// Follow symbolic links because symbolic link targeting a directory is considered a directory.
+			info.setDirectory(Files.isDirectory(path));
 
 			info.setAttribute(EFS.ATTRIBUTE_ARCHIVE, attrs.isArchive());
 			info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, attrs.isReadOnly());
