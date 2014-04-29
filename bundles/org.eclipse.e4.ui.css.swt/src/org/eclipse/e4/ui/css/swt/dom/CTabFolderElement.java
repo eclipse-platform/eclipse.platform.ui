@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
- *     IBM Corporation - initial API and implementation
  *     Brian de Alwis (MTI) - Performance tweaks (Bug 430829)
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.dom;
@@ -27,7 +26,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
