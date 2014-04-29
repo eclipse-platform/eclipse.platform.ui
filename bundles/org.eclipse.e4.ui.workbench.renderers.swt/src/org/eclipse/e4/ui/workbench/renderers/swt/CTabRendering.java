@@ -1113,9 +1113,13 @@ public class CTabRendering extends CTabFolderRenderer implements
 				parent.getBounds().height, defaultBackground, colors, percents,
 				vertical);
 
-		int selectedItemWidth = parent.getSelectionIndex() > -1 ? parent
-				.getSelection().getControl().getBounds().width : parent
-				.getBounds().width;
+		int selectedItemWidth = parent.getBounds().width;
+		if (parent.getSelectionIndex() > -1) {
+			Control control = parent.getSelection().getControl();
+			if (control != null)
+				selectedItemWidth = control.getBounds().width;
+		}
+
 		int leftRightBorder = (parent.getBounds().width - selectedItemWidth) / 2;
 		int topBorder = INNER_KEYLINE + OUTER_KEYLINE;
 
