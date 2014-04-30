@@ -6,7 +6,7 @@
       <product name="%productName" application="org.eclipse.ui.ide.workbench" description="%productBlurb"> 
           <!-- For documentation on updating icons, see http://wiki.eclipse.org/Platform-releng/Updating_Branding -->
           <property name="windowImages" value="eclipse16.png,eclipse32.png,eclipse48.png"/> 
-          <property name="aboutImage" value="eclipse_lg.gif"/> 
+          <property name="aboutImage" value="eclipse_lg.png"/> 
           <property name="aboutText" value="%productBlurb"/> 
           <property name="appName" value="Eclipse"/> 
           <property name="preferenceCustomization" value="plugin_customization.ini"/> 
