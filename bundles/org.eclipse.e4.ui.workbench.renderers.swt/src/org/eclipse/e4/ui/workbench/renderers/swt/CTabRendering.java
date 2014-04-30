@@ -27,7 +27,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
@@ -1056,7 +1055,6 @@ public class CTabRendering extends CTabFolderRenderer implements
 				defaultBackground);
 		drawTabBackground(gc, partHeaderBounds, state, vertical,
 				defaultBackground);
-		redrawChildren();
 	}
 
 	private void drawUnselectedTabBackground(GC gc, Rectangle partHeaderBounds,
@@ -1129,14 +1127,6 @@ public class CTabRendering extends CTabFolderRenderer implements
 						* 2, partHeaderBounds.height,
 				defaultBackground, getUnselectedTabsColors(state),
 				getUnselectedTabsPercents(state), vertical);
-	}
-
-	private void redrawChildren() {
-		for (Control child : parent.getChildren()) {
-			if (child instanceof Composite) {
-				child.reskin(SWT.ALL);
-			}
-		}
 	}
 
 	private static class CTabFolderRendererWrapper extends
