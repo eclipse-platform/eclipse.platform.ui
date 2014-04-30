@@ -172,7 +172,7 @@ public final class BindingPersistenceTest extends UITestCase {
 		}
 	}
 
-	public final void testBindingTransform() throws Exception {
+	public final void TODOtestBindingTransform() throws Exception {
 		ICommandService commandService = (ICommandService) fWorkbench
 				.getAdapter(ICommandService.class);
 		IBindingService bindingService = (IBindingService) fWorkbench
