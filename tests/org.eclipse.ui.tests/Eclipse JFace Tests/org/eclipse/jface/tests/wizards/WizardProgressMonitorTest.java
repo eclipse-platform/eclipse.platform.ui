@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Remy Chi Jian Suen and others.
+ * Copyright (c) 2009, 2014 Remy Chi Jian Suen and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433608
  ******************************************************************************/
 
 package org.eclipse.jface.tests.wizards;
@@ -27,6 +28,7 @@ public class WizardProgressMonitorTest extends TestCase {
 
 	private ProgressMonitoringWizardDialog dialog;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		// initialize a display
@@ -35,6 +37,7 @@ public class WizardProgressMonitorTest extends TestCase {
 		dialog.setBlockOnOpen(false);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if (dialog != null) {
 			dialog.close();
@@ -87,6 +90,7 @@ public class WizardProgressMonitorTest extends TestCase {
 	
 	protected IRunnableWithProgress getRunnable(final String taskName) {
 		return new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 				
 				// check that the label is empty
@@ -117,6 +121,7 @@ public class WizardProgressMonitorTest extends TestCase {
 			super(null, newWizard);
 		}
 
+		@Override
 		protected ProgressMonitorPart createProgressMonitorPart(
 				Composite composite, GridLayout pmlayout) {
 			return new ProgressMonitorPartSubclass(composite, pmlayout, useStopButton);

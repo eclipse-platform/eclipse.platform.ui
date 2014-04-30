@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433608
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers.interactive;
 
@@ -25,44 +26,43 @@ import org.eclipse.swt.widgets.TableColumn;
 
 public class TestTable extends TestBrowser {
 
-    public Viewer createViewer(Composite parent) {
-        TableViewer viewer = new TableViewer(parent);
-        viewer.setContentProvider(new TestModelContentProvider());
-        viewer.setLabelProvider(new TestLabelProvider());
-        viewer.getTable().setLinesVisible(true);
+	@Override
+	public Viewer createViewer(Composite parent) {
+		TableViewer viewer = new TableViewer(parent);
+		viewer.setContentProvider(new TestModelContentProvider());
+		viewer.setLabelProvider(new TestLabelProvider());
+		viewer.getTable().setLinesVisible(true);
 
-        TableLayout layout = new TableLayout();
-        viewer.getTable().setLayout(layout);
-        viewer.getTable().setHeaderVisible(true);
-        String headers[] = { "Label Column", "Second Column" };
+		TableLayout layout = new TableLayout();
+		viewer.getTable().setLayout(layout);
+		viewer.getTable().setHeaderVisible(true);
+		String headers[] = { "Label Column", "Second Column" };
 
-        ColumnLayoutData layouts[] = { new ColumnWeightData(100, false),
-                new ColumnWeightData(100, false) };
+		ColumnLayoutData layouts[] = { new ColumnWeightData(100, false),
+				new ColumnWeightData(100, false) };
 
-        final TableColumn columns[] = new TableColumn[headers.length];
+		final TableColumn columns[] = new TableColumn[headers.length];
 
-        for (int i = 0; i < headers.length; i++) {
-            layout.addColumnData(layouts[i]);
-            TableColumn tc = new TableColumn(viewer.getTable(), SWT.NONE, i);
-            tc.setResizable(layouts[i].resizable);
-            tc.setText(headers[i]);
-            columns[i] = tc;
-        }
+		for (int i = 0; i < headers.length; i++) {
+			layout.addColumnData(layouts[i]);
+			TableColumn tc = new TableColumn(viewer.getTable(), SWT.NONE, i);
+			tc.setResizable(layouts[i].resizable);
+			tc.setText(headers[i]);
+			columns[i] = tc;
+		}
 
-        viewer.setUseHashlookup(true);
+		viewer.setUseHashlookup(true);
 
-        return viewer;
-    }
+		return viewer;
+	}
 
-    public static void main(String[] args) {
-        TestTable browser = new TestTable();
-        browser.setBlockOnOpen(true);
-        browser.open(TestElement.createModel(3, 10));
-    }
+	public static void main(String[] args) {
+		TestTable browser = new TestTable();
+		browser.setBlockOnOpen(true);
+		browser.open(TestElement.createModel(3, 10));
+	}
 
-    /**
-     * 
-     */
-    protected void viewerFillMenuBar(MenuManager mgr) {
-    }
+	@Override
+	protected void viewerFillMenuBar(MenuManager mgr) {
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433608
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers.interactive;
 
@@ -41,46 +42,40 @@ public class VirtualTableView extends ViewPart {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createPartControl(Composite parent) {
 
 		viewer = new TableViewer(parent, SWT.VIRTUAL);
 		viewer.setContentProvider(getContentProvider());
 		viewer.setInput(this);
 		viewer.setItemCount(itemCount);
-		
-		Composite buttonComposite = new Composite(parent,SWT.NONE);
+
+		Composite buttonComposite = new Composite(parent, SWT.NONE);
 		buttonComposite.setLayout(new GridLayout());
 
-		Button resetInput = new Button(buttonComposite,SWT.PUSH);
+		Button resetInput = new Button(buttonComposite, SWT.PUSH);
 		resetInput.setText("Reset input");
-		resetInput.addSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e){
+		resetInput.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
 				resetInput();
 			}
 		});
-		
+
 		Button delete = new Button(buttonComposite, SWT.PUSH);
 		delete.setText("Delete selection");
 		delete.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Object[] selection = ((IStructuredSelection) viewer.getSelection()).toArray();
-				doRemove(selection, viewer.getTable().getSelectionIndices());
+				Object[] selection = ((IStructuredSelection) viewer
+						.getSelection()).toArray();
+				doRemove(selection);
 			}
 		});
 
 	}
 
-	protected void doRemove(Object[] selection, int[] selectionIndices) {
+	final protected void doRemove(Object[] selection) {
 		viewer.remove(selection);
 	}
 
@@ -91,21 +86,13 @@ public class VirtualTableView extends ViewPart {
 	 */
 	protected IContentProvider getContentProvider() {
 		return new IStructuredContentProvider() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-			 */
+			@Override
 			public void dispose() {
 				// Nothing to do here.
 
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-			 */
+			@Override
 			public Object[] getElements(Object inputElement) {
 				String[] elements = new String[itemCount];
 				for (int i = 0; i < itemCount; i++) {
@@ -114,12 +101,7 @@ public class VirtualTableView extends ViewPart {
 				return elements;
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
-			 */
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
 				// Nothing to do here.
@@ -128,11 +110,7 @@ public class VirtualTableView extends ViewPart {
 		};
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
-	 */
+	@Override
 	public void setFocus() {
 		viewer.getTable().setFocus();
 

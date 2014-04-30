@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433608
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers.interactive;
 
@@ -23,6 +24,7 @@ import org.eclipse.swt.widgets.TreeItem;
 
 public class TestLazyVirtualTree extends TestTree {
 
+	@Override
 	public Viewer createViewer(Composite parent) {
 		Tree tree = new Tree(parent, SWT.VIRTUAL);
 		tree.addListener(SWT.SetData, new Listener() {
@@ -34,6 +36,7 @@ public class TestLazyVirtualTree extends TestTree {
 				return getPosition(parentItem) + "." + parentItem.indexOf(item);
 			}
 
+			@Override
 			public void handleEvent(Event event) {
 				String position = getPosition((TreeItem) event.item);
 				System.out.println("updating " + position);
@@ -43,31 +46,30 @@ public class TestLazyVirtualTree extends TestTree {
 		viewer.setContentProvider(new TestModelLazyTreeContentProvider(viewer));
 		viewer.setUseHashlookup(true);
 
-		if (fViewer == null)
-			fViewer = viewer;
+		if (fViewer2 == null)
+			fViewer2 = viewer;
 		return viewer;
 	}
-	
+
+	@Override
 	public void setInput(TestElement input) {
-		if(fViewer!=null) {
-			Object oldInput = fViewer.getInput();
-			if(oldInput!=null) {
-				fViewer.setChildCount(oldInput, 0);
+		if (fViewer2 != null) {
+			Object oldInput = fViewer2.getInput();
+			if (oldInput != null) {
+				fViewer2.setChildCount(oldInput, 0);
 			}
 		}
 		super.setInput(input);
-		if(fViewer!=null && input!=null) {
-			fViewer.setChildCount(input, input.getChildCount());
+		if (fViewer2 != null && input != null) {
+			fViewer2.setChildCount(input, input.getChildCount());
 		}
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		TestBrowser browser = new TestLazyVirtualTree();
 		if (args.length > 0 && args[0].equals("-twopanes"))
 			browser.show2Panes();
+
 		browser.setBlockOnOpen(true);
 		browser.open(TestElement.createModel(3, 10));
 	}

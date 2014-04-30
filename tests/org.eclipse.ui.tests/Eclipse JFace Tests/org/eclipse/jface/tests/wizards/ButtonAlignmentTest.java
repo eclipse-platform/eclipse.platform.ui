@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433608
  ******************************************************************************/
 
 package org.eclipse.jface.tests.wizards;
@@ -23,6 +24,7 @@ public class ButtonAlignmentTest extends TestCase {
 	private TheTestWizard wizard;
 	private TheTestWizardDialog dialog;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -30,12 +32,12 @@ public class ButtonAlignmentTest extends TestCase {
 		Display.getDefault();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if (dialog != null && dialog.getShell() != null
 				&& !dialog.getShell().isDisposed()) {
 			dialog.close();
 		}
-
 		super.tearDown();
 	}
 
@@ -82,6 +84,7 @@ public class ButtonAlignmentTest extends TestCase {
 
 	public void testButtonAlignmentWithoutBackNextButtons() {
 		wizard = new TheTestWizard() {
+			@Override
 			public void addPages() {
 				// only add one page so there are no 'Back' or 'Next' buttons
 				addPage(new TheTestWizardPage(page1Name));
@@ -112,6 +115,7 @@ public class ButtonAlignmentTest extends TestCase {
 
 	public void testBug270174() {
 		wizard = new TheTestWizard() {
+			@Override
 			public boolean canFinish() {
 				// make sure the wizard can't finish early, this will ensure
 				// that the 'Next' button is the default button

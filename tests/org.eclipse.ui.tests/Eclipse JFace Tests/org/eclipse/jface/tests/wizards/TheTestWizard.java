@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433608
  *******************************************************************************/
 
 package org.eclipse.jface.tests.wizards;
@@ -32,7 +33,7 @@ public class TheTestWizard extends Wizard {
 	/**
 	 * Adding the page to the wizard.
 	 */
-
+	@Override
 	public void addPages() {
 		page1 = new TheTestWizardPage(page1Name);
 		addPage(page1);
@@ -46,6 +47,7 @@ public class TheTestWizard extends Wizard {
 	 * This method is called when 'Finish' button is pressed in
 	 * the wizard. 
 	 */
+	@Override
 	public boolean performFinish() {
 		WizardTest.DID_FINISH = true;
 		return true;
@@ -58,9 +60,7 @@ public class TheTestWizard extends Wizard {
 		this.throwExceptionOnDispose = throwExceptionOnDispose;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#dispose()
-	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		if(throwExceptionOnDispose)

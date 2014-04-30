@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433608
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers.interactive;
 
@@ -18,8 +19,7 @@ import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
- * The LazyVirtualTableView is the VirtualTableView with
- * lazy content.
+ * The LazyVirtualTableView is the VirtualTableView with lazy content.
  */
 public class LazyVirtualTableView extends VirtualTableView {
 
@@ -43,48 +43,37 @@ public class LazyVirtualTableView extends VirtualTableView {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.tests.viewers.interactive.VirtualTableView#getContentProvider()
-	 */
+	@Override
 	protected IContentProvider getContentProvider() {
 		return new ILazyContentProvider() {
-			
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ILazyContentProvider#updateElements(int, int)
-			 */
+
+			@Override
 			public void updateElement(int index) {
-		        viewer.replace(elements.get(index), index);
-			}
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-			 */
-			public void dispose() {
-				//Do Nothing
+				viewer.replace(elements.get(index), index);
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-			 */
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			@Override
+			public void dispose() {
+				// Do Nothing
+			}
+
+			@Override
+			public void inputChanged(Viewer viewer, Object oldInput,
+					Object newInput) {
 				// Do nothing.
 			}
 		};
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.tests.viewers.interactive.VirtualTableView#doRemove(java.lang.Object[])
-	 */
+
 	protected void doRemove(Object[] selection, int[] selectionIndices) {
 		for (int i = 0; i < selectionIndices.length; i++) {
 			int index = selectionIndices[i];
 			elements.remove(index);
 		}
-		super.doRemove(selection, selectionIndices);
+		super.doRemove(selection);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.tests.viewers.interactive.VirtualTableView#resetInput()
-	 */
+	@Override
 	protected void resetInput() {
 		viewer.setItemCount(itemCount);
 		super.resetInput();
