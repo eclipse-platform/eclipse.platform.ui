@@ -13,11 +13,8 @@
 package org.eclipse.ui.tests.navigator;
 
 import org.eclipse.swt.widgets.TreeItem;
-
 import org.eclipse.core.resources.IFile;
-
 import org.eclipse.jface.viewers.ILabelProvider;
-
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.extension.TestEmptyContentProvider;
@@ -224,13 +221,40 @@ public class LabelProviderTest extends NavigatorTestBase {
 		// Give time for both and expect both to have happened.
 		DisplayHelper.sleep(200);
 
-		final String EXPECTED = "FEDBGCA";
+		//final String EXPECTED = "FEDBGCA";
+		//final String EXPECTED = "FGEDBCA";
 		if (PRINT_DEBUG_INFO)
 			System.out.println("Map: " + TrackingLabelProvider.styledTextQueries);
 		String queries = (String) TrackingLabelProvider.styledTextQueries.get(_project);
 		// This can happen multiple times depending on when the decorating label
 		// provider runs, so just make sure the sequence is right
-		assertTrue("Wrong query order for text", queries.startsWith(EXPECTED));
+		assertTrue("F has the highest priority", queries.startsWith("F"));
+		assertBefore(queries, 'C', 'A');
+		assertBefore(queries, 'B', 'A');
+		assertBefore(queries, 'D', 'B');
+		assertBefore(queries, 'E', 'D');
+		assertBefore(queries, 'F', 'C');
+		assertBefore(queries, 'G', 'C');
+	}
+
+	/**
+	 * @param queries
+	 * @param firstChar
+	 * @param secondChar
+	 */
+	private void assertBefore(String queries, char firstChar, char secondChar) {
+		boolean first = false;
+		final int LEN = queries.length();
+		for (int i=0; i<LEN; i++) {
+			char cur = queries.charAt(i);
+			if (cur == firstChar) {
+				first = true;
+			}
+			if (cur == secondChar) {
+				assertTrue("Failed to find " + firstChar + " before " + secondChar + " in " + queries, first);
+				return;
+			}
+		}
 	}
 
 	// bug 252293 [CommonNavigator] LabelProviders do not obey override rules
