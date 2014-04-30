@@ -89,9 +89,7 @@ public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 					.toLocale(locale);
 		} catch (Exception e) {
 			// parsing the locale String to a Locale failed, so we use the default Locale
-			if (logService != null)
-				logService.log(LogService.LOG_ERROR, "Invalid locale format: " + locale //$NON-NLS-1$
-						+ " - Default Locale will be used instead.", e); //$NON-NLS-1$
+			ResourceBundleHelper.logInvalidFormat(locale, logService);
 			this.locale = Locale.getDefault();
 		}
 

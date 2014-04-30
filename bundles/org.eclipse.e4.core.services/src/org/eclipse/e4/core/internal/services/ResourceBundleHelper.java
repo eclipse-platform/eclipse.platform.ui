@@ -19,6 +19,7 @@ import java.net.URLConnection;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -498,23 +499,17 @@ public class ResourceBundleHelper {
 		String[] localeParts = str.split("_"); //$NON-NLS-1$
 		if (localeParts.length == 0 || localeParts.length > 3
 				|| (localeParts.length == 1 && localeParts[0].length() == 0)) {
-			if (logService != null)
-				logService.log(LogService.LOG_ERROR, "Invalid locale format: " + str
-						+ " - Default Locale will be used instead."); //$NON-NLS-1$
+			logInvalidFormat(str, logService);
 			return Locale.getDefault();
 		} else {
 			if (localeParts[0].length() == 1 || localeParts[0].length() > 2) {
-				if (logService != null)
-					logService.log(LogService.LOG_ERROR, "Invalid locale format: " + str
-							+ " - Default Locale will be used instead."); //$NON-NLS-1$
+				logInvalidFormat(str, logService);
 				return Locale.getDefault();
 			} else if (localeParts[0].length() == 2) {
 				char ch0 = localeParts[0].charAt(0);
 				char ch1 = localeParts[0].charAt(1);
 				if (ch0 < 'a' || ch0 > 'z' || ch1 < 'a' || ch1 > 'z') {
-					if (logService != null)
-						logService.log(LogService.LOG_ERROR, "Invalid locale format: " + str
-								+ " - Default Locale will be used instead."); //$NON-NLS-1$
+					logInvalidFormat(str, logService);
 					return Locale.getDefault();
 				}
 			}
@@ -556,6 +551,16 @@ public class ResourceBundleHelper {
 		}
 
 		return new Locale(language, country, variant);
+	}
+
+	private static HashSet<String> invalidLocalesLogged = new HashSet<String>();
+
+	static void logInvalidFormat(String str, LogService logService) {
+		if (logService != null && !invalidLocalesLogged.contains(str)) {
+			invalidLocalesLogged.add(str);
+			logService.log(LogService.LOG_ERROR, "Invalid locale format: " + str
+					+ " - Default Locale will be used instead."); //$NON-NLS-1$
+		}
 	}
 
 	/**
