@@ -283,6 +283,8 @@ public class SplitDropAgent2 extends DropAgent {
 		clearFeedback();
 		relToElement = null;
 
+		reactivatePart(dragElement);
+
 		super.dragLeave(dragElement, info);
 	}
 
@@ -341,7 +343,7 @@ public class SplitDropAgent2 extends DropAgent {
 
 		dndManager.getModelService().insert(toInsert, (MPartSashContainerElement) relToElement,
 				where, ratio);
-		reactivatePart(dragElement);
+		// reactivatePart(dragElement);
 
 		return true;
 	}
