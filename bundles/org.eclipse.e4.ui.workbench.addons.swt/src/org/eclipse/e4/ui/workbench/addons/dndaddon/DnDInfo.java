@@ -171,7 +171,8 @@ class DnDInfo {
 
 		// If we're in the same location presume the info is OK
 		Point cPoint = display.getCursorLocation();
-		if (cPoint.x == cursorPos.x && cPoint.y == cursorPos.y)
+		if (cPoint != null && cursorPos != null && cPoint.x == cursorPos.x
+				&& cPoint.y == cursorPos.y)
 			return;
 
 		reset();
