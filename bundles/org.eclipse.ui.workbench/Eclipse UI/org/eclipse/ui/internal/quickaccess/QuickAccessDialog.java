@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Hochstein (Freescale) - Bug 393703 - NotHandledException selecting inactive command under 'Previous Choices' in Quick access
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 433778
  *******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
 
@@ -40,6 +41,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
@@ -79,18 +81,27 @@ public class QuickAccessDialog extends PopupDialog {
 
 		WorkbenchWindow workbenchWindow = (WorkbenchWindow) window;
 		final MWindow model = workbenchWindow.getModel();
+		IHandlerService hs = model.getContext().get(IHandlerService.class);
+		final CommandProvider commandProvider = new CommandProvider();
+		if (commandProvider.getContextSnapshot() == null) {
+			commandProvider.setSnapshot(hs.createContextSnapshot(true));
+		}
 
 		BusyIndicator.showWhile(window.getShell() == null ? null : window.getShell().getDisplay(),
 				new Runnable() {
 
 					@Override
 					public void run() {
+						
+
+
 						QuickAccessProvider[] providers = new QuickAccessProvider[] {
 								new PreviousPicksProvider(previousPicksList),
 								new EditorProvider(),
 								new ViewProvider(model.getContext().get(MApplication.class), model),
 								new PerspectiveProvider(),
-								new CommandProvider(), new ActionProvider(), new WizardProvider(),
+								commandProvider, new ActionProvider(),
+								new WizardProvider(),
 								new PreferenceProvider(), new PropertiesProvider() };
 						providerMap = new HashMap();
 						for (int i = 0; i < providers.length; i++) {
