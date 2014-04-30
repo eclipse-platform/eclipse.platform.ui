@@ -315,3 +315,23 @@
     background-color: #252525;
     color: #CCCCCC;
 }
+
+/* begin of the hack for the Bug 433276 */
+.MPartStack#left > Composite,
+.MPartStack#left ToolBar,
+.MPartStack#right > Composite,
+.MPartStack#right ToolBar,
+.MPartStack#bottom > Composite,
+.MPartStack#bottom ToolBar {
+	background-color: '#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START' '#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_END' 100% 100%;
+}
+
+.MPartStack#left.active > Composite,
+.MPartStack#left.active ToolBar,
+.MPartStack#right.active > Composite,
+.MPartStack#right.active ToolBar,
+.MPartStack#bottom.active > Composite,
+.MPartStack#bottom.active ToolBar {
+	background-color: '#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_START' '#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_END' 100% 100%;
+}
+/* end of the hack */

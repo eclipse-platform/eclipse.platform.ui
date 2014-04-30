@@ -166,13 +166,23 @@ CTabItem:selected {
 	color: '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_TEXT_COLOR';
 }
 
-.MPartStack Composite {
+.MPartStack#left Composite, .MPartStack#right Composite, .MPartStack#bottom Composite {
+	background-color: '#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END';
+}
+
+.MPartStack#left.active Composite, .MPartStack#right.active Composite, .MPartStack#bottom.active Composite {
+	background-color: '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END';
+}
+
+/* begin of the hack for the Bug 433276 */
+.MPartStack#left > Composite, .MPartStack#right > Composite, .MPartStack#bottom > Composite {
 	background-color: '#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START' '#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_END' 100% 100%;
 }
 
-.MPartStack.active Composite {
+.MPartStack#left.active > Composite, .MPartStack#right.active > Composite, .MPartStack#bottom.active > Composite {
 	background-color: '#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_START' '#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_END' 100% 100%;
 }
+/* end of the hack */
 
 #PerspectiveSwitcher {
 	eclipse-perspective-keyline-color: #AAB0BF #AAB0BF;
