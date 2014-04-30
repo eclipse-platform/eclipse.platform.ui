@@ -602,7 +602,14 @@ public class MinMaxAddon {
 		if (curMax.size() > 0) {
 			MUIElement maxElement = curMax.get(0);
 			List<MUIElement> elementsLeftToRestore = getElementsToRestore(maxElement);
-			if (elementsLeftToRestore.size() == 0) {
+
+			// Are any stacks still minimized ?
+			boolean unMax = true;
+			for (MUIElement toRestore : elementsLeftToRestore) {
+				if (!toRestore.isVisible())
+					unMax = false;
+			}
+			if (unMax) {
 				maxElement.getTags().remove(IPresentationEngine.MAXIMIZED);
 			}
 		}
