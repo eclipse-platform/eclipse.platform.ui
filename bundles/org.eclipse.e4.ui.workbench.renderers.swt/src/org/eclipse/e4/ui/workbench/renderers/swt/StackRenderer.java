@@ -872,7 +872,8 @@ public class StackRenderer extends LazyStackRenderer {
 			MElementContainer<MUIElement> stack) {
 		if (stack == null)
 			stack = element.getParent();
-
+		if (!(stack.getWidget() instanceof CTabFolder))
+			return null;
 		CTabFolder ctf = (CTabFolder) stack.getWidget();
 		if (ctf == null || ctf.isDisposed())
 			return null;
