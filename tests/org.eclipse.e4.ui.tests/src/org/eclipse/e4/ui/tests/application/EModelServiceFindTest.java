@@ -19,7 +19,10 @@ import org.eclipse.e4.ui.internal.workbench.ModelServiceImpl;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.commands.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
+import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
@@ -364,7 +367,7 @@ public class EModelServiceFindTest extends TestCase {
 		handler1.setElementId("handler1");
 		application.getHandlers().add(handler1);
 
-		MHandler handler2 = CommandsFactoryImpl.eINSTANCE.createHandler();
+		MHandler handler2 = MCommandsFactory.INSTANCE.createHandler();
 		handler2.setElementId("handler2");
 		application.getHandlers().add(handler2);
 
@@ -385,6 +388,31 @@ public class EModelServiceFindTest extends TestCase {
 
 		foundHandler = findHandler(modelService, application, null);
 		assertNull(foundHandler);
+	}
+
+	public void testFindMKeyBindings() {
+		MApplication application = createApplication();
+		EModelService modelService = (EModelService) application.getContext()
+				.get(EModelService.class.getName());
+		assertNotNull(modelService);
+
+		MBindingTable bindingTable = MCommandsFactory.INSTANCE
+				.createBindingTable();
+		MKeyBinding keyBinding = MCommandsFactory.INSTANCE.createKeyBinding();
+		bindingTable.getBindings().add(keyBinding);
+
+		application.getBindingTables().add(bindingTable);
+
+		List<MKeyBinding> elements = modelService.findElements(application,
+				MKeyBinding.class, EModelService.ANYWHERE, new Selector() {
+					@Override
+					public boolean select(MApplicationElement element) {
+						return (element instanceof MKeyBinding);
+					}
+				});
+
+		assertEquals(1, elements.size());
+		assertEquals(keyBinding, elements.get(0));
 	}
 
 	public void testBug314685() {
