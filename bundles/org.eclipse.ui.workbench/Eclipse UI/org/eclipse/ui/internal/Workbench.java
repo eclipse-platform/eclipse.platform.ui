@@ -13,6 +13,7 @@
  *     		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
  *     		Implemented workbench auto-save to correctly restore state in case of crash.
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422533
+ *     Terry Parker <tparker@google.com> - Bug 416673
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -1262,12 +1263,26 @@ public final class Workbench extends EventManager implements IWorkbench,
 		}
 	}
 
+	private boolean detectWorkbenchCorruption(MApplication application) {
+		if (application.getChildren().isEmpty()) {
+			WorkbenchPlugin.log(
+					"When auto-saving the workbench model, there were no top-level windows. " //$NON-NLS-1$
+							+ " Skipped saving the model.", //$NON-NLS-1$
+					new Exception()); // log a stack trace to assist debugging
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Copy the model, clean it up and write it out to workbench.xmi. Called as
 	 * part of persist(false) during auto-save.
 	 */
 	private void persistWorkbenchModel() {
 		final MApplication appCopy = (MApplication) EcoreUtil.copy((EObject) application);
+		if (detectWorkbenchCorruption(appCopy)) {
+			return;
+		}
 		final IModelResourceHandler handler = e4Context.get(IModelResourceHandler.class);
 
 		Job cleanAndSaveJob = new Job("Workbench Auto-Save Background Job") { //$NON-NLS-1$
@@ -1276,7 +1291,9 @@ public final class Workbench extends EventManager implements IWorkbench,
 				final Resource res = handler.createResourceWithApp(appCopy);
 				cleanUpCopy(appCopy, e4Context);
 				try {
-					res.save(null);
+					if (!detectWorkbenchCorruption((MApplication) res.getContents().get(0))) {
+						res.save(null);
+					}
 				} catch (IOException e) {
 					// Just auto-save, we don't really care
 				} finally {
