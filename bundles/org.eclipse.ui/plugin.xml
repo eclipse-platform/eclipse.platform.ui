@@ -733,6 +733,23 @@
          </parameter>
       </key>
       <key
+            locale="jp"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+_"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+      <key
+      		locale="jp"
+            commandId="org.eclipse.ui.window.splitEditor"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+M2+-"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+         <parameter
+               id="Splitter.isHorizontal"
+               value="true">
+         </parameter>
+      </key>
+      <key
             platform="carbon"
             commandId=""
             contextId="org.eclipse.ui.contexts.window"
