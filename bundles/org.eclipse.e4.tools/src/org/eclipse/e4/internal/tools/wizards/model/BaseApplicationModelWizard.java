@@ -286,7 +286,8 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 		if (buildPropertiesFile.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(buildPropertiesFile);
 			IBuildEntry entry = model.getBuild().getEntry(IBuildEntry.BIN_INCLUDES);
-			entry.addToken(file.getProjectRelativePath().toString());
+			String token = file.getProjectRelativePath().toString();
+			if(!entry.contains(token)) entry.addToken(token);
 			model.save();
 		}
 	}
