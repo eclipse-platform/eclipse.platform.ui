@@ -197,6 +197,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 							Map<Object, Object> options = new HashMap<Object, Object>();
 							resource.save(options);
 							adjustBuildPropertiesFile( modelFile );
+							adjustDependencies( modelFile );
 						}
 						catch (Exception exception) {
 							throw new RuntimeException(exception);
@@ -290,5 +291,15 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 			if(!entry.contains(token)) entry.addToken(token);
 			model.save();
 		}
+	}
+	
+	/**
+	 * Callback hook to allow for after-file-creation modifications. Default
+	 * implementation does nothing.
+	 * 
+	 * @param file
+	 *            the file created by the wizard
+	 */
+	protected void adjustDependencies(IFile file) {
 	}
 }
