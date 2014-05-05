@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Hochstein (Freescale) - Bug 393703 - NotHandledException selecting inactive command under 'Previous Choices' in Quick access
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 433778
+ *     René Brandstetter - Bug 433778
  *******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
 
@@ -41,7 +41,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
@@ -81,27 +80,18 @@ public class QuickAccessDialog extends PopupDialog {
 
 		WorkbenchWindow workbenchWindow = (WorkbenchWindow) window;
 		final MWindow model = workbenchWindow.getModel();
-		IHandlerService hs = model.getContext().get(IHandlerService.class);
-		final CommandProvider commandProvider = new CommandProvider();
-		if (commandProvider.getContextSnapshot() == null) {
-			commandProvider.setSnapshot(hs.createContextSnapshot(true));
-		}
 
 		BusyIndicator.showWhile(window.getShell() == null ? null : window.getShell().getDisplay(),
 				new Runnable() {
 
 					@Override
 					public void run() {
-						
-
-
 						QuickAccessProvider[] providers = new QuickAccessProvider[] {
 								new PreviousPicksProvider(previousPicksList),
 								new EditorProvider(),
 								new ViewProvider(model.getContext().get(MApplication.class), model),
 								new PerspectiveProvider(),
-								commandProvider, new ActionProvider(),
-								new WizardProvider(),
+								new CommandProvider(), new ActionProvider(), new WizardProvider(),
 								new PreferenceProvider(), new PropertiesProvider() };
 						providerMap = new HashMap();
 						for (int i = 0; i < providers.length; i++) {
@@ -211,8 +201,19 @@ public class QuickAccessDialog extends PopupDialog {
 								if (selectedElement instanceof QuickAccessElement) {
 									addPreviousPick(text, selectedElement);
 									storeDialog(getDialogSettings());
-									QuickAccessElement element = (QuickAccessElement) selectedElement;
-									element.execute();
+
+									/*
+									 * Execute after the dialog has been fully
+									 * closed/disposed and the correct
+									 * EclipseContext is in place.
+									 */
+									final QuickAccessElement element = (QuickAccessElement) selectedElement;
+									window.getShell().getDisplay().asyncExec(new Runnable() {
+										@Override
+										public void run() {
+											element.execute();
+										}
+									});
 								}
 							}
 						};
