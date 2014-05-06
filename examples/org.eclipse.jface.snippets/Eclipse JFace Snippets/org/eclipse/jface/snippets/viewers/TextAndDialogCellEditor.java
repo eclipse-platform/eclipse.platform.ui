@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Eric Rizzo and others.
+ * Copyright (c) 2006, 2014 Eric Rizzo and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Eric Rizzo - initial implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
 
@@ -25,9 +26,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * A CellEditor that is a blending of DialogCellEditor and TextCellEditor. The user can either type
- * directly into the Text or use the button to open a Dialog for editing the cell's value.
- * 
+ * A CellEditor that is a blending of DialogCellEditor and TextCellEditor. The
+ * user can either type directly into the Text or use the button to open a
+ * Dialog for editing the cell's value.
+ *
  */
 public class TextAndDialogCellEditor extends DialogCellEditor {
 
@@ -35,21 +37,17 @@ public class TextAndDialogCellEditor extends DialogCellEditor {
 	private String dialogMessage;
 	private String dialogTitle;
 
-
 	public TextAndDialogCellEditor(Composite parent) {
 		super(parent);
 	}
-
 
 	public void setDialogMessage(String dialogMessage) {
 		this.dialogMessage = dialogMessage;
 	}
 
-
 	public void setDialogTitle(String dialogTitle) {
 		this.dialogTitle = dialogTitle;
 	}
-
 
 	@Override
 	protected Control createContents(Composite cell) {
@@ -57,40 +55,42 @@ public class TextAndDialogCellEditor extends DialogCellEditor {
 		textField.setFont(cell.getFont());
 		textField.setBackground(cell.getBackground());
 		textField.addFocusListener(new FocusAdapter() {
-				@Override
-				public void focusLost(FocusEvent event) {
-					 setValueToModel();
-				}
-			});
+			@Override
+			public void focusLost(FocusEvent event) {
+				setValueToModel();
+			}
+		});
 
 		textField.addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyPressed(KeyEvent event) {
-					keyReleaseOccured(event);
-				}
-			});
+			@Override
+			public void keyPressed(KeyEvent event) {
+				keyReleaseOccured(event);
+			}
+		});
 
 		return textField;
 	}
 
 	@Override
 	protected void keyReleaseOccured(KeyEvent keyEvent) {
-		if (keyEvent.keyCode == SWT.CR || keyEvent.keyCode == SWT.KEYPAD_CR) { // Enter key
+		if (keyEvent.keyCode == SWT.CR || keyEvent.keyCode == SWT.KEYPAD_CR) {
+			// Enter key
 			setValueToModel();
 		}
 		super.keyReleaseOccured(keyEvent);
 	}
 
 	protected void setValueToModel() {
-	 	String newValue = textField.getText();
-        boolean newValidState = isCorrect(newValue);
-        if (newValidState) {
-            markDirty();
-            doSetValue(newValue);
-        } else {
-            // try to insert the current value into the error message.
-            setErrorMessage(MessageFormat.format(getErrorMessage(), new Object[] { newValue.toString() }));
-        }
+		String newValue = textField.getText();
+		boolean newValidState = isCorrect(newValue);
+		if (newValidState) {
+			markDirty();
+			doSetValue(newValue);
+		} else {
+			// try to insert the current value into the error message.
+			setErrorMessage(MessageFormat.format(getErrorMessage(),
+					new Object[] { newValue.toString() }));
+		}
 	}
 
 	@Override
@@ -98,13 +98,12 @@ public class TextAndDialogCellEditor extends DialogCellEditor {
 		if (textField == null) {
 			return;
 		}
-
-        String text = "";
-        if (value != null) {
+		String text = "";
+		if (value != null) {
 			text = value.toString();
 		}
-        textField.setText(text);
-		
+		textField.setText(text);
+
 	}
 
 	@Override
@@ -114,23 +113,15 @@ public class TextAndDialogCellEditor extends DialogCellEditor {
 		textField.selectAll();
 	}
 
-
 	@Override
 	protected Object openDialogBox(Control cellEditorWindow) {
-		InputDialog dialog = new InputDialog(cellEditorWindow.getShell(), dialogTitle, dialogMessage, getDialogInitialValue(), null);
-		if (dialog.open() == Window.OK) {
-			return dialog.getValue();
-		} else {
-			return null;
-		}
+		InputDialog dialog = new InputDialog(cellEditorWindow.getShell(),
+				dialogTitle, dialogMessage, getDialogInitialValue(), null);
+		return (dialog.open() == Window.OK ? dialog.getValue() : null);
 	}
 
 	protected String getDialogInitialValue() {
 		Object value = getValue();
-		if (value == null) {
-			return null;
-		} else {
-			return value.toString();
-		}
+		return (value == null ? null : value.toString());
 	}
 }
