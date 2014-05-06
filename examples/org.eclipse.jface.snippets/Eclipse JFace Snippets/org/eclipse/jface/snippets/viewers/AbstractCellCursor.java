@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 414565
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  ******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -29,12 +30,10 @@ import org.eclipse.swt.widgets.Listener;
  *
  */
 public abstract class AbstractCellCursor extends Canvas {
+
 	private ViewerCell[] cells = new ViewerCell[0];
-
 	private ColumnViewer viewer;
-
 	private int activationTime = 0;
-
 	private boolean inFocusRequest = false;
 
 	/**
@@ -42,10 +41,21 @@ public abstract class AbstractCellCursor extends Canvas {
 	 * @param style
 	 */
 	public AbstractCellCursor(ColumnViewer viewer, int style) {
-		super((Composite) viewer.getControl(),style);
+		super((Composite) viewer.getControl(), style);
 		this.viewer = viewer;
 
-		Listener l = new Listener() {
+		Listener listener = createListener();
+		int[] eventsToListen = { SWT.Paint, SWT.KeyDown, SWT.MouseDown,
+				SWT.MouseDoubleClick };
+
+		for (int event : eventsToListen) {
+			addListener(event, listener);
+		}
+		getParent().addListener(SWT.FocusIn, listener);
+	}
+
+	private Listener createListener() {
+		return new Listener() {
 
 			@Override
 			public void handleEvent(Event event) {
@@ -53,46 +63,48 @@ public abstract class AbstractCellCursor extends Canvas {
 				case SWT.Paint:
 					paint(event);
 					break;
+
 				case SWT.KeyDown:
 					getParent().notifyListeners(SWT.KeyDown, event);
 					ArrayList<Object> list = new ArrayList<Object>();
-					for( int i = 0; i < cells.length; i++ ) {
-						list.add(cells[i].getElement());
+					for (ViewerCell cell : cells) {
+						list.add(cell.getElement());
 					}
-					AbstractCellCursor.this.viewer.setSelection(new StructuredSelection(list));
-
+					AbstractCellCursor.this.viewer
+							.setSelection(new StructuredSelection(list));
 					break;
+
 				case SWT.MouseDown:
-					if( event.time < activationTime ) {
+					if (event.time < activationTime) {
 						Event cEvent = copyEvent(event);
 						cEvent.type = SWT.MouseDoubleClick;
-						getParent().notifyListeners(SWT.MouseDoubleClick, cEvent);
+						getParent().notifyListeners(SWT.MouseDoubleClick,
+								cEvent);
 					} else {
-						getParent().notifyListeners(SWT.MouseDown, copyEvent(event));
+						getParent().notifyListeners(SWT.MouseDown,
+								copyEvent(event));
 					}
 					break;
+
 				case SWT.MouseDoubleClick:
-					getParent().notifyListeners(SWT.MouseDoubleClick, copyEvent(event));
+					getParent().notifyListeners(SWT.MouseDoubleClick,
+							copyEvent(event));
 					break;
+
 				case SWT.FocusIn:
-					if( isVisible() ) {
+					if (isVisible()) {
 						inFocusRequest = true;
-						if( ! inFocusRequest ) {
+						if (!inFocusRequest) {
 							forceFocus();
 						}
 						inFocusRequest = false;
 					}
+
 				default:
 					break;
 				}
 			}
 		};
-
-		addListener(SWT.Paint, l);
-		addListener(SWT.KeyDown, l);
-		addListener(SWT.MouseDown, l);
-		addListener(SWT.MouseDoubleClick, l);
-		getParent().addListener(SWT.FocusIn,l);
 	}
 
 	/**
