@@ -71,22 +71,27 @@ public class SomeMathFunction extends ComputedObservableMap {
 		// domain.toCollection()
 		fireMapChange(new MapDiff() {
 
+			@Override
 			public Set getAddedKeys() {
 				return Collections.EMPTY_SET;
 			}
 
+			@Override
 			public Set getChangedKeys() {
 				return keySet();
 			}
 
+			@Override
 			public Object getNewValue(Object key) {
 				return doComputeResult(key, operation);
 			}
 
+			@Override
 			public Object getOldValue(Object key) {
 				return doComputeResult(key, oldOp);
 			}
 
+			@Override
 			public Set getRemovedKeys() {
 				return Collections.EMPTY_SET;
 			}
@@ -105,18 +110,22 @@ public class SomeMathFunction extends ComputedObservableMap {
 		return element;
 	}
 
+	@Override
 	protected Object doGet(Object key) {
 		return doComputeResult(key, this.op);
 	}
 
+	@Override
 	protected Object doPut(Object key, Object value) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	protected void hookListener(Object addedKey) {
 		// ignore, no need to listen to immutable Double objects
 	}
 
+	@Override
 	protected void unhookListener(Object removedKey) {
 		// ignore, no need to listen to immutable Double objects
 	}

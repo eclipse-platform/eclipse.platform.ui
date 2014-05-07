@@ -34,6 +34,7 @@ public class AggregateObservableValue extends AbstractObservableValue {
 	private String currentValue;
 
 	private IValueChangeListener listener = new IValueChangeListener() {
+		@Override
 		public void handleValueChange(ValueChangeEvent event) {
 			if (!updating) {
 				fireValueChange(Diffs.createValueDiff(currentValue,
@@ -56,6 +57,7 @@ public class AggregateObservableValue extends AbstractObservableValue {
 		doGetValue();
 	}
 
+	@Override
 	public void doSetValue(Object value) {
 		Object oldValue = doGetValue();
 		StringTokenizer tokenizer = new StringTokenizer((String) value,
@@ -76,6 +78,7 @@ public class AggregateObservableValue extends AbstractObservableValue {
 		fireValueChange(Diffs.createValueDiff(oldValue, value));
 	}
 
+	@Override
 	public Object doGetValue() {
 		StringBuffer result = new StringBuffer();
 		for (int i = 0; i < observableValues.length; i++) {
@@ -88,10 +91,12 @@ public class AggregateObservableValue extends AbstractObservableValue {
 		return currentValue;
 	}
 
+	@Override
 	public Object getValueType() {
 		return String.class;
 	}
 
+	@Override
 	public synchronized void dispose() {
 		for (int i = 0; i < observableValues.length; i++) {
 			observableValues[i].removeValueChangeListener(listener);

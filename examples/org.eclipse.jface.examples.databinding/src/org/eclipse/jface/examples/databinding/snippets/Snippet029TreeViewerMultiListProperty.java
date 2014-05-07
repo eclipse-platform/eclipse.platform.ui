@@ -61,6 +61,7 @@ public class Snippet029TreeViewerMultiListProperty {
 	public void open() {
 		final Display display = Display.getDefault();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				createContents();
 				shell.open();
@@ -216,6 +217,7 @@ public class Snippet029TreeViewerMultiListProperty {
 			Image catalogImage = createCatalogImage();
 			Image catalogItemImage = createCatalogItemImage();
 
+			@Override
 			public Image getImage(Object element) {
 				if (element instanceof Catalog)
 					return catalogImage;
@@ -224,6 +226,7 @@ public class Snippet029TreeViewerMultiListProperty {
 				return super.getImage(element);
 			}
 
+			@Override
 			public void dispose() {
 				catalogImage.dispose();
 				catalogItemImage.dispose();

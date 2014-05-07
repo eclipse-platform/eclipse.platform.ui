@@ -39,6 +39,7 @@ public class Snippet010MasterDetail {
 	public static void main(String[] args) {
 		final Display display = new Display();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				Shell shell = new Shell(display);
 				shell.setLayout(new GridLayout());
@@ -100,6 +101,7 @@ public class Snippet010MasterDetail {
 			return name;
 		}
 
+		@Override
 		public String toString() {
 			return name;
 		}

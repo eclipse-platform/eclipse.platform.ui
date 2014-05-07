@@ -30,11 +30,13 @@ public class Snippet005MenuUpdater {
 	public static void main(String[] args) {
 		final Display display = new Display();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				Shell shell = new Shell(display);
 
 				final WritableList menuItemStrings = new WritableList();
 				display.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						System.out.println("adding item");
 						menuItemStrings.add(new Date().toString());
@@ -49,6 +51,7 @@ public class Snippet005MenuUpdater {
 				final Menu submenu = new Menu(shell, SWT.DROP_DOWN);
 				fileItem.setMenu(submenu);
 				new MenuUpdater(submenu) {
+					@Override
 					protected void updateMenu() {
 						System.out.println("updating menu");
 						MenuItem[] items = submenu.getItems();

@@ -329,6 +329,7 @@ public class EditMask {
    protected boolean replacedSelectedText = false;
 	
 	private VerifyListener verifyListener = new VerifyListener() {
+		@Override
 		public void verifyText(VerifyEvent e) {
          // If the edit mask is already full, don't let the user type
          // any new characters
@@ -359,6 +360,7 @@ public class EditMask {
 	};
 
 	private Runnable updateTextField = new Runnable() {
+		@Override
 		public void run() {
 			updating = true;
 			try {
@@ -434,6 +436,7 @@ public class EditMask {
 	};
 	
 	private FocusListener focusListener = new FocusAdapter() {
+		@Override
 		public void focusGained(FocusEvent e) {
 			selection = editMaskParser.getFirstIncompleteInputPosition();
 			text.setSelection(selection, selection);
@@ -441,6 +444,7 @@ public class EditMask {
 	};
 	
 	private DisposeListener disposeListener = new DisposeListener() {
+		@Override
 		public void widgetDisposed(DisposeEvent e) {
 			text.removeVerifyListener(verifyListener);
 			text.removeFocusListener(focusListener);

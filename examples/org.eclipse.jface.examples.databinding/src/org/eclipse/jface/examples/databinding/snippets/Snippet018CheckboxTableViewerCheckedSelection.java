@@ -63,6 +63,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 		// The SWT event loop
 		final Display display = Display.getDefault();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				ViewModel viewModel = createSampleModel();
 
@@ -163,6 +164,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 					this.friends = new HashSet(friends));
 		}
 
+		@Override
 		public String toString() {
 			return name;
 		}
@@ -298,9 +300,11 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 					.getDefault(), viewModel, "people");
 
 			addPersonButton.addListener(SWT.Selection, new Listener() {
+				@Override
 				public void handleEvent(Event event) {
 					InputDialog dlg = new InputDialog(shell, "Add Person",
 							"Enter name:", "<Name>", new IInputValidator() {
+								@Override
 								public String isValid(String newText) {
 									if (newText == null
 											|| newText.length() == 0)
@@ -319,6 +323,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 			});
 
 			removePersonButton.addListener(SWT.Selection, new Listener() {
+				@Override
 				public void handleEvent(Event event) {
 					IStructuredSelection selected = (IStructuredSelection) peopleViewer
 							.getSelection();
@@ -338,6 +343,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 					.observeSingleSelection(peopleViewer);
 
 			IObservableValue personSelected = new ComputedValue(Boolean.TYPE) {
+				@Override
 				protected Object calculate() {
 					return Boolean.valueOf(selectedPerson.getValue() != null);
 				}

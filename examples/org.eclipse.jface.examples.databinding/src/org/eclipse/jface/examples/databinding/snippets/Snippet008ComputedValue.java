@@ -43,6 +43,7 @@ public class Snippet008ComputedValue {
 	public static void main(String[] args) {
 		final Display display = new Display();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				Shell shell = new Shell(display);
 				shell.setLayout(new FillLayout());
@@ -101,6 +102,7 @@ public class Snippet008ComputedValue {
 			this.lastName = lastName;
 		}
 
+		@Override
 		protected Object calculate() {
 			String lastName = (String) this.lastName.getValue();
 			String firstName = (String) this.firstName.getValue();

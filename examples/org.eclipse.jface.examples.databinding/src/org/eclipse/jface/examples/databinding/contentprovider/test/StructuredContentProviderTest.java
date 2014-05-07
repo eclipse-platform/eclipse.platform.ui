@@ -160,6 +160,7 @@ public class StructuredContentProviderTest {
 
 			final Label sumLabel = new Label(shell, SWT.NONE);
 			new ControlUpdater(sumLabel) {
+				@Override
 				protected void updateControl() {
 					double sum = ((Double) sumOfOutputSet.getValue())
 							.doubleValue();
@@ -202,6 +203,7 @@ public class StructuredContentProviderTest {
 		// mathFunction implements the selected function
 		mathFunction = new SomeMathFunction(inputSet);
 		currentFunction.addValueChangeListener(new IValueChangeListener() {
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				mathFunction
 						.setOperation(((Integer) currentFunction.getValue())
@@ -219,6 +221,7 @@ public class StructuredContentProviderTest {
 		// sumOfOutputSet stores the current sum of the the Doubles in the
 		// output set
 		sumOfOutputSet = new ComputedValue(realm) {
+			@Override
 			protected Object calculate() {
 				double sum = 0.0;
 				for (Iterator iter = outputSet.iterator(); iter.hasNext();) {
@@ -251,12 +254,14 @@ public class StructuredContentProviderTest {
 		final Button button = new Button(parent, SWT.RADIO);
 		button.setText(string);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				model.setValue(value);
 				super.widgetSelected(e);
 			}
 		});
 		new ControlUpdater(button) {
+			@Override
 			protected void updateControl() {
 				button.setSelection(model.getValue().equals(value));
 			}
@@ -312,6 +317,7 @@ public class StructuredContentProviderTest {
 				Button add = new Button(buttonBar, SWT.PUSH);
 				add.setText("Add"); //$NON-NLS-1$
 				add.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						inputSet.add(new Double(random.nextDouble() * 100.0));
 						super.widgetSelected(e);
@@ -325,6 +331,7 @@ public class StructuredContentProviderTest {
 				// Enable the Remove button if and only if there is currently an
 				// element selected.
 				new ControlUpdater(remove) {
+					@Override
 					protected void updateControl() {
 						// This block demonstrates auto-listening.
 						// When updateControl is running, the framework
@@ -347,6 +354,7 @@ public class StructuredContentProviderTest {
 				};
 
 				remove.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						inputSet.remove(selectedInt.getValue());
 						super.widgetSelected(e);

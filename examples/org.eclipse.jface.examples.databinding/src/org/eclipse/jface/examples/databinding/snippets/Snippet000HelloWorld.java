@@ -38,6 +38,7 @@ public class Snippet000HelloWorld {
 
 		Realm.runWithDefault(SWTObservables.getRealm(display),
 				new Runnable() {
+					@Override
 					public void run() {
 						final Shell shell = new View(viewModel).createShell();
 						// The SWT event loop

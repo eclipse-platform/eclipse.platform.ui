@@ -44,6 +44,7 @@ public class Snippet014WizardDialog {
 
 	static class FirstWizardPage extends WizardPage {
 		private final class SingleDigitValidator implements IValidator {
+			@Override
 			public IStatus validate(Object value) {
 				Integer i = (Integer) value;
 				if (i == null) {
@@ -63,6 +64,7 @@ public class Snippet014WizardDialog {
 					.createFromImage(new Image(Display.getDefault(), 16, 16)));
 		}
 
+		@Override
 		public void createControl(Composite parent) {
 			DataBindingContext dbc = new DataBindingContext();
 			WizardPageSupport.create(this, dbc);
@@ -89,6 +91,7 @@ public class Snippet014WizardDialog {
 					.createFromImage(new Image(Display.getDefault(), 16, 16)));
 		}
 
+		@Override
 		public void createControl(Composite parent) {
 			DataBindingContext dbc = new DataBindingContext();
 			WizardPageSupport.create(this, dbc);
@@ -116,6 +119,7 @@ public class Snippet014WizardDialog {
 
 		private SampleWizardModel model = new SampleWizardModel();
 
+		@Override
 		public void addPages() {
 			addPage(new FirstWizardPage());
 			addPage(new SecondWizardPage());
@@ -125,10 +129,12 @@ public class Snippet014WizardDialog {
 			return model;
 		}
 		
+		@Override
 		public String getWindowTitle() {
 			return "Data Binding Snippet014";
 		}
 
+		@Override
 		public boolean performFinish() {
 			return true;
 		}
@@ -142,6 +148,7 @@ public class Snippet014WizardDialog {
 		// the
 		// Workbench as opposed to just JFace/SWT.
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				IWizard wizard = new SampleWizard();
 				WizardDialog dialog = new WizardDialog(null, wizard);

@@ -45,6 +45,7 @@ public class Snippet003UpdateComboBindUsingViewer {
 	public static void main(String[] args) {
 		final Display display = new Display();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				ViewModel viewModel = new ViewModel();
 				Shell shell = new View(viewModel).createShell();
@@ -144,6 +145,7 @@ public class Snippet003UpdateComboBindUsingViewer {
 			Button reset = new Button(shell, SWT.NULL);
 			reset.setText("reset collection");
 			reset.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					List newList = new ArrayList();
 					newList.add("Chocolate");

@@ -39,6 +39,7 @@ public class Snippet024SelectObservableValue {
 	public static void main(String[] args) {
 		final Display display = Display.getDefault();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				try {
 					Snippet024SelectObservableValue window = new Snippet024SelectObservableValue();
@@ -111,6 +112,7 @@ public class Snippet024SelectObservableValue {
 			this.name = name;
 		}
 
+		@Override
 		public String toString() {
 			return name;
 		}

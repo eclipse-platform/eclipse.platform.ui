@@ -54,6 +54,7 @@ public class Snippet032TableViewerColumnEditing {
 	public static void main(String[] args) {
 		final Display display = new Display();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				ViewModel viewModel = new ViewModel();
 				Shell shell = new View(viewModel).createShell();

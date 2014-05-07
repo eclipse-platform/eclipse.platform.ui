@@ -65,6 +65,7 @@ public class Snippet015DelayTextModifyEvents {
 
 		final IObservableValue stale1 = Observables.observeStale(delayed1);
 		new ControlUpdater(field2) {
+			@Override
 			protected void updateControl() {
 				boolean stale = ((Boolean) stale1.getValue()).booleanValue();
 				field2.setFont(stale ? italicFont : shellFont);
@@ -73,6 +74,7 @@ public class Snippet015DelayTextModifyEvents {
 
 		final IObservableValue stale2 = Observables.observeStale(delayed2);
 		new ControlUpdater(field1) {
+			@Override
 			protected void updateControl() {
 				boolean stale = ((Boolean) stale2.getValue()).booleanValue();
 				field1.setFont(stale ? italicFont : shellFont);
@@ -98,6 +100,7 @@ public class Snippet015DelayTextModifyEvents {
 		final Display display = new Display();
 
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				Shell shell = new Shell();
 				shell.setLayout(new GridLayout(3, false));

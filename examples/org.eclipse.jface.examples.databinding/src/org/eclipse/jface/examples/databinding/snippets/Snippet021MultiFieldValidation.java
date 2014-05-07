@@ -82,6 +82,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 	 * 
 	 * @param parent
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		final GridLayout gridLayout = new GridLayout();
@@ -216,6 +217,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		dbc.bindValue(targetField2, middleField2);
 
 		MultiValidator validator = new MultiValidator() {
+			@Override
 			protected IStatus validate() {
 				Integer field1 = (Integer) middleField1.getValue();
 				Integer field2 = (Integer) middleField2.getValue();
@@ -255,10 +257,12 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		addendsTarget.setInput(targetAddends);
 
 		addAddendButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				InputDialog dialog = new InputDialog(getShell(),
 						"Input addend", "Enter an integer addend", "0",
 						new IInputValidator() {
+							@Override
 							public String isValid(String newText) {
 								try {
 									Integer.valueOf(newText);
@@ -277,6 +281,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		});
 
 		removeAddendButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection selection = (IStructuredSelection) addendsTarget
 						.getSelection();
@@ -294,6 +299,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 				Integer.TYPE);
 
 		MultiValidator validator = new MultiValidator() {
+			@Override
 			protected IStatus validate() {
 				Integer sum = (Integer) middleSum.getValue();
 				int actualSum = 0;
@@ -319,14 +325,17 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 	}
 
 	static class MultiFieldValidationWizard extends Wizard {
+		@Override
 		public void addPages() {
 			addPage(new Snippet021MultiFieldValidation());
 		}
 
+		@Override
 		public String getWindowTitle() {
 			return "Snippet 021 - Multi-field Validation";
 		}
 
+		@Override
 		public boolean performFinish() {
 			return true;
 		}
@@ -336,6 +345,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		Display display = new Display();
 
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				IWizard wizard = new MultiFieldValidationWizard();
 				WizardDialog dialog = new WizardDialog(null, wizard);

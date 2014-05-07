@@ -40,6 +40,7 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 	public static void main(String[] args) {
 		Realm.runWithDefault(SWTObservables.getRealm(Display.getDefault()),
 				new Runnable() {
+					@Override
 					public void run() {
 						Snippet011ValidateMultipleBindingsSnippet.run();
 					}
@@ -64,6 +65,7 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 
 		// DEBUG - print to show value change
 		model.value1.addValueChangeListener(new IValueChangeListener() {
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				System.out.println("Value 1: " + model.value1.getValue());
 			}
@@ -71,6 +73,7 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 
 		// DEBUG - print to show value change
 		model.value2.addValueChangeListener(new IValueChangeListener() {
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				System.out.println("Value 2: " + model.value2.getValue());
 			}
@@ -103,6 +106,7 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 			this.other = other;
 		}
 
+		@Override
 		public IStatus validate(Object value) {
 			if (!value.equals(other.getValue())) {
 				return ValidationStatus.ok();

@@ -47,6 +47,7 @@ public class Snippet022ComputedListCombo {
 		shell.setLayout(new GridLayout(1, false));
 
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				Snippet022ComputedListCombo snippet = new Snippet022ComputedListCombo();
 				snippet.createModel();
@@ -100,6 +101,7 @@ public class Snippet022ComputedListCombo {
 		viewer.setContentProvider(new ObservableListContentProvider());
 		// We should really have an out-of-the box filtered list...
 		IObservableList filteredList = new ComputedList() {
+			@Override
 			protected List calculate() {
 				ArrayList result = new ArrayList();
 				for (Iterator it = model.iterator(); it.hasNext();) {
@@ -131,6 +133,7 @@ public class Snippet022ComputedListCombo {
 			this.male = male;
 		}
 
+		@Override
 		public String toString() {
 			return name;
 		}

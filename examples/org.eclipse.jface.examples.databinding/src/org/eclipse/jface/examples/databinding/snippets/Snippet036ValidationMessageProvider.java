@@ -57,6 +57,7 @@ public class Snippet036ValidationMessageProvider {
 		Display display = new Display();
 
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				IWizard wizard = new MessageProviderWizard();
 				WizardDialog wizardDialog = new WizardDialog(null, wizard);
@@ -75,14 +76,17 @@ public class Snippet036ValidationMessageProvider {
 
 	private static final class MessageProviderWizard extends Wizard {
 
+		@Override
 		public void addPages() {
 			addPage(new MessageProviderWizardPage());
 		}
 
+		@Override
 		public String getWindowTitle() {
 			return "Snippet 036 - IValidationMessageProvider";
 		}
 
+		@Override
 		public boolean performFinish() {
 			return true;
 		}
@@ -99,6 +103,7 @@ public class Snippet036ValidationMessageProvider {
 			setDescription("Please fill in the form.");
 		}
 
+		@Override
 		public void createControl(Composite parent) {
 			dbc = new DataBindingContext();
 			bindingMapName = new HashMap();
@@ -150,6 +155,7 @@ public class Snippet036ValidationMessageProvider {
 			// Custom control decoration for "required" validation.
 			ControlDecorationUpdater decorationUpdater = new ControlDecorationUpdater() {
 
+				@Override
 				protected Image getImage(IStatus status) {
 					// For required validations, we do not want to display an
 					// error icon since the user has not done anything wrong.
@@ -191,6 +197,7 @@ public class Snippet036ValidationMessageProvider {
 			this.bindingMapName = bindingMapName;
 		}
 
+		@Override
 		public String getMessage(ValidationStatusProvider statusProvider) {
 			if (statusProvider != null) {
 				String name = (String) bindingMapName.get(statusProvider);
@@ -203,6 +210,7 @@ public class Snippet036ValidationMessageProvider {
 			return super.getMessage(statusProvider);
 		}
 
+		@Override
 		public int getMessageType(ValidationStatusProvider statusProvider) {
 			if (statusProvider instanceof Binding) {
 				Binding binding = (Binding) statusProvider;
@@ -226,6 +234,7 @@ public class Snippet036ValidationMessageProvider {
 
 	private static final class RequiredValidator implements IValidator {
 
+		@Override
 		public IStatus validate(Object value) {
 			if (value == null || "".equals(value)) {
 				return ValidationStatus.error("Please specify a value.");

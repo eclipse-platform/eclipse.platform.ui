@@ -78,6 +78,7 @@ public class Snippet006Spreadsheet {
 			this.cellFormula = cellFormula;
 		}
 
+		@Override
 		protected Object calculate() {
 			if (calculating) {
 				return "#cycle";
@@ -146,6 +147,7 @@ public class Snippet006Spreadsheet {
 
 		final Display display = new Display();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				Shell shell = new Shell(display);
 				shell.setText("Data Binding Snippet 006");
@@ -178,6 +180,7 @@ public class Snippet006Spreadsheet {
 				}
 
 				new TableUpdater(table, list) {
+					@Override
 					protected void updateItem(int rowIndex, TableItem item, Object element) {
 						if (DEBUG_LEVEL >= 1) {
 							System.out.println("updating row " + rowIndex);
@@ -192,6 +195,7 @@ public class Snippet006Spreadsheet {
 				if (FUNKY_COUNTER) {
 					// counter in A1
 					display.asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							cellFormulas[0][1].setValue("" + counter++);
 							display.timerExec(COUNTER_UPDATE_DELAY, this);
@@ -212,6 +216,7 @@ public class Snippet006Spreadsheet {
 					// corresponding row
 					// in
 					// the table
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						table.setSelection(new TableItem[] { cursor.getRow() });
 					}
@@ -220,6 +225,7 @@ public class Snippet006Spreadsheet {
 					// text
 					// editor so that
 					// they can change the text of the cell
+					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
 						final Text text = new Text(cursor, SWT.NONE);
 						TableItem row = cursor.getRow();
@@ -229,6 +235,7 @@ public class Snippet006Spreadsheet {
 								.setText((String) cellFormulas[rowIndex][columnIndex]
 										.getValue());
 						text.addKeyListener(new KeyAdapter() {
+							@Override
 							public void keyPressed(KeyEvent e) {
 								// close the text editor and copy the data over
 								// when the user hits "ENTER"
@@ -255,6 +262,7 @@ public class Snippet006Spreadsheet {
 				// key.
 				// This alows the user to select multiple items in the table.
 				cursor.addKeyListener(new KeyAdapter() {
+					@Override
 					public void keyPressed(KeyEvent e) {
 						if (e.keyCode == SWT.MOD1 || e.keyCode == SWT.MOD2
 								|| (e.stateMask & SWT.MOD1) != 0
@@ -267,6 +275,7 @@ public class Snippet006Spreadsheet {
 				// "MOD1" key.
 				// This signals the end of the multiple selection task.
 				table.addKeyListener(new KeyAdapter() {
+					@Override
 					public void keyReleased(KeyEvent e) {
 						if (e.keyCode == SWT.MOD1
 								&& (e.stateMask & SWT.MOD2) != 0)

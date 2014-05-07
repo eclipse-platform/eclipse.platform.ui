@@ -38,6 +38,7 @@ public class Snippet023ConditionalVisibility {
 		shell.setLayout(new GridLayout(1, false));
 
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				new Snippet023ConditionalVisibility().createControls(shell);
 			}
@@ -101,6 +102,7 @@ public class Snippet023ConditionalVisibility {
 
 		// Note that ControlUpdater is not API.
 		new ControlUpdater(oneOfTwo) {
+			@Override
 			protected void updateControl() {
 				if (((Boolean) rangeSelected.getValue()).booleanValue()) {
 					stackLayout.topControl = rangeGroup;

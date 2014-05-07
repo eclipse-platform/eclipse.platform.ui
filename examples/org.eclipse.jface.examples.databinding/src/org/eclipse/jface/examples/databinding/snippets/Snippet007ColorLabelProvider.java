@@ -60,6 +60,7 @@ public class Snippet007ColorLabelProvider {
 
 		final Display display = new Display();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				Shell shell = new Shell(display);
 				shell.setText("Gender Bender");
@@ -105,6 +106,7 @@ public class Snippet007ColorLabelProvider {
 					// match
 					// the columns
 					// in the table, we change the column text as follows:
+					@Override
 					public String getColumnText(Object element, int index) {
 						if (index == 0) {
 							return Integer
@@ -113,10 +115,12 @@ public class Snippet007ColorLabelProvider {
 						return ((Person) element).getName();
 					}
 
+					@Override
 					public Color getBackground(Object element, int index) {
 						return null;
 					}
 
+					@Override
 					public Color getForeground(Object element, int index) {
 						if (index == 0)
 							return null;
@@ -125,6 +129,7 @@ public class Snippet007ColorLabelProvider {
 								: female;
 					}
 
+					@Override
 					public void dispose() {
 						super.dispose();
 						female.dispose();
@@ -139,6 +144,7 @@ public class Snippet007ColorLabelProvider {
 				Button button = new Button(shell, SWT.PUSH);
 				button.setText("Toggle Gender");
 				button.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent arg0) {
 						StructuredSelection selection = (StructuredSelection) viewer
 								.getSelection();

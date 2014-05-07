@@ -138,6 +138,7 @@ public class Snippet0xffffffff {
 			// Bind it (manually)
 			name.setText(viewModel.getPerson().getName());
 			name.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					final String text = name.getText();
 					// validation
@@ -147,8 +148,10 @@ public class Snippet0xffffffff {
 			});
 			viewModel.person.addPropertyChangeListener("name",
 					new PropertyChangeListener() {
+						@Override
 						public void propertyChange(PropertyChangeEvent evt) {
 							display.asyncExec(new Runnable() {
+								@Override
 								public void run() {
 									final String newName = viewModel.person.getName();
 									// conversion

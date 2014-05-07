@@ -56,6 +56,7 @@ public class RelaxedDuckType extends DuckType implements InvocationHandler {
 		super(object);
 	}
 	
+	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		try {
 			Method realMethod = objectClass.getMethod(method.getName(), method.getParameterTypes());

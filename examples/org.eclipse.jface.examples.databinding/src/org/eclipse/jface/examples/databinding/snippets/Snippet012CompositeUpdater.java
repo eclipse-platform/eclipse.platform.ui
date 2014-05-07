@@ -39,6 +39,7 @@ public class Snippet012CompositeUpdater {
 	public static void main(String[] args) {
 		final Display display = new Display();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				Shell shell = new Shell(display);
 
@@ -47,6 +48,7 @@ public class Snippet012CompositeUpdater {
 				Button button = new Button(shell, SWT.PUSH);
 				button.setText("add");
 				button.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(
 							org.eclipse.swt.events.SelectionEvent e) {
 						list.add(0, new Counter());
@@ -56,12 +58,14 @@ public class Snippet012CompositeUpdater {
 				final Composite composite = new Composite(shell, SWT.None);
 
 				new CompositeUpdater(composite, list) {
+					@Override
 					protected Widget createWidget(int index) {
 						Label label = new Label(composite, SWT.BORDER);
 						//requestLayout(label);
 						return label;
 					}
 
+					@Override
 					protected void updateWidget(Widget widget, Object element) {
 						((Label) widget).setText(((Counter) element).getValue()
 								+ "");
@@ -95,10 +99,12 @@ public class Snippet012CompositeUpdater {
 
 		private void scheduleIncrementTask() {
 			timer.schedule(new TimerTask() {
+				@Override
 				public void run() {
 					// we have to get onto the realm (UI thread) to perform the
 					// increment
 					getRealm().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							Integer currentVal = (Integer) getValue();
 							setValue(new Integer(currentVal.intValue() + 1));

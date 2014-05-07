@@ -52,6 +52,7 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 		// application, you can do this once, wrapping your binding
 		// method call.
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				ViewModel viewModel = new ViewModel();
 				Shell shell = new View(viewModel).createShell();
@@ -233,6 +234,7 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 			// Since we're using a JFace Viewer, we do first wrap our Table...
 			TableViewer peopleViewer = new TableViewer(duckFamily);
 			peopleViewer.addFilter(new ViewerFilter() {
+				@Override
 				public boolean select(Viewer viewer, Object parentElement,
 						Object element) {
 					return element != UNKNOWN;

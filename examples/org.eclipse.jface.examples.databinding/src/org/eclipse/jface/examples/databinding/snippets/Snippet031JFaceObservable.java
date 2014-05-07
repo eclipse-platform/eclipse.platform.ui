@@ -35,6 +35,7 @@ public class Snippet031JFaceObservable {
 		final ViewModel viewModel = new ViewModel();
 
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				final Shell shell = new View(viewModel).createShell();
 				// The SWT event loop

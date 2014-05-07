@@ -41,6 +41,7 @@ public class Snippet009TableViewer {
 		// automatically by the Workbench. In an SWT application, you can do
 		// this once, wrpping your binding method call.
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 
 				ViewModel viewModel = new ViewModel();

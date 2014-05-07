@@ -41,6 +41,7 @@ public class Snippet004DataBindingContextErrorLabel {
 	public static void main(String[] args) {
 		final Display display = new Display();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				Shell shell = new Shell(display);
 				shell.setText("Data Binding Snippet 004");
@@ -88,6 +89,7 @@ public class Snippet004DataBindingContextErrorLabel {
 	 * @since 3.2
 	 */
 	private static class FiveValidator implements IValidator {
+		@Override
 		public IStatus validate(Object value) {
 			return ("5".equals(value)) ? Status.OK_STATUS : ValidationStatus
 					.error("the value was '" + value + "', not '5'");

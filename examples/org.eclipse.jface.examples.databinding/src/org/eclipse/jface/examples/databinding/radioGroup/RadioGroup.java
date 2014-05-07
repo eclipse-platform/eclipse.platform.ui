@@ -111,11 +111,13 @@ public class RadioGroup {
    }
    
    private SelectionListener selectionListener = new SelectionListener() {
-      public void widgetDefaultSelected(SelectionEvent e) {
+      @Override
+	public void widgetDefaultSelected(SelectionEvent e) {
          widgetSelected(e);
       }
       
-      public void widgetSelected(SelectionEvent e) {
+      @Override
+	public void widgetSelected(SelectionEvent e) {
          potentialNewSelection = getButton(e);
          if (! potentialNewSelection.getSelection()) {
             return;
@@ -162,7 +164,8 @@ public class RadioGroup {
 
    private void rollbackSelection() {
       Display.getCurrent().asyncExec(new Runnable() {
-         public void run() {
+         @Override
+		public void run() {
             potentialNewSelection.setSelection(false);
             selectedButton.setSelection(true);
 //            selectedButton.notifyListeners(SWT.Selection, null);

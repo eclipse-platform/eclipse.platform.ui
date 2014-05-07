@@ -64,6 +64,7 @@ public class Snippet030DateAndTimeObservableValue {
 	public void open() {
 		final Display display = Display.getDefault();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				createContents();
 				shell.pack();
@@ -127,6 +128,7 @@ public class Snippet030DateAndTimeObservableValue {
 
 		syncTime.addListener(SWT.Selection, new Listener() {
 			Runnable runnable = new Runnable() {
+				@Override
 				public void run() {
 					if (syncTime.getSelection()) {
 						timeSelection.setValue(new Date());
@@ -135,6 +137,7 @@ public class Snippet030DateAndTimeObservableValue {
 				}
 			};
 
+			@Override
 			public void handleEvent(Event event) {
 				time.setEnabled(!syncTime.getSelection());
 				if (syncTime.getSelection()) {

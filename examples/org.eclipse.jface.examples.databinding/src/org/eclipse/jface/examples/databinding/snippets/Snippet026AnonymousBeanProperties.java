@@ -64,6 +64,7 @@ public class Snippet026AnonymousBeanProperties {
 	public static void main(String[] args) {
 		Display display = new Display();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				try {
 					Snippet026AnonymousBeanProperties window = new Snippet026AnonymousBeanProperties();
@@ -152,6 +153,7 @@ public class Snippet026AnonymousBeanProperties {
 			firePropertyChange("contacts", oldValue, newValue);
 		}
 
+		@Override
 		public int compareTo(Object o) {
 			ContactGroup that = (ContactGroup) o;
 			return this.name.compareTo(that.name);
@@ -191,6 +193,7 @@ public class Snippet026AnonymousBeanProperties {
 					this.status = checkNull(status));
 		}
 
+		@Override
 		public int compareTo(Object o) {
 			Contact that = (Contact) o;
 			int result = this.name.compareTo(that.name);
@@ -222,16 +225,19 @@ public class Snippet026AnonymousBeanProperties {
 	 * and removeContact methods.
 	 */
 	public static class ContactGroupContactsProperty extends SimpleSetProperty {
+		@Override
 		public Object getElementType() {
 			return Contact.class;
 		}
 
+		@Override
 		protected Set doGetSet(Object source) {
 			if (source == null)
 				return Collections.EMPTY_SET;
 			return ((ContactGroup) source).getContacts();
 		}
 
+		@Override
 		protected void doSetSet(Object source, Set set, SetDiff diff) {
 			doUpdateSet(source, diff);
 		}
@@ -249,6 +255,7 @@ public class Snippet026AnonymousBeanProperties {
 			}
 		}
 
+		@Override
 		public INativePropertyListener adaptListener(
 				final ISimplePropertyListener listener) {
 			return new Listener(this, listener);
@@ -260,15 +267,18 @@ public class Snippet026AnonymousBeanProperties {
 				super(property, listener);
 			}
 
+			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				fireChange(evt.getSource(), null);
 			}
 
+			@Override
 			protected void doAddTo(Object source) {
 				((ContactGroup) source).addPropertyChangeListener("contacts",
 						this);
 			}
 
+			@Override
 			protected void doRemoveFrom(Object source) {
 				((ContactGroup) source).removePropertyChangeListener(
 						"contacts", this);
@@ -367,6 +377,7 @@ public class Snippet026AnonymousBeanProperties {
 			ISetProperty groupContacts = BeanProperties.set(ContactGroup.class,
 					"contacts");
 
+			@Override
 			protected ISetProperty doGetDelegate(Object source) {
 				if (source instanceof ApplicationModel)
 					return modelGroups;
@@ -397,6 +408,7 @@ public class Snippet026AnonymousBeanProperties {
 
 		dbc.bindValue(WidgetProperties.enabled().observe(
 				statusViewer.getControl()), new ComputedValue() {
+			@Override
 			protected Object calculate() {
 				return Boolean.valueOf(selection.getValue() instanceof Contact);
 			}

@@ -65,6 +65,7 @@ public class LabelProviderTest2 {
 		 * 
 		 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 		 */
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button pressed = (Button) e.widget;
 			if (pressed == addButton) {
@@ -97,6 +98,7 @@ public class LabelProviderTest2 {
 			list.setLabelProvider(new ListeningLabelProvider(contentProvider
 					.getKnownElements()) {
 				RenamableItem.Listener listener = new RenamableItem.Listener() {
+					@Override
 					public void handleChanged(RenamableItem item) {
 						fireChangeEvent(Collections.singleton(item));
 					}
@@ -108,6 +110,7 @@ public class LabelProviderTest2 {
 				 * @see org.eclipse.jface.databinding.viewers.ViewerLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel,
 				 *      java.lang.Object)
 				 */
+				@Override
 				public void updateLabel(ViewerLabel label, Object element) {
 					if (element instanceof RenamableItem) {
 						RenamableItem item = (RenamableItem) element;
@@ -116,12 +119,14 @@ public class LabelProviderTest2 {
 					}
 				}
 
+				@Override
 				protected void addListenerTo(Object next) {
 					RenamableItem item = (RenamableItem) next;
 
 					item.addListener(listener);
 				}
 
+				@Override
 				protected void removeListenerFrom(Object next) {
 					RenamableItem item = (RenamableItem) next;
 
@@ -146,6 +151,7 @@ public class LabelProviderTest2 {
 
 				selectedRenamable
 						.addValueChangeListener(new IValueChangeListener() {
+							@Override
 							public void handleValueChange(ValueChangeEvent event) {
 								boolean shouldEnable = selectedRenamable
 										.getValue() != null;
@@ -189,6 +195,7 @@ public class LabelProviderTest2 {
 	public static void main(String[] args) {
 		final Display display = Display.getDefault();
         Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				LabelProviderTest2 test = new LabelProviderTest2();
 				Shell s = test.getShell();
