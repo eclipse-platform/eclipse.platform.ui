@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010-2014 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Sopot Cela <sopotcela@gmail.com> - initial API and implementation
+ *     Marco Descher <marco@descher.at> - Bug 434371
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.model;
 
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
@@ -115,6 +117,11 @@ public class ExtractContributionModelWizard extends BaseApplicationModelWizard {
 	@Override
 	protected NewModelFilePage createWizardPage(ISelection selection) {
 		return new NewModelFilePage(selection,getDefaultFileName());
+	}
+	
+	@Override
+	protected void adjustDependencies(IFile file) {
+		super.adjustFragmentDependencies(file);
 	}
 
 }
