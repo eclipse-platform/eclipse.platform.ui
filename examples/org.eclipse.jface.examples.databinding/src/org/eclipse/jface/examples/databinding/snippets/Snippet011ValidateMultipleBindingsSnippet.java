@@ -1,5 +1,5 @@
- /*******************************************************************************
- * Copyright (c) 2007 Brad Reynolds and others.
+/*******************************************************************************
+ * Copyright (c) 2007, 2014 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 434287
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -109,8 +110,12 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 		@Override
 		public IStatus validate(Object value) {
 			if (!value.equals(other.getValue())) {
+				// DEBUG - print validation result
+				System.out.println("Validation fine");
 				return ValidationStatus.ok();
 			}
+			// DEBUG - print validation result
+			System.out.println("Validation error: values cannot be the same");
 			return ValidationStatus.error("values cannot be the same");
 		}
 	}
