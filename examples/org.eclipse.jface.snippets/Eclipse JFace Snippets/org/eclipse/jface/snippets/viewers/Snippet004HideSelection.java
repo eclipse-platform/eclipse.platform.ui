@@ -12,6 +12,9 @@
 
 package org.eclipse.jface.snippets.viewers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -48,8 +51,7 @@ public class Snippet004HideSelection {
 				| SWT.FULL_SELECTION);
 		v.setLabelProvider(new LabelProvider());
 		v.setContentProvider(ArrayContentProvider.getInstance());
-		MyModel[] model = createModel();
-		v.setInput(model);
+		v.setInput(createModel());
 		v.getTable().setLinesVisible(true);
 		v.getTable().addMouseListener(new MouseAdapter() {
 
@@ -63,11 +65,11 @@ public class Snippet004HideSelection {
 		});
 	}
 
-	private MyModel[] createModel() {
-		MyModel[] elements = new MyModel[10];
+	private List<MyModel> createModel() {
+		List<MyModel> elements = new ArrayList<MyModel>();
 
 		for (int i = 0; i < 10; i++) {
-			elements[i] = new MyModel(i);
+			elements.add(new MyModel(i));
 		}
 
 		return elements;
