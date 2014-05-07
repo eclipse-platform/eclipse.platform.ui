@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *******************************************************************************/
 package org.eclipse.jface.snippets.wizard;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -49,33 +51,25 @@ public class Snippet047WizardWithLongRunningOperation {
 			this.loadingType = loadingType;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.wizard.Wizard#addPages()
-		 */
+		@Override
 		public void addPages() {
 			addPage(new MyWizardPage("Standard Page"));
 			addPage(new MyWizardPageThread("Thread Page", loadingType));
 		}
 
+		@Override
 		public boolean performFinish() {
 			return true;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.wizard.Wizard#canFinish()
-		 */
+		@Override
 		public boolean canFinish() {
 			IWizardPage[] pages = getPages();
-			for (int i = 0; i < pages.length; i++) {
-				if (!pages[i].isPageComplete()) {
+			for (IWizardPage page : pages) {
+				if (!page.isPageComplete()) {
 					return false;
 				}
 			}
-
 			return true;
 		}
 
@@ -88,6 +82,7 @@ public class Snippet047WizardWithLongRunningOperation {
 			setTitle(pageName);
 		}
 
+		@Override
 		public void createControl(Composite parent) {
 			Composite comp = new Composite(parent, SWT.NONE);
 			setControl(comp);
@@ -105,6 +100,7 @@ public class Snippet047WizardWithLongRunningOperation {
 			setTitle(pageName);
 		}
 
+		@Override
 		public void createControl(final Composite parent) {
 			final Composite comp = new Composite(parent, SWT.NONE);
 			comp.setLayout(new GridLayout(1, false));
@@ -114,6 +110,7 @@ public class Snippet047WizardWithLongRunningOperation {
 			v.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 			v.addSelectionChangedListener(new ISelectionChangedListener() {
 
+				@Override
 				public void selectionChanged(SelectionChangedEvent event) {
 					getWizard().getContainer().updateButtons();
 				}
@@ -139,21 +136,21 @@ public class Snippet047WizardWithLongRunningOperation {
 
 			Thread t = new Thread() {
 
+				@Override
 				public void run() {
+					final List<MyModel> ms = new ArrayList<MyModel>();
 					if (loadingType == 1) {
 						try {
 							Thread.sleep(10000);
-							final ArrayList ms = new ArrayList();
 							for (int i = 0; i < 10; i++) {
 								ms.add(new MyModel(i));
 							}
-
 							if (v.getTable().isDisposed()) {
 								return;
 							}
-
 							parent.getDisplay().asyncExec(new Runnable() {
 
+								@Override
 								public void run() {
 									v.setInput(ms);
 									((GridData) barContainer.getLayoutData()).exclude = true;
@@ -162,13 +159,13 @@ public class Snippet047WizardWithLongRunningOperation {
 
 							});
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+
 					} else {
-						final ArrayList ms = new ArrayList();
 						parent.getDisplay().syncExec(new Runnable() {
 
+							@Override
 							public void run() {
 								v.setInput(ms);
 							}
@@ -182,6 +179,7 @@ public class Snippet047WizardWithLongRunningOperation {
 							}
 							parent.getDisplay().asyncExec(new Runnable() {
 
+								@Override
 								public void run() {
 									MyModel tmp = new MyModel(j);
 									v.add(tmp);
@@ -193,13 +191,13 @@ public class Snippet047WizardWithLongRunningOperation {
 							try {
 								Thread.sleep(1000);
 							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
 
 						parent.getDisplay().asyncExec(new Runnable() {
 
+							@Override
 							public void run() {
 								((GridData) barContainer.getLayoutData()).exclude = true;
 								comp.layout(true);
@@ -210,6 +208,7 @@ public class Snippet047WizardWithLongRunningOperation {
 
 					parent.getDisplay().syncExec(new Runnable() {
 
+						@Override
 						public void run() {
 							loading = false;
 							getWizard().getContainer().updateButtons();
@@ -219,10 +218,10 @@ public class Snippet047WizardWithLongRunningOperation {
 				}
 
 			};
-
 			t.start();
 		}
 
+		@Override
 		public boolean isPageComplete() {
 			return !loading && !v.getSelection().isEmpty();
 		}
@@ -236,6 +235,7 @@ public class Snippet047WizardWithLongRunningOperation {
 			this.index = index;
 		}
 
+		@Override
 		public String toString() {
 			return "Item-" + index;
 		}
@@ -251,6 +251,7 @@ public class Snippet047WizardWithLongRunningOperation {
 		b.setText("Load in one Chunk");
 		b.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				WizardDialog dialog = new WizardDialog(shell, new MyWizard(1));
 				dialog.open();
@@ -262,6 +263,7 @@ public class Snippet047WizardWithLongRunningOperation {
 		b.setText("Load Item by Item");
 		b.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				WizardDialog dialog = new WizardDialog(shell, new MyWizard(2));
 				dialog.open();
@@ -275,7 +277,6 @@ public class Snippet047WizardWithLongRunningOperation {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
-
 		display.dispose();
 	}
 }
