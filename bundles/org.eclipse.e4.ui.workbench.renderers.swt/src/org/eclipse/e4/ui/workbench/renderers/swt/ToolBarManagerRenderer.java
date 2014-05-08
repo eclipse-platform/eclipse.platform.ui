@@ -41,8 +41,6 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
@@ -73,9 +71,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
@@ -111,11 +106,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	private Map<MToolBarElement, ArrayList<ToolBarContributionRecord>> sharedElementToRecord = new HashMap<MToolBarElement, ArrayList<ToolBarContributionRecord>>();
 
 	private ToolItemUpdater enablementUpdater = new ToolItemUpdater();
-
-	/**
-	 * The context menu for this trim stack's items.
-	 */
-	private Menu toolbarMenu;
 
 	// @Inject
 	// private Logger logger;
@@ -420,34 +410,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			}
 		}
 
-		createToolbarMenu(toolbarModel, renderedCtrl);
-
 		return renderedCtrl;
-	}
-
-	private void createToolbarMenu(final MToolBar toolbarModel,
-			Control renderedCtrl) {
-		toolbarMenu = new Menu(renderedCtrl);
-		MenuItem hideItem = new MenuItem(toolbarMenu, SWT.NONE);
-		hideItem.setText(Messages.ToolBarManagerRenderer_MenuCloseText);
-		hideItem.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(org.eclipse.swt.widgets.Event event) {
-				toolbarModel.getTags().add(
-						IPresentationEngine.HIDDEN_EXPLICITLY);
-			}
-		});
-
-		new MenuItem(toolbarMenu, SWT.SEPARATOR);
-
-		MenuItem restoreHiddenItems = new MenuItem(toolbarMenu, SWT.NONE);
-		restoreHiddenItems
-				.setText(Messages.ToolBarManagerRenderer_MenuRestoreText);
-		restoreHiddenItems.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(org.eclipse.swt.widgets.Event event) {
-				removeHiddenTags(toolbarModel);
-			}
-		});
-		renderedCtrl.setMenu(toolbarMenu);
 	}
 
 	/**
@@ -1053,22 +1016,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 	ToolItemUpdater getUpdater() {
 		return enablementUpdater;
-	}
-
-	/**
-	 * Removes the IPresentationEngine.HIDDEN_EXPLICITLY from the trimbar
-	 * entries. Having a separate logic for toolbars and toolcontrols would be
-	 * confusing for the user, hence we remove this tag for both these types
-	 *
-	 * @param toolbarModel
-	 */
-	private void removeHiddenTags(MToolBar toolbarModel) {
-		MWindow mWindow = modelService.getTopLevelWindowFor(toolbarModel);
-		List<MTrimElement> trimElements = modelService.findElements(mWindow,
-				null, MTrimElement.class, null);
-		for (MTrimElement trimElement : trimElements) {
-			trimElement.getTags().remove(IPresentationEngine.HIDDEN_EXPLICITLY);
-		}
 	}
 
 }

@@ -127,7 +127,14 @@ public class ToolControlRenderer extends SWTPartRenderer {
 		}
 		CSSRenderingUtils cssUtils = parentContext.get(CSSRenderingUtils.class);
 		newCtrl = cssUtils.frameMeIfPossible(newCtrl, null, vertical, true);
-		createToolControlMenu(toolControl, newCtrl);
+
+		boolean hideable = toolControl.getTags().contains("HIDEABLE"); //$NON-NLS-1$
+		boolean showRestoreMenu = toolControl.getTags().contains(
+				"SHOW_RESTORE_MENU"); //$NON-NLS-1$
+		if (showRestoreMenu || hideable) {
+			createToolControlMenu(toolControl, newCtrl, hideable);
+		}
+
 		return newCtrl;
 	}
 
@@ -171,18 +178,21 @@ public class ToolControlRenderer extends SWTPartRenderer {
 	}
 
 	private void createToolControlMenu(final MToolControl toolControl,
-			Control renderedCtrl) {
+			Control renderedCtrl, boolean hideable) {
 		toolControlMenu = new Menu(renderedCtrl);
-		MenuItem hideItem = new MenuItem(toolControlMenu, SWT.NONE);
-		hideItem.setText(Messages.ToolBarManagerRenderer_MenuCloseText);
-		hideItem.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(org.eclipse.swt.widgets.Event event) {
-				toolControl.getTags()
-						.add(IPresentationEngine.HIDDEN_EXPLICITLY);
-			}
-		});
 
-		new MenuItem(toolControlMenu, SWT.SEPARATOR);
+		if (hideable) {
+			MenuItem hideItem = new MenuItem(toolControlMenu, SWT.NONE);
+			hideItem.setText(Messages.ToolBarManagerRenderer_MenuCloseText);
+			hideItem.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(org.eclipse.swt.widgets.Event event) {
+					toolControl.getTags().add(
+							IPresentationEngine.HIDDEN_EXPLICITLY);
+				}
+			});
+
+			new MenuItem(toolControlMenu, SWT.SEPARATOR);
+		}
 
 		MenuItem restoreHiddenItems = new MenuItem(toolControlMenu, SWT.NONE);
 		restoreHiddenItems
