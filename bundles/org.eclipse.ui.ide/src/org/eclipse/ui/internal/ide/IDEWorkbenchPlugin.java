@@ -378,8 +378,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 						IViewReference viewReference= refs[j];
 						if (IPageLayout.ID_PROBLEM_VIEW.equals(viewReference.getId()))
 							try {
-								if (viewReference.getPart(false) == null)
-									activePage.showView(viewReference.getId(), viewReference.getSecondaryId(), IWorkbenchPage.VIEW_CREATE);
+								activePage.showView(viewReference.getId(), viewReference.getSecondaryId(), IWorkbenchPage.VIEW_CREATE);
 							} catch (PartInitException e) {
 								log("Could not create Problems view", e.getStatus()); //$NON-NLS-1$
 							}
