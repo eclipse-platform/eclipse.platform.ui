@@ -483,13 +483,51 @@ public class ResourceBundleHelper {
 	 *         {@link Locale#getDefault()} will be returned.
 	 */
 	public static Locale toLocale(String str) {
+		return toLocale(str, Locale.getDefault());
+	}
+
+	/**
+	 * <p>
+	 * Converts a String to a Locale.
+	 * </p>
+	 * 
+	 * <p>
+	 * This method takes the string format of a locale and creates the locale object from it.
+	 * </p>
+	 * 
+	 * <pre>
+	 *   MessageFactoryServiceImpl.toLocale("en")         = new Locale("en", "")
+	 *   MessageFactoryServiceImpl.toLocale("en_GB")      = new Locale("en", "GB")
+	 *   MessageFactoryServiceImpl.toLocale("en_GB_xxx")  = new Locale("en", "GB", "xxx")
+	 * </pre>
+	 * 
+	 * <p>
+	 * This method validates the input strictly. The language code must be lowercase. The country
+	 * code must be uppercase. The separator must be an underscore. The length must be correct.
+	 * </p>
+	 * 
+	 * <p>
+	 * This method is inspired by <code>org.apache.commons.lang.LocaleUtils.toLocale(String)</code>
+	 * by fixing the parsing error for uncommon Locales like having a language and a variant code
+	 * but no country code, or a Locale that only consists of a country code.
+	 * </p>
+	 * 
+	 * @param str
+	 *            the locale String to convert
+	 * @param defaultLocale
+	 *            the Locale that should be returned in case of an invalid Locale String
+	 * @return a Locale that matches the specified locale String. If the given input String is
+	 *         <code>null</code> or can not be parsed because of an invalid format, the given
+	 *         default {@link Locale} will be returned.
+	 */
+	public static Locale toLocale(String str, Locale defaultLocale) {
 		LogService logService = ServicesActivator.getDefault().getLogService();
 
 		if (str == null) {
 			if (logService != null)
 				logService.log(LogService.LOG_ERROR, "Given locale String is null"
 						+ " - Default Locale will be used instead."); //$NON-NLS-1$
-			return Locale.getDefault();
+			return defaultLocale;
 		}
 
 		String language = ""; //$NON-NLS-1$
@@ -500,17 +538,17 @@ public class ResourceBundleHelper {
 		if (localeParts.length == 0 || localeParts.length > 3
 				|| (localeParts.length == 1 && localeParts[0].length() == 0)) {
 			logInvalidFormat(str, logService);
-			return Locale.getDefault();
+			return defaultLocale;
 		} else {
 			if (localeParts[0].length() == 1 || localeParts[0].length() > 2) {
 				logInvalidFormat(str, logService);
-				return Locale.getDefault();
+				return defaultLocale;
 			} else if (localeParts[0].length() == 2) {
 				char ch0 = localeParts[0].charAt(0);
 				char ch1 = localeParts[0].charAt(1);
 				if (ch0 < 'a' || ch0 > 'z' || ch1 < 'a' || ch1 > 'z') {
 					logInvalidFormat(str, logService);
-					return Locale.getDefault();
+					return defaultLocale;
 				}
 			}
 
