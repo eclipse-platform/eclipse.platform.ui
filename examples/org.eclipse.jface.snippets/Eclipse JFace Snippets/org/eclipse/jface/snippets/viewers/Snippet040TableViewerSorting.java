@@ -8,15 +8,16 @@
  * Contributors:
  *     Tom Schindl - initial API and implementation
  *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427
+ *     Jeanderson Candido (http://jeandersonbc.github.io) - Bug 414565
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.EditingSupport;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
@@ -28,6 +29,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 
 /**
  * Example usage of ViewerComparator in tables to allow sorting
@@ -36,23 +38,6 @@ import org.eclipse.swt.widgets.Shell;
  *
  */
 public class Snippet040TableViewerSorting {
-
-	private class MyContentProvider implements IStructuredContentProvider {
-
-		@Override
-		public Object[] getElements(Object inputElement) {
-			return (Person[]) inputElement;
-		}
-
-		@Override
-		public void dispose() {
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-
-	}
 
 	public class Person {
 		public String givenname;
@@ -64,7 +49,6 @@ public class Snippet040TableViewerSorting {
 			this.surname = surname;
 			this.email = email;
 		}
-
 	}
 
 	protected abstract class AbstractEditingSupport extends EditingSupport {
@@ -95,13 +79,11 @@ public class Snippet040TableViewerSorting {
 	}
 
 	public Snippet040TableViewerSorting(Shell shell) {
-		TableViewer v = new TableViewer(shell, SWT.BORDER | SWT.FULL_SELECTION);
-		v.setContentProvider(new MyContentProvider());
+		TableViewer viewer = new TableViewer(shell, SWT.BORDER
+				| SWT.FULL_SELECTION);
+		viewer.setContentProvider(ArrayContentProvider.getInstance());
 
-		TableViewerColumn column = new TableViewerColumn(v, SWT.NONE);
-		column.getColumn().setWidth(200);
-		column.getColumn().setText("Givenname");
-		column.getColumn().setMoveable(true);
+		TableViewerColumn column = createColumnFor(viewer, "Givenname");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
@@ -110,7 +92,7 @@ public class Snippet040TableViewerSorting {
 			}
 		});
 
-		column.setEditingSupport(new AbstractEditingSupport(v) {
+		column.setEditingSupport(new AbstractEditingSupport(viewer) {
 
 			@Override
 			protected Object getValue(Object element) {
@@ -124,7 +106,7 @@ public class Snippet040TableViewerSorting {
 
 		});
 
-		ColumnViewerSorter cSorter = new ColumnViewerSorter(v,column) {
+		ColumnViewerSorter cSorter = new ColumnViewerSorter(viewer, column) {
 
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -135,10 +117,7 @@ public class Snippet040TableViewerSorting {
 
 		};
 
-		column = new TableViewerColumn(v, SWT.NONE);
-		column.getColumn().setWidth(200);
-		column.getColumn().setText("Surname");
-		column.getColumn().setMoveable(true);
+		column = createColumnFor(viewer, "Surname");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
@@ -148,7 +127,7 @@ public class Snippet040TableViewerSorting {
 
 		});
 
-		column.setEditingSupport(new AbstractEditingSupport(v) {
+		column.setEditingSupport(new AbstractEditingSupport(viewer) {
 
 			@Override
 			protected Object getValue(Object element) {
@@ -162,7 +141,7 @@ public class Snippet040TableViewerSorting {
 
 		});
 
-		new ColumnViewerSorter(v,column) {
+		new ColumnViewerSorter(viewer, column) {
 
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -173,10 +152,7 @@ public class Snippet040TableViewerSorting {
 
 		};
 
-		column = new TableViewerColumn(v, SWT.NONE);
-		column.getColumn().setWidth(200);
-		column.getColumn().setText("E-Mail");
-		column.getColumn().setMoveable(true);
+		column = createColumnFor(viewer, "E-Mail");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
@@ -186,7 +162,7 @@ public class Snippet040TableViewerSorting {
 
 		});
 
-		column.setEditingSupport(new AbstractEditingSupport(v) {
+		column.setEditingSupport(new AbstractEditingSupport(viewer) {
 
 			@Override
 			protected Object getValue(Object element) {
@@ -200,7 +176,7 @@ public class Snippet040TableViewerSorting {
 
 		});
 
-		new ColumnViewerSorter(v,column) {
+		new ColumnViewerSorter(viewer, column) {
 
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -211,52 +187,59 @@ public class Snippet040TableViewerSorting {
 
 		};
 
-		Person[] model = createModel();
-		v.setInput(model);
-		v.getTable().setLinesVisible(true);
-		v.getTable().setHeaderVisible(true);
+		viewer.setInput(createModel());
+		viewer.getTable().setLinesVisible(true);
+		viewer.getTable().setHeaderVisible(true);
 		cSorter.setSorter(cSorter, ColumnViewerSorter.ASC);
 	}
 
-	private Person[] createModel() {
-		Person[] elements = new Person[4];
-		elements[0] = new Person("Tom", "Schindl",
-				"tom.schindl@bestsolution.at");
-		elements[1] = new Person("Boris", "Bokowski",
-				"Boris_Bokowski@ca.ibm.com");
-		elements[2] = new Person("Tod", "Creasey", "Tod_Creasey@ca.ibm.com");
-		elements[3] = new Person("Wayne", "Beaton", "wayne@eclipse.org");
+	private TableViewerColumn createColumnFor(TableViewer viewer, String label) {
+		TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+		column.getColumn().setWidth(200);
+		column.getColumn().setText(label);
+		column.getColumn().setMoveable(true);
+		return column;
+	}
 
-		return elements;
+	private Person[] createModel() {
+		return new Person[] {
+				new Person("Tom", "Schindl", "tom.schindl@bestsolution.at"),
+				new Person("Boris", "Bokowski", "Boris_Bokowski@ca.ibm.com"),
+				new Person("Tod", "Creasey", "Tod_Creasey@ca.ibm.com"),
+				new Person("Wayne", "Beaton", "wayne@eclipse.org"),
+				new Person("Jeanderson", "Candido", "jeandersonbc@gmail.com"),
+				new Person("Lars", "Vogel", "Lars.Vogel@gmail.com"),
+				new Person("Hendrik", "Still", "hendrik.still@gammas.de") };
 	}
 
 	private static abstract class ColumnViewerSorter extends ViewerComparator {
+
 		public static final int ASC = 1;
-
 		public static final int NONE = 0;
-
 		public static final int DESC = -1;
 
 		private int direction = 0;
-
 		private TableViewerColumn column;
-
 		private ColumnViewer viewer;
 
 		public ColumnViewerSorter(ColumnViewer viewer, TableViewerColumn column) {
 			this.column = column;
 			this.viewer = viewer;
-			this.column.getColumn().addSelectionListener(new SelectionAdapter() {
+			SelectionAdapter selectionAdapter = createSelectionAdapter();
+			this.column.getColumn().addSelectionListener(selectionAdapter);
+		}
+
+		private SelectionAdapter createSelectionAdapter() {
+			return new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if( ColumnViewerSorter.this.viewer.getComparator() != null ) {
-						if( ColumnViewerSorter.this.viewer.getComparator() == ColumnViewerSorter.this ) {
+					if (ColumnViewerSorter.this.viewer.getComparator() != null) {
+						if (ColumnViewerSorter.this.viewer.getComparator() == ColumnViewerSorter.this) {
 							int tdirection = ColumnViewerSorter.this.direction;
-
-							if( tdirection == ASC ) {
+							if (tdirection == ASC) {
 								setSorter(ColumnViewerSorter.this, DESC);
-							} else if( tdirection == DESC ) {
+							} else if (tdirection == DESC) {
 								setSorter(ColumnViewerSorter.this, NONE);
 							}
 						} else {
@@ -266,25 +249,23 @@ public class Snippet040TableViewerSorting {
 						setSorter(ColumnViewerSorter.this, ASC);
 					}
 				}
-			});
+			};
 		}
 
 		public void setSorter(ColumnViewerSorter sorter, int direction) {
-			if( direction == NONE ) {
-				column.getColumn().getParent().setSortColumn(null);
-				column.getColumn().getParent().setSortDirection(SWT.NONE);
+			Table columnParent = column.getColumn().getParent();
+			if (direction == NONE) {
+				columnParent.setSortColumn(null);
+				columnParent.setSortDirection(SWT.NONE);
 				viewer.setComparator(null);
+
 			} else {
-				column.getColumn().getParent().setSortColumn(column.getColumn());
+				columnParent.setSortColumn(column.getColumn());
 				sorter.direction = direction;
+				columnParent.setSortDirection(direction == ASC ? SWT.DOWN
+						: SWT.UP);
 
-				if( direction == ASC ) {
-					column.getColumn().getParent().setSortDirection(SWT.DOWN);
-				} else {
-					column.getColumn().getParent().setSortDirection(SWT.UP);
-				}
-
-				if( viewer.getComparator() == sorter ) {
+				if (viewer.getComparator() == sorter) {
 					viewer.refresh();
 				} else {
 					viewer.setComparator(sorter);
@@ -316,9 +297,7 @@ public class Snippet040TableViewerSorting {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
-
 		display.dispose();
-
 	}
 
 }

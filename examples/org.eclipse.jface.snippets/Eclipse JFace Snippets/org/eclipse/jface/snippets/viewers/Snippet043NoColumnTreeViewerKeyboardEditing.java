@@ -8,11 +8,13 @@
  * Contributors:
  *     Tom Schindl - initial API and implementation
  *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427
+ *     Jeanderson Candido (http://jeandersonbc.github.io) - Bug 414565
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
@@ -37,7 +39,8 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Demonstrates how to use keyboard-editing support in a TreeViewer with no column
+ * Demonstrates how to use keyboard-editing support in a TreeViewer with no
+ * column
  *
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  *
@@ -59,8 +62,7 @@ public class Snippet043NoColumnTreeViewerKeyboardEditing {
 			public void widgetSelected(SelectionEvent e) {
 				MyModel root = (MyModel) v.getInput();
 				TreePath path = new TreePath(new Object[] { root,
-						root.child.get(1),
-						((MyModel) root.child.get(1)).child.get(0) });
+						root.child.get(1), root.child.get(1).child.get(0) });
 				v.editElement(path, 0);
 			}
 
@@ -83,8 +85,7 @@ public class Snippet043NoColumnTreeViewerKeyboardEditing {
 			@Override
 			public void modify(Object element, String property, Object value) {
 				element = ((Item) element).getData();
-				((MyModel) element).counter = Integer
-						.parseInt(value.toString());
+				((MyModel) element).counter = Integer.parseInt(value.toString());
 				v.update(element, null);
 			}
 
@@ -111,28 +112,7 @@ public class Snippet043NoColumnTreeViewerKeyboardEditing {
 						| ColumnViewerEditor.KEYBOARD_ACTIVATION);
 
 		v.setContentProvider(new MyContentProvider());
-
 		v.setInput(createModel());
-	}
-
-	private MyModel createModel() {
-
-		MyModel root = new MyModel(0, null);
-		root.counter = 0;
-
-		MyModel tmp;
-		MyModel subItem;
-		for (int i = 1; i < 10; i++) {
-			tmp = new MyModel(i, root);
-			root.child.add(tmp);
-			for (int j = 1; j < i; j++) {
-				subItem = new MyModel(j, tmp);
-				subItem.child.add(new MyModel(j * 100, subItem));
-				tmp.child.add(subItem);
-			}
-		}
-
-		return root;
 	}
 
 	public static void main(String[] args) {
@@ -146,7 +126,6 @@ public class Snippet043NoColumnTreeViewerKeyboardEditing {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
-
 		display.dispose();
 	}
 
@@ -185,11 +164,29 @@ public class Snippet043NoColumnTreeViewerKeyboardEditing {
 
 	}
 
+	private MyModel createModel() {
+		MyModel root = new MyModel(0, null);
+		root.counter = 0;
+
+		MyModel tmp;
+		MyModel subItem;
+		for (int i = 1; i < 10; i++) {
+			tmp = new MyModel(i, root);
+			root.child.add(tmp);
+			for (int j = 1; j < i; j++) {
+				subItem = new MyModel(j, tmp);
+				subItem.child.add(new MyModel(j * 100, subItem));
+				tmp.child.add(subItem);
+			}
+		}
+
+		return root;
+	}
+
 	public class MyModel {
+
 		public MyModel parent;
-
-		public ArrayList child = new ArrayList();
-
+		public List<MyModel> child = new ArrayList<MyModel>();
 		public int counter;
 
 		public MyModel(int counter, MyModel parent) {
@@ -203,7 +200,6 @@ public class Snippet043NoColumnTreeViewerKeyboardEditing {
 			if (parent != null) {
 				rv = parent.toString() + ".";
 			}
-
 			rv += counter;
 
 			return rv;
