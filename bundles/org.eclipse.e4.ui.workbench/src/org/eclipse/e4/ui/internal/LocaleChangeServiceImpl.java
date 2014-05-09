@@ -76,7 +76,9 @@ public class LocaleChangeServiceImpl implements ILocaleChangeService {
 			Locale locale = ResourceBundleHelper.toLocale(localeString);
 
 			// set the locale to the application context
-			this.application.getContext().set(TranslationService.LOCALE, localeString);
+			// use the resolved locale instead of the given locale string to avoid invalid locales
+			// in context
+			this.application.getContext().set(TranslationService.LOCALE, locale.toString());
 
 			// update model
 			updateLocalization(this.application.getChildren());
