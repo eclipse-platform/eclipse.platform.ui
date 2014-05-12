@@ -93,7 +93,7 @@ public class SplitDropAgent2 extends DropAgent {
 	}
 
 	private boolean isInCursorShell(DnDInfo info, Control ctrl) {
-		if (info.curCtrl == null || info.curCtrl.isDisposed())
+		if (ctrl == null || info.curCtrl == null || info.curCtrl.isDisposed())
 			return false;
 		Shell infoShell = (Shell) (info.curCtrl instanceof Shell ? info.curCtrl : info.curCtrl
 				.getShell());
