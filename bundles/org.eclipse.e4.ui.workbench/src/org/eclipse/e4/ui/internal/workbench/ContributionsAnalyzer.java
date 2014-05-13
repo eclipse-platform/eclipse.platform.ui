@@ -130,6 +130,7 @@ public final class ContributionsAnalyzer {
 				}
 			}
 		}
+		ArrayList<MMenuContribution> includedPopups = new ArrayList<MMenuContribution>();
 		for (MMenuContribution menuContribution : menuContributionList) {
 			String parentID = menuContribution.getParentId();
 			if (parentID == null) {
@@ -140,12 +141,16 @@ public final class ContributionsAnalyzer {
 			boolean popupAny = includePopups && menuModel instanceof MPopupMenu
 					&& POPUP_PARENT_ID.equals(parentID);
 			boolean filtered = isFiltered(menuModel, menuContribution, includePopups);
-			if (filtered || (!popupAny && !popupTarget && !parentID.equals(id))
+			if (!filtered && menuContribution.isToBeRendered() && popupAny) {
+				// process POPUP_ANY first
+				toContribute.add(menuContribution);
+			} else if (filtered || (!popupTarget && !parentID.equals(id))
 					|| !menuContribution.isToBeRendered()) {
 				continue;
 			}
-			toContribute.add(menuContribution);
+			includedPopups.add(menuContribution);
 		}
+		toContribute.addAll(includedPopups);
 	}
 
 	public static void gatherMenuContributions(final MMenu menuModel,
@@ -633,10 +638,12 @@ public final class ContributionsAnalyzer {
 					continue;
 				}
 				Object[] array = item.getChildren().toArray();
+				int idx = 0;
 				for (int c = 0; c < array.length; c++) {
 					MMenuElement me = (MMenuElement) array[c];
 					if (!containsMatching(toContribute.getChildren(), me)) {
-						toContribute.getChildren().add(me);
+						toContribute.getChildren().add(idx, me);
+						idx++;
 					}
 				}
 			}
