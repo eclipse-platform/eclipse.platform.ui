@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Tom Schindl and others.
+ * Copyright (c) 2007, 2014 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,19 +9,22 @@
  *     Tom Schindl<tom.schindl@bestsolution.at> - initial API and implementation
  *     Wayne Beaton - bug 185540
  *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -85,41 +88,6 @@ public class Snippet034CellEditorPerRow {
 
 	}
 
-	private class MyContentProvider implements IStructuredContentProvider {
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
-		@Override
-		public Object[] getElements(Object inputElement) {
-			return (MyModel[]) inputElement;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
-		@Override
-		public void dispose() {
-
-		}
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-		 *      java.lang.Object, java.lang.Object)
-		 */
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
-		}
-
-	}
-
 	public class MyModel {
 		public int counter;
 
@@ -163,24 +131,19 @@ public class Snippet034CellEditorPerRow {
 		});
 
 		column.setEditingSupport(new MyEditingSupport(v));
-
-		v.setContentProvider(new MyContentProvider());
-
-		MyModel[] model = createModel();
-		v.setInput(model);
+		v.setContentProvider(ArrayContentProvider.getInstance());
+		v.setInput(createModel());
 	}
 
-	private MyModel[] createModel() {
-		MyModel[] elements = new MyModel[20];
+	private List<MyModel> createModel() {
+		List<MyModel> elements = new ArrayList<MyModel>();
 
 		for (int i = 0; i < 10; i++) {
-			elements[i] = new MyModel(i);
+			elements.add(new MyModel(i));
 		}
-
 		for (int i = 0; i < 10; i++) {
-			elements[i+10] = new MyModel2(i);
+			elements.add(new MyModel2(i));
 		}
-
 		return elements;
 	}
 

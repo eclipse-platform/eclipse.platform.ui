@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Tom Schindl and others.
+ * Copyright (c) 2006, 2014 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -37,13 +39,13 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * A simple TreeViewer to demonstrate usage
- * 
+ *
  * @author Tom Schindl <tom.schindl@bestsolution.at>
- * 
+ *
  */
 public class Snippet026TreeViewerTabEditing {
 	public Snippet026TreeViewerTabEditing(final Shell shell) {
-		Button b = new Button(shell,SWT.PUSH);
+		Button b = new Button(shell, SWT.PUSH);
 		b.setText("Remove column");
 		final TreeViewer v = new TreeViewer(shell, SWT.BORDER
 				| SWT.FULL_SELECTION);
@@ -53,18 +55,20 @@ public class Snippet026TreeViewerTabEditing {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				
+
 			}
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				v.getTree().getColumn(1).dispose();
 			}
-			
+
 		});
-				 
-		TreeViewerFocusCellManager focusCellManager = new TreeViewerFocusCellManager(v,new FocusCellOwnerDrawHighlighter(v));
-		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(v) {
+
+		TreeViewerFocusCellManager focusCellManager = new TreeViewerFocusCellManager(
+				v, new FocusCellOwnerDrawHighlighter(v));
+		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(
+				v) {
 			@Override
 			protected boolean isEditorActivationEvent(
 					ColumnViewerEditorActivationEvent event) {
@@ -74,26 +78,44 @@ public class Snippet026TreeViewerTabEditing {
 						|| event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC;
 			}
 		};
-		
-		TreeViewerEditor.create(v, focusCellManager, actSupport, ColumnViewerEditor.TABBING_HORIZONTAL
+
+		int feature = ColumnViewerEditor.TABBING_HORIZONTAL
 				| ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
-				| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION);
-		
+				| ColumnViewerEditor.TABBING_VERTICAL
+				| ColumnViewerEditor.KEYBOARD_ACTIVATION;
+
+		TreeViewerEditor.create(v, focusCellManager, actSupport, feature);
 		final TextCellEditor textCellEditor = new TextCellEditor(v.getTree());
 
-		TreeViewerColumn column = new TreeViewerColumn(v, SWT.NONE);
-		column.getColumn().setWidth(200);
-		column.getColumn().setMoveable(true);
-		column.getColumn().setText("Column 1");
-		column.setLabelProvider(new ColumnLabelProvider() {
+		String[] columLabels = { "Column 1", "Column 2", "Column 3" };
+		String[] labelPrefix = { "Column 1 => ", "Column 2 => ", "Column 3 => " };
+
+		for (int i = 0; i < columLabels.length; i++) {
+			TreeViewerColumn column = new TreeViewerColumn(v, SWT.NONE);
+			column.getColumn().setWidth(200);
+			column.getColumn().setMoveable(true);
+			column.getColumn().setText(columLabels[i]);
+			column.setLabelProvider(createColumnLabelProvider(labelPrefix[i]));
+			column.setEditingSupport(createEditingSupportFor(v, textCellEditor));
+		}
+		v.setContentProvider(new MyContentProvider());
+		v.setInput(createModel());
+	}
+
+	private ColumnLabelProvider createColumnLabelProvider(final String prefix) {
+		return new ColumnLabelProvider() {
 
 			@Override
 			public String getText(Object element) {
-				return "Column 1 => " + element.toString();
+				return prefix + element.toString();
 			}
 
-		});
-		column.setEditingSupport(new EditingSupport(v) {
+		};
+	}
+
+	private EditingSupport createEditingSupportFor(final TreeViewer viewer,
+			final TextCellEditor textCellEditor) {
+		return new EditingSupport(viewer) {
 			@Override
 			protected boolean canEdit(Object element) {
 				return false;
@@ -113,89 +135,12 @@ public class Snippet026TreeViewerTabEditing {
 			protected void setValue(Object element, Object value) {
 				((MyModel) element).counter = Integer
 						.parseInt(value.toString());
-				v.update(element, null);
+				viewer.update(element, null);
 			}
-		});
-
-		column = new TreeViewerColumn(v, SWT.NONE);
-		column.getColumn().setWidth(200);
-		column.getColumn().setMoveable(true);
-		column.getColumn().setText("Column 2");
-		column.setLabelProvider(new ColumnLabelProvider() {
-
-			@Override
-			public String getText(Object element) {
-				return "Column 2 => " + element.toString();
-			}
-
-		});
-		column.setEditingSupport(new EditingSupport(v) {
-			@Override
-			protected boolean canEdit(Object element) {
-				return true;
-			}
-
-			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return textCellEditor;
-			}
-
-			@Override
-			protected Object getValue(Object element) {
-				return ((MyModel) element).counter + "";
-			}
-
-			@Override
-			protected void setValue(Object element, Object value) {
-				((MyModel) element).counter = Integer
-						.parseInt(value.toString());
-				v.update(element, null);
-			}
-		});
-		
-		column = new TreeViewerColumn(v, SWT.NONE);
-		column.getColumn().setWidth(200);
-		column.getColumn().setMoveable(true);
-		column.getColumn().setText("Column 3");
-		column.setLabelProvider(new ColumnLabelProvider() {
-
-			@Override
-			public String getText(Object element) {
-				return "Column 3 => " + element.toString();
-			}
-
-		});
-		column.setEditingSupport(new EditingSupport(v) {
-			@Override
-			protected boolean canEdit(Object element) {
-				return true;
-			}
-
-			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return textCellEditor;
-			}
-
-			@Override
-			protected Object getValue(Object element) {
-				return ((MyModel) element).counter + "";
-			}
-
-			@Override
-			protected void setValue(Object element, Object value) {
-				((MyModel) element).counter = Integer
-						.parseInt(value.toString());
-				v.update(element, null);
-			}
-		});
-		
-		v.setContentProvider(new MyContentProvider());
-
-		v.setInput(createModel());
+		};
 	}
 
 	private MyModel createModel() {
-
 		MyModel root = new MyModel(0, null);
 		root.counter = 0;
 
@@ -210,7 +155,6 @@ public class Snippet026TreeViewerTabEditing {
 				tmp.child.add(subItem);
 			}
 		}
-
 		return root;
 	}
 
@@ -225,7 +169,6 @@ public class Snippet026TreeViewerTabEditing {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
-
 		display.dispose();
 	}
 
@@ -266,9 +209,7 @@ public class Snippet026TreeViewerTabEditing {
 
 	public class MyModel {
 		public MyModel parent;
-
-		public ArrayList child = new ArrayList();
-
+		public List<MyModel> child = new ArrayList<MyModel>();
 		public int counter;
 
 		public MyModel(int counter, MyModel parent) {
@@ -282,7 +223,6 @@ public class Snippet026TreeViewerTabEditing {
 			if (parent != null) {
 				rv = parent.toString() + ".";
 			}
-
 			rv += counter;
 
 			return rv;
