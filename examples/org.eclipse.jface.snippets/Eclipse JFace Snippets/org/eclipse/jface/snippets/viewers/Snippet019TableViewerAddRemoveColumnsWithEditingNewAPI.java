@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Tom Schindl and others.
+ * Copyright (c) 2006, 2014 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,24 +7,23 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
-
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.ConfigureColumns;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.EditingSupport;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -36,7 +35,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Explore the new API added in 3.3 and see how easily you can create reusable
  * components
- * 
+ *
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  * @since 3.2
  */
@@ -44,9 +43,7 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 
 	public class Person {
 		public String givenname;
-
 		public String surname;
-
 		public String email;
 
 		public Person(String givenname, String surname, String email) {
@@ -56,46 +53,26 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 		}
 	}
 
-	private class MyContentProvider implements IStructuredContentProvider {
-
-		@Override
-		public Object[] getElements(Object inputElement) {
-			return (Person[]) inputElement;
-		}
-
-		@Override
-		public void dispose() {
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
-		}
-
-	}
-
-	
-
 	private class GivenNameLabelProvider extends ColumnLabelProvider {
 		@Override
 		public String getText(Object element) {
 			return ((Person) element).givenname;
 		}
 	}
-	
+
 	private class GivenNameEditing extends EditingSupport {
 		private TextCellEditor cellEditor;
-		
+
 		public GivenNameEditing(TableViewer viewer) {
 			super(viewer);
 			cellEditor = new TextCellEditor(viewer.getTable());
 		}
-		
+
 		@Override
 		protected boolean canEdit(Object element) {
 			return true;
 		}
-		
+
 		@Override
 		protected CellEditor getCellEditor(Object element) {
 			return cellEditor;
@@ -112,27 +89,27 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 			getViewer().update(element, null);
 		}
 	}
-	
+
 	private class SurNameLabelProvider extends ColumnLabelProvider {
 		@Override
 		public String getText(Object element) {
 			return ((Person) element).surname;
 		}
 	}
-	
+
 	private class SurNameEditing extends EditingSupport {
 		private TextCellEditor cellEditor;
-		
-		public SurNameEditing( TableViewer viewer ) {
+
+		public SurNameEditing(TableViewer viewer) {
 			super(viewer);
 			cellEditor = new TextCellEditor(viewer.getTable());
 		}
-		
+
 		@Override
 		protected boolean canEdit(Object element) {
 			return true;
 		}
-		
+
 		@Override
 		protected CellEditor getCellEditor(Object element) {
 			return cellEditor;
@@ -149,27 +126,27 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 			getViewer().update(element, null);
 		}
 	}
-	
+
 	private class EmailLabelProvider extends ColumnLabelProvider {
 		@Override
 		public String getText(Object element) {
 			return ((Person) element).email;
 		}
 	}
-	
+
 	private class EmailEditing extends EditingSupport {
 		private TextCellEditor cellEditor;
-		
-		public EmailEditing( TableViewer viewer ) {
+
+		public EmailEditing(TableViewer viewer) {
 			super(viewer);
 			cellEditor = new TextCellEditor(viewer.getTable());
 		}
-		
+
 		@Override
 		protected boolean canEdit(Object element) {
 			return true;
 		}
-		
+
 		@Override
 		protected CellEditor getCellEditor(Object element) {
 			return cellEditor;
@@ -186,39 +163,38 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 			getViewer().update(element, null);
 		}
 	}
-	
+
 	private int activeColumn = -1;
-	
+
 	private TableViewerColumn column;
-	
+
 	public Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI(Shell shell) {
 		final TableViewer v = new TableViewer(shell, SWT.BORDER
 				| SWT.FULL_SELECTION);
 
-		TableViewerColumn column = new TableViewerColumn(v,SWT.NONE);
-		column.setLabelProvider(new GivenNameLabelProvider());
-		column.setEditingSupport(new GivenNameEditing(v));
-		
-		column.getColumn().setWidth(200);
-		column.getColumn().setText("Givenname");
-		column.getColumn().setMoveable(true);
+		TableViewerColumn column1 = createColumnFor(v, "Givenname");
+		column1.setLabelProvider(new GivenNameLabelProvider());
+		column1.setEditingSupport(new GivenNameEditing(v));
 
-		column = new TableViewerColumn(v,SWT.NONE);
-		column.setLabelProvider(new SurNameLabelProvider());
-		column.setEditingSupport(new SurNameEditing(v));
-		column.getColumn().setWidth(200);
-		column.getColumn().setText("Surname");
-		column.getColumn().setMoveable(true);
+		TableViewerColumn column2 = createColumnFor(v, "Surname");
+		column2.setLabelProvider(new SurNameLabelProvider());
+		column2.setEditingSupport(new SurNameEditing(v));
 
-		Person[] model = createModel();
-
-		v.setContentProvider(new MyContentProvider());
-		v.setInput(model);
+		v.setContentProvider(ArrayContentProvider.getInstance());
+		v.setInput(createModel());
 		v.getTable().setLinesVisible(true);
 		v.getTable().setHeaderVisible(true);
 
 		addMenu(v);
 		triggerColumnSelectedColumn(v);
+	}
+
+	private TableViewerColumn createColumnFor(TableViewer viewer, String label) {
+		TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+		column.getColumn().setWidth(200);
+		column.getColumn().setText(label);
+		column.getColumn().setMoveable(true);
+		return column;
 	}
 
 	private void triggerColumnSelectedColumn(final TableViewer v) {
@@ -284,10 +260,11 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 		final Action configureColumns = new Action("Configure Columns...") {
 			@Override
 			public void run() {
-				ConfigureColumns.forTable(v.getTable(), new SameShellProvider(v.getControl()));
+				ConfigureColumns.forTable(v.getTable(),
+						new SameShellProvider(v.getControl()));
 			}
 		};
-		
+
 		mgr.setRemoveAllWhenShown(true);
 		mgr.addMenuListener(new IMenuListener() {
 
@@ -308,13 +285,13 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 	}
 
 	private Person[] createModel() {
-		Person[] persons = new Person[3];
-		persons[0] = new Person("Tom", "Schindl", "tom.schindl@bestsolution.at");
-		persons[1] = new Person("Boris", "Bokowski",
-				"boris_bokowski@ca.ibm.com");
-		persons[2] = new Person("Tod", "Creasey", "tod_creasey@ca.ibm.com");
-
-		return persons;
+		return new Person[] {
+				new Person("Tom", "Schindl", "tom.schindl@bestsolution.at"),
+				new Person("Boris", "Bokowski", "boris_bokowski@ca.ibm.com"),
+				new Person("Tod", "Creasey", "tod_creasey@ca.ibm.com"),
+				new Person("Lars", "Vogel", "lars.vogel@gmail.com"),
+				new Person("Hendrik", "Still", "hendrik.still@vogella.com"),
+				new Person("Jeanderson", "Candido", "jeandersonbc@gmail.com") };
 	}
 
 	/**
