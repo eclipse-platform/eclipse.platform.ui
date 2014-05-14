@@ -134,6 +134,9 @@ public class ImageBasedFrame extends Canvas {
 
 	@Override
 	public Point computeSize(int wHint, int hHint) {
+		if (framedControl == null || framedControl.isDisposed())
+			return new Point(0, 0);
+		
 		if (vertical) {
 			int width = w1 + framedControl.getSize().x + w3;
 			int height = h1 + handleHeight + framedControl.getSize().y + h3;
@@ -150,6 +153,9 @@ public class ImageBasedFrame extends Canvas {
 			reskin(SWT.NONE);
 			return;
 		}
+		
+		if (framedControl == null || framedControl.isDisposed())
+			return;
 		
 		Point inner = framedControl.getSize();
 		int handleWidth = (handle != null && !vertical) ? handle.getBounds().width
