@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Brad Reynolds and others.
+ * Copyright (c) 2006, 2014 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 116920, 159768
  *     Matthew Hall - bug 260329
+ *     Hendrik Still <hendrik.still@vogella.com> - Bug 434283
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -23,6 +24,7 @@ import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -55,20 +57,20 @@ public class Snippet004DataBindingContextErrorLabel {
 
 				Label errorLabel = new Label(shell, SWT.BORDER);
 				errorLabel.setForeground(display.getSystemColor(SWT.COLOR_RED));
-				GridDataFactory.swtDefaults().hint(200, SWT.DEFAULT).applyTo(
-						errorLabel);
+				GridDataFactory.swtDefaults().hint(200, SWT.DEFAULT)
+						.applyTo(errorLabel);
 
 				DataBindingContext dbc = new DataBindingContext();
 
 				// Bind the text to the value.
-				dbc.bindValue(
-						SWTObservables.observeText(text, SWT.Modify),
-						value,
-						new UpdateValueStrategy().setAfterConvertValidator(new FiveValidator()),
+				dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
+						value, new UpdateValueStrategy()
+								.setAfterConvertValidator(new FiveValidator()),
 						null);
 
 				// Bind the error label to the validation error on the dbc.
-				dbc.bindValue(SWTObservables.observeText(errorLabel),
+				dbc.bindValue(
+						WidgetProperties.text(SWT.Modify).observe(errorLabel),
 						new AggregateValidationStatus(dbc.getBindings(),
 								AggregateValidationStatus.MAX_SEVERITY));
 
