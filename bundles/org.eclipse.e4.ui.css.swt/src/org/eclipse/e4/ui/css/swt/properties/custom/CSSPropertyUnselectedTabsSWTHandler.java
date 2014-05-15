@@ -88,7 +88,7 @@ public class CSSPropertyUnselectedTabsSWTHandler extends AbstractCSSPropertySWTH
 				|| DEPRECATED_UNSELECTED_TABS_COLOR_PROP.equals(property);
 	}
 
-	// TODO: It needs to be refactored when the Bug 433276 gets fixed
+	// TODO: It needs to be refactored when the Bug 33276 gets fixed
 	private void appendResizeEventListener(CTabFolder folder) {
 		if (hasResizeEventListener(folder)) {
 			return;

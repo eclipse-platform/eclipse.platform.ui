@@ -17,6 +17,7 @@ import org.eclipse.e4.ui.css.core.dom.ArrayNodeList;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.dom.ChildVisibilityAwareElement;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.e4.ui.internal.css.swt.ICTabRendering;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -26,6 +27,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -35,6 +37,8 @@ import org.w3c.dom.NodeList;
  *
  */
 public class CTabFolderElement extends CompositeElement implements ChildVisibilityAwareElement {
+	private final static String BACKGROUND_SET_BY_TAB_RENDERER = "bgSetByTabRenderer"; //$NON-NLS-1$
+
 	private SelectionListener selectionListener = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
@@ -116,6 +120,7 @@ public class CTabFolderElement extends CompositeElement implements ChildVisibili
 		folder.setSelectionForeground((Color) null);
 		folder.setSelectionBackground((Image) null);
 		folder.setBackground(null, null);
+		resetChildrenBackground(folder);
 
 		if (folder.getRenderer() instanceof ICTabRendering) {
 			ICTabRendering renderer = (ICTabRendering) folder
@@ -155,6 +160,39 @@ public class CTabFolderElement extends CompositeElement implements ChildVisibili
 			}
 		}
 		return new ArrayNodeList(visible, engine);
+	}
+
+	private void resetChildrenBackground(Composite composite) {
+		for (Control control : composite.getChildren()) {
+			resetChildBackground(control);
+			if (control instanceof Composite) {
+				resetChildrenBackground((Composite) control);
+			}
+		}
+	}
+
+	private void resetChildBackground(Control control) {
+		Color backgroundSetByRenderer = (Color) control
+				.getData(BACKGROUND_SET_BY_TAB_RENDERER);
+		if (backgroundSetByRenderer != null) {
+			if (control.getBackground() == backgroundSetByRenderer) {
+				control.setBackground(null);
+			}
+			control.setData(BACKGROUND_SET_BY_TAB_RENDERER, null);
+		}
+	}
+
+	public static void setBackgroundOverriddenDuringRenderering(
+			Composite composite, Color background) {
+		CSSSWTColorHelper.setBackground(composite, background);
+		composite.setData(BACKGROUND_SET_BY_TAB_RENDERER, background);
+
+		for (Control control : composite.getChildren()) {
+			if (!CompositeElement.hasBackgroundOverriddenByCSS(control)) {
+				CSSSWTColorHelper.setBackground(control, background);
+				control.setData(BACKGROUND_SET_BY_TAB_RENDERER, background);
+			}
+		}
 	}
 }
 

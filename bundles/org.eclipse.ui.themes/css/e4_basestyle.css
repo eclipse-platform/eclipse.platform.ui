@@ -166,14 +166,6 @@ CTabItem:selected {
 	color: '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_TEXT_COLOR';
 }
 
-.MPartStack#left Composite, .MPartStack#right Composite, .MPartStack#bottom Composite {
-	background-color: '#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END';
-}
-
-.MPartStack#left.active Composite, .MPartStack#right.active Composite, .MPartStack#bottom.active Composite {
-	background-color: '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END';
-}
-
 #PerspectiveSwitcher {
 	eclipse-perspective-keyline-color: #AAB0BF #AAB0BF;
 }
@@ -200,4 +192,14 @@ CTabItem:selected {
 	background-color: #A0A000;
 }
 
+.MPartStack#left Composite, .MPartStack#right Composite, .MPartStack#bottom Composite {
+	background-color: '#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END';
+}
 
+.MPartStack#left.active Composite, .MPartStack#right.active Composite, .MPartStack#bottom.active Composite {
+	background-color: '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END';
+}
+
+.MPartStack#left.active.noFocus Composite, .MPartStack#right.active.noFocus Composite, .MPartStack#bottom.active.noFocus Composite {
+	background-color: '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_END';
+}
