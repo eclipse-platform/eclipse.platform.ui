@@ -57,7 +57,12 @@ implements ICSSPropertyHandler2 {
 			updateChildrenFonts(folder, font);
 		} else if (widget instanceof Control) {
 			Control control = (Control) widget;
-			CSSSWTFontHelper.setFont(control, font);
+			try {
+				control.setRedraw(false);
+				CSSSWTFontHelper.setFont(control, font);
+			} finally {
+				control.setRedraw(true);
+			}
 		}
 	}
 
