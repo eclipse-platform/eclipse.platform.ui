@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2008, 2014 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@ import org.eclipse.e4.ui.css.core.resources.SWTResourcesRegistryTest;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelperTest;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelperTest;
 import org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelperTest;
+import org.eclipse.e4.ui.css.swt.helpers.PreferenceOverriddenByCssChangeListenerTest;
 import org.eclipse.e4.ui.css.swt.properties.preference.EclipsePreferencesHandlerTest;
 
 public class CssSwtTestSuite extends TestSuite {
@@ -57,6 +58,7 @@ public class CssSwtTestSuite extends TestSuite {
 		addTestSuite(MarginTest.class);
 		addTestSuite(InnerClassElementTest.class);
 		addTestSuite(EclipsePreferencesHandlerTest.class);
+		addTestSuite(PreferenceOverriddenByCssChangeListenerTest.class);
 
 		// text-transform tests
 		addTestSuite(ButtonTextTransformTest.class);

@@ -135,6 +135,26 @@ public class EclipsePreferencesHandlerTest extends TestCase {
 		assertNull(preferences.get(PROPS_OVERRIDDEN_BY_CSS_PROP, null));
 	}
 
+	public void testCustomizePreferenceOverriddenByCSS() throws Exception {
+		// given
+		IEclipsePreferences preferences = new EclipsePreferences();
+
+		EclipsePreferencesHandlerTestable handler = new EclipsePreferencesHandlerTestable();
+
+		// when
+		handler.overridePropertyUnMocked(preferences, "name", "value");
+		assertEquals("value", preferences.get("name", null));
+		assertTrue(preferences.get(PROPS_OVERRIDDEN_BY_CSS_PROP, "").contains(
+				"name"));
+
+		preferences.put("name", "customizedValue");
+
+		// then
+		assertEquals("customizedValue", preferences.get("name", null));
+		assertFalse(preferences.get(PROPS_OVERRIDDEN_BY_CSS_PROP, "").contains(
+				"name"));
+	}
+
 	public static class EclipsePreferencesHandlerTestable extends
 	EclipsePreferencesHandler {
 		@Override
