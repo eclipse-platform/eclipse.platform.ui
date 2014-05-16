@@ -27,6 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
@@ -56,12 +57,17 @@ implements ICSSPropertyHandler2 {
 			CSSSWTFontHelper.setFont(folder, font);
 			updateChildrenFonts(folder, font);
 		} else if (widget instanceof Control) {
-			Control control = (Control) widget;
-			try {
+			Control control = (Control)widget;
+			final boolean isLayoutDeferred = (control instanceof Composite) && ((Composite)control).isLayoutDeferred();
+			if (isLayoutDeferred) {
 				control.setRedraw(false);
+			}
+			try {
 				CSSSWTFontHelper.setFont(control, font);
 			} finally {
-				control.setRedraw(true);
+				if (isLayoutDeferred) {
+					control.setRedraw(true);
+				}
 			}
 		}
 	}
