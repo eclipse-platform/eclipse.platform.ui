@@ -31,6 +31,16 @@
           <format>'v${buildTimestamp}'</format>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <configuration>
+          <!--
+            build at first listed BREE  J2SE-1.4
+           -->
+          <executionEnvironment>J2SE-1.4</executionEnvironment>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
