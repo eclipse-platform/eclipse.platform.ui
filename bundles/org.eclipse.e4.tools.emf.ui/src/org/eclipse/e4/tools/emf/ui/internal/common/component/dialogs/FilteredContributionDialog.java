@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Bug 435625, Bug 436281
+ *     Andrej ten Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 395283
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
@@ -52,7 +53,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.NonRe
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -98,7 +98,7 @@ import org.eclipse.swt.widgets.Text;
  * @author Steven Spungin
  *
  */
-public abstract class FilteredContributionDialog extends TitleAreaDialog {
+public abstract class FilteredContributionDialog extends SaveDialogBoundsSettingsDialog {
 
 	private static final int MAX_RESULTS = 500;
 	private Image contributionTypeImage;

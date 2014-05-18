@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013
+ * Copyright (c) 2013 - 2014 fhv.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Nicolaj Hoess <nicohoess@gmail.com> - initial implementation (Bug 396975)
- *     Andrej Brummelhuis <andrejbrummelhuis@gmail.com> - initial implementation (Bug 396975)
+ *     Andrej Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 396975, 395283
  *     Adrian Alcaide - initial implementation (Bug 396975)
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
@@ -23,7 +23,6 @@ import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -44,7 +43,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public abstract class AbstractIdDialog<ContributionClass, ElementClass extends MApplicationElement> extends TitleAreaDialog {
+public abstract class AbstractIdDialog<ContributionClass, ElementClass extends MApplicationElement> extends SaveDialogBoundsSettingsDialog {
 
 	protected EModelService modelService;
 

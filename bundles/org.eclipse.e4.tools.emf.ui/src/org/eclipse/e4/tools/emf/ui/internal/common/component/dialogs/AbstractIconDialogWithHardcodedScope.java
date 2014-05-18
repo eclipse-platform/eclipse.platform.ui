@@ -8,6 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Steven Spungin <steven@spungin.tv> - Bug 404136, 424730
+ *     Andrej ten Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 395283
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
@@ -36,7 +37,6 @@ import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.StringMatcher;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -70,7 +70,7 @@ import org.eclipse.swt.widgets.Text;
  * @author Steven Spungin
  *
  */
-public abstract class AbstractIconDialogWithHardcodedScope extends TitleAreaDialog {
+public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBoundsSettingsDialog {
 	private TableViewer viewer;
 	private IProject project;
 	private Map<IFile, Image> icons = Collections.synchronizedMap(new HashMap<IFile, Image>());
