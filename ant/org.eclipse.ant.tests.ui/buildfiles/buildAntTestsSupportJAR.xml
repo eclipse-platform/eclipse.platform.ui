@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
      Copyright (c) 2005, 2013 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
@@ -21,7 +22,11 @@
 	<target name="lib/antUITestsSupport.jar" depends="init" description= "Builds the support JAR">
 		<property name="destdir" value="${temp.folder}/lib/antUITestsSupport.jar.bin"/>
 		<delete dir="${destdir}"/>
-		<mkdir dir="${destdir}"/>		<!-- copy necessary resources -->		<copy todir="${destdir}">			<fileset dir="${basedir}/test_support_bin/"/>		</copy>
+		<mkdir dir="${destdir}"/>
+		<!-- copy necessary resources -->
+		<copy todir="${destdir}">
+			<fileset dir="${basedir}/test_support_bin/"/>
+		</copy>
 		<mkdir dir="${build.result.folder}/lib"/>
 		<jar destfile="${build.result.folder}/lib/antUITestsSupport.jar" basedir="${destdir}"/>
 		<delete dir="${temp.folder}"/>
