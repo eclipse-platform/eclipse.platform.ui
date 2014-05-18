@@ -19,7 +19,7 @@
   </parent>
   <groupId>org.eclipse.update</groupId>
   <artifactId>org.eclipse.update.core</artifactId>
-  <version>3.2.600-SNAPSHOT</version>
+  <version>3.2.700-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
   <build>
     <plugins>
