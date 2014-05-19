@@ -13,13 +13,12 @@
 
 package org.eclipse.jface.snippets.viewers;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
@@ -34,31 +33,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Explore New API: JFace custom tooltips drawing.
+ * Explore JFace custom tooltips drawing.
  *
- * @author Tom Schindl <tom.schindl@bestsolution.at>
- * @since 3.3
  */
+
 public class Snippet037FancyCustomTooltips {
-	private static class MyContentProvider implements
-			IStructuredContentProvider {
-
-		@Override
-		public Object[] getElements(Object inputElement) {
-			return new String[] { "one", "two", "three", "four", "five", "six",
-					"seven", "eight", "nine", "ten" };
-		}
-
-		@Override
-		public void dispose() {
-
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
-		}
-	}
 
 	private static class FancyToolTipSupport extends ColumnViewerToolTipSupport {
 
@@ -67,22 +46,20 @@ public class Snippet037FancyCustomTooltips {
 			super(viewer, style, manualActivation);
 		}
 
-
 		@Override
 		protected Composite createToolTipContentArea(Event event,
 				Composite parent) {
-			Composite comp = new Composite(parent,SWT.NONE);
-			GridLayout l = new GridLayout(1,false);
-			l.horizontalSpacing=0;
-			l.marginWidth=0;
-			l.marginHeight=0;
-			l.verticalSpacing=0;
+			Composite comp = new Composite(parent, SWT.NONE);
+			GridLayout l = new GridLayout(1, false);
+			l.horizontalSpacing = 0;
+			l.marginWidth = 0;
+			l.marginHeight = 0;
+			l.verticalSpacing = 0;
 
 			comp.setLayout(l);
-			Browser browser = new Browser(comp,SWT.BORDER);
+			Browser browser = new Browser(comp, SWT.BORDER);
 			browser.setText(getText(event));
-			browser.setLayoutData(new GridData(200,150));
-
+			browser.setLayoutData(new GridData(200, 150));
 
 			return comp;
 		}
@@ -92,9 +69,8 @@ public class Snippet037FancyCustomTooltips {
 			return false;
 		}
 
-
 		public static final void enableFor(ColumnViewer viewer, int style) {
-			new FancyToolTipSupport(viewer,style,false);
+			new FancyToolTipSupport(viewer, style, false);
 		}
 	}
 
@@ -109,14 +85,16 @@ public class Snippet037FancyCustomTooltips {
 		TableViewer v = new TableViewer(shell, SWT.FULL_SELECTION);
 		v.getTable().setLinesVisible(true);
 		v.getTable().setHeaderVisible(true);
-		v.setContentProvider(new MyContentProvider());
-		FancyToolTipSupport.enableFor(v,ToolTip.NO_RECREATE);
+		v.setContentProvider(ArrayContentProvider.getInstance());
+		FancyToolTipSupport.enableFor(v, ToolTip.NO_RECREATE);
 
 		CellLabelProvider labelProvider = new CellLabelProvider() {
 
 			@Override
 			public String getToolTipText(Object element) {
-				return "<html><body>Tooltip (" + element + ")<br /><a href='http://www.bestsolution.at' target='_NEW'>www.bestsolution.at</a></body></html>";
+				return "<html><body>Tooltip ("
+						+ element
+						+ ")<br /><a href='http://www.bestsolution.at' target='_NEW'>www.bestsolution.at</a></body></html>";
 			}
 
 			@Override
@@ -144,8 +122,9 @@ public class Snippet037FancyCustomTooltips {
 		column.setLabelProvider(labelProvider);
 		column.getColumn().setText("Column 1");
 		column.getColumn().setWidth(100);
-
-		v.setInput("");
+		String[] values = new String[] { "one", "two", "three", "four", "five",
+				"six", "seven", "eight", "nine", "ten" };
+		v.setInput(values);
 
 		shell.setSize(200, 200);
 		shell.open();
