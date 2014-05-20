@@ -37,6 +37,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
@@ -325,7 +326,14 @@ public class ShowInMenu extends ContributionItem implements
 
 		IWorkbenchPage page = window.getActivePage();
 		if (page != null) {
-			return page.getActivePart();
+			IWorkbenchPart activePart = page.getActivePart();
+			/*
+			 * NOTE: Do not use window.getShell() to test since this won't work
+			 * for detached views (see bug 412285)
+			 */
+			Shell activePartShell = activePart.getSite().getShell();
+			if (activePartShell == activePartShell.getDisplay().getActiveShell())
+				return activePart;
 		}
 		return null;
 	}
