@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Tom Schindl and others.
+ * Copyright (c) 2006, 2014 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,17 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
 import org.eclipse.jface.viewers.EditingSupport;
@@ -33,14 +36,10 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-/**
- * A simple TreeViewer to demonstrate usage
- *
- * @author Tom Schindl <tom.schindl@bestsolution.at>
- *
- */
 public class Snippet056BooleanCellEditor {
+
 	public Snippet056BooleanCellEditor(final Shell shell) {
+
 		final TreeViewer v = new TreeViewer(shell, SWT.BORDER
 				| SWT.FULL_SELECTION);
 		v.getTree().setLinesVisible(true);
@@ -51,71 +50,44 @@ public class Snippet056BooleanCellEditor {
 			@Override
 			protected Color getSelectedCellBackgroundColorNoFocus(
 					ViewerCell cell) {
-				return shell.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+				return shell.getDisplay().getSystemColor(
+						SWT.COLOR_WIDGET_BACKGROUND);
 			}
 
 			@Override
 			protected Color getSelectedCellForegroundColorNoFocus(
 					ViewerCell cell) {
-				return shell.getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
+				return shell.getDisplay().getSystemColor(
+						SWT.COLOR_WIDGET_FOREGROUND);
 			}
 		};
 
-		TreeViewerFocusCellManager focusCellManager = new TreeViewerFocusCellManager(v,h);
-		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(v);
+		TreeViewerFocusCellManager focusCellManager = new TreeViewerFocusCellManager(
+				v, h);
+		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(
+				v);
 
-		TreeViewerEditor.create(v, focusCellManager, actSupport, ColumnViewerEditor.TABBING_HORIZONTAL
+		int feature = ColumnViewerEditor.TABBING_HORIZONTAL
 				| ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
-				| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION);
+				| ColumnViewerEditor.TABBING_VERTICAL
+				| ColumnViewerEditor.KEYBOARD_ACTIVATION;
+
+		TreeViewerEditor.create(v, focusCellManager, actSupport, feature);
 
 		final TextCellEditor textCellEditor = new TextCellEditor(v.getTree());
-		final BooleanCellEditor booleanCellEditor = new BooleanCellEditor(v.getTree());
+		final BooleanCellEditor booleanCellEditor = new BooleanCellEditor(
+				v.getTree());
 
-		TreeViewerColumn column = new TreeViewerColumn(v, SWT.NONE);
-		column.getColumn().setWidth(200);
-		column.getColumn().setMoveable(true);
-		column.getColumn().setText("Column 1");
+		TreeViewerColumn column = createColumnFor(v, "Column 1");
+		column.setLabelProvider(new MyColumnLabelProvider("Column 1"));
+		column.setEditingSupport(new MyEditingSupport(v, v, textCellEditor));
+
+		column = createColumnFor(v, "Column 2");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
 			public String getText(Object element) {
-				return "Column 1 => " + element.toString();
-			}
-
-		});
-		column.setEditingSupport(new EditingSupport(v) {
-			@Override
-			protected boolean canEdit(Object element) {
-				return true;
-			}
-
-			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return textCellEditor;
-			}
-
-			@Override
-			protected Object getValue(Object element) {
-				return ((MyModel) element).counter + "";
-			}
-
-			@Override
-			protected void setValue(Object element, Object value) {
-				((MyModel) element).counter = Integer
-						.parseInt(value.toString());
-				v.update(element, null);
-			}
-		});
-
-		column = new TreeViewerColumn(v, SWT.NONE);
-		column.getColumn().setWidth(200);
-		column.getColumn().setMoveable(true);
-		column.getColumn().setText("Column 2");
-		column.setLabelProvider(new ColumnLabelProvider() {
-
-			@Override
-			public String getText(Object element) {
-				return ((MyModel) element).flag+"";
+				return ((MyModel) element).flag + "";
 			}
 
 		});
@@ -137,50 +109,25 @@ public class Snippet056BooleanCellEditor {
 
 			@Override
 			protected void setValue(Object element, Object value) {
-				((MyModel) element).flag = ((Boolean)value).booleanValue();
+				((MyModel) element).flag = ((Boolean) value).booleanValue();
 				v.update(element, null);
 			}
 		});
-
-		column = new TreeViewerColumn(v, SWT.NONE);
-		column.getColumn().setWidth(200);
-		column.getColumn().setMoveable(true);
-		column.getColumn().setText("Column 3");
-		column.setLabelProvider(new ColumnLabelProvider() {
-
-			@Override
-			public String getText(Object element) {
-				return "Column 3 => " + element.toString();
-			}
-
-		});
-		column.setEditingSupport(new EditingSupport(v) {
-			@Override
-			protected boolean canEdit(Object element) {
-				return true;
-			}
-
-			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return textCellEditor;
-			}
-
-			@Override
-			protected Object getValue(Object element) {
-				return ((MyModel) element).counter + "";
-			}
-
-			@Override
-			protected void setValue(Object element, Object value) {
-				((MyModel) element).counter = Integer
-						.parseInt(value.toString());
-				v.update(element, null);
-			}
-		});
+		column = createColumnFor(v, "Column 3");
+		column.setLabelProvider(new MyColumnLabelProvider("Column 3"));
+		column.setEditingSupport(new MyEditingSupport(v, v, textCellEditor));
 
 		v.setContentProvider(new MyContentProvider());
-
 		v.setInput(createModel());
+	}
+
+	private TreeViewerColumn createColumnFor(final TreeViewer viewer,
+			String label) {
+		TreeViewerColumn column = new TreeViewerColumn(viewer, SWT.NONE);
+		column.getColumn().setWidth(200);
+		column.getColumn().setMoveable(true);
+		column.getColumn().setText(label);
+		return column;
 	}
 
 	private MyModel createModel() {
@@ -219,6 +166,52 @@ public class Snippet056BooleanCellEditor {
 		display.dispose();
 	}
 
+	private final class MyEditingSupport extends EditingSupport {
+		private final TreeViewer v;
+		private final TextCellEditor textCellEditor;
+
+		private MyEditingSupport(ColumnViewer viewer, TreeViewer v,
+				TextCellEditor textCellEditor) {
+			super(viewer);
+			this.v = v;
+			this.textCellEditor = textCellEditor;
+		}
+
+		@Override
+		protected boolean canEdit(Object element) {
+			return true;
+		}
+
+		@Override
+		protected CellEditor getCellEditor(Object element) {
+			return textCellEditor;
+		}
+
+		@Override
+		protected Object getValue(Object element) {
+			return ((MyModel) element).counter + "";
+		}
+
+		@Override
+		protected void setValue(Object element, Object value) {
+			((MyModel) element).counter = Integer.parseInt(value.toString());
+			v.update(element, null);
+		}
+	}
+
+	private final class MyColumnLabelProvider extends ColumnLabelProvider {
+		private String prefix;
+
+		public MyColumnLabelProvider(String prefix) {
+			this.prefix = prefix;
+		}
+
+		@Override
+		public String getText(Object element) {
+			return this.prefix + " => " + element.toString();
+		}
+	}
+
 	private class MyContentProvider implements ITreeContentProvider {
 
 		@Override
@@ -255,12 +248,10 @@ public class Snippet056BooleanCellEditor {
 	}
 
 	public class MyModel {
+
 		public MyModel parent;
-
-		public ArrayList child = new ArrayList();
-
+		public List<MyModel> child = new ArrayList<MyModel>();
 		public int counter;
-
 		public boolean flag;
 
 		public MyModel(int counter, MyModel parent) {

@@ -10,10 +10,10 @@
  *     oliver.schaefer@mbtech-services.com - Fix for Bug 225051 [Snippets] Snippet010OwnerDraw - Wrong german flag
  * 	   Lars Vogel <lars.vogel@gmail.com >- Bug 387367
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 414565
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
-
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.OwnerDrawLabelProvider;
@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
+
 
 public class Snippet010OwnerDraw {
 
@@ -74,10 +75,6 @@ public class Snippet010OwnerDraw {
 			baseName = englishName;
 		}
 
-		/**
-		 * @param index
-		 * @return
-		 */
 		public int getHeight(Event event) {
 			switch (event.index) {
 			case 0:
@@ -91,10 +88,6 @@ public class Snippet010OwnerDraw {
 			}
 		}
 
-		/**
-		 * @param index
-		 * @return
-		 */
 		public int getWidth(Event event) {
 
 			switch (event.index) {
