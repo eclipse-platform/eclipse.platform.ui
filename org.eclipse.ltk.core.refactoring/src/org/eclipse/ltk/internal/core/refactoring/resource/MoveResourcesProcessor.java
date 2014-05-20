@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -181,9 +181,9 @@ public class MoveResourcesProcessor extends MoveProcessor {
 
 	private String getMoveDescription() {
 		if (fResourcesToMove.length == 1) {
-			return Messages.format(RefactoringCoreMessages.MoveResourceProcessor_description_multiple, new Object[] { new Integer(fResourcesToMove.length), BasicElementLabels.getResourceName(fDestination) });
-		} else {
 			return Messages.format(RefactoringCoreMessages.MoveResourceProcessor_description_single, new String[] { BasicElementLabels.getResourceName(fResourcesToMove[0]), BasicElementLabels.getResourceName(fDestination) });
+		} else {
+			return Messages.format(RefactoringCoreMessages.MoveResourceProcessor_description_multiple, new Object[] { new Integer(fResourcesToMove.length), BasicElementLabels.getResourceName(fDestination) });
 		}
 	}
 
@@ -191,7 +191,7 @@ public class MoveResourcesProcessor extends MoveProcessor {
 		MoveResourcesDescriptor descriptor= new MoveResourcesDescriptor();
 		descriptor.setProject(fDestination.getProject().getName());
 		descriptor.setDescription(getMoveDescription());
-		if (fResourcesToMove.length == 1) {
+		if (fResourcesToMove.length <= 1) {
 			descriptor.setComment(descriptor.getDescription());
 		} else {
 			StringBuffer buf= new StringBuffer();
@@ -200,8 +200,7 @@ public class MoveResourcesProcessor extends MoveProcessor {
 					buf.append(", "); //$NON-NLS-1$
 				buf.append(fResourcesToMove[i].getName());
 			}
-			descriptor.setComment(Messages.format(RefactoringCoreMessages.MoveResourceProcessor_comment, new String[] { BasicElementLabels.getResourceName(fResourcesToMove[0]), BasicElementLabels.getResourceName(fDestination) }));
-
+			descriptor.setComment(Messages.format(RefactoringCoreMessages.MoveResourceProcessor_comment, new String[] { buf.toString(), BasicElementLabels.getResourceName(fDestination) }));
 		}
 		descriptor.setFlags(RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.MULTI_CHANGE | RefactoringDescriptor.BREAKING_CHANGE);
 		descriptor.setDestination(fDestination);
