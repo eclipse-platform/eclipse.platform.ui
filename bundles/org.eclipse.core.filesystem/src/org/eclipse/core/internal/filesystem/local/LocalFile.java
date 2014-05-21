@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -220,7 +220,7 @@ public class LocalFile extends FileStore {
 		}
 		if (target.delete() || !target.exists())
 			return true;
-		if (isPhysicalDirectory(target)) {
+		if (target.isDirectory()) {
 			monitor.subTask(NLS.bind(Messages.deleting, target));
 			String[] list = target.list();
 			if (list == null)
@@ -260,15 +260,6 @@ public class LocalFile extends FileStore {
 			message = NLS.bind(Messages.couldnotDelete, target.getAbsolutePath());
 		status.add(new Status(IStatus.ERROR, Policy.PI_FILE_SYSTEM, EFS.ERROR_DELETE, message, null));
 		return false;
-	}
-
-	/**
-	 * Checks whether the given file is a directory but not a symlink to a directory.
-	 */
-	private static boolean isPhysicalDirectory(java.io.File file) {
-		IFileStore fileStore = new LocalFile(file);
-		IFileInfo info = fileStore.fetchInfo();
-		return info.isDirectory() && !info.getAttribute(EFS.ATTRIBUTE_SYMLINK);
 	}
 
 	public boolean isParentOf(IFileStore other) {

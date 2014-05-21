@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,16 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google) - testWorkingLocationDeletion_bug433061
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import java.io.File;
 import java.io.InputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -109,6 +113,7 @@ public class WorkspaceTest extends ResourceTest {
 		suite.addTest(new WorkspaceTest("testFileEmptyDeletion"));
 		suite.addTest(new WorkspaceTest("testMultiDeletion"));
 		suite.addTest(new WorkspaceTest("testProjectDeletion"));
+		suite.addTest(new WorkspaceTest("testWorkingLocationDeletion_bug433061"));
 
 		suite.addTest(new WorkspaceTest("doCleanup"));
 		return suite;
@@ -313,6 +318,30 @@ public class WorkspaceTest extends ResourceTest {
 		IProject target = getTestProject();
 		target.delete(true, getMonitor());
 		assertTrue("Project Deletion failed", !target.exists());
+	}
+
+	public void testWorkingLocationDeletion_bug433061() throws Throwable {
+		// Only activate this test on platforms where the test is able to create a symbolic link.
+		if (!isAttributeSupported(EFS.ATTRIBUTE_SYMLINK) && !isWindowsVistaOrHigher())
+			return;
+		IProject project = getTestProject();
+		project.create(null, getMonitor());
+		IPath workingLocation = project.getWorkingLocation("org.eclipse.core.tests.resources");
+		IPath linkTarget = getRandomLocation();
+		try {
+			linkTarget.toFile().mkdirs();
+			File file = linkTarget.append("aFile").toFile();
+			assertTrue(file.createNewFile());
+			assertTrue(file.exists());
+			// Create a symlink in the working location of the project pointing to linkTarget.
+			createSymLink(workingLocation.toFile(), "link", linkTarget.toOSString(), true);
+			project.delete(true, getMonitor());
+			assertTrue("Project deletion failed", !project.exists());
+			assertTrue("Working location was not deleted", !workingLocation.toFile().exists());
+			assertTrue("File inside a symlinked directory got deleted", file.exists());
+		} finally {
+			Workspace.clear(linkTarget.toFile());
+		}
 	}
 
 	public void testProjectReferences() throws Throwable {
