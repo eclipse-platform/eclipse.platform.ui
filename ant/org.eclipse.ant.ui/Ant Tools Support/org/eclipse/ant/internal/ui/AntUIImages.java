@@ -16,7 +16,6 @@ import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -60,10 +59,10 @@ public class AntUIImages {
 		declareRegistryImage(IAntUIConstants.IMG_MARK_OCCURRENCES, T_ETOOL + "mark_occurrences.png"); //$NON-NLS-1$
 
 		// Ant View Actions
-		declareRegistryImage(IAntUIConstants.IMG_ANT, OBJECT + "ant.png"); //$NON-NLS-1$
+		declareRegistryImage(IAntUIConstants.IMG_ANT, OBJECT + "ant.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_REMOVE, LOCALTOOL + "remove_co.png"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_REMOVE_ALL, LOCALTOOL + "removeall_co.png"); //$NON-NLS-1$
-		declareRegistryImage(IAntUIConstants.IMG_ADD, LOCALTOOL + "add_co.png"); //$NON-NLS-1$
+		declareRegistryImage(IAntUIConstants.IMG_ADD, LOCALTOOL + "add_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_RUN, LOCALTOOL + "run_tool.png"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_SEARCH, LOCALTOOL + "search.png"); //$NON-NLS-1$
 
@@ -76,7 +75,7 @@ public class AntUIImages {
 		declareRegistryImage(IAntUIConstants.IMG_REFRESH, LOCALTOOL + "refresh.png"); //$NON-NLS-1$
 
 		// Ant View Labels
-		declareRegistryImage(IAntUIConstants.IMG_ANT_PROJECT, OBJECT + "ant_buildfile.png"); //$NON-NLS-1$
+		declareRegistryImage(IAntUIConstants.IMG_ANT_PROJECT, OBJECT + "ant_buildfile.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_ANT_TARGET, OBJECT + "targetpublic_obj.png"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_ANT_TARGET_INTERNAL, OBJECT + "targetinternal_obj.png"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_ANT_DEFAULT_TARGET, OBJECT + "defaulttarget_obj.png"); //$NON-NLS-1$
@@ -92,7 +91,7 @@ public class AntUIImages {
 
 		declareRegistryImage(IAntUIConstants.IMG_WIZARD_BANNER, WIZ + "ant_wiz.png"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_EXPORT_WIZARD_BANNER, WIZ + "export_ant_wiz.png"); //$NON-NLS-1$
-		declareRegistryImage(IAntUIConstants.IMG_TAB_ANT_TARGETS, LOCALTOOL + "ant_targets.png"); //$NON-NLS-1$
+		declareRegistryImage(IAntUIConstants.IMG_TAB_ANT_TARGETS, LOCALTOOL + "ant_targets.gif"); //$NON-NLS-1$
 
 		// Overlays
 		declareRegistryImage(IAntUIConstants.IMG_OVR_ERROR, OVR + "error_co.png"); //$NON-NLS-1$
