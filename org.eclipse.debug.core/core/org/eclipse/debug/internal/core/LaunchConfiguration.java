@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -830,7 +830,9 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			    launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, null);
 			}
 			launch.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, getLaunchManager().getEncoding(this));
-
+			if (register) {
+				getLaunchManager().addLaunch(launch);
+			}
 		// perform initial pre-launch sanity checks
 			lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_8);
 
@@ -868,9 +870,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			}
 			else {
 				lmonitor.worked(1); /* No validation */
-			}
-			if (register) {
-			    getLaunchManager().addLaunch(launch);
 			}
 
 			try {
