@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -3969,6 +3969,11 @@ public class TextViewer extends Viewer implements
 				return isPrintable();
 			case HyperlinkManager.OPEN_HYPERLINK:
 				return fHyperlinkManager != null;
+
+			// Workaround to fix bug 434791 during 4.4 RC2. Will be replaced by official API during 4.5.
+			case -100:
+				return true;
+
 		}
 
 		return false;
@@ -4058,6 +4063,15 @@ public class TextViewer extends Viewer implements
 					MessageDialog.openInformation(getControl().getShell(),
 							JFaceTextMessages.getString("TextViewer.open_hyperlink_error_title"), JFaceTextMessages.getString("TextViewer.open_hyperlink_error_message")); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
+
+			// Workaround to fix bug 434791 during 4.4 RC2. Will be replaced by official API during 4.5.
+			case -100:
+				if (fLastSentSelectionChange != null) {
+					ISelection lastSelection= new TextSelection(getDocument(), fLastSentSelectionChange.getOffset(), fLastSentSelectionChange.getLength());
+					fireSelectionChanged(new SelectionChangedEvent(this, lastSelection));
+				}
+				return;
+
 		}
 	}
 
