@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,6 @@ import org.eclipse.debug.internal.ui.elements.adapters.MemoryBlockContentAdapter
 import org.eclipse.debug.internal.ui.elements.adapters.MemoryBlockLabelAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.MemoryRetrievalContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.MemorySegmentLabelAdapter;
-import org.eclipse.debug.internal.ui.elements.adapters.StackFrameSourceDisplayAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.StackFrameViewerInputProvider;
 import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnFactoryAdapter;
 import org.eclipse.debug.internal.ui.model.elements.BreakpointContainerLabelProvider;
@@ -72,6 +71,7 @@ import org.eclipse.debug.internal.ui.model.elements.VariableEditor;
 import org.eclipse.debug.internal.ui.model.elements.VariableLabelProvider;
 import org.eclipse.debug.internal.ui.model.elements.VariableMementoProvider;
 import org.eclipse.debug.internal.ui.model.elements.WatchExpressionEditor;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
@@ -93,7 +93,7 @@ import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 public class DebugElementAdapterFactory implements IAdapterFactory {
 	
 	private static IModelProxyFactory fgModelProxyFactoryAdapter = new DefaultModelProxyFactory();
-	private static ISourceDisplay fgStackFrameSourceDisplayAdapter = new StackFrameSourceDisplayAdapter();
+	private static ISourceDisplay fgStackFrameSourceDisplayAdapter = SourceLookupFacility.getDefault();
 	private static IModelSelectionPolicyFactory fgModelSelectionPolicyFactoryAdapter = new DefaultModelSelectionPolicyFactory();
     
     private static IAsynchronousLabelAdapter fgDebugLabelAdapter = new AsynchronousDebugLabelAdapter();
@@ -248,8 +248,9 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         			adaptableObject instanceof IMemoryBlock ||
         			adaptableObject instanceof DefaultBreakpointsViewInput ||
         			adaptableObject instanceof IBreakpoint ||
-        			adaptableObject instanceof IBreakpointContainer)
-        	return fgModelProxyFactoryAdapter;
+        			adaptableObject instanceof IBreakpointContainer) {
+				return fgModelProxyFactoryAdapter;
+			}
         }
         
         if (adapterType.equals(ISourceDisplay.class)) {
