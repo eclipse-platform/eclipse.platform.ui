@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Bug 435625
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.common;
@@ -14,6 +14,7 @@ package org.eclipse.e4.tools.emf.ui.common;
 import java.util.EnumSet;
 import java.util.List;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Filter;
 
 /**
@@ -30,6 +31,7 @@ public class FilterEx extends Filter {
 	private List<String> locations;
 	private EnumSet<ResourceSearchScope> searchScope = EnumSet.noneOf(ResourceSearchScope.class);
 	private boolean includeNonBundles;
+	private IProgressMonitor progressMonitor;
 
 	public FilterEx(IProject project, String regNamePattern) {
 		super(project, regNamePattern);
@@ -99,6 +101,14 @@ public class FilterEx extends Filter {
 
 	public boolean isIncludeNonBundles() {
 		return includeNonBundles;
+	}
+
+	public IProgressMonitor getProgressMonitor() {
+		return progressMonitor;
+	}
+
+	public void setProgressMonitor(IProgressMonitor progressMonitor) {
+		this.progressMonitor = progressMonitor;
 	}
 
 }

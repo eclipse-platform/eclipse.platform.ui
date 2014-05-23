@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Bug 435625
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator;
@@ -114,9 +114,19 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 				int found = 0;
 				boolean more = false;
 				for (Entry e : cacheEntry) {
+
 					// Check for FilterEx filters
 					if (filter instanceof FilterEx) {
 						FilterEx filterEx = (FilterEx) filter;
+						IProgressMonitor monitor = filterEx.getProgressMonitor();
+						if (monitor != null) {
+							if (monitor.isCanceled()) {
+								break;
+							} else {
+								monitor.subTask("Searching " + e.installLocation);
+							}
+						}
+
 						if (E.notEmpty(filterEx.getBundles())) {
 							if (!filterEx.getBundles().contains(e.bundleSymName)) {
 								continue;
@@ -208,7 +218,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 		ip = ip.addTrailingSeparator().makeRelative();
 		ip = ip.append(e.name);
 		String className = ip.toOSString().replace('/', '.');
-		ContributionData data = new ContributionData(e.bundleSymName, className, "Java", e.installLocation); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		ContributionData data = new ContributionData(e.bundleSymName, className, "Java", e.installLocation); //$NON-NLS-1$
 		data.installLocation = e.installLocation;
 		data.resourceRelativePath = e.relativePath;
 		return data;
@@ -256,124 +266,131 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 			cacheLocation.clear();
 			outputDirectories.clear();
 
-			ProgressMonitorDialog dlg = new ProgressMonitorDialog(Display.getDefault().getActiveShell()) {
+			Display.getDefault().syncExec(new Runnable() {
 
 				@Override
-				protected Control createContents(Composite parent) {
-					// TODO odd this is not a bean.
-					Composite ret = (Composite) super.createContents(parent);
-					Label label = new Label(ret, SWT.NONE);
-					label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 2, 1));
-					label.setText(Messages.TargetPlatformContributionCollector_pleaseWait);
+				public void run() {
+					ProgressMonitorDialog dlg = new ProgressMonitorDialog(Display.getDefault().getActiveShell()) {
 
-					return ret;
-				}
-			};
-			try {
-				dlg.run(true, true, new IRunnableWithProgress() {
+						@Override
+						protected Control createContents(Composite parent) {
+							// TODO odd this is not a bean.
+							Composite ret = (Composite) super.createContents(parent);
+							Label label = new Label(ret, SWT.NONE);
+							label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 2, 1));
+							label.setText(Messages.TargetPlatformContributionCollector_pleaseWait);
 
-					@Override
-					public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-
-						// load workspace projects
-						for (final IProject pj : PDECore.getWorkspace().getRoot().getProjects()) {
-							if (monitor.isCanceled()) {
-								break;
-							}
-							String rootDirectory = pj.getLocation().toOSString();
-							TargetPlatformContributionCollector.this.visit(monitor, FilteredContributionDialog.getBundle(rootDirectory), rootDirectory, new File(rootDirectory));
+							return ret;
 						}
+					};
+					try {
+						dlg.run(true, true, new IRunnableWithProgress() {
 
-						// load target platform bundles
-						IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
-						monitor.beginTask(Messages.TargetPlatformContributionCollector_updatingTargetPlatformCache + cacheName + ")", models.length); //$NON-NLS-2$
-						for (IPluginModelBase pluginModelBase : models) {
-							monitor.subTask(pluginModelBase.getPluginBase().getId());
-							monitor.worked(1);
-							if (monitor.isCanceled()) {
-								break;
-							}
+							@Override
+							public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
-							IPluginBase pluginBase = pluginModelBase.getPluginBase();
-							if (pluginBase == null) {
-								// bundle = getBundle(new File())
-								continue;
-							}
-							URL url;
-							try {
-								String installLocation = pluginModelBase.getInstallLocation();
-								if (installLocation.endsWith(".jar")) { //$NON-NLS-1$
-									url = new URL("file://" + installLocation); //$NON-NLS-1$
-									ZipInputStream zis = new ZipInputStream(url.openStream());
-									while (true) {
-										ZipEntry entry = zis.getNextEntry();
-										if (entry == null) {
-											break;
-										} else {
-											String name2 = entry.getName();
-											if (shouldIgnore(name2)) {
-												continue;
-											}
-											Matcher m = patternFile.matcher(name2);
-											if (m.matches()) {
-												Entry e = new Entry();
-												e.installLocation = installLocation;
-												cacheLocation.add(installLocation);
-												e.name = m.group(2);
-												e.path = m.group(1);
-												if (e.path != null) {
-													e.pakage = e.path.replace("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
-													if (e.pakage.startsWith(".")) { //$NON-NLS-1$
-														e.pakage = e.pakage.substring(1);
-													}
-													if (e.pakage.endsWith(".")) { //$NON-NLS-1$
-														e.pakage = e.pakage.substring(0, e.pakage.length() - 1);
-													}
+								// load workspace projects
+								for (final IProject pj : PDECore.getWorkspace().getRoot().getProjects()) {
+									if (monitor.isCanceled()) {
+										break;
+									}
+									String rootDirectory = pj.getLocation().toOSString();
+									TargetPlatformContributionCollector.this.visit(monitor, FilteredContributionDialog.getBundle(rootDirectory), rootDirectory, new File(rootDirectory));
+								}
+
+								// load target platform bundles
+								IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
+								monitor.beginTask(Messages.TargetPlatformContributionCollector_updatingTargetPlatformCache + cacheName + ")", models.length); //$NON-NLS-1$
+								for (IPluginModelBase pluginModelBase : models) {
+									monitor.subTask(pluginModelBase.getPluginBase().getId());
+									monitor.worked(1);
+									if (monitor.isCanceled()) {
+										break;
+									}
+
+									IPluginBase pluginBase = pluginModelBase.getPluginBase();
+									if (pluginBase == null) {
+										// bundle = getBundle(new File())
+										continue;
+									}
+									URL url;
+									try {
+										String installLocation = pluginModelBase.getInstallLocation();
+										if (installLocation.endsWith(".jar")) { //$NON-NLS-1$
+											url = new URL("file://" + installLocation); //$NON-NLS-1$
+											ZipInputStream zis = new ZipInputStream(url.openStream());
+											while (true) {
+												ZipEntry entry = zis.getNextEntry();
+												if (entry == null) {
+													break;
 												} else {
-													e.pakage = ""; //$NON-NLS-1$
-												}
-												cachePackage.add(e.pakage);
+													String name2 = entry.getName();
+													if (shouldIgnore(name2)) {
+														continue;
+													}
+													Matcher m = patternFile.matcher(name2);
+													if (m.matches()) {
+														Entry e = new Entry();
+														e.installLocation = installLocation;
+														cacheLocation.add(installLocation);
+														e.name = m.group(2);
+														e.path = m.group(1);
+														if (e.path != null) {
+															e.pakage = e.path.replace("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
+															if (e.pakage.startsWith(".")) { //$NON-NLS-1$
+																e.pakage = e.pakage.substring(1);
+															}
+															if (e.pakage.endsWith(".")) { //$NON-NLS-1$
+																e.pakage = e.pakage.substring(0, e.pakage.length() - 1);
+															}
+														} else {
+															e.pakage = ""; //$NON-NLS-1$
+														}
+														cachePackage.add(e.pakage);
 
-												e.bundleSymName = pluginBase.getId();
-												if (e.path == null) {
-													e.path = ""; //$NON-NLS-1$
-												}
-												cacheEntry.add(e);
-												cacheBundleId.add(pluginBase.getId());
+														e.bundleSymName = pluginBase.getId();
+														if (e.path == null) {
+															e.path = ""; //$NON-NLS-1$
+														}
+														cacheEntry.add(e);
+														cacheBundleId.add(pluginBase.getId());
 
-												//
-												// System.out.println(group
-												// + " -> "
-												// +
-												// m.group(2));
+														//
+														// System.out.println(group
+														// + " -> "
+														// +
+														// m.group(2));
+													}
+												}
+											}
+										} else {
+											// not a jar file
+											String bundle = getBundle(new File(installLocation));
+											if (bundle != null) {
+												visit(monitor, bundle, installLocation, new File(installLocation));
 											}
 										}
-									}
-								} else {
-									// not a jar file
-									String bundle = getBundle(new File(installLocation));
-									if (bundle != null) {
-										visit(monitor, bundle, installLocation, new File(installLocation));
+									} catch (MalformedURLException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
 									}
 								}
-							} catch (MalformedURLException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								monitor.done();
 							}
-						}
-						monitor.done();
+						});
+					} catch (InvocationTargetException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
 					}
-				});
-			} catch (InvocationTargetException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+				}
+			});
+
 		}
 	}
 

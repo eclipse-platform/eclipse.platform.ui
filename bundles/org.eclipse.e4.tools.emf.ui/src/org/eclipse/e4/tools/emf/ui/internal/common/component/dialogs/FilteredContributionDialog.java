@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, 424730
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Bug 435625
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
@@ -29,6 +29,10 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.FilterEx;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
@@ -116,6 +120,8 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 	private Button btnIncludeNoneBundle;
 	private WritableList viewerList;
 	protected BundleImageCache imageCache;
+	protected Job currentSearchThread;
+	private ContributionResultHandlerImpl currentResultHandler;
 
 	abstract protected ClassContributionCollector getCollector();
 
@@ -129,7 +135,7 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 
 	abstract protected String getShellTitle();
 
-	private static class ContributionResultHandlerImpl implements ContributionResultHandler {
+	private class ContributionResultHandlerImpl implements ContributionResultHandler {
 		private boolean cancled = false;
 		private IObservableList list;
 
@@ -138,23 +144,43 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 		}
 
 		@Override
-		public void result(ContributionData data) {
+		public void result(final ContributionData data) {
 			if (!cancled) {
-				list.add(data);
+				getShell().getDisplay().syncExec(new Runnable() {
+
+					@Override
+					public void run() {
+						list.add(data);
+					}
+				});
 			}
 		}
 
 		@Override
-		public void moreResults(int hint, Filter filter) {
-			FilteredContributionDialog dlg = (FilteredContributionDialog) filter.userData;
-			// dlg.setStatus("More than " + filter.maxResults +
-			// " items were found and have not been displayed");
-			if (hint != 0) {
-				dlg.setMessage("More than " + filter.maxResults + " items were found.  Not all results have been displayed.");
-			} else {
-				dlg.setMessage("");
+		public void moreResults(final int hint, final Filter filter) {
+			if (!cancled) {
+				getShell().getDisplay().syncExec(new Runnable() {
+
+					@Override
+					public void run() {
+						FilteredContributionDialog dlg = (FilteredContributionDialog) filter.userData;
+						// dlg.setStatus("More than " + filter.maxResults +
+						// " items were found and have not been displayed");
+						if (hint != 0) {
+							dlg.setMessage("More than " + filter.maxResults + " items were found.  Not all results have been displayed.");
+						} else {
+							dlg.setMessage("");
+						}
+					}
+				});
 			}
 		}
+	}
+
+	@Override
+	public boolean close() {
+		stopSearchThread(true);
+		return super.close();
 	}
 
 	@Override
@@ -254,57 +280,80 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 
 		collector = getCollector();
 
+		textBox.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.ARROW_DOWN) {
+					if (viewer.getTable().getItemCount() > 0) {
+						viewer.getTable().setFocus();
+						viewer.getTable().select(0);
+					}
+				}
+			}
+		});
+
+		viewer.getTable().addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				super.keyPressed(e);
+				if ((e.keyCode == SWT.ARROW_UP) && (viewer.getTable().getSelectionIndex() == 0)) {
+					textBox.setFocus();
+				}
+			}
+		});
+
 		textBox.addModifyListener(new ModifyListener() {
-			private ContributionResultHandlerImpl currentResultHandler;
 
 			@Override
 			public void modifyText(ModifyEvent e) {
-				if (currentResultHandler != null) {
-					currentResultHandler.cancled = true;
-				}
-				viewerList.clear();
-
+				stopSearchThread(true);
 				setMessage(""); //$NON-NLS-1$
+
+				viewerList.clear();
 				if (doSearch() == true) {
 					return;
 				}
+				setMessage("Searching...");
 
-				currentResultHandler = new ContributionResultHandlerImpl(viewerList);
-				FilterEx filter;
-				if (searchScopes.contains(ResourceSearchScope.PROJECT)) {
-					filter = new FilterEx(context.get(IProject.class), textBox.getText());
-				} else {
-					// filter = new FilterEx(null, textBox.getText());
-					filter = new FilterEx(context.get(IProject.class), textBox.getText());
-				}
-				filter.maxResults = MAX_RESULTS;
-				filter.userData = FilteredContributionDialog.this;
-				filter.setBundles(filterBundles);
-				filter.setPackages(filterPackages);
-				filter.setLocations(filterLocations);
-				filter.setSearchScope(searchScopes);
-				filter.setIncludeNonBundles(includeNonBundles);
-				collector.findContributions(filter, currentResultHandler);
-				textBox.addKeyListener(new KeyAdapter() {
+				currentSearchThread = new Job("Contribution Search") {
+
+					FilterEx filter;
+
 					@Override
-					public void keyPressed(KeyEvent e) {
-						if (e.keyCode == SWT.ARROW_DOWN) {
-							if (viewer.getTable().getItemCount() > 0) {
-								viewer.getTable().setFocus();
-								viewer.getTable().select(0);
+					protected IStatus run(IProgressMonitor monitor) {
+						monitor.beginTask("Contribution Search", IProgressMonitor.UNKNOWN);
+						currentResultHandler = new ContributionResultHandlerImpl(viewerList);
+						getShell().getDisplay().syncExec(new Runnable() {
+
+							@Override
+							public void run() {
+								if (searchScopes.contains(ResourceSearchScope.PROJECT)) {
+									filter = new FilterEx(context.get(IProject.class), textBox.getText());
+								} else {
+									// filter = new FilterEx(null,
+									// textBox.getText());
+									filter = new FilterEx(context.get(IProject.class), textBox.getText());
+								}
 							}
-						}
+						});
+						filter.maxResults = MAX_RESULTS;
+						filter.userData = FilteredContributionDialog.this;
+						filter.setBundles(filterBundles);
+						filter.setPackages(filterPackages);
+						filter.setLocations(filterLocations);
+						filter.setSearchScope(searchScopes);
+						filter.setIncludeNonBundles(includeNonBundles);
+						filter.setProgressMonitor(monitor);
+						collector.findContributions(filter, currentResultHandler);
+						currentSearchThread = null;
+						monitor.done();
+						return Status.OK_STATUS;
 					}
-				});
-				viewer.getTable().addKeyListener(new KeyAdapter() {
-					@Override
-					public void keyPressed(KeyEvent e) {
-						super.keyPressed(e);
-						if ((e.keyCode == SWT.ARROW_UP) && (viewer.getTable().getSelectionIndex() == 0)) {
-							textBox.setFocus();
-						}
-					}
-				});
+
+				};
+
+				currentSearchThread.schedule();
+
 			}
 		});
 
@@ -877,6 +926,22 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 
 	protected EnumSet<ResourceSearchScope> getSearchScopes() {
 		return searchScopes;
+	}
+
+	public void stopSearchThread(boolean bJoin) {
+		if (currentSearchThread != null) {
+			currentResultHandler.cancled = true;
+			currentSearchThread.cancel();
+			if (bJoin) {
+				try {
+					currentSearchThread.join();
+					currentSearchThread = null;
+				} catch (InterruptedException e) {
+				}
+			} else {
+				currentSearchThread = null;
+			}
+		}
 	}
 
 	static public String getBundle(IFile file) {
