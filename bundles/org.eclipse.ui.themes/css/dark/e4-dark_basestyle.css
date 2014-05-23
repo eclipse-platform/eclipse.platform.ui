@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Andrea Guarinoni - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 435574
  *******************************************************************************/
 
 /* New ColorDefinitions for the E4 dark theme */
@@ -165,14 +166,3 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_SELECTED_TEXT_COLOR 
     label: 'Active (no focus), selected part foreground';
 }
 
-/* Editor definitions: */
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_CODE_EDITOR_BG_COLOR {
-    color: #262626;
-    label: 'Inactive, code editor background color';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_CODE_EDITOR_BG_COLOR {
-    color: #202020;
-    label: 'Active, code editor background color';
-}
