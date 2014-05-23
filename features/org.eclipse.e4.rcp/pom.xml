@@ -49,6 +49,7 @@
                 <plugin id="org.eclipse.equinox.launcher.cocoa.macosx.x86_64"/>
                 <plugin id="org.eclipse.equinox.launcher.gtk.linux.ppc"/>
                 <plugin id="org.eclipse.equinox.launcher.gtk.linux.ppc64"/>
+		<plugin id="org.eclipse.equinox.launcher.gtk.linux.ppc64le"/>
                 <plugin id="org.eclipse.equinox.launcher.gtk.linux.x86"/>
                 <plugin id="org.eclipse.equinox.launcher.gtk.linux.s390x"/>
                 <plugin id="org.eclipse.equinox.launcher.gtk.linux.s390"/>
@@ -65,6 +66,7 @@
                 <plugin id="org.eclipse.swt.gtk.solaris.x86"/>
                 <plugin id="org.eclipse.swt.gtk.linux.ppc"/>
                 <plugin id="org.eclipse.swt.gtk.linux.ppc64"/>
+		<plugin id="org.eclipse.swt.gtk.linux.ppc64le"/>
                 <plugin id="org.eclipse.swt.cocoa.macosx"/>
                 <plugin id="org.eclipse.swt.cocoa.macosx"/>
                 <plugin id="org.eclipse.swt.gtk.aix.ppc"/>
