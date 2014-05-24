@@ -1132,8 +1132,12 @@ public class IWorkspaceTest extends ResourceTest {
 			//however another project can overlap an existing link location
 			assertTrue("10.4", workspace.validateProjectLocation(project, linkLocation).isOK());
 
+			// A new project cannot overlap the default locations of other projects, but its own location is valid
+			IPath defaultProjectLocation = workspace.getRoot().getLocation();
+			assertTrue("11.1", workspace.validateProjectLocation(project, defaultProjectLocation.append(project.getName())).isOK());
+			assertTrue("11.1", !workspace.validateProjectLocation(project, defaultProjectLocation.append("foo")).isOK());
 		} catch (CoreException e) {
-			fail("10.99", e);
+			fail("11.99", e);
 		} finally {
 			Workspace.clear(linkLocation.toFile());
 			//make sure we clean up project directories
@@ -1147,10 +1151,10 @@ public class IWorkspaceTest extends ResourceTest {
 		}
 
 		// cannot overlap .metadata folder from the current workspace
-		assertTrue("11.1", !(workspace.validateProjectLocation(project, platformLocation.addTrailingSeparator().append(".metadata"))).isOK());
+		assertTrue("12.1", !(workspace.validateProjectLocation(project, platformLocation.addTrailingSeparator().append(".metadata"))).isOK());
 
 		IProject metadataProject = workspace.getRoot().getProject(".metadata");
-		assertTrue("11.2", !(workspace.validateProjectLocation(metadataProject, null)).isOK());
+		assertTrue("12.2", !(workspace.validateProjectLocation(metadataProject, null)).isOK());
 
 		// FIXME: Should this be valid?
 		assertTrue("23.1", workspace.validateProjectLocation(project, new Path("/asf")).isOK());

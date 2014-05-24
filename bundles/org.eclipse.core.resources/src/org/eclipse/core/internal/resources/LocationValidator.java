@@ -311,7 +311,7 @@ public class LocationValidator {
 	}
 
 	/* (non-Javadoc)
-	 * @see IWorkspace#validateProjectLocation(IProject, URI)
+	 * @see IWorkspace#validateProjectLocationURI(IProject, URI)
 	 */
 	public IStatus validateProjectLocationURI(IProject context, URI unresolvedLocation) {
 		if (context == null && unresolvedLocation == null)
@@ -364,9 +364,10 @@ public class LocationValidator {
 				message = NLS.bind(Messages.resources_overlapWorkspace, toString(location), defaultDefaultLocation.toOSString());
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
-			// test if the given location is the default location for any potential project
+			// Test if the given location is the default location for any potential project except
+			// the one being created.
 			IPath parentPath = locationPath.removeLastSegments(1);
-			if (FileUtil.isPrefixOf(parentPath, defaultDefaultLocation) && FileUtil.isPrefixOf(defaultDefaultLocation, parentPath)) {
+			if (FileUtil.isPrefixOf(parentPath, defaultDefaultLocation) && FileUtil.isPrefixOf(defaultDefaultLocation, parentPath) && (context == null || !locationPath.equals(defaultDefaultLocation.append(context.getName())))) {
 				message = NLS.bind(Messages.resources_overlapProject, toString(location), locationPath.lastSegment());
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
