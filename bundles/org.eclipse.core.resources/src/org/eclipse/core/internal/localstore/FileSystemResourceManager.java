@@ -10,6 +10,7 @@
  *     Martin Oberhuber (Wind River) - [210664] descriptionChanged(): ignore LF style
  *     Martin Oberhuber (Wind River) - [233939] findFilesForLocation() with symlinks
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Sergey Prigogin (Google) - [338010] Resource.createLink() does not preserve symbolic links
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -71,7 +72,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		final boolean isFileLocation = EFS.SCHEME_FILE.equals(inputLocation.getScheme());
 		final IWorkspaceRoot root = getWorkspace().getRoot();
 		final ArrayList<IPath> results = new ArrayList<IPath>();
-		if (URIUtil.equals(location, root.getLocationURI())) {
+		if (URIUtil.equals(location, locationURIFor(root, true))) {
 			//there can only be one resource at the workspace root's location
 			results.add(Path.ROOT);
 			return results;
@@ -79,8 +80,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		IProject[] projects = root.getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
+			if (!project.exists())
+				continue;
 			//check the project location
-			URI testLocation = project.getLocationURI();
+			URI testLocation = locationURIFor(project, true);;
 			if (testLocation == null)
 				continue;
 			boolean usingAnotherScheme = !inputLocation.getScheme().equals(testLocation.getScheme());
@@ -750,18 +753,48 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 
 	/**
 	 * Returns the resolved, absolute file system location of the given resource.
-	 * Returns null if the location could not be resolved.
+	 * Returns null if the location could not be resolved. No canonicalization is
+	 * applied to the returned path.
+	 *
+	 * @param target the resource to get the location for
 	 */
 	public IPath locationFor(IResource target) {
-		return getStoreRoot(target).localLocation(target.getFullPath(), target);
+		return locationFor(target, false);
 	}
 
 	/**
 	 * Returns the resolved, absolute file system location of the given resource.
 	 * Returns null if the location could not be resolved.
+	 *
+	 * @param target the resource to get the location for
+	 * @param canonical if {@code true}, the prefix of the returned path corresponding
+	 *     to the resource's file store root will be canonicalized
+	 */
+	public IPath locationFor(IResource target, boolean canonical) {
+		return getStoreRoot(target).localLocation(target.getFullPath(), target, false);
+	}
+
+	/**
+	 * Returns the resolved, absolute file system location of the given resource.
+	 * Returns null if the location could not be resolved. No canonicalization is
+	 * applied to the returned URI.
+	 *
+	 * @param target the resource to get the location URI for
 	 */
 	public URI locationURIFor(IResource target) {
-		return getStoreRoot(target).computeURI(target.getFullPath());
+		return locationURIFor(target, false);
+	}
+
+	/**
+	 * Returns the resolved, absolute file system location of the given resource.
+	 * Returns null if the location could not be resolved.
+	 *
+	 * @param target the resource to get the location URI for
+	 * @param canonical if {@code true}, the prefix of the path of the returned URI
+	 *     corresponding to resource's file store root will be canonicalized
+	 */
+	public URI locationURIFor(IResource target, boolean canonical) {
+		return getStoreRoot(target).computeURI(target.getFullPath(), canonical);
 	}
 
 	public void move(IResource source, IFileStore destination, int flags, IProgressMonitor monitor) throws CoreException {
@@ -999,6 +1032,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	public void setLocation(IResource target, ResourceInfo info, URI location) {
 		FileStoreRoot oldRoot = info.getFileStoreRoot();
 		if (location != null) {
+			location = FileUtil.realURI(location); // Normalize case as it exists on the file system.
 			info.setFileStoreRoot(new FileStoreRoot(location, target.getFullPath()));
 		} else {
 			//project is in default location so clear the store root
@@ -1142,7 +1176,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * cannot be modified during save.
 	 */
 	public void writeSilently(IProject target) throws CoreException {
-		IPath location = locationFor(target);
+		IPath location = locationFor(target, false);
 		//if the project location cannot be resolved, we don't know if a description file exists or not
 		if (location == null)
 			return;

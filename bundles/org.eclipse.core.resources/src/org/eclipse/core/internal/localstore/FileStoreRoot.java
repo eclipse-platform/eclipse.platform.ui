@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
+ *     Sergey Prigogin (Google) - [338010] Resource.createLink() does not preserve symbolic links
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -35,9 +36,19 @@ public class FileStoreRoot {
 	 * represents the root location.  This value is null if the root represents
 	 * a non-local file system
 	 */
-	private IPath localRoot = null;
+	private IPath localRoot;
+	/**
+	 * Canonicalized version of localRoot. Initialized lazily.
+	 * @see FileUtil#canonicalPath(IPath)
+	 */
+	private IPath canonicalLocalRoot;
 
 	private URI root;
+	/**
+	 * Canonicalized version of root. Initialized lazily.
+	 * @see FileUtil#canonicalURI(URI)
+	 */
+	private URI canonicalRoot;
 
 	/**
 	 * Defines the root of a file system within the workspace tree.
@@ -65,28 +76,43 @@ public class FileStoreRoot {
 	/**
 	 * Returns the resolved, absolute file system location of the resource
 	 * corresponding to the given workspace path, or null if none could
-	 * be computed.
+	 * be computed. No canonicalization is applied to the returned URI.
 	 */
 	public URI computeURI(IPath workspacePath) {
+		return computeURI(workspacePath, false);
+	}
+
+	/**
+	 * Returns the resolved, absolute file system location of the resource
+	 * corresponding to the given workspace path, or null if none could
+	 * be computed.
+	 *
+	 * @param workspacePath the workspace path to compute the URL for
+	 * @param canonical if {@code true}, the prefix of the path of the returned URI
+	 *     corresponding to this root will be canonicalized
+	 */
+	public URI computeURI(IPath workspacePath, boolean canonical) {
 		IPath childPath = workspacePath.removeFirstSegments(chop);
-		final URI rootURI = getManager(workspacePath).resolveURI(root);
+		URI rootURI = canonical ? getCanonicalRoot() : root;
+		rootURI = getManager(workspacePath).resolveURI(rootURI);
 		if (childPath.segmentCount() == 0)
 			return rootURI;
 		try {
-			return EFS.getStore(rootURI).getChild(childPath).toURI();
+			return EFS.getStore(rootURI).getFileStore(childPath).toURI();
 		} catch (CoreException e) {
 			return null;
 		}
 	}
 
 	/**
-	 * Creates an IFileStore for a given workspace path.
+	 * Creates an IFileStore for a given workspace path. The prefix of the path of
+	 * the returned IFileStore corresponding to this root is canonicalized.
 	 * @exception CoreException If the file system for that resource is undefined
 	 */
 	IFileStore createStore(IPath workspacePath, IResource resource) throws CoreException {
 		IPath childPath = workspacePath.removeFirstSegments(chop);
 		IFileStore rootStore;
-		final URI uri = resource.getPathVariableManager().resolveURI(root);
+		final URI uri = resource.getPathVariableManager().resolveURI(getCanonicalRoot());
 		if (!uri.isAbsolute()) {
 			//handles case where resource location cannot be resolved
 			//such as unresolved path variable or invalid file system scheme
@@ -95,23 +121,45 @@ public class FileStoreRoot {
 		rootStore = EFS.getStore(uri);
 		if (childPath.segmentCount() == 0)
 			return rootStore;
-		return rootStore.getChild(childPath);
+		return rootStore.getFileStore(childPath);
 	}
 
 	boolean isValid() {
 		return isValid;
 	}
 
+	/**
+	 * Returns the resolved, absolute file system location of the given resource.
+	 * Returns null if the location could not be resolved.  No canonicalization
+	 * is applied to the returned path.
+	 * 
+	 * @param workspacePath the workspace path of the resource
+	 * @param resource the resource itself
+	 */
 	IPath localLocation(IPath workspacePath, IResource resource) {
+		return localLocation(workspacePath, resource, false);
+	}
+
+	/**
+	 * Returns the resolved, absolute file system location of the given resource.
+	 * Returns null if the location could not be resolved.
+	 * 
+	 * @param workspacePath the workspace path of the resource
+	 * @param resource the resource itself
+	 * @param canonical if {@code true}, the prefix of the returned path corresponding
+	 *     to this root will be canonicalized
+	 */
+	IPath localLocation(IPath workspacePath, IResource resource, boolean canonical) {
 		if (localRoot == null)
 			return null;
+		IPath rootPath = canonical ? getCanonicalLocalRoot() : localRoot;
 		IPath location;
 		if (workspacePath.segmentCount() <= chop)
-			location = localRoot;
+			location = rootPath;
 		else
-			location = localRoot.append(workspacePath.removeFirstSegments(chop));
+			location = rootPath.append(workspacePath.removeFirstSegments(chop));
 		location = resource.getPathVariableManager().resolvePath(location);
-		
+
 		// if path is still relative then path variable could not be resolved
 		// if path is null, it means path variable refers to a non-local filesystem
 		if (location == null || !location.isAbsolute())
@@ -133,5 +181,19 @@ public class FileStoreRoot {
 		} catch (CoreException e) {
 			return FileUtil.toPath(uri);
 		}
+	}
+
+	private synchronized IPath getCanonicalLocalRoot() {
+		if (canonicalLocalRoot == null && localRoot != null) {
+			canonicalLocalRoot = FileUtil.canonicalPath(localRoot);
+		}
+		return canonicalLocalRoot;
+	}
+
+	private synchronized URI getCanonicalRoot() {
+		if (canonicalRoot == null) {
+			canonicalRoot = FileUtil.canonicalURI(root);
+		}
+		return canonicalRoot;
 	}
 }

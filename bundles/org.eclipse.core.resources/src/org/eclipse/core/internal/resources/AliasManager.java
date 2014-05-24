@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     manklu@web.de - fix for bug 156082
  *     Bert Vingerhoets - fix for bug 169975
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Fix Concurency Exception
+ *     Sergey Prigogin (Google) - [338010] Resource.createLink() does not preserve symbolic links
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -20,8 +21,7 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
-import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -357,6 +357,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			if (link != null) {
 				try {
 					URI locationURI = linkDesc.getLocationURI();
+					locationURI = FileUtil.canonicalURI(locationURI);
 					locationURI = link.getPathVariableManager().resolveURI(locationURI);
 					addToLocationsMap(link, EFS.getStore(locationURI));
 				} catch (CoreException e) {

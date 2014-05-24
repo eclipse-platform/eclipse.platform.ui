@@ -15,6 +15,7 @@
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Sergey Prigogin (Google) - [338010] Resource.createLink() does not preserve symbolic links
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -457,11 +458,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	public void checkValidGroupContainer(IPath destination, boolean isLink, boolean isGroup) throws CoreException {
 		if (!isLink && !isGroup) {
 			String message = Messages.group_invalidParent;
-			ResourceInfo info = workspace.getResourceInfo(destination, false,
-					false);
+			ResourceInfo info = workspace.getResourceInfo(destination, false, false);
 			if (info != null && info.isSet(M_VIRTUAL))
-				throw new ResourceException(new ResourceStatus(
-						IResourceStatus.INVALID_VALUE, null, message));
+				throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message));
 		}
 	}
 
@@ -685,7 +684,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				if ((updateFlags & IResource.HIDDEN) != 0)
 					info.set(M_HIDDEN);
 				info.set(M_LINK);
-				localLocation = FileUtil.canonicalURI(localLocation);
 				LinkDescription linkDescription = new LinkDescription(this, localLocation);
 				if (linkDescription.isGroup())
 					info.set(M_VIRTUAL);
@@ -1149,7 +1147,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		IProject project = getProject();
 		if (project != null && !project.exists())
 			return null;
-		return getLocalManager().locationFor(this);
+		return getLocalManager().locationFor(this, false);
 	}
 
 	/* (non-Javadoc)
@@ -1159,7 +1157,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		IProject project = getProject();
 		if (project != null && !project.exists())
 			return null;
-		return getLocalManager().locationURIFor(this);
+		return getLocalManager().locationURIFor(this, false);
 	}
 
 	/* (non-Javadoc)
@@ -2185,8 +2183,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * 
 	 * @see IResource#setLinkLocation(IPath)
 	 */
-	public void setLinkLocation(URI location, int updateFlags,
-			IProgressMonitor monitor) throws CoreException {
+	public void setLinkLocation(URI location, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		if (!isLinked()) {
 			String message = NLS.bind(Messages.links_resourceIsNotALink, getFullPath());
 			throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);

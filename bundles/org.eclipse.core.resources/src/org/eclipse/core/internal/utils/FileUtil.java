@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,9 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- * Martin Oberhuber (Wind River) - [44107] Add symbolic links to ResourceAttributes API
- * James Blackburn (Broadcom Corp.) - ongoing development
+ *     Martin Oberhuber (Wind River) - [44107] Add symbolic links to ResourceAttributes API
+ *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Sergey Prigogin (Google) - [338010] Resource.createLink() does not preserve symbolic links
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
@@ -77,6 +78,51 @@ public class FileUtil {
 	}
 
 	/**
+	 * For a path on a case-insensitive file system returns the path with the actual
+	 * case as it exists in the file system. If only a prefix of the path exists on
+	 * the file system, the case of remaining part of the returned path is the same
+	 * as in the original path. For a case-sensitive file system returns the original
+	 * path.
+	 * <p>
+	 * This method is similar to java.nio.file.Path.toRealPath(LinkOption.NOFOLLOW_LINKS)
+	 * in Java 1.7.
+	 */
+	public static IPath realPath(IPath path) {
+		if (path == null)
+			return null;
+		IFileSystem fileSystem = EFS.getLocalFileSystem();
+		if (fileSystem.isCaseSensitive())
+			return path;
+		IPath realPath = path.isAbsolute() ? Path.ROOT : Path.EMPTY;
+		realPath = realPath.setDevice(path.getDevice().toUpperCase());
+		IFileStore file = null;
+		for (int i = 0; i < path.segmentCount(); i++) {
+			String segment = path.segment(i);
+			if (i == 0 && path.isUNC()) {
+				realPath = realPath.append(segment.toUpperCase());
+				realPath = realPath.makeUNC(true);
+			} else {
+				if (file == null)
+					file = fileSystem.getStore(realPath);
+				file = file.getChild(segment);
+				IFileInfo info = file.fetchInfo();
+				if (!info.exists()) {
+					// The remainder of the path doesn't exist on the file system - copy from
+					// the original path.
+					realPath = realPath.append(path.removeFirstSegments(realPath.segmentCount()));
+					break;
+				}
+				realPath = realPath.append(info.getName());
+			}
+		}
+		if (path.hasTrailingSeparator()) {
+			realPath = realPath.addTrailingSeparator();
+		}
+		// Return the original path if it's the same as the real one.
+		return realPath.equals(path) ? path : realPath;
+	}
+
+	/**
 	 * Converts a URI into its canonical form.
 	 */
 	public static URI canonicalURI(URI uri) {
@@ -89,6 +135,26 @@ public class FileUtil {
 			if (inputPath == canonicalPath)
 				return uri;
 			return URIUtil.toURI(canonicalPath);
+		}
+		return uri;
+	}
+
+	/**
+	 * Converts a URI by replacing the file system path in the URI with the path
+	 * with the actual case as it exists in the file system.
+	 *
+	 * @see #realPath(IPath)
+	 */
+	public static URI realURI(URI uri) {
+		if (uri == null)
+			return null;
+		if (EFS.SCHEME_FILE.equals(uri.getScheme())) {
+			// Only create a new URI if it is different.
+			final IPath inputPath = URIUtil.toPath(uri);
+			final IPath realPath = realPath(inputPath);
+			if (inputPath == realPath)
+				return uri;
+			return URIUtil.toURI(realPath);
 		}
 		return uri;
 	}

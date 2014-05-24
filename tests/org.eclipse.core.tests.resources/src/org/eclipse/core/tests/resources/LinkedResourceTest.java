@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google) - [338010] Resource.createLink() does not preserve symbolic links
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -1945,5 +1946,25 @@ public class LinkedResourceTest extends ResourceTest {
 		} catch (CoreException e) {
 			// expected to fail
 		}
+	}
+
+	public void testBug338010_linkedFolderWithSymlink() {
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
+			return;
+		IPath baseLocation = getRandomLocation();
+		IPath symlinkTarget = baseLocation.append("dir1/target");
+		symlinkTarget.toFile().mkdirs();
+		createSymLink(baseLocation.toFile(), "symlink", symlinkTarget.toOSString(), true);
+		IPath location = baseLocation.append("symlink/dir2");
+		location.toFile().mkdir();
+		IFolder folder = nonExistingFolderInExistingProject;
+		try {
+			folder.createLink(location, IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.1", e);
+		}
+		// Check that the symlink is preserved.
+		assertEquals("1.2", resolve(location), folder.getLocation());
 	}
 }
