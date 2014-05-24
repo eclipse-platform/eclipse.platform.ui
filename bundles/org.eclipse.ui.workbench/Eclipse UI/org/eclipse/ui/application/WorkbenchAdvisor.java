@@ -755,6 +755,8 @@ public abstract class WorkbenchAdvisor {
 		((WorkbenchWindowConfigurer) configurer).createDefaultContents(shell);
 	}
 
+	private volatile boolean initDone = false;
+
 	/**
 	 * Opens the workbench windows on startup. The default implementation tries
 	 * to restore the previously saved workbench state using
@@ -774,7 +776,7 @@ public abstract class WorkbenchAdvisor {
 		// the UI thread but it could take enough time to disrupt progress reporting.
 		// spawn a new thread to do the grunt work of this initialization and spin the event loop 
 		// ourselves just like it's done in Workbench.
-		final boolean[] initDone = new boolean[]{false};
+
 		final Throwable [] error = new Throwable[1];
 		Thread initThread = new Thread() {
 			/* (non-Javadoc)
@@ -809,21 +811,26 @@ public abstract class WorkbenchAdvisor {
 					error[0] = e;
 				}
 				finally {
-					initDone[0] = true;
+					initDone = true;
 					yield();
+					try {
+						Thread.sleep(5);
+					} catch (InterruptedException e) {
+						// this is a no-op in this case.
+					}
 					display.wake();
 				}
 			}};
 			initThread.start();
 
-			while (true) {
-				if (!display.readAndDispatch()) {
-					if (initDone[0])
-						break;
-					display.sleep();
-				}
-				
+		while (true) {
+			if (!display.readAndDispatch()) {
+				if (initDone)
+					break;
+				display.sleep();
 			}
+
+		}
 			
 			// can only be a runtime or error
 			if (error[0] instanceof Error)
