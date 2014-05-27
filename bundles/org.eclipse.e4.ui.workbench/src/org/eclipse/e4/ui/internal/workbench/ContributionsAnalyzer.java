@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *      Maxime Porhel <maxime.porhel@obeo.fr> Obeo - Bug 435949
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -144,11 +145,13 @@ public final class ContributionsAnalyzer {
 			if (!filtered && menuContribution.isToBeRendered() && popupAny) {
 				// process POPUP_ANY first
 				toContribute.add(menuContribution);
-			} else if (filtered || (!popupTarget && !parentID.equals(id))
-					|| !menuContribution.isToBeRendered()) {
-				continue;
+			} else {
+				if (filtered || (!popupTarget && !parentID.equals(id))
+				|| !menuContribution.isToBeRendered()) {
+					continue;
+				}
+				includedPopups.add(menuContribution);
 			}
-			includedPopups.add(menuContribution);
 		}
 		toContribute.addAll(includedPopups);
 	}
