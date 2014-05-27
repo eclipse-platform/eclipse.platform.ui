@@ -33,10 +33,7 @@ ThemesExtension { color-definition:
     '#org-eclipse-ui-workbench-ACTIVE_TAB_SELECTED_TEXT_COLOR',
     '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_START',
     '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_END',
-    '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_SELECTED_TEXT_COLOR',
-
-    '#org-eclipse-ui-workbench-INACTIVE_CODE_EDITOR_BG_COLOR',
-    '#org-eclipse-ui-workbench-ACTIVE_CODE_EDITOR_BG_COLOR';
+    '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_SELECTED_TEXT_COLOR';
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START {
@@ -163,16 +160,4 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_SELECTED_TEXT_COLOR 
     color: #CCCCCC;
     category: '#org-eclipse-ui-presentation-default';
     label: 'Active (no focus), selected part foreground';
-}
-
-/* Editor definitions: */
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_CODE_EDITOR_BG_COLOR {
-    color: #262626;
-    label: 'Inactive, code editor background color';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_CODE_EDITOR_BG_COLOR {
-    color: #202020;
-    label: 'Active, code editor background color';
 }

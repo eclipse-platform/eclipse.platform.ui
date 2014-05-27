@@ -159,7 +159,7 @@
 .MPart ScheduleDatePicker > ImageHyperlink,
 .MPart CCombo,
 .MPart Spinner,
-.MPart StyledText,
+.MPart Composite > StyledText,
 .MPart PageBook > SashForm Label,
 .MPart SashForm > Text[style~='SWT.BORDER'] {
     background-color: #3f4447;
@@ -173,7 +173,7 @@
 .MPartStack.active .MPart ScheduleDatePicker > ImageHyperlink,
 .MPartStack.active .MPart CCombo,
 .MPartStack.active .MPart Spinner,
-.MPartStack.active .MPart StyledText,
+.MPartStack.active .MPart Composite > StyledText,
 .MPartStack.active .MPart PageBook > SashForm Label,
 .MPartStack.active .MPart SashForm > Text[style~='SWT.BORDER'] {
     background-color: #313538;
@@ -263,21 +263,11 @@
 
 /* ------------------------------------------------------------- */
 
-#org-eclipse-e4-ui-compatibility-editor Canvas,
-#org-eclipse-e4-ui-compatibility-editor Canvas > *,
-/* Workaround for CDT folding column SWT-BUG (styles aren't inherited) */
-#org-eclipse-e4-ui-compatibility-editor Canvas > * > * {
-    /*background-color: #262626;*/
-    background-color: '#org-eclipse-ui-workbench-INACTIVE_CODE_EDITOR_BG_COLOR';
-    /* SWT-BUG: background-color rule for LineNumberRulerColumn is ignored */
+#org-eclipse-e4-ui-compatibility-editor Canvas {
+    background-color: #262626;
 }
-.MPartStack.active #org-eclipse-e4-ui-compatibility-editor Canvas,
-.MPartStack.active #org-eclipse-e4-ui-compatibility-editor Canvas > *,
-/* Workaround for CDT folding column SWT-BUG (styles aren't inherited) */
-.MPartStack.active #org-eclipse-e4-ui-compatibility-editor Canvas > * > * {
-    /*background-color: #202020;*/
-    background-color: '#org-eclipse-ui-workbench-ACTIVE_CODE_EDITOR_BG_COLOR';
-    /* SWT-BUG: background-color rule for LineNumberRulerColumn is ignored */
+.MPartStack.active #org-eclipse-e4-ui-compatibility-editor Canvas {
+    background-color: #202020;
 }
 #org-eclipse-e4-ui-compatibility-editor CTabItem {
     color: #EEEEEE;
