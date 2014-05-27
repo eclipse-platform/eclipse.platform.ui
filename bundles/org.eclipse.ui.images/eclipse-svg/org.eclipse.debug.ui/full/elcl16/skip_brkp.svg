@@ -16,7 +16,7 @@
    version="1.1"
    inkscape:version="0.48.4 r9939"
    sodipodi:docname="skip_brkp.svg"
-   inkscape:export-filename="C:\Users\jmietling\Documents\rect3997-9-1.png"
+   inkscape:export-filename="/home/tmccrary/git/eclipse.platform.ui/bundles/org.eclipse.ui.images/eclipse-svg/org.eclipse.debug.ui/full/elcl16/skip_brkp,svg.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -184,9 +184,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="32"
-     inkscape:cx="9.262603"
-     inkscape:cy="5.6604297"
+     inkscape:zoom="45.254834"
+     inkscape:cx="8.5192675"
+     inkscape:cy="6.1562496"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -214,7 +214,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -232,8 +232,8 @@
        sodipodi:cy="4.5312495"
        sodipodi:rx="3.1562502"
        sodipodi:ry="3.1562502"
-       d="m 8.6875007,4.5312495 a 3.1562502,3.1562502 0 1 1 -6.3125005,0 3.1562502,3.1562502 0 1 1 6.3125005,0 z"
-       transform="matrix(-1.6064355,0,0,1.6064355,17.298318,1037.6136)"
+       d="m 8.6875007,4.5312495 c 0,1.7431489 -1.4131013,3.1562503 -3.1562502,3.1562503 -1.7431489,0 -3.1562503,-1.4131014 -3.1562503,-3.1562503 0,-1.7431489 1.4131014,-3.1562502 3.1562503,-3.1562502 1.7431489,0 3.1562502,1.4131013 3.1562502,3.1562502 z"
+       transform="matrix(-1.424408,0,0,1.424408,16.424061,1038.4384)"
        inkscape:export-filename="C:\Users\jmietling\Documents\path4108-9-1-6.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
