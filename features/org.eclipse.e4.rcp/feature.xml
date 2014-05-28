@@ -438,6 +438,16 @@
          version="0.0.0"
          fragment="true"/>
 
+    <plugin
+         id="org.eclipse.equinox.launcher.gtk.linux.ia64"
+         os="linux"
+         ws="gtk"
+         arch="ia64"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
    <plugin
          id="org.eclipse.equinox.launcher.gtk.linux.x86"
          os="linux"
@@ -672,6 +682,17 @@
          os="linux"
          ws="gtk"
          arch="ppc64le"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+    <plugin
+         id="org.eclipse.swt.gtk.linux.ia64"
+         os="linux"
+         ws="gtk"
+         arch="ia64"
          download-size="0"
          install-size="0"
          version="0.0.0"
