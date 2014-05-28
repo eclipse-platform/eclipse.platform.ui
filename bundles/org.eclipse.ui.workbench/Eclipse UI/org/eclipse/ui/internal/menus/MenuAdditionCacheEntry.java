@@ -146,13 +146,13 @@ public class MenuAdditionCacheEntry {
 		if (idContrib != null && idContrib.length() > 0) {
 			menuContribution.setElementId(idContrib);
 		}
+		String query = location.getQuery();
 		if ("org.eclipse.ui.popup.any".equals(location.getPath())) { //$NON-NLS-1$
 			menuContribution.setParentId("popup"); //$NON-NLS-1$
 		} else {
 			menuContribution.setParentId(location.getPath());
+			hasAdditions = AFTER_ADDITIONS.equals(query);
 		}
-		String query = location.getQuery();
-		hasAdditions = AFTER_ADDITIONS.equals(query);
 		if (query == null || query.length() == 0) {
 			query = AFTER_ADDITIONS;
 		}
