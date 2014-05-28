@@ -28,7 +28,7 @@ public interface IArgumentSelector {
 	 * or <code>null</code> if none.
 	 * 
 	 * @param variable the variable an argument is being selected for
-	 * @param the shell to create any dialogs on, or <code>null</code> if none
+	 * @param shell the shell to create any dialogs on, or <code>null</code> if none
 	 * @return argument for the given variable or <code>null</code>
 	 *  if none
 	 */
