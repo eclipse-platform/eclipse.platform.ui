@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Progress Examples Plug-in
-Bundle-SymbolicName: org.eclipse.ui.examples.job; singleton:=true
+Bundle-SymbolicName: org.eclipse.ui.examples.job;singleton:=true
 Bundle-Version: 3.0.0
 Bundle-ClassPath: ProgressExamples.jar
 Bundle-Activator: org.eclipse.ui.examples.jobs.ProgressExamplesPlugin
