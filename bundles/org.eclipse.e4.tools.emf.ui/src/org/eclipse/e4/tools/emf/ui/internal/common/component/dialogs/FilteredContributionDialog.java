@@ -167,7 +167,11 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 						// dlg.setStatus("More than " + filter.maxResults +
 						// " items were found and have not been displayed");
 						if (hint != 0) {
-							dlg.setMessage("More than " + filter.maxResults + " items were found.  Not all results have been displayed.");
+							if (hint == ContributionResultHandler.MORE_CANCELED) {
+								dlg.setMessage("The search was cancelled.  Not all results may have been displayed.");
+							} else {
+								dlg.setMessage("More than " + filter.maxResults + " items were found.  Not all results have been displayed.");
+							}
 						} else {
 							dlg.setMessage("");
 						}
@@ -727,7 +731,7 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 		viewerList = new WritableList();
 
 		TableViewer oldViewer = viewer;
-		viewer = new TableViewer(compOptions, SWT.FULL_SELECTION);
+		viewer = new TableViewer(compOptions, SWT.FULL_SELECTION | SWT.BORDER);
 		if (oldViewer != null) {
 			viewer.getTable().moveAbove(oldViewer.getTable());
 			oldViewer.getTable().dispose();

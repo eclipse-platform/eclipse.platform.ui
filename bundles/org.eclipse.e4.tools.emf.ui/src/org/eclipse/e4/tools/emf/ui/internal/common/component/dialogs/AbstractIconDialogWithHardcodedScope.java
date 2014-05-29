@@ -155,7 +155,7 @@ public abstract class AbstractIconDialogWithHardcodedScope extends TitleAreaDial
 
 		new Label(container, SWT.NONE);
 
-		viewer = new TableViewer(container, SWT.FULL_SELECTION);
+		viewer = new TableViewer(container, SWT.FULL_SELECTION | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(gd);
 		viewer.setContentProvider(new ObservableListContentProvider());

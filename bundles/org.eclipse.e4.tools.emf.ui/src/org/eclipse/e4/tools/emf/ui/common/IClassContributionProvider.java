@@ -51,15 +51,27 @@ public interface IClassContributionProvider {
 	}
 
 	public interface ContributionResultHandler {
+		// hints for flags paramter
+		/**
+		 * There are more results to display, but the amount is not known
+		 */
+		static public final int MORE_UNKNOWN = -1;
+		/**
+		 * The operation was canceled. There may be additional results.
+		 */
+		static public final int MORE_CANCELED = -2;
+
 		public void result(ContributionData data);
 
 		/**
 		 * This method is called at the end of a search. If the search
 		 * terminated because maxResults was exceeded, the hint parameter will
-		 * contain the number of additional results, or -1 if there are an
-		 * unspecified number of additional results.
+		 * contain the number of additional results, or MORE_UNKNOWN if there
+		 * are an unspecified number of additional results.
 		 *
-		 * No there are no additional results, hint will be 0.
+		 * If the search was cancelled, the hint will be MORE_CANCELED
+		 *
+		 * If there are no additional results, hint will be 0
 		 */
 		public void moreResults(int hint, Filter filter);
 	}

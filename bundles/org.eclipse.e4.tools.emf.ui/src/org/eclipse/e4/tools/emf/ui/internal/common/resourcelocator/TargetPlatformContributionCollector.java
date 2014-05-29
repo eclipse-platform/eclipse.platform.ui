@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Bug 435625
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Bug 435625, Bug 436133, Bug 436132
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator;
@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -72,12 +73,13 @@ import org.w3c.dom.NodeList;
  */
 public abstract class TargetPlatformContributionCollector extends ClassContributionCollector {
 
-	ArrayList<Entry> cacheEntry = new ArrayList<Entry>();
+	CopyOnWriteArrayList<Entry> cacheEntry = new CopyOnWriteArrayList<Entry>();
 	HashSet<String> cacheBundleId = new HashSet<String>();
 	HashSet<String> cachePackage = new HashSet<String>();
 	HashSet<String> cacheLocation = new HashSet<String>();
 	private Pattern patternFile;
 	protected String cacheName;
+	protected boolean stopFiltering;
 
 	static class Entry {
 		String name;
@@ -113,14 +115,19 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 
 				int found = 0;
 				boolean more = false;
-				for (Entry e : cacheEntry) {
 
+				stopFiltering = false;
+				for (Entry e : cacheEntry) {
+					if (stopFiltering) {
+						break;
+					}
 					// Check for FilterEx filters
 					if (filter instanceof FilterEx) {
 						FilterEx filterEx = (FilterEx) filter;
 						IProgressMonitor monitor = filterEx.getProgressMonitor();
 						if (monitor != null) {
 							if (monitor.isCanceled()) {
+								stopFiltering = true;
 								break;
 							} else {
 								monitor.subTask("Searching " + e.installLocation);
@@ -178,7 +185,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 						found++;
 						if (found > maxResults) {
 							more = true;
-							handler.moreResults(-1, filter);
+							handler.moreResults(ContributionResultHandler.MORE_UNKNOWN, filter);
 							break;
 						} else {
 							handler.result(makeData(e));
@@ -187,7 +194,11 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 
 				}
 				if (!more) {
-					handler.moreResults(0, filter);
+					if (stopFiltering) {
+						handler.moreResults(ContributionResultHandler.MORE_CANCELED, filter);
+					} else {
+						handler.moreResults(0, filter);
+					}
 				}
 			}
 		});
@@ -201,6 +212,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 
 			@Override
 			public void clearCache() {
+				stopFiltering = true;
 				cacheEntry.clear();
 				cacheBundleId.clear();
 				cachePackage.clear();
@@ -290,17 +302,22 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 							public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
 								// load workspace projects
-								for (final IProject pj : PDECore.getWorkspace().getRoot().getProjects()) {
+								IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
+								IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
+								int total = projects.length + models.length;
+								monitor.beginTask(Messages.TargetPlatformContributionCollector_updatingTargetPlatformCache + cacheName + ")", total); //$NON-NLS-1$
+
+								for (final IProject pj : projects) {
 									if (monitor.isCanceled()) {
 										break;
 									}
 									String rootDirectory = pj.getLocation().toOSString();
+									monitor.subTask(rootDirectory);
+									monitor.worked(1);
 									TargetPlatformContributionCollector.this.visit(monitor, FilteredContributionDialog.getBundle(rootDirectory), rootDirectory, new File(rootDirectory));
 								}
 
 								// load target platform bundles
-								IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
-								monitor.beginTask(Messages.TargetPlatformContributionCollector_updatingTargetPlatformCache + cacheName + ")", models.length); //$NON-NLS-1$
 								for (IPluginModelBase pluginModelBase : models) {
 									monitor.subTask(pluginModelBase.getPluginBase().getId());
 									monitor.worked(1);
@@ -434,6 +451,9 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 
 	protected void visit(IProgressMonitor monitor, String bundleName, String installLocation, File file) {
 		for (File fChild : file.listFiles()) {
+			if (monitor.isCanceled()) {
+				break;
+			}
 			if (fChild.isDirectory()) {
 				visit(monitor, bundleName, installLocation, fChild);
 			} else {
