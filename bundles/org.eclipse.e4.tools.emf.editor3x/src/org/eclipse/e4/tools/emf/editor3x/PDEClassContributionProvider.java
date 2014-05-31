@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steven@spungin.tv> - Bug 424730
+ *     Steven Spungin <steven@spungin.tv> - Bug 424730, Bug 436281, Bug 436280
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor3x;
 
@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.e4.tools.emf.ui.common.FilterEx;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider;
 import org.eclipse.e4.tools.emf.ui.common.ResourceSearchScope;
 import org.eclipse.jdt.core.IJavaProject;
@@ -42,16 +41,12 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 	}
 
 	@SuppressWarnings("restriction")
-	public void findContribution(final Filter filter,  final ContributionResultHandler handler) {
+	public void findContribution(final Filter filter, final ContributionResultHandler handler) {
 		boolean followReferences = true;
-		if (filter instanceof FilterEx) {
-			FilterEx filterEx = (FilterEx) filter;
-			if (filterEx.getSearchScope().contains(ResourceSearchScope.PROJECT) &&
-					!filterEx.getSearchScope().contains(ResourceSearchScope.REFERENCES)) {
-				followReferences = false;
-			}
-
+		if (filter.getSearchScope().contains(ResourceSearchScope.PROJECT) && !filter.getSearchScope().contains(ResourceSearchScope.REFERENCES)) {
+			followReferences = false;
 		}
+
 		IJavaSearchScope scope = null;
 		if (followReferences == false){
 			IJavaProject javaProject = JavaCore.create(filter.project);
@@ -181,6 +176,7 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 			e.printStackTrace();
 		}
 		
+		handler.moreResults(0, filter);
 	}
 
 }

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Bug 435625, Bug 436133, Bug 436132
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Bug 435625, Bug 436133, Bug 436132, Bug 436283, Bug 436281
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator;
@@ -38,11 +38,15 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.e4.tools.emf.ui.common.FilterEx;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
 import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider;
+import org.eclipse.e4.tools.emf.ui.common.IProviderStatusCallback;
+import org.eclipse.e4.tools.emf.ui.common.ProviderStatus;
 import org.eclipse.e4.tools.emf.ui.common.ResourceSearchScope;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FilteredContributionDialog;
@@ -54,7 +58,10 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -64,7 +71,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * A contribution collector encompassing the current target platform.<br />
- * Uses FilterEx for bundle, package, and location filtering.<br />
+ * Uses filter for bundle, package, and location filtering.<br />
  * This implementation finds resources based on file names, not by parsing file
  * contents.
  *
@@ -106,7 +113,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 
 				Pattern patternName = Pattern.compile(filter.namePattern, Pattern.CASE_INSENSITIVE);
 
-				reloadCache(false);
+				reloadCache(false, filter.getProviderStatusCallback());
 
 				int maxResults = filter.maxResults;
 				if (maxResults == 0) {
@@ -121,65 +128,62 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 					if (stopFiltering) {
 						break;
 					}
-					// Check for FilterEx filters
-					if (filter instanceof FilterEx) {
-						FilterEx filterEx = (FilterEx) filter;
-						IProgressMonitor monitor = filterEx.getProgressMonitor();
-						if (monitor != null) {
-							if (monitor.isCanceled()) {
-								stopFiltering = true;
-								break;
-							} else {
-								monitor.subTask("Searching " + e.installLocation);
-							}
+					IProgressMonitor monitor = filter.getProgressMonitor();
+					if (monitor != null) {
+						if (monitor.isCanceled()) {
+							stopFiltering = true;
+							break;
+						} else {
+							monitor.subTask("Searching " + e.installLocation);
 						}
+					}
 
-						if (E.notEmpty(filterEx.getBundles())) {
-							if (!filterEx.getBundles().contains(e.bundleSymName)) {
-								continue;
+					if (E.notEmpty(filter.getBundles())) {
+						if (!filter.getBundles().contains(e.bundleSymName)) {
+							continue;
+						}
+					}
+					if (E.notEmpty(filter.getPackages())) {
+						if (!filter.getPackages().contains(e.pakage)) {
+							continue;
+						}
+					}
+					if (E.notEmpty(filter.getLocations())) {
+						boolean locationFound = false;
+						for (String location : filter.getLocations()) {
+							if (e.installLocation.startsWith(location)) {
+								locationFound = true;
+								break;
 							}
 						}
-						if (E.notEmpty(filterEx.getPackages())) {
-							if (!filterEx.getPackages().contains(e.pakage)) {
-								continue;
-							}
+						if (!locationFound) {
+							continue;
 						}
-						if (E.notEmpty(filterEx.getLocations())) {
-							boolean locationFound = false;
-							for (String location : filterEx.getLocations()) {
-								if (e.installLocation.startsWith(location)) {
-									locationFound = true;
+					}
+					if (filter.isIncludeNonBundles() == false) {
+						if (e.bundleSymName == null) {
+							continue;
+						}
+					}
+					if (filter.getSearchScope().contains(ResourceSearchScope.WORKSPACE)) {
+						if (filter.project != null) {
+							IWorkspace workspace = filter.project.getWorkspace();
+							boolean fnd = false;
+							for (IProject project : workspace.getRoot().getProjects()) {
+								// String path =
+								// project.getLocationURI().getPath();
+								String path = project.getName();
+								if (e.installLocation.contains(path)) {
+									fnd = true;
 									break;
 								}
 							}
-							if (!locationFound) {
+							if (!fnd) {
 								continue;
-							}
-						}
-						if (filterEx.isIncludeNonBundles() == false) {
-							if (e.bundleSymName == null) {
-								continue;
-							}
-						}
-						if (filterEx.getSearchScope().contains(ResourceSearchScope.WORKSPACE)) {
-							if (filter.project != null) {
-								IWorkspace workspace = filter.project.getWorkspace();
-								boolean fnd = false;
-								for (IProject project : workspace.getRoot().getProjects()) {
-									// String path =
-									// project.getLocationURI().getPath();
-									String path = project.getName();
-									if (e.installLocation.contains(path)) {
-										fnd = true;
-										break;
-									}
-								}
-								if (!fnd) {
-									continue;
-								}
 							}
 						}
 					}
+
 					Matcher m = patternName.matcher(e.name);
 					if (m.find()) {
 						found++;
@@ -241,7 +245,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 	 * @return A copy of the bundle IDs in the cache.
 	 */
 	public Collection<String> getBundleIds() {
-		reloadCache(false);
+		reloadCache(false, null);
 		return new ArrayList<String>(cacheBundleId);
 	}
 
@@ -250,7 +254,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 	 * @return A copy of the bundle IDs in the cache.
 	 */
 	public Collection<String> getPackages() {
-		reloadCache(false);
+		reloadCache(false, null);
 		return new ArrayList<String>(cachePackage);
 	}
 
@@ -259,7 +263,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 	 * @return A copy of the bundle IDs in the cache.
 	 */
 	public Collection<String> getLocations() {
-		reloadCache(false);
+		reloadCache(false, null);
 		return new ArrayList<String>(cacheLocation);
 	}
 
@@ -269,16 +273,138 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 	 *
 	 * @param force
 	 *            true to force reload the cache
+	 * @param providerStatusCallback
 	 */
-	private void reloadCache(boolean force) {
+	private void reloadCache(boolean force, final IProviderStatusCallback providerStatusCallback) {
 		if (cacheEntry.isEmpty() || force) {
+			if (providerStatusCallback != null) {
+				providerStatusCallback.onStatusChanged(ProviderStatus.INITIALIZING);
+			}
 			cacheEntry.clear();
 			cacheBundleId.clear();
 			cachePackage.clear();
 			cacheLocation.clear();
 			outputDirectories.clear();
 
+			final Job job = new Job("Build Target Platform Index") {
+
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					// load workspace projects
+					IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
+					IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
+					int total = projects.length + models.length;
+					monitor.beginTask(Messages.TargetPlatformContributionCollector_updatingTargetPlatformCache + cacheName + ")", total); //$NON-NLS-1$
+
+					for (final IProject pj : projects) {
+						if (monitor.isCanceled()) {
+							break;
+						}
+						String rootDirectory = pj.getLocation().toOSString();
+						monitor.subTask(rootDirectory);
+						monitor.worked(1);
+						TargetPlatformContributionCollector.this.visit(monitor, FilteredContributionDialog.getBundle(rootDirectory), rootDirectory, new File(rootDirectory));
+					}
+
+					// load target platform bundles
+					for (IPluginModelBase pluginModelBase : models) {
+						monitor.subTask(pluginModelBase.getPluginBase().getId());
+						monitor.worked(1);
+						if (monitor.isCanceled()) {
+							break;
+						}
+
+						IPluginBase pluginBase = pluginModelBase.getPluginBase();
+						if (pluginBase == null) {
+							// bundle = getBundle(new File())
+							continue;
+						}
+						URL url;
+						try {
+							String installLocation = pluginModelBase.getInstallLocation();
+							if (installLocation.endsWith(".jar")) { //$NON-NLS-1$
+								url = new URL("file://" + installLocation); //$NON-NLS-1$
+								ZipInputStream zis = new ZipInputStream(url.openStream());
+								while (true) {
+									ZipEntry entry = zis.getNextEntry();
+									if (entry == null) {
+										break;
+									} else {
+										String name2 = entry.getName();
+										if (shouldIgnore(name2)) {
+											continue;
+										}
+										Matcher m = patternFile.matcher(name2);
+										if (m.matches()) {
+											Entry e = new Entry();
+											e.installLocation = installLocation;
+											cacheLocation.add(installLocation);
+											e.name = m.group(2);
+											e.path = m.group(1);
+											if (e.path != null) {
+												e.pakage = e.path.replace("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
+												if (e.pakage.startsWith(".")) { //$NON-NLS-1$
+													e.pakage = e.pakage.substring(1);
+												}
+												if (e.pakage.endsWith(".")) { //$NON-NLS-1$
+													e.pakage = e.pakage.substring(0, e.pakage.length() - 1);
+												}
+											} else {
+												e.pakage = ""; //$NON-NLS-1$
+											}
+											cachePackage.add(e.pakage);
+
+											e.bundleSymName = pluginBase.getId();
+											if (e.path == null) {
+												e.path = ""; //$NON-NLS-1$
+											}
+											cacheEntry.add(e);
+											cacheBundleId.add(pluginBase.getId());
+
+											//
+											// System.out.println(group
+											// + " -> "
+											// +
+											// m.group(2));
+										}
+									}
+								}
+							} else {
+								// not a jar file
+								String bundle = getBundle(new File(installLocation));
+								if (bundle != null) {
+									visit(monitor, bundle, installLocation, new File(installLocation));
+								}
+							}
+						} catch (MalformedURLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					monitor.done();
+					if (monitor.isCanceled()) {
+						if (providerStatusCallback != null) {
+							providerStatusCallback.onStatusChanged(ProviderStatus.CANCELLED);
+						}
+						return Status.CANCEL_STATUS;
+					} else {
+						if (providerStatusCallback != null) {
+							providerStatusCallback.onStatusChanged(ProviderStatus.READY);
+						}
+						return Status.OK_STATUS;
+					}
+				}
+			};
+			job.schedule();
+
+			// User Job will not display dialog if called from a modal dialog,
+			// so we wrap a plain ol' job in a ProgressMonitorDialog
 			Display.getDefault().syncExec(new Runnable() {
+
+				boolean runInBackground = false;
 
 				@Override
 				public void run() {
@@ -294,106 +420,38 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 
 							return ret;
 						}
+
+						@Override
+						protected void createButtonsForButtonBar(Composite parent) {
+							Button button = createButton(parent, 101, "Run In Background", false);
+							// TODO JA
+							button.addSelectionListener(new SelectionAdapter() {
+								@Override
+								public void widgetSelected(SelectionEvent e) {
+									runInBackground = true;
+								}
+							});
+							super.createButtonsForButtonBar(parent);
+
+							// Do not use arrow cursor until calling super
+							// TODO ProgressMonitorDialog should encapsulate
+							// arrowCurson
+							button.setCursor(arrowCursor);
+						}
+
+						@Override
+						protected void cancelPressed() {
+							job.cancel();
+						}
 					};
 					try {
 						dlg.run(true, true, new IRunnableWithProgress() {
 
 							@Override
 							public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-
-								// load workspace projects
-								IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
-								IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
-								int total = projects.length + models.length;
-								monitor.beginTask(Messages.TargetPlatformContributionCollector_updatingTargetPlatformCache + cacheName + ")", total); //$NON-NLS-1$
-
-								for (final IProject pj : projects) {
-									if (monitor.isCanceled()) {
-										break;
-									}
-									String rootDirectory = pj.getLocation().toOSString();
-									monitor.subTask(rootDirectory);
-									monitor.worked(1);
-									TargetPlatformContributionCollector.this.visit(monitor, FilteredContributionDialog.getBundle(rootDirectory), rootDirectory, new File(rootDirectory));
-								}
-
-								// load target platform bundles
-								for (IPluginModelBase pluginModelBase : models) {
-									monitor.subTask(pluginModelBase.getPluginBase().getId());
-									monitor.worked(1);
-									if (monitor.isCanceled()) {
-										break;
-									}
-
-									IPluginBase pluginBase = pluginModelBase.getPluginBase();
-									if (pluginBase == null) {
-										// bundle = getBundle(new File())
-										continue;
-									}
-									URL url;
-									try {
-										String installLocation = pluginModelBase.getInstallLocation();
-										if (installLocation.endsWith(".jar")) { //$NON-NLS-1$
-											url = new URL("file://" + installLocation); //$NON-NLS-1$
-											ZipInputStream zis = new ZipInputStream(url.openStream());
-											while (true) {
-												ZipEntry entry = zis.getNextEntry();
-												if (entry == null) {
-													break;
-												} else {
-													String name2 = entry.getName();
-													if (shouldIgnore(name2)) {
-														continue;
-													}
-													Matcher m = patternFile.matcher(name2);
-													if (m.matches()) {
-														Entry e = new Entry();
-														e.installLocation = installLocation;
-														cacheLocation.add(installLocation);
-														e.name = m.group(2);
-														e.path = m.group(1);
-														if (e.path != null) {
-															e.pakage = e.path.replace("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
-															if (e.pakage.startsWith(".")) { //$NON-NLS-1$
-																e.pakage = e.pakage.substring(1);
-															}
-															if (e.pakage.endsWith(".")) { //$NON-NLS-1$
-																e.pakage = e.pakage.substring(0, e.pakage.length() - 1);
-															}
-														} else {
-															e.pakage = ""; //$NON-NLS-1$
-														}
-														cachePackage.add(e.pakage);
-
-														e.bundleSymName = pluginBase.getId();
-														if (e.path == null) {
-															e.path = ""; //$NON-NLS-1$
-														}
-														cacheEntry.add(e);
-														cacheBundleId.add(pluginBase.getId());
-
-														//
-														// System.out.println(group
-														// + " -> "
-														// +
-														// m.group(2));
-													}
-												}
-											}
-										} else {
-											// not a jar file
-											String bundle = getBundle(new File(installLocation));
-											if (bundle != null) {
-												visit(monitor, bundle, installLocation, new File(installLocation));
-											}
-										}
-									} catch (MalformedURLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									} catch (IOException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
+								monitor.beginTask("Waiting for target platform indexing to complete", IProgressMonitor.UNKNOWN);
+								while (job.getState() == job.RUNNING && !runInBackground) {
+									Thread.sleep(100);
 								}
 								monitor.done();
 							}
@@ -406,8 +464,8 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 						e1.printStackTrace();
 					}
 				}
-			});
 
+			});
 		}
 	}
 

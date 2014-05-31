@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Bug 435625
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Bug 435625, Bug 436281
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
@@ -34,16 +34,18 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.tools.emf.ui.common.FilterEx;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionResultHandler;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Filter;
+import org.eclipse.e4.tools.emf.ui.common.IProviderStatusCallback;
+import org.eclipse.e4.tools.emf.ui.common.ProviderStatus;
 import org.eclipse.e4.tools.emf.ui.common.ResourceSearchScope;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.AbstractIconDialogWithScopeAndFilter.Entry;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.TitleAreaFilterDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatformClassContributionCollector;
+import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatformContributionCollector;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatformIconContributionCollector;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.NonReferencedResourceDialog;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -122,6 +124,10 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 	protected BundleImageCache imageCache;
 	protected Job currentSearchThread;
 	private ContributionResultHandlerImpl currentResultHandler;
+	protected ProviderStatus providerStatus;
+	protected int hint;
+	protected int maxResults;
+	protected boolean searching;
 
 	abstract protected ClassContributionCollector getCollector();
 
@@ -134,6 +140,38 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 	abstract protected String getDialogTitle();
 
 	abstract protected String getShellTitle();
+
+	private void updateStatusMessage() {
+		String message = ""; //$NON-NLS-1$
+		if (searching) {
+			message += "Searching...\n";
+		}
+		// dlg.setStatus("More than " + filter.maxResults +
+		// " items were found and have not been displayed");
+		if (hint != 0) {
+			if (hint == ContributionResultHandler.MORE_CANCELED) {
+				message += "The search was cancelled.  Not all results may have been displayed.\n";
+			} else {
+				message += "More than " + maxResults + " items were found.  Not all results have been displayed.\n";
+			}
+		}
+
+		if (getCollector() instanceof TargetPlatformContributionCollector) {
+			if (providerStatus != null) {
+				switch (providerStatus) {
+				case READY:
+					break;
+				case INITIALIZING:
+					message += "The provider is initializing.  Results will refresh when complete.";
+					break;
+				case CANCELLED:
+					message += "The provider was cancelled while initializing.  Results may be incomplete.";
+					break;
+				}
+			}
+		}
+		setMessage(message);
+	}
 
 	private class ContributionResultHandlerImpl implements ContributionResultHandler {
 		private boolean cancled = false;
@@ -164,17 +202,9 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 					@Override
 					public void run() {
 						FilteredContributionDialog dlg = (FilteredContributionDialog) filter.userData;
-						// dlg.setStatus("More than " + filter.maxResults +
-						// " items were found and have not been displayed");
-						if (hint != 0) {
-							if (hint == ContributionResultHandler.MORE_CANCELED) {
-								dlg.setMessage("The search was cancelled.  Not all results may have been displayed.");
-							} else {
-								dlg.setMessage("More than " + filter.maxResults + " items were found.  Not all results have been displayed.");
-							}
-						} else {
-							dlg.setMessage("");
-						}
+						dlg.hint = hint;
+						dlg.maxResults = filter.maxResults;
+						dlg.updateStatusMessage();
 					}
 				});
 			}
@@ -317,11 +347,12 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 				if (doSearch() == true) {
 					return;
 				}
-				setMessage("Searching...");
+				searching = true;
+				updateStatusMessage();
 
 				currentSearchThread = new Job("Contribution Search") {
 
-					FilterEx filter;
+					Filter filter;
 
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
@@ -332,11 +363,11 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 							@Override
 							public void run() {
 								if (searchScopes.contains(ResourceSearchScope.PROJECT)) {
-									filter = new FilterEx(context.get(IProject.class), textBox.getText());
+									filter = new Filter(context.get(IProject.class), textBox.getText());
 								} else {
-									// filter = new FilterEx(null,
+									// filter = new Filter(null,
 									// textBox.getText());
-									filter = new FilterEx(context.get(IProject.class), textBox.getText());
+									filter = new Filter(context.get(IProject.class), textBox.getText());
 								}
 							}
 						});
@@ -348,9 +379,39 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 						filter.setSearchScope(searchScopes);
 						filter.setIncludeNonBundles(includeNonBundles);
 						filter.setProgressMonitor(monitor);
+						filter.setProviderStatusCallback(new IProviderStatusCallback() {
+
+							@Override
+							public void onStatusChanged(final ProviderStatus status) {
+								FilteredContributionDialog.this.providerStatus = status;
+								getShell().getDisplay().asyncExec(new Runnable() {
+
+									@Override
+									public void run() {
+										updateStatusMessage();
+										switch (status) {
+										case READY:
+											refreshSearch();
+											break;
+										case CANCELLED:
+										case INITIALIZING:
+											break;
+										}
+									}
+								});
+							}
+						});
 						collector.findContributions(filter, currentResultHandler);
 						currentSearchThread = null;
 						monitor.done();
+						searching = false;
+						getShell().getDisplay().asyncExec(new Runnable() {
+
+							@Override
+							public void run() {
+								updateStatusMessage();
+							}
+						});
 						return Status.OK_STATUS;
 					}
 
@@ -939,8 +1000,9 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 			if (bJoin) {
 				try {
 					currentSearchThread.join();
-					currentSearchThread = null;
 				} catch (InterruptedException e) {
+				} finally {
+					currentSearchThread = null;
 				}
 			} else {
 				currentSearchThread = null;

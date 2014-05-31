@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steven@spungin.tv> - Bug 404136, 424730
+ *     Steven Spungin <steven@spungin.tv> - Bug 404136, Bug 424730, Bug 436281
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
@@ -29,8 +29,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.tools.emf.ui.common.FilterEx;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
+import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Filter;
 import org.eclipse.e4.tools.emf.ui.common.ResourceSearchScope;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.StringMatcher;
@@ -303,7 +303,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 			clearImages();
 
 			callback = new IconMatchCallback((IObservableList) getViewer().getInput());
-			FilterEx filter = new FilterEx(project, getFilterTextBox().getText());
+			Filter filter = new Filter(project, getFilterTextBox().getText());
 			filter.setSearchScope(getSearchScopes());
 			filter.setBundles(getFilterBundles());
 			filter.setLocations(getFilterLocations());
@@ -374,10 +374,10 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 		private final StringMatcher matcherGif;
 		private final StringMatcher matcherJpg;
 		private final StringMatcher matcherPng;
-		private FilterEx filter;
+		private Filter filter;
 		private boolean includeNonBundles;
 
-		public SearchThread(IconMatchCallback callback, FilterEx filter) {
+		public SearchThread(IconMatchCallback callback, Filter filter) {
 			this.matcherGif = new StringMatcher("*" + filter.namePattern + "*.gif", true, false); //$NON-NLS-1$//$NON-NLS-2$
 			this.matcherJpg = new StringMatcher("*" + filter.namePattern + "*.jpg", true, false); //$NON-NLS-1$//$NON-NLS-2$
 			this.matcherPng = new StringMatcher("*" + filter.namePattern + "*.png", true, false); //$NON-NLS-1$//$NON-NLS-2$
