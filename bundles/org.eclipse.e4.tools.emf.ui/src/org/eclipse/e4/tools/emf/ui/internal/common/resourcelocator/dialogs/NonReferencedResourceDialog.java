@@ -11,8 +11,6 @@
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
 
-import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,6 +31,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BundleImage
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionDataFile;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FilteredContributionDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.BundleConverter;
+import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -48,8 +47,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 public class NonReferencedResourceDialog extends TitleAreaDialog {
 	private String bundle;
@@ -94,110 +95,117 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite comp = (Composite) super.createDialogArea(parent);
+		Composite compParent = (Composite) super.createDialogArea(parent);
 
-		Composite compInfo = new Composite(comp, SWT.NONE);
-		compInfo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		compInfo.setLayout(new GridLayout(2, false));
+		Composite comp = new Composite(compParent, SWT.NONE);
+		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		layoutData.horizontalSpan = 2;
+		comp.setLayoutData(layoutData);
+		comp.setLayout(new GridLayout(2, false));
 
 		String message = ""; //$NON-NLS-1$
 		Button defaultButton = null;
 
 		if (installLocation != null) {
-			Label label = new Label(compInfo, SWT.NONE);
-			label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+			Label label = new Label(comp, SWT.NONE);
+			label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			label.setText(Messages.NonReferencedResourceDialog_installLocation);
 
-			Label label2 = new Label(compInfo, SWT.NONE);
-			label2.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+			Text label2 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+			label2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			label2.setText(installLocation);
 		}
 
 		if (className != null) {
 			ContributionData cd = ((ContributionDataFile) file).getContributionData();
-			Label label = new Label(compInfo, SWT.NONE);
-			label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+			Label label = new Label(comp, SWT.NONE);
+			label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			label.setText(Messages.NonReferencedResourceDialog_2);
 
-			Label label2 = new Label(compInfo, SWT.NONE);
-			label2.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+			Text label2 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+			label2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			if (bundle != null) {
 				label2.setText(bundle);
 			} else {
 				label2.setText(Messages.NonReferencedResourceDialog__ast_notInABundle_ast);
 			}
 
-			Label label3 = new Label(compInfo, SWT.NONE);
-			label3.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+			Label label3 = new Label(comp, SWT.NONE);
+			label3.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			label3.setText(Messages.NonReferencedResourceDialog_package);
 
-			Label label4 = new Label(compInfo, SWT.NONE);
-			label4.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+			Text label4 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+			label4.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			label4.setText(getPackageFromClassName(className));
 
-			Label label5 = new Label(compInfo, SWT.NONE);
-			label5.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+			Label label5 = new Label(comp, SWT.NONE);
+			label5.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			label5.setText(Messages.NonReferencedResourceDialog_class);
 
-			Label label6 = new Label(compInfo, SWT.NONE);
-			label6.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+			Text label6 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+			label6.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			label6.setText(cd.className.substring(cd.className.lastIndexOf('.') + 1));
 
 			if (bundle != null) {
-				Label label7 = new Label(compInfo, SWT.NONE);
-				label7.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+				Label label7 = new Label(comp, SWT.NONE);
+				label7.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 				label7.setText(Messages.NonReferencedResourceDialog_url);
 
-				Label label8 = new Label(compInfo, SWT.NONE);
-				label8.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+				Text label8 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+				label8.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 				label8.setText("bundleclass://" + bundle + "/" + className); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
-			Label label = new Label(compInfo, SWT.NONE);
-			label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+			Label label = new Label(comp, SWT.NONE);
+			label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			label.setText(Messages.NonReferencedResourceDialog_bundle);
 
-			Label label2 = new Label(compInfo, SWT.NONE);
-			label2.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+			Text label2 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+			label2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			if (bundle != null) {
 				label2.setText(bundle);
 			} else {
 				label2.setText(Messages.NonReferencedResourceDialog_ast_notInABundle_ast);
 			}
 
-			Label label7 = new Label(compInfo, SWT.NONE);
-			label7.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+			Label label7 = new Label(comp, SWT.NONE);
+			label7.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			label7.setText(Messages.NonReferencedResourceDialog_directory);
 
-			Label label8 = new Label(compInfo, SWT.NONE);
-			label8.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+			Text label8 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+			label8.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			label8.setText(file.getFullPath().removeFirstSegments(1).removeLastSegments(1).toOSString());
 
-			Label label3 = new Label(compInfo, SWT.NONE);
-			label3.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+			Label label3 = new Label(comp, SWT.NONE);
+			label3.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			label3.setText(Messages.NonReferencedResourceDialog_resource);
 
-			Label label4 = new Label(compInfo, SWT.NONE);
-			label4.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+			Text label4 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+			label4.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			label4.setText(file.getFullPath().lastSegment());
 
 			if (bundle != null) {
-				Label label5 = new Label(compInfo, SWT.NONE);
-				label5.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+				Label label5 = new Label(comp, SWT.NONE);
+				label5.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 				label5.setText(Messages.NonReferencedResourceDialog_url);
 
-				Label label6 = new Label(compInfo, SWT.NONE);
-				label6.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+				Text label6 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+				label6.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 				label6.setText("platform:/plugin/" + bundle + "/" + file.getFullPath().removeFirstSegments(1).toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
 		Label lblMessage = new Label(comp, SWT.NONE);
-		lblMessage.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		lblMessage.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 0));
 		lblMessage.setText(message);
 
+		Group group = new Group(comp, SWT.NONE);
+		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 0));
+		group.setLayout(new GridLayout(1, false));
+		group.setText("Action");
+
 		if (bundle != null) {
-			final Button btnRequire = new Button(comp, SWT.RADIO);
+			final Button btnRequire = new Button(group, SWT.RADIO);
 			btnRequire.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			btnRequire.setText(Messages.NonReferencedResourceDialog_requireBundle);
 			btnRequire.setImage(imageCache.loadFromKey(ResourceProvider.IMG_Obj16_bundle));
@@ -220,7 +228,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 
 		// make sure className is not in the default package (contains '.')
 		if (className != null && bundle != null && className.contains(".")) { //$NON-NLS-1$
-			final Button btnImport = new Button(comp, SWT.RADIO);
+			final Button btnImport = new Button(group, SWT.RADIO);
 			btnImport.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			btnImport.setText(Messages.NonReferencedResourceDialog_importPackage);
 			btnImport.setImage(imageCache.create("/icons/full/obj16/package_obj.gif")); //$NON-NLS-1$
@@ -263,7 +271,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 		}
 
 		if (bundle != null) {
-			final Button btnUseAnyway = new Button(comp, SWT.RADIO);
+			final Button btnUseAnyway = new Button(group, SWT.RADIO);
 			btnUseAnyway.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			btnUseAnyway.setText(Messages.NonReferencedResourceDialog_useAnyway);
 			btnUseAnyway.setImage(imageCache.create("/icons/full/obj16/use_anyway.gif")); //$NON-NLS-1$
@@ -280,7 +288,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 		} else {
 			if (file instanceof ContributionDataFile) {
 				final ContributionDataFile cdf = (ContributionDataFile) file;
-				final Button btnConvertToBundle = new Button(comp, SWT.RADIO);
+				final Button btnConvertToBundle = new Button(group, SWT.RADIO);
 				btnConvertToBundle.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 				btnConvertToBundle.setText(Messages.NonReferencedResourceDialog_convertAndRequire);
 				btnConvertToBundle.setImage(imageCache.create("/icons/full/obj16/bundle.png")); //$NON-NLS-1$
@@ -316,7 +324,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 		}
 
 		if (className == null) {
-			final Button btnCopy = new Button(comp, SWT.RADIO);
+			final Button btnCopy = new Button(group, SWT.RADIO);
 			defaultButton = btnCopy;
 			btnCopy.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			btnCopy.setText(Messages.NonReferencedResourceDialog_copyToThisProject);
@@ -338,7 +346,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 		}
 
 		if (className == null) {
-			final Button btnCopy2 = new Button(comp, SWT.RADIO);
+			final Button btnCopy2 = new Button(group, SWT.RADIO);
 			btnCopy2.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			btnCopy2.setText(Messages.NonReferencedResourceDialog_copyToReferenedProject);
 			btnCopy2.setImage(imageCache.create("/icons/full/obj16/copy_to_project.png")); //$NON-NLS-1$
