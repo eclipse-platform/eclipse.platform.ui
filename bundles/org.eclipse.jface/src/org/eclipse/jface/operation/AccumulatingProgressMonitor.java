@@ -198,7 +198,7 @@ import org.eclipse.swt.widgets.Display;
 	}
 
 	@Override
-	public void setTaskName(final String name) {
+	public synchronized void setTaskName(final String name) {
 		currentTask = name;
 		if (collector == null) {
 			createCollector(name, null, 0);
