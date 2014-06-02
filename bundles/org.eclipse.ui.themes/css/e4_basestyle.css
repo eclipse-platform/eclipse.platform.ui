@@ -192,14 +192,14 @@ CTabItem:selected {
 	background-color: #A0A000;
 }
 
-.MPartStack#left Composite, .MPartStack#right Composite, .MPartStack#bottom Composite {
+.MPartStack > Composite {
 	background-color: '#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END';
 }
 
-.MPartStack#left.active Composite, .MPartStack#right.active Composite, .MPartStack#bottom.active Composite {
+.MPartStack.active > Composite {
 	background-color: '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END';
 }
 
-.MPartStack#left.active.noFocus Composite, .MPartStack#right.active.noFocus Composite, .MPartStack#bottom.active.noFocus Composite {
+.MPartStack.active.noFocus > Composite {
 	background-color: '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_END';
 }

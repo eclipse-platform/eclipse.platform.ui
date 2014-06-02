@@ -305,3 +305,16 @@
     background-color: #252525;
     color: #CCCCCC;
 }
+
+.MPartStack > Composite {
+	background-color: #323435;
+}
+
+.MPartStack.active > Composite {
+	background-color: #292929;
+}
+
+.MPartStack.active.noFocus > Composite {
+	background-color: #323435;
+}
+
