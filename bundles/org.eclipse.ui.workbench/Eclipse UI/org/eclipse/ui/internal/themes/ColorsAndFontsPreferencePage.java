@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Cornel Izbasa <cizbasa@info.uvt.ro> - Bug https://bugs.eclipse.org/436247
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
@@ -769,7 +770,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
 		private boolean isAnyThemeChanged() {
 			return currentTheme != workbench.getThemeManager().getCurrentTheme()
-					|| currentCSSTheme != themeEngine.getActiveTheme();
+					|| currentCSSTheme != getActiveTheme();
 		}
 	};
 
@@ -852,6 +853,19 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 			return true;
         return false;
     }
+
+	/**
+	 * Get the active theme.
+	 * 
+	 * @return the active theme if there is one; <code>null</code> if there
+	 *         isn't or {@link #themeEngine} is <code>null</code>.
+	 */
+	private org.eclipse.e4.ui.css.swt.theme.ITheme getActiveTheme() {
+		if (themeEngine != null) {
+			return themeEngine.getActiveTheme();
+		}
+		return null;
+	}
 
     /**
      * Create a button for the preference page.
@@ -1379,7 +1393,7 @@ getPreferenceStore(),
 
         currentTheme = manager.getCurrentTheme();
 
-		currentCSSTheme = themeEngine.getActiveTheme();
+		currentCSSTheme = getActiveTheme();
 
         colorRegistry = new CascadingColorRegistry(currentTheme.getColorRegistry());
         fontRegistry = new CascadingFontRegistry(currentTheme.getFontRegistry());
