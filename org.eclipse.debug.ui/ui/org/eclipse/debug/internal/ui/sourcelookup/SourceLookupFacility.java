@@ -241,6 +241,69 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		});
 	}
 
+	private class ArtifactWithLocator {
+		public final Object artifact;
+		public final ISourceLocator locator;
+		public ArtifactWithLocator(Object artifact, ISourceLocator locator) {
+			this.artifact = artifact;
+			this.locator = locator;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see java.lang.Object#hashCode()
+		 */
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + ((artifact == null) ? 0 : artifact.hashCode());
+			result = prime * result + ((locator == null) ? 0 : locator.hashCode());
+			return result;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			ArtifactWithLocator other = (ArtifactWithLocator) obj;
+			if (!getOuterType().equals(other.getOuterType())) {
+				return false;
+			}
+			if (artifact == null) {
+				if (other.artifact != null) {
+					return false;
+				}
+			} else if (!artifact.equals(other.artifact)) {
+				return false;
+			}
+			if (locator == null) {
+				if (other.locator != null) {
+					return false;
+				}
+			} else if (!locator.equals(other.locator)) {
+				return false;
+			}
+			return true;
+		}
+
+		private SourceLookupFacility getOuterType() {
+			return SourceLookupFacility.this;
+		}
+	}
+
 	/**
 	 * Performs source lookup for the given artifact and returns the result.
 	 * 
@@ -254,7 +317,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 	public SourceLookupResult lookup(Object artifact, ISourceLocator locator) {
 		SourceLookupResult result = null;
 		synchronized (fLookupResults) {
-			result = fLookupResults.get(artifact);
+			result = fLookupResults.get(new ArtifactWithLocator(artifact, locator));
 			if (result != null) {
 				return result;
 			}
@@ -315,7 +378,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 				result.setEditorInput(editorInput);
 				result.setEditorId(editorId);
 				result.setSourceElement(sourceElement);
-				fLookupResults.put(artifact, result);
+				fLookupResults.put(new ArtifactWithLocator(artifact, localLocator), result);
 			}
 		}
 		return result;
