@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Cornel Izbasa <cizbasa@info.uvt.ro> - Removed unwanted items in the Customize functionality on the Intro - https://bugs.eclipse.org/420843
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.universal;
 
@@ -48,6 +49,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.DND;
@@ -163,7 +165,11 @@ public class CustomizationContentsArea {
 			this.name = name;
 			this.nameNoMnemonic = nameNoMnemonic;
 		}
-		
+
+		public String getId() {
+			return id;
+		}
+
 		public String getName() {
 			return name;
 		}
@@ -888,6 +894,21 @@ public class CustomizationContentsArea {
 		rootPages = CheckboxTableViewer.newCheckList(container, SWT.BORDER);
 		rootPages.setContentProvider(contentProvider);
 		rootPages.setLabelProvider(labelProvider);
+		// Filter empty pages
+		ViewerFilter[] rootPageFilters = new ViewerFilter[] {
+			new ViewerFilter() {
+				public boolean select(Viewer viewer, Object parentElement,
+						Object element) {
+					if (element instanceof RootPage) {
+						RootPage rootPageElement = (RootPage) element;
+						String rootPageId = rootPageElement.getId();
+						return (introData.getPage(rootPageId) != null);
+					}
+					return false;
+				}
+			}
+		};
+		rootPages.setFilters(rootPageFilters);
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 		gd.horizontalSpan = 2;
 		rootPages.getControl().setLayoutData(gd);
