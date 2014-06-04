@@ -7,7 +7,8 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
- *     Freescale - Teodor Madan - Show IP for active frame only (Bug 49730) 
+ *     Freescale - Teodor Madan - Show IP for active frame only (Bug 49730)
+ *     RedHat - Andrew Ferrazzutti - Source lookup ignores ISourceLocator if artifact was cached (Bug 436411)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
