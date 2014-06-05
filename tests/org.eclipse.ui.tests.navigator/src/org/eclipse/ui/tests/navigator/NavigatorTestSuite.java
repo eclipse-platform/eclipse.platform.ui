@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Fair Issac Corp - bug 287103 - NCSLabelProvider does not properly handle overrides
  *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 457870
+ *     C. Sean Young <csyoung@google.com> - Bug 436645
  *
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
@@ -24,11 +25,9 @@ import org.junit.runners.Suite.SuiteClasses;
 		WorkingSetTest.class, ActivityTest.class, OpenTest.class, INavigatorContentServiceTests.class,
 		ProgrammaticOpenTest.class, PipelineTest.class, PipelineChainTest.class, JstPipelineTest.class,
 		LabelProviderTest.class, SorterTest.class, ViewerTest.class, CdtTest.class, M12Tests.class,
-		FirstClassM1Tests.class, LinkHelperTest.class, ResourceTransferTest.class
+		FirstClassM1Tests.class, LinkHelperTest.class, ResourceTransferTest.class, EvaluationCacheTest.class
 		// DnDTest.class, // DnDTest.testSetDragOperation() fails
 		// PerformanceTest.class // Does not pass on all platforms see bug 264449
 })
 public final class NavigatorTestSuite {
-
-
 }
