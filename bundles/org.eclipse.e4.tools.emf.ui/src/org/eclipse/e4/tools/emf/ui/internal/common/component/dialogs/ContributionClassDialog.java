@@ -8,12 +8,9 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *	   Lars Vogel <lars.vogel@gmail.com> - Enhancements
- *     Steven Spungin <steven@spungin.tv> - Bug 424730
+ *     Steven Spungin <steven@spungin.tv> - Bug 424730, Bug 436847
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatformClassContributionCollector;
-import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatformContributionCollector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -21,6 +18,8 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
+import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatformClassContributionCollector;
+import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatformContributionCollector;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -64,6 +63,10 @@ public class ContributionClassDialog extends FilteredContributionDialog {
 			ContributionDataFile cdf = new ContributionDataFile(cd);
 			IFile file = checkResourceAccessible(cdf, cd.installLocation);
 			if (file != null) {
+				if (file instanceof ContributionDataFile) {
+					cdf = (ContributionDataFile) file;
+					cd = cdf.getContributionData();
+				}
 				String uri = "bundleclass://" + cd.bundleName + "/" + cd.className; //$NON-NLS-1$ //$NON-NLS-2$
 				Command cmd = SetCommand.create(editingDomain, contribution, feature, uri);
 				if (cmd.canExecute()) {

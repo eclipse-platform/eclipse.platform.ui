@@ -48,6 +48,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatfor
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatformContributionCollector;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatformIconContributionCollector;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.NonReferencedResourceDialog;
+import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.NonReferencedResourceWizard;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -61,6 +62,7 @@ import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
@@ -384,21 +386,26 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 							@Override
 							public void onStatusChanged(final ProviderStatus status) {
 								FilteredContributionDialog.this.providerStatus = status;
-								getShell().getDisplay().asyncExec(new Runnable() {
+								try {
+									getShell().getDisplay().asyncExec(new Runnable() {
 
-									@Override
-									public void run() {
-										updateStatusMessage();
-										switch (status) {
-										case READY:
-											refreshSearch();
-											break;
-										case CANCELLED:
-										case INITIALIZING:
-											break;
+										@Override
+										public void run() {
+											updateStatusMessage();
+											switch (status) {
+											case READY:
+												refreshSearch();
+												break;
+											case CANCELLED:
+											case INITIALIZING:
+												break;
+											}
 										}
-									}
-								});
+									});
+								} catch (Exception e2) {
+									// Dialog may have been closed while
+									// provider was still indexing
+								}
 							}
 						});
 						collector.findContributions(filter, currentResultHandler);
@@ -910,23 +917,16 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 		// Not a bundle
 		final String bundle = getBundle(file);
 		if (bundle == null) {
-			NonReferencedResourceDialog dlg = new NonReferencedResourceDialog(getShell(), context.get(IProject.class), bundle, file, installLocation, context) {
-				@Override
-				public String getMessage() {
-					String message = "The resource is not contained in a bundle.";
-					// message +=
-					// "\nTo access during runtime, you need to copy the resource into this project, or into a referenced project.";
-					// message +=
-					// "\nYou can also convert the resource's project into a bundle and then import reference the bundle";
-					return message;
-				}
-			};
-			if (dlg.open() == IDialogConstants.OK_ID) {
-				return dlg.getResult();
+			String message = "The selected resource is not contained in a bundle.";
+			NonReferencedResourceWizard wizard = new NonReferencedResourceWizard(getShell(), context.get(IProject.class), bundle, file, installLocation, context);
+			wizard.setMessage(message);
+			WizardDialog wizDlg = new WizardDialog(getShell(), wizard);
+			wizDlg.setBlockOnOpen(true);
+			if (wizDlg.open() == IDialogConstants.OK_ID) {
+				return wizard.getResult();
 			} else {
 				return null;
 			}
-
 		}
 
 		// Reference by current project
@@ -969,9 +969,13 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 			}
 
 			if (!found) {
-				NonReferencedResourceDialog dlg = new NonReferencedResourceDialog(getShell(), context.get(IProject.class), bundle, file, installLocation, context);
-				if (dlg.open() == IDialogConstants.OK_ID) {
-					return dlg.getResult();
+				String message = "The selected resource's bundle is not referenced by this bundle.";
+				NonReferencedResourceWizard wizard = new NonReferencedResourceWizard(getShell(), context.get(IProject.class), bundle, file, installLocation, context);
+				wizard.setMessage(message);
+				WizardDialog wiz = new WizardDialog(getShell(), wizard);
+				wiz.setBlockOnOpen(true);
+				if (wiz.open() == IDialogConstants.OK_ID) {
+					return wizard.getResult();
 				} else {
 					return null;
 				}
