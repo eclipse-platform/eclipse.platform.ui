@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555, Bug 436889
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
@@ -32,7 +32,7 @@ import org.eclipse.swt.graphics.Image;
  */
 public class EAttributeTableViewerColumn {
 
-	private TableViewerColumn tlc;
+	private TableViewerColumn tableViewerColumn;
 	private IResourcePool resourcePool;
 	private String attName;
 	private TableViewer tvResults;
@@ -40,13 +40,13 @@ public class EAttributeTableViewerColumn {
 	public EAttributeTableViewerColumn(final TableViewer tvResults, String label, final String attName, final IEclipseContext context) {
 		this.tvResults = tvResults;
 		this.attName = attName;
-		tlc = new TableViewerColumn(tvResults, SWT.NONE);
+		tableViewerColumn = new TableViewerColumn(tvResults, SWT.NONE);
 
 		// CAN be null. Used for checkbox icon.
 		resourcePool = context.get(IResourcePool.class);
 
-		tlc.getColumn().setText(label);
-		tlc.setLabelProvider(new ColumnLabelProvider() {
+		tableViewerColumn.getColumn().setText(label);
+		tableViewerColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
 				EObject eObject = (EObject) element;
@@ -93,7 +93,7 @@ public class EAttributeTableViewerColumn {
 				return EAttributeTableViewerColumn.this.getBackground(element);
 			}
 		});
-		tlc.setEditingSupport(new EAttributeEditingSupport(tvResults, attName, context));
+		tableViewerColumn.setEditingSupport(new EAttributeEditingSupport(tvResults, attName, context));
 	}
 
 	public Color getBackground(Object element) {
@@ -107,7 +107,11 @@ public class EAttributeTableViewerColumn {
 	}
 
 	public void dispose() {
-		tlc.getColumn().dispose();
+		tableViewerColumn.getColumn().dispose();
+	}
+
+	public TableViewerColumn getTableViewerColumn() {
+		return tableViewerColumn;
 	}
 
 }

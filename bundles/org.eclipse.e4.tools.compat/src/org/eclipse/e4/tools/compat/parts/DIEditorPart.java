@@ -9,6 +9,7 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Jonas Helming <jhelming@eclipsesource.com>
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 421453
+ *     Steven Spungin <steven@spungin.tv> - Bug 436889
  ******************************************************************************/
 package org.eclipse.e4.tools.compat.parts;
 
@@ -23,6 +24,7 @@ import org.eclipse.e4.tools.services.IClipboardService;
 import org.eclipse.e4.tools.services.IDirtyProviderService;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
+import org.eclipse.e4.ui.di.PersistState;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
@@ -100,6 +102,11 @@ public abstract class DIEditorPart<C> extends EditorPart implements
 	public void createPartControl(Composite parent) {
 		component = PartHelper.createComponent(parent, context, clazz, this);
 		makeActions();
+	}
+
+	@PersistState
+	public void persistState() {
+		ContextInjectionFactory.invoke(component, PersistState.class, context);
 	}
 
 	protected IEclipseContext getContext() {

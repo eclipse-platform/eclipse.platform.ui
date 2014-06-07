@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555, Bug 436889
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
@@ -61,4 +61,15 @@ public interface IViewEObjects {
 	 * @return The editing domain for the implementor's model.
 	 */
 	EditingDomain getEditingDomain();
+
+	/**
+	 * Sizes widgets to fit their content. For example, columns will adjust
+	 * their width.
+	 */
+	void autosizeContent();
+
+	/**
+	 * Reverts the view to default settings
+	 */
+	void resetToDefault();
 }

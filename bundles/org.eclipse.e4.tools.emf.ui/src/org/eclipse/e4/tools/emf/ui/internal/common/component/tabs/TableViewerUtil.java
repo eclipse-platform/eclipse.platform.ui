@@ -11,6 +11,10 @@
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 import java.util.Arrays;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -22,16 +26,12 @@ import org.eclipse.swt.widgets.TableColumn;
 public class TableViewerUtil {
 	static public void refreshAndPack(TableViewer viewer) {
 		viewer.refresh();
-		for (TableColumn col : viewer.getTable().getColumns()) {
-			col.pack();
-		}
+		packAllColumns(viewer);
 	}
 
 	static public void updateAndPack(TableViewer viewer, Object object) {
 		viewer.update(object, null);
-		for (TableColumn col : viewer.getTable().getColumns()) {
-			col.pack();
-		}
+		packAllColumns(viewer);
 	}
 
 	public static boolean isColumnClicked(TableViewer viewer, MouseEvent e, TableViewerColumn tvColumn) {
@@ -57,5 +57,32 @@ public class TableViewerUtil {
 		} else {
 			return cell.getElement();
 		}
+	}
+
+	public static void packAllColumns(TableViewer viewer) {
+		for (TableColumn col : viewer.getTable().getColumns()) {
+			col.pack();
+		}
+	}
+
+	static public void resetColumnOrder(TableViewer tvResults) {
+		int[] order = tvResults.getTable().getColumnOrder();
+		for (int i = 0; i < order.length; i++) {
+			order[i] = i;
+		}
+		tvResults.getTable().setColumnOrder(order);
+	}
+
+	static public ArrayList<TableColumn> getColumnsInDisplayOrder(TableViewer viewer) {
+		final ArrayList<TableColumn> allCols = new ArrayList<TableColumn>(Arrays.asList(viewer.getTable().getColumns()));
+		final int[] order = viewer.getTable().getColumnOrder();
+		Collections.sort(allCols, new Comparator<TableColumn>() {
+	
+			@Override
+			public int compare(TableColumn o1, TableColumn o2) {
+				return order[allCols.indexOf(o1)] - order[allCols.indexOf(o2)];
+			}
+		});
+		return allCols;
 	}
 }
