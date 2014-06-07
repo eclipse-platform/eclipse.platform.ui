@@ -120,7 +120,7 @@ public class ProgrammaticProgressView {
 		
 		MHandler showPreferencesHandler = modelService.createModelElement(MHandler.class);
 		showPreferencesHandler.setCommand(showPreferencesCommand);
-		showPreferencesHandler.setContributionURI("bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.ShowPreferencesHandler"); //$NON-NLS-1$
+		showPreferencesHandler.setContributionURI("bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.OpenPreferenceDialogHandler"); //$NON-NLS-1$
 		part.getHandlers().add(showPreferencesHandler);
 		
 	}
