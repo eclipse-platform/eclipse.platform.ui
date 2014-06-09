@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -426,282 +427,293 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	@PostConstruct
 	public void setup() {
-		// Initialize a previous 'saved' state if applicable. We no longer
-		// update the
-		// preference store.
-		if (getModel().getPersistedState().containsKey(IPreferenceConstants.COOLBAR_VISIBLE)) {
-			this.coolBarVisible = Boolean.parseBoolean(getModel().getPersistedState().get(
-					IPreferenceConstants.COOLBAR_VISIBLE));
-		} else {
-			this.coolBarVisible = PrefUtil.getInternalPreferenceStore().getBoolean(
-					IPreferenceConstants.COOLBAR_VISIBLE);
-			getModel().getPersistedState().put(IPreferenceConstants.COOLBAR_VISIBLE,
-					Boolean.toString(this.coolBarVisible));
-		}
-		if (getModel().getPersistedState().containsKey(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE)) {
-			this.perspectiveBarVisible = Boolean.parseBoolean(getModel().getPersistedState().get(
-					IPreferenceConstants.PERSPECTIVEBAR_VISIBLE));
-		} else {
-			this.perspectiveBarVisible = PrefUtil.getInternalPreferenceStore().getBoolean(
-					IPreferenceConstants.PERSPECTIVEBAR_VISIBLE);
-			getModel().getPersistedState().put(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE,
-					Boolean.toString(this.perspectiveBarVisible));
-		}
+		try {
+			// if workbench window is opened as a result of command execution,
+			// the context in which the new workbench window's commands are
+			// initialized has to to match the workbench context
+			final IEclipseContext windowContext = model.getContext();
+			HandlerServiceImpl.push(windowContext.getParent(), null);
 
-		final IEclipseContext windowContext = model.getContext();
-		IServiceLocatorCreator slc = (IServiceLocatorCreator) workbench
-				.getService(IServiceLocatorCreator.class);
-		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(workbench, null,
-				new IDisposable() {
-					public void dispose() {
-						final Shell shell = getShell();
-						if (shell != null && !shell.isDisposed()) {
-							close();
+			// Initialize a previous 'saved' state if applicable. We no longer
+			// update the preference store.
+			if (getModel().getPersistedState().containsKey(IPreferenceConstants.COOLBAR_VISIBLE)) {
+				this.coolBarVisible = Boolean.parseBoolean(getModel().getPersistedState().get(
+						IPreferenceConstants.COOLBAR_VISIBLE));
+			} else {
+				this.coolBarVisible = PrefUtil.getInternalPreferenceStore().getBoolean(
+						IPreferenceConstants.COOLBAR_VISIBLE);
+				getModel().getPersistedState().put(IPreferenceConstants.COOLBAR_VISIBLE,
+						Boolean.toString(this.coolBarVisible));
+			}
+			if (getModel().getPersistedState().containsKey(
+					IPreferenceConstants.PERSPECTIVEBAR_VISIBLE)) {
+				this.perspectiveBarVisible = Boolean.parseBoolean(getModel().getPersistedState()
+						.get(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE));
+			} else {
+				this.perspectiveBarVisible = PrefUtil.getInternalPreferenceStore().getBoolean(
+						IPreferenceConstants.PERSPECTIVEBAR_VISIBLE);
+				getModel().getPersistedState().put(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE,
+						Boolean.toString(this.perspectiveBarVisible));
+			}
+
+			IServiceLocatorCreator slc = (IServiceLocatorCreator) workbench
+					.getService(IServiceLocatorCreator.class);
+			this.serviceLocator = (ServiceLocator) slc.createServiceLocator(workbench, null,
+					new IDisposable() {
+						public void dispose() {
+							final Shell shell = getShell();
+							if (shell != null && !shell.isDisposed()) {
+								close();
+							}
+						}
+					}, windowContext);
+
+			windowContext.set(IExtensionTracker.class.getName(), new ContextFunction() {
+
+				@Override
+				public Object compute(IEclipseContext context, String contextKey) {
+					if (tracker == null) {
+						tracker = new UIExtensionTracker(getWorkbench().getDisplay());
+					}
+					return tracker;
+				}
+			});
+
+			windowContext.set(IWindowCloseHandler.class.getName(), new IWindowCloseHandler() {
+				public boolean close(MWindow window) {
+					return getWindowAdvisor().preWindowShellClose() && WorkbenchWindow.this.close();
+				}
+			});
+
+			final ISaveHandler defaultSaveHandler = windowContext.get(ISaveHandler.class);
+			final PartServiceSaveHandler localSaveHandler = new PartServiceSaveHandler() {
+				public Save promptToSave(MPart dirtyPart) {
+					Object object = dirtyPart.getObject();
+					if (object instanceof CompatibilityPart) {
+						IWorkbenchPart part = ((CompatibilityPart) object).getPart();
+						if (part instanceof ISaveablePart) {
+							if (!((ISaveablePart) part).isSaveOnCloseNeeded())
+								return Save.NO;
+							return SaveableHelper.savePart((ISaveablePart) part, part,
+									WorkbenchWindow.this, true) ? Save.NO : Save.CANCEL;
 						}
 					}
-				}, windowContext);
-
-		windowContext.set(IExtensionTracker.class.getName(), new ContextFunction() {
-
-			@Override
-			public Object compute(IEclipseContext context, String contextKey) {
-				if (tracker == null) {
-					tracker = new UIExtensionTracker(getWorkbench().getDisplay());
+					return defaultSaveHandler.promptToSave(dirtyPart);
 				}
-				return tracker;
-			}
-		});
 
-		windowContext.set(IWindowCloseHandler.class.getName(), new IWindowCloseHandler() {
-			public boolean close(MWindow window) {
-				return getWindowAdvisor().preWindowShellClose() && WorkbenchWindow.this.close();
-			}
-		});
-
-		final ISaveHandler defaultSaveHandler = windowContext.get(ISaveHandler.class);
-		final PartServiceSaveHandler localSaveHandler = new PartServiceSaveHandler() {
-			public Save promptToSave(MPart dirtyPart) {
-				Object object = dirtyPart.getObject();
-				if (object instanceof CompatibilityPart) {
-					IWorkbenchPart part = ((CompatibilityPart) object).getPart();
-					if (part instanceof ISaveablePart) {
-						if (!((ISaveablePart) part).isSaveOnCloseNeeded())
-							return Save.NO;
-						return SaveableHelper.savePart((ISaveablePart) part, part,
-								WorkbenchWindow.this, true) ? Save.NO : Save.CANCEL;
+				public Save[] promptToSave(Collection<MPart> dirtyParts) {
+					LabelProvider labelProvider = new LabelProvider() {
+						@Override
+						public String getText(Object element) {
+							return ((MPart) element).getLocalizedLabel();
+						}
+					};
+					List<MPart> parts = new ArrayList<MPart>(dirtyParts);
+					ListSelectionDialog dialog = new ListSelectionDialog(getShell(), parts,
+							ArrayContentProvider.getInstance(), labelProvider,
+							WorkbenchMessages.EditorManager_saveResourcesMessage);
+					dialog.setInitialSelections(parts.toArray());
+					dialog.setTitle(WorkbenchMessages.EditorManager_saveResourcesTitle);
+					if (dialog.open() == IDialogConstants.CANCEL_ID) {
+						return new Save[] { Save.CANCEL };
 					}
-				}
-				return defaultSaveHandler.promptToSave(dirtyPart);
-			}
 
-			public Save[] promptToSave(Collection<MPart> dirtyParts) {
-				LabelProvider labelProvider = new LabelProvider() {
-					@Override
-					public String getText(Object element) {
-						return ((MPart) element).getLocalizedLabel();
-					}
-				};
-				List<MPart> parts = new ArrayList<MPart>(dirtyParts);
-				ListSelectionDialog dialog = new ListSelectionDialog(getShell(), parts,
-						ArrayContentProvider.getInstance(), labelProvider,
-						WorkbenchMessages.EditorManager_saveResourcesMessage);
-				dialog.setInitialSelections(parts.toArray());
-				dialog.setTitle(WorkbenchMessages.EditorManager_saveResourcesTitle);
-				if (dialog.open() == IDialogConstants.CANCEL_ID) {
-					return new Save[] { Save.CANCEL };
-				}
-
-				Object[] toSave = dialog.getResult();
-				Save[] retSaves = new Save[parts.size()];
-				Arrays.fill(retSaves, Save.NO);
-				for (int i = 0; i < retSaves.length; i++) {
-					MPart part = parts.get(i);
-					for (Object o : toSave) {
-						if (o == part) {
-							retSaves[i] = Save.YES;
-							break;
+					Object[] toSave = dialog.getResult();
+					Save[] retSaves = new Save[parts.size()];
+					Arrays.fill(retSaves, Save.NO);
+					for (int i = 0; i < retSaves.length; i++) {
+						MPart part = parts.get(i);
+						for (Object o : toSave) {
+							if (o == part) {
+								retSaves[i] = Save.YES;
+								break;
+							}
 						}
 					}
+					return retSaves;
 				}
-				return retSaves;
-			}
 
-			public boolean save(MPart dirtyPart, boolean confirm) {
-				Object object = dirtyPart.getObject();
-				if (object instanceof CompatibilityPart) {
-					IWorkbenchPart workbenchPart = ((CompatibilityPart) object).getPart();
-					if (workbenchPart instanceof ISaveablePart) {
-						ISaveablePart saveablePart = (ISaveablePart) workbenchPart;
-						return page.saveSaveable(saveablePart, workbenchPart, confirm, true);
-					}
-				}
-				return super.save(dirtyPart, confirm);
-			}
-
-			public boolean saveParts(Collection<MPart> dirtyParts, boolean confirm) {
-				ArrayList<ISaveablePart> saveables = new ArrayList<ISaveablePart>();
-				for (MPart part : dirtyParts) {
-					Object object = part.getObject();
+				public boolean save(MPart dirtyPart, boolean confirm) {
+					Object object = dirtyPart.getObject();
 					if (object instanceof CompatibilityPart) {
 						IWorkbenchPart workbenchPart = ((CompatibilityPart) object).getPart();
 						if (workbenchPart instanceof ISaveablePart) {
-							saveables.add((ISaveablePart) workbenchPart);
+							ISaveablePart saveablePart = (ISaveablePart) workbenchPart;
+							return page.saveSaveable(saveablePart, workbenchPart, confirm, true);
 						}
 					}
+					return super.save(dirtyPart, confirm);
 				}
-				if (saveables.isEmpty()) {
-					return super.saveParts(dirtyParts, confirm);
-				}
-				return WorkbenchPage.saveAll(saveables, confirm, false, true, WorkbenchWindow.this,
-						WorkbenchWindow.this);
-			}
-		};
-		localSaveHandler.logger = logger;
-		windowContext.set(ISaveHandler.class, localSaveHandler);
 
-		windowContext.set(IWorkbenchWindow.class.getName(), this);
-		windowContext.set(IPageService.class, this);
-		windowContext.set(IPartService.class, partService);
-
-		windowContext.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, this);
-		windowContext.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, getShell());
-		EContextService cs = (EContextService) windowContext.get(EContextService.class.getName());
-		cs.activateContext(IContextService.CONTEXT_ID_WINDOW);
-		cs.getActiveContextIds();
-
-
-		initializeDefaultServices();
-
-		// register with the tracker
-
-		fireWindowOpening();
-		configureShell(getShell(), windowContext);
-
-		try {
-			page = new WorkbenchPage(this, input);
-		} catch (WorkbenchException e) {
-			WorkbenchPlugin.log(e);
-		}
-
-		ContextInjectionFactory.inject(page, model.getContext());
-		windowContext.set(IWorkbenchPage.class, page);
-
-		menuManager.setOverrides(menuOverride);
-		((CoolBarToTrimManager) getCoolBarManager2()).setOverrides(toolbarOverride);
-
-		// Fill the action bars
-		fillActionBars(FILL_ALL_ACTION_BARS);
-		firePageOpened();
-
-		List<MPerspectiveStack> ps = modelService.findElements(model, null,
-				MPerspectiveStack.class, null);
-		MPerspective curPersp = null;
-		boolean newWindow = true;
-		if (ps.size() > 0) {
-			MPerspectiveStack stack = ps.get(0);
-			if (stack.getSelectedElement() != null) {
-				curPersp = stack.getSelectedElement();
-				IPerspectiveDescriptor thePersp = getWorkbench().getPerspectiveRegistry()
-						.findPerspectiveWithId(curPersp.getElementId());
-				if (thePersp != null) {
-					perspective = thePersp;
-					newWindow = false;
-				}
-			}
-		}
-
-		populateTopTrimContributions();
-		populateBottomTrimContributions();
-
-		// Trim gets populated during rendering (?) so make sure we have al/
-		// sides. See bug 383269 for details
-		modelService.getTrim(model, SideValue.LEFT);
-		modelService.getTrim(model, SideValue.RIGHT);
-
-		Shell shell = (Shell) model.getWidget();
-		if (model.getMainMenu() == null) {
-			final MMenu mainMenu = MenuFactoryImpl.eINSTANCE.createMenu();
-			mainMenu.setElementId("org.eclipse.ui.main.menu"); //$NON-NLS-1$
-
-			final MenuManagerRenderer renderer = (MenuManagerRenderer) rendererFactory.getRenderer(
-					mainMenu, null);
-			renderer.linkModelToManager(mainMenu, menuManager);
-			fill(renderer, mainMenu, menuManager);
-			model.setMainMenu(mainMenu);
-			final Menu menu = (Menu) engine.createGui(mainMenu, model.getWidget(),
-					model.getContext());
-			shell.setMenuBar(menu);
-
-			menuUpdater = new Runnable() {
-				public void run() {
-					try {
-						if (model.getMainMenu() == null || model.getWidget() == null
-								|| menu.isDisposed() || mainMenu.getWidget() == null) {
-							return;
+				public boolean saveParts(Collection<MPart> dirtyParts, boolean confirm) {
+					ArrayList<ISaveablePart> saveables = new ArrayList<ISaveablePart>();
+					for (MPart part : dirtyParts) {
+						Object object = part.getObject();
+						if (object instanceof CompatibilityPart) {
+							IWorkbenchPart workbenchPart = ((CompatibilityPart) object).getPart();
+							if (workbenchPart instanceof ISaveablePart) {
+								saveables.add((ISaveablePart) workbenchPart);
+							}
 						}
-						MenuManagerRendererFilter.updateElementVisibility(mainMenu, renderer,
-								menuManager, windowContext.getActiveLeaf(), 1, false);
-						menuManager.update(true);
-					} finally {
-						canUpdateMenus = true;
 					}
+					if (saveables.isEmpty()) {
+						return super.saveParts(dirtyParts, confirm);
+					}
+					return WorkbenchPage.saveAll(saveables, confirm, false, true,
+							WorkbenchWindow.this, WorkbenchWindow.this);
 				}
 			};
+			localSaveHandler.logger = logger;
+			windowContext.set(ISaveHandler.class, localSaveHandler);
 
-			RunAndTrack menuChangeManager = new RunAndTrack() {
+			windowContext.set(IWorkbenchWindow.class.getName(), this);
+			windowContext.set(IPageService.class, this);
+			windowContext.set(IPartService.class, partService);
 
-				@Override
-				public boolean changed(IEclipseContext context) {
-					ExpressionInfo info = new ExpressionInfo();
-					IEclipseContext leafContext = windowContext.getActiveLeaf();
-					MenuManagerRendererFilter.collectInfo(info, mainMenu, renderer, leafContext,
-							true);
-					// if one of these variables change, re-run the RAT
-					for (String name : info.getAccessedVariableNames()) {
-						leafContext.get(name);
+			windowContext.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, this);
+			windowContext.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, getShell());
+			EContextService cs = (EContextService) windowContext.get(EContextService.class
+					.getName());
+			cs.activateContext(IContextService.CONTEXT_ID_WINDOW);
+			cs.getActiveContextIds();
+
+			initializeDefaultServices();
+
+			// register with the tracker
+
+			fireWindowOpening();
+			configureShell(getShell(), windowContext);
+
+			try {
+				page = new WorkbenchPage(this, input);
+			} catch (WorkbenchException e) {
+				WorkbenchPlugin.log(e);
+			}
+
+			ContextInjectionFactory.inject(page, model.getContext());
+			windowContext.set(IWorkbenchPage.class, page);
+
+			menuManager.setOverrides(menuOverride);
+			((CoolBarToTrimManager) getCoolBarManager2()).setOverrides(toolbarOverride);
+
+			// Fill the action bars
+			fillActionBars(FILL_ALL_ACTION_BARS);
+			firePageOpened();
+
+			List<MPerspectiveStack> ps = modelService.findElements(model, null,
+					MPerspectiveStack.class, null);
+			MPerspective curPersp = null;
+			boolean newWindow = true;
+			if (ps.size() > 0) {
+				MPerspectiveStack stack = ps.get(0);
+				if (stack.getSelectedElement() != null) {
+					curPersp = stack.getSelectedElement();
+					IPerspectiveDescriptor thePersp = getWorkbench().getPerspectiveRegistry()
+							.findPerspectiveWithId(curPersp.getElementId());
+					if (thePersp != null) {
+						perspective = thePersp;
+						newWindow = false;
 					}
-					if (canUpdateMenus && workbench.getDisplay() != null) {
-						canUpdateMenus = false;
-						workbench.getDisplay().asyncExec(menuUpdater);
-					}
-					return manageChanges;
 				}
-			};
-			windowContext.runAndTrack(menuChangeManager);
+			}
+
+			populateTopTrimContributions();
+			populateBottomTrimContributions();
+
+			// Trim gets populated during rendering (?) so make sure we have al/
+			// sides. See bug 383269 for details
+			modelService.getTrim(model, SideValue.LEFT);
+			modelService.getTrim(model, SideValue.RIGHT);
+
+			Shell shell = (Shell) model.getWidget();
+			if (model.getMainMenu() == null) {
+				final MMenu mainMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+				mainMenu.setElementId("org.eclipse.ui.main.menu"); //$NON-NLS-1$
+
+				final MenuManagerRenderer renderer = (MenuManagerRenderer) rendererFactory
+						.getRenderer(mainMenu, null);
+				renderer.linkModelToManager(mainMenu, menuManager);
+				fill(renderer, mainMenu, menuManager);
+				model.setMainMenu(mainMenu);
+				final Menu menu = (Menu) engine.createGui(mainMenu, model.getWidget(),
+						model.getContext());
+				shell.setMenuBar(menu);
+
+				menuUpdater = new Runnable() {
+					public void run() {
+						try {
+							if (model.getMainMenu() == null || model.getWidget() == null
+									|| menu.isDisposed() || mainMenu.getWidget() == null) {
+								return;
+							}
+							MenuManagerRendererFilter.updateElementVisibility(mainMenu, renderer,
+									menuManager, windowContext.getActiveLeaf(), 1, false);
+							menuManager.update(true);
+						} finally {
+							canUpdateMenus = true;
+						}
+					}
+				};
+
+				RunAndTrack menuChangeManager = new RunAndTrack() {
+
+					@Override
+					public boolean changed(IEclipseContext context) {
+						ExpressionInfo info = new ExpressionInfo();
+						IEclipseContext leafContext = windowContext.getActiveLeaf();
+						MenuManagerRendererFilter.collectInfo(info, mainMenu, renderer,
+								leafContext, true);
+						// if one of these variables change, re-run the RAT
+						for (String name : info.getAccessedVariableNames()) {
+							leafContext.get(name);
+						}
+						if (canUpdateMenus && workbench.getDisplay() != null) {
+							canUpdateMenus = false;
+							workbench.getDisplay().asyncExec(menuUpdater);
+						}
+						return manageChanges;
+					}
+				};
+				windowContext.runAndTrack(menuChangeManager);
+			}
+
+			eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, windowWidgetHandler);
+
+			page.setPerspective(perspective);
+			firePageActivated();
+			if (newWindow) {
+				page.fireInitialPartVisibilityEvents();
+			} else {
+				page.updatePerspectiveActionSets();
+			}
+			partService.setPage(page);
+			updateActionSets();
+
+			IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+			boolean enableAnimations = preferenceStore
+					.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
+			preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
+
+			// Hack!! don't show the intro if there's more than one open
+			// perspective
+			List<MPerspective> persps = modelService.findElements(model, null, MPerspective.class,
+					null);
+			if (persps.size() > 1) {
+				PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_INTRO,
+						false);
+				PrefUtil.saveAPIPrefs();
+			}
+			getWindowAdvisor().postWindowCreate();
+			getWindowAdvisor().openIntro();
+
+			preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
+					enableAnimations);
+
+			getShell().setData(this);
+			trackShellActivation();
+		} finally {
+			HandlerServiceImpl.pop();
 		}
-
-		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, windowWidgetHandler);
-
-		page.setPerspective(perspective);
-		firePageActivated();
-		if (newWindow) {
-			page.fireInitialPartVisibilityEvents();
-		} else {
-			page.updatePerspectiveActionSets();
-		}
-		partService.setPage(page);
-		updateActionSets();
-
-		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-		boolean enableAnimations = preferenceStore
-				.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
-		preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
-
-		// Hack!! don't show the intro if there's more than one open perspective
-		List<MPerspective> persps = modelService
-				.findElements(model, null, MPerspective.class, null);
-		if (persps.size() > 1) {
-			PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_INTRO,
-					false);
-			PrefUtil.saveAPIPrefs();
-		}
-		getWindowAdvisor().postWindowCreate();
-		getWindowAdvisor().openIntro();
-
-		preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, enableAnimations);
-
-		getShell().setData(this);
-		trackShellActivation();
 	}
 
 	private void configureShell(Shell shell, IEclipseContext context) {
