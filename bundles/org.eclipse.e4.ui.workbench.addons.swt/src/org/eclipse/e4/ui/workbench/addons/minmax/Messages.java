@@ -17,6 +17,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class Messages extends NLS {
 
+	public static String TrimStack_EmptyStackTooltip;
 	public static String TrimStack_SharedAreaTooltip;
 	public static String TrimStack_CloseText;
 	public static String TrimStack_DefaultOrientationItem;
