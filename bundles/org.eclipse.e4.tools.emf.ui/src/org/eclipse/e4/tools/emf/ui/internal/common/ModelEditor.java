@@ -10,7 +10,7 @@
  *     Wim Jongman <wim.jongman@remainsoftware.com> - Maintenance
  *     Marco Descher <marco@descher.at> - Bug395982, 426653, 422465
  *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
- *     Steven Spungin <steven@spungin.tv> - Bug 396902, 431755, 431735, 424730, 424730
+ *     Steven Spungin <steven@spungin.tv> - Bug 396902, 431755, 431735, 424730, 424730, 391089, 437236
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
@@ -108,6 +108,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.WizardDialogEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.EmfUtil;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.IGotoObject;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.ListTab;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.XmiTab;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationAddons;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationCategoriesEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationWindowEditor;
@@ -134,10 +135,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowWind
 import org.eclipse.e4.tools.emf.ui.internal.common.properties.ExportIdsHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.properties.ExternalizeStringHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.properties.ProjectOSGiTranslationProvider;
-import org.eclipse.e4.tools.emf.ui.internal.common.xml.AnnotationAccess;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.EMFDocumentResourceMediator;
-import org.eclipse.e4.tools.emf.ui.internal.common.xml.XMLConfiguration;
-import org.eclipse.e4.tools.emf.ui.internal.common.xml.XMLPartitionScanner;
 import org.eclipse.e4.tools.services.IClipboardService;
 import org.eclipse.e4.tools.services.IClipboardService.Handler;
 import org.eclipse.e4.tools.services.IResourcePool;
@@ -170,7 +168,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.CommandParameter;
@@ -189,17 +186,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.TextSelection;
-import org.eclipse.jface.text.rules.FastPartitioner;
-import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.AnnotationModel;
-import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.VerticalRuler;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -272,8 +258,6 @@ public class ModelEditor implements IGotoObject {
 	public static final String VIRTUAL_PERSPECTIVE_CONTROLS = ModelEditor.class.getName() + "VIRTUAL_PERSPECTIVE_CONTROLS"; //$NON-NLS-1$
 	public static final String VIRTUAL_SNIPPETS = ModelEditor.class.getName() + "VIRTUAL_SNIPPETS"; //$NON-NLS-1$
 
-	private static final int VERTICAL_RULER_WIDTH = 20;
-
 	public static final int TAB_FORM = 0;
 	public static final int TAB_XMI = 1;
 	public static final int TAB_LIST = 2;
@@ -339,8 +323,6 @@ public class ModelEditor implements IGotoObject {
 
 	private CTabFolder editorTabFolder;
 
-	private SourceViewer sourceViewer;
-
 	private boolean mod1Down = false;
 
 	private boolean saving;
@@ -352,6 +334,8 @@ public class ModelEditor implements IGotoObject {
 	private CTabItem tabItemList;
 
 	private CTabItem tabItemTree;
+
+	private XmiTab xmiTab;
 
 	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project, final IResourcePool resourcePool) {
 		this.resourcePool = resourcePool;
@@ -437,12 +421,13 @@ public class ModelEditor implements IGotoObject {
 
 		tabItemXmi = new CTabItem(editorTabFolder, SWT.NONE);
 		tabItemXmi.setText(messages.ModelEditor_XMI);
-		tabItemXmi.setControl(createXMITab(editorTabFolder));
+		xmiTab = createXMITab(editorTabFolder);
+		tabItemXmi.setControl(xmiTab);
 		tabItemXmi.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_chart_organisation));
 		editorTabFolder.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (editorTabFolder.getSelectionIndex() == 1) {
+				if (editorTabFolder.getSelectionIndex() == getTabIndex(tabItemXmi)) {
 					emfDocumentProvider.updateFromEMF();
 				}
 			}
@@ -508,50 +493,14 @@ public class ModelEditor implements IGotoObject {
 		return null;
 	}
 
-	private Control createXMITab(Composite composite) {
-
-		final AnnotationModel model = new AnnotationModel();
-		VerticalRuler verticalRuler = new VerticalRuler(VERTICAL_RULER_WIDTH, new AnnotationAccess(resourcePool));
-		int styles = SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
-		sourceViewer = new SourceViewer(composite, verticalRuler, styles);
-		sourceViewer.configure(new XMLConfiguration(resourcePool));
-		sourceViewer.setEditable(project != null);
-		sourceViewer.getTextWidget().setFont(JFaceResources.getTextFont());
-
-		final IDocument document = emfDocumentProvider.getDocument();
-		IDocumentPartitioner partitioner = new FastPartitioner(new XMLPartitionScanner(), new String[] { XMLPartitionScanner.XML_TAG, XMLPartitionScanner.XML_COMMENT });
-		partitioner.connect(document);
-		document.setDocumentPartitioner(partitioner);
-		sourceViewer.setDocument(document);
-		verticalRuler.setModel(model);
-
-		emfDocumentProvider.setValidationChangedCallback(new Runnable() {
-
-			@Override
-			public void run() {
-				model.removeAllAnnotations();
-
-				for (Diagnostic d : emfDocumentProvider.getErrorList()) {
-					Annotation a = new Annotation("e4xmi.error", false, d.getMessage()); //$NON-NLS-1$
-					int l;
-					try {
-						l = document.getLineOffset(d.getLine() - 1);
-						model.addAnnotation(a, new Position(l));
-					} catch (BadLocationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-		});
-
-		String property = System.getProperty(ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED);
-		if (property != null || preferences.getBoolean("tab-form-search-show", false)) { //$NON-NLS-1$
-			sourceViewer.setEditable(false);
-			sourceViewer.getTextWidget().setEnabled(false);
-		}
-
-		return sourceViewer.getControl();
+	private XmiTab createXMITab(Composite composite) {
+		IEclipseContext childContext = context.createChild();
+		childContext.set(Composite.class, composite);
+		childContext.set(EMFDocumentResourceMediator.class, emfDocumentProvider);
+		childContext.set(IEclipsePreferences.class, preferences);
+		childContext.set(IResourcePool.class, resourcePool);
+		XmiTab ret = ContextInjectionFactory.make(XmiTab.class, childContext);
+		return ret;
 	}
 
 	private Composite createFormTab(Composite composite) {
@@ -1481,6 +1430,7 @@ public class ModelEditor implements IGotoObject {
 		if (project == null) {
 			context.get(Display.class).removeFilter(SWT.MouseUp, keyListener);
 		}
+		ContextInjectionFactory.uninject(xmiTab, xmiTab.getContext());
 	}
 
 	public IModelResource getModelProvider() {
@@ -1498,7 +1448,7 @@ public class ModelEditor implements IGotoObject {
 					currentEditor.handlePaste();
 				}
 			} else {
-				sourceViewer.getTextWidget().paste();
+				xmiTab.paste();
 			}
 		}
 
@@ -1570,7 +1520,7 @@ public class ModelEditor implements IGotoObject {
 					currentEditor.handleCopy();
 				}
 			} else {
-				sourceViewer.getTextWidget().copy();
+				xmiTab.copy();
 			}
 		}
 
@@ -1592,7 +1542,7 @@ public class ModelEditor implements IGotoObject {
 					currentEditor.handleCut();
 				}
 			} else {
-				sourceViewer.getTextWidget().cut();
+				xmiTab.cut();
 			}
 		}
 
@@ -1855,13 +1805,7 @@ public class ModelEditor implements IGotoObject {
 				emfDocumentProvider.updateFromEMF();
 
 				try {
-					// select the entire start tag
-					IRegion region = emfDocumentProvider.findStartTag(object);
-					if (region != null) {
-						sourceViewer.setSelection(new TextSelection(region.getOffset(), region.getLength()), true);
-					} else {
-						sourceViewer.setSelection(new TextSelection(0, 0), true);
-					}
+					xmiTab.gotoEObject(object);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

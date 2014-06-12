@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - Bug 431735
+ *     Steven Spungin <steven@spungin.tv> - Bug 431735, Bug 391089
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.xml;
@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
@@ -106,7 +107,7 @@ public class EMFDocumentResourceMediator {
 	 * @return The region for the start tag of the EObject, or null if not found.
 	 */
 	public IRegion findStartTag(EObject object) {
-		if (object == null){
+		if (object == null) {
 			return null;
 		}
 		E4XMIResource root = (E4XMIResource) ((EObject) modelResource.getRoot().get(0)).eResource();
@@ -117,6 +118,26 @@ public class EMFDocumentResourceMediator {
 		try {
 			//TODO This will not work if the element has '<' or '>' in an attribute value
 			region = find.find(0, "<.*?" + xmiId + ".*?>", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+			return region;
+		} catch (BadLocationException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * @param object
+	 * @return The region for the start of the text, or null if not found or the
+	 *         text is empty.
+	 */
+	public IRegion findText(String text, int startOffset) {
+		if (E.isEmpty(text)) {
+			return null;
+		}
+
+		FindReplaceDocumentAdapter find = new FindReplaceDocumentAdapter(document);
+		IRegion region;
+		try {
+			region = find.find(startOffset, text, true, true, false, false); //$NON-NLS-1$ //$NON-NLS-2$
 			return region;
 		} catch (BadLocationException e) {
 			return null;
