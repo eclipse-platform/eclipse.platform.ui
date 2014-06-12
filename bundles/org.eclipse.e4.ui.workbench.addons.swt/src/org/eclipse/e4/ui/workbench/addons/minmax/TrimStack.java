@@ -880,31 +880,37 @@ public class TrimStack {
 			MGenericStack<?> theStack = (MGenericStack<?>) minimizedElement;
 
 			// check to see if this stack has any valid elements
-			boolean check = false;
+			boolean hasRenderedElements = false;
 			for (MUIElement stackElement : theStack.getChildren()) {
 				if (stackElement.isToBeRendered()) {
-					check = true;
+					hasRenderedElements = true;
 					break;
 				}
 			}
 
-			if (!check) {
+			if (hasRenderedElements) {
+				for (MUIElement stackElement : theStack.getChildren()) {
+					if (!stackElement.isToBeRendered()) {
+						continue;
+					}
+
+					MUILabel labelElement = getLabelElement(stackElement);
+					ToolItem newItem = new ToolItem(trimStackTB, SWT.CHECK);
+					newItem.setData(labelElement);
+					newItem.setImage(getImage(labelElement));
+					newItem.setToolTipText(getLabelText(labelElement));
+					newItem.addSelectionListener(toolItemSelectionListener);
+				}
+			} else if (theStack.getTags().contains(IPresentationEngine.NO_AUTO_COLLAPSE)) {
+				// OK to be empty and still minimized
+				ToolItem ti = new ToolItem(trimStackTB, SWT.CHECK);
+				ti.setToolTipText(Messages.TrimStack_EmptyStackTooltip);
+				ti.setImage(getLayoutImage());
+				ti.addSelectionListener(toolItemSelectionListener);
+			} else {
 				// doesn't have any children that's showing, place it back in the presentation
 				restoreStack();
 				return;
-			}
-
-			for (MUIElement stackElement : theStack.getChildren()) {
-				if (!stackElement.isToBeRendered()) {
-					continue;
-				}
-
-				MUILabel labelElement = getLabelElement(stackElement);
-				ToolItem newItem = new ToolItem(trimStackTB, SWT.CHECK);
-				newItem.setData(labelElement);
-				newItem.setImage(getImage(labelElement));
-				newItem.setToolTipText(getLabelText(labelElement));
-				newItem.addSelectionListener(toolItemSelectionListener);
 			}
 		}
 
