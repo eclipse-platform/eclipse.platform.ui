@@ -460,6 +460,25 @@ public class MinMaxAddon {
 	}
 
 	/**
+	 * Handles the event that the perspective is reset
+	 * 
+	 * @param event
+	 */
+	@Inject
+	@Optional
+	private void subscribeTopicPerspReset(
+			@UIEventTopic(UIEvents.UILifeCycle.PERSPECTIVE_RESET) Event event) {
+		final MPerspective resetPersp = (MPerspective) event.getProperty(EventTags.ELEMENT);
+
+		// Find any minimized stacks and show their trim
+		List<MUIElement> minimizedElements = modelService.findElements(resetPersp, null,
+				MUIElement.class, Arrays.asList(IPresentationEngine.MINIMIZED));
+		for (MUIElement element : minimizedElements) {
+			createTrim(element);
+		}
+	}
+
+	/**
 	 * Handles the event that the perspective is opened
 	 * 
 	 * @param event

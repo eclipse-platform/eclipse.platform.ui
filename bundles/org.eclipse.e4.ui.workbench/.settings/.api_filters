@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<component id="org.eclipse.e4.ui.workbench" version="2">
+<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.e4.ui.workbench" version="2">
     <resource path="META-INF/MANIFEST.MF">
         <filter comment="Bug 319463 - Remove dead code" id="923795461">
             <message_arguments>
@@ -143,6 +142,12 @@
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.UILifeCycle"/>
                 <message_argument value="APP_SHUTDOWN_STARTED"/>
+            </message_arguments>
+        </filter>
+        <filter id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.UILifeCycle"/>
+                <message_argument value="PERSPECTIVE_RESET"/>
             </message_arguments>
         </filter>
         <filter comment="All of the subinterfaces shouldn't be subclassed either" id="403767336">
