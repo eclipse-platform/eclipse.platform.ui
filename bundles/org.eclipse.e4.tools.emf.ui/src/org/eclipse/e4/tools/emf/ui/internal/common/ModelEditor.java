@@ -209,6 +209,8 @@ import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -364,6 +366,16 @@ public class ModelEditor implements IGotoObject {
 		}
 		labelFeaturePaths.add(FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
 		labelFeaturePaths.add(FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+
+		// This is a workaround until Bug 437207 is merged.
+		// @PersistState will not be invoked.
+		composite.addDisposeListener(new DisposeListener() {
+
+			@Override
+			public void widgetDisposed(DisposeEvent arg0) {
+				persistState();
+			}
+		});
 	}
 
 	@PersistState
