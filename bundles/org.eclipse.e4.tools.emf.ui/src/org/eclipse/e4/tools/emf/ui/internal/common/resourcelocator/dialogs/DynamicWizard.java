@@ -40,13 +40,17 @@ public class DynamicWizard extends Wizard {
 
 	@Override
 	public boolean canFinish() {
+
+		IWizardPage cur = getContainer().getCurrentPage();
+		IWizardPage nextPage = getNextPage(cur);
+
+		// We need to call get next page first, as that may add or remove pages
 		for (IWizardPage page : pages) {
 			if (page.isPageComplete() == false) {
 				return false;
 			}
 		}
-		IWizardPage cur = getContainer().getCurrentPage();
-		return getNextPage(cur) == null;
+		return nextPage == null;
 	}
 
 	@Override
