@@ -387,13 +387,18 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 							public void onStatusChanged(final ProviderStatus status) {
 								FilteredContributionDialog.this.providerStatus = status;
 								try {
-									getShell().getDisplay().asyncExec(new Runnable() {
+									getShell().getDisplay().syncExec(new Runnable() {
 
 										@Override
 										public void run() {
 											updateStatusMessage();
 											switch (status) {
 											case READY:
+												// This will deadlock if currentSearchThread is not null
+												currentSearchThread = null;
+												if (currentResultHandler != null) {
+													currentResultHandler.cancled = true;
+												}
 												refreshSearch();
 												break;
 											case CANCELLED:
@@ -409,10 +414,11 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 							}
 						});
 						collector.findContributions(filter, currentResultHandler);
-						currentSearchThread = null;
+
 						monitor.done();
 						searching = false;
-						getShell().getDisplay().asyncExec(new Runnable() {
+						currentSearchThread = null;
+						getShell().getDisplay().syncExec(new Runnable() {
 
 							@Override
 							public void run() {
@@ -423,7 +429,6 @@ public abstract class FilteredContributionDialog extends TitleAreaDialog {
 					}
 
 				};
-
 				currentSearchThread.schedule();
 
 			}
