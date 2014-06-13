@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555, Bug 436889
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555, Bug 436889, Bug 437372
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
@@ -14,7 +14,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -45,6 +44,7 @@ import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BundleImageCache;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.EAttributeEditingSupport.ATT_TYPE;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.EmptyFilterOption;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.TitleAreaFilterDialog;
@@ -259,7 +259,7 @@ public class ListTab implements IViewEObjects {
 					}
 
 					// move it to the end of the list.
-					int currentIndex = getVisibleColumnIndex(tvResults, col);
+					int currentIndex = TableViewerUtil.getVisibleColumnIndex(tvResults, col);
 					int[] order = tvResults.getTable().getColumnOrder();
 					for (int idx = 0; idx < order.length; idx++) {
 						if (order[idx] > currentIndex) {
@@ -304,16 +304,6 @@ public class ListTab implements IViewEObjects {
 				}
 			} catch (Exception e) {
 			}
-		}
-	}
-
-	// @Refactor
-	static public int getVisibleColumnIndex(TableViewer tvResults2, TableColumn col) {
-		int createOrder = Arrays.asList(tvResults2.getTable().getColumns()).indexOf(col);
-		if (createOrder == -1) {
-			return -1;
-		} else {
-			return tvResults2.getTable().getColumnOrder()[createOrder];
 		}
 	}
 
@@ -585,11 +575,11 @@ public class ListTab implements IViewEObjects {
 
 		app.getContext().set("org.eclipse.e4.tools.active-object-viewer", this); //$NON-NLS-1$
 
-		EAttributeTableViewerColumn colId = new EAttributeTableViewerColumn(tvResults, "elementId", "elementId", context);
-		defaultColumns.put("elementId", colId); //$NON-NLS-1$
+		EAttributeTableViewerColumn colId = new EAttributeTableViewerColumn(tvResults, "elementId", "elementId", context); //$NON-NLS-2$
+		defaultColumns.put("elementId", colId);
 
-		EAttributeTableViewerColumn colLabel = new EAttributeTableViewerColumn_Markable(tvResults, "label", "label", context); //$NON-NLS-1$ //$NON-NLS-2$
-		defaultColumns.put("label", colLabel); //$NON-NLS-1$
+		EAttributeTableViewerColumn colLabel = new EAttributeTableViewerColumn_Markable(tvResults, "label", "label", context); //$NON-NLS-2$
+		defaultColumns.put("label", colLabel);
 
 		// Custom selection for marked items
 		tvResults.getTable().addListener(SWT.EraseItem, new Listener() {
@@ -621,16 +611,39 @@ public class ListTab implements IViewEObjects {
 
 		tvResults.getTable().setFocus();
 
-		for (EAttributeTableViewerColumn col : defaultColumns.values()) {
+		for (final EAttributeTableViewerColumn col : defaultColumns.values()) {
 			col.getTableViewerColumn().getColumn().setMoveable(true);
 		}
 		for (TableColumn col : requiredColumns.values()) {
 			col.setMoveable(true);
 		}
 
+		makeSortable(colId.getTableViewerColumn().getColumn(), new AttributeColumnLabelSorter(colId.getTableViewerColumn().getColumn(), "elementId")); //$NON-NLS-1$
+		makeSortable(colLabel.getTableViewerColumn().getColumn(), new AttributeColumnLabelSorter(colLabel.getTableViewerColumn().getColumn(), "label")); //$NON-NLS-1$
+		makeSortable(colItem.getColumn(), new TableViewerUtil.ColumnLabelSorter(colItem.getColumn()));
+		makeSortable(colMarked.getColumn(), new TableViewerUtil.AbstractInvertableTableSorter() {
+
+			@Override
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				boolean mark1 = isHighlighted(e1);
+				boolean mark2 = isHighlighted(e2);
+				if (mark1 && !mark2) {
+					return -1;
+				} else if (mark2 && !mark1) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+		});
+
 		reload();
 		TableViewerUtil.refreshAndPack(tvResults);
 		loadSettings();
+	}
+
+	private void makeSortable(TableColumn column, TableViewerUtil.AbstractInvertableTableSorter sorter) {
+		new TableViewerUtil.TableSortSelectionListener(tvResults, column, sorter, SWT.UP, false);
 	}
 
 	public void reload() {
@@ -775,10 +788,41 @@ public class ListTab implements IViewEObjects {
 				colName = new EAttributeTableViewerColumn_Markable(tvResults, attName, attName, context);
 				optionalColumns.put(attName, colName);
 				colName.getTableViewerColumn().getColumn().setMoveable(true);
+				makeSortable(colName.getTableViewerColumn().getColumn(), new AttributeColumnLabelSorter(colName.getTableViewerColumn().getColumn(), attName));
 				tvResults.refresh();
 			}
 		}
 		return colName;
+	}
+
+	static private class AttributeColumnLabelSorter extends TableViewerUtil.ColumnLabelSorter {
+
+		private String attName;
+
+		AttributeColumnLabelSorter(TableColumn col, String attName) {
+			super(col);
+			this.attName = attName;
+		}
+
+		@Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			// if either is boolean, use boolean value, otherwise use text value
+			ATT_TYPE e1Type = EAttributeEditingSupport.getAttributeType(e1, attName);
+			ATT_TYPE e2Type = EAttributeEditingSupport.getAttributeType(e2, attName);
+			if (e1Type == ATT_TYPE.BOOLEAN || e2Type == ATT_TYPE.BOOLEAN) {
+				Boolean b1 = (Boolean) (EmfUtil.getAttributeValue((EObject) e1, attName));
+				Boolean b2 = (Boolean) (EmfUtil.getAttributeValue((EObject) e2, attName));
+				if (b1 == null && b2 != null) {
+					return -2;
+				} else if (b2 == null && b1 != null) {
+					return 2;
+				} else {
+					return (b1.compareTo(b2));
+				}
+			} else {
+				return super.compare(viewer, e1, e2);
+			}
+		}
 	}
 
 	private class EAttributeTableViewerColumn_Markable extends EAttributeTableViewerColumn {
