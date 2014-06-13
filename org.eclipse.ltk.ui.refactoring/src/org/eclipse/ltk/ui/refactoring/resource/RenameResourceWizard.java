@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jerome Cambon <jerome.cambon@oracle.com> - [ltk] Rename refactoring should give more control over new file name - https://bugs.eclipse.org/391389
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.resource;
 
@@ -81,7 +82,8 @@ public class RenameResourceWizard extends RefactoringWizard {
 			label.setLayoutData(new GridData());
 
 			fNameField= new Text(composite, SWT.BORDER);
-			fNameField.setText(fRefactoringProcessor.getNewResourceName());
+			String resourceName= fRefactoringProcessor.getNewResourceName();
+			fNameField.setText(resourceName);
 			fNameField.setFont(composite.getFont());
 			fNameField.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
 			fNameField.addModifyListener(new ModifyListener() {
@@ -90,7 +92,12 @@ public class RenameResourceWizard extends RefactoringWizard {
 				}
 			});
 
-			fNameField.selectAll();
+			int lastIndexOfDot= resourceName.lastIndexOf('.');
+			if ((fRefactoringProcessor.getResource().getType() == IResource.FILE) && (lastIndexOfDot > 0)) {
+				fNameField.setSelection(0, lastIndexOfDot);
+			} else {
+				fNameField.selectAll();
+			}
 			setPageComplete(false);
 			setControl(composite);
 		}
