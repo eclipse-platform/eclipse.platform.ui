@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - Bug 437469
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -31,6 +33,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.fieldassist.AutoCompleteField;
+import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -39,6 +43,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
@@ -56,6 +61,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -75,6 +81,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	private WritableList list;
 	private ComboViewer eClassViewer;
 	private Text searchText;
+	private AutoCompleteField acText;
 
 	public FindParentReferenceElementDialog(Shell parentShell, AbstractComponentEditor editor, MStringModelFragment fragment, Messages Messages) {
 		super(parentShell);
@@ -113,7 +120,8 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		Label l = new Label(container, SWT.NONE);
 		l.setText(Messages.FindParentReferenceElementDialog_ContainerType);
 
-		eClassViewer = new ComboViewer(container);
+		Combo combo = new Combo(container, SWT.NONE);
+		eClassViewer = new ComboViewer(combo);
 		eClassViewer.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -121,7 +129,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 			}
 		});
 		eClassViewer.setContentProvider(new ArrayContentProvider());
-		List<EClass> eClassList = new ArrayList<EClass>();
+		final List<EClass> eClassList = new ArrayList<EClass>();
 		for (InternalPackage p : Util.loadPackages()) {
 			eClassList.addAll(p.getAllClasses());
 		}
@@ -141,9 +149,24 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSearch();
-
 			}
 		});
+
+		ArrayList<String> vals = new ArrayList<String>();
+		for (EClass item : eClassList) {
+			vals.add(item.getName());
+		}
+		final String[] values = vals.toArray(new String[0]);
+		ComboContentAdapter textContentAdapter = new ComboContentAdapter() {
+			@Override
+			public void setControlContents(Control control, String text1, int cursorPosition) {
+				super.setControlContents(control, text1, cursorPosition);
+				int index = Arrays.asList(values).indexOf(text1);
+				EClass eClass = eClassList.get(index);
+				eClassViewer.setSelection(new StructuredSelection(eClass));
+			}
+		};
+		acText = new AutoCompleteField(combo, textContentAdapter, values);
 
 		l = new Label(container, SWT.NONE);
 		l.setText(Messages.FindParentReferenceElementDialog_Search);
