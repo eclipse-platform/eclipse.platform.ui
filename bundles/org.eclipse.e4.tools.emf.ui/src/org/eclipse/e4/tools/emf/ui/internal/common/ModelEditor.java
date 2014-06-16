@@ -10,7 +10,7 @@
  *     Wim Jongman <wim.jongman@remainsoftware.com> - Maintenance
  *     Marco Descher <marco@descher.at> - Bug395982, 426653, 422465
  *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
- *     Steven Spungin <steven@spungin.tv> - Bug 396902, 431755, 431735, 424730, 424730, 391089, 437236
+ *     Steven Spungin <steven@spungin.tv> - Bug 396902, 431755, 431735, 424730, 424730, 391089, 437236, 437552
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
@@ -454,7 +454,7 @@ public class ModelEditor implements IGotoObject {
 				// Eventually, all 3 tabs, or even the ModelEditor itself, could
 				// implement the interface.
 				String key = "org.eclipse.e4.tools.active-object-viewer"; //$NON-NLS-1$
-				if (editorTabFolder.getSelectionIndex() == getTabIndex(listTab.getTabItem())) {
+				if (listTab != null && editorTabFolder.getSelectionIndex() == getTabIndex(listTab.getTabItem())) {
 					app.getContext().set(key, listTab);
 				} else {
 					app.getContext().set(key, null);
@@ -1823,7 +1823,7 @@ public class ModelEditor implements IGotoObject {
 				}
 				break;
 			case TAB_LIST:
-				if (tabItemList != null) {
+				if (tabItemList != null && listTab != null) {
 					editorTabFolder.setSelection(getTabIndex(tabItemList));
 					listTab.getViewer().setSelection(new StructuredSelection(object), true);
 				}
