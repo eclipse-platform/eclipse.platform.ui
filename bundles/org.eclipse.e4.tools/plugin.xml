@@ -24,6 +24,9 @@
             id="org.eclipse.e4.tools.E4NewProjectWizard"
             name="%wizard.name"
             project="true">
+         <description>
+            %wizard.name.description
+         </description>
       </wizard>
       <wizard
             category="org.eclipse.e4.tools/org.eclipse.e4.tools.model"
@@ -31,6 +34,9 @@
             icon="icons/full/obj16/application_view_tile.png"
             id="org.eclipse.e4.tools.newappmodel"
             name="%wizard.name.0">
+         <description>
+            %wizard.name.0.description
+         </description>
       </wizard>
       <wizard
             category="org.eclipse.e4.tools/org.eclipse.e4.tools.model"
@@ -38,6 +44,9 @@
             icon="icons/full/obj16/plugin.png"
             id="org.eclipse.e4.tools.newmodelfragment"
             name="%wizard.name.1">
+         <description>
+            %wizard.name.1.description
+         </description>
       </wizard>
       <wizard
             category="org.eclipse.e4.tools/org.eclipse.e4.tools.classes"
@@ -45,6 +54,9 @@
             icon="icons/full/obj16/class_obj.gif"
             id="org.eclipse.e4.tools.newhandler"
             name="%wizard.name.2">
+         <description>
+            %wizard.name.2.description
+         </description>
       </wizard>
       <wizard
             category="org.eclipse.e4.tools/org.eclipse.e4.tools.classes"
@@ -52,6 +64,9 @@
             icon="icons/full/obj16/Part.gif"
             id="org.eclipse.e4.tools.newpart"
             name="%wizard.name.3">
+         <description>
+            %wizard.name.3.description
+         </description>
       </wizard>
       <wizard
             category="org.eclipse.e4.tools/org.eclipse.e4.tools.classes"
@@ -59,6 +74,9 @@
             icon="icons/full/obj16/Addons.png"
             id="org.eclipse.e4.tools.newaddon"
             name="%wizard.name.4">
+         <description>
+            %wizard.name.4.description
+         </description>
       </wizard>
       <wizard
             category="org.eclipse.e4.tools/org.eclipse.e4.tools.classes"
@@ -66,6 +84,9 @@
             icon="icons/full/obj16/ToolControl.gif"
             id="org.eclipse.e4.tools.newtoolcontrol"
             name="%wizard.name.5">
+         <description>
+            %wizard.name.5.description
+         </description>
       </wizard>
    </extension>
 </plugin>
