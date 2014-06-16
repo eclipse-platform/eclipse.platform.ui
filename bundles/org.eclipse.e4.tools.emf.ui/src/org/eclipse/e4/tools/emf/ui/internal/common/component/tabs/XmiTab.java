@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 391089
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 391089, Bug 437543
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.AnnotationAccess;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.EMFDocumentResourceMediator;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.XMLConfiguration;
@@ -51,6 +52,8 @@ public class XmiTab extends Composite {
 
 	@Inject
 	private IEclipseContext context;
+
+	@Optional
 	@Inject
 	private IProject project;
 	@Inject
