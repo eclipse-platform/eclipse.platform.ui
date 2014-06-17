@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 437569
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
@@ -385,6 +385,7 @@ public class NonReferencedActionPage extends WizardPage implements IWizardPage {
 			defaultButton.notifyListeners(SWT.Selection, new Event());
 		}
 
+		comp.setFocus();
 		setControl(comp);
 
 	}
