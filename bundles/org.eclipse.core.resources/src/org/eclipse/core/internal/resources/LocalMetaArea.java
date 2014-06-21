@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- * Francis Lynch (Wind River) - [301563] Save and load tree snapshots
- * Broadcom Corporation - ongoing development
+ *     Francis Lynch (Wind River) - [301563] Save and load tree snapshots
+ *     Broadcom Corporation - ongoing development
+ *     Sergey Prigogin (Google) - [437005] Out-of-date .snap file prevents Eclipse from running
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -176,7 +177,28 @@ public class LocalMetaArea implements ICoreConstants {
 		return prefix.append(pluginId + "." + saveNumber); //$NON-NLS-1$
 	}
 
+	/**
+	 * Returns the path of the snapshot file. The name of the file is composed from a sequence
+	 * number corresponding to the sequence number of tree file and ".snap" extension. Should
+	 * only be called for the workspace root.
+	 */
 	public IPath getSnapshotLocationFor(IResource resource) {
+		Assert.isNotNull(resource);
+		Assert.isLegal(resource.getType() == IResource.ROOT);
+		IPath key = resource.getFullPath().append(F_TREE);
+		String sequenceNumber = getWorkspace().getSaveManager().getMasterTable().getProperty(key.toString());
+		if (sequenceNumber == null)
+			sequenceNumber = "0"; //$NON-NLS-1$
+		return metaAreaLocation.append(sequenceNumber + F_SNAP);
+	}
+
+	/**
+	 * Returns the legacy, pre-4.4.1, path of the snapshot file. The name of the legacy snapshot
+	 * file is ".snap". Should only be called for the workspace root.
+	 */
+	public IPath getLegacySnapshotLocationFor(IResource resource) {
+		Assert.isNotNull(resource);
+		Assert.isLegal(resource.getType() == IResource.ROOT);
 		return metaAreaLocation.append(F_SNAP);
 	}
 

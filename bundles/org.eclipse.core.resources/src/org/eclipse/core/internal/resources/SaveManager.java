@@ -11,10 +11,12 @@
  *     Francis Lynch (Wind River) - [305718] Allow reading snapshot into renamed project
  *     Baltasar Belyavsky (Texas Instruments) - [361675] Order mismatch when saving/restoring workspace trees
  *     Broadcom Corporation - ongoing development
+ *     Sergey Prigogin (Google) - [437005] Out-of-date .snap file prevents Eclipse from running
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
+import java.io.File;
 import java.net.URI;
 import java.util.*;
 import java.util.zip.*;
@@ -264,7 +266,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 */
 	protected void collapseTrees(Map<String, SaveContext> contexts) throws CoreException {
 		//collect trees we're interested in
-		
+
 		//forget saved trees, if they are not used by registered participants
 		synchronized (savedStates) {
 			for (Iterator<SaveContext> i = contexts.values().iterator(); i.hasNext();) {
@@ -484,24 +486,33 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	/**
 	 * Initializes the snapshot mechanism for this workspace.
 	 */
-	protected void initSnap(IProgressMonitor monitor) throws CoreException {
-		//discard any pending snapshot request
+	protected void initSnap(IProgressMonitor monitor) {
+		// Discard any pending snapshot request.
 		snapshotJob.cancel();
-		//the "lastSnap" tree must be frozen as the exact tree obtained from startup,
-		// otherwise ensuing snapshot deltas may be based on an incorrect tree (see bug 12575)
+		// The "lastSnap" tree must be frozen as the exact tree obtained from startup,
+		// otherwise ensuing snapshot deltas may be based on an incorrect tree (see bug 12575).
 		lastSnap = workspace.getElementTree();
 		lastSnap.immutable();
 		workspace.newWorkingTree();
 		operationCount = 0;
-		// delete the snapshot file, if any
-		IPath snapPath = workspace.getMetaArea().getSnapshotLocationFor(workspace.getRoot());
-		java.io.File file = snapPath.toFile();
-		if (file.exists())
-			file.delete();
-		if (file.exists()) {
-			String message = Messages.resources_snapInit;
-			throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, null, message, null);
-		}
+		// Delete the snapshot files, if any.
+		IPath location = workspace.getMetaArea().getSnapshotLocationFor(workspace.getRoot());
+		java.io.File target = location.toFile().getParentFile();
+		FilenameFilter filter = new FilenameFilter() {
+			public boolean accept(java.io.File dir, String name) {
+				if (!name.endsWith(LocalMetaArea.F_SNAP))
+					return false;
+				for (int i = 0; i < name.length() - LocalMetaArea.F_SNAP.length(); i++) {
+					char c = name.charAt(i);
+					if (c < '0' || c > '9')
+						return false;
+				}
+				return true;
+			}
+		};
+		String[] candidates = target.list(filter);
+		if (candidates != null)
+			removeFiles(target, candidates, Collections.<String> emptyList());
 	}
 
 	protected boolean isDeltaCleared(String pluginId) {
@@ -757,8 +768,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * and <code>false</code> if the refresh snapshot was not found or could not be opened.
 	 * @exception CoreException if an error occurred reading the snapshot file.
 	 */
-	protected boolean restoreFromRefreshSnapshot(Project project,
-			IProgressMonitor monitor) throws CoreException {
+	protected boolean restoreFromRefreshSnapshot(Project project, IProgressMonitor monitor) throws CoreException {
 		boolean status = true;
 		IPath snapshotPath = workspace.getMetaArea().getRefreshLocationFor(project);
 		java.io.File snapshotFile = snapshotPath.toFile();
@@ -770,8 +780,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask("", 40); //$NON-NLS-1$
-			status = restoreTreeFromRefreshSnapshot(project,
-					snapshotFile, Policy.subMonitorFor(monitor, 40));
+			status = restoreTreeFromRefreshSnapshot(project, snapshotFile, Policy.subMonitorFor(monitor, 40));
 			if (status) {
 				// load the project description and set internal description
 				ProjectDescription description = workspace.getFileSystemManager().read(project, true);
@@ -917,11 +926,18 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			IPath snapLocation = workspace.getMetaArea().getSnapshotLocationFor(workspace.getRoot());
 			java.io.File localFile = snapLocation.toFile();
 
-			// If the snapshot file doesn't exist, there was no crash. 
-			// Just initialize the snapshot file and return.
 			if (!localFile.exists()) {
-				initSnap(Policy.subMonitorFor(monitor, Policy.totalWork / 2));
-				return;
+				// The snapshot corresponding to the current tree version doesn't exist.
+				// Try the legacy non-versioned snapshot, but ignore it if it is older than
+				// the tree.
+				snapLocation = workspace.getMetaArea().getLegacySnapshotLocationFor(workspace.getRoot());
+				localFile = snapLocation.toFile();
+				if (!localFile.exists() || isSnapshotOlderThanTree(localFile)) {
+					// If the snapshot file doesn't exist, there was no crash.
+					// Just initialize the snapshot file and return.
+					initSnap(Policy.subMonitorFor(monitor, Policy.totalWork / 2));
+					return;
+				}
 			}
 			// If we have a snapshot file, the workspace was shutdown without being saved or crashed.
 			workspace.setCrashed(true);
@@ -951,6 +967,25 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		}
 		if (Policy.DEBUG_RESTORE_SNAPSHOTS)
 			System.out.println("Restore snapshots for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/**
+	 * Checks if the given snapshot file is older than the tree file.
+	 *
+	 * @param snapshot the snapshot file to check
+	 * @return {@code true} if the snapshot file is older than the tree file or the tree file
+	 *     does not exist
+	 */
+	private boolean isSnapshotOlderThanTree(File snapshot) {
+		IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(workspace.getRoot(), false);
+		File tree = treeLocation.toFile();
+		if (!tree.exists()) {
+			treeLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
+			tree = treeLocation.toFile();
+			if (!tree.exists())
+				return false;
+		}
+		return snapshot.lastModified() < tree.lastModified();
 	}
 
 	/**
@@ -1048,14 +1083,13 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Restores a tree saved as a refresh snapshot to a specified URI.
 	 * @return <code>true</code> if the snapshot exists, <code>false</code> otherwise.
 	 * @exception CoreException if the project could not be restored.
 	 */
-	protected boolean restoreTreeFromRefreshSnapshot(Project project,
-			java.io.File snapshotFile, IProgressMonitor monitor) throws CoreException {
+	protected boolean restoreTreeFromRefreshSnapshot(Project project, java.io.File snapshotFile, IProgressMonitor monitor) throws CoreException {
 		long start = System.currentTimeMillis();
 		monitor = Policy.monitorFor(monitor);
 		String message;
@@ -1089,18 +1123,18 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		}
 		return true;
 	}
-	
-	class InternalMonitorWrapper extends ProgressMonitorWrapper{
+
+	class InternalMonitorWrapper extends ProgressMonitorWrapper {
 		private boolean ignoreCancel;
-		
-		public InternalMonitorWrapper(IProgressMonitor monitor){
+
+		public InternalMonitorWrapper(IProgressMonitor monitor) {
 			super(Policy.monitorFor(monitor));
 		}
 
 		public void ignoreCancelState(boolean ignore) {
 			this.ignoreCancel = ignore;
 		}
-		
+
 		public boolean isCanceled() {
 			return ignoreCancel ? false : super.isCanceled();
 		}
@@ -1156,7 +1190,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 							monitor.ignoreCancelState(false);
 							workspace.getFileSystemManager().getHistoryStore().clean(Policy.subMonitorFor(monitor, 1));
 							monitor.ignoreCancelState(keepConsistencyWhenCanceled);
-							
+
 							// write out all metainfo (e.g., workspace/project descriptions) 
 							saveMetaInfo(warnings, Policy.subMonitorFor(monitor, 1));
 							break;
@@ -1291,16 +1325,14 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * @param monitor progress monitor
 	 * @exception CoreException if there is a problem writing the snapshot.
 	 */
-	public void saveRefreshSnapshot(Project project, URI snapshotLocation,
-			IProgressMonitor monitor) throws CoreException {
+	public void saveRefreshSnapshot(Project project, URI snapshotLocation, IProgressMonitor monitor) throws CoreException {
 		IFileStore store = EFS.getStore(snapshotLocation);
 		IPath snapshotPath = new Path(snapshotLocation.getPath());
 		java.io.File tmpTree = null;
 		try {
-			tmpTree = java.io.File.createTempFile("tmp", ".tree");	//$NON-NLS-1$//$NON-NLS-2$
+			tmpTree = java.io.File.createTempFile("tmp", ".tree"); //$NON-NLS-1$//$NON-NLS-2$
 		} catch (IOException e) {
-			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL,
-					snapshotPath, Messages.resources_copyProblem, e);
+			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, snapshotPath, Messages.resources_copyProblem, e);
 		}
 		ZipOutputStream out = null;
 		try {
@@ -1335,10 +1367,11 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, snapshotPath, Messages.resources_copyProblem, e);
 		} finally {
 			FileUtil.safeClose(out);
-			if (tmpTree!=null) tmpTree.delete();
+			if (tmpTree != null)
+				tmpTree.delete();
 		}
 	}
-	
+
 	/**
 	 * Writes the current state of the entire workspace tree to disk.
 	 * This is used during workspace save.  saveTree(Project)
@@ -1946,7 +1979,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				// Builder infos of non-active configurations are persisted after the active 
 				// configuration's builder infos. So, their trees have to follow the same order.
 				trees.addAll(additionalTrees);
-				
+
 				// add the current tree in the list as the last tree in the chain
 				trees.add(current);
 
