@@ -1679,19 +1679,21 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					createChildren(pw);
 					Object element = internalToElement(elementOrPath);
 					w = internalFindChild(pw, element);
-					if (expand && pw instanceof Item) {
-						// expand parent items top-down
-						Item item = (Item) pw;
-						LinkedList<Item> toExpandList = new LinkedList<>();
-						while (item != null && !getExpanded(item)) {
-							toExpandList.addFirst(item);
-							item = getParentItem(item);
-						}
-						for (Item toExpand : toExpandList) {
-							setExpanded(toExpand, true);
-						}
-					}
 				}
+			}
+		}
+		if (expand && w instanceof Item) {
+			// expand parent items top-down
+			Item item = getParentItem((Item) w);
+			LinkedList<Item> toExpandList = new LinkedList<>();
+			while (item != null) {
+				if (!getExpanded(item)) {
+					toExpandList.addFirst(item);
+				}
+				item = getParentItem(item);
+			}
+			for (Item toExpand : toExpandList) {
+				setExpanded(toExpand, true);
 			}
 		}
 		return w;
