@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - Bug 431735
+ *     Steven Spungin <steven@spungin.tv> - Bug 431735, Bug 437890
  ******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal;
@@ -36,12 +36,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		if (pref.get("autoCreateElementId", null) == null) { //$NON-NLS-1$
 			pref.putBoolean("autoCreateElementId", true); //$NON-NLS-1$
 		}
-
-		// TODO: if accepted, this should default to true
-		if (pref.get("tab-list-show", null) == null) { //$NON-NLS-1$
-			pref.putBoolean("tab-list-show", false); //$NON-NLS-1$
-		}
-
+		
 		// TODO: After XMI tab is not forced disabled, this should default to
 		// true
 		if (pref.get("tab-form-search-show", null) == null) { //$NON-NLS-1$

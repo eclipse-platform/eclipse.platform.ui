@@ -429,7 +429,7 @@ public class ModelEditor implements IGotoObject {
 		tabItemTree.setControl(createFormTab(editorTabFolder));
 		tabItemTree.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_application_form));
 
-		tab_list_show(preferences.getBoolean("tab-list-show", false)); //$NON-NLS-1$
+		tab_list_show(true);
 
 		tabItemXmi = new CTabItem(editorTabFolder, SWT.NONE);
 		tabItemXmi.setText(messages.ModelEditor_XMI);
@@ -1281,8 +1281,7 @@ public class ModelEditor implements IGotoObject {
 		registerEditor(FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT, ContextInjectionFactory.make(StringModelFragment.class, context));
 	}
 
-	@Inject
-	public void tab_list_show(@Preference("tab-list-show") Boolean show) {
+	public void tab_list_show(Boolean show) {
 		if (editorTabFolder == null) {
 			return;
 		}

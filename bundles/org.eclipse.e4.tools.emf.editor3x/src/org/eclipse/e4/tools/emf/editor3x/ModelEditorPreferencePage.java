@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - Bug 431735
+ *     Steven Spungin <steven@spungin.tv> - Bug 431735, Bug 437890
  ******************************************************************************/
 
 package org.eclipse.e4.tools.emf.editor3x;
@@ -27,7 +27,6 @@ public class ModelEditorPreferencePage extends PreferencePage implements IWorkbe
 	private ColorFieldEditor fColorValueNotRendered;
 	private ColorFieldEditor fColorValueNotVisible;
 	private ColorFieldEditor fColorValueNotVisibleAndRendered;
-	private BooleanFieldEditor fShowListTab;
 	private BooleanFieldEditor fShowSearch;
 
 	public ModelEditorPreferencePage() {
@@ -101,7 +100,7 @@ public class ModelEditorPreferencePage extends PreferencePage implements IWorkbe
 				fShowXMIId.setPreferenceStore(getPreferenceStore());
 				fShowXMIId.load();
 			}
-
+			
 			{
 				Composite container = new Composite(group, SWT.NONE);
 				container.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false, 2, 1));
@@ -109,23 +108,6 @@ public class ModelEditorPreferencePage extends PreferencePage implements IWorkbe
 				fShowSearch.setPage(this);
 				fShowSearch.setPreferenceStore(getPreferenceStore());
 				fShowSearch.load();
-			}
-
-		}
-
-		{
-			Group group = new Group(result, SWT.NONE);
-			group.setText("Tabs");
-			group.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false, 2, 1));
-			group.setLayout(new GridLayout(2, false));
-
-			{
-				Composite container = new Composite(group, SWT.NONE);
-				container.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false, 2, 1));
-				fShowListTab = new BooleanFieldEditor("tab-list-show", "Show List Tab", container);
-				fShowListTab.setPage(this);
-				fShowListTab.setPreferenceStore(getPreferenceStore());
-				fShowListTab.load();
 			}
 		}
 
@@ -139,7 +121,6 @@ public class ModelEditorPreferencePage extends PreferencePage implements IWorkbe
 		fColorValueNotRendered.store();
 		fColorValueNotVisible.store();
 		fColorValueNotVisibleAndRendered.store();
-		fShowListTab.store();
 		fShowSearch.store();
 		return super.performOk();
 	}
@@ -151,7 +132,6 @@ public class ModelEditorPreferencePage extends PreferencePage implements IWorkbe
 		fColorValueNotRendered.loadDefault();
 		fColorValueNotVisible.loadDefault();
 		fColorValueNotVisibleAndRendered.loadDefault();
-		fShowListTab.loadDefault();
 		fShowSearch.loadDefault();
 		super.performDefaults();
 	}
