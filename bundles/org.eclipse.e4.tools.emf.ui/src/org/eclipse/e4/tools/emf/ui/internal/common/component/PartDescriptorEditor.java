@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steven@spungin.tv> - Bug 404166, 424730
+ *     Steven Spungin <steven@spungin.tv> - Bug 404166, 424730, 437951
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -141,6 +141,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		}
 
 		getMaster().setValue(object);
+		enableIdGenerator(UiPackageImpl.Literals.UI_LABEL__LABEL, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
 		return composite;
 	}
 

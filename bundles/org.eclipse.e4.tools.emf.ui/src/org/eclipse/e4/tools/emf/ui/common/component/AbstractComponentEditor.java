@@ -8,6 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Marco Descher <marco@descher.at> - Bug 422465
+ *     Steven Spungin <steven@spungin.tv> - Bug 437951
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common.component;
 
@@ -33,6 +34,8 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
+import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
@@ -85,6 +88,8 @@ public abstract class AbstractComponentEditor {
 
 	private Composite editorControl;
 
+	private IdGenerator generator;
+
 	public EditingDomain getEditingDomain() {
 		return editingDomain;
 	}
@@ -126,7 +131,11 @@ public abstract class AbstractComponentEditor {
 	public abstract String getDescription(Object element);
 
 	public Composite getEditor(Composite parent, Object object) {
-		return editorControl = doGetEditor(parent, object);
+		if (generator != null) {
+			generator.stopGenerating();
+			generator = null;
+		}
+		return doGetEditor(parent, object);
 	}
 
 	protected abstract Composite doGetEditor(Composite parent, Object object);
@@ -248,5 +257,28 @@ public abstract class AbstractComponentEditor {
 			eec.createContributedEditorTab(parent, context, master, getEditingDomain(), project);
 		}
 
+	}
+
+	/**
+	 * Generates an ID when the another field changes. Must be called after
+	 * master is set with the objects value.
+	 *
+	 * @param attSource
+	 *            The source attribute
+	 * @param attId
+	 *            The id attribute to generate
+	 * @param control
+	 *            optional control to disable generator after losing focus or
+	 *            disposing
+	 */
+	protected void enableIdGenerator(EAttribute attSource, EAttribute attId, Control control) {
+		if (generator != null) {
+			generator.stopGenerating();
+			generator = null;
+		}
+		if (getEditor().isAutoCreateElementId()) {
+			generator = new IdGenerator();
+			generator.bind(getMaster(), EMFEditProperties.value(getEditingDomain(), attSource), EMFEditProperties.value(getEditingDomain(), attId), control);
+		}
 	}
 }

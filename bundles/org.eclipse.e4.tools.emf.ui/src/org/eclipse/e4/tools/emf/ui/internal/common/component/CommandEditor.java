@@ -8,6 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
+ *     Steven Spungin <steven@spungin.tv> - Bug 437951
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -133,6 +134,7 @@ public class CommandEditor extends AbstractComponentEditor {
 		}
 
 		getMaster().setValue(object);
+		enableIdGenerator(CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
 		return composite;
 	}
 
