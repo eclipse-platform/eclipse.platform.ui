@@ -1,0 +1,992 @@
+== Planning Bugs - 4.4 unscheduled ==
+
+{| class="wikitable" border="1"
+|-
+! !! Bug !! TM !! Sev !! Assign !! Status !! Title
+|-
+| 1 || {{bug|385394}} || 4.4 || major || pwebster || NEW || Performance issue regarding enabled state handling for menuContributions containing command (ToolItemUpdateTimer puts constant load on CPU)
+|-
+| 2 || {{bug|388476}} || 4.4 || normal || emoffatt || REOPENED || "[EditorMgmt] Editor tab management lost ""working set"" (MRU) functionality"
+|-
+| 3 || {{bug|375576}} || 4.4 || critical || emoffatt || REOPENED || "Controls are not fully realized when partOpened(...) , partBroughtToTop(...) and partActivated(...) are called"
+|-
+| 4 || {{bug|419018}} || 4.4 || normal || daniel.rolka || NEW || [CSS] Provide the CSS support for defining the new font and color definitions
+|-
+| 5 || {{bug|376486}} || 4.4 || major || pwebster || REOPENED || [Model] Eclipse 4 IDE not extendable via fragments or processors
+|-
+| 6 || {{bug|348954}} || 4.4 || major || emoffatt || NEW || Active Part is incorrect and does not have focus on a restart
+|-
+| 7 || {{bug|384108}} || 4.4 || major || daniel.rolka || NEW || JUnit view icon no longer shows progress while executing tests
+|-
+| 8 || {{bug|411821}} || 4.4 || normal || daniel.rolka || NEW || [QuickAccess] Contribute SearchField through a fragment or other means
+|-
+| 9 || {{bug|317208}} || 4.4 || major || emoffatt || NEW || Missing items on context menu on minimized views
+|-
+| 10 || {{bug|360357}} || 4.4 || normal || pwebster || NEW || CanExecute of Handler are checked ever 500ms
+|-
+| 11 || {{bug|389663}} || 4.4 || critical || tom.schindl || NEW || [E4AP] Merging contributions can lead to duplicate elements in the model
+|-
+| 12 || {{bug|401043}} || 4.4 || normal || emoffatt || REOPENED || [Model] Replace container data with persistentData
+|-
+| 13 || {{bug|317207}} || 4.4 || major || emoffatt || NEW || View tabs have no context menu - can't make it a fast view
+|-
+| 14 || {{bug|398666}} || 4.4 || minor || emoffatt || NEW || partOpened not called for views in default Perspective when welcome view opens first
+|-
+| 15 || {{bug|362420}} || 4.4 || enhancement || daniel.rolka || NEW || "[QuickAccess] Make ""Quick access"" optional and hidden by default"
+|-
+| 16 || {{bug|419016}} || 4.4 || normal || daniel.rolka || ASSIGNED || [CSS] Provide some reasonable bridge interactions between CSS and our older Colors and Fonts properties
+|-
+| 17 || {{bug|375393}} || 4.4 || normal || sopotcela || ASSIGNED || Popup / Context Menu disapears after reopening a part (e4)
+|-
+| 18 || {{bug|351366}} || 4.4 || normal || emoffatt || NEW || Allow the hosting of Views and Editors independent of the presentation
+|-
+| 19 || {{bug|309160}} || 4.4 || normal || daniel.rolka || NEW || [CSS] [Compatibility] Editor bars for markers and annotations are the wrong color
+|-
+| 20 || {{bug|366708}} || 4.4 || major || pwebster || NEW || [Workbench] Workbench.openWorkbenchWindow() calls createWorkbenchWindow 10 times
+|-
+| 21 || {{bug|384835}} || 4.4 || critical || pwebster || NEW || [Workbench] Some org.eclipse.ui.workbench fixes from 3.6 and 3.7 didn't make it into 4.2
+|-
+| 22 || {{bug|395205}} || 4.4 || normal || daniel.rolka || NEW || [CSS] Allow custom renderers to be defined using CSS
+|-
+| 23 || {{bug|401327}} || 4.4 || critical || emoffatt || NEW || [MPE] AbstractMultiEditor.getInnerEditorContainer is never called
+|-
+| 24 || {{bug|401655}} || 4.4 || enhancement || wojciech.sudol || NEW || [Progress] Create e4 based Progress View
+|-
+| 25 || {{bug|373294}} || 4.4 || major || pelder || NEW || Improve startup time
+|-
+| 26 || {{bug|392715}} || 4.4 || enhancement || emoffatt || NEW || Make existing 3.x components available for a pure e4 application
+|-
+| 27 || {{bug|418429}} || 4.4 || enhancement || pwebster || NEW || [Workbench] ClassCastException in WorkbenchPage (when using pure e4 parts)
+|-
+| 28 || {{bug|401712}} || 4.4 || normal || daniel_megert || ASSIGNED || [Markers] Problems view should not update tree unless visible
+|-
+| 29 || {{bug|405262}} || 4.4 || normal || daniel.rolka || REOPENED || [Contributions] Duplicate context menu entries in XML editor source tab
+|-
+| 30 || {{bug|407418}} || 4.4 || enhancement || bsd || NEW || """Import Existing Project"" wizard should allow filtering of already-installed projects"
+|-
+| 31 || {{bug|374310}} || 4.4 || normal || emoffatt || NEW || [MinMax] Closing the last perspective in a minimized perspective stack leaves the model in a strange state
+|-
+| 32 || {{bug|269271}} || 4.4 || normal || pwebster || NEW || [Workbench] [Compatibility] URISyntaxException when workspace loc has space
+|-
+| 33 || {{bug|284439}} || 4.4 || normal || pwebster || NEW || [Workbench] [Compatibility] NPE in FormOutlinePage during delete
+|-
+| 34 || {{bug|339740}} || 4.4 || normal || emoffatt || NEW || [Perspectives] Examine the layout behavior
+|-
+| 35 || {{bug|364566}} || 4.4 || normal || daniel.rolka || NEW || "[Contributions] [performance] Huge regression in performance test ObjectContributionsPerformance#testObjectContributions:limited selection, limited contributors()"
+|-
+| 36 || {{bug|369237}} || 4.4 || normal || pwebster || NEW || [Model] Are we using org.eclipse.e4.emf.xpath?
+|-
+| 37 || {{bug|377999}} || 4.4 || normal || emoffatt || NEW || [RenderingEngine] Support per-element renderers
+|-
+| 38 || {{bug|378672}} || 4.4 || major || daniel.rolka || REOPENED || [CSS] Part tab and tool bar colors/rendering are confusing
+|-
+| 39 || {{bug|380946}} || 4.4 || normal || pelder || NEW || [Commands] [Compatibility] helpContextId not registered for legacy handlers
+|-
+| 40 || {{bug|388482}} || 4.4 || normal || emoffatt || NEW || [Trim] [DND] Dragging toolbars to different trim should change orientation
+|-
+| 41 || {{bug|397942}} || 4.4 || enhancement || emoffatt || NEW || [EditorMgmt] Implement a better MRU tab ordering
+|-
+| 42 || {{bug|415382}} || 4.4 || normal || pelder || NEW || [Commands] Commands contributed from extensions remain after the plugin is gone
+|-
+| 43 || {{bug|148574}} || 4.4 || major || pwebster || NEW || [WorkbenchParts] partHidden partVisible not called if you minimize or restore
+|-
+| 44 || {{bug|350251}} || 4.4 || normal || Platform-UI-Inbox || NEW || Strategy for porting useful org.eclipse.ui.* bits for Eclipse4 RCP apps
+|-
+| 45 || {{bug|393839}} || 4.4 || normal || emoffatt || NEW || [RenderingEngine] Extensions concept for Renderer factory
+|-
+| 46 || {{bug|404727}} || 4.4 || normal || emoffatt || NEW || Make 3.x workbench resources available for e4 apps
+|-
+| 47 || {{bug|351363}} || 4.4 || normal || emoffatt || NEW || [E4] Allow some of the 'standard' views to be used in E4 RCP apps without needing the compatibility layer
+|-
+| 48 || {{bug|392876}} || 4.4 || normal || daniel.rolka || NEW || [platform-ui-dev] [Contributions] Editor context menu is broken when trying to add a dynamic submenu
+|-
+| 49 || {{bug|394394}} || 4.4 || major || emoffatt || NEW || Clicking close X on Welcome screen or last part of maximized stack sends focus to nowhere
+|-
+| 50 || {{bug|401632}} || 4.4 || major || emoffatt || NEW || [WorkbenchParts] Minimized views still update in background (bad part events?)
+|-
+| 51 || {{bug|369860}} || 4.4 || normal || pwebster || NEW || [KeyBinding] Keybinding assist popup eats keys (for two-chord shortcuts)
+|-
+| 52 || {{bug|396318}} || 4.4 || normal || pelder || ASSIGNED || Save Resources dialog missing when selecting Close All from editor tab
+|-
+| 53 || {{bug|309306}} || 4.4 || normal || daniel.rolka || NEW || [ActivityMgmt] [ActionSets] Activities will remove actions but not parent menu
+|-
+| 54 || {{bug|134659}} || 4.4 || normal || daniel.rolka || NEW || [ActionSets] Menubar entry appears twice in the [Customize Perspective] dialog.
+|-
+| 55 || {{bug|411791}} || 4.4 || minor || daniel.rolka || NEW || [CSS] SWTException on shutdown
+|-
+| 56 || {{bug|279838}} || 4.4 || normal || daniel.rolka || NEW || [CSS] Resource loading extensions
+|-
+| 57 || {{bug|413410}} || 4.4 || normal || pelder || REOPENED || [KeyBindings] Lots of Keybinding conflicts occurred on official CDT eclipse Kepler 8.2
+|-
+| 58 || {{bug|214974}} || 4.4 || enhancement || emoffatt || NEW || [Workbench] Allow Workbench UI state to save/restore to user-provided Input/Output Streams
+|-
+| 59 || {{bug|348885}} || 4.4 || normal || emoffatt || NEW || [UI] Removing an element from the model should (eventually) call removeGui on it
+|-
+| 60 || {{bug|365607}} || 4.4 || normal || emoffatt || NEW || IllegalArgumentException in PartRenderingEngine
+|-
+| 61 || {{bug|389478}} || 4.4 || enhancement || emoffatt || NEW || Need IDE.openEditors(...) that allows to inject state
+|-
+| 62 || {{bug|317809}} || 4.4 || major || emoffatt || NEW || [Perspectives] [Compatibility] Sync view showed up in the java perpsective
+|-
+| 63 || {{bug|344234}} || 4.4 || normal || daniel.rolka || NEW || [CSS] Can not change View Title Fonts in preference
+|-
+| 64 || {{bug|371586}} || 4.4 || minor || daniel.rolka || NEW || [Markers] Searching for markers: IllegalArgumentException: Comparison method violates its general contract!
+|-
+| 65 || {{bug|378811}} || 4.4 || major || emoffatt || NEW || [Perspectives] Support separation of the Workspace and the saved UI Model (was: can't save and import perspectives)
+|-
+| 66 || {{bug|385565}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Menu contribution processing has different results in 4.2 than 3.8
+|-
+| 67 || {{bug|404015}} || 4.4 || normal || emoffatt || NEW || [DND] Drag and drop of jobs trim item is broken
+|-
+| 68 || {{bug|412373}} || 4.4 || enhancement || Platform-UI-Inbox || NEW || Platform API candidates for Eclipse 4.4
+|-
+| 69 || {{bug|168379}} || 4.4 || normal || gheorghe || NEW || [EditorMgmt] Investigate possible editor tab management improvements
+|-
+| 70 || {{bug|248561}} || 4.4 || normal || wojciech.sudol || NEW || [Progress] Accessibility: Text changes in progress dialogs are not read by screen readers
+|-
+| 71 || {{bug|347829}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] PropertyTester not getting fired for objectContribution(s) unless view from providing plug-in is loaded.
+|-
+| 72 || {{bug|355946}} || 4.4 || normal || daniel.rolka || NEW || """View and Editor Folders"" color preferences don't work"
+|-
+| 73 || {{bug|348560}} || 4.4 || normal || pwebster || NEW || RunAndTracks that always return true
+|-
+| 74 || {{bug|368466}} || 4.4 || normal || daniel.rolka || REOPENED || [Contributions] Part toolbar does not refresh after adding additional toolbar items to it
+|-
+| 75 || {{bug|366602}} || 4.4 || normal || pwebster || REOPENED || [Compatibility] IServiceLocatorCreator doesn't work
+|-
+| 76 || {{bug|413936}} || 4.4 || normal || daniel.rolka || ASSIGNED || Busy (italic) view title not redrawn promptly with Classic theme
+|-
+| 77 || {{bug|249109}} || 4.4 || enhancement || emoffatt || NEW || [Trim] set toolbar icons with drag and drop
+|-
+| 78 || {{bug|370615}} || 4.4 || normal || emoffatt || NEW || Support dynamic tracing for e4 workbench
+|-
+| 79 || {{bug|330117}} || 4.4 || normal || gheorghe || NEW || "No separation between view toolbar, view description and view content"
+|-
+| 80 || {{bug|374017}} || 4.4 || normal || javabrett || NEW || Enable refresh even when selection has closed projects
+|-
+| 81 || {{bug|319377}} || 4.4 || normal || pelder || NEW || [KeyBindings] [Compatibility] Multiple dialogs appears to confuse context chain
+|-
+| 82 || {{bug|323075}} || 4.4 || normal || pwebster || NEW || [RCP] Headless usage of Eclipse 4 RCP (without a Window) - Context of model elements should be explicitly created and filled
+|-
+| 83 || {{bug|370811}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] View menu doesn't update when adding item to menu model
+|-
+| 84 || {{bug|377906}} || 4.4 || normal || emoffatt || NEW || [Model] Model / SWT interactions are not well enough defined
+|-
+| 85 || {{bug|378861}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Context Menu not available for Dialogs
+|-
+| 86 || {{bug|385367}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Toolbar items do not appear in expected location.
+|-
+| 87 || {{bug|395329}} || 4.4 || normal || daniel.rolka || NEW || [CSS] Make the Drag and drop feedback color styleable through CSS
+|-
+| 88 || {{bug|402519}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Core expressions are not evaluated in compatibility mode
+|-
+| 89 || {{bug|406670}} || 4.4 || major || pwebster || NEW || [Workbench] Eclipse shell/window is visible after WorkbenchWindowAdvisor.postwindowopen()
+|-
+| 90 || {{bug|340889}} || 4.4 || major || daniel.rolka || NEW || [CSS] Platform color scheme does not work together with SWT color constants
+|-
+| 91 || {{bug|345608}} || 4.4 || normal || wojciech.sudol || NEW || [patch][Markers] Horrible performance removing markers from Problems View taking hours to do the job
+|-
+| 92 || {{bug|387876}} || 4.4 || normal || emoffatt || NEW || [DND] Dragging tab to new folder should reselect the previous tab in older folder after drop
+|-
+| 93 || {{bug|389442}} || 4.4 || normal || emoffatt || NEW || [Perspectives] Adding MPlaceholder to rendered but inactive MPerspective causes MPlaceholder in active MPerspective to lose its widget rendering
+|-
+| 94 || {{bug|396528}} || 4.4 || critical || emoffatt || NEW || [MPE] Incomplete implementation in AbstractMultiEditor
+|-
+| 95 || {{bug|398852}} || 4.4 || normal || daniel.rolka || NEW || [CSS] Un-readable tab names when using High Contrast mode.
+|-
+| 96 || {{bug|403930}} || 4.4 || normal || pwebster || NEW || [Workbench] E4 and E3 selection services are not connected
+|-
+| 97 || {{bug|410795}} || 4.4 || normal || daniel.rolka || NEW || [CSS] [Features] [Accessibility] Juno does not support High Contrast Black mode
+|-
+| 98 || {{bug|412013}} || 4.4 || normal || emoffatt || NEW || Secondary Problems view (created with 4.2) doesn't have a view menu
+|-
+| 99 || {{bug|413977}} || 4.4 || major || pelder || NEW || [KeyBindings] All non-native key bindings stop working
+|-
+| 100 || {{bug|393171}} || 4.4 || normal || tom.schindl || NEW || Remove delta migration code
+|-
+| 101 || {{bug|377085}} || 4.4 || normal || emoffatt || REOPENED || [Trim] Auto-unmaximize when there are no more 'minimized by zoom' elements in the trim
+|-
+| 102 || {{bug|355049}} || 4.4 || major || daniel.rolka || REOPENED || [Import/Export] Importing a project containing a linked resource will dereference that linked resource
+|-
+| 103 || {{bug|396974}} || 4.4 || enhancement || pwebster || REOPENED || [Contributions] Multiple Parents for MenuContribution item
+|-
+| 104 || {{bug|380721}} || 4.4 || normal || pelder || NEW || [KeyBindings] Programmatically-created commands are not available in fresh workspace
+|-
+| 105 || {{bug|377519}} || 4.4 || normal || pwebster || NEW || [Workbench] PartServiceImpl#savePart() needs improvement
+|-
+| 106 || {{bug|380321}} || 4.4 || normal || emoffatt || NEW || "View management does not respect ""Do not open..."" setting"
+|-
+| 107 || {{bug|362532}} || 4.4 || normal || gheorghe || NEW || [CSS] Re-enable dynamic CSS pseudo-classes
+|-
+| 108 || {{bug|281144}} || 4.4 || normal || emoffatt || NEW || [ViewMgmt] [Compatibility][UI] Part rendering is destroyed by tab-height of 20
+|-
+| 109 || {{bug|284788}} || 4.4 || normal || emoffatt || NEW || [EditorMgmt] [Compatibility] Sometimes you can't see a new editor tab
+|-
+| 110 || {{bug|292251}} || 4.4 || normal || Platform-UI-Inbox || NEW || [Compatibility] Toggling of breakpoints is not propagated properly
+|-
+| 111 || {{bug|319694}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] [Compatibility] Some actions in view toolbars may be disabled until you activate the part
+|-
+| 112 || {{bug|331645}} || 4.4 || major || pwebster || NEW || [Workbench] EventBroker#unsubscribe is not working when same eventhandler registered for more than one topic
+|-
+| 113 || {{bug|344121}} || 4.4 || major || daniel.rolka || NEW || [Contributions] [Compatibility] Lazy loading does not appear to work for a dynamic contribution to popup:org.eclipse.ui.popup.any
+|-
+| 114 || {{bug|348821}} || 4.4 || normal || Platform-UI-Inbox || NEW || [Compatibility] Update the ISV doc as much as possible
+|-
+| 115 || {{bug|365592}} || 4.4 || normal || pwebster || NEW || [Workbench] UI Event subscriber should use @UIEventTopic instead of EventBroker.subscribe where possible
+|-
+| 116 || {{bug|366554}} || 4.4 || normal || pelder || NEW || [Commands] [Compatibility] failures in CommandsTestSuite
+|-
+| 117 || {{bug|366571}} || 4.4 || normal || Platform-UI-Inbox || NEW || [Compatibility] editor and view action delegates are not properly scoped
+|-
+| 118 || {{bug|366608}} || 4.4 || normal || pelder || NEW || [KeyBindings] [Compatibility] Failures in KeysTestSuite
+|-
+| 119 || {{bug|366635}} || 4.4 || normal || Platform-UI-Inbox || NEW || [Tests] DynamicPluginsTestSuite has failures
+|-
+| 120 || {{bug|368470}} || 4.4 || normal || pwebster || NEW || [IDE] Editor Selection dialog displays Bidirectional strings in left-to-right orientation
+|-
+| 121 || {{bug|375583}} || 4.4 || normal || daniel.rolka || NEW || [CSS] Cannot set foreground colour on a CTabItem
+|-
+| 122 || {{bug|376046}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Customize Perspective doesn't show new toolbar button unless group enabled first
+|-
+| 123 || {{bug|378408}} || 4.4 || normal || emoffatt || NEW || [WorkbenchParts] Need to re-examine how we manage the various 'firePart...' events as well as how we respond to them
+|-
+| 124 || {{bug|378644}} || 4.4 || major || pwebster || NEW || [Workbench] All but 1 window and 1 perspective lost when starting 3.x workspace with 4.2
+|-
+| 125 || {{bug|378939}} || 4.4 || enhancement || pwebster || NEW || [Workbench] Request to close the lifecycle of the application model
+|-
+| 126 || {{bug|379142}} || 4.4 || major || wojciech.sudol || NEW || [Compatilibility][Regression] Editor-contributed actions disabled when closing editor and switching to same type
+|-
+| 127 || {{bug|385547}} || 4.4 || enhancement || emoffatt || NEW || [PerspectiveBar] [PerspectiveSwitcher] Remove all dependencies on org.eclipse.ui.* (Pure E4)
+|-
+| 128 || {{bug|387714}} || 4.4 || normal || daniel.rolka || NEW || [CSS] Tag changes are not propagated as CSS class
+|-
+| 129 || {{bug|395513}} || 4.4 || normal || emoffatt || NEW || [WorkbenchParts] Part activation is tracked in two places
+|-
+| 130 || {{bug|405681}} || 4.4 || enhancement || daniel.rolka || NEW || [CSS] Use tag to render stack below parts
+|-
+| 131 || {{bug|409934}} || 4.4 || normal || pwebster || NEW || [Metadata] Enable API tools for the e4.core bundles
+|-
+| 132 || {{bug|178229}} || 4.4 || normal || eclipse.susan.mccourt || NEW || [Dialogs] [EditorMgmt] Open Resource dialog should not fully create all editors
+|-
+| 133 || {{bug|354538}} || 4.4 || major || daniel.rolka || NEW || [Contributions] [Compatibility] Window menus and toolbars leaked after having been closed
+|-
+| 134 || {{bug|393391}} || 4.4 || normal || daniel.rolka || NEW || "[Contributions] can't re-enable toolbars in ""customize perspective"""
+|-
+| 135 || {{bug|395601}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Customizing perspective - change buttons in the Java perspective reflect the change even in debug perspective
+|-
+| 136 || {{bug|398814}} || 4.4 || normal || emoffatt || NEW || [DND] [EditorMgmt] Moving an unfocused editor does not keep the previously focused editor visible
+|-
+| 137 || {{bug|398925}} || 4.4 || normal || pwebster || NEW || After prolonged usage Eclipse becomes unusable : java.lang.Object cannot be cast to org.eclipse.e4.core.commands.EHandlerService
+|-
+| 138 || {{bug|401252}} || 4.4 || normal || wojciech.sudol || NEW || [Progress] JAWS does not read ProgressMonitor Label
+|-
+| 139 || {{bug|405731}} || 4.4 || major || daniel.rolka || NEW || [CSS] Part tab font not using system font
+|-
+| 140 || {{bug|416461}} || 4.4 || normal || daniel.rolka || NEW || [Wizards] Wizard Parameter overrides command label and icon
+|-
+| 141 || {{bug|355750}} || 4.4 || normal || emoffatt || REOPENED || WorkbenchWindowAdvisor#isDurableFolder() doesn't survive a save and restore
+|-
+| 142 || {{bug|407432}} || 4.4 || normal || pwebster || REOPENED || "[Metadata] Run the ""broken NLS string"" tool on UI bundles"
+|-
+| 143 || {{bug|281455}} || 4.4 || normal || pwebster || REOPENED || ConcurrentModificationException while closing project
+|-
+| 144 || {{bug|379144}} || 4.4 || minor || pelder || NEW || [DI] Same EventAdmin Service injected twice
+|-
+| 145 || {{bug|393242}} || 4.4 || enhancement || daniel.rolka || NEW || [CSS] JFace StatusLine cannot be easily styled
+|-
+| 146 || {{bug|371785}} || 4.4 || normal || gheorghe || NEW || "Remove ""Default"" theme?"
+|-
+| 147 || {{bug|283930}} || 4.4 || normal || pwebster || NEW || [Workbench] [Compatibility] Dirty state tracking causes SWTExceptions when editing in with multiple workbench windows
+|-
+| 148 || {{bug|284387}} || 4.4 || normal || daniel.rolka || NEW || "[Contributions] [Compatibility] pagesite (Outline, Synchronize) actionbar contributions only show up once"
+|-
+| 149 || {{bug|320739}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] [Compatibility] 'Content Assist' submenu of the 'Edit' menu appears in the wrong place
+|-
+| 150 || {{bug|332130}} || 4.4 || normal || pelder || NEW || [Contexts] [Compatibility] create runtime contexts correctly
+|-
+| 151 || {{bug|347843}} || 4.4 || normal || pwebster || NEW || [Workbench] [Compatibility] Save handling has changed in 3.x
+|-
+| 152 || {{bug|366534}} || 4.4 || normal || Platform-UI-Inbox || NEW || [Compatibility] Failures in UIAutomatedSuite
+|-
+| 153 || {{bug|366562}} || 4.4 || normal || pelder || NEW || [Commands] [Compatibility] command service getHelpContextId(*) not implemented
+|-
+| 154 || {{bug|366595}} || 4.4 || normal || pwebster || NEW || [Workbench] [Compatibility] Failures in ServicesTestSuite
+|-
+| 155 || {{bug|368558}} || 4.4 || normal || daniel.rolka || NEW || [CSS] Main tool bar should have its style bits defined by CSS
+|-
+| 156 || {{bug|371665}} || 4.4 || normal || daniel.rolka || NEW || [CSS] Need a low colour or high contrast theme in 4.2
+|-
+| 157 || {{bug|355010}} || 4.4 M3 || normal || daniel.rolka || ASSIGNED || [CSS] Understand default behaviour if product doesn't specify a theme
+|-
+| 158 || {{bug|372826}} || 4.4 || normal || daniel.rolka || REOPENED || [CSS] Changing a CSS class should fire an event to update application style
+|-
+| 159 || {{bug|267851}} || 4.4 || normal || daniel.rolka || NEW || [GlobalActions] Copy refactoring is not triggered in Project Explorer
+|-
+| 160 || {{bug|301687}} || 4.4 || critical || daniel.rolka || NEW || [Import/Export] Overwriting Files with Export feature
+|-
+| 161 || {{bug|110135}} || 4.4 || enhancement || daniel.rolka || NEW || [Import/Export] Import existing projects wizards: enhancements for duplicate projects
+|-
+| 162 || {{bug|371934}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] [Perspectives] [Compatibility] Extra/incorrect categories in the CPD
+|-
+| 163 || {{bug|379557}} || 4.4 || minor || emoffatt || NEW || [Trim] [Min/Max] Maximize animations problematic on multi-monitor setups
+|-
+| 164 || {{bug|391768}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] MenuManagerRenderer uses internal JFace API (MenuManagerEventHelper)
+|-
+| 165 || {{bug|392903}} || 4.4 || normal || emoffatt || NEW || "[RenderingEngine] Easier and more powerful lifecycle handling for Windows, Perspectives, ..."
+|-
+| 166 || {{bug|416142}} || 4.4 || normal || emoffatt || NEW || [ViewMgmt] [regression] Incomplete system menu for views
+|-
+| 167 || {{bug|318435}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Changes in the application model for the menu are not reflected in the user interface
+|-
+| 168 || {{bug|346009}} || 4.4 || normal || emoffatt || NEW || [DND] [Compatibility] Can't DND editors to an editor area in another window
+|-
+| 169 || {{bug|377448}} || 4.4 || minor || emoffatt || NEW || [DynamicGUI] Contributions Made Through IExtensionRegistry.addContribution May Or May Not Show Up
+|-
+| 170 || {{bug|378815}} || 4.4 || normal || platform-ui-triaged || NEW || Need better story for handling model elements that should disappear on startup
+|-
+| 171 || {{bug|382151}} || 4.4 || normal || emoffatt || NEW || [RenderingEngine] Error Disposing Widget after restarting the first time
+|-
+| 172 || {{bug|383679}} || 4.4 || major || daniel.rolka || NEW || [Contributions] Contribution of a control via org.eclipse.ui.menus to a view toolbar leads to a NPE
+|-
+| 173 || {{bug|383914}} || 4.4 || normal || daniel.rolka || NEW || [QuickAccess] CMD+3 enables toolbar even if hidden previously
+|-
+| 174 || {{bug|384308}} || 4.4 || normal || emoffatt || NEW || [DND] Moving editors between windows not working (slow down of development on dual monitors)
+|-
+| 175 || {{bug|386743}} || 4.4 || major || daniel.rolka || NEW || [Contributions] Workbench window toolbar has rendering bugs
+|-
+| 176 || {{bug|391344}} || 4.4 || normal || pelder || NEW || ExecutionEvent trigger is not passed on to handler
+|-
+| 177 || {{bug|394386}} || 4.4 || major || daniel.rolka || NEW || [Contributions] Step-Into and Step-Return interchanged in M3
+|-
+| 178 || {{bug|395980}} || 4.4 || normal || pelder || NEW || [Contexts] [Compatibility] Activations and deactivations via the IContextService do not appear to be synchronous
+|-
+| 179 || {{bug|398027}} || 4.4 || enhancement || emoffatt || NEW || There should be a model tag to prevent resizing the shell
+|-
+| 180 || {{bug|398647}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Dynamic radio items in menu contribution not checked
+|-
+| 181 || {{bug|314159}} || 4.4 || normal || daniel.rolka || NEW || [CSS] part can be sized so small that text does not show and chevron dangles to left
+|-
+| 182 || {{bug|355949}} || 4.4 || normal || daniel.rolka || NEW || [CSS] Too much white space around views without any purpose
+|-
+| 183 || {{bug|393454}} || 4.4 || major || emoffatt || NEW || [DND] Drag and Drop of views/parts: bad user experience
+|-
+| 184 || {{bug|388505}} || 4.4 || normal || pwebster || NEW || "[Workbench] ""Show In"" menu doesn't use MRU order any more"
+|-
+| 185 || {{bug|401633}} || 4.3.2 || major || Platform-UI-Inbox || NEW || Remove obvious performance bottlenecks
+|-
+| 186 || {{bug|402263}} || 4.4 || normal || daniel.rolka || NEW || [Import/Export] import from file system wizard does not show subdirectories
+|-
+| 187 || {{bug|404231}} || 4.4 || major || emoffatt || NEW || resetPerspectiveModel() does not reset the perspective
+|-
+| 188 || {{bug|408309}} || 4.4 || normal || emoffatt || NEW || [Perspectives] Legacy PerspectiveListeners aren't fired for perspectivePreDeactivated and perspectiveDeactivated
+|-
+| 189 || {{bug|409678}} || 4.4 || normal || pwebster || NEW || [Workbench] @ProcessRemovals called before compatibility mode adds menu items
+|-
+| 190 || {{bug|410087}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] DirectToolItem does not evaluate @CanExecute
+|-
+| 191 || {{bug|411704}} || 4.4 || normal || wojciech.sudol || NEW || [PropertiesView] Properties view not initialized with current selection when switching views
+|-
+| 192 || {{bug|412574}} || 4.4 || normal || emoffatt || NEW || [EditorMgmt] Add 'New editor' to the editor tab's right click menu again!
+|-
+| 193 || {{bug|412634}} || 4.4 || major || pwebster || NEW || [Workbench] Save All triggers multi-builds
+|-
+| 194 || {{bug|413096}} || 4.4 || major || pwebster || NEW || [Workbench] 3.6.2 RCP application does not run correctly on 4.3 (workbench window is launching)
+|-
+| 195 || {{bug|414736}} || 4.4 || normal || emoffatt || NEW || [PerspectiveBar] The Perspective Bar can't disabled via property
+|-
+| 196 || {{bug|414738}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Customize Perspective via extension point doesn't work
+|-
+| 197 || {{bug|415965}} || 4.4 || normal || daniel.rolka || NEW || "[QuickAccess] ""Show whitespace characters"" is no longer in the ""Previous Choices"" after restart"
+|-
+| 198 || {{bug|416673}} || 4.4 || major || pwebster || NEW || [Workbench] Corrupted workbench.xmi file causes silent Eclipse exit
+|-
+| 199 || {{bug|178081}} || 4.4 || major || daniel.rolka || ASSIGNED || [Import/Export] BIDI3.3:<HCG:Dir\File path appear in RTL order instead of LTR order>
+|-
+| 200 || {{bug|320901}} || 4.4 || major || daniel.rolka || ASSIGNED || [CSS] White background results in lost separators (non-classic themes)
+|-
+| 201 || {{bug|367094}} || 4.4 || normal || platform-ui-triaged || ASSIGNED || [Compatibility] Programmatically created CommandContributionItems show wrong enablement state
+|-
+| 202 || {{bug|375744}} || 4.4 || normal || pwebster || REOPENED || [Workbench] Command-Q does not ask to confirm exit
+|-
+| 203 || {{bug|378184}} || 4.4 || normal || bsd || REOPENED || [Compatibility] Part with custom title image loses the image after drop
+|-
+| 204 || {{bug|359059}} || 4.4 || normal || pwebster || REOPENED || [Commands] [Compatibility] Undefined context error when restarting with a PHP file open
+|-
+| 205 || {{bug|366600}} || 4.4 || normal || pwebster || REOPENED || [Workbench] [Compatibility] the 3.x mediator services don't seem to be created
+|-
+| 206 || {{bug|343863}} || 4.4 || normal || emoffatt || NEW || [DND] [Compatibility] Dragging active part does not update active stack
+|-
+| 207 || {{bug|309248}} || 4.4 || normal || pwebster || NEW || [Workbench] [Compatibility] Unsaved changes dialog needs polish
+|-
+| 208 || {{bug|316470}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] [Compatibility] e4 story for dealing with custom IContributionItem implementations
+|-
+| 209 || {{bug|337594}} || 4.4 || normal || pwebster || NEW || [Workbench] [Compatibility] ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME is not in the context
+|-
+| 210 || {{bug|339352}} || 4.4 || normal || emoffatt || NEW || [Compatibility] [DND] hitting ESC caused an NPE
+|-
+| 211 || {{bug|342911}} || 4.4 || minor || emoffatt || NEW || [ViewMgmt] [Compatibility] DBCS4.1 Problems view icon does not indicate error/warning in Eclipse 4.1
+|-
+| 212 || {{bug|361469}} || 4.4 || normal || emoffatt || NEW || [ViewMgmt] Improve PartStack keyboard accessibility
+|-
+| 213 || {{bug|366564}} || 4.4 || normal || pelder || NEW || [Commands] [Compatibility] command state not properly represented in Eclipse 4
+|-
+| 214 || {{bug|373011}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Action#setText(String) does not update in 4.2
+|-
+| 215 || {{bug|374307}} || 4.4 || major || pwebster || NEW || [Workbench] 3.x bridge - how we make corresponding 4.x elements
+|-
+| 216 || {{bug|387291}} || 4.4 || normal || emoffatt || NEW || [FastView] Remove 'Fast view' preference references
+|-
+| 217 || {{bug|399659}} || 4.4 || major || pelder || NEW || [KeyBindings] Updating a keybinding causes CCE
+|-
+| 218 || {{bug|410164}} || 4.4 || normal || emoffatt || NEW || [DND] Duplicate views appear after dragging view in share area and back to stack
+|-
+| 219 || {{bug|242246}} || 4.4 || normal || pelder || NEW || [Commands] HandlerUtil.getActivePart() returns null when a dialog is opened.
+|-
+| 220 || {{bug|325937}} || 4.4 || major || daniel.rolka || NEW || [CSS] Active part/stack hard to detect
+|-
+| 221 || {{bug|348250}} || 4.4 || normal || emoffatt || NEW || [RenderingEngine] Context's are not correctly reparented in createGui
+|-
+| 222 || {{bug|357652}} || 4.4 || normal || pwebster || NEW || [Compatibility] Allow model contribution to be merged into the model AFTER the compat layer
+|-
+| 223 || {{bug|361133}} || 4.4 || major || emoffatt || NEW || [Compatibility] WorkbenchWindowAdvisor.createWindowContents(Shell) not called any more
+|-
+| 224 || {{bug|369796}} || 4.4 || normal || daniel.rolka || NEW || [CSS] Enable unibrow editor mode in CSS
+|-
+| 225 || {{bug|369882}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] visibleWhen and checkenabled=true not working correctly in menu
+|-
+| 226 || {{bug|376302}} || 4.4 || normal || daniel.rolka || NEW || [CSS] editor ruler not/hardly visible
+|-
+| 227 || {{bug|379803}} || 4.4 M3 || normal || emoffatt || REOPENED || addStandaloneView ignores the show title argument
+|-
+| 228 || {{bug|380138}} || 4.4 || normal || emoffatt || NEW || "[EditorMgmt] editor list popup not updated on ""close"" action"
+|-
+| 229 || {{bug|383832}} || 4.4 || normal || pwebster || NEW || [Workbench] WorkbenchAdvisor#postStartup behaviour changed
+|-
+| 230 || {{bug|384240}} || 4.4 || enhancement || emoffatt || NEW || [DND] Allow to drag'n'drop view on a minimized stack
+|-
+| 231 || {{bug|385507}} || 4.4 || normal || pelder || NEW || [DI] @Inject/@Execute @Preference method isn't called
+|-
+| 232 || {{bug|385840}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Setting a new label and tooltip text to a HandledToolItem does not work
+|-
+| 233 || {{bug|400496}} || 4.4 || normal || platform-ui-triaged || NEW || Invalid Menu Extension in show in menu
+|-
+| 234 || {{bug|402593}} || 4.4 || normal || daniel.rolka || NEW || "[Contributions] ControlContrubution does not notify registered listeners--Works in Indigo, not in Juno"
+|-
+| 235 || {{bug|409622}} || 4.4 || normal || pwebster || NEW || [Model] Perspective contributed via fragment is not registered in PerspectiveRegistry
+|-
+| 236 || {{bug|411724}} || 4.4 || normal || emoffatt || NEW || [Trim] Hidden toolbar doesn't stay hidden
+|-
+| 237 || {{bug|418231}} || 4.4 || normal || emoffatt || NEW || "[EditorMgmt] [regression] Editor pin doesn't toggle, doesn't remember preference on restart"
+|-
+| 238 || {{bug|325965}} || 4.4 || normal || pwebster || NEW || [Commands] org.eclipse.ui.workbench and org.eclipse.core.expression are preventing the GarbageCollector from removing uninstalled plug-ins
+|-
+| 239 || {{bug|345939}} || 4.4 || minor || daniel_megert || ASSIGNED || Key Assist dialog: info text should show key strokes in single quotes
+|-
+| 240 || {{bug|345951}} || 4.4 || normal || daniel_megert || ASSIGNED || Key Assist dialog: can execute command by pressing 'Return' but not by pressing 'Enter'
+|-
+| 241 || {{bug|226842}} || 4.4 || major || pelder || ASSIGNED || [KeyBindings] Can only switch to Emacs keybindings once.
+|-
+| 242 || {{bug|191256}} || 4.4 || normal || pwebster || ASSIGNED || [Perspectives] perspectiveExtensions not applied after installing feature and restarting workbench
+|-
+| 243 || {{bug|339415}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] DynamicMenuContributionItem's isVisible() does not delegate to loadedDynamicContribution's isVisible()
+|-
+| 244 || {{bug|416761}} || 4.4 || enhancement || daniel_megert || NEW || Open File command should remember the last used folder across restarts
+|-
+| 245 || {{bug|208233}} || 4.4 || enhancement || emoffatt || NEW || [Trim] Allow for sliding toolbars
+|-
+| 246 || {{bug|360065}} || 4.4 || normal || emoffatt || NEW || NPE in dndaddon.DnDManager
+|-
+| 247 || {{bug|263820}} || 4.4 || normal || pelder || NEW || [Commands] [UI] Handlers seems to resolve their URIs early
+|-
+| 248 || {{bug|234331}} || 4.4 || enhancement || Lars.Vogel || NEW || [Viewers] IStructuredSelection should be Iterable
+|-
+| 249 || {{bug|412322}} || 4.4 || enhancement || pelder || NEW || [DI] Release ExtendedObjectSupplier as API for Eclipse 4.4
+|-
+| 250 || {{bug|279631}} || 4.4 || normal || emoffatt || NEW || [ViewMgmt] [Compatibility] View toolbar clips folder tab
+|-
+| 251 || {{bug|284413}} || 4.4 || normal || emoffatt || NEW || [Model] [Compatibility] Create a model instance wizard
+|-
+| 252 || {{bug|308642}} || 4.4 || major || pelder || NEW || [Commands] [Compatibility] command executed in closed XML view
+|-
+| 253 || {{bug|309807}} || 4.4 || normal || pwebster || NEW || [Workbench] [Compatibility] SelectionServiceImpl throws NPE in @PD if the window has perspectives
+|-
+| 254 || {{bug|316515}} || 4.4 || normal || emoffatt || NEW || [RenderingEngine] [Compatibility] IPresentationEngine.stop called twice
+|-
+| 255 || {{bug|318460}} || 4.4 || major || daniel.rolka || NEW || [Contributions] [Compatibility] Failed to open error log in I20100629-2126
+|-
+| 256 || {{bug|320262}} || 4.4 || normal || emoffatt || NEW || [Perspectives] [Compatibility] switching back to the Java perspective gives me a blank
+|-
+| 257 || {{bug|325779}} || 4.4 || normal || emoffatt || NEW || [Trim] [Compatibility] minimized stack is gone
+|-
+| 258 || {{bug|411133}} || 4.4 || normal || daniel.rolka || NEW || [Import/Export] Cannot import project into workspace
+|-
+| 259 || {{bug|391711}} || 4.4 || normal || daniel.rolka || NEW || [Markers] org.eclipse.ui.internal.views.markers.QuickFixHandler duplicates selected marker
+|-
+| 260 || {{bug|164372}} || 4.4 || normal || daniel.rolka || NEW || [OpenModes] OpenStrategy not working properly for the Expand-Event
+|-
+| 261 || {{bug|386803}} || 4.4 || normal || daniel.rolka || NEW || [QuickAccess] Active Keybinding Contexts not deactivated in Quick Access
+|-
+| 262 || {{bug|231314}} || 4.4 || normal || daniel.rolka || NEW || [Themes] ColorRegistry is not sharing Color resources
+|-
+| 263 || {{bug|275923}} || 4.4 || normal || daniel.rolka || NEW || [Wizards] NPE in WizardDialog's updateButtons()
+|-
+| 264 || {{bug|372508}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] CoreExpressions for first level MMenus under MMenu bar are not evaluated
+|-
+| 265 || {{bug|374132}} || 4.4 || major || pwebster || NEW || [Workbench] [Compatibility][api] IWorkbenchPage's showEditor(*) and hideEditor(*) methods are unimplemented
+|-
+| 266 || {{bug|376491}} || 4.4 || normal || pelder || NEW || [KeyBindings] Compare editor shortcuts
+|-
+| 267 || {{bug|378106}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] [Compatibility] Changes to DirectContributionItems should update corresponding actions
+|-
+| 268 || {{bug|382070}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Dynamic menu model changes are not reflected in the UI
+|-
+| 269 || {{bug|382224}} || 4.4 || enhancement || pwebster || NEW || [WorkbenchLauncher] Suggestion for an E4 Splash Screen Service
+|-
+| 270 || {{bug|406763}} || 4.4 || normal || pwebster || NEW || [Workbench] Workbench is returning null for IWorkbenchActivitySupport.
+|-
+| 271 || {{bug|407300}} || 4.4 || major || pelder || NEW || [KeyBindings] [Compatibility] Key bindings are not correctly handled
+|-
+| 272 || {{bug|162006}} || 4.4 || normal || remysuen || NEW || [QuickAccess] Make Ctrl-3 extensible
+|-
+| 273 || {{bug|244364}} || 4.4 || enhancement || emoffatt || NEW || [MPE] [EditorMgmt] Implement a split editor based on AbstractMultiEditor
+|-
+| 274 || {{bug|308689}} || 4.4 || normal || wojciech.sudol || NEW || [Dialogs] FilteredItemsSelectionDialog ignores single asterisk (*)
+|-
+| 275 || {{bug|317379}} || 4.4 || enhancement || emoffatt || NEW || [DetachedView] [Presentations] All detached views pop up when user clicks on only one of the detached views or main window
+|-
+| 276 || {{bug|344638}} || 4.4 || enhancement || pwebster || NEW || [ErrorHandling] Enhance the Logger's 'SHOW' dialog with one the contains the Error View
+|-
+| 277 || {{bug|356457}} || 4.4 || normal || wojciech.sudol || NEW || "[Markers] Problems view loses its ""group by"" state when being closed"
+|-
+| 278 || {{bug|366991}} || 4.4 || normal || wojciech.sudol || NEW || "[Markers] NPE in MarkerGroup.addEntry() by opening the Problems view via ""Ctrl+3"""
+|-
+| 279 || {{bug|374894}} || 4.4 || major || daniel.rolka || NEW || [ActionSets] [Contributions] WWinPluginActions need to clean up on part close
+|-
+| 280 || {{bug|375401}} || 4.4 || normal || emoffatt || NEW || [Intro] Minimizing Welcome/Intro hides toolbars
+|-
+| 281 || {{bug|378873}} || 4.4 || normal || platform-ui-triaged || NEW || """Configuration"" menu contribution at wrong position in Java editor breadcrumb"
+|-
+| 282 || {{bug|379396}} || 4.4 || normal || platform-ui-triaged || NEW || How to set the style of the application window
+|-
+| 283 || {{bug|379806}} || 4.4 || normal || emoffatt || NEW || [Perspectives] IWorkbenchPage.savePerspective throws an Exception
+|-
+| 284 || {{bug|382648}} || 4.4 || enhancement || platform-ui-triaged || NEW || add Trace Log view
+|-
+| 285 || {{bug|383793}} || 4.4 || normal || emoffatt || NEW || """Open Perspective"" button does not show a list of default perspectives"
+|-
+| 286 || {{bug|387821}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] [CPD] CustomizePerspectiveDialog requires 2 checks to hide Navigate>Show In
+|-
+| 287 || {{bug|388918}} || 4.4 || normal || emoffatt || NEW || Clean up code in org.eclipse.e4.ui.widgets.ImageBasedFrame.drawFrame(PaintEvent)
+|-
+| 288 || {{bug|390376}} || 4.4 || normal || emoffatt || NEW || [DetachedView] opening file should open in the editor window that has focus
+|-
+| 289 || {{bug|392457}} || 4.4 || major || daniel.rolka || NEW || [Contributions] cannot create dynamic Status bar controls in eclipse 4.2
+|-
+| 290 || {{bug|393695}} || 4.4 || normal || platform-ui-triaged || NEW || [Regression] setGlobalActionHandlers(*) is stashing handlers in different locations
+|-
+| 291 || {{bug|397960}} || 4.4 || major || daniel.rolka || NEW || "[Contributions] [CPD] Run/Debug buttons gone, can't customize perspective"
+|-
+| 292 || {{bug|398475}} || 4.4 || normal || daniel.rolka || NEW || [CSS] CSS3 property 'font-size-adjust' is called 'font-adjust' in SWT CSS renderer
+|-
+| 293 || {{bug|402322}} || 4.4 || major || emoffatt || NEW || [WorkbenchParts] Workbench window can report an active part/editor while firing page closed
+|-
+| 294 || {{bug|403646}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Toolbar icons are misplaced the first time a clean workspace is used
+|-
+| 295 || {{bug|410973}} || 4.4 || normal || emoffatt || NEW || [DND] IEditorPart loses custom icon on detach/move
+|-
+| 296 || {{bug|412144}} || 4.4 || normal || emoffatt || NEW || [Trim] Accessibility - Shortcuts not working after the last open editor is maximized and closed
+|-
+| 297 || {{bug|413213}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Separators on toolbar from menu contribution are not showing.
+|-
+| 298 || {{bug|413474}} || 4.4 || normal || emoffatt || NEW || "[EditorMgmt] [navigation] After switching perspective, Back no longer returns to the point where a Hyperlink was clicked"
+|-
+| 299 || {{bug|414743}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Seperator in own Toolbar are not rendered
+|-
+| 300 || {{bug|417351}} || 4.4 || normal || emoffatt || NEW || [Min/Max] [WorkbenchParts] No active editor after maximizing then restoring a view
+|-
+| 301 || {{bug|174689}} || 4.4 || normal || pwebster || NEW || [Contributions] Commands not appearing in Customize Perspective dialog
+|-
+| 302 || {{bug|379426}} || 4.4 || major || pwebster || NEW || [Compatibility] CompoundContributionItems result in duplicate menu items
+|-
+| 303 || {{bug|360468}} || 4.4 || normal || markus_keller || ASSIGNED || Improve 'Open Resource' dialog filtering sort order
+|-
+| 304 || {{bug|345932}} || 4.4 || normal || daniel_megert || ASSIGNED || Key Assist dialog should update status info text each time
+|-
+| 305 || {{bug|376862}} || 4.4 || normal || Michael_Rennie || ASSIGNED || [patch] Applying PatternFilter on ElementTreeSelectionDialog results in NullPointerException
+|-
+| 306 || {{bug|195672}} || 4.4 || normal || emoffatt || REOPENED || "[DetachedView] Search dialog misses some options, if called from detached package explorer"
+|-
+| 307 || {{bug|366364}} || 4.4 || normal || emoffatt || REOPENED || DS-Check in E4Application is meaningless
+|-
+| 308 || {{bug|396035}} || 4.4 || normal || pelder || REOPENED || [Commands] ExecutionException leads to InjectionException
+|-
+| 309 || {{bug|361580}} || 4.4 || normal || emoffatt || NEW || The Contributed part renderer's 'getUIContainer' can throw a CCE for a part contained in a sash Container
+|-
+| 310 || {{bug|389920}} || 4.4 || normal || emoffatt || NEW || perspective overlays portion of Welcome page after installing EGit
+|-
+| 311 || {{bug|319121}} || 4.4 || normal || pwebster || NEW || [Workbench] [Compatibility] 'Breakpoints' view goes dirty but cannot be saved
+|-
+| 312 || {{bug|319182}} || 4.4 || major || emoffatt || NEW || [Trim] [Compatibility] calling removeGui on menuBar causes TrimmedPartLayout.layout(*) exception
+|-
+| 313 || {{bug|320161}} || 4.4 || minor || pwebster || NEW || "[About] [Compatibility] About dialog shows scroll bars, need to backport bug 292868"
+|-
+| 314 || {{bug|320672}} || 4.4 || normal || emoffatt || NEW || [WorkbenchParts] [Compatibility] SWTException when activating an editor with stale content causes
+|-
+| 315 || {{bug|320932}} || 4.4 || critical || pwebster || NEW || [Workbench] [Compatibility] Can't start Eclipse 4 SDK with proxy authentication
+|-
+| 316 || {{bug|333742}} || 4.4 || normal || Platform-UI-Inbox || NEW || [Compatibility] MoDisco needs to run on Eclipse 4.x
+|-
+| 317 || {{bug|333763}} || 4.4 || normal || Platform-UI-Inbox || NEW || [Compatibility] Acceleo needs to run on Eclipse 4.x
+|-
+| 318 || {{bug|334303}} || 4.4 || normal || Platform-UI-Inbox || NEW || [Compatibility] Web Tools Platform needs to run on Eclipse 4.x
+|-
+| 319 || {{bug|355426}} || 4.4 || normal || emoffatt || NEW || [Model] [Compatibility] Isolate all model relative searching code into one method
+|-
+| 320 || {{bug|368588}} || 4.4 || normal || pwebster || NEW || [Workbench] Workbench window toolbar configuration always goes to right justification
+|-
+| 321 || {{bug|385295}} || 4.4 || normal || wojciech.sudol || NEW || [PropertiesView] Malformed Java class properties with Hebrew
+|-
+| 322 || {{bug|391914}} || 4.4 || normal || emoffatt || NEW || [Trim] [Min/Max] Minimize error
+|-
+| 323 || {{bug|403011}} || 4.4 || minor || emoffatt || NEW || [RenderingEngine] Full screen mode not remembered
+|-
+| 324 || {{bug|411386}} || 4.4 || normal || emoffatt || NEW || [Perspectives] Enable separate UI presentations based on monitor configurations
+|-
+| 325 || {{bug|413943}} || 4.4 || enhancement || pwebster || NEW || "[Workbench] Make ""instance/org.eclipse.ui.ide/WORKSPACE_NAME"" a public preference"
+|-
+| 326 || {{bug|28722}} || 4.4 || enhancement || platform-ui-triaged || NEW || [EditorMgmt] tabs: Split tabs in editor into several lines
+|-
+| 327 || {{bug|183458}} || 4.4 || enhancement || me || NEW || [Progress] Need to have UIJobs wait until workbench has started
+|-
+| 328 || {{bug|209873}} || 4.4 || normal || emoffatt || NEW || "[Workbench] [Incubator] Support dependency injection for contributed views, editors, etc"
+|-
+| 329 || {{bug|320727}} || 4.4 || normal || emoffatt || NEW || [WorkbenchParts] IPartListener2.partVisible is called twice
+|-
+| 330 || {{bug|338827}} || 4.4 || normal || pelder || NEW || [Commands] Regression in 3.6.2 handler enabledWhen core expression
+|-
+| 331 || {{bug|348331}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] [Dialogs] Customize Perspective dialog - disabled/unavailable tree item labels not visible
+|-
+| 332 || {{bug|350799}} || 4.4 || normal || pelder || NEW || [Commands] Toolbar drop downs do not appear (menuContribution)
+|-
+| 333 || {{bug|354190}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] [Compatibility] Dynamic menu displays only first item when extending ContributionItem rather than CompoundContributionItem
+|-
+| 334 || {{bug|360815}} || 4.4 || normal || pwebster || NEW || [Compatibility] Cannot retrieve model item from within a legacy handler
+|-
+| 335 || {{bug|366080}} || 4.4 || normal || emoffatt || NEW || expanding java editor that is not the currently selected editor causes screen painting issues
+|-
+| 336 || {{bug|372247}} || 4.4 || normal || pwebster || NEW || [KeyBindings] interactions: Mnemonics should not work across workbench parts
+|-
+| 337 || {{bug|372448}} || 4.4 || normal || daniel.rolka || NEW || [CSS] Colour mismatch in the workbench toolbar
+|-
+| 338 || {{bug|372523}} || 4.4 || major || pwebster || NEW || [Workbench] Rework Workbench startup so it doesn't use LegacyIDE.e4xmi
+|-
+| 339 || {{bug|372799}} || 4.4 || normal || pwebster || NEW || [Workbench] [GlobalActions] ViewPart cannot adapt ISaveablePart any longer but must implement it.
+|-
+| 340 || {{bug|373015}} || 4.4 || normal || daniel.rolka || NEW || [CSS] Provide support for system theme properties in CSS
+|-
+| 341 || {{bug|377293}} || 4.4 || normal || pelder || NEW || [Commands] [Compatibility] ICommandService/IExecutionListener pattern needs re-visit
+|-
+| 342 || {{bug|378798}} || 4.4 || normal || pwebster || NEW || [WorkbenchLauncher] bidi2012 - Incorrect display of Workspace path with Hebrew in workspace list
+|-
+| 343 || {{bug|379257}} || 4.4 || enhancement || platform-ui-triaged || NEW || [GlobalActions] Registering actions should not be required to use standard org.eclipse.ui commands
+|-
+| 344 || {{bug|380233}} || 4.4 || normal || emoffatt || NEW || [Trim] Right-clicking on the tool bar to customize it no longer works
+|-
+| 345 || {{bug|380995}} || 4.4 || normal || pwebster || NEW || [Workbench] LegacyIDE.e4xmi is not in an optional plugin
+|-
+| 346 || {{bug|384351}} || 4.4 || major || daniel.rolka || NEW || [Contributions] Compatibility problem: Menu- and toolbar are not empty in Eclipse 4.2 even if configured via WorkbenchWindowAdvisor
+|-
+| 347 || {{bug|385003}} || 4.4 || enhancement || pwebster || NEW || [Themes] Provide a set of icons with alpha transparency for dark themes - Platform icons
+|-
+| 348 || {{bug|389620}} || 4.4 || minor || pelder || NEW || [KeyBindings] Cannot unbind or disable behaviour of ALT+SHIFT+D multi-stroke key bindings
+|-
+| 349 || {{bug|390398}} || 4.4 || minor || emoffatt || NEW || "[Trim] TrimBar set to invisible when setting ""Spacer Glue"" invisible"
+|-
+| 350 || {{bug|390787}} || 4.4 || major || pelder || NEW || [key binding] Chinese content assist key bindings broken
+|-
+| 351 || {{bug|390980}} || 4.4 || enhancement || daniel.rolka || NEW || [Contributions] Plug-in example for 'popupMenu' uses deprecated popupMenu extension
+|-
+| 352 || {{bug|400217}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Not possible to change visibility of tool items or menu items at runtime
+|-
+| 353 || {{bug|402309}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] registerVisibleWhen is not implemented on IContributionRoot
+|-
+| 354 || {{bug|408592}} || 4.4 || normal || emoffatt || NEW || [WorkbenchParts] Plugin's view gets reloaded in spite of being a removed plugin
+|-
+| 355 || {{bug|408740}} || 4.4 || normal || emoffatt || NEW || Define / Refine the way we want activation to work when we switch perspectives.
+|-
+| 356 || {{bug|409149}} || 4.4 || normal || emoffatt || NEW || "[WorkbenchParts] partService.hidePart(part, true) does not respect MDirtyable"
+|-
+| 357 || {{bug|410426}} || 4.4 || major || daniel.rolka || NEW || [Contributions] [Compatibility] VisibleWhen from contribution factories not handled in toolbars
+|-
+| 358 || {{bug|410485}} || --- || normal || emoffatt || NEW || [EditorMgmt] [DetachedEditor] Opening an editor when a detached window has focus opens in workbench window instead of detached window
+|-
+| 359 || {{bug|410723}} || 4.4 || normal || emoffatt || NEW || [FastView] E4 misses a button for opening a new (fast) view
+|-
+| 360 || {{bug|410749}} || 4.4 || normal || pwebster || NEW || [Workbench] Don't prompt to save on close when editor input opened elsewhere
+|-
+| 361 || {{bug|414544}} || 4.4 || normal || emoffatt || NEW || [WorkbenchParts] PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart() is NULL
+|-
+| 362 || {{bug|414611}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Toolbar order is not restored after restart (org.eclipse.ui.menus toolbar)
+|-
+| 363 || {{bug|414845}} || 4.4 || major || emoffatt || NEW || "[Model] Order within elements added by fragments is reversed if ""before:"" or ""after:"" flag is used in ""Position in List"" attribute."
+|-
+| 364 || {{bug|415241}} || 4.4 || normal || daniel.rolka || NEW || [Markers] The Tasks View displays the same item multiple times if there are symbolic link duplicates
+|-
+| 365 || {{bug|418241}} || 4.4 || normal || francisu || NEW || [Navigator] [CommonNavigator] Resource support has wrong expression on org.eclipse.ui.navigator.resources.GoIntoActions
+|-
+| 366 || {{bug|418275}} || 4.4 || enhancement || pwebster || NEW || "[IDE] Own view (source) is not listed in ""Show In"" menu when explicitly requested by IShowInTargetList"
+|-
+| 367 || {{bug|418908}} || 4.4 || normal || emoffatt || NEW || [EditorMgmt] Editor drop-down list does not show custom icons
+|-
+| 368 || {{bug|419021}} || 4.4 || normal || emoffatt || NEW || [EditorMgmt] EditorPart.setPartName leads to NPE
+|-
+| 369 || {{bug|359778}} || 4.4 || normal || wojciech.sudol || NEW || [ActivityMgmt] [Compatibility] Commands Capabilities / Activities in Eclipse 4
+|-
+| 370 || {{bug|376896}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Toolbar button order off in newly created window
+|-
+| 371 || {{bug|370430}} || 4.4 || normal || pelder || NEW || "[KeyBindings] Rename ""Workbench"" context and hide if not supported"
+|-
+| 372 || {{bug|379216}} || 4.4 || normal || emoffatt || ASSIGNED || [Model] Elements with no elementID coming from fragments are never matched by ModelAssember and duplicated on startup
+|-
+| 373 || {{bug|366606}} || 4.4 || normal || platform-ui-triaged || REOPENED || [Compatibility] Failures in ContextsTestSuite
+|-
+| 374 || {{bug|189959}} || 4.4 || enhancement || emoffatt || NEW || Allow for custom branded detached view windows
+|-
+| 375 || {{bug|153761}} || 4.4 || enhancement || me || NEW || [Mac] Investigate API for contributing to the application menu
+|-
+| 376 || {{bug|310139}} || 4.4 || normal || emoffatt || NEW || [Perspectives] [Compatibility] synchronizing switches perspectives
+|-
+| 377 || {{bug|356787}} || 4.4 || normal || daniel.rolka || NEW || [Wizards] Widget Dispose Error
+|-
+| 378 || {{bug|170205}} || 4.4 || normal || daniel.rolka || NEW || [WorkingSets] NPE in org.eclipse.ui.XMLMemento.getChildren(XMLMemento.java:235)
+|-
+| 379 || {{bug|412970}} || 4.4 || normal || daniel.rolka || NEW || [WorkingSets] Working sets reset after closing eclipse
+|-
+| 380 || {{bug|271613}} || 4.4 || normal || wojciech.sudol || NEW || [ActivityMgmt] Preference-pages and activities
+|-
+| 381 || {{bug|236416}} || 4.4 || normal || wojciech.sudol || NEW || [ActivityMgmt] Capabilities are not correctly adding their new project wizards to the main menu if added to an existing installation
+|-
+| 382 || {{bug|314463}} || 4.4 || normal || emoffatt || NEW || [EditorMgmt] [Compatibility] Cannot reopen one editor - NPE in PartServiceImpl
+|-
+| 383 || {{bug|320733}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] [WorkbenchLauncher] [Compatibility] Exception logged once when bringing up the 'Team' submenu
+|-
+| 384 || {{bug|347643}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] [Compatibility] Editor actions linger in toolbar when opening new workbench window
+|-
+| 385 || {{bug|369978}} || 4.4 || normal || emoffatt || NEW || [ViewMgmt] Regression in traversal of editor tabs from 3.x to 4.x
+|-
+| 386 || {{bug|375734}} || 4.4 || normal || emoffatt || NEW || [Trim] make contributed trims moveable
+|-
+| 387 || {{bug|378591}} || 4.4 || enhancement || daniel.rolka || NEW || [Contributions] Popupmenu: hide menu item by evaluating outcome of @CanExecute-annotated method
+|-
+| 388 || {{bug|401488}} || 4.4 || normal || pelder || NEW || [KeyBindings] Key binding conflict reported for a multipage editor even though the functionality works
+|-
+| 389 || {{bug|416138}} || 4.4 || normal || emoffatt || NEW || [DND] [regression] Missing DnD support for minimized stack items
+|-
+| 390 || {{bug|278647}} || 4.4 || minor || pelder || NEW || [KeyBindings] Remove Keys..Export
+|-
+| 391 || {{bug|317465}} || 4.4 || normal || emoffatt || NEW || Implement context menu equivalents for 3.x context menus on Views/Editors/Perspectives (in the switcher)
+|-
+| 392 || {{bug|318224}} || 4.4 || normal || pwebster || NEW || [Decorators] Decoration context should specify decoration area in image (was: Model-based synchronize view shows decorations at unexpected location)
+|-
+| 393 || {{bug|321864}} || 4.4 || normal || emoffatt || NEW || "[Compatibility] Parts, placeholders, editor areas, and what they mean to the 3.x API"
+|-
+| 394 || {{bug|336612}} || 4.4 || major || pwebster || NEW || [Workbench] Save blocks UI instead of reporting progress
+|-
+| 395 || <strike>{{bug|351367}}</strike> || 4.4 || normal || platform-ui-triaged || FIXED || <strike>Remove the use of the 'deltas' approach</strike>
+|-
+| 396 || {{bug|352938}} || 4.4 || normal || pwebster || NEW || [Commands] two propertyTester are crashing on selection with two different objects
+|-
+| 397 || {{bug|382625}} || 4.4 || normal || emoffatt || NEW || "[Perspectives] Setting org.eclipse.ui/PERSPECTIVE_BAR_EXTRAS=myPerspectiveId1,myPerspectiveId2 in plugin_customization.ini"
+|-
+| 398 || {{bug|384548}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Two distinct break point view menus
+|-
+| 399 || {{bug|385015}} || 4.4 || enhancement || daniel.rolka || NEW || "[CSS] Easily adjust font, size and color of *every* UI element"
+|-
+| 400 || {{bug|385548}} || 4.4 || normal || platform-ui-triaged || NEW || [rcp] minimized part's tooltip not translated
+|-
+| 401 || {{bug|386804}} || 4.4 || normal || emoffatt || NEW || [DND] The target area to DND Views and Editors into existing stacks is too small
+|-
+| 402 || {{bug|395455}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] [CPD] Disabled command groups are re-enabled upon restart
+|-
+| 403 || {{bug|398277}} || 4.4 || normal || daniel.rolka || NEW || [CSS] swt-show-close inconsistent with swt-x-visible
+|-
+| 404 || {{bug|401735}} || 4.4 || normal || emoffatt || NEW || [DND] can't move editor tab to first position when editor area overflows
+|-
+| 405 || {{bug|405542}} || 4.4 || normal || pwebster || NEW || [Workbench] More than one workbench save job can run
+|-
+| 406 || {{bug|413112}} || 4.4 || normal || pelder || NEW || [Commands] The parameters of ExecutionEvent are lost in HandlerServiceHandler#execute
+|-
+| 407 || {{bug|414888}} || 4.4 || normal || emoffatt || NEW || [WorkbenchParts] Context menu retained cross editors
+|-
+| 408 || {{bug|417380}} || 4.4 || trivial || daniel.rolka || NEW || [Contributions] Using the Go Into context menu causes view chrome to disappear
+|-
+| 409 || {{bug|418070}} || 4.4 || major || wojciech.sudol || NEW || [PropertiesView] [Min/Max] Data getting disappeared on maximizing a property view
+|-
+| 410 || {{bug|364843}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] [Compatibility] missing tooltips on some actions in main toolbar
+|-
+| 411 || {{bug|88382}} || 4.4 || normal || emoffatt || ASSIGNED || [DetachedViews] Placeholder lost when view detached
+|-
+| 412 || {{bug|244316}} || 4.4 || major || pwebster || ASSIGNED || "[WorkbenchLauncher] File->""Switch Workspace""->Other does nothing first time"
+|-
+| 413 || {{bug|374568}} || 4.4 || normal || pwebster || REOPENED || Part menu is not rendered correctly after removing menu items.
+|-
+| 414 || {{bug|221172}} || 4.4 || normal || emoffatt || REOPENED || [Commands] [ViewMgmt] Window > Show View doesn't open existing instances of multi-instance views
+|-
+| 415 || {{bug|347140}} || 4.4 || normal || platform-ui-triaged || REOPENED || [Compatibility] Toolbar rendering very slow / looks animated
+|-
+| 416 || {{bug|378849}} || 4.4 || normal || pwebster || REOPENED || [CPD] CustomizePerspectiveDialog no longer shows actionSet details
+|-
+| 417 || {{bug|316072}} || 4.4 || normal || pelder || NEW || [Commands] [Compatibility] clicking on a method in the editor threw an exception
+|-
+| 418 || {{bug|318218}} || 4.4 || normal || emoffatt || NEW || [Perspectives] [Compatibility] trying to close the Java perspective throws NPEs
+|-
+| 419 || {{bug|331131}} || 4.4 || minor || pwebster || NEW || [Workbench] [Compatibility] Closing a project generates errors
+|-
+| 420 || {{bug|341346}} || 4.4 || normal || emoffatt || NEW || [Perspectives] [Compatibility] part does not exist ... but it does
+|-
+| 421 || {{bug|363069}} || 4.4 || normal || pelder || NEW || [KeyBindings] [Compatibility] multi-stroke key bindings should provide status line indication
+|-
+| 422 || {{bug|373007}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] Missing context menu on workbench window toolbar (Customize Perspective...)
+|-
+| 423 || {{bug|397704}} || 4.4 || normal || pelder || NEW || [Model] ElementContainerImpl.getChildren uses expensive computation
+|-
+| 424 || {{bug|201589}} || 4.4 || normal || emoffatt || NEW || [Contributions] visibleWhen has no effect on toolbar
+|-
+| 425 || {{bug|222877}} || 4.4 || normal || daniel.rolka || NEW || [BiDi] [WorkbenchLauncher] BIDI3.4:HCG Inconsistent alignment in combo box containing file path
+|-
+| 426 || {{bug|349144}} || 4.4 || normal || emoffatt || NEW || [EditorMgmt] [UI] Editor Stack selection needs refinement
+|-
+| 427 || {{bug|359597}} || 4.4 || normal || emoffatt || NEW || [Perspectives] Reset perspective with views in shared area should reset views in all effected perspectives
+|-
+| 428 || {{bug|365804}} || 4.4 || normal || pwebster || NEW || [BiDi] [Bidi] HEW TVT : RTL affecting path names and negative numbers.
+|-
+| 429 || {{bug|373016}} || 4.4 || normal || daniel.rolka || NEW || [CSS] Provide support for font size as a percentage in CSS
+|-
+| 430 || {{bug|388625}} || 4.4 || enhancement || emoffatt || NEW || [ViewMgmt] allow views to share space for a header and the toolbar
+|-
+| 431 || {{bug|394036}} || 4.4 || enhancement || wojciech.sudol || NEW || [Progress] The Progress view does not track the state of enabled commands
+|-
+| 432 || {{bug|394958}} || 4.4 || normal || pelder || NEW || [KeyBindings] The key binding of a contributed menu item is no longer shown
+|-
+| 433 || {{bug|396271}} || 4.4 || normal || emoffatt || NEW || [Trim] Class extending WorkbenchWindowControlContribution not invoking isVisible() method in Juno
+|-
+| 434 || {{bug|397029}} || 4.4 || normal || emoffatt || NEW || [MPE] MultiPageEditorPart is leaked via perspective's EclipseContext
+|-
+| 435 || {{bug|399100}} || 4.4 || minor || pwebster || NEW || [Workbench] Clicking a Preference page hyperlink that directs to a view can cause Conflicting Handler errors.
+|-
+| 436 || {{bug|406097}} || 4.4 || normal || emoffatt || NEW || Add ability to drag and drop shared editor area
+|-
+| 437 || {{bug|409055}} || 4.4 || normal || daniel.rolka || NEW || [Markers] Marker Properties do not resize
+|-
+| 438 || {{bug|410208}} || 4.4 M3 || normal || emoffatt || NEW || Multiwindow Application Restore
+|-
+| 439 || {{bug|410432}} || 4.4 || major || daniel.rolka || NEW || [Contributions] [Compatibility] Different behaviors for toolbar contribution through factories with bundle and target platform
+|-
+| 440 || {{bug|410624}} || 4.4 || normal || emoffatt || NEW || [DND] Drag&Drop from Firefox onto Editor area fails
+|-
+| 441 || {{bug|413626}} || 4.4 || normal || pwebster || NEW || [Workbench] IntroHandler fails because of early initialialization
+|-
+| 442 || {{bug|417724}} || 4.4 || normal || wojciech.sudol || NEW || [Viewers] Generify IElementComparer
+|-
+| 443 || {{bug|418589}} || 4.4 || normal || emoffatt || NEW || [EditorMgmt] closePart activates
+|-
+| 444 || {{bug|378495}} || 4.4 || normal || pwebster || NEW || Part Toolbar does not refresh when toolbar items are removed
+|-
+| 445 || {{bug|206559}} || 4.4 || normal || ob1.eclipse || NEW || [Preferences] Preferences dialog should have link to export/import
+|-
+| 446 || {{bug|133407}} || 4.4 || enhancement || pwebster || ASSIGNED || [KeyBindings] prefernece page: Allow to limit Scheme-Selection in Keys-Preferences to only one
+|-
+| 447 || {{bug|357282}} || 4.4 || normal || emoffatt || NEW || Provide fading feedback for large screen operations
+|-
+| 448 || {{bug|117746}} || 4.4 || normal || platform-ui-triaged || NEW || [EditorMgmt] Editors should be able to treat large files specially (e.g. deny opening huge files)
+|-
+| 449 || {{bug|299493}} || 4.4 || enhancement || emoffatt || NEW || [Trim] Need a status line renderer / enhancements to trim model
+|-
+| 450 || {{bug|319983}} || 4.4 || normal || pwebster || NEW || [Workbench] [Compatibility] Reassess how selection should work in PageBookView
+|-
+| 451 || {{bug|338470}} || 4.4 || normal || emoffatt || NEW || [Trim] Minimized stacks break lazy loading rules
+|-
+| 452 || {{bug|345762}} || 4.4 || major || daniel.rolka || NEW || [Contributions] Tool bar in the photo demo's tab folder looks awful
+|-
+| 453 || {{bug|348429}} || 4.4 || major || emoffatt || NEW || [Perspectives] [Compare] NPE in ContentMergeViewerLayout.layout
+|-
+| 454 || {{bug|348940}} || 4.4 || normal || emoffatt || NEW || [Trim] [UI] Dragging a stack into the shared area leaves its min/max buttons showing
+|-
+| 455 || {{bug|352690}} || 4.4 || normal || emoffatt || NEW || [DND] EditorAreaDropAdapter should ignore empty events
+|-
+| 456 || {{bug|364975}} || 4.4 || normal || emoffatt || NEW || [patch][Presentations] Icons from one view's toolbar flicker in the top left view's title area
+|-
+| 457 || {{bug|366543}} || 4.4 || minor || wojciech.sudol || NEW || [Progress] Text in progress dialog is truncated even if progress dialog has plenty of space
+|-
+| 458 || {{bug|368187}} || 4.4 || normal || ob1.eclipse || NEW || Services pre-API cleanup
+|-
+| 459 || {{bug|372393}} || 4.4 || normal || platform-ui-triaged || NEW || [Compatibility] Remove MRenderedToolBar and its associated renderer
+|-
+| 460 || {{bug|374051}} || 4.4 || enhancement || wojciech.sudol || NEW || [JFace] SWTFocusBlockManager & FocusBlockHighlighter
+|-
+| 461 || {{bug|379094}} || 4.4 || normal || platform-ui-triaged || NEW || bidi2012 - Error when paste project path with Hebrew to Windows Explorer
+|-
+| 462 || {{bug|379720}} || 4.4 || normal || wojciech.sudol || NEW || [PropertiesDialog] [BiDi] bidi2012- Incorrect display of path with Hebrew characters in Properties view - AIX
+|-
+| 463 || {{bug|381487}} || 4.4 || normal || pwebster || NEW || [BiDi] Handle bidi in affected text fields (when Hebrew characters appear in the path)
+|-
+| 464 || {{bug|383654}} || 4.4 || normal || platform-ui-triaged || NEW || 'Toggle Editor Area Visibility' needs to be renamed to 'Toggle Shared Area Visibility'
+|-
+| 465 || {{bug|384349}} || 4.4 || major || daniel.rolka || NEW || "[Contributions] New Toolbar in Eclipse 4.2 with Resume, Step Into, ... is lost after restoring the perspective"
+|-
+| 466 || {{bug|385302}} || 4.4 || normal || pelder || NEW || [KeyBindings] Some custom ALT+... shortcuts do not work in Juno
+|-
+| 467 || {{bug|388510}} || 4.4 || normal || emoffatt || NEW || [Perspectives] Regression to 4.2: perspective commands enabled even if no perspective open ==> Exceptions
+|-
+| 468 || {{bug|392690}} || 4.4 || normal || emoffatt || NEW || [Trim] [Min/Max] FastView toolbar shows wrong icon when junit run causes Console and Junit views to appear
+|-
+| 469 || {{bug|400263}} || 4.4 || normal || platform-ui-triaged || NEW || "RuntimeException ""Cycle while computing..."""
+|-
+| 470 || {{bug|401534}} || 4.4 || critical || pelder || NEW || [KeyBindings] Keyboard shortcuts don't work in all views
+|-
+| 471 || {{bug|402509}} || 4.4 || enhancement || platform-ui-triaged || NEW || [api] Need a mechanism for filtering context menus
+|-
+| 472 || {{bug|404535}} || 4.4 || enhancement || emoffatt || NEW || [EditorMgmt] Enabling navigation history for inter tab navigation in multi page editors
+|-
+| 473 || {{bug|405521}} || 4.4 || normal || daniel.rolka || NEW || [CSS] Provide default CSS styling for RCP applications running on compatibility layer
+|-
+| 474 || {{bug|407238}} || 4.4 || normal || emoffatt || NEW || [DetachedView] Seperate window containing view has no title
+|-
+| 475 || {{bug|409081}} || 4.4 || normal || pwebster || NEW || BIDI 4.2.2 : Welcome Page isn't correctly mirrored
+|-
+| 476 || {{bug|411017}} || 4.4 || normal || platform-ui-triaged || NEW || Retire org.eclipse.ui.examples.presentation plug-in
+|-
+| 477 || {{bug|412302}} || 4.4 || normal || pelder || NEW || [KeyBindings] on non active parts key bindings does not work
+|-
+| 478 || {{bug|413952}} || 4.4 || normal || pwebster || NEW || [RCP] WorkbenchConfigurer.getSaveAndRestore() is not called anywhere
+|-
+| 479 || {{bug|153470}} || 4.4 || enhancement || emoffatt || ASSIGNED || [DND] API for managing and veto-ing the drag-n-drop of parts
+|-
+| 480 || {{bug|123808}} || 4.4 || enhancement || pwebster || ASSIGNED || [RCP] [WorkbenchParts] Allow app to hide actions in editor and view system menus
+|-
+| 481 || {{bug|387978}} || 4.4 || normal || emoffatt || NEW || [Trim] [Min/Max] Console popup (above another maximized view/editor) does not disappear anymore as long as it hasn't got focus at least once
+|-
+| 482 || {{bug|290008}} || 4.4 || enhancement || emoffatt || NEW || [DnD] Enhance drag and drop to automatically surface the view/editor if hidden in a tab
+|-
+| 483 || {{bug|364838}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] [Compatibility] NPE in PopupMenuExtender#cleanUpContributionCache while running SWTBot
+|-
+| 484 || {{bug|379719}} || 4.4 || normal || pwebster || NEW || "[BiDi] bidi2012 - Wrong display of Hebrew in Properties caption, AIX"
+|-
+| 485 || {{bug|380663}} || 4.4 || major || platform-ui-triaged || NEW || Starting an old 4.2 workspace with a new build resets the perspectives
+|-
+| 486 || {{bug|380931}} || 4.4 || normal || emoffatt || NEW || [WorkbenchParts] NotHandledException in Sketch diagram after pressing Shift-Del
+|-
+| 487 || {{bug|383746}} || 4.4 || trivial || pwebster || NEW || [About] Splash - missing space / About window - missing slash
+|-
+| 488 || {{bug|392538}} || 4.4 || normal || emoffatt || NEW || [Trim] Placeholder & minimizing / maximizing error
+|-
+| 489 || {{bug|403221}} || 4.4 || normal || emoffatt || NEW || [DetachedWindow] Eclipse secondary windows acts abnormally
+|-
+| 490 || {{bug|405561}} || 4.4 || normal || daniel.rolka || NEW || [Contributions] [CPD] Menu is not refreshed after perspective switch
+|-
+| 491 || {{bug|379992}} || 4.4 || normal || emoffatt || NEW || [DND] NPE dragging Error Log view out to desktop
+|-
+|}
+
+Last Generated on '''Thu Oct 24 11:11:18 EDT 2013'''
+
