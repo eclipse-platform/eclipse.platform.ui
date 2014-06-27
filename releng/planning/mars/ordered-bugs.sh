@@ -10,6 +10,15 @@ grep -v target_milestone search_o.csv | grep -v "Bug ID" | grep -v Lars \
  | grep -v RESOLVED | grep -v VERIFIED | grep -v CLOSED >t1 ; mv t1 search_o.csv
 }
 
+get_other_csv_bugs () {
+BUGS="$1"
+
+NUM=1
+curl -o search_o_other.csv 'https://bugs.eclipse.org/bugs/buglist.cgi?bug_id='${BUGS}'&bug_id_type=nowords&classification=Eclipse&columnlist=bug_id%2Ctarget_milestone%2Cassigned_to%2Cbug_status%2Cresolution%2Cshort_desc%2Cbug_severity%2Cqa_contact&component=IDE&component=UI&list_id=9455933&product=Platform&query_format=advanced&target_milestone=4.4.1&target_milestone=4.5&target_milestone=4.5%20M1&&ctype=csv&human=1'
+grep -v target_milestone search_o_other.csv | grep -v "Bug ID" | grep -v Lars \
+ | grep -v RESOLVED | grep -v VERIFIED | grep -v CLOSED >t1 ; mv t1 search_o_other.csv
+}
+
 sort_csv () {
 rm -f tmp.txt
 while read line; do
@@ -18,6 +27,38 @@ done <ordered_list.txt
 mv tmp.txt search_o.csv
 }
 
+gen_bugs_table () {
+FILE="$1"
+	while read line; do
+		BUG=$( echo $line | csvtool col 1 - )
+		TARGET=$( echo $line | csvtool col 2 - )
+		ASSIGNED_TO=$( echo $line | csvtool col 3 - )
+		STATUS=$( echo $line | csvtool col 4 - )
+		if [ RESOLVED = "$STATUS" -o VERIFIED = "$STATUS" ]; then
+			STATUS=$( echo $line | csvtool col 5 - )
+			PRE="<strike>"
+			POST="</strike>"
+		fi
+		TITLE=$( echo $line | csvtool col 6 - )
+		SEV=$( echo $line | csvtool col 7 - )
+		QA=$( echo $line | csvtool col 8 - )
+		if [ "platform-ui-triaged" = "$ASSIGNED_TO" -a ! -z "$QA" ]; then
+			ASSIGNED_TO="$QA"
+		fi
+
+		echo '|-'
+		echo "| $NUM || $PRE{{bug|$BUG}}$POST || $TARGET || $SEV || $ASSIGNED_TO || $STATUS || $PRE$TITLE$POST"
+		BUG=""
+		TARGET=""
+		TITLE=""
+		STATUS=""
+		ASSIGNED_TO=""
+		SEV=""
+		PRE=""
+		POST=""
+		(( NUM = NUM + 1 ))
+	done < ${FILE}
+}
 
 gen_wiki () {
 
@@ -29,35 +70,25 @@ echo '{| class="wikitable" border="1"'
 echo '|-'
 echo '! !! Bug !! TM !! Sev !! Assign !! Status !! Title'
 
-while read line; do
-	BUG=$( echo $line | csvtool col 1 - )
-	TARGET=$( echo $line | csvtool col 2 - )
-	ASSIGNED_TO=$( echo $line | csvtool col 3 - )
-	STATUS=$( echo $line | csvtool col 4 - )
-	if [ RESOLVED = "$STATUS" -o VERIFIED = "$STATUS" ]; then
-		STATUS=$( echo $line | csvtool col 5 - )
-		PRE="<strike>"
-		POST="</strike>"
-	fi
-	TITLE=$( echo $line | csvtool col 6 - )
-	SEV=$( echo $line | csvtool col 7 - )
-	QA=$( echo $line | csvtool col 8 - )
-	if [ "platform-ui-triaged" = "$ASSIGNED_TO" -a ! -z "$QA" ]; then
-		ASSIGNED_TO="$QA"
-	fi
+gen_bugs_table search_o.csv
 
-	echo '|-'
-	echo "| $NUM || $PRE{{bug|$BUG}}$POST || $TARGET || $SEV || $ASSIGNED_TO || $STATUS || $PRE$TITLE$POST"
-	BUG=""
-	TARGET=""
-	TITLE=""
-	STATUS=""
-	ASSIGNED_TO=""
-	SEV=""
-	PRE=""
-	POST=""
-	(( NUM = NUM + 1 ))
-done < search_o.csv
+echo '|-'
+echo '|}'
+echo ""
+
+}
+
+gen_other_wiki () {
+
+NUM=1
+
+echo "== Other 4.4.1 and 4.5 bugs for Planning =="
+echo ""
+echo '{| class="wikitable" border="1"'
+echo '|-'
+echo '! !! Bug !! TM !! Sev !! Assign !! Status !! Title'
+
+gen_bugs_table search_o_other.csv
 
 echo '|-'
 echo '|}'
@@ -74,6 +105,11 @@ done <ordered_list.txt
 
 get_csv_bugs "$BUGS"
 
+get_other_csv_bugs "$BUGS"
+
 sort_csv
 
-gen_wiki 
+gen_wiki
+
+gen_other_wiki
+
