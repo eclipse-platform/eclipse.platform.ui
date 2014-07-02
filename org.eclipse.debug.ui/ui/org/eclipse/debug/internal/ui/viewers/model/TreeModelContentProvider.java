@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Wind River Systems - Fix for viewer state save/restore [188704] 
  *     Pawel Piech (Wind River) - added support for a virtual tree model viewer (Bug 242489)
  *     Dorin Ciuca - Top index fix (Bug 324100)
+ *     Anton Leherbauer (Wind River) - REVEAL delta does not always work reliably (Bug 438724)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
@@ -130,6 +131,10 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
     private Runnable fCompletedUpdatesRunnable;
 
     private ViewerStateTracker fStateTracker = new ViewerStateTracker(this);
+
+	private TreePath fRevealPath;
+
+	private int fRevealIndex;
 
     /**
      * Update type constants
@@ -447,6 +452,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 			return;
 		}
     	
+		fRevealPath = null;
         IModelDelta[] deltaArray = new IModelDelta[] { delta };
         updateNodes(deltaArray, mask & (IModelDelta.REMOVED | IModelDelta.UNINSTALL));
         updateNodes(deltaArray, mask & ITreeModelContentProvider.UPDATE_MODEL_DELTA_FLAGS
@@ -690,6 +696,10 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
             	}
                 if (fRequestsInProgress.isEmpty() && fWaitingRequests.isEmpty() && fModelSequenceRunning) {
                 	fModelSequenceRunning = false;
+                    if (fRevealPath != null) {
+						getViewer().reveal(fRevealPath, fRevealIndex);
+                    	fRevealPath = null;
+                    }
                     if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
                         DebugUIPlugin.trace("MODEL SEQUENCE ENDS"); //$NON-NLS-1$
                     }
@@ -1609,6 +1619,13 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 			if ((delta.getFlags() & IModelDelta.FORCE) != 0 ||
 			    treeViewer.overrideSelection(treeViewer.getSelection(), new TreeSelection(elementPath))) 
 			{
+				/*
+				 * Bug 438724 - Save reveal parameters and redo reveal on
+				 * updatesComplete() in case intermediate content updates have
+				 * shifted the revealed element again.
+				 */
+				fRevealPath = parentPath;
+				fRevealIndex = viewIndex;
 			    treeViewer.reveal(parentPath, viewIndex);
 			}
 		}
