@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
@@ -169,6 +170,8 @@ public class ModelServiceImpl implements EModelService {
 					children.addAll(app.getBindingContexts());
 				} else if (clazz.equals(MBindingTable.class) || clazz.equals(MKeyBinding.class)) {
 					children.addAll(app.getBindingTables());
+				} else if (clazz.equals(MAddon.class)) {
+					children.addAll(app.getAddons());
 				}
 				// } else { only look for these if specifically asked.
 				// children.addAll(app.getHandlers());

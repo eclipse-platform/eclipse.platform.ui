@@ -21,8 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
+import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
@@ -374,6 +376,29 @@ public class EModelServiceFindTest {
 
 		assertEquals(1, elements.size());
 		assertEquals(keyBinding, elements.get(0));
+	}
+
+	@Test
+	public void testFindAddons() {
+		MApplication application = createApplication();
+		EModelService modelService = (EModelService) application.getContext()
+				.get(EModelService.class.getName());
+		assertNotNull(modelService);
+
+		MAddon addon = MApplicationFactory.INSTANCE.createAddon();
+
+		application.getAddons().add(addon);
+
+		List<MAddon> elements = modelService.findElements(application,
+				MAddon.class, EModelService.ANYWHERE, new Selector() {
+					@Override
+					public boolean select(MApplicationElement element) {
+						return (element instanceof MAddon);
+					}
+				});
+
+		assertEquals(1, elements.size());
+		assertEquals(addon, elements.get(0));
 	}
 
 	@Test
