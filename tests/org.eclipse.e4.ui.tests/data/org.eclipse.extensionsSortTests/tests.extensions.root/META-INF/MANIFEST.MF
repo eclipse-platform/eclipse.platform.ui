@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ExtensionSortsTest: Root bundle
+Bundle-SymbolicName: tests.extensions.root;singleton:=true
+Bundle-Version: 0.0.1
+Require-Bundle: org.eclipse.e4.ui.workbench
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
