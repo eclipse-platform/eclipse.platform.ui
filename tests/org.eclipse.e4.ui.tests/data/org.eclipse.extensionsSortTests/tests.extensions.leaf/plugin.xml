@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="test.extensions.leaf.model"
+         point="org.eclipse.e4.workbench.model">
+      <fragment
+            apply="always"
+            uri="test.extensions.leaf.modelfragment">
+      </fragment>
+   </extension>
+
+</plugin>

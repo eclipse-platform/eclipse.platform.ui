@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ExtensionsSortTests: Intermediate bundle
+Bundle-SymbolicName: tests.extensions.intermediate;singleton:=true
+Bundle-Version: 0.0.1
+Require-Bundle: tests.extensions.root;visibility:=reexport,
+ org.eclipse.e4.ui.workbench
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
