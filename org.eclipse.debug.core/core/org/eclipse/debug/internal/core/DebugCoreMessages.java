@@ -67,7 +67,7 @@ public class DebugCoreMessages extends NLS {
 	public static String LogicalStructureProvider_0;
 	public static String LogicalStructureProvider_1;
 	public static String LogicalStructureType_1;
-	public static String SystemPropertyResolver_0;	
+	public static String SystemPropertyResolver_0;
 	public static String InputStreamMonitor_label;
 	public static String Launch_terminate_failed;
 	public static String LaunchConfiguration_Failed_to_delete_launch_configuration__1;
@@ -104,6 +104,8 @@ public class DebugCoreMessages extends NLS {
 	public static String RefreshingResourcesError;
 	public static String RefreshUtil_0;
 	public static String RefreshUtil_1;
+	public static String StepFilter_0;
+	public static String StepFilter_1;
 
 	static {
 		// load message values from bundle file

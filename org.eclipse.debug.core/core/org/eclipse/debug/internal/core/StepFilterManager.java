@@ -10,11 +10,18 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.commands.IStepFiltersHandler;
+import org.eclipse.debug.core.model.IStepFilter;
 import org.eclipse.debug.internal.core.commands.DebugCommandRequest;
 
 /**
@@ -88,4 +95,42 @@ public class StepFilterManager implements ILaunchListener {
 	 */
 	@Override
 	public void launchRemoved(ILaunch launch) {}
+
+	/**
+	 * Returns any step filters that have been contributed for the given model
+	 * identifier.
+	 *
+	 * @param modelIdentifier the model identifier
+	 * @return step filters that have been contributed for the given model
+	 *         identifier, possibly an empty collection
+	 * @since 3.9
+	 * @see org.eclipse.debug.core.model.IStepFilter
+	 */
+	public IStepFilter[] getStepFilters(String modelIdentifier) {
+		initialize();
+		List<IStepFilter> select = new ArrayList<IStepFilter>();
+		for (StepFilter extension : stepFilters) {
+			for (IStepFilter stepFilter : extension.getStepFilters(modelIdentifier)) {
+				select.add(stepFilter);
+			}
+		}
+		return select.toArray(new IStepFilter[select.size()]);
+	}
+
+	private List<StepFilter> stepFilters = null;
+
+	private synchronized void initialize() {
+		if (stepFilters == null) {
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_STEP_FILTERS);
+			IConfigurationElement[] extensions = point.getConfigurationElements();
+			stepFilters = new ArrayList<StepFilter>();
+			for (IConfigurationElement extension : extensions) {
+				try {
+					stepFilters.add(new StepFilter(extension));
+				} catch (CoreException e) {
+					DebugPlugin.log(e);
+				}
+			}
+		}
+	}
 }

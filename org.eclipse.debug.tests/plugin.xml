@@ -95,5 +95,12 @@
             icon="icons/image2.gif"
             id="type.image.2">
       </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.stepFilters">
+      <stepFilter
+            class="org.eclipse.debug.tests.stepfilters.TestStepFilter"
+            modelIdentifier="com.example.debug.model">
+      </stepFilter>
    </extension>   
 </plugin>

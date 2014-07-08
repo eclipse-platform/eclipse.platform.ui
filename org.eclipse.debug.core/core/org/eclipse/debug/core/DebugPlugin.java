@@ -49,6 +49,7 @@ import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IDropToFrame;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStep;
+import org.eclipse.debug.core.model.IStepFilter;
 import org.eclipse.debug.core.model.IStepFilters;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.ITerminate;
@@ -208,6 +209,14 @@ public class DebugPlugin extends Plugin {
 	 * @since 3.5
 	 */
 	public static final String EXTENSION_POINT_BREAKPOINT_IMPORT_PARTICIPANTS = "breakpointImportParticipants"; //$NON-NLS-1$
+
+	/**
+	 * Simple identifier constant (value <code>"stepFilters"</code>) for the
+	 * step filters extension point.
+	 *
+	 * @since 3.9
+	 */
+	public static final String EXTENSION_POINT_STEP_FILTERS = "stepFilters"; //$NON-NLS-1$
 
 	/**
 	 * Status code indicating an unexpected error.
@@ -1565,6 +1574,20 @@ public class DebugPlugin extends Plugin {
 	 */
 	public static boolean isUseStepFilters() {
 		return getStepFilterManager().isUseStepFilters();
+	}
+
+	/**
+	 * Returns any step filters that have been contributed for the given model
+	 * identifier.
+	 *
+	 * @param modelIdentifier the model identifier
+	 * @return step filters that have been contributed for the given model
+	 *         identifier, possibly an empty collection
+	 * @since 3.9
+	 * @see org.eclipse.debug.core.model.IStepFilter
+	 */
+	public static IStepFilter[] getStepFilters(String modelIdentifier) {
+		return getStepFilterManager().getStepFilters(modelIdentifier);
 	}
 
 	/**

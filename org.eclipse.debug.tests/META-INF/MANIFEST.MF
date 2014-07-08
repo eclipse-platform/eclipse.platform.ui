@@ -22,5 +22,6 @@ Export-Package: org.eclipe.debug.tests.launching,
  org.eclipse.debug.tests,
  org.eclipse.debug.tests.breakpoint,
  org.eclipse.debug.tests.expressions,
- org.eclipse.debug.tests.statushandlers
+ org.eclipse.debug.tests.statushandlers,
+ org.eclipse.debug.tests.stepfilters
 Eclipse-BundleShape: dir

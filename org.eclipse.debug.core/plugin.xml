@@ -30,6 +30,7 @@
    <extension-point id="sourcePathComputers" name="%sourcePathComputersName" schema="schema/sourcePathComputers.exsd"/>
    <extension-point id="logicalStructureProviders" name="%logicalStructureProvidersExtensionPointName" schema="schema/logicalStructureProviders.exsd"/>
    <extension-point id="breakpointImportParticipants" name="%breakpointImportParticipantsExtensionPoint.name" schema="schema/breakpointImportParticipants.exsd"/>
+   <extension-point id="stepFilters" name="%stepFiltersExtensionPointName" schema="schema/stepFilters.exsd"/>
 
 <!-- Extensions -->
    <extension

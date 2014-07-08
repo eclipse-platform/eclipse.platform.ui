@@ -34,32 +34,33 @@ import org.eclipe.debug.tests.viewer.model.VirtualViewerStateTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerUpdateTests;
 import org.eclipse.debug.tests.breakpoint.BreakpointOrderingTests;
 import org.eclipse.debug.tests.statushandlers.StatusHandlerTests;
+import org.eclipse.debug.tests.stepfilters.StepFiltersTests;
 
 /**
   * Tests for integration and nightly builds.
- * 
- * @since 3.6 
+ *
+ * @since 3.6
  */
 public class AutomatedSuite extends TestSuite {
 
 	/**
 	 * Returns the suite.  This is required to use the JUnit Launcher.
-	 * 
+	 *
 	 * @return the test suite
 	 */
 	public static Test suite() {
 		return new AutomatedSuite();
 	}
-	
+
 	/**
-	 * Constructs the automated test suite. Adds all tests. 
+	 * Constructs the automated test suite. Adds all tests.
 	 */
 	public AutomatedSuite() {
 		addTest(new TestSuite(BreakpointOrderingTests.class));
-	    // Note: jface viewer tests were moved out of nightly tests 
-	    // due to frequent problems on nightly build machines. 
-	    // (Bug 343308). 
-		
+	    // Note: jface viewer tests were moved out of nightly tests
+	    // due to frequent problems on nightly build machines.
+	    // (Bug 343308).
+
 		// Virtual viewer tests
 		addTest(new TestSuite(VirtualViewerDeltaTests.class));
         addTest(new TestSuite(VirtualViewerContentTests.class));
@@ -68,15 +69,15 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(VirtualViewerStateTests.class));
 		addTest(new TestSuite(VirtualViewerUpdateTests.class));
         addTest(new TestSuite(VirtualViewerFilterTests.class));
-		
+
 		// Viewer neutral tests
 		addTest(new TestSuite(FilterTransformTests.class));
 		addTest(new TestSuite(ChildrenUpdateTests.class));
 		addTest(new TestSuite(PresentationContextTests.class));
-		
+
 		// Memory view
 		addTest(new TestSuite(MemoryRenderingTests.class));
-		
+
 		// Launch framework
 		addTest(new TestSuite(LaunchConfigurationTests.class));
 		addTest(new TestSuite(AcceleratorSubstitutionTests.class));
@@ -85,8 +86,11 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(LaunchManagerTests.class));
 		addTest(new TestSuite(RefreshTabTests.class));
 		addTest(new TestSuite(ArgumentParsingTests.class));
-		
+
 		// Status handlers
 		addTest(new TestSuite(StatusHandlerTests.class));
+
+		// Step filters
+		addTest(new TestSuite(StepFiltersTests.class));
 	}
 }
