@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -471,8 +471,10 @@ public class TextUtilities {
 	}
 
 	/**
-	 * Returns the default line delimiter for the given document. This is either the delimiter of the first line, or the platform line delimiter if it is
-	 * a legal line delimiter or the first one of the legal line delimiters. The default line delimiter should be used when performing document
+	 * Returns the default line delimiter for the given document. This is
+	 * {@link IDocumentExtension4#getDefaultLineDelimiter()} if available.
+	 * Otherwise, this is either the delimiter of the first line, or the platform line delimiter if it is
+	 * a legal line delimiter, or the first one of the legal line delimiters. The default line delimiter should be used when performing document
 	 * manipulations that span multiple lines.
 	 *
 	 * @param document the document

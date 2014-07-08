@@ -271,7 +271,7 @@ public final class SelectionProcessor {
 						int spaces= visualStartColumn;
 						char[] array= new char[spaces];
 						Arrays.fill(array, ' ');
-						string= fDocument.getLegalLineDelimiters()[0] + String.valueOf(array) + string;
+						string= TextUtilities.getDefaultLineDelimiter(fDocument) + String.valueOf(array) + string;
 						edit= new InsertEdit(insertLocation, string);
 						insertLocation+= string.length();
 					}
