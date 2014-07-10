@@ -5,7 +5,7 @@
   are made available under the terms of the Eclipse Distribution License v1.0
   which accompanies this distribution, and is available at
   http://www.eclipse.org/org/documents/edl-v10.php
- 
+
   Contributors:
      Igor Fedorenko - initial implementation
 -->
@@ -47,10 +47,10 @@
                 <plugin id="org.eclipse.equinox.launcher.cocoa.macosx"/>
                 <plugin id="org.eclipse.equinox.launcher.cocoa.macosx"/>
                 <plugin id="org.eclipse.equinox.launcher.cocoa.macosx.x86_64"/>
-		<plugin id="org.eclipse.equinox.launcher.gtk.linux.ia64"/>
+                <plugin id="org.eclipse.equinox.launcher.gtk.linux.ia64"/>
                 <plugin id="org.eclipse.equinox.launcher.gtk.linux.ppc"/>
                 <plugin id="org.eclipse.equinox.launcher.gtk.linux.ppc64"/>
-		<plugin id="org.eclipse.equinox.launcher.gtk.linux.ppc64le"/>
+                <plugin id="org.eclipse.equinox.launcher.gtk.linux.ppc64le"/>
                 <plugin id="org.eclipse.equinox.launcher.gtk.linux.x86"/>
                 <plugin id="org.eclipse.equinox.launcher.gtk.linux.s390x"/>
                 <plugin id="org.eclipse.equinox.launcher.gtk.linux.s390"/>
@@ -61,19 +61,6 @@
                 <plugin id="org.eclipse.equinox.launcher.win32.win32.x86"/>
                 <plugin id="org.eclipse.equinox.launcher.win32.win32.x86_64"/>
                 <plugin id="org.eclipse.swt"/>
-                <plugin id="org.eclipse.swt.gtk.linux.s390x"/>
-                <plugin id="org.eclipse.swt.gtk.linux.s390"/>
-                <plugin id="org.eclipse.swt.gtk.solaris.sparc"/>
-                <plugin id="org.eclipse.swt.gtk.solaris.x86"/>
-		<plugin id="org.eclipse.swt.gtk.linux.ia64"/>
-                <plugin id="org.eclipse.swt.gtk.linux.ppc"/>
-                <plugin id="org.eclipse.swt.gtk.linux.ppc64"/>
-		<plugin id="org.eclipse.swt.gtk.linux.ppc64le"/>
-                <plugin id="org.eclipse.swt.cocoa.macosx"/>
-                <plugin id="org.eclipse.swt.cocoa.macosx"/>
-                <plugin id="org.eclipse.swt.gtk.aix.ppc"/>
-                <plugin id="org.eclipse.swt.gtk.aix.ppc64"/>
-                <plugin id="org.eclipse.swt.gtk.hpux.ia64_32"/>
                 <plugin id="org.w3c.css.sac"/>
                 <plugin id="org.w3c.dom.smil"/>
                 <plugin id="org.w3c.dom.svg"/>
