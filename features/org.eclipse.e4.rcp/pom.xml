@@ -38,7 +38,6 @@
               <excludes>
                 <plugin id="javax.xml"/>
                 <plugin id="org.eclipse.swt"/>
-                <plugin id="org.eclipse.equinox.launcher"/>
                 <plugin id="org.eclipse.equinox.launcher.gtk.solaris.sparc"/>
                 <plugin id="org.eclipse.equinox.launcher.gtk.solaris.x86"/>
                 <plugin id="org.eclipse.equinox.launcher.cocoa.macosx"/>
