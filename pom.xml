@@ -55,7 +55,6 @@
     <module>bundles/org.eclipse.core.filesystem.win32.x86_64</module>
     <module>bundles/org.eclipse.core.filesystem/fragments/org.eclipse.core.filesystem.aix.ppc</module>
     <module>bundles/org.eclipse.core.filesystem/fragments/org.eclipse.core.filesystem.aix.ppc64</module>
-    <module>bundles/org.eclipse.core.filesystem/fragments/org.eclipse.core.filesystem.solaris.sparcv9</module>
 
     <module>bundles/org.eclipse.core.resources</module>
     <module>bundles/org.eclipse.core.resources.win32.x86</module>
