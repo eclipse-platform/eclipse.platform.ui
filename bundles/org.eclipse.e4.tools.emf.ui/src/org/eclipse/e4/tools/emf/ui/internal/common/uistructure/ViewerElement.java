@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     Wim Jongman <wim.jongman@remainsoftware.com> - initial API and implementation
+ *     Steven Spungin <steve@spungin.tv> -Bug 439284 - [model editor] make list a combo with autocomplete for add part descriptor
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.uistructure;
 
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.tools.emf.ui.common.ComboViewerAutoComplete;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
@@ -157,8 +159,10 @@ public class ViewerElement {
 		buttonCompTopLayout.marginHeight = 0;
 		buttonCompTop.setLayout(buttonCompTopLayout);
 
-		dropDown = new ComboViewer(buttonCompTop);
+		dropDown = new ComboViewer(buttonCompTop, SWT.READ_ONLY | SWT.SIMPLE);
 		dropDown.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+
+		ComboViewerAutoComplete autocomplete = new ComboViewerAutoComplete(dropDown);
 
 		addButton = new Button(buttonCompTop, SWT.PUSH | SWT.FLAT);
 		addButton.setImage(editor.createImage(ResourceProvider.IMG_Obj16_table_add));

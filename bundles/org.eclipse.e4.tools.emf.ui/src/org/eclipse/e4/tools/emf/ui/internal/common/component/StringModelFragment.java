@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Steven Spungin <steve@spungin.tv> - Ongoing Maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -218,24 +219,6 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 			tableElement.getViewer().setContentProvider(new ObservableListContentProvider());
 			tableElement.getViewer().setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
-
-			tableElement.getDropDown().setContentProvider(new ArrayContentProvider());
-			tableElement.getDropDown().setLabelProvider(new LabelProvider() {
-				@Override
-				public String getText(Object element) {
-					FeatureClass eclass = (FeatureClass) element;
-					return eclass.label;
-				}
-			});
-
-			tableElement.getDropDown().setComparator(new ViewerComparator() {
-				@Override
-				public int compare(Viewer viewer, Object e1, Object e2) {
-					FeatureClass eClass1 = (FeatureClass) e1;
-					FeatureClass eClass2 = (FeatureClass) e2;
-					return eClass1.label.compareTo(eClass2.label);
-				}
-			});
 
 			tableElement.getDropDown().setContentProvider(new ArrayContentProvider());
 			tableElement.getDropDown().setLabelProvider(new LabelProvider() {
