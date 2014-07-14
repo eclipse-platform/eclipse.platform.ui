@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -438,7 +438,6 @@ public final class ResourcesPlugin extends Plugin {
 		if (!new LocalMetaArea().hasSavedWorkspace()) {
 			constructWorkspace();
 		}
-		Workspace.DEBUG = ResourcesPlugin.getPlugin().isDebugging();
 		// Remember workspace before opening, to
 		// make it easier to debug cases where open() is failing.
 		workspace = new Workspace();

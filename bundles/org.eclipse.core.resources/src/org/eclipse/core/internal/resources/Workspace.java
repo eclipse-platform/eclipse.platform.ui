@@ -80,8 +80,6 @@ import org.xml.sax.InputSource;
  */
 public class Workspace extends PlatformObject implements IWorkspace, ICoreConstants {
 	public static final boolean caseSensitive = Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new java.io.File("a").compareTo(new java.io.File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
-	// whether the resources plugin is in debug mode.
-	public static boolean DEBUG = false;
 
 	/**
 	 * Work manager should never be accessed directly because accessor
