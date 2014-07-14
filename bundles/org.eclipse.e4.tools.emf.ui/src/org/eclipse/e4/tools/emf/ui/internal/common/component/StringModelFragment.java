@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steve@spungin.tv> - Ongoing Maintenance
+ *     Steven Spungin <steve@spungin.tv> - Ongoing Maintenance, Bug 439532
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -28,14 +28,17 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FeatureSelectionDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindParentReferenceElementDialog;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.ViewerElement;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.fragment.MModelFragment;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
+import org.eclipse.e4.ui.model.fragment.impl.StringModelFragmentImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.IEMFListProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EClass;
@@ -111,8 +114,25 @@ public class StringModelFragment extends AbstractComponentEditor {
 	}
 
 	@Override
+	public FeaturePath[] getLabelProperties() {
+		return new FeaturePath[] { FeaturePath.fromList(FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME), FeaturePath.fromList(FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID) };
+	}
+
+	@Override
 	public String getDetailLabel(Object element) {
-		return null;
+		if (element instanceof StringModelFragmentImpl) {
+			StringModelFragmentImpl fragment = (StringModelFragmentImpl) element;
+			String ret = ""; //$NON-NLS-1$
+			if (E.notEmpty(fragment.getFeaturename())) {
+				ret += fragment.getFeaturename();
+			}
+			if (E.notEmpty(fragment.getParentElementId())) {
+				ret += " (" + fragment.getParentElementId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			return ret;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
