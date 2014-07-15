@@ -7,7 +7,7 @@ BUGS="$1"
 NUM=1
 curl -o search_o.csv 'https://bugs.eclipse.org/bugs/buglist.cgi?bug_id='${BUGS}'&bug_id_type=anyexact&list_id=9354617&query_format=advanced&columnlist=bug_id%2Ctarget_milestone%2Cassigned_to%2Cbug_status%2Cresolution%2Cshort_desc%2Cbug_severity%2Cqa_contact&ctype=csv&human=1'
 grep -v target_milestone search_o.csv | grep -v "Bug ID" | grep -v Lars \
- | grep -v RESOLVED | grep -v VERIFIED | grep -v CLOSED >t1 ; mv t1 search_o.csv
+  >t1 ; mv t1 search_o.csv
 }
 
 get_other_csv_bugs () {
@@ -16,7 +16,7 @@ BUGS="$1"
 NUM=1
 curl -o search_o_other.csv 'https://bugs.eclipse.org/bugs/buglist.cgi?bug_id='${BUGS}'&bug_id_type=nowords&classification=Eclipse&columnlist=bug_id%2Ctarget_milestone%2Cassigned_to%2Cbug_status%2Cresolution%2Cshort_desc%2Cbug_severity%2Cqa_contact&component=IDE&component=UI&list_id=9455933&product=Platform&query_format=advanced&target_milestone=4.4.1&target_milestone=4.5&target_milestone=4.5%20M1&&ctype=csv&human=1'
 grep -v target_milestone search_o_other.csv | grep -v "Bug ID" | grep -v Lars \
- | grep -v RESOLVED | grep -v VERIFIED | grep -v CLOSED >t1 ; mv t1 search_o_other.csv
+  >t1 ; mv t1 search_o_other.csv
 }
 
 sort_csv () {
