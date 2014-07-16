@@ -685,7 +685,7 @@ import com.ibm.icu.text.NumberFormat;
 	/*
 	 * Default converter implementation, does not perform any conversion.
 	 */
-	protected static final class DefaultConverter implements IConverter {
+	static final class DefaultConverter implements IConverter {
 
 		private final Object toType;
 
