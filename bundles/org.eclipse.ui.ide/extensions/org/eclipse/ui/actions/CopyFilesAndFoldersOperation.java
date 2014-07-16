@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -1122,15 +1124,25 @@ public class CopyFilesAndFoldersOperation {
 					}
 				};
 
+				final String initial = getAutoNewNameFor(originalName, workspace).lastSegment().toString();
 				InputDialog dialog = new InputDialog(
 						messageShell,
 						IDEWorkbenchMessages.CopyFilesAndFoldersOperation_inputDialogTitle,
 						NLS
 								.bind(
 										IDEWorkbenchMessages.CopyFilesAndFoldersOperation_inputDialogMessage,
-										resource.getName()), getAutoNewNameFor(
-								originalName, workspace).lastSegment()
-								.toString(), validator);
+										resource.getName()), initial, validator) {
+					
+					@Override
+					protected Control createContents(Composite parent) {
+						Control contents= super.createContents(parent);
+						int lastIndexOfDot= initial.lastIndexOf('.');
+						if (resource instanceof IFile && lastIndexOfDot > 0) {
+							getText().setSelection(0, lastIndexOfDot);
+						}
+						return contents;
+					}
+				};
 				dialog.setBlockOnOpen(true);
 				dialog.open();
 				if (dialog.getReturnCode() == Window.CANCEL) {
