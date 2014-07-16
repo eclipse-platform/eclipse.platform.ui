@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Wim Jongman <wim.jongman@remainsoftware.com> - Maintenance
- *     Marco Descher <marco@descher.at> - Bug395982, 426653, 422465
+ *     Marco Descher <marco@descher.at> - Bug395982, 426653, 422465, 429674
  *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
  *     Steven Spungin <steven@spungin.tv> - Bug 396902, 431755, 431735, 424730, 424730, 391089, 437236, 437552
  ******************************************************************************/
@@ -1609,8 +1609,7 @@ public class ModelEditor implements IGotoObject {
 		@Override
 		public void dragSetData(DragSourceEvent event) {
 			IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-			Object o = selection.getFirstElement();
-			event.data = o;
+			event.data = selection.toArray();
 		}
 	}
 
@@ -1622,9 +1621,19 @@ public class ModelEditor implements IGotoObject {
 			this.domain = domain;
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public boolean performDrop(Object data) {
+			Object[] dropDataArray = (Object[]) data;
+			for (Object object : dropDataArray) {
+				boolean result = performSingleDrop(object);
+				if (!result)
+					return false;
+			}
+			return true;
+		}
+
+		@SuppressWarnings("unchecked")
+		public boolean performSingleDrop(Object data) {
 			if (getCurrentLocation() == LOCATION_ON) {
 				EStructuralFeature feature = null;
 				EObject parent = null;
@@ -1659,6 +1668,7 @@ public class ModelEditor implements IGotoObject {
 								((MElementContainer<MUIElement>) parent).setSelectedElement((MUIElement) data);
 							}
 						}
+						return true;
 					}
 				}
 			} else if (getCurrentLocation() == LOCATION_AFTER || getCurrentLocation() == LOCATION_BEFORE) {
