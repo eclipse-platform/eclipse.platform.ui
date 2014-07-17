@@ -223,6 +223,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 	protected Control createContents(Composite parent) {
 		Control ret = super.createContents(parent);
 		textBox.notifyListeners(SWT.Modify, new Event());
+		textBox.setFocus();
 		return ret;
 	}
 
@@ -394,7 +395,9 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 											updateStatusMessage();
 											switch (status) {
 											case READY:
-												// This will deadlock if currentSearchThread is not null
+												// This will deadlock if
+												// currentSearchThread is not
+												// null
 												currentSearchThread = null;
 												if (currentResultHandler != null) {
 													currentResultHandler.cancled = true;
