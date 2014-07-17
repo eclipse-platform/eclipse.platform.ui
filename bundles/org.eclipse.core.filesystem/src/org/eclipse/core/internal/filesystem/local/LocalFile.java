@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- * Martin Oberhuber (Wind River) - [294429] Avoid substring baggage in FileInfo
- * Martin Lippert (VMware) - [394607] Poor performance when using findFilesForLocationURI
+ * 	Martin Oberhuber (Wind River) - [294429] Avoid substring baggage in FileInfo
+ * 	Martin Lippert (VMware) - [394607] Poor performance when using findFilesForLocationURI
+ * 	Sergey Prigogin (Google) - Fix for bug 435519
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
