@@ -219,6 +219,7 @@ public class Messages {
 	public String PartStackEditor_ContainerData;
 	public String PartStackEditor_AddPart;
 	public String PartStackEditor_AddPlaceholder;
+	public String PartStackEditor_AddCompositePart;
 
 	public String PerspectiveEditor_Label;
 	public String PerspectiveEditor_Description;
@@ -693,4 +694,18 @@ public class Messages {
 	public static String ListTab_resetColumns;
 	public static String ListTab_selectAnAttribute;
 	public static String ListTab_selectAType;
+
+	public String CompositePartEditor_AddPartSashContainer;
+	public String CompositePartEditor_AddPartStack;
+	public String CompositePartEditor_AddPart;
+	public String CompositePartEditor_AddArea;
+	public String CompositePartEditor_AddPlaceholder;
+	public String CompositePartEditor_Label;
+	public String CompositePartEditor_Description;
+	public String CompositePartEditor_Orientation;
+	public String CompositePartEditor_Horizontal;
+	public String CompositePartEditor_Vertical;
+	public String CompositePartEditor_SelectedElement;
+	public String CompositePartEditor_ContainerData;
+	public String CompositePartEditor_Controls;
 }

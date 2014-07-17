@@ -72,6 +72,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.BindingTableEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.CategoryEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.CommandEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.CommandParameterEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.CompositePartEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.CoreExpressionEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DefaultEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DialogEditor;
@@ -1261,6 +1262,7 @@ public class ModelEditor implements IGotoObject {
 
 		registerEditor(UiPackageImpl.Literals.CORE_EXPRESSION, ContextInjectionFactory.make(CoreExpressionEditor.class, context));
 
+		registerEditor(BasicPackageImpl.Literals.COMPOSITE_PART, ContextInjectionFactory.make(CompositePartEditor.class, context));
 		registerEditor(BasicPackageImpl.Literals.PART, ContextInjectionFactory.make(PartEditor.class, context));
 		registerEditor(BasicPackageImpl.Literals.WINDOW, ContextInjectionFactory.make(WindowEditor.class, context));
 		registerEditor(BasicPackageImpl.Literals.TRIMMED_WINDOW, ContextInjectionFactory.make(TrimmedWindowEditor.class, context));
