@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
+ *  Copyright (c) 2004, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -103,7 +103,7 @@ public class RefreshJob extends WorkspaceJob {
 		}
 		return children;
 	}
-	
+
 	/**
 	 * Returns the path prefixes visited by this job so far.
 	 */
@@ -152,7 +152,7 @@ public class RefreshJob extends WorkspaceJob {
 		MultiStatus errors = new MultiStatus(ResourcesPlugin.PI_RESOURCES, 1, msg, null);
 		long longestRefresh = 0;
 		try {
-			if (RefreshManager.DEBUG)
+			if (Policy.DEBUG_AUTO_REFRESH)
 				Policy.debug(RefreshManager.DEBUG_PREFIX + " starting refresh job"); //$NON-NLS-1$
 			int refreshCount = 0;
 			int depth = 2;
@@ -192,8 +192,8 @@ public class RefreshJob extends WorkspaceJob {
 			pathPrefixHistory = null;
 			rootPathHistory = null;
 			monitor.done();
-			if (RefreshManager.DEBUG)
-				System.out.println(RefreshManager.DEBUG_PREFIX + " finished refresh job in: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (Policy.DEBUG_AUTO_REFRESH)
+				Policy.debug(RefreshManager.DEBUG_PREFIX + " finished refresh job in: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (!errors.isOK())
 			return errors;
@@ -211,16 +211,16 @@ public class RefreshJob extends WorkspaceJob {
 	 * Starts the refresh job
 	 */
 	public void start() {
-		if (RefreshManager.DEBUG)
-			System.out.println(RefreshManager.DEBUG_PREFIX + " enabling auto-refresh"); //$NON-NLS-1$
+		if (Policy.DEBUG_AUTO_REFRESH)
+			Policy.debug(RefreshManager.DEBUG_PREFIX + " enabling auto-refresh"); //$NON-NLS-1$
 	}
 
 	/**
 	 * Stops the refresh job
 	 */
 	public void stop() {
-		if (RefreshManager.DEBUG)
-			System.out.println(RefreshManager.DEBUG_PREFIX + " disabling auto-refresh"); //$NON-NLS-1$
+		if (Policy.DEBUG_AUTO_REFRESH)
+			Policy.debug(RefreshManager.DEBUG_PREFIX + " disabling auto-refresh"); //$NON-NLS-1$
 		cancel();
 	}
 }

@@ -457,7 +457,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 					break;
 			}
 			if (endMessage != null)
-				System.out.println(endMessage + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$
+				Policy.debug(endMessage + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$
 		}
 	}
 
@@ -471,13 +471,13 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (Policy.DEBUG_SAVE) {
 			switch (kind) {
 				case ISaveContext.FULL_SAVE :
-					System.out.println(DEBUG_FULL_SAVE + DEBUG_START);
+					Policy.debug(DEBUG_FULL_SAVE + DEBUG_START);
 					break;
 				case ISaveContext.SNAPSHOT :
-					System.out.println(DEBUG_SNAPSHOT + DEBUG_START);
+					Policy.debug(DEBUG_SNAPSHOT + DEBUG_START);
 					break;
 				case ISaveContext.PROJECT_SAVE :
-					System.out.println(DEBUG_PROJECT_SAVE + project.getFullPath() + DEBUG_START);
+					Policy.debug(DEBUG_PROJECT_SAVE + project.getFullPath() + DEBUG_START);
 					break;
 			}
 		}
@@ -682,7 +682,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 */
 	protected void restore(IProgressMonitor monitor) throws CoreException {
 		if (Policy.DEBUG_RESTORE)
-			System.out.println("Restore workspace: starting..."); //$NON-NLS-1$
+			Policy.debug("Restore workspace: starting..."); //$NON-NLS-1$
 		long start = System.currentTimeMillis();
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -725,7 +725,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			monitor.done();
 		}
 		if (Policy.DEBUG_RESTORE)
-			System.out.println("Restore workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.debug("Restore workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -738,7 +738,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected boolean restore(Project project, IProgressMonitor monitor) throws CoreException {
 		boolean status = true;
 		if (Policy.DEBUG_RESTORE)
-			System.out.println("Restore project " + project.getFullPath() + ": starting..."); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.debug("Restore project " + project.getFullPath() + ": starting..."); //$NON-NLS-1$ //$NON-NLS-2$
 		long start = System.currentTimeMillis();
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -756,7 +756,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			monitor.done();
 		}
 		if (Policy.DEBUG_RESTORE)
-			System.out.println("Restore project " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Policy.debug("Restore project " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return status;
 	}
 
@@ -775,7 +775,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (!snapshotFile.exists())
 			return false;
 		if (Policy.DEBUG_RESTORE)
-			System.out.println("Restore project " + project.getFullPath() + ": starting..."); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.debug("Restore project " + project.getFullPath() + ": starting..."); //$NON-NLS-1$ //$NON-NLS-2$
 		long start = System.currentTimeMillis();
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -791,7 +791,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			monitor.done();
 		}
 		if (Policy.DEBUG_RESTORE)
-			System.out.println("Restore project " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Policy.debug("Restore project " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return status;
 	}
 
@@ -810,7 +810,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		// if we have the workspace root then restore markers for its projects
 		if (resource.getType() == IResource.PROJECT) {
 			if (Policy.DEBUG_RESTORE_MARKERS) {
-				System.out.println("Restore Markers for " + resource.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				Policy.debug("Restore Markers for " + resource.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			return;
 		}
@@ -819,7 +819,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			if (projects[i].isAccessible())
 				markerManager.restore(projects[i], generateDeltas, monitor);
 		if (Policy.DEBUG_RESTORE_MARKERS) {
-			System.out.println("Restore Markers for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			Policy.debug("Restore Markers for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ 
 		}
 	}
 
@@ -846,7 +846,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 		}
 		if (Policy.DEBUG_RESTORE_MASTERTABLE)
-			System.out.println("Restore master table for " + location + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Policy.debug("Restore master table for " + location + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	/**
@@ -855,7 +855,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 */
 	protected void restoreMetaInfo(MultiStatus problems, IProgressMonitor monitor) {
 		if (Policy.DEBUG_RESTORE_METAINFO)
-			System.out.println("Restore workspace metainfo: starting..."); //$NON-NLS-1$
+			Policy.debug("Restore workspace metainfo: starting..."); //$NON-NLS-1$
 		long start = System.currentTimeMillis();
 		IProject[] roots = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < roots.length; i++) {
@@ -868,7 +868,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			}
 		}
 		if (Policy.DEBUG_RESTORE_METAINFO)
-			System.out.println("Restore workspace metainfo: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.debug("Restore workspace metainfo: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -907,7 +907,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			throw failure;
 		}
 		if (Policy.DEBUG_RESTORE_METAINFO)
-			System.out.println("Restore metainfo for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Policy.debug("Restore metainfo for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	/**
@@ -966,7 +966,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			monitor.done();
 		}
 		if (Policy.DEBUG_RESTORE_SNAPSHOTS)
-			System.out.println("Restore snapshots for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.debug("Restore snapshots for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -1003,7 +1003,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		// restore sync info for all projects if we were given the workspace root.
 		if (resource.getType() == IResource.PROJECT) {
 			if (Policy.DEBUG_RESTORE_SYNCINFO) {
-				System.out.println("Restore SyncInfo for " + resource.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				Policy.debug("Restore SyncInfo for " + resource.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			return;
 		}
@@ -1012,7 +1012,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			if (projects[i].isAccessible())
 				synchronizer.restore(projects[i], monitor);
 		if (Policy.DEBUG_RESTORE_SYNCINFO) {
-			System.out.println("Restore SyncInfo for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.debug("Restore SyncInfo for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -1042,7 +1042,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, treeLocation, msg, e);
 		}
 		if (Policy.DEBUG_RESTORE_TREE) {
-			System.out.println("Restore Tree for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.debug("Restore Tree for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -1079,7 +1079,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			monitor.done();
 		}
 		if (Policy.DEBUG_RESTORE_TREE) {
-			System.out.println("Restore Tree for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Policy.debug("Restore Tree for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return true;
 	}
@@ -1119,7 +1119,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			monitor.done();
 		}
 		if (Policy.DEBUG_RESTORE_TREE) {
-			System.out.println("Restore Tree for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Policy.debug("Restore Tree for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return true;
 	}
@@ -1273,7 +1273,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, NLS.bind(Messages.resources_exSaveMaster, location.toOSString()), e);
 		}
 		if (Policy.DEBUG_SAVE_MASTERTABLE)
-			System.out.println("Save master table for " + location + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Policy.debug("Save master table for " + location + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	/**
@@ -1282,7 +1282,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 */
 	protected void saveMetaInfo(MultiStatus problems, IProgressMonitor monitor) throws CoreException {
 		if (Policy.DEBUG_SAVE_METAINFO)
-			System.out.println("Save workspace metainfo: starting..."); //$NON-NLS-1$
+			Policy.debug("Save workspace metainfo: starting..."); //$NON-NLS-1$
 		long start = System.currentTimeMillis();
 		// save preferences (workspace description, path variables, etc)
 		ResourcesPlugin.getPlugin().savePluginPreferences();
@@ -1295,7 +1295,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 					problems.merge(result);
 			}
 		if (Policy.DEBUG_SAVE_METAINFO)
-			System.out.println("Save workspace metainfo: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.debug("Save workspace metainfo: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -1314,7 +1314,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			return new ResourceStatus(IResourceStatus.MISSING_DESCRIPTION_REPAIRED, project.getFullPath(), msg);
 		}
 		if (Policy.DEBUG_SAVE_METAINFO)
-			System.out.println("Save metainfo for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Policy.debug("Save metainfo for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return Status.OK_STATUS;
 	}
 
@@ -1396,7 +1396,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, Path.ROOT, msg, e);
 		}
 		if (Policy.DEBUG_SAVE_TREE)
-			System.out.println("Save Workspace Tree: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.debug("Save Workspace Tree: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -1448,7 +1448,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				operationCount++;
 				if (snapshotJob.getState() == Job.NONE) {
 					if (Policy.DEBUG_SAVE)
-						System.out.println("Scheduling workspace snapshot"); //$NON-NLS-1$
+						Policy.debug("Scheduling workspace snapshot"); //$NON-NLS-1$
 					long interval = workspace.internalGetDescription().getSnapshotInterval();
 					snapshotJob.schedule(Math.max(interval, MIN_SNAPSHOT_DELAY));
 				}
@@ -1501,7 +1501,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			monitor.done();
 		}
 		if (Policy.DEBUG_SAVE_TREE)
-			System.out.println("Snapshot Workspace Tree: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.debug("Snapshot Workspace Tree: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -1689,9 +1689,9 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				throw (IOException) e.getTargetException();
 			}
 			if (Policy.DEBUG_SAVE_MARKERS)
-				System.out.println("Save Markers for " + root.getFullPath() + ": " + saveTimes[0] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				Policy.debug("Save Markers for " + root.getFullPath() + ": " + saveTimes[0] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (Policy.DEBUG_SAVE_SYNCINFO)
-				System.out.println("Save SyncInfo for " + root.getFullPath() + ": " + saveTimes[1] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				Policy.debug("Save SyncInfo for " + root.getFullPath() + ": " + saveTimes[1] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			removeGarbage(markersOutput, markersLocation, markersTempLocation);
 			// if we have the workspace root the output stream will be null and we
 			// don't have to perform cleanup code
@@ -1802,9 +1802,9 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				throw (IOException) e.getTargetException();
 			}
 			if (Policy.DEBUG_SAVE_MARKERS)
-				System.out.println("Snap Markers for " + root.getFullPath() + ": " + snapTimes[0] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				Policy.debug("Snap Markers for " + root.getFullPath() + ": " + snapTimes[0] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (Policy.DEBUG_SAVE_SYNCINFO)
-				System.out.println("Snap SyncInfo for " + root.getFullPath() + ": " + snapTimes[1] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				Policy.debug("Snap SyncInfo for " + root.getFullPath() + ": " + snapTimes[1] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (markerFileSize != markersOutput.size())
 				safeMarkerStream.succeed();
 			if (safeSyncInfoStream != null && syncInfoFileSize != syncInfoOutput.size()) {
@@ -2096,7 +2096,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, treeLocation, msg, e);
 		}
 		if (Policy.DEBUG_SAVE_TREE)
-			System.out.println("Save tree for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Policy.debug("Save tree for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	protected void writeWorkspaceFields(DataOutputStream output, IProgressMonitor monitor) throws IOException {

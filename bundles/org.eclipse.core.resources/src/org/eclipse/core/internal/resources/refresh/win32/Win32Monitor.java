@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,8 @@ package org.eclipse.core.internal.resources.refresh.win32;
 
 import java.io.File;
 import java.util.*;
-import org.eclipse.core.internal.refresh.RefreshManager;
 import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
@@ -140,8 +140,8 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 					if (error != Win32Natives.ERROR_INVALID_HANDLE)
 						addException(NLS.bind(Messages.WM_errCloseHandle, Integer.toString(error)));
 				}
-				if (RefreshManager.DEBUG)
-					System.out.println(DEBUG_PREFIX + "removed handle: " + handleValue); //$NON-NLS-1$
+				if (Policy.DEBUG_AUTO_REFRESH)
+					Policy.debug(DEBUG_PREFIX + "removed handle: " + handleValue); //$NON-NLS-1$
 				handleValue = Win32Natives.INVALID_HANDLE_VALUE;
 			}
 		}
@@ -451,8 +451,8 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		}
 		//make sure the job is running
 		schedule(RESCHEDULE_DELAY);
-		if (RefreshManager.DEBUG)
-			System.out.println(DEBUG_PREFIX + " added monitor for: " + resource); //$NON-NLS-1$
+		if (Policy.DEBUG_AUTO_REFRESH)
+			Policy.debug(DEBUG_PREFIX + " added monitor for: " + resource); //$NON-NLS-1$
 		return true;
 	}
 
@@ -494,8 +494,8 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
 		long start = -System.currentTimeMillis();
-		if (RefreshManager.DEBUG)
-			System.out.println(DEBUG_PREFIX + "job started."); //$NON-NLS-1$
+		if (Policy.DEBUG_AUTO_REFRESH)
+			Policy.debug(DEBUG_PREFIX + "job started."); //$NON-NLS-1$
 		try {
 			long[][] handleArrays = getHandleValueArrays();
 			monitor.beginTask(Messages.WM_beginTask, handleArrays.length);
@@ -510,13 +510,13 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		} finally {
 			monitor.done();
 			start += System.currentTimeMillis();
-			if (RefreshManager.DEBUG)
-				System.out.println(DEBUG_PREFIX + "job finished in: " + start + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (Policy.DEBUG_AUTO_REFRESH)
+				Policy.debug(DEBUG_PREFIX + "job finished in: " + start + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		//always reschedule the job - so it will come back after errors or cancelation
 		long delay = Math.max(RESCHEDULE_DELAY, start);
-		if (RefreshManager.DEBUG)
-			System.out.println(DEBUG_PREFIX + "rescheduling in: " + delay / 1000 + " seconds"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (Policy.DEBUG_AUTO_REFRESH)
+			Policy.debug(DEBUG_PREFIX + "rescheduling in: " + delay / 1000 + " seconds"); //$NON-NLS-1$ //$NON-NLS-2$
 		final Bundle bundle = Platform.getBundle(ResourcesPlugin.PI_RESOURCES);
 		//if the bundle is null then the framework has shutdown - just bail out completely (bug 98219)
 		if (bundle == null)

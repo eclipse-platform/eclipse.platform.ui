@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.core.internal.refresh;
 import java.util.ArrayList;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
 import org.eclipse.core.runtime.*;
@@ -113,12 +114,12 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		//check to see if we need to start an iteration
 		if (toRefresh.isEmpty()) {
 			beginIteration();
-			if (RefreshManager.DEBUG)
-				System.out.println(RefreshManager.DEBUG_PREFIX + "New polling iteration on " + toRefresh.size() + " roots"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (Policy.DEBUG_AUTO_REFRESH)
+				Policy.debug(RefreshManager.DEBUG_PREFIX + "New polling iteration on " + toRefresh.size() + " roots"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		final int oldSize = toRefresh.size();
-		if (RefreshManager.DEBUG)
-			System.out.println(RefreshManager.DEBUG_PREFIX + "started polling"); //$NON-NLS-1$
+		if (Policy.DEBUG_AUTO_REFRESH)
+			Policy.debug(RefreshManager.DEBUG_PREFIX + "started polling"); //$NON-NLS-1$
 		//refresh the hot root if applicable
 		if (time - hotRootTime > HOT_ROOT_DECAY)
 			hotRoot = null;
@@ -135,16 +136,16 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 				break;
 		}
 		time = System.currentTimeMillis() - time;
-		if (RefreshManager.DEBUG)
-			System.out.println(RefreshManager.DEBUG_PREFIX + "polled " + (oldSize - toRefresh.size()) + " roots in " + time + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (Policy.DEBUG_AUTO_REFRESH)
+			Policy.debug(RefreshManager.DEBUG_PREFIX + "polled " + (oldSize - toRefresh.size()) + " roots in " + time + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		//reschedule automatically - shouldRun will cancel if not needed
 		//make sure it doesn't run more than 5% of the time
 		long delay = Math.max(MIN_FREQUENCY, time * 20);
 		//back off even more if there are other jobs running
 		if (!getJobManager().isIdle())
 			delay *= 2;
-		if (RefreshManager.DEBUG)
-			System.out.println(RefreshManager.DEBUG_PREFIX + "rescheduling polling job in: " + delay / 1000 + " seconds"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (Policy.DEBUG_AUTO_REFRESH)
+			Policy.debug(RefreshManager.DEBUG_PREFIX + "rescheduling polling job in: " + delay / 1000 + " seconds"); //$NON-NLS-1$ //$NON-NLS-2$
 		//don't reschedule the job if the resources plugin has been shut down
 		if (Platform.getBundle(ResourcesPlugin.PI_RESOURCES).getState() == Bundle.ACTIVE)
 			schedule(delay);
@@ -179,8 +180,8 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		refreshManager.refresh(resource);
 		hotRoot = resource;
 		hotRootTime = System.currentTimeMillis();
-		if (RefreshManager.DEBUG)
-			System.out.println(RefreshManager.DEBUG_PREFIX + "new hot root: " + resource); //$NON-NLS-1$
+		if (Policy.DEBUG_AUTO_REFRESH)
+			Policy.debug(RefreshManager.DEBUG_PREFIX + "new hot root: " + resource); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

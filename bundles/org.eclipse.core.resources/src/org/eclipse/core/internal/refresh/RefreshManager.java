@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.refresh;
 
 import org.eclipse.core.internal.resources.IManager;
-import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
 import org.eclipse.core.resources.refresh.IRefreshResult;
@@ -26,8 +25,6 @@ import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
  * @since 3.0
  */
 public class RefreshManager implements IRefreshResult, IManager, Preferences.IPropertyChangeListener {
-
-	public static boolean DEBUG = Policy.DEBUG_AUTO_REFRESH;
 	public static final String DEBUG_PREFIX = "Auto-refresh: "; //$NON-NLS-1$
 	MonitorManager monitors;
 	private RefreshJob refreshJob;

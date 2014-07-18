@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,9 +112,9 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 
 	public void handleEvent(LifecycleEvent event) {
 		switch (event.kind) {
-			case LifecycleEvent.PRE_LINK_DELETE:
-			case LifecycleEvent.PRE_PROJECT_CLOSE:
-			case LifecycleEvent.PRE_PROJECT_DELETE:
+			case LifecycleEvent.PRE_LINK_DELETE :
+			case LifecycleEvent.PRE_PROJECT_CLOSE :
+			case LifecycleEvent.PRE_PROJECT_DELETE :
 				unmonitor(event.resource);
 				break;
 		}
@@ -158,8 +158,8 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 	 * @see IRefreshResult#monitorFailed
 	 */
 	public void monitorFailed(IRefreshMonitor monitor, IResource resource) {
-		if (RefreshManager.DEBUG)
-			System.err.println(RefreshManager.DEBUG_PREFIX + " monitor (" + monitor + ") failed to monitor resource: " + resource); //$NON-NLS-1$ //$NON-NLS-2$
+		if (Policy.DEBUG_AUTO_REFRESH)
+			Policy.debug(RefreshManager.DEBUG_PREFIX + " monitor (" + monitor + ") failed to monitor resource: " + resource); //$NON-NLS-1$ //$NON-NLS-2$
 		if (registeredMonitors == null || monitor == null)
 			return;
 		if (resource == null) {
@@ -223,8 +223,8 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 			if (!resources.contains(resource))
 				resources.add(resource);
 		}
-		if (RefreshManager.DEBUG)
-			System.out.println(RefreshManager.DEBUG_PREFIX + " added monitor (" + monitor + ") on resource: " + resource); //$NON-NLS-1$ //$NON-NLS-2$
+		if (Policy.DEBUG_AUTO_REFRESH)
+			Policy.debug(RefreshManager.DEBUG_PREFIX + " added monitor (" + monitor + ") on resource: " + resource); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private void removeMonitor(IRefreshMonitor monitor, IResource resource) {
@@ -236,8 +236,8 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 			else
 				registeredMonitors.remove(monitor);
 		}
-		if (RefreshManager.DEBUG)
-			System.out.println(RefreshManager.DEBUG_PREFIX + " removing monitor (" + monitor + ") on resource: " + resource); //$NON-NLS-1$ //$NON-NLS-2$
+		if (Policy.DEBUG_AUTO_REFRESH)
+			Policy.debug(RefreshManager.DEBUG_PREFIX + " removing monitor (" + monitor + ") on resource: " + resource); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private IRefreshMonitor safeInstallMonitor(RefreshProvider provider, IResource resource) {
@@ -264,9 +264,9 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		workspace.getPathVariableManager().addChangeListener(this);
 		workspace.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 		//adding the lifecycle listener twice does no harm
-		((Workspace)workspace).addLifecycleListener(this);
-		if (RefreshManager.DEBUG)
-			System.out.println(RefreshManager.DEBUG_PREFIX + " starting monitor manager."); //$NON-NLS-1$
+		((Workspace) workspace).addLifecycleListener(this);
+		if (Policy.DEBUG_AUTO_REFRESH)
+			Policy.debug(RefreshManager.DEBUG_PREFIX + " starting monitor manager."); //$NON-NLS-1$
 		//If not exclusively using polling, create a polling monitor and run it once, to catch 
 		//changes that occurred while the native monitor was turned off.
 		if (refreshNeeded)
@@ -287,8 +287,8 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 			}
 		}
 		registeredMonitors.clear();
-		if (RefreshManager.DEBUG)
-			System.out.println(RefreshManager.DEBUG_PREFIX + " stopping monitor manager."); //$NON-NLS-1$
+		if (Policy.DEBUG_AUTO_REFRESH)
+			Policy.debug(RefreshManager.DEBUG_PREFIX + " stopping monitor manager."); //$NON-NLS-1$
 		pollMonitor.cancel();
 	}
 
@@ -306,7 +306,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 			}
 		}
 		if (resource.getType() == IResource.PROJECT)
-			unmonitorLinkedContents((IProject)resource);
+			unmonitorLinkedContents((IProject) resource);
 	}
 
 	private void unmonitorLinkedContents(IProject project) {
@@ -336,7 +336,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 	}
 
 	public boolean visit(IResourceDelta delta) {
-		if (delta.getKind () == IResourceDelta.ADDED) {
+		if (delta.getKind() == IResourceDelta.ADDED) {
 			IResource resource = delta.getResource();
 			if (resource.isLinked())
 				monitor(resource);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,7 +76,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		if (Policy.DEBUG_BUILD_NEEDED)
 			Policy.debug("Auto-Build requested, needsBuild: " + needsBuild + " state: " + state + " delay: " + delay); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (needsBuild && Policy.DEBUG_BUILD_NEEDED_STACK && state != Job.RUNNING)
-			new RuntimeException("Build Needed").printStackTrace(); //$NON-NLS-1$
+			Policy.debug(new RuntimeException("Build needed")); //$NON-NLS-1$
 		//don't mess with the interrupt flag if the job is still running
 		if (state != Job.RUNNING)
 			setInterrupted(false);
@@ -120,7 +120,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		//schedule a rebuild immediately if build was implicitly canceled
 		if (interrupted) {
 			if (Policy.DEBUG_BUILD_INTERRUPT)
-				System.out.println("Scheduling rebuild due to interruption"); //$NON-NLS-1$
+				Policy.debug("Scheduling rebuild due to interruption"); //$NON-NLS-1$
 			setInterrupted(false);
 			schedule(computeScheduleDelay());
 		}
@@ -159,7 +159,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 			monitor.done();
 		}
 	}
-	
+
 	/**
 	 * Forces an autobuild to occur, even if nothing has changed since the last
 	 * build. This is used to force a build after a clean.
@@ -188,10 +188,8 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 				if (Job.getJobManager().currentJob() == this)
 					return;
 				setInterrupted(true);
-				if (interrupted && Policy.DEBUG_BUILD_INTERRUPT) {
-					System.out.println("Autobuild was interrupted:"); //$NON-NLS-1$
-					new Exception().fillInStackTrace().printStackTrace();
-				}
+				if (interrupted && Policy.DEBUG_BUILD_INTERRUPT)
+					Policy.debug(new RuntimeException("Autobuild was interrupted")); //$NON-NLS-1$
 				break;
 		}
 		//clear the autobuild avoidance flag if we were interrupted

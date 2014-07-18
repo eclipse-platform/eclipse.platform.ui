@@ -2360,7 +2360,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			String msg = "The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes."; //$NON-NLS-1$
 			Policy.log(new ResourceStatus(ICoreConstants.CRASH_DETECTED, msg));
 			if (Policy.DEBUG)
-				System.out.println(msg);
+				Policy.debug(msg);
 		}
 	}
 

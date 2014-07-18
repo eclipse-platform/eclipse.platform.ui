@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,7 +84,7 @@ public class HistoryStore2 implements IHistoryStore {
 	public synchronized IFileState addState(IPath key, IFileStore localFile, IFileInfo info, boolean moveContents) {
 		long lastModified = info.getLastModified();
 		if (Policy.DEBUG_HISTORY)
-			System.out.println("History: Adding state for key: " + key + ", file: " + localFile + ", timestamp: " + lastModified + ", size: " + localFile.fetchInfo().getLength()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			Policy.debug("History: Adding state for key: " + key + ", file: " + localFile + ", timestamp: " + lastModified + ", size: " + localFile.fetchInfo().getLength()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		if (!isValid(localFile, info))
 			return null;
 		UniversalUniqueIdentifier uuid = null;
@@ -180,7 +180,7 @@ public class HistoryStore2 implements IHistoryStore {
 			monitor.done();
 		}
 	}
-	
+
 	/*
 	 * Remove blobs from the blobStore. When the size of blobsToRemove exceeds the limit,
 	 * remove the given blobs from blobStore. If the limit is zero or negative, remove blobs
@@ -303,7 +303,7 @@ public class HistoryStore2 implements IHistoryStore {
 		long length = info.getLength();
 		boolean result = length <= description.getMaxFileStateSize();
 		if (Policy.DEBUG_HISTORY && !result)
-			System.out.println("History: Ignoring file (too large). File: " + localFile.toString() + //$NON-NLS-1$
+			Policy.debug("History: Ignoring file (too large). File: " + localFile.toString() + //$NON-NLS-1$
 					", size: " + length + //$NON-NLS-1$
 					", max: " + description.getMaxFileStateSize()); //$NON-NLS-1$
 		return result;

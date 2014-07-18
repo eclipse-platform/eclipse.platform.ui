@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.*;
 import org.eclipse.core.internal.dtree.DeltaDataTree;
 import org.eclipse.core.internal.resources.*;
@@ -827,15 +825,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 */
 	private void hookStartBuild(IBuildConfiguration[] configs, int trigger) {
 		building = true;
-		if (Policy.DEBUG_BUILD_STACK) {
-			StringWriter writer = new StringWriter();
-			writer.write("Starting build: " + debugTrigger(trigger) + " from:\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			new RuntimeException().fillInStackTrace().printStackTrace(new PrintWriter(writer));
-			String str = writer.toString();
-			if (str.endsWith("\n")) //$NON-NLS-1$
-				str = str.substring(0, str.length() - 2);
-			Policy.debug(str);
-		}
+		if (Policy.DEBUG_BUILD_STACK)
+			Policy.debug(new RuntimeException("Starting build: " + debugTrigger(trigger))); //$NON-NLS-1$
 		if (Policy.DEBUG_BUILD_INVOKING) {
 			overallTimeStamp = System.currentTimeMillis();
 			StringBuffer sb = new StringBuffer("Top-level build-start of: "); //$NON-NLS-1$

@@ -14,14 +14,16 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import org.eclipse.core.internal.preferences.PreferencesService;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.osgi.service.debug.DebugOptions;
+import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.osgi.framework.*;
 
 /**
@@ -334,6 +336,7 @@ public final class ResourcesPlugin extends Plugin {
 	private static Workspace workspace = null;
 
 	private ServiceRegistration<IWorkspace> workspaceRegistration;
+	private ServiceRegistration<DebugOptionsListener> debugRegistration;
 
 	/** 
 	 * Constructs an instance of this plug-in runtime class.
@@ -415,6 +418,11 @@ public final class ResourcesPlugin extends Plugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
+
+		// unregister debug options listener
+		debugRegistration.unregister();
+		debugRegistration = null;
+
 		if (workspace == null)
 			return;
 		workspaceRegistration.unregister();
@@ -435,6 +443,12 @@ public final class ResourcesPlugin extends Plugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+
+		// register debug options listener
+		Hashtable<String, String> properties = new Hashtable<String, String>(2);
+		properties.put(DebugOptions.LISTENER_SYMBOLICNAME, PI_RESOURCES);
+		debugRegistration = context.registerService(DebugOptionsListener.class, Policy.RESOURCES_DEBUG_OPTIONS_LISTENER, properties);
+
 		if (!new LocalMetaArea().hasSavedWorkspace()) {
 			constructWorkspace();
 		}
