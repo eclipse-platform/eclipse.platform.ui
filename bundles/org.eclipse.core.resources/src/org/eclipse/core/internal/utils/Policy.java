@@ -111,7 +111,7 @@ public class Policy {
 
 	/**
 	 * Print a debug message to the console. 
-	 * Pre-pend the message with the current date and the name of the current thread.
+	 * Prepend the message with the current date and the name of the current thread.
 	 */
 	public static void debug(String message) {
 		StringBuilder output = new StringBuilder();
@@ -125,7 +125,7 @@ public class Policy {
 
 	/**
 	 * Print a debug throwable to the console. 
-	 * Pre-pend the throwable with the current date and the name of the current thread.
+	 * Prepend the throwable with the current date and the name of the current thread.
 	 */
 	public static void debug(Throwable t) {
 		StringWriter writer = new StringWriter();
@@ -133,7 +133,7 @@ public class Policy {
 		String str = writer.toString();
 		if (str.endsWith("\n")) //$NON-NLS-1$
 			str = str.substring(0, str.length() - 2);
-		Policy.debug(str);
+		debug(str);
 	}
 
 	public static void log(int severity, String message, Throwable t) {
