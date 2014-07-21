@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2012 IBM Corporation and others.
+ *  Copyright (c) 2003, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -138,7 +138,11 @@ public class LockManager {
 			return;
 		try {
 			synchronized (tempLocks) {
-				tempLocks.lockAcquired(thread, lock);
+				try {
+					tempLocks.lockAcquired(thread, lock);
+				} catch (Exception e) {
+					throw createDebugException(tempLocks, e);
+				}
 			}
 		} catch (Exception e) {
 			handleInternalError(e);
@@ -155,7 +159,11 @@ public class LockManager {
 		try {
 			Deadlock found = null;
 			synchronized (tempLocks) {
-				found = tempLocks.lockWaitStart(thread, lock);
+				try {
+					found = tempLocks.lockWaitStart(thread, lock);
+				} catch (Exception e) {
+					throw createDebugException(tempLocks, e);
+				}
 			}
 			if (found == null)
 				return;
@@ -175,6 +183,16 @@ public class LockManager {
 		} catch (Exception e) {
 			handleInternalError(e);
 		}
+	}
+
+	private Exception createDebugException(DeadlockDetector tempLocks, Exception rootException) {
+		String debugString = null;
+		try {
+			debugString = tempLocks.toDebugString();
+		} catch (Exception e) {
+			//ignore failure to create the debug string
+		}
+		return new Exception(debugString, rootException);
 	}
 
 	/**
@@ -201,9 +219,8 @@ public class LockManager {
 	private void handleInternalError(Throwable t) {
 		try {
 			handleException(t);
-			handleException(new Exception(locks.toDebugString()));
-		} catch (Exception e2) {
-			//ignore failure to log or to create the debug string
+		} catch (Exception e) {
+			//ignore failure to log
 		}
 		//discard the deadlock detector for good
 		locks = null;
@@ -250,7 +267,11 @@ public class LockManager {
 			return;
 		try {
 			synchronized (tempLocks) {
-				tempLocks.lockReleasedCompletely(thread, rule);
+				try {
+					tempLocks.lockReleasedCompletely(thread, rule);
+				} catch (Exception e) {
+					throw createDebugException(tempLocks, e);
+				}
 			}
 		} catch (Exception e) {
 			handleInternalError(e);
@@ -266,7 +287,11 @@ public class LockManager {
 			return;
 		try {
 			synchronized (tempLocks) {
-				tempLocks.lockReleased(thread, lock);
+				try {
+					tempLocks.lockReleased(thread, lock);
+				} catch (Exception e) {
+					throw createDebugException(tempLocks, e);
+				}
 			}
 		} catch (Exception e) {
 			handleInternalError(e);
@@ -284,7 +309,11 @@ public class LockManager {
 			return;
 		try {
 			synchronized (tempLocks) {
-				tempLocks.lockWaitStop(thread, lock);
+				try {
+					tempLocks.lockWaitStop(thread, lock);
+				} catch (Exception e) {
+					throw createDebugException(tempLocks, e);
+				}
 			}
 		} catch (Exception e) {
 			handleInternalError(e);
