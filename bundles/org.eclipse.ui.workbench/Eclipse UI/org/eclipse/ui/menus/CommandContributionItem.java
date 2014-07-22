@@ -573,16 +573,10 @@ public class CommandContributionItem extends ContributionItem {
 		ToolItem item = (ToolItem) widget;
 
 		String text = label;
-		String tooltip = label;
-
 		if (text == null) {
 			if (command != null) {
 				try {
 					text = command.getCommand().getName();
-					tooltip = command.getCommand().getDescription();
-					if (tooltip == null || tooltip.trim().length() == 0) {
-						tooltip = text;
-					}
 				} catch (NotDefinedException e) {
 					StatusManager.getManager().handle(
 							StatusUtil.newStatus(IStatus.ERROR,
@@ -597,7 +591,7 @@ public class CommandContributionItem extends ContributionItem {
 			item.setText(text);
 		}
 
-		String toolTipText = getToolTipText(tooltip);
+		String toolTipText = getToolTipText(text);
 		item.setToolTipText(toolTipText);
 
 		if (item.getSelection() != checkedState) {
