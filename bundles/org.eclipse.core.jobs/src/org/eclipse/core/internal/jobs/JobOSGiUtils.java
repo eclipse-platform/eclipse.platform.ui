@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
+import java.util.Hashtable;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.osgi.service.debug.DebugOptions;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
+import org.eclipse.osgi.service.debug.DebugOptionsListener;
+import org.osgi.framework.*;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -28,7 +29,7 @@ import org.osgi.util.tracker.ServiceTracker;
  * @since org.eclipse.core.jobs 3.2
  */
 class JobOSGiUtils {
-	private ServiceTracker debugTracker = null;
+	private ServiceRegistration<DebugOptionsListener> debugRegistration = null;
 	private ServiceTracker bundleTracker = null;
 
 	private static final JobOSGiUtils singleton = new JobOSGiUtils();
@@ -57,37 +58,24 @@ class JobOSGiUtils {
 			return;
 		}
 
-		debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
-		debugTracker.open();
+		// register debug options listener
+		Hashtable<String, String> properties = new Hashtable<String, String>(2);
+		properties.put(DebugOptions.LISTENER_SYMBOLICNAME, JobManager.PI_JOBS);
+		debugRegistration = context.registerService(DebugOptionsListener.class, JobManager.getInstance(), properties);
 
 		bundleTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
 		bundleTracker.open();
 	}
 
 	void closeServices() {
-		if (debugTracker != null) {
-			debugTracker.close();
-			debugTracker = null;
+		if (debugRegistration != null) {
+			debugRegistration.unregister();
+			debugRegistration = null;
 		}
 		if (bundleTracker != null) {
 			bundleTracker.close();
 			bundleTracker = null;
 		}
-	}
-
-	public boolean getBooleanDebugOption(String option, boolean defaultValue) {
-		if (debugTracker == null) {
-			if (JobManager.DEBUG)
-				JobMessages.message("Debug tracker is not set"); //$NON-NLS-1$
-			return defaultValue;
-		}
-		DebugOptions options = (DebugOptions) debugTracker.getService();
-		if (options != null) {
-			String value = options.getOption(option);
-			if (value != null)
-				return value.equalsIgnoreCase("true"); //$NON-NLS-1$
-		}
-		return defaultValue;
 	}
 
 	/**

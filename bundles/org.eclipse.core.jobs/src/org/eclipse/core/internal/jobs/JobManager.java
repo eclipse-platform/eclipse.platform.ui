@@ -20,6 +20,8 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.osgi.service.debug.DebugOptions;
+import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -40,7 +42,7 @@ import org.eclipse.osgi.util.NLS;
  * 
  * @ThreadSafe
  */
-public class JobManager implements IJobManager {
+public class JobManager implements IJobManager, DebugOptionsListener {
 
 	/**
 	 * The unique identifier constant of this plug-in.
@@ -258,7 +260,6 @@ public class JobManager implements IJobManager {
 
 	private JobManager() {
 		instance = this;
-		initDebugOptions();
 		synchronized (lock) {
 			waiting = new JobQueue(false);
 			waitingThreadJobs = new JobQueue(false, false);
@@ -758,17 +759,6 @@ public class JobManager implements IJobManager {
 		return NLS.bind(message, Integer.toString(jobCount));
 	}
 
-	private void initDebugOptions() {
-		DEBUG = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_JOBS, false);
-		DEBUG_BEGIN_END = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_BEGIN_END, false);
-		DEBUG_YIELDING = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_YIELDING, false);
-		DEBUG_YIELDING_DETAILED = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_YIELDING_DETAILED, false);
-		DEBUG_DEADLOCK = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEADLOCK_ERROR, false);
-		DEBUG_LOCKS = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_LOCKS, false);
-		DEBUG_TIMING = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_JOBS_TIMING, false);
-		DEBUG_SHUTDOWN = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_SHUTDOWN, false);
-	}
-
 	/**
 	 * Returns whether the job manager is active (has not been shutdown).
 	 */
@@ -1033,6 +1023,18 @@ public class JobManager implements IJobManager {
 			}
 			return (Job) job;
 		}
+	}
+
+	@Override
+	public void optionsChanged(DebugOptions options) {
+		DEBUG = options.getBooleanOption(OPTION_DEBUG_JOBS, false);
+		DEBUG_BEGIN_END = options.getBooleanOption(OPTION_DEBUG_BEGIN_END, false);
+		DEBUG_YIELDING = options.getBooleanOption(OPTION_DEBUG_YIELDING, false);
+		DEBUG_YIELDING_DETAILED = options.getBooleanOption(OPTION_DEBUG_YIELDING_DETAILED, false);
+		DEBUG_DEADLOCK = options.getBooleanOption(OPTION_DEADLOCK_ERROR, false);
+		DEBUG_LOCKS = options.getBooleanOption(OPTION_LOCKS, false);
+		DEBUG_TIMING = options.getBooleanOption(OPTION_DEBUG_JOBS_TIMING, false);
+		DEBUG_SHUTDOWN = options.getBooleanOption(OPTION_SHUTDOWN, false);
 	}
 
 	/* (non-Javadoc)
