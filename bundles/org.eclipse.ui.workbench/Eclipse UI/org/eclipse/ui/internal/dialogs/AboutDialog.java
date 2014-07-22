@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440149
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.IProduct;
@@ -75,7 +75,7 @@ public class AboutDialog extends TrayDialog {
 
     private AboutBundleGroupData[] bundleGroupInfos;
 
-    private ArrayList images = new ArrayList();
+    private ArrayList<Image> images = new ArrayList<Image>();
 
     private AboutFeaturesButtonManager buttonManager = new AboutFeaturesButtonManager();
 
@@ -100,22 +100,19 @@ public class AboutDialog extends TrayDialog {
 
         // create a descriptive object for each BundleGroup
         IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
-        LinkedList groups = new LinkedList();
+		LinkedList<AboutBundleGroupData> groups = new LinkedList<AboutBundleGroupData>();
         if (providers != null) {
-			for (int i = 0; i < providers.length; ++i) {
-                IBundleGroup[] bundleGroups = providers[i].getBundleGroups();
-                for (int j = 0; j < bundleGroups.length; ++j) {
-					groups.add(new AboutBundleGroupData(bundleGroups[j]));
+			for (IBundleGroupProvider provider : providers) {
+                IBundleGroup[] bundleGroups = provider.getBundleGroups();
+                for (IBundleGroup bundleGroup : bundleGroups) {
+					groups.add(new AboutBundleGroupData(bundleGroup));
 				}
             }
 		}
-        bundleGroupInfos = (AboutBundleGroupData[]) groups
+        bundleGroupInfos = groups
                 .toArray(new AboutBundleGroupData[0]);
     }
 
-    /*
-     * (non-Javadoc) Method declared on Dialog.
-     */
     @Override
 	protected void buttonPressed(int buttonId) {
         switch (buttonId) {
@@ -140,16 +137,13 @@ public class AboutDialog extends TrayDialog {
 	public boolean close() {
         // dispose all images
         for (int i = 0; i < images.size(); ++i) {
-            Image image = (Image) images.get(i);
+            Image image = images.get(i);
             image.dispose();
         }
 
         return super.close();
     }
 
-    /*
-     * (non-Javadoc) Method declared on Window.
-     */
     @Override
 	protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
@@ -183,15 +177,6 @@ public class AboutDialog extends TrayDialog {
         b.setFocus();
     }
 
-    /**
-     * Creates and returns the contents of the upper part 
-     * of the dialog (above the button bar).
-     *
-     * Subclasses should overide.
-     *
-     * @param parent  the parent composite to contain the dialog area
-     * @return the dialog area control
-     */
     @Override
 	protected Control createDialogArea(Composite parent) {
          // brand the about box if there is product info
@@ -345,8 +330,9 @@ public class AboutDialog extends TrayDialog {
     		textComposite.addControlListener(new ControlAdapter() {
     			@Override
 				public void controlResized(ControlEvent e) {
-    				if (inresize[0])
-    					return;
+    				if (inresize[0]) {
+						return;
+					}
     				inresize[0] = true;
     				// required because of bugzilla report 4579
     				textComposite.layout(true);
@@ -433,8 +419,8 @@ public class AboutDialog extends TrayDialog {
         data.horizontalAlignment = GridData.FILL;
         featureContainer.setLayoutData(data);
 
-        for (int i = 0; i < bundleGroupInfos.length; i++) {
-			createFeatureButton(featureContainer, bundleGroupInfos[i]);
+        for (AboutBundleGroupData bundleGroupInfo : bundleGroupInfos) {
+			createFeatureButton(featureContainer, bundleGroupInfo);
 		}
     }
 
@@ -455,9 +441,6 @@ public class AboutDialog extends TrayDialog {
         button.setToolTipText(info.getProviderName());
         
         button.getAccessible().addAccessibleListener(new AccessibleAdapter(){
-        	/* (non-Javadoc)
-			 * @see org.eclipse.swt.accessibility.AccessibleAdapter#getName(org.eclipse.swt.accessibility.AccessibleEvent)
-			 */
 			@Override
 			public void getName(AccessibleEvent e) {
 				e.result = info.getProviderName();
@@ -480,11 +463,6 @@ public class AboutDialog extends TrayDialog {
         return button;
     }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-	 */
 	@Override
 	protected boolean isResizable() {
 		return true;
