@@ -322,8 +322,12 @@ public class WorkspaceTest extends ResourceTest {
 
 	public void testWorkingLocationDeletion_bug433061() throws Throwable {
 		// Only activate this test on platforms where the test is able to create a symbolic link.
-		if (!isAttributeSupported(EFS.ATTRIBUTE_SYMLINK) && !isWindowsVistaOrHigher())
+		if (isWindowsVistaOrHigher())
 			return;
+
+		if (!isAttributeSupported(EFS.ATTRIBUTE_SYMLINK))
+			return;
+
 		IProject project = getTestProject();
 		project.create(null, getMonitor());
 		IPath workingLocation = project.getWorkingLocation("org.eclipse.core.tests.resources");
