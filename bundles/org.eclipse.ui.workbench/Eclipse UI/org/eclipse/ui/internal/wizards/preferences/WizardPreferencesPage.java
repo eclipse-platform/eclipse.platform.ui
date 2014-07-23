@@ -369,9 +369,10 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		buttonComposite.setLayoutData(data);
 		buttonComposite.setFont(parentFont);
 		
-		selectAllButton = createButton(buttonComposite,
-				IDialogConstants.SELECT_ALL_ID,
-				PreferencesMessages.SelectionDialog_selectLabel, false);
+		selectAllButton = new Button(buttonComposite, SWT.PUSH);
+		selectAllButton.setText(PreferencesMessages.SelectionDialog_selectLabel);
+		selectAllButton.setData(new Integer(IDialogConstants.SELECT_ALL_ID));
+		setButtonLayoutData(selectAllButton);
 
 		SelectionListener listener = new SelectionAdapter() {
 			@Override
@@ -383,9 +384,10 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		selectAllButton.addSelectionListener(listener);
 		selectAllButton.setFont(parentFont);
 		
-		deselectAllButton = createButton(buttonComposite,
-				IDialogConstants.DESELECT_ALL_ID,
-				PreferencesMessages.SelectionDialog_deselectLabel, false);
+		deselectAllButton = new Button(buttonComposite, SWT.PUSH);
+		deselectAllButton.setText(PreferencesMessages.SelectionDialog_deselectLabel);
+		deselectAllButton.setData(new Integer(IDialogConstants.DESELECT_ALL_ID));
+		setButtonLayoutData(deselectAllButton);
 
 		listener = new SelectionAdapter() {
 			@Override
