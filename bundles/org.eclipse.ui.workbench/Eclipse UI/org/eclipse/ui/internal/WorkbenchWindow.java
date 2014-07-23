@@ -951,6 +951,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		if (!QUICK_ACCESS_ID.equals(control.getElementId())) {
 			return;
 		}
+		MWindow myWindow = modelService.getTopLevelWindowFor(control);
+		if (myWindow != model) {
+			return;
+		}
 		if (UIEvents.isADD(event)) {
 			if (UIEvents.contains(event, UIEvents.EventTags.NEW_VALUE,
 					IPresentationEngine.HIDDEN_EXPLICITLY)) {
