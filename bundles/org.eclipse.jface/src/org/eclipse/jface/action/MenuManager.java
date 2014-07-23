@@ -8,11 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 12116 [Contributions] widgets: MenuManager.setImageDescriptor() method needed
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440252
  *******************************************************************************/
 package org.eclipse.jface.action;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.ListenerList;
@@ -155,9 +155,6 @@ public class MenuManager extends ContributionManager implements IMenuManager {
         this.id = id;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IMenuManager#addMenuListener(org.eclipse.jface.action.IMenuListener)
-     */
     @Override
 	public void addMenuListener(IMenuListener listener) {
         listeners.add(listener);
@@ -235,18 +232,15 @@ public class MenuManager extends ContributionManager implements IMenuManager {
         }
 
         disposeOldImages();
-        
+
         IContributionItem[] items = getItems();
-        for (int i = 0; i < items.length; i++) {
-            items[i].dispose();
+        for (IContributionItem item : items) {
+            item.dispose();
         }
-        
+
         markDirty();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Composite)
-     */
     @Override
 	public void fill(Composite parent) {
     }
@@ -333,8 +327,8 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      */
     private void fireAboutToShow(IMenuManager manager) {
         Object[] listeners = this.listeners.getListeners();
-        for (int i = 0; i < listeners.length; ++i) {
-            ((IMenuListener) listeners[i]).menuAboutToShow(manager);
+        for (Object listener : listeners) {
+            ((IMenuListener) listener).menuAboutToShow(manager);
         }
     }
 
@@ -347,9 +341,8 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      */
     private void fireAboutToHide(IMenuManager manager) {
         final Object[] listeners = this.listeners.getListeners();
-        for (int i = 0; i < listeners.length; ++i) {
-        	final Object listener = listeners[i];
-			if (listener instanceof IMenuListener2) {
+        for (final Object listener : listeners) {
+        	if (listener instanceof IMenuListener2) {
 				final IMenuListener2 listener2 = (IMenuListener2) listener;
 				listener2.menuAboutToHide(manager);
 			}
@@ -359,7 +352,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
     /**
 	 * Returns the menu id. The menu id is used when creating a contribution
 	 * item for adding this menu as a sub menu of another.
-	 * 
+	 *
 	 * @return the menu id
 	 */
     @Override
@@ -730,15 +723,17 @@ public class MenuManager extends ContributionManager implements IMenuManager {
     }
 
     /**
-     * Incrementally builds the menu from the contribution items.
-     * This method leaves out double separators and separators in the first 
-     * or last position.
-     *
-     * @param force <code>true</code> means update even if not dirty,
-     *   and <code>false</code> for normal incremental updating
-     * @param recursive <code>true</code> means recursively update 
-     *   all submenus, and <code>false</code> means just this menu
-     */
+	 * Incrementally builds the menu from the contribution items. This method
+	 * leaves out double separators and separators in the first or last
+	 * position.
+	 *
+	 * @param force
+	 *            <code>true</code> means update even if not dirty, and
+	 *            <code>false</code> for normal incremental updating
+	 * @param recursive
+	 *            <code>true</code> means recursively update all submenus, and
+	 *            <code>false</code> means just this menu
+	 */
     protected void update(boolean force, boolean recursive) {
         if (isDirty() || force) {
             if (menuExist()) {
@@ -746,13 +741,13 @@ public class MenuManager extends ContributionManager implements IMenuManager {
                 IContributionItem[] items = getItems();
                 List<IContributionItem> clean = new ArrayList<IContributionItem>(items.length);
                 IContributionItem separator = null;
-                for (int i = 0; i < items.length; ++i) {
-                    IContributionItem ci = items[i];
+                for (IContributionItem item : items) {
+                    IContributionItem ci = item;
                     if (!isChildVisible(ci)) {
 						continue;
 					}
                     if (ci.isSeparator()) {
-                        // delay creation until necessary 
+						// delay creation until necessary
                         // (handles both adjacent separators, and separator at end)
                         separator = ci;
                     } else {
@@ -769,15 +764,15 @@ public class MenuManager extends ContributionManager implements IMenuManager {
                 // remove obsolete (removed or non active)
                 Item[] mi = getMenuItems();
 
-                for (int i = 0; i < mi.length; i++) {
-                    Object data = mi[i].getData();
+                for (Item element : mi) {
+                    Object data = element.getData();
 
                     if (data == null || !clean.contains(data)) {
-                        mi[i].dispose();
+                        element.dispose();
                     } else if (data instanceof IContributionItem
                             && ((IContributionItem) data).isDynamic()
                             && ((IContributionItem) data).isDirty()) {
-                        mi[i].dispose();
+                        element.dispose();
                     }
                 }
 
@@ -786,8 +781,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
                 int srcIx = 0;
                 int destIx = 0;
 
-                for (Iterator<IContributionItem> e = clean.iterator(); e.hasNext();) {
-                    IContributionItem src = e.next();
+                for (IContributionItem src : clean) {
                     IContributionItem dest;
 
                     // get corresponding item in SWT widget
@@ -844,8 +838,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
             // I am not dirty. Check if I must recursivly walk down the hierarchy.
             if (recursive) {
                 IContributionItem[] items = getItems();
-                for (int i = 0; i < items.length; ++i) {
-                    IContributionItem ci = items[i];
+                for (IContributionItem ci : items) {
                     if (ci instanceof IMenuManager) {
                         IMenuManager mm = (IMenuManager) ci;
                         if (isChildVisible(mm)) {
@@ -862,10 +855,10 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 	public void update(String property) {
         IContributionItem items[] = getItems();
 
-        for (int i = 0; i < items.length; i++) {
-			items[i].update(property);
+        for (IContributionItem item : items) {
+			item.update(property);
 		}
-        
+
         if (menu != null && !menu.isDisposed() && menu.getParentItem() != null) {
         	if (IAction.TEXT.equals(property)) {
                 String text = getOverrides().getText(this);
