@@ -26,6 +26,7 @@ import org.eclipse.ui.tests.navigator.NavigatorTestSuite;
 import org.eclipse.ui.tests.operations.OperationsTestSuite;
 import org.eclipse.ui.tests.preferences.PreferencesTestSuite;
 import org.eclipse.ui.tests.progress.ProgressTestSuite;
+import org.eclipse.ui.tests.services.ServicesTestSuite;
 import org.eclipse.ui.tests.themes.ThemesTestSuite;
 
 /**
@@ -77,7 +78,7 @@ public class UiTestSuite extends TestSuite {
 		addTest(new FieldAssistTestSuite());
 		// addTest(new MultiEditorTestSuite());
 		// addTest(new TestSuite(FilteredTreeTests.class));
-		// addTest(new ServicesTestSuite());
+		addTest(new ServicesTestSuite());
 		// addTest(new StatusHandlingTestSuite());
 		// addTest(OpenSystemInPlaceEditorTest.suite());
 		addTest(new ProgressTestSuite());

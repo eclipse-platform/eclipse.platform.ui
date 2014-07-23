@@ -361,6 +361,7 @@ public final class EvaluationService implements IEvaluationService {
 			}
 		}
 		endSourceChange(sourceNames);
+		eventBroker.post(UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC, UIEvents.ALL_ELEMENT_ID);
 	}
 
 	/**
