@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,6 +86,84 @@ public class DynamicMenuContributionItem extends ContributionItem {
 			return loadedDynamicContribution.isDirty();
 		}
 		return super.isDirty();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.ContributionItem#isEnabled()
+	 */
+	@Override
+	public boolean isEnabled() {
+		if (loadedDynamicContribution != null) {
+			return loadedDynamicContribution.isEnabled();
+		}
+		return super.isEnabled();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.ContributionItem#isGroupMarker()
+	 */
+	@Override
+	public boolean isGroupMarker() {
+		if (loadedDynamicContribution != null) {
+			return loadedDynamicContribution.isGroupMarker();
+		}
+		return super.isGroupMarker();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.ContributionItem#isSeparator()
+	 */
+	@Override
+	public boolean isSeparator() {
+		if (loadedDynamicContribution != null) {
+			return loadedDynamicContribution.isSeparator();
+		}
+		return super.isSeparator();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.ContributionItem#isVisible()
+	 */
+	@Override
+	public boolean isVisible() {
+		if (loadedDynamicContribution != null) {
+			return loadedDynamicContribution.isVisible();
+		}
+		return super.isVisible();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.ContributionItem#saveWidgetState()
+	 */
+	@Override
+	public void saveWidgetState() {
+		if (loadedDynamicContribution != null) {
+			loadedDynamicContribution.saveWidgetState();
+		}
+		super.saveWidgetState();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.ContributionItem#setVisible(boolean)
+	 */
+	@Override
+	public void setVisible(boolean visible) {
+		if (loadedDynamicContribution != null) {
+			loadedDynamicContribution.setVisible(visible);
+		}
+		super.setVisible(visible);
 	}
 
 	/*
