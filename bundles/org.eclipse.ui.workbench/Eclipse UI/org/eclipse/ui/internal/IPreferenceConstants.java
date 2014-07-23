@@ -260,4 +260,19 @@ public interface IPreferenceConstants {
 	 */
 	public static final String WORKBENCH_SAVE_INTERVAL = "WORKBENCH_SAVE_INTERVAL"; //$NON-NLS-1$
 
+	/**
+	 * This preference is the threshold value to determine whether a document is
+	 * large or not. When the user tries to open a file larger than the
+	 * threshold, then EditorSelectionDialog will be opened, suggesting the user
+	 * to open with an external editor.
+	 * <p>
+	 * This preference is a <code>long</code> value that represents the
+	 * threshold in bytes. The default value is <code>0</code> meaning no
+	 * prompting on editor opening.
+	 * </p>
+	 *
+	 * @since 3.7
+	 */
+	public static final String LARGE_DOC_SIZE_FOR_EDITORS = "LARGE_DOC_SIZE_FOR_EDITORS"; //$NON-NLS-1$
+
 }
