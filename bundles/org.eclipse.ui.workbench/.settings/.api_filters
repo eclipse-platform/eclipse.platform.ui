@@ -1,4 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.ui.workbench" version="2">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.workbench" version="2">
+    <resource path="Eclipse UI/org/eclipse/ui/dialogs/EditorSelectionDialog.java" type="org.eclipse.ui.dialogs.EditorSelectionDialog">
+        <filter id="1192230914">
+            <message_arguments>
+                <message_argument value="3.7"/>
+                <message_argument value="3.107"/>
+                <message_argument value="STORE_ID_INTERNAL_EXTERNAL"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="Eclipse UI/org/eclipse/ui/internal/themes/WorkbenchThemeManager.java" type="org.eclipse.ui.internal.themes.WorkbenchThemeManager">
         <filter id="640712815">
             <message_arguments>
