@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -416,11 +416,6 @@ public class FilteredTree extends Composite {
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		treeViewer.getControl().setLayoutData(data);
 		treeViewer.getControl().addDisposeListener(new DisposeListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-			 */
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				refreshJob.cancel();
@@ -638,11 +633,6 @@ public class FilteredTree extends Composite {
 		filterText = doCreateFilterText(parent);
 		filterText.getAccessible().addAccessibleListener(
 				new AccessibleAdapter() {
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.swt.accessibility.AccessibleListener#getName(org.eclipse.swt.accessibility.AccessibleEvent)
-					 */
 					@Override
 					public void getName(AccessibleEvent e) {
 						String filterTextString = filterText.getText();
@@ -691,11 +681,6 @@ public class FilteredTree extends Composite {
 				});
 
 		filterText.addFocusListener(new FocusAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
-			 */
 			@Override
 			public void focusGained(FocusEvent e) {
 				if (!useNewLook) {
@@ -719,11 +704,6 @@ public class FilteredTree extends Composite {
 				}
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.FocusAdapter#focusLost(org.eclipse.swt.events.FocusEvent)
-			 */
 			@Override
 			public void focusLost(FocusEvent e) {
 				if (!useNewLook) {
@@ -738,12 +718,6 @@ public class FilteredTree extends Composite {
 
 		if (useNewLook) {
 			filterText.addMouseListener(new MouseAdapter() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see
-				 * org.eclipse.swt.events.MouseAdapter#mouseDown(org.eclipse.swt.events.MouseEvent)
-				 */
 				@Override
 				public void mouseDown(MouseEvent e) {
 					if (filterText.getText().equals(initialText)) {
@@ -756,11 +730,6 @@ public class FilteredTree extends Composite {
 		}
 
 		filterText.addKeyListener(new KeyAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
-			 */
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// on a CR we want to transfer focus to the list
@@ -787,11 +756,6 @@ public class FilteredTree extends Composite {
 		});
 
 		filterText.addModifyListener(new ModifyListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
-			 */
 			@Override
 			public void modifyText(ModifyEvent e) {
 				textChanged();
@@ -803,11 +767,6 @@ public class FilteredTree extends Composite {
 		// pressed)
 		if ((filterText.getStyle() & SWT.ICON_CANCEL) != 0) {
 			filterText.addSelectionListener(new SelectionAdapter() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.swt.events.SelectionAdapter#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-				 */
 				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 					if (e.detail == SWT.ICON_CANCEL)
@@ -936,11 +895,6 @@ public class FilteredTree extends Composite {
 			filterToolBar.createControl(parent);
 
 			IAction clearTextAction= new Action("", IAction.AS_PUSH_BUTTON) {//$NON-NLS-1$
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.jface.action.Action#run()
-				 */
 				@Override
 				public void run() {
 					clearText();
@@ -1148,16 +1102,16 @@ public class FilteredTree extends Composite {
 	}
 
 	/**
-	 * Sets whetther this filtetered tree is used to make quick selections. In
-	 * this mode the first match in the tree is automatically selected while
+	 * Sets whether this filtered tree is used to make quick selections. In this
+	 * mode the first match in the tree is automatically selected while
 	 * filtering and the 'Enter' key is not used to move the focus to the tree.
 	 * <p>
 	 * By default, this is set to <code>false</code>.
 	 * </p>
 	 * 
 	 * @param enabled
-	 *            <code>true</code> if this filtetered tree is used to make
-	 *            quick selections, <code>false</code> otherwise
+	 *            <code>true</code> if this filtered tree is used to make quick
+	 *            selections, <code>false</code> otherwise
 	 * @since 3.105
 	 */
 	public void setQuickSelectionMode(boolean enabled) {
