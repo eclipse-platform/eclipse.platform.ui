@@ -31,9 +31,9 @@ package org.eclipse.debug.core.model;
  * Clients contributing step filters must implement this interface.
  * </p>
  *
- * @since 3.9
+ * @since 3.10
  * @see org.eclipse.debug.core.model.IStep
- *
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IStepFilter {
 

@@ -18,6 +18,7 @@ import org.eclipse.debug.core.model.IStepFilter;
  * Manage step filter extensions.
  *
  * @see IConfigurationElementConstants
+ * @since 3.10
  */
 public class StepFilter {
 

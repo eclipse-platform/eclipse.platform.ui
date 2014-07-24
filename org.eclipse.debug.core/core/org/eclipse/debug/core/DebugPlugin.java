@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Kosyakov (Itemis AG) - Bug 438621 - [step filtering] Provide an extension point to enhance methods step filtering.
  *******************************************************************************/
 package org.eclipse.debug.core;
 
@@ -214,7 +215,7 @@ public class DebugPlugin extends Plugin {
 	 * Simple identifier constant (value <code>"stepFilters"</code>) for the
 	 * step filters extension point.
 	 *
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public static final String EXTENSION_POINT_STEP_FILTERS = "stepFilters"; //$NON-NLS-1$
 
@@ -762,7 +763,7 @@ public class DebugPlugin extends Plugin {
 		if (config != null) {
 			try {
 				processFactoryID= config.getAttribute(ATTR_PROCESS_FACTORY_ID, (String)null);
-			} catch (CoreException e) {
+			} catch (@SuppressWarnings("unused") CoreException e) {
 			}
 		}
 		if (processFactoryID != null) {
@@ -1583,7 +1584,7 @@ public class DebugPlugin extends Plugin {
 	 * @param modelIdentifier the model identifier
 	 * @return step filters that have been contributed for the given model
 	 *         identifier, possibly an empty collection
-	 * @since 3.9
+	 * @since 3.10
 	 * @see org.eclipse.debug.core.model.IStepFilter
 	 */
 	public static IStepFilter[] getStepFilters(String modelIdentifier) {
