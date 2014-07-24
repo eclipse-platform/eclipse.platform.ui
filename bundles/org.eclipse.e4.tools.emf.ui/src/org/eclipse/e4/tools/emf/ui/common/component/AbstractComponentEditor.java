@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Marco Descher <marco@descher.at> - Bug 422465
- *     Steven Spungin <steven@spungin.tv> - Bug 437951
+ *     Steven Spungin <steven@spungin.tv> - Bug 437951, Bug 439709
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common.component;
 
@@ -135,7 +135,8 @@ public abstract class AbstractComponentEditor {
 			generator.stopGenerating();
 			generator = null;
 		}
-		return doGetEditor(parent, object);
+		editorControl = doGetEditor(parent, object);
+		return editorControl;
 	}
 
 	protected abstract Composite doGetEditor(Composite parent, Object object);
