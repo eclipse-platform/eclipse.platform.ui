@@ -621,13 +621,6 @@ public class FilteredTree extends Composite {
 		filterText = doCreateFilterText(parent);
 		filterText.getAccessible().addAccessibleListener(
 				new AccessibleAdapter() {
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see
-					 * org.eclipse.swt.accessibility.AccessibleListener#getName
-					 * (org.eclipse.swt.accessibility.AccessibleEvent)
-					 */
 					@Override
 					public void getName(AccessibleEvent e) {
 						String filterTextString = filterText.getText();
