@@ -5,7 +5,7 @@ Bundle-SymbolicName: com.google.code.atinject.tck
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: GOOGLE
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Require-Bundle: org.junit
+Require-Bundle: org.junit;bundle-version="3.8.2"
 Export-Package: org.atinject.tck,
  org.atinject.tck.auto;x-internal:=true,
  org.atinject.tck.auto.accessories;x-internal:=true
