@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Remain BV and others
+ * Copyright (c) 2012, 2014 Remain BV and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,13 @@
  * Contributors:
  *     Wim Jongman <wim.jongman@remainsoftware.com> - initial API and implementation
  *     Steven Spungin <steve@spungin.tv> -Bug 439284 - [model editor] make list a combo with autocomplete for add part descriptor
+ *     Toni Umbreit - Bug 440289
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.uistructure;
 
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.tools.emf.ui.common.ComboViewerAutoComplete;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
@@ -31,9 +31,9 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * A viewer with buttons.
- * 
+ *
  * @author wim.jongman@remainsoftware.com
- * 
+ *
  */
 public class ViewerElement {
 
@@ -112,7 +112,7 @@ public class ViewerElement {
 	/**
 	 * Returns the button that removes an element from the list. Use it to add
 	 * your {@link SelectionListener} to it.
-	 * 
+	 *
 	 * @return
 	 */
 	public Button getButtonRemove() {
@@ -122,7 +122,7 @@ public class ViewerElement {
 	/**
 	 * Returns the button that adds an element to the list. Use it to add your
 	 * {@link SelectionListener} to it.
-	 * 
+	 *
 	 * @return
 	 */
 	public Button getButtonAdd() {
@@ -132,7 +132,7 @@ public class ViewerElement {
 	/**
 	 * Returns the button that moves an element down in the list. Use it to add
 	 * your {@link SelectionListener} to it.
-	 * 
+	 *
 	 * @return
 	 */
 	public Button getButtonDown() {
@@ -142,7 +142,7 @@ public class ViewerElement {
 	/**
 	 * Returns the button that moves an element up in the list. Use it to add
 	 * your {@link SelectionListener} to it.
-	 * 
+	 *
 	 * @return
 	 */
 	public Button getButtonUp() {
@@ -159,15 +159,13 @@ public class ViewerElement {
 		buttonCompTopLayout.marginHeight = 0;
 		buttonCompTop.setLayout(buttonCompTopLayout);
 
-		dropDown = new ComboViewer(buttonCompTop, SWT.READ_ONLY | SWT.SIMPLE);
+		dropDown = new ComboViewer(buttonCompTop, SWT.READ_ONLY | SWT.DROP_DOWN);
 		dropDown.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-
-		ComboViewerAutoComplete autocomplete = new ComboViewerAutoComplete(dropDown);
 
 		addButton = new Button(buttonCompTop, SWT.PUSH | SWT.FLAT);
 		addButton.setImage(editor.createImage(ResourceProvider.IMG_Obj16_table_add));
 		addButton.setText(Messages.ModelTooling_Common_AddEllipsis);
-		addButton.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		addButton.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 
 	}
 
@@ -178,7 +176,7 @@ public class ViewerElement {
 	/**
 	 * Creates and returns a new instance of this class based on the supplied
 	 * context.
-	 * 
+	 *
 	 * @param parentContext
 	 * @param parent
 	 * @param reference
