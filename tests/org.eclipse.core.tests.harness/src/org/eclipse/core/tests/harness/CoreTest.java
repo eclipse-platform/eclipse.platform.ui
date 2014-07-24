@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *	IBM Corporation - initial API and implementation
  *	Martin Oberhuber (Wind River) - [232426] createSymLink() method
  *	Martin Oberhuber (Wind River) - [335864] ResourceAttributeTest fails on Win7
+ *	Sergey Prigogin (Google) - [440283] Modify symlink tests to run on Windows with or without administrator privileges
  *******************************************************************************/
 package org.eclipse.core.tests.harness;
 
@@ -36,6 +37,7 @@ import org.osgi.framework.Version;
  * @since 3.1
  */
 public class CoreTest extends TestCase {
+	private static Boolean canCreateSymLinks;
 
 	/** counter for generating unique random file system locations */
 	protected static int nextLocationCounter = 0;
@@ -201,29 +203,30 @@ public class CoreTest extends TestCase {
 	}
 
 	/**
-	 * Create a symbolic link.
-	 * Should only be called on Platforms where symbolic links can actually
+	 * Creates a symbolic link.
+	 * Should only be called on platforms where symbolic links can actually
 	 * be created, i.e. an "ln" command is available.
-	 * @param basedir folder in which the symbolic link should be created. 
+	 * @param basedir folder in which the symbolic link should be created
 	 * @param linkName name of the symbolic link
-	 * @param linkTgt target to which the symbolic link should point
+	 * @param linkTarget target to which the symbolic link should point
 	 * @param isDir <code>true</code> if the link should point to a folder
+	 * @throws AssertionFailedError if creation of the symbolic link failed
 	 */
-	protected void createSymLink(File basedir, String linkName, String linkTgt, boolean isDir) {
-		//Deliberately use an empty environment to make the test reproducible
+	protected void createSymLink(File basedir, String linkName, String linkTarget, boolean isDir) {
+		// Deliberately use an empty environment to make the test reproducible.
 		String[] envp = {};
 		try {
 			Process p;
 			if (isWindowsVistaOrHigher()) {
 				if (isDir) {
-					String[] cmd = {"cmd", "/c", "mklink", "/d", linkName, linkTgt};
+					String[] cmd = {"cmd", "/c", "mklink", "/d", linkName, linkTarget};
 					p = Runtime.getRuntime().exec(cmd, envp, basedir);
 				} else {
-					String[] cmd = {"cmd", "/c", "mklink", linkName, linkTgt};
+					String[] cmd = {"cmd", "/c", "mklink", linkName, linkTarget};
 					p = Runtime.getRuntime().exec(cmd, envp, basedir);
 				}
 			} else {
-				String[] cmd = {"ln", "-s", linkTgt, linkName};
+				String[] cmd = {"ln", "-s", linkTarget, linkName};
 				p = Runtime.getRuntime().exec(cmd, envp, basedir);
 			}
 			int exitcode = p.waitFor();
@@ -236,6 +239,29 @@ public class CoreTest extends TestCase {
 		} catch (InterruptedException e) {
 			fail("createSymLink", e);
 		}
+	}
+
+	/**
+	 * Checks whether it is possible for a test to create a symbolic link.
+	 *
+	 * @return <code>true</code> if symbolic links can be created by a test
+	 */
+	protected boolean canCreateSymLinks() {
+		if (canCreateSymLinks == null) {
+			IPath tempDir = getTempDir();
+			String linkName = FileSystemHelper.getRandomLocation(tempDir).lastSegment();
+			try {
+				// Try to create a symlink.
+				createSymLink(tempDir.toFile(), linkName, "testTarget", false);
+				// Clean up if the link was created.
+				new File(tempDir.toFile(), linkName).delete();
+				canCreateSymLinks = Boolean.TRUE;
+			} catch (AssertionFailedError e) {
+				// This exception indicates that creation of the symlink failed.
+				canCreateSymLinks = Boolean.FALSE;
+			}
+		}
+		return canCreateSymLinks.booleanValue();
 	}
 
 	protected void ensureDoesNotExistInFileSystem(java.io.File file) {
@@ -334,7 +360,7 @@ public class CoreTest extends TestCase {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Test if running on Windows Vista or higher.
 	 * @return <code>true</code> if running on Windows Vista or higher.
@@ -342,7 +368,7 @@ public class CoreTest extends TestCase {
 	protected static boolean isWindowsVistaOrHigher() {
 		return isWindowsMinVersion(6, 0, 0);
 	}
-	
+
 	/**
 	 * Copy the data from the input stream to the output stream.
 	 * Close both streams when finished.
