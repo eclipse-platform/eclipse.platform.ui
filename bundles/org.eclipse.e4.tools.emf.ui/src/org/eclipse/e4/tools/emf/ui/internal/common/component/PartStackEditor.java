@@ -103,13 +103,13 @@ public class PartStackEditor extends AbstractComponentEditor {
 				handleAddChild(BasicPackageImpl.Literals.PART);
 			}
 		});
-		actions.add(new Action(Messages.PartStackEditor_AddPlaceholder, createImageDescriptor(ResourceProvider.IMG_Placeholder)) {
+		actions.add(new Action(Messages.PartStackEditor_AddCompositePart, createImageDescriptor(ResourceProvider.IMG_PartSashContainer)) {
 			@Override
 			public void run() {
-				handleAddChild(AdvancedPackageImpl.Literals.PLACEHOLDER);
+				handleAddChild(BasicPackageImpl.Literals.COMPOSITE_PART);
 			}
 		});
-		actions.add(new Action(Messages.PartStackEditor_AddCompositePart, createImageDescriptor(ResourceProvider.IMG_PartSashContainer)) {
+		actions.add(new Action(Messages.PartStackEditor_AddPlaceholder, createImageDescriptor(ResourceProvider.IMG_Placeholder)) {
 			@Override
 			public void run() {
 				handleAddChild(AdvancedPackageImpl.Literals.PLACEHOLDER);
