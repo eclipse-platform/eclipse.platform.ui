@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.e4.ui.workbench" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.e4.ui.workbench" id="org.eclipse.e4.workbench.model.definition.enrichment" name="Model definition extensions"/>
+         <meta.schema plugin="org.eclipse.e4.ui.workbench" id="model.definition.enrichment" name="Model definition extensions"/>
       </appInfo>
       <documentation>
          &lt;strong&gt;This is not an API. The schema for this extension point is not frozen and might change in a non-backward compatible way in the future.&lt;/strong&gt;
@@ -81,9 +81,9 @@ To find and create a custom UI model element via the EModelService#createModelEl
          The following is an example to register a model definiton enrichment:
 
 &lt;extension
-	 point=&quot;org.eclipse.e4.workbench.model.definition.enrichment&quot;&gt;
+  point=&quot;org.eclipse.e4.workbench.model.definition.enrichment&quot;&gt;
   &lt;definitionEnrichment
-		ePackageNS=&quot;http://www.eclipse.org/ui/2010/UIModel/application/ui&quot;&gt;
+  ePackageNS=&quot;http://www.eclipse.org/ui/2010/UIModel/application/ui&quot;&gt;
   &lt;/definitionEnrichment&gt;
 &lt;/extension&gt;
       </documentation>
