@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.e4.ui.progress.internal;
 
@@ -416,20 +417,35 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 
 		setOpenOnRun(false);
 		aboutToRun();
+		
+		final Object jobIsDone = new Object();
+		final JobChangeAdapter jobListener = new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				synchronized (jobIsDone) {
+					jobIsDone.notify();
+				}
+			}
+		};
+		job.addJobChangeListener(jobListener);
+		
 		// start with a quick busy indicator. Lock the UI as we
 		// want to preserve modality
 		BusyIndicator.showWhile(getDisplay(),
 				new Runnable() {
 					public void run() {
 						try {
-							Thread
-									.sleep(ProgressManagerUtil.SHORT_OPERATION_TIME);
+							synchronized (jobIsDone) {
+								if (job.getState() != Job.NONE) {
+									jobIsDone.wait(ProgressManagerUtil.SHORT_OPERATION_TIME);
+								}
+							}
 						} catch (InterruptedException e) {
 							// Do not log as this is a common operation from the
 							// lock listener
 						}
 					}
 				});
+		job.removeJobChangeListener(jobListener);
 
 		Job openJob = new UIJob(
 				ProgressMessages.ProgressMonitorFocusJobDialog_UserDialogJob) {
