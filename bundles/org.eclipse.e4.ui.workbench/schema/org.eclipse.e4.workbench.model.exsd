@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.e4.ui.workbench" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.e4.ui.workbench" id="org.eclipse.e4.workbench.model" name="Model extensions"/>
+         <meta.schema plugin="org.eclipse.e4.ui.workbench" id="model" name="Model extensions"/>
       </appInfo>
       <documentation>
          &lt;strong&gt;This is not an API. The schema for this extension point is not frozen and might change in a non-backward compatible way in the future.&lt;/strong&gt;
@@ -215,7 +215,7 @@ Whenever possible, the model extensions of dependent bundles are processed befor
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2010, 2012 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2010, 2014 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 
