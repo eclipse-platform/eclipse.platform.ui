@@ -4,15 +4,15 @@
         <filter comment="Bug 430640: API Tools errors in org.eclipse.core.runtime with 4.3.2 as baseline" id="305422471">
             <message_arguments>
                 <message_argument value="javax.annotation.ManagedBean"/>
-                <message_argument value="org.eclipse.core.runtime_3.9.100"/>
+                <message_argument value="org.eclipse.core.runtime_3.10.0"/>
             </message_arguments>
         </filter>
     </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.osgi.event.BatchBundleListener">
-        <filter comment="Bug 407302: Remove org.eclipse.osgi.event API package" id="305422471">
+    <resource path="META-INF/MANIFEST.MF" type="javax.annotation.Priority">
+        <filter comment="Bug 430640: API Tools errors in org.eclipse.core.runtime with 4.3.2 as baseline" id="305422471">
             <message_arguments>
-                <message_argument value="org.eclipse.osgi.event.BatchBundleListener"/>
-                <message_argument value="org.eclipse.core.runtime_3.9.100"/>
+                <message_argument value="javax.annotation.Priority"/>
+                <message_argument value="org.eclipse.core.runtime_3.10.0"/>
             </message_arguments>
         </filter>
     </resource>
