@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Marco Descher <marco@descher.at> - Bug 389063, Bug 398865, Bug 398866, Bug 405471
  *     Sopot Cela <sopotcela@gmail.com>
+ *     Steven Spungin <steven@spungin.tv> - Bug 437747
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -420,6 +421,11 @@ MenuManagerEventHelper.getInstance()
 			ContributionRecord record = entry.getValue();
 			if (disposedRecords.contains(record))
 				iterator.remove();
+		}
+
+		MenuManager manager = getManager(menuModel);
+		if (manager != null) {
+			manager.markDirty();
 		}
 	}
 
