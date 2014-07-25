@@ -708,4 +708,8 @@ public class Messages {
 	public String CompositePartEditor_SelectedElement;
 	public String CompositePartEditor_ContainerData;
 	public String CompositePartEditor_Controls;
+	public String CompositePartEditor_LabelLabel;
+	public String CompositePartEditor_Tooltip;
+	public String CompositePartEditor_IconURI;
+	public String CompositePartEditor_IconURI_Tooltip;
 }
