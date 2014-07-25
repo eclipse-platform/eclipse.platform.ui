@@ -684,11 +684,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			deltaCache.cache(project.getFullPath(), currentLastBuiltTree, currentTree, result);
 			if (Policy.DEBUG_BUILD_FAILURE && result == null)
 				Policy.debug("Build: no delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			if (Policy.DEBUG_BUILD_DELTA) {
-				Policy.debug("Finished computing delta, time: " + (System.currentTimeMillis() - startTime) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
-				// Debug the delta
-				Policy.debug(((ResourceDelta) result).toDebugString());
-			}
+			if (Policy.DEBUG_BUILD_DELTA)
+				Policy.debug("Finished computing delta, time: " + (System.currentTimeMillis() - startTime) + "ms" + ((ResourceDelta) result).toDeepDebugString()); //$NON-NLS-1$ //$NON-NLS-2$
 			return result;
 		} finally {
 			lock.release();
