@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Dirk Fauth <dirk.fauth@googlemail.com> - initial API and implementation
+ *    Fabian Miehe - Bug 440435
  *******************************************************************************/
 package org.eclipse.e4.ui.internal;
 
@@ -23,9 +24,11 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.osgi.service.log.LogService;
 
 /**
@@ -117,6 +120,15 @@ public class LocaleChangeServiceImpl implements ILocaleChangeService {
 				for (MTrimBar trimBar : ((MTrimmedWindow) element).getTrimBars()) {
 					trimBar.updateLocalization();
 					updateLocalization(trimBar.getChildren());
+				}
+			}
+
+			if (element instanceof MPart) {
+				MPart mPart = (MPart) element;
+				MToolBar toolbar = mPart.getToolbar();
+				if (toolbar != null && toolbar.getChildren() != null) {
+					toolbar.updateLocalization();
+					updateLocalization(toolbar.getChildren());
 				}
 			}
 
