@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555, Bug 436889, Bug 437372
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555, Bug 436889, Bug 437372, Bug 440469
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
@@ -237,69 +237,79 @@ public class ListTab implements IViewEObjects {
 	// load custom column and filter settings
 	private void loadSettings() {
 		IEclipsePreferences pref = InstanceScope.INSTANCE.getNode("org.eclipse.e4.tools.emf.ui"); //$NON-NLS-1$
+
+		boolean restoreColumns = pref.getBoolean("list-tab-remember-columns", false); //$NON-NLS-1$
+		boolean restoreFilters = pref.getBoolean("list-tab-remember-filters", false); //$NON-NLS-1$
+		if (!restoreColumns && !restoreFilters) {
+			return;
+		}
+
 		String xml = pref.get("list-tab-xml", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (E.notEmpty(xml)) {
 			try {
 				Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
 				XPath xpath = XPathFactory.newInstance().newXPath();
 				NodeList list;
-
-				// restore columns and column widths
-				list = (NodeList) xpath.evaluate("//columns/column", doc, XPathConstants.NODESET); //$NON-NLS-1$
-				for (int i = 0; i < list.getLength(); i++) {
-					Element ele = (Element) list.item(i);
-					TableColumn col;
-					String colName = xpath.evaluate("attribute/text()", ele); //$NON-NLS-1$
-					if (colName.isEmpty()) {
-						continue;
-					}
-					col = requiredColumns.get(colName);
-					if (col == null) {
-						col = addColumn(colName).getTableViewerColumn().getColumn();
-					}
-
-					// move it to the end of the list.
-					int currentIndex = TableViewerUtil.getVisibleColumnIndex(tvResults, col);
-					int[] order = tvResults.getTable().getColumnOrder();
-					for (int idx = 0; idx < order.length; idx++) {
-						if (order[idx] > currentIndex) {
-							order[idx]--;
-						} else if (order[idx] == currentIndex) {
-							order[idx] = order.length - 1;
+				if (restoreColumns) {
+					// restore columns and column widths
+					list = (NodeList) xpath.evaluate("//columns/column", doc, XPathConstants.NODESET); //$NON-NLS-1$
+					for (int i = 0; i < list.getLength(); i++) {
+						Element ele = (Element) list.item(i);
+						TableColumn col;
+						String colName = xpath.evaluate("attribute/text()", ele); //$NON-NLS-1$
+						if (colName.isEmpty()) {
+							continue;
 						}
-					}
-					tvResults.getTable().setColumnOrder(order);
+						col = requiredColumns.get(colName);
+						if (col == null) {
+							col = addColumn(colName).getTableViewerColumn().getColumn();
+						}
 
-					//					if ("Item".equals(colName)) { //$NON-NLS-1$
-					// col = colItem;
-					//					} else if ("Item".equals(colName)) { //$NON-NLS-1$
-					// col = colItem;
-					// }
+						// move it to the end of the list.
+						int currentIndex = TableViewerUtil.getVisibleColumnIndex(tvResults, col);
+						int[] order = tvResults.getTable().getColumnOrder();
+						for (int idx = 0; idx < order.length; idx++) {
+							if (order[idx] > currentIndex) {
+								order[idx]--;
+							} else if (order[idx] == currentIndex) {
+								order[idx] = order.length - 1;
+							}
+						}
+						tvResults.getTable().setColumnOrder(order);
 
-					String sWidth = xpath.evaluate("width/text()", ele); //$NON-NLS-1$
-					try {
-						col.setWidth(Integer.parseInt(sWidth));
-					} catch (Exception e) {
+						//					if ("Item".equals(colName)) { //$NON-NLS-1$
+						// col = colItem;
+						//					} else if ("Item".equals(colName)) { //$NON-NLS-1$
+						// col = colItem;
+						// }
+
+						String sWidth = xpath.evaluate("width/text()", ele); //$NON-NLS-1$
+						try {
+							col.setWidth(Integer.parseInt(sWidth));
+						} catch (Exception e) {
+						}
 					}
 				}
 
-				// restore filters
-				list = (NodeList) xpath.evaluate("//filters/filter", doc, XPathConstants.NODESET); //$NON-NLS-1$
-				for (int i = 0; i < list.getLength(); i++) {
-					Element ele = (Element) list.item(i);
-					String type = xpath.evaluate("type/text()", ele); //$NON-NLS-1$
-					String condition = xpath.evaluate("condition/text()", ele); //$NON-NLS-1$
-					String emptyOption = xpath.evaluate("emptyOption/text()", ele); //$NON-NLS-1$
-					if ("item".equals(type)) { //$NON-NLS-1$
-						filterByItem(condition);
-					} else if ("attribute".equals(type)) { //$NON-NLS-1$
-						EmptyFilterOption emptyFilterOption;
-						try {
-							emptyFilterOption = EmptyFilterOption.valueOf(emptyOption);
-						} catch (Exception e) {
-							emptyFilterOption = EmptyFilterOption.INCLUDE;
+				if (restoreFilters) {
+					// restore filters
+					list = (NodeList) xpath.evaluate("//filters/filter", doc, XPathConstants.NODESET); //$NON-NLS-1$
+					for (int i = 0; i < list.getLength(); i++) {
+						Element ele = (Element) list.item(i);
+						String type = xpath.evaluate("type/text()", ele); //$NON-NLS-1$
+						String condition = xpath.evaluate("condition/text()", ele); //$NON-NLS-1$
+						String emptyOption = xpath.evaluate("emptyOption/text()", ele); //$NON-NLS-1$
+						if ("item".equals(type)) { //$NON-NLS-1$
+							filterByItem(condition);
+						} else if ("attribute".equals(type)) { //$NON-NLS-1$
+							EmptyFilterOption emptyFilterOption;
+							try {
+								emptyFilterOption = EmptyFilterOption.valueOf(emptyOption);
+							} catch (Exception e) {
+								emptyFilterOption = EmptyFilterOption.INCLUDE;
+							}
+							filterByAttribute(condition, emptyFilterOption);
 						}
-						filterByAttribute(condition, emptyFilterOption);
 					}
 				}
 			} catch (Exception e) {

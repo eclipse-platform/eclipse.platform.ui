@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - Bug 431735, Bug 437890
+ *     Steven Spungin <steven@spungin.tv> - Bug 431735, Bug 437890, Bug 440469
  ******************************************************************************/
 
 package org.eclipse.e4.tools.emf.editor3x;
@@ -28,6 +28,8 @@ public class ModelEditorPreferencePage extends PreferencePage implements IWorkbe
 	private ColorFieldEditor fColorValueNotVisible;
 	private ColorFieldEditor fColorValueNotVisibleAndRendered;
 	private BooleanFieldEditor fShowSearch;
+	private BooleanFieldEditor fRememberColumns;
+	private BooleanFieldEditor fRememberFilters;
 
 	public ModelEditorPreferencePage() {
 	}
@@ -100,7 +102,7 @@ public class ModelEditorPreferencePage extends PreferencePage implements IWorkbe
 				fShowXMIId.setPreferenceStore(getPreferenceStore());
 				fShowXMIId.load();
 			}
-			
+
 			{
 				Composite container = new Composite(group, SWT.NONE);
 				container.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false, 2, 1));
@@ -108,6 +110,29 @@ public class ModelEditorPreferencePage extends PreferencePage implements IWorkbe
 				fShowSearch.setPage(this);
 				fShowSearch.setPreferenceStore(getPreferenceStore());
 				fShowSearch.load();
+			}
+
+		}
+
+		{
+			Group group = new Group(result, SWT.NONE);
+			group.setText("List Tab");
+			group.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false, 2, 1));
+			group.setLayout(new GridLayout(2, false));
+
+			{
+				Composite container = new Composite(group, SWT.NONE);
+				container.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false, 2, 1));
+
+				fRememberColumns = new BooleanFieldEditor("list-tab-remember-columns", "Remember column settings when reopening editor  ", container);
+				fRememberColumns.setPage(this);
+				fRememberColumns.setPreferenceStore(getPreferenceStore());
+				fRememberColumns.load();
+
+				fRememberFilters = new BooleanFieldEditor("list-tab-remember-filters", "Remember filter settings when reopening editor", container);
+				fRememberFilters.setPage(this);
+				fRememberFilters.setPreferenceStore(getPreferenceStore());
+				fRememberFilters.load();
 			}
 		}
 
@@ -122,6 +147,8 @@ public class ModelEditorPreferencePage extends PreferencePage implements IWorkbe
 		fColorValueNotVisible.store();
 		fColorValueNotVisibleAndRendered.store();
 		fShowSearch.store();
+		fRememberColumns.store();
+		fRememberFilters.store();
 		return super.performOk();
 	}
 
@@ -133,6 +160,8 @@ public class ModelEditorPreferencePage extends PreferencePage implements IWorkbe
 		fColorValueNotVisible.loadDefault();
 		fColorValueNotVisibleAndRendered.loadDefault();
 		fShowSearch.loadDefault();
+		fRememberColumns.loadDefault();
+		fRememberFilters.loadDefault();
 		super.performDefaults();
 	}
 
