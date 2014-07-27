@@ -894,7 +894,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 					@Override
 					public void running(IJobChangeEvent event) {
 						Job job = event.getJob();
-						if (job.belongsTo(family))
+						if (family == null || job.belongsTo(family))
 							jobs.add(job);
 					}
 
@@ -908,7 +908,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 						if (isSuspended())
 							return;
 						Job job = event.getJob();
-						if (job.belongsTo(family))
+						if (family == null || job.belongsTo(family))
 							jobs.add(job);
 					}
 				};
