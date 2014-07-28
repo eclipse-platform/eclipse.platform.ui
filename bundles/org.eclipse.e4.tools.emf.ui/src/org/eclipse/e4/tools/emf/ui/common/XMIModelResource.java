@@ -45,7 +45,7 @@ public class XMIModelResource implements IModelResource {
 	private EditingDomain editingDomain;
 	private Resource resource;
 	private List<ModelListener> listeners = new ArrayList<IModelResource.ModelListener>();
-	private boolean dirty;
+
 	private IObservableList list;
 
 	public XMIModelResource(URI uri) {
@@ -58,7 +58,6 @@ public class XMIModelResource implements IModelResource {
 
 			@Override
 			public void commandStackChanged(EventObject event) {
-				dirty = true;
 				fireDirtyChanged();
 				fireCommandStackChanged();
 			}
@@ -126,7 +125,7 @@ public class XMIModelResource implements IModelResource {
 
 	@Override
 	public boolean isDirty() {
-		return dirty && getEditingDomain().getCommandStack().canUndo();
+		return ((BasicCommandStack) getEditingDomain().getCommandStack()).isSaveNeeded();
 	}
 
 	private void fireDirtyChanged() {
@@ -146,10 +145,13 @@ public class XMIModelResource implements IModelResource {
 		Map<String, String> map = new HashMap<String, String>();
 		try {
 			resource.save(map);
-			editingDomain.getCommandStack().flush();
-			dirty = false;
+
+			BasicCommandStack commandStack = (BasicCommandStack) getEditingDomain().getCommandStack();
+			commandStack.saveIsDone();
+
 			fireDirtyChanged();
 			fireCommandStackChanged();
+
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -157,5 +159,4 @@ public class XMIModelResource implements IModelResource {
 
 		return Status.OK_STATUS;
 	}
-
 }
