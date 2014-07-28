@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     vogella GmbH - added word wrap button (bug 287303)
+ *     vogella GmbH - Bug 287303 - [patch] Add Word Wrap action to Console View
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 

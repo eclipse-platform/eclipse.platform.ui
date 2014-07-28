@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     vogella GmbH  - Bug 287303 - [patch] Add Word Wrap action to Console View
  *******************************************************************************/
 package org.eclipse.ui.console;
 
@@ -96,7 +97,7 @@ public interface IConsoleView extends IViewPart {
 	 *
 	 * @param wordWrap <code>true</code> to turn word wrap on, otherwise
 	 *            <code>false</code>
-	 * @since 4.5
+	 * @since 3.6
 	 */
 	public void setWordWrap(boolean wordWrap);
 
@@ -105,7 +106,7 @@ public interface IConsoleView extends IViewPart {
 	 *
 	 * @return <code>true</code> if word wrap is on, <code>false</code>
 	 *         otherwise
-	 * @since 4.5
+	 * @since 3.6
 	 */
 	public boolean getWordWrap();
 
