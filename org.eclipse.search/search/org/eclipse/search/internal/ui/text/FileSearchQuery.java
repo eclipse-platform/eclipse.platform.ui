@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,14 @@
  *     Ulrich Etter, etteru@ethz.ch - 47136 Search view should show match objects
  *     Roman Fuchs, fuchsro@ethz.ch - 47136 Search view should show match objects
  *     Christian Walther (Indel AG) - Bug 399094: Add whole word option to file search
+ *     Terry Parker <tparker@google.com> (Google Inc.) - Bug 441016 - Speed up text search by parallelizing it using JobGroups
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
@@ -48,7 +52,8 @@ public class FileSearchQuery implements ISearchQuery {
 		private final boolean fSearchInBinaries;
 
 		private final boolean fIsLightweightAutoRefresh;
-		private ArrayList fCachedMatches;
+		private Map fCachedMatches; // map of IFile -> ArrayList of FileMatches
+		private Object fLock= new Object();
 
 		private TextSearchResultCollector(AbstractTextSearchResult result, boolean isFileSearchOnly, boolean searchInBinaries) {
 			fResult= result;
@@ -63,7 +68,9 @@ public class FileSearchQuery implements ISearchQuery {
 				return false;
 
 			if (fIsFileSearchOnly) {
-				fResult.addMatch(new FileMatch(file));
+				synchronized (fLock) {
+					fResult.addMatch(new FileMatch(file));
+				}
 			}
 			flushMatches();
 			return true;
@@ -77,22 +84,55 @@ public class FileSearchQuery implements ISearchQuery {
 		}
 
 		public boolean acceptPatternMatch(TextSearchMatchAccess matchRequestor) throws CoreException {
+			ArrayList matches;
+			synchronized(fLock) {
+				// fCachedMatches is set to null when the caller invokes endReporting(),
+				// indicating that no further results are desired/expected, so discard
+				// any additional results.
+				if (fCachedMatches == null) {
+					return false;
+				}
+				matches= (ArrayList) fCachedMatches.get(matchRequestor.getFile());
+			}
+
 			int matchOffset= matchRequestor.getMatchOffset();
 
-			LineElement lineElement= getLineElement(matchOffset, matchRequestor);
+			/*
+			 * Another job may call flushCaches() at any time, which will clear the cached matches.
+			 * Any addition of matches to the cache needs to be protected against the flushing of
+			 * the cache by other jobs. It is OK to call getLineElement() with an unprotected local
+			 * reference to the matches for this file, because getLineElement() uses previous matches
+			 * as an optimization when creating new matches but doesn't update the cache directly
+			 * (and because each file is processed by at most one job).
+			 */
+			LineElement lineElement= getLineElement(matchOffset, matchRequestor, matches);
 			if (lineElement != null) {
 				FileMatch fileMatch= new FileMatch(matchRequestor.getFile(), matchOffset, matchRequestor.getMatchLength(), lineElement);
-				fCachedMatches.add(fileMatch);
+				synchronized(fLock) {
+					// fCachedMatches is set to null when the caller invokes endReporting(),
+					// indicating that no further results are desired/expected, so discard
+					// any additional results.
+					if (fCachedMatches == null) {
+						return false;
+					}
+					matches= (ArrayList) fCachedMatches.get(matchRequestor.getFile());
+					if (matches == null) {
+						matches= new ArrayList();
+						fCachedMatches.put(matchRequestor.getFile(), matches);
+					}
+					matches.add(fileMatch);
+				}
 			}
 			return true;
 		}
 
-		private LineElement getLineElement(int offset, TextSearchMatchAccess matchRequestor) {
+		private LineElement getLineElement(int offset, TextSearchMatchAccess matchRequestor, ArrayList matches) {
 			int lineNumber= 1;
 			int lineStart= 0;
-			if (!fCachedMatches.isEmpty()) {
+
+			if (matches != null) {
 				// match on same line as last?
-				FileMatch last= (FileMatch) fCachedMatches.get(fCachedMatches.size() - 1);
+				FileMatch last= (FileMatch) matches.get(matches.size() - 1);
 				LineElement lineElement= last.getLineElement();
 				if (lineElement.contains(offset)) {
 					return lineElement;
@@ -142,18 +182,26 @@ public class FileSearchQuery implements ISearchQuery {
 		}
 
 		public void beginReporting() {
-			fCachedMatches= new ArrayList();
+			fCachedMatches= new HashMap();
 		}
 
 		public void endReporting() {
 			flushMatches();
-			fCachedMatches= null;
+			synchronized (fLock) {
+				fCachedMatches= null;
+			}
 		}
 
 		private void flushMatches() {
-			if (!fCachedMatches.isEmpty()) {
-				fResult.addMatches((Match[]) fCachedMatches.toArray(new Match[fCachedMatches.size()]));
-				fCachedMatches.clear();
+			synchronized (fLock) {
+				if (fCachedMatches != null && !fCachedMatches.isEmpty()) {
+					Iterator it = fCachedMatches.values().iterator();
+					while(it.hasNext()) {
+						ArrayList matches= (ArrayList) it.next();
+						fResult.addMatches((Match[]) matches.toArray(new Match[matches.size()]));
+					}
+					fCachedMatches.clear();
+				}
 			}
 		}
 	}
