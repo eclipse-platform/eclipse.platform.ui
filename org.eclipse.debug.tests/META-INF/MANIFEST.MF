@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.debug.tests;singleton:=true
-Bundle-Version: 3.9.100.qualifier
+Bundle-Version: 3.9.200.qualifier
 Bundle-Activator: org.eclipse.debug.tests.TestsPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui;bundle-version="[3.6.0,4.0.0)",
@@ -16,12 +16,12 @@ Require-Bundle: org.eclipse.ui;bundle-version="[3.6.0,4.0.0)",
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %providerName
-Export-Package: org.eclipe.debug.tests.launching,
- org.eclipe.debug.tests.view.memory,
- org.eclipe.debug.tests.viewer.model,
- org.eclipse.debug.tests,
+Export-Package: org.eclipse.debug.tests,
  org.eclipse.debug.tests.breakpoint,
  org.eclipse.debug.tests.expressions,
+ org.eclipse.debug.tests.launching,
  org.eclipse.debug.tests.statushandlers,
- org.eclipse.debug.tests.stepfilters
+ org.eclipse.debug.tests.stepfilters,
+ org.eclipse.debug.tests.view.memory,
+ org.eclipse.debug.tests.viewer.model
 Eclipse-BundleShape: dir

@@ -15,27 +15,27 @@ package org.eclipse.debug.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipe.debug.tests.launching.AcceleratorSubstitutionTests;
-import org.eclipe.debug.tests.launching.ArgumentParsingTests;
-import org.eclipe.debug.tests.launching.LaunchConfigurationTests;
-import org.eclipe.debug.tests.launching.LaunchFavoriteTests;
-import org.eclipe.debug.tests.launching.LaunchHistoryTests;
-import org.eclipe.debug.tests.launching.LaunchManagerTests;
-import org.eclipe.debug.tests.launching.RefreshTabTests;
-import org.eclipe.debug.tests.view.memory.MemoryRenderingTests;
-import org.eclipe.debug.tests.viewer.model.ChildrenUpdateTests;
-import org.eclipe.debug.tests.viewer.model.FilterTransformTests;
-import org.eclipe.debug.tests.viewer.model.PresentationContextTests;
-import org.eclipe.debug.tests.viewer.model.VirtualViewerContentTests;
-import org.eclipe.debug.tests.viewer.model.VirtualViewerDeltaTests;
-import org.eclipe.debug.tests.viewer.model.VirtualViewerFilterTests;
-import org.eclipe.debug.tests.viewer.model.VirtualViewerLazyModeTests;
-import org.eclipe.debug.tests.viewer.model.VirtualViewerSelectionTests;
-import org.eclipe.debug.tests.viewer.model.VirtualViewerStateTests;
-import org.eclipe.debug.tests.viewer.model.VirtualViewerUpdateTests;
 import org.eclipse.debug.tests.breakpoint.BreakpointOrderingTests;
+import org.eclipse.debug.tests.launching.AcceleratorSubstitutionTests;
+import org.eclipse.debug.tests.launching.ArgumentParsingTests;
+import org.eclipse.debug.tests.launching.LaunchConfigurationTests;
+import org.eclipse.debug.tests.launching.LaunchFavoriteTests;
+import org.eclipse.debug.tests.launching.LaunchHistoryTests;
+import org.eclipse.debug.tests.launching.LaunchManagerTests;
+import org.eclipse.debug.tests.launching.RefreshTabTests;
 import org.eclipse.debug.tests.statushandlers.StatusHandlerTests;
 import org.eclipse.debug.tests.stepfilters.StepFiltersTests;
+import org.eclipse.debug.tests.view.memory.MemoryRenderingTests;
+import org.eclipse.debug.tests.viewer.model.ChildrenUpdateTests;
+import org.eclipse.debug.tests.viewer.model.FilterTransformTests;
+import org.eclipse.debug.tests.viewer.model.PresentationContextTests;
+import org.eclipse.debug.tests.viewer.model.VirtualViewerContentTests;
+import org.eclipse.debug.tests.viewer.model.VirtualViewerDeltaTests;
+import org.eclipse.debug.tests.viewer.model.VirtualViewerFilterTests;
+import org.eclipse.debug.tests.viewer.model.VirtualViewerLazyModeTests;
+import org.eclipse.debug.tests.viewer.model.VirtualViewerSelectionTests;
+import org.eclipse.debug.tests.viewer.model.VirtualViewerStateTests;
+import org.eclipse.debug.tests.viewer.model.VirtualViewerUpdateTests;
 
 /**
   * Tests for integration and nightly builds.

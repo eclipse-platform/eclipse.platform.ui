@@ -13,8 +13,8 @@ package org.eclipse.debug.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipe.debug.tests.viewer.model.JFaceViewerPerformanceTests;
-import org.eclipe.debug.tests.viewer.model.VirtualViewerPerformanceTests;
+import org.eclipse.debug.tests.viewer.model.JFaceViewerPerformanceTests;
+import org.eclipse.debug.tests.viewer.model.VirtualViewerPerformanceTests;
 
 /**
  * Tests for release builds.

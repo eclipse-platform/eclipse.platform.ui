@@ -17,47 +17,47 @@
       <renderingType
             id="rendering_type_1"
             name="%renderingType.name"
-            class="org.eclipe.debug.tests.view.memory.RenderingTypeDelegate">
+            class="org.eclipse.debug.tests.view.memory.RenderingTypeDelegate">
       </renderingType>
       <renderingType
             id="rendering_type_2"
             name="%renderingType.name.0"
-            class="org.eclipe.debug.tests.view.memory.RenderingTypeDelegate">
+            class="org.eclipse.debug.tests.view.memory.RenderingTypeDelegate">
       </renderingType>
       <renderingType
             id="rendering_type_3"
             name="%renderingType.name.1"
-            class="org.eclipe.debug.tests.view.memory.RenderingTypeDelegate">
+            class="org.eclipse.debug.tests.view.memory.RenderingTypeDelegate">
       </renderingType>      
       <renderingBindings
       		primaryId="rendering_type_1">
       		<enablement>
-      			<instanceof value="org.eclipe.debug.tests.view.memory.MemoryBlockOne"/>
+      			<instanceof value="org.eclipse.debug.tests.view.memory.MemoryBlockOne"/>
       		</enablement>
       </renderingBindings>
       <renderingBindings
       		renderingIds="rendering_type_1, rendering_type_2">
       		<enablement>
-      			<instanceof value="org.eclipe.debug.tests.view.memory.MemoryBlockTwo"/>
+      			<instanceof value="org.eclipse.debug.tests.view.memory.MemoryBlockTwo"/>
       		</enablement>
       </renderingBindings>
       <renderingBindings
       		defaultIds="rendering_type_3">
       		<enablement>
-      			<instanceof value="org.eclipe.debug.tests.view.memory.MemoryBlockThree"/>
+      			<instanceof value="org.eclipse.debug.tests.view.memory.MemoryBlockThree"/>
       		</enablement>
       </renderingBindings>  
       <renderingBindings
-      		class="org.eclipe.debug.tests.view.memory.DynamicRenderingBindings">
+      		class="org.eclipse.debug.tests.view.memory.DynamicRenderingBindings">
       		<enablement>
-      			<instanceof value="org.eclipe.debug.tests.view.memory.MemoryBlockDynamic"/>
+      			<instanceof value="org.eclipse.debug.tests.view.memory.MemoryBlockDynamic"/>
       		</enablement>
       </renderingBindings>                  
    </extension>
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            delegate="org.eclipe.debug.tests.launching.TestLaunchDelegate"
+            delegate="org.eclipse.debug.tests.launching.TestLaunchDelegate"
             id="org.eclipse.debug.tests.launch.type"
             modes="run, debug"
             name="%launchConfigurationType.name">
@@ -70,7 +70,7 @@
      <filesystem
            scheme="debug">
         <run
-              class="org.eclipe.debug.tests.launching.DebugFileSystem">
+              class="org.eclipse.debug.tests.launching.DebugFileSystem">
         </run>
      </filesystem>
    </extension>

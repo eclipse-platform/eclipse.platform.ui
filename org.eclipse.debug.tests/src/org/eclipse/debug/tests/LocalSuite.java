@@ -13,16 +13,16 @@ package org.eclipse.debug.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipe.debug.tests.viewer.model.ColumnPresentationTests;
-import org.eclipe.debug.tests.viewer.model.JFaceViewerCheckTests;
-import org.eclipe.debug.tests.viewer.model.JFaceViewerContentTests;
-import org.eclipe.debug.tests.viewer.model.JFaceViewerDeltaTests;
-import org.eclipe.debug.tests.viewer.model.JFaceViewerFilterTests;
-import org.eclipe.debug.tests.viewer.model.JFaceViewerLazyTests;
-import org.eclipe.debug.tests.viewer.model.JFaceViewerSelectionTests;
-import org.eclipe.debug.tests.viewer.model.JFaceViewerStateTests;
-import org.eclipe.debug.tests.viewer.model.JFaceViewerTopIndexTests;
-import org.eclipe.debug.tests.viewer.model.JFaceViewerUpdateTests;
+import org.eclipse.debug.tests.viewer.model.ColumnPresentationTests;
+import org.eclipse.debug.tests.viewer.model.JFaceViewerCheckTests;
+import org.eclipse.debug.tests.viewer.model.JFaceViewerContentTests;
+import org.eclipse.debug.tests.viewer.model.JFaceViewerDeltaTests;
+import org.eclipse.debug.tests.viewer.model.JFaceViewerFilterTests;
+import org.eclipse.debug.tests.viewer.model.JFaceViewerLazyTests;
+import org.eclipse.debug.tests.viewer.model.JFaceViewerSelectionTests;
+import org.eclipse.debug.tests.viewer.model.JFaceViewerStateTests;
+import org.eclipse.debug.tests.viewer.model.JFaceViewerTopIndexTests;
+import org.eclipse.debug.tests.viewer.model.JFaceViewerUpdateTests;
 
 /**
  * Tests to run locally.  They require a user terminal to execute correctly 
