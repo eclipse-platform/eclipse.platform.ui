@@ -26,6 +26,7 @@ public class VirtualTreeViewerTest extends TreeViewerTest {
 		super(name);
 	}
 
+	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		Tree tree = new Tree(parent, SWT.VIRTUAL);
 		fTreeViewer = new TreeViewer(tree);

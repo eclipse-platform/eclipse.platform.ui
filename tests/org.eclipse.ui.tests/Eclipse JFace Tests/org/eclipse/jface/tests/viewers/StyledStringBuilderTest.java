@@ -31,6 +31,7 @@ public class StyledStringBuilderTest extends TestCase {
 			this.borderStyle= borderStyle;
 		}
 		
+		@Override
 		public void applyStyles(TextStyle textStyle) {
 			textStyle.borderStyle= borderStyle;
 		}

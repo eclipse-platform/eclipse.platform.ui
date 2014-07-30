@@ -27,10 +27,12 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 		super(name);
 	}
 
-    protected StructuredViewer createViewer(Composite parent) {
+    @Override
+	protected StructuredViewer createViewer(Composite parent) {
     	Tree tree = new Tree(parent, SWT.VIRTUAL);
     	tree.addListener(SWT.SetData, new Listener(){
 
+			@Override
 			public void handleEvent(Event event) {
 				setDataCalls++;
 			}});
@@ -39,17 +41,20 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
         return fTreeViewer;
     }
     
-    public void setUp() {
+    @Override
+	public void setUp() {
     	super.setUp();
     	// process events because the content provider uses an asyncExec to set the item count of the tree
     	processEvents();
     }
     
-    protected void setInput() {
+    @Override
+	protected void setInput() {
 		super.setInput();
 	}
     
-    public void tearDown() {
+    @Override
+	public void tearDown() {
     	super.tearDown();
 //    	System.out.println("calls: " + setDataCalls);
     }
@@ -73,52 +78,64 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
     }
     
 
-    public void testRefreshWithDuplicateChild() {
+    @Override
+	public void testRefreshWithDuplicateChild() {
     	// Test leads to infinite loop. Duplicate children are a bad idea in virtual trees.
     }
     
-    public void testSetExpandedWithCycle() {
+    @Override
+	public void testSetExpandedWithCycle() {
     	// Test leads to infinite loop. Cycles are a bad idea in virtual trees.
     }
     
-    public void testFilterExpanded() {
+    @Override
+	public void testFilterExpanded() {
     	// no need to test since virtual trees do not support filtering
     }
     
-    public void testFilter() {
+    @Override
+	public void testFilter() {
     	// no need to test since virtual trees do not support filtering
     }
     
-    public void testSetFilters() {
+    @Override
+	public void testSetFilters() {
     	// no need to test since virtual trees do not support filtering
     }
     
-    public void testInsertSiblingWithFilterFiltered() {
+    @Override
+	public void testInsertSiblingWithFilterFiltered() {
     	// no need to test since virtual trees do not support filtering
     }
     
-    public void testInsertSiblingWithFilterNotFiltered() {
+    @Override
+	public void testInsertSiblingWithFilterNotFiltered() {
     	// no need to test since virtual trees do not support filtering
     }
     
-    public void testInsertSiblingWithSorter() {
+    @Override
+	public void testInsertSiblingWithSorter() {
     	// no need to test since virtual trees do not support sorting
     }
         
-    public void testRenameWithFilter() {
+    @Override
+	public void testRenameWithFilter() {
     	// no need to test since virtual trees do not support filtering
     }
     
-    public void testRenameWithSorter() {
+    @Override
+	public void testRenameWithSorter() {
     	// no need to test since virtual trees do not support sorting
     }
     
-    public void testSorter() {
+    @Override
+	public void testSorter() {
     	// no need to test since virtual trees do not support sorting
     }
     
     // Temporary overrides for bug 347491:
-    public void testRefreshWithAddedChildren() {
+    @Override
+	public void testRefreshWithAddedChildren() {
 		if (disableTestsBug347491)
 			return;
 		if (setDataCalls == 0) {
@@ -128,7 +145,8 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 		super.testRefreshWithAddedChildren();
     }
 
-    public void testDeleteSibling() {
+    @Override
+	public void testDeleteSibling() {
 		if (disableTestsBug347491)
 			return;
 		if (setDataCalls == 0) {
@@ -138,7 +156,8 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 		super.testDeleteSibling();
     }
     
-    public void testExpandToLevel() {
+    @Override
+	public void testExpandToLevel() {
 		if (setDataCalls == 0) {
 			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
 			return;
@@ -146,7 +165,8 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
     	super.testExpandToLevel();
     }
     
-    public void testInsertSibling() {
+    @Override
+	public void testInsertSibling() {
 		if (disableTestsBug347491)
 			return;
 		if (setDataCalls == 0) {
@@ -156,7 +176,8 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
     	super.testInsertSibling();
     }
     
-    public void testInsertSiblings() {
+    @Override
+	public void testInsertSiblings() {
 		if (disableTestsBug347491)
 			return;
 		if (setDataCalls == 0) {
@@ -166,7 +187,8 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
    	super.testInsertSiblings();
     }
     
-    public void testSetInput() {
+    @Override
+	public void testSetInput() {
 		if (disableTestsBug347491)
 			return;
 		if (setDataCalls == 0) {
@@ -176,7 +198,8 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
     	super.testSetInput();
     }
     
-    public void testSomeChildrenChanged() {
+    @Override
+	public void testSomeChildrenChanged() {
 		if (disableTestsBug347491)
 			return;
 		if (setDataCalls == 0) {
@@ -186,6 +209,7 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
     	super.testSomeChildrenChanged();
     }
 
+	@Override
 	public void testWorldChanged() {
 		if (disableTestsBug347491)
 			return;

@@ -22,13 +22,15 @@ public class TreeViewerTest extends AbstractTreeViewerTest {
         super(name);
     }
 
-    protected StructuredViewer createViewer(Composite parent) {
+    @Override
+	protected StructuredViewer createViewer(Composite parent) {
         fTreeViewer = new TreeViewer(parent);
         fTreeViewer.setContentProvider(new TestModelContentProvider());
         return fTreeViewer;
     }
 
-    protected int getItemCount() {
+    @Override
+	protected int getItemCount() {
         TestElement first = fRootElement.getFirstChild();
         TreeItem ti = (TreeItem) fViewer.testFindItem(first);
         Tree tree = ti.getParent();
@@ -38,11 +40,13 @@ public class TreeViewerTest extends AbstractTreeViewerTest {
     /**
      * getItemCount method comment.
      */
-    protected int getItemCount(TestElement element) {
+    @Override
+	protected int getItemCount(TestElement element) {
         return element.getChildCount();
     }
 
-    protected String getItemText(int at) {
+    @Override
+	protected String getItemText(int at) {
         Tree tree = (Tree) fTreeViewer.getControl();
         return tree.getItems()[at].getText();
     }

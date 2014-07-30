@@ -39,6 +39,7 @@ public class ListViewerRefreshTest extends TestCase {
 
 	private ArrayList input = null;
 
+	@Override
 	protected void setUp() throws Exception {
 		shell = new Shell();
 		shell.setSize(400, 200);
@@ -57,6 +58,7 @@ public class ListViewerRefreshTest extends TestCase {
 		shell.open();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		shell.dispose();
 		shell = null;
@@ -73,12 +75,14 @@ public class ListViewerRefreshTest extends TestCase {
 		readAndDispatch();
 
 		run("Scrolled to position 30.", new Runnable() { //$NON-NLS-1$
+					@Override
 					public void run() {
 						viewer.reveal(input.get(30));
 					}
 				});
 
 		run("Refreshed viewer without a selection.", new Runnable() { //$NON-NLS-1$
+					@Override
 					public void run() {
 						viewer.refresh();
 					}
@@ -99,6 +103,7 @@ public class ListViewerRefreshTest extends TestCase {
 		readAndDispatch();
 
 		run("Setting selection to index 30.", new Runnable() { //$NON-NLS-1$
+					@Override
 					public void run() {
 						viewer.setSelection(new StructuredSelection(input
 								.get(30)));
@@ -109,6 +114,7 @@ public class ListViewerRefreshTest extends TestCase {
 		viewer.getList().setTopIndex(0);
 		
 		run("Refreshed viewer with selection.", new Runnable() { //$NON-NLS-1$
+					@Override
 					public void run() {
 						viewer.refresh();
 					}
@@ -151,13 +157,16 @@ public class ListViewerRefreshTest extends TestCase {
 
 	private class ContentProvider implements IStructuredContentProvider {
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((List) inputElement).toArray();
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}

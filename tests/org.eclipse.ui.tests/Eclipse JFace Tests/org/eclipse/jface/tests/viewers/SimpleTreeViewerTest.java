@@ -45,6 +45,7 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 		super(name);
 	}
 
+	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		treeViewer = new TreeViewer(parent);
 		treeViewer.setContentProvider(new TestModelContentProvider());
@@ -59,24 +60,30 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 	public void testNullLabel() {
 		treeViewer.setLabelProvider(new ITableLabelProvider(){
 
+			@Override
 			public Image getColumnImage(Object element, int columnIndex) {
 				return null;
 			}
 
+			@Override
 			public String getColumnText(Object element, int columnIndex) {
 				return null;
 			}
 
+			@Override
 			public void addListener(ILabelProviderListener listener) {
 			}
 
+			@Override
 			public void dispose() {
 			}
 
+			@Override
 			public boolean isLabelProperty(Object element, String property) {
 				return false;
 			}
 
+			@Override
 			public void removeListener(ILabelProviderListener listener) {
 			}});
 	}
@@ -84,6 +91,7 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 	static class MyViewerSorter extends ViewerSorter {
 		boolean inverted = false;
 
+		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (inverted) {
 				return super.compare(viewer, e2, e1);
@@ -101,6 +109,7 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 		Object childOfFirstRoot = contentProvider.getChildren(firstRoot)[0];
 		treeViewer.setSelection(new StructuredSelection(childOfFirstRoot), true);
 		final ISelectionChangedListener listener = new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				fail();
 			}
@@ -113,14 +122,17 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 
 	public void testBug184712() {
 		class TableAndTreeLabelProvider extends LabelProvider implements ITableLabelProvider {
+			@Override
 			public Image getColumnImage(Object element, int columnIndex) {
 				return null;
 			}
 
+			@Override
 			public String getColumnText(Object element, int columnIndex) {
 				return "wrong";
 			}
 
+			@Override
 			public String getText(Object element) {
 				return "right";
 			}
@@ -142,6 +154,7 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 		treeViewer.setInput(children);
 
 		ViewerFilter filter= new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element == children[0] || element == children[1] || element == children[2] || element == children[4])
 					return false;

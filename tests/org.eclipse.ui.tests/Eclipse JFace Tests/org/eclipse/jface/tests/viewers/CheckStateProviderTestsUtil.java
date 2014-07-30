@@ -35,11 +35,13 @@ public class CheckStateProviderTestsUtil {
 		public List isCheckedInvokedOn = new ArrayList();
 		public List isGrayedInvokedOn = new ArrayList();
 		
+		@Override
 		public boolean isChecked(Object element) {
 			isCheckedInvokedOn.add(element);
 			return true;
 		}
 
+		@Override
 		public boolean isGrayed(Object element) {
 			isGrayedInvokedOn.add(element);
 			return true;
@@ -69,11 +71,13 @@ public class CheckStateProviderTestsUtil {
 			this.shift = shift;
 		}
 		
+		@Override
 		public boolean isChecked(Object element) {
 			super.isChecked(element);
 			return shouldBeChecked((TestElement)element, shift);
 		}
 
+		@Override
 		public boolean isGrayed(Object element) {
 			super.isGrayed(element);
 			return shouldBeGrayed((TestElement)element, shift);
@@ -85,6 +89,7 @@ public class CheckStateProviderTestsUtil {
 	 * @since 3.5
 	 */
 	public static final class Sorter extends ViewerSorter {
+		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			return constructNumber((TestElement)e1) - constructNumber((TestElement)e2);
 		}
@@ -95,6 +100,7 @@ public class CheckStateProviderTestsUtil {
 	 * @since 3.5
 	 */
 	public static final class Filter extends ViewerFilter {
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			return (constructNumber((TestElement)element) % (NUMBER_OF_STATES * 2 - 1)) == (NUMBER_OF_STATES - 1);
 		}

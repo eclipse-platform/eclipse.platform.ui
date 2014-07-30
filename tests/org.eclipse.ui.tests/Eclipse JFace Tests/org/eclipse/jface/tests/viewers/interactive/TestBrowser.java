@@ -90,7 +90,8 @@ public abstract class TestBrowser extends ApplicationWindow {
     /* (non-Javadoc)
      * Method declared on Window.
      */
-    protected void configureShell(Shell shell) {
+    @Override
+	protected void configureShell(Shell shell) {
         super.configureShell(shell);
         shell.setText("Test Browser");
     }
@@ -148,7 +149,8 @@ public abstract class TestBrowser extends ApplicationWindow {
         fClearSelection = new ClearSelectionAction("Clear Selection", this);
     }
 
-    protected Control createContents(Composite parent) {
+    @Override
+	protected Control createContents(Composite parent) {
         ViewForm form = new ViewForm(parent, SWT.NONE);
         CLabel label = new CLabel(form, SWT.NONE);
         form.setTopLeft(label);

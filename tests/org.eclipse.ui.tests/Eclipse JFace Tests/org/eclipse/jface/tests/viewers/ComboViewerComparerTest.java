@@ -50,12 +50,14 @@ public class ComboViewerComparerTest extends TestCase {
 	public void testSetSelection() {
 		viewer.setContentProvider(new ArrayContentProvider());
 		viewer.setComparer(new IElementComparer() {
+			@Override
 			public boolean equals(final Object element1, final Object element2) {
 				TestElement testElement1 = (TestElement) element1;
 				TestElement testElement2 = (TestElement) element2;
 				return testElement1.getName().equals(testElement2.getName());
 			}
 
+			@Override
 			public int hashCode(final Object element) {
 				TestElement testElement = (TestElement) element;
 				return testElement.getName().hashCode();
@@ -72,13 +74,16 @@ public class ComboViewerComparerTest extends TestCase {
 		assertEquals(aElement.getName(), selectedElement.getName());
 	}
 
+	@Override
 	protected void setUp() {
 		Policy.setLog(new ILogger() {
+			@Override
 			public void log(IStatus status) {
 				fail(status.getMessage());
 			}
 		});
 		SafeRunnable.setRunner(new ISafeRunnableRunner() {
+			@Override
 			public void run(ISafeRunnable code) {
 				try {
 					code.run();
@@ -98,6 +103,7 @@ public class ComboViewerComparerTest extends TestCase {
 		shell.open();
 	}
 
+	@Override
 	protected void tearDown() {
 		processEvents();
 		viewer = null;

@@ -68,6 +68,7 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 		return (TreeViewer) fViewer;
 	}
 
+	@Override
 	protected void setUpModel() {
 		/*
 		 * - fRootElement

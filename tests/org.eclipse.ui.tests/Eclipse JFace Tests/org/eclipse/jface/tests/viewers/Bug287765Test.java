@@ -56,36 +56,44 @@ public class Bug287765Test extends TestCase {
 	private final class SimpleTreeContentProvider implements
 			ITreeContentProvider, ILabelProvider {
 
+		@Override
 		public Image getImage(Object element) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
+		@Override
 		public String getText(Object element) {
 			Node node = (Node) element;
 			return Integer.toString(node.level);
 		}
 
+		@Override
 		public void addListener(ILabelProviderListener listener) {
 		}
 
+		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}
 
+		@Override
 		public void removeListener(ILabelProviderListener listener) {
 		}
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			Node node = (Node) parentElement;
 			return node.children.toArray();
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			Node node = (Node) element;
 			return node.children.size() > 0;
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			int depth = 4;
 
@@ -100,19 +108,23 @@ public class Bug287765Test extends TestCase {
 			return new Object[] { node };
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			Node node = (Node) element;
 
 			return node.parent;
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -143,6 +155,7 @@ public class Bug287765Test extends TestCase {
 		shell.open();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		treeViewer.getControl().getShell().dispose();
 		treeViewer = null;

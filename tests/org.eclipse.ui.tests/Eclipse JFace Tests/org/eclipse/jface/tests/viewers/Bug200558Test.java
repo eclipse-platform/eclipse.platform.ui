@@ -37,29 +37,36 @@ public class Bug200558Test extends ViewerTestCase {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		final TreeViewer treeViewer = new TreeViewer(parent, SWT.FULL_SELECTION);
 		treeViewer.setContentProvider(new ITreeContentProvider() {
 
+			@Override
 			public void dispose() {
 			}
 
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
 			}
 
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return new Object[] { "item" };
 			}
 
+			@Override
 			public Object[] getChildren(Object parentElement) {
 				return null;
 			}
 
+			@Override
 			public Object getParent(Object element) {
 				return null;
 			}
 
+			@Override
 			public boolean hasChildren(Object element) {
 				return false;
 			}
@@ -69,14 +76,17 @@ public class Bug200558Test extends ViewerTestCase {
 				treeViewer.getTree()) });
 		treeViewer.setColumnProperties(new String[] { "0" });
 		treeViewer.setCellModifier(new ICellModifier() {
+			@Override
 			public boolean canModify(Object element, String property) {
 				return true;
 			}
 
+			@Override
 			public Object getValue(Object element, String property) {
 				return "Test";
 			}
 
+			@Override
 			public void modify(Object element, String property, Object value) {
 			}
 
@@ -88,11 +98,13 @@ public class Bug200558Test extends ViewerTestCase {
 		return treeViewer;
 	}
 
+	@Override
 	protected void setUpModel() {
 		// don't do anything here - we are not using the normal fModel and
 		// fRootElement
 	}
 
+	@Override
 	protected void setInput() {
 		getTreeViewer().setInput(new Object());
 		getTreeViewer().getTree().getColumn(0).dispose();

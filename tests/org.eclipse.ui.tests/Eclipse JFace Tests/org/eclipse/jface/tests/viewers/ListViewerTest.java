@@ -27,19 +27,22 @@ public class ListViewerTest extends StructuredViewerTest {
         super(name);
     }
 
-    protected StructuredViewer createViewer(Composite parent) {
+    @Override
+	protected StructuredViewer createViewer(Composite parent) {
         ListViewer viewer = new ListViewer(parent);
         viewer.setContentProvider(new TestModelContentProvider());
         return viewer;
     }
 
-    protected int getItemCount() {
+    @Override
+	protected int getItemCount() {
         TestElement first = fRootElement.getFirstChild();
         List list = (List) fViewer.testFindItem(first);
         return list.getItemCount();
     }
 
-    protected String getItemText(int at) {
+    @Override
+	protected String getItemText(int at) {
         List list = (List) fViewer.getControl();
         return list.getItem(at);
     }
@@ -57,6 +60,7 @@ public class ListViewerTest extends StructuredViewerTest {
     	
     	v.addFilter(new ViewerFilter() {
 
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				return true;
 			}

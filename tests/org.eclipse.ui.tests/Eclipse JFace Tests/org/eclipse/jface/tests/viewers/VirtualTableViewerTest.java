@@ -52,11 +52,13 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		super(name);
 	}
 
+	@Override
 	public void setUp() {
 		super.setUp();
 		processEvents(); // run events for SetData precondition test
 	}
 
+	@Override
 	protected int getShellStyle() {
 		return super.getShellStyle() | SWT.ON_TOP;
 	}
@@ -66,6 +68,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * 
 	 * @see org.eclipse.jface.tests.viewers.TableViewerTest#createTableViewer(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected TableViewer createTableViewer(Composite parent) {
 		visibleItems = new HashSet();
 		TableViewer viewer = new TableViewer(parent, SWT.VIRTUAL | SWT.MULTI);
@@ -77,6 +80,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 			 * 
 			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 			 */
+			@Override
 			public void handleEvent(Event event) {
 				setDataCalled = true;
 				TableItem item = (TableItem) event.item;
@@ -125,6 +129,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * 
 	 * @see org.eclipse.jface.tests.viewers.TableViewerTest#getItemCount()
 	 */
+	@Override
 	protected int getItemCount() {
 		return getVisibleItems().length;
 	}
@@ -134,6 +139,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * 
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testFilter()
 	 */
+	@Override
 	public void testFilter() {
 		ViewerFilter filter = new TestLabelFilter();
 		visibleItems = new HashSet();
@@ -149,6 +155,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		assertEquals("unfiltered count", 10, getItemCount());
 	}
 
+	@Override
 	public void testSetFilters() {
 		ViewerFilter filter = new TestLabelFilter();
 		visibleItems = new HashSet();
@@ -174,6 +181,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * 
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testInsertSibling()
 	 */
+	@Override
 	public void testInsertSibling() {
 		// This test is no use here as it is
 		// based on the assumption that all items
@@ -185,6 +193,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * 
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testInsertSiblingReveal()
 	 */
+	@Override
 	public void testInsertSiblingReveal() {
 		// This test is no use here as it is
 		// based on the assumption that all items
@@ -196,6 +205,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * 
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testInsertSiblings()
 	 */
+	@Override
 	public void testInsertSiblings() {
 		// This test is no use here as it is
 		// based on the assumption that all items
@@ -207,6 +217,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * 
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testInsertSiblingWithFilterFiltered()
 	 */
+	@Override
 	public void testInsertSiblingWithFilterFiltered() {
 		// This test is no use here as it is
 		// based on the assumption that all items
@@ -218,6 +229,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * 
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testInsertSiblingWithFilterNotFiltered()
 	 */
+	@Override
 	public void testInsertSiblingWithFilterNotFiltered() {
 		// This test is no use here as it is
 		// based on the assumption that all items
@@ -229,6 +241,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * 
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testInsertSiblingWithSorter()
 	 */
+	@Override
 	public void testInsertSiblingWithSorter() {
 		// This test is no use here as it is
 		// based on the assumption that all items
@@ -240,6 +253,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * 
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testRenameWithFilter()
 	 */
+	@Override
 	public void testRenameWithFilter() {
 		if (!setDataCalled) {
 			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
@@ -265,11 +279,13 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * 
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testSetInput()
 	 */
+	@Override
 	public void testSetInput() {
 		// This test us based on findItem assuming all items
 		// are created so it is not valid.
 	}
 
+	@Override
 	public void testRenameWithSorter() {
 		// Call update to make sure the viewer is in a correct state
 		// At least on MacOSX I get failures without this call
@@ -287,6 +303,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * 
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testSorter()
 	 */
+	@Override
 	public void testSorter() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement last = fRootElement.getLastChild();
@@ -311,6 +328,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * 
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testInsertSiblingSelectExpanded()
 	 */
+	@Override
 	public void testInsertSiblingSelectExpanded() {
 		// This test is no use here as it is
 		// based on the assumption that all items
@@ -322,6 +340,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * 
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testSomeChildrenChanged()
 	 */
+	@Override
 	public void testSomeChildrenChanged() {
 		// This test is no use here as it is
 		// based on the assumption that all items
@@ -333,6 +352,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * 
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testWorldChanged()
 	 */
+	@Override
 	public void testWorldChanged() {
 		// This test is no use here as it is
 		// based on the assumption that all items
@@ -342,6 +362,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testDeleteSibling()
 	 */
+	@Override
 	public void testDeleteSibling() {
 		//Force creation of the item first
 		((TableViewer) fViewer).getTable().getItem(0).getText();
@@ -351,6 +372,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testSetSelection()
 	 */
+	@Override
 	public void testSetSelection() {
 		//Force creation of the item first
 		((TableViewer) fViewer).getTable().getItem(0).getText();

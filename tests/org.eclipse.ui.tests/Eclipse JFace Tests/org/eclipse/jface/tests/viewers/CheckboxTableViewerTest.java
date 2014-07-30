@@ -37,19 +37,22 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 
         public boolean fExtended = false;
 
-        public String getText(Object element) {
+        @Override
+		public String getText(Object element) {
             if (fExtended)
                 return providedString((String) element);
             return element.toString();
         }
 
-        public String getColumnText(Object element, int index) {
+        @Override
+		public String getColumnText(Object element, int index) {
             if (fExtended)
                 return providedString((TestElement) element);
             return element.toString();
         }
 
-        public Image getColumnImage(Object element, int columnIndex) {
+        @Override
+		public Image getColumnImage(Object element, int columnIndex) {
             return null;
         }
     }
@@ -58,7 +61,8 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 			super(name);
 		}
     	
-	    protected StructuredViewer createViewer(Composite parent) {
+	    @Override
+		protected StructuredViewer createViewer(Composite parent) {
 	    	TableViewer viewer = new CheckboxTableViewer(parent);
 	    	
 	        Table table = viewer.getTable();
@@ -87,6 +91,7 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 	        return viewer;
 	    }
 	    
+		@Override
 		public void testViewerColumn() {
 	    	assertNull(getViewerColumn((TableViewer) fViewer, -1));
 			assertNotNull(getViewerColumn((TableViewer) fViewer, 0));
@@ -103,7 +108,8 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 			super(name);
 		}
     	
-	    protected StructuredViewer createViewer(Composite parent) {
+	    @Override
+		protected StructuredViewer createViewer(Composite parent) {
 	    	TableViewer viewer = CheckboxTableViewer.newCheckList(parent, SWT.NONE);
 	    	
 	        Table table = viewer.getTable();
@@ -138,7 +144,8 @@ public class CheckboxTableViewerTest extends TableViewerTest {
         super(name);
     }
 
-    protected StructuredViewer createViewer(Composite parent) {
+    @Override
+	protected StructuredViewer createViewer(Composite parent) {
         Table table = new Table(parent, SWT.CHECK | SWT.BORDER);
         table.setLinesVisible(true);
         TableLayout layout = new TableLayout();
@@ -274,7 +281,9 @@ public class CheckboxTableViewerTest extends TableViewerTest {
     	CheckboxTableViewer ctv = (CheckboxTableViewer)fViewer;
     	
     	ctv.setCheckStateProvider(new ICheckStateProvider() {
+			@Override
 			public boolean isChecked(Object element)	{	return isChecked;	}
+			@Override
 			public boolean isGrayed(Object element) 	{	return isGrayed;	}
     	});
     	

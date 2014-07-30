@@ -36,6 +36,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
         }
     }
 
+	@Override
 	protected void assertSelectionEquals(String message, TestElement expected) {
 	    ISelection selection = fViewer.getSelection();
 	    assertTrue(selection instanceof IStructuredSelection);
@@ -273,7 +274,8 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
     /* (non-Javadoc)
      * @see org.eclipse.jface.tests.viewers.ViewerTestCase#tearDown()
      */
-    public void tearDown() {
+    @Override
+	public void tearDown() {
     	super.tearDown();
     	fTreeViewer = null;
     }

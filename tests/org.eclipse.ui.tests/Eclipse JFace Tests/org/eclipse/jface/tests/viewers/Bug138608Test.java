@@ -52,6 +52,7 @@ public class Bug138608Test extends ViewerTestCase {
 		super(name);
 	}
 
+	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		final TreeViewer viewer = new TreeViewer(parent);
 		viewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -62,11 +63,13 @@ public class Bug138608Test extends ViewerTestCase {
 		return viewer;
 	}
 
+	@Override
 	protected void setUpModel() {
 		// don't do anything here - we are not using the normal fModel and
 		// fRootElement
 	}
 
+	@Override
 	protected void setInput() {
 		getTreeViewer().setInput(contentProvider.root);
 		getTreeViewer().expandAll();
@@ -103,6 +106,7 @@ public class Bug138608Test extends ViewerTestCase {
 
 	}
 
+	@Override
 	public void tearDown() {
 		contentProvider = null;
 		super.tearDown();
@@ -123,25 +127,31 @@ public class Bug138608Test extends ViewerTestCase {
 			b.setChildren(new TreeNode[] { c });
 		}
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			return ((TreeNode) parentElement).getChildren();
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			return ((TreeNode) element).getParent();
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			return ((TreeNode) element).hasChildren();
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}

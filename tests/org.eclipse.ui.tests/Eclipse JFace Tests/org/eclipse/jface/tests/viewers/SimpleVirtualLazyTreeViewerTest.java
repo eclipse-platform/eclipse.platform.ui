@@ -46,6 +46,7 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		 */
 		private Object input;
 
+		@Override
 		public void updateElement(Object parent, int index) {
 			updateElementCallCount++;
 			String parentString = (String) parent;
@@ -58,14 +59,17 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 			}
 		}
 
+		@Override
 		public void dispose() {
 			// do nothing
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			this.input = newInput;
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			return null;
 		}
@@ -73,6 +77,7 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#updateChildCount(java.lang.Object, int)
 		 */
+		@Override
 		public void updateChildCount(Object element, int currentChildCount) {
 			if (printCallbacks)
 				System.out.println("updateChildCount called for " + element + " with " + currentChildCount);
@@ -100,21 +105,25 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 	 */
 	protected boolean setDataCalled = false;
 
+	@Override
 	public void setUp() {
 		super.setUp();
 		processEvents(); // run events for SetData precondition test
 	}
 	
+	@Override
 	protected void setInput() {
 		String letterR = "R";
 		getTreeViewer().setInput(letterR);
 	}
 
+	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		Tree tree = new Tree(fShell, SWT.VIRTUAL | SWT.MULTI);
 		TreeViewer treeViewer = new TreeViewer(tree);
 		treeViewer.setContentProvider(new LazyTreeContentProvider());
 		tree.addListener(SWT.SetData, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				setDataCalled = true;
 			}

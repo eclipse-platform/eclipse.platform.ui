@@ -39,6 +39,7 @@ public class TableViewerComparatorTest extends ViewerComparatorTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.tests.viewers.ViewerTestCase#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		TableViewer viewer = new TableViewer(parent);
 		viewer.setContentProvider(new TeamModelContentProvider());
@@ -96,6 +97,7 @@ public class TableViewerComparatorTest extends ViewerComparatorTest {
 		}
 	}
 	
+	@Override
 	protected void setInput() {
 		fViewer.setInput(team1);
 	}

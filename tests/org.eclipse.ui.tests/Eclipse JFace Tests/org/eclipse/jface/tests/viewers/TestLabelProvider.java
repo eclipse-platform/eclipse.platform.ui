@@ -28,11 +28,13 @@ public class TestLabelProvider extends LabelProvider {
         return fgImage;
     }
 
-    public Image getImage(Object element) {
+    @Override
+	public Image getImage(Object element) {
         return getImage();
     }
 
-    public String getText(Object element) {
+    @Override
+	public String getText(Object element) {
         String label = element.toString();
         return label + " <rendered>";
     }

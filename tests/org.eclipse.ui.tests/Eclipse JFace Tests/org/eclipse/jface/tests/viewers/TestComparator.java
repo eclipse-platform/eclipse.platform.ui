@@ -22,7 +22,8 @@ public class TestComparator implements Comparator {
     /* (non-Javadoc)
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    public int compare(Object arg0, Object arg1) {
+    @Override
+	public int compare(Object arg0, Object arg1) {
         comparisons++;
 
         return (arg0.toString()).compareTo(arg1.toString());
