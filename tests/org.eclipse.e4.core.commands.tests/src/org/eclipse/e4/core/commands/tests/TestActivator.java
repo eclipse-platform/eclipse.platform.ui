@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431667
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431667, 440893
  *******************************************************************************/
 package org.eclipse.e4.core.commands.tests;
 
@@ -74,7 +74,7 @@ public class TestActivator implements BundleActivator {
 	}
 
 	public PackageAdmin getBundleAdmin() {
-		return (PackageAdmin) serviceContext.get(PackageAdmin.class);
+		return serviceContext.get(PackageAdmin.class);
 	}
 
 	public Bundle getBundleForName(String bundleName) {

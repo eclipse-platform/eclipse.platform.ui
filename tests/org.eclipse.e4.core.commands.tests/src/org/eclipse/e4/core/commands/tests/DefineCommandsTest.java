@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431667
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431667, 440893
  *******************************************************************************/
 package org.eclipse.e4.core.commands.tests;
 
@@ -47,7 +47,7 @@ public class DefineCommandsTest extends TestCase {
 
 	public void testCreateWithSecondContexts() throws Exception {
 		IEclipseContext localContext = workbenchContext.createChild();
-		ECommandService cs = (ECommandService) localContext
+		ECommandService cs = localContext
 				.get(ECommandService.class);
 		assertNotNull(cs);
 		assertNotNull(cs.defineCategory(TEST_CAT1, "CAT1", null));
@@ -66,7 +66,7 @@ public class DefineCommandsTest extends TestCase {
 
 	public void testCreateWithTwoContexts() throws Exception {
 		IEclipseContext localContext = workbenchContext.createChild("Level1");
-		ECommandService cs = (ECommandService) localContext
+		ECommandService cs = localContext
 				.get(ECommandService.class);
 		assertNotNull(cs);
 		assertNotNull(cs.defineCategory(TEST_CAT1, "CAT1", null));
