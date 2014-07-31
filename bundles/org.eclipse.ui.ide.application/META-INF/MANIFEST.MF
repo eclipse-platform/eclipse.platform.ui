@@ -17,4 +17,4 @@ Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.6.0,4.0.0)",
 Export-Package: org.eclipse.ui.internal.ide.application;x-internal:=true,
  org.eclipse.ui.internal.ide.application.dialogs;x-internal:=true
 Import-Package: com.ibm.icu.text
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

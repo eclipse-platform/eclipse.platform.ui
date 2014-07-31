@@ -45,7 +45,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  */
 public class DelayedEventsProcessor implements Listener {
 
-	private ArrayList filesToOpen = new ArrayList(1);
+	private ArrayList<String> filesToOpen = new ArrayList<String>(1);
 
 	/**
 	 * Constructor.
