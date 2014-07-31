@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440893
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
@@ -80,8 +81,8 @@ public class Bug299755Test extends TestCase {
 		// create an "in" part context
 		IEclipseContext inContext = windowContext.createChild();
 
-		Out out = (Out) ContextInjectionFactory.make(Out.class, outContext);
-		In in = (In) ContextInjectionFactory.make(In.class, inContext);
+		Out out = ContextInjectionFactory.make(Out.class, outContext);
+		In in = ContextInjectionFactory.make(In.class, inContext);
 
 		// no selection in the beginning
 		assertNull(in.getSelection());

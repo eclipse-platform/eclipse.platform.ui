@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440893
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
@@ -75,9 +76,9 @@ public class Bug308220Test extends TestCase {
 		part.activate();
 		windowA.activate();
 
-		WindowService windowServiceA = (WindowService) ContextInjectionFactory
+		WindowService windowServiceA = ContextInjectionFactory
 				.make(WindowService.class, windowA);
-		WindowService windowServiceB = (WindowService) ContextInjectionFactory
+		WindowService windowServiceB = ContextInjectionFactory
 				.make(WindowService.class, windowB);
 
 		// windowA should have an active part, it was set earlier
