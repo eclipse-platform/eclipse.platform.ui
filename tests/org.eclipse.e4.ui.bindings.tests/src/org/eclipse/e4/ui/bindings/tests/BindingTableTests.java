@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440893
  *******************************************************************************/
 package org.eclipse.e4.ui.bindings.tests;
 
@@ -179,7 +180,7 @@ public class BindingTableTests extends TestCase {
 	}
 
 	public void testContextSet() throws Exception {
-		BindingTableManager manager = (BindingTableManager) ContextInjectionFactory
+		BindingTableManager manager = ContextInjectionFactory
 				.make(BindingTableManager.class, workbenchContext);
 		ArrayList<Context> window = new ArrayList<Context>();
 		Context winContext = contextManager.getContext(ID_WINDOW);
@@ -199,7 +200,7 @@ public class BindingTableTests extends TestCase {
 	}
 
 	public void testContextSetSibling() throws Exception {
-		BindingTableManager manager = (BindingTableManager) ContextInjectionFactory
+		BindingTableManager manager = ContextInjectionFactory
 				.make(BindingTableManager.class, workbenchContext);
 		ArrayList<Context> all = new ArrayList<Context>();
 		for (int i = 0; i < CONTEXTS.length; i += 3) {
@@ -211,7 +212,7 @@ public class BindingTableTests extends TestCase {
 	}
 
 	public void testSingleParentChainPerfectMatch() throws Exception {
-		BindingTableManager manager = (BindingTableManager) ContextInjectionFactory
+		BindingTableManager manager = ContextInjectionFactory
 				.make(BindingTableManager.class, workbenchContext);
 
 		manager.addTable(loadTable(ID_DIALOG_AND_WINDOW));
@@ -391,7 +392,7 @@ public class BindingTableTests extends TestCase {
 	}
 
 	private BindingTableManager createManager() throws Exception {
-		BindingTableManager manager = (BindingTableManager) ContextInjectionFactory
+		BindingTableManager manager = ContextInjectionFactory
 				.make(BindingTableManager.class, workbenchContext);
 
 		for (int i = 0; i < CONTEXTS.length; i += 3) {
