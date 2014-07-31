@@ -14,6 +14,7 @@
  *     		Implemented workbench auto-save to correctly restore state in case of crash.
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422533
  *     Terry Parker <tparker@google.com> - Bug 416673
+ *     Sergey Prigogin <eclipse.sprigogin@gmail.com> - Bug 438324
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -263,7 +264,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
- * primary responsability is the management of workbench windows, dialogs,
+ * primary responsibility is the management of workbench windows, dialogs,
  * wizards, and other workbench-related windows.
  * <p>
  * Note that any code that is run during the creation of a workbench instance
@@ -2917,11 +2918,6 @@ UIEvents.Context.TOPIC_CONTEXT,
 
 			}
 
-			// let the advisor run its start up code
-			if (initOK[0]) {
-				advisor.postStartup(); // may trigger a close/restart
-			}
-
 			if (initOK[0] && runEventLoop) {
 				// Same registration as in E4Workbench
 				Hashtable<String, Object> properties = new Hashtable<String, Object>();
@@ -2937,6 +2933,8 @@ UIEvents.Context.TOPIC_CONTEXT,
 				Runnable earlyStartup = new Runnable() {
 					@Override
 					public void run() {
+						// Let the advisor run its start-up code.
+						advisor.postStartup(); // May trigger a close/restart.
 						// start eager plug-ins
 						startPlugins();
 						addStartupRegistryListener();
