@@ -9,7 +9,7 @@ import org.eclipse.e4.core.services.nls.Message;
 /**
  * Load messages from a resource folder in the plugin
  */
-@Message(contributorURI="platform:/plugin/org.eclipse.e4.core.tests/resources/another")
+@Message(contributionURI="platform:/plugin/org.eclipse.e4.core.tests/resources/another")
 public class ResourcesMessages {
 	
 	//message as is

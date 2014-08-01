@@ -9,7 +9,7 @@ import org.eclipse.e4.core.services.nls.Message;
 /**
  * Load messages out of a class based resource bundle specified in the annotation.
  */
-@Message(contributorURI="bundleclass://org.eclipse.e4.core.tests/org.eclipse.e4.core.internal.tests.nls.ResourceBundleClass")
+@Message(contributionURI="bundleclass://org.eclipse.e4.core.tests/org.eclipse.e4.core.internal.tests.nls.ResourceBundleClass")
 public class ResourceBundleClassMessages {
 	
 	//message as is
