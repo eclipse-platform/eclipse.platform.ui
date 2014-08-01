@@ -62,7 +62,7 @@ public class ResourceBundleHelper {
 	private static final String PATH_SEPARATOR = "/"; //$NON-NLS-1$
 
 	/**
-	 * Parses the specified contributor URI and loads the {@link ResourceBundle} for the specified
+	 * Parses the specified contribution URI and loads the {@link ResourceBundle} for the specified
 	 * {@link Locale} out of an OSGi {@link Bundle}.
 	 * <p>
 	 * Following URIs are supported:
@@ -79,7 +79,7 @@ public class ResourceBundleHelper {
 	 * </ul>
 	 * </p>
 	 * 
-	 * @param contributorURI
+	 * @param contributionURI
 	 *            The URI that points to a {@link ResourceBundle}
 	 * @param locale
 	 *            The {@link Locale} to use for loading the {@link ResourceBundle}
@@ -88,19 +88,20 @@ public class ResourceBundleHelper {
 	 *            of the given {@link Bundle} which is specified by URI.
 	 * @return
 	 */
-	public static ResourceBundle getResourceBundleForUri(String contributorURI, Locale locale,
+	public static ResourceBundle getResourceBundleForUri(String contributionURI, Locale locale,
 			ResourceBundleProvider provider) {
-		if (contributorURI == null)
+		if (contributionURI == null)
 			return null;
 
 		LogService logService = ServicesActivator.getDefault().getLogService();
 
 		URI uri;
 		try {
-			uri = new URI(contributorURI);
+			uri = new URI(contributionURI);
 		} catch (URISyntaxException e) {
 			if (logService != null)
-				logService.log(LogService.LOG_ERROR, "Invalid contributor URI: " + contributorURI); //$NON-NLS-1$
+				logService
+						.log(LogService.LOG_ERROR, "Invalid contribution URI: " + contributionURI); //$NON-NLS-1$
 			return null;
 		}
 
@@ -126,7 +127,7 @@ public class ResourceBundleHelper {
 			if (uri.getAuthority() == null) {
 				if (logService != null)
 					logService.log(LogService.LOG_ERROR,
-							"Failed to get bundle for: " + contributorURI); //$NON-NLS-1$
+							"Failed to get bundle for: " + contributionURI); //$NON-NLS-1$
 			}
 			bundleName = uri.getAuthority();
 			// remove the leading /
@@ -134,8 +135,8 @@ public class ResourceBundleHelper {
 				classPath = uri.getPath().substring(1);
 			} else {
 				if (logService != null) {
-					logService.log(LogService.LOG_ERROR, "Called with invalid contributor URI: "
-							+ contributorURI);
+					logService.log(LogService.LOG_ERROR, "Called with invalid contribution URI: "
+							+ contributionURI);
 				}
 			}
 		}
@@ -157,7 +158,7 @@ public class ResourceBundleHelper {
 						if (logService != null)
 							logService
 									.log(LogService.LOG_ERROR,
-											"Failed to load specified ResourceBundle: " + contributorURI, e); //$NON-NLS-1$
+											"Failed to load specified ResourceBundle: " + contributionURI, e); //$NON-NLS-1$
 					}
 				} else if (resourcePath != null && resourcePath.length() > 0) {
 					// the specified URI points to a resource

@@ -157,9 +157,19 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 			ResourceBundleProvider rbProvider) {
 
 		ResourceBundle resourceBundle = null;
-		if (annotation != null && annotation.contributorURI().length() > 0) {
-			resourceBundle = ResourceBundleHelper.getResourceBundleForUri(
+		if (annotation != null) {
+			if (annotation.contributionURI().length() > 0) {
+				resourceBundle = ResourceBundleHelper.getResourceBundleForUri(
+						annotation.contributionURI(), locale, rbProvider);
+			} else if (annotation.contributorURI().length() > 0) {
+				if (logService != null) {
+					logService
+							.log(LogService.LOG_WARNING,
+									"Usage of @Message#contributorURI detected! Please use @Message#contributionURI instead!"); //$NON-NLS-1$
+				}
+				resourceBundle = ResourceBundleHelper.getResourceBundleForUri(
 					annotation.contributorURI(), locale, rbProvider);
+			}
 		}
 
 		if (resourceBundle == null) {
