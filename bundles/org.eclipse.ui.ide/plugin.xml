@@ -1672,17 +1672,8 @@
                style="push">
          </command>
       </menuContribution>
-      <menuContribution
-            locationURI="popup:windowCoolbarContextMenu">
-         <command
-               commandId="org.eclipse.ui.ToggleCoolbarAction"
-               style="push"
-               tooltip="%menu.toggleCoolbar.tooltip">
-               <!-- no visibility needed - the result of this action will remove the ability to show this menu anyway -->
-         </command>
-        
-      </menuContribution>
-     
+
+
       <menuContribution
             locationURI="popup:org.eclipse.ui.ide.MarkersView">
           <command
