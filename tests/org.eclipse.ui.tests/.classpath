@@ -4,7 +4,6 @@
 	<classpathentry kind="src" path="Eclipse JFace Tests"/>
 	<classpathentry kind="src" path="Eclipse UI Tests"/>
 	<classpathentry kind="src" path="Eclipse Part References Test"/>
-	<classpathentry kind="src" path="Benchmark Tests"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
