@@ -4,7 +4,7 @@ Bundle-SymbolicName: org.eclipse.e4.ui.css.core;singleton:=true
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-Version: 0.10.100.qualifier
+Bundle-Version: 0.10.200.qualifier
 Export-Package: org.eclipse.e4.ui.css.core;x-internal:=true,
  org.eclipse.e4.ui.css.core.css2;x-friends:="org.eclipse.e4.ui.css.swt.theme,org.eclipse.e4.ui.css.swt,org.eclipse.e4.ui.css.jface",
  org.eclipse.e4.ui.css.core.dom;x-friends:="org.eclipse.e4.ui.css.swt",
