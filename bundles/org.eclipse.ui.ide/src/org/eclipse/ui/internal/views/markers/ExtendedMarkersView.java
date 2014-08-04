@@ -275,6 +275,7 @@ public class ExtendedMarkersView extends ViewPart {
 		 * https://bugs.eclipse.org/341865 for details.
 		 */
 		viewer.getTree().addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent e) {
 				treePainted= true;
 				viewer.getTree().removePaintListener(this);
@@ -402,13 +403,7 @@ public class ExtendedMarkersView extends ViewPart {
 		return preferredWidth;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
+	@Override
 	public void createPartControl(Composite parent) {
 
 		createViewer(parent);
@@ -464,6 +459,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	private void addDoubleClickListener() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				ISelection selection = event.getSelection();
 				if(selection instanceof ITreeSelection) {
@@ -483,7 +479,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 *
 	 */
 	private void addPageAndPartSelectionListener() {
-		// Initialise any selection based filtering
+		// Initialize any selection based filtering
 		pageSelectionListener = new ViewerPageSelectionListener(this);
 		getSite().getPage().addPostSelectionListener(pageSelectionListener);
 
@@ -498,6 +494,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	private void addSelectionListener() {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
 				if (selection instanceof IStructuredSelection){
@@ -513,13 +510,8 @@ public class ExtendedMarkersView extends ViewPart {
 	private void addHelpListener() {
 		// Set help on the view itself
 		viewer.getControl().addHelpListener(new HelpListener() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.swt.events.HelpListener#helpRequested(org.eclipse
-			 * .swt.events.HelpEvent)
-			 */
+
+			@Override
 			public void helpRequested(HelpEvent e) {
 				Object provider = getAdapter(IContextProvider.class);
 				if (provider == null)
@@ -538,24 +530,12 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	private void addExpansionListener() {
 		viewer.getTree().addTreeListener(new TreeAdapter() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.swt.events.TreeAdapter#treeCollapsed(org.eclipse.
-			 * swt.events.TreeEvent)
-			 */
+			@Override
 			public void treeCollapsed(TreeEvent e) {
 				removeExpandedCategory((MarkerCategory) e.item.getData());
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.swt.events.TreeAdapter#treeExpanded(org.eclipse.swt
-			 * .events.TreeEvent)
-			 */
+			@Override
 			public void treeExpanded(TreeEvent e) {
 				addExpandedCategory((MarkerCategory) e.item.getData());
 			}
@@ -567,13 +547,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	private void addLinkWithEditorSupport() {
 		new OpenAndLinkWithEditorHelper(viewer) {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.ui.OpenAndLinkWithEditorHelper#activate(org.eclipse
-			 * .jface.viewers.ISelection )
-			 */
+			@Override
 			protected void activate(ISelection selection) {
 				final int currentMode = OpenStrategy.getOpenMethod();
 				try {
@@ -584,24 +558,12 @@ public class ExtendedMarkersView extends ViewPart {
 				}
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.ui.OpenAndLinkWithEditorHelper#linkToEditor(org.eclipse
-			 * .jface.viewers .ISelection)
-			 */
+			@Override
 			protected void linkToEditor(ISelection selection) {
 				// Not supported by this part
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.ui.OpenAndLinkWithEditorHelper#open(org.eclipse.jface
-			 * .viewers.ISelection, boolean)
-			 */
+			@Override
 			protected void open(ISelection selection, boolean activate) {
 				openSelectedMarkers();
 			}
@@ -643,11 +605,7 @@ public class ExtendedMarkersView extends ViewPart {
 		generator.disableAllFilters();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
-	 */
+	@Override
 	public void dispose() {
 		builder.cancelUpdate();
 		cancelQueuedUpdates();
@@ -819,6 +777,7 @@ public class ExtendedMarkersView extends ViewPart {
 			/**
 			 * Handles the case of user selecting the header area.
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 
 				final TreeColumn column = (TreeColumn) e.widget;
@@ -839,54 +798,27 @@ public class ExtendedMarkersView extends ViewPart {
 	private IPartListener2 getPartListener() {
 		return new IPartListener2() {
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @seeorg.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.
-			 * IWorkbenchPartReference)
-			 */
+			@Override
 			public void partActivated(IWorkbenchPartReference partRef) {
 				// Do nothing by default
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui
-			 * .IWorkbenchPartReference)
-			 */
+			@Override
 			public void partBroughtToTop(IWorkbenchPartReference partRef) {
 				// Do nothing by default
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @seeorg.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.
-			 * IWorkbenchPartReference)
-			 */
+			@Override
 			public void partClosed(IWorkbenchPartReference partRef) {
 				// Do nothing by default
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.
-			 * IWorkbenchPartReference)
-			 */
+			@Override
 			public void partDeactivated(IWorkbenchPartReference partRef) {
 				// Do nothing by default
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @seeorg.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.
-			 * IWorkbenchPartReference)
-			 */
+			@Override
 			public void partHidden(IWorkbenchPartReference partRef) {
 				if (partRef.getId().equals(getSite().getId())) {
 					isViewVisible= false;
@@ -904,26 +836,17 @@ public class ExtendedMarkersView extends ViewPart {
 			 * org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui
 			 * .IWorkbenchPartReference)
 			 */
+			@Override
 			public void partInputChanged(IWorkbenchPartReference partRef) {
 				// Do nothing by default
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @seeorg.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.
-			 * IWorkbenchPartReference)
-			 */
+			@Override
 			public void partOpened(IWorkbenchPartReference partRef) {
 				// Do nothing by default
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @seeorg.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.
-			 * IWorkbenchPartReference)
-			 */
+			@Override
 			public void partVisible(IWorkbenchPartReference partRef) {
 				if (partRef.getId().equals(getSite().getId())) {
 					isViewVisible= true;
@@ -1075,12 +998,7 @@ public class ExtendedMarkersView extends ViewPart {
 		return generator.getVisibleFields();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.part.ViewPart#init(org.eclipse.ui.IViewSite,
-	 * org.eclipse.ui.IMemento)
-	 */
+	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		ContentGeneratorDescriptor generatorDescriptor = null;
@@ -1296,11 +1214,7 @@ public class ExtendedMarkersView extends ViewPart {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.part.ViewPart#saveState(org.eclipse.ui.IMemento)
-	 */
+	@Override
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
 		memento.putString(TAG_PART_NAME, getPartName());
@@ -1355,11 +1269,7 @@ public class ExtendedMarkersView extends ViewPart {
 		builder.setCategoryGroup(group);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-	 */
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
@@ -1545,24 +1455,12 @@ public class ExtendedMarkersView extends ViewPart {
 		Transfer[] transferTypes = new Transfer[] {
 				MarkerTransfer.getInstance(), TextTransfer.getInstance() };
 		DragSourceListener listener = new DragSourceAdapter() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.swt.dnd.DragSourceAdapter#dragSetData(org.eclipse
-			 * .swt.dnd.DragSourceEvent)
-			 */
+			@Override
 			public void dragSetData(DragSourceEvent event) {
 				performDragSetData(event);
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.swt.dnd.DragSourceAdapter#dragFinished(org.eclipse
-			 * .swt.dnd.DragSourceEvent)
-			 */
+			@Override
 			public void dragFinished(DragSourceEvent event) {
 			}
 		};
@@ -1785,6 +1683,7 @@ public class ExtendedMarkersView extends ViewPart {
 			this.view = view;
 		}
 
+		@Override
 		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 
 			// Do not respond to our own selections
