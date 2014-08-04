@@ -91,8 +91,8 @@
             locationURI="menu:window?after=openNewWindow">
          <menu
                id="org.eclipse.ui.editors"
-               label="%menu.label"
-               mnemonic="%menu.mnemonic">
+               label="%menu.editor.label"
+               mnemonic="%menu.editor.mnemonic">
             <command
                   commandId="org.eclipse.ui.window.splitEditor"
                   mnemonic="%command.split.horizontal.mnemonic"
