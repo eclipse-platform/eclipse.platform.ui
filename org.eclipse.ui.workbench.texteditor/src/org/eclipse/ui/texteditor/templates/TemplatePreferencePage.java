@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Nicolaj Hoess <nicohoess@gmail.com> - Editor templates pref page: Allow to sort by column - https://bugs.eclipse.org/203722
  *******************************************************************************/
 package org.eclipse.ui.texteditor.templates;
 
@@ -37,6 +38,7 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
@@ -86,6 +88,7 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -889,20 +892,25 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		GC gc= new GC(getShell());
 		gc.setFont(JFaceResources.getDialogFont());
 
+		TemplateViewerComparator viewerComparator= new TemplateViewerComparator();
+		
 		TableColumn column1= new TableColumn(table, SWT.NONE);
 		column1.setText(TemplatesMessages.TemplatePreferencePage_column_name);
 		int minWidth= computeMinimumColumnWidth(gc, TemplatesMessages.TemplatePreferencePage_column_name);
 		columnLayout.addColumnData(new ColumnWeightData(2, minWidth, true));
+		column1.addSelectionListener(new TemplateColumnSelectionAdapter(column1, 0, viewerComparator));
 
 		TableColumn column2= new TableColumn(table, SWT.NONE);
 		column2.setText(TemplatesMessages.TemplatePreferencePage_column_context);
 		minWidth= computeMinimumContextColumnWidth(gc);
 		columnLayout.addColumnData(new ColumnWeightData(1, minWidth, true));
+		column2.addSelectionListener(new TemplateColumnSelectionAdapter(column2, 1, viewerComparator));
 
 		TableColumn column3= new TableColumn(table, SWT.NONE);
 		column3.setText(TemplatesMessages.TemplatePreferencePage_column_description);
 		minWidth= computeMinimumColumnWidth(gc, TemplatesMessages.TemplatePreferencePage_column_description);
 		columnLayout.addColumnData(new ColumnWeightData(3, minWidth, true));
+		column3.addSelectionListener(new TemplateColumnSelectionAdapter(column3, 2, viewerComparator));
 
 		TableColumn column4= new TableColumn(table, SWT.NONE);
 		column4.setAlignment(SWT.CENTER);
@@ -910,31 +918,19 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		minWidth= computeMinimumColumnWidth(gc, TemplatesMessages.TemplatePreferencePage_column_autoinsert);
 		minWidth= Math.max(minWidth, computeMinimumColumnWidth(gc, TemplatesMessages.TemplatePreferencePage_on));
 		columnLayout.addColumnData(new ColumnPixelData(minWidth, false, false));
+		column4.addSelectionListener(new TemplateColumnSelectionAdapter(column4, 3, viewerComparator));
 
 		gc.dispose();
 
 		fTableViewer= new CheckboxTableViewer(table);
 		fTableViewer.setLabelProvider(new TemplateLabelProvider());
 		fTableViewer.setContentProvider(new TemplateContentProvider());
-
-		fTableViewer.setComparator(new ViewerComparator() {
-			public int compare(Viewer viewer, Object object1, Object object2) {
-				if ((object1 instanceof TemplatePersistenceData) && (object2 instanceof TemplatePersistenceData)) {
-					Template left= ((TemplatePersistenceData) object1).getTemplate();
-					Template right= ((TemplatePersistenceData) object2).getTemplate();
-					int result= Collator.getInstance().compare(left.getName(), right.getName());
-					if (result != 0)
-						return result;
-					return Collator.getInstance().compare(left.getDescription(), right.getDescription());
-				}
-				return super.compare(viewer, object1, object2);
-			}
-
-			public boolean isSorterProperty(Object element, String property) {
-				return true;
-			}
-		});
-
+		fTableViewer.setComparator(viewerComparator);
+		
+		// Specify default sorting
+		table.setSortColumn(column1);
+		table.setSortDirection(viewerComparator.getDirection());
+		
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent e) {
 				edit();
@@ -1524,5 +1520,78 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 	protected TableViewer getTableViewer() {
 		return fTableViewer;
+	}
+	
+	private final class TemplateViewerComparator extends ViewerComparator {
+
+		private int fSortColumn;
+
+		private int fSortOrder; // 1 = asc, -1 = desc
+
+		public TemplateViewerComparator() {
+			fSortColumn= 0;
+			fSortOrder= 1;
+		}
+
+		/**
+		 * Returns the {@linkplain SWT} style constant for the sort direction.
+		 * 
+		 * @return {@link SWT#DOWN} for asc sorting, {@link SWT#UP} otherwise
+		 */
+		public int getDirection() {
+			return fSortOrder == 1 ? SWT.DOWN : SWT.UP;
+		}
+
+		/**
+		 * Sets the sort column. If the newly set sort column equals the previous set sort column,
+		 * the sort direction changes.
+		 * 
+		 * @param column New sort column
+		 */
+		public void setColumn(int column) {
+			if (column == fSortColumn) {
+				fSortOrder*= -1;
+			} else {
+				fSortColumn= column;
+				fSortOrder= 1;
+			}
+		}
+
+		public int compare(Viewer viewer, Object e1, Object e2) {
+
+			if (viewer instanceof TableViewer) {
+				IBaseLabelProvider baseLabel= ((TableViewer)viewer).getLabelProvider();
+
+				String left= ((TemplateLabelProvider)baseLabel).getColumnText(e1, fSortColumn);
+				String right= ((TemplateLabelProvider)baseLabel).getColumnText(e2, fSortColumn);
+				int sortResult= getComparator().compare(left, right);
+				return sortResult * fSortOrder;
+			}
+
+			return super.compare(viewer, e1, e2);
+		}
+	}
+	
+	private final class TemplateColumnSelectionAdapter extends SelectionAdapter {
+
+		private final TableColumn fTableColumn;
+
+		private final int fColumnIndex;
+
+		private final TemplateViewerComparator fViewerComparator;
+
+		public TemplateColumnSelectionAdapter(TableColumn column, int index, TemplateViewerComparator vc) {
+			fTableColumn= column;
+			fColumnIndex= index;
+			fViewerComparator= vc;
+		}
+
+		public void widgetSelected(SelectionEvent e) {
+			fViewerComparator.setColumn(fColumnIndex);
+			int dir= fViewerComparator.getDirection();
+			fTableViewer.getTable().setSortDirection(dir);
+			fTableViewer.getTable().setSortColumn(fTableColumn);
+			fTableViewer.refresh();
+		}
 	}
 }
