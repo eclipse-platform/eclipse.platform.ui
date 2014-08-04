@@ -103,6 +103,7 @@
     <module>bundles/org.eclipse.ui.views</module>
     <module>bundles/org.eclipse.ui.views.properties.tabbed</module>
     <module>bundles/org.eclipse.ui.workbench</module>
+    <module>bundles/org.eclipse.ui.monitoring</module>
     <module>bundles/org.eclipse.ui.navigator</module>
     <module>bundles/org.eclipse.ui.themes</module>
     <module>features/org.eclipse.e4.rcp</module>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="4.4"?>
+<!--
+  Copyright (C) 2014, Google Inc and others.
+  All rights reserved. This program and the accompanying materials
+  are made available under the terms of the Eclipse Public License v1.0
+  which accompanies this distribution, and is available at
+  http://www.eclipse.org/legal/epl-v10.html
+
+  Contributors:
+      Steve Foreman (Google) - initial API and implementation
+      Marcus Eng (Google)
+-->
+<plugin>
+   <extension-point
+      id="logger"
+      name="%UiFreezeEventLogger.name"
+      schema="schema/org.eclipse.ui.monitoring.logger.exsd"/>
+
+   <extension point="org.eclipse.ui.startup">
+      <startup class="org.eclipse.ui.internal.monitoring.MonitoringStartup"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.ui.internal.monitoring.preferences.MonitoringPreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.ui.trace.tracingPage"
+            class="org.eclipse.ui.internal.monitoring.preferences.MonitoringPreferencePage"
+            id="org.eclipse.ui.monitoring.page"
+            name="%eventLoopMonitorPreferencePage.name">
+      </page>
+   </extension>
+</plugin>

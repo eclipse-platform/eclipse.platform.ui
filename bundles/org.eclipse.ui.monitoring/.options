@@ -1,0 +1,4 @@
+# Debugging options for the org.eclipse.ui.monitoring plugin
+
+# Turn on general debugging for the org.eclipse.ui.monitoring plugin.
+org.eclipse.ui.monitoring/debug/event_monitor=false

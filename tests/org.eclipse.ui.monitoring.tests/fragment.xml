@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="4.4"?>
+<!--
+  Copyright (C) 2014, Google Inc and others.
+  All rights reserved. This program and the accompanying materials
+  are made available under the terms of the Eclipse Public License v1.0
+  which accompanies this distribution, and is available at
+  http://www.eclipse.org/legal/epl-v10.html
+
+  Contributors:
+      Steve Foreman (Google) - initial API and implementation
+      Marcus Eng (Google)
+-->
+<fragment>
+  <extension point="org.eclipse.ui.commands">
+    <command
+        id="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+        name="Delay"
+        defaultHandler="org.eclipse.ui.internal.monitoring.DelayHandler">
+      <commandParameter
+          id="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync"
+          name="Synchronous"
+          optional="false" />
+      <commandParameter
+          id="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration"
+          name="Duration"
+          optional="false" />
+    </command>
+  </extension>
+
+  <extension point="org.eclipse.ui.menus">
+    <menuContribution
+        locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+      <menu label="Delays" id="org.eclipse.ui.monitoring.manualtesting.menus.delayMenu">
+        <menu label="Sync" id="org.eclipse.ui.monitoring.manualtesting.menus.delayMenu.sync">
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.syncDelay1"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 1ms">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="true" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="1" />
+          </command>
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.syncDelay10"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 10ms">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="true" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="10" />
+          </command>
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.syncDelay100"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 100ms">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="true" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="100" />
+          </command>
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.syncDelay1000"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 1s">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="true" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="1000" />
+          </command>
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.syncDelay5000"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 5s">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="true" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="5000" />
+          </command>
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.syncDelay30000"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 30s">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="true" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="30000" />
+          </command>
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.syncDelay60000"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 1m">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="true" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="60000" />
+          </command>
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.syncDelay180000"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 3m">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="true" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="180000" />
+          </command>
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.syncDelay300000"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 5m">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="true" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="300000" />
+          </command>
+        </menu>
+        <menu label="Async" id="org.eclipse.ui.monitoring.manualtesting.menus.delayMenu.async">
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.asyncDelay1"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 1ms">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="false" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="1" />
+          </command>
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.asyncDelay10"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 10ms">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="false" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="10" />
+          </command>
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.asyncDelay100"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 100ms">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="false" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="100" />
+          </command>
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.asyncDelay1000"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 1s">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="false" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="1000" />
+          </command>
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.asyncDelay5000"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 5s">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="false" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="5000" />
+          </command>
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.asyncDelay30000"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 30s">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="false" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="30000" />
+          </command>
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.asyncDelay60000"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 1m">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="false" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="60000" />
+          </command>
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.asyncDelay180000"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 3m">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="false" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="180000" />
+          </command>
+          <command
+            id="org.eclipse.ui.monitoring.manualtesting.commands.asyncDelay3000000"
+            commandId="org.eclipse.ui.monitoring.manualtesting.commands.delay"
+            label="Delay 5m">
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.sync" value="false" />
+            <parameter name="org.eclipse.ui.monitoring.manualtesting.commands.delay.duration" value="300000" />
+          </command>
+        </menu>
+      </menu>
+    </menuContribution>
+  </extension>
+  <extension
+        point="org.eclipse.ui.monitoring.logger">
+     <logger
+           class="org.eclipse.ui.internal.monitoring.MockUiFreezeEventLogger">
+     </logger>
+  </extension>
+</fragment>

@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: org.eclipse.ui.internal.monitoring.MonitoringPlugin
+Bundle-ClassPath: .
+Bundle-Localization: plugin
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-SymbolicName: org.eclipse.ui.monitoring;singleton:=true
+Bundle-Vendor: %Bundle-Vendor
+Bundle-Version: 1.0.0.qualifier
+Export-Package: org.eclipse.ui.internal.monitoring;x-internal:=true,
+ org.eclipse.ui.internal.monitoring.preferences;x-internal:=true,
+ org.eclipse.ui.monitoring;x-internal:=true
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.10.0,4.0.0)",
+ org.eclipse.jface;bundle-version="[3.10.0,4.0.0)",
+ org.eclipse.ui;bundle-version="[3.106.0,4.0.0)"
