@@ -44,7 +44,7 @@ public class CommonWizardDescriptorManager {
 	 */
 	public static final String WIZARD_TYPE_NEW = "new"; //$NON-NLS-1$
 
-	private Map commonWizardDescriptors = new HashMap();
+	private Map<String, Set> commonWizardDescriptors = new HashMap<String, Set>();
 
 	/**
 	 * @return the singleton instance of the registry
@@ -73,10 +73,10 @@ public class CommonWizardDescriptorManager {
 			NavigatorPlugin.logError(0, "A null wizardId was supplied for a commonWizard in " + aDesc.getNamespace(), null); //$NON-NLS-1$
 		}
 		synchronized (commonWizardDescriptors) {
-			Set descriptors = (Set) commonWizardDescriptors.get(aDesc
+			Set<CommonWizardDescriptor> descriptors = commonWizardDescriptors.get(aDesc
 					.getType());
 			if (descriptors == null) { 
-				commonWizardDescriptors.put(aDesc.getType(), descriptors = new HashSet());
+				commonWizardDescriptors.put(aDesc.getType(), descriptors = new HashSet<CommonWizardDescriptor>());
 			}
 			if (!descriptors.contains(aDesc)) {
 				descriptors.add(aDesc);
@@ -100,12 +100,12 @@ public class CommonWizardDescriptorManager {
 	public String[] getEnabledCommonWizardDescriptorIds(Object anElement,
 			String aType, INavigatorContentService aContentService) {
 
-		Set commonDescriptors = (Set) commonWizardDescriptors.get(aType);
+		Set commonDescriptors = commonWizardDescriptors.get(aType);
 		if (commonDescriptors == null) {
 			return NO_DESCRIPTOR_IDS;
 		}
 		/* Find other Common Wizard providers which enable for this object */
-		List descriptorIds = new ArrayList();
+		List<String> descriptorIds = new ArrayList<String>();
 		for (Iterator commonWizardDescriptorsItr = commonDescriptors.iterator(); commonWizardDescriptorsItr
 				.hasNext();) {
 			CommonWizardDescriptor descriptor = (CommonWizardDescriptor) commonWizardDescriptorsItr
@@ -117,7 +117,7 @@ public class CommonWizardDescriptorManager {
 			}
 		}
 		String[] wizardIds = new String[descriptorIds.size()];
-		return (String[]) descriptorIds.toArray(wizardIds); 
+		return descriptorIds.toArray(wizardIds); 
 	}
 	
 
@@ -137,12 +137,12 @@ public class CommonWizardDescriptorManager {
 	public CommonWizardDescriptor[] getEnabledCommonWizardDescriptors(Object anElement,
 			String aType, INavigatorContentService aContentService) {
 
-		Set commonDescriptors = (Set) commonWizardDescriptors.get(aType);
+		Set commonDescriptors = commonWizardDescriptors.get(aType);
 		if (commonDescriptors == null) {
 			return NO_DESCRIPTORS;
 		}
 		/* Find other Common Wizard providers which enable for this object */
-		List descriptors = new ArrayList();
+		List<CommonWizardDescriptor> descriptors = new ArrayList<CommonWizardDescriptor>();
 		for (Iterator commonWizardDescriptorsItr = commonDescriptors.iterator(); commonWizardDescriptorsItr
 				.hasNext();) {
 			CommonWizardDescriptor descriptor = (CommonWizardDescriptor) commonWizardDescriptorsItr
@@ -154,7 +154,7 @@ public class CommonWizardDescriptorManager {
 			}
 		}
 		CommonWizardDescriptor[] enabledDescriptors = new CommonWizardDescriptor[descriptors.size()];
-		return (CommonWizardDescriptor[]) descriptors.toArray(enabledDescriptors);  
+		return descriptors.toArray(enabledDescriptors);  
 	}
 
 	/**

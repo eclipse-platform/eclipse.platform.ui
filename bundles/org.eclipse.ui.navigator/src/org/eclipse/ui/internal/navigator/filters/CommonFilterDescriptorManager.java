@@ -32,7 +32,7 @@ public class CommonFilterDescriptorManager {
 	private static final CommonFilterDescriptor[] NO_FILTER_DESCRIPTORS = new CommonFilterDescriptor[0];
 
 	// K(ID) V(CommonFilterDescriptor)
-	private final Map filters = new HashMap();
+	private final Map<String, CommonFilterDescriptor> filters = new HashMap<String, CommonFilterDescriptor>();
 
 	/**
 	 * 
@@ -73,7 +73,7 @@ public class CommonFilterDescriptorManager {
 	 */
 	public CommonFilterDescriptor[] findVisibleFilters(INavigatorContentService contentService, boolean forUI) {
 
-		List visibleFilters = new ArrayList();
+		List<CommonFilterDescriptor> visibleFilters = new ArrayList<CommonFilterDescriptor>();
 		CommonFilterDescriptor descriptor;
 		for (Iterator filtersItr = filters.entrySet().iterator(); filtersItr.hasNext();) {
 			descriptor = (CommonFilterDescriptor) ((Map.Entry)filtersItr.next()).getValue();
@@ -86,7 +86,7 @@ public class CommonFilterDescriptorManager {
 		if (visibleFilters.size() == 0) {
 			return NO_FILTER_DESCRIPTORS;
 		}
-		return (CommonFilterDescriptor[]) visibleFilters
+		return visibleFilters
 				.toArray(new CommonFilterDescriptor[visibleFilters.size()]);
 	}
 
@@ -95,7 +95,7 @@ public class CommonFilterDescriptorManager {
 	 * @return the CommonFilterDescriptor, if found
 	 */
 	public CommonFilterDescriptor getFilterById(String id) {
-		return (CommonFilterDescriptor) filters.get(id);
+		return filters.get(id);
 	}
 	
 	/**

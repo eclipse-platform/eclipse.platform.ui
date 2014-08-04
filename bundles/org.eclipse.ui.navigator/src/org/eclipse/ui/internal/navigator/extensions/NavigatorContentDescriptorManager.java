@@ -43,19 +43,19 @@ public class NavigatorContentDescriptorManager {
 
 	private static final NavigatorContentDescriptorManager INSTANCE = new NavigatorContentDescriptorManager();
 
-	private final Map firstClassDescriptorsMap = new HashMap();
+	private final Map<String, NavigatorContentDescriptor> firstClassDescriptorsMap = new HashMap<String, NavigatorContentDescriptor>();
 
-	private final Map allDescriptors = new HashMap();
+	private final Map<String, NavigatorContentDescriptor> allDescriptors = new HashMap<String, NavigatorContentDescriptor>();
 
 	private ImageRegistry imageRegistry;
 
-	private final Set overridingDescriptors = new HashSet();
+	private final Set<NavigatorContentDescriptor> overridingDescriptors = new HashSet<NavigatorContentDescriptor>();
 
-	private final Set saveablesProviderDescriptors = new HashSet();
+	private final Set<NavigatorContentDescriptor> saveablesProviderDescriptors = new HashSet<NavigatorContentDescriptor>();
 
-	private final Set sortOnlyDescriptors = new HashSet();
+	private final Set<NavigatorContentDescriptor> sortOnlyDescriptors = new HashSet<NavigatorContentDescriptor>();
 
-	private final Set firstClassDescriptorsSet = new HashSet();
+	private final Set<NavigatorContentDescriptor> firstClassDescriptorsSet = new HashSet<NavigatorContentDescriptor>();
 
 	/**
 	 * @return the singleton instance of the manager
@@ -75,7 +75,7 @@ public class NavigatorContentDescriptorManager {
 	public NavigatorContentDescriptor[] getAllContentDescriptors() {
 		NavigatorContentDescriptor[] finalDescriptors = new NavigatorContentDescriptor[allDescriptors
 				.size()];
-		finalDescriptors = (NavigatorContentDescriptor[]) allDescriptors.values().toArray(finalDescriptors);
+		finalDescriptors = allDescriptors.values().toArray(finalDescriptors);
 		Arrays.sort(finalDescriptors, ExtensionSequenceNumberComparator.INSTANCE);
 		return finalDescriptors;
 	}
@@ -118,7 +118,7 @@ public class NavigatorContentDescriptorManager {
 	 * @param considerOverrides
 	 * @return the best content descriptor for the given element.
 	 */
-	public Set findDescriptorsForTriggerPoint(Object anElement,
+	public Set<NavigatorContentDescriptor> findDescriptorsForTriggerPoint(Object anElement,
 			VisibilityAssistant aVisibilityAssistant, boolean considerOverrides) {
 		return findDescriptors(anElement, aVisibilityAssistant, considerOverrides, !POSSIBLE_CHILD);
 	}
@@ -137,7 +137,7 @@ public class NavigatorContentDescriptorManager {
 	 * @param toComputeOverrides
 	 * @return the best content descriptor for the given element.
 	 */
-	public Set findDescriptorsForPossibleChild(Object anElement,
+	public Set<NavigatorContentDescriptor> findDescriptorsForPossibleChild(Object anElement,
 			VisibilityAssistant aVisibilityAssistant, boolean toComputeOverrides) {
 		return findDescriptors(anElement, aVisibilityAssistant, toComputeOverrides, POSSIBLE_CHILD);
 	}
@@ -145,10 +145,10 @@ public class NavigatorContentDescriptorManager {
 	private static final boolean POSSIBLE_CHILD = true;
 
 
-	private Set findDescriptors(Object anElement,
+	private Set<NavigatorContentDescriptor> findDescriptors(Object anElement,
 			VisibilityAssistant aVisibilityAssistant, boolean considerOverrides, boolean possibleChild) {
 
-		Set descriptors = new TreeSet(ExtensionSequenceNumberComparator.INSTANCE);
+		Set<NavigatorContentDescriptor> descriptors = new TreeSet<NavigatorContentDescriptor>(ExtensionSequenceNumberComparator.INSTANCE);
 
 		if (considerOverrides) {
 			addDescriptorsConsideringOverrides(anElement, firstClassDescriptorsSet, aVisibilityAssistant, descriptors, possibleChild);
@@ -159,8 +159,8 @@ public class NavigatorContentDescriptorManager {
 		} else {
 
 			/* Find other ContentProviders which enable for this object */
-			for (Iterator contentDescriptorsItr = firstClassDescriptorsSet.iterator(); contentDescriptorsItr.hasNext();) {
-				NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) contentDescriptorsItr.next();
+			for (Iterator<NavigatorContentDescriptor> contentDescriptorsItr = firstClassDescriptorsSet.iterator(); contentDescriptorsItr.hasNext();) {
+				NavigatorContentDescriptor descriptor = contentDescriptorsItr.next();
 
 				if (aVisibilityAssistant.isActive(descriptor) && aVisibilityAssistant.isVisible(descriptor)
 						&& (possibleChild ? descriptor.isPossibleChild(anElement) : descriptor.isTriggerPoint(anElement))) {
@@ -173,15 +173,15 @@ public class NavigatorContentDescriptorManager {
 	}
 
 	private boolean addDescriptorsConsideringOverrides(Object anElement,
-			Set theChildDescriptors, VisibilityAssistant aVisibilityAssistant,
-			Set theFoundDescriptors, boolean possibleChild) {
+			Set<NavigatorContentDescriptor> theChildDescriptors, VisibilityAssistant aVisibilityAssistant,
+			Set<NavigatorContentDescriptor> theFoundDescriptors, boolean possibleChild) {
 		int initialSize = theFoundDescriptors.size();
 
 		NavigatorContentDescriptor descriptor;
 		/* Find other ContentProviders which enable for this object */
-		for (Iterator contentDescriptorsItr = theChildDescriptors.iterator(); contentDescriptorsItr
+		for (Iterator<NavigatorContentDescriptor> contentDescriptorsItr = theChildDescriptors.iterator(); contentDescriptorsItr
 				.hasNext();) {
-			descriptor = (NavigatorContentDescriptor) contentDescriptorsItr
+			descriptor = contentDescriptorsItr
 					.next();
 
 			boolean isApplicable = aVisibilityAssistant.isActive(descriptor)
@@ -192,7 +192,7 @@ public class NavigatorContentDescriptorManager {
 
 				boolean isOverridden;
 
-				Set overridingDescriptors = new TreeSet(ExtensionSequenceNumberComparator.INSTANCE);
+				Set<NavigatorContentDescriptor> overridingDescriptors = new TreeSet<NavigatorContentDescriptor>(ExtensionSequenceNumberComparator.INSTANCE);
 				isOverridden = addDescriptorsConsideringOverrides(anElement, descriptor.getOverriddingExtensions(),
 						aVisibilityAssistant, overridingDescriptors, possibleChild);
 
@@ -219,7 +219,7 @@ public class NavigatorContentDescriptorManager {
 	 * @return The content descriptor of the given id
 	 */
 	public NavigatorContentDescriptor getContentDescriptor(String id) {
-		return (NavigatorContentDescriptor) allDescriptors.get(id);
+		return allDescriptors.get(id);
 	}
 
 	/**
@@ -321,11 +321,11 @@ public class NavigatorContentDescriptorManager {
 		if (overridingDescriptors.size() > 0) {
 			NavigatorContentDescriptor descriptor;
 			NavigatorContentDescriptor overriddenDescriptor;
-			for (Iterator overridingIterator = overridingDescriptors.iterator(); overridingIterator
+			for (Iterator<NavigatorContentDescriptor> overridingIterator = overridingDescriptors.iterator(); overridingIterator
 					.hasNext();) {
-				descriptor = (NavigatorContentDescriptor) overridingIterator
+				descriptor = overridingIterator
 						.next();
-				overriddenDescriptor = (NavigatorContentDescriptor) allDescriptors
+				overriddenDescriptor = allDescriptors
 						.get(descriptor.getSuppressedExtensionId());
 				if (overriddenDescriptor != null) {
 
@@ -369,9 +369,9 @@ public class NavigatorContentDescriptorManager {
 		}
 	}
 
-	private int findId(List list, String id) {
+	private int findId(List<NavigatorContentDescriptor> list, String id) {
 		for (int i = 0, len = list.size(); i < len; i++) {
-			NavigatorContentDescriptor desc = (NavigatorContentDescriptor) list.get(i);
+			NavigatorContentDescriptor desc = list.get(i);
 			if (desc.getId().equals(id))
 				return i;
 		}
@@ -384,7 +384,7 @@ public class NavigatorContentDescriptorManager {
 	private void computeSequenceNumbers() {
 		NavigatorContentDescriptor[] descs = getAllContentDescriptors();
 
-		LinkedList list = new LinkedList();
+		LinkedList<NavigatorContentDescriptor> list = new LinkedList<NavigatorContentDescriptor>();
 		for (int i = 0; i < descs.length; i++) {
 			list.add(descs[i]);
 		}
@@ -393,7 +393,7 @@ public class NavigatorContentDescriptorManager {
 		while (changed) {
 			changed = false;
 			for (int i = 0, len = list.size(); i < len; i++) {
-				NavigatorContentDescriptor desc = (NavigatorContentDescriptor) list.get(i);
+				NavigatorContentDescriptor desc = list.get(i);
 				if (desc.getAppearsBeforeId() != null) {
 					int beforeInd = findId(list, desc.getAppearsBeforeId());
 					if (beforeInd >= 0 && beforeInd < i) {
@@ -406,7 +406,7 @@ public class NavigatorContentDescriptorManager {
 		}
 
 		for (int i = 0, len = list.size(); i < len; i++) {
-			NavigatorContentDescriptor desc = (NavigatorContentDescriptor) list.get(i);
+			NavigatorContentDescriptor desc = list.get(i);
 			desc.setSequenceNumber(i);
 			if (Policy.DEBUG_EXTENSION_SETUP) {
 				System.out.println("Descriptors by sequence: " + desc); //$NON-NLS-1$

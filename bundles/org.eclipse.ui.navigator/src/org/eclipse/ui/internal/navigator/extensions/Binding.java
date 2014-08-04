@@ -28,16 +28,16 @@ import org.eclipse.ui.internal.navigator.Policy;
 
 class Binding {
 
-	private final Set rootPatterns = new HashSet();
+	private final Set<Pattern> rootPatterns = new HashSet<Pattern>();
 
-	private final Set includePatterns = new HashSet();
+	private final Set<Pattern> includePatterns = new HashSet<Pattern>();
 
-	private final Set excludePatterns = new HashSet();
+	private final Set<Pattern> excludePatterns = new HashSet<Pattern>();
 
 	private final String TAG_EXTENSION;
 
-	private final Map knownIds = new HashMap();
-	private final Map knownRootIds = new HashMap();
+	private final Map<String, Boolean> knownIds = new HashMap<String, Boolean>();
+	private final Map<String, Boolean> knownRootIds = new HashMap<String, Boolean>();
 
 	protected Binding(String tagExtension) {
 		TAG_EXTENSION = tagExtension;
@@ -52,11 +52,11 @@ class Binding {
 		// Have we seen this pattern before?
 		if (knownIds.containsKey(anExtensionId)) {
 			// we have, don't recompute
-			return ((Boolean) knownIds.get(anExtensionId)).booleanValue();
+			return knownIds.get(anExtensionId).booleanValue();
 		}
 
-		for (Iterator itr = excludePatterns.iterator(); itr.hasNext();) {
-			Pattern pattern = (Pattern) itr.next();
+		for (Iterator<Pattern> itr = excludePatterns.iterator(); itr.hasNext();) {
+			Pattern pattern = itr.next();
 			if (pattern.matcher(anExtensionId).matches()) {
 				knownIds.put(anExtensionId, Boolean.FALSE);
 				if (Policy.DEBUG_RESOLUTION) {
@@ -67,8 +67,8 @@ class Binding {
 			}
 		}
 
-		for (Iterator itr = includePatterns.iterator(); itr.hasNext();) {
-			Pattern pattern = (Pattern) itr.next();
+		for (Iterator<Pattern> itr = includePatterns.iterator(); itr.hasNext();) {
+			Pattern pattern = itr.next();
 			if (pattern.matcher(anExtensionId).matches()) {
 				// keep track of the result for next time
 				knownIds.put(anExtensionId, Boolean.TRUE);
@@ -100,11 +100,11 @@ class Binding {
 		// Have we seen this pattern before?
 		if (knownRootIds.containsKey(anExtensionId)) {
 			// we have, don't recompute
-			return ((Boolean) knownRootIds.get(anExtensionId)).booleanValue();
+			return knownRootIds.get(anExtensionId).booleanValue();
 		}
 		Pattern pattern = null;
-		for (Iterator itr = rootPatterns.iterator(); itr.hasNext();) {
-			pattern = (Pattern) itr.next();
+		for (Iterator<Pattern> itr = rootPatterns.iterator(); itr.hasNext();) {
+			pattern = itr.next();
 			if (pattern.matcher(anExtensionId).matches()) {
 				knownRootIds.put(anExtensionId, Boolean.TRUE);
 				return true;

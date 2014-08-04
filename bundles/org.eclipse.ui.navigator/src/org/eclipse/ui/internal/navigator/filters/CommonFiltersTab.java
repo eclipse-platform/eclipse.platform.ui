@@ -215,8 +215,8 @@ public class CommonFiltersTab extends CustomizationTab {
 		patternFilter.setPattern(filterText.getText());
 		getTableViewer().refresh();
 		
-		Set checkedItems = getCheckedItems();
-		for (Iterator iterator = checkedItems.iterator(); iterator.hasNext();) {  
+		Set<Object> checkedItems = getCheckedItems();
+		for (Iterator<Object> iterator = checkedItems.iterator(); iterator.hasNext();) {  
 			getTableViewer().setChecked(iterator.next(), true);
 		}
 	} 

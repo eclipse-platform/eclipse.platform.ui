@@ -213,7 +213,7 @@ public class CommonViewer extends TreeViewer {
 
 		Object[] changed = event.getElements();
 		if (changed != null) {
-			List others = new ArrayList();
+			List<Object> others = new ArrayList<Object>();
 			for (int i = 0; i < changed.length; i++) {
 				if (changed[i] == null)
 					continue;
@@ -342,7 +342,7 @@ public class CommonViewer extends TreeViewer {
 			if (pipeDream.interceptRefresh(update)) {
 				/* intercept and apply the update */
 				boolean toUpdateLabels = update.isUpdateLabels();
-				for (Iterator iter = update.getRefreshTargets().iterator(); iter
+				for (Iterator<Object> iter = update.getRefreshTargets().iterator(); iter
 						.hasNext();) {
 					super.refresh(iter.next(), toUpdateLabels);
 				}
@@ -527,7 +527,7 @@ public class CommonViewer extends TreeViewer {
 			/* if the update is modified */
 			if (pipeDream.interceptUpdate(update)) {
 				/* intercept and apply the update */ 
-				for (Iterator iter = update.getRefreshTargets().iterator(); iter
+				for (Iterator<Object> iter = update.getRefreshTargets().iterator(); iter
 						.hasNext();) {
 					super.update(iter.next(), properties);
 				}

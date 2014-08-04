@@ -32,7 +32,7 @@ public class LinkHelperManager {
 
 	private static final LinkHelperDescriptor[] NO_DESCRIPTORS = new LinkHelperDescriptor[0];
 
-	private List descriptors;
+	private List<LinkHelperDescriptor> descriptors;
 
 	/**
 	 * @return the singleton instance.
@@ -62,10 +62,10 @@ public class LinkHelperManager {
 			Object anObject,
 			INavigatorContentService aContentService) {
 
-		List helpersList = new ArrayList();
+		List<LinkHelperDescriptor> helpersList = new ArrayList<LinkHelperDescriptor>();
 		LinkHelperDescriptor descriptor = null;
-		for (Iterator itr = getDescriptors().iterator(); itr.hasNext();) {
-			descriptor = (LinkHelperDescriptor) itr.next();
+		for (Iterator<LinkHelperDescriptor> itr = getDescriptors().iterator(); itr.hasNext();) {
+			descriptor = itr.next();
 			if (aContentService.isVisible(descriptor.getId())
 					&& descriptor.isEnabledFor(anObject)) {
 				helpersList.add(descriptor);
@@ -74,7 +74,7 @@ public class LinkHelperManager {
 		if (helpersList.size() == 0) {
 			return NO_DESCRIPTORS;
 		}
-		return (LinkHelperDescriptor[]) helpersList
+		return helpersList
 				.toArray(new LinkHelperDescriptor[helpersList.size()]);
 
 	}
@@ -95,10 +95,10 @@ public class LinkHelperManager {
 	public LinkHelperDescriptor[] getLinkHelpersFor(IEditorInput anInput,
 			INavigatorContentService aContentService) {
 
-		List helpersList = new ArrayList();
+		List<LinkHelperDescriptor> helpersList = new ArrayList<LinkHelperDescriptor>();
 		LinkHelperDescriptor descriptor = null;
-		for (Iterator itr = getDescriptors().iterator(); itr.hasNext();) {
-			descriptor = (LinkHelperDescriptor) itr.next();
+		for (Iterator<LinkHelperDescriptor> itr = getDescriptors().iterator(); itr.hasNext();) {
+			descriptor = itr.next();
 			if (aContentService.isVisible(descriptor.getId())
 					&& descriptor.isEnabledFor(anInput)) {
 				helpersList.add(descriptor);
@@ -107,14 +107,14 @@ public class LinkHelperManager {
 		if (helpersList.size() == 0) {
 			return NO_DESCRIPTORS;
 		}
-		return (LinkHelperDescriptor[]) helpersList
+		return helpersList
 				.toArray(new LinkHelperDescriptor[helpersList.size()]);
 
 	}
 
-	protected List getDescriptors() {
+	protected List<LinkHelperDescriptor> getDescriptors() {
 		if (descriptors == null) {
-			descriptors = new ArrayList();
+			descriptors = new ArrayList<LinkHelperDescriptor>();
 		}
 		return descriptors;
 	}

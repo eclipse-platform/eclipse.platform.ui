@@ -37,7 +37,7 @@ public class NavigatorContentServiceTransfer {
 		return instance;
 	}
 
-	private final Set registeredContentServices = new HashSet();
+	private final Set<WeakReference<INavigatorContentService>> registeredContentServices = new HashSet<WeakReference<INavigatorContentService>>();
 	
 	/**
 	 *  
@@ -45,7 +45,7 @@ public class NavigatorContentServiceTransfer {
 	 */
 	public synchronized void registerContentService(INavigatorContentService aContentService) { 
 		if(findService(aContentService.getViewerId()) == null) {
-			registeredContentServices.add(new WeakReference(aContentService));
+			registeredContentServices.add(new WeakReference<INavigatorContentService>(aContentService));
 		}
 	}
 	
@@ -55,8 +55,8 @@ public class NavigatorContentServiceTransfer {
 	 */
 	public synchronized void unregisterContentService(INavigatorContentService aContentService) { 
   
-		for (Iterator iter = registeredContentServices.iterator(); iter.hasNext();) {
-			WeakReference ref = (WeakReference) iter.next();
+		for (Iterator<WeakReference<INavigatorContentService>> iter = registeredContentServices.iterator(); iter.hasNext();) {
+			WeakReference ref = iter.next();
 			if(ref.get() == null) {
 				iter.remove();
 			} else { 
@@ -78,8 +78,8 @@ public class NavigatorContentServiceTransfer {
 			return null;
 		}
 		INavigatorContentService contentService;
-		for (Iterator iter = registeredContentServices.iterator(); iter.hasNext();) {
-			WeakReference ref = (WeakReference) iter.next();
+		for (Iterator<WeakReference<INavigatorContentService>> iter = registeredContentServices.iterator(); iter.hasNext();) {
+			WeakReference ref = iter.next();
 			if(ref.get() == null) {
 				iter.remove();
 			} else {

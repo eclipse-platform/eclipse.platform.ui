@@ -60,17 +60,17 @@ public class CommonActionDescriptorManager {
 	}
 	
 	/* Provides a map of (ids, CommonActionProviderDescriptor)-pairs. */
-	private final Map dependentDescriptors = new LinkedHashMap();
+	private final Map<String, CommonActionProviderDescriptor> dependentDescriptors = new LinkedHashMap<String, CommonActionProviderDescriptor>();
 
 	/* Provides a map of (ids, CommonActionProviderDescriptor)-pairs. */
-	private final Map rootDescriptors = new LinkedHashMap();
+	private final Map<String, CommonActionProviderDescriptor> rootDescriptors = new LinkedHashMap<String, CommonActionProviderDescriptor>();
 
 	/* Provides a map of (ids, CommonActionProviderDescriptor)-pairs. */
-	private final Set overridingDescriptors = new LinkedHashSet();
+	private final Set<CommonActionProviderDescriptor> overridingDescriptors = new LinkedHashSet<CommonActionProviderDescriptor>();
 
 	
-	private final LinkedList rootDescriptorsList = new LinkedList();
-	private final LinkedList dependentDescriptorsList = new LinkedList();
+	private final LinkedList<CommonActionProviderDescriptor> rootDescriptorsList = new LinkedList<CommonActionProviderDescriptor>();
+	private final LinkedList<CommonActionProviderDescriptor> dependentDescriptorsList = new LinkedList<CommonActionProviderDescriptor>();
 
 	
 	/**
@@ -92,9 +92,9 @@ public class CommonActionDescriptorManager {
 		}
 	}
 
-	private int findId(List list, String id) {
+	private int findId(List<CommonActionProviderDescriptor> list, String id) {
 		for (int i= 0, len = list.size(); i< len; i++) {
-			CommonActionProviderDescriptor desc = (CommonActionProviderDescriptor) list.get(i);
+			CommonActionProviderDescriptor desc = list.get(i);
 			if (desc.getId().equals(id))
 				return i;
 		}
@@ -106,12 +106,12 @@ public class CommonActionDescriptorManager {
 	/**
 	 * Sorts the descriptors according to the appearsBefore property
 	 */
-	private void sortDescriptors(LinkedList list, Map outMap) {
+	private void sortDescriptors(LinkedList<CommonActionProviderDescriptor> list, Map<String, CommonActionProviderDescriptor> outMap) {
 		boolean changed = true;
 		while (changed) {
 			changed = false;
 			for (int i = 0, len = list.size(); i < len; i++) {
-				CommonActionProviderDescriptor desc = (CommonActionProviderDescriptor) list.get(i);
+				CommonActionProviderDescriptor desc = list.get(i);
 				if (desc.getAppearsBeforeId() != null) {
 					int beforeInd = findId(list, desc.getAppearsBeforeId());
 					if (beforeInd < i) {
@@ -123,7 +123,7 @@ public class CommonActionDescriptorManager {
 			}
 		}
 		for (int i = 0, len = list.size(); i < len; i++) {
-			CommonActionProviderDescriptor desc = (CommonActionProviderDescriptor) list.get(i);
+			CommonActionProviderDescriptor desc = list.get(i);
 			outMap.put(desc.getDefinedId(), desc);
 		}
 	}
@@ -144,31 +144,31 @@ public class CommonActionDescriptorManager {
 
 		CommonActionProviderDescriptor descriptor;
 		CommonActionProviderDescriptor overriddenDescriptor;
-		for (Iterator iter = overridingDescriptors.iterator(); iter.hasNext();) {
-			descriptor = (CommonActionProviderDescriptor) iter.next();
+		for (Iterator<CommonActionProviderDescriptor> iter = overridingDescriptors.iterator(); iter.hasNext();) {
+			descriptor = iter.next();
 			if (rootDescriptors.containsKey(descriptor.getOverridesId())) {
-				overriddenDescriptor = (CommonActionProviderDescriptor) rootDescriptors
+				overriddenDescriptor = rootDescriptors
 						.get(descriptor.getOverridesId());
 				overriddenDescriptor.addOverridingDescriptor(descriptor);
 			} else if (dependentDescriptors.containsKey(descriptor
 					.getOverridesId())) {
-				overriddenDescriptor = (CommonActionProviderDescriptor) dependentDescriptors
+				overriddenDescriptor = dependentDescriptors
 						.get(descriptor.getOverridesId());
 				overriddenDescriptor.addOverridingDescriptor(descriptor);
 			}
 
 		}
 
-		Collection unresolvedDependentDescriptors = new ArrayList(
+		Collection<CommonActionProviderDescriptor> unresolvedDependentDescriptors = new ArrayList<CommonActionProviderDescriptor>(
 				dependentDescriptors.values());
 
-		for (Iterator iter = dependentDescriptors.values().iterator(); iter
+		for (Iterator<CommonActionProviderDescriptor> iter = dependentDescriptors.values().iterator(); iter
 				.hasNext();) {
-			dependentDescriptor = (CommonActionProviderDescriptor) iter.next();
-			requiredDescriptor = (CommonActionProviderDescriptor) rootDescriptors
+			dependentDescriptor = iter.next();
+			requiredDescriptor = rootDescriptors
 					.get(dependentDescriptor.getDependsOnId());
 			if (requiredDescriptor == null) {
-				requiredDescriptor = (CommonActionProviderDescriptor) dependentDescriptors
+				requiredDescriptor = dependentDescriptors
 						.get(dependentDescriptor.getDependsOnId());
 			}
 			if (requiredDescriptor != null) {
@@ -185,7 +185,7 @@ public class CommonActionDescriptorManager {
 					"There were unresolved dependencies for action provider extensions to a Common Navigator.\n" + //$NON-NLS-1$
 							"Verify that the \"dependsOn\" attribute for each <actionProvider /> element is valid."); //$NON-NLS-1$
 
-			CommonActionProviderDescriptor[] unresolvedDescriptors = (CommonActionProviderDescriptor[]) unresolvedDependentDescriptors
+			CommonActionProviderDescriptor[] unresolvedDescriptors = unresolvedDependentDescriptors
 					.toArray(new CommonActionProviderDescriptor[unresolvedDependentDescriptors
 							.size()]);
 			for (int i = 0; i < unresolvedDescriptors.length; i++) {
@@ -227,17 +227,17 @@ public class CommonActionDescriptorManager {
 
 		Set blockedProviders = new HashSet();
 		CommonActionProviderDescriptor actionDescriptor = null;
-		Set providers = new LinkedHashSet();
-		for (Iterator providerItr = rootDescriptors.values().iterator(); providerItr
+		Set<CommonActionProviderDescriptor> providers = new LinkedHashSet<CommonActionProviderDescriptor>();
+		for (Iterator<CommonActionProviderDescriptor> providerItr = rootDescriptors.values().iterator(); providerItr
 				.hasNext();) {
-			actionDescriptor = (CommonActionProviderDescriptor) providerItr
+			actionDescriptor = providerItr
 					.next();
 			addProviderIfRelevant(aContentService, structuredSelection,
 					actionDescriptor, providers, blockedProviders);
 		}
 		if (providers.size() > 0) {
 			providers.removeAll(blockedProviders);
-			return (CommonActionProviderDescriptor[]) providers
+			return providers
 					.toArray(new CommonActionProviderDescriptor[providers
 							.size()]);
 		}
@@ -253,7 +253,7 @@ public class CommonActionDescriptorManager {
 	private boolean addProviderIfRelevant(
 			INavigatorContentService aContentService,
 			IStructuredSelection structuredSelection,
-			CommonActionProviderDescriptor actionDescriptor, Set providers, Set blockedProviders) {
+			CommonActionProviderDescriptor actionDescriptor, Set<CommonActionProviderDescriptor> providers, Set blockedProviders) {
 		if (isVisible(aContentService, actionDescriptor)
 				&& actionDescriptor.isEnabledFor(structuredSelection)) {
 			

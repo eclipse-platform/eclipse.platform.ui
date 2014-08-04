@@ -40,7 +40,7 @@ public class CommonDropDescriptorManager {
 	 * A map of (INavigatorContentDescriptor,
 	 * CommonDropAdapterDescriptor)-pairs.
 	 */
-	private final Map dropDescriptors = new TreeMap(ExtensionSequenceNumberComparator.INSTANCE);
+	private final Map<INavigatorContentDescriptor, List> dropDescriptors = new TreeMap<INavigatorContentDescriptor, List>(ExtensionSequenceNumberComparator.INSTANCE);
 
 	/**
 	 * 
@@ -67,17 +67,17 @@ public class CommonDropDescriptorManager {
 	 */
 	public CommonDropAdapterDescriptor[] findCommonDropAdapterAssistants(Object aDropTarget, INavigatorContentService aContentService) {
 
-		Set foundDescriptors = new LinkedHashSet();
-		for (Iterator iter = dropDescriptors.keySet().iterator(); iter
+		Set<CommonDropAdapterDescriptor> foundDescriptors = new LinkedHashSet<CommonDropAdapterDescriptor>();
+		for (Iterator<INavigatorContentDescriptor> iter = dropDescriptors.keySet().iterator(); iter
 				.hasNext();) {
-			INavigatorContentDescriptor contentDescriptor = (INavigatorContentDescriptor) iter
+			INavigatorContentDescriptor contentDescriptor = iter
 					.next();
 			if (aContentService.isVisible(contentDescriptor.getId())
 					&& aContentService.isActive(contentDescriptor.getId())) {
-				List dropDescriptors = getDropDescriptors(contentDescriptor);
-				for (Iterator iterator = dropDescriptors.iterator(); iterator
+				List<CommonDropAdapterDescriptor> dropDescriptors = getDropDescriptors(contentDescriptor);
+				for (Iterator<CommonDropAdapterDescriptor> iterator = dropDescriptors.iterator(); iterator
 						.hasNext();) {
-					CommonDropAdapterDescriptor dropDescriptor = (CommonDropAdapterDescriptor) iterator
+					CommonDropAdapterDescriptor dropDescriptor = iterator
 							.next();
 					if (dropDescriptor.isDropElementSupported(aDropTarget)) {
 						foundDescriptors.add(dropDescriptor);
@@ -89,22 +89,22 @@ public class CommonDropDescriptorManager {
 		if (foundDescriptors.isEmpty()) {
 			return NO_DESCRIPTORS;
 		}
-		return (CommonDropAdapterDescriptor[]) foundDescriptors
+		return foundDescriptors
 				.toArray(new CommonDropAdapterDescriptor[foundDescriptors
 						.size()]);
 	}
 
-	private List getDropDescriptors(
+	private List<CommonDropAdapterDescriptor> getDropDescriptors(
 			INavigatorContentDescriptor aContentDescriptor) {
-		List descriptors = (List) dropDescriptors.get(aContentDescriptor);
+		List<CommonDropAdapterDescriptor> descriptors = dropDescriptors.get(aContentDescriptor);
 		if (descriptors != null) {
 			return descriptors;
 		}
 		synchronized (dropDescriptors) {
-			descriptors = (List) dropDescriptors.get(aContentDescriptor);
+			descriptors = dropDescriptors.get(aContentDescriptor);
 			if (descriptors == null) {
 				dropDescriptors.put(aContentDescriptor,
-						(descriptors = new ArrayList()));
+						(descriptors = new ArrayList<CommonDropAdapterDescriptor>()));
 			}
 
 		}

@@ -38,7 +38,7 @@ public class CommonSorterDescriptorManager {
 
 	private static final CommonSorterDescriptor[] NO_SORTER_DESCRIPTORS = new CommonSorterDescriptor[0];
 
-	private final Map sortersMap = new HashMap();
+	private final Map<INavigatorContentDescriptor, Set> sortersMap = new HashMap<INavigatorContentDescriptor, Set>();
 	
 	/**
 	 * 
@@ -85,12 +85,12 @@ public class CommonSorterDescriptorManager {
 			NavigatorContentService aContentService,
 			INavigatorContentDescriptor theSource, Object aParent) {
 
-		List applicableSorters = new ArrayList();
+		List<CommonSorterDescriptor> applicableSorters = new ArrayList<CommonSorterDescriptor>();
 
 		CommonSorterDescriptor descriptor;
-		Set sorters = getCommonSorters(theSource);
-		for (Iterator sortersItr = sorters.iterator(); sortersItr.hasNext();) {
-			descriptor = (CommonSorterDescriptor) sortersItr.next();
+		Set<CommonSorterDescriptor> sorters = getCommonSorters(theSource);
+		for (Iterator<CommonSorterDescriptor> sortersItr = sorters.iterator(); sortersItr.hasNext();) {
+			descriptor = sortersItr.next();
 			if (descriptor.isEnabledForParent(aParent)) {
 				applicableSorters.add(descriptor);
 			}
@@ -98,7 +98,7 @@ public class CommonSorterDescriptorManager {
 		if (applicableSorters.size() == 0) {
 			return NO_SORTER_DESCRIPTORS;
 		}
-		return (CommonSorterDescriptor[]) applicableSorters
+		return applicableSorters
 				.toArray(new CommonSorterDescriptor[applicableSorters.size()]);
 	}
 	
@@ -112,11 +112,11 @@ public class CommonSorterDescriptorManager {
 	 */
 	public CommonSorterDescriptor[] findApplicableSorters(INavigatorContentDescriptor theSource) {
   
-		Set sorters = getCommonSorters(theSource); 
+		Set<CommonSorterDescriptor> sorters = getCommonSorters(theSource); 
 		if (sorters.size() == 0) {
 			return NO_SORTER_DESCRIPTORS;
 		}
-		return (CommonSorterDescriptor[]) sorters
+		return sorters
 				.toArray(new CommonSorterDescriptor[sorters.size()]);
 	}
 
@@ -143,7 +143,7 @@ public class CommonSorterDescriptorManager {
 								.getChildren(TAG_COMMON_SORTER);
 
 						if (children.length > 0) {
-							Set localSorters = getCommonSorters(contentDescriptor);
+							Set<CommonSorterDescriptor> localSorters = getCommonSorters(contentDescriptor);
 							for (int i = 0; i < children.length; i++) {
 								localSorters.add(new CommonSorterDescriptor(
 										children[i]));
@@ -180,12 +180,12 @@ public class CommonSorterDescriptorManager {
 
 	}
 
-	private Set getCommonSorters(INavigatorContentDescriptor contentDescriptor) {
-		Set descriptors = null;
+	private Set<CommonSorterDescriptor> getCommonSorters(INavigatorContentDescriptor contentDescriptor) {
+		Set<CommonSorterDescriptor> descriptors = null;
 		synchronized (sortersMap) {
-			descriptors = (Set) sortersMap.get(contentDescriptor);
+			descriptors = sortersMap.get(contentDescriptor);
 			if (descriptors == null) {
-				sortersMap.put(contentDescriptor, descriptors = new HashSet());
+				sortersMap.put(contentDescriptor, descriptors = new HashSet<CommonSorterDescriptor>());
 			}
 		}
 		return descriptors;
