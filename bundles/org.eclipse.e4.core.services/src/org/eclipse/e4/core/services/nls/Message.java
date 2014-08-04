@@ -9,6 +9,7 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Dirk Fauth <dirk.fauth@googlemail.com - Bug 440444, 440445
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440444, 440445
+ *     Markus Keller <markus_keller@ch.ibm.com> - Bug 440445
  *******************************************************************************/
 package org.eclipse.e4.core.services.nls;
 
@@ -18,7 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Annotation for message classes to control
  * <ul>
- * <li>contribution uri to point to resource bundles in different locations</li>
+ * <li>contribution uri to point to resource bundles in a different location</li>
  * <li>caching behavior</li>
  * </ul>
  *
@@ -29,6 +30,7 @@ import java.lang.annotation.RetentionPolicy;
  * <p>
  * Via the <code>contributionURI</code> parameter it is possible to specify the location of the
  * resource bundle files. It supports the following location patterns:
+ * </p>
  * <ul>
  * <li>
  * <code>platform:/[plugin|fragment]/[Bundle-SymbolicName]</code><br>
@@ -36,7 +38,7 @@ import java.lang.annotation.RetentionPolicy;
  * For example:<br>
  * <code>@Message(contributionURI="platform:/plugin/com.example.e4.translation.extension")</code><br>
  * will load the OSGi resource bundle that is configured in the <code>MANIFEST.MF</code> of the
- * <code>com.example.e4.translation.extension</code> plugin.</li>
+ * <code>com.example.e4.translation.extension</code> plug-in.</li>
  * <li>
  * <code>platform:/[plugin|fragment]/[Bundle-SymbolicName]/[Path]/[Basename]</code><br>
  * Load the resource bundle specified by [Path] and [Basename] out of the bundle/fragment named
@@ -44,21 +46,20 @@ import java.lang.annotation.RetentionPolicy;
  * For example:<br>
  * <code>@Message(contributionURI="platform:/plugin/com.example.e4.translation/resources/another")</code>
  * <br>
- * will load the resource bundle that is located in the folder <i>resources/other</i> in the
- * <code>com.example.e4.translation</code> plugin.</li>
+ * will load the resource bundle that is located in the folder <i>resources/another</i> in the
+ * <code>com.example.e4.translation</code> plug-in.</li>
  * <li>
- * <code>bundleclass://[plugin|fragment]/[Fully-Qualified-Classname]</code><br>
- * Instantiate the class based resourcebundle specified by [Fully-Qualified-Classname] out of the
+ * <code>bundleclass://[plugin|fragment]/[Bundle-SymbolicName]/[Fully-Qualified-Classname]</code><br>
+ * Instantiate the class-based resource bundle specified by [Fully-Qualified-Classname] out of the
  * bundle/fragment named [Bundle-SymbolicName]. Note that the class needs to be a subtype of
  * <code>ResourceBundle</code>.<br>
  * For example:<br>
  * <code>@Message(contributionURI="bundleclass://com.example.e4.translation/com.example.e4.translation.resources.MockBundle")</code>
  * <br>
- * will load the class based resource bundle <code>MockBundle</code> in package
+ * will load the class-based resource bundle <code>MockBundle</code> in package
  * <code>com.example.e4.translation.resources</code> in the <code>com.example.e4.translation</code>
- * plugin.</li>
+ * plug-in.</li>
  * </ul>
- * </p>
  *
  * <p>
  * <b>Note:</b><br>
@@ -75,6 +76,7 @@ import java.lang.annotation.RetentionPolicy;
  * <p>
  * Via the <code>referenceType</code> parameter it is possible to specify the caching behavior of
  * message class instances.
+ * </p>
  * <ul>
  * <li>
  * <code>ReferenceType.NONE</code><br>
@@ -86,10 +88,9 @@ import java.lang.annotation.RetentionPolicy;
  * <li>
  * <code>ReferenceType.SOFT</code><br>
  * The message instance is cached as a soft reference. If every requestor was garbage collected, the
- * message instance is not immediately discarded with the next garbage collection cycle, but will
- * retain for a while in memory. <b>This is the default configuration!</b></li>
+ * message instance is not immediately discarded with the next garbage collection cycle, but will be
+ * retained for a while in memory. <b>This is the default configuration!</b></li>
  * </ul>
- * </p>
  *
  * <p>
  * <b>Examples:</b>
@@ -97,6 +98,7 @@ import java.lang.annotation.RetentionPolicy;
  *
  * <p>
  * <b>Loading through a dedicated class</b>
+ * </p>
  *
  * <pre>
  * &#064;Message(contributionURI = &quot;bundleclass://mybundle/my.ResourceBundleClass&quot;)
@@ -105,10 +107,9 @@ import java.lang.annotation.RetentionPolicy;
  * }
  * </pre>
  *
- * </p>
- *
  * <p>
  * <b>No caching</b>
+ * </p>
  *
  * <pre>
  * &#064;Message(referenceType = ReferenceType.NONE)
@@ -117,10 +118,9 @@ import java.lang.annotation.RetentionPolicy;
  * }
  * </pre>
  *
- * </p>
- *
  * <p>
  * <b>Loading through a dedicated class with weak reference type</b>
+ * </p>
  *
  * <pre>
  * &#064;Message(contributionURI = &quot;bundleclass://mybundle/my.ResourceBundleClass&quot;, referenceType = ReferenceType.WEAK)
@@ -129,16 +129,19 @@ import java.lang.annotation.RetentionPolicy;
  * }
  * </pre>
  *
- * </p>
- *
  * @since 1.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Message {
+	@Message(contributionURI = "platform:/plugin/org.eclipse.e4.core.tests/resources/another")
 	public enum ReferenceType {
 		NONE, SOFT, WEAK
 	}
 
+	/**
+	 * @return optional caching behavior
+	 * @see Message
+	 */
 	ReferenceType referenceType() default ReferenceType.SOFT;
 
 	/**
@@ -148,8 +151,8 @@ public @interface Message {
 	String contributorURI() default "";
 
 	/**
-	 * ContributionURI optional parameter to point to resource bundles in different locations
-	 *
+	 * @return optional parameter to point to resource bundles in a different location
+	 * @see Message
 	 * @since 1.3
 	 */
 	String contributionURI() default "";
