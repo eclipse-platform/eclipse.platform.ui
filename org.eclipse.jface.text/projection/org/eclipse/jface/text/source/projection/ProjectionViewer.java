@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *     Anton Leherbauer <anton.leherbauer@windriver.com> - [projection] Eclipse is too eager to unfold code - http://bugs.eclipse.org/178203
+ *     Pawel Pogorzelski <pawel.pogorzelski1@gmail.com> - [projection] ProjectionViewer.computeCollapsedNestedAnnotations unnecessary slow - http://bugs.eclipse.org/410359
  *******************************************************************************/
 package org.eclipse.jface.text.source.projection;
 
@@ -1043,7 +1044,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 	private ProjectionAnnotation[] computeCollapsedNestedAnnotations(int offset, int length) {
 		List annotations= new ArrayList(5);
-		Iterator e= fProjectionAnnotationModel.getAnnotationIterator();
+		Iterator e= fProjectionAnnotationModel.getAnnotationIterator(offset, length, false, false);
 		while (e.hasNext()) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
 			if (annotation.isCollapsed()) {
@@ -1052,8 +1053,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					// annotation might already be deleted, we will be informed later on about this deletion
 					continue;
 				}
-				if (covers(offset, length, position))
-					annotations.add(annotation);
+				annotations.add(annotation);
 			}
 		}
 
