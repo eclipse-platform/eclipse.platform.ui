@@ -4,9 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 441150
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -28,6 +29,10 @@ import org.eclipse.swt.widgets.Layout;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
+/**
+ * Default SWT renderer responsible for a MPartSashContainer. See
+ * {@link WorkbenchRendererFactory}
+ */
 public class SashRenderer extends SWTPartRenderer {
 
 	@Inject
@@ -194,10 +199,6 @@ public class SashRenderer extends SWTPartRenderer {
 		return null;
 	}
 
-	/**
-	 * @param element
-	 * @return
-	 */
 	private static int getWeight(MUIElement element) {
 		String info = element.getContainerData();
 		if (info == null || info.length() == 0) {
