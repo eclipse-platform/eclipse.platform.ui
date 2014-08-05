@@ -838,6 +838,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 
 			if (delegate2 != null) {
 				if (!(delegate2.preLaunchCheck(this, mode, new SubProgressMonitor(lmonitor, 1)))) {
+					getLaunchManager().removeLaunch(launch);
 					return launch;
 				}
 			}
@@ -865,6 +866,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_4);
 			if (delegate2 != null) {
 				if (!(delegate2.finalLaunchCheck(this, mode, new SubProgressMonitor(lmonitor, 1)))) {
+					getLaunchManager().removeLaunch(launch);
 					return launch;
 				}
 			}
