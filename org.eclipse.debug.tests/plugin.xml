@@ -62,6 +62,12 @@
             modes="run, debug"
             name="%launchConfigurationType.name">
       </launchConfigurationType>
+      <launchConfigurationType
+            delegate="org.eclipse.debug.tests.launching.CancellingLaunchDelegate"
+            id="cancelling.type"
+            modes="run"
+            name="%launchConfigurationType.name.0">
+      </launchConfigurationType>
    </extension>
    <extension
         id="debugFS"

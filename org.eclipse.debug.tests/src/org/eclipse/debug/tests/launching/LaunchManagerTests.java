@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.launching;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.core.LaunchManager;
+import org.eclipse.debug.tests.launching.CancellingLaunchDelegate.CancellingLaunch;
 
 /**
  *
@@ -200,5 +205,117 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 		text = "Remo&ve"; //$NON-NLS-1$
 		label = LaunchManager.removeAccelerators(text);
 		assertEquals("the label should be 'Remove'", "Remove", label); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/**
+	 * Create a new configuration that will cancel one of the three checks: 1.
+	 * preLaunchCheck 2. finalLaunchCheck 3. buildForLaunch
+	 *
+	 * @param pre If the prelaunchCheck should cancel
+	 * @param fin If the fnalLaunchCheck should cancel
+	 * @param build If the buildForLaunch check should cancel
+	 * @return the new {@link ILaunchConfiguration}
+	 * @since 3.9.100
+	 */
+	ILaunchConfiguration getCancellingConfiguration(boolean pre, boolean fin, boolean build) throws Exception {
+		ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType("cancelling.type"); //$NON-NLS-1$
+		if (type != null) {
+			ILaunchConfigurationWorkingCopy copy = type.newInstance(null, getLaunchManager().generateLaunchConfigurationName("cancelling")); //$NON-NLS-1$
+			copy.setAttribute("cancel.preLaunchCheck", !pre); //$NON-NLS-1$
+			copy.setAttribute("cancel.finalLaunchCheck", !fin); //$NON-NLS-1$
+			copy.setAttribute("cancel.buildForLaunch", !build); //$NON-NLS-1$
+			return copy.doSave();
+		}
+		return null;
+	}
+
+	/**
+	 * Checks if the expected number of cancelled launches appear in the manager
+	 *
+	 * @param count the expected count
+	 * @since 3.9.100
+	 */
+	void hasCancellingLaunches(int count) {
+		ILaunch[] launches = getLaunchManager().getLaunches();
+		int num = 0;
+		for (int i = 0; i < launches.length; i++) {
+			if (launches[i] instanceof CancellingLaunch) {
+				num++;
+			}
+		}
+		assertEquals("The number of expected launches is wrong", count, num); //$NON-NLS-1$
+	}
+
+	/**
+	 * Tests if a launch is properly removed from the launch manager when
+	 * #preLaunchCheck is cancelled
+	 *
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=437122
+	 * @since 3.9.100
+	 */
+	public void testCancelledPreLaunchCheck() throws Exception {
+		ILaunchConfiguration config = getCancellingConfiguration(true, false, false);
+		assertNotNull("The cancelling config should have been created", config); //$NON-NLS-1$
+		try {
+			hasCancellingLaunches(0);
+			config.launch("run", new NullProgressMonitor()); //$NON-NLS-1$
+			hasCancellingLaunches(0);
+		} finally {
+			ILaunch[] launches = getLaunchManager().getLaunches();
+			for (int i = 0; i < launches.length; i++) {
+				getLaunchManager().removeLaunch(launches[i]);
+			}
+			config.delete();
+		}
+	}
+
+	/**
+	 * Tests if a launch is properly removed from the launch manager when
+	 * #finalLaunchCheck is cancelled
+	 *
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=437122
+	 * @since 3.9.100
+	 */
+	public void testCancelledFinalLaunchCheck() throws Exception {
+		ILaunchConfiguration config = getCancellingConfiguration(false, true, false);
+		assertNotNull("The cancelling config should have been created", config); //$NON-NLS-1$
+		try {
+			hasCancellingLaunches(0);
+			config.launch("run", new NullProgressMonitor()); //$NON-NLS-1$
+			hasCancellingLaunches(0);
+		} finally {
+			ILaunch[] launches = getLaunchManager().getLaunches();
+			for (int i = 0; i < launches.length; i++) {
+				getLaunchManager().removeLaunch(launches[i]);
+			}
+			config.delete();
+		}
+	}
+
+	/**
+	 * Tests if a launch is properly removed from the launch manager when
+	 * #buildFoLaunch is cancelled
+	 *
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=437122
+	 * @since 3.9.100
+	 */
+	public void testCancelledBuildForLaunch() throws Exception {
+		ILaunchConfiguration config = getCancellingConfiguration(false, false, true);
+		assertNotNull("The cancelling config should have been created", config); //$NON-NLS-1$
+		try {
+			hasCancellingLaunches(0);
+			config.launch("run", new NullProgressMonitor()); //$NON-NLS-1$
+			hasCancellingLaunches(1); // XXX #buildForLaunch does not remove the
+										// launch
+		} finally {
+			ILaunch[] launches = getLaunchManager().getLaunches();
+			for (int i = 0; i < launches.length; i++) {
+				getLaunchManager().removeLaunch(launches[i]);
+			}
+			config.delete();
+		}
 	}
 }
