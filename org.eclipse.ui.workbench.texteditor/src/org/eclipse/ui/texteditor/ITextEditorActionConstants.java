@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -671,6 +671,13 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 3.5
 	 */
 	String BLOCK_SELECTION_MODE= "BlockSelectionMode"; //$NON-NLS-1$
+
+	/**
+	 * Name of the action for toggling word wrap. Value:
+	 * <code>"WordWrap"</code>
+	 * @since 3.10
+	 */
+	String WORD_WRAP= "WordWrap"; //$NON-NLS-1$
 
 	/**
 	 * Name of the action displaying a sticky ruler hover for the current caret location.

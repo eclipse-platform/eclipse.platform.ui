@@ -16,6 +16,7 @@
  *     Nick Sandonato <nsandona@us.ibm.com> - [implementation] AbstractTextEditor does not prompt when out of sync in MultiPageEditorPart - http://bugs.eclipse.org/337719
  *     Holger Voormann - Word Wrap - https://bugs.eclipse.org/bugs/show_bug.cgi?id=35779
  *     Florian Weßling <flo@cdhq.de> - Word Wrap - https://bugs.eclipse.org/bugs/show_bug.cgi?id=35779
+ *     Andrey Loskutov <loskutov@gmx.de> - Word Wrap - https://bugs.eclipse.org/bugs/show_bug.cgi?id=35779
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -2313,6 +2314,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	public static final String PREFERENCE_HOVER_ENRICH_MODE= "hoverReplaceMode"; //$NON-NLS-1$
 
+	/**
+	 * A named preference to control the initial word wrap status.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 3.10
+	 */
+	public static final String PREFERENCE_WORD_WRAP_ENABLED= "wordwrap.enabled"; //$NON-NLS-1$
+
 	/** Menu id for the editor context menu. */
 	public static final String DEFAULT_EDITOR_CONTEXT_MENU_ID= "#EditorContext"; //$NON-NLS-1$
 	/** Menu id for the ruler context menu. */
@@ -3590,6 +3601,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		IVerticalRuler ruler= getVerticalRuler();
 		if (ruler instanceof CompositeRuler)
 			updateContributedRulerColumns((CompositeRuler) ruler);
+
+		if(isWordWrapSupported())
+			setWordWrap(getInitialWordWrapStatus());
 	}
 
 	/**
@@ -5950,10 +5964,36 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_INFORMATION);
 		setAction(ITextEditorActionConstants.SHOW_INFORMATION, action);
 
-		action= new BlockSelectionModeToggleAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ToggleBlockSelectionMode.", this); //$NON-NLS-1$
+		final BlockSelectionModeToggleAction blockAction= new BlockSelectionModeToggleAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ToggleBlockSelectionMode.", this); //$NON-NLS-1$
+		action = blockAction;
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.BLOCK_SELECTION_MODE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.BLOCK_SELECTION_MODE);
 		setAction(ITextEditorActionConstants.BLOCK_SELECTION_MODE, action);
+
+		if(isWordWrapSupported()){
+			final WordWrapToggleAction wrapAction= new WordWrapToggleAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ToggleWordWrap.", this, getInitialWordWrapStatus()); //$NON-NLS-1$
+			action = wrapAction;
+			action.setHelpContextId(IAbstractTextEditorHelpContextIds.WORD_WRAP_TOGGLE_ACTION);
+			action.setActionDefinitionId(ITextEditorActionDefinitionIds.WORD_WRAP);
+			setAction(ITextEditorActionConstants.WORD_WRAP, action);
+
+			blockAction.addPropertyChangeListener(new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					if(IAction.CHECKED == event.getProperty() &&
+							Boolean.TRUE.equals(event.getNewValue())){
+						wrapAction.setChecked(false);
+					}
+				}
+			});
+			wrapAction.addPropertyChangeListener(new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					if(IAction.CHECKED == event.getProperty() &&
+							Boolean.TRUE.equals(event.getNewValue())){
+						blockAction.setChecked(false);
+					}
+				}
+			});
+		}
 
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.OpenHyperlink.", this, HyperlinkManager.OPEN_HYPERLINK, true); //$NON-NLS-1$;
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.OPEN_HYPERLINK_ACTION);
@@ -7465,4 +7505,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 	}
 
+	/**
+	 * Returns the initial word wrap status.
+	 *
+	 * @return initial word wrap status
+	 * @since 3.10
+	 */
+	protected boolean getInitialWordWrapStatus() {
+		return getPreferenceStore().getBoolean(PREFERENCE_WORD_WRAP_ENABLED);
+	}
 }

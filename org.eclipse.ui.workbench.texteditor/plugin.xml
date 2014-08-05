@@ -405,6 +405,12 @@
 	        categoryId="org.eclipse.ui.category.edit"
 	        id="org.eclipse.ui.edit.text.toggleBlockSelectionMode">
 	  </command>
+	  <command
+	        name="%toggleWordWrap.label"
+	        description="%toggleWordWrap.description"
+	        categoryId="org.eclipse.ui.category.edit"
+	        id="org.eclipse.ui.edit.text.toggleWordWrap">
+	  </command>
       <command
             name="%command.toggleInsertMode.name"
             description="%command.toggleInsertMode.description"
@@ -792,6 +798,11 @@
             sequence="M2+M3+A"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.toggleBlockSelectionMode"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            sequence="M2+M3+Y"
+            contextId="org.eclipse.ui.textEditorScope"
+            commandId="org.eclipse.ui.edit.text.toggleWordWrap"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             platform="carbon"
@@ -1183,6 +1194,19 @@
                style="toggle"
                toolbarPath="Normal/Presentation"
                tooltip="%toggleBlockSelectionMode.tooltip">
+        </action>
+         <action
+               allowLabelUpdate="true"
+               definitionId="org.eclipse.ui.edit.text.toggleWordWrap"
+               disabledIcon="$nl$/icons/full/dtool16/wordwrap.png"
+               helpContextId="org.eclipse.ui.word_wrap_toggle_action_context"
+               icon="$nl$/icons/full/etool16/wordwrap.png"
+               id="org.eclipse.ui.edit.text.toggleWordWrap"
+               label="%toggleWordWrap.label"
+               retarget="true"
+               style="toggle"
+               toolbarPath="Normal/Presentation"
+               tooltip="%toggleWordWrap.tooltip">
         </action>
       </actionSet>
    </extension>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -395,6 +395,13 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * @since 3.5
 	 */
 	String BLOCK_SELECTION_MODE_ACTION= PREFIX + "block_selection_mode" + ACTION_POSTFIX; //$NON-NLS-1$
+
+	/**
+	 * Help context id for the word wrap toggle action. Value:
+	 * <code>"org.eclipse.ui.word_wrap_toggle_action_context"</code>
+	 * @since 3.10
+	 */
+	String WORD_WRAP_TOGGLE_ACTION= PREFIX + "word_wrap_toggle" + ACTION_POSTFIX; //$NON-NLS-1$
 
 	/**
 	 * Help context id for the open hyperlink action.
