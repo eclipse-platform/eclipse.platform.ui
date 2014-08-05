@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl - bug 151205
+ *     Lars Voel <Lars.Vogel@gmail.com> - Bug 402439
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
@@ -1019,12 +1020,19 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * The <code>StructuredViewer</code> implementation of this method returns
-	 * the result as an <code>IStructuredSelection</code>.
+	 * the result as an <code>IStructuredSelection</code>. Sub-classes should
+	 * return a <code>IStructuredSelection</code>.
+	 *
 	 * <p>
 	 * Subclasses do not typically override this method, but implement
 	 * <code>getSelectionFromWidget(List)</code> instead.
 	 * <p>
+	 *
+	 * Call {@link StructuredViewer#getStructuredSelection()} instead to get the
+	 * <code>IStructuredSelection</code> type directly.
+	 *
 	 * @return ISelection
+	 *
 	 */
 	@Override
 	public ISelection getSelection() {
@@ -1034,6 +1042,26 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		}
 		List list = getSelectionFromWidget();
 		return new StructuredSelection(list, comparer);
+	}
+
+	/**
+	 * Returns the <code>IStructuredSelection</code> of this viewer.
+	 *
+	 * @return IStructuredSelection
+	 * @throws ClassCastException
+	 *             if the selection of the viewer is not an instance of
+	 *             IStructuredSelection
+	 * @since 3.11
+	 */
+	public IStructuredSelection getStructuredSelection()
+			throws ClassCastException {
+		ISelection selection = getSelection();
+		if (selection instanceof IStructuredSelection) {
+			return (IStructuredSelection) selection;
+
+		}
+		throw new ClassCastException(
+				"StructuredViewer should return an instance of IStructuredSelection from its getSelection() method. "); //$NON-NLS-1$
 	}
 
 	/**
