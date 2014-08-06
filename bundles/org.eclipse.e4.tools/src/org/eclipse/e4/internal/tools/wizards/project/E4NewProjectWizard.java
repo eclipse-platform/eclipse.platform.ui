@@ -293,13 +293,15 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 						cssValue);
 			}
 
-			String lifeCycleValue = map
-					.get(NewApplicationWizardPage.APPLICATION_LIFECYCLE_PROPERTY);
-			if (lifeCycleValue != null) {
-				lifeCycleValue = "bundleclass://" + fPluginData.getId() + "/"
-						+ fPluginData.getId().toLowerCase() + "." + lifeCycleValue;
-				map.put(NewApplicationWizardPage.APPLICATION_LIFECYCLE_PROPERTY,
-						lifeCycleValue);
+			if ("TRUE".equals(map.get(NewApplicationWizardPage.generateLifecycle))){
+				String lifeCycleValue = map
+						.get(NewApplicationWizardPage.generateLifecycleName);
+				if (lifeCycleValue != null && lifeCycleValue.isEmpty() == false) {
+					lifeCycleValue = "bundleclass://" + fPluginData.getId() + "/"
+							+ fPluginData.getId().toLowerCase() + "." + lifeCycleValue;
+					map.put(NewApplicationWizardPage.LIFECYCLE_URI_PROPERTY,
+							lifeCycleValue);
+				}
 			}
 
 			extension.setPoint("org.eclipse.core.runtime.products");
@@ -333,6 +335,10 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 										NewApplicationWizardPage.APPLICATION)
 								|| entry.getKey().equals(
 										NewApplicationWizardPage.richSample)
+								|| entry.getKey().equals(
+												NewApplicationWizardPage.generateLifecycle)
+								|| entry.getKey().equals(
+												NewApplicationWizardPage.generateLifecycleName)
 								|| entry.getKey()
 										.equals(NewApplicationWizardPage.CLEAR_PERSISTED_STATE)) {
 							continue;
@@ -374,15 +380,17 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 		// them with underscores, product name does the same
 		String pluginName = fPluginData.getId();
 		
-		// BEGIN Generate E4Lifecycle class with annotations
-		String classname = fPluginData.getId() + "." + map.get(NewApplicationWizardPage.APPLICATION_LIFECYCLE_PROPERTY);
-		LifeCycleClassCodeGenerator fGenerator = new LifeCycleClassCodeGenerator(project, classname, fPluginData, false, getContainer());
-		try {
-			fGenerator.generate(new NullProgressMonitor());
-		} catch (CoreException e2) {
-			e2.printStackTrace();
+		// BEGIN Generate E4Lifecycle class with annotations	
+		boolean lifeCycleCreated = "TRUE".equals(map.get(NewApplicationWizardPage.generateLifecycle));
+		if (lifeCycleCreated){
+			String classname = fPluginData.getId() + "." + map.get(NewApplicationWizardPage.generateLifecycleName);
+			LifeCycleClassCodeGenerator fGenerator = new LifeCycleClassCodeGenerator(project, classname, fPluginData, false, getContainer());
+			try {
+				fGenerator.generate(new NullProgressMonitor());
+			} catch (CoreException e2) {
+				e2.printStackTrace();
+			}
 		}
-		boolean lifeCycleCreated = true;
 		// END Generate E4Lifecycle class with annotations
 		
 		// If there's no Activator or LifeCycle created we create default package

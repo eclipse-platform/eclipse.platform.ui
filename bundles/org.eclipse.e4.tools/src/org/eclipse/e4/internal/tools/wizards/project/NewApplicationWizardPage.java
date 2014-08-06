@@ -10,6 +10,7 @@
  *     IBM Corporation - ongoing enhancements
  *     Lars Vogel, vogella GmbH - ongoing enhancements
  *     Sopot Cela - ongoing enhancements
+ *     Steven Spungin - ongoing enhancements, Bug 438591
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.project;
 
@@ -24,8 +25,11 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.internal.ui.wizards.plugin.AbstractFieldData;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
@@ -51,12 +55,15 @@ import org.eclipse.ui.branding.IProductConstants;
 public class NewApplicationWizardPage extends WizardPage {
 	public static final String E4_APPLICATION = "org.eclipse.e4.ui.workbench.swt.E4Application";
 	public static final String APPLICATION_CSS_PROPERTY = "applicationCSS";
-	public static final String APPLICATION_LIFECYCLE_PROPERTY = "lifeCycleURI";
+	public static final String LIFECYCLE_URI_PROPERTY = "lifeCycleURI";
 	public static final String PRODUCT_NAME = "productName";
 	public static final String APPLICATION = "application";
 	public static final String CLEAR_PERSISTED_STATE = "clearPersistedState";
 	public static final String EOL = System.getProperty("line.separator");
 	public static final String richSample = "RICH_SAMPLE";
+	public static final String generateLifecycle = "GENERATE_LIFECYCLE";
+	public static final String generateLifecycleName = "GENERATE_LIFECYCLE_NAME";
+
 	private final Map<String, String> data;
 
 	private IProject project;
@@ -67,6 +74,8 @@ public class NewApplicationWizardPage extends WizardPage {
 
 	private PropertyData[] PROPERTIES;
 	private Button richSampleCheckbox;
+	protected Button generateLifecycleClassCheckbox;
+	protected Text lifeCycleName;
 
 	protected NewApplicationWizardPage(IProjectProvider projectProvider,
 			AbstractFieldData pluginData) {
@@ -114,22 +123,60 @@ public class NewApplicationWizardPage extends WizardPage {
 
 	private Group createTemplateGroup(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setLayout(new GridLayout(1, false));
+		group.setLayout(new GridLayout(3, false));
 		group.setText("Template option");
-		
+
 		richSampleCheckbox = new Button(group, SWT.CHECK);
-		
+
 		richSampleCheckbox.setSelection(false);
 		richSampleCheckbox.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				data.put(richSample, richSampleCheckbox.getSelection() ? "TRUE"
-						: "FALSE");
+				data.put(richSample, richSampleCheckbox.getSelection() ? "TRUE" : "FALSE");
 			}
 		});
 		richSampleCheckbox.setText("Create sample content (parts, menu etc.)");
+		richSampleCheckbox.setLayoutData(new GridData(SWT.BEGINNING, SWT.TOP, false, false, 2, 1));
+
+		{
+			SelectionListener listener= new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					lifeCycleName.setEnabled(generateLifecycleClassCheckbox.getSelection());
+					data.put(generateLifecycle, generateLifecycleClassCheckbox.getSelection() ? "TRUE" : "FALSE");
+				}
+			};		
+			
+			generateLifecycleClassCheckbox = new Button(group, SWT.CHECK);
+			generateLifecycleClassCheckbox.setSelection(false);
+
+			generateLifecycleClassCheckbox.setText("Create an e4 lifecycle annotated class");
+			generateLifecycleClassCheckbox.setLayoutData(new GridData(SWT.BEGINNING, SWT.TOP, false, false, 2, 1));
+			generateLifecycleClassCheckbox.addSelectionListener(listener);
+
+			new Label(group, SWT.NONE);
+			Label lbl = new Label(group, SWT.NONE);
+			lbl.setText("LifeCycle class name:");
+			GridData gd = new GridData();
+			gd.horizontalIndent = 20;
+			lbl.setLayoutData(gd);
+			
+			lifeCycleName = new Text(group, SWT.BORDER);
+			lifeCycleName.setText("E4LifeCycle");
+			lifeCycleName.setEnabled(false);
+			lifeCycleName.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+			lifeCycleName.addModifyListener(new ModifyListener() {
+				
+				@Override
+				public void modifyText(ModifyEvent e) {
+					data.put(generateLifecycleName, lifeCycleName.getText());
+				}
+			});
+			data.put(generateLifecycleName, lifeCycleName.getText());
+		}
 		return group;
 	}
+
 	
 	static class PropertyData {
 		private String name;
@@ -425,8 +472,6 @@ public class NewApplicationWizardPage extends WizardPage {
 			PROPERTIES = new PropertyData[] {
 					new PropertyData(APPLICATION_CSS_PROPERTY, "CSS Style:",
 							"css/default.css", String.class, true),
-					new PropertyData(APPLICATION_LIFECYCLE_PROPERTY, "LifeCycle Class Name:",
-							"E4LifeCycle", String.class, true),
 					new PropertyData(
 							IProductConstants.PREFERENCE_CUSTOMIZATION,
 							"Preference Customization:", "", String.class, true),
