@@ -63,12 +63,6 @@ public class CompatibilityView extends CompatibilityPart {
 		return (IViewPart) getPart();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.internal.e4.compatibility.CompatibilityPart#getReference()
-	 */
 	@Override
 	public WorkbenchPartReference getReference() {
 		return reference;
@@ -83,13 +77,6 @@ public class CompatibilityView extends CompatibilityPart {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.internal.e4.compatibility.CompatibilityPart#createPartControl
-	 * (org.eclipse.ui.IWorkbenchPart, org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected boolean createPartControl(IWorkbenchPart legacyPart, Composite parent) {
 		clearMenuItems();
