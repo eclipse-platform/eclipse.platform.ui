@@ -51,6 +51,7 @@ import org.eclipse.ui.branding.IProductConstants;
 public class NewApplicationWizardPage extends WizardPage {
 	public static final String E4_APPLICATION = "org.eclipse.e4.ui.workbench.swt.E4Application";
 	public static final String APPLICATION_CSS_PROPERTY = "applicationCSS";
+	public static final String APPLICATION_LIFECYCLE_PROPERTY = "lifeCycleURI";
 	public static final String PRODUCT_NAME = "productName";
 	public static final String APPLICATION = "application";
 	public static final String CLEAR_PERSISTED_STATE = "clearPersistedState";
@@ -424,6 +425,8 @@ public class NewApplicationWizardPage extends WizardPage {
 			PROPERTIES = new PropertyData[] {
 					new PropertyData(APPLICATION_CSS_PROPERTY, "CSS Style:",
 							"css/default.css", String.class, true),
+					new PropertyData(APPLICATION_LIFECYCLE_PROPERTY, "LifeCycle Class Name:",
+							"E4LifeCycle", String.class, true),
 					new PropertyData(
 							IProductConstants.PREFERENCE_CUSTOMIZATION,
 							"Preference Customization:", "", String.class, true),

@@ -11,6 +11,7 @@
  *     Sopot Cela - ongoing enhancements
  *     Lars Vogel - ongoing enhancements
  *     Wim Jongman - ongoing enhancements
+ *     Steven Spungin - ongoing enhancements, Bug 438591
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.project;
 
@@ -292,6 +293,15 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 						cssValue);
 			}
 
+			String lifeCycleValue = map
+					.get(NewApplicationWizardPage.APPLICATION_LIFECYCLE_PROPERTY);
+			if (lifeCycleValue != null) {
+				lifeCycleValue = "bundleclass://" + fPluginData.getId() + "/"
+						+ fPluginData.getId().toLowerCase() + "." + lifeCycleValue;
+				map.put(NewApplicationWizardPage.APPLICATION_LIFECYCLE_PROPERTY,
+						lifeCycleValue);
+			}
+
 			extension.setPoint("org.eclipse.core.runtime.products");
 			extension.setId("product");
 			IPluginElement productElement = fmodel.getFactory().createElement(
@@ -363,9 +373,20 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 		// If the project has invalid characters, the plug-in name would replace
 		// them with underscores, product name does the same
 		String pluginName = fPluginData.getId();
-
-		// If there's no Activator created we create default package
-		if (!fPluginData.doGenerateClass()) {
+		
+		// BEGIN Generate E4Lifecycle class with annotations
+		String classname = fPluginData.getId() + "." + map.get(NewApplicationWizardPage.APPLICATION_LIFECYCLE_PROPERTY);
+		LifeCycleClassCodeGenerator fGenerator = new LifeCycleClassCodeGenerator(project, classname, fPluginData, false, getContainer());
+		try {
+			fGenerator.generate(new NullProgressMonitor());
+		} catch (CoreException e2) {
+			e2.printStackTrace();
+		}
+		boolean lifeCycleCreated = true;
+		// END Generate E4Lifecycle class with annotations
+		
+		// If there's no Activator or LifeCycle created we create default package
+		if (!fPluginData.doGenerateClass() && !lifeCycleCreated) {
 			String packageName = fPluginData.getId();
 			IPath path = new Path(packageName.replace('.', '/'));
 			if (fPluginData.getSourceFolderName().trim().length() > 0)
