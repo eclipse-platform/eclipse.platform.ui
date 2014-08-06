@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430616, 441267
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430616, 441267, 441282
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -32,7 +33,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.views.IStickyViewDescriptor;
@@ -53,6 +53,9 @@ public class ViewRegistry implements IViewRegistry {
 
 	@Inject
 	private IWorkbench workbench;
+
+	@Inject
+	Logger logger;
 
 	private Map<String, IViewDescriptor> descriptors = new HashMap<String, IViewDescriptor>();
 
@@ -78,8 +81,7 @@ public class ViewRegistry implements IViewRegistry {
 						stickyDescriptors.add(new StickyViewDescriptor(element));
 					} catch (CoreException e) {
 						// log an error since its not safe to open a dialog here
-						WorkbenchPlugin.log(
-								"Unable to create sticky view descriptor.", e.getStatus());//$NON-NLS-1$
+						logger.error("Unable to create sticky view descriptor.", e.getStatus()); //$NON-NLS-1$
 					}
 				}
 			}
