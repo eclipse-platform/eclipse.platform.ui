@@ -14,7 +14,7 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="stepover_co.svg">
   <defs
      id="defs4">
@@ -115,9 +115,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16.000001"
-     inkscape:cx="8.4782246"
-     inkscape:cy="18.925026"
+     inkscape:zoom="32.000002"
+     inkscape:cx="9.7403858"
+     inkscape:cy="10.714549"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -155,7 +155,7 @@
        id="rect6259"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:url(#linearGradient5268);fill-opacity:1;stroke:url(#linearGradient5273);stroke-width:0.58432114000000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
+       style="fill:url(#linearGradient5268);fill-opacity:1;stroke:url(#linearGradient5273);stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
        d="m 5.03125,3.53125 c -1.7874,0 -3.46875,1.78305 -3.46875,3.53125 l 0,1.71875 C 1.5625,9.17155 1.8597,9.5 2.25,9.5 l 0.53125,0 C 3.17155,9.5 3.5,9.17165 3.5,8.78125 l 0,-0.75 c 0,-2.0179 0.50225,-2.546875 2.53125,-2.546875 0.9680124,-0.035113 1.9599802,0 2.96875,0 2.017902,0 2.53125,0.486625 2.53125,2.515625 l 0,0.5 -2.25,0 0,1 L 12.5,12.71875 15.71875,9.5 l 0,-1 L 13.5,8.5 13.5,7 C 13.5,5.2126 11.716965,3.53125 9.96875,3.53125 l -3.4375,0 -0.28125,0 z"
        transform="translate(0,1036.3622)"
        id="rect3968"

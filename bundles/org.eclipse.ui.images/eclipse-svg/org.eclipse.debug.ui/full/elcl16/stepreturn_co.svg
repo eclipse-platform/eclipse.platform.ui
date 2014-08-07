@@ -14,7 +14,7 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="stepreturn_co.svg">
   <defs
      id="defs4">
@@ -138,9 +138,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16.000001"
-     inkscape:cx="16.76927"
-     inkscape:cy="9.8265094"
+     inkscape:zoom="45.254837"
+     inkscape:cx="13.269468"
+     inkscape:cy="9.7805524"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -183,7 +183,7 @@
        d="m 13,1048.3622 c -0.554,0 -1,0.446 -1,1 l 0,1 4,0 0,-1 c 0,-0.554 -0.446,-1 -1,-1 l -2,0 z"
        id="rect6259-5" />
     <path
-       style="fill:url(#linearGradient5168);fill-opacity:1;stroke:url(#linearGradient5170);stroke-width:0.58432114;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
+       style="fill:url(#linearGradient5168);fill-opacity:1;stroke:url(#linearGradient5170);stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
        d="m 7.53125,1043.427 0,5.7031 c 0,0.3903 0.2972,0.7188 0.6875,0.7188 l 0.5312,0 c 0.3903,0 0.721109,-0.3285 0.7188,-0.7188 l 0,-5.2812 2.03125,0 0,2.25 1,0 3.2188,-3.2188 -3.2188,-3.2187 -1,0 0,2.2187 -2.43745,0 c -0.9367,0 -1.5313,0.4395 -1.5313,1.5469 z"
        id="rect3968"
        inkscape:connector-curvature="0"
