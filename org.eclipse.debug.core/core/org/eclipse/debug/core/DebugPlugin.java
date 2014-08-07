@@ -763,7 +763,7 @@ public class DebugPlugin extends Plugin {
 		if (config != null) {
 			try {
 				processFactoryID= config.getAttribute(ATTR_PROCESS_FACTORY_ID, (String)null);
-			} catch (@SuppressWarnings("unused") CoreException e) {
+			} catch (CoreException e) {
 			}
 		}
 		if (processFactoryID != null) {
