@@ -1036,12 +1036,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		commandQueue.clear();
 	}
 
-	private boolean covers(int offset, int length, Position position) {
-		if (!(position.offset == offset && position.length == length) && !position.isDeleted())
-			return offset <= position.getOffset() && position.getOffset() + position.getLength() <= offset + length;
-		return false;
-	}
-
 	private ProjectionAnnotation[] computeCollapsedNestedAnnotations(int offset, int length) {
 		List annotations= new ArrayList(5);
 		Iterator e= fProjectionAnnotationModel.getAnnotationIterator(offset, length, false, false);
