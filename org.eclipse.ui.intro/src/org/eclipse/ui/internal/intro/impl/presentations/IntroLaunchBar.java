@@ -37,7 +37,6 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.AnimationEngine;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
