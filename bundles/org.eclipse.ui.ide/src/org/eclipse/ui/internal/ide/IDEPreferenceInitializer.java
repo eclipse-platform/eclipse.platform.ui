@@ -55,6 +55,8 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 				IDEInternalPreferences.PSPM_PROMPT);
 		node.putBoolean(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS, false);
 
+		node.putBoolean(IDEInternalPreferences.WARN_ABOUT_WORKSPACE_INCOMPATIBILITY, true);
+
 		// Turning some Help Menu separators on
 		node.putBoolean(getHelpSeparatorKey("group.main"), true); //$NON-NLS-1$
 		node.putBoolean(getHelpSeparatorKey("group.assist"), true); //$NON-NLS-1$
@@ -63,7 +65,7 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 		// Set up marker limits
 		node.putBoolean(IDEInternalPreferences.LIMIT_PROBLEMS, true);
 		node.putInt(IDEInternalPreferences.PROBLEMS_LIMIT, 100);
-		
+
 		node.putBoolean(IDEInternalPreferences.LIMIT_BOOKMARKS, true);
 		node.putInt(IDEInternalPreferences.BOOKMARKS_LIMIT, 100);
 

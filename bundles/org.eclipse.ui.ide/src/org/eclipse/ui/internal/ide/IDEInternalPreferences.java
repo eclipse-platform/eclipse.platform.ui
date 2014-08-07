@@ -124,6 +124,10 @@ public interface IDEInternalPreferences {
      * System explore command, used to launch file manager showing selected resource.
      */
     public static final String WORKBENCH_SYSTEM_EXPLORER = "SYSTEM_EXPLORER"; //$NON-NLS-1$
-    
-    
+
+    /**
+     * Warn the user that the workspace is going to be upgraded because the IDE is newer
+     */
+    public static final String WARN_ABOUT_WORKSPACE_INCOMPATIBILITY = "WARN_ABOUT_WORKSPACE_INCOMPATIBILITY"; //$NON-NLS-1$
+
 }
