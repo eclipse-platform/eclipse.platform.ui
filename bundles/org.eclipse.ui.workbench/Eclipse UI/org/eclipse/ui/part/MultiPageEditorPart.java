@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 package org.eclipse.ui.part;
 
@@ -428,7 +429,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * @since 3.5
 	 */
 	private void initializeSubTabSwitching() {
-		IHandlerService service = (IHandlerService) getSite().getService(IHandlerService.class);
+		IHandlerService service = getSite().getService(IHandlerService.class);
 		service.activateHandler(COMMAND_NEXT_SUB_TAB, new AbstractHandler() {
 			/**
 			 * {@inheritDoc}
@@ -657,7 +658,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 			} else if (data instanceof IServiceLocator) {
 				return (IServiceLocator) data;
 			} else if (data == null) {
-				IServiceLocatorCreator slc = (IServiceLocatorCreator) getSite()
+				IServiceLocatorCreator slc = getSite()
 						.getService(IServiceLocatorCreator.class);
 				IServiceLocator sl = slc.createServiceLocator(getSite(), null, new IDisposable(){
 					@Override
@@ -692,7 +693,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 */
 	private IServiceLocator getPageContainerSite() {
 		if (pageContainerSite == null) {
-			IServiceLocatorCreator slc = (IServiceLocatorCreator) getSite()
+			IServiceLocatorCreator slc = getSite()
 					.getService(IServiceLocatorCreator.class);
 			pageContainerSite = slc.createServiceLocator(getSite(), null, new IDisposable(){
 				@Override
@@ -854,7 +855,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	protected void pageChange(int newPageIndex) {
 		deactivateSite(false, false);
 
-		IPartService partService = (IPartService) getSite().getService(
+		IPartService partService = getSite().getService(
 				IPartService.class);
 		if (partService.getActivePart() == this) {
 			setFocus();

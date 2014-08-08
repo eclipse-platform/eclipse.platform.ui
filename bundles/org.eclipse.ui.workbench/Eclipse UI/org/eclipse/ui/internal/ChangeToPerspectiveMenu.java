@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -67,9 +68,9 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 			persp = page.getPerspective();
 		}
 
-		IHandlerService handlerService = (IHandlerService) getWindow()
+		IHandlerService handlerService = getWindow()
 				.getService(IHandlerService.class);
-		ICommandService commandService = (ICommandService) getWindow()
+		ICommandService commandService = getWindow()
 				.getService(ICommandService.class);
 
 		Command command = commandService

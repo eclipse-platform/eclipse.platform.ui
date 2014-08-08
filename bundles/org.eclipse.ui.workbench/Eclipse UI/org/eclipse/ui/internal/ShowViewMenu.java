@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -133,9 +134,9 @@ public class ShowViewMenu extends ContributionItem {
 		super(id);
 		this.window = window;
 		this.makeFast = makeFast;
-		final IHandlerService handlerService = (IHandlerService) window
+		final IHandlerService handlerService = window
 				.getService(IHandlerService.class);
-		final ICommandService commandService = (ICommandService) window
+		final ICommandService commandService = window
 				.getService(ICommandService.class);
 		final ParameterizedCommand cmd = getCommand(commandService, makeFast);
 

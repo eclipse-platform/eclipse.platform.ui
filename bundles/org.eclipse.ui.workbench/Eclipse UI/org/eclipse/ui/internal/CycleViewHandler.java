@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -66,7 +67,7 @@ public class CycleViewHandler extends CycleBaseHandler {
 	@Override
 	protected ParameterizedCommand getBackwardCommand() {
 		// TODO Auto-generated method stub
-		final ICommandService commandService = (ICommandService) window.getWorkbench().getService(ICommandService.class);
+		final ICommandService commandService = window.getWorkbench().getService(ICommandService.class);
 		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_PREVIOUS_VIEW);
 		ParameterizedCommand commandBack = new ParameterizedCommand(command, null);
 		return commandBack;
@@ -78,7 +79,7 @@ public class CycleViewHandler extends CycleBaseHandler {
 	@Override
 	protected ParameterizedCommand getForwardCommand() {
 		// TODO Auto-generated method stub
-		final ICommandService commandService = (ICommandService) window.getWorkbench().getService(ICommandService.class);
+		final ICommandService commandService = window.getWorkbench().getService(ICommandService.class);
 		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_NEXT_VIEW);
 		ParameterizedCommand commandF = new ParameterizedCommand(command, null);
 		return commandF;

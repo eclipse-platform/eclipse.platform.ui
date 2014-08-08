@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 package org.eclipse.ui.internal.commands;
 
@@ -101,7 +102,7 @@ final class CommandLegacyWrapper implements ICommand {
 	public final Object execute(Map parameterValuesByName)
 			throws ExecutionException, NotHandledException {
 		try {
-			IHandlerService service = (IHandlerService) PlatformUI.getWorkbench().getService(
+			IHandlerService service = PlatformUI.getWorkbench().getService(
 					IHandlerService.class);
 
 			return command.execute(new ExecutionEvent(command,
@@ -180,7 +181,7 @@ final class CommandLegacyWrapper implements ICommand {
 		if (parameterizedCommand == null) {
 			parameterizedCommand = new ParameterizedCommand(command, null);
 		}
-		IBindingService bindingService = (IBindingService) PlatformUI.getWorkbench().getService(
+		IBindingService bindingService = PlatformUI.getWorkbench().getService(
 				IBindingService.class);
 		final TriggerSequence[] activeBindings = bindingService
 				.getActiveBindingsFor(parameterizedCommand);

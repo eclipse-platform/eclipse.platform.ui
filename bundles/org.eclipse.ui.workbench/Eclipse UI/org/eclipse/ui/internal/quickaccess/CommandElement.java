@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     ARTAL Technologies <simon.chemouil@artal.fr> - Bug 293044 added keybindings display 
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 
 package org.eclipse.ui.internal.quickaccess;
@@ -65,7 +66,7 @@ public class CommandElement extends QuickAccessElement {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		if (window != null) {
-			IHandlerService handlerService = (IHandlerService) window
+			IHandlerService handlerService = window
 					.getWorkbench().getService(IHandlerService.class);
 			try {
 				handlerService.executeCommand(command, null);

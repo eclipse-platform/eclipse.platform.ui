@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 package org.eclipse.ui.application;
 
@@ -192,7 +193,7 @@ public class ActionBarAdvisor {
 		if (action instanceof RetargetAction) {
 			String definitionId = action.getActionDefinitionId();
 			if (definitionId != null) {
-				IActionCommandMappingService mapping = (IActionCommandMappingService) getActionBarConfigurer()
+				IActionCommandMappingService mapping = getActionBarConfigurer()
 						.getWindowConfigurer().getWindow()
 						.getService(IActionCommandMappingService.class);
 				if (mapping != null) {

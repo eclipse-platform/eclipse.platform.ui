@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  ******************************************************************************/
 
 package org.eclipse.ui.internal.handlers;
 
 import java.util.Map;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.ui.IEditorPart;
@@ -55,7 +55,7 @@ public class PinEditorHandler extends AbstractHandler implements
 			WorkbenchPartReference concreteRef = (WorkbenchPartReference) ref;
 
 			concreteRef.setPinned(!concreteRef.isPinned());
-			ICommandService commandService = (ICommandService) window
+			ICommandService commandService = window
 					.getService(ICommandService.class);
 			commandService.refreshElements(event.getCommand().getId(), null);
 		}
@@ -71,7 +71,7 @@ public class PinEditorHandler extends AbstractHandler implements
 	 */
 	@Override
 	public void updateElement(UIElement element, Map parameters) {
-		IWorkbenchWindow window = (IWorkbenchWindow) element
+		IWorkbenchWindow window = element
 				.getServiceLocator().getService(IWorkbenchWindow.class);
 		if (window == null) {
 			return;

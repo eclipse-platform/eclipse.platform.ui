@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  ******************************************************************************/
 
 package org.eclipse.ui.internal.services;
@@ -87,7 +88,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 	public void initialize(IServiceLocator locator) {
 //		this.locator = locator;
 		super.initialize(locator);
-		IWorkbenchLocationService wls = (IWorkbenchLocationService) locator
+		IWorkbenchLocationService wls = locator
 				.getService(IWorkbenchLocationService.class);
 		workbench = wls.getWorkbench();
 		workbench.addWindowListener(windowListener);
@@ -444,7 +445,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 
 	private IWorkbenchWindow getActiveWindow() {
 		final Shell newActiveShell = workbench.getDisplay().getActiveShell();
-		final IContextService contextService = (IContextService) workbench
+		final IContextService contextService = workbench
 				.getService(IContextService.class);
 		if (contextService != null) {
 			final int shellType = contextService.getShellType(newActiveShell);
@@ -929,7 +930,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 		 * We will fallback to the workbench window, but only if a dialog is not
 		 * open.
 		 */
-		final IContextService contextService = (IContextService) workbench
+		final IContextService contextService = workbench
 				.getService(IContextService.class);
 		if (contextService == null) {
 			return;

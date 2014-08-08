@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 
 package org.eclipse.ui.actions;
@@ -96,7 +97,7 @@ public final class ContributedAction extends CommandAction {
 				}
 			}
 			// legacy bridge part
-			IActionCommandMappingService mapping = (IActionCommandMappingService) locator
+			IActionCommandMappingService mapping = locator
 					.getService(IActionCommandMappingService.class);
 			if (mapping == null) {
 				throw new CommandNotMappedException(
@@ -125,11 +126,11 @@ public final class ContributedAction extends CommandAction {
 
 	private void updateSiteAssociations(IWorkbenchPartSite site,
 			String commandId, String actionId, IConfigurationElement element) {
-		IWorkbenchLocationService wls = (IWorkbenchLocationService) site
+		IWorkbenchLocationService wls = site
 				.getService(IWorkbenchLocationService.class);
 		IWorkbench workbench = wls.getWorkbench();
 		IWorkbenchWindow window = wls.getWorkbenchWindow();
-		IHandlerService serv = (IHandlerService) workbench
+		IHandlerService serv = workbench
 				.getService(IHandlerService.class);
 		appContext = new EvaluationContext(serv.getCurrentState(),
 				Collections.EMPTY_LIST);
@@ -160,7 +161,7 @@ public final class ContributedAction extends CommandAction {
 					null, null);
 		}
 		if (site instanceof MultiPageEditorSite) {
-			IHandlerService siteServ = (IHandlerService) site
+			IHandlerService siteServ = site
 					.getService(IHandlerService.class);
 			siteServ.activateHandler(commandId, partHandler);
 		}

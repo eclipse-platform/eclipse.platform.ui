@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 package org.eclipse.ui.menus;
 
@@ -204,15 +205,15 @@ public class CommandContributionItem extends ContributionItem {
 		this.visibleEnabled = contributionParameters.visibleEnabled;
 		this.mode = contributionParameters.mode;
 
-		menuService = (IMenuService) contributionParameters.serviceLocator
+		menuService = contributionParameters.serviceLocator
 				.getService(IMenuService.class);
-		commandService = (ICommandService) contributionParameters.serviceLocator
+		commandService = contributionParameters.serviceLocator
 				.getService(ICommandService.class);
-		handlerService = (IHandlerService) contributionParameters.serviceLocator
+		handlerService = contributionParameters.serviceLocator
 				.getService(IHandlerService.class);
-		bindingService = (IBindingService) contributionParameters.serviceLocator
+		bindingService = contributionParameters.serviceLocator
 				.getService(IBindingService.class);
-		IWorkbenchLocationService workbenchLocationService = (IWorkbenchLocationService) contributionParameters.serviceLocator.getService(IWorkbenchLocationService.class);
+		IWorkbenchLocationService workbenchLocationService = contributionParameters.serviceLocator.getService(IWorkbenchLocationService.class);
 		display = workbenchLocationService.getWorkbench().getDisplay();
 		
 		createCommand(contributionParameters.commandId,
@@ -230,7 +231,7 @@ public class CommandContributionItem extends ContributionItem {
 						// it's OK to not have a helpContextId
 					}
 				}
-				IWorkbenchLocationService wls = (IWorkbenchLocationService) contributionParameters.serviceLocator
+				IWorkbenchLocationService wls = contributionParameters.serviceLocator
 						.getService(IWorkbenchLocationService.class);
 				final IWorkbench workbench = wls.getWorkbench();
 				if (workbench != null && helpContextId != null) {
@@ -286,7 +287,7 @@ public class CommandContributionItem extends ContributionItem {
 
 	private void setImages(IServiceLocator locator, String iconStyle) {
 		if (icon == null) {
-			ICommandImageService service = (ICommandImageService) locator
+			ICommandImageService service = locator
 					.getService(ICommandImageService.class);
 			icon = service.getImageDescriptor(command.getId(),
 					ICommandImageService.TYPE_DEFAULT, iconStyle);

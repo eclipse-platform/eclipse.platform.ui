@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 
 package org.eclipse.ui.internal.handlers;
@@ -46,7 +47,7 @@ public class ToggleCoolbarHandler extends AbstractHandler implements
 
 	@Override
 	public void updateElement(UIElement element, Map parameters) {
-		IWorkbenchLocationService wls = (IWorkbenchLocationService) element
+		IWorkbenchLocationService wls = element
 				.getServiceLocator()
 				.getService(IWorkbenchLocationService.class);
 		IWorkbenchWindow window = wls.getWorkbenchWindow();

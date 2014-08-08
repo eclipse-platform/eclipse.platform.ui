@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 
 package org.eclipse.ui.internal.actions;
@@ -180,11 +181,11 @@ public class CommandAction extends Action {
 			// already initialized
 			return;
 		}
-		handlerService = (IHandlerService) serviceLocator
+		handlerService = serviceLocator
 				.getService(IHandlerService.class);
-		ICommandService commandService = (ICommandService) serviceLocator
+		ICommandService commandService = serviceLocator
 				.getService(ICommandService.class);
-		ICommandImageService commandImageService = (ICommandImageService) serviceLocator
+		ICommandImageService commandImageService = serviceLocator
 				.getService(ICommandImageService.class);
 
 		createCommand(commandService, commandIdIn, parameterMap);

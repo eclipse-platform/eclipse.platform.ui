@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 
 package org.eclipse.ui.internal.keys;
@@ -1244,9 +1245,9 @@ public final class KeysPreferencePage extends PreferencePage implements
 	@Override
 	public final void init(final IWorkbench workbench) {
 		activityManager = workbench.getActivitySupport().getActivityManager();
-		bindingService = (IBindingService) workbench.getService(IBindingService.class);
-		commandService = (ICommandService) workbench.getService(ICommandService.class);
-		contextService = (IContextService) workbench.getService(IContextService.class);
+		bindingService = workbench.getService(IBindingService.class);
+		commandService = workbench.getService(ICommandService.class);
+		contextService = workbench.getService(IContextService.class);
 	}
 
 	/**

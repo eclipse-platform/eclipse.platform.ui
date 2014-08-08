@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 
 package org.eclipse.ui.fieldassist;
@@ -171,7 +172,7 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 		setAutoActivationDelay(DEFAULT_AUTO_ACTIVATION_DELAY);
 
 		// Cache the handler service so we don't have to retrieve it each time
-		this.handlerService = (IHandlerService) PlatformUI.getWorkbench()
+		this.handlerService = PlatformUI.getWorkbench()
 				.getService(IHandlerService.class);
 
 		// Add listeners to the control to manage activation of the handler
@@ -258,7 +259,7 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 		}
 		// Always update the decoration text since the key binding may
 		// have changed since it was last retrieved.
-		IBindingService bindingService = (IBindingService) PlatformUI
+		IBindingService bindingService = PlatformUI
 				.getWorkbench().getService(IBindingService.class);
 		dec
 				.setDescription(NLS

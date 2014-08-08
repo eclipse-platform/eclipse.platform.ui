@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -310,7 +311,7 @@ class PreferencePageHistory {
 	 */
 	private void registerKeybindings(IAction action) {
 		final IHandler handler = new ActionHandler(action);
-		final IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+		final IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 		final IHandlerActivation activation = handlerService.activateHandler(
 				action.getActionDefinitionId(), handler,
 				new ActiveShellExpression(dialog.getShell()));
@@ -322,7 +323,7 @@ class PreferencePageHistory {
 	 *
 	 */
 	public void dispose() {
-		final IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+		final IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 		final Iterator iterator = activations.iterator();
 		while (iterator.hasNext()) {
 			handlerService.deactivateHandler((IHandlerActivation) iterator

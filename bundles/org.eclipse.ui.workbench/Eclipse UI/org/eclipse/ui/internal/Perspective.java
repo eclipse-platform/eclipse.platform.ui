@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Alexander Kuppe, Versant GmbH - bug 215797
  *     Sascha Zak - bug 282874
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -304,7 +305,7 @@ public class Perspective {
 
     //for dynamic UI
     protected void addActionSet(IActionSetDescriptor newDesc) {
-    	IContextService service = (IContextService)page.getWorkbenchWindow().getService(IContextService.class);
+    	IContextService service = page.getWorkbenchWindow().getService(IContextService.class);
     	try {
 			service.deferUpdates(true);
 			for (int i = 0; i < alwaysOnActionSets.size(); i++) {
@@ -332,7 +333,7 @@ public class Perspective {
     // for dynamic UI
 	protected void removeActionSet(IActionSetDescriptor toRemove) {
 		String id = toRemove.getId();
-    	IContextService service = (IContextService)page.getWorkbenchWindow().getService(IContextService.class);
+    	IContextService service = page.getWorkbenchWindow().getService(IContextService.class);
     	try {
 			service.deferUpdates(true);
 			for (int i = 0; i < alwaysOnActionSets.size(); i++) {

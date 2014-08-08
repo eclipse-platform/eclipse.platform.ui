@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 
 package org.eclipse.ui.fieldassist;
@@ -129,7 +130,7 @@ public class ContentAssistField extends DecoratedField {
 		}
 		// Always update the decoration text since the key binding may
 		// have changed since it was last retrieved.
-		IBindingService bindingService = (IBindingService) PlatformUI
+		IBindingService bindingService = PlatformUI
 				.getWorkbench().getService(IBindingService.class);
 		dec.setDescription(NLS.bind(
 				WorkbenchMessages.ContentAssist_Cue_Description_Key,

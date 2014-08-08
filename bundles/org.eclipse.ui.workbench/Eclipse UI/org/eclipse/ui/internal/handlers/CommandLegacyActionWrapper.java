@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 
 package org.eclipse.ui.internal.handlers;
@@ -188,7 +189,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	@Override
 	public final int getAccelerator() {
 		final String commandId = getActionDefinitionId();
-		final IBindingService bindingService = (IBindingService) serviceLocator
+		final IBindingService bindingService = serviceLocator
 				.getService(IBindingService.class);
 		final TriggerSequence triggerSequence = bindingService
 				.getBestActiveBindingFor(commandId);
@@ -221,7 +222,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	@Override
 	public final ImageDescriptor getDisabledImageDescriptor() {
 		final String commandId = getActionDefinitionId();
-		final ICommandImageService commandImageService = (ICommandImageService) serviceLocator
+		final ICommandImageService commandImageService = serviceLocator
 				.getService(ICommandImageService.class);
 		return commandImageService.getImageDescriptor(commandId,
 				CommandImageManager.TYPE_DISABLED, style);
@@ -236,7 +237,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	@Override
 	public final ImageDescriptor getHoverImageDescriptor() {
 		final String commandId = getActionDefinitionId();
-		final ICommandImageService commandImageService = (ICommandImageService) serviceLocator
+		final ICommandImageService commandImageService = serviceLocator
 				.getService(ICommandImageService.class);
 		return commandImageService.getImageDescriptor(commandId,
 				CommandImageManager.TYPE_HOVER, style);
@@ -250,7 +251,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	@Override
 	public final ImageDescriptor getImageDescriptor() {
 		final String commandId = getActionDefinitionId();
-		final ICommandImageService commandImageService = (ICommandImageService) serviceLocator
+		final ICommandImageService commandImageService = serviceLocator
 				.getService(ICommandImageService.class);
 		return commandImageService.getImageDescriptor(commandId, style);
 	}
@@ -370,7 +371,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 		// Update the command.
 		final Command oldBaseCommand = command.getCommand();
 		oldBaseCommand.removeCommandListener(commandListener);
-		final ICommandService commandService = (ICommandService) serviceLocator
+		final ICommandService commandService = serviceLocator
 				.getService(ICommandService.class);
 		final Command newBaseCommand = commandService.getCommand(id);
 		command = new ParameterizedCommand(newBaseCommand, null);
@@ -467,7 +468,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	public final void setDisabledImageDescriptor(final ImageDescriptor newImage) {
 		final String commandId = getActionDefinitionId();
 		final int type = CommandImageManager.TYPE_DISABLED;
-		final ICommandImageService commandImageService = (ICommandImageService) serviceLocator
+		final ICommandImageService commandImageService = serviceLocator
 				.getService(ICommandImageService.class);
 		if (commandImageService instanceof CommandImageService) {
 			((CommandImageService) commandImageService).bind(commandId, type,
@@ -496,7 +497,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	public final void setHoverImageDescriptor(final ImageDescriptor newImage) {
 		final String commandId = getActionDefinitionId();
 		final int type = CommandImageManager.TYPE_HOVER;
-		final ICommandImageService commandImageService = (ICommandImageService) serviceLocator
+		final ICommandImageService commandImageService = serviceLocator
 				.getService(ICommandImageService.class);
 		if (commandImageService instanceof CommandImageService) {
 			((CommandImageService) commandImageService).bind(commandId, type,
@@ -513,7 +514,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	public final void setImageDescriptor(final ImageDescriptor newImage) {
 		final String commandId = getActionDefinitionId();
 		final int type = CommandImageManager.TYPE_DEFAULT;
-		final ICommandImageService commandImageService = (ICommandImageService) serviceLocator
+		final ICommandImageService commandImageService = serviceLocator
 				.getService(ICommandImageService.class);
 		if (commandImageService instanceof CommandImageService) {
 			((CommandImageService) commandImageService).bind(commandId, type,

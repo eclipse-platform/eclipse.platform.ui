@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 
 package org.eclipse.ui.internal.menus;
@@ -120,7 +121,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 */
 	public LegacyActionPersistence(final IWorkbenchWindow window) {
 		// TODO Blind casts are bad.
-		this.commandService = (ICommandService) window
+		this.commandService = window
 				.getService(ICommandService.class);
 		this.window = window;
 	}
@@ -130,7 +131,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * the collection. This should be called before every read.
 	 */
 	private final void clearActivations() {
-		final IHandlerService service = (IHandlerService) window
+		final IHandlerService service = window
 				.getService(IHandlerService.class);
 		if (service == null) {
 			handlerActivations.clear();
@@ -197,7 +198,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			command = commandService.getCommand(commandId);
 		}
 
-		final IActionCommandMappingService mappingService = (IActionCommandMappingService) window
+		final IActionCommandMappingService mappingService = window
 				.getService(IActionCommandMappingService.class);
 		
 		String label = null;
@@ -310,7 +311,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			}
 
 			// Add a mapping from this action id to the command id.
-			final IActionCommandMappingService mappingService = (IActionCommandMappingService) window
+			final IActionCommandMappingService mappingService = window
 					.getService(IActionCommandMappingService.class);
 			if (mappingService != null) {
 				mappingService.map(actionId, command.getId());
@@ -367,7 +368,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 		// Activate the handler.
 		final String commandId = command.getId();
-		final IHandlerService service = (IHandlerService) window
+		final IHandlerService service = window
 				.getService(IHandlerService.class);
 		final IHandlerActivation handlerActivation;
 		if (activeWhenExpression == null) {
