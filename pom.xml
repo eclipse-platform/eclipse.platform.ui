@@ -5,7 +5,7 @@
   are made available under the terms of the Eclipse Distribution License v1.0
   which accompanies this distribution, and is available at
   http://www.eclipse.org/org/documents/edl-v10.php
- 
+
   Contributors:
      Igor Fedorenko - initial implementation
 -->
@@ -47,6 +47,7 @@
     <module>bundles/org.eclipse.core.filesystem.java7</module>
     <module>bundles/org.eclipse.core.filesystem.linux.ppc</module>
     <module>bundles/org.eclipse.core.filesystem.linux.ppc64</module>
+    <module>bundles/org.eclipse.core.filesystem.linux.ppc64le</module>
     <module>bundles/org.eclipse.core.filesystem.linux.x86</module>
     <module>bundles/org.eclipse.core.filesystem.linux.x86_64</module>
     <module>bundles/org.eclipse.core.filesystem.macosx</module>
