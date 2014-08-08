@@ -133,7 +133,11 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Message {
-	@Message(contributionURI = "platform:/plugin/org.eclipse.e4.core.tests/resources/another")
+	/**
+	 * Caching behaviors.
+	 * 
+	 * @see Message
+	 */
 	public enum ReferenceType {
 		NONE, SOFT, WEAK
 	}
