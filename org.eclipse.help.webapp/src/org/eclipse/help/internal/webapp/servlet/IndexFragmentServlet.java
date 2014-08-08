@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Yaroslav Nikolaiko <nikolaiko.yaroslav@gmail.com> - [webapp][base] Bugs related to Search Scope for filtering content in The Eclipse platform's help infocenter - http://bugs.eclipse.org/441407
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.servlet;
 
@@ -349,7 +350,7 @@ public class IndexFragmentServlet extends HttpServlet {
 			
 				String href;
 				if (singleTopic) {
-					href = UrlUtil.getHelpURL((entry.getTopics()[0]).getHref());
+					href = UrlUtil.getHelpURL((topics[0]).getHref());
 				    buf.append('\n' + "      href=\"" +  //$NON-NLS-1$
 				    	XMLGenerator.xmlEscape(href) + "\""); //$NON-NLS-1$
 				}

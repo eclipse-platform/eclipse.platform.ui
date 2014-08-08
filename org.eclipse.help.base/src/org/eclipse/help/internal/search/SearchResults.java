@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Yaroslav Nikolaiko <nikolaiko.yaroslav@gmail.com> - [webapp][base] Bugs related to Search Scope for filtering content in The Eclipse platform's help infocenter - http://bugs.eclipse.org/441407
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
@@ -231,7 +232,9 @@ public class SearchResults implements ISearchHitCollector {
 			// Test for href attached to Toc element
 			topic = nextToc.getTopic(null);
 			if (topic != null && href != null && href.equals(topic.getHref())) {
-				return nextToc;
+				if (filter == null || filter.inScope(topic)) {
+					return nextToc;
+				}
 			}
 		}
 		if (!foundInToc) {
