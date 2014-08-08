@@ -148,7 +148,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 
 	void removeSaveable() {
 		Saveable[] toRemove = getActiveSaveables();
-		ISaveablesLifecycleListener lifecycleListener = (ISaveablesLifecycleListener) getSite()
+		ISaveablesLifecycleListener lifecycleListener = getSite()
 				.getService(ISaveablesLifecycleListener.class);
 		SaveablesLifecycleEvent event = new SaveablesLifecycleEvent(this,
 				SaveablesLifecycleEvent.PRE_CLOSE, toRemove, false);
@@ -163,7 +163,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 	void addSaveable() {
 		MySaveable saveable = new MySaveable();
 		saveables.add(saveable);
-		ISaveablesLifecycleListener lifecycleListener = (ISaveablesLifecycleListener) getSite()
+		ISaveablesLifecycleListener lifecycleListener = getSite()
 				.getService(ISaveablesLifecycleListener.class);
 		lifecycleListener.handleLifecycleEvent(new SaveablesLifecycleEvent(
 				this, SaveablesLifecycleEvent.POST_OPEN,

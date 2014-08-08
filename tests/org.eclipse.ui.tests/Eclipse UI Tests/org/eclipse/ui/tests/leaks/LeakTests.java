@@ -86,13 +86,15 @@ public class LeakTests extends UITestCase {
         return new PhantomReference(object, queue);
     }
 
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
         super.doSetUp();
         fWin = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
         fActivePage = fWin.getActivePage();
     }
 
-    protected void doTearDown() throws Exception {
+    @Override
+	protected void doTearDown() throws Exception {
         super.doTearDown();
         fWin = null;
         fActivePage = null;
@@ -142,13 +144,15 @@ public class LeakTests extends UITestCase {
 
 		// create a job to schedule
 		Job doNothingJob = new Job("Does Nothing") { //$NON-NLS-1$
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				return Status.OK_STATUS;
 			}
 		};
 
 		// retrieve the progress service
-		IWorkbenchSiteProgressService service = (IWorkbenchSiteProgressService) view
+		@SuppressWarnings("cast")
+		IWorkbenchSiteProgressService service = view
 				.getSite().getService(IWorkbenchSiteProgressService.class);
 		// schedule it
 		service.schedule(doNothingJob);
@@ -179,13 +183,14 @@ public class LeakTests extends UITestCase {
 
 		// create a job to schedule
 		Job doNothingJob = new Job("Does Nothing") { //$NON-NLS-1$
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				return Status.OK_STATUS;
 			}
 		};
 
 		// retrieve the progress service
-		IWorkbenchSiteProgressService service = (IWorkbenchSiteProgressService) view
+		IWorkbenchSiteProgressService service = view
 				.getSite().getService(IWorkbenchSiteProgressService.class);
 		// schedule it
 		service.schedule(doNothingJob);

@@ -41,7 +41,7 @@ public class TextContentAssistCommandAdapterTest extends
 		
 		final boolean[] handlerInvocationIndicator = new boolean[] {false};
 		
-		IHandlerService service = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+		IHandlerService service = PlatformUI.getWorkbench().getService(IHandlerService.class);
 		IHandlerActivation handlerActivation = service.activateHandler(IWorkbenchCommandConstants.EDIT_CONTENT_ASSIST, new AbstractHandler() {
 			
 			public Object execute(ExecutionEvent event) {

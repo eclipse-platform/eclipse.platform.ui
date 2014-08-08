@@ -348,10 +348,12 @@ public class UtilTest extends TestCase {
 			clearVariable();
 		}
 
+		@Override
 		public Map getCurrentState() {
 			return sourceState;
 		}
 
+		@Override
 		public String[] getProvidedSourceNames() {
 			return new String[] { VARIABLE };
 		}
@@ -360,6 +362,7 @@ public class UtilTest extends TestCase {
 		 * (non-Javadoc)		 
 		 * @see org.eclipse.ui.ISourceProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
@@ -388,25 +391,31 @@ public class UtilTest extends TestCase {
 	
 	public void testExpressionEnablement() throws Exception {
 		IPluginContribution filterExp = new IPluginContribution() {
+			@Override
 			public String getLocalId() {
 				return "filter";
 			}
+			@Override
 			public String getPluginId() {
 				return "org";
 			}
 		};
 		IPluginContribution filterExp2 = new IPluginContribution() {
+			@Override
 			public String getLocalId() {
 				return "filter2";
 			}
+			@Override
 			public String getPluginId() {
 				return "org";
 			}
 		};
 		IPluginContribution noExp = new IPluginContribution() {
+			@Override
 			public String getLocalId() {
 				return "donotfilter";
 			}
+			@Override
 			public String getPluginId() {
 				return "org";
 			}
@@ -446,7 +455,7 @@ public class UtilTest extends TestCase {
 		// and change the context to enable org.eclipse.ui.tests.filter1.enabled:
 		// context: org.eclipse.ui.command.contexts.enablement_test1
 		
-		IContextService localService = (IContextService) PlatformUI
+		IContextService localService = PlatformUI
 				.getWorkbench().getService(IContextService.class);
 		IContextActivation activation = localService.activateContext(EXPRESSION_VALUE);
 		try {
@@ -461,7 +470,7 @@ public class UtilTest extends TestCase {
 		// Testing with an arbitrary self-declared test variable.
 		//
 		TestSourceProvider testSourceProvider = new TestSourceProvider();
-		IEvaluationService evalService = (IEvaluationService) PlatformUI
+		IEvaluationService evalService = PlatformUI
 				.getWorkbench().getService(IEvaluationService.class);
 		evalService.addSourceProvider(testSourceProvider);
 		testSourceProvider.fireSourceChanged();
@@ -582,7 +591,7 @@ public class UtilTest extends TestCase {
     public void testSetEnabledExpressionActivity() {
     	try {
     		TestSourceProvider testSourceProvider = new TestSourceProvider();
-    		IEvaluationService evalService = (IEvaluationService) PlatformUI
+    		IEvaluationService evalService = PlatformUI
     				.getWorkbench().getService(IEvaluationService.class);
     		evalService.addSourceProvider(testSourceProvider);
     		testSourceProvider.fireSourceChanged();
@@ -618,6 +627,7 @@ public class UtilTest extends TestCase {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		rememberedSet = getActivityManager().getEnabledActivityIds();
@@ -626,6 +636,7 @@ public class UtilTest extends TestCase {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(

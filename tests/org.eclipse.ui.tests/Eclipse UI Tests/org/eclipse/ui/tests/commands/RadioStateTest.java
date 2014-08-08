@@ -40,9 +40,9 @@ public class RadioStateTest extends UITestCase {
 
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
-		commandService = (ICommandService) fWorkbench
+		commandService = fWorkbench
 				.getService(ICommandService.class);
-		handlerService = (IHandlerService) fWorkbench
+		handlerService = fWorkbench
 				.getService(IHandlerService.class);
 	}
 

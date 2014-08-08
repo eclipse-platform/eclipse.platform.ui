@@ -52,17 +52,17 @@ public class ContributedServiceTest extends UITestCase {
 	}
 
 	public void testGlobalService() throws Exception {
-		IWorkbenchLocationService wls = (IWorkbenchLocationService) getWorkbench()
+		IWorkbenchLocationService wls = getWorkbench()
 				.getService(IWorkbenchLocationService.class);
 		assertNotNull(wls.getWorkbench());
 		assertNull(wls.getWorkbenchWindow());
 
-		ILevelService l = (ILevelService) getWorkbench().getService(
+		ILevelService l = getWorkbench().getService(
 				ILevelService.class);
 		assertNotNull(l);
 		assertEquals(1, l.getLevel());
 
-		l = (ILevelService) getWorkbench().getService(ILevelService.class);
+		l = getWorkbench().getService(ILevelService.class);
 		assertNotNull(l);
 		assertEquals(1, l.getLevel());
 
@@ -71,22 +71,22 @@ public class ContributedServiceTest extends UITestCase {
 
 	public void testWindowService() throws Exception {
 		IServiceLocator locator = getWorkbench().getActiveWorkbenchWindow();
-		IWorkbenchLocationService wls = (IWorkbenchLocationService) locator
+		IWorkbenchLocationService wls = locator
 				.getService(IWorkbenchLocationService.class);
 		assertNotNull(wls.getWorkbenchWindow());
 
-		ILevelService l = (ILevelService) locator
+		ILevelService l = locator
 				.getService(ILevelService.class);
 		assertNotNull(l);
 		assertEquals(2, l.getLevel());
 
 		assertEquals(2, LevelServiceFactory.instancesCreated);
 
-		l = (ILevelService) locator.getService(ILevelService.class);
+		l = locator.getService(ILevelService.class);
 		assertNotNull(l);
 		assertEquals(2, l.getLevel());
 
-		l = (ILevelService) getWorkbench().getService(ILevelService.class);
+		l = getWorkbench().getService(ILevelService.class);
 		assertNotNull(l);
 		assertEquals(1, l.getLevel());
 
@@ -115,11 +115,11 @@ public class ContributedServiceTest extends UITestCase {
 
 	public void testLocalServiceCreated() throws Exception {
 		IServiceLocator parent = getWorkbench().getActiveWorkbenchWindow();
-		IWorkbenchLocationService wls = (IWorkbenchLocationService) parent
+		IWorkbenchLocationService wls = parent
 				.getService(IWorkbenchLocationService.class);
 		assertNotNull(wls.getWorkbenchWindow());
 
-		IServiceLocatorCreator lc = (IServiceLocatorCreator) parent
+		IServiceLocatorCreator lc = parent
 				.getService(IServiceLocatorCreator.class);
 		IServiceLocator locator = lc.createServiceLocator(parent, null,
 				new IDisposable() {
@@ -128,7 +128,7 @@ public class ContributedServiceTest extends UITestCase {
 					}
 				});
 
-		ILevelService l = (ILevelService) locator
+		ILevelService l = locator
 				.getService(ILevelService.class);
 		assertNotNull(l);
 		assertEquals(3, l.getLevel());
@@ -144,7 +144,7 @@ public class ContributedServiceTest extends UITestCase {
 			public void dispose() {
 			}
 		});
-		l = (ILevelService) locator.getService(ILevelService.class);
+		l = locator.getService(ILevelService.class);
 		assertNotNull(l);
 		assertEquals(3, l.getLevel());
 
@@ -159,7 +159,7 @@ public class ContributedServiceTest extends UITestCase {
 					public void dispose() {
 					}
 				});
-		l = (ILevelService) locator.getService(ILevelService.class);
+		l = locator.getService(ILevelService.class);
 		assertNotNull(l);
 		assertEquals(8, l.getLevel());
 
@@ -171,7 +171,7 @@ public class ContributedServiceTest extends UITestCase {
 	
 	public void testLocalDialogService() throws Exception {
 		IServiceLocator parent = getWorkbench();
-		IServiceLocatorCreator lc = (IServiceLocatorCreator) parent
+		IServiceLocatorCreator lc = parent
 				.getService(IServiceLocatorCreator.class);
 		IServiceLocator locator = lc.createServiceLocator(parent,
 				new AbstractServiceFactory() {
@@ -181,7 +181,7 @@ public class ContributedServiceTest extends UITestCase {
 							IServiceLocator locator) {
 						if (IWorkbenchLocationService.class
 								.equals(serviceInterface)) {
-							IWorkbenchLocationService wls = (IWorkbenchLocationService) parentLocator
+							IWorkbenchLocationService wls = parentLocator
 									.getService(IWorkbenchLocationService.class);
 							return new WorkbenchLocationService(
 									IServiceScopes.DIALOG_SCOPE, wls
@@ -195,7 +195,7 @@ public class ContributedServiceTest extends UITestCase {
 					public void dispose() {
 					}
 				});
-		IWorkbenchLocationService wls = (IWorkbenchLocationService) locator
+		IWorkbenchLocationService wls = locator
 				.getService(IWorkbenchLocationService.class);
 		assertNotNull(wls.getWorkbench());
 		assertNull(wls.getWorkbenchWindow());
@@ -205,7 +205,7 @@ public class ContributedServiceTest extends UITestCase {
 
 	public void testWorkbenchServiceFactory() throws Exception {
 		IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
-		IProgressService progress = (IProgressService) window
+		IProgressService progress = window
 				.getService(IProgressService.class);
 		assertNotNull(progress);
 
@@ -219,7 +219,7 @@ public class ContributedServiceTest extends UITestCase {
 		}
 
 		assertNotNull(part);
-		progress = (IProgressService) part.getSite().getService(
+		progress = part.getSite().getService(
 				IProgressService.class);
 		assertFalse(progress == getWorkbench().getProgressService());
 		assertEquals(part.getSite().getService(

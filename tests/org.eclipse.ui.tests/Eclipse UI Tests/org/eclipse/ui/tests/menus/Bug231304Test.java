@@ -34,7 +34,7 @@ public class Bug231304Test extends UITestCase {
 
 	public void testToolTip() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
-		IMenuService menus = (IMenuService) window
+		IMenuService menus = window
 				.getService(IMenuService.class);
 		ToolBarManager manager = new ToolBarManager();
 		try {

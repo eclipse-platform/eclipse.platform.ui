@@ -217,7 +217,7 @@ public final class BindingPersistenceTest extends UITestCase {
 		assertTrue("Unable to find delete marker", foundDeleteMarker);
 
 		// make sure that the proper contexts are currently active
-		IContextService contextService = (IContextService) fWorkbench
+		IContextService contextService = fWorkbench
 				.getService(IContextService.class);
 		contextService
 				.activateContext(IContextService.CONTEXT_ID_DIALOG_AND_WINDOW);
@@ -331,7 +331,7 @@ public final class BindingPersistenceTest extends UITestCase {
 		assertNotNull(editorBinding);
 		assertEquals(activateEditorCmd, editorBinding.getParameterizedCommand());
 
-		EBindingService ebs = (EBindingService) fWorkbench
+		EBindingService ebs = fWorkbench
 				.getService(EBindingService.class);
 		HashMap<String, String> attrs = new HashMap<String, String>();
 		attrs.put(EBindingService.TYPE_ATTR_TAG, "user");
@@ -406,7 +406,7 @@ public final class BindingPersistenceTest extends UITestCase {
 		assertNotNull(editorBinding);
 		assertEquals(activateEditorCmd, editorBinding.getParameterizedCommand());
 
-		EBindingService ebs = (EBindingService) fWorkbench
+		EBindingService ebs = fWorkbench
 				.getService(EBindingService.class);
 		HashMap<String, String> attrs = new HashMap<String, String>();
 		attrs.put(EBindingService.TYPE_ATTR_TAG, "user");
@@ -462,7 +462,7 @@ public final class BindingPersistenceTest extends UITestCase {
 				findAndReplaceBinding.getParameterizedCommand());
 		assertEquals(EMACS_SCHEME_ID, findAndReplaceBinding.getSchemeId());
 
-		EBindingService ebs = (EBindingService) fWorkbench
+		EBindingService ebs = fWorkbench
 				.getService(EBindingService.class);
 		HashMap<String, String> attrs = new HashMap<String, String>();
 		attrs.put(EBindingService.TYPE_ATTR_TAG, "user");

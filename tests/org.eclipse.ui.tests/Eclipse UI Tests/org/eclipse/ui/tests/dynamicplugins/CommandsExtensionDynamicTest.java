@@ -287,7 +287,7 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 	}
 	
 	public void testNonExistingHandler() {
-		IHandlerService handlerService = (IHandlerService) getWorkbench()
+		IHandlerService handlerService = getWorkbench()
 				.getService(IHandlerService.class);
 		getBundle();
 

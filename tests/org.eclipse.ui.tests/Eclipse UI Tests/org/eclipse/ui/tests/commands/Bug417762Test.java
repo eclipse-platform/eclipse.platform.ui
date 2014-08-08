@@ -47,9 +47,9 @@ public class Bug417762Test extends UITestCase {
 	public void testAsReported() throws ExecutionException,
 			NotDefinedException, NotEnabledException, NotHandledException {
 		IWorkbench workbench = getWorkbench();
-		ICommandService commandService = (ICommandService) workbench
+		ICommandService commandService = workbench
 				.getService(ICommandService.class);
-		IHandlerService handlerService = (IHandlerService) workbench
+		IHandlerService handlerService = workbench
 				.getService(IHandlerService.class);
 		Command showInCommand = commandService
 				.getCommand(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN);
@@ -67,9 +67,9 @@ public class Bug417762Test extends UITestCase {
 	public void testSuggestionUseExecuteCommand() throws ExecutionException,
 			NotDefinedException, NotEnabledException, NotHandledException {
 		IWorkbench workbench = getWorkbench();
-		ICommandService commandService = (ICommandService) workbench
+		ICommandService commandService = workbench
 				.getService(ICommandService.class);
-		IHandlerService handlerService = (IHandlerService) workbench
+		IHandlerService handlerService = workbench
 				.getService(IHandlerService.class);
 		Command showInCommand = commandService
 				.getCommand(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN);
@@ -96,9 +96,9 @@ public class Bug417762Test extends UITestCase {
 	public void testSuggestionUseExecuteCommandInContext() throws ExecutionException,
 			NotDefinedException, NotEnabledException, NotHandledException {
 		IWorkbench workbench = getWorkbench();
-		ICommandService commandService = (ICommandService) workbench
+		ICommandService commandService = workbench
 				.getService(ICommandService.class);
-		IHandlerService handlerService = (IHandlerService) workbench
+		IHandlerService handlerService = workbench
 				.getService(IHandlerService.class);
 		Command showInCommand = commandService
 				.getCommand(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN);
@@ -125,9 +125,9 @@ public class Bug417762Test extends UITestCase {
 	public void testSuggestionUseParameterizedCommandExecuteWithChecks() throws ExecutionException,
 			NotDefinedException, NotEnabledException, NotHandledException {
 		IWorkbench workbench = getWorkbench();
-		ICommandService commandService = (ICommandService) workbench
+		ICommandService commandService = workbench
 				.getService(ICommandService.class);
-		IHandlerService handlerService = (IHandlerService) workbench
+		IHandlerService handlerService = workbench
 				.getService(IHandlerService.class);
 		Command showInCommand = commandService
 				.getCommand(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN);

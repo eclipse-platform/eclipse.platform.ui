@@ -50,7 +50,7 @@ public class ChangeEnablementHandler extends AbstractHandler {
 
 	private void init(IServiceLocator serviceLocator) {
 		if (fContextManagerListener == null) {
-			IContextService service = (IContextService) serviceLocator
+			IContextService service = serviceLocator
 					.getService(IContextService.class);
 			service.addContextManagerListener(getContextListener());
 		}
@@ -99,7 +99,7 @@ public class ChangeEnablementHandler extends AbstractHandler {
 	 */
 	public void dispose() {
 		if (fContextManagerListener != null) {
-			IContextService service = (IContextService) PlatformUI
+			IContextService service = PlatformUI
 					.getWorkbench().getService(IContextService.class);
 			service.removeContextManagerListener(fContextManagerListener);
 			fContextManagerListener = null;

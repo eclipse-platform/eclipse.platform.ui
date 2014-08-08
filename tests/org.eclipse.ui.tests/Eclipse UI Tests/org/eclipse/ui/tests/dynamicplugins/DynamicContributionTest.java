@@ -28,7 +28,7 @@ public class DynamicContributionTest extends DynamicTestCase {
 
 	public void testMenuContribution() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
-		IMenuService menus = (IMenuService) window
+		IMenuService menus = window
 				.getService(IMenuService.class);
 		MenuManager manager = new MenuManager();
 		try {

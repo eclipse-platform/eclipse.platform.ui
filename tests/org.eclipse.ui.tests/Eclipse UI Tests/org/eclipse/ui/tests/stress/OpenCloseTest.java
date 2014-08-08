@@ -111,7 +111,7 @@ public class OpenCloseTest extends UITestCase {
      *  
      */
     public void testOpenClosePerspective() {
-		ICommandService commandService = (ICommandService) fWorkbench.getService(ICommandService.class);
+		ICommandService commandService = fWorkbench.getService(ICommandService.class);
 		Command command = commandService.getCommand("org.eclipse.ui.window.closePerspective");
 		
 		HashMap parameters = new HashMap();

@@ -142,11 +142,11 @@ public class HandlerActivationTest extends UITestCase {
 	public HandlerActivationTest(String name) {
 		super(name);
 		services = PlatformUI.getWorkbench();
-		contextService = (IContextService) services
+		contextService = services
 				.getService(IContextService.class);
-		commandService = (ICommandService) services
+		commandService = services
 				.getService(ICommandService.class);
-		handlerService = (IHandlerService) services
+		handlerService = services
 				.getService(IHandlerService.class);
 	}
 

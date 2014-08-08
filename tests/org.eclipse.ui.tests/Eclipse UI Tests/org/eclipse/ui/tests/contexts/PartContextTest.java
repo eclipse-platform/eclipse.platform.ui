@@ -49,7 +49,7 @@ public class PartContextTest extends UITestCase {
 	}
 
 	public void testBasicContextActivation() throws Exception {
-		IContextService globalService = (IContextService) getWorkbench()
+		IContextService globalService = getWorkbench()
 				.getService(IContextService.class);
 
 		checkActiveContext(globalService, MockViewPart5.PART_CONTEXT_ID, false);
@@ -65,7 +65,7 @@ public class PartContextTest extends UITestCase {
 	}
 
 	public void testContextActivation() throws Exception {
-		IContextService globalService = (IContextService) getWorkbench()
+		IContextService globalService = getWorkbench()
 				.getService(IContextService.class);
 
 		checkActiveContext(globalService, MockViewPart5.PART_CONTEXT_ID, false);
@@ -73,7 +73,7 @@ public class PartContextTest extends UITestCase {
 		IWorkbenchWindow window = openTestWindow();
 		IWorkbenchPage page = window.getActivePage();
 		IViewPart view = page.showView(MockViewPart5.ID);
-		IContextService localService = (IContextService) view.getSite()
+		IContextService localService = view.getSite()
 				.getService(IContextService.class);
 
 		checkActiveContext(globalService, MockViewPart5.PART_CONTEXT_ID, true);
@@ -97,12 +97,12 @@ public class PartContextTest extends UITestCase {
 	}
 
 	public void testWindowContextActivation() throws Exception {
-		IContextService globalService = (IContextService) getWorkbench()
+		IContextService globalService = getWorkbench()
 				.getService(IContextService.class);
 		checkActiveContext(globalService, WINDOW_CONTEXT_ID, false);
 
 		IWorkbenchWindow window = openTestWindow();
-		IContextService localService = (IContextService) window
+		IContextService localService = window
 				.getService(IContextService.class);
 		localService.activateContext(WINDOW_CONTEXT_ID);
 		checkActiveContext(globalService, WINDOW_CONTEXT_ID, true);
@@ -119,7 +119,7 @@ public class PartContextTest extends UITestCase {
 	 *             on error
 	 */
 	public void testPageBookPageContextActivation() throws Exception {
-		IContextService globalService = (IContextService) getWorkbench()
+		IContextService globalService = getWorkbench()
 				.getService(IContextService.class);
 		checkActiveContext(globalService, ContextPage.TEST_CONTEXT_ID, false);
 

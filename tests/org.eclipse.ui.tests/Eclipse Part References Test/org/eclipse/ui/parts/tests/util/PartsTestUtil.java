@@ -137,7 +137,7 @@ public class PartsTestUtil {
     public static boolean isZoomed(IWorkbenchPart part) {
     	IWorkbenchPage page = part.getSite().getPage();
     	IWorkbenchPartReference ref = page.getReference(part);
-    	EModelService modelService = (EModelService) part.getSite().getService(EModelService.class);
+    	EModelService modelService = part.getSite().getService(EModelService.class);
     	
     	MUIElement element = getActiveElement(page, modelService, ref);
    		return element.getTags().contains(IPresentationEngine.MAXIMIZED);

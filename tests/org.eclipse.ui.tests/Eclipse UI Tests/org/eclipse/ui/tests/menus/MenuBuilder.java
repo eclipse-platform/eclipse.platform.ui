@@ -47,7 +47,7 @@ public class MenuBuilder {
 		if (!PlatformUI.isWorkbenchRunning()) {
 			return;
 		}
-		IMenuService menuService = (IMenuService) PlatformUI.getWorkbench()
+		IMenuService menuService = PlatformUI.getWorkbench()
 				.getService(IMenuService.class);
 		if (menuService==null) {
 			return;
@@ -118,7 +118,7 @@ public class MenuBuilder {
 		if (!PlatformUI.isWorkbenchRunning()) {
 			return;
 		}
-		IMenuService menuService = (IMenuService) PlatformUI.getWorkbench()
+		IMenuService menuService = PlatformUI.getWorkbench()
 				.getService(IMenuService.class);
 		if (menuService==null) {
 			return;
@@ -130,7 +130,7 @@ public class MenuBuilder {
 	}
 
 	public static void addSearchMenu() {
-		IMenuService menuService = (IMenuService) PlatformUI.getWorkbench()
+		IMenuService menuService = PlatformUI.getWorkbench()
 				.getService(IMenuService.class);
 
 		AbstractContributionFactory searchContribution = new AbstractContributionFactory(
@@ -155,7 +155,7 @@ public class MenuBuilder {
 	}
 
 	public static void addToSearchMenu() {
-		final IMenuService menuService = (IMenuService) PlatformUI
+		final IMenuService menuService = PlatformUI
 				.getWorkbench().getService(IMenuService.class);
 		final ActiveActionSetExpression activeSearchActionSet = new ActiveActionSetExpression(
 				"org.eclipse.jdt.ui.SearchActionSet");
@@ -267,7 +267,7 @@ public class MenuBuilder {
 	}
 
 	public static void addFileContribution() {
-		final IMenuService menuService = (IMenuService) PlatformUI
+		final IMenuService menuService = PlatformUI
 				.getWorkbench().getService(IMenuService.class);
 		final ObjectClassExpression ifileExpression = new ObjectClassExpression(
 				"org.eclipse.core.resources.IFile");
@@ -301,7 +301,7 @@ public class MenuBuilder {
 	}
 
 	public static void addTextMenuContribition() {
-		final IMenuService menuService = (IMenuService) PlatformUI
+		final IMenuService menuService = PlatformUI
 				.getWorkbench().getService(IMenuService.class);
 
 		final ImageDescriptor scrambleIcon = AbstractUIPlugin

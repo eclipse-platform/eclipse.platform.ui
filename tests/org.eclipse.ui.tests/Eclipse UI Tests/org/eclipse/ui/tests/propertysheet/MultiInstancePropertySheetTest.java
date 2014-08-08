@@ -299,7 +299,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 		// pressed
 		activePage.activate(propertySheet);
 
-		IHandlerService handlerService = (IHandlerService) PlatformUI
+		IHandlerService handlerService = PlatformUI
 				.getWorkbench().getService(IHandlerService.class);
 		Event event = new Event();
 		handlerService.executeCommand(NewPropertySheetHandler.ID, event);

@@ -121,7 +121,7 @@ public class EvaluationServiceTest extends UITestCase {
 		activePage.setPerspective(resourecePerspective);
 		processEvents();
 		
-		IEvaluationService service = (IEvaluationService) window.getService(IEvaluationService.class);
+		IEvaluationService service = window.getService(IEvaluationService.class);
 		Object currentSelection = service.getCurrentState().getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
 		assertEquals(selection, currentSelection);
 		
@@ -129,7 +129,7 @@ public class EvaluationServiceTest extends UITestCase {
 	
 	public void testBasicService() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
-		IEvaluationService service = (IEvaluationService) window
+		IEvaluationService service = window
 				.getService(IEvaluationService.class);
 		assertNotNull(service);
 
@@ -145,7 +145,7 @@ public class EvaluationServiceTest extends UITestCase {
 			assertEquals(1, listener.count);
 			assertFalse(listener.currentValue);
 
-			contextService = (IContextService) window
+			contextService = window
 					.getService(IContextService.class);
 			context1 = contextService.activateContext(CONTEXT_ID1);
 			assertEquals(2, listener.count);
@@ -179,7 +179,7 @@ public class EvaluationServiceTest extends UITestCase {
 
 	public void testTwoEvaluations() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
-		IEvaluationService service = (IEvaluationService) window
+		IEvaluationService service = window
 				.getService(IEvaluationService.class);
 		assertNotNull(service);
 
@@ -205,7 +205,7 @@ public class EvaluationServiceTest extends UITestCase {
 			assertFalse(listener2.currentValue);
 			evalRef2.setResult(true);
 
-			contextService = (IContextService) window
+			contextService = window
 					.getService(IContextService.class);
 			context1 = contextService.activateContext(CONTEXT_ID1);
 			assertEquals(2, listener1.count);
@@ -241,10 +241,10 @@ public class EvaluationServiceTest extends UITestCase {
 	// TODO fix testRestriction
 	public void TODOtestRestriction() {
 		IWorkbenchWindow window = openTestWindow();
-		IEvaluationService evaluationService = (IEvaluationService) window
+		IEvaluationService evaluationService = window
 				.getService(IEvaluationService.class);
 		assertNotNull(evaluationService);
-		IContextService contextService = (IContextService) window
+		IContextService contextService = window
 				.getService(IContextService.class);
 		assertNotNull(contextService);
 
@@ -319,7 +319,7 @@ public class EvaluationServiceTest extends UITestCase {
 	// TODO fix testScopedService
 	public void TODOtestScopedService() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
-		IEvaluationService service = (IEvaluationService) window
+		IEvaluationService service = window
 				.getService(IEvaluationService.class);
 		assertNotNull(service);
 		//assertTrue(service instanceof SlaveEvaluationService);
@@ -335,7 +335,7 @@ public class EvaluationServiceTest extends UITestCase {
 			assertEquals(1, listener.count);
 			assertFalse(listener.currentValue);
 
-			contextService = (IContextService) window.getWorkbench()
+			contextService = window.getWorkbench()
 					.getService(IContextService.class);
 			context1 = contextService.activateContext(CONTEXT_ID1);
 			assertEquals(2, listener.count);
@@ -385,7 +385,7 @@ public class EvaluationServiceTest extends UITestCase {
 
 	public void testSourceProvider() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
-		IEvaluationService service = (IEvaluationService) window
+		IEvaluationService service = window
 				.getService(IEvaluationService.class);
 		assertNotNull(service);
 
@@ -397,7 +397,7 @@ public class EvaluationServiceTest extends UITestCase {
 		assertFalse(listener.currentValue);
 		assertEquals(1, listener.count);
 
-		ISourceProviderService sps = (ISourceProviderService) window
+		ISourceProviderService sps = window
 				.getService(ISourceProviderService.class);
 		ActiveUserSourceProvider userProvider = (ActiveUserSourceProvider) sps
 				.getSourceProvider("username");
@@ -416,7 +416,7 @@ public class EvaluationServiceTest extends UITestCase {
 	}
 	
 	public void testSourceProviderPriority() throws Exception {
-		IHandlerService hs = (IHandlerService) getWorkbench().getService(IHandlerService.class);
+		IHandlerService hs = getWorkbench().getService(IHandlerService.class);
 		
 		Collection activations = null;
 		// fill in a set of activations
@@ -462,7 +462,7 @@ public class EvaluationServiceTest extends UITestCase {
 
 	public void testPropertyChange() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
-		IEvaluationService service = (IEvaluationService) window
+		IEvaluationService service = window
 				.getService(IEvaluationService.class);
 		assertNotNull(service);
 		MyEval listener = new MyEval();
@@ -498,7 +498,7 @@ public class EvaluationServiceTest extends UITestCase {
 	}
 	
 	public void testPlatformProperty() throws Exception {
-		IEvaluationService evaluationService = (IEvaluationService) PlatformUI
+		IEvaluationService evaluationService = PlatformUI
 				.getWorkbench().getService(IEvaluationService.class);
 		TestExpression test = new TestExpression("org.eclipse.core.runtime",
 				"bundleState",
@@ -513,7 +513,7 @@ public class EvaluationServiceTest extends UITestCase {
 		// this is not added, as the ability to test system properties with
 		// no '.' seems unhelpful
 		System.setProperty("isHere", "true");
-		IEvaluationService evaluationService = (IEvaluationService) PlatformUI
+		IEvaluationService evaluationService = PlatformUI
 				.getWorkbench().getService(IEvaluationService.class);
 		TestExpression test = new TestExpression("org.eclipse.core.runtime",
 				"isHere",
@@ -574,7 +574,7 @@ public class EvaluationServiceTest extends UITestCase {
 	public void testWorkbenchProvider() throws Exception {
 		
 		IWorkbenchWindow window = openTestWindow();
-		final IEvaluationService service = (IEvaluationService) window
+		final IEvaluationService service = window
 				.getWorkbench().getService(IEvaluationService.class);
 		assertNotNull(service);
 

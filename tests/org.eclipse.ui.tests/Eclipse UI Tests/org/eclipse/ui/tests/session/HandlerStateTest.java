@@ -76,7 +76,7 @@ public class HandlerStateTest extends TestCase {
 	 */
 	public final void testInitialHandlerState() {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
-		final ICommandService service = (ICommandService) workbench
+		final ICommandService service = workbench
 				.getService(ICommandService.class);
 		final Command command = service.getCommand(COMMAND_ID);
 		State state;
@@ -107,7 +107,7 @@ public class HandlerStateTest extends TestCase {
 	 */
 	public final void testModifiedHandlerState() {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
-		final ICommandService service = (ICommandService) workbench
+		final ICommandService service = workbench
 				.getService(ICommandService.class);
 		final Command command = service.getCommand(COMMAND_ID);
 		State state;

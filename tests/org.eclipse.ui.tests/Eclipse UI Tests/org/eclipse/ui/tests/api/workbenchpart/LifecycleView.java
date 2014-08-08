@@ -79,7 +79,7 @@ public class LifecycleView extends ViewPart {
 	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		IWorkbenchLocationService wls = (IWorkbenchLocationService) getSite()
+		IWorkbenchLocationService wls = getSite()
 				.getService(IWorkbenchLocationService.class);
 		if (wls.getPartSite() == null) {
 			callSiteDispose = true;

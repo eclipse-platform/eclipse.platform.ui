@@ -195,7 +195,7 @@ public class MultiVariablePageTest extends UITestCase {
 	 *             on error
 	 */
 	public void testContextActivation() throws Throwable {
-		IContextService globalService = (IContextService) getWorkbench()
+		IContextService globalService = getWorkbench()
 				.getService(IContextService.class);
 
 		// Open a new test window.

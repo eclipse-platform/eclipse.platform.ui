@@ -59,7 +59,7 @@ public class ActionDelegateProxyTest extends UITestCase {
 		assertTrue(view instanceof MenuContributionHarness);
 		MenuContributionHarness mch = (MenuContributionHarness) view;
 		assertEquals(0, mch.getCount());
-		IHandlerService service = (IHandlerService) window.getService(IHandlerService.class);
+		IHandlerService service = window.getService(IHandlerService.class);
 		service.executeCommand(INC_COMMAND, null);
 		assertEquals(1, mch.getCount());
 		service.executeCommand(INC_COMMAND, null);
@@ -82,7 +82,7 @@ public class ActionDelegateProxyTest extends UITestCase {
 	public void testWWActionDelegate() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		window.getActivePage().showActionSet(DELEGATE_ACTION_SET_ID);
-		IHandlerService service = (IHandlerService) window.getService(IHandlerService.class);
+		IHandlerService service = window.getService(IHandlerService.class);
 		assertFalse(SimplyGoActionDelegate.executed);
 		service.executeCommand(GO_COMMAND, null);
 		assertTrue(SimplyGoActionDelegate.executed);
@@ -93,7 +93,7 @@ public class ActionDelegateProxyTest extends UITestCase {
 	public void testEditorActionDelegate() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		window.getActivePage().closeAllEditors(false);
-		IHandlerService service = (IHandlerService) window.getService(IHandlerService.class);
+		IHandlerService service = window.getService(IHandlerService.class);
 		assertFalse(EditorActionDelegate.executed);
 		EditorActionDelegate.part = null;
 		try {

@@ -127,9 +127,9 @@ public class ISelectionServiceTest extends UITestCase implements
 				.showView(SelectionProviderView.ID);
 
 		ISelectionService service = fWindow.getSelectionService();
-		ISelectionService windowService = (ISelectionService) fWindow
+		ISelectionService windowService = fWindow
 				.getService(ISelectionService.class);
-		ISelectionService slaveService = (ISelectionService) view2.getSite()
+		ISelectionService slaveService = view2.getSite()
 				.getService(ISelectionService.class);
 
 		assertTrue(service != slaveService);

@@ -44,7 +44,7 @@ public class ToggleContextHandler extends AbstractHandler implements
 		IWorkbenchWindow window = HandlerUtil
 				.getActiveWorkbenchWindowChecked(event);
 
-		IContextService contextService = (IContextService) window
+		IContextService contextService = window
 				.getService(IContextService.class);
 		IContextActivation a = (IContextActivation) contextActivations
 				.get(contextId);
@@ -62,7 +62,7 @@ public class ToggleContextHandler extends AbstractHandler implements
 		// to toggleContext(contextId) ... this request means
 		// only update the UI that points to this specific context
 		// id ... not the other, non-interesting ones.
-		ICommandService commandService = (ICommandService) window
+		ICommandService commandService = window
 				.getService(ICommandService.class);
 		Map filter = new HashMap();
 		filter.put(TOGGLE_ID, contextId);

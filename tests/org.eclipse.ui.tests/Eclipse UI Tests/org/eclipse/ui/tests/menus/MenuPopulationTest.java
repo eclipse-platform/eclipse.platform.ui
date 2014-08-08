@@ -125,7 +125,7 @@ public class MenuPopulationTest extends MenuTestCase {
 
 	
 	public void testMenuServiceContribution() {
-		IMenuService ms = (IMenuService) PlatformUI.getWorkbench().getService(IMenuService.class);
+		IMenuService ms = PlatformUI.getWorkbench().getService(IMenuService.class);
 		AbstractContributionFactory factory = new AbstractContributionFactory("menu:org.eclipse.ui.main.menu?after=file", "205747") {
 			public void createContributionItems(IServiceLocator serviceLocator, IContributionRoot additions) {
 				MenuManager manager = new MenuManager("&LoFile", "lofile");
@@ -416,7 +416,7 @@ public class MenuPopulationTest extends MenuTestCase {
 		IViewPart view = window.getActivePage()
 				.showView(IPageLayout.ID_OUTLINE);
 		assertNotNull(view);
-		IMenuService service = (IMenuService) view.getSite().getService(
+		IMenuService service = view.getSite().getService(
 				IMenuService.class);
 		service.populateContributionManager(testManager,
 				"menu:the.population.menu");

@@ -53,9 +53,9 @@ public final class HelpContextIdTest extends UITestCase {
 	 *             defined.
 	 */
 	public final void testHelpContextId() throws NotDefinedException {
-		final ICommandService commandService = (ICommandService) fWorkbench
+		final ICommandService commandService = fWorkbench
 				.getService(ICommandService.class);
-		final IHandlerService handlerService = (IHandlerService) fWorkbench
+		final IHandlerService handlerService = fWorkbench
 				.getService(IHandlerService.class);
 		String helpContextId = null;
 

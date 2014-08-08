@@ -45,7 +45,7 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
 
 		MockViewPart view = (MockViewPart) page.showView(MockViewPart.ID);
 
-		IPageService slaveService = (IPageService) view.getSite().getService(
+		IPageService slaveService = view.getSite().getService(
 				IPageService.class);
 
 		assertTrue(fWindow != slaveService);

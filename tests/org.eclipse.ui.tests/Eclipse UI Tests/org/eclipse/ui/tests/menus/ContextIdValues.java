@@ -25,7 +25,7 @@ public class ContextIdValues implements IParameterValues {
 	public Map getParameterValues() {
 		Map values = new HashMap();
 
-		IContextService contextService = (IContextService) PlatformUI
+		IContextService contextService = PlatformUI
 				.getWorkbench().getService(IContextService.class);
 		Context[] definedContexts = contextService.getDefinedContexts();
 		try {

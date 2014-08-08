@@ -114,7 +114,7 @@ public class MenuContributionHarness extends ViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 		// Access the menu service
-		menuSvc = (IMenuService) getSite().getService(IMenuService.class);
+		menuSvc = getSite().getService(IMenuService.class);
 
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL);
@@ -189,7 +189,7 @@ public class MenuContributionHarness extends ViewPart {
 		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 
-		final IContextService contextService = (IContextService) getSite()
+		final IContextService contextService = getSite()
 				.getService(IContextService.class);
 		action3 = new Action() {
 			IContextActivation currentActivation = null;

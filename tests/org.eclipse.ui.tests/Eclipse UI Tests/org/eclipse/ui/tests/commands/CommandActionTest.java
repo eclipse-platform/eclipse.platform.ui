@@ -46,7 +46,7 @@ public class CommandActionTest extends UITestCase {
 	 */
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
-		handlerService = (IHandlerService) fWorkbench
+		handlerService = fWorkbench
 				.getService(IHandlerService.class);
 
 		cmd1Handler = new VerifyHandler();

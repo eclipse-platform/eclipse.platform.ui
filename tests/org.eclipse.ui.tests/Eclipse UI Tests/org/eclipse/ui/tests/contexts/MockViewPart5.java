@@ -93,7 +93,7 @@ public class MockViewPart5 extends MockWorkbenchPart implements IViewPart {
 	}
 
 	private void addContext() throws PartInitException {
-		IContextService contextService = (IContextService) getSite()
+		IContextService contextService = getSite()
 				.getService(IContextService.class);
 		if (!contextService.getContext(PART_CONTEXT_ID).isDefined()) {
 			throw new PartInitException("Failed to find context "

@@ -76,7 +76,7 @@ public final class Bug48589Test extends UITestCase {
                 textFile, true);
         
         // Get the current title of the text editor.
-        EModelService modelService = (EModelService) window.getService(EModelService.class);
+        EModelService modelService = window.getService(EModelService.class);
         MArea area = modelService.findElements(((WorkbenchWindow)window).getModel() , null, MArea.class, null).get(0);
         MPartStack partStack = modelService.findElements(area, null, MPartStack.class, null).get(0);
         assertTrue(partStack.getWidget() instanceof CTabFolder);

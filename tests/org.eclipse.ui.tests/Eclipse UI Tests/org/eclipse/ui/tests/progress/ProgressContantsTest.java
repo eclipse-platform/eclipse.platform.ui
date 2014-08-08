@@ -46,7 +46,7 @@ public class ProgressContantsTest extends ProgressTestCase {
 		DummyJob okJob = new DummyJob("OK Job", Status.OK_STATUS);
 
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		ICommandService commandService = (ICommandService) workbench.getService(ICommandService.class);
+		ICommandService commandService = workbench.getService(ICommandService.class);
 		String commandId = "org.eclipse.ui.tests.progressViewCommand";
 		Command command = commandService.getCommand(commandId);
 		ParameterizedCommand parameterizedCommand = new ParameterizedCommand(command, null);
@@ -54,7 +54,7 @@ public class ProgressContantsTest extends ProgressTestCase {
 		okJob.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
 		okJob.schedule();
 
-		IHandlerService service = (IHandlerService) workbench.getService(IHandlerService.class);
+		IHandlerService service = workbench.getService(IHandlerService.class);
 		CommandHandler handler = new CommandHandler();
 		service.activateHandler(commandId, handler);
 

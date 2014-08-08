@@ -53,8 +53,8 @@ public class ToggleStateTest extends UITestCase {
 	
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
-		commandService = (ICommandService) fWorkbench.getService(ICommandService.class);
-		handlerService = (IHandlerService) fWorkbench.getService(IHandlerService.class);
+		commandService = fWorkbench.getService(ICommandService.class);
+		handlerService = fWorkbench.getService(IHandlerService.class);
 	}
 	
 	public void testDefaultValues() throws Exception {

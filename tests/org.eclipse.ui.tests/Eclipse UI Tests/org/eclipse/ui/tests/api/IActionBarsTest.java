@@ -184,8 +184,8 @@ public class IActionBarsTest extends UITestCase {
 	    }
     
     private void runMatchingCommand(IWorkbenchWindow window, String actionId) {
-    	IHandlerService hs = (IHandlerService) window.getService(IHandlerService.class);
-    	IActionCommandMappingService ms = (IActionCommandMappingService) window.getService(IActionCommandMappingService.class);
+    	IHandlerService hs = window.getService(IHandlerService.class);
+    	IActionCommandMappingService ms = window.getService(IActionCommandMappingService.class);
     	String commandId = ms.getCommandId(actionId);
     	assertNotNull(commandId);
     	try {

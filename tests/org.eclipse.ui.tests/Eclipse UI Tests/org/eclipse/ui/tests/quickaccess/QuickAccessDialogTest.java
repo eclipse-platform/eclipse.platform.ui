@@ -74,7 +74,7 @@ public class QuickAccessDialogTest extends UITestCase {
 	 * @throws Exception
 	 */
 	public void testOpenByCommand() throws Exception {
-		IHandlerService handlerService = (IHandlerService) getWorkbench().getActiveWorkbenchWindow()
+		IHandlerService handlerService = getWorkbench().getActiveWorkbenchWindow()
 				.getService(IHandlerService.class);
 		Shell shell = searchField.getQuickAccessShell();
 		assertFalse("Quick access dialog should not be visible yet", shell.isVisible());
@@ -151,7 +151,7 @@ public class QuickAccessDialogTest extends UITestCase {
 	 */
 	public void testShowAll() throws Exception {
 		// Open the shell
-		IHandlerService handlerService = (IHandlerService) getWorkbench().getActiveWorkbenchWindow()
+		IHandlerService handlerService = getWorkbench().getActiveWorkbenchWindow()
 				.getService(IHandlerService.class);
 		Shell shell = searchField.getQuickAccessShell();
 		assertFalse("Quick access dialog should not be visible yet", shell.isVisible());

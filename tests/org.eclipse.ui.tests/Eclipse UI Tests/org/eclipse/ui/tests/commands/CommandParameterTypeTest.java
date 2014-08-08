@@ -103,7 +103,7 @@ public class CommandParameterTypeTest extends UITestCase {
 		// execute the command and check the result
 		ParameterizedCommand pCommand = new ParameterizedCommand(command,
 				parameterizations);
-		IHandlerService hs = (IHandlerService) getWorkbench().getService(IHandlerService.class);
+		IHandlerService hs = getWorkbench().getService(IHandlerService.class);
 		Integer result = (Integer) pCommand.executeWithChecks(null, hs.getCurrentState());
 		assertEquals(difference, result.intValue());
 	}

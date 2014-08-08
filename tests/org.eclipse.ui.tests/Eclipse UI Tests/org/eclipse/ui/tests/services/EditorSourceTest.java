@@ -117,7 +117,7 @@ public class EditorSourceTest extends UITestCase {
 
 	public void testActiveEditor() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
-		IEvaluationService es = (IEvaluationService) window
+		IEvaluationService es = window
 				.getService(IEvaluationService.class);
 		IWorkbenchPage page = window.getActivePage();
 		IEditorPart editor1 = IDE.openEditor(page, test1, true);

@@ -91,7 +91,7 @@ public class ContextPage extends Page {
 	 */
 	public void init(IPageSite pageSite) {
 		super.init(pageSite);
-		IContextService localService = (IContextService) getSite().getService(
+		IContextService localService = getSite().getService(
 				IContextService.class);
 		localService.activateContext(TEST_CONTEXT_ID);
 	}

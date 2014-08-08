@@ -18,8 +18,8 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.menus.UIElement;
 
@@ -37,6 +37,7 @@ public class HelloUpdateHandler extends AbstractHandler implements
 	 * 
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil
 				.getActiveWorkbenchWindowChecked(event);
@@ -44,7 +45,7 @@ public class HelloUpdateHandler extends AbstractHandler implements
 		MessageDialog.openInformation(window.getShell(), "Hello",
 				"Hello label update command!");
 		myLabelState = "My New Item";
-		ICommandService cs = (ICommandService) window
+		ICommandService cs = window
 				.getService(ICommandService.class);
 		cs.refreshElements(event.getCommand().getId(), null);
 		return null;
@@ -56,6 +57,7 @@ public class HelloUpdateHandler extends AbstractHandler implements
 	 * @see org.eclipse.ui.commands.ICallbackUpdater#updateCallback(org.eclipse.core.runtime.IAdaptable,
 	 *      java.util.Map)
 	 */
+	@Override
 	public void updateElement(UIElement element, Map parameters) {
 		if (myLabelState == null) {
 			return;
