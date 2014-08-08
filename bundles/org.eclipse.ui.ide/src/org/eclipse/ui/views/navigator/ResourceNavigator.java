@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Benjamin Muskalla - bug 105041
  *     Remy Chi Jian Suen - bug 144102
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 
 package org.eclipse.ui.views.navigator;
@@ -1025,7 +1026,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     	MainActionGroup group = new MainActionGroup(this);
         setActionGroup(group);
         
-        IHandlerService service = (IHandlerService) getSite().getService(IHandlerService.class);
+        IHandlerService service = getSite().getService(IHandlerService.class);
 		service.activateHandler(IWorkbenchCommandConstants.NAVIGATE_TOGGLE_LINK_WITH_EDITOR,
     			new ActionHandler(group.toggleLinkingAction));
     	collapseAllHandler = new CollapseAllHandler(viewer);

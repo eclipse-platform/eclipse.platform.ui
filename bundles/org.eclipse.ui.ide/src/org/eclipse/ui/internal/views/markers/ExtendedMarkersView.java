@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Andrew Gvozdev -  Bug 364039 - Add "Delete All Markers"
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 package org.eclipse.ui.internal.views.markers;
 
@@ -1024,7 +1025,7 @@ public class ExtendedMarkersView extends ViewPart {
 		generator.restoreState(memento);
 
 		// Add in the entries common to all markers views
-		IMenuService menuService = (IMenuService) site
+		IMenuService menuService = site
 				.getService(IMenuService.class);
 
 		// Add in the markers view actions

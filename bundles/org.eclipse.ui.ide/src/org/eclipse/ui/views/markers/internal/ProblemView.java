@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de>
  *     	 - Fix for Bug 109361 [Markers] Multiselection in problems view yields invalid status message
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 
 package org.eclipse.ui.views.markers.internal;
@@ -233,7 +234,7 @@ public class ProblemView extends MarkerView {
 		String quickFixId = "org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"; //$NON-NLS-1$
 		resolveMarkerAction.setActionDefinitionId(quickFixId);
 
-		handlerService = (IHandlerService) getViewSite().getService(
+		handlerService = getViewSite().getService(
 				IHandlerService.class);
 		if (handlerService != null) {
 			resolveMarkerHandlerActivation = handlerService.activateHandler(

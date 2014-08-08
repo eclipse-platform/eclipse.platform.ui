@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Andreas Buchen <andreas.buchen@sap.com> - Bug 206584
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -352,7 +353,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 			coolbarPopupMenuManager.add(new ActionContributionItem(lockToolBarAction));
             coolbarPopupMenuManager.add(new ActionContributionItem(editActionSetAction));
             coolBar.setContextMenuManager(coolbarPopupMenuManager);
-            IMenuService menuService = (IMenuService) window.getService(IMenuService.class);
+            IMenuService menuService = window.getService(IMenuService.class);
             menuService.populateContributionManager(coolbarPopupMenuManager, "popup:windowCoolbarContextMenu"); //$NON-NLS-1$
         }
         coolBar.add(new GroupMarker(IIDEActionConstants.GROUP_FILE));
@@ -786,7 +787,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 			return;
 		}
     	isDisposed = true;
-    	IMenuService menuService = (IMenuService) window.getService(IMenuService.class);
+    	IMenuService menuService = window.getService(IMenuService.class);
         menuService.releaseContributions(coolbarPopupMenuManager);
         coolbarPopupMenuManager.dispose();
         
@@ -1323,8 +1324,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             }
 
 			private void updateCommandEnablement(String commandId) {
-				IHandlerService handlerService = (IHandlerService) window.getService(IHandlerService.class);
-				ICommandService commandService = (ICommandService) window.getService(ICommandService.class);
+				IHandlerService handlerService = window.getService(IHandlerService.class);
+				ICommandService commandService = window.getService(ICommandService.class);
 				if (handlerService != null && commandService != null) {
 					Command buildAllCmd = commandService.getCommand(commandId);
 					buildAllCmd.setEnabled(handlerService.getCurrentState());
@@ -1535,7 +1536,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		ISharedImages sharedImages = getWindow().getWorkbench()
 				.getSharedImages();
 
-		IActionCommandMappingService acms = (IActionCommandMappingService) getWindow()
+		IActionCommandMappingService acms = getWindow()
 				.getService(IActionCommandMappingService.class);
 		acms.map(actionId, commandId);
 
