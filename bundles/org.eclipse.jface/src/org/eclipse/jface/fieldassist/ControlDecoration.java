@@ -362,8 +362,9 @@ public class ControlDecoration {
 			int y = -extent.y - hah + 1;
 			int x = arrowOnLeft ? -hao + haw / 2 : -extent.x + hao + haw / 2;
 
-			hoverShell.setLocation(control.getParent().toDisplay(
-					decorationRectangle.x + x, decorationRectangle.y + y));
+			Point hoverSize = hoverShell.getSize();
+			Rectangle hoverBounds = control.getDisplay().map(control.getParent(), null, decorationRectangle.x + x, decorationRectangle.y + y, hoverSize.x, hoverSize.y);
+			hoverShell.setLocation(hoverBounds.x, hoverBounds.y);
 		}
 
 		/*
