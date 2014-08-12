@@ -155,7 +155,7 @@ public class DebugContextManager implements IDebugContextManager {
 	protected IDebugContextService createService(IWorkbenchWindow window) {
 		DebugWindowContextService service = fServices.get(window);
 		if (service == null) {
-			IEvaluationService evaluationService = (IEvaluationService)window.getService(IEvaluationService.class);
+			IEvaluationService evaluationService = window.getService(IEvaluationService.class);
 			if (window.getShell() == null || evaluationService == null) {
 				// the window has been closed - return a dummy service
 				return NULL_SERVICE;

@@ -114,11 +114,11 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
         ISelection selection = null;
         
         ISelectionService selectionService = 
-            (ISelectionService)fServiceLocator.getService(ISelectionService.class);
+            fServiceLocator.getService(ISelectionService.class);
         if (selectionService != null) {
             selection = selectionService.getSelection();
         }
-        IPartService partService = (IPartService)fServiceLocator.getService(IPartService.class);
+        IPartService partService = fServiceLocator.getService(IPartService.class);
         if (partService != null) {
             part = partService.getActivePart();
         }

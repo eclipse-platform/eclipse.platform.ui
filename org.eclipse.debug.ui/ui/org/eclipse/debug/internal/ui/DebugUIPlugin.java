@@ -1453,7 +1453,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	 */
 	public static IEvaluationContext createEvaluationContext(Object defaultvar) {
 		IEvaluationContext parent = null;
-		IEvaluationService esrvc = (IEvaluationService)PlatformUI.getWorkbench().getService(IEvaluationService.class);
+		IEvaluationService esrvc = PlatformUI.getWorkbench().getService(IEvaluationService.class);
 		if (esrvc != null) {
 			parent = esrvc.getCurrentState();
 		}

@@ -649,7 +649,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	public void partActivated(IWorkbenchPartReference partRef) {
 		if (isThisPart(partRef)) {
 			fActive = true;
-			IContextService contextService = (IContextService)getSite().getService(IContextService.class);
+			IContextService contextService = getSite().getService(IContextService.class);
 			if(contextService != null) {
 				fActivatedContext = contextService.activateContext(IConsoleConstants.ID_CONSOLE_VIEW);
 				activateParticipants(fActiveConsole);
@@ -669,7 +669,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	public void partDeactivated(IWorkbenchPartReference partRef) {
         if (isThisPart(partRef)) {
 			fActive = false;
-			IContextService contextService = (IContextService)getSite().getService(IContextService.class);
+			IContextService contextService = getSite().getService(IContextService.class);
 			if(contextService != null) {
 				contextService.deactivateContext(fActivatedContext);
 				deactivateParticipants(fActiveConsole);

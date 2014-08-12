@@ -161,7 +161,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 			fAction.setText(getText());
 			fAction.setToolTipText(getTooltipText());
 			String commandId = getCommandId();
-			ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+			ICommandService service = PlatformUI.getWorkbench().getService(ICommandService.class);
 			if (service != null) {
 				Command command = service.getCommand(commandId);
 				command.undefine();

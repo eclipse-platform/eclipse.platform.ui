@@ -247,8 +247,8 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         // add EOF submissions
         IPageSite site = fPage.getSite();
         if(fActivatedContext == null && fActivatedHandler == null) {
-	        IHandlerService handlerService = (IHandlerService)site.getService(IHandlerService.class);
-	        IContextService contextService = (IContextService)site.getService(IContextService.class);
+	        IHandlerService handlerService = site.getService(IHandlerService.class);
+	        IContextService contextService = site.getService(IContextService.class);
 	        fActivatedContext = contextService.activateContext(fContextId);
 	        fActivatedHandler = handlerService.activateHandler("org.eclipse.debug.ui.commands.eof", fEOFHandler); //$NON-NLS-1$
         }
@@ -261,8 +261,8 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 	public void deactivated() {
         // remove EOF submissions
         IPageSite site = fPage.getSite();
-        IHandlerService handlerService = (IHandlerService)site.getService(IHandlerService.class);
-        IContextService contextService = (IContextService)site.getService(IContextService.class);
+        IHandlerService handlerService = site.getService(IHandlerService.class);
+        IContextService contextService = site.getService(IContextService.class);
         handlerService.deactivateHandler(fActivatedHandler);
 		contextService.deactivateContext(fActivatedContext);
 		fActivatedContext = null;

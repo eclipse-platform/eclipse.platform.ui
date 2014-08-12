@@ -370,9 +370,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 	}
 
 	public void activateHandlers() {
-		ICommandService commandSupport = (ICommandService) getSite().getService(ICommandService.class);
-		IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
-		IContextService contextSupport = (IContextService) getSite().getService(IContextService.class);
+		ICommandService commandSupport = getSite().getService(ICommandService.class);
+		IHandlerService handlerService = getSite().getService(IHandlerService.class);
+		IContextService contextSupport = getSite().getService(IContextService.class);
 
 		if (commandSupport != null && handlerService != null && contextSupport != null) {
 			contextSupport.activateContext(ID_MEMORY_VIEW_CONTEXT);

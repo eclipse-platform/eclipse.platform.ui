@@ -95,13 +95,13 @@ public class DetailPaneAssignValueAction extends Action{
 		fViewSite = viewSite;
 		
 		setEnabled(false);
-        IHandlerService service = (IHandlerService) fViewSite.getService(IHandlerService.class);
+        IHandlerService service = fViewSite.getService(IHandlerService.class);
         ActionHandler handler = new ActionHandler(this);
         fHandlerActivation = service.activateHandler(getActionDefinitionId(), handler);
 	}
 		
 	public void dispose() {
-        IHandlerService service = (IHandlerService) fViewSite.getService(IHandlerService.class);
+        IHandlerService service = fViewSite.getService(IHandlerService.class);
         service.deactivateHandler(fHandlerActivation);
     }
 

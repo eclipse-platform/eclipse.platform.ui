@@ -972,7 +972,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		
 		action = new CollapseAllAction((TreeModelViewer)getViewer());
 		setAction(COLLAPSE_ALL, action); 
-		IHandlerService hs = (IHandlerService) getSite().getService(IHandlerService.class);
+		IHandlerService hs = getSite().getService(IHandlerService.class);
 		if (hs != null) {
 			hs.activateHandler(CollapseAllHandler.COMMAND_ID, new ActionHandler(action));
 		}

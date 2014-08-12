@@ -945,7 +945,7 @@ public class LaunchView extends AbstractDebugView
 		super.init(site);
 		commonInit(site);
 		preferenceInit(site);
-		fContextService = (IContextService)site.getService(IContextService.class);
+		fContextService = site.getService(IContextService.class);
 	}
 
 	/* (non-Javadoc)
@@ -956,7 +956,7 @@ public class LaunchView extends AbstractDebugView
 		super.init(site, memento);
 		commonInit(site);
         preferenceInit(site);
-        fContextService = (IContextService)site.getService(IContextService.class);
+        fContextService = site.getService(IContextService.class);
 	}
 
     /* (non-Javadoc)

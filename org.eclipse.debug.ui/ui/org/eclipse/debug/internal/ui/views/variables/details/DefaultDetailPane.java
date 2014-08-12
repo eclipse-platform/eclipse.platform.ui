@@ -514,7 +514,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		textAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_DLCL_CONTENT_ASSIST));
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_CONTENT_ASSIST_ACTION);
 		ActionHandler actionHandler = new ActionHandler(textAction);
-        IHandlerService handlerService = (IHandlerService) getViewSite().getService(IHandlerService.class);
+        IHandlerService handlerService = getViewSite().getService(IHandlerService.class);
         fContentAssistActivation = handlerService.activateHandler(textAction.getActionDefinitionId(), actionHandler);
         setAction(DETAIL_CONTENT_ASSIST_ACTION, textAction);
 			
@@ -695,7 +695,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 				((DetailPaneAssignValueAction)action).dispose();
 			}
 			if (fContentAssistActivation != null){
-				IHandlerService service = (IHandlerService) getViewSite().getService(IHandlerService.class);
+				IHandlerService service = getViewSite().getService(IHandlerService.class);
 		        service.deactivateHandler(fContentAssistActivation);
 		        fContentAssistActivation = null;
 			}
