@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -100,5 +100,52 @@ public class ResourceChangeEvent extends EventObject implements IResourceChangeE
 
 	public void setDelta(IResourceDelta value) {
 		delta = value;
+	}
+
+	public String toDebugString() {
+		StringBuilder output = new StringBuilder();
+		output.append("\nType: ");//$NON-NLS-1$
+		switch (type) {
+			case POST_CHANGE :
+				output.append("POST_CHANGE"); //$NON-NLS-1$
+				break;
+			case PRE_CLOSE :
+				output.append("PRE_CLOSE"); //$NON-NLS-1$
+				break;
+			case PRE_DELETE :
+				output.append("PRE_DELETE"); //$NON-NLS-1$
+				break;
+			case PRE_BUILD :
+				output.append("PRE_BUILD"); //$NON-NLS-1$
+				break;
+			case POST_BUILD :
+				output.append("POST_BUILD"); //$NON-NLS-1$
+				break;
+			case PRE_REFRESH :
+				output.append("PRE_REFRESH"); //$NON-NLS-1$
+				break;
+			default :
+				output.append("?"); //$NON-NLS-1$
+				break;
+		}
+		output.append("\nBuild kind: "); //$NON-NLS-1$
+		switch (trigger) {
+			case IncrementalProjectBuilder.FULL_BUILD :
+				output.append("FULL_BUILD"); //$NON-NLS-1$
+				break;
+			case IncrementalProjectBuilder.AUTO_BUILD :
+			case IncrementalProjectBuilder.INCREMENTAL_BUILD :
+				output.append("INCREMENTAL_BUILD"); //$NON-NLS-1$
+				break;
+			case IncrementalProjectBuilder.CLEAN_BUILD :
+				output.append("CLEAN_BUILD"); //$NON-NLS-1$
+				break;
+			default :
+				output.append(trigger);
+				break;
+		}
+		output.append("\nResource: " + (resource == null ? "null" : resource)); //$NON-NLS-1$ //$NON-NLS-2$
+		output.append("\nDelta:" + (delta == null ? " null" : ((ResourceDelta) delta).toDeepDebugString())); //$NON-NLS-1$ //$NON-NLS-2$
+		return output.toString();
 	}
 }

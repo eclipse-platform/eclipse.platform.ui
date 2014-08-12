@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.core.internal.events;
 import java.util.*;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -288,6 +289,8 @@ public class NotificationManager implements IManager, ILifecycleListener {
 						}
 
 						public void run() throws Exception {
+							if (Policy.DEBUG_NOTIFICATIONS)
+								Policy.debug("Notifying " + listener + " about resource change event" + ((ResourceChangeEvent) event).toDebugString()); //$NON-NLS-1$ //$NON-NLS-2$
 							listener.resourceChanged(event);
 						}
 					});

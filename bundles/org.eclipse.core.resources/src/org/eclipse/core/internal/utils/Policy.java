@@ -38,6 +38,7 @@ public class Policy {
 			DEBUG_CONTENT_TYPE_CACHE = DEBUG && options.getBooleanOption(ResourcesPlugin.PI_RESOURCES + "/contenttype/cache", false); //$NON-NLS-1$
 			DEBUG_HISTORY = DEBUG && options.getBooleanOption(ResourcesPlugin.PI_RESOURCES + "/history", false); //$NON-NLS-1$
 			DEBUG_NATURES = DEBUG && options.getBooleanOption(ResourcesPlugin.PI_RESOURCES + "/natures", false); //$NON-NLS-1$
+			DEBUG_NOTIFICATIONS = DEBUG && options.getBooleanOption(ResourcesPlugin.PI_RESOURCES + "/notifications", false); //$NON-NLS-1$
 			DEBUG_PREFERENCES = DEBUG && options.getBooleanOption(ResourcesPlugin.PI_RESOURCES + "/preferences", false); //$NON-NLS-1$
 
 			DEBUG_RESTORE = DEBUG && options.getBooleanOption(ResourcesPlugin.PI_RESOURCES + "/restore", false); //$NON-NLS-1$
@@ -78,6 +79,7 @@ public class Policy {
 	public static boolean DEBUG_CONTENT_TYPE_CACHE = false;
 	public static boolean DEBUG_HISTORY = false;
 	public static boolean DEBUG_NATURES = false;
+	public static boolean DEBUG_NOTIFICATIONS = false;
 	public static boolean DEBUG_PREFERENCES = false;
 	// Get timing information for restoring data
 	public static boolean DEBUG_RESTORE = false;

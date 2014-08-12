@@ -72,3 +72,6 @@ org.eclipse.core.resources/refresh=false
 # Prints debug information on resource content description 
 org.eclipse.core.resources/contenttype=false
 org.eclipse.core.resources/contenttype/cache=false
+
+# Prints debug information about resource change event notifications
+org.eclipse.core.resources/notifications=false
