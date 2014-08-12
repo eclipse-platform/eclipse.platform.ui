@@ -140,7 +140,7 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 						dstBlue += (srcBlue - dstBlue) * srcAlpha / 255;
 					} else {
 						// See Porter T., Duff T. 1984. "Compositing Digital Images".
-						// Computer Graphics 18 (3): 253–259.
+						// Computer Graphics 18 (3): 253-259.
 						dstRed = srcRed * srcAlpha * 255 + dstRed * dstAlpha * (255 - srcAlpha);
 						dstGreen = srcGreen * srcAlpha * 255 + dstGreen * dstAlpha * (255 - srcAlpha);
 						dstBlue = srcBlue * srcAlpha * 255 + dstBlue * dstAlpha * (255 - srcAlpha);

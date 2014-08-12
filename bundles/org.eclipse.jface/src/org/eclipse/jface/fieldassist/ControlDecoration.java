@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     R�diger Herrmann - fix for bug 418420
+ *     Rüdiger Herrmann - fix for bug 418420
  *******************************************************************************/
 package org.eclipse.jface.fieldassist;
 
