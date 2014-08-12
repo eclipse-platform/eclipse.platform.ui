@@ -4,6 +4,13 @@
         <filter id="1192230914">
             <message_arguments>
                 <message_argument value="3.7"/>
+                <message_argument value="3.106"/>
+                <message_argument value="STORE_ID_INTERNAL_EXTERNAL"/>
+            </message_arguments>
+        </filter>
+        <filter id="1192230914">
+            <message_arguments>
+                <message_argument value="3.7"/>
                 <message_argument value="3.107"/>
                 <message_argument value="STORE_ID_INTERNAL_EXTERNAL"/>
             </message_arguments>
@@ -15,6 +22,14 @@
                 <message_argument value="IStylingEngine"/>
                 <message_argument value="WorkbenchThemeManager"/>
                 <message_argument value="style(Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF">
+        <filter id="924844039">
+            <message_arguments>
+                <message_argument value="3.106.1"/>
+                <message_argument value="3.106.0"/>
             </message_arguments>
         </filter>
     </resource>
