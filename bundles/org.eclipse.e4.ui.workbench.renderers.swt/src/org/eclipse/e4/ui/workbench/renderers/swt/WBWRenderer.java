@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 429728
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 429728, 441150
  *     Simon Scholz <scholzsimon@arcor.de - Bug 429729
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
@@ -87,7 +87,8 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 /**
- * Render a Window or Workbench Window.
+ * Default SWT renderer responsible for an instance of MWindow. See
+ * {@link WorkbenchRendererFactory}
  */
 public class WBWRenderer extends SWTPartRenderer {
 
@@ -127,6 +128,9 @@ public class WBWRenderer extends SWTPartRenderer {
 	private IEventBroker eventBroker;
 
 	@Inject
+	private IEclipseContext context;
+
+	@Inject
 	private IPresentationEngine engine;
 
 	private EventHandler topWindowHandler;
@@ -138,21 +142,17 @@ public class WBWRenderer extends SWTPartRenderer {
 	@Inject
 	private EModelService modelService;
 
-	public WBWRenderer() {
-		super();
-	}
-
 	/**
 	 * Closes the provided detached window.
-	 * 
+	 *
 	 * @param window
 	 *            the detached window to close
 	 * @return <code>true</code> if the window should be closed,
 	 *         <code>false</code> otherwise
 	 */
 	private boolean closeDetachedWindow(MWindow window) {
-		EPartService partService = (EPartService) window.getContext().get(
-				EPartService.class.getName());
+		EPartService partService = window.getContext().get(
+				EPartService.class);
 		List<MPart> parts = modelService.findElements(window, null,
 				MPart.class, null);
 		// this saves one part at a time, not ideal but better than not saving
@@ -172,7 +172,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	}
 
 	@PostConstruct
-	public void init() {
+	protected void init() {
 
 		topWindowHandler = new EventHandler() {
 
@@ -326,7 +326,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	}
 
 	@PreDestroy
-	public void contextDisposed() {
+	protected void contextDisposed() {
 		eventBroker.unsubscribe(topWindowHandler);
 		eventBroker.unsubscribe(shellUpdater);
 		eventBroker.unsubscribe(visibilityHandler);
@@ -426,10 +426,10 @@ public class WBWRenderer extends SWTPartRenderer {
 		bindWidget(element, newWidget);
 
 		// Add the shell into the WBW's context
-		localContext.set(Shell.class.getName(), wbwShell);
+		localContext.set(Shell.class, wbwShell);
 		localContext.set(E4Workbench.LOCAL_ACTIVE_SHELL, wbwShell);
 		setCloseHandler(wbwModel);
-		localContext.set(IShellProvider.class.getName(), new IShellProvider() {
+		localContext.set(IShellProvider.class, new IShellProvider() {
 			@Override
 			public Shell getShell() {
 				return wbwShell;
@@ -488,7 +488,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		IEclipseContext context = window.getContext();
 		// no direct model parent, must be a detached window
 		if (window.getParent() == null) {
-			context.set(IWindowCloseHandler.class.getName(),
+			context.set(IWindowCloseHandler.class,
 					new IWindowCloseHandler() {
 						@Override
 						public boolean close(MWindow window) {
@@ -496,13 +496,11 @@ public class WBWRenderer extends SWTPartRenderer {
 						}
 					});
 		} else {
-			context.set(IWindowCloseHandler.class.getName(),
+			context.set(IWindowCloseHandler.class,
 					new IWindowCloseHandler() {
 						@Override
 						public boolean close(MWindow window) {
-							EPartService partService = (EPartService) window
-									.getContext().get(
-											EPartService.class.getName());
+							EPartService partService = window.getContext().get(EPartService.class);
 							return partService.saveAll(true);
 						}
 					});
@@ -556,9 +554,7 @@ public class WBWRenderer extends SWTPartRenderer {
 					// override the shell close event
 					e.doit = false;
 					MWindow window = (MWindow) e.widget.getData(OWNING_ME);
-					IWindowCloseHandler closeHandler = (IWindowCloseHandler) window
-							.getContext().get(
-									IWindowCloseHandler.class.getName());
+					IWindowCloseHandler closeHandler = window.getContext().get(IWindowCloseHandler.class);
 					// if there's no handler or the handler permits the close
 					// request, clean-up as necessary
 					if (closeHandler == null || closeHandler.close(window)) {
@@ -651,10 +647,6 @@ public class WBWRenderer extends SWTPartRenderer {
 	/*
 	 * Processing the contents of a Workbench window has to take into account
 	 * that there may be trim elements contained in its child list. Since the
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartFactory#processContents
-	 * (org.eclipse.e4.ui.model.application.MPart)
 	 */
 	@Override
 	public void processContents(MElementContainer<MUIElement> me) {
@@ -664,8 +656,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		super.processContents(me);
 
 		// Populate the main menu
-		IPresentationEngine renderer = (IPresentationEngine) context
-				.get(IPresentationEngine.class.getName());
+		IPresentationEngine renderer = context.get(IPresentationEngine.class);
 		if (wbwModel.getMainMenu() != null) {
 			renderer.createGui(wbwModel.getMainMenu(), me.getWidget(), null);
 			Shell shell = (Shell) me.getWidget();
@@ -758,9 +749,6 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		return dialog.getCheckedElements();
 	}
-
-	@Inject
-	private IEclipseContext context;
 
 	private void applyDialogStyles(Control control) {
 		IStylingEngine engine = (IStylingEngine) context
