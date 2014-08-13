@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.e4.ui.workbench.addons.swt;singleton:=true
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.1.1.qualifier
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -30,5 +30,5 @@ Import-Package: javax.annotation;version="1.0.0",
 Export-Package: org.eclipse.e4.ui.workbench.addons.cleanupaddon;x-internal:=true,
  org.eclipse.e4.ui.workbench.addons.dndaddon;x-internal:=true,
  org.eclipse.e4.ui.workbench.addons.minmax;x-internal:=true,
- org.eclipse.e4.ui.workbench.addons.splitteraddon,
+ org.eclipse.e4.ui.workbench.addons.splitteraddon;x-internal:=true,
  org.eclipse.e4.ui.workbench.addons.swt;x-internal:=true

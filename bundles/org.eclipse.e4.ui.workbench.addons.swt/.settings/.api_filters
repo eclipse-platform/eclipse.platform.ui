@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.e4.ui.workbench.addons.swt" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter id="923795461">
+            <message_arguments>
+                <message_argument value="1.1.1"/>
+                <message_argument value="1.1.0"/>
+            </message_arguments>
+        </filter>
+        <filter id="923795461">
+            <message_arguments>
+                <message_argument value="1.2.0"/>
+                <message_argument value="1.1.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/addons/splitteraddon/SplitHost.java" type="org.eclipse.e4.ui.workbench.addons.splitteraddon.SplitHost">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.addons.splitteraddon.SplitHost"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.addons.swt_1.1.1"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/addons/splitteraddon/SplitterAddon.java" type="org.eclipse.e4.ui.workbench.addons.splitteraddon.SplitterAddon">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.addons.splitteraddon.SplitterAddon"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.addons.swt_1.1.1"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
