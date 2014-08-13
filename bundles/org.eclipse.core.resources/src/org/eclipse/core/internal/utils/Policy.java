@@ -15,6 +15,7 @@ import java.io.StringWriter;
 import java.util.Date;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.osgi.framework.Bundle;
@@ -113,7 +114,7 @@ public class Policy {
 
 	/**
 	 * Print a debug message to the console. 
-	 * Prepend the message with the current date and the name of the current thread.
+	 * Prepend the message with the current date, the name of the current thread and the current job if present.
 	 */
 	public static void debug(String message) {
 		StringBuilder output = new StringBuilder();
@@ -121,13 +122,19 @@ public class Policy {
 		output.append(" - ["); //$NON-NLS-1$
 		output.append(Thread.currentThread().getName());
 		output.append("] "); //$NON-NLS-1$
+		Job currentJob = Job.getJobManager().currentJob();
+		if (currentJob != null) {
+			output.append(currentJob.getClass().getName());
+			output.append("("); //$NON-NLS-1$
+			output.append(currentJob.getName());
+			output.append("): "); //$NON-NLS-1$
+		}
 		output.append(message);
 		System.out.println(output.toString());
 	}
 
 	/**
 	 * Print a debug throwable to the console. 
-	 * Prepend the throwable with the current date and the name of the current thread.
 	 */
 	public static void debug(Throwable t) {
 		StringWriter writer = new StringWriter();
