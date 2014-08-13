@@ -74,7 +74,7 @@ public class ThemesExtension implements IThemesExtension {
 	public String getDefaultDescription() {
 		if (description == null) {
 			ResourceBundle resourceBundle = ResourceBundle.getBundle(Theme.class.getName());
-			description = resourceBundle.getString("Added.by.css.desc"); //$NON-NLS-1$
+			description = resourceBundle.getString("Added.by.css.label"); //$NON-NLS-1$
 		}
 		return description;
 	}

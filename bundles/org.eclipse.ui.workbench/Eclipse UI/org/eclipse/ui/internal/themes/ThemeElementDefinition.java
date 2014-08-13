@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,14 +95,20 @@ public class ThemeElementDefinition {
 
 	private String formatDescription() {
 		String description = this.description != null ? this.description : label;
-		String modifiedByUserLabel = isModifiedByUser() ? RESOURCE_BUNDLE
-				.getString("Modified.by.user.label") : ""; //$NON-NLS-1$ //$NON-NLS-2$
+		if (isAddedByCss() && isModifiedByUser()) {
+			return RESOURCE_BUNDLE.getString("Added.by.css.and.modified.by.user.label").trim(); //$NON-NLS-1$
+		}
 		if (isAddedByCss()) {
-			return RESOURCE_BUNDLE.getString("Added.by.css.desc").trim(); //$NON-NLS-1$
+			return RESOURCE_BUNDLE.getString("Added.by.css.label").trim(); //$NON-NLS-1$
+		}
+		if (isOverridden() && isModifiedByUser()) {
+			return MessageFormat.format(
+					RESOURCE_BUNDLE.getString("Overridden.by.css.and.modified.by.user.label"), //$NON-NLS-1$
+					new Object[] { description }).trim();
 		}
 		if (isOverridden()) {
 			return MessageFormat.format(RESOURCE_BUNDLE.getString("Overridden.by.css.label"), //$NON-NLS-1$
-					new Object[] { description, modifiedByUserLabel }).trim();
+					new Object[] { description }).trim();
 		}
 		return description;
 	}
