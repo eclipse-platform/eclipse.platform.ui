@@ -31,8 +31,6 @@ import org.osgi.service.event.Event;
 
 /**
  * Support containment of split internal parts.
- * 
- * @since 1.1
  */
 public class SplitHost {
 	@Inject
