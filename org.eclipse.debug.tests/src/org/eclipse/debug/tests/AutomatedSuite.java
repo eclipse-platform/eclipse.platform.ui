@@ -23,6 +23,7 @@ import org.eclipse.debug.tests.launching.LaunchFavoriteTests;
 import org.eclipse.debug.tests.launching.LaunchHistoryTests;
 import org.eclipse.debug.tests.launching.LaunchManagerTests;
 import org.eclipse.debug.tests.launching.RefreshTabTests;
+import org.eclipse.debug.tests.sourcelookup.SourceLookupFacilityTests;
 import org.eclipse.debug.tests.statushandlers.StatusHandlerTests;
 import org.eclipse.debug.tests.stepfilters.StepFiltersTests;
 import org.eclipse.debug.tests.view.memory.MemoryRenderingTests;
@@ -57,6 +58,9 @@ public class AutomatedSuite extends TestSuite {
 	 * Constructs the automated test suite. Adds all tests.
 	 */
 	public AutomatedSuite() {
+		// Source lookup tests
+		addTest(new TestSuite(SourceLookupFacilityTests.class));
+		// BP tests
 		addTest(new TestSuite(BreakpointOrderingTests.class));
 	    // Note: jface viewer tests were moved out of nightly tests
 	    // due to frequent problems on nightly build machines.
