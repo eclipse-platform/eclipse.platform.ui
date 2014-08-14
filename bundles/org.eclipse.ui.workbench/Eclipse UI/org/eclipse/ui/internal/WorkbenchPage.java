@@ -195,6 +195,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	private static final String ATT_AGGREGATE_WORKING_SET_ID = "aggregateWorkingSetId"; //$NON-NLS-1$
 
+	private static final int WINDOW_SCOPE = EModelService.OUTSIDE_PERSPECTIVE
+			| EModelService.IN_ANY_PERSPECTIVE | EModelService.IN_SHARED_AREA;
+
 	class E4PartListener implements org.eclipse.e4.ui.workbench.modeling.IPartListener {
 
 		@Override
@@ -1122,6 +1125,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	List<EditorReference> getSortedEditorReferences() {
+		return getSortedEditorReferences(false);
+	}
+
+	private List<EditorReference> getSortedEditorReferences(boolean allPerspectives) {
 		List<EditorReference> sortedReferences = new ArrayList<EditorReference>();
 		for (MPart part : activationList) {
 			for (EditorReference ref : editorReferences) {
@@ -1140,9 +1147,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		MPerspective currentPerspective = getCurrentPerspective();
 		if (currentPerspective != null) {
+			int scope = allPerspectives ? WINDOW_SCOPE : EModelService.PRESENTATION;
 			List<MPart> placeholders = modelService.findElements(window,
-					CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null,
-					EModelService.PRESENTATION);
+					CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null, scope);
 			List<EditorReference> visibleReferences = new ArrayList<EditorReference>();
 			for (EditorReference reference : sortedReferences) {
 				for (MPart placeholder : placeholders) {
@@ -2356,24 +2363,38 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 	
 	public IEditorReference[] getSortedEditors() {
-		IWorkbenchPartReference[] parts = getSortedParts(true, false);
+		IWorkbenchPartReference[] parts = getSortedParts(true, false, false);
 		IEditorReference[] editors = new IEditorReference[parts.length];
 		System.arraycopy(parts, 0, editors, 0, parts.length);
 		return editors;
 	}
 
 	public IWorkbenchPartReference[] getSortedParts() {
-		return getSortedParts(true, true);
+		return getSortedParts(true, true, false);
 	}
 
-	private IWorkbenchPartReference[] getSortedParts(boolean editors, boolean views) {
+	/**
+	 * Returns a sorted array of references to editors and/or views from this
+	 * page.
+	 *
+	 * @param editors
+	 *            include editors
+	 * @param views
+	 *            include views
+	 * @param allPerspectives
+	 *            if {@code false}, does not include parts from inactive
+	 *            perspectives
+	 * @return a sorted array of references to editors and/or views
+	 */
+	private IWorkbenchPartReference[] getSortedParts(boolean editors, boolean views,
+			boolean allPerspectives) {
 		if (!editors && !views) {
 			return new IWorkbenchPartReference[0];
 		}
 
 		List<IWorkbenchPartReference> sortedReferences = new ArrayList<IWorkbenchPartReference>();
-		IViewReference[] viewReferences = getViewReferences();
-		List<EditorReference> editorReferences = getSortedEditorReferences();
+		IViewReference[] viewReferences = getViewReferences(allPerspectives);
+		List<EditorReference> editorReferences = getSortedEditorReferences(allPerspectives);
 
 		activationLoop: for (MPart part : activationList) {
 			if (views) {
@@ -2518,10 +2539,15 @@ public class WorkbenchPage implements IWorkbenchPage {
      */
     @Override
 	public IViewReference[] getViewReferences() {
+		return getViewReferences(false);
+	}
+
+	private IViewReference[] getViewReferences(boolean allPerspectives) {
 		MPerspective perspective = getCurrentPerspective();
 		if (perspective != null) {
+			int scope = allPerspectives ? WINDOW_SCOPE : EModelService.PRESENTATION;
 			List<MPlaceholder> placeholders = modelService.findElements(window, null,
-					MPlaceholder.class, null, EModelService.PRESENTATION);
+					MPlaceholder.class, null, scope);
 			List<IViewReference> visibleReferences = new ArrayList<IViewReference>();
 			for (ViewReference reference : viewReferences) {
 				for (MPlaceholder placeholder : placeholders) {
@@ -3540,7 +3566,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	public ISaveablePart[] getDirtyParts() {
 		List result = new ArrayList(3);
-		IWorkbenchPartReference[] allParts = getSortedParts();
+		IWorkbenchPartReference[] allParts = getSortedParts(true, true, true);
 		for (int i = 0; i < allParts.length; i++) {
 			IWorkbenchPartReference reference = allParts[i];
 
