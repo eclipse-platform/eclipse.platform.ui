@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.part.IWorkbenchPartOrientation;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -316,7 +317,12 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 		// hook reference listeners to the part
 		// reference.hookPropertyListeners();
 
-		Composite parent = new Composite(composite, SWT.NONE);
+		int style = SWT.NONE;
+		if (wrapped instanceof IWorkbenchPartOrientation) {
+			style = ((IWorkbenchPartOrientation) wrapped).getOrientation();
+		}
+
+		Composite parent = new Composite(composite, style);
 		parent.setLayout(new FillLayout());
 		if (!createPartControl(wrapped, parent)) {
 			return;
