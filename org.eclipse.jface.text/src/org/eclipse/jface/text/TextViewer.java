@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *     Markus Schorn <markus.schorn@windriver.com> - shift with trailing empty line - https://bugs.eclipse.org/325438
+ *     Sergey Prigogin (Google) - Bug 441827 - TextViewer.ViewerState.restore method looses caret position
  *******************************************************************************/
 package org.eclipse.jface.text;
 
@@ -1231,7 +1232,7 @@ public class TextViewer extends Viewer implements
 					int offset= fSelection.getOffset();
 					int length= fSelection.getLength();
 					if (fReverseSelection) {
-						offset-= length;
+						offset+= length;
 						length= -length;
 					}
 					setSelectedRange(offset, length);
@@ -1289,17 +1290,11 @@ public class TextViewer extends Viewer implements
 					int endVirtual= Math.max(0, bts.getEndColumn() - document.getLineInformationOfOffset(bts.getOffset() + bts.getLength()).getLength());
 					fSelection= new ColumnPosition(bts.getOffset(), bts.getLength(), startVirtual, endVirtual);
 				} else {
+					Point range= fTextWidget.getSelectionRange();
+					int caretOffset= fTextWidget.getCaretOffset();
+					fReverseSelection= caretOffset == range.x;
 					Point selectionRange= getSelectedRange();
-					fReverseSelection= selectionRange.y < 0;
-					int offset, length;
-					if (fReverseSelection) {
-						offset= selectionRange.x + selectionRange.y;
-						length= -selectionRange.y;
-					} else {
-						offset= selectionRange.x;
-						length= selectionRange.y;
-					}
-					fSelection= new Position(offset, length);
+					fSelection= new Position(selectionRange.x, selectionRange.y);
 				}
 
 				fSelectionSet= false;

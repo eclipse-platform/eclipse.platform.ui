@@ -30,6 +30,7 @@ public class JFaceTextTestSuite extends TestSuite {
 		suite.addTest(TextHoverPopupTest.suite());
 		suite.addTest(TextPresentationTest.suite());
 		suite.addTest(DefaultUndoManagerTest.suite());
+		suite.addTest(TextViewerTest.suite());
 		suite.addTest(TextViewerUndoManagerTest.suite());
 		suite.addTest(RulesTestSuite.suite());
 		suite.addTest(ReconcilerTestSuite.suite());
