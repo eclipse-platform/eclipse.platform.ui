@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google) - [440283] Modify symlink tests to run on Windows with or without administrator privileges
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
 import java.net.URI;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -66,11 +68,8 @@ public class Bug_233939 extends ResourceTest {
 	}
 
 	public void testBug() {
-		if (isWindowsVistaOrHigher())
-			return;
-
-		// only activate this test on platforms that support symbolic links
-		if (!isAttributeSupported(EFS.ATTRIBUTE_SYMLINK))
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
 		String fileName = "file.txt";
 
@@ -105,13 +104,9 @@ public class Bug_233939 extends ResourceTest {
 	}
 
 	public void testMultipleLinksToFolder() {
-		if (isWindowsVistaOrHigher())
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
-
-		// only activate this test on platforms that support symbolic links
-		if (!isAttributeSupported(EFS.ATTRIBUTE_SYMLINK))
-			return;
-
 		// create a folder: getTempStore() will be cleaned up in tearDown()
 		IFileStore tempStore = getTempStore();
 		createFileInFileSystem(tempStore.getChild("foo.txt"));

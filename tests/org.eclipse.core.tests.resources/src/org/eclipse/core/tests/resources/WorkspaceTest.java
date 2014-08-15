@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google) - testWorkingLocationDeletion_bug433061
+ *     Sergey Prigogin (Google) - [440283] Modify symlink tests to run on Windows with or without administrator privileges
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -15,7 +16,6 @@ import java.io.File;
 import java.io.InputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -321,13 +321,9 @@ public class WorkspaceTest extends ResourceTest {
 	}
 
 	public void testWorkingLocationDeletion_bug433061() throws Throwable {
-		// Only activate this test on platforms where the test is able to create a symbolic link.
-		if (isWindowsVistaOrHigher())
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
-
-		if (!isAttributeSupported(EFS.ATTRIBUTE_SYMLINK))
-			return;
-
 		IProject project = getTestProject();
 		project.create(null, getMonitor());
 		IPath workingLocation = project.getWorkingLocation("org.eclipse.core.tests.resources");

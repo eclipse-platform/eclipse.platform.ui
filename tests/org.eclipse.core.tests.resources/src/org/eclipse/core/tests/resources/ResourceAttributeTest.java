@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2013 IBM Corporation and others.
+ *  Copyright (c) 2005, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
- *  Martin Oberhuber (Wind River) - [335864] ResourceAttributeTest fails on Win7
+ *     Martin Oberhuber (Wind River) - [335864] ResourceAttributeTest fails on Win7
+ *     Sergey Prigogin (Google) - [440283] Modify symlink tests to run on Windows with or without administrator privileges
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -279,11 +280,8 @@ public class ResourceAttributeTest extends ResourceTest {
 	}
 
 	public void testAttributeSymlink() {
-		if (isWindowsVistaOrHigher())
-			return;
-
-		// only activate this test on platforms that support it
-		if (!isAttributeSupported(EFS.ATTRIBUTE_SYMLINK))
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFile link = project.getFile("link");

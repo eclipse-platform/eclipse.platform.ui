@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Martin Oberhuber (Wind River) - initial API and implementation for [232426]
  *     Szymon Ptaszkiewicz (IBM) - Symlink test failures on Windows 7 [331716]
+ *     Sergey Prigogin (Google) - Modify symlink tests to run on Windows with or without administrator privileges [440283]
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
@@ -83,14 +84,9 @@ public class SymlinkResourceTest extends LocalStoreTest {
 	 * See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=232426">bug 232426</a> 
 	 */
 	public void testBug232426() throws Exception {
-		if (isWindowsVistaOrHigher())
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
-
-		/* Only run the test if EFS supports symbolic links on this Platform */
-		if ((EFS.getLocalFileSystem().attributes() & EFS.ATTRIBUTE_SYMLINK) == 0) {
-			return;
-		}
-
 		/* Re-use projects which are cleaned up automatically */
 		final IProject project = projects[0];
 		getWorkspace().run(new IWorkspaceRunnable() {
@@ -119,14 +115,9 @@ public class SymlinkResourceTest extends LocalStoreTest {
 	}
 
 	public void testBug358830() throws Exception {
-		if (isWindowsVistaOrHigher())
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
-
-		/* Only run the test if EFS supports symbolic links on this Platform */
-		if ((EFS.getLocalFileSystem().attributes() & EFS.ATTRIBUTE_SYMLINK) == 0) {
-			return;
-		}
-
 		/* Re-use projects which are cleaned up automatically */
 		final IProject project = projects[0];
 		getWorkspace().run(new IWorkspaceRunnable() {

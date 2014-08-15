@@ -12,6 +12,7 @@
  * Martin Oberhuber (Wind River) - [184433] liblocalfile for Linux x86_64
  * Martin Oberhuber (Wind River) - [232426] push up createSymLink() to CoreTest
  * Martin Oberhuber (Wind River) - [331716] Symlink test failures on Windows 7
+ * Sergey Prigogin (Google) - [440283] Modify symlink tests to run on Windows with or without administrator privileges
  *******************************************************************************/
 package org.eclipse.core.tests.filesystem;
 
@@ -44,19 +45,6 @@ public class SymlinkTest extends FileSystemTest {
 
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
-	}
-
-	public static boolean isTestablePlatform() {
-		// A Platform is testable if it supports the "ln -s" command.
-		String os = Platform.getOS();
-		//currently we only support linux, solaris and mac os
-		if (os.equals(Platform.OS_LINUX) || os.equals(Platform.OS_SOLARIS) || os.equals(Platform.OS_MACOSX) || os.equals(Platform.OS_AIX)
-		//		  ||os.equals(Platform.OS_HPUX)
-		//		  || isWindowsVistaOrHigher()
-		) {
-			return true;
-		}
-		return false;
 	}
 
 	protected void fetchFileInfos() {
@@ -106,9 +94,9 @@ public class SymlinkTest extends FileSystemTest {
 	}
 
 	public void testBrokenSymlinkAttributes() {
-		if (!isTestablePlatform()) {
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
-		}
 		makeLinkStructure();
 		//break links by removing actual dir and file
 		ensureDoesNotExist(aDir);
@@ -143,11 +131,11 @@ public class SymlinkTest extends FileSystemTest {
 		}
 	}
 
+	// Moving a broken symlink is possible.
 	public void testBrokenSymlinkMove() throws Exception {
-		//moving a broken symlink is possible
-		if (!isTestablePlatform()) {
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
-		}
 		makeLinkStructure();
 		ensureDoesNotExist(aFile);
 		ensureDoesNotExist(aDir);
@@ -187,11 +175,11 @@ public class SymlinkTest extends FileSystemTest {
 		return false;
 	}
 
+	// Removing a broken symlink is possible.
 	public void testBrokenSymlinkRemove() throws Exception {
-		//removing a broken symlink is possible
-		if (!isTestablePlatform()) {
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
-		}
 		makeLinkStructure();
 		ensureDoesNotExist(aFile);
 		ensureDoesNotExist(aDir);
@@ -208,7 +196,8 @@ public class SymlinkTest extends FileSystemTest {
 	}
 
 	public void testRecursiveSymlink() throws Exception {
-		if (!isTestablePlatform())
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
 		mkLink(baseStore, "l1", "l2", false);
 		mkLink(baseStore, "l2", "l1", false);
@@ -257,9 +246,9 @@ public class SymlinkTest extends FileSystemTest {
 	}
 
 	public void testSymlinkAttributes() {
-		if (!isTestablePlatform()) {
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
-		}
 		makeLinkStructure();
 		assertFalse(iFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
 		assertFalse(iDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
@@ -288,11 +277,11 @@ public class SymlinkTest extends FileSystemTest {
 		}
 	}
 
+	// Reading from a directory pointed to by a link is possible.
 	public void testSymlinkDirRead() throws Exception {
-		//reading from a directory pointed to by a link is possible
-		if (!isTestablePlatform()) {
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
-		}
 		makeLinkStructure();
 		IFileStore childDir = aDir.getChild("subDir");
 		ensureExists(childDir, true);
@@ -305,11 +294,11 @@ public class SymlinkTest extends FileSystemTest {
 		ensureDoesNotExist(childDir);
 	}
 
+	// Writing to symlinked dir.
 	public void testSymlinkDirWrite() throws Exception {
-		//writing to symlinked dir
-		if (!isTestablePlatform()) {
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
-		}
 		makeLinkStructure();
 		IFileStore childFile = llDir.getChild("subFile");
 		ensureExists(childFile, false);
@@ -350,7 +339,8 @@ public class SymlinkTest extends FileSystemTest {
 	 * TODO Fix this test.  See https://bugs.eclipse.org/bugs/show_bug.cgi?id=172346
 	 */
 	public void _testSymlinkExtendedChars() throws Exception {
-		if (!isTestablePlatform())
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
 		IFileStore childDir = baseStore.getChild(specialCharName);
 		ensureExists(childDir, true);
@@ -377,9 +367,9 @@ public class SymlinkTest extends FileSystemTest {
 	}
 
 	public void testSymlinkPutLastModified() throws Exception {
-		if (!isTestablePlatform()) {
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
-		}
 		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
 			// flag EFS.SET_LAST_MODIFIED is set by java.io and it fails on Mac OS
 			return;
@@ -412,9 +402,9 @@ public class SymlinkTest extends FileSystemTest {
 	}
 
 	public void testSymlinkPutReadOnly() throws Exception {
-		if (!isTestablePlatform()) {
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
-		}
 		//check that putInfo() "writes through" the symlink
 		makeLinkStructure();
 		illFile.setAttribute(EFS.ATTRIBUTE_READ_ONLY, true);
@@ -448,9 +438,9 @@ public class SymlinkTest extends FileSystemTest {
 	}
 
 	public void testSymlinkPutExecutable() throws Exception {
-		if (!isTestablePlatform()) {
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
-		}
 		//check that putInfo() "writes through" the symlink
 		makeLinkStructure();
 		illFile.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, true);
@@ -473,12 +463,12 @@ public class SymlinkTest extends FileSystemTest {
 		}
 	}
 
+	// Removing a symlink keeps the link target intact.
+	// Symlinks being broken due to remove are set to non-existent.
 	public void testSymlinkRemove() throws Exception {
-		//removing a symlink keeps the link target intact.
-		//symlinks being broken due to remove are set to non-existent.
-		if (!isTestablePlatform()) {
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
 			return;
-		}
 		makeLinkStructure();
 		lFile.delete(EFS.NONE, getMonitor());
 		illFile = lFile.fetchInfo();
