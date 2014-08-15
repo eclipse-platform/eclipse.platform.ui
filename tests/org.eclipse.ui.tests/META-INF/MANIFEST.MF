@@ -6,8 +6,7 @@ Bundle-Version: 3.10.0.qualifier
 Eclipse-BundleShape: dir
 Bundle-Activator: org.eclipse.ui.tests.TestPlugin
 Bundle-Vendor: Eclipse.org
-Require-Bundle: org.eclipse.core.runtime.compatibility,
- org.eclipse.core.resources,
+Require-Bundle: org.eclipse.core.resources,
  org.eclipse.core.expressions,
  org.eclipse.ui,
  org.junit,
