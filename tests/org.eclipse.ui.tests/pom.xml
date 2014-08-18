@@ -8,6 +8,7 @@
 
   Contributors:
      Igor Fedorenko - initial implementation
+     Lars Vogel <Lars.Vogel@gmail.com> - Bug 441877
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -22,8 +23,8 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
-    <testSuite>${project.artifactId}</testSuite>
-    <testClass>org.eclipse.jface.tests.AllTests</testClass>
+   	<testSuiteUITests>**/org/eclipse/ui/tests/UiTestSuite.java</testSuiteUITests>
+	<testSuiteJFace>**/org/eclipse/jface/tests/AllTests.java</testSuiteJFace>
   </properties>
 
   <build>
@@ -32,39 +33,31 @@
   			<groupId>org.eclipse.tycho</groupId>
   			<artifactId>tycho-surefire-plugin</artifactId>
   			<version>${tycho.version}</version>
-			<executions>
-				<!-- Default execution is kept with ${testClass} in UI Thread -->
-				<execution>
-					<id>nouithread-tests</id>
-					<phase>verify</phase>
-					<goals>
-						<goal>test</goal>
-					</goals>
-					<configuration>
-		  				<testClass>org.eclipse.ui.tests.UiTestSuite</testClass>
-						<work>${project.build.directory}/work-nouithread</work>
-		  			  	<useUIHarness>false</useUIHarness>
-			  			<useUIThread>false</useUIThread>
-		  				<dependencies>
-		  					<dependency>
-		  						<type>eclipse-plugin</type>
-		  						<artifactId>org.eclipse.equinox.event</artifactId>
-		  						<version>0.0.0</version>
-		  					</dependency>
-		  					<dependency>
-		  						<type>eclipse-plugin</type>
-		  						<artifactId>org.eclipse.osgi.compatibility.state</artifactId>
-		  						<version>0.0.0</version>
-		  					</dependency>
-							<dependency>
-								<type>eclipse-plugin</type>
-								<artifactId>org.eclipse.jdt.ui</artifactId>
-								<version>0.0.0</version>
-							</dependency>
-		  				</dependencies>
-					</configuration>
-				</execution>
-			</executions>
+				<configuration>
+					<includes>
+						<include>${testSuiteJFace}</include>
+					 	<include>${testSuiteUITests}</include>
+					</includes>
+					<useUIHarness>true</useUIHarness>
+					<useUIThread>true</useUIThread>
+		  			<dependencies>
+		  				<dependency>
+		  					<type>eclipse-plugin</type>
+		  					<artifactId>org.eclipse.equinox.event</artifactId>
+		  					<version>0.0.0</version>
+		  				</dependency>
+		  				<dependency>
+		  					<type>eclipse-plugin</type>
+		  					<artifactId>org.eclipse.osgi.compatibility.state</artifactId>
+		  					<version>0.0.0</version>
+		  				</dependency>
+						<dependency>
+							<type>eclipse-plugin</type>
+							<artifactId>org.eclipse.jdt.ui</artifactId>
+							<version>0.0.0</version>
+						</dependency>
+		  			</dependencies>
+				</configuration>
   		</plugin>
   	</plugins>
   </build>
