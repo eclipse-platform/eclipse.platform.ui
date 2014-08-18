@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.runtime.CoreException;
@@ -28,6 +27,7 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -35,6 +35,12 @@ import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 final class ExtensionActivityRegistry extends AbstractActivityRegistry {
+
+	/**
+	 * Prefix for all activity preferences
+	 */
+	private final static String PREFIX = "UIActivities."; //$NON-NLS-1$    
+
     private List activityRequirementBindingDefinitions;
 
     private List activityDefinitions;
@@ -171,6 +177,22 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 			}
         }
                 
+		// merge enablement overrides from plugin_customization.ini
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		for (Iterator i = activityDefinitions.iterator(); i.hasNext();) {
+			ActivityDefinition activityDef = (ActivityDefinition) i.next();
+			String id = activityDef.getId();
+			String preferenceKey = createPreferenceKey(id);
+			if ("".equals(store.getDefaultString(preferenceKey))) //$NON-NLS-1$
+				continue;
+			if (store.getDefaultBoolean(preferenceKey)) {
+				if (!defaultEnabledActivities.contains(id) && activityDef.getEnabledWhen() == null)
+					defaultEnabledActivities.add(id);
+			} else {
+				defaultEnabledActivities.remove(id);
+			}
+		}
+
         // Removal of all defaultEnabledActivites which target to expression
         // controlled activities.
 		for (int i = 0; i < defaultEnabledActivities.size();) {
@@ -267,6 +289,17 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 			fireActivityRegistryChanged();
 		}
     }
+
+	/**
+	 * Create the preference key for the activity.
+	 * 
+	 * @param activityId
+	 *            the activity id.
+	 * @return String a preference key representing the activity.
+	 */
+	private String createPreferenceKey(String activityId) {
+		return PREFIX + activityId;
+	}
 
     private void readDefaultEnablement(
             IConfigurationElement configurationElement) {
