@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation; bug 153993
  *												   fix in bug 163317, 151295, 167323, 167858, 184346, 187826, 201905
+ *     Stefan Winkler <stefan@winklerweb.net> - Bug 242231
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -386,10 +387,10 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 	/**
 	 * Apply the value of the active cell editor if one is active.
-	 * 
-	 * @since 3.3
+	 *
+	 * @since 3.11 (public - protected since 3.3)
 	 */
-	protected void applyEditorValue() {
+	public void applyEditorValue() {
 		if (viewerEditor != null) {
 			viewerEditor.applyEditorValue();
 		}

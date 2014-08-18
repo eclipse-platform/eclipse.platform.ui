@@ -64,6 +64,7 @@ public class AllTests extends TestSuite {
 		addTestSuite(Bug180504TreeViewerTest.class);
 		addTestSuite(Bug256889TableViewerTest.class);
 		addTestSuite(Bug287765Test.class);
+		addTestSuite(Bug242231Test.class);
 		addTestSuite(StyledStringBuilderTest.class);
 		addTestSuite(TreeManagerTest.class);
 	}

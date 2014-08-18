@@ -7,16 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Winkler <stefan@winklerweb.net> - Bug 242231
  ******************************************************************************/
 
 package org.eclipse.jface.tests.viewers;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
@@ -90,28 +87,7 @@ public class Bug180504TableViewerTest extends ViewerTestCase {
 
 	public void testBug180504ApplyEditor() {
 		getTableViewer().editElement(getTableViewer().getElementAt(0), 0);
-		Method m;
-		try {
-			m = ColumnViewer.class.getDeclaredMethod("applyEditorValue", new Class[0]);
-			m.setAccessible(true);
-			m.invoke(getTableViewer(), new Object[0]);
-		} catch (SecurityException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-
-		}
+		getTableViewer().applyEditorValue();
 	}
 
 	public void testBug180504CancleEditor() {

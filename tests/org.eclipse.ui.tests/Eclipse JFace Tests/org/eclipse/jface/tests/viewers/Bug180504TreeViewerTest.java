@@ -7,16 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Winkler <stefan@winklerweb.net> - Bug 242231
  ******************************************************************************/
 
 package org.eclipse.jface.tests.viewers;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -161,27 +159,7 @@ public class Bug180504TreeViewerTest extends ViewerTestCase {
 
 	public void testBug201002() {
 		getTreeViewer().editElement(((MyModel)((MyModel)getTreeViewer().getInput()).child.get(90)).child.get(10), 0);
-		Method m;
-		try {
-			m = ColumnViewer.class.getDeclaredMethod("applyEditorValue", new Class[0]);
-			m.setAccessible(true);
-			m.invoke(getTreeViewer(), new Object[0]);
-		} catch (SecurityException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
+		getTreeViewer().applyEditorValue();
 	}
 
 	public void testBug180504CancleEditor() {
