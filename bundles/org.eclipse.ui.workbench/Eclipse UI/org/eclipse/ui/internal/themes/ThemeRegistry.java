@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.ui.themes.IThemeManager;
 
 /**
@@ -313,12 +312,17 @@ public class ThemeRegistry implements IThemeRegistry {
     }
 
     /**
-     * Add a category presentation binding.  The given category will only be 
-     * availible if the given presentation is active.
-     * 
-     * @param categoryId the category id
-     * @param presentationId the presentation id
-     */
+	 * Add a category presentation binding. The given category will only be
+	 * availible if the given presentation is active.
+	 * 
+	 * @param categoryId
+	 *            the category id
+	 * @param presentationId
+	 *            the presentation id
+	 * 
+	 * @deprecated used by the removal presentation API
+	 */
+	@Deprecated
     public void addCategoryPresentationBinding(String categoryId,
             String presentationId) {
         Set presentations = (Set) categoryBindingMap.get(categoryId);

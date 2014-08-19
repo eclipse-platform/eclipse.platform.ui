@@ -1529,14 +1529,6 @@
             %Presentation.misc.desc
          </description>
       </themeElementCategory>
-      <categoryPresentationBinding
-            categoryId="org.eclipse.ui.presentation.default"
-            presentationId="org.eclipse.ui.presentations.default">
-      </categoryPresentationBinding>
-      <categoryPresentationBinding
-            categoryId="org.eclipse.ui.presentation.default"
-            presentationId="org.eclipse.ui.presentations.r30">
-      </categoryPresentationBinding>
       <fontDefinition
             label="%FontsPreference.BannerFontLabel"
             categoryId="org.eclipse.ui.workbenchMisc"
