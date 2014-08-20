@@ -20,4 +20,7 @@
   <artifactId>org.eclipse.core.tests.runtime</artifactId>
   <version>3.9.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+  <properties>
+    <defaultSigning-excludeInnerJars>true</defaultSigning-excludeInnerJars>
+  </properties>
 </project>
