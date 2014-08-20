@@ -11,6 +11,7 @@
  *     		Bug 186522 - [KeyBindings] New Keys preference page does not resort by binding with conflicts
  *     		Bug 226342 - [KeyBindings] Keys preference page conflict table is hard to read
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
+ *     Cornel Izbasa <cizbasa@info.uvt.ro> - Bug 442215
  *******************************************************************************/
 
 package org.eclipse.ui.internal.keys;
@@ -368,7 +369,7 @@ public class NewKeysPreferencePage extends PreferencePage implements
 		public String getText(Object element) {
 			String rc = getColumnText(element, 0);
 			if (rc == null) {
-				super.getText(element);
+				rc = super.getText(element);
 			}
 			StringBuffer buf = new StringBuffer(rc);
 			for (int i = 1; i < USER_DELTA_COLUMN; i++) {
