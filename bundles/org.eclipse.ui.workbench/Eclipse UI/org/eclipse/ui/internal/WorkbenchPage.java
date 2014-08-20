@@ -11,6 +11,7 @@
  *     Marc-Andre Laperle (Ericsson) - Fix for Bug 413590
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431340, 431348, 426535, 433234
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431868
+ *     Cornel Izbasa <cizbasa@info.uvt.ro> - Bug 442214
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -885,7 +886,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 						editorReferences.remove(eRef);
 					ViewReference vRef = getViewReference(changedPart);
 					if (vRef != null)
-						viewReferences.remove(eRef);
+						viewReferences.remove(vRef);
 				}
 			}
 		}
