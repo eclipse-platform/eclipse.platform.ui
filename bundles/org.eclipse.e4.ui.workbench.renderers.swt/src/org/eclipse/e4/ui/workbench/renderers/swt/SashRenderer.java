@@ -7,14 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 441150
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 441150, 441120
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
@@ -27,7 +26,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Layout;
 import org.osgi.service.event.Event;
-import org.osgi.service.event.EventHandler;
 
 /**
  * Default SWT renderer responsible for a MPartSashContainer. See
@@ -35,50 +33,38 @@ import org.osgi.service.event.EventHandler;
  */
 public class SashRenderer extends SWTPartRenderer {
 
-	@Inject
-	private IEventBroker eventBroker;
-
 	private static final int UNDEFINED_WEIGHT = -1;
 	private static final int DEFAULT_WEIGHT = 5000;
 
-	private EventHandler sashOrientationHandler;
-	private EventHandler sashWeightHandler;
 	private int processedContent = 0;
 
-	@PostConstruct
-	void postConstruct() {
-		sashOrientationHandler = new EventHandler() {
-			@Override
-			public void handleEvent(Event event) {
-				// Ensure that this event is for a MPartSashContainer
-				MUIElement element = (MUIElement) event
-						.getProperty(UIEvents.EventTags.ELEMENT);
-				if (element.getRenderer() != SashRenderer.this) {
-					return;
-				}
-				forceLayout((MElementContainer<MUIElement>) element);
-			}
-		};
 
-		eventBroker.subscribe(UIEvents.GenericTile.TOPIC_HORIZONTAL,
-				sashOrientationHandler);
+	@SuppressWarnings("unchecked")
+	@Inject
+	@Optional
+	private void subscribeTopicOrientationChanged(
+			@UIEventTopic(UIEvents.GenericTile.TOPIC_HORIZONTAL) Event event) {
+		// Ensure that this event is for a MPartSashContainer
+		MUIElement element = (MUIElement) event
+				.getProperty(UIEvents.EventTags.ELEMENT);
+		if (element.getRenderer() != SashRenderer.this) {
+			return;
+		}
+		forceLayout((MElementContainer<MUIElement>) element);
+	}
 
-		sashWeightHandler = new EventHandler() {
-			@Override
-			public void handleEvent(Event event) {
-				// Ensure that this event is for a MPartSashContainer
-				MUIElement element = (MUIElement) event
-						.getProperty(UIEvents.EventTags.ELEMENT);
-				MElementContainer<MUIElement> parent = element.getParent();
-				if (parent.getRenderer() != SashRenderer.this)
-					return;
-
-				forceLayout(parent);
-			}
-		};
-
-		eventBroker.subscribe(UIEvents.UIElement.TOPIC_CONTAINERDATA,
-				sashWeightHandler);
+	@SuppressWarnings("unchecked")
+	@Inject
+	@Optional
+	private void subscribeTopicSashWeightChanged(
+			@UIEventTopic(UIEvents.UIElement.TOPIC_CONTAINERDATA) Event event) {
+		// Ensure that this event is for a MPartSashContainer
+		MUIElement element = (MUIElement) event
+				.getProperty(UIEvents.EventTags.ELEMENT);
+		if (element.getRenderer() != SashRenderer.this) {
+			return;
+		}
+		forceLayout((MElementContainer<MUIElement>) element);
 	}
 
 	/**
@@ -100,12 +86,6 @@ public class SashRenderer extends SWTPartRenderer {
 			}
 		}
 		s.layout(true, true);
-	}
-
-	@PreDestroy
-	void preDestroy() {
-		eventBroker.unsubscribe(sashOrientationHandler);
-		eventBroker.unsubscribe(sashWeightHandler);
 	}
 
 	@Override
