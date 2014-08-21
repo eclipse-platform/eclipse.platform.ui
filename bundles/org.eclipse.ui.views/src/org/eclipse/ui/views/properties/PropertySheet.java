@@ -11,6 +11,7 @@
  *     Semion Chichelnitsky (semion@il.ibm.com) - bug 272564
  *     Craig Foote (Footeware.ca) - https://bugs.eclipse.org/325743
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 460405
+ *     Cornel Izbasa <cizbasa@info.uvt.ro> - Bug 417447
  *******************************************************************************/
 package org.eclipse.ui.views.properties;
 
@@ -312,15 +313,17 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
     }
 
     @Override
-	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
-        // we ignore null selection, or if we are pinned, or our own selection or same selection
-		if (sel == null || !isImportant(part) || sel.equals(currentSelection)) {
+    public void selectionChanged(IWorkbenchPart part, ISelection sel) {
+		// we ignore selection if we are hidden OR selection is coming from
+		// another source as the last one
+		if (part == null || !part.equals(currentPart)) {
 			return;
 		}
 
-		// we ignore selection if we are hidden OR selection is coming from another source as the last one
-		if(part == null || !part.equals(currentPart)){
-		    return;
+		// we ignore null selection, or if we are pinned, or our own selection
+		// or same selection
+		if (sel == null || !isImportant(part) || sel.equals(currentSelection)) {
+			return;
 		}
 
         currentPart = part;
