@@ -32,29 +32,6 @@ you can run every test in the workbench or a subset of the tests.
 <p>To run the UiTestSuite from within Eclipse just select UiTestSuite.java
 in the navigator and invoke Run > JUnit Eclipse Plugin Tests.&nbsp; The
 results of the test suite will appear in the JUnit view.
-<h3>
-Automated Sniff Tests</h3>
-The following process is used to run the workbench UI sniff tests after
-a build.
-<p>To create the sniff test files ..
-<ol>
-<li>
-Export the 4 test projects into a zip file.&nbsp; The options in the export
-wizard should be set to "Compress the contents of the file" and not "Create
-directory Structure".</li>
-</ol>
-To run the sniff tests in a fresh build of Eclipse ..
-<ol>
-<li>
-Unzip the zip file in the Eclipse plugins directory.</li>
-
-<li>
-On Windows copy uiSniff.bat in the org.eclipse.ui.tests plugin directory
-to the Eclipse home directory.&nbsp; On Linux copy uiSniff instead.</li>
-
-<li>
-Run uiSniff.bat ( or uiSniff ).&nbsp; Redirect the results into a file.</li>
-</ol>
 
 <h3>
 Test Patterns</h3>
