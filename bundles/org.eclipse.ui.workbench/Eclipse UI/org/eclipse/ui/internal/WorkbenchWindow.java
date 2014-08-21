@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -126,6 +127,7 @@ import org.eclipse.ui.IPageService;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISaveablePart;
+import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbench;
@@ -538,8 +540,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					if (object instanceof CompatibilityPart) {
 						IWorkbenchPart workbenchPart = ((CompatibilityPart) object).getPart();
 						if (workbenchPart instanceof ISaveablePart) {
-							ISaveablePart saveablePart = (ISaveablePart) workbenchPart;
-							return page.saveSaveable(saveablePart, workbenchPart, confirm, true);
+							SaveablesList saveablesList = (SaveablesList) PlatformUI.getWorkbench()
+									.getService(ISaveablesLifecycleListener.class);
+							Object saveResult = saveablesList.preCloseParts(
+									Collections.singletonList((ISaveablePart) workbenchPart), true,
+									WorkbenchWindow.this);
+							return saveResult != null;
 						}
 					}
 					return super.save(dirtyPart, confirm);
@@ -559,8 +565,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					if (saveables.isEmpty()) {
 						return super.saveParts(dirtyParts, confirm);
 					}
-					return WorkbenchPage.saveAll(saveables, confirm, false, true,
-							WorkbenchWindow.this, WorkbenchWindow.this);
+
+					SaveablesList saveablesList = (SaveablesList) PlatformUI.getWorkbench()
+							.getService(ISaveablesLifecycleListener.class);
+					Object saveResult = saveablesList.preCloseParts(saveables, true,
+							WorkbenchWindow.this);
+					return saveResult != null;
 				}
 			};
 			localSaveHandler.logger = logger;

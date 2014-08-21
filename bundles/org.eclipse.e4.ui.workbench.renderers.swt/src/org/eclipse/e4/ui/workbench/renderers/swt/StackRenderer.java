@@ -45,6 +45,7 @@ import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.IContributionItem;
@@ -1463,6 +1464,31 @@ public class StackRenderer extends LazyStackRenderer {
 
 		EPartService partService = getContextForParent(part).get(
 				EPartService.class);
+		// try using the ISaveHandler first... This gives better control of
+		// dialogs...
+		ISaveHandler saveHandler = getContextForParent(part).get(
+				ISaveHandler.class);
+		if (saveHandler != null) {
+			final List<MPart> toPrompt = new ArrayList<MPart>(others);
+			toPrompt.retainAll(partService.getDirtyParts());
+
+			boolean cancel = false;
+			if (toPrompt.size() > 1) {
+				cancel = !saveHandler.saveParts(toPrompt, true);
+			} else if (toPrompt.size() == 1) {
+				cancel = !saveHandler.save(toPrompt.get(0), true);
+			}
+			if (cancel) {
+				return;
+			}
+
+			for (MPart other : others) {
+				partService.hidePart(other);
+			}
+			return;
+		}
+
+		// No ISaveHandler, fall back to just using the part service...
 		for (MPart otherPart : others) {
 			if (partService.savePart(otherPart, true))
 				partService.hidePart(otherPart);
