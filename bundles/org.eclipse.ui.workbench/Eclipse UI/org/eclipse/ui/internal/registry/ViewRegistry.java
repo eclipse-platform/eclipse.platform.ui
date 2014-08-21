@@ -198,16 +198,6 @@ public class ViewRegistry implements IViewRegistry {
 	}
 
 	/**
-	 * Method does nothing, should not be called anymore
-	 *
-	 * @deprecated
-	 */
-	@Deprecated
-	public void dispose() {
-
-	}
-
-	/**
 	 * Returns the {@link ViewCategory} for the given id or <code>null</code> if
 	 * one cannot be found or the id is <code>null</code>
 	 *
