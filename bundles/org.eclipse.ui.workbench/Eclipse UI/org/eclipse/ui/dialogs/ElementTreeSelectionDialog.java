@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -230,10 +230,6 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
         updateStatus(fCurrStatus);
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#open()
-     */
     @Override
 	public int open() {
         fIsEmpty = evaluateIfTreeEmpty(fInput);
@@ -254,18 +250,11 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
         super.cancelPressed();
     }
 
-    /*
-     * @see SelectionStatusDialog#computeResult()
-     */
     @Override
 	protected void computeResult() {
         setResult(((IStructuredSelection) fViewer.getSelection()).toList());
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#create()
-     */
     @Override
 	public void create() {
         BusyIndicator.showWhile(null, new Runnable() {
@@ -279,9 +268,6 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
         });
     }
 
-    /*
-     * @see Dialog#createDialogArea(Composite)
-     */
     @Override
 	protected Control createDialogArea(Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);
@@ -427,9 +413,6 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
         super.setResult(result);
     }
 
-    /**
-     * @see org.eclipse.jface.window.Window#handleShellCloseEvent()
-     */
     @Override
 	protected void handleShellCloseEvent() {
         super.handleShellCloseEvent();
