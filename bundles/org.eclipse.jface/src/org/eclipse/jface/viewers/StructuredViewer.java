@@ -1020,19 +1020,16 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * The <code>StructuredViewer</code> implementation of this method returns
-	 * the result as an <code>IStructuredSelection</code>. Sub-classes should
-	 * return a <code>IStructuredSelection</code>.
-	 *
+	 * the result as an <code>IStructuredSelection</code>.
 	 * <p>
 	 * Subclasses do not typically override this method, but implement
-	 * <code>getSelectionFromWidget(List)</code> instead.
-	 * <p>
-	 *
-	 * Call {@link StructuredViewer#getStructuredSelection()} instead to get the
-	 * <code>IStructuredSelection</code> type directly.
+	 * <code>getSelectionFromWidget(List)</code> instead. If they override this
+	 * method, they should return an <code>IStructuredSelection</code> as well.
+	 * </p>
+	 * Call {@link #getStructuredSelection()} instead to get an instance of
+	 * <code>IStructuredSelection</code> directly.
 	 *
 	 * @return ISelection
-	 *
 	 */
 	@Override
 	public ISelection getSelection() {
@@ -1046,6 +1043,10 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * Returns the <code>IStructuredSelection</code> of this viewer.
+	 * <p>
+	 * Subclasses whose {@link #getSelection()} specifies to return a more
+	 * specific type should also override this method and return that type.
+	 * </p>
 	 *
 	 * @return IStructuredSelection
 	 * @throws ClassCastException
@@ -1053,15 +1054,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *             IStructuredSelection
 	 * @since 3.11
 	 */
-	public IStructuredSelection getStructuredSelection()
-			throws ClassCastException {
+	public IStructuredSelection getStructuredSelection() throws ClassCastException {
 		ISelection selection = getSelection();
 		if (selection instanceof IStructuredSelection) {
 			return (IStructuredSelection) selection;
-
 		}
-		throw new ClassCastException(
-				"StructuredViewer should return an instance of IStructuredSelection from its getSelection() method. "); //$NON-NLS-1$
+		throw new ClassCastException("StructuredViewer should return an instance of IStructuredSelection from its getSelection() method."); //$NON-NLS-1$
 	}
 
 	/**

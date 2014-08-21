@@ -400,8 +400,8 @@ public class ShowViewDialog extends Dialog implements
 		// popup the description for the selected view
 		if (descriptionHint.isVisible() && event.keyCode == SWT.F2
 				&& event.stateMask == 0) {
-			ITreeSelection selection = (ITreeSelection) filteredTree
-					.getViewer().getSelection();
+			ITreeSelection selection = filteredTree.getViewer()
+					.getStructuredSelection();
 			// only show description if one view is selected
 			if (selection.size() == 1) {
 				Object o = selection.getFirstElement();
