@@ -9,6 +9,7 @@
  *     Marcel <emmpeegee@gmail.com> - initial API and implementation
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 442343
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 442278
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
 
@@ -105,8 +106,7 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 	public Snippet053StartEditorWithContextMenu(Shell shell) {
 		viewer = new TreeViewer(shell, SWT.BORDER);
 		viewer.setContentProvider(new MyContentProvider());
-		viewer.setCellEditors(new CellEditor[] { new TextCellEditor(viewer
-				.getTree()) });
+		viewer.setCellEditors(new CellEditor[] { new TextCellEditor(viewer.getTree()) });
 		viewer.setColumnProperties(new String[] { "name" });
 		viewer.setCellModifier(new ICellModifier() {
 
@@ -123,21 +123,18 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 			@Override
 			public void modify(Object element, String property, Object value) {
 				TreeItem item = (TreeItem) element;
-				((MyModel) item.getData()).counter = Integer.parseInt(value
-						.toString());
+				((MyModel) item.getData()).counter = Integer.parseInt(value.toString());
 				viewer.update(item.getData(), null);
 			}
 
 		});
 
-		TreeViewerEditor.create(viewer,
-				new ColumnViewerEditorActivationStrategy(viewer) {
-					@Override
-					protected boolean isEditorActivationEvent(
-							ColumnViewerEditorActivationEvent event) {
-						return event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC;
-					}
-				}, ColumnViewerEditor.DEFAULT);
+		TreeViewerEditor.create(viewer, new ColumnViewerEditorActivationStrategy(viewer) {
+			@Override
+			protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
+				return event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC;
+			}
+		}, ColumnViewerEditor.DEFAULT);
 
 		Menu menu = new Menu(viewer.getControl());
 		MenuItem renameItem = new MenuItem(menu, SWT.PUSH);
@@ -154,8 +151,7 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 
 	@Override
 	public void widgetSelected(SelectionEvent e) {
-		IStructuredSelection selection = (IStructuredSelection) viewer
-				.getSelection();
+		IStructuredSelection selection = viewer.getStructuredSelection();
 		if (!selection.isEmpty()) {
 			viewer.editElement(selection.getFirstElement(), 0);
 		}
