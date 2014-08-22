@@ -2349,14 +2349,17 @@ public class IProjectTest extends ResourceTest {
 		IPath root = getWorkspace().getRoot().getLocation().removeLastSegments(1).append("temp");
 		IPath path = root.append("foo");
 		assertTrue("1.0", getWorkspace().validateProjectLocation(project1, path).isOK());
-		// but not if its in the default default area
-		path = Platform.getLocation().append(project1.getName());
+		// but not if its in the default default area of another project
+		path = Platform.getLocation().append("Project2");
 		assertTrue("1.1", !getWorkspace().validateProjectLocation(project1, path).isOK());
+		// Project's own default default area is ok.
+		path = Platform.getLocation().append(project1.getName());
+		assertTrue("1.2", getWorkspace().validateProjectLocation(project1, path).isOK());
 		// create the first project with its default default mapping
 		try {
 			project1.create(getMonitor());
 		} catch (CoreException e) {
-			fail("1.2", e);
+			fail("1.3", e);
 		}
 
 		// create the second project with a non-default mapping
@@ -2388,6 +2391,12 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("4.2", getWorkspace().validateProjectLocation(project3, root.append("project2/foo")).isOK());
 		assertTrue("4.3", getWorkspace().validateProjectLocation(project3, null).isOK());
 		assertTrue("4.4", getWorkspace().validateProjectLocation(project3, root.append("%20foo")).isOK());
+
+		// Validation of a path without a project context.
+		assertTrue("5.0", getWorkspace().validateProjectLocation(null, root).isOK());
+		assertTrue("5.1", !getWorkspace().validateProjectLocation(null, root.append("project2")).isOK());
+		assertTrue("5.2", getWorkspace().validateProjectLocation(null, root.append("project2/foo")).isOK());
+		assertTrue("5.3", getWorkspace().validateProjectLocation(null, root.append("%20foo")).isOK());
 
 		try {
 			project1.delete(true, getMonitor());
