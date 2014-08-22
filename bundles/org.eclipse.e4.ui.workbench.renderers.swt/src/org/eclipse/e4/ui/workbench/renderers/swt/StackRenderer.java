@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 429728, 430166
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 429728, 430166, 441150
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -193,17 +193,11 @@ public class StackRenderer extends LazyStackRenderer {
 		return itemsToSet;
 	}
 
-	/**
-	 * This is the new way to handle UIEvents (as opposed to subscring and
-	 * unsubscribing them with the event broker.
-	 * 
-	 * The method is described in detail at
-	 * http://wiki.eclipse.org/Eclipse4/RCP/Event_Model
-	 */
+
 	@SuppressWarnings("unchecked")
 	@Inject
 	@Optional
-	private void handleTransientDataEvents(
+	private void subscribeTopicTransientDataChanged(
 			@UIEventTopic(UIEvents.ApplicationElement.TOPIC_TRANSIENTDATA) org.osgi.service.event.Event event) {
 		Object changedElement = event.getProperty(UIEvents.EventTags.ELEMENT);
 
@@ -285,10 +279,6 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 
 		return super.requiresFocus(element);
-	}
-
-	public StackRenderer() {
-		super();
 	}
 
 	@PostConstruct
