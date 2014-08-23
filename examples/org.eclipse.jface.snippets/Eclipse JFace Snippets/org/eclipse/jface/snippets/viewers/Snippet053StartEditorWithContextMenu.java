@@ -8,6 +8,7 @@
  * Contributors:
  *     Marcel <emmpeegee@gmail.com> - initial API and implementation
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 442343
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
 
@@ -155,7 +156,7 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 	public void widgetSelected(SelectionEvent e) {
 		IStructuredSelection selection = (IStructuredSelection) viewer
 				.getSelection();
-		if (selection != null) {
+		if (!selection.isEmpty()) {
 			viewer.editElement(selection.getFirstElement(), 0);
 		}
 	}
