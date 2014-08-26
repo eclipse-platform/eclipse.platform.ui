@@ -48,8 +48,10 @@
     </ant>
   </target>
 
-  <!-- This target runs the performance test suites. -->
+  <!-- This target runs the performance test suites.
+  Disabled for bug 442528: We should not have empty performance targets
   <target name="performance">
   </target>
+  -->
 
 </project>
