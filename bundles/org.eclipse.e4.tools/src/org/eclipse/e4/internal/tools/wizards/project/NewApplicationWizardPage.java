@@ -150,7 +150,7 @@ public class NewApplicationWizardPage extends WizardPage {
 			generateLifecycleClassCheckbox = new Button(group, SWT.CHECK);
 			generateLifecycleClassCheckbox.setSelection(false);
 
-			generateLifecycleClassCheckbox.setText("Create an e4 lifecycle annotated class");
+			generateLifecycleClassCheckbox.setText("Add a lifecycle class");
 			generateLifecycleClassCheckbox.setLayoutData(new GridData(SWT.BEGINNING, SWT.TOP, false, false, 2, 1));
 			generateLifecycleClassCheckbox.addSelectionListener(listener);
 
