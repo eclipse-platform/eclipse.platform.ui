@@ -2159,10 +2159,10 @@ getPreferenceStore(),
 			clientArea = new Rectangle(clientArea.x, clientArea.y, clientArea.width, maxHeight);
 		
 		String messageTop = RESOURCE_BUNDLE.getString("fontColorSample"); //$NON-NLS-1$
+		String fontColorString = RESOURCE_BUNDLE.getString("fontColorString"); //$NON-NLS-1$
 		RGB rgb = currentColor.getRGB();
 		String messageBottom = MessageFormat
-				.format(
-						"RGB({0}, {1}, {2})", new Object[] { new Integer(rgb.red), new Integer(rgb.green), new Integer(rgb.blue) }); //$NON-NLS-1$
+				.format(fontColorString, new Object[] { new Integer(rgb.red), new Integer(rgb.green), new Integer(rgb.blue) });
 
 		// calculate position of the vertical line
 		int separator = (clientArea.width - 2) / 3;
