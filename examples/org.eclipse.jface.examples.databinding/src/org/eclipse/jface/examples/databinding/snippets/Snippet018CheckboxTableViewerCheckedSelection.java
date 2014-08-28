@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Matthew Hall and others.
+ * Copyright (c) 2008, 2014 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 124684)
  *     Matthew Hall - bugs 260329, 260337
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 442278
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -325,8 +326,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 			removePersonButton.addListener(SWT.Selection, new Listener() {
 				@Override
 				public void handleEvent(Event event) {
-					IStructuredSelection selected = (IStructuredSelection) peopleViewer
-							.getSelection();
+					IStructuredSelection selected = peopleViewer.getStructuredSelection();
 					if (selected.isEmpty())
 						return;
 					Person person = (Person) selected.getFirstElement();

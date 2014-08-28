@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Matthew Hall and others.
+ * Copyright (c) 2008, 2014 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 218269)
  *     Matthew Hall - bug 260329
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 442278
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -283,8 +284,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		removeAddendButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection selection = (IStructuredSelection) addendsTarget
-						.getSelection();
+				IStructuredSelection selection = addendsTarget.getStructuredSelection();
 				if (!selection.isEmpty())
 					targetAddends.remove(selection.getFirstElement());
 			}
