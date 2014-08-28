@@ -295,7 +295,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		// floating shell visible, we have to re-layout it for its contents to
 		// become correct.
 		if (layoutShellLater != null) {
-			layoutShellLater.layout();
+			layoutShellLater.layout(true, true);
 		}
 	}
 }
