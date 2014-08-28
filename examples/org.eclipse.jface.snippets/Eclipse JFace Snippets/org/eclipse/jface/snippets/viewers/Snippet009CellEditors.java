@@ -8,17 +8,17 @@
  * Contributors:
  *     Tom Schindl - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 414565
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 442343
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -30,34 +30,6 @@ import org.eclipse.swt.widgets.TableItem;
  *
  */
 public class Snippet009CellEditors {
-	private class MyContentProvider implements IStructuredContentProvider {
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
-		@Override
-		public Object[] getElements(Object inputElement) {
-			return (MyModel[])inputElement;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
-		@Override
-		public void dispose() {
-
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
-		}
-
-	}
-
 	public class MyModel {
 		public int counter;
 
@@ -74,7 +46,7 @@ public class Snippet009CellEditors {
 	public Snippet009CellEditors(Shell shell) {
 		final TableViewer v = new TableViewer(shell,SWT.BORDER|SWT.FULL_SELECTION);
 		v.setLabelProvider(new LabelProvider());
-		v.setContentProvider(new MyContentProvider());
+		v.setContentProvider(ArrayContentProvider.getInstance());
 		v.setCellModifier(new ICellModifier() {
 
 			/* (non-Javadoc)

@@ -8,11 +8,13 @@
  * Contributors:
  *     Tom Schindl - initial API and implementation
  *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 442343
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
@@ -20,13 +22,11 @@ import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.FocusCellOwnerDrawHighlighter;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TableViewerEditor;
 import org.eclipse.jface.viewers.TableViewerFocusCellManager;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -38,25 +38,6 @@ import org.eclipse.swt.widgets.Shell;
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  */
 public class Snippet057TableViewerSkipHiddenCells {
-
-	private class MyContentProvider implements IStructuredContentProvider {
-
-		@Override
-		public Object[] getElements(Object inputElement) {
-			return (Person[]) inputElement;
-		}
-
-		@Override
-		public void dispose() {
-
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
-		}
-
-	}
 
 	public class Person {
 		public String givenname;
@@ -104,7 +85,7 @@ public class Snippet057TableViewerSkipHiddenCells {
 
 		final TableViewer tableviewer = new TableViewer(shell, SWT.BORDER
 				| SWT.FULL_SELECTION);
-		tableviewer.setContentProvider(new MyContentProvider());
+		tableviewer.setContentProvider(ArrayContentProvider.getInstance());
 		MenuManager mgr = new MenuManager();
 		mgr.add(new Action("toggle surname visibility") {
 

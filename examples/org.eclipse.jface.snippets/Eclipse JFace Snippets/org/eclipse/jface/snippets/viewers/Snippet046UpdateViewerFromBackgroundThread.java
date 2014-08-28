@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Tom Schindl and others.
+ * Copyright (c) 2006, 2014 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,15 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 442343
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
 
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -37,33 +37,6 @@ import org.eclipse.swt.widgets.TableColumn;
 public class Snippet046UpdateViewerFromBackgroundThread {
 	private static Image[] images;
 
-	private class MyContentProvider implements IStructuredContentProvider {
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
-		@Override
-		public Object[] getElements(Object inputElement) {
-			return (MyModel[])inputElement;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
-		@Override
-		public void dispose() {
-
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
-		}
-
-	}
 
 	public class MyModel {
 		public int counter;
@@ -111,7 +84,7 @@ public class Snippet046UpdateViewerFromBackgroundThread {
 	public Snippet046UpdateViewerFromBackgroundThread(Shell shell) {
 		final TableViewer v = new TableViewer(shell,SWT.BORDER|SWT.FULL_SELECTION);
 		v.setLabelProvider(new MyLabelProvider());
-		v.setContentProvider(new MyContentProvider());
+		v.setContentProvider(ArrayContentProvider.getInstance());
 
 		TableColumn column = new TableColumn(v.getTable(),SWT.NONE);
 		column.setWidth(200);

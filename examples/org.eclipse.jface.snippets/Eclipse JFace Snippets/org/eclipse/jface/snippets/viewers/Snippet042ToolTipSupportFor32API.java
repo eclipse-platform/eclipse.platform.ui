@@ -8,17 +8,17 @@
  * Contributors:
  *     Tom Schindl - initial API and implementation
  *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 442343
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.DefaultToolTip;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
@@ -138,41 +138,6 @@ public class Snippet042ToolTipSupportFor32API {
 		}
 	}
 
-	private class MyContentProvider implements IStructuredContentProvider {
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
-		@Override
-		public Object[] getElements(Object inputElement) {
-			return (MyModel[]) inputElement;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
-		@Override
-		public void dispose() {
-
-		}
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-		 *      java.lang.Object, java.lang.Object)
-		 */
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
-		}
-
-	}
-
 	public class MyModel {
 		public int counter;
 
@@ -221,7 +186,7 @@ public class Snippet042ToolTipSupportFor32API {
 		final TableViewer v = new TableViewer(shell, SWT.BORDER
 				| SWT.FULL_SELECTION);
 		v.setLabelProvider(new MyLabelProvider());
-		v.setContentProvider(new MyContentProvider());
+		v.setContentProvider(ArrayContentProvider.getInstance());
 
 		TableColumn column = new TableColumn(v.getTable(), SWT.NONE);
 		column.setWidth(200);

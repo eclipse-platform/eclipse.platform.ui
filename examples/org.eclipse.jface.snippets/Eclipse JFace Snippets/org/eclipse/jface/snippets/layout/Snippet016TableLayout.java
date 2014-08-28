@@ -8,17 +8,17 @@
  * Contributors:
  *     Tom Schindl - initial API and implementation
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 442343
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.layout;
 
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
@@ -29,30 +29,11 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 /**
- * A simple TableViewer to demonstrate usage
+ * A simple TableViewer to demonstrate usage of the {@link TableColumnLayout}.
  *
  * @author Tom Schindl <tom.schindl@bestsolution.at>
- * @since 3.3M3
  */
 public class Snippet016TableLayout {
-	private class MyContentProvider implements IStructuredContentProvider {
-
-		@Override
-		public Object[] getElements(Object inputElement) {
-			return (MyModel[]) inputElement;
-		}
-
-		@Override
-		public void dispose() {
-
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
-		}
-
-	}
 
 	private class MyLabelProvider extends LabelProvider implements
 			ITableLabelProvider {
@@ -85,7 +66,7 @@ public class Snippet016TableLayout {
 	public Snippet016TableLayout(Composite comp) {
 		final TableViewer v = new TableViewer(new Table(comp, SWT.BORDER));
 		v.setLabelProvider(new MyLabelProvider());
-		v.setContentProvider(new MyContentProvider());
+		v.setContentProvider(ArrayContentProvider.getInstance());
 		v.getTable().setHeaderVisible(true);
 
 		TableColumnLayout ad = new TableColumnLayout();

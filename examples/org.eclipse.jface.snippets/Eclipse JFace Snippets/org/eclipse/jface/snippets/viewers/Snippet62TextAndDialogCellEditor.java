@@ -8,18 +8,18 @@
  * Contributors:
  *     Eric Rizzo - initial implementation
  *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 442343
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.EditingSupport;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -34,25 +34,6 @@ import org.eclipse.swt.widgets.Shell;
  *
  */
 public class Snippet62TextAndDialogCellEditor {
-
-	private class MyContentProvider implements IStructuredContentProvider {
-
-		@Override
-		public Object[] getElements(Object inputElement) {
-			return (Person[]) inputElement;
-		}
-
-		@Override
-		public void dispose() {
-			// noting to do
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// noting to do
-		}
-
-	}
 
 	public class Person {
 		public String givenname;
@@ -100,7 +81,7 @@ public class Snippet62TextAndDialogCellEditor {
 
 	public Snippet62TextAndDialogCellEditor(Shell shell) {
 		TableViewer v = new TableViewer(shell, SWT.BORDER | SWT.FULL_SELECTION);
-		v.setContentProvider(new MyContentProvider());
+		v.setContentProvider(ArrayContentProvider.getInstance());
 
 		TableViewerColumn column = new TableViewerColumn(v, SWT.NONE);
 		column.getColumn().setWidth(200);
