@@ -209,6 +209,7 @@ public class CommonViewer extends TreeViewer {
 	/*
 	 * @see ContentViewer#handleLabelProviderChanged(LabelProviderChangedEvent)
 	 */
+	@Override
 	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
 
 		Object[] changed = event.getElements();
@@ -235,6 +236,7 @@ public class CommonViewer extends TreeViewer {
 		super.handleLabelProviderChanged(event);
 	}
 
+	@Override
 	protected void handleDispose(DisposeEvent event) {
 		dispose();
 		super.handleDispose(event);
@@ -260,6 +262,7 @@ public class CommonViewer extends TreeViewer {
 	 * @param sorter
 	 *            a viewer sorter, or <code>null</code> if none
 	 */
+	@Override
 	public void setSorter(ViewerSorter sorter) {
 		if (sorter != null && sorter instanceof CommonViewerSorter) {
 			((CommonViewerSorter) sorter).setContentService(contentService);
@@ -287,6 +290,7 @@ public class CommonViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#add(java.lang.Object,
 	 *      java.lang.Object[])
 	 */
+	@Override
 	public void add(Object parentElement, Object[] childElements) {
 		NavigatorPipelineService pipeDream = (NavigatorPipelineService) contentService
 				.getPipelineService();
@@ -311,6 +315,7 @@ public class CommonViewer extends TreeViewer {
 	 * 
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object[])
 	 */
+	@Override
 	public void remove(Object[] elements) {
 		NavigatorPipelineService pipeDream = (NavigatorPipelineService) contentService
 				.getPipelineService();
@@ -329,6 +334,7 @@ public class CommonViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#refresh(java.lang.Object,
 	 *      boolean)
 	 */
+	@Override
 	public void refresh(Object element, boolean updateLabels) {
 
 		if(element != getInput()) {
@@ -358,6 +364,7 @@ public class CommonViewer extends TreeViewer {
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.Viewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean)
 	 */
+	@Override
 	public void setSelection(ISelection selection, boolean reveal) { 
 
 		if(selection instanceof IStructuredSelection) {
@@ -382,7 +389,8 @@ public class CommonViewer extends TreeViewer {
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ContentViewer#hookControl(Control)
      */
-    protected void hookControl(Control control) {
+    @Override
+	protected void hookControl(Control control) {
     	super.hookControl(control);
         // FIXME - This caching thing should not be here; it's brittle.
         // The underlying problem of over-calling of getSelection() should
@@ -391,7 +399,8 @@ public class CommonViewer extends TreeViewer {
         // some platforms (GTK).  Since DragStart can turn around and
         // call getSelection(), we need to clear the cache.
         control.addMouseListener(new MouseAdapter() {
-            public void mouseDown(MouseEvent e) {
+            @Override
+			public void mouseDown(MouseEvent e) {
             	clearSelectionCache();
             }
         });
@@ -412,6 +421,7 @@ public class CommonViewer extends TreeViewer {
 	/*
 	 * @see StructuredViewer#mapElement(Object, Widget)
 	 */
+	@Override
 	protected void mapElement(Object element, Widget item) {
 		super.mapElement(element, item);
 		if (_mapper != null && item instanceof Item) {
@@ -422,6 +432,7 @@ public class CommonViewer extends TreeViewer {
 	/*
 	 * @see StructuredViewer#unmapElement(Object, Widget)
 	 */
+	@Override
 	protected void unmapElement(Object element, Widget item) {
 		if (_mapper != null && item instanceof Item) {
 			_mapper.removeFromMap(element, (Item) item);
@@ -432,6 +443,7 @@ public class CommonViewer extends TreeViewer {
 	/*
 	 * @see StructuredViewer#unmapAllElements()
 	 */
+	@Override
 	protected void unmapAllElements() {
 		if (_mapper != null)
 			_mapper.clearMap();
@@ -441,6 +453,7 @@ public class CommonViewer extends TreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#setSelectionToWidget(java.util.List, boolean)
 	 */
+	@Override
 	protected void setSelectionToWidget(List v, boolean reveal) {
 		clearSelectionCache();
 		super.setSelectionToWidget(v, reveal);
@@ -449,6 +462,7 @@ public class CommonViewer extends TreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#handleDoubleSelect(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	protected void handleDoubleSelect(SelectionEvent event) {
 		clearSelectionCache();
 		super.handleDoubleSelect(event);
@@ -457,6 +471,7 @@ public class CommonViewer extends TreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#handleOpen(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	protected void handleOpen(SelectionEvent event) {
 		clearSelectionCache();
 		super.handleOpen(event);
@@ -465,6 +480,7 @@ public class CommonViewer extends TreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#handlePostSelect(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	protected void handlePostSelect(SelectionEvent e) {
 		clearSelectionCache();
 		super.handlePostSelect(e);
@@ -473,6 +489,7 @@ public class CommonViewer extends TreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#handleSelect(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	protected void handleSelect(SelectionEvent event) {
 		clearSelectionCache();
 		super.handleSelect(event);
@@ -494,6 +511,7 @@ public class CommonViewer extends TreeViewer {
 	 * 
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getSelection()
 	 */
+	@Override
 	public ISelection getSelection() {
 		if (cachedSelection == null) {
 			cachedSelection = super.getSelection();
@@ -506,6 +524,7 @@ public class CommonViewer extends TreeViewer {
 	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#refresh(java.lang.Object)
 	 */
+	@Override
 	public void refresh(Object element) {
 		refresh(element, true);
 	}
@@ -516,6 +535,7 @@ public class CommonViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#update(java.lang.Object,
 	 *      java.lang.String[])
 	 */
+	@Override
 	public void update(Object element, String[] properties) {
 		if(element != getInput()) {
 			INavigatorPipelineService pipeDream = contentService
@@ -544,6 +564,7 @@ public class CommonViewer extends TreeViewer {
 	 * 
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return contentService.toString() + " Viewer"; //$NON-NLS-1$
 	}
@@ -554,6 +575,7 @@ public class CommonViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#internalRefresh(java.lang.Object,
 	 *      boolean)
 	 */
+	@Override
 	protected void internalRefresh(Object element, boolean updateLabels) {
 		if (element == null && getRoot() == null) {
 			return;

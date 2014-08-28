@@ -47,6 +47,7 @@ public class CustomAndExpression extends Expression {
 		if (children.length == 0)
 			return;
 		SafeRunner.run(new NavigatorSafeRunnable() {
+			@Override
 			public void run() throws Exception {
 				fExpressions = new ArrayList<Expression>();
 				for (int i = 0; i < children.length; i++) {
@@ -58,6 +59,7 @@ public class CustomAndExpression extends Expression {
 
 	}
 
+	@Override
 	public EvaluationResult evaluate(IEvaluationContext scope) {
 		if (fExpressions == null) {
 			return EvaluationResult.TRUE;

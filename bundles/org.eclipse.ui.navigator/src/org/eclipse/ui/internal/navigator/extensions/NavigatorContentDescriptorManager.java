@@ -429,15 +429,18 @@ public class NavigatorContentDescriptorManager {
 		 *
 		 * @see org.eclipse.ui.internal.navigator.extensions.RegistryReader#readRegistry()
 		 */
+		@Override
 		public void readRegistry() {
 			super.readRegistry();
 			computeSequenceNumbers();
 			computeOverrides();
 		}
 
+		@Override
 		protected boolean readElement(final IConfigurationElement anElement) {
 			if (TAG_NAVIGATOR_CONTENT.equals(anElement.getName())) {
 				SafeRunner.run(new NavigatorSafeRunnable(anElement) {
+					@Override
 					public void run() throws Exception {
 						addNavigatorContentDescriptor(new NavigatorContentDescriptor(anElement));
 					}

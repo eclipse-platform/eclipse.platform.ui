@@ -100,6 +100,7 @@ public final class CommonDropAdapterDescriptor implements
 	public CommonDropAdapterAssistant createDropAssistant() {
 		final CommonDropAdapterAssistant[] retValue = new CommonDropAdapterAssistant[1];
 		SafeRunner.run(new NavigatorSafeRunnable(element) {
+			@Override
 			public void run() throws Exception {
 				retValue[0] = (CommonDropAdapterAssistant) element
 						.createExecutableExtension(ATT_CLASS);

@@ -76,6 +76,7 @@ public class UpdateActiveExtensionsOperation extends AbstractOperation {
 	 * @see org.eclipse.core.commands.operations.AbstractOperation#execute(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info) {
 
 		boolean updateExtensionActivation = false;
@@ -149,6 +150,7 @@ public class UpdateActiveExtensionsOperation extends AbstractOperation {
 	 * @see org.eclipse.core.commands.operations.AbstractOperation#redo(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info) {
 		return null;
 	}
@@ -159,6 +161,7 @@ public class UpdateActiveExtensionsOperation extends AbstractOperation {
 	 * @see org.eclipse.core.commands.operations.AbstractOperation#undo(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info) {
 		return null;
 	}

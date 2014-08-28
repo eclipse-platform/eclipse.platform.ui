@@ -36,7 +36,8 @@ public class CommonNavigatorFrameSource extends TreeViewerFrameSource {
      * by setting the frame's tool tip text to show the full path for the input
      * element.
      */
-    protected TreeFrame createFrame(Object input) {
+    @Override
+	protected TreeFrame createFrame(Object input) {
         TreeFrame frame = super.createFrame(input);
         frame.setName(navigator.getTitle());
         frame.setToolTipText(navigator.getFrameToolTipText(input));
@@ -46,7 +47,8 @@ public class CommonNavigatorFrameSource extends TreeViewerFrameSource {
     /**
      * Also updates the navigator's title.
      */
-    protected void frameChanged(TreeFrame frame) {
+    @Override
+	protected void frameChanged(TreeFrame frame) {
         super.frameChanged(frame);
         navigator.updateTitle();
     }

@@ -43,7 +43,8 @@ public class TreeViewerFrameSource implements IFrameSource {
      */
     public void connectTo(FrameList frameList) {
         frameList.addPropertyChangeListener(new IPropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent event) {
+            @Override
+			public void propertyChange(PropertyChangeEvent event) {
                 TreeViewerFrameSource.this.handlePropertyChange(event);
             }
         });
@@ -92,7 +93,8 @@ public class TreeViewerFrameSource implements IFrameSource {
     /* (non-Javadoc)
      * Method declared on IFrameSource.
      */
-    public Frame getFrame(int whichFrame, int flags) {
+    @Override
+	public Frame getFrame(int whichFrame, int flags) {
         switch (whichFrame) {
         case IFrameSource.CURRENT_FRAME:
             return getCurrentFrame(flags);

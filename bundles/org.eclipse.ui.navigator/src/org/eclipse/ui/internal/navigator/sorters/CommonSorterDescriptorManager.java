@@ -131,6 +131,7 @@ public class CommonSorterDescriptorManager {
 		 * 
 		 * @see org.eclipse.ui.internal.navigator.extensions.NavigatorContentRegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
 		 */
+		@Override
 		protected boolean readElement(IConfigurationElement element) {
 
 			if (TAG_NAVIGATOR_CONTENT.equals(element.getName())) {

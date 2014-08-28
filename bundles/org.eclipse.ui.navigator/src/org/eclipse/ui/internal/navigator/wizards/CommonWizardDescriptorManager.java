@@ -175,11 +175,13 @@ public class CommonWizardDescriptorManager {
   
 	private class CommonWizardRegistry extends NavigatorContentRegistryReader {
 
+		@Override
 		protected boolean readElement(final IConfigurationElement anElement) {
 			final boolean[] retValue = new boolean[1];
 
 			if (TAG_COMMON_WIZARD.equals(anElement.getName())) {
 				SafeRunner.run(new NavigatorSafeRunnable(anElement) {
+					@Override
 					public void run() throws Exception {
 						addCommonWizardDescriptor(new CommonWizardDescriptor(anElement));
 						retValue[0] = true;
@@ -197,6 +199,7 @@ public class CommonWizardDescriptorManager {
 					// Assume it did not work
 					retValue[0] = false;
 					SafeRunner.run(new NavigatorSafeRunnable(element) {
+						@Override
 						public void run() throws Exception {
 							addCommonWizardDescriptor(new CommonWizardDescriptor(element,
 									contentExtensionId));

@@ -50,6 +50,7 @@ public class ExtensionSequenceNumberComparator implements Comparator {
 	 * 
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public int compare(Object o1, Object o2) {
 
 		INavigatorContentDescriptor lvalue = null;

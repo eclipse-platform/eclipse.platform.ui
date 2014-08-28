@@ -104,21 +104,25 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		enforceHasChildren = vDesc.getBooleanConfigProperty(NavigatorViewerDescriptor.PROP_ENFORCE_HAS_CHILDREN);
 	}
 
+	@Override
 	public void inputChanged(Viewer aViewer, Object anOldInput, Object aNewInput) {
 		viewer = aViewer;
 		contentService.updateService(aViewer, anOldInput, aNewInput);
 	}
 
+	@Override
 	public Object[] getElements(Object anInputElement) {
 		Set rootContentExtensions = contentService.findRootContentExtensions(anInputElement);
 		return internalGetChildren(anInputElement, anInputElement, rootContentExtensions, ELEMENTS);
 	}
 
+	@Override
 	public Object[] getChildren(Object aParentElement) {
 		Set enabledExtensions = contentService.findContentExtensionsByTriggerPoint(aParentElement);
 		return internalGetChildren(aParentElement, aParentElement, enabledExtensions, !ELEMENTS);
 	}
 
+	@Override
 	public Object[] getChildren(TreePath parentPath) {
 		Object aParentElement = internalAsElement(parentPath);
 		Set enabledExtensions = contentService.findContentExtensionsByTriggerPoint(aParentElement);
@@ -141,6 +145,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 				Object[] contributedChildren = null;
 				NavigatorContentExtension[] overridingExtensions;
 
+				@Override
 				public void run() throws Exception {
 					if (!isOverridingExtensionInSet(foundExtension.getDescriptor(),
 							enabledExtensions)) {
@@ -165,6 +170,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 					}
 				}
 
+				@Override
 				public void handleException(Throwable e) {
 					NavigatorPlugin.logError(0, NLS.bind(
 							CommonNavigatorMessages.Exception_Invoking_Extension, new Object[] {
@@ -278,6 +284,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		return false;
 	}
 
+	@Override
 	public Object getParent(final Object anElement) {
 		final Set extensions = contentService.findContentExtensionsWithPossibleChild(anElement);
 		final Object[] parent = new Object[1];
@@ -288,6 +295,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 			SafeRunner.run(new NavigatorSafeRunnable() {
 				NavigatorContentExtension[] overridingExtensions;
 
+				@Override
 				public void run() throws Exception {
 					if (!isOverridingExtensionInSet(foundExtension.getDescriptor(), extensions)) {
 						parent[0] = foundExtension.internalGetContentProvider()
@@ -300,6 +308,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 					}
 				}
 
+				@Override
 				public void handleException(Throwable e) {
 					NavigatorPlugin.logError(0, NLS.bind(
 							CommonNavigatorMessages.Exception_Invoking_Extension, new Object[] {
@@ -314,6 +323,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		return parent[0];
 	}
 
+	@Override
 	public TreePath[] getParents(Object anElement) {
 		List paths = new ArrayList();
 		TreePathCompiler compiler = new TreePathCompiler(anElement);
@@ -372,6 +382,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 	 *  For pipelined calls, we simply ask the pipelined content provider about the children
 	 *  and they can override this as they would in the case where they are providing the objects.
 	 */
+	@Override
 	public boolean hasChildren(final Object anElementOrPath) {
 		final Object anElement = internalAsElement(anElementOrPath);
 		final Set enabledExtensions = contentService.findContentExtensionsByTriggerPoint(anElement);
@@ -381,6 +392,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 			SafeRunner.run(new NavigatorSafeRunnable() {
 				NavigatorContentExtension ext;
 
+				@Override
 				public void run() throws Exception {
 					ext = (NavigatorContentExtension) itr.next();
 
@@ -408,6 +420,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 					}
 				}
 
+				@Override
 				public void handleException(Throwable e) {
 					NavigatorPlugin.logError(0, NLS.bind(
 							CommonNavigatorMessages.Exception_Invoking_Extension, new Object[] {
@@ -418,6 +431,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		return suggestedHasChildren[0];
 	}
 
+	@Override
 	public boolean hasChildren(TreePath path) {
 		return hasChildren((Object)path);
 	}
@@ -465,6 +479,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 	 * 
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (disposeContentService) {
 			contentService.dispose();
@@ -566,6 +581,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		 * 
 		 * @see java.lang.Object#toString()
 		 */
+		@Override
 		public String toString() {
 
 			StringBuffer buffer = new StringBuffer();
@@ -614,6 +630,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 				NavigatorContentExtension foundExtension;
 				Object parent = null;
 
+				@Override
 				public void run() throws Exception {
 					foundDescriptor = (NavigatorContentDescriptor) itr.next();
 					foundExtension = contentService.getExtension(foundDescriptor);
@@ -639,6 +656,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 					}
 				}
 
+				@Override
 				public void handleException(Throwable e) {
 					NavigatorPlugin.logError(0, NLS.bind(
 							CommonNavigatorMessages.Exception_Invoking_Extension, new Object[] {

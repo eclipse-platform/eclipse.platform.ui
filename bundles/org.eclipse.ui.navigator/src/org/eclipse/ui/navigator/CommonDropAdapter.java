@@ -92,6 +92,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	 * 
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
+	@Override
 	public void dragEnter(DropTargetEvent event) {
 
 		if (event.detail == DND.DROP_NONE)
@@ -145,6 +146,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	 * 
 	 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragLeave(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
+	@Override
 	public void dragLeave(DropTargetEvent event) {
 		super.dragLeave(event);
 		if (LocalSelectionTransfer.getTransfer().isSupportedType(
@@ -154,6 +156,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 		}
 	}
 
+	@Override
 	public boolean performDrop(Object data) {
 		final DropTargetEvent event = getCurrentEvent();
 		if (Policy.DEBUG_DND) {
@@ -182,6 +185,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 		for (int i = 0; i < assistants.length; i++) {
 			final CommonDropAdapterAssistant localAssistant = assistants[i];
 			SafeRunner.run(new NavigatorSafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					localAssistant.setCurrentEvent(event);
 					IStatus valid = localAssistant.validateDrop(target, getCurrentOperation(),
@@ -209,6 +213,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#validateDrop(java.lang.Object,
 	 *      int, org.eclipse.swt.dnd.TransferData)
 	 */
+	@Override
 	public boolean validateDrop(final Object aDropTarget, final int theDropOperation,
 			final TransferData theTransferData) {
 
@@ -242,6 +247,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 				final CommonDropAdapterAssistant assistantLocal = assistants[i];
 
 				SafeRunner.run(new NavigatorSafeRunnable() {
+					@Override
 					public void run() throws Exception {
 						assistantLocal.setCurrentEvent(getCurrentEvent());
 						valid[0] = assistantLocal.validateDrop(target, theDropOperation,
@@ -282,6 +288,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	 * 
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getBounds(org.eclipse.swt.widgets.Item)
 	 */
+	@Override
 	public Rectangle getBounds(Item item) {
 		return super.getBounds(item);
 	}
@@ -291,6 +298,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	 * 
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getCurrentLocation()
 	 */
+	@Override
 	public int getCurrentLocation() {
 		return super.getCurrentLocation();
 	}
@@ -300,6 +308,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	 * 
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getCurrentOperation()
 	 */
+	@Override
 	public int getCurrentOperation() {
 		return super.getCurrentOperation();
 	}
@@ -308,6 +317,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#overrideOperation(int)
 	 * @since 3.4
 	 */
+	@Override
 	public void overrideOperation(int operation) {
 		if (Policy.DEBUG_DND) {
 			System.out.println("CommonDropAdapter.overrideOperation: " + operation); //$NON-NLS-1$
@@ -320,6 +330,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	 * 
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getCurrentTarget()
 	 */
+	@Override
 	public Object getCurrentTarget() {
 		return super.getCurrentTarget();
 	}
@@ -329,6 +340,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	 * 
 	 * @see org.eclipse.ui.part.PluginDropAdapter#getCurrentTransfer()
 	 */
+	@Override
 	public TransferData getCurrentTransfer() {
 		return super.getCurrentTransfer();
 	}

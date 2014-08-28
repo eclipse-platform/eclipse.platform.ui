@@ -88,6 +88,7 @@ public final class NavigatorViewerDescriptor implements
 	 * 
 	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorViewerDescriptor#getViewerId()
 	 */
+	@Override
 	public String getViewerId() {
 		return viewerId;
 	}
@@ -97,6 +98,7 @@ public final class NavigatorViewerDescriptor implements
 	 * 
 	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorViewerDescriptor#getPopupMenuId()
 	 */
+	@Override
 	public String getPopupMenuId() {
 		return popupMenuId != null ? popupMenuId : viewerId;
 	}
@@ -123,26 +125,32 @@ public final class NavigatorViewerDescriptor implements
 		consumeBinding(element, true);
 	}
 
+	@Override
 	public boolean isRootExtension(String aContentExtensionId) {
 		return contentBinding.isRootExtension(aContentExtensionId);
 	}
 
+	@Override
 	public boolean allowsPlatformContributionsToContextMenu() {
 		return allowsPlatformContributions;
 	}
 
+	@Override
 	public boolean isVisibleContentExtension(String aContentExtensionId) {
 		return contentBinding.isVisibleExtension(aContentExtensionId);
 	}
 
+	@Override
 	public boolean isVisibleActionExtension(String anActionExtensionId) {
 		return actionBinding.isVisibleExtension(anActionExtensionId);
 	}
 
+	@Override
 	public boolean hasOverriddenRootExtensions() {
 		return contentBinding.hasOverriddenRootExtensions();
 	}
 
+	@Override
 	public MenuInsertionPoint[] getCustomInsertionPoints() {
 		return customInsertionPoints;
 	}
@@ -196,6 +204,7 @@ public final class NavigatorViewerDescriptor implements
 	/**
 	 * @return the help context associated with this viewer
 	 */
+	@Override
 	public String getHelpContext() {
 		return helpContext;
 	}
@@ -250,6 +259,7 @@ public final class NavigatorViewerDescriptor implements
 	 * 
 	 * @see org.eclipse.ui.navigator.INavigatorViewerDescriptor#getStringConfigProperty(java.lang.String)
 	 */
+	@Override
 	public String getStringConfigProperty(String aPropertyName) {
 		return properties.getProperty(aPropertyName);
 	}
@@ -259,6 +269,7 @@ public final class NavigatorViewerDescriptor implements
 	 * 
 	 * @see org.eclipse.ui.navigator.INavigatorViewerDescriptor#getBooleanConfigProperty(java.lang.String)
 	 */
+	@Override
 	public boolean getBooleanConfigProperty(String aPropertyName) {
 		String propValue = properties.getProperty(aPropertyName);
 		if (propValue == null) {
@@ -277,6 +288,7 @@ public final class NavigatorViewerDescriptor implements
 	 * 
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return "ViewerDescriptor[" + viewerId + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}

@@ -39,6 +39,7 @@ public final class SkeletonLabelProvider implements ICommonLabelProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		return null;
 	}
@@ -48,6 +49,7 @@ public final class SkeletonLabelProvider implements ICommonLabelProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		return null;
 	}
@@ -57,6 +59,7 @@ public final class SkeletonLabelProvider implements ICommonLabelProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 
 	}
@@ -66,6 +69,7 @@ public final class SkeletonLabelProvider implements ICommonLabelProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 
 	}
@@ -76,6 +80,7 @@ public final class SkeletonLabelProvider implements ICommonLabelProvider {
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
 	 *      java.lang.String)
 	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
@@ -85,24 +90,29 @@ public final class SkeletonLabelProvider implements ICommonLabelProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 
 	}
 
  
+	@Override
 	public void init(ICommonContentExtensionSite aConfig) {
 
 	}
 
  
+	@Override
 	public String getDescription(Object anElement) {
 		return null;
 	}
 
+	@Override
 	public void restoreState(IMemento aMemento) { 
 		
 	}
 
+	@Override
 	public void saveState(IMemento aMemento) { 
 		
 	}

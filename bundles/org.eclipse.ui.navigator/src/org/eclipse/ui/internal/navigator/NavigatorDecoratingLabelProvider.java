@@ -55,6 +55,7 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider#getImage(java.lang.Object)
 		 */
+		@Override
 		public Image getImage(Object element) {
 			return provider.getImage(element);
 		}
@@ -62,6 +63,7 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider#getStyledText(java.lang.Object)
 		 */
+		@Override
 		public StyledString getStyledText(Object element) {
 			if (provider instanceof IStyledLabelProvider) {
 				return ((IStyledLabelProvider) provider).getStyledText(element);
@@ -75,6 +77,7 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 		 */
+		@Override
 		public void addListener(ILabelProviderListener listener) {
 			provider.addListener(listener);
 		}
@@ -82,6 +85,7 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 			provider.dispose();
 		}
@@ -89,6 +93,7 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
 		 */
+		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			return provider.isLabelProperty(element, property);
 		}
@@ -96,6 +101,7 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 		 */
+		@Override
 		public void removeListener(ILabelProviderListener listener) {
 			provider.removeListener(listener);
 		}
@@ -103,6 +109,7 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 		 */
+		@Override
 		public Color getBackground(Object element) {
 			if (provider instanceof IColorProvider) {
 				return ((IColorProvider) provider).getBackground(element);
@@ -113,6 +120,7 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 		 */
+		@Override
 		public Color getForeground(Object element) {
 			if (provider instanceof IColorProvider) {
 				return ((IColorProvider) provider).getForeground(element);
@@ -123,6 +131,7 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 		 */
+		@Override
 		public Font getFont(Object element) {
 			if (provider instanceof IFontProvider) {
 				return ((IFontProvider) provider).getFont(element);
@@ -133,6 +142,7 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 		 */
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (provider instanceof ITableLabelProvider) {
 				return ((ITableLabelProvider) provider).getColumnImage(element, columnIndex);
@@ -143,6 +153,7 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 		 */
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			if (provider instanceof ITableLabelProvider) {
 				return ((ITableLabelProvider) provider).getColumnText(element, columnIndex);
@@ -163,6 +174,7 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#initialize(org.eclipse.jface.viewers.ColumnViewer, org.eclipse.jface.viewers.ViewerColumn)
 	 */
+	@Override
 	public void initialize(ColumnViewer viewer, ViewerColumn column) {
 		PlatformUI.getPreferenceStore().addPropertyChangeListener(this);
 		JFaceResources.getColorRegistry().addListener(this);
@@ -175,6 +187,7 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.DecoratingStyledCellLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		PlatformUI.getPreferenceStore().removePropertyChangeListener(this);
@@ -202,11 +215,13 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		String property= event.getProperty();
 		if (property.equals(JFacePreferences.QUALIFIER_COLOR) || property.equals(JFacePreferences.COUNTER_COLOR) || property.equals(JFacePreferences.DECORATIONS_COLOR)
 				|| property.equals(IWorkbenchPreferenceConstants.USE_COLORED_LABELS)) {
 			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					refresh();
 				}
@@ -217,6 +232,7 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		return getStyledText(element).getString();
 	}
@@ -224,6 +240,7 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 	 */
+	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		return ((StyledLabelProviderAdapter)getStyledStringProvider()).getColumnImage(element, columnIndex);
 	}
@@ -231,6 +248,7 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 	 */
+	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		return ((StyledLabelProviderAdapter)getStyledStringProvider()).getColumnText(element, columnIndex);
 	}

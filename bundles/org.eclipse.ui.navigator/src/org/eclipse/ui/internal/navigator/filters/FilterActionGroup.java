@@ -64,6 +64,7 @@ public class FilterActionGroup extends ActionGroup {
 	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
 	 */
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		IMenuManager menu = actionBars.getMenuManager();
 		menu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS,
@@ -90,6 +91,7 @@ public class FilterActionGroup extends ActionGroup {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) { 
 		super.fillContextMenu(menu);
 	}

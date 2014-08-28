@@ -192,6 +192,7 @@ public class CommonActionProviderDescriptor implements
 		}
 		final CommonActionProvider[] provider = new CommonActionProvider[1];
 		SafeRunner.run(new NavigatorSafeRunnable(configurationElement) {
+			@Override
 			public void run() throws Exception {
 				provider[0] = (CommonActionProvider) configurationElement
 						.createExecutableExtension(ATT_CLASS);
@@ -322,6 +323,7 @@ public class CommonActionProviderDescriptor implements
 	}
 
 
+	@Override
 	public int hashCode() {
 		final int PRIME = 31;
 		int result = 1;
@@ -330,6 +332,7 @@ public class CommonActionProviderDescriptor implements
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -395,6 +398,7 @@ public class CommonActionProviderDescriptor implements
 		return pluginId;
 	}
 	
+	@Override
 	public String toString() {
 		if (toString == null) {
 			toString = "CommonActionProviderDescriptor[definedId=" + getDefinedId() + ", visibilityId=" + getId() + ", dependsOn=" + getDependsOnId() + ", overrides=" + getOverridesId() + "]"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
@@ -421,6 +425,7 @@ public class CommonActionProviderDescriptor implements
 		/* (non-Javadoc)
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public int compare(Object o1, Object o2) {
 			CommonActionProviderDescriptor lvalue= null, rvalue= null;
 			

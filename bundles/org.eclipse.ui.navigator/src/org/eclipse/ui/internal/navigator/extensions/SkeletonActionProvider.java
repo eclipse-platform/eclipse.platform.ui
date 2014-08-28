@@ -36,6 +36,7 @@ public final  class SkeletonActionProvider extends CommonActionProvider {
 		super();
 	}
 
+	@Override
 	public void init(ICommonActionExtensionSite aConfig) {
 
 	}

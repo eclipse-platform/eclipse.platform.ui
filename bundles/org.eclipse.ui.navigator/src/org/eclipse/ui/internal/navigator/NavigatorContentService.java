@@ -180,6 +180,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		structuredViewerManager = new StructuredViewerManager(aViewer, this);
 	}
 
+	@Override
 	public String[] getVisibleExtensionIds() {
 
 		List<String> visibleExtensionIds = new ArrayList<String>();
@@ -199,6 +200,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	}
 
+	@Override
 	public INavigatorContentDescriptor[] getVisibleExtensions() {
 		List<NavigatorContentDescriptor> visibleDescriptors = new ArrayList<NavigatorContentDescriptor>();
 
@@ -244,6 +246,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * org.eclipse.ui.navigator.INavigatorContentService#bindExtensions(java
 	 * .lang.String[], boolean)
 	 */
+	@Override
 	public INavigatorContentDescriptor[] bindExtensions(String[] extensionIds,
 			boolean isRoot) {
 		if (extensionIds == null || extensionIds.length == 0) {
@@ -283,6 +286,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @seeorg.eclipse.ui.internal.navigator.INavigatorContentService#
 	 * createCommonContentProvider()
 	 */
+	@Override
 	public ITreeContentProvider createCommonContentProvider() {
 		if (contentProviderInitialized) {
 			return contentProvider;
@@ -303,6 +307,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @seeorg.eclipse.ui.internal.navigator.INavigatorContentService#
 	 * createCommonLabelProvider()
 	 */
+	@Override
 	public ILabelProvider createCommonLabelProvider() {
 		if (labelProviderInitialized) {
 			return labelProvider;
@@ -322,6 +327,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @seeorg.eclipse.ui.navigator.INavigatorContentService#
 	 * createCommonDescriptionProvider()
 	 */
+	@Override
 	public IDescriptionProvider createCommonDescriptionProvider() {
 		if (descriptionProvider != null) {
 			return descriptionProvider;
@@ -340,6 +346,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * 
 	 * @see org.eclipse.ui.internal.navigator.INavigatorContentService#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (navigatorSaveablesService != null) {
 			assistant.removeListener(navigatorSaveablesService);
@@ -390,6 +397,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		}
 	}
 
+	@Override
 	public IExtensionStateModel findStateModel(String anExtensionId) {
 		if (anExtensionId == null) {
 			return null;
@@ -516,6 +524,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 *         a root element or have a <b>triggerPoints</b> expression that is
 	 *         <i>enabled</i> for the given element.
 	 */
+	@Override
 	public Set<NavigatorContentExtension> findRootContentExtensions(Object anElement) {
 		return findRootContentExtensions(anElement, true);
 	}
@@ -595,6 +604,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * 
 	 * @see INavigatorContentService#getContentDescriptorById(String)
 	 */
+	@Override
 	public INavigatorContentDescriptor getContentDescriptorById(
 			String anExtensionId) {
 		return CONTENT_DESCRIPTOR_REGISTRY.getContentDescriptor(anExtensionId);
@@ -609,6 +619,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @return An instance of the content extension for the given extension id.
 	 *         May return <b>null</b> if the id is invalid.
 	 */
+	@Override
 	public INavigatorContentExtension getContentExtensionById(
 			String anExtensionId) {
 		NavigatorContentDescriptor descriptor = CONTENT_DESCRIPTOR_REGISTRY
@@ -629,6 +640,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 *         have a <b>triggerPoints</b> expression that is <i>enabled</i> for
 	 *         the given element.
 	 */
+	@Override
 	public Set<NavigatorContentExtension> findContentExtensionsByTriggerPoint(Object anElement) {
 		return findContentExtensionsByTriggerPoint(anElement, true, !CONSIDER_OVERRIDES);
 	}
@@ -664,6 +676,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 *         have a <b>possibleChildren</b> expression that is <i>enabled</i>
 	 *         for the given element.
 	 */
+	@Override
 	public Set<NavigatorContentExtension> findContentExtensionsWithPossibleChild(Object anElement) {
 		return findContentExtensionsWithPossibleChild(anElement, true);
 	}
@@ -848,10 +861,12 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @seeorg.eclipse.ui.internal.navigator.INavigatorContentService#
 	 * onExtensionActivation(java.lang.String, java.lang.String, boolean)
 	 */
+	@Override
 	public void onExtensionActivation(String aViewerId,
 			String[] aNavigatorExtensionId, boolean toEnable) {
 		synchronized (this) {
 			SafeRunner.run(new NavigatorSafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					NavigatorContentDescriptor key;
 					NavigatorContentExtension extension;
@@ -880,6 +895,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * 
 	 * @see org.eclipse.ui.internal.navigator.INavigatorContentService#update()
 	 */
+	@Override
 	public void update() {
 		rootContentProviders = null;
 		if (structuredViewerManager != null) {
@@ -893,6 +909,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see
 	 * org.eclipse.ui.internal.navigator.INavigatorContentService#getViewerId()
 	 */
+	@Override
 	public final String getViewerId() {
 		return viewerDescriptor.getViewerId();
 	}
@@ -964,6 +981,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @seeorg.eclipse.ui.internal.navigator.INavigatorContentService#
 	 * getViewerDescriptor()
 	 */
+	@Override
 	public INavigatorViewerDescriptor getViewerDescriptor() {
 		return viewerDescriptor;
 	}
@@ -975,6 +993,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * org.eclipse.ui.internal.navigator.INavigatorContentService#restoreState
 	 * (org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void restoreState(final IMemento aMemento) {
 		synchronized (this) {
 			for (Iterator extensionItr = getExtensions().iterator(); extensionItr.hasNext();) {
@@ -982,6 +1001,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 						.next();
 				SafeRunner.run(new NavigatorSafeRunnable(((NavigatorContentDescriptor) element
 						.getDescriptor()).getConfigElement()) {
+					@Override
 					public void run() throws Exception {
 						element.restoreState(aMemento);
 					}
@@ -997,6 +1017,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * org.eclipse.ui.internal.navigator.INavigatorContentService#saveState(
 	 * org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void saveState(final IMemento aMemento) {
 		synchronized (this) {
 			for (Iterator extensionItr = getExtensions().iterator(); extensionItr.hasNext();) {
@@ -1004,6 +1025,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 						.next();
 				SafeRunner.run(new NavigatorSafeRunnable(((NavigatorContentDescriptor) element
 						.getDescriptor()).getConfigElement()) {
+					@Override
 					public void run() throws Exception {
 						element.saveState(aMemento);
 					}
@@ -1012,10 +1034,12 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		}
 	}
 
+	@Override
 	public boolean isActive(String anExtensionId) {
 		return assistant.isActive(anExtensionId);
 	}
 
+	@Override
 	public boolean isVisible(String anExtensionId) {
 		return assistant.isVisible(anExtensionId);
 	}
@@ -1035,6 +1059,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * .eclipse.ui.internal.navigator.extensions.INavigatorContentServiceListener
 	 * )
 	 */
+	@Override
 	public void addListener(INavigatorContentServiceListener aListener) {
 		listeners.add(aListener);
 	}
@@ -1044,6 +1069,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * 
 	 * @see org.eclipse.ui.navigator.INavigatorContentService#getFilterService()
 	 */
+	@Override
 	public INavigatorFilterService getFilterService() {
 		if (navigatorFilterService == null) {
 			navigatorFilterService = new NavigatorFilterService(this);
@@ -1056,6 +1082,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * 
 	 * @see org.eclipse.ui.navigator.INavigatorContentService#getFilterService()
 	 */
+	@Override
 	public INavigatorSorterService getSorterService() {
 		if (navigatorSorterService == null) {
 			navigatorSorterService = new NavigatorSorterService(this);
@@ -1069,6 +1096,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * 
 	 * @see org.eclipse.ui.navigator.INavigatorContentService#getFilterService()
 	 */
+	@Override
 	public INavigatorPipelineService getPipelineService() {
 		if (navigatorPipelineService == null) {
 			navigatorPipelineService = new NavigatorPipelineService(this);
@@ -1081,6 +1109,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * 
 	 * @see org.eclipse.ui.navigator.INavigatorContentService#getDnDService()
 	 */
+	@Override
 	public INavigatorDnDService getDnDService() {
 		if (navigatorDnDService == null) {
 			navigatorDnDService = new NavigatorDnDService(this);
@@ -1094,6 +1123,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see
 	 * org.eclipse.ui.navigator.INavigatorContentService#getActivationService()
 	 */
+	@Override
 	public INavigatorActivationService getActivationService() {
 
 		if (navigatorActivationService == null) {
@@ -1108,6 +1138,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see
 	 * org.eclipse.ui.navigator.INavigatorContentService#getSaveableService()
 	 */
+	@Override
 	public INavigatorSaveablesService getSaveablesService() {
 		synchronized (this) {
 			if (navigatorSaveablesService == null) {
@@ -1159,6 +1190,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * org.eclipse.ui.internal.navigator.extensions.INavigatorContentServiceListener
 	 * )
 	 */
+	@Override
 	public void removeListener(INavigatorContentServiceListener aListener) {
 		listeners.remove(aListener);
 	}
@@ -1168,6 +1200,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * 
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return "ContentService[" + viewerDescriptor.getViewerId() + "]"; //$NON-NLS-1$//$NON-NLS-2$
 	}
@@ -1185,10 +1218,12 @@ public class NavigatorContentService implements IExtensionActivationListener,
 					.next();
 			SafeRunner.run(new NavigatorSafeRunnable() {
 
+				@Override
 				public void run() throws Exception {
 					listener.onLoad(aDescriptorInstance);
 				}
 
+				@Override
 				public void handleException(Throwable e) {
 					super.handleException(e);
 					failedListeners.add(listener);

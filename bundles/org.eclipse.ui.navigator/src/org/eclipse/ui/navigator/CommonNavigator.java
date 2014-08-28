@@ -185,6 +185,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite aParent) {
 
 		final PerformanceStats stats= PerformanceStats.getStats(PERF_CREATE_PART_CONTROL, this);
@@ -237,6 +238,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 			ISaveablesLifecycleListener siteSaveablesLifecycleListener = (ISaveablesLifecycleListener) getSite()
 					.getService(ISaveablesLifecycleListener.class);
 
+			@Override
 			public void handleLifecycleEvent(SaveablesLifecycleEvent event) {
 				if (event.getEventType() == SaveablesLifecycleEvent.DIRTY_CHANGED) {
 					firePropertyChange(PROP_DIRTY);
@@ -250,6 +252,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		
 		commonViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				firePropertyChange(PROP_DIRTY);
 			}});
@@ -309,6 +312,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (commonManager != null) {
 			commonManager.dispose();
@@ -327,6 +331,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * @see org.eclipse.ui.part.ViewPart#init(org.eclipse.ui.IViewSite,
 	 *      org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void init(IViewSite aSite, IMemento aMemento)
 			throws PartInitException {
 		super.init(aSite, aMemento);
@@ -349,6 +354,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * 
 	 * @see org.eclipse.ui.part.ViewPart#saveState(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void saveState(IMemento aMemento) {
 		aMemento.putInteger(LINKING_ENABLED, (isLinkingEnabled) ? 1 : 0);
 		super.saveState(aMemento);
@@ -363,6 +369,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		if (commonViewer != null) {
 			commonViewer.getTree().setFocus();
@@ -378,6 +385,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * 
 	 * @see org.eclipse.ui.part.ISetSelectionTarget#selectReveal(org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectReveal(ISelection selection) {
 		if (commonViewer != null) {
 			commonViewer.setSelection(selection, true);
@@ -440,6 +448,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 *    or <code>null</code> if this object does not
 	 *    have an adapter for the given class
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == COMMON_VIEWER_CLASS) {
 			return getCommonViewer();
@@ -458,7 +467,8 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
      */
     private IShowInSource getShowInSource() {
         return new IShowInSource() {
-            public ShowInContext getShowInContext() {
+            @Override
+			public ShowInContext getShowInContext() {
                 return new ShowInContext(getCommonViewer().getInput(), getCommonViewer().getSelection());
             }
         };
@@ -517,8 +527,10 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	protected void initListeners(TreeViewer viewer) {
 
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(final DoubleClickEvent event) {
 				SafeRunner.run(new NavigatorSafeRunnable() {
+					@Override
 					public void run() throws Exception {
 						handleDoubleClick(event);
 					}
@@ -618,6 +630,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablesSource#getSaveables()
 	 */
+	@Override
 	public Saveable[] getSaveables() {
 		return getNavigatorContentService().getSaveablesService().getSaveables();
 	}
@@ -625,6 +638,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablesSource#getActiveSaveables()
 	 */
+	@Override
 	public Saveable[] getActiveSaveables() {
 		return getNavigatorContentService().getSaveablesService().getActiveSaveables();
 	}
@@ -632,6 +646,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		// Ignore. This method is not called because CommonNavigator implements
 		// ISaveablesSource. All saves will go through the ISaveablesSource /
@@ -641,6 +656,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
 	 */
+	@Override
 	public void doSaveAs() {
 		// ignore
 	}
@@ -648,6 +664,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		Saveable[] saveables = getSaveables();
 		for (int i = 0; i < saveables.length; i++) {
@@ -661,6 +678,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
@@ -668,6 +686,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
 	 */
+	@Override
 	public boolean isSaveOnCloseNeeded() {
 		return isDirty();
 	}
@@ -675,6 +694,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
 	 */
+	@Override
 	public boolean show(ShowInContext context) {
 		IStructuredSelection selection = getSelection(context);
 		if (selection != null && !selection.isEmpty()) {

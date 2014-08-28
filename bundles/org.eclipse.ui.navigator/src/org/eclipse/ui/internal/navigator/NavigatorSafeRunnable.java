@@ -57,8 +57,10 @@ public abstract class NavigatorSafeRunnable extends SafeRunnable {
 		_object = object;
 	}
 
+	@Override
 	public abstract void run() throws Exception;
 
+	@Override
 	public void handleException(Throwable e) {
 		String msg = _message;
 		if (msg == null)

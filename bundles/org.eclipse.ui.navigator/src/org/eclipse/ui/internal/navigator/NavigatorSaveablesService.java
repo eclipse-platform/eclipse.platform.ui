@@ -107,6 +107,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	}
 
 	private class LifecycleListener implements ISaveablesLifecycleListener {
+		@Override
 		public void handleLifecycleEvent(SaveablesLifecycleEvent event) {
 			Saveable[] saveables = event.getSaveables();
 			Saveable[] shownSaveables = null;
@@ -153,6 +154,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 
 	private DisposeListener disposeListener = new DisposeListener() {
 
+		@Override
 		public void widgetDisposed(DisposeEvent e) {
 			// synchronize in the same order as in the init method.
 			synchronized (instances) {
@@ -193,6 +195,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	 * @param outsideListener
 	 * 
 	 */
+	@Override
 	public void init(final ISaveablesSource saveablesSource,
 			final StructuredViewer viewer,
 			ISaveablesLifecycleListener outsideListener) {
@@ -279,6 +282,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		return result.toArray(new Saveable[result.size()]);
 	}
 
+	@Override
 	public synchronized Saveable[] getActiveSaveables() {
 		if(!isDisposed()){
 			ITreeContentProvider contentProvider = (ITreeContentProvider) viewer
@@ -428,6 +432,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	/**
 	 * @return the saveables
 	 */
+	@Override
 	public synchronized Saveable[] getSaveables() {
 		return currentSaveables;
 	}
@@ -511,6 +516,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		addedSaveables.removeAll(oldSaveables);
 		if (addedSaveables.size() > 0) {
 			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (isDisposed()) {
 						return;
@@ -528,6 +534,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		// an appropriate PRE_CLOSE
 		if (removedSaveables.size() > 0) {
 			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (isDisposed()) {
 						return;
@@ -595,6 +602,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.navigator.VisibilityAssistant.VisibilityListener#onVisibilityOrActivationChange()
 	 */
+	@Override
 	public synchronized void onVisibilityOrActivationChange() {
 		if (!isDisposed()) {
 			recomputeSaveablesAndNotify(true, null);

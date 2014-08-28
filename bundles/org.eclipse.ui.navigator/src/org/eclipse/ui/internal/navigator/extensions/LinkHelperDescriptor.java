@@ -96,6 +96,7 @@ public class LinkHelperDescriptor implements ILinkHelperExtPtConstants {
 			return SkeletonLinkHelper.INSTANCE;
 		final ILinkHelper[] helper = new ILinkHelper[1];
 		SafeRunner.run(new NavigatorSafeRunnable(configElement) {
+			@Override
 			public void run() throws Exception {
 				helper[0] = (ILinkHelper) configElement.createExecutableExtension(ATT_CLASS);
 			}

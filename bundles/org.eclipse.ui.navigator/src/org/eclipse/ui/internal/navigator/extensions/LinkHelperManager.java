@@ -126,10 +126,12 @@ public class LinkHelperManager {
 			super(NavigatorPlugin.PLUGIN_ID, LINK_HELPER);
 		}
 
+		@Override
 		public boolean readElement(final IConfigurationElement element) {
 			if (LINK_HELPER.equals(element.getName())) {
 				final boolean retValue[] = new boolean[1];
 				SafeRunner.run(new NavigatorSafeRunnable(element) {
+					@Override
 					public void run() throws Exception {
 						getDescriptors().add(new LinkHelperDescriptor(element));
 						retValue[0] = true;

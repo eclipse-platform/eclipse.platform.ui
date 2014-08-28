@@ -92,6 +92,7 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 		final ViewerSorter[] sorter = new ViewerSorter[1];
 
 		SafeRunner.run(new NavigatorSafeRunnable(element) {
+			@Override
 			public void run() throws Exception {
 				sorter[0] = (ViewerSorter) element.createExecutableExtension(ATT_CLASS);
 			}
@@ -106,6 +107,7 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 	 * 
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return "CommonSorterDescriptor[" + getId() + "]"; //$NON-NLS-1$//$NON-NLS-2$
 	}

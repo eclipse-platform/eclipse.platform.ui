@@ -86,6 +86,7 @@ public class NavigatorViewerDescriptorManager {
 			super(NavigatorPlugin.PLUGIN_ID, TAG_VIEWER);
 		}
 
+		@Override
 		protected boolean readElement(IConfigurationElement element) {
 			if (TAG_VIEWER.equals(element.getName())) {
 				String viewerId = element.getAttribute(ATT_VIEWER_ID);
@@ -197,6 +198,7 @@ public class NavigatorViewerDescriptorManager {
 			return false;
 		}
 		
+		@Override
 		public void readRegistry() {
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IExtensionPoint point = registry.getExtensionPoint(NavigatorPlugin.PLUGIN_ID, TAG_VIEWER);

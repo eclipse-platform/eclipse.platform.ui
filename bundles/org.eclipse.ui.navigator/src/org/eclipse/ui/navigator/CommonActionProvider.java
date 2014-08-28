@@ -100,10 +100,12 @@ public abstract class CommonActionProvider extends ActionGroup implements
 		}
 		
 		IPluginContribution piCont = new IPluginContribution() {
+			@Override
 			public String getLocalId() {
 				return action.getId();
 			}
 
+			@Override
 			public String getPluginId() {
 				return actionSite.getPluginId();
 			}
@@ -128,6 +130,7 @@ public abstract class CommonActionProvider extends ActionGroup implements
 	 *            A memento that was given to the view part to restore its
 	 *            state.
 	 */
+	@Override
 	public void restoreState(IMemento aMemento) {
 	}
 
@@ -148,6 +151,7 @@ public abstract class CommonActionProvider extends ActionGroup implements
 	 * @param aMemento
 	 *            A memento that was given to the view part to save its state.
 	 */
+	@Override
 	public void saveState(IMemento aMemento) {
 	}
 

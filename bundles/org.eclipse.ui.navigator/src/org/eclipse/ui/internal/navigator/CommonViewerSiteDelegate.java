@@ -44,23 +44,28 @@ public class CommonViewerSiteDelegate implements ICommonViewerSite {
 		shell = aShell;
 	} 
 
+	@Override
 	public String getId() {
 		return id;
 	} 
 
+	@Override
 	public Shell getShell() {
 		return shell;
 	}
 
+	@Override
 	public ISelectionProvider getSelectionProvider() {
 		return selectionProvider;
 	}  
 
 
+	@Override
 	public void setSelectionProvider(ISelectionProvider aSelectionProvider) {
 		selectionProvider = aSelectionProvider;
 	}
 
+	@Override
 	public Object getAdapter(Class adapter) { 
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}

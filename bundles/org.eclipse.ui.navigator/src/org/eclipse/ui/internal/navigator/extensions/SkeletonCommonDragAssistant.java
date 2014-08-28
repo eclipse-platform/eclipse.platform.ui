@@ -40,6 +40,7 @@ public final class SkeletonCommonDragAssistant extends
 	 * 
 	 * @see org.eclipse.ui.navigator.CommonDragAdapterAssistant#getSupportedTransferTypes()
 	 */
+	@Override
 	public Transfer[] getSupportedTransferTypes() {
 		return NO_TRANSFER_TYPES;
 	}
@@ -50,6 +51,7 @@ public final class SkeletonCommonDragAssistant extends
 	 * @see org.eclipse.ui.navigator.CommonDragAdapterAssistant#setDragData(org.eclipse.swt.dnd.DragSourceEvent,
 	 *      org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public boolean setDragData(DragSourceEvent anEvent,
 			IStructuredSelection aSelection) {
 		return false;

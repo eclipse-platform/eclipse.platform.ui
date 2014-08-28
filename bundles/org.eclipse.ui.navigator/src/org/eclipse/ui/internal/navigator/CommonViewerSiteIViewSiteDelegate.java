@@ -39,43 +39,53 @@ public class CommonViewerSiteIViewSiteDelegate implements ICommonViewerWorkbench
 		viewSite = aViewSite; 
 	}
 
+	@Override
 	public String getId() {
 		return viewSite.getId();
 	}
 
+	@Override
 	public IActionBars getActionBars() {
 		return viewSite.getActionBars();
 	}
 
+	@Override
 	public Object getAdapter(Class adapter) {
 		return viewSite.getAdapter(adapter);
 	}
 
+	@Override
 	public IWorkbenchPage getPage() {
 		return viewSite.getPage();
 	}
 
+	@Override
 	public ISelectionProvider getSelectionProvider() {
 		return viewSite.getSelectionProvider();
 	}
 
+	@Override
 	public void setSelectionProvider(ISelectionProvider aSelectionProvider) {
 		viewSite.setSelectionProvider(aSelectionProvider);
 	}
 
+	@Override
 	public Shell getShell() {
 		return viewSite.getShell();
 	}
 
+	@Override
 	public IWorkbenchWindow getWorkbenchWindow() {
 		return viewSite.getWorkbenchWindow();
 	}
 
+	@Override
 	public void registerContextMenu(String menuId, MenuManager menuManager,
 			ISelectionProvider selectionProvider) {
 		viewSite.registerContextMenu(menuId, menuManager, selectionProvider);
 	}
  
+	@Override
 	public IWorkbenchPart getPart() { 
 		return viewSite.getPart();
 	}
@@ -83,6 +93,7 @@ public class CommonViewerSiteIViewSiteDelegate implements ICommonViewerWorkbench
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.ICommonViewerWorkbenchSite#getSite()
 	 */
+	@Override
 	public IWorkbenchPartSite getSite() { 
 		return viewSite;
 	}

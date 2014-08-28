@@ -56,6 +56,7 @@ public class ContributorTrackingSet extends LinkedHashSet {
 		contentService = aContentService;
 	}
 	
+	@Override
 	public boolean add(Object o) { 
 		if (contributor != null) {
 			contentService.rememberContribution(contributor, firstClassContributor, o);
@@ -63,12 +64,14 @@ public class ContributorTrackingSet extends LinkedHashSet {
 		return super.add(o);
 	}
 	
+	@Override
 	public boolean remove(Object o) { 
 		contentService.forgetContribution(o);
 		return super.remove(o);
 	}
 
 	
+	@Override
 	public void clear() { 
 		Iterator it = iterator();
 		while (it.hasNext())
@@ -113,21 +116,25 @@ public class ContributorTrackingSet extends LinkedHashSet {
 		
 	}
 	
+	@Override
 	public Iterator iterator() {
 		return new Iterator() {
 
 			Iterator delegateIterator = ContributorTrackingSet.super.iterator();
 			Object current;
 
+			@Override
 			public boolean hasNext() {
 				return delegateIterator.hasNext();
 			}
 
+			@Override
 			public Object next() {
 				current = delegateIterator.next();
 				return current;
 			}
 
+			@Override
 			public void remove() {
 				delegateIterator.remove();
 				contentService.forgetContribution(current);

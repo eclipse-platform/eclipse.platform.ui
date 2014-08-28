@@ -86,6 +86,7 @@ public final class CommonActionExtensionSite extends CommonExtensionSite
 	 * @return The unique identifier of the associated content extension or the
 	 *         top-level Common Action Provider.
 	 */
+	@Override
 	public String getExtensionId() {
 		return extensionId;
 	}
@@ -94,6 +95,7 @@ public final class CommonActionExtensionSite extends CommonExtensionSite
 	 * 
 	 * @return The plugin id of associated Common Action Provider
 	 */
+	@Override
 	public String getPluginId() {
 		return pluginId;
 	}
@@ -103,6 +105,7 @@ public final class CommonActionExtensionSite extends CommonExtensionSite
 	 * @return The associated structured viewer for the instantiated Common
 	 *         Action Provider.
 	 */
+	@Override
 	public StructuredViewer getStructuredViewer() {
 		return structuredViewer;
 	}
@@ -111,6 +114,7 @@ public final class CommonActionExtensionSite extends CommonExtensionSite
 	 * 
 	 * @return The ICommonViewerSite from the CommonViewer.
 	 */
+	@Override
 	public ICommonViewerSite getViewSite() {
 		return commonViewerSite;
 	}

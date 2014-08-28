@@ -74,6 +74,7 @@ public class StructuredViewerManager {
 				this.contentService = contentService;
 				this.viewerDataMap = viewerDataMap;
 			}
+			@Override
 			public void associate(Object element, Item item) {
 				NavigatorContentDescriptor desc = contentService.getContribution(element);
 				contentService.forgetContribution(element);
@@ -88,6 +89,7 @@ public class StructuredViewerManager {
 						System.out.println("associate: " + element + " item: " + item + " desc: " + desc); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 			}
+			@Override
 			public void disassociate(Item item) {
 				synchronized (viewerDataMap) {
 					if (Policy.DEBUG_VIEWER_MAP)
@@ -96,6 +98,7 @@ public class StructuredViewerManager {
 				}
 			}
 
+			@Override
 			public void filteredOut(Object element) {
 				contentService.forgetContribution(element);
 				synchronized (viewerDataMap) {
@@ -181,6 +184,7 @@ public class StructuredViewerManager {
 	public boolean initialize(final IStructuredContentProvider aContentProvider) {
 		final boolean[] result = new boolean[1];
 		SafeRunner.run(new NavigatorSafeRunnable() {
+			@Override
 			public void run() throws Exception {
 				if (aContentProvider != null) {
 					aContentProvider.inputChanged(viewer, cachedOldInput, cachedNewInput);
@@ -204,10 +208,12 @@ public class StructuredViewerManager {
 		if (display.isDisposed())
 			return;
 		display.syncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (localViewer.getControl().isDisposed())
 					return;
 				SafeRunner.run(new NavigatorSafeRunnable() {
+					@Override
 					public void run() throws Exception {
 						localViewer.getControl().setRedraw(false);
 						localViewer.refresh();

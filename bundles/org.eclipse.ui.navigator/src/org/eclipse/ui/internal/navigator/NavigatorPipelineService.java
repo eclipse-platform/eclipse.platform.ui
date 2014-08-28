@@ -46,6 +46,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 		contentService = aContentService;
 	}
 
+	@Override
 	public PipelinedShapeModification interceptAdd(
 			PipelinedShapeModification anAddModification) {
 		
@@ -77,12 +78,14 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 							.getExtension(overridingDescriptor);
 					if (extension.internalGetContentProvider().isPipelined()) {
 						SafeRunner.run(new NavigatorSafeRunnable() {
+							@Override
 							public void run() throws Exception {
 								((IPipelinedTreeContentProvider) extension
 										.internalGetContentProvider())
 										.interceptAdd(anAddModification);
 							}
 
+							@Override
 							public void handleException(Throwable e) {
 								NavigatorPlugin.logError(0, NLS.bind(
 										CommonNavigatorMessages.Exception_Invoking_Extension,
@@ -98,6 +101,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 		}
 	}
 
+	@Override
 	public PipelinedShapeModification interceptRemove(
 			PipelinedShapeModification aRemoveModification) {
 		
@@ -134,11 +138,13 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 					.getDescriptor(), null);
 			if (overridingExtension.internalGetContentProvider().isPipelined()) {
 				SafeRunner.run(new NavigatorSafeRunnable() {
+					@Override
 					public void run() throws Exception {
 						((IPipelinedTreeContentProvider) overridingExtension
 								.internalGetContentProvider()).interceptRemove(aRemoveModification);
 					}
 
+					@Override
 					public void handleException(Throwable e) {
 						NavigatorPlugin.logError(0, NLS.bind(
 								CommonNavigatorMessages.Exception_Invoking_Extension, new Object[] {
@@ -153,6 +159,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 
 	}
 
+	@Override
 	public boolean interceptRefresh(
 			PipelinedViewerUpdate aRefreshSynchronization) {
  
@@ -182,6 +189,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 			final NavigatorContentExtension nceLocal = overridingExtensions[i];
 			if (nceLocal.internalGetContentProvider().isPipelined()) {
 				SafeRunner.run(new NavigatorSafeRunnable() {
+					@Override
 					public void run() throws Exception {
 						intercepted[0] |= ((IPipelinedTreeContentProvider) nceLocal
 								.internalGetContentProvider())
@@ -192,6 +200,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 									aRefreshSynchronization, refreshable);
 					}
 
+					@Override
 					public void handleException(Throwable e) {
 						NavigatorPlugin.logError(0, NLS.bind(
 								CommonNavigatorMessages.Exception_Invoking_Extension, new Object[] {
@@ -204,6 +213,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 		return intercepted[0];
 	}	
 
+	@Override
 	public boolean interceptUpdate(
 			PipelinedViewerUpdate anUpdateSynchronization) {
 		 
@@ -233,6 +243,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 			if (overridingExtensions[i].internalGetContentProvider().isPipelined()) {
 				final NavigatorContentExtension nceLocal = overridingExtensions[i];
 				SafeRunner.run(new NavigatorSafeRunnable() {
+					@Override
 					public void run() throws Exception {
 						intercepted[0] |= ((IPipelinedTreeContentProvider) nceLocal
 								.internalGetContentProvider())
@@ -243,6 +254,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 									anUpdateSynchronization, refreshable);
 					}
 
+					@Override
 					public void handleException(Throwable e) {
 						NavigatorPlugin.logError(0, NLS.bind(
 								CommonNavigatorMessages.Exception_Invoking_Extension, new Object[] {
