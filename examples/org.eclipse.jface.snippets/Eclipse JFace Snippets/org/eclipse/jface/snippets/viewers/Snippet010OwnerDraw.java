@@ -13,7 +13,8 @@
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
-import org.eclipse.jface.resource.JFaceResources;
+
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.OwnerDrawLabelProvider;
