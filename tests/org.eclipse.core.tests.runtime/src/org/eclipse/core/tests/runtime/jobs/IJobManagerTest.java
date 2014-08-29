@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,6 +135,54 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 		super.tearDown();
 		//		manager.startup();
+	}
+
+	public void testBadGlobalListener() {
+		final int[] status = new int[] {-1};
+		Job job = new Job("testBadGlobalListener") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				status[0] = TestBarrier.STATUS_RUNNING;
+				return Status.OK_STATUS;
+			}
+		};
+		IJobChangeListener listener = new JobChangeAdapter() {
+			@Override
+			public void running(IJobChangeEvent event) {
+				throw new Error("Thrown from bad global listener");
+			}
+		};
+		try {
+			Job.getJobManager().addJobChangeListener(listener);
+			job.schedule();
+			TestBarrier.waitForStatus(status, TestBarrier.STATUS_RUNNING);
+		} finally {
+			Job.getJobManager().removeJobChangeListener(listener);
+		}
+	}
+
+	public void testBadLocalListener() {
+		final int[] status = new int[] {-1};
+		Job job = new Job("testBadLocalListener") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				status[0] = TestBarrier.STATUS_RUNNING;
+				return Status.OK_STATUS;
+			}
+		};
+		IJobChangeListener listener = new JobChangeAdapter() {
+			@Override
+			public void running(IJobChangeEvent event) {
+				throw new Error("Thrown from bad local listener");
+			}
+		};
+		try {
+			job.addJobChangeListener(listener);
+			job.schedule();
+			TestBarrier.waitForStatus(status, TestBarrier.STATUS_RUNNING);
+		} finally {
+			job.removeJobChangeListener(listener);
+		}
 	}
 
 	public void testBeginInvalidNestedRules() {
