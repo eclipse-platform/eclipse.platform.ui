@@ -8,6 +8,7 @@
  * Contributors:
  *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Bug 435625, Bug 436281
  *     Andrej ten Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 395283
+ *     Marco Descher <marco@descher.at> - Bug 442647
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
@@ -103,7 +104,9 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 	private static final int MAX_RESULTS = 500;
 	private Image contributionTypeImage;
 	private TableViewer viewer;
+	private static final String PREF_SEARCHSCOPE = "searchScope"; //$NON-NLS-1$
 	private ResourceSearchScope searchScope = ResourceSearchScope.PROJECT;
+	private static final String PREF_SEARCHSCOPES = "searchScopes"; //$NON-NLS-1$
 	private EnumSet<ResourceSearchScope> searchScopes = EnumSet.of(ResourceSearchScope.PROJECT);
 	// private EnumSet<SearchScope> searchScopes =
 	// EnumSet.of(SearchScope.PROJECT, SearchScope.REFERENCES);
@@ -216,6 +219,8 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 	@Override
 	public boolean close() {
 		stopSearchThread(true);
+		getPreferences().put(PREF_SEARCHSCOPE, searchScope.toString());
+		getPreferences().put(PREF_SEARCHSCOPES, searchScopes.toString());
 		return super.close();
 	}
 
@@ -231,6 +236,20 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		super(parentShell);
 		this.context = context;
 		imageCache = new BundleImageCache(context.get(Display.class), getClass().getClassLoader());
+
+		String searchScopeString = getPreferences().get(PREF_SEARCHSCOPE, ResourceSearchScope.PROJECT.toString());
+		searchScope = ResourceSearchScope.valueOf(searchScopeString);
+
+		String searchScopesString = getPreferences().get(PREF_SEARCHSCOPES, EnumSet.of(ResourceSearchScope.PROJECT).toString());
+		searchScopes = valueOf(ResourceSearchScope.class, searchScopesString);
+	}
+
+	public static <E extends Enum<E>> EnumSet<E> valueOf(Class<E> eClass, String str) {
+		String[] arr = str.substring(1, str.length() - 1).split(",");
+		EnumSet<E> set = EnumSet.noneOf(eClass);
+		for (String e : arr)
+			set.add(E.valueOf(eClass, e.trim()));
+		return set;
 	}
 
 	public void setStatus(final String message) {

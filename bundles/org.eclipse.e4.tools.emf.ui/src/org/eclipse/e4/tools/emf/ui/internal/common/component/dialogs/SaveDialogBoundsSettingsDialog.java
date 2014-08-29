@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrej ten Brummelhuis <andrejbrummelhuis@gmail.com> - initial implementation (Bug 395283)
+ *     Marco Descher <marco@descher.at> - Bug 442647
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
@@ -27,22 +28,17 @@ public abstract class SaveDialogBoundsSettingsDialog extends TitleAreaDialog {
 	private static final String DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
 	private static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
 
-	private IDialogSettings dialogSettings;
+	private IDialogSettings dialogSettings = new DialogSettings(ORG_ECLIPSE_E4_TOOLS_EMF_UI);
 
 	private Preferences preferences = InstanceScope.INSTANCE.getNode(ORG_ECLIPSE_E4_TOOLS_EMF_UI);
 
 	public SaveDialogBoundsSettingsDialog(Shell parentShell) {
 		super(parentShell);
-	}
 
-	@Override
-	protected IDialogSettings getDialogBoundsSettings() {
-		dialogSettings = new DialogSettings(ORG_ECLIPSE_E4_TOOLS_EMF_UI);
 		dialogSettings.put(DIALOG_HEIGHT, preferences.getInt(DIALOG_HEIGHT, -1));
 		dialogSettings.put(DIALOG_WIDTH, preferences.getInt(DIALOG_WIDTH, -1));
 		dialogSettings.put(DIALOG_ORIGIN_X, preferences.getInt(DIALOG_ORIGIN_X, -1));
 		dialogSettings.put(DIALOG_ORIGIN_Y, preferences.getInt(DIALOG_ORIGIN_Y, -1));
-		return dialogSettings;
 	}
 
 	private void saveDialogSettings() {
@@ -62,5 +58,14 @@ public abstract class SaveDialogBoundsSettingsDialog extends TitleAreaDialog {
 		boolean returnValue = super.close();
 		saveDialogSettings();
 		return returnValue;
+	}
+
+	@Override
+	protected IDialogSettings getDialogBoundsSettings() {
+		return dialogSettings;
+	}
+
+	public Preferences getPreferences() {
+		return preferences;
 	}
 }
