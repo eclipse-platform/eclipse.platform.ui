@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Angelo Zerr and others.
+ * Copyright (c) 2008, 2014 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,28 +55,20 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 	 * @param instance
 	 */
 	public void addStaticPseudoInstance(String pseudoE) {
-		if (staticPseudoInstances == null)
+		if (staticPseudoInstances == null) {
 			staticPseudoInstances = new ArrayList();
+		}
 		staticPseudoInstances.add(pseudoE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#isStaticPseudoInstance(java.lang.String)
-	 */
 	@Override
 	public boolean isStaticPseudoInstance(String s) {
-		if (staticPseudoInstances == null)
+		if (staticPseudoInstances == null) {
 			return false;
+		}
 		return staticPseudoInstances.contains(s);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#copyDefaultStyleDeclarations(org.eclipse.e4.ui.css.core.dom.CSSStylableElement)
-	 */
 	@Override
 	public void copyDefaultStyleDeclarations(CSSStylableElement stylableElement) {
 		// Copy default style decalaration
@@ -86,8 +78,7 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 		String[] staticPseudoInstances = stylableElement
 				.getStaticPseudoInstances();
 		if (staticPseudoInstances != null) {
-			for (int i = 0; i < staticPseudoInstances.length; i++) {
-				String pseudoE = staticPseudoInstances[i];
+			for (String pseudoE : staticPseudoInstances) {
 				CSSStyleDeclaration declaration = stylableElement
 						.getDefaultStyleDeclaration(pseudoE);
 				this.setDefaultStyleDeclaration(pseudoE, declaration);
@@ -95,19 +86,9 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.w3c.dom.Node#getLocalName()
-	 */
 	@Override
 	public abstract String getLocalName();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.w3c.dom.Element#getAttribute(java.lang.String)
-	 */
 	@Override
 	public abstract String getAttribute(String arg0);
 
@@ -396,39 +377,27 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 		return engine.getElement(widget);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#getStyle()
-	 */
 	@Override
 	public CSSExtendedProperties getStyle() {
-		if (style == null)
+		if (style == null) {
 			style = new CSSExtendedPropertiesImpl(nativeWidget, engine);
+		}
 		return style;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#getStaticPseudoInstances()
-	 */
 	@Override
 	public String[] getStaticPseudoInstances() {
-		if (staticPseudoInstances == null)
+		if (staticPseudoInstances == null) {
 			return EMPTY_STRING;
+		}
 		return (String[]) staticPseudoInstances.toArray(EMPTY_STRING);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#isPseudoInstanceOf(java.lang.String)
-	 */
 	@Override
 	public boolean isPseudoInstanceOf(String s) {
-		if (staticPseudoInstances == null)
+		if (staticPseudoInstances == null) {
 			return false;
+		}
 		return staticPseudoInstances.contains(s);
 	}
 
