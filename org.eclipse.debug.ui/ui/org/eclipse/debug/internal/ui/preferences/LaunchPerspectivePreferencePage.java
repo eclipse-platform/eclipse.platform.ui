@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,7 +110,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 
 		@Override
 		public int hashCode() {
-			return fDelegate.hashCode() + fType.hashCode() + fModes.hashCode();
+			return (fDelegate != null ? fDelegate.hashCode() : 0) + fType.hashCode() + fModes.hashCode();
 		}
 	}
 	
