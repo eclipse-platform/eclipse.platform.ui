@@ -988,6 +988,13 @@ public class TrimStack {
 			if (minimizedElement instanceof MPartStack) {
 				MPartStack theStack = (MPartStack) minimizedElement;
 				MStackElement curSel = theStack.getSelectedElement();
+
+				// Hack for elems that are lazy initialized
+				if (curSel.getRenderer() == null) {
+					theStack.setSelectedElement(null);
+					theStack.setSelectedElement(curSel);
+				}
+
 				if (curSel instanceof MPart) {
 					partService.activate((MPart) curSel);
 				} else if (curSel instanceof MPlaceholder) {
