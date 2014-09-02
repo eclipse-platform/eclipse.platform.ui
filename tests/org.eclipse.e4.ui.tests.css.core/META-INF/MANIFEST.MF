@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: e4 css core tests (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.ui.tests.css.core
-Bundle-Version: 0.9.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.core.runtime,
  org.junit,
  org.eclipse.swt,
