@@ -10,8 +10,6 @@ Require-Bundle: org.junit,
  org.w3c.css.sac,
  org.eclipse.e4.ui.css.swt.theme;bundle-version="0.9.1",
  org.eclipse.ui;bundle-version="3.106.0",
- org.hamcrest;bundle-version="1.1.0",
- org.objenesis;bundle-version="1.0.0",
  org.mockito;bundle-version="1.8.4",
  org.eclipse.equinox.preferences;bundle-version="3.5.200"
 Bundle-ActivationPolicy: lazy
