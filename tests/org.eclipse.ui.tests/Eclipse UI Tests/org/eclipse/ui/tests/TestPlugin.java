@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,10 +103,8 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IStartup#earlyStartup()
-     */
-    public void earlyStartup() {
+    @Override
+	public void earlyStartup() {
         earlyStartupCalled = true;
     }
 
@@ -118,20 +116,16 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
         earlyStartupCalled = false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
-     */
-    public void start(BundleContext context) throws Exception {
+    @Override
+	public void start(BundleContext context) throws Exception {
         TestInstallUtil.setContext(context);
         super.start(context);
         earlyStartup();
         MenuBuilder.addMenuContribution();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-     */
-    public void stop(BundleContext context) throws Exception {
+    @Override
+	public void stop(BundleContext context) throws Exception {
     	MenuBuilder.removeMenuContribution();
         TestInstallUtil.setContext(null);
         super.stop(context);
