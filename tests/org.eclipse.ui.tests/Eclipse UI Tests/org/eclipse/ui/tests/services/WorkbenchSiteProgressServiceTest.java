@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,9 @@
  ******************************************************************************/
 
 package org.eclipse.ui.tests.services;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -44,6 +47,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 	private WorkbenchSiteProgressService progressService;
 	private IWorkbenchPartSite site;
     
+	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		window = openTestWindow("org.eclipse.ui.resourcePerspective");
@@ -67,29 +71,42 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 		LongJob jobWithCursor = new LongJob();
 		
 		progressService.schedule(jobWithCursor, 0, true);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z");
+		System.out.println("after schedule: " + dateFormat.format(new Date()));
 		
 		while(jobWithCursor.getState() != Job.RUNNING) {
 			Thread.sleep(100);
 		}
+		System.out.println("after running:  " + dateFormat.format(new Date()));
 		
 		processEvents();
+		System.out.println("after process:  " + dateFormat.format(new Date()));
 		forceUpdate();		
+		System.out.println("after update:   " + dateFormat.format(new Date()));
 		processEvents();
+		System.out.println("after process2: " + dateFormat.format(new Date()));
 		
 		Cursor cursor = ((Control) ((PartSite)site).getModel().getWidget()).getCursor();
+		System.out.println("after getCursor:" + dateFormat.format(new Date()));
 		assertNotNull(cursor);
 		
 		jobWithCursor.cancel();
+		System.out.println("after cancel:   " + dateFormat.format(new Date()));
 		processEvents();
+		System.out.println("after process3: " + dateFormat.format(new Date()));
 
 		 // wait till this job is done
 		while(jobWithCursor.getState() == Job.RUNNING) {
 			Thread.sleep(100);
 		}
+		System.out.println("after done:     " + dateFormat.format(new Date()));
 		
 		processEvents();
+		System.out.println("after process4: " + dateFormat.format(new Date()));
 		forceUpdate();
+		System.out.println("after update2:  " + dateFormat.format(new Date()));
 		processEvents();
+		System.out.println("after process5: " + dateFormat.format(new Date()));
 		cursor = ((Control) ((PartSite)site).getModel().getWidget()).getCursor();
 		assertNull(cursor); // no jobs, no cursor
 
@@ -101,34 +118,43 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 		
 		progressService.schedule(jobWithCursor, 2000, true);
 		progressService.schedule(jobWithoutCursor, 0, false);
+		System.out.println("after schedule2:" + dateFormat.format(new Date()));
 		
 		while(jobWithoutCursor.getState() != Job.RUNNING) {
 			Thread.sleep(100);
 		}
 		
 		processEvents();
+		System.out.println("after process6: " + dateFormat.format(new Date()));
 
 		// we just want the jobWithoutCursor running
 		assertTrue(jobWithCursor.getState() != Job.RUNNING); 
 		
 		forceUpdate();
+		System.out.println("after update3:  " + dateFormat.format(new Date()));
 		processEvents();
+		System.out.println("after process7: " + dateFormat.format(new Date()));
 		cursor = ((Control) ((PartSite)site).getModel().getWidget()).getCursor();
 		assertNull(cursor); // jobWithoutCursor is scheduled to run first - no cursor now
 		
 		while(jobWithCursor.getState() != Job.RUNNING) {
 			Thread.sleep(100);
 		}
+		System.out.println("after done2:    " + dateFormat.format(new Date()));
 		
 		processEvents();
+		System.out.println("after process8: " + dateFormat.format(new Date()));
 		
 		// both jobs should be running
 		assertTrue(jobWithCursor.getState() == Job.RUNNING && jobWithoutCursor.getState() == Job.RUNNING);
 
 		forceUpdate();		
+		System.out.println("after update4:  " + dateFormat.format(new Date()));
 		processEvents();
+		System.out.println("after process9: " + dateFormat.format(new Date()));
 		cursor = ((Control) ((PartSite)site).getModel().getWidget()).getCursor();
 		assertNotNull(cursor); // both running now - cursor should be set
+		System.out.println("end:            " + dateFormat.format(new Date()));
 	}
 
 	class LongJob extends Job{
@@ -138,6 +164,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 			super("LongJob");
 		}
 		
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			
 			monitor.beginTask("job starts", 1000);
