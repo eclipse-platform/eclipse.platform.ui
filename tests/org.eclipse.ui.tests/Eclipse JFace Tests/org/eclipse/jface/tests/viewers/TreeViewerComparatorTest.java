@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.tests.viewers;
-
-import java.util.ArrayList;
+package org.eclipse.jface.tests.viewers;import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,6 +23,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+;
 
 /**
  * @since 3.2
@@ -35,17 +34,11 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest{
 	protected class TeamModelTreeContentProvider extends TeamModelContentProvider 
 				implements ITreeContentProvider{
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-		 */
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof List){
@@ -66,9 +59,6 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest{
 			return null; 
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-		 */
 		@Override
 		public Object getParent(Object element) {
 			if (element instanceof TeamMember){
@@ -77,9 +67,6 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest{
 			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-		 */
 		@Override
 		public boolean hasChildren(Object element) {
 	        if (element instanceof Team) {
@@ -90,9 +77,6 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest{
 	        return false;
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			List oldElement = (List) oldInput;
