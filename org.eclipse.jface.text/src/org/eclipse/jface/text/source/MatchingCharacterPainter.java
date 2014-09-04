@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -177,6 +177,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 			if (redraw)
 				handleDrawRequest(null);
 		}
+		fPreviousSelection= null;
 	}
 
 	/*
@@ -327,7 +328,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 				boolean lengthChanged= length != fPreviousLengthOfDocument;
 				fPreviousLengthOfDocument= length;
 
-				if (reason != IPainter.CONFIGURATION && fSourceViewer.getDocument() == document && !lengthChanged && selection.equals(fPreviousSelection)) {
+				if (reason != IPainter.CONFIGURATION && fSourceViewer.getDocument() == document && !lengthChanged && (selection.equals(fPreviousSelection) || fPreviousSelection == null)) {
 					return;
 				}
 
