@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Marcus Eng (Google) - initial API and implementation
+ *	   Marcus Eng (Google) - initial API and implementation
+ *	   Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.ui.monitoring;
 
@@ -18,26 +19,27 @@ package org.eclipse.ui.monitoring;
 public class PreferenceConstants {
 	public static final String PLUGIN_ID = "org.eclipse.ui.monitoring"; //$NON-NLS-1$
 	/**
-	 * If true, enables the monitoring thread which logs when the user sees a Blocked Jobs dialog or
-	 * when the UI thread becomes unresponsive.
+	 * If true, enables the monitoring thread which logs when the user sees a Blocked Jobs dialog
+	 * or when the UI thread becomes unresponsive.
 	 */
 	public static final String MONITORING_ENABLED = "monitoring_enabled"; //$NON-NLS-1$
 	/** Sample interval to capture the traces of an unresponsive event. */
-	public static final String FORCE_DEADLOCK_LOG_TIME_MILLIS = "force_deadlock_log"; //$NON-NLS-1$
+	public static final String DEADLOCK_REPORTING_THRESHOLD_MILLIS = "deadlock_reporting_threshold"; //$NON-NLS-1$
 	/** Maximum number of traces to write out to the log. */
-	public static final String MAX_LOG_TRACE_COUNT = "max_log_trace_count"; //$NON-NLS-1$
+	public static final String MAX_STACK_SAMPLES = "max_stack_samples"; //$NON-NLS-1$
 	/** Log events that took longer than the specified duration in milliseconds. */
-	public static final String MAX_EVENT_LOG_TIME_MILLIS = "max_event_log_time"; //$NON-NLS-1$
+	public static final String LONG_EVENT_THRESHOLD_MILLIS = "max_event_log_time"; //$NON-NLS-1$
 	/**
 	 * Start capturing traces if an event takes longer than the specified duration in
 	 * milliseconds.
 	 */
-	public static final String MAX_EVENT_SAMPLE_TIME_MILLIS = "max_event_sample_time"; //$NON-NLS-1$
+	public static final String INITIAL_SAMPLE_DELAY_MILLIS = "initial_sample_delay"; //$NON-NLS-1$
 	/** Sample collection interval to capture the traces of an unresponsive event. */
-	public static final String SAMPLE_INTERVAL_TIME_MILLIS = "sample_interval"; //$NON-NLS-1$
+	public static final String SAMPLE_INTERVAL_MILLIS = "sample_interval"; //$NON-NLS-1$
 	/**
-	 * If true, includes call stacks of all threads into the logged message. Otherwise, only the stack
-	 * of the main thread is included. Disabled by default due to additional performance overhead.
+	 * If true, includes call stacks of all threads into the logged message. Otherwise, only
+	 * the stack of the main thread is included. Disabled by default due to additional performance
+	 * overhead.
 	 */
 	public static final String DUMP_ALL_THREADS = "dump_all_threads"; //$NON-NLS-1$
 	/**

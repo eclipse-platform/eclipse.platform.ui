@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Marcus Eng (Google) - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.ui.monitoring;
 
@@ -19,14 +20,12 @@ public class UiFreezeEvent {
 	private final long startTimestamp;
 	private final long totalDuration;
 	private final StackSample[] stackTraceSamples;
-	private final int numSamples;
 	private final boolean isRunning;
 
-	public UiFreezeEvent(long startTime, long totalTime, StackSample[] samples, int sampleCount,
+	public UiFreezeEvent(long startTime, long totalTime, StackSample[] samples,
 			boolean stillRunning) {
 		this.startTimestamp = startTime;
 		this.stackTraceSamples = samples;
-		this.numSamples = sampleCount;
 		this.totalDuration = totalTime;
 		this.isRunning = stillRunning;
 	}
@@ -46,17 +45,10 @@ public class UiFreezeEvent {
 	}
 
 	/**
-	 * Returns a list of stack trace samples obtained during the event.
+	 * Returns the stack trace samples obtained during the event.
 	 */
 	public StackSample[] getStackTraceSamples() {
 		return stackTraceSamples;
-	}
-
-	/**
-	 * Returns the number stack traces obtained when the UI thread was frozen.
-	 */
-	public int getSampleCount() {
-		return numSamples;
 	}
 
 	/**
@@ -64,5 +56,28 @@ public class UiFreezeEvent {
 	 */
 	public boolean isStillRunning() {
 		return isRunning;
+	}
+
+	/** For debugging only. */
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder();
+		buf.append("Freeze started at ");
+		buf.append(startTimestamp);
+		if (isRunning) {
+			buf.append(" still ongoing after ");
+		} else {
+			buf.append(" lasted ");
+		}
+		buf.append(totalDuration);
+		buf.append("ms");
+		if (stackTraceSamples.length != 0) {
+			buf.append("\nStack trace samples:");
+			for (StackSample stackTraceSample : stackTraceSamples) {
+				buf.append('\n');
+				buf.append(stackTraceSample.toString());
+			}
+		}
+		return buf.toString();
 	}
 }

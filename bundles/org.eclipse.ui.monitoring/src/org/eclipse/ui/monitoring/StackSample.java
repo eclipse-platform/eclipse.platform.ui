@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Marcus Eng (Google) - initial API and implementation
+ *	   Marcus Eng (Google) - initial API and implementation
+ *	   Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.ui.monitoring;
 
@@ -39,5 +40,20 @@ public class StackSample {
 	 */
 	public ThreadInfo[] getStackTraces() {
 		return traces;
+	}
+
+	/** For debugging only. */
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder();
+		buf.append("At ");
+		buf.append(timestamp);
+		if (traces.length != 0) {
+			buf.append(" threads:\n");
+			for (ThreadInfo threadInfo : traces) {
+				buf.append(threadInfo.toString());
+			}
+		}
+		return buf.toString();
 	}
 }

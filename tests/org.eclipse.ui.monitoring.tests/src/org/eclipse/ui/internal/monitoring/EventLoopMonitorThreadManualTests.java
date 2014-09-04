@@ -6,16 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steve Foreman (Google) - initial API and implementation
- *     Marcus Eng (Google)
+ *	   Steve Foreman (Google) - initial API and implementation
+ *	   Marcus Eng (Google)
+ *	   Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring;
-
-import junit.framework.TestCase;
-
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.monitoring.PreferenceConstants;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -28,12 +23,18 @@ import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import junit.framework.TestCase;
+
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.monitoring.PreferenceConstants;
+
 /**
  * A test that measures performance overhead of {@link EventLoopMonitorThread}.
- * This test is not included into {@link MonitoringTestSuite} due to its
- * low reliability and the amount of time it takes.
+ * This test is not included into {@link MonitoringTestSuite} due to its low reliability
+ * and the amount of time it takes.
  */
-public class EventLoopMonitorThreadManualJUnitPluginTests extends TestCase {
+public class EventLoopMonitorThreadManualTests extends TestCase {
 	/** Change to {@code true} to enable printing of detailed information to the console. */
 	private static final boolean PRINT_TO_CONSOLE = false;
 
@@ -45,7 +46,7 @@ public class EventLoopMonitorThreadManualJUnitPluginTests extends TestCase {
 	protected static final double MAX_RELATIVE_INCREASE_ONE_STACK_PERCENT = 2.5; // %
 
 	/** Maximum allowable relative increase per thread due to taking traces on all threads. */
-	protected static final double MAX_RELATIVE_INCREASE_PER_EXTRA_THREAD_PERCENT = 0.25; // %
+	protected static final double MAX_RELATIVE_INCREASE_PER_EXTRA_THREAD_PERCENT = 0.3; // %
 
 	/** Number of times to repeat the control measurement. This should always be at least 2. */
 	protected static final int NUM_CONTROL_MEASUREMENTS = 5;
@@ -58,8 +59,8 @@ public class EventLoopMonitorThreadManualJUnitPluginTests extends TestCase {
 
 	// Calibration Tuning Parameters
 	/**
-	 * Number of work units to integrate over while calibrating. This parameter is used to adjust how
-	 * much work is done to capture some jitter but too large of value will oscillate with large
+	 * Number of work units to integrate over while calibrating. This parameter is used to adjust
+	 * how much work is done to capture some jitter but too large of value will oscillate with large
 	 * events (e.g. GC) instead of converging.
 	 */
 	protected static final long WORK_INTEGRATION_ITERATIONS = 70000; // iterations
@@ -78,14 +79,14 @@ public class EventLoopMonitorThreadManualJUnitPluginTests extends TestCase {
 	protected static final double MAX_OUTLIER_RATIO = 0.03;
 
 	/**
-	 * Weight of new elements added to the exponential averaging of the mean during calibration. The
-	 * optimal value is [2/(N-1)] where N is the desired number of samples to average.
+	 * Weight of new elements added to the exponential averaging of the mean during calibration.
+	 * The optimal value is [2/(N-1)] where N is the desired number of samples to average.
 	 */
 	protected static final double CAL_EMA_ALPHA = 2.0 / (MIN_CONVERGING_ITERATIONS - 1.0);
 
 	/**
-	 * Max relative error between each new estimated mean and the previous estimate. Once the relative
-	 * error stabilizes below this threshold for long enough (defined by
+	 * Max relative error between each new estimated mean and the previous estimate.
+	 * Once the relative error stabilizes below this threshold for long enough (defined by
 	 * {@link #MIN_CONVERGING_ITERATIONS} iterations) the calibration is complete.
 	 */
 	protected static final double CAL_MAX_RELATIVE_ERROR = 0.003;
@@ -186,9 +187,9 @@ public class EventLoopMonitorThreadManualJUnitPluginTests extends TestCase {
 		double maxRunningTime = 0.0;
 
 		/*
-		 * This could be made more precise by measuring the control loop many times, calculating the
-		 * mean and standard deviation, measuring each of the test case a few times, calculating the
-		 * probability of the result, and comparing that probability to some acceptable bound.
+		 * This could be made more precise by measuring the control loop many times, calculating
+		 * the mean and standard deviation, measuring each of the test case a few times, calculating
+		 * the probability of the result, and comparing that probability to some acceptable bound.
 		 */
 		if (PRINT_TO_CONSOLE) {
 			System.out.println(String.format("Starting %d control measurements without monitoring.",
@@ -207,18 +208,19 @@ public class EventLoopMonitorThreadManualJUnitPluginTests extends TestCase {
 			}
 		}
 
-		// Calculate error bound between mean & max control runs
+		// Calculate error bound between mean and max control runs.
 		double controlDiff = Math.abs((maxRunningTime - expectedRunningTime) / expectedRunningTime);
 		double maxRelativeIncreaseOneStackAllowed =
-			(MAX_RELATIVE_INCREASE_ONE_STACK_PERCENT / 100) * (1 + controlDiff);
+			(MAX_RELATIVE_INCREASE_ONE_STACK_PERCENT / 100.) * (1 + controlDiff);
 		double maxRelativeIncreaseAllStacksAllowed =
 				((MAX_RELATIVE_INCREASE_ONE_STACK_PERCENT + MAX_RELATIVE_INCREASE_PER_EXTRA_THREAD_PERCENT
-				* (totalThreadCount - 1)) / 100) * (1 + controlDiff);
+				* (totalThreadCount - 1)) / 100.) * (1 + controlDiff);
 
 		Thread monitor1 = createAndStartMonitoringThread(display, false);
 		double worstRelativeDiffOneThread = Double.MIN_NORMAL;
 		if (PRINT_TO_CONSOLE) {
-			System.out.println(String.format("Starting %d measurements while collecting UI thread stacks.",
+			System.out.println(
+					String.format("Starting %d measurements while collecting UI thread stacks.",
 					NUM_UI_STACK_MEASUREMENTS));
 		}
 		for (int i = 1; i <= NUM_UI_STACK_MEASUREMENTS; ++i) {
@@ -230,22 +232,26 @@ public class EventLoopMonitorThreadManualJUnitPluginTests extends TestCase {
 			}
 			if (PRINT_TO_CONSOLE) {
 				System.out.println(String.format(
-						"Measurement %d/%d finished. tWork = %fs, Relative increase = %f%%  (allowed < %f%%)",
+						"Measurement %d of %d took %.3fs. Relative increase = %.3f%% "
+						+ "(allowed < %.3f%%).",
 						i, NUM_UI_STACK_MEASUREMENTS, tWork[0] / 1e9, relativeDiffOneThread * 100,
 						maxRelativeIncreaseOneStackAllowed * 100));
 			}
 			assertTrue(
-				String.format("Relative increase with monitoring thread surpassed threshold for "
-					+ "measurement %d/%d. It took %fs with a relative increase of %f%%",
-					i, NUM_UI_STACK_MEASUREMENTS, tWork[0] / 1e9, relativeDiffOneThread * 100),
-				relativeDiffOneThread < maxRelativeIncreaseOneStackAllowed);
+				String.format("Relative overhead of monitoring surpassed threshold for "
+					+ "measurement %d of %d. It took %.3fs with a relative increase of %.3f%% "
+					+ "(allowed < %.3f%%).",
+					i, NUM_UI_STACK_MEASUREMENTS, tWork[0] / 1e9, relativeDiffOneThread * 100,
+					maxRelativeIncreaseOneStackAllowed * 100),
+				relativeDiffOneThread <= maxRelativeIncreaseOneStackAllowed);
 		}
 		killMonitorThread(monitor1, display);
 
 		Thread monitor2 = createAndStartMonitoringThread(display, true);
 		double worstRelativeDiffAllThreads = Double.MIN_NORMAL;
 		if (PRINT_TO_CONSOLE) {
-			System.out.println(String.format("Starting %d measurements while collecting all thread stacks.",
+			System.out.println(
+					String.format("Starting %d measurements while collecting all thread stacks.",
 					NUM_ALL_STACKS_MEASUREMENTS));
 		}
 		for (int i = 1; i <= NUM_ALL_STACKS_MEASUREMENTS; ++i) {
@@ -257,28 +263,25 @@ public class EventLoopMonitorThreadManualJUnitPluginTests extends TestCase {
 			}
 			if (PRINT_TO_CONSOLE) {
 				System.out.println(String.format(
-						"Measurement %d/%d finished. tWork = %fs, Relative increase = %f%%  (allowed < %f%%)",
+						"Measurement %d of %d took %.3fs, Relative increase = %.3f%% "
+						+ "(allowed < %.3f%%).",
 						i, NUM_ALL_STACKS_MEASUREMENTS, tWork[0] / 1e9, relativeDiffAllThreads * 100,
 						maxRelativeIncreaseAllStacksAllowed * 100));
 			}
 			assertTrue(
-				String.format("Relative increase with monitoring thread (with all threads) surpassed "
-					+ "threshold for measurement %d/%d. It took %fs with a relative increase of %f%%",
-					i, NUM_ALL_STACKS_MEASUREMENTS, tWork[0] / 1e9, relativeDiffAllThreads * 100),
-				relativeDiffAllThreads < maxRelativeIncreaseAllStacksAllowed);
+				String.format("Relative overhead of monitoring with stack traces of all threads "
+					+ "surpassed threshold for measurement %d of %d. It took %.3fs with a relative "
+					+ "increase of %.3f%% (allowed < %.3f%%).",
+					i, NUM_ALL_STACKS_MEASUREMENTS, tWork[0] / 1e9, relativeDiffAllThreads * 100,
+					maxRelativeIncreaseAllStacksAllowed * 100),
+				relativeDiffAllThreads <= maxRelativeIncreaseAllStacksAllowed);
 		}
 		killMonitorThread(monitor2, display);
 
 		backgroundJobsDone.countDown();
 
-		boolean gotFreezeEvents =
-		logger.getLoggedEvents().size() == NUM_UI_STACK_MEASUREMENTS + NUM_ALL_STACKS_MEASUREMENTS;
-
-		boolean oneThreadOk = worstRelativeDiffOneThread < maxRelativeIncreaseOneStackAllowed;
-		boolean allThreadsOk = worstRelativeDiffAllThreads < maxRelativeIncreaseAllStacksAllowed;
-
 		if (PRINT_TO_CONSOLE) {
-			// Tabulate final results while waiting for monitor to finish
+			// Tabulate final results while waiting for monitor to finish.
 			double controlMean = 0;
 			double controlMin = Double.MAX_VALUE;
 			double controlMax = Double.MIN_NORMAL;
@@ -325,16 +328,16 @@ public class EventLoopMonitorThreadManualJUnitPluginTests extends TestCase {
 				allStacksMax = Math.max(allStacksMax, v);
 			}
 
-			// Ensure the work cannot be optimized away completely
+			// Ensure that the work cannot be optimized away completely.
 			System.out.println(String.format("Work result = %016X", workOutput[0]));
 
-			if (!oneThreadOk) {
+			if (!(worstRelativeDiffOneThread <= maxRelativeIncreaseOneStackAllowed)) {
 				System.out.println(" * Monitoring UI thread slowed down work too much");
 			}
-			if (!allThreadsOk) {
+			if (!(worstRelativeDiffAllThreads <= maxRelativeIncreaseAllStacksAllowed)) {
 				System.out.println(" * Monitoring all threads slowed down work too much");
 			}
-			if (!gotFreezeEvents) {
+			if (logger.getLoggedEvents().size() != NUM_UI_STACK_MEASUREMENTS + NUM_ALL_STACKS_MEASUREMENTS) {
 				System.out.println(String.format(" * Didn't get expected freeze events (got %d/%d)",
 						logger.getLoggedEvents().size(),
 						NUM_UI_STACK_MEASUREMENTS + NUM_ALL_STACKS_MEASUREMENTS));
@@ -365,17 +368,26 @@ public class EventLoopMonitorThreadManualJUnitPluginTests extends TestCase {
 			}
 		}
 
-		assertTrue(oneThreadOk && allThreadsOk && gotFreezeEvents && !logger.getLoggedEvents().isEmpty());
-		assertTrue("Monitoring slowed down cases too much", oneThreadOk || allThreadsOk);
-		assertTrue("Monitoring UI thread slowed down work too much", oneThreadOk);
-		assertTrue("Did not log expected freeze events", gotFreezeEvents);
-		assertTrue("Monitoring all threads slowed down work too much", allThreadsOk);
+		assertEquals("Did not log expected number of freeze events,",
+				NUM_UI_STACK_MEASUREMENTS + NUM_ALL_STACKS_MEASUREMENTS,
+				logger.getLoggedEvents().size());
+		assertTrue(String.format("Relative overhead of monitoring with stack traces of the UI "
+				+ "thread was %.3f%% (allowed < %.3f%%).",
+				worstRelativeDiffOneThread * 100,
+				maxRelativeIncreaseOneStackAllowed * 100),
+				worstRelativeDiffOneThread <= maxRelativeIncreaseOneStackAllowed);
+		assertTrue(String.format("Relative overhead of monitoring with stack traces of all "
+				+ "threads was %.3f%% (allowed < %.3f%%).",
+				worstRelativeDiffAllThreads * 100,
+				maxRelativeIncreaseAllStacksAllowed * 100),
+				worstRelativeDiffAllThreads <= maxRelativeIncreaseAllStacksAllowed);
 	}
 
 	private Thread createAndStartMonitoringThread(Display display, boolean dumpAll) throws Exception {
-		CountDownLatch monitorStarted = new CountDownLatch(1);
+		// Let the monitoring thread to go to sleep twice before considering it ready.
+		CountDownLatch monitorStarted = new CountDownLatch(2);
 		Thread monitor = createTestMonitor(dumpAll, monitorStarted);
-		startMontoring(display, monitor, monitorStarted);
+		startMonitoring(display, monitor, monitorStarted);
 		return monitor;
 	}
 
@@ -394,13 +406,15 @@ public class EventLoopMonitorThreadManualJUnitPluginTests extends TestCase {
 		IPreferenceStore preferences = MonitoringPlugin.getDefault().getPreferenceStore();
 		EventLoopMonitorThread.Parameters params = new EventLoopMonitorThread.Parameters();
 
-		params.loggingThreshold = preferences.getInt(PreferenceConstants.MAX_EVENT_LOG_TIME_MILLIS);
-		params.samplingThreshold = preferences.getInt(PreferenceConstants.MAX_EVENT_SAMPLE_TIME_MILLIS);
+		params.longEventThreshold = preferences.getInt(
+				PreferenceConstants.LONG_EVENT_THRESHOLD_MILLIS);
+		params.initialSampleDelay = preferences.getInt(
+				PreferenceConstants.INITIAL_SAMPLE_DELAY_MILLIS);
 		params.dumpAllThreads = preferences.getBoolean(PreferenceConstants.DUMP_ALL_THREADS);
-		params.minimumPollingDelay = preferences.getInt(
-				PreferenceConstants.SAMPLE_INTERVAL_TIME_MILLIS);
-		params.loggedTraceCount = preferences.getInt(PreferenceConstants.MAX_LOG_TRACE_COUNT);
-		params.deadlockDelta = preferences.getInt(PreferenceConstants.FORCE_DEADLOCK_LOG_TIME_MILLIS);
+		params.sampleInterval = preferences.getInt(PreferenceConstants.SAMPLE_INTERVAL_MILLIS);
+		params.maxStackSamples = preferences.getInt(PreferenceConstants.MAX_STACK_SAMPLES);
+		params.deadlockThreshold = preferences.getInt(
+				PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS);
 		params.filterTraces = preferences.getString(PreferenceConstants.FILTER_TRACES);
 
 		params.checkParameters();
@@ -410,17 +424,11 @@ public class EventLoopMonitorThreadManualJUnitPluginTests extends TestCase {
 	protected Thread createTestMonitor(boolean dumpAllThreads, final CountDownLatch monitorStarted)
 			throws Exception {
 		EventLoopMonitorThread.Parameters args = createDefaultParameters();
-		args.samplingThreshold = 100;
-		args.minimumPollingDelay = 100;
+		args.initialSampleDelay = 100;
+		args.sampleInterval = 100;
 		args.dumpAllThreads = dumpAllThreads;
 
 		return new EventLoopMonitorThread(args) {
-			/**
-			 * Replaces the super-class implementation with a no-op. This breaks the implicit contract
-			 * that some amount of time should have passed when sleepForMillis is called with a non-zero
-			 * argument, but in this testing environment giving the unit tests complete control over the
-			 * elapsed time allows the tests to be more deterministic.
-			 */
 			@Override
 			protected void sleepForMillis(long nanoseconds) {
 				monitorStarted.countDown();
@@ -504,18 +512,18 @@ public class EventLoopMonitorThreadManualJUnitPluginTests extends TestCase {
 		return threads;
 	}
 
-	protected void startMontoring(final Display display, final Thread swtThread,
+	protected void startMonitoring(final Display display, final Thread monitorThread,
 			CountDownLatch eventsRegistered) throws Exception {
 		display.syncExec(new Runnable() {
 			@Override
 			public void run() {
-				swtThread.start();
+				monitorThread.start();
 
 				// If we're still running when display gets disposed, shutdown the thread.
 				display.disposeExec(new Runnable() {
 					@Override
 					public void run() {
-						shutdownThread(swtThread);
+						shutdownThread(monitorThread);
 					}
 				});
 			}
@@ -611,7 +619,7 @@ public class EventLoopMonitorThreadManualJUnitPluginTests extends TestCase {
 
 		// Passing the hash to println method ensures it cannot be optimized away completely.
 		System.out.println(String.format("Measurement converged in %d ms (%d loops) "
-				+ "tWork = %fns, relErr = %f, outliers = %d",
+				+ "tWork = %.3fns, relErr = %f, outliers = %d",
 				System.currentTimeMillis() - startWallTime,
 				n,
 				tWork,

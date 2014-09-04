@@ -30,12 +30,12 @@ public class MonitoringPreferenceInitializer extends AbstractPreferenceInitializ
 		IPreferenceStore store = MonitoringPlugin.getDefault().getPreferenceStore();
 
 		store.setDefault(PreferenceConstants.MONITORING_ENABLED, false);
-		store.setDefault(PreferenceConstants.FORCE_DEADLOCK_LOG_TIME_MILLIS,
+		store.setDefault(PreferenceConstants.LONG_EVENT_THRESHOLD_MILLIS, 500);
+		store.setDefault(PreferenceConstants.MAX_STACK_SAMPLES, 3);
+		store.setDefault(PreferenceConstants.SAMPLE_INTERVAL_MILLIS, 300);
+		store.setDefault(PreferenceConstants.INITIAL_SAMPLE_DELAY_MILLIS, 300);
+		store.setDefault(PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS,
 				DEFAULT_FORCE_DEADLOCK_LOG_TIME_MILLIS);
-		store.setDefault(PreferenceConstants.MAX_LOG_TRACE_COUNT, 3);
-		store.setDefault(PreferenceConstants.MAX_EVENT_LOG_TIME_MILLIS, 500);
-		store.setDefault(PreferenceConstants.MAX_EVENT_SAMPLE_TIME_MILLIS, 500);
-		store.setDefault(PreferenceConstants.SAMPLE_INTERVAL_TIME_MILLIS, 300);
 		store.setDefault(PreferenceConstants.DUMP_ALL_THREADS, false);
 		store.setDefault(PreferenceConstants.LOG_TO_ERROR_LOG, true);
 		store.setDefault(PreferenceConstants.FILTER_TRACES, DEFAULT_FILTER_TRACES);

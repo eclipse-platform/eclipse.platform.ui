@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
 
 /**
  * Test suite for {@code org.eclipse.ui.monitoring} plug-in.
- * The tests in {@link EventLoopMonitorThreadManualJUnitPluginTests} are not included in this
+ * The tests in {@link EventLoopMonitorThreadManualTests} are not included in this
  * suite due to their flakiness.
  */
 public class MonitoringTestSuite extends TestSuite {
@@ -26,6 +26,6 @@ public class MonitoringTestSuite extends TestSuite {
 	public MonitoringTestSuite() {
 		addTestSuite(EventLoopMonitorThreadTests.class);
 		addTestSuite(FilterHandlerTests.class);
-		addTestSuite(DefaultLoggerTest.class);
+		addTestSuite(DefaultLoggerTests.class);
 	}
 }

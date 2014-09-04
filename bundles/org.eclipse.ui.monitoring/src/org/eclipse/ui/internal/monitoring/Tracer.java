@@ -6,19 +6,19 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Terry Parker (Google) - initial API and implementation
- *     Marcus Eng (Google)
+ *	   Terry Parker (Google) - initial API and implementation
+ *	   Marcus Eng (Google)
+ *	   Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring;
-
-import org.eclipse.core.runtime.Platform;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
+
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Simple helper class for Eclipse debug tracing.
@@ -27,14 +27,10 @@ import java.util.Date;
  *      >Eclipse Wiki: FAQ How do I use the platform debug tracing facility?</a>
  */
 public class Tracer {
-	private static final Calendar localChronology = Calendar.getInstance();
 	private static final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
+	private final Date date = new Date();
 	private final String prefix;
 	private final PrintStream out = System.out;
-
-	private static String getTimestamp() {
-		return timeFormatter.format(new Date(localChronology.getTimeInMillis()));
-	}
 
 	/**
 	 * Returns {@code true} if the debug option is set, but only if the platform is running in debug
@@ -88,5 +84,10 @@ public class Tracer {
 		t.printStackTrace(printer);
 		printer.flush();
 		trace(writer.toString());
+	}
+
+	private String getTimestamp() {
+		date.setTime(System.currentTimeMillis());
+		return timeFormatter.format(date);
 	}
 }

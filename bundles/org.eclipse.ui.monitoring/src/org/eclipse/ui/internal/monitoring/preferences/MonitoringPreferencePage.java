@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring.preferences;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -25,52 +28,73 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.monitoring.MonitoringPlugin;
 import org.eclipse.ui.monitoring.PreferenceConstants;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Preference page that allows user to toggle plug in settings from Eclipse preferences.
  */
 public class MonitoringPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+	private static final int HOUR_IN_MS = 3600000;
 	private static final IPreferenceStore preferences = MonitoringPlugin.getDefault().getPreferenceStore();
 	private boolean pluginEnabled = preferences.getBoolean(PreferenceConstants.MONITORING_ENABLED);
+	private IntegerEditor longEventThreshold;
+	private IntegerEditor sampleInterval;
+	private IntegerEditor initialSampleDelay;
+	private IntegerEditor deadlockThreshold;
 	private Map<FieldEditor, Composite> editors;
 
-	/**
-	 * Checks that the capture threshold is less than the log threshold.
-	 */
-	private class LogThresholdFieldEditor extends IntegerFieldEditor {
-		IntegerFieldEditor maxEventSampleTime;
+	private class IntegerEditor extends IntegerFieldEditor {
+		public IntegerEditor(String name, String labelText, Composite parent, int min, int max) {
+	    	super(name, labelText, parent);
+	    	setValidRange(min, max);
+		}
 
-		public LogThresholdFieldEditor(String name, String textLabel, Composite parent) {
-			super(name, textLabel, parent);
-			this.setupField(parent);
-			this.fillIntoGrid(parent, 2);
-			this.setEnabled(pluginEnabled, parent);
+		@Override
+		protected void valueChanged() {
+			super.valueChanged();
+			if (longEventThreshold.isValid() &&
+					sampleInterval.checkValue() && initialSampleDelay.checkValue()) {
+				deadlockThreshold.checkValue();
+			}
 		}
 
 		@Override
 		protected boolean checkState() {
-			try {
-				if (maxEventSampleTime.getIntValue() > this.getIntValue()) {
-					showErrorMessage();
+			if (!super.checkState()) {
+				return false;
+			}
+
+			String preferenceName = getPreferenceName();
+			if (preferenceName.equals(PreferenceConstants.SAMPLE_INTERVAL_MILLIS)) {
+				if (longEventThreshold.isValid() &&
+						getIntValue() >= longEventThreshold.getIntValue()) {
+					showMessage(Messages.MonitoringPreferencePage_sample_interval_too_high_error);
 					return false;
 				}
-			} catch (NumberFormatException e) {
-				// With a number exception, fall through and allow the parent class handle state
+			} else if (preferenceName.equals(PreferenceConstants.INITIAL_SAMPLE_DELAY_MILLIS)) {
+				if (longEventThreshold.isValid() &&
+						getIntValue() >= longEventThreshold.getIntValue()) {
+					showMessage(Messages.MonitoringPreferencePage_initial_sample_delay_too_high_error);
+					return false;
+				}
+			} else if (preferenceName.equals(PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS)) {
+				if (longEventThreshold.isValid() &&
+						getIntValue() <= longEventThreshold.getIntValue()) {
+					showMessage(Messages.MonitoringPreferencePage_deadlock_threshold_too_low_error);
+					return false;
+				}
 			}
-			return super.checkState();
+			return true;
 		}
 
-		public void setSampleFieldEditor(IntegerFieldEditor field) {
-			this.maxEventSampleTime = field;
-		}
+		private boolean checkValue() {
+	        boolean oldState = isValid();
+	        refreshValidState();
 
-		private void setupField(Composite parent) {
-			super.setValidRange(1, Integer.MAX_VALUE);
-			super.setErrorMessage(Messages.MonitoringPreferencePage_log_threshold_error);
-			addField(this, parent);
-		}
+	        boolean isValid = isValid();
+	        if (isValid != oldState) {
+				fireStateChanged(IS_VALID, oldState, isValid);
+			}
+	        return isValid;
+	    }
 	}
 
 	public MonitoringPreferencePage() {
@@ -99,50 +123,32 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage implemen
 		topGroup.setLayout(innerGroupLayout);
 		topGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-		createBooleanFieldEditor(PreferenceConstants.MONITORING_ENABLED,
+		createBooleanEditor(PreferenceConstants.MONITORING_ENABLED,
 				Messages.MonitoringPreferencePage_enable_thread_label, topGroup);
 
-		final LogThresholdFieldEditor maxEventLogTime = new LogThresholdFieldEditor(
-				PreferenceConstants.MAX_EVENT_LOG_TIME_MILLIS,
-				Messages.MonitoringPreferencePage_event_log_label, topGroup);
-		createIntegerFieldEditor(PreferenceConstants.MAX_LOG_TRACE_COUNT,
-				Messages.MonitoringPreferencePage_stack_sample_label, topGroup);
-		createIntegerFieldEditor(PreferenceConstants.SAMPLE_INTERVAL_TIME_MILLIS,
-				Messages.MonitoringPreferencePage_sample_interval_label, topGroup);
-		topGroup.setLayout(innerGroupLayout);
+		longEventThreshold = createIntegerEditor(
+				PreferenceConstants.LONG_EVENT_THRESHOLD_MILLIS,
+				Messages.MonitoringPreferencePage_long_event_threshold, topGroup, 3, HOUR_IN_MS);
+		createIntegerEditor(
+				PreferenceConstants.MAX_STACK_SAMPLES,
+				Messages.MonitoringPreferencePage_max_stack_samples_label, topGroup, 1, 100);
+		sampleInterval = createIntegerEditor(
+				PreferenceConstants.SAMPLE_INTERVAL_MILLIS,
+				Messages.MonitoringPreferencePage_sample_interval_label, topGroup, 2, HOUR_IN_MS);
+		initialSampleDelay = createIntegerEditor(
+				PreferenceConstants.INITIAL_SAMPLE_DELAY_MILLIS,
+				Messages.MonitoringPreferencePage_initial_sample_delay_label, topGroup,
+				2, HOUR_IN_MS);
+		deadlockThreshold = createIntegerEditor(
+				PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS,
+				Messages.MonitoringPreferencePage_deadlock_threshold_label, topGroup,
+				1000, 24 * HOUR_IN_MS);
 
-		IntegerFieldEditor maxEventSampleTime = new IntegerFieldEditor(
-				PreferenceConstants.MAX_EVENT_SAMPLE_TIME_MILLIS,
-				Messages.MonitoringPreferencePage_first_stack_label, topGroup) {
-			@Override
-			protected boolean checkState() {
-				try {
-					if (maxEventLogTime.getIntValue() < this.getIntValue()) {
-						showErrorMessage();
-						return false;
-					}
-				} catch (NumberFormatException e) {
-					// With a number exception, fall through and allow the parent class handle state.
-				}
-				return super.checkState();
-			}
-		};
-
-		maxEventSampleTime.setValidRange(1, Integer.MAX_VALUE);
-		maxEventSampleTime.setErrorMessage(Messages.MonitoringPreferencePage_capture_threshold_error);
-		maxEventLogTime.setSampleFieldEditor(maxEventSampleTime);
-		maxEventSampleTime.fillIntoGrid(topGroup, 2);
-		addField(maxEventSampleTime, topGroup);
-		maxEventSampleTime.setEnabled(pluginEnabled, topGroup);
-
-		createIntegerFieldEditor(PreferenceConstants.FORCE_DEADLOCK_LOG_TIME_MILLIS,
-				Messages.MonitoringPreferencePage_deadlock_label, topGroup);
-
-		createBooleanFieldEditor(PreferenceConstants.DUMP_ALL_THREADS,
+		createBooleanEditor(PreferenceConstants.DUMP_ALL_THREADS,
 				Messages.MonitoringPreferencePage_dump_all_threads_label, topGroup);
 		topGroup.setLayout(innerGroupLayout);
 
-		createBooleanFieldEditor(PreferenceConstants.LOG_TO_ERROR_LOG,
+		createBooleanEditor(PreferenceConstants.LOG_TO_ERROR_LOG,
 				Messages.MonitoringPreferencePage_log_freeze_events_label, topGroup);
 		topGroup.setLayout(innerGroupLayout);
 
@@ -161,40 +167,43 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage implemen
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
+        if (event.getProperty().equals(FieldEditor.VALUE)) {
+    		Object source = event.getSource();
+    		if (source instanceof FieldEditor) {
+    			String preferenceName = ((FieldEditor) source).getPreferenceName();
+				if (preferenceName.equals(PreferenceConstants.MONITORING_ENABLED)) {
+    				boolean enabled = Boolean.TRUE.equals(event.getNewValue());
+	    			for (Map.Entry<FieldEditor, Composite> entry : editors.entrySet()) {
+						FieldEditor editor = entry.getKey();
+	    				if (!editor.getPreferenceName().equals(PreferenceConstants.MONITORING_ENABLED)) {
+	    					editor.setEnabled(enabled, entry.getValue());
+	    				}
+	    			}
+    			}
+    		}
+        }
 		super.propertyChange(event);
-		Object object = event.getSource();
-		if (object instanceof BooleanFieldEditor
-				&& ((BooleanFieldEditor) object).getPreferenceName().equals(PreferenceConstants.MONITORING_ENABLED)) {
-			for (Map.Entry<FieldEditor, Composite> editor : editors.entrySet()) {
-				editor.getKey().setEnabled(event.getNewValue().equals(true),
-						editor.getValue());
-			}
-		}
 	}
 
-	private void addField(FieldEditor editor, Composite parent) {
-		super.addField(editor);
-
-		if (!editor.getPreferenceName().equals(PreferenceConstants.MONITORING_ENABLED)) {
-			editors.put(editor, parent);
-		}
-	}
-
-	private void createBooleanFieldEditor(String name, String labelText, Composite parent) {
+	private BooleanFieldEditor createBooleanEditor(String name, String labelText,
+			Composite parent) {
 		BooleanFieldEditor field = new BooleanFieldEditor(name, labelText, parent);
-		field.fillIntoGrid(parent, 2);
-		addField(field, parent);
-		if (!name.equals(PreferenceConstants.MONITORING_ENABLED)) {
-			field.setEnabled(pluginEnabled, parent);
-		}
+		return addField(field, parent);
 	}
 
-	private void createIntegerFieldEditor(String name, String labelText, Composite parent) {
-		IntegerFieldEditor field = new IntegerFieldEditor(name, labelText, parent);
-		field.setValidRange(1, Integer.MAX_VALUE);
-		field.setErrorMessage(Messages.MonitoringPreferencePage_invalid_number_error);
-		field.fillIntoGrid(parent, 2);
-		addField(field, parent);
-		field.setEnabled(pluginEnabled, parent);
+	private IntegerEditor createIntegerEditor(String name, String labelText, Composite parent,
+			int min, int max) {
+		IntegerEditor field = new IntegerEditor(name, labelText, parent, min, max);
+		return addField(field, parent);
+	}
+
+	private <T extends FieldEditor> T addField(T editor, Composite parent) {
+		super.addField(editor);
+		editor.fillIntoGrid(parent, 2);
+		editors.put(editor, parent);
+		if (!editor.getPreferenceName().equals(PreferenceConstants.MONITORING_ENABLED)) {
+			editor.setEnabled(pluginEnabled, parent);
+		}
+		return editor;
 	}
 }

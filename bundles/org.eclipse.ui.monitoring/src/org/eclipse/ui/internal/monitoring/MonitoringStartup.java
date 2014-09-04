@@ -8,6 +8,7 @@
  * Contributors:
  *     Steve Foreman (Google) - initial API and implementation
  *     Marcus Eng (Google)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring;
 
@@ -79,14 +80,14 @@ public class MonitoringStartup implements IStartup {
 		IPreferenceStore preferences = MonitoringPlugin.getDefault().getPreferenceStore();
 		EventLoopMonitorThread.Parameters args = new EventLoopMonitorThread.Parameters();
 
-		args.loggingThreshold = preferences.getInt(PreferenceConstants.MAX_EVENT_LOG_TIME_MILLIS);
-		args.samplingThreshold = preferences.getInt(PreferenceConstants.MAX_EVENT_SAMPLE_TIME_MILLIS);
+		args.longEventThreshold = preferences.getInt(PreferenceConstants.LONG_EVENT_THRESHOLD_MILLIS);
+		args.maxStackSamples = preferences.getInt(PreferenceConstants.MAX_STACK_SAMPLES);
+		args.sampleInterval = preferences.getInt(PreferenceConstants.SAMPLE_INTERVAL_MILLIS);
+		args.initialSampleDelay = preferences.getInt(PreferenceConstants.INITIAL_SAMPLE_DELAY_MILLIS);
+		args.deadlockThreshold = preferences.getInt(PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS);
 		args.dumpAllThreads = preferences.getBoolean(PreferenceConstants.DUMP_ALL_THREADS);
-		args.minimumPollingDelay = preferences.getInt(PreferenceConstants.SAMPLE_INTERVAL_TIME_MILLIS);
-		args.loggedTraceCount = preferences.getInt(PreferenceConstants.MAX_LOG_TRACE_COUNT);
-		args.deadlockDelta = preferences.getInt(PreferenceConstants.FORCE_DEADLOCK_LOG_TIME_MILLIS);
-		args.logLocally = preferences.getBoolean(PreferenceConstants.LOG_TO_ERROR_LOG);
 		args.filterTraces = preferences.getString(PreferenceConstants.FILTER_TRACES);
+		args.logToErrorLog = preferences.getBoolean(PreferenceConstants.LOG_TO_ERROR_LOG);
 
 		return args;
 	}
