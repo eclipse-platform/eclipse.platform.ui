@@ -938,6 +938,7 @@ public class TrimStack {
 	 */
 	public void showStack(boolean show) {
 		Control ctrl = (Control) minimizedElement.getWidget();
+		CTabFolder ctf = ctrl instanceof CTabFolder? (CTabFolder) ctrl: null;
 
 		Composite clientAreaComposite = getCAComposite();
 		if (clientAreaComposite == null || clientAreaComposite.isDisposed())
@@ -951,8 +952,7 @@ public class TrimStack {
 
 				// Hack ! Force a resize of the CTF to make sure the hosted
 				// view is the correct size...see bug 434062 for details
-				if (ctrl instanceof CTabFolder) {
-					CTabFolder ctf = (CTabFolder) ctrl;
+				if (ctrl != null) {
 					Rectangle bb = ctf.getBounds();
 					bb.width--;
 					ctf.setBounds(bb);
@@ -990,7 +990,7 @@ public class TrimStack {
 				MStackElement curSel = theStack.getSelectedElement();
 
 				// Hack for elems that are lazy initialized
-				if (curSel.getRenderer() == null) {
+				if (ctf != null && ctf.getSelection() == null) {
 					theStack.setSelectedElement(null);
 					theStack.setSelectedElement(curSel);
 				}
