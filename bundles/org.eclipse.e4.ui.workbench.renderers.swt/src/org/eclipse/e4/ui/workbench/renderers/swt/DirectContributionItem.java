@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Joseph Carroll <jdsalingerjr@gmail.com> - Bug 385414 Contributing wizards
  *     to toolbar always displays icon and text
+ *     Bruce Skingle <Bruce.Skingle@immutify.com> - Bug 443092
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -486,6 +487,9 @@ public class DirectContributionItem extends ContributionItem {
 	 * @return the execution context
 	 */
 	private IEclipseContext getExecutionContext(IEclipseContext context) {
+		if (context == null)
+			return null;
+
 		return context.getActiveLeaf();
 	}
 
