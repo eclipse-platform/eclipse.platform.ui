@@ -257,6 +257,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#appendDescriptiveText(java.lang.StringBuffer)
 	 */
+	@Override
 	protected void appendDescriptiveText(StringBuffer text) {
 		super.appendDescriptiveText(text);
 		text.append(" resourceDescriptions: "); //$NON-NLS-1$
@@ -317,6 +318,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#setTargetResources(org.eclipse.core.resources.IResource[])
 	 */
+	@Override
 	protected void setTargetResources(IResource[] targetResources) {
 		// Remove any descendants if the parent has also
 		// been specified.

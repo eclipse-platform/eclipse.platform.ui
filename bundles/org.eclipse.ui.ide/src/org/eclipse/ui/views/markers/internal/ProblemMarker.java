@@ -27,7 +27,8 @@ public class ProblemMarker extends ConcreteMarker {
     /* (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.ConcreteMarker#refresh()
      */
-    public void refresh() {
+    @Override
+	public void refresh() {
         super.refresh();
         severity = getMarker().getAttribute(IMarker.SEVERITY, -1);
     }

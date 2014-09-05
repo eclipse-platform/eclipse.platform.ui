@@ -46,7 +46,8 @@ class CopyBookmarkAction extends BookmarkAction {
     /**
      * Performs this action.
      */
-    public void run() {
+    @Override
+	public void run() {
         // Get the selected markers
         BookmarkNavigator bookmarkNavigator = getView();
         StructuredViewer viewer = bookmarkNavigator.getViewer();
@@ -65,7 +66,8 @@ class CopyBookmarkAction extends BookmarkAction {
     /** 
      * Updates enablement based on the current selection
      */
-    public void selectionChanged(IStructuredSelection sel) {
+    @Override
+	public void selectionChanged(IStructuredSelection sel) {
         setEnabled(!sel.isEmpty());
     }
 

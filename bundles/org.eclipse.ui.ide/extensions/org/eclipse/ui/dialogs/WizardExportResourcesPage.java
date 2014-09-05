@@ -107,7 +107,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
      * <code>WizardDataTransferPage</code> method returns <code>false</code>. 
      * Subclasses may override this method.
      */
-    protected boolean allowNewContainerName() {
+    @Override
+	protected boolean allowNewContainerName() {
         return false;
     }
 
@@ -184,7 +185,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
                 IDialogConstants.SELECT_TYPES_ID, SELECT_TYPES_TITLE, false);
 
         SelectionListener listener = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 handleTypesEditButtonPressed();
             }
         };
@@ -196,7 +198,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
                 IDialogConstants.SELECT_ALL_ID, SELECT_ALL_TITLE, false);
 
         listener = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 resourceGroup.setAllSelections(true);
                 updateWidgetEnablements();
             }
@@ -209,7 +212,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
                 IDialogConstants.DESELECT_ALL_ID, DESELECT_ALL_TITLE, false);
 
         listener = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 resourceGroup.setAllSelections(false);
                 updateWidgetEnablements();
             }
@@ -223,7 +227,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
     /** (non-Javadoc)
      * Method declared on IDialogPage.
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
 
         initializeDialogUnits(parent);
 
@@ -289,7 +294,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
                 DialogUtil.inRegularFontMode(parent));
         
         ICheckStateListener listener = new ICheckStateListener() {
-            public void checkStateChanged(CheckStateChangedEvent event) {
+            @Override
+			public void checkStateChanged(CheckStateChangedEvent event) {
                 updateWidgetEnablements();
             }
         };
@@ -300,7 +306,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
     /*
      * @see WizardDataTransferPage.getErrorDialogTitle()
      */
-    protected String getErrorDialogTitle() {
+    @Override
+	protected String getErrorDialogTitle() {
         return IDEWorkbenchMessages.WizardExportPage_errorDialogTitle;
     }
 
@@ -310,7 +317,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
      *
      * @deprecated Only retained for backwards compatibility.
      */
-    protected boolean ensureResourcesLocal(List resources) {
+    @Deprecated
+	protected boolean ensureResourcesLocal(List resources) {
         return true;
     }
 
@@ -343,7 +351,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
      */
     private ITreeContentProvider getResourceProvider(final int resourceType) {
         return new WorkbenchContentProvider() {
-            public Object[] getChildren(Object o) {
+            @Override
+			public Object[] getChildren(Object o) {
                 if (o instanceof IContainer) {
                     IResource[] members = null;
                     try {
@@ -517,7 +526,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
      * setting for their controls should extend hook method 
      * <code>internalSaveWidgetValues</code>.
      */
-    protected void saveWidgetValues() {
+    @Override
+	protected void saveWidgetValues() {
 
         // allow subclasses to save values
         internalSaveWidgetValues();
@@ -546,7 +556,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
     private void setupSelectionsBasedOnSelectedTypes() {
 
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 Map selectionMap = new Hashtable();
                 //Only get the white selected ones
                 Iterator resourceIterator = resourceGroup
@@ -627,7 +638,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
     /**
      * Check if widgets are enabled or disabled by a change in the dialog.
      */
-    protected void updateWidgetEnablements() {
+    @Override
+	protected void updateWidgetEnablements() {
 
         boolean pageComplete = determinePageCompletion();
         setPageComplete(pageComplete);

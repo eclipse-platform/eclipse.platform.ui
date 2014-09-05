@@ -73,6 +73,7 @@ public class ActionPasteMarker extends MarkerSelectionProviderAction {
 	/**
 	 * Copies the marker(s) from the clipboard to the bookmark navigator view.
 	 */
+	@Override
 	public void run() {
 		// Get the markers from the clipboard
 		MarkerTransfer transfer = MarkerTransfer.getInstance();
@@ -91,6 +92,7 @@ public class ActionPasteMarker extends MarkerSelectionProviderAction {
 
 		try {
 			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					for (int i = 0; i < markers.length; i++) {
 						// Collect info about the markers to be pasted.
@@ -130,6 +132,7 @@ public class ActionPasteMarker extends MarkerSelectionProviderAction {
 		// sent after the operation is executed.
 		if (getSelectionProvider() != null && op.getMarkers() != null) {
 			part.getSite().getShell().getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					getSelectionProvider().setSelection(
 							new StructuredSelection(op.getMarkers()));

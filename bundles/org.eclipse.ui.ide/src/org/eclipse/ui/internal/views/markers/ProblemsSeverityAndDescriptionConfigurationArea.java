@@ -25,6 +25,7 @@ public class ProblemsSeverityAndDescriptionConfigurationArea extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.views.markers.DescriptionConfigurationArea#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createContents(Composite parent) {
 	
 		super.createContents(parent);

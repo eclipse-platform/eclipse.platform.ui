@@ -30,6 +30,7 @@ public class ProblemsSeverityAndDescriptionFieldFilter extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.views.markers.DescriptionFieldFilter#select(org.eclipse.ui.views.markers.MarkerItem)
 	 */
+	@Override
 	public boolean select(MarkerItem item) {
 
 		IMarker marker = item.getMarker();
@@ -48,6 +49,7 @@ public class ProblemsSeverityAndDescriptionFieldFilter extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.views.markers.DescriptionFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento, org.eclipse.ui.internal.views.markers.MarkerContentGenerator)
 	 */
+	@Override
 	void loadLegacySettings(IMemento memento, MarkerContentGenerator generator) {
 
 		super.loadLegacySettings(memento,generator);
@@ -65,6 +67,7 @@ public class ProblemsSeverityAndDescriptionFieldFilter extends
 	 * 
 	 * @see org.eclipse.ui.internal.views.markers.DescriptionFieldFilter#initialize(org.eclipse.ui.views.markers.internal.ProblemFilter)
 	 */
+	@Override
 	public void initialize(ProblemFilter problemFilter) {
 		super.initialize(problemFilter);
 		if (problemFilter.getSeverity() > 0)

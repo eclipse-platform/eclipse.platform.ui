@@ -56,6 +56,7 @@ public class OpenLocalFileAction extends Action implements IWorkbenchWindowActio
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {
 		window =  null;
 		filterPath =  null;
@@ -64,6 +65,7 @@ public class OpenLocalFileAction extends Action implements IWorkbenchWindowActio
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		this.window =  window;
 		filterPath =  System.getProperty("user.home"); //$NON-NLS-1$
@@ -72,6 +74,7 @@ public class OpenLocalFileAction extends Action implements IWorkbenchWindowActio
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		run();
 	}
@@ -79,12 +82,14 @@ public class OpenLocalFileAction extends Action implements IWorkbenchWindowActio
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		FileDialog dialog =  new FileDialog(window.getShell(), SWT.OPEN | SWT.MULTI);
 		dialog.setText(IDEWorkbenchMessages.OpenLocalFileAction_title);

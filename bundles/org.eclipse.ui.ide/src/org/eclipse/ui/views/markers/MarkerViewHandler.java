@@ -100,6 +100,7 @@ public abstract class MarkerViewHandler extends AbstractHandler {
 			 * 
 			 * @see java.lang.Runnable#run()
 			 */
+			@Override
 			public void run() {
 				result[0] = view.getSelectedMarkers();
 			}

@@ -112,6 +112,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	 * by the user.
 	 * Sets the dialog result to the created folder.  
 	 */
+	@Override
 	protected void computeResult() {
 		//Do nothing here as we 
 		//need to know the result
@@ -120,6 +121,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	/* (non-Javadoc)
 	 * Method declared in Window.
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
@@ -129,6 +131,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	/**
 	 * @see org.eclipse.jface.window.Window#create()
 	 */
+	@Override
 	public void create() {
 		super.create();
 		// initially disable the ok button since we don't preset the
@@ -164,6 +167,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 			data.horizontalAlignment = GridData.BEGINNING;
 			advancedButton.setLayoutData(data);
 			advancedButton.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					handleAdvancedButtonSelect();
 				}
@@ -171,19 +175,23 @@ public class NewFolderDialog extends SelectionStatusDialog {
 		}
 		linkedResourceGroup = new CreateLinkedResourceGroup(IResource.FOLDER,
 				new Listener() {
+					@Override
 					public void handleEvent(Event e) {
 						validateLinkedResource();
 						firstLinkCheck = false;
 					}
 				}, new CreateLinkedResourceGroup.IStringValue() {
+					@Override
 					public void setValue(String string) {
 						folderNameField.setText(string);
 					}
 
+					@Override
 					public String getValue() {
 						return folderNameField.getText();
 					}
 
+					@Override
 					public IResource getResource() {
 						return container;
 					}
@@ -193,6 +201,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 		composite.setLayout(new GridLayout());
@@ -229,6 +238,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 		folderNameField.setLayoutData(data);
 		folderNameField.setFont(font);
 		folderNameField.addListener(SWT.Modify, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				validateLinkedResource();
 			}
@@ -263,6 +273,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 		final IFolder folderHandle = createFolderHandle(folderName);
 
 		WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
+			@Override
 			public void execute(IProgressMonitor monitor) throws CoreException {
 				try {
 					monitor
@@ -383,6 +394,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	 * Update the dialog's status line to reflect the given status. It is safe to call
 	 * this method before the dialog has been opened.
 	 */
+	@Override
 	protected void updateStatus(IStatus status) {
 		if (firstLinkCheck && status != null) {
 			// don't show the first validation result as an error.
@@ -468,6 +480,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		URI linkTarget = linkedResourceGroup.getLinkTargetURI();
 		IFolder folder = createNewFolder(folderNameField.getText(), linkTarget);

@@ -51,27 +51,31 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
     /**
      * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(ILabelProviderListener)
      */
-    public void addListener(ILabelProviderListener listener) {
+    @Override
+	public void addListener(ILabelProviderListener listener) {
     }
 
     /**
      * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         // no resources to dispose
     }
 
     /**
      * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
      */
-    public boolean isLabelProperty(Object element, String property) {
+    @Override
+	public boolean isLabelProperty(Object element, String property) {
         return false;
     }
 
     /**
      * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(ILabelProviderListener)
      */
-    public void removeListener(ILabelProviderListener listener) {
+    @Override
+	public void removeListener(ILabelProviderListener listener) {
     }
 
     /**
@@ -82,7 +86,8 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
      * @param decoration  The decoration we are adding to
      * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(Object, IDecoration)
      */
-    public void decorate(Object element, IDecoration decoration) {
+    @Override
+	public void decorate(Object element, IDecoration decoration) {
 
         if (element instanceof IResource == false) {
 			return;

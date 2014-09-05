@@ -50,7 +50,8 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
      * 
      * @see ViewerFilter#select(Viewer, Object, Object)
      */
-    public boolean select(Viewer viewer, Object parentElement, Object element) {
+    @Override
+	public boolean select(Viewer viewer, Object parentElement, Object element) {
         IResource resource = null;
 
         if (workingSet == null || (workingSet.isAggregateWorkingSet() &&
@@ -159,7 +160,8 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
      * 
      * @see ViewerFilter#filter(Viewer, Object, Object[])
      */
-    public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
+    @Override
+	public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
         Object[] result = null;
         if (workingSet != null) {
 			cachedWorkingSet = workingSet.getElements();

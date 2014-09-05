@@ -21,6 +21,7 @@ import org.eclipse.ui.actions.SelectionProviderAction;
  * Superclass of all actions provided by the resource navigator.
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
+@Deprecated
 public abstract class ResourceNavigatorAction extends SelectionProviderAction {
 
     private IResourceNavigator navigator;

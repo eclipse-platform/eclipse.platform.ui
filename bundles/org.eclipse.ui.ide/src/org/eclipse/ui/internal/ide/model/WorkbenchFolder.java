@@ -26,7 +26,8 @@ public class WorkbenchFolder extends WorkbenchResource {
      *	considering the passed open status as well iff appropriate for the type of
      *	passed resource
      */
-    protected ImageDescriptor getBaseImage(IResource resource) {
+    @Override
+	protected ImageDescriptor getBaseImage(IResource resource) {
         return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
                 ISharedImages.IMG_OBJ_FOLDER);
     }
@@ -34,7 +35,8 @@ public class WorkbenchFolder extends WorkbenchResource {
     /**
      * Returns the children of this container.
      */
-    public Object[] getChildren(Object o) {
+    @Override
+	public Object[] getChildren(Object o) {
         try {
             return ((IContainer) o).members();
         } catch (CoreException e) {

@@ -24,7 +24,8 @@ class MarkerLabelProvider extends LabelProvider implements ITableLabelProvider {
         this.properties = properties;
     }
 
-    public Image getColumnImage(Object element, int columnIndex) {
+    @Override
+	public Image getColumnImage(Object element, int columnIndex) {
         if (element == null || !(element instanceof IMarker)
                 || properties == null || columnIndex >= properties.length) {
 			return null;
@@ -33,7 +34,8 @@ class MarkerLabelProvider extends LabelProvider implements ITableLabelProvider {
         return properties[columnIndex].getImage(element);
     }
 
-    public String getColumnText(Object element, int columnIndex) {
+    @Override
+	public String getColumnText(Object element, int columnIndex) {
         if (element == null || !(element instanceof IMarker)
                 || properties == null || columnIndex >= properties.length) {
 			return ""; //$NON-NLS-1$

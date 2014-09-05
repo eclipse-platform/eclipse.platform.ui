@@ -77,6 +77,7 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 		 * (non-Javadoc)
 		 * @see org.eclipse.ui.actions.OpenWithMenu#openEditor(org.eclipse.ui.IEditorDescriptor, boolean)
 		 */
+		@Override
 		protected void openEditor(IEditorDescriptor editorDescriptor, boolean openUsingDescriptor) {
 			computeResult();
 			setResult(Collections.EMPTY_LIST);
@@ -97,10 +98,12 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.internal.ShowInMenu#getContext(org.eclipse.ui.IWorkbenchPart)
 		 */
+		@Override
 		protected ShowInContext getContext(IWorkbenchPart sourcePart) {
 			return new ShowInContext(null, selectedItems);
 		}
 
+		@Override
 		protected IWorkbenchPart getSourcePart() {
 			return null;
 		}
@@ -108,6 +111,7 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.internal.ShowInMenu#getContributionItem(org.eclipse.ui.views.IViewDescriptor)
 		 */
+		@Override
 		protected IContributionItem getContributionItem(IViewDescriptor viewDescriptor) {
 			final String targetId= viewDescriptor.getId();
 			String label = '&' + viewDescriptor.getLabel();
@@ -116,6 +120,7 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 				/* (non-Javadoc)
 				 * @see org.eclipse.jface.action.Action#run()
 				 */
+				@Override
 				public void run() {
 					computeResult();
 					setResult(Collections.EMPTY_LIST);
@@ -169,6 +174,7 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 * @since 3.5
 	 */
+	@Override
 	protected void fillContextMenu(IMenuManager menuManager) {
 		super.fillContextMenu(menuManager);
 
@@ -186,6 +192,7 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 		
 		// Add 'Open' menu item
 		OpenFileAction openFileAction = new OpenFileAction(activePage) {
+			@Override
 			public void run() {
 				okPressed();
 			}
@@ -218,12 +225,14 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 	 * @see org.eclipse.ui.dialogs.SelectionDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 * @since 3.5
 	 */
+	@Override
 	protected void createButtonsForButtonBar(final Composite parent) {
 		GridLayout parentLayout = (GridLayout)parent.getLayout();
 		parentLayout.makeColumnsEqualWidth = false;
 
 		showInButton = createDropdownButton(parent, SHOW_IN_ID, IDEWorkbenchMessages.OpenResourceDialog_showInButton_text,
 				new MouseAdapter() {
+					@Override
 					public void mouseDown(MouseEvent e) {
 						showShowInMenu();
 					}
@@ -232,6 +241,7 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 		
 		openWithButton = createDropdownButton(parent, OPEN_WITH_ID, IDEWorkbenchMessages.OpenResourceDialog_openWithButton_text,
 				new MouseAdapter() {
+					@Override
 					public void mouseDown(MouseEvent e) {
 						showOpenWithMenu();
 					}
@@ -275,6 +285,7 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 		case OPEN_WITH_ID:
@@ -292,6 +303,7 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#updateButtonsEnableState(org.eclipse.core.runtime.IStatus)
 	 * @since 3.5
 	 */
+	@Override
 	protected void updateButtonsEnableState(IStatus status) {
 		super.updateButtonsEnableState(status);
 		if (showInButton != null && !showInButton.isDisposed()

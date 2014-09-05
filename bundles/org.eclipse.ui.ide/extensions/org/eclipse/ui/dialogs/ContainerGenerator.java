@@ -163,7 +163,8 @@ public class ContainerGenerator {
     public IContainer generateContainer(IProgressMonitor monitor)
             throws CoreException {
         IDEWorkbenchPlugin.getPluginWorkspace().run(new IWorkspaceRunnable() {
-            public void run(IProgressMonitor monitor) throws CoreException {
+            @Override
+			public void run(IProgressMonitor monitor) throws CoreException {
                 monitor
                         .beginTask(
                                 IDEWorkbenchMessages.ContainerGenerator_progressMessage, 1000 * containerFullPath.segmentCount());

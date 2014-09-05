@@ -18,6 +18,7 @@ import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
  * @since 2.0
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
+@Deprecated
 public class SortViewAction extends ResourceNavigatorAction {
     private int sortCriteria;
 
@@ -42,7 +43,8 @@ public class SortViewAction extends ResourceNavigatorAction {
 				INavigatorHelpContextIds.SORT_VIEW_ACTION);
     }
 
-    public void run() {
+    @Override
+	public void run() {
         IResourceNavigator navigator = getNavigator();
         ResourceComparator comparator = navigator.getComparator();
 

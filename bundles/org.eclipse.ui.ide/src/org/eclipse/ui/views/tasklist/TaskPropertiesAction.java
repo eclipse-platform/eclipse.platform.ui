@@ -35,7 +35,8 @@ class TaskPropertiesAction extends TaskAction {
     /**
      * Performs this action.
      */
-    public void run() {
+    @Override
+	public void run() {
         IStructuredSelection sel = (IStructuredSelection) getTaskList()
                 .getSelection();
         Object o = sel.getFirstElement();

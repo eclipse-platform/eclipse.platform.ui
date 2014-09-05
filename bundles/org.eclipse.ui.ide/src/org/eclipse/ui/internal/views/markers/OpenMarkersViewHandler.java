@@ -36,6 +36,7 @@ public class OpenMarkersViewHandler extends MarkerViewHandler {
 	 * 
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ExtendedMarkersView part = getView(event);
 		if (part == null)
@@ -81,6 +82,7 @@ public class OpenMarkersViewHandler extends MarkerViewHandler {
 			 * 
 			 * @see org.eclipse.jface.dialogs.IInputValidator#isValid(java.lang.String)
 			 */
+			@Override
 			public String isValid(String newText) {
 				if (newText.length() > 0)
 					return null;

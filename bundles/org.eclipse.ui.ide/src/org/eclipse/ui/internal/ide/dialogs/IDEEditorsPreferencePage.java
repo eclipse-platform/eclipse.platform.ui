@@ -29,6 +29,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  */
 public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = createComposite(parent);
         

@@ -66,6 +66,7 @@ public class QuickFixHandler extends MarkerViewHandler {
 	 * 
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
 		final ExtendedMarkersView view = getView(event);
@@ -77,6 +78,7 @@ public class QuickFixHandler extends MarkerViewHandler {
 		final IMarker firstSelectedMarker = selectedMarkers[0];
 
 		IRunnableWithProgress resolutionsRunnable = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 				monitor
 						.beginTask(

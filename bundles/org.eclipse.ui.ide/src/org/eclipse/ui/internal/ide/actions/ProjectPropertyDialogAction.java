@@ -64,7 +64,8 @@ public class ProjectPropertyDialogAction extends PartEventAction implements
     /**
      * Opens the project properties dialog.
      */
-    public void run() {
+    @Override
+	public void run() {
         IProject project = getProject();
         if (project == null) {
 			return;
@@ -80,14 +81,16 @@ public class ProjectPropertyDialogAction extends PartEventAction implements
     /**
      * Update the enablement state when a the selection changes.
      */
-    public void selectionChanged(IWorkbenchPart part, ISelection sel) {
+    @Override
+	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
         setEnabled(getProject() != null);
     }
 
     /**
      * Update the enablement state when a new part is activated.
      */
-    public void partActivated(IWorkbenchPart part) {
+    @Override
+	public void partActivated(IWorkbenchPart part) {
         super.partActivated(part);
         setEnabled(getProject() != null);
     }
@@ -124,7 +127,8 @@ public class ProjectPropertyDialogAction extends PartEventAction implements
     /* (non-javadoc)
      * Method declared on ActionFactory.IWorkbenchAction
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         if (workbenchWindow == null) {
             // action has already been disposed
             return;
@@ -140,21 +144,25 @@ public class ProjectPropertyDialogAction extends PartEventAction implements
     private static final class SelProvider implements ISelectionProvider {
         protected IStructuredSelection projectSelection = StructuredSelection.EMPTY;
 
-        public void addSelectionChangedListener(
+        @Override
+		public void addSelectionChangedListener(
                 ISelectionChangedListener listener) {
             // do nothing
         }
 
-        public ISelection getSelection() {
+        @Override
+		public ISelection getSelection() {
             return projectSelection;
         }
 
-        public void removeSelectionChangedListener(
+        @Override
+		public void removeSelectionChangedListener(
                 ISelectionChangedListener listener) {
             // do nothing
         }
 
-        public void setSelection(ISelection selection) {
+        @Override
+		public void setSelection(ISelection selection) {
             // do nothing
         }
     }

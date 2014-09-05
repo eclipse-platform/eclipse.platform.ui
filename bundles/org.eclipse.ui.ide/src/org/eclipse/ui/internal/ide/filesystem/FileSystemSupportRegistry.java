@@ -74,6 +74,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 				 * @see org.eclipse.ui.ide.fileSystem.FileSystemContributor#browseFileSystem(java.lang.String,
 				 *      org.eclipse.swt.widgets.Shell)
 				 */
+				@Override
 				public URI browseFileSystem(String initialPath, Shell shell) {
 
 					DirectoryDialog dialog = new DirectoryDialog(shell, SWT.SHEET);
@@ -129,6 +130,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 	 * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamichelpers.IExtensionTracker,
 	 *      org.eclipse.core.runtime.IExtension)
 	 */
+	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		processExtension(tracker, extension);
 		allConfigurations = null;//Clear the cache
@@ -140,6 +142,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 	 * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension,
 	 *      java.lang.Object[])
 	 */
+	@Override
 	public void removeExtension(IExtension extension, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
 			registeredContributions.remove(objects[i]);
@@ -181,6 +184,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 		final CoreException[] exceptions = new CoreException[1];
 
 		Platform.run(new ISafeRunnable() {
+			@Override
 			public void run() {
 				try {
 					contributors[0] = (FileSystemContributor) IDEWorkbenchPlugin
@@ -194,6 +198,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 			/*
 			 * (non-Javadoc) Method declared on ISafeRunnable.
 			 */
+			@Override
 			public void handleException(Throwable e) {
 				// Do nothing as Core will handle the logging
 			}

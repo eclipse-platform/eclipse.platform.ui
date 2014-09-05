@@ -40,7 +40,8 @@ class MarkCompletedAction extends TaskAction {
      * Sets the completed value of the currently selected
      * actions.
      */
-    public void run() {
+    @Override
+	public void run() {
         ISelection selectedMarkers = getTaskList().getSelection();
         if (selectedMarkers instanceof IStructuredSelection) {
             Iterator selections = ((IStructuredSelection) selectedMarkers).iterator();

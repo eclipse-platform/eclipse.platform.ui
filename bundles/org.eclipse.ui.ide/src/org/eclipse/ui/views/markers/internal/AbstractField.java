@@ -22,6 +22,7 @@ public abstract class AbstractField implements IField {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#isShowing()
 	 */
+	@Override
 	public boolean isShowing() {
 		return visible;
 	}
@@ -30,6 +31,7 @@ public abstract class AbstractField implements IField {
 	 * Set whether or not the receiver is showing.
 	 * @param showing
 	 */
+	@Override
 	public void setShowing(boolean showing){
 		visible = showing;
 		

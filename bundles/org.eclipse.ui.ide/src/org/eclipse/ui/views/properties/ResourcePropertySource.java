@@ -138,14 +138,16 @@ public class ResourcePropertySource implements IPropertySource {
     /* (non-Javadoc)
      * Method declared on IPropertySource.
      */
-    public Object getEditableValue() {
+    @Override
+	public Object getEditableValue() {
         return this;
     }
 
     /* (non-Javadoc)
      * Method declared on IPropertySource.
      */
-    public IPropertyDescriptor[] getPropertyDescriptors() {
+    @Override
+	public IPropertyDescriptor[] getPropertyDescriptors() {
         if (isPathVariable(element)) {
 			return propertyDescriptorsLinkVariable;
 		}
@@ -155,7 +157,8 @@ public class ResourcePropertySource implements IPropertySource {
     /* (non-Javadoc)
      * Method declared on IPropertySource.
      */
-    public Object getPropertyValue(Object name) {
+    @Override
+	public Object getPropertyValue(Object name) {
         if (name.equals(IBasicPropertyConstants.P_TEXT)) {
             return element.getName();
         }
@@ -222,7 +225,8 @@ public class ResourcePropertySource implements IPropertySource {
     /* (non-Javadoc)
      * Method declared on IPropertySource.
      */
-    public boolean isPropertySet(Object property) {
+    @Override
+	public boolean isPropertySet(Object property) {
         return false;
     }
 
@@ -231,7 +235,8 @@ public class ResourcePropertySource implements IPropertySource {
      * <code>IPropertySource</code> method does nothing since all
      * properties are read-only.
      */
-    public void resetPropertyValue(Object property) {
+    @Override
+	public void resetPropertyValue(Object property) {
     }
 
     /**
@@ -239,7 +244,8 @@ public class ResourcePropertySource implements IPropertySource {
      * <code>IPropertySource</code> method does nothing since all
      * properties are read-only.
      */
-    public void setPropertyValue(Object name, Object value) {
+    @Override
+	public void setPropertyValue(Object name, Object value) {
     }
 
     /** 

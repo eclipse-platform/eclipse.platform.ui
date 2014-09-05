@@ -53,6 +53,7 @@ import org.eclipse.ui.operations.UndoRedoActionGroup;
  * This contains a few actions and several subgroups.
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
+@Deprecated
 public class MainActionGroup extends ResourceNavigatorActionGroup {
 
     protected AddBookmarkAction addBookmarkAction;
@@ -95,7 +96,8 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
     public MainActionGroup(IResourceNavigator navigator) {
         super(navigator);
         resourceChangeListener = new IResourceChangeListener() {
-            public void resourceChanged(IResourceChangeEvent event) {
+            @Override
+			public void resourceChanged(IResourceChangeEvent event) {
                 handleResourceChanged(event);
             }
         };
@@ -134,7 +136,8 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
                 if (sel.contains(projDelta.getResource())) {
                     getNavigator().getSite().getShell().getDisplay().syncExec(
                             new Runnable() {
-                                public void run() {
+                                @Override
+								public void run() {
                                     addTaskAction.selectionChanged(selection);
                                     gotoGroup.updateActionBars();
                                     refactorGroup.updateActionBars();
@@ -149,7 +152,8 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
     /**
      * Makes the actions contained directly in this action group.
      */
-    protected void makeActions() {
+    @Override
+	protected void makeActions() {
         IShellProvider provider = navigator.getSite();
 
         newWizardMenu = new NewWizardMenu(navigator.getSite().getWorkbenchWindow());
@@ -193,7 +197,8 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
         openGroup = new OpenActionGroup(navigator);
         refactorGroup = new RefactorActionGroup(navigator);
         IPropertyChangeListener workingSetUpdater = new IPropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent event) {
+            @Override
+			public void propertyChange(PropertyChangeEvent event) {
                 String property = event.getProperty();
 
                 if (WorkingSetFilterActionGroup.CHANGE_WORKING_SET
@@ -224,7 +229,8 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
     /**
      * Extends the superclass implementation to set the context in the subgroups.
      */
-    public void setContext(ActionContext context) {
+    @Override
+	public void setContext(ActionContext context) {
         super.setContext(context);
         gotoGroup.setContext(context);
         openGroup.setContext(context);
@@ -240,7 +246,8 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
      * 
      * @param menu the context menu
      */
-    public void fillContextMenu(IMenuManager menu) {
+    @Override
+	public void fillContextMenu(IMenuManager menu) {
         IStructuredSelection selection = (IStructuredSelection) getContext()
                 .getSelection();
 
@@ -278,7 +285,8 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
     /**
      * Adds the actions in this group and its subgroups to the action bars.
      */
-    public void fillActionBars(IActionBars actionBars) {
+    @Override
+	public void fillActionBars(IActionBars actionBars) {
         actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(),
                 propertyDialogAction);
         actionBars.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(),
@@ -307,7 +315,8 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
      * Updates the actions which were added to the action bars,
      * delegating to the subgroups as necessary.
      */
-    public void updateActionBars() {
+    @Override
+	public void updateActionBars() {
         IStructuredSelection selection = (IStructuredSelection) getContext()
                 .getSelection();
         propertyDialogAction.setEnabled(selection.size() == 1);
@@ -326,7 +335,8 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
     /**
      * Runs the default action (open file) by delegating the open group.
      */
-    public void runDefaultAction(IStructuredSelection selection) {
+    @Override
+	public void runDefaultAction(IStructuredSelection selection) {
         openGroup.runDefaultAction(selection);
     }
 
@@ -334,7 +344,8 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
      * Handles a key pressed event by invoking the appropriate action,
      * delegating to the subgroups as necessary.
      */
-    public void handleKeyPressed(KeyEvent event) {
+    @Override
+	public void handleKeyPressed(KeyEvent event) {
         refactorGroup.handleKeyPressed(event);
         workspaceGroup.handleKeyPressed(event);
     }
@@ -343,7 +354,8 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
      * Extends the superclass implementation to dispose the 
      * actions in this group and its subgroups.
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         ResourcesPlugin.getWorkspace().removeResourceChangeListener(
                 resourceChangeListener);
 

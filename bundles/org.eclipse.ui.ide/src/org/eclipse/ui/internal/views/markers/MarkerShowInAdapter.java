@@ -36,6 +36,7 @@ public class MarkerShowInAdapter implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object,
 	 *      java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (!(adaptableObject instanceof ExtendedMarkersView))
 			return null;
@@ -43,6 +44,7 @@ public class MarkerShowInAdapter implements IAdapterFactory {
 		final ExtendedMarkersView view = (ExtendedMarkersView) adaptableObject;
 
 		return new IShowInSource() {
+			@Override
 			public ShowInContext getShowInContext() {
 				IMarker[] markers = view.getSelectedMarkers();
 				Collection resources = new HashSet();
@@ -62,6 +64,7 @@ public class MarkerShowInAdapter implements IAdapterFactory {
 	 * 
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	public Class[] getAdapterList() {
 		return classes;
 	}

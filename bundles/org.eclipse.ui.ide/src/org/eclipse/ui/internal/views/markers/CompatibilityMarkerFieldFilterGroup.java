@@ -43,6 +43,7 @@ public class CompatibilityMarkerFieldFilterGroup extends MarkerFieldFilterGroup 
 	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerFieldFilterGroup#getID()
 	 */
+	@Override
 	public String getID() {
 		return problemFilter.getId();
 	}
@@ -52,6 +53,7 @@ public class CompatibilityMarkerFieldFilterGroup extends MarkerFieldFilterGroup 
 	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerFieldFilterGroup#getName()
 	 */
+	@Override
 	public String getName() {
 		return problemFilter.getName();
 	}
@@ -61,6 +63,7 @@ public class CompatibilityMarkerFieldFilterGroup extends MarkerFieldFilterGroup 
 	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerFieldFilterGroup#isSystem()
 	 */
+	@Override
 	public boolean isSystem() {
 		return true;
 	}
@@ -70,6 +73,7 @@ public class CompatibilityMarkerFieldFilterGroup extends MarkerFieldFilterGroup 
 	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerFieldFilterGroup#makeWorkingCopy()
 	 */
+	@Override
 	MarkerFieldFilterGroup makeWorkingCopy() {
 
 		CompatibilityMarkerFieldFilterGroup clone = new CompatibilityMarkerFieldFilterGroup(
@@ -85,6 +89,7 @@ public class CompatibilityMarkerFieldFilterGroup extends MarkerFieldFilterGroup 
 	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerFieldFilterGroup#calculateFilters()
 	 */
+	@Override
 	protected void calculateFilters() {
 		super.calculateFilters();
 		// Now initialize with the ProblemFilter

@@ -54,6 +54,7 @@ import org.eclipse.ui.part.ResourceTransfer;
  * @since 2.0
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
+@Deprecated
 public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 
     /**
@@ -78,7 +79,8 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
     /*
      * @see org.eclipse.swt.dnd.DropTargetListener#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
      */
-    public void dragEnter(DropTargetEvent event) {
+    @Override
+	public void dragEnter(DropTargetEvent event) {
         if (FileTransfer.getInstance().isSupportedType(event.currentDataType)
                 && event.detail == DND.DROP_DEFAULT) {
             // default to copy when dragging from outside Eclipse. Fixes bug 16308.
@@ -91,6 +93,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
     /* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragOperationChanged(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
+	@Override
 	public void dragOperationChanged(DropTargetEvent event) {
 		super.dragOperationChanged(event);
 	}
@@ -235,7 +238,8 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
      * Perform the drop.
      * @see org.eclipse.swt.dnd.DropTargetListener#drop(org.eclipse.swt.dnd.DropTargetEvent)
      */
-    public boolean performDrop(final Object data) {
+    @Override
+	public boolean performDrop(final Object data) {
         alwaysOverwrite = false;
         if (getCurrentTarget() == null || data == null) {
             return false;
@@ -283,7 +287,8 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
         // Otherwise the drag source (e.g., Windows Explorer) will be blocked
         // while the operation executes. Fixes bug 16478.
         Display.getCurrent().asyncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 getShell().forceActive();
 				new CopyFilesAndFoldersOperation(getShell()).copyOrLinkFiles(names, target, currentOperation);
             }
@@ -404,7 +409,8 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
     /*
      * @see org.eclipse.ui.dialogs.IOverwriteQuery#queryOverwrite(java.lang.String)
      */
-    public String queryOverwrite(String pathString) {
+    @Override
+	public String queryOverwrite(String pathString) {
         if (alwaysOverwrite) {
 			return ALL;
 		}
@@ -415,7 +421,8 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
                 IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL,
                 IDialogConstants.CANCEL_LABEL };
         getDisplay().syncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 MessageDialog dialog = new MessageDialog(
                         getShell(),
                         ResourceNavigatorMessages.DropAdapter_question, null, msg, MessageDialog.QUESTION, options, 0);
@@ -435,7 +442,8 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
      * This method is used to notify the action that some aspect of
      * the drop operation has changed.
      */
-    public boolean validateDrop(Object target, int dragOperation,
+    @Override
+	public boolean validateDrop(Object target, int dragOperation,
             TransferData transferType) {
 
         if (dragOperation != DND.DROP_NONE) {

@@ -30,6 +30,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * @since 2.0
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
+@Deprecated
 public abstract class ResourceNavigatorActionGroup extends ActionGroup {
 
     /**

@@ -83,7 +83,8 @@ public class NewProjectAction extends Action {
     /* (non-Javadoc)
      * Method declared on IAction.
      */
-    public void run() {
+    @Override
+	public void run() {
         // Create wizard selection wizard.
         IWorkbench workbench = PlatformUI.getWorkbench();
         NewWizard wizard = new NewWizard();

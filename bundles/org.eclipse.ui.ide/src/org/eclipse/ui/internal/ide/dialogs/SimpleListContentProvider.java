@@ -32,14 +32,16 @@ public class SimpleListContentProvider implements IStructuredContentProvider {
     /**
      * Do nothing when disposing,
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
     }
 
     /**
      * Returns the elements to display in the viewer. The inputElement is ignored for this
      * provider.
      */
-    public Object[] getElements(Object inputElement) {
+    @Override
+	public Object[] getElements(Object inputElement) {
         return this.elements;
     }
 
@@ -47,7 +49,8 @@ public class SimpleListContentProvider implements IStructuredContentProvider {
      * Required method from IStructuredContentProvider. The input is assumed to not change 
      * for the SimpleListContentViewer so do nothing here.
      */
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    @Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     }
 
     /**

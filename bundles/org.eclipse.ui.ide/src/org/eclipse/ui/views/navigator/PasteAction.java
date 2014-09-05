@@ -39,6 +39,7 @@ import org.eclipse.ui.part.ResourceTransfer;
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  * @since 2.0
  */
+@Deprecated
 /*package*/class PasteAction extends SelectionListenerAction {
 
     /**
@@ -118,7 +119,8 @@ import org.eclipse.ui.part.ResourceTransfer;
     /**
      * Implementation of method defined on <code>IAction</code>.
      */
-    public void run() {
+    @Override
+	public void run() {
         // try a resource transfer
         ResourceTransfer resTransfer = ResourceTransfer.getInstance();
         IResource[] resourceData = (IResource[]) clipboard
@@ -180,14 +182,16 @@ import org.eclipse.ui.part.ResourceTransfer;
      * -Files and folders may be pasted to a single selected folder in open 
      * 	project or multiple selected files in the same folder 
      */
-    protected boolean updateSelection(IStructuredSelection selection) {
+    @Override
+	protected boolean updateSelection(IStructuredSelection selection) {
         if (!super.updateSelection(selection)) {
 			return false;
 		}
 
         final IResource[][] clipboardData = new IResource[1][];
         shell.getDisplay().syncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 // clipboard must have resources or files
                 ResourceTransfer resTransfer = ResourceTransfer.getInstance();
                 clipboardData[0] = (IResource[]) clipboard

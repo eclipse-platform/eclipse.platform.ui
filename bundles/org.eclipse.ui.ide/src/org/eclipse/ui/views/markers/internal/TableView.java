@@ -91,6 +91,7 @@ public abstract class TableView extends ViewPart {
 	/*
 	 * (non-Javadoc) Method declared on IViewPart.
 	 */
+	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		this.memento = memento;
@@ -116,6 +117,7 @@ public abstract class TableView extends ViewPart {
 	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 
@@ -130,6 +132,7 @@ public abstract class TableView extends ViewPart {
 		viewer.setContentProvider(contentProvider);
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event
 						.getSelection();
@@ -169,6 +172,7 @@ public abstract class TableView extends ViewPart {
 		registerGlobalActions(getViewSite().getActionBars());
 
 		viewer.addOpenListener(new IOpenListener() {
+			@Override
 			public void open(OpenEvent event) {
 				handleOpenEvent(event);
 			}
@@ -340,6 +344,7 @@ public abstract class TableView extends ViewPart {
 		MenuManager mgr = new MenuManager();
 		mgr.setRemoveAllWhenShown(true);
 		mgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager mgr) {
 
 				getViewer().cancelEditing();
@@ -387,6 +392,7 @@ public abstract class TableView extends ViewPart {
 	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		Viewer viewer = getViewer();
 		if (viewer != null && !viewer.getControl().isDisposed()) {
@@ -448,6 +454,7 @@ public abstract class TableView extends ViewPart {
 			/**
 			 * Handles the case of user selecting the header area.
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 
 				final TreeColumn column = (TreeColumn) e.widget;
@@ -463,6 +470,7 @@ public abstract class TableView extends ViewPart {
 							 * 
 							 * @see java.lang.Runnable#run()
 							 */
+							@Override
 							public void run() {
 								resortTable(column, field,
 										new NullProgressMonitor());
@@ -477,6 +485,7 @@ public abstract class TableView extends ViewPart {
 									 * 
 									 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 									 */
+									@Override
 									public void run(IProgressMonitor monitor) {
 										resortTable(column, field, monitor);
 									}
@@ -517,6 +526,7 @@ public abstract class TableView extends ViewPart {
 							 * 
 							 * @see java.lang.Runnable#run()
 							 */
+							@Override
 							public void run() {
 								viewer.refresh();
 								updateDirectionIndicator(column);
@@ -586,6 +596,7 @@ public abstract class TableView extends ViewPart {
 	 * 
 	 * @see org.eclipse.ui.part.ViewPart#saveState(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
 

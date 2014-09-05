@@ -45,7 +45,8 @@ class GotoTaskAction extends TaskAction {
     /**
      * Performs this action. This action works only for single selection.
      */
-    public void run() {
+    @Override
+	public void run() {
         IStructuredSelection selection = (IStructuredSelection) getTaskList()
                 .getSelection();
         Object o = selection.getFirstElement();

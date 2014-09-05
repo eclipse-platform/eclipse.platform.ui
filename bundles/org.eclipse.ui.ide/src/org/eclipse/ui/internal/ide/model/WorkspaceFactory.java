@@ -38,20 +38,23 @@ public class WorkspaceFactory implements IElementFactory, IPersistableElement {
     /**
      * @see IElementFactory
      */
-    public IAdaptable createElement(IMemento memento) {
+    @Override
+	public IAdaptable createElement(IMemento memento) {
         return ResourcesPlugin.getWorkspace();
     }
 
     /**
      * @see IPersistableElement
      */
-    public String getFactoryId() {
+    @Override
+	public String getFactoryId() {
         return FACTORY_ID;
     }
 
     /**
      * @see IPersistableElement
      */
-    public void saveState(IMemento memento) {
+    @Override
+	public void saveState(IMemento memento) {
     }
 }

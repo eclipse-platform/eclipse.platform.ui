@@ -29,6 +29,7 @@ public class MarkerLocationField extends MarkerField {
 	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
+	@Override
 	public String getValue(MarkerItem item) {
 		return item.getLocation();
 	}
@@ -40,6 +41,7 @@ public class MarkerLocationField extends MarkerField {
 	 *            the control to scale from
 	 * @return int
 	 */
+	@Override
 	public int getDefaultColumnWidth(Control control) {
 		return 15 * MarkerSupportInternalUtilities.getFontWidth(control);
 	}
@@ -50,6 +52,7 @@ public class MarkerLocationField extends MarkerField {
 	 * @see org.eclipse.ui.views.markers.MarkerField#compare(org.eclipse.ui.views.markers.MarkerItem,
 	 *      org.eclipse.ui.views.markers.MarkerItem)
 	 */
+	@Override
 	public int compare(MarkerItem item1, MarkerItem item2) {
 
 		//See if location got overridden

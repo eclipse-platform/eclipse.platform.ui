@@ -67,13 +67,15 @@ public class DialogTaskFilter extends
 	        	/* (non-Javadoc)
 	        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	        	 */
-	        	public void widgetSelected(SelectionEvent e) {
+	        	@Override
+				public void widgetSelected(SelectionEvent e) {
 	        		  updateForSelection();
 	        	}
 	          });
 			// Prevent Esc and Return from closing the dialog when the combo is
 			// active.
 			combo.addTraverseListener(new TraverseListener() {
+				@Override
 				public void keyTraversed(TraverseEvent e) {
 					if (e.detail == SWT.TRAVERSE_ESCAPE
 							|| e.detail == SWT.TRAVERSE_RETURN) {
@@ -88,6 +90,7 @@ public class DialogTaskFilter extends
 			data.horizontalSpan = 3;
 			description.setLayoutData(data);
 			description.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					DialogTaskFilter.this.markDirty();
 				}
@@ -150,6 +153,7 @@ public class DialogTaskFilter extends
 				 * 
 				 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 				 */
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					updateEnablement(true);
 					DialogTaskFilter.this.markDirty();
@@ -174,7 +178,8 @@ public class DialogTaskFilter extends
 	        	/* (non-Javadoc)
 	        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	        	 */
-	        	public void widgetSelected(SelectionEvent e) {
+	        	@Override
+				public void widgetSelected(SelectionEvent e) {
 	        		  updateForSelection();
 	        	}
 	          });
@@ -187,7 +192,8 @@ public class DialogTaskFilter extends
 	        	/* (non-Javadoc)
 	        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	        	 */
-	        	public void widgetSelected(SelectionEvent e) {
+	        	@Override
+				public void widgetSelected(SelectionEvent e) {
 	        		  updateForSelection();
 	        	}
 	          });
@@ -200,7 +206,8 @@ public class DialogTaskFilter extends
 	        	/* (non-Javadoc)
 	        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	        	 */
-	        	public void widgetSelected(SelectionEvent e) {
+	        	@Override
+				public void widgetSelected(SelectionEvent e) {
 	        		  updateForSelection();
 	        	}
 	          });
@@ -265,6 +272,7 @@ public class DialogTaskFilter extends
 		 */
 		public StatusGroup(Composite parent) {
 			SelectionListener enablementListener = new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					updateEnablement(true);
 					DialogTaskFilter.this.markDirty();
@@ -290,6 +298,7 @@ public class DialogTaskFilter extends
 			composite.setLayoutData(data);
 
 			SelectionListener listener = new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					completeButton.setSelection(!incompleteButton
 							.getSelection());
@@ -355,6 +364,7 @@ public class DialogTaskFilter extends
 	 * 
 	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#createAttributesArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createAttributesArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setFont(parent.getFont());
@@ -371,6 +381,7 @@ public class DialogTaskFilter extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#updateFilterFromUI(org.eclipse.ui.views.markers.internal.MarkerFilter)
 	 */
+	@Override
 	protected void updateFilterFromUI(MarkerFilter filter) {
 		super.updateFilterFromUI(filter);
 
@@ -399,6 +410,7 @@ public class DialogTaskFilter extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#updateUIWithFilter(org.eclipse.ui.views.markers.internal.MarkerFilter)
 	 */
+	@Override
 	protected void updateUIWithFilter(MarkerFilter filter) {
 		TaskFilter taskFilter = (TaskFilter)filter;
 		descriptionGroup.setContains(taskFilter.getContains());
@@ -423,6 +435,7 @@ public class DialogTaskFilter extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#updateEnabledState(boolean)
 	 */
+	@Override
 	protected void updateEnabledState(boolean enabled) {
 		super.updateEnabledState(enabled);
 		descriptionGroup.updateEnablement(enabled);
@@ -436,6 +449,7 @@ public class DialogTaskFilter extends
 	 * 
 	 * @see org.eclipse.ui.views.markerview.FiltersDialog#resetPressed()
 	 */
+	@Override
 	protected void resetPressed() {
 		descriptionGroup.setContains(TaskFilter.DEFAULT_CONTAINS);
 		descriptionGroup.setDescription(TaskFilter.DEFAULT_DESCRIPTION);
@@ -459,6 +473,7 @@ public class DialogTaskFilter extends
 	 * 
 	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#newFilter(java.lang.String)
 	 */
+	@Override
 	protected MarkerFilter newFilter(String newName) {
 		return new TaskFilter(newName);
 	}

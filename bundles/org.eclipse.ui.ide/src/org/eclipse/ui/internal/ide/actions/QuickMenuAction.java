@@ -27,6 +27,7 @@ import org.eclipse.ui.keys.IBindingService;
 public abstract class QuickMenuAction extends Action {
 
 	private QuickMenuCreator creator = new QuickMenuCreator() {
+		@Override
 		protected void fillMenu(IMenuManager menu) {
 			QuickMenuAction.this.fillMenu(menu);
 		}
@@ -46,7 +47,8 @@ public abstract class QuickMenuAction extends Action {
     /**
      * {@inheritDoc}
      */
-    public void run() {
+    @Override
+	public void run() {
     	creator.createMenu();
     }
     

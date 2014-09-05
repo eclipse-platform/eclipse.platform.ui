@@ -31,6 +31,7 @@ import org.eclipse.ui.views.framelist.UpAction;
  * This is the action group for the goto actions.
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
+@Deprecated
 public class GotoActionGroup extends ResourceNavigatorActionGroup {
 
     private BackAction backAction;
@@ -47,7 +48,8 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
         super(navigator);
     }
 
-    public void fillContextMenu(IMenuManager menu) {
+    @Override
+	public void fillContextMenu(IMenuManager menu) {
         IStructuredSelection selection = (IStructuredSelection) getContext()
                 .getSelection();
         if (selection.size() == 1) {
@@ -68,7 +70,8 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
         }
     }
 
-    public void fillActionBars(IActionBars actionBars) {
+    @Override
+	public void fillActionBars(IActionBars actionBars) {
         actionBars.setGlobalActionHandler(IWorkbenchActionConstants.GO_INTO,
                 goIntoAction);
         actionBars.setGlobalActionHandler(ActionFactory.BACK.getId(),
@@ -86,7 +89,8 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
         toolBar.add(upAction);
     }
 
-    protected void makeActions() {
+    @Override
+	protected void makeActions() {
         FrameList frameList = navigator.getFrameList();
         goIntoAction = new GoIntoAction(frameList);
         backAction = new BackAction(frameList);
@@ -96,7 +100,8 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
                 ResourceNavigatorMessages.GoToResource_label);
     }
 
-    public void updateActionBars() {
+    @Override
+	public void updateActionBars() {
         ActionContext context = getContext();
         boolean enable = false;
 

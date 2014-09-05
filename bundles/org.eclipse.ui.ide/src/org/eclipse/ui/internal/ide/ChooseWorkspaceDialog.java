@@ -123,7 +123,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
      * @param parent the parent composite to contain the dialog area
      * @return the dialog area control
      */
-    protected Control createDialogArea(Composite parent) {
+    @Override
+	protected Control createDialogArea(Composite parent) {
         String productName = getWindowTitle();
 
         Composite composite = (Composite) super.createDialogArea(parent);
@@ -148,6 +149,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		String vmName = System.getProperty("java.vm.name");//$NON-NLS-1$
 		if (!gcj && vmName != null && vmName.indexOf("libgcj") != -1) { //$NON-NLS-1$
 			composite.getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					// set this via an async - if we set it directly the dialog
 					// will
@@ -191,7 +193,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
      * 
      * @param shell the shell
      */
-    protected void configureShell(Shell shell) {
+    @Override
+	protected void configureShell(Shell shell) {
         super.configureShell(shell);
         shell.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_dialogName);
     }
@@ -204,7 +207,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
      * and closes the dialog. Subclasses may override.
      * </p>
      */
-    protected void okPressed() {
+    @Override
+	protected void okPressed() {
         launchData.workspaceSelected(TextProcessor.deprocess(getWorkspaceLocation()));
         super.okPressed();
     }
@@ -225,7 +229,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
      * and closes the dialog. Subclasses may override if desired.
      * </p>
      */
-    protected void cancelPressed() {
+    @Override
+	protected void cancelPressed() {
         launchData.workspaceSelected(null);
         super.cancelPressed();
     }
@@ -253,7 +258,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         text.setFocus();        
         text.setLayoutData(new GridData(400, SWT.DEFAULT));
         text.addModifyListener(new ModifyListener(){
-        	public void modifyText(ModifyEvent e) {
+        	@Override
+			public void modifyText(ModifyEvent e) {
         		Button okButton = getButton(Window.OK);
         		if(okButton != null && !okButton.isDisposed()) {
         			boolean nonWhitespaceFound = false;
@@ -277,7 +283,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_END;
         browseButton.setLayoutData(data);
         browseButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SHEET);
                 dialog.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_directoryBrowserTitle);
                 dialog.setMessage(IDEWorkbenchMessages.ChooseWorkspaceDialog_directoryBrowserMessage);
@@ -312,6 +319,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	/*
 	 * see org.eclipse.jface.Window.getInitialLocation() 
 	 */
+	@Override
 	protected Point getInitialLocation(Point initialSize) {
 		Composite parent = getShell().getParent();
 		
@@ -348,7 +356,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         button.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_useDefaultMessage);
         button.setSelection(!launchData.getShowDialog());
         button.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 launchData.toggleShowDialog();
             }
         });
@@ -371,6 +380,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
      * 
      * @since 3.2
      */
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		// If we were explicitly instructed to center on the monitor, then
 		// do not provide any settings for retrieving a different location or, worse,

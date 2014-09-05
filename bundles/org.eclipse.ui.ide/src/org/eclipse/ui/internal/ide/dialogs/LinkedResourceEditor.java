@@ -134,6 +134,7 @@ public class LinkedResourceEditor {
 		fEditResourceButton = createButton(groupComponent,
 				IDEWorkbenchMessages.LinkedResourceEditor_editLinkedLocation);
 		fEditResourceButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				editLocation();
 			}
@@ -142,6 +143,7 @@ public class LinkedResourceEditor {
 		fConvertAbsoluteButton = createButton(groupComponent,
 				IDEWorkbenchMessages.LinkedResourceEditor_convertToVariableLocation);
 		fConvertAbsoluteButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				convertLocation();
 			}
@@ -149,6 +151,7 @@ public class LinkedResourceEditor {
 		fRemoveButton = createButton(groupComponent,
 				IDEWorkbenchMessages.LinkedResourceEditor_remove);
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				removeSelection();
 			}
@@ -221,6 +224,7 @@ public class LinkedResourceEditor {
 		fTree = new TreeViewer(treeComposite, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 
 		fTree.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSelection();
 			}
@@ -257,12 +261,14 @@ public class LinkedResourceEditor {
 		createButtons(pageComponent);
 
 		fTree.getTree().addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 		        if (getSelectedResource().length == 1)
 		        	editLocation();
 			}
         });
 		fTree.getTree().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.DEL) {
 					e.doit = false;
@@ -300,6 +306,7 @@ public class LinkedResourceEditor {
 			super();
 		}
 
+		@Override
 		public String getColumnText(Object obj, int index) {
 			if (obj instanceof IResource) {
 				IResource resource = (IResource) obj;
@@ -318,6 +325,7 @@ public class LinkedResourceEditor {
 			return null;
 		}
 
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			if (index == NAME_COLUMN) {
 				if (obj instanceof String) {
@@ -335,12 +343,14 @@ public class LinkedResourceEditor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 		 */
+		@Override
 		public void addListener(ILabelProviderListener listener) {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 			stockProvider.dispose();
 		}
@@ -348,6 +358,7 @@ public class LinkedResourceEditor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
 		 */
+		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			return stockProvider.isLabelProperty(element, property);
 		}
@@ -355,12 +366,14 @@ public class LinkedResourceEditor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 		 */
+		@Override
 		public void removeListener(ILabelProviderListener listener) {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 		 */
+		@Override
 		public Image getImage(Object element) {
 			return getColumnImage(element, 0);
 		}
@@ -368,6 +381,7 @@ public class LinkedResourceEditor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 		 */
+		@Override
 		public String getText(Object element) {
 			return getColumnText(element, 0);
 		}
@@ -375,12 +389,15 @@ public class LinkedResourceEditor {
 
 	class ContentProvider implements IContentProvider, ITreeContentProvider {
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof LinkedResourceEditor) {
 				ArrayList list = new ArrayList(); 
@@ -401,6 +418,7 @@ public class LinkedResourceEditor {
 			return null;
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			if (element instanceof IResource) {
 				String fullPath = ((IResource) element).getFullPath()
@@ -415,6 +433,7 @@ public class LinkedResourceEditor {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			if (element instanceof LinkedResourceEditor) {
 				return true;
@@ -428,6 +447,7 @@ public class LinkedResourceEditor {
 			return false;
 		}
 
+		@Override
 		public Object[] getElements(Object parentElement) {
 			return getChildren(parentElement);
 		}
@@ -445,6 +465,7 @@ public class LinkedResourceEditor {
 					/**
 					 * @throws CoreException
 					 */
+					@Override
 					public boolean visit(IResource resource)
 							throws CoreException {
 						if (resource.isLinked() && !resource.isVirtual())
@@ -561,6 +582,7 @@ public class LinkedResourceEditor {
 			final ArrayList/*<IResource>*/ removedResources = new ArrayList();
 
 			IRunnableWithProgress op = new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) {
 					try {
 						monitor.beginTask(
@@ -673,10 +695,12 @@ public class LinkedResourceEditor {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
 			 */
+			@Override
 			protected boolean isResizable() {
 				return true;
 			}
 
+			@Override
 			protected Control createCustomArea(Composite comp) {
 				setShellStyle(getShellStyle() | SWT.RESIZE);
 				Composite parent = new Composite(comp, 0);

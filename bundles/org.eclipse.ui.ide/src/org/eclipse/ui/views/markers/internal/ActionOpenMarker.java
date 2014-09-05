@@ -65,6 +65,7 @@ public class ActionOpenMarker extends MarkerSelectionProviderAction {
 	 * 
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		IMarker[] markers = getSelectedMarkers();
 		for (int i = 0; i < markers.length; i++) {
@@ -148,6 +149,7 @@ public class ActionOpenMarker extends MarkerSelectionProviderAction {
 	 * 
 	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		if (Util.allConcreteSelection(selection)) {
 			Iterator nodes = selection.iterator();

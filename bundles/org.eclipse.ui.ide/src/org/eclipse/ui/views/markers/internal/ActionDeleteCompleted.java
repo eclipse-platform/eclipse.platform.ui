@@ -48,6 +48,7 @@ public class ActionDeleteCompleted extends MarkerSelectionProviderAction {
 	 * 
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		final List completed = getCompletedTasks();
 		// Check if there is anything to do
@@ -103,6 +104,7 @@ public class ActionDeleteCompleted extends MarkerSelectionProviderAction {
 	 * 
 	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		setEnabled(!selection.isEmpty());
 	}

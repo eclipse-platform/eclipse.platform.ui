@@ -66,7 +66,8 @@ public class BasicNewFileResourceWizard extends BasicNewResourceWizard {
     /* (non-Javadoc)
      * Method declared on IWizard.
      */
-    public void addPages() {
+    @Override
+	public void addPages() {
         super.addPages();
         mainPage = new WizardNewFileCreationPage("newFilePage1", getSelection());//$NON-NLS-1$
         mainPage.setTitle(ResourceMessages.FileResource_pageTitle);
@@ -77,7 +78,8 @@ public class BasicNewFileResourceWizard extends BasicNewResourceWizard {
     /* (non-Javadoc)
      * Method declared on IWorkbenchWizard.
      */
-    public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+    @Override
+	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
         super.init(workbench, currentSelection);
         setWindowTitle(ResourceMessages.FileResource_shellTitle);
         setNeedsProgressMonitor(true);
@@ -86,7 +88,8 @@ public class BasicNewFileResourceWizard extends BasicNewResourceWizard {
     /* (non-Javadoc)
      * Method declared on BasicNewResourceWizard.
      */
-    protected void initializeDefaultPageImageDescriptor() {
+    @Override
+	protected void initializeDefaultPageImageDescriptor() {
        ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newfile_wiz.png");//$NON-NLS-1$
 	   setDefaultPageImageDescriptor(desc);
     }
@@ -94,7 +97,8 @@ public class BasicNewFileResourceWizard extends BasicNewResourceWizard {
     /* (non-Javadoc)
      * Method declared on IWizard.
      */
-    public boolean performFinish() {
+    @Override
+	public boolean performFinish() {
         IFile file = mainPage.createNewFile();
         if (file == null) {
 			return false;

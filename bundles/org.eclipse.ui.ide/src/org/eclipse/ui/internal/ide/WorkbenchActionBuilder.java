@@ -251,15 +251,18 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private void hookListeners() {
 
         pageListener = new IPageListener() {
-            public void pageActivated(IWorkbenchPage page) {
+            @Override
+			public void pageActivated(IWorkbenchPage page) {
                 // do nothing
             }
 
-            public void pageClosed(IWorkbenchPage page) {
+            @Override
+			public void pageClosed(IWorkbenchPage page) {
                 // do nothing
             }
 
-            public void pageOpened(IWorkbenchPage page) {
+            @Override
+			public void pageOpened(IWorkbenchPage page) {
                 // set default build handler -- can't be done until the shell is available
                 IAction buildHandler = new BuildAction(page.getWorkbenchWindow(), IncrementalProjectBuilder.INCREMENTAL_BUILD);
             	((RetargetActionWithDefault)buildProjectAction).setDefaultHandler(buildHandler);
@@ -268,7 +271,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         getWindow().addPageListener(pageListener);
 
         prefListener = new Preferences.IPropertyChangeListener() {
-            public void propertyChange(Preferences.PropertyChangeEvent event) {
+            @Override
+			public void propertyChange(Preferences.PropertyChangeEvent event) {
                 if (event.getProperty().equals(
                         ResourcesPlugin.PREF_AUTO_BUILDING)) {
                    	updateBuildActions(false);
@@ -281,14 +285,16 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         // listener for the "close editors automatically"
         // preference change
         propPrefListener = new IPropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent event) {
+            @Override
+			public void propertyChange(PropertyChangeEvent event) {
                 if (event.getProperty().equals(
 						IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
                     if (window.getShell() != null
                             && !window.getShell().isDisposed()) {
                         // this property change notification could be from a non-ui thread
                         window.getShell().getDisplay().syncExec(new Runnable() {
-                            public void run() {
+                            @Override
+							public void run() {
                                 updatePinActionToolbar();
                             }
                         });
@@ -307,6 +313,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
                 .addPropertyChangeListener(propPrefListener);
         //listen for project description changes, which can affect enablement of build actions
         resourceListener = new IResourceChangeListener() {
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				IResourceDelta delta = event.getDelta();
 				if (delta == null) {
@@ -327,7 +334,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener, IResourceChangeEvent.POST_CHANGE);
     }
 
-    public void fillActionBars(int flags) {
+    @Override
+	public void fillActionBars(int flags) {
         super.fillActionBars(flags);
         updateBuildActions(true);
         if ((flags & FILL_PROXY) == 0) {
@@ -338,7 +346,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     /**
      * Fills the coolbar with the workbench actions.
      */
-    protected void fillCoolBar(ICoolBarManager coolBar) {
+    @Override
+	protected void fillCoolBar(ICoolBarManager coolBar) {
 
     	IActionBarConfigurer2 actionBarConfigurer = (IActionBarConfigurer2) getActionBarConfigurer();
         coolBar.add(new GroupMarker(IIDEActionConstants.GROUP_FILE));
@@ -408,7 +417,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     /**
      * Fills the menu bar with the workbench actions.
      */
-    protected void fillMenuBar(IMenuManager menuBar) {
+    @Override
+	protected void fillMenuBar(IMenuManager menuBar) {
         menuBar.add(createFileMenu());
         menuBar.add(createEditMenu());
         menuBar.add(createNavigateMenu());
@@ -767,7 +777,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      * Disposes any resources and unhooks any listeners that are no longer needed.
      * Called when the window is closed.
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         if (isDisposed) {
 			return;
 		}
@@ -880,7 +891,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      * be considered as an OLE container menu. Container menus
      * are preserved in OLE menu merging.
      */
-    public boolean isApplicationMenu(String menuId) {
+    @Override
+	public boolean isApplicationMenu(String menuId) {
         if (menuId.equals(IWorkbenchActionConstants.M_FILE)) {
 			return true;
 		}
@@ -907,14 +919,16 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     /**
      * Fills the status line with the workbench contribution items.
      */
-    protected void fillStatusLine(IStatusLineManager statusLine) {
+    @Override
+	protected void fillStatusLine(IStatusLineManager statusLine) {
         statusLine.add(statusLineItem);
     }
 
     /**
      * Creates actions (and contribution items) for the menu bar, toolbar and status line.
      */
-    protected void makeActions(final IWorkbenchWindow window) {
+    @Override
+	protected void makeActions(final IWorkbenchWindow window) {
         // @issue should obtain from ConfigurationItemFactory
         statusLineItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
 
@@ -1118,7 +1132,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         String showInQuickMenuId = IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU;
         showInQuickMenu = new QuickMenuAction(showInQuickMenuId) {
-            protected void fillMenu(IMenuManager menu) {
+            @Override
+			protected void fillMenu(IMenuManager menu) {
                 menu.add(ContributionItemFactory.VIEWS_SHOW_IN
                         .create(window));
             }
@@ -1127,7 +1142,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         final String newQuickMenuId = "org.eclipse.ui.file.newQuickMenu"; //$NON-NLS-1$
         newQuickMenu = new QuickMenuAction(newQuickMenuId) {
-            protected void fillMenu(IMenuManager menu) {
+            @Override
+			protected void fillMenu(IMenuManager menu) {
                 menu.add(new NewWizardMenu(window));
             }
         };
@@ -1261,7 +1277,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     void updateBuildActions(boolean immediately) {
         // this can be triggered by property or resource change notifications
         Runnable update = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 if (isDisposed) {
 					return;
 				}

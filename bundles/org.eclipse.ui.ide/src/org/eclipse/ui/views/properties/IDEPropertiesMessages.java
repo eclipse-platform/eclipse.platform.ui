@@ -17,6 +17,7 @@ package org.eclipse.ui.views.properties;
  * @deprecated These messages are not API and should not be referenced
  * outside of this plug-in.
  */
+@Deprecated
 class IDEPropertiesMessages {
     private IDEPropertiesMessages() {
         // prevent instantiation of class

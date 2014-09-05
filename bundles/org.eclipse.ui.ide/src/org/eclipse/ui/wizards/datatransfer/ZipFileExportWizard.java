@@ -67,7 +67,8 @@ public class ZipFileExportWizard extends Wizard implements IExportWizard {
     /* (non-Javadoc)
      * Method declared on IWizard.
      */
-    public void addPages() {
+    @Override
+	public void addPages() {
         super.addPages();
         mainPage = new WizardArchiveFileResourceExportPage1(selection);
         addPage(mainPage);
@@ -76,7 +77,8 @@ public class ZipFileExportWizard extends Wizard implements IExportWizard {
     /* (non-Javadoc)
      * Method declared on IWorkbenchWizard.
      */
-    public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+    @Override
+	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
         this.selection = currentSelection;
         List selectedResources = IDE.computeSelectedResources(currentSelection);
         if (!selectedResources.isEmpty()) {
@@ -91,7 +93,8 @@ public class ZipFileExportWizard extends Wizard implements IExportWizard {
     /* (non-Javadoc)
      * Method declared on IWizard.
      */
-    public boolean performFinish() {
+    @Override
+	public boolean performFinish() {
         return mainPage.finish();
     }
 }

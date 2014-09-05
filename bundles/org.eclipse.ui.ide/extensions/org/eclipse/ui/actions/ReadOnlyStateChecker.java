@@ -111,7 +111,8 @@ public class ReadOnlyStateChecker {
             result = checkReadOnlyResources(itemsToCheck, selections);
         } catch (final CoreException exception) {
             shell.getDisplay().syncExec(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     ErrorDialog.openError(shell, READ_ONLY_EXCEPTION_MESSAGE,
                             null, exception.getStatus());
                 }
@@ -236,12 +237,14 @@ public class ReadOnlyStateChecker {
                         IDialogConstants.YES_TO_ALL_LABEL,
                         IDialogConstants.NO_LABEL,
                         IDialogConstants.CANCEL_LABEL }, 0) {
-        	protected int getShellStyle() {
+        	@Override
+			protected int getShellStyle() {
         		return super.getShellStyle() | SWT.SHEET;
         	}
         };
         shell.getDisplay().syncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 dialog.open();
             }
         });

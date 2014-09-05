@@ -63,6 +63,7 @@ public class MarkerAdapter {
 		 * 
 		 * @see org.eclipse.ui.views.markers.internal.MarkerNode#getChildren()
 		 */
+		@Override
 		public MarkerNode[] getChildren() {
 
 			if (children == null) {
@@ -108,6 +109,7 @@ public class MarkerAdapter {
 		 * 
 		 * @see org.eclipse.ui.views.markers.internal.MarkerNode#getParent()
 		 */
+		@Override
 		public MarkerNode getParent() {
 			return null;
 		}
@@ -117,6 +119,7 @@ public class MarkerAdapter {
 		 * 
 		 * @see org.eclipse.ui.views.markers.internal.MarkerNode#getDescription()
 		 */
+		@Override
 		public String getDescription() {
 
 			int size = end - start + 1;
@@ -149,6 +152,7 @@ public class MarkerAdapter {
 		 * 
 		 * @see org.eclipse.ui.views.markers.internal.MarkerNode#isConcrete()
 		 */
+		@Override
 		public boolean isConcrete() {
 			return false;
 		}
@@ -158,6 +162,7 @@ public class MarkerAdapter {
 		 * 
 		 * @see org.eclipse.ui.views.markers.internal.MarkerNode#getConcreteRepresentative()
 		 */
+		@Override
 		public ConcreteMarker getConcreteRepresentative() {
 			return markerAdapter.lastMarkers.getMarker(start);
 		}

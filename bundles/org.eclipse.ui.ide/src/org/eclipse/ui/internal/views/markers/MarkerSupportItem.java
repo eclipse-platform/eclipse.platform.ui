@@ -29,6 +29,7 @@ abstract class MarkerSupportItem extends MarkerItem {
 	 *            the defaultValue if the value is not set
 	 * @return String
 	 */
+	@Override
 	public String getAttributeValue(String attribute, String defaultValue) {
 		// All items have messages
 		if (attribute == IMarker.MESSAGE)

@@ -50,6 +50,7 @@ public class SortFieldContribution extends MarkersContribution {
 	 * 
 	 * @see org.eclipse.ui.actions.CompoundContributionItem#getContributionItems()
 	 */
+	@Override
 	protected IContributionItem[] getContributionItems() {
 		ExtendedMarkersView view = getView();
 		if (view == null)
@@ -86,6 +87,7 @@ public class SortFieldContribution extends MarkersContribution {
 			 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu,
 			 *      int)
 			 */
+			@Override
 			public void fill(Menu menu, int index) {
 				MenuItem item = new MenuItem(menu, SWT.CHECK);
 				item.setText(MarkerMessages.sortDirectionAscending_text);
@@ -96,6 +98,7 @@ public class SortFieldContribution extends MarkersContribution {
 					 * 
 					 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 					 */
+					@Override
 					public void handleEvent(Event event) {
 
 						if (view != null)
@@ -126,6 +129,7 @@ public class SortFieldContribution extends MarkersContribution {
 			 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu,
 			 *      int)
 			 */
+			@Override
 			public void fill(Menu menu, int index) {
 				MenuItem item = new MenuItem(menu, SWT.RADIO);
 				String title = field.getName();
@@ -154,6 +158,7 @@ public class SortFieldContribution extends MarkersContribution {
 					 * 
 					 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 					 */
+					@Override
 					public void handleEvent(Event event) {
 
 						MenuItem item = (MenuItem) event.widget;

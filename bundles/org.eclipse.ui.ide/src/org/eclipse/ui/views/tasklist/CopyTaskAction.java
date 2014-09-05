@@ -44,7 +44,8 @@ class CopyTaskAction extends TaskAction {
     /**
      * Performs this action.
      */
-    public void run() {
+    @Override
+	public void run() {
         // Get the selected markers
         TaskList taskList = getTaskList();
         TableViewer viewer = taskList.getTableViewer();

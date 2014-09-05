@@ -41,7 +41,8 @@ public class WelcomeEditorInputFactory implements IElementFactory {
      * @param memento a memento containing the state for the object
      * @return an object, or <code>null</code> if the element could not be created
      */
-    public IAdaptable createElement(IMemento memento) {
+    @Override
+	public IAdaptable createElement(IMemento memento) {
         // Get the feature id.
         String versionedFeatureId = memento
                 .getString(WelcomeEditorInput.FEATURE_ID);

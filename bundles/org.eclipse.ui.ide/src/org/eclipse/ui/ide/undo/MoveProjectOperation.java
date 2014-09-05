@@ -71,6 +71,7 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#updateResourceChangeDescriptionFactory(org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory,
 	 *      int)
 	 */
+	@Override
 	protected boolean updateResourceChangeDescriptionFactory(
 			IResourceChangeDescriptionFactory factory, int operation) {
 		// A change of project location only is not of interest to
@@ -89,6 +90,7 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.ide.undo.AbstractCopyOrMoveResourcesOperation#isDestinationPathValid(org.eclipse.core.resources.IResource, int)
 	 */
+	@Override
 	protected boolean isDestinationPathValid(IResource resource, int index) {
 		// path has already been validated in #computeMoveOrCopyStatus()
 		return true;
@@ -98,6 +100,7 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.ide.undo.AbstractCopyOrMoveResourcesOperation#getProposedName(org.eclipse.core.resources.IResource, int)
 	 */
+	@Override
 	protected String getProposedName(IResource resource, int index) {
 		return getProject().getName();
 	}
@@ -110,6 +113,7 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractCopyOrMoveResourcesOperation#computeMoveOrCopyStatus()
 	 */
+	@Override
 	protected IStatus computeMoveOrCopyStatus() {
 		IStatus status = Status.OK_STATUS;
 		if (projectLocation != null) {
@@ -130,6 +134,7 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doExecute(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	protected void doExecute(IProgressMonitor monitor, IAdaptable uiInfo)
 			throws CoreException {
 		projectLocation = moveProject(getProject(), projectLocation, monitor);
@@ -145,6 +150,7 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doUndo(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	protected void doUndo(IProgressMonitor monitor, IAdaptable uiInfo)
 			throws CoreException {
 		doExecute(monitor, uiInfo);
@@ -177,6 +183,7 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public IStatus computeUndoableStatus(IProgressMonitor monitor) {
 		IStatus status = super.computeUndoableStatus(monitor);
 		if (status.isOK()) {

@@ -43,7 +43,8 @@ public class IDEPerspectivesPreferencePage extends PerspectivesPreferencePage {
     /**
      * Creates the page's UI content.
      */
-    protected Control createContents(Composite parent) {
+    @Override
+	protected Control createContents(Composite parent) {
         // @issue if the product subclasses this page, then it should provide
         // the help content
     	PlatformUI
@@ -98,7 +99,8 @@ public class IDEPerspectivesPreferencePage extends PerspectivesPreferencePage {
      * 
      * @see org.eclipse.ui.internal.dialogs.PerspectivesPreferencePage#performDefaults()
      */
-    protected void performDefaults() {
+    @Override
+	protected void performDefaults() {
         projectSwitchField.loadDefault();
         super.performDefaults();
     }
@@ -108,7 +110,8 @@ public class IDEPerspectivesPreferencePage extends PerspectivesPreferencePage {
      * 
      * @see org.eclipse.ui.internal.dialogs.PerspectivesPreferencePage#performOk()
      */
-    public boolean performOk() {
+    @Override
+	public boolean performOk() {
         projectSwitchField.store();
         IDEWorkbenchPlugin.getDefault().savePluginPreferences();
         return super.performOk();

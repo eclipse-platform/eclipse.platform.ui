@@ -39,6 +39,7 @@ public class DeleteHandler extends MarkerViewHandler {
 	 * 
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
+	@Override
 	public Object execute(ExecutionEvent event) {
 
 		final MarkerSupportView view = getView(event);
@@ -62,6 +63,7 @@ public class DeleteHandler extends MarkerViewHandler {
 		}
 		
 		WorkspaceJob deleteJob= new WorkspaceJob(IDEWorkbenchMessages.MarkerDeleteHandler_JobTitle) { //See Bug#250807
+			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) {
 				monitor.beginTask(IDEWorkbenchMessages.MarkerDeleteHandler_JobMessageLabel, 10 * selected.length);
 				try {

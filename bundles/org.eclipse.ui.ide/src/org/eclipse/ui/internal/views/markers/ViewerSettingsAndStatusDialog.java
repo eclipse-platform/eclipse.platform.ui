@@ -54,6 +54,7 @@ public abstract class ViewerSettingsAndStatusDialog extends ViewSettingsDialog {
 	 * org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets
 	 * .Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 	}
@@ -63,6 +64,7 @@ public abstract class ViewerSettingsAndStatusDialog extends ViewSettingsDialog {
 	 * 
 	 * @see org.eclipse.jface.window.Window#getShellStyle()
 	 */
+	@Override
 	protected int getShellStyle() {
 		return super.getShellStyle() | SWT.RESIZE;
 	}
@@ -72,12 +74,14 @@ public abstract class ViewerSettingsAndStatusDialog extends ViewSettingsDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
 	 */
+	@Override
 	protected Point getInitialSize() {
 		Point size = super.getInitialSize();
 		size.y += convertHeightInCharsToPixels(3);
 		return size;
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 
 		Composite dialogArea = (Composite) super.createDialogArea(parent);
@@ -285,14 +289,17 @@ public abstract class ViewerSettingsAndStatusDialog extends ViewSettingsDialog {
 		return JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR);
 	}
 
+	@Override
 	protected void performDefaults() {
 		super.performDefaults();
 	}
 
+	@Override
 	protected boolean isResizable() {
 		return true;
 	}
 
+	@Override
 	protected void okPressed() {
 		super.okPressed();
 	}

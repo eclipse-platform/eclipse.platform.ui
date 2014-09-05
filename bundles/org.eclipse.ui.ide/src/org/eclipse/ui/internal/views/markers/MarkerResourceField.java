@@ -29,6 +29,7 @@ public class MarkerResourceField extends MarkerField {
 	 * 
 	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#getValue(org.eclipse.ui.provisional.views.markers.MarkerItem)
 	 */
+	@Override
 	public String getValue(MarkerItem item) {
 		if (item.getMarker() == null)
 			return MarkerSupportInternalUtilities.EMPTY_STRING;

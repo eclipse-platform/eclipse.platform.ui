@@ -50,6 +50,7 @@ public class TaskPropertiesDialog extends DialogTaskProperties {
 	 * 
 	 * @since 3.2
 	 */
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		IDialogSettings settings = IDEWorkbenchPlugin.getDefault()
 				.getDialogSettings();
@@ -65,7 +66,8 @@ public class TaskPropertiesDialog extends DialogTaskProperties {
      * 
      * @param marker the marker, or <code>null</code> to create a new marker
      */
-    public void setMarker(IMarker marker) {
+    @Override
+	public void setMarker(IMarker marker) {
     	// Method is overridden because API is being inherited from an internal class.
         super.setMarker(marker);
     }
@@ -77,7 +79,8 @@ public class TaskPropertiesDialog extends DialogTaskProperties {
      * 
      * @return the marker
      */
-    public IMarker getMarker() {
+    @Override
+	public IMarker getMarker() {
     	// Method is overridden because API is being inherited from an internal class.
         return super.getMarker();
     }
@@ -88,7 +91,8 @@ public class TaskPropertiesDialog extends DialogTaskProperties {
      * 
      * @param resource the resource
      */
-    public void setResource(IResource resource) {
+    @Override
+	public void setResource(IResource resource) {
     	// Method is overridden because API is being inherited from an internal class.
         super.setResource(resource);
     }
@@ -100,7 +104,8 @@ public class TaskPropertiesDialog extends DialogTaskProperties {
      * 
      * @return the resource
      */
-    public IResource getResource() {
+    @Override
+	public IResource getResource() {
     	// Method is overridden because API is being inherited from an internal class.
         return super.getResource();
     }
@@ -111,7 +116,8 @@ public class TaskPropertiesDialog extends DialogTaskProperties {
      * 
      * @param initialAttributes the initial attributes
      */
-    public void setInitialAttributes(Map initialAttributes) {
+    @Override
+	public void setInitialAttributes(Map initialAttributes) {
     	// Method is overridden because API is being inherited from an internal class.
         super.setInitialAttributes(initialAttributes);
     }
@@ -123,7 +129,8 @@ public class TaskPropertiesDialog extends DialogTaskProperties {
      * 
      * @return the initial attributes
      */
-    public Map getInitialAttributes() {
+    @Override
+	public Map getInitialAttributes() {
     	// Method is overridden because API is being inherited from an internal class.
         return super.getInitialAttributes();
     }

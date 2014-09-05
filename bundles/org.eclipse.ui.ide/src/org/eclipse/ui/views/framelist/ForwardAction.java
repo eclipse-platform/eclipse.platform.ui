@@ -56,7 +56,8 @@ public class ForwardAction extends FrameAction {
     /**
      * Calls <code>forward()</code> on the frame list.
      */
-    public void run() {
+    @Override
+	public void run() {
         getFrameList().forward();
     }
 
@@ -66,7 +67,8 @@ public class ForwardAction extends FrameAction {
      * The tool tip text is "Forward to " plus the tool tip text for the next
      * frame.
      */
-    public void update() {
+    @Override
+	public void update() {
         super.update();
         Frame nextFrame = getNextFrame();
         setEnabled(nextFrame != null);

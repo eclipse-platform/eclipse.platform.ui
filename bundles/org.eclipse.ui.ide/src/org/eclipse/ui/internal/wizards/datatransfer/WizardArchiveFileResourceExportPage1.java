@@ -72,7 +72,8 @@ public class WizardArchiveFileResourceExportPage1 extends
     /** (non-Javadoc)
      * Method declared on IDialogPage.
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         super.createControl(parent);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
                 IDataTransferHelpContextIds.ZIP_FILE_EXPORT_WIZARD_PAGE);
@@ -82,7 +83,8 @@ public class WizardArchiveFileResourceExportPage1 extends
      *	Create the export options specification widgets.
      *
      */
-    protected void createOptionsGroupButtons(Group optionsGroup) {
+    @Override
+	protected void createOptionsGroupButtons(Group optionsGroup) {
     	Font font = optionsGroup.getFont();
     	optionsGroup.setLayout(new GridLayout(2, true));
     	
@@ -226,7 +228,8 @@ public class WizardArchiveFileResourceExportPage1 extends
      * not close.
      * @returns boolean
      */
-    public boolean finish() {
+    @Override
+	public boolean finish() {
     	List resourcesToExport = getWhiteCheckedResources();
     	
         if (!ensureTargetIsValid()) {
@@ -245,7 +248,8 @@ public class WizardArchiveFileResourceExportPage1 extends
     /**
      *	Answer the string to display in the receiver as the destination type
      */
-    protected String getDestinationLabel() {
+    @Override
+	protected String getDestinationLabel() {
         return DataTransferMessages.ArchiveExport_destinationLabel;
     }
 
@@ -253,7 +257,8 @@ public class WizardArchiveFileResourceExportPage1 extends
      *	Answer the contents of self's destination specification widget.  If this
      *	value does not have a suffix then add it first.
      */
-    protected String getDestinationValue() {
+    @Override
+	protected String getDestinationValue() {
         String idealSuffix = getOutputSuffix();
         String destinationText = super.getDestinationValue();
 
@@ -298,7 +303,8 @@ public class WizardArchiveFileResourceExportPage1 extends
      *	Open an appropriate destination browser so that the user can specify a source
      *	to import from
      */
-    protected void handleDestinationBrowseButtonPressed() {
+    @Override
+	protected void handleDestinationBrowseButtonPressed() {
         FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.SAVE | SWT.SHEET);
         dialog.setFilterExtensions(new String[] { "*.zip;*.tar.gz;*.tar;*.tgz", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
         dialog.setText(DataTransferMessages.ArchiveExport_selectDestinationTitle);
@@ -321,7 +327,8 @@ public class WizardArchiveFileResourceExportPage1 extends
      *	Hook method for saving widget values for restoration by the next instance
      *	of this class.
      */
-    protected void internalSaveWidgetValues() {
+    @Override
+	protected void internalSaveWidgetValues() {
         // update directory names history
         IDialogSettings settings = getDialogSettings();
         if (settings != null) {
@@ -346,7 +353,8 @@ public class WizardArchiveFileResourceExportPage1 extends
      *	Hook method for restoring widget values to the values that they held
      *	last time this wizard was used to completion.
      */
-    protected void restoreWidgetValues() {
+    @Override
+	protected void restoreWidgetValues() {
         IDialogSettings settings = getDialogSettings();
         if (settings != null) {
             String[] directoryNames = settings
@@ -375,7 +383,8 @@ public class WizardArchiveFileResourceExportPage1 extends
     /* (non-Javadoc)
      * @see org.eclipse.ui.wizards.datatransfer.WizardFileSystemResourceExportPage1#destinationEmptyMessage()
      */
-    protected String destinationEmptyMessage() {
+    @Override
+	protected String destinationEmptyMessage() {
         return DataTransferMessages.ArchiveExport_destinationEmpty;
     }
     
@@ -383,7 +392,8 @@ public class WizardArchiveFileResourceExportPage1 extends
      *	Answer a boolean indicating whether the receivers destination specification
      *	widgets currently all contain valid values.
      */
-    protected boolean validateDestinationGroup() {
+    @Override
+	protected boolean validateDestinationGroup() {
     	String destinationValue = getDestinationValue();
     	if (destinationValue.endsWith(".tar")) { //$NON-NLS-1$
     		compressContentsCheckbox.setSelection(false);

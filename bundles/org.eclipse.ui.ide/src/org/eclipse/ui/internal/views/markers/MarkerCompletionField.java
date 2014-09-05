@@ -53,6 +53,7 @@ public class MarkerCompletionField extends MarkerField {
 		 * 
 		 * @see org.eclipse.jface.viewers.EditingSupport#canEdit(java.lang.Object)
 		 */
+		@Override
 		protected boolean canEdit(Object element) {
 			if (element instanceof MarkerEntry)
 				return ((MarkerEntry) element).getAttributeValue(
@@ -65,6 +66,7 @@ public class MarkerCompletionField extends MarkerField {
 		 * 
 		 * @see org.eclipse.jface.viewers.EditingSupport#getCellEditor(java.lang.Object)
 		 */
+		@Override
 		protected CellEditor getCellEditor(Object element) {
 			return editor;
 		}
@@ -74,6 +76,7 @@ public class MarkerCompletionField extends MarkerField {
 		 * 
 		 * @see org.eclipse.jface.viewers.EditingSupport#getValue(java.lang.Object)
 		 */
+		@Override
 		protected Object getValue(Object element) {
 			return new Boolean(((MarkerEntry) element).getAttributeValue(
 					IMarker.DONE, false));
@@ -85,6 +88,7 @@ public class MarkerCompletionField extends MarkerField {
 		 * @see org.eclipse.jface.viewers.EditingSupport#setValue(java.lang.Object,
 		 *      java.lang.Object)
 		 */
+		@Override
 		protected void setValue(Object element, Object value) {
 			MarkerEntry entry = (MarkerEntry) element;
 			Boolean booleanValue = (Boolean) value;
@@ -119,6 +123,7 @@ public class MarkerCompletionField extends MarkerField {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#compare(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem,
 	 *      org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
 	 */
+	@Override
 	public int compare(MarkerItem item1, MarkerItem item2) {
 		return getDoneConstant(item2) - getDoneConstant(item1);
 	}
@@ -128,6 +133,7 @@ public class MarkerCompletionField extends MarkerField {
 	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnHeaderText()
 	 */
+	@Override
 	public String getColumnHeaderText() {
 		return MarkerSupportInternalUtilities.EMPTY_STRING;
 	}
@@ -137,6 +143,7 @@ public class MarkerCompletionField extends MarkerField {
 	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getColumnTooltipText()
 	 */
+	@Override
 	public String getColumnTooltipText() {
 		return getName();
 	}
@@ -156,6 +163,7 @@ public class MarkerCompletionField extends MarkerField {
 	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getDefaultColumnWidth(org.eclipse.swt.widgets.Control)
 	 */
+	@Override
 	public int getDefaultColumnWidth(Control control) {
 		return 40;
 	}
@@ -185,6 +193,7 @@ public class MarkerCompletionField extends MarkerField {
 	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getEditingSupport(org.eclipse.jface.viewers.ColumnViewer)
 	 */
+	@Override
 	public EditingSupport getEditingSupport(ColumnViewer viewer) {
 
 		return new CompletionEditingSupport(viewer);
@@ -214,6 +223,7 @@ public class MarkerCompletionField extends MarkerField {
 	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
+	@Override
 	public String getValue(MarkerItem item) {
 		return MarkerSupportInternalUtilities.EMPTY_STRING;
 	}
@@ -223,6 +233,7 @@ public class MarkerCompletionField extends MarkerField {
 	 * 
 	 * @see org.eclipse.ui.views.markers.MarkerField#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
+	@Override
 	public void update(ViewerCell cell) {
 		super.update(cell);
 		cell.setImage(getImage(cell.getElement()));

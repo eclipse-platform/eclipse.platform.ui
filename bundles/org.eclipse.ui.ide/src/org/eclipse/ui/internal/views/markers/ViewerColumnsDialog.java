@@ -126,6 +126,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	 * @see org.eclipse.ui.internal.views.markers.ViewerSettingsAndStatusDialog#
 	 * createDialogContentArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogContentArea(Composite dialogArea) {
 		Composite composite = new Composite(dialogArea, SWT.NONE);
 		GridLayout gridLayout = new GridLayout(4, false);
@@ -166,6 +167,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		upButton = new Button(bttArea, SWT.PUSH);
 		upButton.setText(JFaceResources.getString("ConfigureColumnsDialog_up")); //$NON-NLS-1$
 		upButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				handleUpButton(event);
 			}
@@ -178,6 +180,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		downButton.setText(JFaceResources
 				.getString("ConfigureColumnsDialog_down")); //$NON-NLS-1$
 		downButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				handleDownButton(event);
 			}
@@ -212,6 +215,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		widthText = new Text(widthComposite, SWT.BORDER);
 		widthText.addVerifyListener(new VerifyListener() {
 
+			@Override
 			public void verifyText(VerifyEvent e) {
 				if (e.character != 0 && e.keyCode != SWT.BS
 						&& e.keyCode != SWT.DEL
@@ -226,6 +230,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		widthText.setLayoutData(gridData);
 		widthText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateWidth();
 			}
@@ -265,6 +270,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		final TableColumn column = new TableColumn(table, SWT.NONE);
 		column.setText(MarkerMessages.MarkerPreferences_VisibleColumnsTitle);
 		Listener columnResize = new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				column.setWidth(table.getClientArea().width);
 			}
@@ -276,11 +282,13 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		visibleViewer.setContentProvider(ArrayContentProvider.getInstance());
 		visibleViewer
 				.addSelectionChangedListener(new ISelectionChangedListener() {
+					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
 						handleVisibleSelection(event.getSelection());
 					}
 				});
 		table.addListener(SWT.MouseDoubleClick, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				handleToNonVisibleButton(event);
 			}
@@ -318,6 +326,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		final TableColumn column = new TableColumn(table, SWT.NONE);
 		column.setText(MarkerMessages.MarkerPreferences_HiddenColumnsTitle);
 		Listener columnResize = new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				column.setWidth(table.getClientArea().width);
 			}
@@ -329,11 +338,13 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		nonVisibleViewer.setContentProvider(ArrayContentProvider.getInstance());
 		nonVisibleViewer
 				.addSelectionChangedListener(new ISelectionChangedListener() {
+					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
 						handleNonVisibleSelection(event.getSelection());
 					}
 				});
 		table.addListener(SWT.MouseDoubleClick, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				handleToVisibleButton(event);
 			}
@@ -368,6 +379,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		setButtonLayoutData(toVisibleBtt);
 		((GridData)toVisibleBtt.getLayoutData()).verticalIndent = tableLabelSize.y;
 		toVisibleBtt.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				handleToVisibleButton(event);
 			}
@@ -379,6 +391,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		setButtonLayoutData(toNonVisibleBtt);
 
 		toNonVisibleBtt.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				handleToNonVisibleButton(event);
 			}
@@ -578,6 +591,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		}
 	}
 	
+	@Override
 	protected void performDefaults() {
 		refreshViewers();
 		super.performDefaults();
@@ -621,10 +635,12 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	 */
 	class TableLabelProvider extends LabelProvider implements
 			ITableLabelProvider {
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			return getText(element);
 		}
@@ -804,6 +820,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 			this.keyIndex = currIndex;
 		}
 
+		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
@@ -812,6 +829,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 			return result;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
@@ -836,6 +854,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 			return true;
 		}
 
+		@Override
 		public String toString() {
 			return key.toString();
 		}
@@ -844,14 +863,17 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 				final TestData[] colums) {
 			ViewerColumnsDialog dialog = new ViewerColumnsDialog(shell) {
 
+				@Override
 				protected IColumnInfoProvider getColumnInfoProvider() {
 					return getInfoProvider(colums);
 				}
 
+				@Override
 				protected ITableLabelProvider getLabelProvider() {
 					return new TableLabelProvider();
 				}
 
+				@Override
 				protected IColumnUpdater getColumnUpdater() {
 					return getUpdater(colums);
 				}
@@ -863,24 +885,29 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		private static IColumnUpdater getUpdater(final TestData[] data) {
 			return new IColumnUpdater() {
 
+				@Override
 				public void setColumnWidth(Object columnObj, int newWidth) {
 					((TestData) columnObj).width = newWidth;
 				}
 
+				@Override
 				public void setColumnVisible(Object columnObj, boolean visible) {
 					((TestData) columnObj).visibility = visible;
 				}
 
+				@Override
 				public void setColumnResizable(Object columnObj,
 						boolean resizable) {
 
 				}
 
+				@Override
 				public void setColumnMovable(Object columnObj, boolean movable) {
 					((TestData) columnObj).movable = movable;
 
 				}
 
+				@Override
 				public void setColumnIndex(Object columnObj, int index) {
 					((TestData) columnObj).newIndex = index;
 				}
@@ -891,22 +918,27 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 				final TestData[] colData) {
 			return new IColumnInfoProvider() {
 
+				@Override
 				public boolean isColumnVisible(Object columnObj) {
 					return ((TestData) columnObj).visibility;
 				}
 
+				@Override
 				public boolean isColumnResizable(Object columnObj) {
 					return ((TestData) columnObj).resizable;
 				}
 
+				@Override
 				public boolean isColumnMovable(Object columnObj) {
 					return ((TestData) columnObj).movable;
 				}
 
+				@Override
 				public int getColumnWidth(Object columnObj) {
 					return ((TestData) columnObj).width;
 				}
 
+				@Override
 				public int getColumnIndex(Object columnObj) {
 					return ((TestData) columnObj).newIndex;
 				}

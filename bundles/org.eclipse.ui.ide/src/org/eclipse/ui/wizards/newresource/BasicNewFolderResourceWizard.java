@@ -61,7 +61,8 @@ public class BasicNewFolderResourceWizard extends BasicNewResourceWizard {
     /* (non-Javadoc)
      * Method declared on IWizard.
      */
-    public void addPages() {
+    @Override
+	public void addPages() {
         super.addPages();
         mainPage = new WizardNewFolderMainPage(ResourceMessages.NewFolder_text, getSelection()); 
         addPage(mainPage);
@@ -70,7 +71,8 @@ public class BasicNewFolderResourceWizard extends BasicNewResourceWizard {
     /* (non-Javadoc)
      * Method declared on IWorkbenchWizard.
      */
-    public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+    @Override
+	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
         super.init(workbench, currentSelection);
         setWindowTitle(ResourceMessages.NewFolder_title);
         setNeedsProgressMonitor(true);
@@ -79,7 +81,8 @@ public class BasicNewFolderResourceWizard extends BasicNewResourceWizard {
     /* (non-Javadoc)
      * Method declared on BasicNewResourceWizard.
      */
-    protected void initializeDefaultPageImageDescriptor() {
+    @Override
+	protected void initializeDefaultPageImageDescriptor() {
       ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newfolder_wiz.png");//$NON-NLS-1$
       setDefaultPageImageDescriptor(desc);
        
@@ -88,7 +91,8 @@ public class BasicNewFolderResourceWizard extends BasicNewResourceWizard {
     /* (non-Javadoc)
      * Method declared on IWizard.
      */
-    public boolean performFinish() {
+    @Override
+	public boolean performFinish() {
         IFolder folder = mainPage.createNewFolder();
         if (folder == null) {
 			return false;

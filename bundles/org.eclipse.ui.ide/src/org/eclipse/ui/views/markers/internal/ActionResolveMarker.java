@@ -60,6 +60,7 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 	/**
 	 * Displays a list of resolutions and performs the selection.
 	 */
+	@Override
 	public void run() {
 
 		IRunnableContext context = new ProgressMonitorDialog(view.getSite()
@@ -67,6 +68,7 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 		final Object[] resolutions = new Object[1];
 
 		IRunnableWithProgress resolutionsRunnable = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 				monitor.beginTask(NLS.bind(
 						MarkerMessages.resolveMarkerAction_computationAction,
@@ -142,6 +144,7 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 	 * 
 	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 
 		if (Util.isSingleConcreteSelection(selection)) {

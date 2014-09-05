@@ -65,6 +65,7 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	 *            the shell for any dialogs
 	 * @deprecated see {@link #AddBookmarkAction(IShellProvider, boolean)} 
 	 */
+	@Deprecated
 	public AddBookmarkAction(Shell shell) {
 		this(shell, true);
 	}
@@ -78,10 +79,12 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	 *            whether to ask the user for the bookmark name
 	 * @deprecated see {@link #AddBookmarkAction(IShellProvider, boolean)} 
 	 */
+	@Deprecated
 	public AddBookmarkAction(final Shell shell, boolean promptForName) {
 		super(IDEWorkbenchMessages.AddBookmarkLabel);
 		Assert.isNotNull(shell);
 		shellProvider = new IShellProvider() {
+			@Override
 			public Shell getShell() {
 				return shell;
 			} };
@@ -120,6 +123,7 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	/*
 	 * (non-Javadoc) Method declared on IAction.
 	 */
+	@Override
 	public void run() {
 		if (getSelectedResources().isEmpty())
 			return;
@@ -149,6 +153,7 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	 * <code>SelectionListenerAction</code> method enables the action only if
 	 * the selection is not empty and contains just file resources.
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		// @issue typed selections
 		return super.updateSelection(selection) && getSelectedResources().size() == 1;

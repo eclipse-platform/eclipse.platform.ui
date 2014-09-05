@@ -33,6 +33,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
  * @deprecated should use NewWizardMenu to populate a New submenu instead (see Navigator view)
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class CreateFileAction extends SelectionListenerAction {
 
     /**
@@ -52,11 +53,13 @@ public class CreateFileAction extends SelectionListenerAction {
      * 
      * @deprecated {@link #CreateFileAction(IShellProvider)}
      */
-    public CreateFileAction(final Shell shell) {
+    @Deprecated
+	public CreateFileAction(final Shell shell) {
         super(IDEWorkbenchMessages.CreateFileAction_text);
         Assert.isNotNull(shell);
         shellProvider = new IShellProvider(){
-        	public Shell getShell(){
+        	@Override
+			public Shell getShell(){
         		return shell;
         	}
         };
@@ -71,7 +74,8 @@ public class CreateFileAction extends SelectionListenerAction {
      * @deprecated see deprecated tag on class
      * @since 3.4
      */
-    public CreateFileAction(IShellProvider provider){
+    @Deprecated
+	public CreateFileAction(IShellProvider provider){
     	super(IDEWorkbenchMessages.CreateFileAction_toolTip);
     	Assert.isNotNull(provider);
     	shellProvider = provider;
@@ -93,7 +97,8 @@ public class CreateFileAction extends SelectionListenerAction {
      * <code>IAction</code> method opens a <code>BasicNewFileResourceWizard</code>
      * in a wizard dialog under the shell passed to the constructor.
      */
-    public void run() {
+    @Override
+	public void run() {
         BasicNewFileResourceWizard wizard = new BasicNewFileResourceWizard();
         wizard.init(PlatformUI.getWorkbench(), getStructuredSelection());
         wizard.setNeedsProgressMonitor(true);
@@ -111,7 +116,8 @@ public class CreateFileAction extends SelectionListenerAction {
      * <code>SelectionListenerAction</code> method enables the action only
      * if the selection contains folders and open projects.
      */
-    protected boolean updateSelection(IStructuredSelection s) {
+    @Override
+	protected boolean updateSelection(IStructuredSelection s) {
         if (!super.updateSelection(s)) {
             return false;
         }

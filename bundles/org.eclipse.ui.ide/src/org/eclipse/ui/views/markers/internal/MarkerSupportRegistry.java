@@ -520,6 +520,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamichelpers.IExtensionTracker,
 	 *      org.eclipse.core.runtime.IExtension)
 	 */
+	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		Map groupIDsToEntries = new HashMap();
 		Map entryIDsToEntries = new HashMap();
@@ -684,6 +685,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension,
 	 *      java.lang.Object[])
 	 */
+	@Override
 	public void removeExtension(IExtension extension, Object[] objects) {
 
 		for (int i = 0; i < objects.length; i++) {

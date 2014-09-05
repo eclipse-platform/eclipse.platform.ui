@@ -41,12 +41,14 @@ public class VirtualResourceDecorator implements ILightweightLabelDecorator {
 	/**
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(ILabelProviderListener)
 	 */
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 	}
 
 	/**
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// no resources to dispose
 	}
@@ -55,6 +57,7 @@ public class VirtualResourceDecorator implements ILightweightLabelDecorator {
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
 	 *      java.lang.String)
 	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
@@ -62,6 +65,7 @@ public class VirtualResourceDecorator implements ILightweightLabelDecorator {
 	/**
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(ILabelProviderListener)
 	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 	}
 
@@ -75,6 +79,7 @@ public class VirtualResourceDecorator implements ILightweightLabelDecorator {
 	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(Object,
 	 *      IDecoration)
 	 */
+	@Override
 	public void decorate(Object element, IDecoration decoration) {
 		if (element instanceof IFolder && ((IResource) element).isVirtual()) {
 			decoration.addOverlay(VIRTUAL_FOLDER, IDecoration.BOTTOM_RIGHT);

@@ -23,7 +23,8 @@ public abstract class FrameAction extends Action {
     private FrameList frameList;
 	
     private IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             FrameAction.this.handlePropertyChange(event);
         }
     };

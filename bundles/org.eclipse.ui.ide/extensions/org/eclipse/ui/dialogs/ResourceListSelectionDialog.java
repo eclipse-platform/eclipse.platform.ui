@@ -103,7 +103,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 
         boolean resourcesSorted = true;
 
-        public int compareTo(Object o) {
+        @Override
+		public int compareTo(Object o) {
             return collator.compare(label, ((ResourceDescriptor) o).label);
         }
     }
@@ -115,7 +116,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 
         int lastMatch = descriptorsSize - 1;
 
-        public void run() {
+        @Override
+		public void run() {
             Display display = resourceNames.getDisplay();
             final int itemIndex[] = { 0 };
             final int itemCount[] = { 0 };
@@ -123,7 +125,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
             //so that we can abort if required
             final boolean[] disposed = { false };
             display.syncExec(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     //Be sure the widget still exists
                     if (resourceNames.isDisposed()) {
                         disposed[0] = true;
@@ -167,7 +170,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                     }
                     final int index = i;
                     display.syncExec(new Runnable() {
-                        public void run() {
+                        @Override
+						public void run() {
                             if (stop || resourceNames.isDisposed()) {
 								return;
 							}
@@ -199,7 +203,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                         }
                         last = index;
                         display.syncExec(new Runnable() {
-                            public void run() {
+                            @Override
+							public void run() {
                                 if (stop || resourceNames.isDisposed()) {
 									return;
 								}
@@ -217,7 +222,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 
             lastMatch = last;
             display.syncExec(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     if (resourceNames.isDisposed()) {
 						return;
 					}
@@ -246,7 +252,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 
         boolean refilter = false;
 
-        public void run() {
+        @Override
+		public void run() {
             Display display = resourceNames.getDisplay();
             final int itemIndex[] = { 0 };
             final int itemCount[] = { 0 };
@@ -254,7 +261,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
             //so that we can abort if required
             final boolean[] disposed = { false };
             display.syncExec(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     //Be sure the widget still exists
                     if (resourceNames.isDisposed()) {
                         disposed[0] = true;
@@ -283,7 +291,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                     }
                     final int index = i;
                     display.syncExec(new Runnable() {
-                        public void run() {
+                        @Override
+						public void run() {
                             if (stop || resourceNames.isDisposed()) {
 								return;
 							}
@@ -309,7 +318,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                     final int index = i;
                     if (match(descriptors[index].label)) {
                         display.syncExec(new Runnable() {
-                            public void run() {
+                            @Override
+							public void run() {
                                 if (stop || resourceNames.isDisposed()) {
 									return;
 								}
@@ -326,7 +336,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
             }
 
             display.syncExec(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     if (resourceNames.isDisposed()) {
                         return;
                     }
@@ -394,7 +405,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
     /**
      * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
      */
-    protected void cancelPressed() {
+    @Override
+	protected void cancelPressed() {
         setResult(null);
         super.cancelPressed();
     }
@@ -402,7 +414,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
     /**
      * @see org.eclipse.jface.window.Window#close()
      */
-    public boolean close() {
+    @Override
+	public boolean close() {
         boolean result = super.close();
         labelProvider.dispose();
         return result;
@@ -411,7 +424,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
     /**
      * @see org.eclipse.jface.window.Window#create()
      */
-    public void create() {
+    @Override
+	public void create() {
         super.create();
         pattern.setFocus();
         getButton(IDialogConstants.OK_ID).setEnabled(okEnabled);
@@ -423,7 +437,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
      * 
      * @param parent parent to create the dialog widgets in
      */
-    protected Control createDialogArea(Composite parent) {
+    @Override
+	protected Control createDialogArea(Composite parent) {
 
         Composite dialogArea = (Composite) super.createDialogArea(parent);
         Label l = new Label(dialogArea, SWT.NONE);
@@ -462,7 +477,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
         }
 
         pattern.addKeyListener(new KeyAdapter() {
-            public void keyReleased(KeyEvent e) {
+            @Override
+			public void keyReleased(KeyEvent e) {
                 if (e.keyCode == SWT.ARROW_DOWN) {
 					resourceNames.setFocus();
 				}
@@ -470,23 +486,27 @@ public class ResourceListSelectionDialog extends SelectionDialog {
         });
 
         pattern.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
+            @Override
+			public void modifyText(ModifyEvent e) {
                 refresh(false);
             }
         });
 
         resourceNames.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 updateFolders((ResourceDescriptor) e.item.getData());
             }
 
-            public void widgetDefaultSelected(SelectionEvent e) {
+            @Override
+			public void widgetDefaultSelected(SelectionEvent e) {
                 okPressed();
             }
         });
 
         folderNames.addSelectionListener(new SelectionAdapter() {
-            public void widgetDefaultSelected(SelectionEvent e) {
+            @Override
+			public void widgetDefaultSelected(SelectionEvent e) {
                 okPressed();
             }
         });
@@ -495,7 +515,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
             showDerivedButton = new Button(dialogArea, SWT.CHECK);
             showDerivedButton.setText(IDEWorkbenchMessages.ResourceSelectionDialog_showDerived);
             showDerivedButton.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e) {
+                @Override
+				public void widgetSelected(SelectionEvent e) {
                     setShowDerived(showDerivedButton.getSelection());
                     refresh(true);
                 }
@@ -633,7 +654,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 
         final ArrayList resources = new ArrayList();
         BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 getMatchingResources(resources);
                 IResource resourcesArray[] = new IResource[resources.size()];
                 resources.toArray(resourcesArray);
@@ -700,7 +722,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
     private void getMatchingResources(final ArrayList resources) {
         try {
             container.accept(new IResourceProxyVisitor() {
-                public boolean visit(IResourceProxy proxy) {
+                @Override
+				public boolean visit(IResourceProxy proxy) {
                     // optionally exclude derived resources (bugs 38085 and 81333)
                     if (!getShowDerived() && proxy.isDerived()) {
                         return false;
@@ -776,7 +799,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
      */
     private void initDescriptors(final IResource resources[]) {
         BusyIndicator.showWhile(null, new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 descriptors = new ResourceDescriptor[resources.length];
                 for (int i = 0; i < resources.length; i++) {
                     IResource r = resources[i];
@@ -842,7 +866,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
      * The user has selected a resource and the dialog is closing.
      * Set the selected resource as the dialog result.
      */
-    protected void okPressed() {
+    @Override
+	protected void okPressed() {
         TableItem items[] = folderNames.getSelection();
         if (items.length == 1) {
             ArrayList result = new ArrayList();
@@ -887,11 +912,13 @@ public class ResourceListSelectionDialog extends SelectionDialog {
      */
     private void updateFolders(final ResourceDescriptor desc) {
         BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 if (!desc.resourcesSorted) {
                     // sort the folder names
                     Collections.sort(desc.resources, new Comparator() {
-                        public int compare(Object o1, Object o2) {
+                        @Override
+						public int compare(Object o1, Object o2) {
                             String s1 = getParentLabel((IResource) o1);
                             String s2 = getParentLabel((IResource) o2);
                             return collator.compare(s1, s2);
@@ -967,6 +994,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
      * 
      * @since 3.2
      */
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
         IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
         IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);

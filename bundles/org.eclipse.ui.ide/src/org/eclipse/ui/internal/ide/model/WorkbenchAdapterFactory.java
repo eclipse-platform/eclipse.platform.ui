@@ -80,7 +80,8 @@ public class WorkbenchAdapterFactory implements IAdapterFactory {
      *    does not have an adapter of the given type for the
      *    given object
      */
-    public Object getAdapter(Object o, Class adapterType) {
+    @Override
+	public Object getAdapter(Object o, Class adapterType) {
         if (adapterType.isInstance(o)) {
             return o;
         }
@@ -115,7 +116,8 @@ public class WorkbenchAdapterFactory implements IAdapterFactory {
      *
      * @return the collection of adapter types
      */
-    public Class[] getAdapterList() {
+    @Override
+	public Class[] getAdapterList() {
         return new Class[] { IWorkbenchAdapter.class, IWorkbenchAdapter2.class,
                 IWorkbenchAdapter3.class, IElementFactory.class,
                 IPersistableElement.class, IActionFilter.class,

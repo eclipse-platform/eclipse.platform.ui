@@ -37,6 +37,7 @@ public class FieldSeverityAndMessage extends FieldMessage {
 	 * 
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -46,6 +47,7 @@ public class FieldSeverityAndMessage extends FieldMessage {
 	 * 
 	 * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object obj) {
 		if (obj == null || !(obj instanceof MarkerNode)) {
 			return null;
@@ -76,6 +78,7 @@ public class FieldSeverityAndMessage extends FieldMessage {
 	 * @see org.eclipse.ui.views.markers.internal.IField#compare(java.lang.Object,
 	 *      java.lang.Object)
 	 */
+	@Override
 	public int compare(Object obj1, Object obj2) {
 		if (obj1 == null || obj2 == null || !(obj1 instanceof ProblemMarker)
 				|| !(obj2 instanceof ProblemMarker)) {
@@ -98,6 +101,7 @@ public class FieldSeverityAndMessage extends FieldMessage {
 	 * 
 	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
 	 */
+	@Override
 	public Image getColumnHeaderImage() {
 		return getImage(FieldDone.DESCRIPTION_IMAGE_PATH);
 	}

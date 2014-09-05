@@ -54,6 +54,7 @@ public class BuildSetAction extends Action {
 		return workingSet;
 	}
 
+	@Override
 	public void run() {
 		//register this action instance as the global handler for the build last action
 		setActionDefinitionId("org.eclipse.ui.project.buildLast"); //$NON-NLS-1$
@@ -73,6 +74,7 @@ public class BuildSetAction extends Action {
 		build.run();
 	}
 
+	@Override
 	public void runWithEvent(Event event) {
 		//radio buttons receive an event when they become unselected,
 		//so we must not run the action in this case
@@ -87,6 +89,7 @@ public class BuildSetAction extends Action {
 	/* (non-Javadoc)
 	 * For debugging purposes only.
 	 */
+	@Override
 	public String toString() {
 		return "BuildSetAction(" + workingSet.getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}

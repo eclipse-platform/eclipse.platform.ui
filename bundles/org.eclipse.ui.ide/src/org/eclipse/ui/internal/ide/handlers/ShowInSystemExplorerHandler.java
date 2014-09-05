@@ -58,6 +58,7 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 	 * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.
 	 * ExecutionEvent)
 	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ILog log = IDEWorkbenchPlugin.getDefault().getLog();
 

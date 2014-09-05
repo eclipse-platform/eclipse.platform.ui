@@ -35,6 +35,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 	 */
 	class ContributorResourceAdapter implements IContributorResourceAdapter2 {
 
+		@Override
 		public ResourceMapping getAdaptedResourceMapping(IAdaptable adaptable) {
 			if (adaptable instanceof IWorkingSet) {
 				IWorkingSet workingSet = (IWorkingSet) adaptable;
@@ -57,6 +58,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 			return null;
 		}
 
+		@Override
 		public IResource getAdaptedResource(IAdaptable adaptable) {
 			// Working sets don't adapt to IResource
 			return null;
@@ -66,6 +68,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 
 	class WorkbenchAdapter implements IWorkbenchAdapter {
 
+		@Override
 		public Object[] getChildren(Object o) {
 			if (o instanceof IWorkingSet) {
 				IWorkingSet set = (IWorkingSet) o;
@@ -74,6 +77,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 			return null;
 		}
 
+		@Override
 		public ImageDescriptor getImageDescriptor(Object o) {
 			if (o instanceof IWorkingSet) {
 				IWorkingSet set = (IWorkingSet) o;
@@ -82,6 +86,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 			return null;
 		}
 
+		@Override
 		public String getLabel(Object o) {
 			if (o instanceof IWorkingSet) {
 				IWorkingSet set = (IWorkingSet) o;
@@ -90,6 +95,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 			return null;
 		}
 
+		@Override
 		public Object getParent(Object o) {
 			return null;
 		}
@@ -106,6 +112,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object,
 	 *      java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adaptableObject instanceof IWorkingSet) {
 			if (adapterType == IContributorResourceAdapter.class) {
@@ -138,6 +145,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 	 * 
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	public Class[] getAdapterList() {
 		return new Class[] { IContributorResourceAdapter2.class,
 				IWorkbenchAdapter.class, ResourceMapping.class };

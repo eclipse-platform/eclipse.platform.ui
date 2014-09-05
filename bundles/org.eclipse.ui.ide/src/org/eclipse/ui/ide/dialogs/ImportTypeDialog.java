@@ -157,6 +157,7 @@ public class ImportTypeDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.TrayDialog#close()
 	 */
+	@Override
 	public boolean close() {
 		return super.close();
 	}
@@ -243,6 +244,7 @@ public class ImportTypeDialog extends TrayDialog {
 		IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(key, newValue);
 	}
 
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
 			writeContextPreference(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_TYPE, Integer.toString(currentSelection));
@@ -253,6 +255,7 @@ public class ImportTypeDialog extends TrayDialog {
 		super.buttonPressed(buttonId);
 	}
 
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		String title = (operationMask & IMPORT_FILES_ONLY) != 0 ? IDEWorkbenchMessages.ImportTypeDialog_titleFilesOnly:
@@ -262,6 +265,7 @@ public class ImportTypeDialog extends TrayDialog {
 				IIDEHelpContextIds.IMPORT_TYPE_DIALOG);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		boolean linkIsOnlyChoice = hasFlag(IMPORT_LINK) && !(hasFlag(IMPORT_COPY | IMPORT_MOVE) || (hasFlag(IMPORT_VIRTUAL_FOLDERS_AND_LINKS) && !hasFlag(IMPORT_FILES_ONLY)));
 
@@ -284,11 +288,13 @@ public class ImportTypeDialog extends TrayDialog {
 		layout.marginWidth += indent;
 		composite.setLayout(layout);
 		SelectionListener listener = new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				currentSelection = ((Integer) e.widget.getData()).intValue();
 				refreshSelection();
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				currentSelection = ((Integer) e.widget.getData()).intValue();
 				refreshSelection();
@@ -337,12 +343,15 @@ public class ImportTypeDialog extends TrayDialog {
 
 		if (hasFlag(IMPORT_VIRTUAL_FOLDERS_AND_LINKS | IMPORT_LINK)) {
 			relativePathVariableGroup = new RelativePathVariableGroup(new RelativePathVariableGroup.IModel() {
+				@Override
 				public IResource getResource() {
 					return receivingResource;
 				}
+				@Override
 				public void setVariable(String string) {
 					variable = string;
 				}
+				@Override
 				public String getVariable() {
 					return variable;
 				}
@@ -394,6 +403,7 @@ public class ImportTypeDialog extends TrayDialog {
 		Link link= new Link(composite, SWT.WRAP | SWT.RIGHT);
 		link.setText(IDEWorkbenchMessages.ImportTypeDialog_configureSettings);
 		link.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				openSettingsPage();
 			}

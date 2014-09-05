@@ -47,6 +47,7 @@ public class ActionMarkerProperties extends SelectionProviderAction {
 	 * 
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		if (!isEnabled()) {
 			return;
@@ -67,6 +68,7 @@ public class ActionMarkerProperties extends SelectionProviderAction {
 	 * 
 	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		setEnabled(selection != null && selection.size() == 1);
 	}

@@ -28,7 +28,8 @@ public class WorkbenchMarker extends WorkbenchAdapter implements
      *  (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
      */
-    public ImageDescriptor getImageDescriptor(Object o) {
+    @Override
+	public ImageDescriptor getImageDescriptor(Object o) {
         if (!(o instanceof IMarker)) {
 			return null;
 		}
@@ -40,7 +41,8 @@ public class WorkbenchMarker extends WorkbenchAdapter implements
      *  (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
      */
-    public String getLabel(Object o) {
+    @Override
+	public String getLabel(Object o) {
         IMarker marker = (IMarker) o;
         return marker.getAttribute(IMarker.MESSAGE, "");//$NON-NLS-1$
     }
@@ -49,7 +51,8 @@ public class WorkbenchMarker extends WorkbenchAdapter implements
      *  (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
      */
-    public Object getParent(Object o) {
+    @Override
+	public Object getParent(Object o) {
         return ((IMarker) o).getResource();
     }
 
@@ -62,7 +65,8 @@ public class WorkbenchMarker extends WorkbenchAdapter implements
      * @param value the attriute value
      * @return <code>true</code> if the attribute matches; <code>false</code> otherwise
      */
-    public boolean testAttribute(Object target, String name, String value) {
+    @Override
+	public boolean testAttribute(Object target, String name, String value) {
         return MarkerPropertyTester.test((IMarker) target, name, value);
     }
 }

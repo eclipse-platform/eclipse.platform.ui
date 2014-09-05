@@ -116,6 +116,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 * 
 	 * @see org.eclipse.jface.preference.FieldEditor#adjustForNumColumns(int)
 	 */
+	@Override
 	protected void adjustForNumColumns(int numColumns) {
 		((GridData) getContainer().getLayoutData()).horizontalSpan = numColumns;
 	}
@@ -126,6 +127,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 * @see org.eclipse.jface.preference.FieldEditor#doFillIntoGrid(org.eclipse.swt.widgets.Composite,
 	 *      int)
 	 */
+	@Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
 		container = createEncodingGroup(parent, numColumns);
 	}
@@ -135,6 +137,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 * 
 	 * @see org.eclipse.jface.preference.FieldEditor#doLoad()
 	 */
+	@Override
 	protected void doLoad() {
 		if (encodingCombo != null) {
 			List encodings = IDEEncoding.getIDEEncodings();
@@ -156,6 +159,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 * 
 	 * @see org.eclipse.jface.preference.FieldEditor#doLoadDefault()
 	 */
+	@Override
 	protected void doLoadDefault() {
 		updateEncodingState(true);
 	}
@@ -165,6 +169,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 * 
 	 * @see org.eclipse.jface.preference.FieldEditor#getNumberOfControls()
 	 */
+	@Override
 	public int getNumberOfControls() {
 		return 1;
 	}
@@ -174,6 +179,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 * 
 	 * @see org.eclipse.jface.preference.FieldEditor#isValid()
 	 */
+	@Override
 	public boolean isValid() {
 		return isValid;
 	}
@@ -183,6 +189,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 * 
 	 * @see org.eclipse.jface.preference.FieldEditor#refreshValidState()
 	 */
+	@Override
 	protected void refreshValidState() {
 		updateValidState();
 	}
@@ -192,6 +199,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 * 
 	 * @see org.eclipse.jface.preference.FieldEditor#setPreferenceStore(org.eclipse.jface.preference.IPreferenceStore)
 	 */
+	@Override
 	public void setPreferenceStore(IPreferenceStore store) {
 		super.setPreferenceStore(store);
 		defaultEnc = store.getDefaultString(getPreferenceName());
@@ -240,6 +248,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 		topControl.setLayout(layout);
 
 		SelectionAdapter buttonListener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateEncodingState(defaultEncodingButton.getSelection());
 				updateValidState();
@@ -268,6 +277,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 			 * 
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateValidState();
 			}
@@ -278,6 +288,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 			 * 
 			 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
 			 */
+			@Override
 			public void keyReleased(KeyEvent e) {
 				updateValidState();
 			}
@@ -293,6 +304,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 *      org.eclipse.swt.widgets.Composite)
 	 * @since 3.3
 	 */
+	@Override
 	public void setEnabled(boolean enabled, Composite parent) {
 		if (container != null)
 			container.setEnabled(enabled);

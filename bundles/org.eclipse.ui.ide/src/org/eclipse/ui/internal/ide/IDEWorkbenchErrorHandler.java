@@ -85,6 +85,7 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 	 * @see org.eclipse.ui.statushandlers.WorkbenchErrorHandler#handle(org.eclipse.ui.statushandlers.StatusAdapter,
 	 *      int)
 	 */
+	@Override
 	public void handle(final StatusAdapter statusAdapter, int style) {
 
 		// if fatal error occurs, we will show the blocking error dialog anyway
@@ -117,6 +118,7 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 				 * 
 				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 				 */
+				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					handleException(statusAdapter.getStatus().getException());
 					return new Status(

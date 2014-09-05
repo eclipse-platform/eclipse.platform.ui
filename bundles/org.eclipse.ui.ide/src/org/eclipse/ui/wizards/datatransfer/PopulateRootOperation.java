@@ -41,7 +41,8 @@ public class PopulateRootOperation extends SelectFilesOperation {
      * - if the file system object is a file then it must have an extension
      *   suitable for selection
      */
-    protected FileSystemElement createElement(FileSystemElement parent,
+    @Override
+	protected FileSystemElement createElement(FileSystemElement parent,
             Object fileSystemObject) throws InterruptedException {
 
         //Iterate on level deep

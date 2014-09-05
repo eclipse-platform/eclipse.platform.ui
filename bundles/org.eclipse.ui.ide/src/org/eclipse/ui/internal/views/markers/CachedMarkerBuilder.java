@@ -257,6 +257,7 @@ public class CachedMarkerBuilder {
 	void refreshContents(IWorkbenchSiteProgressService service) {
 		try {
 			service.busyCursorWhile(new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) {
 					SortingJob job=new SortingJob(CachedMarkerBuilder.this);
 					job.run(monitor);
@@ -680,6 +681,7 @@ public class CachedMarkerBuilder {
 		 * org.eclipse.jface.util.IPropertyChangeListener#propertyChange
 		 * (org.eclipse.jface.util.PropertyChangeEvent)
 		 */
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			boolean needsUpdate=false;
 			if (event

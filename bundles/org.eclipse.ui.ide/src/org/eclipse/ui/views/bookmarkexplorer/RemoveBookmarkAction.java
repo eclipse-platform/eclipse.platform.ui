@@ -42,7 +42,8 @@ class RemoveBookmarkAction extends BookmarkAction {
     /**
      * Delete the marker selection.
      */
-    public void run() {
+    @Override
+	public void run() {
         final IStructuredSelection sel = getStructuredSelection();
         if (sel.isEmpty()) {
 			return;
@@ -55,7 +56,8 @@ class RemoveBookmarkAction extends BookmarkAction {
    				WorkspaceUndoUtil.getUIInfoAdapter(getView().getShell()));
     }
 
-    public void selectionChanged(IStructuredSelection sel) {
+    @Override
+	public void selectionChanged(IStructuredSelection sel) {
         setEnabled(!sel.isEmpty());
     }
 }

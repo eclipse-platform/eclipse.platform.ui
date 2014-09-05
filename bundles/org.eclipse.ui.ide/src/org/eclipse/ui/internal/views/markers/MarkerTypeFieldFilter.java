@@ -46,6 +46,7 @@ public class MarkerTypeFieldFilter extends CompatibilityFieldFilter {
 	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#select(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
 	 */
+	@Override
 	public boolean select(MarkerItem item) {
 
 		IMarker marker = item.getMarker();
@@ -90,6 +91,7 @@ public class MarkerTypeFieldFilter extends CompatibilityFieldFilter {
 	 * 
 	 * @see org.eclipse.ui.views.markers.MarkerFieldFilter#saveSettings(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void saveSettings(IMemento memento) {
 
 		if (selectedTypes.containsAll(contentGenerator.getMarkerTypes()))
@@ -112,6 +114,7 @@ public class MarkerTypeFieldFilter extends CompatibilityFieldFilter {
 	 * 
 	 * @see org.eclipse.ui.views.markers.MarkerFieldFilter#loadSettings(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void loadSettings(IMemento memento) {
 
 		String types = memento.getString(TAG_SELECTED_TYPES);
@@ -137,6 +140,7 @@ public class MarkerTypeFieldFilter extends CompatibilityFieldFilter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.views.markers.CompatibilityFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento, org.eclipse.ui.internal.views.markers.MarkerContentGenerator)
 	 */
+	@Override
 	void loadLegacySettings(IMemento memento, MarkerContentGenerator generator) {
 
 		setContentGenerator(generator);
@@ -182,6 +186,7 @@ public class MarkerTypeFieldFilter extends CompatibilityFieldFilter {
 	 * 
 	 * @see org.eclipse.ui.internal.views.markers.CompatibilityFieldFilter#initialize(org.eclipse.ui.views.markers.internal.ProblemFilter)
 	 */
+	@Override
 	public void initialize(ProblemFilter problemFilter) {
 		selectedTypes.clear();
 		selectedTypes.addAll(problemFilter.getSelectedTypes());
@@ -206,6 +211,7 @@ public class MarkerTypeFieldFilter extends CompatibilityFieldFilter {
 	 * 
 	 * @see org.eclipse.ui.views.markers.MarkerFieldFilter#populateWorkingCopy(org.eclipse.ui.views.markers.MarkerFieldFilter)
 	 */
+	@Override
 	public void populateWorkingCopy(MarkerFieldFilter copy) {
 		super.populateWorkingCopy(copy);
 		

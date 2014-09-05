@@ -37,6 +37,7 @@ public class MarkerSeverityAndDescriptionField extends MarkerDescriptionField {
 	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#compare(org.eclipse.ui.provisional.views.markers.MarkerItem,
 	 *      org.eclipse.ui.provisional.views.markers.MarkerItem)
 	 */
+	@Override
 	public int compare(MarkerItem item1, MarkerItem item2) {
 
 		int severity1 = MarkerSupportInternalUtilities.getSeverity(item1);
@@ -71,6 +72,7 @@ public class MarkerSeverityAndDescriptionField extends MarkerDescriptionField {
 	 * 
 	 * @see org.eclipse.ui.views.markers.MarkerField#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
+	@Override
 	public void update(ViewerCell cell) {
 		super.update(cell);
 

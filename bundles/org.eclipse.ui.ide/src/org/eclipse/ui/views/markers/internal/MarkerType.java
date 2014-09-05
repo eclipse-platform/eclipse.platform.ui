@@ -153,7 +153,8 @@ public class MarkerType {
         return false;
     }
 
-    public boolean equals(Object other) {
+    @Override
+	public boolean equals(Object other) {
         if (!(other instanceof MarkerType)) {
             return false;
         }

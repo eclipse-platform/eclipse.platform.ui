@@ -76,6 +76,7 @@ public class ZipFileImportWizard extends Wizard implements IImportWizard {
 	/*
 	 * (non-Javadoc) Method declared on IWizard.
 	 */
+	@Override
 	public void addPages() {
 		super.addPages();
 		mainPage = new WizardArchiveFileResourceImportPage1(workbench,
@@ -97,6 +98,7 @@ public class ZipFileImportWizard extends Wizard implements IImportWizard {
 	/*
 	 * (non-Javadoc) Method declared on IWorkbenchWizard.
 	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		this.workbench = workbench;
 		this.selection = currentSelection;
@@ -114,6 +116,7 @@ public class ZipFileImportWizard extends Wizard implements IImportWizard {
 	/*
 	 * (non-Javadoc) Method declared on IWizard.
 	 */
+	@Override
 	public boolean performCancel() {
 		return mainPage.cancel();
 	}
@@ -121,6 +124,7 @@ public class ZipFileImportWizard extends Wizard implements IImportWizard {
 	/*
 	 * (non-Javadoc) Method declared on IWizard.
 	 */
+	@Override
 	public boolean performFinish() {
 		return mainPage.finish();
 	}

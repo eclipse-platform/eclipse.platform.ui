@@ -121,14 +121,17 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	 */
 	private final class ProjectLabelProvider extends LabelProvider implements IColorProvider{
 		
+		@Override
 		public String getText(Object element) {
 			return ((ProjectRecord) element).getProjectLabel();
 		}
 
+		@Override
 		public Color getBackground(Object element) {
 			return null;
 		}
 
+		@Override
 		public Color getForeground(Object element) {
 			ProjectRecord projectRecord = (ProjectRecord) element;
 			if(projectRecord.hasConflicts)
@@ -299,6 +302,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		 * org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers
 		 * .Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
 			return !((ProjectRecord) element).hasConflicts;
@@ -417,6 +421,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
 	 * .Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 
 		initializeDialogUnits(parent);
@@ -446,12 +451,14 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		workingSetGroup = new WorkingSetGroup(workArea, currentSelection, workingSetIds);
 	}
 
+	@Override
 	protected void createOptionsGroupButtons(Group optionsGroup) {
 		nestedProjectsCheckbox = new Button(optionsGroup, SWT.CHECK);
 		nestedProjectsCheckbox
 				.setText(DataTransferMessages.WizardProjectsImportPage_SearchForNestedProjects);
 		nestedProjectsCheckbox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		nestedProjectsCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				nestedProjects = nestedProjectsCheckbox.getSelection();
 				if (projectFromDirectoryRadio.getSelection()) {
@@ -467,6 +474,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 				.setText(DataTransferMessages.WizardProjectsImportPage_CopyProjectsIntoWorkspace);
 		copyCheckbox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		copyCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				copyFiles = copyCheckbox.getSelection();
 				// need to refresh the project list as projects already
@@ -482,6 +490,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		hideConflictingProjects.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
 		hideConflictingProjects.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				projectsList.removeFilter(conflictingProjectsFilter);
 				if (hideConflictingProjects.getSelection()) {
@@ -527,6 +536,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			 * org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java
 			 * .lang.Object)
 			 */
+			@Override
 			public Object[] getChildren(Object parentElement) {
 				return null;
 			}
@@ -538,6 +548,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			 * org.eclipse.jface.viewers.IStructuredContentProvider#getElements
 			 * (java.lang.Object)
 			 */
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return getProjectRecords();
 			}
@@ -549,6 +560,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			 * org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java
 			 * .lang.Object)
 			 */
+			@Override
 			public boolean hasChildren(Object element) {
 				return false;
 			}
@@ -560,6 +572,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			 * org.eclipse.jface.viewers.ITreeContentProvider#getParent(java
 			 * .lang.Object)
 			 */
+			@Override
 			public Object getParent(Object element) {
 				return null;
 			}
@@ -569,6 +582,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			 * 
 			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
+			@Override
 			public void dispose() {
 
 			}
@@ -580,6 +594,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			 * org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse
 			 * .jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 			 */
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
 			}
@@ -596,6 +611,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			 * org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged
 			 * (org.eclipse.jface.viewers.CheckStateChangedEvent)
 			 */
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				ProjectRecord element = (ProjectRecord) event.getElement();
 				if(element.hasConflicts) {
@@ -628,6 +644,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		Button selectAll = new Button(buttonsComposite, SWT.PUSH);
 		selectAll.setText(DataTransferMessages.DataTransfer_selectAll);
 		selectAll.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (int i = 0; i < selectedProjects.length; i++) {
 					if(selectedProjects[i].hasConflicts)
@@ -651,6 +668,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse
 			 * .swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 
 				projectsList.setCheckedElements(new Object[0]);
@@ -670,6 +688,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse
 			 * .swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (projectFromDirectoryRadio.getSelection()) {
 					updateProjectsList(directoryPathField.getText().trim());
@@ -743,6 +762,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetS
 			 * elected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleLocationDirectoryButtonPressed();
 			}
@@ -757,6 +777,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse
 			 * .swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleLocationArchiveButtonPressed();
 			}
@@ -772,6 +793,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			 * org.eclipse.swt.events.TraverseListener#keyTraversed(org.eclipse
 			 * .swt.events.TraverseEvent)
 			 */
+			@Override
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_RETURN) {
 					e.doit = false;
@@ -790,6 +812,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			 * org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt
 			 * .events.FocusEvent)
 			 */
+			@Override
 			public void focusLost(org.eclipse.swt.events.FocusEvent e) {
 				updateProjectsList(directoryPathField.getText().trim());
 			}
@@ -797,6 +820,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		});
 
 		directoryPathField.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateProjectsList(directoryPathField.getText().trim());
 			}
@@ -811,6 +835,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			 * org.eclipse.swt.events.TraverseListener#keyTraversed(org.eclipse
 			 * .swt.events.TraverseEvent)
 			 */
+			@Override
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_RETURN) {
 					e.doit = false;
@@ -828,12 +853,14 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			 * org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt
 			 * .events.FocusEvent)
 			 */
+			@Override
 			public void focusLost(org.eclipse.swt.events.FocusEvent e) {
 				updateProjectsList(archivePathField.getText().trim());
 			}
 		});
 
 		archivePathField.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateProjectsList(archivePathField.getText().trim());
 			}
@@ -847,6 +874,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			 * org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse
 			 * .swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				directoryRadioSelected();
 			}
@@ -860,6 +888,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			 * org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse
 			 * .swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				archiveRadioSelected();
 			}
@@ -900,6 +929,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	 * (non-Javadoc) Method declared on IDialogPage. Set the focus on path
 	 * fields when page becomes visible.
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible && this.projectFromDirectoryRadio.getSelection()) {
@@ -959,6 +989,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 				 * org.eclipse.jface.operation.IRunnableWithProgress#run(org
 				 * .eclipse.core.runtime.IProgressMonitor)
 				 */
+				@Override
 				public void run(IProgressMonitor monitor) {
 
 					monitor
@@ -1308,6 +1339,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		final Object[] selected = projectsList.getCheckedElements();
 		createdProjects = new ArrayList();
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+			@Override
 			protected void execute(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 				try {
@@ -1578,6 +1610,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	 * 
 	 * Method declared public only for use of tests.
 	 */
+	@Override
 	public void restoreWidgetValues() {
 				
 		// First, check to see if we have resore settings, and
@@ -1654,6 +1687,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	 * 
 	 * Method declared public only for use of tests.
 	 */
+	@Override
 	public void saveWidgetValues() {
 		IDialogSettings settings = getDialogSettings();
 		if (settings != null) {
@@ -1696,9 +1730,11 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		return nestedProjectsCheckbox;
 	}
 
+	@Override
 	public void handleEvent(Event event) {
 	}
 
+	@Override
 	protected boolean allowNewContainerName() {
 		return true;
 	}

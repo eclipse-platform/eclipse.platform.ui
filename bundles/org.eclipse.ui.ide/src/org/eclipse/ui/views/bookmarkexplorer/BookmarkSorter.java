@@ -166,7 +166,8 @@ class BookmarkSorter extends ViewerComparator {
         return 0;
     }
 
-    public int compare(Viewer viewer, Object e1, Object e2) {
+    @Override
+	public int compare(Viewer viewer, Object e1, Object e2) {
         IMarker marker1 = (IMarker) e1;
         IMarker marker2 = (IMarker) e2;
 

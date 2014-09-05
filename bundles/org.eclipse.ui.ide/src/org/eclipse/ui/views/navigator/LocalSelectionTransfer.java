@@ -25,6 +25,7 @@ import org.eclipse.swt.dnd.TransferData;
  * @noextend This class is not intended to be subclassed by clients.
  * @deprecated as of 3.5, use {@link org.eclipse.jface.util.LocalSelectionTransfer} instead
  */
+@Deprecated
 public class LocalSelectionTransfer extends
 		org.eclipse.jface.util.LocalSelectionTransfer {
 
@@ -60,6 +61,7 @@ public class LocalSelectionTransfer extends
 	 * 
 	 * @see org.eclipse.jface.util.LocalSelectionTransfer#getSelection()
 	 */
+	@Override
 	public ISelection getSelection() {
 		return jfaceTransfer.getSelection();
 	}
@@ -69,6 +71,7 @@ public class LocalSelectionTransfer extends
 	 * 
 	 * @see org.eclipse.jface.util.LocalSelectionTransfer#getSelectionSetTime()
 	 */
+	@Override
 	public long getSelectionSetTime() {
 		return jfaceTransfer.getSelectionSetTime();
 	}
@@ -78,6 +81,7 @@ public class LocalSelectionTransfer extends
 	 * 
 	 * @see org.eclipse.jface.util.LocalSelectionTransfer#setSelection(org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void setSelection(ISelection s) {
 		jfaceTransfer.setSelection(s);
 	}
@@ -87,6 +91,7 @@ public class LocalSelectionTransfer extends
 	 * 
 	 * @see org.eclipse.jface.util.LocalSelectionTransfer#setSelectionSetTime(long)
 	 */
+	@Override
 	public void setSelectionSetTime(long time) {
 		jfaceTransfer.setSelectionSetTime(time);
 	}
@@ -94,6 +99,7 @@ public class LocalSelectionTransfer extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.LocalSelectionTransfer#javaToNative(java.lang.Object, org.eclipse.swt.dnd.TransferData)
 	 */
+	@Override
 	public void javaToNative(Object object, TransferData transferData) {
 		jfaceTransfer.javaToNative(object, transferData);
 	}
@@ -101,6 +107,7 @@ public class LocalSelectionTransfer extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.LocalSelectionTransfer#nativeToJava(org.eclipse.swt.dnd.TransferData)
 	 */
+	@Override
 	public Object nativeToJava(TransferData transferData) {
 		return jfaceTransfer.nativeToJava(transferData);
 	}

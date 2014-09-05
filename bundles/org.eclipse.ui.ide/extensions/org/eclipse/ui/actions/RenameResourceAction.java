@@ -115,6 +115,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	 *            the shell for any dialogs
 	 * @deprecated see {@link #RenameResourceAction(IShellProvider)}
 	 */
+	@Deprecated
 	public RenameResourceAction(Shell shell) {
 		super(shell, IDEWorkbenchMessages.RenameResourceAction_text);
 		initAction();
@@ -148,6 +149,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	 *            the tree
 	 * @deprecated see {@link #RenameResourceAction(IShellProvider, Tree)}
 	 */
+	@Deprecated
 	public RenameResourceAction(Shell shell, Tree tree) {
 		this(shell);
 		this.navigatorTree = tree;
@@ -187,6 +189,7 @@ public class RenameResourceAction extends WorkspaceAction {
 		// shell as we are not in the UI thread.
 
 		Runnable query = new Runnable() {
+			@Override
 			public void run() {
 				String pathName = destination.getFullPath().makeRelative()
 						.toString();
@@ -264,6 +267,7 @@ public class RenameResourceAction extends WorkspaceAction {
 		final int inset = getCellEditorInset(textEditorParent);
 		if (inset > 0) {
 			textEditorParent.addListener(SWT.Paint, new Listener() {
+				@Override
 				public void handleEvent(Event e) {
 					Point textSize = textEditor.getSize();
 					Point parentSize = textEditorParent.getSize();
@@ -277,6 +281,7 @@ public class RenameResourceAction extends WorkspaceAction {
 		textEditor.setFont(navigatorTree.getFont());
 		textEditorParent.setBackground(textEditor.getBackground());
 		textEditor.addListener(SWT.Modify, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				Point textSize = textEditor.computeSize(SWT.DEFAULT,
 						SWT.DEFAULT);
@@ -289,6 +294,7 @@ public class RenameResourceAction extends WorkspaceAction {
 			}
 		});
 		textEditor.addListener(SWT.Traverse, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 
 				// Workaround for Bug 20214 due to extra
@@ -309,6 +315,7 @@ public class RenameResourceAction extends WorkspaceAction {
 			}
 		});
 		textEditor.addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusLost(FocusEvent fe) {
 				saveChangesAndDispose(resource);
 			}
@@ -342,6 +349,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	 * 
 	 * @return list of resource elements (element type: <code>IResource</code>)
 	 */
+	@Override
 	protected List getActionResources() {
 		if (inlinedResource == null) {
 			return super.getActionResources();
@@ -355,6 +363,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	/*
 	 * (non-Javadoc) Method declared on WorkspaceAction.
 	 */
+	@Override
 	protected String getOperationMessage() {
 		return IDEWorkbenchMessages.RenameResourceAction_progress;
 	}
@@ -362,6 +371,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	/*
 	 * (non-Javadoc) Method declared on WorkspaceAction.
 	 */
+	@Override
 	protected String getProblemsMessage() {
 		return IDEWorkbenchMessages.RenameResourceAction_problemMessage;
 	}
@@ -369,6 +379,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	/*
 	 * (non-Javadoc) Method declared on WorkspaceAction.
 	 */
+	@Override
 	protected String getProblemsTitle() {
 		return IDEWorkbenchMessages.RenameResourceAction_problemTitle;
 	}
@@ -393,6 +404,7 @@ public class RenameResourceAction extends WorkspaceAction {
 		final IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 		final IPath prefix = resource.getFullPath().removeLastSegments(1);
 		IInputValidator validator = new IInputValidator() {
+			@Override
 			public String isValid(String string) {
 				if (resource.getName().equals(string)) {
 					return IDEWorkbenchMessages.RenameResourceAction_nameMustBeDifferent;
@@ -453,6 +465,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	 * (non-Javadoc) Method declared on IAction; overrides method on
 	 * WorkspaceAction.
 	 */
+	@Override
 	public void run() {
 		IResource currentResource = getCurrentResource();
 		if (currentResource == null || !currentResource.exists()) {
@@ -539,6 +552,7 @@ public class RenameResourceAction extends WorkspaceAction {
 		// rename
 		// text widget to lose focus and trigger this method).
 		Runnable query = new Runnable() {
+			@Override
 			public void run() {
 				try {
 					if (!newName.equals(inlinedResource.getName())) {
@@ -577,6 +591,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	 * disabled if any of the selections are not resources or resources that are
 	 * not local.
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		disposeTextWidget();
 
@@ -640,8 +655,10 @@ public class RenameResourceAction extends WorkspaceAction {
 	 * rename.
 	 * @since 3.3
 	 */
+	@Override
 	protected IRunnableWithProgress createOperation(final IStatus[] errorStatus) {
 		return new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 				IResource[] resources = (IResource[]) getActionResources()
 						.toArray(new IResource[getActionResources().size()]);

@@ -57,7 +57,8 @@ public class CloseResourceAction extends WorkspaceAction implements
      * @param shell the shell for any dialogs
      * @deprecated See {@link #CloseResourceAction(IShellProvider)}
      */
-    public CloseResourceAction(Shell shell) {
+    @Deprecated
+	public CloseResourceAction(Shell shell) {
         super(shell, IDEWorkbenchMessages.CloseResourceAction_text);
         initAction();
     }
@@ -67,7 +68,8 @@ public class CloseResourceAction extends WorkspaceAction implements
 	 * override with unique text.
 	 * @deprecated See {@link #CloseResourceAction(IShellProvider, String)}
 	 */
-    protected CloseResourceAction(Shell shell, String text) {
+    @Deprecated
+	protected CloseResourceAction(Shell shell, String text) {
     	super(shell, text);
     }
     
@@ -106,25 +108,29 @@ public class CloseResourceAction extends WorkspaceAction implements
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    protected String getOperationMessage() {
+    @Override
+	protected String getOperationMessage() {
         return IDEWorkbenchMessages.CloseResourceAction_operationMessage;
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    protected String getProblemsMessage() {
+    @Override
+	protected String getProblemsMessage() {
         return IDEWorkbenchMessages.CloseResourceAction_problemMessage;
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    protected String getProblemsTitle() {
+    @Override
+	protected String getProblemsTitle() {
         return IDEWorkbenchMessages.CloseResourceAction_title;
     }
 
-    protected void invokeOperation(IResource resource, IProgressMonitor monitor)
+    @Override
+	protected void invokeOperation(IResource resource, IProgressMonitor monitor)
 	        throws CoreException {
 	    ((IProject) resource).close(monitor);
 	}
@@ -134,7 +140,8 @@ public class CloseResourceAction extends WorkspaceAction implements
      * method saves and closes the resource's dirty editors before closing 
      * it.
      */
-    public void run() {
+    @Override
+	public void run() {
         // Get the items to close.
         List projects = getSelectedResources();
         if (projects == null || projects.isEmpty()) {
@@ -166,7 +173,8 @@ public class CloseResourceAction extends WorkspaceAction implements
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    protected boolean shouldPerformResourcePruning() {
+    @Override
+	protected boolean shouldPerformResourcePruning() {
         return false;
     }
 
@@ -175,7 +183,8 @@ public class CloseResourceAction extends WorkspaceAction implements
      * <code>SelectionListenerAction</code> method ensures that this action is
      * enabled only if one of the selections is an open project.
      */
-    protected boolean updateSelection(IStructuredSelection s) {
+    @Override
+	protected boolean updateSelection(IStructuredSelection s) {
         // don't call super since we want to enable if open project is selected.
         if (!selectionIsOfType(IResource.PROJECT)) {
 			return false;
@@ -195,7 +204,8 @@ public class CloseResourceAction extends WorkspaceAction implements
      * Handles a resource changed event by updating the enablement
      * if one of the selected projects is opened or closed.
      */
-    public synchronized void resourceChanged(IResourceChangeEvent event) {
+    @Override
+	public synchronized void resourceChanged(IResourceChangeEvent event) {
         // Warning: code duplicated in OpenResourceAction
         List sel = getSelectedResources();
         // don't bother looking at delta if selection not applicable
@@ -221,14 +231,16 @@ public class CloseResourceAction extends WorkspaceAction implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.actions.SelectionListenerAction#getSelectedResources()
      */
-    protected synchronized List getSelectedResources() {
+    @Override
+	protected synchronized List getSelectedResources() {
     	return super.getSelectedResources();
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.ui.actions.SelectionListenerAction#getSelectedNonResources()
      */
-    protected synchronized List getSelectedNonResources() {
+    @Override
+	protected synchronized List getSelectedNonResources() {
     	return super.getSelectedNonResources();
     }
     

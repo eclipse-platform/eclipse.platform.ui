@@ -115,6 +115,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	 * 
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(MarkerMessages.resolveMarkerAction_dialogTitle);
@@ -125,6 +126,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 
 		initializeDialogUnits(parent);
@@ -157,6 +159,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		resolutionsList = new ListViewer(control, SWT.BORDER | SWT.SINGLE
 				| SWT.V_SCROLL);
 		resolutionsList.setContentProvider(new IStructuredContentProvider() {
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return resolutions;
 			}
@@ -166,6 +169,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * 
 			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
+			@Override
 			public void dispose() {
 
 			}
@@ -176,6 +180,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
 
@@ -183,6 +188,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		});
 
 		resolutionsList.setLabelProvider(new LabelProvider() {
+			@Override
 			public String getText(Object element) {
 				return ((IMarkerResolution) element).getLabel();
 			}
@@ -195,6 +201,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 					 * 
 					 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 					 */
+					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
 
 						WorkbenchMarkerResolution resolution = getSelectedWorkbenchResolution();
@@ -300,6 +307,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				return ((IMarkerResolution) e1).getLabel().compareTo(
 						((IMarkerResolution) e1).getLabel());
@@ -333,6 +341,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * 
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				markersTable.setAllChecked(true);
 				setComplete(!resolutionsList.getSelection().isEmpty());
@@ -350,6 +359,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * 
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				markersTable.setAllChecked(false);
 				setComplete(false);
@@ -367,6 +377,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * 
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 
 				WorkbenchMarkerResolution selected = getSelectedWorkbenchResolution();
@@ -446,6 +457,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * 
 			 * @see java.lang.Runnable#run()
 			 */
+			@Override
 			public void run() {
 				IMarker[] others = resolution.findOtherMarkers(markerView
 						.getCurrentMarkers().getIMarkers());
@@ -505,6 +517,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * 
 			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
+			@Override
 			public void dispose() {
 
 			}
@@ -514,6 +527,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * 
 			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 			 */
+			@Override
 			public Object[] getElements(Object inputElement) {
 				IMarkerResolution selected = getSelectedResolution();
 				if (selected == null) {
@@ -532,6 +546,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
 
@@ -546,6 +561,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object,
 			 *      int)
 			 */
+			@Override
 			public Image getColumnImage(Object element, int columnIndex) {
 				if (columnIndex == 0)
 					return Util.getImage(((IMarker) element).getAttribute(
@@ -559,6 +575,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object,
 			 *      int)
 			 */
+			@Override
 			public String getColumnText(Object element, int columnIndex) {
 				if (columnIndex == 0)
 					return Util.getResourceName((IMarker) element);
@@ -576,6 +593,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * 
 			 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 			 */
+			@Override
 			public void addListener(ILabelProviderListener listener) {
 				// do nothing
 
@@ -586,6 +604,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * 
 			 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 			 */
+			@Override
 			public void dispose() {
 				// do nothing
 
@@ -597,6 +616,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
 			 *      java.lang.String)
 			 */
+			@Override
 			public boolean isLabelProperty(Object element, String property) {
 				return false;
 			}
@@ -606,6 +626,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * 
 			 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 			 */
+			@Override
 			public void removeListener(ILabelProviderListener listener) {
 				// do nothing
 
@@ -618,6 +639,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			 * 
 			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
 			 */
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				if (event.getChecked() == true) {
 					setComplete(true);
@@ -678,6 +700,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#create()
 	 */
+	@Override
 	public void create() {
 		super.create();
 		setTitle(MarkerMessages.MarkerResolutionDialog_Title);
@@ -692,6 +715,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		IMarkerResolution resolution = getSelectedResolution();
 		if (resolution == null) {
@@ -739,6 +763,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
 	 */
+	@Override
 	protected void cancelPressed() {
 		if (calculatingResolutions) {
 			progressCancelled = true;
@@ -752,7 +777,8 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
      * (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#isResizable()
      */
-    protected boolean isResizable() {
+    @Override
+	protected boolean isResizable() {
     	return true;
     }
 }

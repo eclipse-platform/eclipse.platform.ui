@@ -77,6 +77,7 @@ public class CopyProjectOperation {
 	 * @deprecated As of 3.3, validation is performed in the undoable operation
 	 *             executed by this operation.
 	 */
+	@Deprecated
 	protected static boolean validateCopy(Shell shell, IProject project,
 			String newName, String[] modelProviderIds) {
 		IResourceChangeDescriptionFactory factory = ResourceChangeValidator
@@ -154,6 +155,7 @@ public class CopyProjectOperation {
 	private boolean performProjectCopy(final IProject project,
 			final String projectName, final URI newLocation) {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				org.eclipse.ui.ide.undo.CopyProjectOperation op = new org.eclipse.ui.ide.undo.CopyProjectOperation(
 						project, projectName, newLocation,
@@ -183,6 +185,7 @@ public class CopyProjectOperation {
 		} catch (InvocationTargetException e) {
 			final String message = e.getTargetException().getMessage();
 			parentShell.getDisplay().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					MessageDialog
 							.openError(

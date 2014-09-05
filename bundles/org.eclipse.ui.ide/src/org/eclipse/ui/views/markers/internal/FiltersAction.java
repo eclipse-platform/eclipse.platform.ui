@@ -37,7 +37,8 @@ class FiltersAction extends Action {
     /**
      * Opens the dialog. Notifies the view if the filter has been modified.
      */
-    public void run() {
+    @Override
+	public void run() {
         view.openFiltersDialog();
     }
 }

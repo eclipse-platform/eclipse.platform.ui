@@ -39,6 +39,7 @@ public class BuildProjectHandler extends AbstractHandler {
 	/**
 	 * @throws ExecutionException
 	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		if (window != null) {
@@ -83,6 +84,7 @@ public class BuildProjectHandler extends AbstractHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.AbstractHandler#setEnabled(java.lang.Object)
 	 */
+	@Override
 	public void setEnabled(Object evaluationContext) {
 		boolean enabled = false;
 		if ((evaluationContext instanceof IEvaluationContext)) {

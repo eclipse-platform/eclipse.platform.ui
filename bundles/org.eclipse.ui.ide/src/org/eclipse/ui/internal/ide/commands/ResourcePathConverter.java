@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Path;
 public final class ResourcePathConverter extends
 		AbstractParameterValueConverter {
 
+	@Override
 	public final Object convertToObject(final String parameterValue)
 			throws ParameterValueConversionException {
 		final Path path = new Path(parameterValue);
@@ -42,6 +43,7 @@ public final class ResourcePathConverter extends
 		return resource;
 	}
 
+	@Override
 	public final String convertToString(final Object parameterValue)
 			throws ParameterValueConversionException {
 		if (!(parameterValue instanceof IResource)) {

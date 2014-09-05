@@ -97,6 +97,7 @@ public abstract class SelectionListenerAction extends
 	 * <code>BaseSelectionListenerAction</code> method clears the cached
 	 * resources and non-resources.
 	 */
+	@Override
 	protected void clearCache() {
 		selectionDirty = true;
 		// clear out the lists in case computeResources does not get called

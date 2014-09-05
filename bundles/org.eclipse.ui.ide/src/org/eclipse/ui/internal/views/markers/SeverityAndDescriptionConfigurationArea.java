@@ -52,6 +52,7 @@ public class SeverityAndDescriptionConfigurationArea extends
 	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#apply(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
 	 */
+	@Override
 	public void apply(MarkerFieldFilter filter) {
 		super.apply(filter);
 		((SeverityAndDescriptionFieldFilter) filter).selectedSeverities = severities;
@@ -84,6 +85,7 @@ public class SeverityAndDescriptionConfigurationArea extends
 			 * 
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateSeverities(
 						SeverityAndDescriptionFieldFilter.SEVERITY_ERROR,
@@ -102,6 +104,7 @@ public class SeverityAndDescriptionConfigurationArea extends
 			 * 
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateSeverities(
 						SeverityAndDescriptionFieldFilter.SEVERITY_WARNING,
@@ -117,6 +120,7 @@ public class SeverityAndDescriptionConfigurationArea extends
 			 * 
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateSeverities(
 						SeverityAndDescriptionFieldFilter.SEVERITY_INFO,
@@ -131,6 +135,7 @@ public class SeverityAndDescriptionConfigurationArea extends
 	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#initialize(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
 	 */
+	@Override
 	public void initialize(MarkerFieldFilter filter) {
 		super.initialize(filter);
 		SeverityAndDescriptionFieldFilter sevFilter = (SeverityAndDescriptionFieldFilter) filter;

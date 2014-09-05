@@ -45,6 +45,7 @@ public class ActionRevealMarker extends MarkerSelectionProviderAction {
 	 * 
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		
 		IEditorPart editor = part.getSite().getPage().getActiveEditor();
@@ -67,6 +68,7 @@ public class ActionRevealMarker extends MarkerSelectionProviderAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		setEnabled(Util.isSingleConcreteSelection(selection));
 	}

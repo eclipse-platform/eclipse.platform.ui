@@ -72,6 +72,7 @@ public class FolderDescription extends ContainerDescription {
 	 * 
 	 * @see org.eclipse.ui.internal.ide.undo.ContainerDescription#createResourceHandle()
 	 */
+	@Override
 	public IResource createResourceHandle() {
 		IWorkspaceRoot workspaceRoot = getWorkspace().getRoot();
 		IPath folderPath = parent.getFullPath().append(name);
@@ -84,6 +85,7 @@ public class FolderDescription extends ContainerDescription {
 	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#createExistentResourceFromHandle(org.eclipse.core.resources.IResource,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void createExistentResourceFromHandle(IResource resource,
 			IProgressMonitor monitor) throws CoreException {
 

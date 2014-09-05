@@ -57,7 +57,8 @@ class ResolveMarkerAction extends TaskAction {
     /**
      * Displays a list of resolutions and performs the selection.
      */
-    public void run() {
+    @Override
+	public void run() {
         IMarker marker = getMarker();
         if (marker == null) {
             return;

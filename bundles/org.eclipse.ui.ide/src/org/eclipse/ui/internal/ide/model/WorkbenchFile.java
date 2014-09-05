@@ -41,7 +41,8 @@ public class WorkbenchFile extends WorkbenchResource {
      *	considering the passed open status as well iff appropriate for the type of
      *	passed resource
      */
-    protected ImageDescriptor getBaseImage(IResource resource) {
+    @Override
+	protected ImageDescriptor getBaseImage(IResource resource) {
 		IContentType contentType = null;
 		// do we need to worry about checking here?
 		if (resource instanceof IFile) {

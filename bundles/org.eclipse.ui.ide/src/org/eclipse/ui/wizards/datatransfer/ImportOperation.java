@@ -375,7 +375,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * Method declared on WorkbenchModifyOperation.
      * Imports the specified file system objects from the file system.
      */
-    protected void execute(IProgressMonitor progressMonitor) {
+    @Override
+	protected void execute(IProgressMonitor progressMonitor) {
 
         monitor = progressMonitor;
 

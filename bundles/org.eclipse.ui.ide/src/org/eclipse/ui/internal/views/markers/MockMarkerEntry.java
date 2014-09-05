@@ -28,6 +28,7 @@ public class MockMarkerEntry extends MarkerEntry{
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		// TODO Auto-generated method stub
 		return name.equals(((MockMarkerEntry)obj).name);

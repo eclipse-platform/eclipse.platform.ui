@@ -86,6 +86,7 @@ public class TaskFilter extends MarkerFilter {
 		super(newName, new String[] { IMarker.TASK });
 	}
 
+	@Override
 	public boolean selectMarker(ConcreteMarker marker) {
 		if (!(marker instanceof TaskMarker)) {
 			return false;
@@ -183,6 +184,7 @@ public class TaskFilter extends MarkerFilter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#resetState()
 	 */
+	@Override
 	public void resetState() {
 		super.resetState();
 		contains = DEFAULT_CONTAINS;
@@ -198,6 +200,7 @@ public class TaskFilter extends MarkerFilter {
 	 * 
 	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#restoreFilterSettings(org.eclipse.jface.dialogs.IDialogSettings)
 	 */
+	@Override
 	public void restoreFilterSettings(IDialogSettings settings) {
 		super.restoreFilterSettings(settings);
 
@@ -245,6 +248,7 @@ public class TaskFilter extends MarkerFilter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#restoreFilterSettings(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	protected void restoreFilterSettings(IMemento settings) {
 		super.restoreFilterSettings(settings);
 
@@ -290,6 +294,7 @@ public class TaskFilter extends MarkerFilter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#saveFilterSettings(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void saveFilterSettings(IMemento settings) {
 		super.saveFilterSettings(settings);
 		settings.putString(TAG_CONTAINS, String.valueOf(contains));

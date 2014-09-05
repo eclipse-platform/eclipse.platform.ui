@@ -27,7 +27,8 @@ public class TableSortAction extends Action {
         setEnabled(true);
     }
 
-    public void run() {
+    @Override
+	public void run() {
         if (dialog.open() == Window.OK && dialog.isDirty()) {
             view.setComparator(dialog.getSorter());
         }

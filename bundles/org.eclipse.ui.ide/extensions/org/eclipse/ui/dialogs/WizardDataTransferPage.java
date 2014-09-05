@@ -245,7 +245,8 @@ public abstract class WizardDataTransferPage extends WizardPage implements
      * @return the user's reply: one of <code>"YES"</code>, <code>"NO"</code>, <code>"ALL"</code>, 
      *   or <code>"CANCEL"</code>
      */
-    public String queryOverwrite(String pathString) {
+    @Override
+	public String queryOverwrite(String pathString) {
 
         Path path = new Path(pathString);
 
@@ -267,7 +268,8 @@ public abstract class WizardDataTransferPage extends WizardPage implements
                         IDialogConstants.NO_LABEL,
                         IDialogConstants.NO_TO_ALL_LABEL,
                         IDialogConstants.CANCEL_LABEL }, 0) {
-        	protected int getShellStyle() {
+        	@Override
+			protected int getShellStyle() {
         		return super.getShellStyle() | SWT.SHEET;
         	}
         };
@@ -275,7 +277,8 @@ public abstract class WizardDataTransferPage extends WizardPage implements
         //run in syncExec because callback is from an operation,
         //which is probably not running in the UI thread.
         getControl().getDisplay().syncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 dialog.open();
             }
         });
@@ -296,7 +299,8 @@ public abstract class WizardDataTransferPage extends WizardPage implements
                 (Image) null, message, MessageDialog.NONE,
                 new String[] { IDialogConstants.YES_LABEL,
                         IDialogConstants.NO_LABEL }, 0) {
-        	protected int getShellStyle() {
+        	@Override
+			protected int getShellStyle() {
         		return super.getShellStyle() | SWT.SHEET;
         	}
         };

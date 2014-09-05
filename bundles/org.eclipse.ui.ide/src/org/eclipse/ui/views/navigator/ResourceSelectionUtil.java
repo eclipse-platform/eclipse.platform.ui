@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
  * @noextend This class is not intended to be subclassed by clients.
  * @deprecated as of 3.5, use {@link org.eclipse.ui.ide.ResourceSelectionUtil} instead.
  */
+@Deprecated
 public class ResourceSelectionUtil {
     /* (non-Javadoc)
      * Private constructor to block instantiation.

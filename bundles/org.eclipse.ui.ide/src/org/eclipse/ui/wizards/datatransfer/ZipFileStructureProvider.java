@@ -102,7 +102,8 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
     /* (non-Javadoc)
      * Method declared on IImportStructureProvider
      */
-    public List getChildren(Object element) {
+    @Override
+	public List getChildren(Object element) {
         if (children == null) {
 			initialize();
 		}
@@ -113,7 +114,8 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
     /* (non-Javadoc)
      * Method declared on IImportStructureProvider
      */
-    public InputStream getContents(Object element) {
+    @Override
+	public InputStream getContents(Object element) {
         try {
             return zipFile.getInputStream((ZipEntry) element);
         } catch (IOException e) {
@@ -125,14 +127,16 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
     /* (non-Javadoc)
      * Method declared on IImportStructureProvider
      */
-    public String getFullPath(Object element) {
+    @Override
+	public String getFullPath(Object element) {
         return ((ZipEntry) element).getName();
     }
 
     /* (non-Javadoc)
      * Method declared on IImportStructureProvider
      */
-    public String getLabel(Object element) {
+    @Override
+	public String getLabel(Object element) {
         if (element.equals(root)) {
 			return ((ZipEntry) element).getName();
 		}
@@ -183,7 +187,8 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
     /* (non-Javadoc)
      * Method declared on IImportStructureProvider
      */
-    public boolean isFolder(Object element) {
+    @Override
+	public boolean isFolder(Object element) {
         return ((ZipEntry) element).isDirectory();
     }
 }

@@ -98,7 +98,8 @@ public interface IResourceActionFilter extends IActionFilter {
      * @since 3.0
      * @deprecated Please use content types instead.
      */
-    public static final String XML_FIRST_TAG = "xmlFirstTag"; //$NON-NLS-1$
+    @Deprecated
+	public static final String XML_FIRST_TAG = "xmlFirstTag"; //$NON-NLS-1$
 
     /**
      * An attribute indicating that this is an xml file and we should ensure that the DTD
@@ -106,7 +107,8 @@ public interface IResourceActionFilter extends IActionFilter {
      * @since 3.0
      * @deprecated Please use content types instead.
      */
-    public static final String XML_DTD_NAME = "xmlDTDName"; //$NON-NLS-1$
+    @Deprecated
+	public static final String XML_DTD_NAME = "xmlDTDName"; //$NON-NLS-1$
 
     /**
      * An attribute indicating that this is a file, and we are looking to verify

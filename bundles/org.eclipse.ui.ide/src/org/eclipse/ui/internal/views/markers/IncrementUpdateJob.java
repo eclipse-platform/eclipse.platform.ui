@@ -48,6 +48,7 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 	 * @seeorg.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.
 	 * IProgressMonitor)
 	 */
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		monitor.beginTask(MarkerMessages.MarkerView_processUpdates,
 				IProgressMonitor.UNKNOWN);
@@ -296,6 +297,7 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 	 * 
 	 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
 	 */
+	@Override
 	public boolean belongsTo(Object family) {
 		if (family.equals(builder.MARKER_INCREMENTAL_UPDATE_FAMILY)) {
 			return true;

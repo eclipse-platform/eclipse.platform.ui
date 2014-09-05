@@ -17,12 +17,14 @@ import org.eclipse.ui.ide.IDE;
  * 
  * @deprecated advisors should call the org.eclipse.ui.ide.IDE method
  */
+@Deprecated
 public final class WorkbenchAdapterBuilder {
 	/**
 	 * Creates extenders and registers
 	 * 
 	 * @deprecated advisors should call the org.eclipse.ui.ide.IDE method
 	 */
+	@Deprecated
 	public static void registerAdapters() {
 		IDE.registerAdapters();
 	}

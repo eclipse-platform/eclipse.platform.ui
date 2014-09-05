@@ -92,7 +92,8 @@ public class OpenFileAction extends OpenSystemEditorAction {
      *
      * @param file the file resource
      */
-    void openFile(IFile file) {
+    @Override
+	void openFile(IFile file) {
         try {
             boolean activate = OpenStrategy.activateOnOpen();
             if (editorDescriptor == null) {

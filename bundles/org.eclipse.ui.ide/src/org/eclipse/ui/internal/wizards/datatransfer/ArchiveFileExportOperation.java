@@ -300,7 +300,8 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
      *	Export the resources that were previously specified for export
      *	(or if a single resource was specified then export it recursively)
      */
-    public void run(IProgressMonitor progressMonitor)
+    @Override
+	public void run(IProgressMonitor progressMonitor)
             throws InvocationTargetException, InterruptedException {
         this.monitor = progressMonitor;
 

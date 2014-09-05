@@ -37,7 +37,8 @@ public class BuildSetMenu extends ContributionItem {
     boolean dirty = true;
 
     private IMenuListener menuListener = new IMenuListener() {
-        public void menuAboutToShow(IMenuManager manager) {
+        @Override
+		public void menuAboutToShow(IMenuManager manager) {
             manager.markDirty();
             dirty = true;
         }
@@ -80,7 +81,8 @@ public class BuildSetMenu extends ContributionItem {
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Menu, int)
      */
-    public void fill(Menu menu, int index) {
+    @Override
+	public void fill(Menu menu, int index) {
         if (getParent() instanceof MenuManager) {
 			((MenuManager) getParent()).addMenuListener(menuListener);
 		}
@@ -145,14 +147,16 @@ public class BuildSetMenu extends ContributionItem {
         new ActionContributionItem(selectBuildWorkingSetAction).fill(menu, -1);
     }
 
-    public boolean isDirty() {
+    @Override
+	public boolean isDirty() {
         return dirty;
     }
 
     /**
      * Overridden to always return true and force dynamic menu building.
      */
-    public boolean isDynamic() {
+    @Override
+	public boolean isDynamic() {
         return true;
     }
 }

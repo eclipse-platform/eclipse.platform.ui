@@ -94,7 +94,8 @@ public class NewWizardMenu extends BaseNewWizardMenu {
      *      the window
      * @deprecated use NewWizardMenu(IWorkbenchWindow) instead
      */
-    public NewWizardMenu(IMenuManager innerMgr, IWorkbenchWindow window,
+    @Deprecated
+	public NewWizardMenu(IMenuManager innerMgr, IWorkbenchWindow window,
             boolean register) {
         this(window, null);
         fillMenu(innerMgr);
@@ -123,7 +124,8 @@ public class NewWizardMenu extends BaseNewWizardMenu {
      * 
      * @deprecated has no effect
      */
-    public void deregisterListeners() {
+    @Deprecated
+	public void deregisterListeners() {
         // do nothing
     }
 
@@ -166,7 +168,8 @@ public class NewWizardMenu extends BaseNewWizardMenu {
     /* (non-Javadoc)
      * @see org.eclipse.ui.actions.BaseNewWizardMenu#addItems(org.eclipse.jface.action.IContributionManager)
      */
-    protected void addItems(List list) {
+    @Override
+	protected void addItems(List list) {
     	ArrayList shortCuts= new ArrayList();
     	addShortcuts(shortCuts);
     	
@@ -206,6 +209,7 @@ public class NewWizardMenu extends BaseNewWizardMenu {
 	/* (non-Javadoc)
 	 * Method declared on IContributionItem.
 	 */
+	@Override
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -223,6 +227,7 @@ public class NewWizardMenu extends BaseNewWizardMenu {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.BaseNewWizardMenu#getContributionItems()
 	 */
+	@Override
 	protected IContributionItem[] getContributionItems() {
 		if (isEnabled()) {
 			return super.getContributionItems();

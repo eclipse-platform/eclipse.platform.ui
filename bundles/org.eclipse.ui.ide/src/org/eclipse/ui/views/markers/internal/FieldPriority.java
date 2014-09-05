@@ -43,7 +43,8 @@ public class FieldPriority extends AbstractField {
      *  (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
      */
-    public String getDescription() {
+    @Override
+	public String getDescription() {
         return description;
     }
     
@@ -63,7 +64,8 @@ public class FieldPriority extends AbstractField {
      *  (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.IField#getDescriptionImage()
      */
-    public Image getDescriptionImage() {
+    @Override
+	public Image getDescriptionImage() {
         return getImage(DESCRIPTION_IMAGE_PATH);
     }
 
@@ -71,7 +73,8 @@ public class FieldPriority extends AbstractField {
      *  (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderText()
      */
-    public String getColumnHeaderText() {
+    @Override
+	public String getColumnHeaderText() {
         return ""; //$NON-NLS-1$
     }
 
@@ -79,7 +82,8 @@ public class FieldPriority extends AbstractField {
      *  (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
      */
-    public Image getColumnHeaderImage() {
+    @Override
+	public Image getColumnHeaderImage() {
         return getDescriptionImage();
     }
 
@@ -87,7 +91,8 @@ public class FieldPriority extends AbstractField {
      *  (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
      */
-    public String getValue(Object obj) {
+    @Override
+	public String getValue(Object obj) {
         return ""; //$NON-NLS-1$
     }
 
@@ -95,7 +100,8 @@ public class FieldPriority extends AbstractField {
      *  (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
      */
-    public Image getImage(Object obj) {
+    @Override
+	public Image getImage(Object obj) {
         if (obj == null || !(obj instanceof TaskMarker)) {
             return null;
         }
@@ -117,7 +123,8 @@ public class FieldPriority extends AbstractField {
      *  (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.IField#compare(java.lang.Object, java.lang.Object)
      */
-    public int compare(Object obj1, Object obj2) {
+    @Override
+	public int compare(Object obj1, Object obj2) {
         if (obj1 == null || obj2 == null || !(obj1 instanceof TaskMarker)
                 || !(obj2 instanceof TaskMarker)) {
             return 0;
@@ -130,6 +137,7 @@ public class FieldPriority extends AbstractField {
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
 	 */
+	@Override
 	public int getDefaultDirection() {
 		return TableComparator.DESCENDING;
 	}
@@ -137,6 +145,7 @@ public class FieldPriority extends AbstractField {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
 	 */
+	@Override
 	public int getPreferredWidth() {
 		return 16;
 	}

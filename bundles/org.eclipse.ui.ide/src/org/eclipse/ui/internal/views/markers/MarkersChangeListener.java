@@ -114,6 +114,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 	 * org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org
 	 * .eclipse.core.resources.IResourceChangeEvent)
 	 */
+	@Override
 	public synchronized void resourceChanged(IResourceChangeEvent event) {
 		/* We can now consider removing synchronized for
 		 * this method.Only the start and stop need to be

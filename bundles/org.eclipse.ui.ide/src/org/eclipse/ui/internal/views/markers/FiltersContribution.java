@@ -37,6 +37,7 @@ public class FiltersContribution extends MarkersContribution {
 	 * 
 	 * @see org.eclipse.ui.actions.CompoundContributionItem#getContributionItems()
 	 */
+	@Override
 	protected IContributionItem[] getContributionItems() {
 		final ExtendedMarkersView view = getView();
 		if (view == null)
@@ -60,6 +61,7 @@ public class FiltersContribution extends MarkersContribution {
 				 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu,
 				 *      int)
 				 */
+				@Override
 				public void fill(Menu menu, int index) {
 					MenuItem item = new MenuItem(menu, SWT.CHECK);
 					item.setText(group.getName());
@@ -87,6 +89,7 @@ public class FiltersContribution extends MarkersContribution {
 						 * 
 						 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 						 */
+						@Override
 						public void handleEvent(Event event) {
 							if (view != null)
 								view.toggleFilter(group);
@@ -116,6 +119,7 @@ public class FiltersContribution extends MarkersContribution {
 			 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu,
 			 *      int)
 			 */
+			@Override
 			public void fill(Menu menu, int index) {
 				MenuItem item = new MenuItem(menu, SWT.CHECK);
 				item.setText(MarkerMessages.MarkerFilter_showAllCommand_title);
@@ -127,6 +131,7 @@ public class FiltersContribution extends MarkersContribution {
 					 * 
 					 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 					 */
+					@Override
 					public void handleEvent(Event event) {
 						ExtendedMarkersView view = getView();
 						if (view != null)

@@ -32,7 +32,8 @@ public class TaskMarker extends ConcreteMarker {
         super(toCopy);
     }
 
-    public void refresh() {
+    @Override
+	public void refresh() {
         super.refresh();
         priority = getMarker().getAttribute(IMarker.PRIORITY,
                 IMarker.PRIORITY_NORMAL);

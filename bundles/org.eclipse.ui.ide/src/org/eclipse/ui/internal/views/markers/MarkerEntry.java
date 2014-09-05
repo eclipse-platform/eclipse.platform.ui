@@ -46,6 +46,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 			 * org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang
 			 * .Object, java.lang.Class)
 			 */
+			@Override
 			public Object getAdapter(Object adaptableObject, Class adapterType) {
 				if (adapterType == IMarker.class
 						&& adaptableObject instanceof MarkerEntry)
@@ -59,6 +60,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 			 * 
 			 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 			 */
+			@Override
 			public Class[] getAdapterList() {
 				return new Class[] { IMarker.class };
 			}
@@ -97,6 +99,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IMarker.class))
 			return marker;
@@ -109,6 +112,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getAttributeValue(java.lang.String,
 	 *      boolean)
 	 */
+	@Override
 	public boolean getAttributeValue(String attribute, boolean defaultValue) {
 		Object value = getAttributeValue(attribute);
 		if (value == null)
@@ -122,6 +126,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * @see org.eclipse.ui.views.markers.MarkerItem#getAttributeValue(java.lang.String,
 	 *      int)
 	 */
+	@Override
 	public int getAttributeValue(String attribute, int defaultValue) {
 
 		Object value = getAttributeValue(attribute);
@@ -163,6 +168,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getAttributeValue(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public String getAttributeValue(String attribute, String defaultValue) {
 
 		Object value = getAttributeValue(attribute);
@@ -189,6 +195,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getChildren()
 	 */
+	@Override
 	MarkerSupportItem[] getChildren() {
 		return MarkerSupportInternalUtilities.EMPTY_MARKER_ITEM_ARRAY;
 	}
@@ -228,6 +235,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getCreationTime()
 	 */
+	@Override
 	long getCreationTime() {
 		if(stale){
 			return -1;
@@ -246,6 +254,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getDescription()
 	 */
+	@Override
 	String getDescription() {
 		return getAttributeValue(IMarker.MESSAGE,
 				MarkerSupportInternalUtilities.UNKNOWN_ATRRIBTE_VALUE_STRING);
@@ -256,6 +265,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getID()
 	 */
+	@Override
 	long getID() {
 		return marker.getId();
 	}
@@ -265,6 +275,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * 
 	 * @see org.eclipse.ui.views.markers.MarkerItem#getLocation()
 	 */
+	@Override
 	public String getLocation() {
 		if(stale||checkIfMarkerStale()){
 			return MarkerSupportInternalUtilities.UNKNOWN_ATRRIBTE_VALUE_STRING;
@@ -304,6 +315,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * 
 	 * @see org.eclipse.ui.views.markers.MarkerItem#getMarker()
 	 */
+	@Override
 	public IMarker getMarker() {
 		return marker;
 	}
@@ -313,6 +325,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getMarkerTypeName()
 	 */
+	@Override
 	String getMarkerTypeName() {
 		if(stale){
 			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker
@@ -348,6 +361,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getParent()
 	 */
+	@Override
 	MarkerSupportItem getParent() {
 		return category;
 	}
@@ -357,6 +371,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * 
 	 * @see org.eclipse.ui.views.markers.MarkerItem#getPath()
 	 */
+	@Override
 	public String getPath() {
 		String folder = getAttributeValue(MarkerViewUtil.PATH_ATTRIBUTE, null);
 		if (folder != null) {
@@ -382,6 +397,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#isConcrete()
 	 */
+	@Override
 	boolean isConcrete() {
 		return true;
 	}
@@ -423,6 +439,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	/**
 	 * Clear the cached values for performance reasons.
 	 */
+	@Override
 	void clearCache() {
 		cache = null;		
 	}
@@ -455,6 +472,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -465,6 +483,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;

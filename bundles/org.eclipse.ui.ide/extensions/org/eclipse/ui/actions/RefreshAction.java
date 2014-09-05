@@ -75,6 +75,7 @@ public class RefreshAction extends WorkspaceAction {
 	 *            the shell for any dialogs
 	 * @deprecated See {@link #RefreshAction(IShellProvider)}
 	 */
+	@Deprecated
 	public RefreshAction(Shell shell) {
 		super(shell, IDEWorkbenchMessages.RefreshAction_text);
 		initAction();
@@ -123,6 +124,7 @@ public class RefreshAction extends WorkspaceAction {
 					message, MessageDialog.QUESTION, new String[] {
 							IDialogConstants.YES_LABEL,
 							IDialogConstants.NO_LABEL }, 0) {
+				@Override
 				protected int getShellStyle() {
 					return super.getShellStyle() | SWT.SHEET;
 				}
@@ -132,6 +134,7 @@ public class RefreshAction extends WorkspaceAction {
 			// Must prompt user in UI thread (we're in the operation thread
 			// here).
 			getShell().getDisplay().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					dialog.open();
 				}
@@ -147,6 +150,7 @@ public class RefreshAction extends WorkspaceAction {
 	/*
 	 * (non-Javadoc) Method declared on WorkspaceAction.
 	 */
+	@Override
 	protected String getOperationMessage() {
 		return IDEWorkbenchMessages.RefreshAction_progressMessage;
 	}
@@ -154,6 +158,7 @@ public class RefreshAction extends WorkspaceAction {
 	/*
 	 * (non-Javadoc) Method declared on WorkspaceAction.
 	 */
+	@Override
 	protected String getProblemsMessage() {
 		return IDEWorkbenchMessages.RefreshAction_problemMessage;
 	}
@@ -161,6 +166,7 @@ public class RefreshAction extends WorkspaceAction {
 	/*
 	 * (non-Javadoc) Method declared on WorkspaceAction.
 	 */
+	@Override
 	protected String getProblemsTitle() {
 		return IDEWorkbenchMessages.RefreshAction_problemTitle;
 	}
@@ -169,6 +175,7 @@ public class RefreshAction extends WorkspaceAction {
 	 * Returns a list containing the workspace root if the selection would
 	 * otherwise be empty.
 	 */
+	@Override
 	protected List getSelectedResources() {
 		List resources = super.getSelectedResources();
 		if (resources.isEmpty()) {
@@ -184,6 +191,7 @@ public class RefreshAction extends WorkspaceAction {
 	 * enabled if the selection is empty, but is disabled if any of the selected
 	 * elements are not resources.
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection s) {
 		return (super.updateSelection(s) || s.isEmpty())
 				&& getSelectedNonResources().size() == 0;
@@ -217,6 +225,7 @@ public class RefreshAction extends WorkspaceAction {
 	 * 
 	 * @see org.eclipse.ui.actions.WorkspaceAction#createOperation(org.eclipse.core.runtime.IStatus[])
 	 */
+	@Override
 	final protected IRunnableWithProgress createOperation(
 			final IStatus[] errorStatus) {
 		ISchedulingRule rule = null;
@@ -235,6 +244,7 @@ public class RefreshAction extends WorkspaceAction {
 					.next()));
 		}
 		return new WorkspaceModifyOperation(rule) {
+			@Override
 			public void execute(IProgressMonitor monitor) {
 				MultiStatus errors = null;
 				monitor.beginTask("", resources.size() * 1000); //$NON-NLS-1$
@@ -299,12 +309,14 @@ public class RefreshAction extends WorkspaceAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.WorkspaceAction#run()
 	 */
+	@Override
 	public void run() {
 		final IStatus[] errorStatus = new IStatus[1];
 		errorStatus[0] = Status.OK_STATUS;
 		final WorkspaceModifyOperation op = (WorkspaceModifyOperation) createOperation(errorStatus);
 		WorkspaceJob job = new WorkspaceJob("refresh") { //$NON-NLS-1$
 
+			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor)
 					throws CoreException {
 				try {

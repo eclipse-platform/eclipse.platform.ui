@@ -51,7 +51,8 @@ class PasteBookmarkAction extends BookmarkAction {
     /**
      * Copies the marker(s) from the clipboard to the bookmark navigator view.
      */
-    public void run() {
+    @Override
+	public void run() {
         // Get the markers from the clipboard
         MarkerTransfer transfer = MarkerTransfer.getInstance();
         final IMarker[] markerData = (IMarker[]) view.getClipboard()
@@ -64,7 +65,8 @@ class PasteBookmarkAction extends BookmarkAction {
         final ArrayList newMarkerResources = new ArrayList();
         try {   
             ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-                public void run(IProgressMonitor monitor) throws CoreException {
+                @Override
+				public void run(IProgressMonitor monitor) throws CoreException {
 					for (int i = 0; i < markerData.length; i++) {
 						// Collect the info about the markers to be pasted.
 						// Ignore any markers that aren't bookmarks.
@@ -95,7 +97,8 @@ class PasteBookmarkAction extends BookmarkAction {
         // sent after the operation is executed.
         if (op.getMarkers() != null) {
             view.getShell().getDisplay().asyncExec(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     view.getViewer().setSelection(
                             new StructuredSelection(op.getMarkers()));
                     view.updatePasteEnablement();

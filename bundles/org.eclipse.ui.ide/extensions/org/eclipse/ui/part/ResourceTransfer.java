@@ -85,7 +85,8 @@ public class ResourceTransfer extends ByteArrayTransfer {
     /* (non-Javadoc)
      * Method declared on Transfer.
      */
-    protected int[] getTypeIds() {
+    @Override
+	protected int[] getTypeIds() {
         return new int[] { TYPEID };
     }
 
@@ -94,14 +95,16 @@ public class ResourceTransfer extends ByteArrayTransfer {
      *
      * @return the list of type names
      */
-    protected String[] getTypeNames() {
+    @Override
+	protected String[] getTypeNames() {
         return new String[] { TYPE_NAME };
     }
 
     /* (non-Javadoc)
      * Method declared on Transfer.
      */
-    protected void javaToNative(Object data, TransferData transferData) {
+    @Override
+	protected void javaToNative(Object data, TransferData transferData) {
         if (!(data instanceof IResource[])) {
             return;
         }
@@ -142,7 +145,8 @@ public class ResourceTransfer extends ByteArrayTransfer {
     /* (non-Javadoc)
      * Method declared on Transfer.
      */
-    protected Object nativeToJava(TransferData transferData) {
+    @Override
+	protected Object nativeToJava(TransferData transferData) {
         /**
          * The resource serialization format is:
          *  (int) number of resources

@@ -49,6 +49,7 @@ public class BookmarkFilter extends MarkerFilter {
 	/**
 	 * Returns true iff the given marker is accepted by this filter
 	 */
+	@Override
 	public boolean selectMarker(ConcreteMarker marker) {
 		return !isEnabled()
 				|| (super.selectMarker(marker) && selectByDescription(marker));
@@ -85,6 +86,7 @@ public class BookmarkFilter extends MarkerFilter {
 	 * 
 	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#resetState()
 	 */
+	@Override
 	void resetState() {
 		super.resetState();
 		contains = DEFAULT_CONTAINS;
@@ -96,6 +98,7 @@ public class BookmarkFilter extends MarkerFilter {
 	 * 
 	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#restoreFilterSettings(org.eclipse.jface.dialogs.IDialogSettings)
 	 */
+	@Override
 	public void restoreFilterSettings(IDialogSettings settings) {
 
 		super.restoreFilterSettings(settings);
@@ -117,6 +120,7 @@ public class BookmarkFilter extends MarkerFilter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#restoreFilterSettings(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	protected void restoreFilterSettings(IMemento memento) {
 		super.restoreFilterSettings(memento);
 
@@ -139,6 +143,7 @@ public class BookmarkFilter extends MarkerFilter {
 	 * 
 	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#saveFilterSettings(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void saveFilterSettings(IMemento memento) {
 		super.saveFilterSettings(memento);
 		memento.putString(TAG_CONTAINS, String.valueOf(contains));

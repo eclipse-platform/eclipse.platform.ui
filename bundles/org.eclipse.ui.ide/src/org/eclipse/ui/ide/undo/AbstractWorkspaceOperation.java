@@ -148,6 +148,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * 
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canExecute()
 	 */
+	@Override
 	public boolean canExecute() {
 		return isValid();
 	}
@@ -159,6 +160,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * 
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canUndo()
 	 */
+	@Override
 	public boolean canUndo() {
 		return isValid();
 	}
@@ -170,6 +172,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * 
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canRedo()
 	 */
+	@Override
 	public boolean canRedo() {
 		return isValid();
 	}
@@ -198,10 +201,12 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#execute(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	public IStatus execute(IProgressMonitor monitor, final IAdaptable uiInfo)
 			throws ExecutionException {
 		try {
 			getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					doExecute(monitor, uiInfo);
 				}
@@ -238,10 +243,12 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#redo(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	public IStatus redo(IProgressMonitor monitor, final IAdaptable uiInfo)
 			throws ExecutionException {
 		try {
 			getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					doExecute(monitor, uiInfo);
 				}
@@ -279,10 +286,12 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#undo(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	public IStatus undo(IProgressMonitor monitor, final IAdaptable uiInfo)
 			throws ExecutionException {
 		try {
 			getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					doUndo(monitor, uiInfo);
 				}
@@ -348,6 +357,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * 
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#aboutToNotify(org.eclipse.core.commands.operations.OperationHistoryEvent)
 	 */
+	@Override
 	public void aboutToNotify(OperationHistoryEvent event) {
 		// do nothing
 	}
@@ -357,6 +367,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * 
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#getAffectedObjects()
 	 */
+	@Override
 	public Object[] getAffectedObjects() {
 		return resources;
 	}
@@ -396,6 +407,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 * @see #setQuietCompute(boolean)
 	 */
+	@Override
 	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
 		IStatus status = Status.OK_STATUS;
 
@@ -459,6 +471,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 * @see #setQuietCompute(boolean)
 	 */
+	@Override
 	public IStatus computeUndoableStatus(IProgressMonitor monitor) {
 		IStatus status = Status.OK_STATUS;
 		// If we are not to prompt the user, nothing to do.
@@ -521,6 +534,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 * @see #setQuietCompute(boolean)
 	 */
+	@Override
 	public IStatus computeRedoableStatus(IProgressMonitor monitor) {
 		IStatus status = Status.OK_STATUS;
 		// If we are not to prompt the user, nothing to do.
@@ -707,6 +721,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * 
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#setQuietCompute(boolean)
 	 */
+	@Override
 	public void setQuietCompute(boolean quiet) {
 		quietCompute = quiet;
 	}
@@ -714,6 +729,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	/*
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer text = new StringBuffer(super.toString());
 		text.append("\n"); //$NON-NLS-1$
@@ -766,6 +782,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * 
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#runInBackground()
 	 */
+	@Override
 	public boolean runInBackground() {
 		return true;
 	}

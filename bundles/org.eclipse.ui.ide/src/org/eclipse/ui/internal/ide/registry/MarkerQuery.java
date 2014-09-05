@@ -104,7 +104,8 @@ public class MarkerQuery {
     /* (non-Javadoc)
      * Method declared on Object.
      */
-    public boolean equals(Object o) {
+    @Override
+	public boolean equals(Object o) {
         if (!(o instanceof MarkerQuery)) {
 			return false;
 		}
@@ -134,7 +135,8 @@ public class MarkerQuery {
     /* (non-Javadoc)
      * Method declared on Object.
      */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return hashCode;
     }
 

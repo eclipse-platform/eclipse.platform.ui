@@ -63,7 +63,8 @@ public class MarkerHelpRegistryReader extends IDERegistryReader {
     /**
      * Processes one configuration element or child element.
      */
-    protected boolean readElement(IConfigurationElement element) {
+    @Override
+	protected boolean readElement(IConfigurationElement element) {
         if (element.getName().equals(TAG_HELP)) {
             readHelpElement(element);
             return true;

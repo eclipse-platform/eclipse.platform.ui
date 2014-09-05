@@ -33,7 +33,8 @@ public class ProjectImageRegistryReader extends IDERegistryReader {
     /**
      * Reads the contents of the given element
      */
-    protected boolean readElement(IConfigurationElement element) {
+    @Override
+	protected boolean readElement(IConfigurationElement element) {
         if (!element.getName().equals(TAG_IMAGE)) {
 			return false;
 		}

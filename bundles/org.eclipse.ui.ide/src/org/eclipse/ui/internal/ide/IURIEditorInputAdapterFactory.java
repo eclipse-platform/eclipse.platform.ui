@@ -44,6 +44,7 @@ public class IURIEditorInputAdapterFactory implements IAdapterFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IPathEditorInput#getPath()
 		 */
+		@Override
 		public IPath getPath() {
 			return URIUtil.toPath(getURI());
 		}
@@ -58,6 +59,7 @@ public class IURIEditorInputAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (IPathEditorInput.class.equals(adapterType)) {
 			if (adaptableObject instanceof IURIEditorInput) {
@@ -79,6 +81,7 @@ public class IURIEditorInputAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	public Class[] getAdapterList() {
 		return ADAPTER_LIST;
 	}

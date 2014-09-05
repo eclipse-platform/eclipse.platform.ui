@@ -41,6 +41,7 @@ public class IDESelectionConversionService implements
 	 * 
 	 * @see org.eclipse.ui.internal.SelectionConversionService#convertToResources(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public IStructuredSelection convertToResources(
 			IStructuredSelection originalSelection) {
 

@@ -101,6 +101,7 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	 *            
 	 * @deprecated {@link #CloseUnrelatedProjectsAction(IShellProvider)}
 	 */
+	@Deprecated
 	public CloseUnrelatedProjectsAction(Shell shell) {
 		super(shell, IDEWorkbenchMessages.CloseUnrelatedProjectsAction_text);
 		initAction();
@@ -122,6 +123,7 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	/*
 	 * (non-Javadoc)overrides method on CloseResourceAction.
 	 */
+	@Override
 	public void run() {
 		if(promptForConfirmation())
 				super.run();
@@ -179,6 +181,7 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	 * 
 	 * @see org.eclipse.ui.actions.SelectionListenerAction#clearCache()
 	 */
+	@Override
 	protected void clearCache() {
 		super.clearCache();
 		oldSelection = Collections.EMPTY_LIST;
@@ -204,6 +207,7 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	 * 
 	 * @see org.eclipse.ui.actions.SelectionListenerAction#getSelectedResources()
 	 */
+	@Override
 	protected List getSelectedResources() {
 		if (selectionDirty) {
 			List newSelection = super.getSelectedResources();
@@ -223,6 +227,7 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	 * This method overrides the super-type implementation to update
 	 * the selection when the open state or description of any project changes.
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		// don't bother looking at delta if selection not applicable
 		if (selectionIsOfType(IResource.PROJECT)) {

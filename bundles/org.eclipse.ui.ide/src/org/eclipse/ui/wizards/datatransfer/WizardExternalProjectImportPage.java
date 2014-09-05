@@ -69,7 +69,8 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
     private FileFilter projectFilter = new FileFilter() {
         //Only accept those files that are .project
-        public boolean accept(File pathName) {
+        @Override
+		public boolean accept(File pathName) {
             return pathName.getName().equals(
                     IProjectDescription.DESCRIPTION_FILE_NAME);
         }
@@ -89,7 +90,8 @@ public class WizardExternalProjectImportPage extends WizardPage {
     private IProjectDescription description;
 
     private Listener locationModifyListener = new Listener() {
-        public void handleEvent(Event e) {
+        @Override
+		public void handleEvent(Event e) {
             setPageComplete(validatePage());
         }
     };
@@ -112,7 +114,8 @@ public class WizardExternalProjectImportPage extends WizardPage {
     /** (non-Javadoc)
      * Method declared on IDialogPage.
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
 
         initializeDialogUnits(parent);
 
@@ -212,7 +215,8 @@ public class WizardExternalProjectImportPage extends WizardPage {
         setButtonLayoutData(this.browseButton);
 
         this.browseButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent event) {
+            @Override
+			public void widgetSelected(SelectionEvent event) {
                 handleLocationBrowseButtonPressed();
             }
         });
@@ -445,7 +449,8 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
         // create the new project operation
         WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-            protected void execute(IProgressMonitor monitor)
+            @Override
+			protected void execute(IProgressMonitor monitor)
                     throws CoreException {
                 monitor.beginTask("", 2000); //$NON-NLS-1$
                 project.create(description, new SubProgressMonitor(monitor,
@@ -494,7 +499,8 @@ public class WizardExternalProjectImportPage extends WizardPage {
     /*
      * see @DialogPage.setVisible(boolean)
      */
-    public void setVisible(boolean visible) {
+    @Override
+	public void setVisible(boolean visible) {
         super.setVisible(visible);
         if (visible) {
 			this.locationPathField.setFocus();

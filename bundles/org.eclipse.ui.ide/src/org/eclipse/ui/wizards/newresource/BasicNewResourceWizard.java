@@ -82,7 +82,8 @@ public abstract class BasicNewResourceWizard extends Wizard implements
      * by calling <code>initializeDefaultPageImageDescriptor</code>.
      * Subclasses may extend.
      */
-    public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+    @Override
+	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
         this.workbench = workbench;
         this.selection = currentSelection;
 
@@ -171,7 +172,8 @@ public abstract class BasicNewResourceWizard extends Wizard implements
                 // select and reveal resource
                 final ISetSelectionTarget finalTarget = target;
                 window.getShell().getDisplay().asyncExec(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         finalTarget.selectReveal(selection);
                     }
                 });

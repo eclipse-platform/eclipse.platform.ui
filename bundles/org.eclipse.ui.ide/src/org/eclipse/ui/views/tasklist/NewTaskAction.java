@@ -52,7 +52,8 @@ class NewTaskAction extends TaskAction {
      * Opens the new task dialog and shows the newly created task when done.
      * The new task is created on the currently selected resource.
      */
-    public void run() {
+    @Override
+	public void run() {
         TaskPropertiesDialog dialog = new TaskPropertiesDialog(getShell());
         dialog.setResource(getTaskList().getResource());
         int result = dialog.open();
@@ -73,7 +74,8 @@ class NewTaskAction extends TaskAction {
             // since the task list updates itself with the addition in an asyncExec,
             // which hasn't been processed yet.
             getShell().getDisplay().asyncExec(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     getTaskList().setSelection(new StructuredSelection(marker),
                             true);
                 }

@@ -109,6 +109,7 @@ public class ZipLeveledStructureProvider implements
 	/*
 	 * (non-Javadoc) Method declared on IImportStructureProvider
 	 */
+	@Override
 	public List getChildren(Object element) {
 		if (children == null) {
 			initialize();
@@ -120,6 +121,7 @@ public class ZipLeveledStructureProvider implements
 	/*
 	 * (non-Javadoc) Method declared on IImportStructureProvider
 	 */
+	@Override
 	public InputStream getContents(Object element) {
 		try {
 			return zipFile.getInputStream((ZipEntry) element);
@@ -155,6 +157,7 @@ public class ZipLeveledStructureProvider implements
 	/*
 	 * (non-Javadoc) Method declared on IImportStructureProvider
 	 */
+	@Override
 	public String getFullPath(Object element) {
 		return stripPath(((ZipEntry) element).getName());
 	}
@@ -162,6 +165,7 @@ public class ZipLeveledStructureProvider implements
 	/*
 	 * (non-Javadoc) Method declared on IImportStructureProvider
 	 */
+	@Override
 	public String getLabel(Object element) {
 		if (element.equals(root)) {
 			return ((ZipEntry) element).getName();
@@ -175,6 +179,7 @@ public class ZipLeveledStructureProvider implements
 	 * 
 	 * @return java.util.zip.ZipEntry
 	 */
+	@Override
 	public Object getRoot() {
 		return root;
 	}
@@ -193,6 +198,7 @@ public class ZipLeveledStructureProvider implements
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.internal.wizards.datatransfer.ILeveledImportStructureProvider#closeArchive()
 	 */
+	@Override
 	public boolean closeArchive(){
 		try {
 			getZipFile().close();
@@ -235,14 +241,17 @@ public class ZipLeveledStructureProvider implements
 	/*
 	 * (non-Javadoc) Method declared on IImportStructureProvider
 	 */
+	@Override
 	public boolean isFolder(Object element) {
 		return ((ZipEntry) element).isDirectory();
 	}
 
+	@Override
 	public void setStrip(int level) {
 		stripLevel = level;
 	}
 
+	@Override
 	public int getStrip() {
 		return stripLevel;
 	}

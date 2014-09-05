@@ -81,6 +81,7 @@ class MarkerComparator implements Comparator {
 	 */
 	Comparator getCategoryComparator(){
 		return new Comparator(){
+			@Override
 			public int compare(Object o1, Object o2) {
 				return compareCategory(o1, o2);
 			}			
@@ -92,6 +93,7 @@ class MarkerComparator implements Comparator {
 	 * 
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public int compare(Object arg0, Object arg1) {
 
 		// Sort by category first
@@ -129,6 +131,7 @@ class MarkerComparator implements Comparator {
 	 */
 	Comparator getFieldsComparator(){
 		return new Comparator(){
+			@Override
 			public int compare(Object o1, Object o2) {
 				return compareFields(o1, o2);
 			}			

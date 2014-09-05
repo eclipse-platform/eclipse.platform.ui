@@ -35,21 +35,26 @@ public class SymlinkDecorator implements ILightweightLabelDecorator {
 
 	}
 
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 		// empty
 	}
 
+	@Override
 	public void dispose() {
 	}
 
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
 
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		// empty
 	}
 
+	@Override
 	public void decorate(Object element, IDecoration decoration) {
 		if (element instanceof ResourceMapping)
 			element = ((ResourceMapping) element).getModelObject();

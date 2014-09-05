@@ -48,6 +48,7 @@ public class MarkerColumnLabelProvider extends ColumnLabelProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		imageManager.dispose();
@@ -58,6 +59,7 @@ public class MarkerColumnLabelProvider extends ColumnLabelProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.ColumnLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
+	@Override
 	public void update(ViewerCell cell) {
 		field.update(cell);
 	}

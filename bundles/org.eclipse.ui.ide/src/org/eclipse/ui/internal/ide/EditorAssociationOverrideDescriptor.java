@@ -84,6 +84,7 @@ public final class EditorAssociationOverrideDescriptor {
 			/*
 			 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 			 */
+			@Override
 			public void run() throws Exception {
 //		 		String pluginId = fElement.getContributor().getName();
 				result[0]= (IEditorAssociationOverride)fElement.createExecutableExtension(CLASS_ATTRIBUTE);
@@ -91,6 +92,7 @@ public final class EditorAssociationOverrideDescriptor {
 			/*
 			 * @see org.eclipse.jface.util.SafeRunnable#handleException(java.lang.Throwable)
 			 */
+			@Override
 			public void handleException(Throwable ex) {
 				super.handleException(ex);
 				exception[0]= ex;
@@ -135,12 +137,14 @@ public final class EditorAssociationOverrideDescriptor {
 		return fElement.getAttribute(DESCRIPTION_ATTRIBUTE);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !obj.getClass().equals(this.getClass()) || getId() == null)
 			return false;
 		return getId().equals(((EditorAssociationOverrideDescriptor)obj).getId());
 	}
 
+	@Override
 	public int hashCode() {
 		return getId().hashCode();
 	}

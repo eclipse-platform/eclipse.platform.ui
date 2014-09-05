@@ -96,12 +96,14 @@ public abstract class WorkspaceModifyOperation implements IRunnableWithProgress,
      * invoking the <code>execute</code> method as a workspace runnable
      * (<code>IWorkspaceRunnable</code>).
      */
-    public synchronized final void run(IProgressMonitor monitor)
+    @Override
+	public synchronized final void run(IProgressMonitor monitor)
             throws InvocationTargetException, InterruptedException {
         final InvocationTargetException[] iteHolder = new InvocationTargetException[1];
         try {
             IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
-                public void run(IProgressMonitor pm) throws CoreException {
+                @Override
+				public void run(IProgressMonitor pm) throws CoreException {
                     try {
                         execute(pm);
                     } catch (InvocationTargetException e) {
@@ -141,6 +143,7 @@ public abstract class WorkspaceModifyOperation implements IRunnableWithProgress,
 	 * @see IThreadListener#threadChange(Thread);
 	 * @since 3.2
 	 */
+	@Override
 	public void threadChange(Thread thread) {
 		//we must make sure we aren't transferring control away from a thread that
 		//already owns a scheduling rule because this is deadlock prone (bug 105491)

@@ -66,7 +66,8 @@ public class MarkerImageProviderRegistry {
      */
     public MarkerImageProviderRegistry() {
         class MarkerImageReader extends IDERegistryReader {
-            protected boolean readElement(IConfigurationElement element) {
+            @Override
+			protected boolean readElement(IConfigurationElement element) {
                 if (element.getName().equals(TAG_PROVIDER)) {
                     addProvider(element);
                     return true;

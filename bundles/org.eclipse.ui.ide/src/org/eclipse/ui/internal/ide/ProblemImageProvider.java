@@ -36,7 +36,8 @@ public class ProblemImageProvider implements IMarkerImageProvider {
      * @param marker The marker to get an image path for.
      *
      */
-    public String getImagePath(IMarker marker) {
+    @Override
+	public String getImagePath(IMarker marker) {
         String iconPath = "/icons/full/";//$NON-NLS-1$
         if (isMarkerType(marker, IMarker.PROBLEM)) {
             switch (marker.getAttribute(IMarker.SEVERITY,

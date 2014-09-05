@@ -50,7 +50,8 @@ class BookmarkLabelProvider extends LabelProvider implements
     /* (non-Javadoc)
      * Method declared on LabelProvider.
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         if (image != null) {
             JFaceResources.getResources().destroyImage(desc);
             image = null;
@@ -60,11 +61,13 @@ class BookmarkLabelProvider extends LabelProvider implements
     /* (non-Javadoc)
      * Method declared on LabelProvider.
      */
-    public Image getImage(Object element) {
+    @Override
+	public Image getImage(Object element) {
         return image;
     }
 
-    public String getColumnText(Object element, int columnIndex) {
+    @Override
+	public String getColumnText(Object element, int columnIndex) {
         if (!(element instanceof IMarker)) {
 			return ""; //$NON-NLS-1$
 		}
@@ -88,7 +91,8 @@ class BookmarkLabelProvider extends LabelProvider implements
         return ""; //$NON-NLS-1$ 
     }
 
-    public Image getColumnImage(Object element, int index) {
+    @Override
+	public Image getColumnImage(Object element, int index) {
         if (index == COLUMN_ICON) {
 			return image;
 		}

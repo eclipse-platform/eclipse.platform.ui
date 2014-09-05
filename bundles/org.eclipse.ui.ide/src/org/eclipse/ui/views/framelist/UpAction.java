@@ -57,7 +57,8 @@ public class UpAction extends FrameAction {
      * Calls <code>gotoFrame</code> on the frame list with a frame
      * representing the parent of the current input.
      */
-    public void run() {
+    @Override
+	public void run() {
         Frame parentFrame = getParentFrame(IFrameSource.FULL_CONTEXT);
         if (parentFrame != null) {
             getFrameList().gotoFrame(parentFrame);
@@ -71,7 +72,8 @@ public class UpAction extends FrameAction {
      * The tool tip text is "Up to " plus the tool tip text for the parent
      * frame.
      */
-    public void update() {
+    @Override
+	public void update() {
         super.update();
         Frame parentFrame = getParentFrame(0);
         setEnabled(parentFrame != null);

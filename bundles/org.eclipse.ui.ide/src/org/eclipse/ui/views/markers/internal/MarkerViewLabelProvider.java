@@ -39,6 +39,7 @@ public class MarkerViewLabelProvider extends ColumnLabelProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.ColumnLabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		return field.getValue(element);
 	}
@@ -48,6 +49,7 @@ public class MarkerViewLabelProvider extends ColumnLabelProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.ColumnLabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		return field.getImage(element);
 	}

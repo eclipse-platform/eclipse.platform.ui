@@ -81,6 +81,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 		 * @see org.eclipse.ui.internal.provisional.views.markers.TypesConfigurationArea.TypesEntry#addElementsMatching(java.util.Collection,
 		 *      java.util.Collection)
 		 */
+		@Override
 		public void addElementsMatching(Collection selectedTypes,
 				Collection entries) {
 			Iterator childIterator = children.iterator();
@@ -96,6 +97,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 		 * 
 		 * @see org.eclipse.ui.internal.provisional.views.markers.TypesConfigurationArea.TypesEntry#getChildren()
 		 */
+		@Override
 		public Collection getChildren() {
 			return children;
 		}
@@ -105,6 +107,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 		 * 
 		 * @see org.eclipse.ui.internal.provisional.views.markers.TypesConfigurationArea.TypesEntry#getLabel()
 		 */
+		@Override
 		public String getLabel() {
 			return name;
 		}
@@ -114,6 +117,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 		 * 
 		 * @see org.eclipse.ui.internal.provisional.views.markers.TypesConfigurationArea.TypesEntry#getParent()
 		 */
+		@Override
 		public TypesEntry getParent() {
 			return null;
 		}
@@ -123,6 +127,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 		 * 
 		 * @see org.eclipse.ui.internal.provisional.views.markers.TypesConfigurationArea.TypesEntry#hasChildren()
 		 */
+		@Override
 		public boolean hasChildren() {
 			return children.size() > 0;
 		}
@@ -149,6 +154,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 		 * @see org.eclipse.ui.internal.provisional.views.markers.TypesConfigurationArea.TypesEntry#addElementsMatching(java.util.Collection,
 		 *      java.util.Collection)
 		 */
+		@Override
 		public void addElementsMatching(Collection selectedTypes,
 				Collection entries) {
 			if (selectedTypes.contains(markerType))
@@ -161,6 +167,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 		 * 
 		 * @see org.eclipse.ui.internal.provisional.views.markers.TypesConfigurationArea.TypesEntry#getChildren()
 		 */
+		@Override
 		public Collection getChildren() {
 			return EMPTY_COLLECTION;
 		}
@@ -170,6 +177,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 		 * 
 		 * @see org.eclipse.ui.internal.provisional.views.markers.TypesConfigurationArea.TypesEntry#getLabel()
 		 */
+		@Override
 		public String getLabel() {
 			return markerType.getLabel();
 		}
@@ -188,6 +196,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 		 * 
 		 * @see org.eclipse.ui.internal.provisional.views.markers.TypesConfigurationArea.TypesEntry#getParent()
 		 */
+		@Override
 		public TypesEntry getParent() {
 			return category;
 		}
@@ -197,6 +206,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 		 * 
 		 * @see org.eclipse.ui.internal.provisional.views.markers.TypesConfigurationArea.TypesEntry#hasChildren()
 		 */
+		@Override
 		public boolean hasChildren() {
 			return false;
 		}
@@ -265,6 +275,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#apply(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
 	 */
+	@Override
 	public void apply(MarkerFieldFilter filter) {
 		Collection selectedTypes = new ArrayList();
 		Object[] elements = typesViewer.getCheckedElements();
@@ -286,6 +297,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#applyToGroup(org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilterGroup)
 	 */
+	@Override
 	public void applyToGroup(MarkerFieldFilterGroup group) {
 		// Nothing to set at the group level
 	}
@@ -295,6 +307,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createContents(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -326,6 +339,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 			 * 
 			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 			 */
+			@Override
 			public String getText(Object element) {
 				return ((TypesEntry) element).getLabel();
 			}
@@ -337,12 +351,14 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 			 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				return ((TypesEntry) e1).getLabel().compareTo(
 						((TypesEntry) e2).getLabel());
 			}
 		});
 		typesViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Object element = event.getElement();
 				boolean checked = event.getChecked();
@@ -422,6 +438,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean grabExcessVerticalSpace() {
 		return true;
 	}
@@ -443,6 +460,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 			 * 
 			 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 
 			}
@@ -452,6 +470,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 			 * 
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Object[] elements = typesContentProvider
 						.getElements(typesViewer.getInput());
@@ -550,6 +569,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 			 * 
 			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
+			@Override
 			public void dispose() {
 			}
 
@@ -558,6 +578,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 			 * 
 			 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 			 */
+			@Override
 			public Object[] getChildren(Object parentElement) {
 				return ((TypesEntry) parentElement).getChildren().toArray();
 			}
@@ -567,6 +588,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 			 * 
 			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 			 */
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return elementsForGroup((MarkerFieldFilterGroup) inputElement)
 						.toArray();
@@ -577,6 +599,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 			 * 
 			 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 			 */
+			@Override
 			public Object getParent(Object element) {
 				return ((TypesEntry) element).getParent();
 			}
@@ -586,6 +609,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 			 * 
 			 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 			 */
+			@Override
 			public boolean hasChildren(Object element) {
 				return ((TypesEntry) element).hasChildren();
 			}
@@ -596,6 +620,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
 			}
@@ -607,6 +632,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#initialize(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
 	 */
+	@Override
 	public void initialize(MarkerFieldFilter filter) {
 		// This was already done when initialising from the group.
 
@@ -617,6 +643,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 	 * 
 	 * @see org.eclipse.ui.internal.views.markers.GroupFilterConfigurationArea#initializeFromGroup(org.eclipse.ui.internal.views.markers.MarkerFieldFilterGroup)
 	 */
+	@Override
 	public void initializeFromGroup(MarkerFieldFilterGroup group) {
 		typesViewer.setInput(group);
 		typesViewer.refresh();
@@ -633,6 +660,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 	 * 
 	 * @see org.eclipse.ui.views.markers.FilterConfigurationArea#getTitle()
 	 */
+	@Override
 	public String getTitle() {
 		return MarkerMessages.filtersDialog_typesTitle;
 	}

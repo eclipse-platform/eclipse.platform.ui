@@ -36,6 +36,7 @@ public class DialogProblemProperties extends DialogMarkerProperties {
 	 * 
 	 * @see org.eclipse.ui.views.markerview.MarkerPropertiesDialog#createAttributesArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createAttributesArea(Composite parent) {
 		createSeperator(parent);
 		super.createAttributesArea(parent);
@@ -59,6 +60,7 @@ public class DialogProblemProperties extends DialogMarkerProperties {
 	 * 
 	 * @see org.eclipse.ui.views.markerview.MarkerPropertiesDialog#updateDialogFromMarker()
 	 */
+	@Override
 	protected void updateDialogFromMarker() {
 		super.updateDialogFromMarker();
 		IMarker marker = getMarker();

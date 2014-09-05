@@ -49,7 +49,8 @@ public class FilePropertySource extends ResourcePropertySource {
     /* (non-Javadoc)
      * Method declared on IPropertySource.
      */
-    public IPropertyDescriptor[] getPropertyDescriptors() {
+    @Override
+	public IPropertyDescriptor[] getPropertyDescriptors() {
         IPropertyDescriptor[] superDescriptors = super.getPropertyDescriptors();
         int superLength = superDescriptors.length;
         IPropertyDescriptor[] fileDescriptors = new IPropertyDescriptor[superLength + 1];
@@ -62,7 +63,8 @@ public class FilePropertySource extends ResourcePropertySource {
     /* (non-Javadoc)
      * Method declared on IPropertySource.
      */
-    public Object getPropertyValue(Object key) {
+    @Override
+	public Object getPropertyValue(Object key) {
     	Object returnValue = (key.equals(IBasicPropertyConstants.P_TEXT)) ? TextProcessor
 				.process(element.getName())
 				: super.getPropertyValue(key);

@@ -201,6 +201,7 @@ public class CreateLinkedResourceGroup {
 			createLinkButton.setSelection(createLink);
 			createLinkButton.setFont(font);
 			SelectionListener selectionListener = new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					setEnabled(createLinkButton.getSelection());
 				}
@@ -276,6 +277,7 @@ public class CreateLinkedResourceGroup {
 		linkTargetField.setFont(locationGroup.getFont());
 		BidiUtils.applyBidiProcessing(linkTargetField, StructuredTextTypeHandlerFactory.FILE);
 		linkTargetField.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				linkTarget = linkTargetField.getText();
 				if (isDefaultConfigurationSelected()) {
@@ -305,6 +307,7 @@ public class CreateLinkedResourceGroup {
 		browseButton
 				.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_browseButton);
 		browseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				handleLinkTargetBrowseButtonPressed();
 			}
@@ -318,6 +321,7 @@ public class CreateLinkedResourceGroup {
 		variablesButton
 				.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_variablesButton);
 		variablesButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				handleVariablesButtonPressed();
 			}

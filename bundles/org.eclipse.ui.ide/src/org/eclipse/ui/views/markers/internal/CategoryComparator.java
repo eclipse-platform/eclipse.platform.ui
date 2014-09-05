@@ -78,6 +78,7 @@ public class CategoryComparator extends ViewerComparator implements Comparator {
 	 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,
 	 *      java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		return compare(e1, e2, 0, true);
 	}
@@ -87,6 +88,7 @@ public class CategoryComparator extends ViewerComparator implements Comparator {
 	 * 
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public int compare(Object arg0, Object arg1) {
 		return compare(arg0, arg1, 0, true);
 	}

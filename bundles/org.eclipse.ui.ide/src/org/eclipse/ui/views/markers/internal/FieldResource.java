@@ -34,7 +34,8 @@ public class FieldResource extends AbstractField {
      *  (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
      */
-    public String getDescription() {
+    @Override
+	public String getDescription() {
         return description;
     }
 
@@ -42,7 +43,8 @@ public class FieldResource extends AbstractField {
      *  (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.IField#getDescriptionImage()
      */
-    public Image getDescriptionImage() {
+    @Override
+	public Image getDescriptionImage() {
         return image;
     }
 
@@ -50,7 +52,8 @@ public class FieldResource extends AbstractField {
      *  (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderText()
      */
-    public String getColumnHeaderText() {
+    @Override
+	public String getColumnHeaderText() {
         return description;
     }
 
@@ -58,7 +61,8 @@ public class FieldResource extends AbstractField {
      *  (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
      */
-    public Image getColumnHeaderImage() {
+    @Override
+	public Image getColumnHeaderImage() {
         return image;
     }
 
@@ -66,7 +70,8 @@ public class FieldResource extends AbstractField {
      *  (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
      */
-    public String getValue(Object obj) {
+    @Override
+	public String getValue(Object obj) {
         if (obj == null || !(obj instanceof ConcreteMarker)) {
             return ""; //$NON-NLS-1$
         }
@@ -78,7 +83,8 @@ public class FieldResource extends AbstractField {
      *  (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
      */
-    public Image getImage(Object obj) {
+    @Override
+	public Image getImage(Object obj) {
         return null;
     }
 
@@ -86,7 +92,8 @@ public class FieldResource extends AbstractField {
      *  (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.IField#compare(java.lang.Object, java.lang.Object)
      */
-    public int compare(Object obj1, Object obj2) {
+    @Override
+	public int compare(Object obj1, Object obj2) {
         if (obj1 == null || obj2 == null || !(obj1 instanceof ConcreteMarker)
                 || !(obj2 instanceof ConcreteMarker)) {
             return 0;
@@ -102,6 +109,7 @@ public class FieldResource extends AbstractField {
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
 	 */
+	@Override
 	public int getDefaultDirection() {
 		return TableComparator.ASCENDING;
 	}
@@ -109,6 +117,7 @@ public class FieldResource extends AbstractField {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
 	 */
+	@Override
 	public int getPreferredWidth() {
 		return 75;
 	}

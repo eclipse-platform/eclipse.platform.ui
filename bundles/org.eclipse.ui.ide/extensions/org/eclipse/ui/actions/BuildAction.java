@@ -92,7 +92,8 @@ public class BuildAction extends WorkspaceAction {
      *  <code>IncrementalProjectBuilder.FULL_BUILD</code>
      * @deprecated See {@link #BuildAction(IShellProvider, int)}
      */
-    public BuildAction(Shell shell, int type) {
+    @Deprecated
+	public BuildAction(Shell shell, int type) {
         super(shell, "");//$NON-NLS-1$
         initAction(type);
     }
@@ -139,28 +140,32 @@ public class BuildAction extends WorkspaceAction {
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    protected List getActionResources() {
+    @Override
+	protected List getActionResources() {
         return getProjectsToBuild();
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    protected String getOperationMessage() {
+    @Override
+	protected String getOperationMessage() {
         return IDEWorkbenchMessages.BuildAction_operationMessage;
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    protected String getProblemsMessage() {
+    @Override
+	protected String getProblemsMessage() {
         return IDEWorkbenchMessages.BuildAction_problemMessage;
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    protected String getProblemsTitle() {
+    @Override
+	protected String getProblemsTitle() {
         return IDEWorkbenchMessages.BuildAction_problemTitle;
     }
 
@@ -232,7 +237,8 @@ public class BuildAction extends WorkspaceAction {
     /* (non-Javadoc)
      * Method declared on Action
      */
-    public boolean isEnabled() {
+    @Override
+	public boolean isEnabled() {
     	//update enablement based on active window and part
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
@@ -259,7 +265,8 @@ public class BuildAction extends WorkspaceAction {
      * open editors so that the updated contents will be used for building.
      * The build is run as a background job.
      */
-    public void run() {
+    @Override
+	public void run() {
 	    final List buildConfigurations = getBuildConfigurationsToBuild();
 	    if (buildConfigurations == null || buildConfigurations.isEmpty())
 			return;
@@ -273,7 +280,8 @@ public class BuildAction extends WorkspaceAction {
      * (non-Javadoc)
      * @see org.eclipse.ui.actions.WorkspaceAction#runInBackground(org.eclipse.core.runtime.jobs.ISchedulingRule, java.lang.Object[])
      */
-    public void runInBackground(ISchedulingRule rule, Object[] jobFamilies) {
+    @Override
+	public void runInBackground(ISchedulingRule rule, Object[] jobFamilies) {
         // Get immutable copies of the build settings
 		final int kind = buildType;
 	    List buildConfigurations = getBuildConfigurationsToBuild();
@@ -287,6 +295,7 @@ public class BuildAction extends WorkspaceAction {
 			 * (non-Javadoc)
 			 * @see Job#belongsTo(Object)
 			 */
+			@Override
 			public boolean belongsTo(Object family) {
 				return ResourcesPlugin.FAMILY_MANUAL_BUILD.equals(family);
 			}
@@ -295,6 +304,7 @@ public class BuildAction extends WorkspaceAction {
 			 * (non-Javadoc)
 			 * @see WorkspaceJob#runInWorkspace(IProgressMonitor)
 			 */
+			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) {
 				IStatus status = null;
 				monitor.beginTask("", 10000); //$NON-NLS-1$
@@ -321,7 +331,8 @@ public class BuildAction extends WorkspaceAction {
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    protected boolean shouldPerformResourcePruning() {
+    @Override
+	protected boolean shouldPerformResourcePruning() {
         return true;
     }
 
@@ -330,7 +341,8 @@ public class BuildAction extends WorkspaceAction {
      * <code>SelectionListenerAction</code> method ensures that this action is
      * enabled only if all of the selected resources have buildable projects.
      */
-    protected boolean updateSelection(IStructuredSelection s) {
+    @Override
+	protected boolean updateSelection(IStructuredSelection s) {
         projectConfigsToBuild = null;
         projectsToBuild = null;
         IProject[] projects = (IProject[]) getProjectsToBuild().toArray(new IProject[0]);

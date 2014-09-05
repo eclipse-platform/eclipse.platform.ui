@@ -117,6 +117,7 @@ public class WorkspaceUndoMonitor {
 			 * 
 			 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 			 */
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				// If there is an operation in progress, this event is to be
 				// ignored.
@@ -149,6 +150,7 @@ public class WorkspaceUndoMonitor {
 			 * 
 			 * @see org.eclipse.core.commands.operations.IOperationHistoryListener#historyNotification(org.eclipse.core.commands.operations.OperationHistoryEvent)
 			 */
+			@Override
 			public void historyNotification(OperationHistoryEvent event) {
 				// We only care about events that have the workspace undo
 				// context.

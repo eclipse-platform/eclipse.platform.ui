@@ -52,7 +52,8 @@ class PasteTaskAction extends TaskAction {
     /**
      * Implementation of method defined on <code>IAction</code>.
      */
-    public void run() {
+    @Override
+	public void run() {
         // Get the markers from the clipboard
         MarkerTransfer transfer = MarkerTransfer.getInstance();
         final IMarker[] markerData = (IMarker[]) getTaskList().getClipboard()
@@ -67,7 +68,8 @@ class PasteTaskAction extends TaskAction {
 
         try {
             getTaskList().getWorkspace().run(new IWorkspaceRunnable() {
-                public void run(IProgressMonitor monitor) throws CoreException {
+                @Override
+				public void run(IProgressMonitor monitor) throws CoreException {
                     for (int i = 0; i < markerData.length; i++) {
                         // Only paste tasks 
                         if (!markerData[i].getType().equals(IMarker.TASK)) {
@@ -98,7 +100,8 @@ class PasteTaskAction extends TaskAction {
         // sent after the operation is executed.
         if (op.getMarkers() != null) {
             getShell().getDisplay().asyncExec(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     TaskList taskList = getTaskList();
                     taskList.setSelection(new StructuredSelection(op.getMarkers()),
                             true);
