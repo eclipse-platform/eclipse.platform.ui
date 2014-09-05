@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 434283
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -16,6 +17,7 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.util.JFaceProperties;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -126,11 +128,11 @@ public class Snippet031JFaceObservable {
 			IValueProperty nameProperty = JFaceProperties.value(Person.class,
 					"name", NAME_PROPERTY);
 
-			bindingContext.bindValue(SWTObservables.observeText(name,
-					SWT.Modify), nameProperty.observe(person), null, null);
+			bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(name), nameProperty.observe(person),
+					null, null);
 
 			Label label = new Label(shell, SWT.NONE);
-			bindingContext.bindValue(SWTObservables.observeText(label),
+			bindingContext.bindValue(WidgetProperties.text().observe(label),
 					nameProperty.observe(person), null, null);
 
 			// Open and return the Shell

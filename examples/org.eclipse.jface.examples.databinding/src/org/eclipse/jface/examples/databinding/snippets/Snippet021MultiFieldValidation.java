@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 218269)
  *     Matthew Hall - bug 260329
- *     Simon Scholz <simon.scholz@vogella.com> - Bug 442278
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 442278, 434283
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -26,6 +26,7 @@ import org.eclipse.core.databinding.validation.MultiValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -205,14 +206,12 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 	}
 
 	private void bindEvensAndOddsGroup(DataBindingContext dbc) {
-		IObservableValue targetField1 = SWTObservables.observeText(
-				field1Target, SWT.Modify);
+		IObservableValue targetField1 = WidgetProperties.text(SWT.Modify).observe(field1Target);
 		final IObservableValue middleField1 = new WritableValue(null,
 				Integer.TYPE);
 		dbc.bindValue(targetField1, middleField1);
 
-		IObservableValue targetField2 = SWTObservables.observeText(
-				field2Target, SWT.Modify);
+		IObservableValue targetField2 = WidgetProperties.text(SWT.Modify).observe(field2Target);
 		final IObservableValue middleField2 = new WritableValue(null,
 				Integer.TYPE);
 		dbc.bindValue(targetField2, middleField2);
@@ -240,15 +239,14 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		dbc.bindValue(validator.observeValidatedValue(middleField2),
 				modelField2);
 
-		dbc.bindValue(SWTObservables.observeText(field1ModelValue, SWT.Modify),
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(field1ModelValue),
 				modelField1);
-		dbc.bindValue(SWTObservables.observeText(field2ModelValue, SWT.Modify),
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(field2ModelValue),
 				modelField2);
 	}
 
 	private void bindSumAndAddendsGroup(DataBindingContext dbc) {
-		IObservableValue targetSum = SWTObservables.observeText(sumTarget,
-				SWT.Modify);
+		IObservableValue targetSum = WidgetProperties.text(SWT.Modify).observe(sumTarget);
 		final IObservableValue middleSum = new WritableValue(null, Integer.TYPE);
 		dbc.bindValue(targetSum, middleSum);
 
@@ -292,7 +290,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 
 		IObservableValue modelSum = new WritableValue(new Integer(5),
 				Integer.TYPE);
-		dbc.bindValue(SWTObservables.observeText(sumModelValue, SWT.Modify),
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(sumModelValue),
 				modelSum);
 
 		IObservableList modelAddends = new WritableList(new ArrayList(),

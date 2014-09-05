@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 434287
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 434283
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -23,6 +24,7 @@ import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -55,11 +57,11 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 		final Model model = new Model();
 
 		DataBindingContext dbc = new DataBindingContext();
-		dbc.bindValue(SWTObservables.observeText(view.text1, SWT.Modify),
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(view.text1),
 				model.value1, new UpdateValueStrategy()
 						.setAfterConvertValidator(new CrossFieldValidator(
 								model.value2)), null);
-		dbc.bindValue(SWTObservables.observeText(view.text2, SWT.Modify),
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(view.text2),
 				model.value2, new UpdateValueStrategy()
 						.setAfterConvertValidator(new CrossFieldValidator(
 								model.value1)), null);

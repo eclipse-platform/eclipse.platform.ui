@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 The Pampered Chef, Inc. and others.
+ * Copyright (c) 2006, 2014 The Pampered Chef, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     The Pampered Chef, Inc. - initial API and implementation
  *     Brad Reynolds - bug 116920
  *     Matthew Hall - bug 260329
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 434283
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -25,6 +26,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -192,7 +194,7 @@ public class Snippet001NestedSelectionWithCombo {
 			DataBindingContext dbc = new DataBindingContext(realm);
 			IObservableValue selectedPerson = ViewersObservables
 					.observeSingleSelection(peopleListViewer);
-			dbc.bindValue(SWTObservables.observeText(name, SWT.Modify),
+			dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(name),
 					BeansObservables.observeDetailValue(selectedPerson,
 							"name", String.class));
 

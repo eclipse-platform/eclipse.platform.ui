@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 The Pampered Chef, Inc. and others.
+ * Copyright (c) 2006, 2014 The Pampered Chef, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     The Pampered Chef, Inc. - initial API and implementation
  *     Brad Reynolds - bug 116920
  *     Matthew Hall - bug 260329
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 434283
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -28,6 +29,7 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -162,13 +164,13 @@ public class Snippet002UpdateComboRetainSelection {
             System.out.println(viewModel.getText());
 
             DataBindingContext dbc = new DataBindingContext();
-            
+
             IObservableList list = MasterDetailObservables.detailList(BeansObservables.observeValue(viewModel, "choices"),
                     getListDetailFactory(),
                     String.class);
-            dbc.bindList(SWTObservables.observeItems(combo), list); 
-            dbc.bindValue(SWTObservables.observeText(combo), BeansObservables.observeValue(viewModel, "text"));
-            
+			dbc.bindList(WidgetProperties.items().observe(combo), list);
+			dbc.bindValue(WidgetProperties.text().observe(combo), BeansObservables.observeValue(viewModel, "text"));
+
             // Open and return the Shell
             shell.pack();
             shell.open();

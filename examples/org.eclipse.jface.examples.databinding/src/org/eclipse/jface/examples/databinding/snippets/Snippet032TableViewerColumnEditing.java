@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 The Pampered Chef, Inc. and others.
+ * Copyright (c) 2006, 2014 The Pampered Chef, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Tom Schindl - cell editing
  *     Matthew Hall - bugs 260329, 260337
  *     Heiko Ahlig - bug 267712
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 434283
  *******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -245,11 +246,11 @@ public class Snippet032TableViewerColumnEditing {
 			// current selection
 			IObservableValue selection = ViewersObservables
 					.observeSingleSelection(peopleViewer);
-			bindingContext.bindValue(SWTObservables
-					.observeText(selectedCommitterName), BeansObservables
+			bindingContext.bindValue(WidgetProperties.text().observe(selectedCommitterName),
+					BeansObservables
 					.observeDetailValue(selection, "name", String.class));
-			bindingContext.bindValue(SWTObservables
-					.observeText(selectedCommitterFirstName), BeansObservables
+			bindingContext.bindValue(WidgetProperties.text().observe(selectedCommitterFirstName),
+					BeansObservables
 					.observeDetailValue(selection, "firstName", String.class));
 		}
 	}

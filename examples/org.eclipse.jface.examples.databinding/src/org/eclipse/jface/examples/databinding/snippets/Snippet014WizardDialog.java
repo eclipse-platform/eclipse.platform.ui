@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Boris Bokowski, IBM Corporation - initial API and implementation
  *     Matthew Hall - bug 260329
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 434283
  *******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -23,6 +24,7 @@ import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -72,13 +74,12 @@ public class Snippet014WizardDialog {
 			Label label = new Label(composite, SWT.NONE);
 			label.setText("Enter a number between 0 and 9:");
 			Text text = new Text(composite, SWT.BORDER);
-			
-			dbc.bindValue(
-							SWTObservables.observeText(text, SWT.Modify),
+
+			dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
 							((SampleWizard) getWizard()).getModel().intValue,
 							new UpdateValueStrategy().setAfterConvertValidator(new SingleDigitValidator()),
 							null);
-			
+
 			GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(
 					composite);
 			setControl(composite);
@@ -100,8 +101,7 @@ public class Snippet014WizardDialog {
 			label.setText("Enter a date:");
 			Text text = new Text(composite, SWT.BORDER);
 			
-			dbc.bindValue(
-							SWTObservables.observeText(text, SWT.Modify),
+			dbc.bindValue(WidgetProperties.text().observe(text),
 							((SampleWizard) getWizard()).getModel().dateValue);
 
 			GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(
