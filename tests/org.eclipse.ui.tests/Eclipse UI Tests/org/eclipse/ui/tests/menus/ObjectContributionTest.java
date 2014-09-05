@@ -305,18 +305,22 @@ public final class ObjectContributionTest extends UITestCase {
 	public void assertPopupMenus(String name, String[] commandIds,
 			final ISelection selection, Class selectionType, boolean existance) {
 		ISelectionProvider selectionProvider = new ISelectionProvider() {
+			@Override
 			public void addSelectionChangedListener(
 					ISelectionChangedListener listener) {
 			}
 
+			@Override
 			public ISelection getSelection() {
 				return selection;
 			}
 
+			@Override
 			public void removeSelectionChangedListener(
 					ISelectionChangedListener listener) {
 			}
 
+			@Override
 			public void setSelection(ISelection selection) {
 			}
 		};

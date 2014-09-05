@@ -87,6 +87,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		return logStatus==null?"No message":logStatus.getMessage();
 	}
 	ILogListener openAndHideListener = new ILogListener() {
+		@Override
 		public void logging(IStatus status, String plugin) {
 			logStatus = status;
 			logCount++;
@@ -101,31 +102,39 @@ public class IWorkbenchPageTest extends UITestCase {
 	private int partActiveCount = 0;
 	private IWorkbenchPartReference partActiveRef = null;
 	IPartListener2 partListener2 = new IPartListener2() {
+		@Override
 		public void partActivated(IWorkbenchPartReference partRef) {
 			partActiveCount++;
 			partActiveRef = partRef;
 		}
 
+		@Override
 		public void partBroughtToTop(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partClosed(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partDeactivated(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partHidden(IWorkbenchPartReference partRef) {
 			partHiddenCount++;
 			partHiddenRef = partRef;
 		}
 
+		@Override
 		public void partInputChanged(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partOpened(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partVisible(IWorkbenchPartReference partRef) {
 			partVisibleCount++;
 			partVisibleRef = partRef;
@@ -136,6 +145,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		super(testName);
 	}
 
+	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		fWin = openTestWindow();
@@ -145,6 +155,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		Platform.addLogListener(openAndHideListener);
 	}
 
+	@Override
 	protected void doTearDown() throws Exception {
 		super.doTearDown();
 		if (proj != null) {
@@ -234,6 +245,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		sets[0] = new IWorkingSet[0];
 		IPropertyChangeListener listener = new IPropertyChangeListener() {
 
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				IWorkingSet[] oldSets = (IWorkingSet[]) event.getOldValue();
 				assertTrue(Arrays.equals(sets[0], oldSets));

@@ -44,6 +44,7 @@ public class CommandActionTest extends UITestCase {
 	 * 
 	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doSetUp()
 	 */
+	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		handlerService = fWorkbench
@@ -60,6 +61,7 @@ public class CommandActionTest extends UITestCase {
 	 * 
 	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doTearDown()
 	 */
+	@Override
 	protected void doTearDown() throws Exception {
 		if (cmd1Activation != null) {
 			handlerService.deactivateHandler(cmd1Activation);
@@ -83,6 +85,7 @@ public class CommandActionTest extends UITestCase {
 		 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 		 */
 
+		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 
 			paramValue1 = event.getParameter("protocol");
@@ -100,6 +103,7 @@ public class CommandActionTest extends UITestCase {
 		 * 
 		 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 		 */
+		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 
 			count++;

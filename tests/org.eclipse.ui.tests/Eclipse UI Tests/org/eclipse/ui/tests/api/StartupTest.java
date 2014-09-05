@@ -28,7 +28,8 @@ public class StartupTest extends UITestCase {
         assertTrue("Startup - completed before tests", StartupClass.getEarlyStartupCompleted());
     }
 
-    protected void doTearDown() throws Exception {
+    @Override
+	protected void doTearDown() throws Exception {
         super.doTearDown();
         // NOTE:  tearDown will run after each test.  Therefore, we
         // only want one test in this suite (or the values set when

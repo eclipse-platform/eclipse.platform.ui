@@ -29,7 +29,8 @@ import org.eclipse.ui.tests.session.NonRestorableView;
  */
 public class PropertySheetPerspectiveFactory implements IPerspectiveFactory {
 
-    public void createInitialLayout(IPageLayout layout) {
+    @Override
+	public void createInitialLayout(IPageLayout layout) {
         String editorArea = layout.getEditorArea();
         IFolderLayout topLeft = layout.createFolder("topLeft", IPageLayout.LEFT, (float) 0.33,
                 editorArea);

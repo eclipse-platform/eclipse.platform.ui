@@ -16,7 +16,8 @@ public class ListElementPropertyTester extends PropertyTester {
 
     public static final String ATTR_NAME = "name";
 
-    public boolean test(Object receiver, String property, Object[] args,
+    @Override
+	public boolean test(Object receiver, String property, Object[] args,
             Object expectedValue) {
         ListElement le = (ListElement) receiver;
         if (property.equals(ATTR_NAME)) {

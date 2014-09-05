@@ -30,6 +30,7 @@ public class Bug78470Test extends UITestCase {
 	public static class MyPerspective implements IPerspectiveFactory {
 		public static String ID = "org.eclipse.ui.tests.internal.Bug78470Test.MyPerspective";
 
+		@Override
 		public void createInitialLayout(IPageLayout layout) {
 			String editorArea = layout.getEditorArea();
 			IFolderLayout folder1 = layout.createFolder("folder1",
@@ -47,11 +48,13 @@ public class Bug78470Test extends UITestCase {
 		public static String ID2 = ID + "2";
 		public static String ID3 = ID + "3";
 
+		@Override
 		public void createPartControl(Composite parent) {
 			Label label = new Label(parent, SWT.NONE);
 			label.setText(getSite().getId());
 		}
 
+		@Override
 		public void setFocus() {
 			// nothing to do
 		}
@@ -70,18 +73,25 @@ public class Bug78470Test extends UITestCase {
 		final IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
 		activeWorkbenchWindow.getPartService().addPartListener(
 				new IPartListener2() {
+					@Override
 					public void partActivated(IWorkbenchPartReference partRef) {
 					}
+					@Override
 					public void partBroughtToTop(IWorkbenchPartReference partRef) {
 					}
+					@Override
 					public void partClosed(IWorkbenchPartReference partRef) {
 					}
+					@Override
 					public void partDeactivated(IWorkbenchPartReference partRef) {
 					}
+					@Override
 					public void partOpened(IWorkbenchPartReference partRef) {
 					}
+					@Override
 					public void partHidden(IWorkbenchPartReference partRef) {
 					}
+					@Override
 					public void partVisible(IWorkbenchPartReference partRef) {
 						if (partRef.getId().equals(MyViewPart.ID)) {
 							partVisibleExecuted = true;
@@ -93,6 +103,7 @@ public class Bug78470Test extends UITestCase {
 							}
 						}
 					}
+					@Override
 					public void partInputChanged(IWorkbenchPartReference partRef) {
 					}
 				});

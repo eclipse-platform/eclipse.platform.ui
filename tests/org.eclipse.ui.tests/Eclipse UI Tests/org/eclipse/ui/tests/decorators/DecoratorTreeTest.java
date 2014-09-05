@@ -32,6 +32,7 @@ public class DecoratorTreeTest extends DecoratorViewerTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
 	 */
+	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		createTestFile();
@@ -41,6 +42,7 @@ public class DecoratorTreeTest extends DecoratorViewerTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.decorators.DecoratorViewerTest#backgroundCheck(org.eclipse.ui.part.ViewPart)
 	 */
+	@Override
 	protected void backgroundCheck(IViewPart view) {
 		TreeItem first = ((DecoratorTreeView) view).viewer.getTree().getItems()[0];
 		assertEquals(BackgroundColorDecorator.color.getRGB(), first.getBackground().getRGB());
@@ -49,6 +51,7 @@ public class DecoratorTreeTest extends DecoratorViewerTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.decorators.DecoratorViewerTest#foregroundCheck(org.eclipse.ui.part.ViewPart)
 	 */
+	@Override
 	protected void foregroundCheck(IViewPart view) {
 
 		TreeItem first = ((DecoratorTreeView) view).viewer.getTree().getItems()[0];
@@ -59,6 +62,7 @@ public class DecoratorTreeTest extends DecoratorViewerTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.decorators.DecoratorViewerTest#openView(org.eclipse.ui.IWorkbenchPage)
 	 */
+	@Override
 	protected IViewPart openView(IWorkbenchPage page) throws PartInitException {
 
 		return page.showView("org.eclipse.ui.tests.decorators.TreeViewTest");
@@ -68,6 +72,7 @@ public class DecoratorTreeTest extends DecoratorViewerTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.decorators.DecoratorViewerTest#fontCheck(org.eclipse.ui.part.ViewPart)
 	 */
+	@Override
 	protected void fontCheck(IViewPart view) {
 		TreeItem first = ((DecoratorTreeView) view).viewer.getTree().getItems()[0];
 		assertEquals(FontDecorator.font.getFontData()[0], first.getFont().getFontData()[0]);

@@ -37,16 +37,19 @@ public class TestEditor extends EditorPart {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void doSaveAs() {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
 		if (!(input instanceof IFileEditorInput))
@@ -57,16 +60,19 @@ public class TestEditor extends EditorPart {
 
 	}
 
+	@Override
 	public boolean isDirty() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@Override
 	public boolean isSaveAsAllowed() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 		fMainPanel = new Composite(parent, SWT.NONE);
 		fMainPanel.setLayout(new RowLayout(SWT.VERTICAL));
@@ -83,6 +89,7 @@ public class TestEditor extends EditorPart {
 	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		fMainPanel.setFocus();
 	}

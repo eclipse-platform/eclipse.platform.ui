@@ -26,10 +26,12 @@ import org.eclipse.swt.widgets.Display;
  */
 public class SyncExecWhileUIThreadWaitsForRuleTest extends TestCase {
 	class TestRule implements ISchedulingRule {
+		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
 
+		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
 		}
@@ -41,12 +43,14 @@ public class SyncExecWhileUIThreadWaitsForRuleTest extends TestCase {
 		final boolean[] lockAcquired = new boolean[] {false};
 		final SubMonitor beginRuleMonitor = SubMonitor.convert(null);
 		Thread locking = new Thread("SyncExecWhileUIThreadWaitsForRuleTest") {
+			@Override
 			public void run() {
 				try {
 					//first make sure this background thread owns the lock
 					Job.getJobManager().beginRule(rule, null);
 					//spawn an asyncExec that will cause the UI thread to be blocked
 					Display.getDefault().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							blocked[0] = true;
 							Job.getJobManager().beginRule(rule, beginRuleMonitor);
@@ -65,6 +69,7 @@ public class SyncExecWhileUIThreadWaitsForRuleTest extends TestCase {
 					//now attempt to do a syncExec that also acquires the lock
 					//this should succeed even while the above asyncExec is blocked, thanks to UISynchronizer
 					Display.getDefault().syncExec(new Runnable() {
+						@Override
 						public void run() {
 							//use a timeout to avoid deadlock in case of regression
 							Job.getJobManager().beginRule(rule, null);
@@ -81,6 +86,7 @@ public class SyncExecWhileUIThreadWaitsForRuleTest extends TestCase {
 		//create a thread that will cancel the monitor after 60 seconds so we don't hang the tests
 		final long waitStart = System.currentTimeMillis();
 		Thread canceler = new Thread("Canceler") {
+			@Override
 			public void run() {
 				while (true) {
 					if (System.currentTimeMillis() - waitStart > 60000) {

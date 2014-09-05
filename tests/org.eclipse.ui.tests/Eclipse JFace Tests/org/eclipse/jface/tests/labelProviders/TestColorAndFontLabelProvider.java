@@ -33,10 +33,12 @@ public class TestColorAndFontLabelProvider extends LabelProvider implements
 		fDisplay= display;
 	}
 
+	@Override
 	public Color getBackground(Object element) {
 		return fDisplay.getSystemColor(SWT.COLOR_RED);
 	}
 
+	@Override
 	public Color getForeground(Object element) {
 		return fDisplay.getSystemColor(SWT.COLOR_BLUE);
 	}

@@ -50,7 +50,8 @@ public class Bug42627Test extends UITestCase {
         super(name);
     }
 
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
         super.doSetUp();
         //		logged = false;
     }

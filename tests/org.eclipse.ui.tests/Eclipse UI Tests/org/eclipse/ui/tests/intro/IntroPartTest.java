@@ -40,7 +40,8 @@ public class IntroPartTest extends IWorkbenchPartTest {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.api.IWorkbenchPartTest#openPart(org.eclipse.ui.IWorkbenchPage)
      */
-    protected MockPart openPart(IWorkbenchPage page) throws Throwable {
+    @Override
+	protected MockPart openPart(IWorkbenchPage page) throws Throwable {
         return (MockIntroPart) page.getWorkbenchWindow().getWorkbench()
                 .getIntroManager().showIntro(page.getWorkbenchWindow(), false);
     }
@@ -48,13 +49,15 @@ public class IntroPartTest extends IWorkbenchPartTest {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.api.IWorkbenchPartTest#closePart(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.tests.api.MockWorkbenchPart)
      */
-    protected void closePart(IWorkbenchPage page, MockPart part)
+    @Override
+	protected void closePart(IWorkbenchPage page, MockPart part)
             throws Throwable {
         assertTrue(page.getWorkbenchWindow().getWorkbench().getIntroManager()
                 .closeIntro((IIntroPart) part));
     }
 
-    public void testOpenAndClose() throws Throwable {
+    @Override
+	public void testOpenAndClose() throws Throwable {
         // Open a part.
         MockPart part = openPart(fPage);
         CallHistory history = part.getCallHistory();
@@ -92,7 +95,8 @@ public class IntroPartTest extends IWorkbenchPartTest {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
      */
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
         super.doSetUp();
         oldDesc = Workbench.getInstance().getIntroDescriptor();
         IntroDescriptor testDesc = getIntroDesc();
@@ -110,7 +114,8 @@ public class IntroPartTest extends IWorkbenchPartTest {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
      */
-    protected void doTearDown() throws Exception {
+    @Override
+	protected void doTearDown() throws Exception {
         super.doTearDown();
         Workbench.getInstance().setIntroDescriptor(oldDesc);
     }

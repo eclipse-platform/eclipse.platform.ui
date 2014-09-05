@@ -38,7 +38,8 @@ public class UIJobTest extends UITestCase {
         super(testName);
     }
 
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
         super.doSetUp();
         fWindow = openTestWindow();
         fPage = fWindow.getActivePage();
@@ -70,7 +71,8 @@ public class UIJobTest extends UITestCase {
 	        /* (non-Javadoc)
 	         * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 	         */
-	        public IStatus runInUIThread(IProgressMonitor monitor) {
+	        @Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
 	            backgroundThreadFinishedBeforeUIJob = backgroundThreadFinished;
 	            uiJobFinished = true;
 	            
@@ -87,7 +89,8 @@ public class UIJobTest extends UITestCase {
         /* (non-Javadoc)
          * @see java.lang.Thread#run()
          */
-        public void run() {
+        @Override
+		public void run() {
             testJob.schedule();
             
             backgroundThreadStarted = true;
@@ -106,7 +109,8 @@ public class UIJobTest extends UITestCase {
         // sleep(xxxx) in order to ensure that we don't wake up before the test job was
         // scheduled.
         Job delayJob = new Job("blah") {
-            protected IStatus run(IProgressMonitor monitor) {
+            @Override
+			protected IStatus run(IProgressMonitor monitor) {
                 
                 return Status.OK_STATUS;
             }

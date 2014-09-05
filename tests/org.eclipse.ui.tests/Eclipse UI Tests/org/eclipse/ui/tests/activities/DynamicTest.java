@@ -152,7 +152,8 @@ public class DynamicTest extends UITestCase {
                 .getIdentifier("org.eclipse.pattern3"); //$NON-NLS-1$
         assertTrue(enabledIdentifier.isEnabled());
         enabledIdentifier.addIdentifierListener(new IIdentifierListener() {
-            public void identifierChanged(IdentifierEvent identifierEvent) {
+            @Override
+			public void identifierChanged(IdentifierEvent identifierEvent) {
                 switch (listenerType) {
                 case ACTIVITY_ENABLED_CHANGED:
                     assertTrue(identifierEvent.hasEnabledChanged());
@@ -208,7 +209,8 @@ public class DynamicTest extends UITestCase {
     public void testActivityManagerListener() {
         activityManager
                 .addActivityManagerListener(new IActivityManagerListener() {
-                    public void activityManagerChanged(
+                    @Override
+					public void activityManagerChanged(
                             ActivityManagerEvent activityManagerEvent) {
                         switch (listenerType) {
                         case ENABLED_ACTIVITYIDS_CHANGED:
@@ -267,7 +269,8 @@ public class DynamicTest extends UITestCase {
         final IActivity activity_to_listen = activityManager
                 .getActivity("org.eclipse.activity18"); //$NON-NLS-1$
         activity_to_listen.addActivityListener(new IActivityListener() {
-            public void activityChanged(ActivityEvent activityEvent) {
+            @Override
+			public void activityChanged(ActivityEvent activityEvent) {
                 switch (listenerType) {
                 case DEFINED_CHANGED:
                     assertTrue(activityEvent.hasDefinedChanged());
@@ -376,7 +379,8 @@ public class DynamicTest extends UITestCase {
                 .getCategory((String) activityManager.getDefinedCategoryIds()
                         .toArray()[0]);
         category_to_listen.addCategoryListener(new ICategoryListener() {
-            public void categoryChanged(CategoryEvent categoryEvent) {
+            @Override
+			public void categoryChanged(CategoryEvent categoryEvent) {
                 switch (listenerType) {
                 case DEFINED_CHANGED:
                     assertTrue(categoryEvent.hasDefinedChanged());
@@ -459,6 +463,7 @@ public class DynamicTest extends UITestCase {
 		final boolean[] registryChanged = new boolean[] { false, false };
 		activity.addActivityListener(new IActivityListener() {
 
+			@Override
 			public void activityChanged(ActivityEvent activityEvent) {
 				registryChanged[0] = true;
 
@@ -466,6 +471,7 @@ public class DynamicTest extends UITestCase {
 		});
 		category.addCategoryListener(new ICategoryListener() {
 
+			@Override
 			public void categoryChanged(CategoryEvent categoryEvent) {
 				System.err.println("categoryChanged");
 				registryChanged[1] = true;

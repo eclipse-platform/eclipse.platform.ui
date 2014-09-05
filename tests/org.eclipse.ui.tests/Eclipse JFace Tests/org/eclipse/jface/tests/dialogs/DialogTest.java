@@ -91,6 +91,7 @@ public class DialogTest extends TestCase {
 			super((Shell) null);
 		}
 
+		@Override
 		protected Control createContents(Composite parent) {
 			Control contents = super.createContents(parent);
 			// explicitly layout the button prior to the shell being realized
@@ -102,6 +103,7 @@ public class DialogTest extends TestCase {
 		/**
 		 * Overridden to allow it to be invoked locally.
 		 */
+		@Override
 		protected Button getButton(int id) {
 			return super.getButton(id);
 		}

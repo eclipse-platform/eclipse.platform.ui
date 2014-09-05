@@ -39,6 +39,7 @@ public class ToggleContextHandler extends AbstractHandler implements
 	 * 
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String contextId = event.getParameter(TOGGLE_ID);
 		IWorkbenchWindow window = HandlerUtil
@@ -73,6 +74,7 @@ public class ToggleContextHandler extends AbstractHandler implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.menus.UIElement, java.util.Map)
 	 */
+	@Override
 	public void updateElement(UIElement element, Map parameters) {
 
 		// the checked state depends on if we have an activation for that

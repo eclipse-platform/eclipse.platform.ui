@@ -43,6 +43,7 @@ public class DynamicItem extends CompoundContributionItem {
 
 	private void makeActions() {
 		action1 = new Action() {
+			@Override
 			public void run() {
 				showMessage("Dynamic Item 1 executed");
 			}
@@ -53,6 +54,7 @@ public class DynamicItem extends CompoundContributionItem {
 				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 
 		action2 = new Action() {
+			@Override
 			public void run() {
 				showMessage("Dynamic Item 2 executed");
 			}
@@ -68,6 +70,7 @@ public class DynamicItem extends CompoundContributionItem {
 	 * 
 	 * @see org.eclipse.ui.actions.CompoundContributionItem#getContributionItems()
 	 */
+	@Override
 	protected IContributionItem[] getContributionItems() {
 		IContributionItem[] items = { new ActionContributionItem(action1),
 				new ActionContributionItem(action2) };

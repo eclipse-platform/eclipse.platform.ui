@@ -39,6 +39,7 @@ public class MarkerTesterTest extends UITestCase {
 		super(testName);
 	}
 
+	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		project = ResourcesPlugin.getWorkspace().getRoot().getProject("tests");
@@ -49,6 +50,7 @@ public class MarkerTesterTest extends UITestCase {
 			project.open(null);
 	}
 
+	@Override
 	protected void doTearDown() throws Exception {
 		super.doTearDown();
 		if (project.exists())

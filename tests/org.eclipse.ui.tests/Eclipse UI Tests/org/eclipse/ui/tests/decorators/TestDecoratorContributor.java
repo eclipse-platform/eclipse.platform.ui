@@ -36,7 +36,8 @@ public class TestDecoratorContributor implements ILabelDecorator {
     /*
      * @see ILabelDecorator#decorateText(String, Object)
      */
-    public String decorateText(String text, Object element) {
+    @Override
+	public String decorateText(String text, Object element) {
         //Check that the element is adapted to IResource
         Assert.isTrue(element instanceof IResource);
         return text + DECORATOR_SUFFIX;
@@ -45,7 +46,8 @@ public class TestDecoratorContributor implements ILabelDecorator {
     /*
      * @see ILabelDecorator#decorateImage(Image, Object)
      */
-    public Image decorateImage(Image image, Object element) {
+    @Override
+	public Image decorateImage(Image image, Object element) {
         Assert.isTrue(element instanceof IResource);
         return image;
     }
@@ -53,14 +55,16 @@ public class TestDecoratorContributor implements ILabelDecorator {
     /*
      * @see IBaseLabelProvider#addListener(ILabelProviderListener)
      */
-    public void addListener(ILabelProviderListener listener) {
+    @Override
+	public void addListener(ILabelProviderListener listener) {
         listeners.add(listener);
     }
 
     /*
      * @see IBaseLabelProvider#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         contributor = null;
         listeners = new HashSet();
     }
@@ -68,14 +72,16 @@ public class TestDecoratorContributor implements ILabelDecorator {
     /*
      * @see IBaseLabelProvider#isLabelProperty(Object, String)
      */
-    public boolean isLabelProperty(Object element, String property) {
+    @Override
+	public boolean isLabelProperty(Object element, String property) {
         return false;
     }
 
     /*
      * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
      */
-    public void removeListener(ILabelProviderListener listener) {
+    @Override
+	public void removeListener(ILabelProviderListener listener) {
         listeners.remove(listener);
     }
 

@@ -22,15 +22,18 @@ import org.eclipse.ui.part.EditorPart;
 
 public class EditorWithInputException extends EditorPart {
 
-    public void doSave(IProgressMonitor monitor) {
+    @Override
+	public void doSave(IProgressMonitor monitor) {
 
     }
 
-    public void doSaveAs() {
+    @Override
+	public void doSaveAs() {
 
     }
 
-    public void init(IEditorSite site, IEditorInput input)
+    @Override
+	public void init(IEditorSite site, IEditorInput input)
             throws PartInitException {
         if (!(input instanceof IFileEditorInput))
             throw new PartInitException("Invalid Input: Must be IFileEditorInput");
@@ -38,26 +41,31 @@ public class EditorWithInputException extends EditorPart {
         setInput(input);
     }
 
-    public boolean isDirty() {
+    @Override
+	public boolean isDirty() {
         return false;
     }
 
-    public boolean isSaveAsAllowed() {
+    @Override
+	public boolean isSaveAsAllowed() {
         return false;
     }
     
-    public IEditorInput getEditorInput() {
+    @Override
+	public IEditorInput getEditorInput() {
         IllegalStateException exception = new IllegalStateException("This exception was thrown intentionally as part of an error handling test");
         throw exception;
     }
 
-    public void createPartControl(Composite parent) {
+    @Override
+	public void createPartControl(Composite parent) {
         Label testLabel = new Label(parent, SWT.NONE);
         
         testLabel.setText("This throws an exception in getEditorInput");
     }
 
-    public void setFocus() {
+    @Override
+	public void setFocus() {
 
     }
 

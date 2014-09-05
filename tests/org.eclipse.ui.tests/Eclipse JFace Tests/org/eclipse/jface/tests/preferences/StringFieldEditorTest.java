@@ -31,6 +31,7 @@ public class StringFieldEditorTest extends TestCase {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -109,6 +110,7 @@ public class StringFieldEditorTest extends TestCase {
 		store.setValue("foo", "???");
 		assertEquals("???", store.getString("foo"));
 		IPropertyChangeListener listener = new  IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				assertEquals("foo", event.getProperty());
 				assertEquals("???", event.getOldValue());
@@ -120,6 +122,7 @@ public class StringFieldEditorTest extends TestCase {
 		store.removePropertyChangeListener(listener);
 		assertEquals("bar", store.getString("foo"));
 		IPropertyChangeListener failingListener = new  IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				// Make sure no event is fired to this listener
 				fail("1.0");
@@ -135,6 +138,7 @@ public class StringFieldEditorTest extends TestCase {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}

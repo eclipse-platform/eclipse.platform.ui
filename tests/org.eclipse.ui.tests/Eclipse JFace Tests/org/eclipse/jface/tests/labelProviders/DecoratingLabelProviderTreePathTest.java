@@ -42,6 +42,7 @@ public class DecoratingLabelProviderTreePathTest extends
 		 * 
 		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 		 */
+		@Override
 		public Color getForeground(Object element) {
 			return foreground;
 		}
@@ -51,6 +52,7 @@ public class DecoratingLabelProviderTreePathTest extends
 		 * 
 		 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 		 */
+		@Override
 		public Color getBackground(Object element) {
 			return background;
 		}
@@ -60,10 +62,12 @@ public class DecoratingLabelProviderTreePathTest extends
 		 * 
 		 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 		 */
+		@Override
 		public Font getFont(Object element) {
 			return font;
 		}
 
+		@Override
 		public void updateLabel(ViewerLabel label, TreePath elementPath) {
 			label.setText(getText(elementPath.getLastSegment()));
 		}
@@ -84,6 +88,7 @@ public class DecoratingLabelProviderTreePathTest extends
 	 * 
 	 * @see org.eclipse.jface.tests.labelProviders.DecoratingLabelProviderTreeTest#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 
 		initializeColors(parent);

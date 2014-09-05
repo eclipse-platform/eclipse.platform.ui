@@ -40,6 +40,7 @@ public class LifecycleView extends ViewPart {
 	 * 
 	 * @see org.eclipse.ui.part.ViewPart#init(org.eclipse.ui.IViewSite)
 	 */
+	@Override
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
 	}
@@ -49,6 +50,7 @@ public class LifecycleView extends ViewPart {
 	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 
 		IActionBars actionBars = getViewSite().getActionBars();
@@ -59,6 +61,7 @@ public class LifecycleView extends ViewPart {
 		((ToolBarManager) toolBarManager).getControl().addDisposeListener(
 				new DisposeListener() {
 
+					@Override
 					public void widgetDisposed(DisposeEvent e) {
 						callWidgetDispose = true;
 					}
@@ -70,6 +73,7 @@ public class LifecycleView extends ViewPart {
 	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 	}
 
@@ -78,6 +82,7 @@ public class LifecycleView extends ViewPart {
 	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IWorkbenchLocationService wls = getSite()
 				.getService(IWorkbenchLocationService.class);

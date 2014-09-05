@@ -38,9 +38,11 @@ public class ModalContextCrashTest extends TestCase {
 
 	private static final class CrashingRunnable implements IRunnableWithProgress, IThreadListener {
 
+		@Override
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		}
 
+		@Override
 		public void threadChange(Thread thread) {
 			// only throw the exception in the finally block 
 			// of ModalContextThread

@@ -38,11 +38,14 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  */
 public class TestBug98621 extends TestCase {
 	class TransferTestOperation extends WorkspaceModifyOperation implements IThreadListener {
+		@Override
 		public void execute(final IProgressMonitor pm) {
 			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					try {
 						workspace.run(new IWorkspaceRunnable() {
+							@Override
 							public void run(IProgressMonitor mon) {
 								//
 							}
@@ -60,6 +63,7 @@ public class TestBug98621 extends TestCase {
 			}
 		}
 
+		@Override
 		public void threadChange(Thread thread) {
 			Platform.getJobManager().transferRule(workspace.getRoot(), thread);
 		}
@@ -80,6 +84,7 @@ public class TestBug98621 extends TestCase {
 	 */
 	public void testBug() throws CoreException {
 		workspace.run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
 				try {

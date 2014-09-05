@@ -64,6 +64,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		super(testName);
 	}
 	
+	@Override
 	public String queryOverwrite(String pathString) {
 		return "";
 	}
@@ -274,7 +275,8 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		
 	}
 
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		project = FileUtil.createProject("Export" + getName());
 		File destination = 
@@ -288,6 +290,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 	    excludeProjectPath = false;
 	}
     
+	@Override
 	protected void doTearDown() throws Exception {
         super.doTearDown();
         // delete exported data

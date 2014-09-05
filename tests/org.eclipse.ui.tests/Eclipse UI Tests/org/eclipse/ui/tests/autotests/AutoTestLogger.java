@@ -50,7 +50,8 @@ public class AutoTestLogger extends AbstractTestLogger {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.result.AutoTestResult#reportResult(java.lang.String, java.lang.String)
      */
-    public void reportResult(String testName, TestResult result) throws Throwable {
+    @Override
+	public void reportResult(String testName, TestResult result) throws Throwable {
         TestResultFilter expectedResult = expectedResults.get(testName);
         
         if (expectedResult == null) {

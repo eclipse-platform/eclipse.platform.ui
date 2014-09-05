@@ -34,7 +34,8 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
         super(testName);
     }
 
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
         super.doSetUp();
         fWindow = openTestWindow();
     }
@@ -197,28 +198,32 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
     /**
      * @see IPageListener#pageActivated(IWorkbenchPage)
      */
-    public void pageActivated(IWorkbenchPage page) {
+    @Override
+	public void pageActivated(IWorkbenchPage page) {
         pageEventReceived = true;
     }
 
     /**
      * @see IPageListener#pageClosed(IWorkbenchPage)
      */
-    public void pageClosed(IWorkbenchPage page) {
+    @Override
+	public void pageClosed(IWorkbenchPage page) {
         pageEventReceived = true;
     }
 
     /**
      * @see IPageListener#pageOpened(IWorkbenchPage)
      */
-    public void pageOpened(IWorkbenchPage page) {
+    @Override
+	public void pageOpened(IWorkbenchPage page) {
         pageEventReceived = true;
     }
 
     /**
      * @see IPerspectiveListener#perspectiveActivated(IWorkbenchPage, IPerspectiveDescriptor)
      */
-    public void perspectiveActivated(IWorkbenchPage page,
+    @Override
+	public void perspectiveActivated(IWorkbenchPage page,
             IPerspectiveDescriptor perspective) {
         perspEventReceived = true;
     }
@@ -226,7 +231,8 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
     /**
      * @see IPerspectiveListener#perspectiveChanged(IWorkbenchPage, IPerspectiveDescriptor, String)
      */
-    public void perspectiveChanged(IWorkbenchPage page,
+    @Override
+	public void perspectiveChanged(IWorkbenchPage page,
             IPerspectiveDescriptor perspective, String changeId) {
         perspEventReceived = true;
     }

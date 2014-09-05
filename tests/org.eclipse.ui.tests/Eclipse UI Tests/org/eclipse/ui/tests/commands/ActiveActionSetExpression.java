@@ -38,6 +38,7 @@ public class ActiveActionSetExpression extends Expression {
 	 * 
 	 * @see org.eclipse.core.expressions.Expression#collectExpressionInfo(org.eclipse.core.expressions.ExpressionInfo)
 	 */
+	@Override
 	public void collectExpressionInfo(ExpressionInfo info) {
 		for (int i = 0; i < expressionInfo.length; i++) {
 			info.addVariableNameAccess(expressionInfo[i]);
@@ -49,6 +50,7 @@ public class ActiveActionSetExpression extends Expression {
 	 * 
 	 * @see org.eclipse.core.expressions.Expression#evaluate(org.eclipse.core.expressions.IEvaluationContext)
 	 */
+	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) {
 		final Object variable = context
 				.getVariable(ISources.ACTIVE_ACTION_SETS_NAME);

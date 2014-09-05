@@ -38,6 +38,7 @@ public class RadioStateTest extends UITestCase {
 		super(testName);
 	}
 
+	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		commandService = fWorkbench
@@ -83,12 +84,18 @@ public class RadioStateTest extends UITestCase {
 			super(serviceLocator);
 		}
 
+		@Override
 		public void setDisabledIcon(ImageDescriptor desc) {}
+		@Override
 		public void setHoverIcon(ImageDescriptor desc) {}
+		@Override
 		public void setIcon(ImageDescriptor desc) {}
+		@Override
 		public void setText(String text) {}
+		@Override
 		public void setTooltip(String text) {}
 
+		@Override
 		public void setChecked(boolean checked) {
 			this.checked = checked;
 		}

@@ -40,7 +40,8 @@ public class ExtendedTextSelection extends TextSelection implements IAdaptable {
     /*
      * @see IAdaptable#getAdapter(Class)
      */
-    public Object getAdapter(Class adapter) {
+    @Override
+	public Object getAdapter(Class adapter) {
         if (adapter == IActionFilter.class) {
             return filter;
         }

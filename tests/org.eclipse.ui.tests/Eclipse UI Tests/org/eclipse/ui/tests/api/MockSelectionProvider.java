@@ -44,21 +44,24 @@ public class MockSelectionProvider implements ISelectionProvider {
     /**
      * @see ISelectionProvider#addSelectionChangedListener(ISelectionChangedListener)
      */
-    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+    @Override
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
         listeners.add(listener);
     }
 
     /**
      * @see ISelectionProvider#getSelection()
      */
-    public ISelection getSelection() {
+    @Override
+	public ISelection getSelection() {
         return StructuredSelection.EMPTY;
     }
 
     /**
      * @see ISelectionProvider#removeSelectionChangedListener(ISelectionChangedListener)
      */
-    public void removeSelectionChangedListener(
+    @Override
+	public void removeSelectionChangedListener(
             ISelectionChangedListener listener) {
         listeners.remove(listener);
     }
@@ -66,7 +69,8 @@ public class MockSelectionProvider implements ISelectionProvider {
     /**
      * @see ISelectionProvider#setSelection(ISelection)
      */
-    public void setSelection(ISelection selection) {
+    @Override
+	public void setSelection(ISelection selection) {
     }
 }
 

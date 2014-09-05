@@ -40,6 +40,7 @@ public class CompositeLabelProviderTableTest extends CompositeLabelProviderTest 
 		 * 
 		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 		 */
+		@Override
 		public Color getForeground(Object element) {
 			return foreground;
 		}
@@ -49,6 +50,7 @@ public class CompositeLabelProviderTableTest extends CompositeLabelProviderTest 
 		 * 
 		 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 		 */
+		@Override
 		public Color getBackground(Object element) {
 			return background;
 		}
@@ -59,6 +61,7 @@ public class CompositeLabelProviderTableTest extends CompositeLabelProviderTest 
 		 * @see org.eclipse.jface.viewers.IViewerLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel,
 		 *      java.lang.Object)
 		 */
+		@Override
 		public void updateLabel(ViewerLabel label, Object element) {
 			label.setText(getText(element));
 		}
@@ -68,6 +71,7 @@ public class CompositeLabelProviderTableTest extends CompositeLabelProviderTest 
 		 * 
 		 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 		 */
+		@Override
 		public Font getFont(Object element) {
 			return font;
 		}
@@ -87,6 +91,7 @@ public class CompositeLabelProviderTableTest extends CompositeLabelProviderTest 
 	 * 
 	 * @see org.eclipse.jface.tests.viewers.ViewerTestCase#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		
 		initializeColors(parent);

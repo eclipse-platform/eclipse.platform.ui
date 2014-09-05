@@ -49,7 +49,8 @@ public class ViewDragSource extends TestDragSource {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.dnd.TestDragSource#getName()
      */
-    public String toString() {
+    @Override
+	public String toString() {
         IViewDescriptor desc = WorkbenchPlugin.getDefault().getViewRegistry()
                 .find(targetPart);
         String title = desc.getLabel();
@@ -68,7 +69,8 @@ public class ViewDragSource extends TestDragSource {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.dnd.TestDragSource#drag(org.eclipse.swt.graphics.Point)
      */
-    public void drag(TestDropLocation target) {
+    @Override
+	public void drag(TestDropLocation target) {
         IViewPart part = getPart();
 
         WorkbenchPage page = getPage();

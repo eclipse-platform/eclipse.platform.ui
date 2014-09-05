@@ -28,11 +28,13 @@ public class DummyService implements INestable {
 		return active;
 	}
 	
+	@Override
 	public void activate() {
 		active = true;
 	}
 
 	
+	@Override
 	public void deactivate() {
 		active = false;
 	}

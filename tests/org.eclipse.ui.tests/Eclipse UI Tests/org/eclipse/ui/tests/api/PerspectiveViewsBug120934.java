@@ -29,6 +29,7 @@ public class PerspectiveViewsBug120934 implements IPerspectiveFactory {
 	 * 
 	 * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
 	 */
+	@Override
 	public void createInitialLayout(IPageLayout layout) {
 		layout.addView(IPageLayout.ID_BOOKMARKS, IPageLayout.RIGHT, 0.25f,
 				IPageLayout.ID_EDITOR_AREA);

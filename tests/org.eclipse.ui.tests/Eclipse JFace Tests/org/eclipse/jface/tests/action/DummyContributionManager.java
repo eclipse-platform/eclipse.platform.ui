@@ -18,7 +18,8 @@ import org.eclipse.jface.action.ContributionManager;
  * Does not populate any widgets.
  */
 class DummyContributionManager extends ContributionManager {
-    public void update(boolean force) {
+    @Override
+	public void update(boolean force) {
         // ignore
     }
 }

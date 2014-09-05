@@ -23,7 +23,8 @@ public class TestColorFactory implements IColorFactory {
     /* (non-Javadoc)
      * @see org.eclipse.ui.themes.IColorFactory#createColor()
      */
-    public RGB createColor() {
+    @Override
+	public RGB createColor() {
         return RGB;
     }
 

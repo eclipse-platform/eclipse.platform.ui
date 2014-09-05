@@ -15,12 +15,14 @@ import org.eclipse.ui.part.ViewPart;
 
 public class ViewWithCreateControlsException extends ViewPart {
 
-    public void createPartControl(Composite parent) {
+    @Override
+	public void createPartControl(Composite parent) {
         throw new RuntimeException("This exception was thrown intentionally as part of an error handling test");
 
     }
 
-    public void setFocus() {
+    @Override
+	public void setFocus() {
 
     }
 

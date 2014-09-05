@@ -31,21 +31,24 @@ public class IEditorSiteTest extends IWorkbenchPartSiteTest {
     /**
      * @see IWorkbenchPartSiteTest#getTestPartName()
      */
-    protected String getTestPartName() throws Throwable {
+    @Override
+	protected String getTestPartName() throws Throwable {
         return MockEditorPart.NAME;
     }
 
     /**
      * @see IWorkbenchPartSiteTest#getTestPartId()
      */
-    protected String getTestPartId() throws Throwable {
+    @Override
+	protected String getTestPartId() throws Throwable {
         return MockEditorPart.ID1;
     }
 
     /**
      * @see IWorkbenchPartSiteTest#createTestPart(IWorkbenchPage)
      */
-    protected IWorkbenchPart createTestPart(IWorkbenchPage page)
+    @Override
+	protected IWorkbenchPart createTestPart(IWorkbenchPage page)
             throws Throwable {
         IProject proj = FileUtil.createProject("createTestPart");
         IFile file = FileUtil.createFile("test1.mock1", proj);

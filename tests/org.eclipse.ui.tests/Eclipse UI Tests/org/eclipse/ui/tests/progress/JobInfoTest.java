@@ -49,6 +49,7 @@ public class JobInfoTest extends TestCase {
 	/**
 	 * @throws java.lang.Exception
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		int counter = 0;
 		counter = createAndAddJobInfos(false, false, ABOUT_TO_RUN, counter);
@@ -197,6 +198,7 @@ public class JobInfoTest extends TestCase {
 			super(enclosingJob);
 		}
 
+		@Override
 		public String toString() {
 			return "ExtendedJobInfo [getName()=" + getJob().getName() + ", getPriority()="
 						+ getJob().getPriority() + ", getState()=" + getJob().getState()
@@ -216,6 +218,7 @@ public class JobInfoTest extends TestCase {
 			super(name);
 		}
 
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			throw new UnsupportedOperationException("Not implemented, because of just a unit test");
 		}

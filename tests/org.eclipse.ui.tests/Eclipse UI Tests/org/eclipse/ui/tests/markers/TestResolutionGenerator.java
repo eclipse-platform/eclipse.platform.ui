@@ -31,6 +31,7 @@ public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 
 	private class TestMarkerResolution extends WorkbenchMarkerResolution {
 
+		@Override
 		public IMarker[] findOtherMarkers(IMarker[] markers) {
 			return markers;
 		}
@@ -40,6 +41,7 @@ public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 		 * 
 		 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
 		 */
+		@Override
 		public String getDescription() {
 			return "A test of the new style resolution";
 		}
@@ -49,6 +51,7 @@ public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 		 * 
 		 * @see org.eclipse.ui.IMarkerResolution2#getImage()
 		 */
+		@Override
 		public Image getImage() {
 			return null;
 		}
@@ -58,6 +61,7 @@ public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 		 * 
 		 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 		 */
+		@Override
 		public String getLabel() {
 			return "3.2 Multi resolution";
 		}
@@ -67,6 +71,7 @@ public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 		 * 
 		 * @see org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
 		 */
+		@Override
 		public void run(IMarker marker) {
 			try {
 				System.out.println(marker
@@ -82,6 +87,7 @@ public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 		 * @see org.eclipse.ui.views.markers.WorkbenchMarkerResolution#run(org.eclipse.core.resources.IMarker[],
 		 *      org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public void run(IMarker[] markers, IProgressMonitor monitor) {
 			for (int i = 0; i < markers.length; i++) {
 				IMarker marker = markers[i];
@@ -105,6 +111,7 @@ public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 		 * 
 		 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 		 */
+		@Override
 		public String getLabel() {
 			return "3.1 Compatibility Resolution";
 		}
@@ -114,6 +121,7 @@ public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 		 * 
 		 * @see org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
 		 */
+		@Override
 		public void run(IMarker marker) {
 			try {
 				System.out.println(marker
@@ -131,6 +139,7 @@ public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 	 * 
 	 * @see org.eclipse.ui.IMarkerResolutionGenerator2#hasResolutions(org.eclipse.core.resources.IMarker)
 	 */
+	@Override
 	public boolean hasResolutions(IMarker marker) {
 		return true;
 	}
@@ -140,6 +149,7 @@ public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 	 * 
 	 * @see org.eclipse.ui.IMarkerResolutionGenerator#getResolutions(org.eclipse.core.resources.IMarker)
 	 */
+	@Override
 	public IMarkerResolution[] getResolutions(IMarker marker) {
 		IMarkerResolution[] resolutions = new IMarkerResolution[2];
 

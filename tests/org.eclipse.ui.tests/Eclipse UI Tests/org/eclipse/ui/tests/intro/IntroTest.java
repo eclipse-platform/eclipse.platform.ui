@@ -233,7 +233,8 @@ public class IntroTest extends UITestCase {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
      */
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
         super.doSetUp();
         
         // these tests rely on the 3.2 behavior for sticky views
@@ -251,7 +252,8 @@ public class IntroTest extends UITestCase {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
      */
-    protected void doTearDown() throws Exception {
+    @Override
+	protected void doTearDown() throws Exception {
         super.doTearDown();
         Workbench.getInstance().setIntroDescriptor(oldDesc);
     }

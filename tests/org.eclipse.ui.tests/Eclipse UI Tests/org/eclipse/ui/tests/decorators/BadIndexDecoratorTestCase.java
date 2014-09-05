@@ -30,7 +30,8 @@ public class BadIndexDecoratorTestCase extends DecoratorEnablementTestCase {
 	/**
      * Sets up the hierarchy.
      */
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
         super.doSetUp();
         createTestFile();
         showNav();

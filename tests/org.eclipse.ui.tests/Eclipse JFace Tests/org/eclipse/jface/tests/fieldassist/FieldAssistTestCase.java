@@ -125,6 +125,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		event.keyCode = SWT.ARROW_LEFT;
 		window.getDisplay().post(event);
 		window.getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				closeFieldAssistWindow();
 			}

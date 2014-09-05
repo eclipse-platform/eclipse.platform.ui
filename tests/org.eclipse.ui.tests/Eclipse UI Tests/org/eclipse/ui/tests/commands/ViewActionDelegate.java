@@ -24,16 +24,19 @@ public class ViewActionDelegate implements IViewActionDelegate {
 
 	private IViewPart viewPart;
 
+	@Override
 	public void init(IViewPart view) {
 		viewPart = view;
 	}
 
+	@Override
 	public void run(IAction action) {
 		if (viewPart instanceof MenuContributionHarness) {
 			((MenuContributionHarness)viewPart).updateCount();
 		}
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// don't care
 	}

@@ -35,7 +35,8 @@ public class DeclaredProgrammaticFactoryForToolbarVisibilityTest extends Extensi
 
     public static final String TEST_MENU_MANAGER_WITH_ALWAYS_TRUE_VISIBLE_WHEN = "TestMenuManagerWithAlwaysTrueVisibleWhen"; //$NON-NLS-1$
 
-    public void createContributionItems(IServiceLocator serviceLocator, IContributionRoot additions) {
+    @Override
+	public void createContributionItems(IServiceLocator serviceLocator, IContributionRoot additions) {
         addContribution(additions, new TestAction(TEST_ITEM_WITHOUT_VISIBLE_WHEN), null);
         addContribution(additions, new TestAction(TEST_ITEM_WITH_ALWAYS_TRUE_VISIBLE_WHEN), AlwaysEnabledExpression.INSTANCE);
         addContribution(additions, new TestAction(TEST_ITEM_WITH_ALWAYS_FALSE_VISIBLE_WHEN), new AlwaysDisabledExpression());
@@ -83,7 +84,8 @@ public class DeclaredProgrammaticFactoryForToolbarVisibilityTest extends Extensi
          * org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets
          * .ToolBar, int)
          */
-        public void fill(ToolBar parent, int index) {
+        @Override
+		public void fill(ToolBar parent, int index) {
             actionContributionItem.fill(parent, index);
         }
 
@@ -100,7 +102,8 @@ public class DeclaredProgrammaticFactoryForToolbarVisibilityTest extends Extensi
     }
 
     private static class AlwaysDisabledExpression extends Expression {
-        public EvaluationResult evaluate(IEvaluationContext context) {
+        @Override
+		public EvaluationResult evaluate(IEvaluationContext context) {
             return EvaluationResult.FALSE;
         }
     }

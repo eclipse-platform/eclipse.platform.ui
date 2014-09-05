@@ -46,6 +46,7 @@ public class ContextPage extends Page {
 	/*
 	 * (non-Javadoc) Method declared on IPage.
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		// Message in default page of Outline should have margins
 		pgComp = new Composite(parent, SWT.NULL);
@@ -58,6 +59,7 @@ public class ContextPage extends Page {
 	/*
 	 * (non-Javadoc) Method declared on IPage.
 	 */
+	@Override
 	public Control getControl() {
 		return pgComp;
 	}
@@ -65,6 +67,7 @@ public class ContextPage extends Page {
 	/**
 	 * Sets focus to a part in the page.
 	 */
+	@Override
 	public void setFocus() {
 		// important to give focus to the composite rather than the label
 		// as the composite will actually take focus (though hidden),
@@ -89,6 +92,7 @@ public class ContextPage extends Page {
 	 * 
 	 * @see org.eclipse.ui.part.Page#init(org.eclipse.ui.part.IPageSite)
 	 */
+	@Override
 	public void init(IPageSite pageSite) {
 		super.init(pageSite);
 		IContextService localService = getSite().getService(

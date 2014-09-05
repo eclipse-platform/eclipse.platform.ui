@@ -38,6 +38,7 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 		super(name);
 	}
 
+	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		history = PlatformUI.getWorkbench().getOperationSupport().getOperationHistory();
@@ -67,6 +68,7 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 
 	}
 
+	@Override
 	protected void doTearDown() throws Exception {
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, true);
 		super.doTearDown();
@@ -79,7 +81,9 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 	
 	public void testMatchingContext() {
 		IUndoContext newContext = new IUndoContext() {
+			@Override
 			public String getLabel() { return "Matching Test Context"; }
+			@Override
 			public boolean matches(IUndoContext otherContext) { return false; }
 		};
 		assertFalse(newContext.matches(context));

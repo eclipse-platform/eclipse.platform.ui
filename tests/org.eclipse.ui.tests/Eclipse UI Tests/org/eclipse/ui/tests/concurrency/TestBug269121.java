@@ -58,6 +58,7 @@ public class TestBug269121 extends TestCase {
 	public void testBug() throws InterruptedException,
 			InvocationTargetException {
 		Job job = new UIJob("UI job") {
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				return Status.OK_STATUS;
 			};
@@ -65,6 +66,7 @@ public class TestBug269121 extends TestCase {
 		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		final int[] status = new int[] { -1 };
 		WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
+			@Override
 			protected void execute(IProgressMonitor monitor) {
 				status[0] = TestBarrier.STATUS_DONE;
 			}
@@ -72,6 +74,7 @@ public class TestBug269121 extends TestCase {
 		final ProgressMonitorDialog dialog = new ProgressMonitorDialog(
 				new Shell());
 		Job statusJob = new Job("Checking for deadlock") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
@@ -81,6 +84,7 @@ public class TestBug269121 extends TestCase {
 					// UILockListener.aboutToWait(Thread) without running the
 					// event loop so we can cancel the dialog to stop the test
 					dialog.getShell().getDisplay().syncExec(new Runnable() {
+						@Override
 						public void run() {
 							dialog.getProgressMonitor().setCanceled(true);
 						}

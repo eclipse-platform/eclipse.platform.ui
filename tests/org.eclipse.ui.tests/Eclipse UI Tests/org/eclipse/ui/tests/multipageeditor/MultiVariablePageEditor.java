@@ -39,6 +39,7 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 	 * Default with 2 pages, although they're on the same editor input and
 	 * they're the TextEditor.
 	 */
+	@Override
 	protected void createPages() {
 		try {
 			TextEditor section1 = new TextEditor();
@@ -58,10 +59,12 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 		}
 	}
 
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		// do nothing
 	}
 
+	@Override
 	public void doSaveAs() {
 		throw new UnsupportedOperationException(
 				"doSaveAs should not be called.");
@@ -72,6 +75,7 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 	 * 
 	 * @return false
 	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
@@ -81,6 +85,7 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 	 * 
 	 * @see org.eclipse.ui.part.MultiPageEditorPart#pageChange(int)
 	 */
+	@Override
 	protected void pageChange(int newPageIndex) {
 		super.pageChange(newPageIndex);
 		IEditorPart part = getEditor(newPageIndex);
@@ -145,6 +150,7 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 		return lastPage;
 	}
 	
+	@Override
 	public IEditorPart getEditor(int pageIndex) {
 		return super.getEditor(pageIndex);
 	}

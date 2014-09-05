@@ -34,12 +34,14 @@ public class ExtendedTextEditor extends TextEditor {
      * @param styles style bits
      * @return the source viewer
      */
-    protected ISourceViewer createSourceViewer(Composite parent,
+    @Override
+	protected ISourceViewer createSourceViewer(Composite parent,
             IVerticalRuler ruler, int styles) {
         return new ExtendedSourceViewer(parent, ruler, styles);
     }
 
-    public boolean isDirty() {
+    @Override
+	public boolean isDirty() {
         return false;
     }
 

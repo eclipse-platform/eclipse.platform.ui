@@ -31,6 +31,7 @@ public class StandaloneViewPerspective implements IPerspectiveFactory {
 		// do nothing
 	}
 
+	@Override
 	public void createInitialLayout(IPageLayout layout) {
 		layout.setEditorAreaVisible(true);
 

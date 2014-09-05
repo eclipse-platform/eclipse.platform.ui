@@ -33,6 +33,7 @@ public class ListenerRemovalTestCase extends UITestCase {
 			super();
 		}
 
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			listened = true;
 		}

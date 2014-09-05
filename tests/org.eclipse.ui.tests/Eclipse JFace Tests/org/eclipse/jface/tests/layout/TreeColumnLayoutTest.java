@@ -37,6 +37,7 @@ public class TreeColumnLayoutTest extends TestCase {
 		}
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		display = Display.getCurrent();
 		if (display == null) {
@@ -45,6 +46,7 @@ public class TreeColumnLayoutTest extends TestCase {
 		parent = new Shell(display, SWT.NONE);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		parent.dispose();
 	}

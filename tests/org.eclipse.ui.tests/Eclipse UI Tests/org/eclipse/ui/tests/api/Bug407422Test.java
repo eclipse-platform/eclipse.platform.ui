@@ -61,24 +61,32 @@ public class Bug407422Test extends UITestCase {
 
 		page.addPartListener(new IPartListener2() {
 
+			@Override
 			public void partVisible(IWorkbenchPartReference partRef) { }
 
+			@Override
 			public void partOpened(IWorkbenchPartReference partRef) {
 				openedParts.add(partRef);
 			}
 
+			@Override
 			public void partInputChanged(IWorkbenchPartReference partRef) {}
 
+			@Override
 			public void partHidden(IWorkbenchPartReference partRef) {}
 
+			@Override
 			public void partDeactivated(IWorkbenchPartReference partRef) {}
 
+			@Override
 			public void partClosed(IWorkbenchPartReference partRef) {
 				openedParts.remove(partRef);
 			}
 
+			@Override
 			public void partBroughtToTop(IWorkbenchPartReference partRef) { }
 
+			@Override
 			public void partActivated(IWorkbenchPartReference partRef) {}
 		});
 

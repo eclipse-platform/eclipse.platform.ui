@@ -46,6 +46,7 @@ public class Bug397302Tests {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.ISourceProviderListener#sourceChanged(int, java.lang.String, java.lang.Object)
 		 */
+		@Override
 		public void sourceChanged(int sourcePriority, String sourceName,
 				Object sourceValue) {
 			++callCount;
@@ -54,6 +55,7 @@ public class Bug397302Tests {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.ISourceProviderListener#sourceChanged(int, java.util.Map)
 		 */
+		@Override
 		public void sourceChanged(int sourcePriority, Map sourceValuesByName) {
 			++callCount;
 			}
@@ -64,6 +66,7 @@ public class Bug397302Tests {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.ISourceProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 			// do nothing
 		}
@@ -71,6 +74,7 @@ public class Bug397302Tests {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.ISourceProvider#getCurrentState()
 		 */
+		@Override
 		public Map getCurrentState() {
 			return Collections.EMPTY_MAP;
 		}
@@ -78,6 +82,7 @@ public class Bug397302Tests {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.ISourceProvider#getProvidedSourceNames()
 		 */
+		@Override
 		public String[] getProvidedSourceNames() {
 			return new String[] {};
 		}

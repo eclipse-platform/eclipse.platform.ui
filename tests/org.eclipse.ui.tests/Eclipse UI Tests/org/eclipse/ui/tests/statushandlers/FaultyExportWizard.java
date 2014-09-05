@@ -43,6 +43,7 @@ public class FaultyExportWizard extends Wizard implements IExportWizard {
 	 * 
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		return false;
 	}
@@ -53,10 +54,12 @@ public class FaultyExportWizard extends Wizard implements IExportWizard {
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench,
 	 *      org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("window title");
 	}
 
+	@Override
 	public void addPages() {
 		super.addPages();
 		addPage(new MyWizardPage("wizard"));
@@ -77,6 +80,7 @@ public class FaultyExportWizard extends Wizard implements IExportWizard {
 		 * 
 		 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 		 */
+		@Override
 		public void createControl(Composite parent) {
 			Composite page = new Composite(parent, SWT.NONE);
 			GridLayout pageLayout = new GridLayout();

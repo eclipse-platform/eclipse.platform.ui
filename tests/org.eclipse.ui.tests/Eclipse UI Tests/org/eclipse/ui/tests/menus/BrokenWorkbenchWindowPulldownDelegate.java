@@ -41,7 +41,8 @@ public final class BrokenWorkbenchWindowPulldownDelegate implements
     /**
      * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate2#getMenu(org.eclipse.swt.widgets.Menu)
      */
-    public Menu getMenu(Menu parent) {
+    @Override
+	public Menu getMenu(Menu parent) {
         if (throwMenu) {
             throwMenu = false;
             throw new ForcedException(
@@ -54,7 +55,8 @@ public final class BrokenWorkbenchWindowPulldownDelegate implements
     /**
      * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate#getMenu(org.eclipse.swt.widgets.Control)
      */
-    public Menu getMenu(Control parent) {
+    @Override
+	public Menu getMenu(Control parent) {
         if (throwControl) {
             throwControl = false;
             throw new ForcedException(
@@ -67,7 +69,8 @@ public final class BrokenWorkbenchWindowPulldownDelegate implements
     /**
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         if (menuControl != null)
             menuControl.dispose();
 
@@ -78,14 +81,16 @@ public final class BrokenWorkbenchWindowPulldownDelegate implements
     /**
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
      */
-    public void init(IWorkbenchWindow window) {
+    @Override
+	public void init(IWorkbenchWindow window) {
         // Do nothing.
     }
 
     /**
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
-    public void run(IAction action) {
+    @Override
+	public void run(IAction action) {
         // Do nothing.
     }
 
@@ -93,7 +98,8 @@ public final class BrokenWorkbenchWindowPulldownDelegate implements
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
      *      org.eclipse.jface.viewers.ISelection)
      */
-    public void selectionChanged(IAction action, ISelection selection) {
+    @Override
+	public void selectionChanged(IAction action, ISelection selection) {
         // Do nothing.
     }
 

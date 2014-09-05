@@ -28,7 +28,8 @@ public class PerspectiveWithMultiViewPlaceholdersInFolder extends PerspectiveWit
         // do nothing
     }
 
-    public void createInitialLayout(IPageLayout layout) {
+    @Override
+	public void createInitialLayout(IPageLayout layout) {
         IFolderLayout folder = layout.createFolder("folder", IPageLayout.LEFT, 0.5f, IPageLayout.ID_EDITOR_AREA);
         addPlaceholders(folder);
     }

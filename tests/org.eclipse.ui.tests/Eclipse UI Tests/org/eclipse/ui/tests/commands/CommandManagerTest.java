@@ -57,22 +57,26 @@ public final class CommandManagerTest extends UITestCase {
 		 */
 		private ExecutionEvent preExecuteEvent = null;
 
+		@Override
 		public final void notHandled(final String commandId,
 				final NotHandledException exception) {
 			notHandledId = commandId;
 			notHandledException = exception;
 		}
 
+		@Override
 		public final void postExecuteFailure(final String commandId,
 				final ExecutionException exception) {
 			// Do nothing.
 		}
 
+		@Override
 		public final void postExecuteSuccess(final String commandId,
 				final Object returnValue) {
 			// Do nothing
 		}
 
+		@Override
 		public final void preExecute(final String commandId,
 				final ExecutionEvent event) {
 			preExecuteId = commandId;

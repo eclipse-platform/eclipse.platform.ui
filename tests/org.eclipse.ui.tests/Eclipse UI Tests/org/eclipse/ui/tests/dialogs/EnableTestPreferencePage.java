@@ -77,7 +77,8 @@ public class EnableTestPreferencePage extends FieldEditorPreferencePage
     /**
      * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
      */
-    protected void createFieldEditors() {
+    @Override
+	protected void createFieldEditors() {
 
         String[][] labelsAndValues = new String[][] { { "Label 1", "Value 1" },
                 { "Label 2", "Value 2" } };
@@ -112,17 +113,20 @@ public class EnableTestPreferencePage extends FieldEditorPreferencePage
     /* (non-Javadoc)
      * Method declared on PreferencePage.
      */
-    protected Control createContents(Composite parent) {
+    @Override
+	protected Control createContents(Composite parent) {
         Composite composite = (Composite) super.createContents(parent);
         Button enabledButton = new Button(parent, SWT.PUSH);
         enabledButton.setText("Switch Enabled State");
 
         enabledButton.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 flipState();
             }
 
-            public void widgetDefaultSelected(SelectionEvent e) {
+            @Override
+			public void widgetDefaultSelected(SelectionEvent e) {
                 flipState();
             }
         });
@@ -132,7 +136,8 @@ public class EnableTestPreferencePage extends FieldEditorPreferencePage
     /**
      * @see org.eclipse.ui.IWorkbenchPreferencePage#init(IWorkbench)
      */
-    public void init(IWorkbench workbench) {
+    @Override
+	public void init(IWorkbench workbench) {
     }
 
 }

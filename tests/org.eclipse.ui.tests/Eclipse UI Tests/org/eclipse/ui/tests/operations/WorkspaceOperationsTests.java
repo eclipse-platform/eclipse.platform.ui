@@ -194,6 +194,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 			}
 		}
 
+		@Override
 		boolean isValid(IResource parent) throws CoreException {
 			IResource resource = getWorkspaceRoot().findMember(
 					parent.getFullPath().append(name));
@@ -235,6 +236,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 			}
 		}
 
+		@Override
 		boolean isValid(IResource parent) throws CoreException {
 			IResource resource = getWorkspaceRoot().findMember(
 					parent.getFullPath().append(name));
@@ -302,6 +304,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 
 		}
 
+		@Override
 		boolean isValid(IResource parent) throws CoreException {
 			IResource resource = getWorkspaceRoot().findMember(
 					parent.getFullPath().append(name));
@@ -352,6 +355,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		super(name);
 	}
 
+	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		// Suppress validation UI
@@ -415,6 +419,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 
 	}
 
+	@Override
 	protected void doTearDown() throws Exception {
 		testProject = (IProject) getWorkspaceRoot().findMember(
 				TEST_PROJECT_NAME);

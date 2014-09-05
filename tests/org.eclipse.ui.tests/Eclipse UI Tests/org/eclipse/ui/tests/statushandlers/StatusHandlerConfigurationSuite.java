@@ -31,6 +31,7 @@ public class StatusHandlerConfigurationSuite extends WorkbenchSessionTest {
 		System.out.println("initalization2");
 	}
 
+	@Override
 	protected Setup newSetup() throws SetupException {
 		Setup base = super.newSetup();
 		System.out.println(base);

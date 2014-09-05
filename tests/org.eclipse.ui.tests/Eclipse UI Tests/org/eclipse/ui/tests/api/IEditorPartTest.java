@@ -34,6 +34,7 @@ public class IEditorPartTest extends IWorkbenchPartTest {
 	/**
 	 * @see IWorkbenchPartTest#openPart(IWorkbenchPage)
 	 */
+	@Override
 	protected MockPart openPart(IWorkbenchPage page) throws Throwable {
 		IProject proj = FileUtil.createProject("IEditorPartTest");
 		IFile file = FileUtil.createFile("IEditorPartTest.txt", proj);
@@ -44,6 +45,7 @@ public class IEditorPartTest extends IWorkbenchPartTest {
 	/**
 	 * @see IWorkbenchPartTest#closePart(IWorkbenchPage, MockWorkbenchPart)
 	 */
+	@Override
 	protected void closePart(IWorkbenchPage page, MockPart part)
 			throws Throwable {
 		page.closeEditor((IEditorPart) part, true);

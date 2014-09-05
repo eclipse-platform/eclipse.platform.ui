@@ -49,13 +49,15 @@ public class MockReusableEditorPart extends MockWorkbenchPart implements IEditor
         super();
     }
 
-    public void createPartControl(Composite parent) {
+    @Override
+	public void createPartControl(Composite parent) {
         super.createPartControl(parent);
 
         final Button dirtyToggle = new Button(parent, SWT.CHECK);
         dirtyToggle.setText("Dirty");
         dirtyToggle.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 setDirty(dirtyToggle.getSelection());
             }
         });
@@ -64,7 +66,8 @@ public class MockReusableEditorPart extends MockWorkbenchPart implements IEditor
         final Button saveNeededToggle = new Button(parent, SWT.CHECK);
         saveNeededToggle.setText("Save on close");
         saveNeededToggle.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 setSaveNeeded(saveNeededToggle.getSelection());
             }
         });
@@ -73,7 +76,8 @@ public class MockReusableEditorPart extends MockWorkbenchPart implements IEditor
         final Button saveAsToggle = new Button(parent, SWT.CHECK);
         saveAsToggle.setText("Save as allowed");
         saveAsToggle.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 setSaveAsAllowed(saveAsToggle.getSelection());
             }
         });
@@ -82,7 +86,8 @@ public class MockReusableEditorPart extends MockWorkbenchPart implements IEditor
     /**
      * @see IEditorPart#doSave(IProgressMonitor)
      */
-    public void doSave(IProgressMonitor monitor) {
+    @Override
+	public void doSave(IProgressMonitor monitor) {
         setDirty(false);
         callTrace.add("doSave");
     }
@@ -90,34 +95,39 @@ public class MockReusableEditorPart extends MockWorkbenchPart implements IEditor
     /**
      * @see IEditorPart#doSaveAs()
      */
-    public void doSaveAs() {
+    @Override
+	public void doSaveAs() {
     }
 
     /**
      * @see IEditorPart#getEditorInput()
      */
-    public IEditorInput getEditorInput() {
+    @Override
+	public IEditorInput getEditorInput() {
         return input;
     }
 
     /**
      * @see IEditorPart#getEditorSite()
      */
-    public IEditorSite getEditorSite() {
+    @Override
+	public IEditorSite getEditorSite() {
         return (IEditorSite) getSite();
     }
 
     /**
      * @see org.eclipse.ui.ide.IGotoMarker
      */
-    public void gotoMarker(IMarker marker) {
+    @Override
+	public void gotoMarker(IMarker marker) {
         callTrace.add("gotoMarker");
     }
 
     /**
      * @see IEditorPart#init(IEditorSite, IEditorInput)
      */
-    public void init(IEditorSite site, IEditorInput input)
+    @Override
+	public void init(IEditorSite site, IEditorInput input)
             throws PartInitException {
         this.input = input;
         setSite(site);
@@ -128,7 +138,8 @@ public class MockReusableEditorPart extends MockWorkbenchPart implements IEditor
     /**
      * @see IEditorPart#isDirty()
      */
-    public boolean isDirty() {
+    @Override
+	public boolean isDirty() {
         callTrace.add("isDirty");
         return dirty;
     }
@@ -141,7 +152,8 @@ public class MockReusableEditorPart extends MockWorkbenchPart implements IEditor
     /**
      * @see IEditorPart#isSaveAsAllowed()
      */
-    public boolean isSaveAsAllowed() {
+    @Override
+	public boolean isSaveAsAllowed() {
         callTrace.add("isSaveAsAllowed");
         return saveAsAllowed;
     }
@@ -149,7 +161,8 @@ public class MockReusableEditorPart extends MockWorkbenchPart implements IEditor
     /**
      * @see IEditorPart#isSaveOnCloseNeeded()
      */
-    public boolean isSaveOnCloseNeeded() {
+    @Override
+	public boolean isSaveOnCloseNeeded() {
         callTrace.add("isSaveOnCloseNeeded");
         return saveNeeded;
     }
@@ -165,20 +178,23 @@ public class MockReusableEditorPart extends MockWorkbenchPart implements IEditor
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.api.MockWorkbenchPart#getActionBars()
      */
-    protected IActionBars getActionBars() {
+    @Override
+	protected IActionBars getActionBars() {
         return getEditorSite().getActionBars();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IShowEditorInput#showEditorInput(org.eclipse.ui.IEditorInput)
      */
-    public void showEditorInput(IEditorInput editorInput) {
+    @Override
+	public void showEditorInput(IEditorInput editorInput) {
         callTrace.add("showEditorInput");
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IReusableEditor#setInput(org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	public void setInput(IEditorInput input) {
 		this.input = input;
 		firePropertyChange(PROP_INPUT);

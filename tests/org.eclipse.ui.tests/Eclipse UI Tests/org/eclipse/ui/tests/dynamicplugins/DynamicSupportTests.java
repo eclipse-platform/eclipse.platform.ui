@@ -38,6 +38,7 @@ public class DynamicSupportTests extends TestCase {
 	}
 	
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		tracker = new ExtensionTracker();		
@@ -51,6 +52,7 @@ public class DynamicSupportTests extends TestCase {
 		o2 = new WeakReference(o1); 
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		((ExtensionTracker)tracker).close();

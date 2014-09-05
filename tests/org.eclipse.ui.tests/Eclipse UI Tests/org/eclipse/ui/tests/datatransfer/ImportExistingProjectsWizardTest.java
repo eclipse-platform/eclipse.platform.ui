@@ -105,6 +105,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		return DialogCheck.getShell();
 	}
 
+	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		originalRefreshSetting = ResourcesPlugin.getPlugin()
@@ -114,6 +115,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 				ResourcesPlugin.PREF_AUTO_REFRESH, true);
 	}
 
+	@Override
 	protected void doTearDown() throws Exception {
 		super.doTearDown();
 		IWorkspaceRoot wsRoot = ResourcesPlugin.getWorkspace().getRoot();
@@ -149,6 +151,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
 					new IRunnableWithProgress() {
+						@Override
 						public void run(IProgressMonitor monitor)
 								throws InterruptedException {
 							Job.getJobManager().join(

@@ -35,14 +35,17 @@ public class DynamicInvalidControlContributionTest extends DynamicTestCase {
 				.getId(), null);
 	}
 
+	@Override
 	protected String getExtensionId() {
 		return "menu.invalid.toolbar.contribution.bug371611";
 	}
 
+	@Override
 	protected String getExtensionPoint() {
 		return IWorkbenchRegistryConstants.PL_MENUS;
 	}
 
+	@Override
 	protected String getInstallLocation() {
 		return "data/org.eclipse.newInvalidMenuContribution1";
 	}

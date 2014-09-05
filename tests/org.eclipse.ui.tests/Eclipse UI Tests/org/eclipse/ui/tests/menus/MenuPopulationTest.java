@@ -87,6 +87,7 @@ public class MenuPopulationTest extends MenuTestCase {
 			
 			processEventsUntil(new Condition() {
 
+				@Override
 				public boolean compute() {
 					return window.getActivePage().getActivePart() != null;
 				}
@@ -127,6 +128,7 @@ public class MenuPopulationTest extends MenuTestCase {
 	public void testMenuServiceContribution() {
 		IMenuService ms = PlatformUI.getWorkbench().getService(IMenuService.class);
 		AbstractContributionFactory factory = new AbstractContributionFactory("menu:org.eclipse.ui.main.menu?after=file", "205747") {
+			@Override
 			public void createContributionItems(IServiceLocator serviceLocator, IContributionRoot additions) {
 				MenuManager manager = new MenuManager("&LoFile", "lofile");
 				CommandContributionItem cci = new CommandContributionItem(new CommandContributionItemParameter(serviceLocator, "my.about",
@@ -155,6 +157,7 @@ public class MenuPopulationTest extends MenuTestCase {
 		final boolean []errorLogged = new boolean[] {false};
 		Platform.addLogListener(new ILogListener() {
 			
+			@Override
 			public void logging(IStatus status, String plugin) {
 				if("org.eclipse.ui.workbench".equals(status.getPlugin()) 
 						&& status.getSeverity() == IStatus.ERROR
@@ -313,6 +316,7 @@ public class MenuPopulationTest extends MenuTestCase {
 			};
 		}
 
+		@Override
 		public void createContributionItems(IServiceLocator serviceLocator,
 				IContributionRoot additions) {
 			additions.addContributionItem(localContribution, null);
@@ -403,6 +407,7 @@ public class MenuPopulationTest extends MenuTestCase {
 				"menu:the.population.menu?after=additions",
 				"org.eclipse.ui.tests") {
 
+			@Override
 			public void createContributionItems(IServiceLocator serviceLocator,
 					IContributionRoot additions) {
 				final MenuManager manager = new MenuManager("menu.id");
@@ -550,10 +555,12 @@ public class MenuPopulationTest extends MenuTestCase {
 	 * 
 	 * @see org.eclipse.ui.tests.menus.MenuTestCase#doSetUp()
 	 */
+	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		afterOne = new AbstractContributionFactory(
 				"menu:after.menu?after=after.one", "org.eclipse.ui.tests") {
+			@Override
 			public void createContributionItems(IServiceLocator serviceLocator,
 					IContributionRoot additions) {
 				additions.addContributionItem(new GroupMarker("after.insert"),
@@ -564,6 +571,7 @@ public class MenuPopulationTest extends MenuTestCase {
 
 		beforeOne = new AbstractContributionFactory(
 				"menu:before.menu?before=before.one", "org.eclipse.ui.tests") {
+			@Override
 			public void createContributionItems(IServiceLocator serviceLocator,
 					IContributionRoot additions) {
 				additions.addContributionItem(new GroupMarker("before.insert"),
@@ -574,6 +582,7 @@ public class MenuPopulationTest extends MenuTestCase {
 
 		endofOne = new AbstractContributionFactory(
 				"menu:endof.menu?endof=endof.one", "org.eclipse.ui.tests") {
+			@Override
 			public void createContributionItems(IServiceLocator serviceLocator,
 					IContributionRoot additions) {
 				additions.addContributionItem(new GroupMarker("endof.insert"),
@@ -594,6 +603,7 @@ public class MenuPopulationTest extends MenuTestCase {
 	 * 
 	 * @see org.eclipse.ui.tests.menus.MenuTestCase#doTearDown()
 	 */
+	@Override
 	protected void doTearDown() throws Exception {
 		menuService.removeContributionFactory(afterOne);
 		menuService.removeContributionFactory(beforeOne);
@@ -614,6 +624,7 @@ public class MenuPopulationTest extends MenuTestCase {
 				
 				processEventsUntil(new Condition() {
 	
+					@Override
 					public boolean compute() {
 						return window.getActivePage().getActivePart() != null;
 					}

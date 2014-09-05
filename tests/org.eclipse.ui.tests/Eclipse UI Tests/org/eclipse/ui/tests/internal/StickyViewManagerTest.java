@@ -35,6 +35,7 @@ public class StickyViewManagerTest extends UITestCase {
 		super(testName);
 	}
 
+	@Override
 	protected void doSetUp() throws Exception {
 		// preserve the original behaviour
 		originalPreference = PlatformUI.getPreferenceStore().getBoolean(
@@ -46,6 +47,7 @@ public class StickyViewManagerTest extends UITestCase {
 		super.doSetUp();
 	}
 
+	@Override
 	protected void doTearDown() throws Exception {
 		super.doTearDown();
 		// revert to the original behaviour to ensure future tests are not

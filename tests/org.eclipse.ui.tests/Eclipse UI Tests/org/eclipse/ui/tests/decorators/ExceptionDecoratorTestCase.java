@@ -41,7 +41,8 @@ public class ExceptionDecoratorTestCase extends DecoratorEnablementTestCase
     /**
      * Sets up the hierarchy.
      */
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
         //reset the static fields so that the decorators will fail
         HeavyNullImageDecorator.fail = true;
         HeavyNullTextDecorator.fail = true;
@@ -68,7 +69,8 @@ public class ExceptionDecoratorTestCase extends DecoratorEnablementTestCase
      * @see org.eclipse.ui.tests.navigator.LightweightDecoratorTestCase#doTearDown()
      */
 
-    protected void doTearDown() throws Exception {
+    @Override
+	protected void doTearDown() throws Exception {
         super.doTearDown();
 
         //Need to wait for decoration to end to allow for all 

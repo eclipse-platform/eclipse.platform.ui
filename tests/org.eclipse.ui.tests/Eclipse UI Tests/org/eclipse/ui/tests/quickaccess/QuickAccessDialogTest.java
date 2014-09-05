@@ -105,6 +105,7 @@ public class QuickAccessDialogTest extends UITestCase {
 
 		text.setText("T");
 		processEventsUntil(new Condition() {
+			@Override
 			public boolean compute() {
 				return table.getItemCount() > 1;
 			};
@@ -116,6 +117,7 @@ public class QuickAccessDialogTest extends UITestCase {
 
 		text.setText("E");
 		processEventsUntil(new Condition() {
+			@Override
 			public boolean compute() {
 				return table.getItemCount() > 1 && !table.getItem(0).getText(1).equals(oldFirstItemText);
 			};
@@ -128,6 +130,7 @@ public class QuickAccessDialogTest extends UITestCase {
 
 		text.setText("QWERTYUIOPTEST");
 		processEventsUntil(new Condition() {
+			@Override
 			public boolean compute() {
 				return table.getItemCount() == 1;
 			};
@@ -137,6 +140,7 @@ public class QuickAccessDialogTest extends UITestCase {
 
 		text.setText("");
 		processEventsUntil(new Condition() {
+			@Override
 			public boolean compute() {
 				return table.getItemCount() == 1;
 			};
@@ -166,6 +170,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		// Set a filter to get some items
 		text.setText("T");
 		processEventsUntil(new Condition() {
+			@Override
 			public boolean compute() {
 				return table.getItemCount() > 1;
 			};
@@ -179,6 +184,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		handlerService
 		.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
 		processEventsUntil(new Condition() {
+			@Override
 			public boolean compute() {
 				return table.getItemCount() != oldCount;
 			};
@@ -191,6 +197,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		handlerService
 		.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
 		processEventsUntil(new Condition() {
+			@Override
 			public boolean compute() {
 				return table.getItemCount() != newCount;
 			};
@@ -203,6 +210,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		handlerService
 		.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
 		processEventsUntil(new Condition() {
+			@Override
 			public boolean compute() {
 				return table.getItemCount() != oldCount;
 			};
@@ -216,6 +224,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
 		text.setText("T");
 		processEventsUntil(new Condition() {
+			@Override
 			public boolean compute() {
 				return table.getItemCount() > 1;
 			};

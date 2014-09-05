@@ -42,6 +42,7 @@ public class StatusHandlingConfigurationTest extends TestCase {
 		final StatusAdapter adapter = new StatusAdapter(new Status(IStatus.ERROR,"fakeplugin","testmessage"));
 		final boolean[] called = new boolean[]{false};
 		AbstractStatusHandler tester = new AbstractStatusHandler(){
+			@Override
 			public void handle(StatusAdapter statusAdapter, int style) {
 				if(statusAdapter == adapter){
 					called[0] = true;
@@ -59,6 +60,7 @@ public class StatusHandlingConfigurationTest extends TestCase {
 		final StatusAdapter adapter2 = new StatusAdapter(new Status(IStatus.ERROR,"fakeplugin2","testmessage2"));
 		final boolean[] called = new boolean[]{false};
 		StatusManager.getManager().addListener(new StatusManager.INotificationListener(){
+					@Override
 					public void statusManagerNotified(int type,
 							StatusAdapter[] adapters) {
 						if (type == INotificationTypes.HANDLED)

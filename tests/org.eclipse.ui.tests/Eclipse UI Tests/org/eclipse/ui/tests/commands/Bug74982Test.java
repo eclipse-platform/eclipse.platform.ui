@@ -70,7 +70,8 @@ public final class Bug74982Test extends UITestCase {
         text.setText("Mooooooooooooooooooooooooooooo");
         text.setLayoutData(new GridData());
         text.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 selectionEventFired = true;
             }
         });

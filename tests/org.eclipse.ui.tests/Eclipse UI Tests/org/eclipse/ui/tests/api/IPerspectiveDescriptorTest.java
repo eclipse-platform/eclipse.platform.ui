@@ -24,7 +24,8 @@ public class IPerspectiveDescriptorTest extends TestCase {
         super(testName);
     }
 
-    public void setUp() {
+    @Override
+	public void setUp() {
         fPerspectives = PlatformUI
                 .getWorkbench().getPerspectiveRegistry().getPerspectives();
     }

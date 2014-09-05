@@ -65,7 +65,8 @@ public abstract class ThemeTest extends UITestCase {
      * 
      * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
      */
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
         super.doSetUp();
         fManager = fWorkbench.getThemeManager();
         fManager.setCurrentTheme(IThemeManager.DEFAULT_THEME);

@@ -46,7 +46,8 @@ public class IWorkingSetManagerTest extends UITestCase {
     Object fChangeOldValue;
 
     class TestPropertyChangeListener implements IPropertyChangeListener {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             fChangeProperty = event.getProperty();
             fChangeNewValue = event.getNewValue();
             fChangeOldValue = event.getOldValue();
@@ -57,7 +58,8 @@ public class IWorkingSetManagerTest extends UITestCase {
         super(testName);
     }
 
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
         super.doSetUp();
         fWorkingSetManager = fWorkbench.getWorkingSetManager();
         fWorkspace = ResourcesPlugin.getWorkspace();
@@ -398,6 +400,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 		// add a bogus listener that dies unexpectedly
 		IPropertyChangeListener badListener = new IPropertyChangeListener() {
 
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				throw new RuntimeException();
 
@@ -405,6 +408,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 		};
 		IPropertyChangeListener goodListener = new IPropertyChangeListener() {
 
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				result[0] = true;
 
@@ -432,77 +436,97 @@ public class IWorkingSetManagerTest extends UITestCase {
 	private IWorkingSet createSet(final String[] setIds, final int i) {
 		return new IWorkingSet() {
 
+			@Override
 			public IAdaptable[] adaptElements(IAdaptable[] objects) {
 				return null;
 			}
 
+			@Override
 			public IAdaptable[] getElements() {
 				return null;
 			}
 
+			@Override
 			public String getId() {
 				return setIds[i] + "";
 			}
 
+			@Override
 			public ImageDescriptor getImage() {
 				return null;
 			}
 
+			@Override
 			public ImageDescriptor getImageDescriptor() {
 				return null;
 			}
 
+			@Override
 			public String getLabel() {
 				return null;
 			}
 
+			@Override
 			public String getName() {
 				return null;
 			}
 
+			@Override
 			public boolean isAggregateWorkingSet() {
 				return false;
 			}
 
+			@Override
 			public boolean isEditable() {
 				return true;
 			}
 
+			@Override
 			public boolean isEmpty() {
 				return false;
 			}
 
+			@Override
 			public boolean isSelfUpdating() {
 				return false;
 			}
 
+			@Override
 			public boolean isVisible() {
 				return true;
 			}
 
+			@Override
 			public void setElements(IAdaptable[] elements) {
 			}
 
+			@Override
 			public void setId(String id) {
 			}
 
+			@Override
 			public void setLabel(String label) {
 			}
 
+			@Override
 			public void setName(String name) {
 			}
 
+			@Override
 			public String getFactoryId() {
 				return null;
 			}
 
+			@Override
 			public void saveState(IMemento memento) {
 			}
 
+			@Override
 			public Object getAdapter(Class adapter) {
 				return null;
 			}
 			
+			@Override
 			public String toString() {
 				return getId();
 			}

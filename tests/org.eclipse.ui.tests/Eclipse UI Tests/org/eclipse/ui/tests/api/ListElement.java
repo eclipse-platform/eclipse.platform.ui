@@ -28,7 +28,8 @@ public class ListElement implements IAdaptable {
         this.flag = flag;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return name + ':' + flag;
     }
 
@@ -40,7 +41,8 @@ public class ListElement implements IAdaptable {
         return flag;
     }
 
-    public Object getAdapter(Class adapter) {
+    @Override
+	public Object getAdapter(Class adapter) {
         if (adapter == IActionFilter.class) {
             return ListElementActionFilter.getSingleton();
         }

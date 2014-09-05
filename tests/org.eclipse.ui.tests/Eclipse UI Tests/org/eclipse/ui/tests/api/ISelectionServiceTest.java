@@ -40,7 +40,8 @@ public class ISelectionServiceTest extends UITestCase implements
         super(testName);
     }
 
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
         super.doSetUp();
         fWindow = openTestWindow();
         fPage = fWindow.getActivePage();
@@ -249,7 +250,8 @@ public class ISelectionServiceTest extends UITestCase implements
     /*
      * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
      */
-    public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+    @Override
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
         eventReceived = true;
         eventPart = part;
         eventSelection = selection;

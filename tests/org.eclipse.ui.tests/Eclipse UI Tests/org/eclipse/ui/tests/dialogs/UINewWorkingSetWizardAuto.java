@@ -41,7 +41,8 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
         super(name);
     }
 
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
         fWizard = getWorkbench().getWorkingSetManager().createWorkingSetNewWizard(null);
         super.doSetUp();
     }

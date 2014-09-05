@@ -24,7 +24,8 @@ public class IEditorDescriptorTest extends TestCase {
         super(testName);
     }
 
-    public void setUp() {
+    @Override
+	public void setUp() {
         IFileEditorMapping mapping = (IFileEditorMapping) ArrayUtil
                 .pickRandom(PlatformUI.getWorkbench().getEditorRegistry()
                         .getFileEditorMappings());

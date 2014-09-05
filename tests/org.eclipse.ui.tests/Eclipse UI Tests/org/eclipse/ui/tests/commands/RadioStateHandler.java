@@ -22,6 +22,7 @@ import org.eclipse.ui.handlers.RadioState;
  */
 public class RadioStateHandler extends AbstractHandler {
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
 		if(HandlerUtil.matchesRadioState(event))

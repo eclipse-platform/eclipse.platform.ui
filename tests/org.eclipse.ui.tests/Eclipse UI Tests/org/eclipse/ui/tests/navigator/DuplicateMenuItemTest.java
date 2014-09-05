@@ -77,7 +77,8 @@ public class DuplicateMenuItemTest extends AbstractNavigatorTest {
     /**
      * Sets up the hierarchy.
      */
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
         super.doSetUp();
         createTestFile();
         showNav();

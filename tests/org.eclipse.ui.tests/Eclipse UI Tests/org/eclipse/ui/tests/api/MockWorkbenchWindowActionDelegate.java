@@ -35,21 +35,25 @@ public class MockWorkbenchWindowActionDelegate extends MockActionDelegate
     /**
      * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
      */
-    public void init(IWorkbenchWindow window) {
+    @Override
+	public void init(IWorkbenchWindow window) {
         callHistory.add("init");
     }
 
     /**
      * @see IWorkbenchWindowActionDelegate#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         callHistory.add("dispose");
     }
 
+	@Override
 	public void init(IAction action) {
 		callHistory.add("init");
 	}
 
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		callHistory.add("runWithEvent");
 	}

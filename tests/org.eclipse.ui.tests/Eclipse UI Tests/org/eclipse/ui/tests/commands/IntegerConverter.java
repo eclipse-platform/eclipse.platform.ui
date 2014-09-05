@@ -15,6 +15,7 @@ import org.eclipse.core.commands.ParameterValueConversionException;
 
 public class IntegerConverter extends AbstractParameterValueConverter {
 
+	@Override
 	public Object convertToObject(String parameterValue)
 			throws ParameterValueConversionException {
 		try {
@@ -26,6 +27,7 @@ public class IntegerConverter extends AbstractParameterValueConverter {
 		}
 	}
 	
+	@Override
 	public String convertToString(Object parameterValue)
 			throws ParameterValueConversionException {
 		if (!(parameterValue instanceof Integer)) {

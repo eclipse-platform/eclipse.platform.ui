@@ -33,6 +33,7 @@ public class TestLabelProvider implements ILabelProvider, IColorProvider, IFontP
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		if (image == null) {
 			TestPlugin plugin = TestPlugin.getDefault();
@@ -44,6 +45,7 @@ public class TestLabelProvider implements ILabelProvider, IColorProvider, IFontP
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		return ((TestElement) element).name;
 	}
@@ -51,6 +53,7 @@ public class TestLabelProvider implements ILabelProvider, IColorProvider, IFontP
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 	 */
+	@Override
 	public Color getBackground(Object element) {
 		
 		int switchNumber = 0;
@@ -79,6 +82,7 @@ public class TestLabelProvider implements ILabelProvider, IColorProvider, IFontP
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
+	@Override
 	public Color getForeground(Object element) {
 		
 		int switchNumber = 0;
@@ -107,6 +111,7 @@ public class TestLabelProvider implements ILabelProvider, IColorProvider, IFontP
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 	 */
+	@Override
 	public Font getFont(Object element) {
 		return JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT);
 	}
@@ -114,6 +119,7 @@ public class TestLabelProvider implements ILabelProvider, IColorProvider, IFontP
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 
 	}
@@ -121,6 +127,7 @@ public class TestLabelProvider implements ILabelProvider, IColorProvider, IFontP
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (image != null)
 			image.dispose();
@@ -130,6 +137,7 @@ public class TestLabelProvider implements ILabelProvider, IColorProvider, IFontP
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
 	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
@@ -137,6 +145,7 @@ public class TestLabelProvider implements ILabelProvider, IColorProvider, IFontP
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		
 

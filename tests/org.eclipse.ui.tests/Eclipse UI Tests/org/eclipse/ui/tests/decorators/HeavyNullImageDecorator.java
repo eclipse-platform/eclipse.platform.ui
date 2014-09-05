@@ -34,32 +34,37 @@ public class HeavyNullImageDecorator implements ILabelDecorator {
     /**
      * @see ILabelDecorator#addListener
      */
-    public void addListener(ILabelProviderListener listener) {
+    @Override
+	public void addListener(ILabelProviderListener listener) {
     }
 
     /**
      * @see ILabelDecorator#dispose
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
     }
 
     /**
      * @see ILabelDecorator#isLabelProperty
      */
-    public boolean isLabelProperty(Object element, String property) {
+    @Override
+	public boolean isLabelProperty(Object element, String property) {
         return false;
     }
 
     /**
      * @see ILabelDecorator#removeListener
      */
-    public void removeListener(ILabelProviderListener listener) {
+    @Override
+	public void removeListener(ILabelProviderListener listener) {
     }
 
     /**
      * @see ILabelDecorator#decorateImage
      */
-    public Image decorateImage(Image image, Object element) {
+    @Override
+	public Image decorateImage(Image image, Object element) {
         if (fail) {
             fail = false;
             throw new ForcedException("Heavy image decorator boom");
@@ -70,7 +75,8 @@ public class HeavyNullImageDecorator implements ILabelDecorator {
     /**
      * @see ILabelDecorator#decorateText
      */
-    public String decorateText(String text, Object element) {
+    @Override
+	public String decorateText(String text, Object element) {
         return text;
     }
 }

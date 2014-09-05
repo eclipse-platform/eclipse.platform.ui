@@ -46,7 +46,8 @@ public class OverriddenTitleTest extends UITestCase {
         /* (non-Javadoc)
          * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
          */
-        public void propertyChanged(Object source, int propId) {
+        @Override
+		public void propertyChanged(Object source, int propId) {
             switch (propId) {
             case IWorkbenchPartConstants.PROP_TITLE:
                 titleChangeEvent = true;
@@ -61,7 +62,8 @@ public class OverriddenTitleTest extends UITestCase {
         }
     };
 
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
         super.doSetUp();
         window = openTestWindow();
         page = window.getActivePage();
@@ -76,7 +78,8 @@ public class OverriddenTitleTest extends UITestCase {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
      */
-    protected void doTearDown() throws Exception {
+    @Override
+	protected void doTearDown() throws Exception {
         view.removePropertyListener(propertyListener);
         page.hideView(view);
         super.doTearDown();

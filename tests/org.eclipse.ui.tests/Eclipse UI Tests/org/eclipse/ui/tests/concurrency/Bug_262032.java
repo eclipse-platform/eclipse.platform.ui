@@ -31,9 +31,11 @@ import org.eclipse.swt.widgets.Display;
 public class Bug_262032 extends TestCase {
 
 	ISchedulingRule identityRule = new ISchedulingRule() {
+		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
 		}
+		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
@@ -71,6 +73,7 @@ public class Bug_262032 extends TestCase {
 
 		// Job hols scheduling rule
 		Job j = new Job ("Deadlocking normal Job") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				tb1.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
 				tb1.waitForStatus(TestBarrier.STATUS_RUNNING);
@@ -91,6 +94,7 @@ public class Bug_262032 extends TestCase {
 
 		// asyncExec job that wants the lock
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				lock.acquire();
 				concurrentAccess = true;

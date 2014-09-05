@@ -32,11 +32,13 @@ public class HeavyResourceView extends ViewPart {
     private Shell tempShell;
     private Composite control;
     
-    public void createPartControl(Composite parent) {
+    @Override
+	public void createPartControl(Composite parent) {
         control = parent;
         
         SelectionListener listener = new SelectionAdapter() {
-          public void widgetSelected(SelectionEvent e) {
+          @Override
+		public void widgetSelected(SelectionEvent e) {
                 super.widgetSelected(e);
                 
                 if (e.widget == useAllComposites) {
@@ -62,7 +64,8 @@ public class HeavyResourceView extends ViewPart {
            
     }
 
-    public void setFocus() {
+    @Override
+	public void setFocus() {
         control.setFocus();
     }
     
@@ -85,7 +88,8 @@ public class HeavyResourceView extends ViewPart {
         }
     }
     
-    public void dispose() {
+    @Override
+	public void dispose() {
         releaseAll();
         super.dispose();
     }

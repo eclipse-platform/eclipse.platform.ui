@@ -35,7 +35,8 @@ public class ComboBoxPropertyDescriptorTest extends TestCase {
     /* (non-Javadoc)
      * @see junit.framework.TestCase#setUp()
      */
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         descriptor = new ComboBoxPropertyDescriptor(ID, NAME, values);
     }
@@ -43,7 +44,8 @@ public class ComboBoxPropertyDescriptorTest extends TestCase {
     /* (non-Javadoc)
      * @see junit.framework.TestCase#tearDown()
      */
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         super.tearDown();
     }
 

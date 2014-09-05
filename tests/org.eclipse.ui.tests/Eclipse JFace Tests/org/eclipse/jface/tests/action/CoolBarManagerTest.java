@@ -33,6 +33,7 @@ public class CoolBarManagerTest extends JFaceActionTest {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 

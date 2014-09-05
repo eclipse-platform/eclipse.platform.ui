@@ -23,14 +23,17 @@ public class ActivitySupportTests extends DynamicTestCase {
 		super(testName);
 	}
 
+	@Override
 	protected String getExtensionId() {
 		return "newActivitySupport1.testNewActivitySupportAddition";
 	}
 
+	@Override
 	protected String getExtensionPoint() {
 		return IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT;
 	}
 
+	@Override
 	protected String getInstallLocation() {
 		return "data/org.eclipse.newActivitySupport1";
 	}

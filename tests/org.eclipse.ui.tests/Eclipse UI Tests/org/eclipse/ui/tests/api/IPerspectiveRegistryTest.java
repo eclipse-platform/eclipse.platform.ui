@@ -26,7 +26,8 @@ public class IPerspectiveRegistryTest extends TestCase {
         super(testName);
     }
 
-    public void setUp() {
+    @Override
+	public void setUp() {
         fReg = PlatformUI.getWorkbench().getPerspectiveRegistry();
     }
 

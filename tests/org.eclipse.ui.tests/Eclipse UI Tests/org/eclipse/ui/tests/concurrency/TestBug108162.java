@@ -30,6 +30,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  */
 public class TestBug108162 extends TestCase {
 	class LockAcquiringOperation extends WorkspaceModifyOperation {
+		@Override
 		public void execute(final IProgressMonitor pm) {
 			//empty operation is sufficient to cause deadlock
 		}
@@ -50,6 +51,7 @@ public class TestBug108162 extends TestCase {
 	 */
 	public void testBug() throws CoreException {
 		workspace.run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
 				try {

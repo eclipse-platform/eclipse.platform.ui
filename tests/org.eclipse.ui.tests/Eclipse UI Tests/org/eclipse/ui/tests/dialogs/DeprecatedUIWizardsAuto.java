@@ -121,7 +121,8 @@ public class DeprecatedUIWizardsAuto extends TestCase {
     /**
      * @see junit.framework.TestCase#tearDown()
      */
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         super.tearDown();
         try {
             if (project != null) {
@@ -184,7 +185,8 @@ public class DeprecatedUIWizardsAuto extends TestCase {
      */
     public void testNewFile2() {
         BasicNewFileResourceWizard wizard = new BasicNewFileResourceWizard() {
-            public void addPages() {
+            @Override
+			public void addPages() {
                 super.addPages();
                 IWizardPage page = getPage("newFilePage1");
                 assertTrue("Expected newFilePage1",

@@ -35,7 +35,8 @@ public class BrokenUpdatePreferencePage extends PreferencePage implements
         IWorkbenchPreferencePage {
 
     private IPropertyChangeListener badListener = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             //Intentionally generate an error
             String[] strings = new String[1];
             System.out.println(strings[2]);
@@ -47,7 +48,8 @@ public class BrokenUpdatePreferencePage extends PreferencePage implements
     /**
      * @see org.eclipse.jface.preference.PreferencePage#createContents(Composite)
      */
-    protected Control createContents(Composite parent) {
+    @Override
+	protected Control createContents(Composite parent) {
 
         data = parent.getFont().getFontData();
 
@@ -58,11 +60,13 @@ public class BrokenUpdatePreferencePage extends PreferencePage implements
         Button fontButton = new Button(buttonComposite, SWT.PUSH);
         fontButton.setText("Update Font");
         fontButton.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 changeFont();
             }
 
-            public void widgetDefaultSelected(SelectionEvent e) {
+            @Override
+			public void widgetDefaultSelected(SelectionEvent e) {
                 changeFont();
             }
         });
@@ -70,11 +74,13 @@ public class BrokenUpdatePreferencePage extends PreferencePage implements
         Button preferencePluginButton = new Button(buttonComposite, SWT.PUSH);
         preferencePluginButton.setText("Update Plugin Preferences");
         preferencePluginButton.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 changePluginPreference();
             }
 
-            public void widgetDefaultSelected(SelectionEvent e) {
+            @Override
+			public void widgetDefaultSelected(SelectionEvent e) {
                 changePluginPreference();
             }
         });
@@ -82,11 +88,13 @@ public class BrokenUpdatePreferencePage extends PreferencePage implements
         Button preferenceButton = new Button(buttonComposite, SWT.PUSH);
         preferenceButton.setText("Update Dialog Preferences");
         preferenceButton.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 changePluginPreference();
             }
 
-            public void widgetDefaultSelected(SelectionEvent e) {
+            @Override
+			public void widgetDefaultSelected(SelectionEvent e) {
                 changePluginPreference();
             }
         });
@@ -98,7 +106,8 @@ public class BrokenUpdatePreferencePage extends PreferencePage implements
     /**
      * @see org.eclipse.ui.IWorkbenchPreferencePage#init(IWorkbench)
      */
-    public void init(IWorkbench workbench) {
+    @Override
+	public void init(IWorkbench workbench) {
 
         JFaceResources.getFontRegistry().addListener(badListener);
 
@@ -110,7 +119,8 @@ public class BrokenUpdatePreferencePage extends PreferencePage implements
     /**	
      * see@DialogPage.dispose();
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         super.dispose();
         JFaceResources.getFontRegistry().removeListener(badListener);
 

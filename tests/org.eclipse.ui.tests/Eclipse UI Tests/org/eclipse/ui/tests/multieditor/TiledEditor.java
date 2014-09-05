@@ -55,10 +55,12 @@ public class TiledEditor extends MultiEditor {
 	/*
 	 * @see IWorkbenchPart#createPartControl(Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		callHistory.add("createPartControl");
 
 		parent.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				widgetsDisposed();
 			}
@@ -85,6 +87,7 @@ public class TiledEditor extends MultiEditor {
 
 			final int index = i;
 			e.addPropertyListener(new IPropertyListener() {
+				@Override
 				public void propertyChanged(Object source, int property) {
 					if (property == IEditorPart.PROP_DIRTY
 							|| property == IWorkbenchPart.PROP_TITLE)
@@ -99,6 +102,7 @@ public class TiledEditor extends MultiEditor {
 	/**
 	 * Draw the gradient for the specified editor.
 	 */
+	@Override
 	protected void drawGradient(IEditorPart innerEditor, Gradient g) {
 		CLabel label = innerEditorTitle[getIndex(innerEditor)];
 		if ((label == null) || label.isDisposed())
@@ -145,6 +149,7 @@ public class TiledEditor extends MultiEditor {
 	/*
 	 * 
 	 */
+	@Override
 	protected int getIndex(IEditorPart editor) {
 		IEditorPart innerEditors[] = getInnerEditors();
 		for (int i = 0; i < innerEditors.length; i++) {
@@ -159,33 +164,39 @@ public class TiledEditor extends MultiEditor {
 	// add them to the call history.
 	//
 
+	@Override
 	public Composite createInnerPartControl(Composite parent, IEditorPart e) {
 		callHistory.add("createInnerPartControl");
 		return super.createInnerPartControl(parent, e);
 	}
 
+	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
 		callHistory.add("init");
 		super.init(site, input);
 	}
 
+	@Override
 	public void setFocus() {
 		callHistory.add("setFocus");
 		super.setFocus();
 	}
 
+	@Override
 	public void updateGradient(IEditorPart editor) {
 		callHistory.add("updateGradient");
 		super.updateGradient(editor);
 	}
 
+	@Override
 	public void setInitializationData(IConfigurationElement cfig,
 			String propertyName, Object data) {
 		callHistory.add("setInitializationData");
 		super.setInitializationData(cfig, propertyName, data);
 	}
 
+	@Override
 	public void dispose() {
 		callHistory.add("dispose");
 		super.dispose();

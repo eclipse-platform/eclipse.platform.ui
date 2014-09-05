@@ -43,7 +43,8 @@ public class ViewTitleDropTarget extends WorkbenchWindowDropTarget {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.dnd.TestDropTarget#getName()
      */
-    public String toString() {
+    @Override
+	public String toString() {
         IViewDescriptor desc = WorkbenchPlugin.getDefault().getViewRegistry()
                 .find(targetPart);
         String title = desc.getLabel();
@@ -54,14 +55,16 @@ public class ViewTitleDropTarget extends WorkbenchWindowDropTarget {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
      */
-    public Point getLocation() {
+    @Override
+	public Point getLocation() {
         Rectangle bounds = DragOperations.getDisplayBounds(DragOperations
                 .getPane(getPart()));
 
         return new Point( (bounds.x + bounds.width) - 8, bounds.y + 8);
     }
     
-    public Shell getShell() {
+    @Override
+	public Shell getShell() {
     	return getPart().getSite().getShell();
     }
 }

@@ -27,6 +27,7 @@ public class FileEditorMappingTest extends UITestCase {
 		super(testName);
 	}
 
+	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 

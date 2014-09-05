@@ -127,6 +127,7 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.views.markers.ExtendedMarkersView#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		tree = (Tree) parent.getChildren()[0];

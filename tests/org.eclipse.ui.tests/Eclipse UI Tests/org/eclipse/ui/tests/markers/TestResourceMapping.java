@@ -30,6 +30,7 @@ public class TestResourceMapping extends ResourceMapping {
 	 * 
 	 * @see org.eclipse.core.resources.mapping.ResourceMapping#getModelObject()
 	 */
+	@Override
 	public Object getModelObject() {
 		return element;
 	}
@@ -37,6 +38,7 @@ public class TestResourceMapping extends ResourceMapping {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.mapping.ResourceMapping#getModelProviderId()
 	 */
+	@Override
 	public String getModelProviderId() {
 		return ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
 	}
@@ -46,6 +48,7 @@ public class TestResourceMapping extends ResourceMapping {
 	 * 
 	 * @see org.eclipse.core.resources.mapping.ResourceMapping#getProjects()
 	 */
+	@Override
 	public IProject[] getProjects() {
 		if (element.getType() == IResource.ROOT)
 			return ((IWorkspaceRoot) element).getProjects();
@@ -58,6 +61,7 @@ public class TestResourceMapping extends ResourceMapping {
 	 * @see org.eclipse.core.resources.mapping.ResourceMapping#getTraversals(org.eclipse.core.resources.mapping.ResourceMappingContext,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public ResourceTraversal[] getTraversals(ResourceMappingContext context,
 			IProgressMonitor monitor) {
 		ResourceTraversal traversal = new ResourceTraversal(

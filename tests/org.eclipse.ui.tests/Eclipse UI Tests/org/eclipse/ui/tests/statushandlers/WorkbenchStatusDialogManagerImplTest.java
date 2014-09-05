@@ -31,6 +31,7 @@ public class WorkbenchStatusDialogManagerImplTest extends TestCase {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		mgr = new WorkbenchStatusDialogManagerImpl(0xFFFFFF, null);
@@ -40,6 +41,7 @@ public class WorkbenchStatusDialogManagerImplTest extends TestCase {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		if(mgr != null && mgr.getShell() != null){

@@ -28,6 +28,7 @@ public class EditorActionDelegate implements IEditorActionDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		part = targetEditor;
 	}
@@ -35,6 +36,7 @@ public class EditorActionDelegate implements IEditorActionDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		executed = true;
 	}
@@ -42,6 +44,7 @@ public class EditorActionDelegate implements IEditorActionDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// TODO Auto-generated method stub
 

@@ -50,6 +50,7 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 	 * 
 	 * @return The extension identifier; never <code>null</code>.
 	 */
+	@Override
 	protected final String getExtensionId() {
 		return "commandsExtensionDynamicTest.testDynamicCommandAddition";
 	}
@@ -59,6 +60,7 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 	 * 
 	 * @return The extension point identifier; never <code>null</code>.
 	 */
+	@Override
 	protected final String getExtensionPoint() {
 		return IWorkbenchRegistryConstants.PL_COMMANDS;
 	}
@@ -69,6 +71,7 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 	 * 
 	 * @return The relative install location; never <code>null</code>.
 	 */
+	@Override
 	protected final String getInstallLocation() {
 		return "data/org.eclipse.commandsExtensionDynamicTest";
 	}

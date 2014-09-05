@@ -45,7 +45,8 @@ public class IActionFilterTest extends UITestCase {
         super(testName);
     }
 
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
         super.doSetUp();
         fWindow = openTestWindow();
         fPage = fWindow.getActivePage();

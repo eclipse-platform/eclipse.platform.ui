@@ -33,6 +33,7 @@ public class ForegroundColorDecorator implements ILightweightLabelDecorator {
 	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object,
 	 *      org.eclipse.jface.viewers.IDecoration)
 	 */
+	@Override
 	public void decorate(Object element, IDecoration decoration) {
 
 		if(color == null){
@@ -42,6 +43,7 @@ public class ForegroundColorDecorator implements ILightweightLabelDecorator {
 				 * 
 				 * @see java.lang.Runnable#run()
 				 */
+				@Override
 				public void run() {
 					setUpColor();
 
@@ -58,6 +60,7 @@ public class ForegroundColorDecorator implements ILightweightLabelDecorator {
 	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 		// TODO Auto-generated method stub
 
@@ -68,6 +71,7 @@ public class ForegroundColorDecorator implements ILightweightLabelDecorator {
 	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
 
@@ -79,6 +83,7 @@ public class ForegroundColorDecorator implements ILightweightLabelDecorator {
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
 	 *      java.lang.String)
 	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		// TODO Auto-generated method stub
 		return false;
@@ -89,6 +94,7 @@ public class ForegroundColorDecorator implements ILightweightLabelDecorator {
 	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		// TODO Auto-generated method stub
 

@@ -18,6 +18,7 @@ import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 
 public class TextCommandFieldAssistWindow extends TextFieldAssistWindow {
 
+	@Override
 	protected ContentProposalAdapter createContentProposalAdapter(
 			Control control) {
 		return new ContentAssistCommandAdapter(control,

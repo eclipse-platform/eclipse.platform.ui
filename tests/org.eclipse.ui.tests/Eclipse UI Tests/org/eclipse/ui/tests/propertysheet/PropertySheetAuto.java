@@ -110,15 +110,18 @@ public class PropertySheetAuto extends UITestCase {
                     .toArray(new IPropertyDescriptor[list.size()]);
         }
 
-        public Object getEditableValue() {
+        @Override
+		public Object getEditableValue() {
             return this;
         }
 
-        public IPropertyDescriptor[] getPropertyDescriptors() {
+        @Override
+		public IPropertyDescriptor[] getPropertyDescriptors() {
             return descriptors;
         }
 
-        public Object getPropertyValue(Object id) {
+        @Override
+		public Object getPropertyValue(Object id) {
             if (id.equals(MODEL_YEAR))
                 return Integer.toString(modelYear);
             if (id.equals(COLOR))
@@ -132,15 +135,18 @@ public class PropertySheetAuto extends UITestCase {
             return null;
         }
 
-        public boolean isPropertySet(Object id) {
+        @Override
+		public boolean isPropertySet(Object id) {
             return false;
         }
 
-        public void resetPropertyValue(Object id) {
+        @Override
+		public void resetPropertyValue(Object id) {
             return;
         }
 
-        public void setPropertyValue(Object id, Object value) {
+        @Override
+		public void setPropertyValue(Object id, Object value) {
             if (id.equals(MODEL_YEAR))
                 modelYear = new Integer((String) value).intValue();
             if (id.equals(COLOR))
@@ -153,7 +159,8 @@ public class PropertySheetAuto extends UITestCase {
                 engineSize = new Double((String) value).doubleValue();
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             StringBuffer s = new StringBuffer();
             s.append("<");
             if (modelYear != 0) {
@@ -240,7 +247,8 @@ public class PropertySheetAuto extends UITestCase {
         return new Car(modelYear, color, manufacturer, model, engineSize);
     }
 
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
         super.doSetUp();
         workbenchWindow = openTestWindow();
         activePage = workbenchWindow.getActivePage();

@@ -45,14 +45,16 @@ public class TestLightweightDecoratorContributor implements
     /*
      * @see IBaseLabelProvider#addListener(ILabelProviderListener)
      */
-    public void addListener(ILabelProviderListener listener) {
+    @Override
+	public void addListener(ILabelProviderListener listener) {
         listeners.add(listener);
     }
 
     /*
      * @see IBaseLabelProvider#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         contributor = null;
         listeners = new HashSet();
     }
@@ -60,14 +62,16 @@ public class TestLightweightDecoratorContributor implements
     /*
      * @see IBaseLabelProvider#isLabelProperty(Object, String)
      */
-    public boolean isLabelProperty(Object element, String property) {
+    @Override
+	public boolean isLabelProperty(Object element, String property) {
         return false;
     }
 
     /*
      * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
      */
-    public void removeListener(ILabelProviderListener listener) {
+    @Override
+	public void removeListener(ILabelProviderListener listener) {
         listeners.remove(listener);
     }
 
@@ -108,7 +112,8 @@ public class TestLightweightDecoratorContributor implements
     /**
      * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object, org.eclipse.jface.viewers.IDecoration)
      */
-    public void decorate(Object element, IDecoration decoration) {
+    @Override
+	public void decorate(Object element, IDecoration decoration) {
         decoration.addOverlay(getOverlay(element));
         decoration.addPrefix(DECORATOR_PREFIX);
         decoration.addSuffix(DECORATOR_SUFFIX);

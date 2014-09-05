@@ -52,6 +52,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 
 	WritableList saveables = new WritableList();
 	IObservableValue dirty = new ComputedValue() {
+		@Override
 		protected Object calculate() {
 			for (Iterator it = saveables.iterator(); it.hasNext();) {
 				MySaveable saveable = (MySaveable) it.next();
@@ -68,6 +69,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 	public ViewWithSaveables() {
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TableViewer(parent, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, true).span(4,1).applyTo(viewer.getControl());
@@ -76,10 +78,12 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 		viewer.setLabelProvider(new ObservableMapLabelProvider(
 				new DirtyObservableMap(observableListContentProvider
 						.getKnownElements())) {
+			@Override
 			public String getColumnText(Object element, int columnIndex) {
 				return getText(element);
 			}
 
+			@Override
 			public String getText(Object element) {
 				MySaveable saveable = (MySaveable) element;
 				return (saveable.isDirty() ? "*" : "") + saveable.toString();
@@ -90,6 +94,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 			Button button = new Button(parent, SWT.PUSH);
 			button.setText("Add");
 			button.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					addSaveable();
 				}
@@ -100,11 +105,13 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 			final Button button = new Button(parent, SWT.PUSH);
 			button.setText("Remove");
 			button.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					removeSaveable();
 				}
 			});
 			new ControlUpdater(button) {
+				@Override
 				protected void updateControl() {
 					button.setEnabled(selection.getValue() != null);
 				}
@@ -114,12 +121,14 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 			final Button button = new Button(parent, SWT.CHECK);
 			button.setText("dirty");
 			button.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					MySaveable saveable = (MySaveable) selection.getValue();
 					saveable.setDirty(button.getSelection());
 				}
 			});
 			new ControlUpdater(button) {
+				@Override
 				protected void updateControl() {
 					MySaveable saveable = (MySaveable) selection.getValue();
 					if (saveable == null) {
@@ -139,6 +148,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 		}
 		getSite().setSelectionProvider(viewer);
 		dirty.addValueChangeListener(new IValueChangeListener() {
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				firePropertyChange(ISaveablePart.PROP_DIRTY);
 			}
@@ -170,35 +180,43 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 				new Saveable[] { saveable }, false));
 	}
 
+	@Override
 	public void setFocus() {
 	}
 
+	@Override
 	public Saveable[] getActiveSaveables() {
 		Saveable selectedSaveable = (Saveable) selection.getValue();
 		return selectedSaveable == null ? new Saveable[0]
 				: new Saveable[] { selectedSaveable };
 	}
 
+	@Override
 	public Saveable[] getSaveables() {
 		return (Saveable[]) saveables.toArray(new Saveable[saveables.size()]);
 	}
 
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		Assert.isTrue(false,
 				"Save operations should happen through the saveables.");
 	}
 
+	@Override
 	public void doSaveAs() {
 	}
 
+	@Override
 	public boolean isDirty() {
 		return ((Boolean) dirty.getValue()).booleanValue();
 	}
 
+	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
 
+	@Override
 	public boolean isSaveOnCloseNeeded() {
 		return true;
 	}
@@ -208,30 +226,37 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 		private IObservableValue myDirty = new WritableValue(Boolean.FALSE,
 				Boolean.TYPE);
 
+		@Override
 		public void doSave(IProgressMonitor monitor) throws CoreException {
 			setDirty(false);
 		}
 
+		@Override
 		public boolean equals(Object object) {
 			return this == object;
 		}
 
+		@Override
 		public ImageDescriptor getImageDescriptor() {
 			return null;
 		}
 
+		@Override
 		public String getName() {
 			return toString();
 		}
 
+		@Override
 		public String getToolTipText() {
 			return toString();
 		}
 
+		@Override
 		public int hashCode() {
 			return System.identityHashCode(this);
 		}
 
+		@Override
 		public boolean isDirty() {
 			return ((Boolean) myDirty.getValue()).booleanValue();
 		}
@@ -251,6 +276,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 		Map writableValueToElement = new HashMap();
 		
 		private IValueChangeListener valueChangeListener = new IValueChangeListener() {
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 					fireMapChange(Diffs.createMapDiffSingleChange(writableValueToElement.get(event
 							.getSource()), event.diff.getOldValue(), event.diff
@@ -263,11 +289,13 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 			init();
 		}
 
+		@Override
 		protected Object doGet(Object key) {
 			MySaveable saveable = (MySaveable) key;
 			return Boolean.valueOf(saveable.isDirty());
 		}
 
+		@Override
 		protected Object doPut(Object key, Object value) {
 				MySaveable saveable = (MySaveable) key;
 				Boolean oldValue = Boolean.valueOf(saveable.isDirty());
@@ -276,6 +304,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 				return oldValue;
 		}
 
+		@Override
 		protected void hookListener(Object key) {
 			MySaveable saveable = (MySaveable) key;
 			IObservableValue oValue = saveable.getDirty();
@@ -283,6 +312,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 			oValue.addValueChangeListener(valueChangeListener);
 		}
 
+		@Override
 		protected void unhookListener(Object key) {
 			MySaveable saveable = (MySaveable) key;
 			saveable.getDirty().removeValueChangeListener(valueChangeListener);

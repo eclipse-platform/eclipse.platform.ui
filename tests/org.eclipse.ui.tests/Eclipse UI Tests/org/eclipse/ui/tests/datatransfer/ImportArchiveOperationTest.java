@@ -66,7 +66,8 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
     /*
      * @see IOverwriteQuery#queryOverwrite(String)
      */
-    public String queryOverwrite(String pathString) {
+    @Override
+	public String queryOverwrite(String pathString) {
         //Always return an empty String - we aren't
         //doing anything interesting
         return "";
@@ -76,7 +77,8 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
      * Tear down. Delete the project we created and all of the
      * files on the file system.
      */
-    protected void doTearDown() throws Exception {
+    @Override
+	protected void doTearDown() throws Exception {
         super.doTearDown();
         try {
             project.delete(true, true, null);

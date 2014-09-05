@@ -20,7 +20,8 @@ public class ExistingWindowProvider implements IWorkbenchWindowProvider {
         this.window = window;
     }
     
-    public IWorkbenchWindow getWorkbenchWindow() {
+    @Override
+	public IWorkbenchWindow getWorkbenchWindow() {
         return window;
     }
 

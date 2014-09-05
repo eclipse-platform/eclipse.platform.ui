@@ -24,7 +24,8 @@ public class ViewPerspective implements IPerspectiveFactory {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
      */
-    public void createInitialLayout(IPageLayout layout) {
+    @Override
+	public void createInitialLayout(IPageLayout layout) {
         String editorArea = layout.getEditorArea();
         IFolderLayout folder1 = layout.createFolder("folder1",
                 IPageLayout.LEFT, .25f, editorArea);

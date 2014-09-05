@@ -55,6 +55,7 @@ public class ObjectContributionTests extends DynamicTestCase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionId()
 	 */
+	@Override
 	protected String getExtensionId() {
 		return "newOC1.testDynamicOCAddition";
 	}
@@ -62,6 +63,7 @@ public class ObjectContributionTests extends DynamicTestCase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
 	 */
+	@Override
 	protected String getExtensionPoint() {
 		return IWorkbenchRegistryConstants.PL_POPUP_MENU;
 	}
@@ -69,6 +71,7 @@ public class ObjectContributionTests extends DynamicTestCase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getInstallLocation()
 	 */
+	@Override
 	protected String getInstallLocation() {		
 		return "data/org.eclipse.newOC1";
 	}
@@ -80,17 +83,21 @@ public class ObjectContributionTests extends DynamicTestCase {
 		resetViewerMenu(menu);
 		ISelectionProvider provider = new ISelectionProvider() {
 
+			@Override
 			public void addSelectionChangedListener(ISelectionChangedListener listener) {
 				
 			}
 
+			@Override
 			public ISelection getSelection() {
 				return new StructuredSelection(new Random());
 			}
 
+			@Override
 			public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 			}
 
+			@Override
 			public void setSelection(ISelection selection) {
 			}
 			
@@ -130,17 +137,21 @@ public class ObjectContributionTests extends DynamicTestCase {
 		IMenuManager menu = new MenuManager();
 		ISelectionProvider provider = new ISelectionProvider() {
 
+			@Override
 			public void addSelectionChangedListener(ISelectionChangedListener listener) {
 				
 			}
 
+			@Override
 			public ISelection getSelection() {
 				return new StructuredSelection(new Random());
 			}
 
+			@Override
 			public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 			}
 
+			@Override
 			public void setSelection(ISelection selection) {
 			}
 			
@@ -164,6 +175,7 @@ public class ObjectContributionTests extends DynamicTestCase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getMarkerClass()
 	 */
+	@Override
 	protected String getMarkerClass() {
 		return "org.eclipse.ui.dynamic.MockObjectActionDelegate";
 	}

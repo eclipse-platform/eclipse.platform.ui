@@ -92,6 +92,7 @@ public class Bug95357Test extends TestCase {
 		}
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		fWin = fWorkbench.getActiveWorkbenchWindow();
 

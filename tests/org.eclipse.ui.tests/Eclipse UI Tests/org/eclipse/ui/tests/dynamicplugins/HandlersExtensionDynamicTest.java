@@ -40,6 +40,7 @@ public final class HandlersExtensionDynamicTest extends DynamicTestCase {
 	 * 
 	 * @return The extension identifier; never <code>null</code>.
 	 */
+	@Override
 	protected final String getExtensionId() {
 		return "handlersExtensionDynamicTest.testDynamicHandlerAddition";
 	}
@@ -49,6 +50,7 @@ public final class HandlersExtensionDynamicTest extends DynamicTestCase {
 	 * 
 	 * @return The extension point identifier; never <code>null</code>.
 	 */
+	@Override
 	protected final String getExtensionPoint() {
 		return IWorkbenchRegistryConstants.PL_HANDLERS;
 	}
@@ -59,6 +61,7 @@ public final class HandlersExtensionDynamicTest extends DynamicTestCase {
 	 * 
 	 * @return The relative install location; never <code>null</code>.
 	 */
+	@Override
 	protected final String getInstallLocation() {
 		return "data/org.eclipse.handlersExtensionDynamicTest";
 	}

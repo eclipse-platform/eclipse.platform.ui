@@ -44,7 +44,8 @@ public class RawIViewPart extends EventManager implements IViewPart {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IViewPart#getViewSite()
      */
-    public IViewSite getViewSite() {
+    @Override
+	public IViewSite getViewSite() {
         return site;
     }
 
@@ -56,14 +57,16 @@ public class RawIViewPart extends EventManager implements IViewPart {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite)
      */
-    public void init(IViewSite site) throws PartInitException {
+    @Override
+	public void init(IViewSite site) throws PartInitException {
         this.site = site;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
      */
-    public void init(IViewSite site, IMemento memento) throws PartInitException {
+    @Override
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
         this.site = site;
     }
 
@@ -77,7 +80,8 @@ public class RawIViewPart extends EventManager implements IViewPart {
         for (int nX = 0; nX < array.length; nX++) {
             final IPropertyListener l = (IPropertyListener) array[nX];
             Platform.run(new SafeRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     l.propertyChanged(RawIViewPart.this, propertyId);
                 }
             });
@@ -87,49 +91,56 @@ public class RawIViewPart extends EventManager implements IViewPart {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
      */
-    public void saveState(IMemento memento) {
+    @Override
+	public void saveState(IMemento memento) {
 
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#addPropertyListener(org.eclipse.ui.IPropertyListener)
      */
-    public void addPropertyListener(IPropertyListener listener) {
+    @Override
+	public void addPropertyListener(IPropertyListener listener) {
         addListenerObject(listener);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createPartControl(Composite parent) {
+    @Override
+	public void createPartControl(Composite parent) {
 
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
 
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#getSite()
      */
-    public IWorkbenchPartSite getSite() {
+    @Override
+	public IWorkbenchPartSite getSite() {
         return site;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#getTitle()
      */
-    public String getTitle() {
+    @Override
+	public String getTitle() {
         return title;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#getTitleImage()
      */
-    public Image getTitleImage() {
+    @Override
+	public Image getTitleImage() {
         return PlatformUI.getWorkbench().getSharedImages().getImage(
                 ISharedImages.IMG_DEF_VIEW);
     }
@@ -137,28 +148,32 @@ public class RawIViewPart extends EventManager implements IViewPart {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#getTitleToolTip()
      */
-    public String getTitleToolTip() {
+    @Override
+	public String getTitleToolTip() {
         return "blah";
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#removePropertyListener(org.eclipse.ui.IPropertyListener)
      */
-    public void removePropertyListener(IPropertyListener l) {
+    @Override
+	public void removePropertyListener(IPropertyListener l) {
         removeListenerObject(l);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPart#setFocus()
      */
-    public void setFocus() {
+    @Override
+	public void setFocus() {
 
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
-    public Object getAdapter(Class adapter) {
+    @Override
+	public Object getAdapter(Class adapter) {
         return null;
     }
 

@@ -35,13 +35,15 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
         super(testName);
     }
 
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
         super.doSetUp();
         fWindow = openTestWindow();
         fWindow.addPageListener(this);
     }
 
-    protected void doTearDown() throws Exception {
+    @Override
+	protected void doTearDown() throws Exception {
         fWindow.removePageListener(this);
         super.doTearDown();
     }
@@ -126,7 +128,8 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
     /**
      * @see IPageListener#pageActivated(IWorkbenchPage)
      */
-    public void pageActivated(IWorkbenchPage page) {
+    @Override
+	public void pageActivated(IWorkbenchPage page) {
         if (pageMask == null || page == pageMask)
             eventsReceived = eventsReceived | ACTIVATE;
     }
@@ -134,7 +137,8 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
     /**
      * @see IPageListener#pageClosed(IWorkbenchPage)
      */
-    public void pageClosed(IWorkbenchPage page) {
+    @Override
+	public void pageClosed(IWorkbenchPage page) {
         if (pageMask == null || page == pageMask)
         	eventsReceived = eventsReceived | CLOSE;
     }
@@ -142,7 +146,8 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
     /**
      * @see IPageListener#pageOpened(IWorkbenchPage)
      */
-    public void pageOpened(IWorkbenchPage page) {
+    @Override
+	public void pageOpened(IWorkbenchPage page) {
         if (pageMask == null || page == pageMask)
             eventsReceived |= OPEN;
     }

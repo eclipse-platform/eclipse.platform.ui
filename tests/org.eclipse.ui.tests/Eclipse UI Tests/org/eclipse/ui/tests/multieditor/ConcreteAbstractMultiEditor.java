@@ -24,10 +24,12 @@ public class ConcreteAbstractMultiEditor extends AbstractMultiEditor {
 
 	private IEditorReference leftReference;
 
+	@Override
 	protected void innerEditorsCreated() {
 		// no-op
 	}
 
+	@Override
 	public Composite getInnerEditorContainer(
 			IEditorReference innerEditorReference) {
 		if (leftReference == null) {
@@ -37,6 +39,7 @@ public class ConcreteAbstractMultiEditor extends AbstractMultiEditor {
 		return right;
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 		SashForm form = new SashForm(parent, SWT.HORIZONTAL);
 		left = new Composite(form, SWT.NONE);

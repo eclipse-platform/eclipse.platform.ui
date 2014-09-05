@@ -47,6 +47,7 @@ public class EncodingTests extends DynamicTestCase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionId()
 	 */
+	@Override
 	protected String getExtensionId() {
 		return "newEncoding1.testDynamicEncodingAddition";
 	}
@@ -54,6 +55,7 @@ public class EncodingTests extends DynamicTestCase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
 	 */
+	@Override
 	protected String getExtensionPoint() {
 		return IWorkbenchRegistryConstants.PL_ENCODINGS;
 	}
@@ -61,6 +63,7 @@ public class EncodingTests extends DynamicTestCase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getInstallLocation()
 	 */
+	@Override
 	protected String getInstallLocation() {
 		return "data/org.eclipse.newEncoding1";
 	}

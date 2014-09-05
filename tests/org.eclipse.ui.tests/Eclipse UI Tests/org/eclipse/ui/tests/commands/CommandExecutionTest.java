@@ -58,29 +58,35 @@ public class CommandExecutionTest extends UITestCase {
 		ArrayList<Pair> methods = new ArrayList<Pair>();
 		IWorkbenchWindow wbw;
 
+		@Override
 		public void preExecute(String commandId, ExecutionEvent event) {
 			methods.add(new Pair("preExecute", event));
 			// ensure HandlerUtil has proper access. See bug 412681.
 			wbw = HandlerUtil.getActiveWorkbenchWindow(event);
 		}
 
+		@Override
 		public void postExecuteSuccess(String commandId, Object returnValue) {
 			methods.add(new Pair("postExecuteSuccess", returnValue));
 		}
 
+		@Override
 		public void postExecuteFailure(String commandId,
 				ExecutionException exception) {
 			methods.add(new Pair("postExecuteFailure", exception));
 		}
 
+		@Override
 		public void notHandled(String commandId, NotHandledException exception) {
 			methods.add(new Pair("notHandled", exception));
 		}
 
+		@Override
 		public void notEnabled(String commandId, NotEnabledException exception) {
 			methods.add(new Pair("notEnabled", exception));
 		}
 
+		@Override
 		public void notDefined(String commandId, NotDefinedException exception) {
 			methods.add(new Pair("notDefined", exception));
 		}

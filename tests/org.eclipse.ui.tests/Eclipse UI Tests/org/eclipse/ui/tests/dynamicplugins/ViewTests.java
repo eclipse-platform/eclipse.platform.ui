@@ -195,6 +195,7 @@ public class ViewTests extends DynamicTestCase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionId()
 	 */
+	@Override
 	protected String getExtensionId() {
 		return "newView1.testDynamicViewAddition";
 	}
@@ -202,6 +203,7 @@ public class ViewTests extends DynamicTestCase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
 	 */
+	@Override
 	protected String getExtensionPoint() {
 		return IWorkbenchRegistryConstants.PL_VIEWS;
 	}
@@ -209,6 +211,7 @@ public class ViewTests extends DynamicTestCase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getInstallLocation()
 	 */
+	@Override
 	protected String getInstallLocation() {
 		return "data/org.eclipse.newView1";
 	}	
@@ -216,6 +219,7 @@ public class ViewTests extends DynamicTestCase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getMarkerClass()
 	 */
+	@Override
 	protected String getMarkerClass() {
 		return "org.eclipse.ui.dynamic.DynamicView";
 	}

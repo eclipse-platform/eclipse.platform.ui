@@ -42,12 +42,14 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		super(testName);
 	}
 
+	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		fWin = openTestWindow();
 		fActivePage = fWin.getActivePage();
 	}
 
+	@Override
 	protected void doTearDown() throws Exception {
 		super.doTearDown();
 		if (proj != null) {

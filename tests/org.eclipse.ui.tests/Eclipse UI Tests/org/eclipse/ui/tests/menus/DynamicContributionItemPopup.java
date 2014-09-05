@@ -27,6 +27,7 @@ public class DynamicContributionItemPopup extends CompoundContributionItem {
 	
 	private int count = 1;
 	
+	@Override
 	protected IContributionItem[] getContributionItems() {
 		// set the labels here, which will be verified in the test case
 		ContributionItem contributionItem1 = new ActionContributionItem(new DoNothingAction("something " + (count++)));

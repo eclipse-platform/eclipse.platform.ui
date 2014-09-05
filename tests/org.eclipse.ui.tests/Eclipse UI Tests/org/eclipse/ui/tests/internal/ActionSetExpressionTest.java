@@ -29,7 +29,8 @@ public class ActionSetExpressionTest extends ActionExpressionTest {
     /**
      * Opens the action set.  Returns the menu manager containing it.
      */
-    protected MenuManager getActionMenuManager(ListView view) throws Throwable {
+    @Override
+	protected MenuManager getActionMenuManager(ListView view) throws Throwable {
         fPage.showActionSet("org.eclipse.ui.tests.internal.ListElementActions");
         WorkbenchWindow win = (WorkbenchWindow) fWindow;
         IContributionItem item = win.getMenuBarManager().find(
@@ -46,7 +47,8 @@ public class ActionSetExpressionTest extends ActionExpressionTest {
     /**
      * Tests the enablement of an action.
      */
-    protected void testAction(MenuManager mgr, String action, boolean expected)
+    @Override
+	protected void testAction(MenuManager mgr, String action, boolean expected)
             throws Throwable {
         assertEquals(action, expected, ActionUtil.getActionWithLabel(mgr,
                 action).isEnabled());

@@ -82,7 +82,8 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
     /**
      * @see IActionDelegateTest#createActionWidget()
      */
-    protected Object createActionWidget() throws Throwable {
+    @Override
+	protected Object createActionWidget() throws Throwable {
         fPage.showActionSet("org.eclipse.ui.tests.api.MockActionSet");
         return null;
     }
@@ -90,14 +91,16 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
     /**
      * @see IActionDelegateTest#runAction()
      */
-    protected void runAction(Object widget) throws Throwable {
+    @Override
+	protected void runAction(Object widget) throws Throwable {
         ActionUtil.runActionWithLabel(this, fWindow, "Mock Action");
     }
 
     /**
      * @see IActionDelegateTest#fireSelection()
      */
-    protected void fireSelection(Object widget) throws Throwable {
+    @Override
+	protected void fireSelection(Object widget) throws Throwable {
         MockViewPart view = (MockViewPart) fPage.showView(MockViewPart.ID);
         view.fireSelection();
     }

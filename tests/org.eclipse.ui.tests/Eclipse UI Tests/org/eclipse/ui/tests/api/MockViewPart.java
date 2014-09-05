@@ -50,13 +50,15 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
     private ContributionItem toolbarItem = new ContributionItem("someId") {
 
     	private DisposeListener disposeListener = new DisposeListener() {
-    		public void widgetDisposed(DisposeEvent e) {
+    		@Override
+			public void widgetDisposed(DisposeEvent e) {
     			toolbarContributionItemWidgetDisposed();
     		}
 
     	};
     	
-    	public void fill(ToolBar parent, int index) {
+    	@Override
+		public void fill(ToolBar parent, int index) {
     		super.fill(parent, index);
     		
     		ToolItem item = new ToolItem(parent, index);
@@ -65,7 +67,8 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
     		item.setImage(WorkbenchImages.getImage(ISharedImages.IMG_DEF_VIEW));
     	}
     	
-    	public void dispose() {
+    	@Override
+		public void dispose() {
     		toolbarContributionItemDisposed();
     		super.dispose();
     	}
@@ -88,14 +91,16 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
 	/**
      * @see IViewPart#getViewSite()
      */
-    public IViewSite getViewSite() {
+    @Override
+	public IViewSite getViewSite() {
         return (IViewSite) getSite();
     }
 
     /**
      * @see IViewPart#init(IViewSite)
      */
-    public void init(IViewSite site) throws PartInitException {
+    @Override
+	public void init(IViewSite site) throws PartInitException {
         setSite(site);
         callTrace.add("init");
         setSiteInitialized();
@@ -105,7 +110,8 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
     /**
      * @see IViewPart#init(IViewSite, IMemento)
      */
-    public void init(IViewSite site, IMemento memento) throws PartInitException {
+    @Override
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
         setSite(site);
         callTrace.add("init");
         setSiteInitialized();
@@ -115,12 +121,14 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.api.MockWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createPartControl(Composite parent) {
+    @Override
+	public void createPartControl(Composite parent) {
     	super.createPartControl(parent);
     	
         Button addAction = new Button(parent, SWT.PUSH);
         addAction.setText("Add Action to Tool Bar");
         addAction.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IActionBars bars = getViewSite().getActionBars();
 				bars.getToolBarManager().add(new DummyAction());
@@ -131,6 +139,7 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
         Button removeAction = new Button(parent, SWT.PUSH);
         removeAction.setText("Remove Action from Tool Bar");
         removeAction.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IActionBars bars = getViewSite().getActionBars();
 				IToolBarManager tbm = bars.getToolBarManager();
@@ -151,6 +160,7 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.api.MockPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// Test for bug 94457: The contribution items must still be in the toolbar manager at the
 		// time the part is disposed. (Changing this behavior would be a breaking change for some
@@ -177,14 +187,16 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
     /**
      * @see IViewPart#saveState(IMemento)
      */
-    public void saveState(IMemento memento) {
+    @Override
+	public void saveState(IMemento memento) {
     	// do nothing
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.api.MockWorkbenchPart#getActionBars()
      */
-    protected IActionBars getActionBars() {
+    @Override
+	protected IActionBars getActionBars() {
         return getViewSite().getActionBars();
     }
 }

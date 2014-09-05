@@ -28,7 +28,8 @@ public class MockViewActionDelegate extends MockActionDelegate implements
     /**
      * @see IViewActionDelegate#init(IViewPart)
      */
-    public void init(IViewPart view) {
+    @Override
+	public void init(IViewPart view) {
         callHistory.add("init");
     }
 }

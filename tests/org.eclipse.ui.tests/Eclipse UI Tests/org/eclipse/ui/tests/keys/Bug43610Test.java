@@ -49,6 +49,7 @@ public class Bug43610Test extends UITestCase {
 		// Set up a working environment.
 		Display display = Display.getCurrent();
 		Listener listener = new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				if (event.stateMask == SWT.SHIFT) {
 					assertEquals(

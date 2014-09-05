@@ -32,6 +32,7 @@ public class DecoratorTableTest extends DecoratorViewerTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.decorators.DecoratorViewerTest#backgroundCheck(org.eclipse.ui.part.ViewPart)
 	 */
+	@Override
 	protected void backgroundCheck(IViewPart view) {
 		TableItem first = ((DecoratorTableView) view).viewer.getTable().getItem(0);
 		Assert.isTrue(first.getBackground().getRGB()
@@ -42,6 +43,7 @@ public class DecoratorTableTest extends DecoratorViewerTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.decorators.DecoratorViewerTest#foregroundCheck(org.eclipse.ui.part.ViewPart)
 	 */
+	@Override
 	protected void foregroundCheck(IViewPart view) {
 		TableItem first = ((DecoratorTableView) view).viewer.getTable().getItem(0);
 		Assert.isTrue(first.getForeground().getRGB()
@@ -52,6 +54,7 @@ public class DecoratorTableTest extends DecoratorViewerTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.decorators.DecoratorViewerTest#openView(org.eclipse.ui.IWorkbenchPage)
 	 */
+	@Override
 	protected IViewPart openView(IWorkbenchPage page) throws PartInitException {
 		return page.showView("org.eclipse.ui.tests.decorator.TableViewTest");
 	}
@@ -59,6 +62,7 @@ public class DecoratorTableTest extends DecoratorViewerTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.decorators.DecoratorViewerTest#fontCheck(org.eclipse.ui.part.ViewPart)
 	 */
+	@Override
 	protected void fontCheck(IViewPart view) {
 		TableItem first = ((DecoratorTableView) view).viewer.getTable().getItem(0);
 		Assert.isTrue(first.getFont().getFontData()[0].equals(FontDecorator.font.getFontData()[0]));

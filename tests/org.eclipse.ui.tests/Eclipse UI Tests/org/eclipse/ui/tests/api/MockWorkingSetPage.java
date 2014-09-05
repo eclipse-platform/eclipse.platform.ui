@@ -35,7 +35,8 @@ public class MockWorkingSetPage extends WizardPage implements IWorkingSetPage {
      * 
      * @see org.eclipse.jface.wizard.WizardPage#createControl(Composite)
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
     }
 
     /**
@@ -43,7 +44,8 @@ public class MockWorkingSetPage extends WizardPage implements IWorkingSetPage {
      * 
      * @see org.eclipse.ui.dialogs.IWorkingSetPage#getSelection()
      */
-    public IWorkingSet getSelection() {
+    @Override
+	public IWorkingSet getSelection() {
         return workingSet;
     }
 
@@ -52,13 +54,15 @@ public class MockWorkingSetPage extends WizardPage implements IWorkingSetPage {
      * 
      * @see org.eclipse.ui.dialogs.IWorkingSetPage#setSelection(IWorkingSet)
      */
-    public void setSelection(IWorkingSet workingSet) {
+    @Override
+	public void setSelection(IWorkingSet workingSet) {
     }
 
     /**
      * @see org.eclipse.ui.dialogs.IWorkingSetPage#finish()
      */
-    public void finish() {
+    @Override
+	public void finish() {
     }
 
 }

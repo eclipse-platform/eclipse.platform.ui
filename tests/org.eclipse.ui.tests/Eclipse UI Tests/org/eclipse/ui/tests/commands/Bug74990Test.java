@@ -63,6 +63,7 @@ public final class Bug74990Test extends UITestCase {
 
 		// Create a handler submission.
 		final IHandler handler = new AbstractHandler() {
+			@Override
 			public final Object execute(final Map parameterValuesByName)
 					throws ExecutionException {
 				// Do nothing.

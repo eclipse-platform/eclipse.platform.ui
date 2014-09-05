@@ -68,7 +68,8 @@ public class ZoomTestCase extends UITestCase {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
      */
-    protected void doTearDown() throws Exception {
+    @Override
+	protected void doTearDown() throws Exception {
     	// Ensure that the model is sane
         // page.testInvariants();
         
@@ -78,7 +79,8 @@ public class ZoomTestCase extends UITestCase {
         apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, oldMinMaxState);
     }
     
-    protected void doSetUp() throws Exception {
+    @Override
+	protected void doSetUp() throws Exception {
 		// These tests are hard-wired to the pre-3.3 zoom behaviour
 		// Run them anyway to ensure that we preserve the 3.0 mechanism
         IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();

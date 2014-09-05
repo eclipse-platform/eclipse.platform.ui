@@ -170,6 +170,7 @@ public class Bug99858Test extends TestCase {
 			fTestingMode = true;
 		}
 
+		@Override
 		public void run() {
 			super.run();
 			fRan = true;
@@ -205,11 +206,13 @@ public class Bug99858Test extends TestCase {
 			;
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		AdvancedValidationUserApprover.AUTOMATED_MODE = true;
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		AdvancedValidationUserApprover.AUTOMATED_MODE = false;
 		super.tearDown();

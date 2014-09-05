@@ -21,6 +21,7 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class DummyServiceFactory extends AbstractServiceFactory {
 	
+	@Override
 	public Object create(Class serviceInterface, IServiceLocator parentLocator,
 			IServiceLocator locator) {
 		if(serviceInterface.equals(DummyService.class))

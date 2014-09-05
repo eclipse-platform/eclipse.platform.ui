@@ -32,6 +32,7 @@ public class DummyJob extends Job {
 		this.status = status;
 	}
 
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 
 		monitor.beginTask(getName() + " starts now", 10);

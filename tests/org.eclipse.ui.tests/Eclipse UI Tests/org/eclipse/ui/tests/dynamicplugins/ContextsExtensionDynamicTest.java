@@ -38,6 +38,7 @@ public final class ContextsExtensionDynamicTest extends DynamicTestCase {
 	 * 
 	 * @return The extension identifier; never <code>null</code>.
 	 */
+	@Override
 	protected final String getExtensionId() {
 		return "contextsExtensionDynamicTest.testDynamicContextAddition";
 	}
@@ -47,6 +48,7 @@ public final class ContextsExtensionDynamicTest extends DynamicTestCase {
 	 * 
 	 * @return The extension point identifier; never <code>null</code>.
 	 */
+	@Override
 	protected final String getExtensionPoint() {
 		return IWorkbenchRegistryConstants.PL_CONTEXTS;
 	}
@@ -57,6 +59,7 @@ public final class ContextsExtensionDynamicTest extends DynamicTestCase {
 	 * 
 	 * @return The relative install location; never <code>null</code>.
 	 */
+	@Override
 	protected final String getInstallLocation() {
 		return "data/org.eclipse.contextsExtensionDynamicTest";
 	}

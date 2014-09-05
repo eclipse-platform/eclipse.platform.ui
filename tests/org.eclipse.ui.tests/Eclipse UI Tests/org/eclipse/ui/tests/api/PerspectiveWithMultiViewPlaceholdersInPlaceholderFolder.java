@@ -29,7 +29,8 @@ public class PerspectiveWithMultiViewPlaceholdersInPlaceholderFolder implements 
         // do nothing
     }
 
-    public void createInitialLayout(IPageLayout layout) {
+    @Override
+	public void createInitialLayout(IPageLayout layout) {
         IPlaceholderFolderLayout folder = layout.createPlaceholderFolder("placeholderFolder", IPageLayout.LEFT, 0.5f, IPageLayout.ID_EDITOR_AREA);
         addPlaceholders(folder);
     }

@@ -59,6 +59,7 @@ public class TextControlView extends ViewPart {
 	 * org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets
 	 * .Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		Composite c = new Composite(parent, SWT.NONE);
 		c.setLayout(new GridLayout(3, true));
@@ -80,6 +81,7 @@ public class TextControlView extends ViewPart {
 	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		editableText.setFocus();
 	}

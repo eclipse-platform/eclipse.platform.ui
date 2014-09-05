@@ -79,6 +79,7 @@ public class Bug43597Test extends UITestCase {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.harness.util.UITestCase#doTearDown()
      */
+	@Override
 	protected void doTearDown() throws Exception {
 		if (textFont != null) {
 			textFont.dispose();

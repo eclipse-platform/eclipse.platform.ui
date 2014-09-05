@@ -54,6 +54,7 @@ public class TrimList implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.IWindowTrim#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return fCombo;
 	}
@@ -63,6 +64,7 @@ public class TrimList implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.IWindowTrim#getValidSides()
 	 */
+	@Override
 	public int getValidSides() {
 		return SWT.TOP | SWT.BOTTOM;
 	}
@@ -72,6 +74,7 @@ public class TrimList implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.IWindowTrim#dock(int)
 	 */
+	@Override
 	public void dock(int dropSide) {
 		// nothing to do, we don't have to re-orient our control
 	}
@@ -81,6 +84,7 @@ public class TrimList implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.IWindowTrim#getId()
 	 */
+	@Override
 	public String getId() {
 		return TRIM_LIST_ID;
 	}
@@ -90,6 +94,7 @@ public class TrimList implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.IWindowTrim#getDisplayName()
 	 */
+	@Override
 	public String getDisplayName() {
 		// Should be the NLS string name, but I'll cheat for now
 		return "Trim List";
@@ -100,6 +105,7 @@ public class TrimList implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.IWindowTrim#isCloseable()
 	 */
+	@Override
 	public boolean isCloseable() {
 		return false;
 	}
@@ -109,6 +115,7 @@ public class TrimList implements IWindowTrim {
 	 * 
 	 * @see org.eclipse.ui.IWindowTrim#handleClose()
 	 */
+	@Override
 	public void handleClose() {
 		// nothing to do here.
 	}
@@ -116,6 +123,7 @@ public class TrimList implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowTrim#getWidthHint()
 	 */
+	@Override
 	public int getWidthHint() {
 		return SWT.DEFAULT;
 	}
@@ -123,6 +131,7 @@ public class TrimList implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowTrim#getHeightHint()
 	 */
+	@Override
 	public int getHeightHint() {
 		return SWT.DEFAULT;
 	}
@@ -130,6 +139,7 @@ public class TrimList implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowTrim#isResizeable()
 	 */
+	@Override
 	public boolean isResizeable() {
 		return false;
 	}

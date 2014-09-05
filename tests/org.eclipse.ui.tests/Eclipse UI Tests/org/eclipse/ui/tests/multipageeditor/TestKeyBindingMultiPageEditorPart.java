@@ -56,7 +56,8 @@ public final class TestKeyBindingMultiPageEditorPart extends EditorPart {
      * 
      * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createPartControl(Composite parent) {
+    @Override
+	public void createPartControl(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new RowLayout());
         Text text1 = new Text(composite, SWT.NONE);
@@ -70,7 +71,8 @@ public final class TestKeyBindingMultiPageEditorPart extends EditorPart {
      * 
      * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
      */
-    public void doSave(IProgressMonitor monitor) {
+    @Override
+	public void doSave(IProgressMonitor monitor) {
         // Do nothing.
     }
 
@@ -79,7 +81,8 @@ public final class TestKeyBindingMultiPageEditorPart extends EditorPart {
      * 
      * @see org.eclipse.ui.part.EditorPart#doSaveAs()
      */
-    public void doSaveAs() {
+    @Override
+	public void doSaveAs() {
         throw new UnsupportedOperationException("Not implemented in this test."); //$NON-NLS-1$
 
     }
@@ -99,7 +102,8 @@ public final class TestKeyBindingMultiPageEditorPart extends EditorPart {
      * @see org.eclipse.ui.part.EditorPart#init(org.eclipse.ui.IEditorSite,
      *      org.eclipse.ui.IEditorInput)
      */
-    public void init(IEditorSite site, IEditorInput input)
+    @Override
+	public void init(IEditorSite site, IEditorInput input)
             throws PartInitException {
         setInput(input);
         setSite(site);
@@ -113,7 +117,8 @@ public final class TestKeyBindingMultiPageEditorPart extends EditorPart {
      * 
      * @see org.eclipse.ui.part.EditorPart#isDirty()
      */
-    public boolean isDirty() {
+    @Override
+	public boolean isDirty() {
         return false;
     }
 
@@ -122,7 +127,8 @@ public final class TestKeyBindingMultiPageEditorPart extends EditorPart {
      * 
      * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
      */
-    public boolean isSaveAsAllowed() {
+    @Override
+	public boolean isSaveAsAllowed() {
         return false;
     }
 
@@ -131,7 +137,8 @@ public final class TestKeyBindingMultiPageEditorPart extends EditorPart {
      * 
      * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
      */
-    public void setFocus() {
+    @Override
+	public void setFocus() {
         final boolean odds = (number % 2) > 0;
         final String scope1 = "org.eclipse.ui.tests.scope1"; //$NON-NLS-1$
         final String scope2 = "org.eclipse.ui.tests.scope2"; //$NON-NLS-1$

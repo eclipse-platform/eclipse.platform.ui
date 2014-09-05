@@ -21,11 +21,13 @@ public class TestImportWizard extends Wizard implements IImportWizard {
 		super();
 	}
 
+	@Override
 	public boolean performFinish() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		// TODO Auto-generated method stub
 

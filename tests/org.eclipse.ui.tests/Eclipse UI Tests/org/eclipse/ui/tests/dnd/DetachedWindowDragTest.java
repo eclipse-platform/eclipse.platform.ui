@@ -35,7 +35,8 @@ public class DetachedWindowDragTest	extends DragTest {
 		super(dragSource, dropTarget, log, " - detached");
 	}
     
-    public void doSetUp() throws Exception {
+    @Override
+	public void doSetUp() throws Exception {
     	super.doSetUp();
     	
     	// First, show all the necessary views (note that we show view '2' first, this should

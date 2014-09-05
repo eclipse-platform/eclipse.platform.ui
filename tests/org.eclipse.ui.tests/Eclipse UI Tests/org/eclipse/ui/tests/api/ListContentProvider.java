@@ -20,7 +20,8 @@ public class ListContentProvider implements IStructuredContentProvider {
     /**
      * @see IStructuredContentProvider#getElements(Object)
      */
-    public Object[] getElements(Object inputElement) {
+    @Override
+	public Object[] getElements(Object inputElement) {
         if (inputElement instanceof List) {
             return ((List) inputElement).toArray();
         }
@@ -30,13 +31,15 @@ public class ListContentProvider implements IStructuredContentProvider {
     /**
      * @see IContentProvider#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
     }
 
     /**
      * @see IContentProvider#inputChanged(Viewer, Object, Object)
      */
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    @Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     }
 
 }

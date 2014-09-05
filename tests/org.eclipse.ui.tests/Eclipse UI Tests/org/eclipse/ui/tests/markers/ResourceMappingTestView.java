@@ -34,12 +34,14 @@ public class ResourceMappingTestView extends ViewPart implements IViewPart {
 		super();
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent);
 		viewer.getTree().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		viewer.setLabelProvider(new LabelProvider() {
+			@Override
 			public String getText(Object element) {
 				return ((TestResourceMapping) element).getName();
 			}
@@ -53,26 +55,32 @@ public class ResourceMappingTestView extends ViewPart implements IViewPart {
 	private IContentProvider getContentProvider() {
 		return new ITreeContentProvider() {
 
+			@Override
 			public Object[] getChildren(Object parentElement) {
 				return ((TestResourceMapping) parentElement).getChildren();
 			}
 
+			@Override
 			public Object getParent(Object element) {
 				return ((TestResourceMapping) element).getParent();
 			}
 
+			@Override
 			public boolean hasChildren(Object element) {
 				return ((TestResourceMapping) element).getChildren().length > 0;
 			}
 
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return ((TestResourceMapping) inputElement).getChildren();
 			}
 
+			@Override
 			public void dispose() {
 
 			}
 
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
 
@@ -86,6 +94,7 @@ public class ResourceMappingTestView extends ViewPart implements IViewPart {
 	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		viewer.setSelection(new StructuredSelection(new TestResourceMapping(
 				TestPlugin.getWorkspace().getRoot())));

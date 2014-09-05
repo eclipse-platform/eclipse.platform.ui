@@ -43,6 +43,7 @@ public class MultiPageResourceEditor extends MultiPageEditorPart {
 		editor.setSelection(new StructuredSelection(file));
 	}
 
+	@Override
 	protected void createPages() {
 		try {
 			editor = new SubEditor();
@@ -57,6 +58,7 @@ public class MultiPageResourceEditor extends MultiPageEditorPart {
 	 * 
 	 * @see org.eclipse.ui.part.MultiPageEditorPart#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == IPropertySheetPage.class) {
 			if (page == null) {
@@ -67,14 +69,17 @@ public class MultiPageResourceEditor extends MultiPageEditorPart {
 		return super.getAdapter(adapter);
 	}
 
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		// nothing to do
 	}
 
+	@Override
 	public void doSaveAs() {
 		// nothing to do
 	}
 
+	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
@@ -83,6 +88,7 @@ public class MultiPageResourceEditor extends MultiPageEditorPart {
 
 		private TreeViewer viewer;
 
+		@Override
 		public void createPartControl(Composite parent) {
 			viewer = new TreeViewer(parent);
 			viewer.setContentProvider(new WorkbenchContentProvider());
@@ -94,46 +100,56 @@ public class MultiPageResourceEditor extends MultiPageEditorPart {
 			getSite().setSelectionProvider(this);
 		}
 
+		@Override
 		public void setFocus() {
 			viewer.getControl().setFocus();
 		}
 
+		@Override
 		public void doSave(IProgressMonitor monitor) {
 			// nothing to do
 		}
 
+		@Override
 		public void doSaveAs() {
 			// nothing to do
 		}
 
+		@Override
 		public void init(IEditorSite site, IEditorInput input)
 				throws PartInitException {
 			setSite(site);
 			setInput(input);
 		}
 
+		@Override
 		public boolean isDirty() {
 			return false;
 		}
 
+		@Override
 		public boolean isSaveAsAllowed() {
 			return false;
 		}
 
+		@Override
 		public void addSelectionChangedListener(
 				ISelectionChangedListener listener) {
 			viewer.addSelectionChangedListener(listener);
 		}
 
+		@Override
 		public ISelection getSelection() {
 			return viewer.getSelection();
 		}
 
+		@Override
 		public void removeSelectionChangedListener(
 				ISelectionChangedListener listener) {
 			viewer.removeSelectionChangedListener(listener);
 		}
 
+		@Override
 		public void setSelection(ISelection selection) {
 			viewer.setSelection(selection);
 		}

@@ -34,6 +34,7 @@ public class PerspectiveViewsBug88345 implements IPerspectiveFactory {
 		// do nothing
 	}
 
+	@Override
 	public void createInitialLayout(IPageLayout layout) {
 		layout.addView(MockViewPart.IDMULT, IPageLayout.LEFT, 0.33f,
 				IPageLayout.ID_EDITOR_AREA);

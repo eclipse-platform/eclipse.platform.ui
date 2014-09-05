@@ -64,6 +64,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 
 		private boolean dirty;
 
+		@Override
 		public void doSave(IProgressMonitor monitor) throws CoreException {
 			SubMonitor subMonitor = SubMonitor.convert(monitor, 2);
 			IJobRunnable runnable = doSave(subMonitor.newChild(1), getSite());
@@ -73,6 +74,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 			monitor.done();
 		}
 
+		@Override
 		public IJobRunnable doSave(IProgressMonitor monitor,
 				IShellProvider shellProvider) throws CoreException {
 			monitor.beginTask("Saving in the foreground",
@@ -103,6 +105,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 				return null;
 			}
 			IJobRunnable result = new IJobRunnable() {
+				@Override
 				public IStatus run(IProgressMonitor monitor) {
 					monitor.beginTask("Saving in the background",
 							data.backgroundSaveTime);
@@ -135,26 +138,32 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 			return result;
 		}
 
+		@Override
 		public boolean equals(Object object) {
 			return this == object;
 		}
 
+		@Override
 		public ImageDescriptor getImageDescriptor() {
 			return input.getImageDescriptor();
 		}
 
+		@Override
 		public String getName() {
 			return input.getName();
 		}
 
+		@Override
 		public String getToolTipText() {
 			return input.getToolTipText();
 		}
 
+		@Override
 		public int hashCode() {
 			return System.identityHashCode(this);
 		}
 
+		@Override
 		public boolean isDirty() {
 			return dirty;
 		}
@@ -163,6 +172,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 			firePropertyChange("dirty", new Boolean(this.dirty), new Boolean(
 					this.dirty = dirty));
 			getSite().getShell().getDisplay().syncExec(new Runnable(){
+				@Override
 				public void run() {
 					TestBackgroundSaveEditor.this
 					.firePropertyChange(ISaveablePart.PROP_DIRTY);
@@ -193,10 +203,12 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 		mySaveable = new MySaveable();
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 		Realm realm = SWTObservables.getRealm(parent.getDisplay());
 		final DataBindingContext dbc = new DataBindingContext(realm);
 		parent.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				dbc.dispose();
 			}
@@ -296,6 +308,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 		GridLayoutFactory.swtDefaults().generateLayout(inputGroup);
 	}
 
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		try {
 			mySaveable.doSave(monitor);
@@ -308,10 +321,12 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 		}
 	}
 
+	@Override
 	public void doSaveAs() {
 		Assert.isTrue(false, "Should not be called");
 	}
 
+	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
 		if (!(input instanceof IFileEditorInput))
@@ -322,14 +337,17 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 		this.input = input;
 	}
 
+	@Override
 	public boolean isDirty() {
 		return mySaveable.isDirty();
 	}
 
+	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
 
+	@Override
 	public void setFocus() {
 		inputText.setFocus();
 	}
@@ -478,10 +496,12 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 
 	private Data data = new Data();
 
+	@Override
 	public Saveable[] getActiveSaveables() {
 		return new Saveable[] { mySaveable };
 	}
 
+	@Override
 	public Saveable[] getSaveables() {
 		return new Saveable[] { mySaveable };
 	}

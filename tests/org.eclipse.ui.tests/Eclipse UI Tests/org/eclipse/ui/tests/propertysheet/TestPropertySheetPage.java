@@ -34,6 +34,7 @@ public class TestPropertySheetPage extends PropertySheetPage implements
 	 * org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object,
 	 * java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		// singleton cleanup
 		fSelection = null;
@@ -46,6 +47,7 @@ public class TestPropertySheetPage extends PropertySheetPage implements
 	 * 
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	public Class[] getAdapterList() {
 		return new Class[] { IPropertySheetPage.class };
 	}
@@ -57,6 +59,7 @@ public class TestPropertySheetPage extends PropertySheetPage implements
 	 * org.eclipse.ui.views.properties.PropertySheetPage#selectionChanged(org
 	 * .eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		super.selectionChanged(part, selection);
 		fPart = part;

@@ -27,18 +27,21 @@ import org.eclipse.ui.PartInitException;
 public class MockViewPartMult extends MockViewPart {
 	static int counter = 1;
 	
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		
 		Button button = new Button(parent, SWT.NONE);
 		button.setText("Open Another");
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				openAnother();
 			}
 		});
 	}
 
+	@Override
 	public String getTitle() {
 		String title = super.getTitle();
 		String secondaryId = getViewSite().getSecondaryId();

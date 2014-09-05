@@ -57,7 +57,8 @@ public class MockPart extends EventManager implements IExecutableExtension {
     	/* (non-Javadoc)
     	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
     	 */
-    	public void widgetDisposed(DisposeEvent e) {
+    	@Override
+		public void widgetDisposed(DisposeEvent e) {
     		MockPart.this.widgetDisposed();
     	}
     };
@@ -70,7 +71,8 @@ public class MockPart extends EventManager implements IExecutableExtension {
         return selectionProvider;
     }
 
-    public void setInitializationData(IConfigurationElement config,
+    @Override
+	public void setInitializationData(IConfigurationElement config,
             String propertyName, Object data) throws CoreException {
     	
     	callTrace.add("setInitializationData");

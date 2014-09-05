@@ -43,6 +43,7 @@ public class APITestUtils {
 			this.response = response;
 		}
 
+		@Override
 		public Save promptToSave(MPart dirtyPart) {
 			switch (response) {
 			case 0: return Save.YES;
@@ -54,6 +55,7 @@ public class APITestUtils {
 			throw new RuntimeException();
 		}
 
+		@Override
 		public Save[] promptToSave(Collection<MPart> dirtyParts) {
 			Save save = promptToSave((MPart) null);
 			Save[] prompt = new Save[dirtyParts.size()];

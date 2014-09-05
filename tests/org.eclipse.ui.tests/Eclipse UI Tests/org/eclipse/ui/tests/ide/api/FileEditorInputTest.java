@@ -61,38 +61,46 @@ public class FileEditorInputTest extends UITestCase {
             this.file = file;
         }
         
-        public IFile getFile() {
+        @Override
+		public IFile getFile() {
             return file;
         }
 
         /**
 		 * @throws CoreException if this method fails
 		 */
-        public IStorage getStorage() throws CoreException {
+        @Override
+		public IStorage getStorage() throws CoreException {
             return file;
         }
 
-        public boolean exists() {
+        @Override
+		public boolean exists() {
             return file.exists();
         }
 
-        public ImageDescriptor getImageDescriptor() {
+        @Override
+		public ImageDescriptor getImageDescriptor() {
             return null;
         }
 
-        public String getName() {
+        @Override
+		public String getName() {
             return file.getName();
         }
 
-        public IPersistableElement getPersistable() {
+        @Override
+		public IPersistableElement getPersistable() {
             return null;
         }
 
-        public String getToolTipText() {
+        @Override
+		public String getToolTipText() {
             return file.getFullPath().toString();
         }
 
-        public Object getAdapter(Class adapter) {
+        @Override
+		public Object getAdapter(Class adapter) {
             if (adapter == IResource.class)
                 return file;
             if (adapter == IFile.class)
@@ -100,14 +108,16 @@ public class FileEditorInputTest extends UITestCase {
             return null;
         }
         
-        public boolean equals(Object obj) {
+        @Override
+		public boolean equals(Object obj) {
             if (!(obj instanceof IFileEditorInput))
                 return false;
             IFileEditorInput other = (IFileEditorInput) obj;
             return file.equals(other.getFile());
         }
         
-        public int hashCode() {
+        @Override
+		public int hashCode() {
             return file.hashCode();
         }
     }
