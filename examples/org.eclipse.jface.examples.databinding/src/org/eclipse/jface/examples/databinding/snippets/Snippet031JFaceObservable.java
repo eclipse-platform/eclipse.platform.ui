@@ -128,12 +128,10 @@ public class Snippet031JFaceObservable {
 			IValueProperty nameProperty = JFaceProperties.value(Person.class,
 					"name", NAME_PROPERTY);
 
-			bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(name), nameProperty.observe(person),
-					null, null);
+			bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(name), nameProperty.observe(person));
 
 			Label label = new Label(shell, SWT.NONE);
-			bindingContext.bindValue(WidgetProperties.text().observe(label),
-					nameProperty.observe(person), null, null);
+			bindingContext.bindValue(WidgetProperties.text().observe(label), nameProperty.observe(person));
 
 			// Open and return the Shell
 			shell.pack();
