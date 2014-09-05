@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Guy Gurfinkel, guy.g@zend.com - [content assist][api] provide better access to ContentAssistant - https://bugs.eclipse.org/bugs/show_bug.cgi?id=169954
  *     Anton Leherbauer (Wind River Systems) - [content assist][api] ContentAssistEvent should contain information about auto activation - https://bugs.eclipse.org/bugs/show_bug.cgi?id=193728
  *     Marcel Bruch, bruch@cs.tu-darmstadt.de - [content assist] Allow to re-sort proposals - https://bugs.eclipse.org/bugs/show_bug.cgi?id=350991
+ *     John Glassmyer, jogl@google.com - catch Content Assist exceptions to protect navigation keys - http://bugs.eclipse.org/434901
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
@@ -48,7 +49,12 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.core.commands.IHandler;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
@@ -831,6 +837,31 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 	}
 
+	/**
+	 * A subclass of ISafeRunnable which, in case of exception, logs a specified error message to the jface.text log and
+	 * sets fLastErrorMessage to this message.
+	 */
+	private abstract class ExceptionLoggingSafeRunnable implements ISafeRunnable {
+		private static final String PLUGIN_ID= "org.eclipse.jface.text"; //$NON-NLS-1$
+
+		private final String messageKey;
+
+		/**
+		 * @param messageKey key passed to JFaceTextMessages to lookup the text of the error message
+		 */
+		ExceptionLoggingSafeRunnable(String messageKey) {
+			this.messageKey = messageKey;
+		}
+
+		public void handleException(Throwable exception) {
+			String message = JFaceTextMessages.getString(messageKey);
+
+			IStatus status = new Status(IStatus.ERROR, PLUGIN_ID, message, exception);
+			Platform.getLog(Platform.getBundle(PLUGIN_ID)).log(status);
+
+			fLastErrorMessage = message;
+		}
+	}
 
 	/**
 	 * Dialog store constant for the x-size of the completion proposal pop-up
@@ -875,6 +906,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	public static final int WIDGET_PRIORITY= 20;
 	private static final int DEFAULT_AUTO_ACTIVATION_DELAY= 500;
 
+	private static final String COMPLETION_ERROR_MESSAGE_KEY= "ContentAssistant.error_computing_completion"; //$NON-NLS-1$
+	private static final String CONTEXT_ERROR_MESSAGE_KEY= "ContentAssistant.error_computing_context"; //$NON-NLS-1$
 
 	private IInformationControlCreator fInformationControlCreator;
 	private int fAutoActivationDelay= DEFAULT_AUTO_ACTIVATION_DELAY;
@@ -1828,18 +1861,25 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 * @since 3.0
 	 */
-	ICompletionProposal[] computeCompletionProposals(IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
+	ICompletionProposal[] computeCompletionProposals(
+			final IContentAssistSubjectControl contentAssistSubjectControl, final int offset) {
 		fLastErrorMessage= null;
 
-		ICompletionProposal[] result= null;
+		final ICompletionProposal[][] result= { null };
 
-		IContentAssistProcessor p= getProcessor(contentAssistSubjectControl, offset);
+		final IContentAssistProcessor p= getProcessor(contentAssistSubjectControl, offset);
 		if (p instanceof ISubjectControlContentAssistProcessor) {
-			result= ((ISubjectControlContentAssistProcessor) p).computeCompletionProposals(contentAssistSubjectControl, offset);
-			fLastErrorMessage= p.getErrorMessage();
+			// Ensure that the assist session ends cleanly even if the processor throws an exception.
+			SafeRunner.run(new ExceptionLoggingSafeRunnable(COMPLETION_ERROR_MESSAGE_KEY) {
+				public void run() throws Exception {
+					result[0]= ((ISubjectControlContentAssistProcessor) p)
+							.computeCompletionProposals(contentAssistSubjectControl, offset);
+					fLastErrorMessage= p.getErrorMessage();
+				}
+			});
 		}
 
-		return result;
+		return result[0];
 	}
 
 	/**
@@ -1851,18 +1891,23 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @return an array of completion proposals or <code>null</code> if no proposals are possible
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
-	ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
+	ICompletionProposal[] computeCompletionProposals(final ITextViewer viewer, final int offset) {
 		fLastErrorMessage= null;
 
-		ICompletionProposal[] result= null;
+		final ICompletionProposal[][] result= { null };
 
-		IContentAssistProcessor p= getProcessor(viewer, offset);
+		final IContentAssistProcessor p= getProcessor(viewer, offset);
 		if (p != null) {
-			result= p.computeCompletionProposals(viewer, offset);
-			fLastErrorMessage= p.getErrorMessage();
+			// Ensure that the assist session ends cleanly even if the processor throws an exception.
+			SafeRunner.run(new ExceptionLoggingSafeRunnable(COMPLETION_ERROR_MESSAGE_KEY) {
+				public void run() throws Exception {
+					result[0]= p.computeCompletionProposals(viewer, offset);
+					fLastErrorMessage= p.getErrorMessage();
+				}
+			});
 		}
 
-		return result;
+		return result[0];
 	}
 
 	/**
@@ -1875,18 +1920,23 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @return an array of context information objects
 	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 */
-	IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
+	IContextInformation[] computeContextInformation(final ITextViewer viewer, final int offset) {
 		fLastErrorMessage= null;
 
-		IContextInformation[] result= null;
+		final IContextInformation[][] result= { null };
 
-		IContentAssistProcessor p= getProcessor(viewer, offset);
+		final IContentAssistProcessor p= getProcessor(viewer, offset);
 		if (p != null) {
-			result= p.computeContextInformation(viewer, offset);
-			fLastErrorMessage= p.getErrorMessage();
+			// Ensure that the assist session ends cleanly even if the processor throws an exception.
+			SafeRunner.run(new ExceptionLoggingSafeRunnable(CONTEXT_ERROR_MESSAGE_KEY) {
+				public void run() throws Exception {
+					result[0]= p.computeContextInformation(viewer, offset);
+					fLastErrorMessage= p.getErrorMessage();
+				}
+			});
 		}
 
-		return result;
+		return result[0];
 	}
 
 	/**
@@ -1900,18 +1950,25 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 * @since 3.0
 	 */
-	IContextInformation[] computeContextInformation(IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
+	IContextInformation[] computeContextInformation(
+			final IContentAssistSubjectControl contentAssistSubjectControl, final int offset) {
 		fLastErrorMessage= null;
 
-		IContextInformation[] result= null;
+		final IContextInformation[][] result= { null };
 
-		IContentAssistProcessor p= getProcessor(contentAssistSubjectControl, offset);
+		final IContentAssistProcessor p= getProcessor(contentAssistSubjectControl, offset);
 		if (p instanceof ISubjectControlContentAssistProcessor) {
-			result= ((ISubjectControlContentAssistProcessor) p).computeContextInformation(contentAssistSubjectControl, offset);
-			fLastErrorMessage= p.getErrorMessage();
+			// Ensure that the assist session ends cleanly even if the processor throws an exception.
+			SafeRunner.run(new ExceptionLoggingSafeRunnable(CONTEXT_ERROR_MESSAGE_KEY) {
+				public void run() throws Exception {
+					result[0]= ((ISubjectControlContentAssistProcessor) p)
+							.computeContextInformation(contentAssistSubjectControl, offset);
+					fLastErrorMessage= p.getErrorMessage();
+				}
+			});
 		}
 
-		return result;
+		return result[0];
 	}
 
 	/**
