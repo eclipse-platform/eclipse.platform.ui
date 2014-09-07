@@ -35,13 +35,6 @@ public class Activator implements BundleActivator {
 	private IEclipseContext serviceContext;
 
 	/**
-	 * The constructor
-	 */
-	public Activator() {
-	}
-
-
-	/**
 	 * Returns the shared instance
 	 *
 	 * @return the shared instance
@@ -93,20 +86,4 @@ public class Activator implements BundleActivator {
 		return appContext;
 	}
 
-	public PackageAdmin getBundleAdmin() {
-		return (PackageAdmin) serviceContext.get(PackageAdmin.class.getName());
-	}
-
-	public Bundle getBundleForName(String bundleName) {
-		Bundle[] bundles = getBundleAdmin().getBundles(bundleName, null);
-		if (bundles == null)
-			return null;
-		// Return the first bundle that is not installed or uninstalled
-		for (int i = 0; i < bundles.length; i++) {
-			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
-				return bundles[i];
-			}
-		}
-		return null;
-	}
 }
