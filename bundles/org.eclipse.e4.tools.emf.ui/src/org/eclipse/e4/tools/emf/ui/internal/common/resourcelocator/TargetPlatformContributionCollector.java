@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Bug 435625, Bug 436133, Bug 436132, Bug 436283, Bug 436281
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Bug 435625, Bug 436133, Bug 436132, Bug 436283, Bug 436281, Bug 443510
  *     Fabian Miehe - Bug 440327
  *******************************************************************************/
 
@@ -234,7 +234,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 		IPath ip = Path.fromOSString(e.path);
 		ip = ip.addTrailingSeparator().makeRelative();
 		ip = ip.append(e.name);
-		String className = ip.toOSString().replace('\\', '.');
+		String className = ip.toOSString().replace(File.separatorChar, '.');
 		ContributionData data = new ContributionData(e.bundleSymName, className, "Java", e.installLocation); //$NON-NLS-1$
 		data.installLocation = e.installLocation;
 		data.resourceRelativePath = e.relativePath;
