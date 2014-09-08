@@ -368,6 +368,12 @@ public class E4Application implements IApplication {
 			if (brandingBundle != null)
 				appModelPath = brandingBundle.getSymbolicName() + "/"
 						+ E4Application.APPLICATION_MODEL_PATH_DEFAULT;
+			else {
+				Logger logger = new WorkbenchLogger(PLUGIN_ID);
+				logger.error(
+						new Exception(), // log a stack trace for debugging
+						"applicationXMI parameter not set and no branding plugin defined. "); //$NON-NLS-1$
+			}
 		}
 
 		URI initialWorkbenchDefinitionInstance;
