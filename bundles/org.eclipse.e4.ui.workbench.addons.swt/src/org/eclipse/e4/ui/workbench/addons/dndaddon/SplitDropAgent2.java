@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -218,12 +218,6 @@ public class SplitDropAgent2 extends DropAgent {
 		return onEdge;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#dragEnter(org.eclipse.e4.ui.model.
-	 * application.ui.MUIElement, org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
-	 */
 	@Override
 	public void dragEnter(final MUIElement dragElement, DnDInfo info) {
 		super.dragEnter(dragElement, info);
@@ -271,12 +265,6 @@ public class SplitDropAgent2 extends DropAgent {
 		return -1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#dragLeave(org.eclipse.e4.ui.model.
-	 * application.ui.MUIElement, org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
-	 */
 	@Override
 	public void dragLeave(MUIElement dragElement, DnDInfo info) {
 		dndManager.clearOverlay();
@@ -354,13 +342,6 @@ public class SplitDropAgent2 extends DropAgent {
 						.getModelService().isLastEditorStack(relToElement));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#track(org.eclipse.e4.ui.model.application
-	 * .ui.MUIElement, org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
-	 */
 	@Override
 	public boolean track(MUIElement dragElement, DnDInfo info) {
 		if (getTargetElement(dragElement, info) != relToElement) {
