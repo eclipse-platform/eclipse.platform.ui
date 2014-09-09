@@ -8,6 +8,7 @@
  
   Contributors:
      Igor Fedorenko - initial implementation
+     Lars Vogel <Lars.Vogel@vogella.com> - Bug 441263
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -21,4 +22,19 @@
   <artifactId>org.eclipse.core.databinding</artifactId>
   <version>1.4.100-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+  
+   <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-compiler-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <configuration>
+          <compilerArgs>
+            <arg>-warn:-raw,unchecked</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+    </plugins>
+ </build>
 </project>
