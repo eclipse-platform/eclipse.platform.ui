@@ -58,6 +58,7 @@ public class DelayedEventsProcessor implements Listener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void handleEvent(Event event) {
 		final String path = event.text;
 		if (path == null)
@@ -88,6 +89,7 @@ public class DelayedEventsProcessor implements Listener {
 
 	private void openFile(Display display, final String path) {
 		display.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 				if (window == null)

@@ -100,6 +100,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	private String lastEditorTitleTooltip = ""; //$NON-NLS-1$
 
 	private IPropertyListener editorPropertyListener = new IPropertyListener() {
+		@Override
 		public void propertyChanged(Object source, int propId) {
 			if (propId == IWorkbenchPartConstants.PROP_TITLE) {
 				if (lastActiveEditor != null) {
@@ -143,6 +144,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchWindowAdvisor#createActionBarAdvisor(org.eclipse.ui.application.IActionBarConfigurer)
 	 */
+	@Override
 	public ActionBarAdvisor createActionBarAdvisor(
 			IActionBarConfigurer configurer) {
 		return new WorkbenchActionBuilder(configurer);
@@ -162,6 +164,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#preWindowShellClose
 	 */
+	@Override
 	public boolean preWindowShellClose() {
 		if (getWorkbench().getWorkbenchWindowCount() > 1) {
 			return true;
@@ -240,6 +243,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#preWindowOpen
 	 */
+	@Override
 	public void preWindowOpen() {
 		IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
 
@@ -268,30 +272,36 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	private void hookTitleUpdateListeners(IWorkbenchWindowConfigurer configurer) {
 		// hook up the listeners to update the window title
 		configurer.getWindow().addPageListener(new IPageListener() {
+			@Override
 			public void pageActivated(IWorkbenchPage page) {
 				updateTitle(false);
 			}
 
+			@Override
 			public void pageClosed(IWorkbenchPage page) {
 				updateTitle(false);
 			}
 
+			@Override
 			public void pageOpened(IWorkbenchPage page) {
 				// do nothing
 			}
 		});
 		configurer.getWindow().addPerspectiveListener(new PerspectiveAdapter() {
+			@Override
 			public void perspectiveActivated(IWorkbenchPage page,
 					IPerspectiveDescriptor perspective) {
 				updateTitle(false);
 			}
 
+			@Override
 			public void perspectiveSavedAs(IWorkbenchPage page,
 					IPerspectiveDescriptor oldPerspective,
 					IPerspectiveDescriptor newPerspective) {
 				updateTitle(false);
 			}
 
+			@Override
 			public void perspectiveDeactivated(IWorkbenchPage page,
 					IPerspectiveDescriptor perspective) {
 				updateTitle(false);
@@ -299,30 +309,36 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		});
 		configurer.getWindow().getPartService().addPartListener(
 				new IPartListener2() {
+					@Override
 					public void partActivated(IWorkbenchPartReference ref) {
 						if (ref instanceof IEditorReference) {
 							updateTitle(false);
 						}
 					}
 
+					@Override
 					public void partBroughtToTop(IWorkbenchPartReference ref) {
 						if (ref instanceof IEditorReference) {
 							updateTitle(false);
 						}
 					}
 
+					@Override
 					public void partClosed(IWorkbenchPartReference ref) {
 						updateTitle(false);
 					}
 
+					@Override
 					public void partDeactivated(IWorkbenchPartReference ref) {
 						// do nothing
 					}
 
+					@Override
 					public void partOpened(IWorkbenchPartReference ref) {
 						// do nothing
 					}
 
+					@Override
 					public void partHidden(IWorkbenchPartReference ref) {
 						if (ref.getPart(false) == lastActiveEditor
 								&& lastActiveEditor != null) {
@@ -330,6 +346,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						}
 					}
 
+					@Override
 					public void partVisible(IWorkbenchPartReference ref) {
 						if (ref.getPart(false) == lastActiveEditor
 								&& lastActiveEditor != null) {
@@ -337,6 +354,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						}
 					}
 
+					@Override
 					public void partInputChanged(IWorkbenchPartReference ref) {
 						// do nothing
 					}
@@ -344,6 +362,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		
 		// Listen for changes of the workspace name.
 		propertyChangeListener = new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (IDEInternalPreferences.WORKSPACE_NAME.equals(event
 						.getProperty())) {
@@ -503,6 +522,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#postWindowRestore
 	 */
+	@Override
 	public void postWindowRestore() throws WorkbenchException {
 		IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
 		IWorkbenchWindow window = configurer.getWindow();
@@ -552,6 +572,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchWindowAdvisor#openIntro()
 	 */
+	@Override
 	public void openIntro() {
 		if (editorsAndIntrosOpened) {
 			return;
@@ -732,6 +753,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#createEmptyWindowContents(org.eclipse.ui.application.IWorkbenchWindowConfigurer,
 	 *      org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createEmptyWindowContents(Composite parent) {
 		final IWorkbenchWindow window = getWindowConfigurer().getWindow();
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -760,6 +782,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchWindowAdvisor#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (propertyChangeListener != null) {
 			IDEWorkbenchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(propertyChangeListener);

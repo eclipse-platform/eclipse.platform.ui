@@ -161,6 +161,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		workbenchAdvisor = this;
 		
 		Listener closeListener = new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				boolean doExit = IDEWorkbenchWindowAdvisor.promptOnExit(null);
 				event.doit = doExit;
@@ -185,6 +186,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#initialize
 	 */
+	@Override
 	public void initialize(IWorkbenchConfigurer configurer) {
 
 		PluginActionBuilder.setAllowIdeLogging(true);
@@ -238,6 +240,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#preStartup()
 	 */
+	@Override
 	public void preStartup() {
 
 		// Suspend background jobs while we startup
@@ -259,6 +262,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#postStartup()
 	 */
+	@Override
 	public void postStartup() {
 		try {
 			refreshFromLocal();
@@ -300,6 +304,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			boolean currentHighContrast = Display.getCurrent()
 					.getHighContrast();
 
+			@Override
 			public void handleEvent(org.eclipse.swt.widgets.Event event) {
 				if (Display.getCurrent().getHighContrast() == currentHighContrast)
 					return;
@@ -326,6 +331,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#postShutdown
 	 */
+	@Override
 	public void postShutdown() {
 		if (activityHelper != null) {
 			activityHelper.shutdown();
@@ -349,6 +355,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#preShutdown()
 	 */
+	@Override
 	public boolean preShutdown() {
 		Display.getCurrent().removeListener(SWT.Settings,
 				settingsChangeListener);
@@ -360,6 +367,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#createWorkbenchWindowAdvisor(org.eclipse.ui.application.IWorkbenchWindowConfigurer)
 	 */
+	@Override
 	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(
 			IWorkbenchWindowConfigurer configurer) {
 		return new IDEWorkbenchWindowAdvisor(this, configurer);
@@ -394,6 +402,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		final IContainer root = ResourcesPlugin.getWorkspace().getRoot();
 		Job job = new WorkspaceJob(IDEWorkbenchMessages.Workspace_refreshing) {
+			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor)
 					throws CoreException {
 				root.refreshLocal(IResource.DEPTH_INFINITE, monitor);
@@ -419,6 +428,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		 * (non-Javadoc)
 		 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#internalWorked(double)
 		 */
+		@Override
 		public void internalWorked(double work) {
 			super.internalWorked(work);
 			total += work;
@@ -429,12 +439,14 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		 * (non-Javadoc)
 		 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#worked(int)
 		 */
+		@Override
 		public void worked(int work) {
 			super.worked(work);
 			total += work;
 			updateProgressDetails();
 		}
 
+		@Override
 		public void beginTask(String name, int totalWork) {
 			super.beginTask(name, totalWork);
 			subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_preHistoryCompaction);
@@ -463,6 +475,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		 * (non-Javadoc)
 		 * @see org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog#createDetailsButton(org.eclipse.swt.widgets.Composite)
 		 */
+		@Override
 		protected void createButtonsForButtonBar(Composite parent) {
 			super.createButtonsForButtonBar(parent);
 			registerCancelButtonListener();
@@ -470,6 +483,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		public void registerCancelButtonListener() {
 			cancel.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					subTaskLabel.setText(""); //$NON-NLS-1$
 				}
@@ -493,6 +507,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 					.getDescription().isApplyFileStatePolicy();
 
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) {
 					try {
 						if (applyPolicy)
@@ -533,6 +548,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#getDefaultPageInput
 	 */
+	@Override
 	public IAdaptable getDefaultPageInput() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
@@ -542,6 +558,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor
 	 */
+	@Override
 	public String getInitialWindowPerspectiveId() {
 		int index = PlatformUI.getWorkbench().getWorkbenchWindowCount() - 1;
 
@@ -853,6 +870,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#getMainPreferencePageId
 	 */
+	@Override
 	public String getMainPreferencePageId() {
 		// indicate that we want the Workench preference page to be prominent
 		return WORKBENCH_PREFERENCE_CATEGORY_ID;
@@ -895,6 +913,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#getWorkbenchErrorHandler()
 	 */
+	@Override
 	public synchronized AbstractStatusHandler getWorkbenchErrorHandler() {
 		if (ideWorkbenchErrorHandler == null) {
 			ideWorkbenchErrorHandler = new IDEWorkbenchErrorHandler(
@@ -906,6 +925,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#eventLoopIdle(org.eclipse.swt.widgets.Display)
 	 */
+	@Override
 	public void eventLoopIdle(Display display) {
 		if (delayedEventsProcessor != null)
 			delayedEventsProcessor.catchUp(display);

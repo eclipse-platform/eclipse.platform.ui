@@ -45,7 +45,8 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
      * 
      * @see org.eclipse.jface.preference.PreferencePage
      */
-    protected Control createContents(Composite parent) {
+    @Override
+	protected Control createContents(Composite parent) {
 
     	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 				IWorkbenchHelpContextIds.STARTUP_PREFERENCE_PAGE);
@@ -66,7 +67,8 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
     /**
      * The default button has been pressed.
      */
-    protected void performDefaults() {
+    @Override
+	protected void performDefaults() {
         IPreferenceStore store = getIDEPreferenceStore();
 
         refreshButton
@@ -82,7 +84,8 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
     /**
      * The user has pressed Ok. Store/apply this page's values appropriately.
      */
-    public boolean performOk() {
+    @Override
+	public boolean performOk() {
         IPreferenceStore store = getIDEPreferenceStore();
 
         // store the refresh workspace on startup setting
