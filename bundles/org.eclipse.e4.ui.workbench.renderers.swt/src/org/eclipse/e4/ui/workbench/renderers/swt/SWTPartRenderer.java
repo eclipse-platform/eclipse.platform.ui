@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ragnar Nevries <r.eclipse@nevri.es> - Bug 443514
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -208,7 +209,8 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	protected String getToolTip(MUILabel element) {
 		String overrideTip = (String) ((MUIElement) element).getTransientData()
 				.get(IPresentationEngine.OVERRIDE_TITLE_TOOL_TIP_KEY);
-		return overrideTip == null ? element.getTooltip() : overrideTip;
+		return overrideTip == null ? element.getLocalizedTooltip()
+				: overrideTip;
 	}
 
 	protected Image getImageFromURI(String iconURI) {
