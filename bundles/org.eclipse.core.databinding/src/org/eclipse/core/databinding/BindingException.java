@@ -46,6 +46,7 @@ public class BindingException extends RuntimeException {
 		this.cause = cause;
 	}
 
+	@Override
 	public void printStackTrace(PrintStream err) {
 		super.printStackTrace(err);
 		if (cause != null) {
@@ -54,6 +55,7 @@ public class BindingException extends RuntimeException {
 		}
 	}
 
+	@Override
 	public void printStackTrace(PrintWriter err) {
 		super.printStackTrace(err);
 		if (cause != null) {

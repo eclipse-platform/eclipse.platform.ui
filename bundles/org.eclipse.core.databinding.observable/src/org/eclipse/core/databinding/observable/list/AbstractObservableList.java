@@ -49,14 +49,17 @@ public abstract class AbstractObservableList extends AbstractList implements
 			super(realm);
 		}
 
+		@Override
 		protected void firstListenerAdded() {
 			AbstractObservableList.this.firstListenerAdded();
 		}
 
+		@Override
 		protected void lastListenerRemoved() {
 			AbstractObservableList.this.lastListenerRemoved();
 		}
 
+		@Override
 		protected boolean hasListeners() {
 			return super.hasListeners();
 		}
@@ -94,17 +97,20 @@ public abstract class AbstractObservableList extends AbstractList implements
 		return !disposed && changeSupport.hasListeners();
 	}
 
+	@Override
 	public boolean isStale() {
 		getterCalled();
 		return false;
 	}
 
+	@Override
 	public synchronized void addListChangeListener(IListChangeListener listener) {
 		if (!disposed) {
 			changeSupport.addListener(ListChangeEvent.TYPE, listener);
 		}
 	}
 
+	@Override
 	public synchronized void removeListChangeListener(IListChangeListener listener) {
 		if (!disposed) {
 			changeSupport.removeListener(ListChangeEvent.TYPE, listener);
@@ -117,24 +123,28 @@ public abstract class AbstractObservableList extends AbstractList implements
 		changeSupport.fireEvent(new ListChangeEvent(this, diff));
 	}
 
+	@Override
 	public synchronized void addChangeListener(IChangeListener listener) {
 		if (!disposed) {
 			changeSupport.addChangeListener(listener);
 		}
 	}
 
+	@Override
 	public synchronized void removeChangeListener(IChangeListener listener) {
 		if (!disposed) {
 			changeSupport.removeChangeListener(listener);
 		}
 	}
 
+	@Override
 	public synchronized void addStaleListener(IStaleListener listener) {
 		if (!disposed) {
 			changeSupport.addStaleListener(listener);
 		}
 	}
 
+	@Override
 	public synchronized void removeStaleListener(IStaleListener listener) {
 		if (!disposed) {
 			changeSupport.removeStaleListener(listener);
@@ -144,6 +154,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	/**
 	 * @since 1.2
 	 */
+	@Override
 	public synchronized void addDisposeListener(IDisposeListener listener) {
 		if (!disposed) {
 			changeSupport.addDisposeListener(listener);
@@ -153,6 +164,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	/**
 	 * @since 1.2
 	 */
+	@Override
 	public synchronized void removeDisposeListener(IDisposeListener listener) {
 		if (!disposed) {
 			changeSupport.removeDisposeListener(listener);
@@ -190,6 +202,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	/**
 	 * @since 1.2
 	 */
+	@Override
 	public synchronized boolean isDisposed() {
 		return disposed;
 	}
@@ -197,6 +210,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	/**
 	 * 
 	 */
+	@Override
 	public synchronized void dispose() {
 		if (!disposed) {
 			disposed = true;
@@ -207,6 +221,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 		}
 	}
 
+	@Override
 	public final int size() {
 		getterCalled();
 		return doGetSize();
@@ -224,39 +239,47 @@ public abstract class AbstractObservableList extends AbstractList implements
 		ObservableTracker.getterCalled(this);
 	}
 
+	@Override
 	public boolean isEmpty() {
 		getterCalled();
 		return super.isEmpty();
 	}
 
+	@Override
 	public boolean contains(Object o) {
 		getterCalled();
 		return super.contains(o);
 	}
 
+	@Override
 	public Iterator iterator() {
 		getterCalled();
 		final Iterator wrappedIterator = super.iterator();
 		return new Iterator() {
+			@Override
 			public void remove() {
 				wrappedIterator.remove();
 			}
 
+			@Override
 			public boolean hasNext() {
 				return wrappedIterator.hasNext();
 			}
 
+			@Override
 			public Object next() {
 				return wrappedIterator.next();
 			}
 		};
 	}
 
+	@Override
 	public Object[] toArray() {
 		getterCalled();
 		return super.toArray();
 	}
 
+	@Override
 	public Object[] toArray(Object a[]) {
 		getterCalled();
 		return super.toArray(a);
@@ -264,6 +287,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 
 	// Modification Operations
 
+	@Override
 	public boolean add(Object o) {
 		getterCalled();
 		return super.add(o);
@@ -292,6 +316,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	 * @see ListDiff#accept(ListDiffVisitor)
 	 * @since 1.1
 	 */
+	@Override
 	public Object move(int oldIndex, int newIndex) {
 		checkRealm();
 		int size = doGetSize();
@@ -306,6 +331,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 		return element;
 	}
 
+	@Override
 	public boolean remove(Object o) {
 		getterCalled();
 		return super.remove(o);
@@ -313,26 +339,31 @@ public abstract class AbstractObservableList extends AbstractList implements
 
 	// Bulk Modification Operations
 
+	@Override
 	public boolean containsAll(Collection c) {
 		getterCalled();
 		return super.containsAll(c);
 	}
 
+	@Override
 	public boolean addAll(Collection c) {
 		getterCalled();
 		return super.addAll(c);
 	}
 
+	@Override
 	public boolean addAll(int index, Collection c) {
 		getterCalled();
 		return super.addAll(c);
 	}
 
+	@Override
 	public boolean removeAll(Collection c) {
 		getterCalled();
 		return super.removeAll(c);
 	}
 
+	@Override
 	public boolean retainAll(Collection c) {
 		getterCalled();
 		return super.retainAll(c);
@@ -340,26 +371,31 @@ public abstract class AbstractObservableList extends AbstractList implements
 
 	// Comparison and hashing
 
+	@Override
 	public boolean equals(Object o) {
 		getterCalled();
 		return super.equals(o);
 	}
 
+	@Override
 	public int hashCode() {
 		getterCalled();
 		return super.hashCode();
 	}
 
+	@Override
 	public int indexOf(Object o) {
 		getterCalled();
 		return super.indexOf(o);
 	}
 
+	@Override
 	public int lastIndexOf(Object o) {
 		getterCalled();
 		return super.lastIndexOf(o);
 	}
 
+	@Override
 	public Realm getRealm() {
 		return realm;
 	}

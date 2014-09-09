@@ -40,6 +40,7 @@ public class AnonymousPojoMapProperty extends DelegatingMapProperty {
 		this.delegates = new HashMap();
 	}
 
+	@Override
 	protected IMapProperty doGetDelegate(Object source) {
 		Class beanClass = source.getClass();
 		if (delegates.containsKey(beanClass))
@@ -56,6 +57,7 @@ public class AnonymousPojoMapProperty extends DelegatingMapProperty {
 		return delegate;
 	}
 
+	@Override
 	public String toString() {
 		String s = "?." + propertyName + "{:}"; //$NON-NLS-1$ //$NON-NLS-2$
 		Class keyType = (Class) getKeyType();

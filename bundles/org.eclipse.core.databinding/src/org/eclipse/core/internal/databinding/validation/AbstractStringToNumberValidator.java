@@ -63,6 +63,7 @@ public abstract class AbstractStringToNumberValidator implements IValidator {
 	 * 
 	 * @see org.eclipse.core.databinding.validation.IValidator#validate(java.lang.Object)
 	 */
+	@Override
 	public final IStatus validate(Object value) {
 		ParseResult result = StringToNumberParser.parse(value, converter
 				.getNumberFormat(), toPrimitive);

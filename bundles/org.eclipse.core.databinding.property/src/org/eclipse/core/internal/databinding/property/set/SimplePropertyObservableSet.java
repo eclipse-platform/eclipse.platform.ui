@@ -60,15 +60,18 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 		this.property = property;
 	}
 
+	@Override
 	protected void firstListenerAdded() {
 		if (!isDisposed()) {
 			if (listener == null) {
 				listener = property
 						.adaptListener(new ISimplePropertyListener() {
+							@Override
 							public void handleEvent(
 									final SimplePropertyEvent event) {
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {
+										@Override
 										public void run() {
 											if (event.type == SimplePropertyEvent.CHANGE) {
 												modCount++;
@@ -86,6 +89,7 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 			}
 
 			getRealm().exec(new Runnable() {
+				@Override
 				public void run() {
 					cachedSet = new HashSet(getSet());
 					stale = false;
@@ -97,6 +101,7 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 		}
 	}
 
+	@Override
 	protected void lastListenerRemoved() {
 		if (listener != null)
 			listener.removeFrom(source);
@@ -106,10 +111,12 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 		stale = false;
 	}
 
+	@Override
 	protected Set getWrappedSet() {
 		return getSet();
 	}
 
+	@Override
 	public Object getElementType() {
 		return property.getElementType();
 	}
@@ -120,26 +127,31 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 		return property.getSet(source);
 	}
 
+	@Override
 	public boolean contains(Object o) {
 		getterCalled();
 		return getSet().contains(o);
 	}
 
+	@Override
 	public boolean containsAll(Collection c) {
 		getterCalled();
 		return getSet().containsAll(c);
 	}
 
+	@Override
 	public boolean isEmpty() {
 		getterCalled();
 		return getSet().isEmpty();
 	}
 
+	@Override
 	public Object[] toArray() {
 		getterCalled();
 		return getSet().toArray();
 	}
 
+	@Override
 	public Object[] toArray(Object[] a) {
 		getterCalled();
 		return getSet().toArray(a);
@@ -162,6 +174,7 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 		}
 	}
 
+	@Override
 	public boolean add(Object o) {
 		checkRealm();
 
@@ -176,6 +189,7 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 		return true;
 	}
 
+	@Override
 	public Iterator iterator() {
 		getterCalled();
 		return new Iterator() {
@@ -184,12 +198,14 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 			Iterator iterator = set.iterator();
 			Object last = null;
 
+			@Override
 			public boolean hasNext() {
 				getterCalled();
 				checkForComodification();
 				return iterator.hasNext();
 			}
 
+			@Override
 			public Object next() {
 				getterCalled();
 				checkForComodification();
@@ -197,6 +213,7 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 				return last;
 			}
 
+			@Override
 			public void remove() {
 				checkRealm();
 				checkForComodification();
@@ -218,6 +235,7 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 		};
 	}
 
+	@Override
 	public boolean remove(Object o) {
 		getterCalled();
 
@@ -234,6 +252,7 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 
 	// Bulk change operations
 
+	@Override
 	public boolean addAll(Collection c) {
 		getterCalled();
 
@@ -256,6 +275,7 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 		return true;
 	}
 
+	@Override
 	public boolean removeAll(Collection c) {
 		getterCalled();
 
@@ -278,6 +298,7 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 		return true;
 	}
 
+	@Override
 	public boolean retainAll(Collection c) {
 		getterCalled();
 
@@ -302,6 +323,7 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 		return true;
 	}
 
+	@Override
 	public void clear() {
 		getterCalled();
 
@@ -326,29 +348,35 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 		}
 	}
 
+	@Override
 	public boolean isStale() {
 		getterCalled();
 		return stale;
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		getterCalled();
 		return getSet().equals(o);
 	}
 
+	@Override
 	public int hashCode() {
 		getterCalled();
 		return getSet().hashCode();
 	}
 
+	@Override
 	public Object getObserved() {
 		return source;
 	}
 
+	@Override
 	public IProperty getProperty() {
 		return property;
 	}
 
+	@Override
 	public synchronized void dispose() {
 		if (!isDisposed()) {
 			if (listener != null)

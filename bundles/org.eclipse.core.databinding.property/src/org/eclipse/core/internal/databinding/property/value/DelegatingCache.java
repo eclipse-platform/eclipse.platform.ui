@@ -95,6 +95,7 @@ abstract class DelegatingCache {
 			return cachedValues.containsValue(detailValue);
 		}
 
+		@Override
 		public void handleMapChange(MapChangeEvent event) {
 			Set changedKeys = event.diff.getChangedKeys();
 			for (Iterator it = changedKeys.iterator(); it.hasNext();)
@@ -138,6 +139,7 @@ abstract class DelegatingCache {
 		this.delegateCaches = new IdentityMap();
 
 		elements.addSetChangeListener(new ISetChangeListener() {
+			@Override
 			public void handleSetChange(SetChangeEvent event) {
 				for (Iterator it = event.diff.getRemovals().iterator(); it
 						.hasNext();) {

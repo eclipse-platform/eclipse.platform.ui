@@ -410,6 +410,7 @@ public class DataBindingContext {
 	 * 
 	 * @deprecated as of 1.1, please use {@link #getValidationStatusProviders()}
 	 */
+	@Deprecated
 	public final IObservableMap getValidationStatusMap() {
 		return validationStatusMap;
 	}

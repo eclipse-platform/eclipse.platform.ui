@@ -44,10 +44,12 @@ public class PojoListProperty extends SimpleListProperty {
 				: elementType;
 	}
 
+	@Override
 	public Object getElementType() {
 		return elementType;
 	}
 
+	@Override
 	protected List doGetList(Object source) {
 		return asList(BeanPropertyHelper.readProperty(source,
 				propertyDescriptor));
@@ -61,10 +63,12 @@ public class PojoListProperty extends SimpleListProperty {
 		return (List) propertyValue;
 	}
 
+	@Override
 	protected void doSetList(Object source, List list, ListDiff diff) {
 		doSetList(source, list);
 	}
 
+	@Override
 	protected void doSetList(Object source, List list) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor,
 				convertListToBeanPropertyType(list));
@@ -83,11 +87,13 @@ public class PojoListProperty extends SimpleListProperty {
 		return propertyValue;
 	}
 
+	@Override
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		return null;
 	}
 
+	@Override
 	public String toString() {
 		String s = BeanPropertyHelper.propertyName(propertyDescriptor) + "[]"; //$NON-NLS-1$
 		if (elementType != null)

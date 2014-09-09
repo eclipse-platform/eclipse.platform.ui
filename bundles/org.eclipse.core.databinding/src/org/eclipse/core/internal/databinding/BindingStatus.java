@@ -43,6 +43,7 @@ public class BindingStatus extends MultiStatus {
 	 * 
 	 * @see org.eclipse.core.runtime.MultiStatus#add(org.eclipse.core.runtime.IStatus)
 	 */
+	@Override
 	public void add(IStatus status) {
 		if (status.getSeverity() >= getSeverity()) {
 			setMessage((status.getMessage() != null) ? status.getMessage() : ""); //$NON-NLS-1$
@@ -82,6 +83,7 @@ public class BindingStatus extends MultiStatus {
 		return result;
 	}
 	
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -89,6 +91,7 @@ public class BindingStatus extends MultiStatus {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

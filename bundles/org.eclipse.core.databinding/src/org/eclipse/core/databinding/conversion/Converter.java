@@ -32,10 +32,12 @@ public abstract class Converter implements IConverter {
 		this.toType = toType;
 	}
 
+	@Override
 	public Object getFromType() {
 		return fromType;
 	}
 
+	@Override
 	public Object getToType() {
 		return toType;
 	}

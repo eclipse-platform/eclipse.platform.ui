@@ -48,6 +48,7 @@ public class ValidatedObservableMap extends ObservableMap {
 	private boolean updatingTarget = false;
 
 	private IMapChangeListener targetChangeListener = new IMapChangeListener() {
+		@Override
 		public void handleMapChange(MapChangeEvent event) {
 			if (updatingTarget)
 				return;
@@ -74,12 +75,14 @@ public class ValidatedObservableMap extends ObservableMap {
 	};
 
 	private IStaleListener targetStaleListener = new IStaleListener() {
+		@Override
 		public void handleStale(StaleEvent staleEvent) {
 			fireStale();
 		}
 	};
 
 	private IValueChangeListener validationStatusChangeListener = new IValueChangeListener() {
+		@Override
 		public void handleValueChange(ValueChangeEvent event) {
 			IStatus oldStatus = (IStatus) event.diff.getOldValue();
 			IStatus newStatus = (IStatus) event.diff.getNewValue();
@@ -163,11 +166,13 @@ public class ValidatedObservableMap extends ObservableMap {
 		}
 	}
 
+	@Override
 	public boolean isStale() {
 		getterCalled();
 		return stale || target.isStale();
 	}
 
+	@Override
 	public void clear() {
 		checkRealm();
 		if (isEmpty())
@@ -178,6 +183,7 @@ public class ValidatedObservableMap extends ObservableMap {
 		fireMapChange(diff);
 	}
 
+	@Override
 	public Object put(Object key, Object value) {
 		checkRealm();
 		MapDiff diff;
@@ -198,6 +204,7 @@ public class ValidatedObservableMap extends ObservableMap {
 		return oldValue;
 	}
 
+	@Override
 	public void putAll(Map m) {
 		checkRealm();
 		Map map = new HashMap(wrappedMap);
@@ -208,6 +215,7 @@ public class ValidatedObservableMap extends ObservableMap {
 		fireMapChange(diff);
 	}
 
+	@Override
 	public Object remove(Object key) {
 		checkRealm();
 		if (!wrappedMap.containsKey(key))
@@ -219,14 +227,17 @@ public class ValidatedObservableMap extends ObservableMap {
 		return oldValue;
 	}
 
+	@Override
 	public Object getKeyType() {
 		return target.getKeyType();
 	}
 
+	@Override
 	public Object getValueType() {
 		return target.getValueType();
 	}
 
+	@Override
 	public synchronized void dispose() {
 		target.removeMapChangeListener(targetChangeListener);
 		target.removeStaleListener(targetStaleListener);

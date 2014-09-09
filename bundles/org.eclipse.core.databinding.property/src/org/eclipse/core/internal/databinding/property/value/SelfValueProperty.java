@@ -29,17 +29,21 @@ public final class SelfValueProperty extends SimpleValueProperty {
 		this.valueType = valueType;
 	}
 
+	@Override
 	public Object getValueType() {
 		return valueType;
 	}
 
+	@Override
 	protected Object doGetValue(Object source) {
 		return source;
 	}
 
+	@Override
 	protected void doSetValue(Object source, Object value) {
 	}
 
+	@Override
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		return null;

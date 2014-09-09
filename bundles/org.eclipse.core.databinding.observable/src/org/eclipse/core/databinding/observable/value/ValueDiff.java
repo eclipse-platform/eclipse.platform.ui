@@ -36,6 +36,7 @@ public abstract class ValueDiff implements IDiff {
 	 */
 	public abstract Object getNewValue();
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ValueDiff) {
 			ValueDiff val = (ValueDiff) obj;
@@ -47,6 +48,7 @@ public abstract class ValueDiff implements IDiff {
 		return false;
 	}
 		
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -60,6 +62,7 @@ public abstract class ValueDiff implements IDiff {
 	/**
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer

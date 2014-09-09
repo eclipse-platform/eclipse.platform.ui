@@ -34,10 +34,12 @@ public class DisposeEvent extends ObservableEvent {
 		super(source);
 	}
 
+	@Override
 	protected void dispatch(IObservablesListener listener) {
 		((IDisposeListener) listener).handleDispose(this);
 	}
 
+	@Override
 	protected Object getListenerType() {
 		return TYPE;
 	}

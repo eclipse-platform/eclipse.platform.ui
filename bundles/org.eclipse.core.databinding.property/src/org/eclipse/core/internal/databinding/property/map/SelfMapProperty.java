@@ -36,26 +36,32 @@ public final class SelfMapProperty extends SimpleMapProperty {
 		this.valueType = valueType;
 	}
 
+	@Override
 	public Object getKeyType() {
 		return keyType;
 	}
 
+	@Override
 	public Object getValueType() {
 		return valueType;
 	}
 
+	@Override
 	protected Map doGetMap(Object source) {
 		return (Map) source;
 	}
 
+	@Override
 	protected void doSetMap(Object source, Map map, MapDiff diff) {
 		doUpdateMap(source, diff);
 	}
 
+	@Override
 	protected void doUpdateMap(Object source, MapDiff diff) {
 		diff.applyTo((Map) source);
 	}
 
+	@Override
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		return null; // no listener API

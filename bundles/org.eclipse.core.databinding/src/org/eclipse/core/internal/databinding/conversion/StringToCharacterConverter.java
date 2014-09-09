@@ -34,6 +34,7 @@ public class StringToCharacterConverter implements IConverter {
 	 * 
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
 	 */
+	@Override
 	public Object convert(Object source) {
 		if (source != null && !(source instanceof String))
 			throw new IllegalArgumentException(
@@ -62,10 +63,12 @@ public class StringToCharacterConverter implements IConverter {
 		return result;
 	}
 
+	@Override
 	public Object getFromType() {
 		return String.class;
 	}
 
+	@Override
 	public Object getToType() {
 		return primitiveTarget ? Character.TYPE : Character.class;
 	}

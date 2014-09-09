@@ -36,6 +36,7 @@ public class NumberToShortValidator extends NumberToNumberValidator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.databinding.validation.NumberToNumberValidator#inRange(java.lang.Number)
 	 */
+	@Override
 	protected boolean inRange(Number number) {
 		return StringToNumberParser.inShortRange(number);
 	}

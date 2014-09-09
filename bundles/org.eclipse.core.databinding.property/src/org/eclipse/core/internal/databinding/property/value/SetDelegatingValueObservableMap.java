@@ -45,24 +45,29 @@ public class SetDelegatingValueObservableMap extends AbstractObservableMap
 	private Set entrySet;
 
 	class EntrySet extends AbstractSet {
+		@Override
 		public Iterator iterator() {
 			return new Iterator() {
 				final Iterator it = masterSet.iterator();
 
+				@Override
 				public boolean hasNext() {
 					return it.hasNext();
 				}
 
+				@Override
 				public Object next() {
 					return new MapEntry(it.next());
 				}
 
+				@Override
 				public void remove() {
 					it.remove();
 				}
 			};
 		}
 
+		@Override
 		public int size() {
 			return masterSet.size();
 		}
@@ -75,11 +80,13 @@ public class SetDelegatingValueObservableMap extends AbstractObservableMap
 			this.key = key;
 		}
 
+		@Override
 		public Object getKey() {
 			getterCalled();
 			return key;
 		}
 
+		@Override
 		public Object getValue() {
 			getterCalled();
 
@@ -89,6 +96,7 @@ public class SetDelegatingValueObservableMap extends AbstractObservableMap
 			return cache.get(key);
 		}
 
+		@Override
 		public Object setValue(Object value) {
 			checkRealm();
 
@@ -98,6 +106,7 @@ public class SetDelegatingValueObservableMap extends AbstractObservableMap
 			return cache.put(key, value);
 		}
 
+		@Override
 		public boolean equals(Object o) {
 			getterCalled();
 			if (o == this)
@@ -111,6 +120,7 @@ public class SetDelegatingValueObservableMap extends AbstractObservableMap
 					&& Util.equals(this.getValue(), that.getValue());
 		}
 
+		@Override
 		public int hashCode() {
 			getterCalled();
 			Object value = getValue();
@@ -120,6 +130,7 @@ public class SetDelegatingValueObservableMap extends AbstractObservableMap
 	}
 
 	private ISetChangeListener masterListener = new ISetChangeListener() {
+		@Override
 		public void handleSetChange(SetChangeEvent event) {
 			if (isDisposed())
 				return;
@@ -153,6 +164,7 @@ public class SetDelegatingValueObservableMap extends AbstractObservableMap
 	};
 
 	private IStaleListener staleListener = new IStaleListener() {
+		@Override
 		public void handleStale(StaleEvent staleEvent) {
 			fireStale();
 		}
@@ -168,6 +180,7 @@ public class SetDelegatingValueObservableMap extends AbstractObservableMap
 		this.masterSet = keySet;
 		this.detailProperty = valueProperty;
 		this.cache = new DelegatingCache(getRealm(), valueProperty) {
+			@Override
 			void handleValueChange(Object masterElement, Object oldValue,
 					Object newValue) {
 				fireMapChange(Diffs.createMapDiffSingleChange(masterElement,
@@ -180,6 +193,7 @@ public class SetDelegatingValueObservableMap extends AbstractObservableMap
 		masterSet.addStaleListener(staleListener);
 	}
 
+	@Override
 	public Set entrySet() {
 		getterCalled();
 		if (entrySet == null)
@@ -191,36 +205,44 @@ public class SetDelegatingValueObservableMap extends AbstractObservableMap
 		ObservableTracker.getterCalled(this);
 	}
 
+	@Override
 	public Object get(Object key) {
 		getterCalled();
 		return cache.get(key);
 	}
 
+	@Override
 	public Object put(Object key, Object value) {
 		checkRealm();
 		return cache.put(key, value);
 	}
 
+	@Override
 	public boolean isStale() {
 		return masterSet.isStale();
 	}
 
+	@Override
 	public Object getObserved() {
 		return masterSet;
 	}
 
+	@Override
 	public IProperty getProperty() {
 		return detailProperty;
 	}
 
+	@Override
 	public Object getKeyType() {
 		return masterSet.getElementType();
 	}
 
+	@Override
 	public Object getValueType() {
 		return detailProperty.getValueType();
 	}
 
+	@Override
 	public synchronized void dispose() {
 		if (masterSet != null) {
 			masterSet.removeSetChangeListener(masterListener);

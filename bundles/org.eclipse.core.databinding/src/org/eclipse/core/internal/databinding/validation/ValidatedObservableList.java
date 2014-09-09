@@ -52,6 +52,7 @@ public class ValidatedObservableList extends ObservableList {
 	private boolean updatingTarget = false;
 
 	private IListChangeListener targetChangeListener = new IListChangeListener() {
+		@Override
 		public void handleListChange(ListChangeEvent event) {
 			if (updatingTarget)
 				return;
@@ -82,12 +83,14 @@ public class ValidatedObservableList extends ObservableList {
 	}
 
 	private IStaleListener targetStaleListener = new IStaleListener() {
+		@Override
 		public void handleStale(StaleEvent staleEvent) {
 			fireStale();
 		}
 	};
 
 	private IValueChangeListener validationStatusChangeListener = new IValueChangeListener() {
+		@Override
 		public void handleValueChange(ValueChangeEvent event) {
 			IStatus oldStatus = (IStatus) event.diff.getOldValue();
 			IStatus newStatus = (IStatus) event.diff.getNewValue();
@@ -146,14 +149,17 @@ public class ValidatedObservableList extends ObservableList {
 
 	private void applyDiff(ListDiff diff, final List list) {
 		diff.accept(new ListDiffVisitor() {
+			@Override
 			public void handleAdd(int index, Object element) {
 				list.add(index, element);
 			}
 
+			@Override
 			public void handleRemove(int index, Object element) {
 				list.remove(index);
 			}
 
+			@Override
 			public void handleReplace(int index, Object oldElement,
 					Object newElement) {
 				list.set(index, newElement);
@@ -161,11 +167,13 @@ public class ValidatedObservableList extends ObservableList {
 		});
 	}
 
+	@Override
 	public boolean isStale() {
 		ObservableTracker.getterCalled(this);
 		return stale || target.isStale();
 	}
 
+	@Override
 	public void add(int index, Object element) {
 		checkRealm();
 		wrappedList.add(index, element);
@@ -175,17 +183,20 @@ public class ValidatedObservableList extends ObservableList {
 		fireListChange(diff);
 	}
 
+	@Override
 	public boolean add(Object o) {
 		checkRealm();
 		add(wrappedList.size(), o);
 		return true;
 	}
 
+	@Override
 	public boolean addAll(Collection c) {
 		checkRealm();
 		return addAll(wrappedList.size(), c);
 	}
 
+	@Override
 	public boolean addAll(int index, Collection c) {
 		checkRealm();
 		Object[] elements = c.toArray();
@@ -201,6 +212,7 @@ public class ValidatedObservableList extends ObservableList {
 		return true;
 	}
 
+	@Override
 	public void clear() {
 		checkRealm();
 		if (isEmpty())
@@ -212,20 +224,24 @@ public class ValidatedObservableList extends ObservableList {
 		fireListChange(diff);
 	}
 
+	@Override
 	public Iterator iterator() {
 		getterCalled();
 		final ListIterator wrappedIterator = wrappedList.listIterator();
 		return new Iterator() {
 			Object last = null;
 
+			@Override
 			public boolean hasNext() {
 				return wrappedIterator.hasNext();
 			}
 
+			@Override
 			public Object next() {
 				return last = wrappedIterator.next();
 			}
 
+			@Override
 			public void remove() {
 				int index = wrappedIterator.previousIndex();
 				wrappedIterator.remove();
@@ -237,10 +253,12 @@ public class ValidatedObservableList extends ObservableList {
 		};
 	}
 
+	@Override
 	public ListIterator listIterator() {
 		return listIterator(0);
 	}
 
+	@Override
 	public ListIterator listIterator(int index) {
 		getterCalled();
 		final ListIterator wrappedIterator = wrappedList.listIterator(index);
@@ -248,6 +266,7 @@ public class ValidatedObservableList extends ObservableList {
 			int lastIndex = -1;
 			Object last = null;
 
+			@Override
 			public void add(Object o) {
 				wrappedIterator.add(o);
 				lastIndex = previousIndex();
@@ -257,34 +276,41 @@ public class ValidatedObservableList extends ObservableList {
 				fireListChange(diff);
 			}
 
+			@Override
 			public boolean hasNext() {
 				return wrappedIterator.hasNext();
 			}
 
+			@Override
 			public boolean hasPrevious() {
 				return wrappedIterator.hasPrevious();
 			}
 
+			@Override
 			public Object next() {
 				last = wrappedIterator.next();
 				lastIndex = previousIndex();
 				return last;
 			}
 
+			@Override
 			public int nextIndex() {
 				return wrappedIterator.nextIndex();
 			}
 
+			@Override
 			public Object previous() {
 				last = wrappedIterator.previous();
 				lastIndex = nextIndex();
 				return last;
 			}
 
+			@Override
 			public int previousIndex() {
 				return wrappedIterator.previousIndex();
 			}
 
+			@Override
 			public void remove() {
 				wrappedIterator.remove();
 				ListDiff diff = Diffs.createListDiff(Diffs.createListDiffEntry(
@@ -294,6 +320,7 @@ public class ValidatedObservableList extends ObservableList {
 				fireListChange(diff);
 			}
 
+			@Override
 			public void set(Object o) {
 				wrappedIterator.set(o);
 				ListDiff diff = Diffs.createListDiff(Diffs.createListDiffEntry(
@@ -306,6 +333,7 @@ public class ValidatedObservableList extends ObservableList {
 		};
 	}
 
+	@Override
 	public Object move(int oldIndex, int newIndex) {
 		checkRealm();
 		int size = wrappedList.size();
@@ -327,6 +355,7 @@ public class ValidatedObservableList extends ObservableList {
 		return element;
 	}
 
+	@Override
 	public Object remove(int index) {
 		checkRealm();
 		Object element = wrappedList.remove(index);
@@ -337,6 +366,7 @@ public class ValidatedObservableList extends ObservableList {
 		return element;
 	}
 
+	@Override
 	public boolean remove(Object o) {
 		checkRealm();
 		int index = wrappedList.indexOf(o);
@@ -346,6 +376,7 @@ public class ValidatedObservableList extends ObservableList {
 		return true;
 	}
 
+	@Override
 	public boolean removeAll(Collection c) {
 		checkRealm();
 		List list = new ArrayList(wrappedList);
@@ -359,6 +390,7 @@ public class ValidatedObservableList extends ObservableList {
 		return changed;
 	}
 
+	@Override
 	public boolean retainAll(Collection c) {
 		checkRealm();
 		List list = new ArrayList(wrappedList);
@@ -372,6 +404,7 @@ public class ValidatedObservableList extends ObservableList {
 		return changed;
 	}
 
+	@Override
 	public Object set(int index, Object element) {
 		checkRealm();
 		Object oldElement = wrappedList.set(index, element);
@@ -383,6 +416,7 @@ public class ValidatedObservableList extends ObservableList {
 		return oldElement;
 	}
 
+	@Override
 	public synchronized void dispose() {
 		target.removeListChangeListener(targetChangeListener);
 		target.removeStaleListener(targetStaleListener);

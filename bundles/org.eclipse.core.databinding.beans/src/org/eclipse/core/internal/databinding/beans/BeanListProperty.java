@@ -46,10 +46,12 @@ public class BeanListProperty extends SimpleListProperty {
 				: elementType;
 	}
 
+	@Override
 	public Object getElementType() {
 		return elementType;
 	}
 
+	@Override
 	protected List doGetList(Object source) {
 		return asList(BeanPropertyHelper.readProperty(source,
 				propertyDescriptor));
@@ -63,10 +65,12 @@ public class BeanListProperty extends SimpleListProperty {
 		return (List) propertyValue;
 	}
 
+	@Override
 	protected void doSetList(Object source, List list, ListDiff diff) {
 		doSetList(source, list);
 	}
 
+	@Override
 	protected void doSetList(Object source, List list) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor,
 				convertListToBeanPropertyType(list));
@@ -85,9 +89,11 @@ public class BeanListProperty extends SimpleListProperty {
 		return propertyValue;
 	}
 
+	@Override
 	public INativePropertyListener adaptListener(
 			final ISimplePropertyListener listener) {
 		return new BeanPropertyListener(this, propertyDescriptor, listener) {
+			@Override
 			protected IDiff computeDiff(Object oldValue, Object newValue) {
 				return Diffs
 						.computeListDiff(asList(oldValue), asList(newValue));
@@ -95,6 +101,7 @@ public class BeanListProperty extends SimpleListProperty {
 		};
 	}
 
+	@Override
 	public String toString() {
 		String s = BeanPropertyHelper.propertyName(propertyDescriptor) + "[]"; //$NON-NLS-1$
 		if (elementType != null)

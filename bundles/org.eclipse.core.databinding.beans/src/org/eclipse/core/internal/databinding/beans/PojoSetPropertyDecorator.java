@@ -45,55 +45,67 @@ public class PojoSetPropertyDecorator extends SetProperty implements
 		this.propertyDescriptor = propertyDescriptor;
 	}
 
+	@Override
 	public Object getElementType() {
 		return delegate.getElementType();
 	}
 
+	@Override
 	protected Set doGetSet(Object source) {
 		return delegate.getSet(source);
 	}
 
+	@Override
 	protected void doSetSet(Object source, Set set) {
 		delegate.setSet(source, set);
 	}
 
+	@Override
 	protected void doUpdateSet(Object source, SetDiff diff) {
 		delegate.updateSet(source, diff);
 	}
 
+	@Override
 	public PropertyDescriptor getPropertyDescriptor() {
 		return propertyDescriptor;
 	}
 
+	@Override
 	public IBeanMapProperty values(String propertyName) {
 		return values(propertyName, null);
 	}
 
+	@Override
 	public IBeanMapProperty values(String propertyName, Class valueType) {
 		Class beanClass = (Class) delegate.getElementType();
 		return values(PojoProperties.value(beanClass, propertyName, valueType));
 	}
 
+	@Override
 	public IBeanMapProperty values(IBeanValueProperty property) {
 		return new BeanMapPropertyDecorator(super.values(property),
 				property.getPropertyDescriptor());
 	}
 
+	@Override
 	public IObservableSet observe(Object source) {
 		return new BeanObservableSetDecorator(delegate.observe(source),
 				propertyDescriptor);
 	}
 
+	@Override
 	public IObservableSet observe(Realm realm, Object source) {
 		return new BeanObservableSetDecorator(delegate.observe(realm, source),
 				propertyDescriptor);
 	}
 
+	@Override
 	public IObservableSet observeDetail(IObservableValue master) {
 		return new BeanObservableSetDecorator(delegate.observeDetail(master),
 				propertyDescriptor);
 	}
 
+	@Override
 	public String toString() {
 		return delegate.toString();
 	}

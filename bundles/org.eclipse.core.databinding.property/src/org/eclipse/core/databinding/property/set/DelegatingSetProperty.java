@@ -66,48 +66,60 @@ public abstract class DelegatingSetProperty extends SetProperty {
 	 */
 	protected abstract ISetProperty doGetDelegate(Object source);
 
+	@Override
 	public Object getElementType() {
 		return elementType;
 	}
 
+	@Override
 	protected Set doGetSet(Object source) {
 		return getDelegate(source).getSet(source);
 	}
 
+	@Override
 	protected void doSetSet(Object source, Set set) {
 		getDelegate(source).setSet(source, set);
 	}
 
+	@Override
 	protected void doUpdateSet(Object source, SetDiff diff) {
 		getDelegate(source).updateSet(source, diff);
 	}
 
+	@Override
 	public IObservableSet observe(Object source) {
 		return getDelegate(source).observe(source);
 	}
 
+	@Override
 	public IObservableSet observe(Realm realm, Object source) {
 		return getDelegate(source).observe(realm, source);
 	}
 
 	private class NullSetProperty extends SimpleSetProperty {
+		@Override
 		public Object getElementType() {
 			return elementType;
 		}
 
+		@Override
 		protected Set doGetSet(Object source) {
 			return Collections.EMPTY_SET;
 		}
 
+		@Override
 		protected void doSetSet(Object source, Set set, SetDiff diff) {
 		}
 
+		@Override
 		protected void doSetSet(Object source, Set set) {
 		}
 
+		@Override
 		protected void doUpdateSet(Object source, SetDiff diff) {
 		}
 
+		@Override
 		public INativePropertyListener adaptListener(
 				ISimplePropertyListener listener) {
 			return null;

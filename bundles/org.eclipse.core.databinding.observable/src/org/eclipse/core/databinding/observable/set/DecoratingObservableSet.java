@@ -40,15 +40,18 @@ public class DecoratingObservableSet extends DecoratingObservableCollection
 		this.decorated = decorated;
 	}
 
+	@Override
 	public void clear() {
 		getterCalled();
 		decorated.clear();
 	}
 
+	@Override
 	public synchronized void addSetChangeListener(ISetChangeListener listener) {
 		addListener(SetChangeEvent.TYPE, listener);
 	}
 
+	@Override
 	public synchronized void removeSetChangeListener(ISetChangeListener listener) {
 		removeListener(SetChangeEvent.TYPE, listener);
 	}
@@ -59,14 +62,17 @@ public class DecoratingObservableSet extends DecoratingObservableCollection
 		fireEvent(new SetChangeEvent(this, diff));
 	}
 
+	@Override
 	protected void fireChange() {
 		throw new RuntimeException(
 				"fireChange should not be called, use fireSetChange() instead"); //$NON-NLS-1$
 	}
 
+	@Override
 	protected void firstListenerAdded() {
 		if (setChangeListener == null) {
 			setChangeListener = new ISetChangeListener() {
+				@Override
 				public void handleSetChange(SetChangeEvent event) {
 					DecoratingObservableSet.this.handleSetChange(event);
 				}
@@ -76,6 +82,7 @@ public class DecoratingObservableSet extends DecoratingObservableCollection
 		super.firstListenerAdded();
 	}
 
+	@Override
 	protected void lastListenerRemoved() {
 		super.lastListenerRemoved();
 		if (setChangeListener != null) {
@@ -97,6 +104,7 @@ public class DecoratingObservableSet extends DecoratingObservableCollection
 		fireSetChange(event.diff);
 	}
 
+	@Override
 	public synchronized void dispose() {
 		if (decorated != null && setChangeListener != null) {
 			decorated.removeSetChangeListener(setChangeListener);

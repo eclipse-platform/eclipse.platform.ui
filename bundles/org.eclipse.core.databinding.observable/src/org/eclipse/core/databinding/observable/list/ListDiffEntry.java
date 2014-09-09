@@ -36,6 +36,7 @@ public abstract class ListDiffEntry {
 	/**
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer

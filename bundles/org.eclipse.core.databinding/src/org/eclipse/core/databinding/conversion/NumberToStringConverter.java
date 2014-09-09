@@ -99,6 +99,7 @@ public class NumberToStringConverter extends Converter {
 	 *            was constructed for a non primitive type.
 	 * @see org.eclipse.core.databinding.conversion.IConverter#convert(java.lang.Object)
 	 */
+	@Override
 	public Object convert(Object fromObject) {
 		// Null is allowed when the type is not primitve.
 		if (fromObject == null && !fromType.isPrimitive()) {

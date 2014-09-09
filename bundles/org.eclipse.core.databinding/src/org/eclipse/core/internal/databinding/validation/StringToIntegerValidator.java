@@ -34,6 +34,7 @@ public class StringToIntegerValidator extends AbstractStringToNumberValidator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.databinding.validation.AbstractStringToNumberValidator#inRange(java.lang.Number)
 	 */
+	@Override
 	protected boolean isInRange(Number number) {
 		return StringToNumberParser.inIntegerRange(number);
 	}

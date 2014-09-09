@@ -43,10 +43,12 @@ public class StaleEvent extends ObservableEvent {
 
 	static final Object TYPE = new Object();
 
+	@Override
 	protected void dispatch(IObservablesListener listener) {
 		((IStaleListener) listener).handleStale(this);
 	}
 
+	@Override
 	protected Object getListenerType() {
 		return TYPE;
 	}

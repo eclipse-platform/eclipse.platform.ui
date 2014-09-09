@@ -44,18 +44,22 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 		this.decorated = decorated;
 	}
 
+	@Override
 	public synchronized void addMapChangeListener(IMapChangeListener listener) {
 		addListener(MapChangeEvent.TYPE, listener);
 	}
 
+	@Override
 	public synchronized void removeMapChangeListener(IMapChangeListener listener) {
 		removeListener(MapChangeEvent.TYPE, listener);
 	}
 
+	@Override
 	public Object getKeyType() {
 		return decorated.getKeyType();
 	}
 
+	@Override
 	public Object getValueType() {
 		return decorated.getValueType();
 	}
@@ -66,14 +70,17 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 		fireEvent(new MapChangeEvent(this, diff));
 	}
 
+	@Override
 	protected void fireChange() {
 		throw new RuntimeException(
 				"fireChange should not be called, use fireListChange() instead"); //$NON-NLS-1$
 	}
 
+	@Override
 	protected void firstListenerAdded() {
 		if (mapChangeListener == null) {
 			mapChangeListener = new IMapChangeListener() {
+				@Override
 				public void handleMapChange(MapChangeEvent event) {
 					DecoratingObservableMap.this.handleMapChange(event);
 				}
@@ -83,6 +90,7 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 		super.firstListenerAdded();
 	}
 
+	@Override
 	protected void lastListenerRemoved() {
 		super.lastListenerRemoved();
 		if (mapChangeListener != null) {
@@ -104,16 +112,19 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 		fireMapChange(event.diff);
 	}
 
+	@Override
 	public void clear() {
 		checkRealm();
 		decorated.clear();
 	}
 
+	@Override
 	public boolean containsKey(Object key) {
 		getterCalled();
 		return decorated.containsKey(key);
 	}
 
+	@Override
 	public boolean containsValue(Object value) {
 		getterCalled();
 		return decorated.containsValue(value);
@@ -126,47 +137,57 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 			this.collection = set;
 		}
 
+		@Override
 		public boolean add(Object o) {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public boolean addAll(Collection arg0) {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public void clear() {
 			checkRealm();
 			collection.clear();
 		}
 
+		@Override
 		public boolean contains(Object o) {
 			getterCalled();
 			return collection.contains(o);
 		}
 
+		@Override
 		public boolean containsAll(Collection c) {
 			getterCalled();
 			return collection.containsAll(c);
 		}
 
+		@Override
 		public boolean isEmpty() {
 			getterCalled();
 			return collection.isEmpty();
 		}
 
+		@Override
 		public Iterator iterator() {
 			final Iterator iterator = collection.iterator();
 			return new Iterator() {
+				@Override
 				public boolean hasNext() {
 					getterCalled();
 					return iterator.hasNext();
 				}
 
+				@Override
 				public Object next() {
 					getterCalled();
 					return iterator.next();
 				}
 
+				@Override
 				public void remove() {
 					checkRealm();
 					iterator.remove();
@@ -174,46 +195,55 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 			};
 		}
 
+		@Override
 		public boolean remove(Object o) {
 			getterCalled();
 			return collection.remove(o);
 		}
 
+		@Override
 		public boolean removeAll(Collection c) {
 			getterCalled();
 			return collection.removeAll(c);
 		}
 
+		@Override
 		public boolean retainAll(Collection c) {
 			getterCalled();
 			return collection.retainAll(c);
 		}
 
+		@Override
 		public int size() {
 			getterCalled();
 			return collection.size();
 		}
 
+		@Override
 		public Object[] toArray() {
 			getterCalled();
 			return collection.toArray();
 		}
 
+		@Override
 		public Object[] toArray(Object[] array) {
 			getterCalled();
 			return collection.toArray(array);
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			getterCalled();
 			return collection.equals(obj);
 		}
 
+		@Override
 		public int hashCode() {
 			getterCalled();
 			return collection.hashCode();
 		}
 
+		@Override
 		public String toString() {
 			getterCalled();
 			return collection.toString();
@@ -228,6 +258,7 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 
 	Set entrySet = null;
 
+	@Override
 	public Set entrySet() {
 		getterCalled();
 		if (entrySet == null) {
@@ -236,11 +267,13 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 		return entrySet;
 	}
 
+	@Override
 	public Object get(Object key) {
 		getterCalled();
 		return decorated.get(key);
 	}
 
+	@Override
 	public boolean isEmpty() {
 		getterCalled();
 		return decorated.isEmpty();
@@ -248,6 +281,7 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 
 	Set keySet = null;
 
+	@Override
 	public Set keySet() {
 		getterCalled();
 		if (keySet == null) {
@@ -256,21 +290,25 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 		return keySet;
 	}
 
+	@Override
 	public Object put(Object key, Object value) {
 		checkRealm();
 		return decorated.put(key, value);
 	}
 
+	@Override
 	public void putAll(Map m) {
 		checkRealm();
 		decorated.putAll(m);
 	}
 
+	@Override
 	public Object remove(Object key) {
 		checkRealm();
 		return decorated.remove(key);
 	}
 
+	@Override
 	public int size() {
 		getterCalled();
 		return decorated.size();
@@ -278,6 +316,7 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 
 	Collection values;
 
+	@Override
 	public Collection values() {
 		getterCalled();
 		if (values == null) {
@@ -286,6 +325,7 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 		return values;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		getterCalled();
 		if (this == obj) {
@@ -294,16 +334,19 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 		return decorated.equals(obj);
 	}
 
+	@Override
 	public int hashCode() {
 		getterCalled();
 		return decorated.hashCode();
 	}
 
+	@Override
 	public String toString() {
 		getterCalled();
 		return decorated.toString();
 	}
 
+	@Override
 	public synchronized void dispose() {
 		if (decorated != null && mapChangeListener != null) {
 			decorated.removeMapChangeListener(mapChangeListener);

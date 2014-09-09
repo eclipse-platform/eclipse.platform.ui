@@ -67,48 +67,60 @@ public abstract class DelegatingListProperty extends ListProperty {
 	 */
 	protected abstract IListProperty doGetDelegate(Object source);
 
+	@Override
 	public Object getElementType() {
 		return elementType;
 	}
 
+	@Override
 	protected List doGetList(Object source) {
 		return getDelegate(source).getList(source);
 	}
 
+	@Override
 	protected void doSetList(Object source, List list) {
 		getDelegate(source).setList(source, list);
 	}
 
+	@Override
 	protected void doUpdateList(Object source, ListDiff diff) {
 		getDelegate(source).updateList(source, diff);
 	}
 
+	@Override
 	public IObservableList observe(Object source) {
 		return getDelegate(source).observe(source);
 	}
 
+	@Override
 	public IObservableList observe(Realm realm, Object source) {
 		return getDelegate(source).observe(realm, source);
 	}
 
 	private class NullListProperty extends SimpleListProperty {
+		@Override
 		public Object getElementType() {
 			return elementType;
 		}
 
+		@Override
 		protected List doGetList(Object source) {
 			return Collections.EMPTY_LIST;
 		}
 
+		@Override
 		protected void doSetList(Object source, List list, ListDiff diff) {
 		}
 
+		@Override
 		protected void doSetList(Object source, List list) {
 		}
 
+		@Override
 		protected void doUpdateList(Object source, ListDiff diff) {
 		}
 
+		@Override
 		public INativePropertyListener adaptListener(
 				ISimplePropertyListener listener) {
 			return null;

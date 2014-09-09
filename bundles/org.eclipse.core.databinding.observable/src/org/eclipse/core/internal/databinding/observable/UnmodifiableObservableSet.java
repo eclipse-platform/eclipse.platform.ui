@@ -41,35 +41,43 @@ public class UnmodifiableObservableSet extends DecoratingObservableSet {
 		this.unmodifiableSet = Collections.unmodifiableSet(decorated);
 	}
 
+	@Override
 	public boolean add(Object o) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean addAll(Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Iterator iterator() {
 		getterCalled();
 		return unmodifiableSet.iterator();
 	}
 
+	@Override
 	public boolean remove(Object o) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean removeAll(Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean retainAll(Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public synchronized void dispose() {
 		unmodifiableSet = null;
 		super.dispose();

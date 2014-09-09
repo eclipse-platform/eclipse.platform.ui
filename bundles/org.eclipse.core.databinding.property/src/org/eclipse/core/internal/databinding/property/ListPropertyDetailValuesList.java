@@ -44,10 +44,12 @@ public class ListPropertyDetailValuesList extends ListProperty {
 		this.detailProperty = detailProperty;
 	}
 
+	@Override
 	public Object getElementType() {
 		return detailProperty.getValueType();
 	}
 
+	@Override
 	protected List doGetList(Object source) {
 		List masterList = masterProperty.getList(source);
 		List detailList = new ArrayList(masterList.size());
@@ -56,21 +58,26 @@ public class ListPropertyDetailValuesList extends ListProperty {
 		return detailList;
 	}
 
+	@Override
 	protected void doUpdateList(Object source, ListDiff diff) {
 		final List masterList = masterProperty.getList(source);
 		diff.accept(new ListDiffVisitor() {
+			@Override
 			public void handleAdd(int index, Object element) {
 				throw new UnsupportedOperationException();
 			}
 
+			@Override
 			public void handleRemove(int index, Object element) {
 				throw new UnsupportedOperationException();
 			}
 
+			@Override
 			public void handleMove(int oldIndex, int newIndex, Object element) {
 				throw new UnsupportedOperationException();
 			}
 
+			@Override
 			public void handleReplace(int index, Object oldElement,
 					Object newElement) {
 				detailProperty.setValue(masterList.get(index), newElement);
@@ -78,6 +85,7 @@ public class ListPropertyDetailValuesList extends ListProperty {
 		});
 	}
 
+	@Override
 	public IObservableList observe(Realm realm, Object source) {
 		IObservableList masterList;
 
@@ -93,6 +101,7 @@ public class ListPropertyDetailValuesList extends ListProperty {
 		return detailList;
 	}
 
+	@Override
 	public IObservableList observeDetail(IObservableValue master) {
 		IObservableList masterList;
 
@@ -108,6 +117,7 @@ public class ListPropertyDetailValuesList extends ListProperty {
 		return detailList;
 	}
 
+	@Override
 	public String toString() {
 		return masterProperty + " => " + detailProperty; //$NON-NLS-1$
 	}

@@ -41,6 +41,7 @@ public class Policy {
 	 */
 	private static ILogger getDummyLog() {
 		return new ILogger() {
+			@Override
 			public void log(IStatus status) {
 				System.err.println(status.toString());
 				if( status.getException() != null ) {

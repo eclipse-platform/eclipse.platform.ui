@@ -53,10 +53,12 @@ public class IdentitySet implements Set {
 		addAll(collection);
 	}
 
+	@Override
 	public boolean add(Object o) {
 		return wrappedSet.add(IdentityWrapper.wrap(o));
 	}
 
+	@Override
 	public boolean addAll(Collection c) {
 		boolean changed = false;
 		for (Iterator iterator = c.iterator(); iterator.hasNext();)
@@ -64,14 +66,17 @@ public class IdentitySet implements Set {
 		return changed;
 	}
 
+	@Override
 	public void clear() {
 		wrappedSet.clear();
 	}
 
+	@Override
 	public boolean contains(Object o) {
 		return wrappedSet.contains(IdentityWrapper.wrap(o));
 	}
 
+	@Override
 	public boolean containsAll(Collection c) {
 		for (Iterator iterator = c.iterator(); iterator.hasNext();)
 			if (!wrappedSet.contains(IdentityWrapper.wrap(iterator.next())))
@@ -79,31 +84,38 @@ public class IdentitySet implements Set {
 		return true;
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return wrappedSet.isEmpty();
 	}
 
+	@Override
 	public Iterator iterator() {
 		final Iterator wrappedIterator = wrappedSet.iterator();
 		return new Iterator() {
+			@Override
 			public boolean hasNext() {
 				return wrappedIterator.hasNext();
 			}
 
+			@Override
 			public Object next() {
 				return ((IdentityWrapper) wrappedIterator.next()).unwrap();
 			}
 
+			@Override
 			public void remove() {
 				wrappedIterator.remove();
 			}
 		};
 	}
 
+	@Override
 	public boolean remove(Object o) {
 		return wrappedSet.remove(IdentityWrapper.wrap(o));
 	}
 
+	@Override
 	public boolean removeAll(Collection c) {
 		boolean changed = false;
 		for (Iterator iterator = c.iterator(); iterator.hasNext();)
@@ -111,6 +123,7 @@ public class IdentitySet implements Set {
 		return changed;
 	}
 
+	@Override
 	public boolean retainAll(Collection c) {
 		// Have to do this the slow way to ensure correct comparisons. i.e.
 		// cannot delegate to c.contains(it) since we can't be sure will
@@ -130,14 +143,17 @@ public class IdentitySet implements Set {
 		return changed;
 	}
 
+	@Override
 	public int size() {
 		return wrappedSet.size();
 	}
 
+	@Override
 	public Object[] toArray() {
 		return toArray(new Object[wrappedSet.size()]);
 	}
 
+	@Override
 	public Object[] toArray(Object[] a) {
 		int size = wrappedSet.size();
 		IdentityWrapper[] wrappedArray = (IdentityWrapper[]) wrappedSet
@@ -152,6 +168,7 @@ public class IdentitySet implements Set {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
@@ -161,6 +178,7 @@ public class IdentitySet implements Set {
 		return size() == that.size() && containsAll(that);
 	}
 
+	@Override
 	public int hashCode() {
 		int hash = 0;
 		for (Iterator iterator = iterator(); iterator.hasNext();) {

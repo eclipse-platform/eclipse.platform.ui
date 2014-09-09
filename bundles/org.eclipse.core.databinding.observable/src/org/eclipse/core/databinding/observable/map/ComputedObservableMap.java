@@ -46,6 +46,7 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	private Object valueType;
 
 	private ISetChangeListener setChangeListener = new ISetChangeListener() {
+		@Override
 		public void handleSetChange(SetChangeEvent event) {
 			Set addedKeys = new HashSet(event.diff.getAdditions());
 			Set removedKeys = new HashSet(event.diff.getRemovals());
@@ -77,6 +78,7 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	};
 
 	private IStaleListener staleListener = new IStaleListener() {
+		@Override
 		public void handleStale(StaleEvent staleEvent) {
 			fireStale();
 		}
@@ -86,39 +88,47 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 
 	private class EntrySet extends AbstractSet {
 
+		@Override
 		public Iterator iterator() {
 			final Iterator keyIterator = keySet.iterator();
 			return new Iterator() {
 
+				@Override
 				public boolean hasNext() {
 					return keyIterator.hasNext();
 				}
 
+				@Override
 				public Object next() {
 					final Object key = keyIterator.next();
 					return new Map.Entry() {
 
+						@Override
 						public Object getKey() {
 							getterCalled();
 							return key;
 						}
 
+						@Override
 						public Object getValue() {
 							return get(getKey());
 						}
 
+						@Override
 						public Object setValue(Object value) {
 							return put(getKey(), value);
 						}
 					};
 				}
 
+				@Override
 				public void remove() {
 					keyIterator.remove();
 				}
 			};
 		}
 
+		@Override
 		public int size() {
 			return keySet.size();
 		}
@@ -143,6 +153,7 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 		this.valueType = valueType;
 
 		keySet.addDisposeListener(new IDisposeListener() {
+			@Override
 			public void handleDispose(DisposeEvent staleEvent) {
 				ComputedObservableMap.this.dispose();
 			}
@@ -152,17 +163,21 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	/**
 	 * @deprecated Subclasses are no longer required to call this method.
 	 */
+	@Deprecated
 	protected void init() {
 	}
 
+	@Override
 	protected void firstListenerAdded() {
 		getRealm().exec(new Runnable() {
+			@Override
 			public void run() {
 				hookListeners();
 			}
 		});
 	}
 
+	@Override
 	protected void lastListenerRemoved() {
 		unhookListeners();
 	}
@@ -203,6 +218,7 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	/**
 	 * @since 1.2
 	 */
+	@Override
 	public Object getKeyType() {
 		return keySet.getElementType();
 	}
@@ -210,6 +226,7 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	/**
 	 * @since 1.2
 	 */
+	@Override
 	public Object getValueType() {
 		return valueType;
 	}
@@ -217,6 +234,7 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	/**
 	 * @since 1.3
 	 */
+	@Override
 	public Object remove(Object key) {
 		checkRealm();
 
@@ -229,19 +247,23 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	/**
 	 * @since 1.3
 	 */
+	@Override
 	public boolean containsKey(Object key) {
 		getterCalled();
 		return keySet().contains(key);
 	}
 
+	@Override
 	public Set entrySet() {
 		return entrySet;
 	}
 
+	@Override
 	public Set keySet() {
 		return keySet;
 	}
 
+	@Override
 	final public Object get(Object key) {
 		getterCalled();
 		if (!keySet.contains(key))
@@ -253,6 +275,7 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 		ObservableTracker.getterCalled(this);
 	}
 
+	@Override
 	final public Object put(Object key, Object value) {
 		checkRealm();
 		if (!keySet.contains(key))
@@ -283,10 +306,12 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	 */
 	protected abstract Object doPut(Object key, Object value);
 
+	@Override
 	public boolean isStale() {
 		return super.isStale() || keySet.isStale();
 	}
 
+	@Override
 	public synchronized void dispose() {
 		unhookListeners();
 		entrySet = null;

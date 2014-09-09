@@ -391,12 +391,15 @@ public class Observables {
 	public static IObservableSet staticObservableSet(Realm realm, Set set,
 			Object elementType) {
 		return new ObservableSet(realm, set, elementType) {
+			@Override
 			public synchronized void addChangeListener(IChangeListener listener) {
 			}
 
+			@Override
 			public synchronized void addStaleListener(IStaleListener listener) {
 			}
 
+			@Override
 			public synchronized void addSetChangeListener(
 					ISetChangeListener listener) {
 			}
@@ -515,12 +518,15 @@ public class Observables {
 	public static IObservableList staticObservableList(Realm realm, List list,
 			Object elementType) {
 		return new ObservableList(realm, list, elementType) {
+			@Override
 			public synchronized void addChangeListener(IChangeListener listener) {
 			}
 
+			@Override
 			public synchronized void addStaleListener(IStaleListener listener) {
 			}
 
+			@Override
 			public synchronized void addListChangeListener(
 					IListChangeListener listener) {
 			}
@@ -608,6 +614,7 @@ public class Observables {
 	public static IObservableFactory mapEntryValueFactory(
 			final IObservableMap map, final Object valueType) {
 		return new IObservableFactory() {
+			@Override
 			public IObservable createObservable(Object key) {
 				return observeMapEntry(map, key, valueType);
 			}
@@ -654,6 +661,7 @@ public class Observables {
 			final IObservableValue destination) {
 		destination.setValue(source.getValue());
 		source.addValueChangeListener(new IValueChangeListener() {
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				destination.setValue(event.diff.getNewValue());
 			}

@@ -61,12 +61,14 @@ public class ListDetailValueObservableList extends AbstractObservableList
 	private IdentitySet staleDetailObservables = new IdentitySet();
 
 	private IListChangeListener masterListListener = new IListChangeListener() {
+		@Override
 		public void handleListChange(ListChangeEvent event) {
 			handleMasterListChange(event.diff);
 		}
 	};
 
 	private IValueChangeListener detailValueListener = new IValueChangeListener() {
+		@Override
 		public void handleValueChange(ValueChangeEvent event) {
 			if (!event.getObservable().isStale()) {
 				staleDetailObservables.remove(event.getObservable());
@@ -76,12 +78,14 @@ public class ListDetailValueObservableList extends AbstractObservableList
 	};
 
 	private IStaleListener masterStaleListener = new IStaleListener() {
+		@Override
 		public void handleStale(StaleEvent staleEvent) {
 			fireStale();
 		}
 	};
 
 	private IStaleListener detailStaleListener = new IStaleListener() {
+		@Override
 		public void handleStale(StaleEvent staleEvent) {
 			boolean wasStale = isStale();
 			staleDetailObservables.add((staleEvent.getObservable()));
@@ -109,6 +113,7 @@ public class ListDetailValueObservableList extends AbstractObservableList
 		masterList.addListChangeListener(masterListListener);
 		masterList.addStaleListener(masterStaleListener);
 		masterList.addDisposeListener(new IDisposeListener() {
+			@Override
 			public void handleDispose(DisposeEvent event) {
 				ListDetailValueObservableList.this.dispose();
 			}
@@ -119,6 +124,7 @@ public class ListDetailValueObservableList extends AbstractObservableList
 		handleMasterListChange(initMasterDiff);
 	}
 
+	@Override
 	protected synchronized void firstListenerAdded() {
 		for (int i = 0; i < detailList.size(); i++) {
 			IObservableValue detail = (IObservableValue) detailList.get(i);
@@ -130,6 +136,7 @@ public class ListDetailValueObservableList extends AbstractObservableList
 		}
 	}
 
+	@Override
 	protected synchronized void lastListenerRemoved() {
 		if (isDisposed()) {
 			return;
@@ -262,15 +269,18 @@ public class ListDetailValueObservableList extends AbstractObservableList
 		}
 	}
 
+	@Override
 	protected int doGetSize() {
 		return detailList.size();
 	}
 
+	@Override
 	public Object get(int index) {
 		ObservableTracker.getterCalled(this);
 		return ((IObservableValue) detailList.get(index)).getValue();
 	}
 
+	@Override
 	public Object set(int index, Object element) {
 		IObservableValue detail = (IObservableValue) detailList.get(index);
 		Object oldElement = detail.getValue();
@@ -278,30 +288,37 @@ public class ListDetailValueObservableList extends AbstractObservableList
 		return oldElement;
 	}
 
+	@Override
 	public Object move(int oldIndex, int newIndex) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean remove(Object o) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean removeAll(Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean retainAll(Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Object getElementType() {
 		return detailType;
 	}
 
+	@Override
 	public boolean isStale() {
 		return super.isStale()
 				|| (masterList != null && masterList.isStale())
@@ -309,10 +326,12 @@ public class ListDetailValueObservableList extends AbstractObservableList
 						.isEmpty());
 	}
 
+	@Override
 	public Object getObserved() {
 		return masterList;
 	}
 
+	@Override
 	public synchronized void dispose() {
 		if (masterList != null) {
 			masterList.removeListChangeListener(masterListListener);

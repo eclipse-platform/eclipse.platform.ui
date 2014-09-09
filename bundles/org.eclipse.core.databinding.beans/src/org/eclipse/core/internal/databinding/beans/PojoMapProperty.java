@@ -42,14 +42,17 @@ public class PojoMapProperty extends SimpleMapProperty {
 		this.valueType = valueType;
 	}
 
+	@Override
 	public Object getKeyType() {
 		return keyType;
 	}
 
+	@Override
 	public Object getValueType() {
 		return valueType;
 	}
 
+	@Override
 	protected Map doGetMap(Object source) {
 		return asMap(BeanPropertyHelper
 				.readProperty(source, propertyDescriptor));
@@ -61,19 +64,23 @@ public class PojoMapProperty extends SimpleMapProperty {
 		return (Map) propertyValue;
 	}
 
+	@Override
 	protected void doSetMap(Object source, Map map, MapDiff diff) {
 		doSetMap(source, map);
 	}
 
+	@Override
 	protected void doSetMap(Object source, Map map) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor, map);
 	}
 
+	@Override
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		return null;
 	}
 
+	@Override
 	public String toString() {
 		String s = BeanPropertyHelper.propertyName(propertyDescriptor) + "{:}"; //$NON-NLS-1$
 

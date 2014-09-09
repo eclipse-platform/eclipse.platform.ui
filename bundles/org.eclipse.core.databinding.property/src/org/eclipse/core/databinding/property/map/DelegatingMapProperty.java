@@ -68,57 +68,71 @@ public abstract class DelegatingMapProperty extends MapProperty {
 	 */
 	protected abstract IMapProperty doGetDelegate(Object source);
 
+	@Override
 	public Object getKeyType() {
 		return keyType;
 	}
 
+	@Override
 	public Object getValueType() {
 		return valueType;
 	}
 
+	@Override
 	protected Map doGetMap(Object source) {
 		return getDelegate(source).getMap(source);
 	}
 
+	@Override
 	protected void doSetMap(Object source, Map map) {
 		getDelegate(source).setMap(source, map);
 	}
 
+	@Override
 	protected void doUpdateMap(Object source, MapDiff diff) {
 		getDelegate(source).updateMap(source, diff);
 	}
 
+	@Override
 	public IObservableMap observe(Object source) {
 		return getDelegate(source).observe(source);
 	}
 
+	@Override
 	public IObservableMap observe(Realm realm, Object source) {
 		return getDelegate(source).observe(realm, source);
 	}
 
 	private class NullMapProperty extends SimpleMapProperty {
+		@Override
 		protected Map doGetMap(Object source) {
 			return Collections.EMPTY_MAP;
 		}
 
+		@Override
 		protected void doSetMap(Object source, Map map, MapDiff diff) {
 		}
 
+		@Override
 		protected void doSetMap(Object source, Map map) {
 		}
 
+		@Override
 		protected void doUpdateMap(Object source, MapDiff diff) {
 		}
 
+		@Override
 		public INativePropertyListener adaptListener(
 				ISimplePropertyListener listener) {
 			return null;
 		}
 
+		@Override
 		public Object getKeyType() {
 			return keyType;
 		}
 
+		@Override
 		public Object getValueType() {
 			return valueType;
 		}

@@ -23,16 +23,19 @@ import org.eclipse.core.databinding.conversion.IConverter;
  * @since 1.0
  */
 public class DateToStringConverter extends DateConversionSupport implements IConverter {	
+	@Override
 	public Object convert(Object source) {
 		if (source != null)
 			return format((Date)source);
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public Object getFromType() {
 		return Date.class;
 	}
 
+	@Override
 	public Object getToType() {
 		return String.class;
 	}	

@@ -44,14 +44,17 @@ public class BeanMapProperty extends SimpleMapProperty {
 		this.valueType = valueType;
 	}
 
+	@Override
 	public Object getKeyType() {
 		return keyType;
 	}
 
+	@Override
 	public Object getValueType() {
 		return valueType;
 	}
 
+	@Override
 	protected Map doGetMap(Object source) {
 		return asMap(BeanPropertyHelper
 				.readProperty(source, propertyDescriptor));
@@ -63,23 +66,28 @@ public class BeanMapProperty extends SimpleMapProperty {
 		return (Map) propertyValue;
 	}
 
+	@Override
 	protected void doSetMap(Object source, Map map, MapDiff diff) {
 		doSetMap(source, map);
 	}
 
+	@Override
 	protected void doSetMap(Object source, Map map) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor, map);
 	}
 
+	@Override
 	public INativePropertyListener adaptListener(
 			final ISimplePropertyListener listener) {
 		return new BeanPropertyListener(this, propertyDescriptor, listener) {
+			@Override
 			protected IDiff computeDiff(Object oldValue, Object newValue) {
 				return Diffs.computeMapDiff(asMap(oldValue), asMap(newValue));
 			}
 		};
 	}
 
+	@Override
 	public String toString() {
 		String s = BeanPropertyHelper.propertyName(propertyDescriptor) + "{:}"; //$NON-NLS-1$
 

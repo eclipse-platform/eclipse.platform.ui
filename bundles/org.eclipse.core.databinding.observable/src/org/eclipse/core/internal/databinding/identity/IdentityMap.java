@@ -58,33 +58,41 @@ public class IdentityMap implements Map {
 		putAll(map);
 	}
 
+	@Override
 	public void clear() {
 		wrappedMap.clear();
 	}
 
+	@Override
 	public boolean containsKey(Object key) {
 		return wrappedMap.containsKey(IdentityWrapper.wrap(key));
 	}
 
+	@Override
 	public boolean containsValue(Object value) {
 		return wrappedMap.containsValue(value);
 	}
 
+	@Override
 	public Set entrySet() {
 		final Set wrappedEntrySet = wrappedMap.entrySet();
 		return new Set() {
+			@Override
 			public boolean add(Object o) {
 				throw new UnsupportedOperationException();
 			}
 
+			@Override
 			public boolean addAll(Collection c) {
 				throw new UnsupportedOperationException();
 			}
 
+			@Override
 			public void clear() {
 				wrappedEntrySet.clear();
 			}
 
+			@Override
 			public boolean contains(Object o) {
 				for (Iterator iterator = iterator(); iterator.hasNext();)
 					if (iterator.next().equals(o))
@@ -92,6 +100,7 @@ public class IdentityMap implements Map {
 				return false;
 			}
 
+			@Override
 			public boolean containsAll(Collection c) {
 				for (Iterator iterator = c.iterator(); iterator.hasNext();)
 					if (!contains(iterator.next()))
@@ -99,34 +108,42 @@ public class IdentityMap implements Map {
 				return true;
 			}
 
+			@Override
 			public boolean isEmpty() {
 				return wrappedEntrySet.isEmpty();
 			}
 
+			@Override
 			public Iterator iterator() {
 				final Iterator wrappedIterator = wrappedEntrySet.iterator();
 				return new Iterator() {
+					@Override
 					public boolean hasNext() {
 						return wrappedIterator.hasNext();
 					}
 
+					@Override
 					public Object next() {
 						final Map.Entry wrappedEntry = (Map.Entry) wrappedIterator
 								.next();
 						return new Map.Entry() {
+							@Override
 							public Object getKey() {
 								return ((IdentityWrapper) wrappedEntry.getKey())
 										.unwrap();
 							}
 
+							@Override
 							public Object getValue() {
 								return wrappedEntry.getValue();
 							}
 
+							@Override
 							public Object setValue(Object value) {
 								return wrappedEntry.setValue(value);
 							}
 
+							@Override
 							public boolean equals(Object obj) {
 								if (obj == this)
 									return true;
@@ -138,35 +155,42 @@ public class IdentityMap implements Map {
 												.getValue());
 							}
 
+							@Override
 							public int hashCode() {
 								return wrappedEntry.hashCode();
 							}
 						};
 					}
 
+					@Override
 					public void remove() {
 						wrappedIterator.remove();
 					}
 				};
 			}
 
+			@Override
 			public boolean remove(Object o) {
 				final Map.Entry unwrappedEntry = (Map.Entry) o;
 				final IdentityWrapper wrappedKey = IdentityWrapper
 						.wrap(unwrappedEntry.getKey());
 				Map.Entry wrappedEntry = new Map.Entry() {
+					@Override
 					public Object getKey() {
 						return wrappedKey;
 					}
 
+					@Override
 					public Object getValue() {
 						return unwrappedEntry.getValue();
 					}
 
+					@Override
 					public Object setValue(Object value) {
 						throw new UnsupportedOperationException();
 					}
 
+					@Override
 					public boolean equals(Object obj) {
 						if (obj == this)
 							return true;
@@ -179,6 +203,7 @@ public class IdentityMap implements Map {
 												.getValue());
 					}
 
+					@Override
 					public int hashCode() {
 						return wrappedKey.hashCode()
 								^ (getValue() == null ? 0 : getValue()
@@ -188,6 +213,7 @@ public class IdentityMap implements Map {
 				return wrappedEntrySet.remove(wrappedEntry);
 			}
 
+			@Override
 			public boolean removeAll(Collection c) {
 				boolean changed = false;
 				for (Iterator iterator = c.iterator(); iterator.hasNext();)
@@ -195,6 +221,7 @@ public class IdentityMap implements Map {
 				return changed;
 			}
 
+			@Override
 			public boolean retainAll(Collection c) {
 				boolean changed = false;
 				Object[] toRetain = c.toArray();
@@ -209,14 +236,17 @@ public class IdentityMap implements Map {
 				return changed;
 			}
 
+			@Override
 			public int size() {
 				return wrappedEntrySet.size();
 			}
 
+			@Override
 			public Object[] toArray() {
 				return toArray(new Object[size()]);
 			}
 
+			@Override
 			public Object[] toArray(Object[] a) {
 				int size = size();
 				if (a.length < size) {
@@ -231,6 +261,7 @@ public class IdentityMap implements Map {
 				return a;
 			}
 
+			@Override
 			public boolean equals(Object obj) {
 				if (obj == this)
 					return true;
@@ -240,39 +271,48 @@ public class IdentityMap implements Map {
 				return this.size() == that.size() && containsAll(that);
 			}
 
+			@Override
 			public int hashCode() {
 				return wrappedEntrySet.hashCode();
 			}
 		};
 	}
 
+	@Override
 	public Object get(Object key) {
 		return wrappedMap.get(IdentityWrapper.wrap(key));
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return wrappedMap.isEmpty();
 	}
 
+	@Override
 	public Set keySet() {
 		final Set wrappedKeySet = wrappedMap.keySet();
 		return new Set() {
+			@Override
 			public boolean add(Object o) {
 				throw new UnsupportedOperationException();
 			}
 
+			@Override
 			public boolean addAll(Collection c) {
 				throw new UnsupportedOperationException();
 			}
 
+			@Override
 			public void clear() {
 				wrappedKeySet.clear();
 			}
 
+			@Override
 			public boolean contains(Object o) {
 				return wrappedKeySet.contains(IdentityWrapper.wrap(o));
 			}
 
+			@Override
 			public boolean containsAll(Collection c) {
 				for (Iterator iterator = c.iterator(); iterator.hasNext();)
 					if (!wrappedKeySet.contains(IdentityWrapper.wrap(iterator
@@ -281,32 +321,39 @@ public class IdentityMap implements Map {
 				return true;
 			}
 
+			@Override
 			public boolean isEmpty() {
 				return wrappedKeySet.isEmpty();
 			}
 
+			@Override
 			public Iterator iterator() {
 				final Iterator wrappedIterator = wrappedKeySet.iterator();
 				return new Iterator() {
+					@Override
 					public boolean hasNext() {
 						return wrappedIterator.hasNext();
 					}
 
+					@Override
 					public Object next() {
 						return ((IdentityWrapper) wrappedIterator.next())
 								.unwrap();
 					}
 
+					@Override
 					public void remove() {
 						wrappedIterator.remove();
 					}
 				};
 			}
 
+			@Override
 			public boolean remove(Object o) {
 				return wrappedKeySet.remove(IdentityWrapper.wrap(o));
 			}
 
+			@Override
 			public boolean removeAll(Collection c) {
 				boolean changed = false;
 				for (Iterator iterator = c.iterator(); iterator.hasNext();)
@@ -315,6 +362,7 @@ public class IdentityMap implements Map {
 				return changed;
 			}
 
+			@Override
 			public boolean retainAll(Collection c) {
 				boolean changed = false;
 				Object[] toRetain = c.toArray();
@@ -330,14 +378,17 @@ public class IdentityMap implements Map {
 				return changed;
 			}
 
+			@Override
 			public int size() {
 				return wrappedKeySet.size();
 			}
 
+			@Override
 			public Object[] toArray() {
 				return toArray(new Object[wrappedKeySet.size()]);
 			}
 
+			@Override
 			public Object[] toArray(Object[] a) {
 				int size = wrappedKeySet.size();
 				IdentityWrapper[] wrappedArray = (IdentityWrapper[]) wrappedKeySet
@@ -352,6 +403,7 @@ public class IdentityMap implements Map {
 				return result;
 			}
 
+			@Override
 			public boolean equals(Object obj) {
 				if (obj == this)
 					return true;
@@ -361,16 +413,19 @@ public class IdentityMap implements Map {
 				return this.size() == that.size() && containsAll(that);
 			}
 
+			@Override
 			public int hashCode() {
 				return wrappedKeySet.hashCode();
 			}
 		};
 	}
 
+	@Override
 	public Object put(Object key, Object value) {
 		return wrappedMap.put(IdentityWrapper.wrap(key), value);
 	}
 
+	@Override
 	public void putAll(Map other) {
 		for (Iterator iterator = other.entrySet().iterator(); iterator
 				.hasNext();) {
@@ -380,18 +435,22 @@ public class IdentityMap implements Map {
 		}
 	}
 
+	@Override
 	public Object remove(Object key) {
 		return wrappedMap.remove(IdentityWrapper.wrap(key));
 	}
 
+	@Override
 	public int size() {
 		return wrappedMap.size();
 	}
 
+	@Override
 	public Collection values() {
 		return wrappedMap.values();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
@@ -401,6 +460,7 @@ public class IdentityMap implements Map {
 		return this.entrySet().equals(that.entrySet());
 	}
 
+	@Override
 	public int hashCode() {
 		return wrappedMap.hashCode();
 	}

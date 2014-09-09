@@ -60,6 +60,7 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 	private boolean updating;
 
 	private IListChangeListener masterListener = new IListChangeListener() {
+		@Override
 		public void handleListChange(ListChangeEvent event) {
 			if (!isDisposed()) {
 				updateKnownElements();
@@ -92,6 +93,7 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 	};
 
 	private IStaleListener staleListener = new IStaleListener() {
+		@Override
 		public void handleStale(StaleEvent staleEvent) {
 			fireStale();
 		}
@@ -110,9 +112,11 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		this.detailProperty = valueProperty;
 
 		ISimplePropertyListener listener = new ISimplePropertyListener() {
+			@Override
 			public void handleEvent(final SimplePropertyEvent event) {
 				if (!isDisposed() && !updating) {
 					getRealm().exec(new Runnable() {
+						@Override
 						public void run() {
 							if (event.type == SimplePropertyEvent.CHANGE) {
 								notifyIfChanged(event.getSource());
@@ -130,6 +134,7 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		this.detailListener = detailProperty.adaptListener(listener);
 	}
 
+	@Override
 	protected void firstListenerAdded() {
 		ObservableTracker.setIgnore(true);
 		try {
@@ -141,6 +146,7 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		cachedValues = new IdentityMap();
 		staleElements = new IdentitySet();
 		knownMasterElements.addSetChangeListener(new ISetChangeListener() {
+			@Override
 			public void handleSetChange(SetChangeEvent event) {
 				for (Iterator it = event.diff.getRemovals().iterator(); it
 						.hasNext();) {
@@ -160,6 +166,7 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 			}
 		});
 		getRealm().exec(new Runnable() {
+			@Override
 			public void run() {
 				knownMasterElements.addAll(masterList);
 
@@ -169,6 +176,7 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		});
 	}
 
+	@Override
 	protected void lastListenerRemoved() {
 		if (masterList != null) {
 			masterList.removeListChangeListener(masterListener);
@@ -188,6 +196,7 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		}
 	}
 
+	@Override
 	protected int doGetSize() {
 		getterCalled();
 		return masterList.size();
@@ -197,28 +206,34 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		ObservableTracker.getterCalled(this);
 	}
 
+	@Override
 	public Object getElementType() {
 		return detailProperty.getValueType();
 	}
 
+	@Override
 	public Object get(int index) {
 		getterCalled();
 		Object masterElement = masterList.get(index);
 		return detailProperty.getValue(masterElement);
 	}
 
+	@Override
 	public boolean add(Object o) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean addAll(Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean addAll(int index, Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean contains(Object o) {
 		getterCalled();
 
@@ -229,55 +244,66 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		return false;
 	}
 
+	@Override
 	public boolean isEmpty() {
 		getterCalled();
 		return masterList.isEmpty();
 	}
 
+	@Override
 	public boolean isStale() {
 		getterCalled();
 		return masterList.isStale() || staleElements != null
 				&& !staleElements.isEmpty();
 	}
 
+	@Override
 	public Iterator iterator() {
 		getterCalled();
 		return new Iterator() {
 			Iterator it = masterList.iterator();
 
+			@Override
 			public boolean hasNext() {
 				getterCalled();
 				return it.hasNext();
 			}
 
+			@Override
 			public Object next() {
 				getterCalled();
 				Object masterElement = it.next();
 				return detailProperty.getValue(masterElement);
 			}
 
+			@Override
 			public void remove() {
 				throw new UnsupportedOperationException();
 			}
 		};
 	}
 
+	@Override
 	public Object move(int oldIndex, int newIndex) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean remove(Object o) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean removeAll(Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean retainAll(Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Object[] toArray() {
 		getterCalled();
 		Object[] masterElements = masterList.toArray();
@@ -288,6 +314,7 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		return result;
 	}
 
+	@Override
 	public Object[] toArray(Object[] a) {
 		getterCalled();
 		Object[] masterElements = masterList.toArray();
@@ -300,18 +327,22 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		return a;
 	}
 
+	@Override
 	public void add(int index, Object o) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public ListIterator listIterator() {
 		return listIterator(0);
 	}
 
+	@Override
 	public ListIterator listIterator(final int index) {
 		getterCalled();
 		return new ListIterator() {
@@ -320,20 +351,24 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 			Object lastElement;
 			boolean haveIterated = false;
 
+			@Override
 			public void add(Object arg0) {
 				throw new UnsupportedOperationException();
 			}
 
+			@Override
 			public boolean hasNext() {
 				getterCalled();
 				return it.hasNext();
 			}
 
+			@Override
 			public boolean hasPrevious() {
 				getterCalled();
 				return it.hasPrevious();
 			}
 
+			@Override
 			public Object next() {
 				getterCalled();
 				lastMasterElement = it.next();
@@ -342,11 +377,13 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 				return lastElement;
 			}
 
+			@Override
 			public int nextIndex() {
 				getterCalled();
 				return it.nextIndex();
 			}
 
+			@Override
 			public Object previous() {
 				getterCalled();
 				lastMasterElement = it.previous();
@@ -355,15 +392,18 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 				return lastElement;
 			}
 
+			@Override
 			public int previousIndex() {
 				getterCalled();
 				return it.previousIndex();
 			}
 
+			@Override
 			public void remove() {
 				throw new UnsupportedOperationException();
 			}
 
+			@Override
 			public void set(Object o) {
 				checkRealm();
 				if (!haveIterated)
@@ -425,10 +465,12 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		fireListChange(Diffs.createListDiff(differences));
 	}
 
+	@Override
 	public Object remove(int index) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Object set(int index, Object o) {
 		checkRealm();
 		Object masterElement = masterList.get(index);
@@ -447,14 +489,17 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		return oldValue;
 	}
 
+	@Override
 	public Object getObserved() {
 		return masterList;
 	}
 
+	@Override
 	public IProperty getProperty() {
 		return detailProperty;
 	}
 
+	@Override
 	public synchronized void dispose() {
 		if (knownMasterElements != null) {
 			knownMasterElements.clear(); // detaches listeners

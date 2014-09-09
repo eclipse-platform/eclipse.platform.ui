@@ -41,12 +41,14 @@ public class Activator implements BundleActivator {
 	public Activator() {
 	}
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		_frameworkLogTracker = new ServiceTracker(context, FrameworkLog.class.getName(), null);
 		_frameworkLogTracker.open();
 
 		Policy.setLog(new ILogger() {
 
+			@Override
 			public void log(IStatus status) {
 				ServiceTracker frameworkLogTracker = _frameworkLogTracker;
 				FrameworkLog log = frameworkLogTracker == null ? null : (FrameworkLog) frameworkLogTracker.getService();
@@ -92,6 +94,7 @@ public class Activator implements BundleActivator {
 	}
 
 	
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (_frameworkLogTracker != null) {
 			_frameworkLogTracker.close();

@@ -700,14 +700,17 @@ import com.ibm.icu.text.NumberFormat;
 			this.fromType = fromType;
 		}
 
+		@Override
 		public Object convert(Object fromObject) {
 			return fromObject;
 		}
 
+		@Override
 		public Object getFromType() {
 			return fromType;
 		}
 
+		@Override
 		public Object getToType() {
 			return toType;
 		}

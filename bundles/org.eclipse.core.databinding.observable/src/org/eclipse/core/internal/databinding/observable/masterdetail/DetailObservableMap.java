@@ -48,6 +48,7 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 	private Object detailValueType;
 
 	private IValueChangeListener masterChangeListener = new IValueChangeListener() {
+		@Override
 		public void handleValueChange(ValueChangeEvent event) {
 			if (isDisposed())
 				return;
@@ -63,6 +64,7 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 	};
 
 	private IMapChangeListener detailChangeListener = new IMapChangeListener() {
+		@Override
 		public void handleMapChange(MapChangeEvent event) {
 			if (!updating) {
 				fireMapChange(event.diff);
@@ -92,6 +94,7 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 		this.detailValueType = valueType;
 
 		master.addDisposeListener(new IDisposeListener() {
+			@Override
 			public void handleDispose(DisposeEvent staleEvent) {
 				dispose();
 			}
@@ -146,14 +149,17 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 		}
 	}
 
+	@Override
 	public Object getKeyType() {
 		return detailKeyType;
 	}
 
+	@Override
 	public Object getValueType() {
 		return detailValueType;
 	}
 
+	@Override
 	public Object put(final Object key, final Object value) {
 		ObservableTracker.setIgnore(true);
 		try {
@@ -163,6 +169,7 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 		}
 	}
 
+	@Override
 	public void putAll(final Map map) {
 		ObservableTracker.setIgnore(true);
 		try {
@@ -172,6 +179,7 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 		}
 	}
 
+	@Override
 	public Object remove(final Object key) {
 		ObservableTracker.setIgnore(true);
 		try {
@@ -181,6 +189,7 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 		}
 	}
 
+	@Override
 	public void clear() {
 		ObservableTracker.setIgnore(true);
 		try {
@@ -190,6 +199,7 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 		}
 	}
 
+	@Override
 	public synchronized void dispose() {
 		if (master != null) {
 			master.removeValueChangeListener(masterChangeListener);
@@ -206,6 +216,7 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 		super.dispose();
 	}
 
+	@Override
 	public Object getObserved() {
 		if (detailMap instanceof IObserving) {
 			return ((IObserving) detailMap).getObserved();

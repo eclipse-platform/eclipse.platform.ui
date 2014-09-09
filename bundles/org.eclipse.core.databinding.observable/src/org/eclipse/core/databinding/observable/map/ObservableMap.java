@@ -53,10 +53,12 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 		this.wrappedMap = wrappedMap;
 	}
 
+	@Override
 	public synchronized void addMapChangeListener(IMapChangeListener listener) {
 		addListener(MapChangeEvent.TYPE, listener);
 	}
 
+	@Override
 	public synchronized void removeMapChangeListener(IMapChangeListener listener) {
 		removeListener(MapChangeEvent.TYPE, listener);
 	}
@@ -64,6 +66,7 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 	/**
 	 * @since 1.2
 	 */
+	@Override
 	public Object getKeyType() {
 		return null;
 	}
@@ -71,6 +74,7 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 	/**
 	 * @since 1.2
 	 */
+	@Override
 	public Object getValueType() {
 		return null;
 	}
@@ -88,41 +92,49 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 		fireEvent(new MapChangeEvent(this, diff));
 	}
 
+	@Override
 	public boolean containsKey(Object key) {
 		getterCalled();
 		return wrappedMap.containsKey(key);
 	}
 
+	@Override
 	public boolean containsValue(Object value) {
 		getterCalled();
 		return wrappedMap.containsValue(value);
 	}
 
+	@Override
 	public Set entrySet() {
 		getterCalled();
 		return wrappedMap.entrySet();
 	}
 
+	@Override
 	public Object get(Object key) {
 		getterCalled();
 		return wrappedMap.get(key);
 	}
 
+	@Override
 	public boolean isEmpty() {
 		getterCalled();
 		return wrappedMap.isEmpty();
 	}
 
+	@Override
 	public Set keySet() {
 		getterCalled();
 		return wrappedMap.keySet();
 	}
 
+	@Override
 	public int size() {
 		getterCalled();
 		return wrappedMap.size();
 	}
 
+	@Override
 	public Collection values() {
 		getterCalled();
 		return wrappedMap.values();
@@ -133,6 +145,7 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 	 * 
 	 * @return stale state
 	 */
+	@Override
 	public boolean isStale() {
 		checkRealm();
 		return stale;
@@ -155,32 +168,39 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 		}
 	}
 
+	@Override
 	public Object put(Object key, Object value) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Object remove(Object key) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void putAll(Map arg0) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		getterCalled();
 		return o == this || wrappedMap.equals(o);
 	}
 
+	@Override
 	public int hashCode() {
 		getterCalled();
 		return wrappedMap.hashCode();
 	}
 
+	@Override
 	public synchronized void dispose() {
 		super.dispose();
 	}

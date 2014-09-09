@@ -32,6 +32,7 @@ public class UnmodifiableObservableValue extends DecoratingObservableValue {
 		super(wrappedValue, false);
 	}
 
+	@Override
 	public void setValue(Object value) {
 		throw new UnsupportedOperationException();
 	}

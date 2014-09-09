@@ -48,6 +48,7 @@ public class IntegerToStringConverter extends Converter {
 	 * 
 	 * @see org.eclipse.core.databinding.conversion.IConverter#convert(java.lang.Object)
 	 */
+	@Override
 	public Object convert(Object fromObject) {
 		// Null is allowed when the type is not primitve.
 		if (fromObject == null && !primitive) {

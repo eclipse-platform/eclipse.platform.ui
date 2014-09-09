@@ -36,6 +36,7 @@ public abstract class NativePropertyListener implements INativePropertyListener 
 		this.listener = listener;
 	}
 
+	@Override
 	public final void addTo(Object source) {
 		if (source != null)
 			doAddTo(source);
@@ -43,6 +44,7 @@ public abstract class NativePropertyListener implements INativePropertyListener 
 
 	protected abstract void doAddTo(Object source);
 
+	@Override
 	public final void removeFrom(Object source) {
 		if (source != null)
 			doRemoveFrom(source);

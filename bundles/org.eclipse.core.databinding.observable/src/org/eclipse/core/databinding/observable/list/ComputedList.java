@@ -151,17 +151,20 @@ public abstract class ComputedList extends AbstractObservableList {
 	 */
 	private class PrivateInterface implements Runnable, IChangeListener,
 			IStaleListener {
+		@Override
 		public void run() {
 			cachedList = calculate();
 			if (cachedList == null)
 				cachedList = Collections.EMPTY_LIST;
 		}
 
+		@Override
 		public void handleStale(StaleEvent event) {
 			if (!dirty)
 				makeStale();
 		}
 
+		@Override
 		public void handleChange(ChangeEvent event) {
 			makeDirty();
 		}
@@ -171,10 +174,12 @@ public abstract class ComputedList extends AbstractObservableList {
 
 	private Object elementType;
 
+	@Override
 	protected int doGetSize() {
 		return doGetList().size();
 	}
 
+	@Override
 	public Object get(int index) {
 		getterCalled();
 		return doGetList().get(index);
@@ -248,6 +253,7 @@ public abstract class ComputedList extends AbstractObservableList {
 			fireListChange(new ListDiff() {
 				ListDiffEntry[] differences;
 
+				@Override
 				public ListDiffEntry[] getDifferences() {
 					if (differences == null)
 						differences = Diffs.computeListDiff(oldList, getList())
@@ -277,16 +283,19 @@ public abstract class ComputedList extends AbstractObservableList {
 		}
 	}
 
+	@Override
 	public boolean isStale() {
 		// recalculate list if dirty, to ensure staleness is correct.
 		getList();
 		return stale;
 	}
 
+	@Override
 	public Object getElementType() {
 		return elementType;
 	}
 
+	@Override
 	public synchronized void addChangeListener(IChangeListener listener) {
 		super.addChangeListener(listener);
 		// If somebody is listening, we need to make sure we attach our own
@@ -294,6 +303,7 @@ public abstract class ComputedList extends AbstractObservableList {
 		computeListForListeners();
 	}
 
+	@Override
 	public synchronized void addListChangeListener(IListChangeListener listener) {
 		super.addListChangeListener(listener);
 		// If somebody is listening, we need to make sure we attach our own
@@ -311,6 +321,7 @@ public abstract class ComputedList extends AbstractObservableList {
 		// been executed. It is their job to figure out what to do with those
 		// notifications.
 		getRealm().exec(new Runnable() {
+			@Override
 			public void run() {
 				if (dependencies == null) {
 					// We are not currently listening.
@@ -323,6 +334,7 @@ public abstract class ComputedList extends AbstractObservableList {
 		});
 	}
 
+	@Override
 	public synchronized void dispose() {
 		stopListening();
 		super.dispose();

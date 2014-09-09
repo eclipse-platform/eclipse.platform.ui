@@ -70,6 +70,7 @@ public class Diffs {
 		return new ListDiff() {
 			ListDiff lazyDiff;
 
+			@Override
 			public ListDiffEntry[] getDifferences() {
 				if (lazyDiff == null) {
 					lazyDiff = Diffs.computeListDiff(oldList, newList);
@@ -231,10 +232,12 @@ public class Diffs {
 				return lazyDiff;
 			}
 
+			@Override
 			public Set getAdditions() {
 				return getLazyDiff().getAdditions();
 			}
 
+			@Override
 			public Set getRemovals() {
 				return getLazyDiff().getRemovals();
 			}
@@ -283,22 +286,27 @@ public class Diffs {
 			newValues.put(newKey, newMap.get(newKey));
 		}
 		return new MapDiff() {
+			@Override
 			public Set getAddedKeys() {
 				return addedKeys;
 			}
 
+			@Override
 			public Set getChangedKeys() {
 				return changedKeys;
 			}
 
+			@Override
 			public Set getRemovedKeys() {
 				return removedKeys;
 			}
 
+			@Override
 			public Object getNewValue(Object key) {
 				return newValues.get(key);
 			}
 
+			@Override
 			public Object getOldValue(Object key) {
 				return oldValues.get(key);
 			}
@@ -329,22 +337,27 @@ public class Diffs {
 				return lazyDiff;
 			}
 
+			@Override
 			public Set getAddedKeys() {
 				return getLazyDiff().getAddedKeys();
 			}
 
+			@Override
 			public Set getRemovedKeys() {
 				return getLazyDiff().getRemovedKeys();
 			}
 
+			@Override
 			public Set getChangedKeys() {
 				return getLazyDiff().getChangedKeys();
 			}
 
+			@Override
 			public Object getOldValue(Object key) {
 				return getLazyDiff().getOldValue(key);
 			}
 
+			@Override
 			public Object getNewValue(Object key) {
 				return getLazyDiff().getNewValue(key);
 			}
@@ -361,10 +374,12 @@ public class Diffs {
 			final Object newValue) {
 		return new ValueDiff() {
 
+			@Override
 			public Object getOldValue() {
 				return oldValue;
 			}
 
+			@Override
 			public Object getNewValue() {
 				return newValue;
 			}
@@ -382,10 +397,12 @@ public class Diffs {
 		final Set unmodifiableRemovals = Collections.unmodifiableSet(removals);
 		return new SetDiff() {
 
+			@Override
 			public Set getAdditions() {
 				return unmodifiableAdditions;
 			}
 
+			@Override
 			public Set getRemovals() {
 				return unmodifiableRemovals;
 			}
@@ -416,6 +433,7 @@ public class Diffs {
 	 */
 	public static ListDiff createListDiff(final ListDiffEntry[] differences) {
 		return new ListDiff() {
+			@Override
 			public ListDiffEntry[] getDifferences() {
 				return differences;
 			}
@@ -432,14 +450,17 @@ public class Diffs {
 			final boolean isAddition, final Object element) {
 		return new ListDiffEntry() {
 
+			@Override
 			public int getPosition() {
 				return position;
 			}
 
+			@Override
 			public boolean isAddition() {
 				return isAddition;
 			}
 
+			@Override
 			public Object getElement() {
 				return element;
 			}
@@ -455,22 +476,27 @@ public class Diffs {
 			final Object newValue) {
 		return new MapDiff() {
 
+			@Override
 			public Set getAddedKeys() {
 				return Collections.singleton(addedKey);
 			}
 
+			@Override
 			public Set getChangedKeys() {
 				return Collections.EMPTY_SET;
 			}
 
+			@Override
 			public Object getNewValue(Object key) {
 				return newValue;
 			}
 
+			@Override
 			public Object getOldValue(Object key) {
 				return null;
 			}
 
+			@Override
 			public Set getRemovedKeys() {
 				return Collections.EMPTY_SET;
 			}
@@ -487,22 +513,27 @@ public class Diffs {
 			final Object oldValue, final Object newValue) {
 		return new MapDiff() {
 
+			@Override
 			public Set getAddedKeys() {
 				return Collections.EMPTY_SET;
 			}
 
+			@Override
 			public Set getChangedKeys() {
 				return Collections.singleton(existingKey);
 			}
 
+			@Override
 			public Object getNewValue(Object key) {
 				return newValue;
 			}
 
+			@Override
 			public Object getOldValue(Object key) {
 				return oldValue;
 			}
 
+			@Override
 			public Set getRemovedKeys() {
 				return Collections.EMPTY_SET;
 			}
@@ -518,22 +549,27 @@ public class Diffs {
 			final Object oldValue) {
 		return new MapDiff() {
 
+			@Override
 			public Set getAddedKeys() {
 				return Collections.EMPTY_SET;
 			}
 
+			@Override
 			public Set getChangedKeys() {
 				return Collections.EMPTY_SET;
 			}
 
+			@Override
 			public Object getNewValue(Object key) {
 				return null;
 			}
 
+			@Override
 			public Object getOldValue(Object key) {
 				return oldValue;
 			}
 
+			@Override
 			public Set getRemovedKeys() {
 				return Collections.singleton(removedKey);
 			}
@@ -547,22 +583,27 @@ public class Diffs {
 	public static MapDiff createMapDiffRemoveAll(final Map copyOfOldMap) {
 		return new MapDiff() {
 
+			@Override
 			public Set getAddedKeys() {
 				return Collections.EMPTY_SET;
 			}
 
+			@Override
 			public Set getChangedKeys() {
 				return Collections.EMPTY_SET;
 			}
 
+			@Override
 			public Object getNewValue(Object key) {
 				return null;
 			}
 
+			@Override
 			public Object getOldValue(Object key) {
 				return copyOfOldMap.get(key);
 			}
 
+			@Override
 			public Set getRemovedKeys() {
 				return copyOfOldMap.keySet();
 			}
@@ -582,22 +623,27 @@ public class Diffs {
 			final Map newValues) {
 		return new MapDiff() {
 
+			@Override
 			public Set getAddedKeys() {
 				return addedKeys;
 			}
 
+			@Override
 			public Set getChangedKeys() {
 				return changedKeys;
 			}
 
+			@Override
 			public Object getNewValue(Object key) {
 				return newValues.get(key);
 			}
 
+			@Override
 			public Object getOldValue(Object key) {
 				return oldValues.get(key);
 			}
 
+			@Override
 			public Set getRemovedKeys() {
 				return removedKeys;
 			}

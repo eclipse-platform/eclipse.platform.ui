@@ -46,10 +46,12 @@ public class BeanSetProperty extends SimpleSetProperty {
 				: elementType;
 	}
 
+	@Override
 	public Object getElementType() {
 		return elementType;
 	}
 
+	@Override
 	protected Set doGetSet(Object source) {
 		return asSet(BeanPropertyHelper
 				.readProperty(source, propertyDescriptor));
@@ -63,10 +65,12 @@ public class BeanSetProperty extends SimpleSetProperty {
 		return (Set) propertyValue;
 	}
 
+	@Override
 	protected void doSetSet(Object source, Set set, SetDiff diff) {
 		doSetSet(source, set);
 	}
 
+	@Override
 	protected void doSetSet(Object source, Set set) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor,
 				convertSetToBeanPropertyType(set));
@@ -84,15 +88,18 @@ public class BeanSetProperty extends SimpleSetProperty {
 		return propertyValue;
 	}
 
+	@Override
 	public INativePropertyListener adaptListener(
 			final ISimplePropertyListener listener) {
 		return new BeanPropertyListener(this, propertyDescriptor, listener) {
+			@Override
 			protected IDiff computeDiff(Object oldValue, Object newValue) {
 				return Diffs.computeSetDiff(asSet(oldValue), asSet(newValue));
 			}
 		};
 	}
 
+	@Override
 	public String toString() {
 		String s = BeanPropertyHelper.propertyName(propertyDescriptor) + "{}"; //$NON-NLS-1$
 		if (elementType != null)

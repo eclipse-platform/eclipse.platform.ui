@@ -77,6 +77,7 @@ public final class UnionSet extends ObservableSet {
 	}
 
 	private ISetChangeListener childSetChangeListener = new ISetChangeListener() {
+		@Override
 		public void handleSetChange(SetChangeEvent event) {
 			processAddsAndRemoves(event.diff.getAdditions(), event.diff
 					.getRemovals());
@@ -84,6 +85,7 @@ public final class UnionSet extends ObservableSet {
 	};
 
 	private IStalenessConsumer stalenessConsumer = new IStalenessConsumer() {
+		@Override
 		public void setStale(boolean stale) {
 			boolean oldStale = UnionSet.this.stale;
 			UnionSet.this.stale = stale;
@@ -93,6 +95,7 @@ public final class UnionSet extends ObservableSet {
 		}
 	};
 
+	@Override
 	public boolean isStale() {
 		getterCalled();
 		if (refCounts != null) {
@@ -151,6 +154,7 @@ public final class UnionSet extends ObservableSet {
 		}
 	}
 
+	@Override
 	protected void firstListenerAdded() {
 		super.firstListenerAdded();
 
@@ -164,6 +168,7 @@ public final class UnionSet extends ObservableSet {
 		setWrappedSet(refCounts.keySet());
 	}
 
+	@Override
 	protected void lastListenerRemoved() {
 		super.lastListenerRemoved();
 
@@ -197,6 +202,7 @@ public final class UnionSet extends ObservableSet {
 		return adds;
 	}
 
+	@Override
 	protected void getterCalled() {
 		super.getterCalled();
 		if (refCounts == null) {

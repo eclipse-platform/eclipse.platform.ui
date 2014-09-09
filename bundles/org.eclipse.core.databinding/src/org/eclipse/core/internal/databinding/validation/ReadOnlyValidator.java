@@ -37,6 +37,7 @@ public class ReadOnlyValidator implements IValidator {
 		return singleton;
 	}
 
+	@Override
 	public IStatus validate(Object value) {
 		// No changes are allowed
 		return ValidationStatus.error(BindingMessages

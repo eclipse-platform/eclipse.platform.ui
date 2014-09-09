@@ -131,14 +131,17 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 	private IObservableList models;
 
 	IListChangeListener targetsListener = new IListChangeListener() {
+		@Override
 		public void handleListChange(ListChangeEvent event) {
 			event.diff.accept(new ListDiffVisitor() {
+				@Override
 				public void handleAdd(int index, Object element) {
 					IObservable dependency = (IObservable) element;
 					dependency.addChangeListener(dependencyListener);
 					dependency.addStaleListener(dependencyListener);
 				}
 
+				@Override
 				public void handleRemove(int index, Object element) {
 					IObservable dependency = (IObservable) element;
 					dependency.removeChangeListener(dependencyListener);
@@ -149,10 +152,12 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 	};
 
 	private class DependencyListener implements IChangeListener, IStaleListener {
+		@Override
 		public void handleChange(ChangeEvent event) {
 			revalidate();
 		}
 
+		@Override
 		public void handleStale(StaleEvent staleEvent) {
 			validationStatus.makeStale();
 		}
@@ -208,6 +213,7 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 	 * @return an {@link IObservableValue} whose value is always the current
 	 *         validation status of this MultiValidator.
 	 */
+	@Override
 	public IObservableValue getValidationStatus() {
 		if (unmodifiableValidationStatus == null) {
 			ObservableTracker.setIgnore(true);
@@ -243,6 +249,7 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 		class ValidationRunnable implements Runnable {
 			IStatus validationResult;
 
+			@Override
 			public void run() {
 				try {
 					validationResult = validate();
@@ -433,14 +440,17 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 		return new ValidatedObservableMap(target, getValidationStatus());
 	}
 
+	@Override
 	public IObservableList getTargets() {
 		return unmodifiableTargets;
 	}
 
+	@Override
 	public IObservableList getModels() {
 		return models;
 	}
 
+	@Override
 	public void dispose() {
 		if (targets != null) {
 			targets.clear(); // Remove listeners from dependencies
@@ -486,10 +496,12 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 			super(realm);
 		}
 
+		@Override
 		protected Object doGetValue() {
 			return value;
 		}
 
+		@Override
 		protected void doSetValue(Object value) {
 			boolean oldStale = stale;
 
@@ -523,11 +535,13 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 			}
 		}
 
+		@Override
 		public boolean isStale() {
 			ObservableTracker.getterCalled(this);
 			return stale;
 		}
 
+		@Override
 		public Object getValueType() {
 			return IStatus.class;
 		}

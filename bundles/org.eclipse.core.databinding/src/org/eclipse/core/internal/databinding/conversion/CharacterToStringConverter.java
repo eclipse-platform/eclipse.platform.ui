@@ -32,6 +32,7 @@ public class CharacterToStringConverter extends Converter {
 	 * 
 	 * @see org.eclipse.core.databinding.conversion.IConverter#convert(java.lang.Object)
 	 */
+	@Override
 	public Object convert(Object fromObject) {
 		// Null is allowed when the type is not primitive.
 		if (fromObject == null) {

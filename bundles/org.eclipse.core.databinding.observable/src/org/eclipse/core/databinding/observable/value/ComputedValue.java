@@ -130,10 +130,12 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	 */
 	private class PrivateInterface implements Runnable, IChangeListener,
 			IStaleListener {
+		@Override
 		public void run() {
 			cachedValue = calculate();
 		}
 
+		@Override
 		public void handleStale(StaleEvent event) {
 			if (!dirty && !stale) {
 				stale = true;
@@ -141,6 +143,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 			}
 		}
 
+		@Override
 		public void handleChange(ChangeEvent event) {
 			makeDirty();
 		}
@@ -150,6 +153,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 
 	private Object valueType;
 
+	@Override
 	protected final Object doGetValue() {
 		if (dirty) {
 			// This line will do the following:
@@ -200,10 +204,12 @@ public abstract class ComputedValue extends AbstractObservableValue {
 			// value lazily.
 			fireValueChange(new ValueDiff() {
 
+				@Override
 				public Object getOldValue() {
 					return oldValue;
 				}
 
+				@Override
 				public Object getNewValue() {
 					return getValue();
 				}
@@ -227,12 +233,14 @@ public abstract class ComputedValue extends AbstractObservableValue {
 		}
 	}
 
+	@Override
 	public boolean isStale() {
 		// we need to recompute, otherwise staleness wouldn't mean anything
 		getValue();
 		return stale;
 	}
 
+	@Override
 	public Object getValueType() {
 		return valueType;
 	}
@@ -241,10 +249,12 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	/**
 	 * @since 1.1
 	 */
+	@Override
 	protected boolean hasListeners() {
 		return super.hasListeners();
 	}
 
+	@Override
 	public synchronized void addChangeListener(IChangeListener listener) {
 		super.addChangeListener(listener);
 		// If somebody is listening, we need to make sure we attach our own
@@ -263,6 +273,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	 */
 	private void computeValueForListeners() {
 		getRealm().exec(new Runnable() {
+			@Override
 			public void run() {
 				if (dependencies == null) {
 					// We are not currently listening.
@@ -277,6 +288,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 		});
 	}
 
+	@Override
 	public synchronized void addValueChangeListener(
 			IValueChangeListener listener) {
 		super.addValueChangeListener(listener);
@@ -285,6 +297,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 		computeValueForListeners();
 	}
 
+	@Override
 	public synchronized void dispose() {
 		super.dispose();
 		stopListening();

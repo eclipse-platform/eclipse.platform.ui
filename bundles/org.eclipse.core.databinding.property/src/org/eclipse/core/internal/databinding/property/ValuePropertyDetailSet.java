@@ -41,25 +41,30 @@ public class ValuePropertyDetailSet extends SetProperty {
 		this.detailProperty = detailProperty;
 	}
 
+	@Override
 	public Object getElementType() {
 		return detailProperty.getElementType();
 	}
 
+	@Override
 	protected Set doGetSet(Object source) {
 		Object masterValue = masterProperty.getValue(source);
 		return detailProperty.getSet(masterValue);
 	}
 
+	@Override
 	protected void doSetSet(Object source, Set set) {
 		Object masterValue = masterProperty.getValue(source);
 		detailProperty.setSet(masterValue, set);
 	}
 
+	@Override
 	protected void doUpdateSet(Object source, SetDiff diff) {
 		Object masterValue = masterProperty.getValue(source);
 		detailProperty.updateSet(masterValue, diff);
 	}
 
+	@Override
 	public IObservableSet observe(Realm realm, Object source) {
 		IObservableValue masterValue;
 
@@ -75,6 +80,7 @@ public class ValuePropertyDetailSet extends SetProperty {
 		return detailSet;
 	}
 
+	@Override
 	public IObservableSet observeDetail(IObservableValue master) {
 		IObservableValue masterValue;
 
@@ -90,6 +96,7 @@ public class ValuePropertyDetailSet extends SetProperty {
 		return detailSet;
 	}
 
+	@Override
 	public String toString() {
 		return masterProperty + " => " + detailProperty; //$NON-NLS-1$
 	}

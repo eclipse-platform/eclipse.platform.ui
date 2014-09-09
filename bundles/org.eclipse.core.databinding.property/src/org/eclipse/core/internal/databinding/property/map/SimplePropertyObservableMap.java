@@ -64,10 +64,12 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 		this.property = property;
 	}
 
+	@Override
 	public Object getKeyType() {
 		return property.getKeyType();
 	}
 
+	@Override
 	public Object getValueType() {
 		return property.getValueType();
 	}
@@ -76,15 +78,18 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 		ObservableTracker.getterCalled(this);
 	}
 
+	@Override
 	protected void firstListenerAdded() {
 		if (!isDisposed()) {
 			if (listener == null) {
 				listener = property
 						.adaptListener(new ISimplePropertyListener() {
+							@Override
 							public void handleEvent(
 									final SimplePropertyEvent event) {
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {
+										@Override
 										public void run() {
 											if (event.type == SimplePropertyEvent.CHANGE) {
 												modCount++;
@@ -102,6 +107,7 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 			}
 
 			getRealm().exec(new Runnable() {
+				@Override
 				public void run() {
 					cachedMap = new HashMap(getMap());
 					stale = false;
@@ -113,6 +119,7 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 		}
 	}
 
+	@Override
 	protected void lastListenerRemoved() {
 		if (listener != null)
 			listener.removeFrom(source);
@@ -147,16 +154,19 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 
 	private EntrySet es = new EntrySet();
 
+	@Override
 	public Set entrySet() {
 		getterCalled();
 		return es;
 	}
 
 	private class EntrySet extends AbstractSet {
+		@Override
 		public Iterator iterator() {
 			return new EntrySetIterator();
 		}
 
+		@Override
 		public int size() {
 			return getMap().size();
 		}
@@ -168,12 +178,14 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 		Iterator iterator = map.entrySet().iterator();
 		Map.Entry last = null;
 
+		@Override
 		public boolean hasNext() {
 			getterCalled();
 			checkForComodification();
 			return iterator.hasNext();
 		}
 
+		@Override
 		public Object next() {
 			getterCalled();
 			checkForComodification();
@@ -181,6 +193,7 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 			return last;
 		}
 
+		@Override
 		public void remove() {
 			getterCalled();
 			checkForComodification();
@@ -201,6 +214,7 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 		}
 	}
 
+	@Override
 	public Set keySet() {
 		getterCalled();
 		// AbstractMap depends on entrySet() to fulfil keySet() API, so all
@@ -208,18 +222,21 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 		return super.keySet();
 	}
 
+	@Override
 	public boolean containsKey(Object key) {
 		getterCalled();
 
 		return getMap().containsKey(key);
 	}
 
+	@Override
 	public Object get(Object key) {
 		getterCalled();
 
 		return getMap().get(key);
 	}
 
+	@Override
 	public Object put(Object key, Object value) {
 		checkRealm();
 
@@ -240,6 +257,7 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 		return oldValue;
 	}
 
+	@Override
 	public void putAll(Map m) {
 		checkRealm();
 
@@ -267,6 +285,7 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 		updateMap(map, diff);
 	}
 
+	@Override
 	public Object remove(Object key) {
 		checkRealm();
 
@@ -282,6 +301,7 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 		return oldValue;
 	}
 
+	@Override
 	public void clear() {
 		getterCalled();
 
@@ -293,6 +313,7 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 		updateMap(map, diff);
 	}
 
+	@Override
 	public Collection values() {
 		getterCalled();
 		// AbstractMap depends on entrySet() to fulfil values() API, so all
@@ -313,19 +334,23 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 		}
 	}
 
+	@Override
 	public boolean isStale() {
 		getterCalled();
 		return stale;
 	}
 
+	@Override
 	public Object getObserved() {
 		return source;
 	}
 
+	@Override
 	public IProperty getProperty() {
 		return property;
 	}
 
+	@Override
 	public synchronized void dispose() {
 		if (!isDisposed()) {
 			if (listener != null)

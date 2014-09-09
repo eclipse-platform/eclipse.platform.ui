@@ -76,6 +76,7 @@ public final class SimplePropertyEvent extends EventObject {
 		this.diff = diff;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
@@ -90,6 +91,7 @@ public final class SimplePropertyEvent extends EventObject {
 				&& Util.equals(this.diff, that.diff);
 	}
 
+	@Override
 	public int hashCode() {
 		int hash = 17;
 		hash = hash * 37 + getSource().hashCode();

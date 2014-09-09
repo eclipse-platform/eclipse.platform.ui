@@ -84,6 +84,7 @@ public class WritableMap extends ObservableMap {
 	/**
 	 * @since 1.2
 	 */
+	@Override
 	public Object getKeyType() {
 		return keyType;
 	}
@@ -91,6 +92,7 @@ public class WritableMap extends ObservableMap {
 	/**
 	 * @since 1.2
 	 */
+	@Override
 	public Object getValueType() {
 		return valueType;
 	}
@@ -98,6 +100,7 @@ public class WritableMap extends ObservableMap {
 	/**
 	 * Associates the provided <code>value</code> with the <code>key</code>.  Must be invoked from the current realm.
 	 */
+	@Override
 	public Object put(Object key, Object value) {
 		checkRealm();
 
@@ -126,6 +129,7 @@ public class WritableMap extends ObservableMap {
 	/**
 	 * Removes the value with the provide <code>key</code>.  Must be invoked from the current realm.
 	 */
+	@Override
 	public Object remove(Object key) {
 		checkRealm();
 		if (wrappedMap.containsKey(key)) {
@@ -139,6 +143,7 @@ public class WritableMap extends ObservableMap {
 	/**
 	 * Clears the map.  Must be invoked from the current realm.
 	 */
+	@Override
 	public void clear() {
 		checkRealm();
 		if (!isEmpty()) {
@@ -151,6 +156,7 @@ public class WritableMap extends ObservableMap {
 	/**
 	 * Adds the provided <code>map</code>'s contents to this map.  Must be invoked from the current realm.
 	 */
+	@Override
 	public void putAll(Map map) {
 		checkRealm();
 		Set addedKeys = new HashSet(map.size());

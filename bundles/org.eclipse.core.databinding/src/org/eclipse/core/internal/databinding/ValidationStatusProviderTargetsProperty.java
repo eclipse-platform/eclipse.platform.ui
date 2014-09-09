@@ -25,26 +25,32 @@ import org.eclipse.core.databinding.property.list.ListProperty;
  * 
  */
 public class ValidationStatusProviderTargetsProperty extends ListProperty {
+	@Override
 	public Object getElementType() {
 		return IObservable.class;
 	}
 
+	@Override
 	protected List doGetList(Object source) {
 		return ((ValidationStatusProvider) source).getTargets();
 	}
 
+	@Override
 	protected void doSetList(Object source, List list) {
 		throw new UnsupportedOperationException(toString() + " is unmodifiable"); //$NON-NLS-1$
 	}
 
+	@Override
 	protected void doUpdateList(Object source, ListDiff diff) {
 		throw new UnsupportedOperationException(toString() + " is unmodifiable"); //$NON-NLS-1$
 	}
 
+	@Override
 	public IObservableList observe(Realm realm, Object source) {
 		return ((ValidationStatusProvider) source).getTargets();
 	}
 
+	@Override
 	public String toString() {
 		return "ValidationStatusProvider#targets[] <IObservable>"; //$NON-NLS-1$
 	}

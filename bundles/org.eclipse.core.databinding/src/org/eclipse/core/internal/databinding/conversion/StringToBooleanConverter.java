@@ -21,6 +21,7 @@ public class StringToBooleanConverter extends StringToBooleanPrimitiveConverter 
 	 * 
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
 	 */
+	@Override
 	public Object convert(Object source) {
 		String sourceString = (String) source;
 		if ("".equals(sourceString.trim())) { //$NON-NLS-1$
@@ -29,6 +30,7 @@ public class StringToBooleanConverter extends StringToBooleanPrimitiveConverter 
 		return super.convert(source);
 	}
 
+	@Override
 	public Object getToType() {
 		return Boolean.class;
 	}

@@ -124,6 +124,7 @@ public class WritableList extends ObservableList {
 		super(realm, new ArrayList(collection), elementType);
 	}
 
+	@Override
 	public Object set(int index, Object element) {
 		checkRealm();
 		Object oldElement = wrappedList.set(index, element);
@@ -136,6 +137,7 @@ public class WritableList extends ObservableList {
 	/**
 	 * @since 1.1
 	 */
+	@Override
 	public Object move(int oldIndex, int newIndex) {
 		checkRealm();
 		int size = wrappedList.size();
@@ -155,6 +157,7 @@ public class WritableList extends ObservableList {
 		return element;
 	}
 
+	@Override
 	public Object remove(int index) {
 		checkRealm();
 		Object oldElement = wrappedList.remove(index);
@@ -163,6 +166,7 @@ public class WritableList extends ObservableList {
 		return oldElement;
 	}
 
+	@Override
 	public boolean add(Object element) {
 		checkRealm();
 		boolean added = wrappedList.add(element);
@@ -173,6 +177,7 @@ public class WritableList extends ObservableList {
 		return added;
 	}
 
+	@Override
 	public void add(int index, Object element) {
 		checkRealm();
 		wrappedList.add(index, element);
@@ -180,6 +185,7 @@ public class WritableList extends ObservableList {
 				true, element)));
 	}
 
+	@Override
 	public boolean addAll(Collection c) {
 		checkRealm();
 		ListDiffEntry[] entries = new ListDiffEntry[c.size()];
@@ -194,6 +200,7 @@ public class WritableList extends ObservableList {
 		return added;
 	}
 
+	@Override
 	public boolean addAll(int index, Collection c) {
 		checkRealm();
 		ListDiffEntry[] entries = new ListDiffEntry[c.size()];
@@ -208,6 +215,7 @@ public class WritableList extends ObservableList {
 		return added;
 	}
 
+	@Override
 	public boolean remove(Object o) {
 		checkRealm();
 		int index = wrappedList.indexOf(o);
@@ -220,6 +228,7 @@ public class WritableList extends ObservableList {
 		return true;
 	}
 
+	@Override
 	public boolean removeAll(Collection c) {
 		checkRealm();
 		List entries = new ArrayList();
@@ -238,6 +247,7 @@ public class WritableList extends ObservableList {
 		return entries.size() > 0;
 	}
 
+	@Override
 	public boolean retainAll(Collection c) {
 		checkRealm();
 		List entries = new ArrayList();
@@ -259,6 +269,7 @@ public class WritableList extends ObservableList {
 		return entries.size() > 0;
 	}
 
+	@Override
 	public void clear() {
 		checkRealm();
 		// We remove the elements from back to front which is typically much

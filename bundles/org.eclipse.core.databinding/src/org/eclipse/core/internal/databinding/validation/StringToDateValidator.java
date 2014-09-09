@@ -40,6 +40,7 @@ public class StringToDateValidator implements IValidator {
 	 *
 	 * @see org.eclipse.core.databinding.validation.IValidator#validate(java.lang.Object)
 	 */
+	@Override
 	public IStatus validate(Object value) {
 		if (value instanceof String && ((String)value).trim().length()==0) {
 			return Status.OK_STATUS;
@@ -82,6 +83,7 @@ public class StringToDateValidator implements IValidator {
 		 *
 		 * @see org.eclipse.core.internal.databinding.conversion.DateConversionSupport#numFormatters()
 		 */
+		@Override
 		protected int numFormatters() {
 			return super.numFormatters();
 		}
@@ -91,6 +93,7 @@ public class StringToDateValidator implements IValidator {
 		 *
 		 * @see org.eclipse.core.internal.databinding.conversion.DateConversionSupport#format(java.util.Date)
 		 */
+		@Override
 		protected String format(Date date) {
 			return super.format(date);
 		}
@@ -101,6 +104,7 @@ public class StringToDateValidator implements IValidator {
 		 * @see org.eclipse.core.internal.databinding.conversion.DateConversionSupport#format(java.util.Date,
 		 *      int)
 		 */
+		@Override
 		protected String format(Date date, int formatterIdx) {
 			return super.format(date, formatterIdx);
 		}

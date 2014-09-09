@@ -53,6 +53,7 @@ public class IdentityConverter implements IConverter {
 	 * 
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
 	 */
+	@Override
 	public Object convert(Object source) {
 		if (toType.isPrimitive()) {
 			if (source == null) {
@@ -99,10 +100,12 @@ public class IdentityConverter implements IConverter {
 		return false;
 	}
 
+	@Override
 	public Object getFromType() {
 		return fromType;
 	}
 
+	@Override
 	public Object getToType() {
 		return toType;
 	}

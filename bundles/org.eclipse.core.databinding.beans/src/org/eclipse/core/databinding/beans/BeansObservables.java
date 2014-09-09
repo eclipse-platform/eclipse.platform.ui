@@ -491,6 +491,7 @@ final public class BeansObservables {
 	 *             {@link #observeDetailValue(IObservableValue, String, Class)}
 	 *             instead
 	 */
+	@Deprecated
 	public static IObservableValue observeDetailValue(Realm realm,
 			IObservableValue master, String propertyName, Class propertyType) {
 		warnIfDifferentRealms(realm, master.getRealm());
@@ -566,6 +567,7 @@ final public class BeansObservables {
 	 *             {@link #observeDetailValue(IObservableValue, Class, String, Class)}
 	 *             instead.
 	 */
+	@Deprecated
 	public static IObservableValue observeDetailValue(Realm realm,
 			IObservableValue master, Class masterType, String propertyName,
 			Class propertyType) {
@@ -624,6 +626,7 @@ final public class BeansObservables {
 	 *             {@link #observeDetailList(IObservableValue, String, Class)}
 	 *             instead
 	 */
+	@Deprecated
 	public static IObservableList observeDetailList(Realm realm,
 			IObservableValue master, String propertyName, Class propertyType) {
 		warnIfDifferentRealms(realm, master.getRealm());
@@ -676,6 +679,7 @@ final public class BeansObservables {
 	 *             {@link #observeDetailSet(IObservableValue, String, Class)}
 	 *             instead.
 	 */
+	@Deprecated
 	public static IObservableSet observeDetailSet(Realm realm,
 			IObservableValue master, String propertyName, Class propertyType) {
 		warnIfDifferentRealms(realm, master.getRealm());
@@ -724,6 +728,7 @@ final public class BeansObservables {
 	 * @deprecated Use {@link #observeDetailMap(IObservableValue, String)}
 	 *             instead
 	 */
+	@Deprecated
 	public static IObservableMap observeDetailMap(Realm realm,
 			IObservableValue master, String propertyName) {
 		warnIfDifferentRealms(realm, master.getRealm());
@@ -867,6 +872,7 @@ final public class BeansObservables {
 	public static IObservableFactory setToMapFactory(final Class beanClass,
 			final String propertyName) {
 		return new IObservableFactory() {
+			@Override
 			public IObservable createObservable(Object target) {
 				return observeMap((IObservableSet) target, beanClass,
 						propertyName);

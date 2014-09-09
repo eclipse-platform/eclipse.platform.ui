@@ -33,18 +33,22 @@ public final class SelfSetProperty extends SimpleSetProperty {
 		this.elementType = elementType;
 	}
 
+	@Override
 	public Object getElementType() {
 		return elementType;
 	}
 
+	@Override
 	protected Set doGetSet(Object source) {
 		return (Set) source;
 	}
 
+	@Override
 	protected void doSetSet(Object source, Set set, SetDiff diff) {
 		diff.applyTo((Set) source);
 	}
 
+	@Override
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		return null; // no listener API

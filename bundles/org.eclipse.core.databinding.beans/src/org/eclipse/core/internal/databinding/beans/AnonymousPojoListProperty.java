@@ -38,6 +38,7 @@ public class AnonymousPojoListProperty extends DelegatingListProperty {
 		this.delegates = new HashMap();
 	}
 
+	@Override
 	protected IListProperty doGetDelegate(Object source) {
 		Class beanClass = source.getClass();
 		if (delegates.containsKey(beanClass))
@@ -54,6 +55,7 @@ public class AnonymousPojoListProperty extends DelegatingListProperty {
 		return delegate;
 	}
 
+	@Override
 	public String toString() {
 		String s = "?." + propertyName + "{}"; //$NON-NLS-1$ //$NON-NLS-2$
 		Class elementType = (Class) getElementType();

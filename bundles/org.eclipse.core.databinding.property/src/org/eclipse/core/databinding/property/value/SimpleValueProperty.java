@@ -43,8 +43,10 @@ import org.eclipse.core.internal.databinding.property.value.SimplePropertyObserv
  * @since 1.2
  */
 public abstract class SimpleValueProperty extends ValueProperty {
+	@Override
 	protected abstract Object doGetValue(Object source);
 
+	@Override
 	protected abstract void doSetValue(Object source, Object value);
 
 	/**
@@ -66,18 +68,22 @@ public abstract class SimpleValueProperty extends ValueProperty {
 	public abstract INativePropertyListener adaptListener(
 			ISimplePropertyListener listener);
 
+	@Override
 	public IObservableValue observe(Realm realm, Object source) {
 		return new SimplePropertyObservableValue(realm, source, this);
 	}
 
+	@Override
 	public IObservableList observeDetail(IObservableList master) {
 		return new ListSimpleValueObservableList(master, this);
 	}
 
+	@Override
 	public IObservableMap observeDetail(IObservableSet master) {
 		return new SetSimpleValueObservableMap(master, this);
 	}
 
+	@Override
 	public IObservableMap observeDetail(IObservableMap master) {
 		return new MapSimpleValueObservableMap(master, this);
 	}

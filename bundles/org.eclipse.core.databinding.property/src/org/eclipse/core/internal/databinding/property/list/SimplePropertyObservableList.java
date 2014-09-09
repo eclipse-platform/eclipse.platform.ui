@@ -63,15 +63,18 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		this.property = property;
 	}
 
+	@Override
 	protected void firstListenerAdded() {
 		if (!isDisposed()) {
 			if (listener == null) {
 				listener = property
 						.adaptListener(new ISimplePropertyListener() {
+							@Override
 							public void handleEvent(
 									final SimplePropertyEvent event) {
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {
+										@Override
 										public void run() {
 											if (event.type == SimplePropertyEvent.CHANGE) {
 												modCount++;
@@ -89,6 +92,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 			}
 
 			getRealm().exec(new Runnable() {
+				@Override
 				public void run() {
 					cachedList = new ArrayList(getList());
 					stale = false;
@@ -100,6 +104,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		}
 	}
 
+	@Override
 	protected void lastListenerRemoved() {
 		if (listener != null)
 			listener.removeFrom(source);
@@ -112,6 +117,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		ObservableTracker.getterCalled(this);
 	}
 
+	@Override
 	public Object getElementType() {
 		return property.getElementType();
 	}
@@ -122,45 +128,54 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		return property.getList(source);
 	}
 
+	@Override
 	protected int doGetSize() {
 		return getList().size();
 	}
 
+	@Override
 	public boolean contains(Object o) {
 		getterCalled();
 		return getList().contains(o);
 	}
 
+	@Override
 	public boolean containsAll(Collection c) {
 		getterCalled();
 		return getList().containsAll(c);
 	}
 
+	@Override
 	public Object get(int index) {
 		getterCalled();
 		return getList().get(index);
 	}
 
+	@Override
 	public int indexOf(Object o) {
 		getterCalled();
 		return getList().indexOf(o);
 	}
 
+	@Override
 	public boolean isEmpty() {
 		getterCalled();
 		return getList().isEmpty();
 	}
 
+	@Override
 	public int lastIndexOf(Object o) {
 		getterCalled();
 		return getList().lastIndexOf(o);
 	}
 
+	@Override
 	public Object[] toArray() {
 		getterCalled();
 		return getList().toArray();
 	}
 
+	@Override
 	public Object[] toArray(Object[] a) {
 		getterCalled();
 		return getList().toArray(a);
@@ -183,6 +198,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		}
 	}
 
+	@Override
 	public boolean add(Object o) {
 		checkRealm();
 
@@ -195,6 +211,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		return true;
 	}
 
+	@Override
 	public void add(int index, Object o) {
 		checkRealm();
 
@@ -208,6 +225,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		updateList(list, diff);
 	}
 
+	@Override
 	public Iterator iterator() {
 		getterCalled();
 		return new Iterator() {
@@ -218,12 +236,14 @@ public class SimplePropertyObservableList extends AbstractObservableList
 			Object lastElement = null;
 			int lastIndex = -1;
 
+			@Override
 			public boolean hasNext() {
 				getterCalled();
 				checkForComodification();
 				return iterator.hasNext();
 			}
 
+			@Override
 			public Object next() {
 				getterCalled();
 				checkForComodification();
@@ -232,6 +252,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 				return next;
 			}
 
+			@Override
 			public void remove() {
 				checkRealm();
 				checkForComodification();
@@ -257,6 +278,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		};
 	}
 
+	@Override
 	public Object move(int oldIndex, int newIndex) {
 		checkRealm();
 
@@ -279,6 +301,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		return element;
 	}
 
+	@Override
 	public boolean remove(Object o) {
 		checkRealm();
 
@@ -295,10 +318,12 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		return true;
 	}
 
+	@Override
 	public ListIterator listIterator() {
 		return listIterator(0);
 	}
 
+	@Override
 	public ListIterator listIterator(final int index) {
 		getterCalled();
 		return new ListIterator() {
@@ -309,18 +334,21 @@ public class SimplePropertyObservableList extends AbstractObservableList
 			Object lastElement = null;
 			int lastIndex = -1;
 
+			@Override
 			public boolean hasNext() {
 				getterCalled();
 				checkForComodification();
 				return iterator.hasNext();
 			}
 
+			@Override
 			public int nextIndex() {
 				getterCalled();
 				checkForComodification();
 				return iterator.nextIndex();
 			}
 
+			@Override
 			public Object next() {
 				getterCalled();
 				checkForComodification();
@@ -329,18 +357,21 @@ public class SimplePropertyObservableList extends AbstractObservableList
 				return lastElement;
 			}
 
+			@Override
 			public boolean hasPrevious() {
 				getterCalled();
 				checkForComodification();
 				return iterator.hasPrevious();
 			}
 
+			@Override
 			public int previousIndex() {
 				getterCalled();
 				checkForComodification();
 				return iterator.previousIndex();
 			}
 
+			@Override
 			public Object previous() {
 				getterCalled();
 				checkForComodification();
@@ -349,6 +380,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 				return lastElement;
 			}
 
+			@Override
 			public void add(Object o) {
 				checkRealm();
 				checkForComodification();
@@ -365,6 +397,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 				expectedModCount = modCount;
 			}
 
+			@Override
 			public void set(Object o) {
 				checkRealm();
 				checkForComodification();
@@ -380,6 +413,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 				expectedModCount = modCount;
 			}
 
+			@Override
 			public void remove() {
 				checkRealm();
 				checkForComodification();
@@ -404,6 +438,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		};
 	}
 
+	@Override
 	public Object remove(int index) {
 		checkRealm();
 
@@ -417,6 +452,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		return element;
 	}
 
+	@Override
 	public Object set(int index, Object o) {
 		checkRealm();
 
@@ -430,6 +466,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		return oldElement;
 	}
 
+	@Override
 	public List subList(int fromIndex, int toIndex) {
 		getterCalled();
 		return Collections.unmodifiableList(getList().subList(fromIndex,
@@ -438,6 +475,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 
 	// Bulk change operations
 
+	@Override
 	public boolean addAll(Collection c) {
 		checkRealm();
 
@@ -448,6 +486,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		return addAll(list, list.size(), c);
 	}
 
+	@Override
 	public boolean addAll(int index, Collection c) {
 		checkRealm();
 
@@ -476,6 +515,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		return true;
 	}
 
+	@Override
 	public boolean removeAll(Collection c) {
 		checkRealm();
 
@@ -505,6 +545,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		return true;
 	}
 
+	@Override
 	public boolean retainAll(Collection c) {
 		checkRealm();
 
@@ -536,6 +577,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		return true;
 	}
 
+	@Override
 	public void clear() {
 		checkRealm();
 
@@ -569,29 +611,35 @@ public class SimplePropertyObservableList extends AbstractObservableList
 		}
 	}
 
+	@Override
 	public boolean isStale() {
 		getterCalled();
 		return stale;
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		getterCalled();
 		return getList().equals(o);
 	}
 
+	@Override
 	public int hashCode() {
 		getterCalled();
 		return getList().hashCode();
 	}
 
+	@Override
 	public Object getObserved() {
 		return source;
 	}
 
+	@Override
 	public IProperty getProperty() {
 		return property;
 	}
 
+	@Override
 	public synchronized void dispose() {
 		if (!isDisposed()) {
 			if (listener != null)

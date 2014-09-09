@@ -69,60 +69,72 @@ public interface IObservableMap extends Map, IObservable {
 	/**
 	 * @TrackedGetter
 	 */
+	@Override
 	public int size();
 
 	/**
 	 * @TrackedGetter
 	 */
+	@Override
 	public boolean isEmpty();
 
 	/**
 	 * @TrackedGetter
 	 */
+	@Override
 	public boolean containsKey(Object key);
 
 	/**
 	 * @TrackedGetter
 	 */
+	@Override
 	public boolean containsValue(Object value);
 
 	/**
 	 * @TrackedGetter
 	 */
+	@Override
 	public Object get(Object key);
 
 	/**
 	 * 
 	 */
+	@Override
 	public Object put(Object key, Object value);
 
 	/**
 	 * 
 	 */
+	@Override
 	public Object remove(Object key);
 
 	/**
 	 * @TrackedGetter
 	 */
+	@Override
 	public Set keySet();
 
 	/**
 	 * @TrackedGetter
 	 */
+	@Override
 	public Collection values();
 
 	/**
 	 * @TrackedGetter
 	 */
+	@Override
 	public Set entrySet();
 
 	/**
 	 * @TrackedGetter
 	 */
+	@Override
 	public boolean equals(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
+	@Override
 	public int hashCode();
 }

@@ -42,14 +42,17 @@ abstract public class AbstractObservableValue extends AbstractObservable impleme
 		super(realm);
 	}
 
+	@Override
 	public synchronized void addValueChangeListener(IValueChangeListener listener) {
 		addListener(ValueChangeEvent.TYPE, listener);
 	}
 
+	@Override
 	public synchronized void removeValueChangeListener(IValueChangeListener listener) {
 		removeListener(ValueChangeEvent.TYPE, listener);
 	}
 
+	@Override
 	final public void setValue(Object value) {
 		checkRealm();
 		doSetValue(value);
@@ -71,6 +74,7 @@ abstract public class AbstractObservableValue extends AbstractObservable impleme
 		fireEvent(new ValueChangeEvent(this, diff));
 	}
 
+	@Override
 	public final Object getValue() {
 		getterCalled();
 		return doGetValue();
@@ -78,6 +82,7 @@ abstract public class AbstractObservableValue extends AbstractObservable impleme
 
 	abstract protected Object doGetValue();
 
+	@Override
 	public boolean isStale() {
 		getterCalled();
 		return false;
@@ -87,6 +92,7 @@ abstract public class AbstractObservableValue extends AbstractObservable impleme
 		ObservableTracker.getterCalled(this);
 	}
 
+	@Override
 	protected void fireChange() {
 		throw new RuntimeException(
 				"fireChange should not be called, use fireValueChange() instead"); //$NON-NLS-1$

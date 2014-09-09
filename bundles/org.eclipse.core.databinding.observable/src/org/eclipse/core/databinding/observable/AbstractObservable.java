@@ -30,18 +30,22 @@ public abstract class AbstractObservable extends ChangeManager implements IObser
 		ObservableTracker.observableCreated(this);
 	}
 
+	@Override
 	public synchronized void addChangeListener(IChangeListener listener) {
 		addListener(ChangeEvent.TYPE, listener);
 	}
 
+	@Override
 	public synchronized void removeChangeListener(IChangeListener listener) {
 		removeListener(ChangeEvent.TYPE, listener);
 	}
 
+	@Override
 	public synchronized void addStaleListener(IStaleListener listener) {
 		addListener(StaleEvent.TYPE, listener);
 	}
 
+	@Override
 	public synchronized void removeStaleListener(IStaleListener listener) {
 		removeListener(StaleEvent.TYPE, listener);
 	}
@@ -49,6 +53,7 @@ public abstract class AbstractObservable extends ChangeManager implements IObser
 	/**
 	 * @since 1.2
 	 */
+	@Override
 	public synchronized void addDisposeListener(IDisposeListener listener) {
 		addListener(DisposeEvent.TYPE, listener);
 	}
@@ -56,6 +61,7 @@ public abstract class AbstractObservable extends ChangeManager implements IObser
 	/**
 	 * @since 1.2
 	 */
+	@Override
 	public synchronized void removeDisposeListener(IDisposeListener listener) {
 		removeListener(DisposeEvent.TYPE, listener);
 	}
@@ -73,6 +79,7 @@ public abstract class AbstractObservable extends ChangeManager implements IObser
 	/**
 	 * @since 1.2
 	 */
+	@Override
 	public synchronized boolean isDisposed() {
 		return disposed;
 	}
@@ -80,6 +87,7 @@ public abstract class AbstractObservable extends ChangeManager implements IObser
 	/**
 	 * 
 	 */
+	@Override
 	public synchronized void dispose() {
 		if (!disposed) {
 			disposed = true;

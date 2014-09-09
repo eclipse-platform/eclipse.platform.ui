@@ -29,6 +29,7 @@ public class DecoratingVetoableValue extends DecoratingObservableValue
 		super(decorated, disposeDecoratedOnDispose);
 	}
 
+	@Override
 	public void setValue(Object value) {
 		checkRealm();
 		Object currentValue = getValue();
@@ -40,11 +41,13 @@ public class DecoratingVetoableValue extends DecoratingObservableValue
 		super.setValue(value);
 	}
 
+	@Override
 	public synchronized void addValueChangingListener(
 			IValueChangingListener listener) {
 		addListener(ValueChangingEvent.TYPE, listener);
 	}
 
+	@Override
 	public synchronized void removeValueChangingListener(
 			IValueChangingListener listener) {
 		removeListener(ValueChangingEvent.TYPE, listener);

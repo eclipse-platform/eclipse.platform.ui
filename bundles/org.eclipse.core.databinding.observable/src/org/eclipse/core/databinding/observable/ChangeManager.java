@@ -148,6 +148,7 @@ import org.eclipse.core.runtime.ListenerList;
 		return realm;
 	}
 
+	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		ChangeManager duplicate = (ChangeManager) super.clone();
 		duplicate.listenerLists = null;

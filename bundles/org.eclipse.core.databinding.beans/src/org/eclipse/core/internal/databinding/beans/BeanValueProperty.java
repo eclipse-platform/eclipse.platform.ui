@@ -39,27 +39,33 @@ public class BeanValueProperty extends SimpleValueProperty {
 				.getPropertyType() : valueType;
 	}
 
+	@Override
 	public Object getValueType() {
 		return valueType;
 	}
 
+	@Override
 	protected Object doGetValue(Object source) {
 		return BeanPropertyHelper.readProperty(source, propertyDescriptor);
 	}
 
+	@Override
 	protected void doSetValue(Object source, Object value) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor, value);
 	}
 
+	@Override
 	public INativePropertyListener adaptListener(
 			final ISimplePropertyListener listener) {
 		return new BeanPropertyListener(this, propertyDescriptor, listener) {
+			@Override
 			protected IDiff computeDiff(Object oldValue, Object newValue) {
 				return Diffs.createValueDiff(oldValue, newValue);
 			}
 		};
 	}
 
+	@Override
 	public String toString() {
 		String s = BeanPropertyHelper.propertyName(propertyDescriptor);
 		if (valueType != null)

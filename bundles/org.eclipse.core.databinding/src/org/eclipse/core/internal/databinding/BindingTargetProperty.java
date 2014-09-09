@@ -22,18 +22,22 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
  * 
  */
 public class BindingTargetProperty extends SimpleValueProperty {
+	@Override
 	public Object getValueType() {
 		return IObservable.class;
 	}
 
+	@Override
 	protected Object doGetValue(Object source) {
 		return ((Binding) source).getTarget();
 	}
 
+	@Override
 	protected void doSetValue(Object source, Object value) {
 		// no setter API
 	}
 
+	@Override
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		// no listener API
@@ -47,6 +51,7 @@ public class BindingTargetProperty extends SimpleValueProperty {
 			INativePropertyListener listener) {
 	}
 
+	@Override
 	public String toString() {
 		return "Binding#target <IObservable>"; //$NON-NLS-1$
 	}

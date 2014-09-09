@@ -45,27 +45,32 @@ public class MapDelegatingValueObservableMap extends AbstractObservableMap
 	private Set entrySet;
 
 	class EntrySet extends AbstractSet {
+		@Override
 		public Iterator iterator() {
 			return new Iterator() {
 				Iterator it = masterMap.entrySet().iterator();
 
+				@Override
 				public boolean hasNext() {
 					getterCalled();
 					return it.hasNext();
 				}
 
+				@Override
 				public Object next() {
 					getterCalled();
 					Map.Entry next = (Map.Entry) it.next();
 					return new MapEntry(next.getKey());
 				}
 
+				@Override
 				public void remove() {
 					it.remove();
 				}
 			};
 		}
 
+		@Override
 		public int size() {
 			return masterMap.size();
 		}
@@ -78,11 +83,13 @@ public class MapDelegatingValueObservableMap extends AbstractObservableMap
 			this.key = key;
 		}
 
+		@Override
 		public Object getKey() {
 			getterCalled();
 			return key;
 		}
 
+		@Override
 		public Object getValue() {
 			getterCalled();
 
@@ -93,6 +100,7 @@ public class MapDelegatingValueObservableMap extends AbstractObservableMap
 			return cache.get(masterValue);
 		}
 
+		@Override
 		public Object setValue(Object value) {
 			checkRealm();
 
@@ -103,6 +111,7 @@ public class MapDelegatingValueObservableMap extends AbstractObservableMap
 			return cache.put(masterValue, value);
 		}
 
+		@Override
 		public boolean equals(Object o) {
 			getterCalled();
 			if (o == this)
@@ -116,6 +125,7 @@ public class MapDelegatingValueObservableMap extends AbstractObservableMap
 					&& Util.equals(this.getValue(), that.getValue());
 		}
 
+		@Override
 		public int hashCode() {
 			getterCalled();
 			Object value = getValue();
@@ -125,6 +135,7 @@ public class MapDelegatingValueObservableMap extends AbstractObservableMap
 	}
 
 	private IMapChangeListener masterListener = new IMapChangeListener() {
+		@Override
 		public void handleMapChange(final MapChangeEvent event) {
 			if (isDisposed())
 				return;
@@ -183,6 +194,7 @@ public class MapDelegatingValueObservableMap extends AbstractObservableMap
 	};
 
 	private IStaleListener staleListener = new IStaleListener() {
+		@Override
 		public void handleStale(StaleEvent staleEvent) {
 			fireStale();
 		}
@@ -198,6 +210,7 @@ public class MapDelegatingValueObservableMap extends AbstractObservableMap
 		this.masterMap = map;
 		this.detailProperty = valueProperty;
 		this.cache = new DelegatingCache(getRealm(), valueProperty) {
+			@Override
 			void handleValueChange(Object masterElement, Object oldValue,
 					Object newValue) {
 				fireMapChange(keysFor(masterElement), oldValue, newValue);
@@ -209,6 +222,7 @@ public class MapDelegatingValueObservableMap extends AbstractObservableMap
 		masterMap.addStaleListener(staleListener);
 	}
 
+	@Override
 	public Set entrySet() {
 		getterCalled();
 		if (entrySet == null)
@@ -220,12 +234,14 @@ public class MapDelegatingValueObservableMap extends AbstractObservableMap
 		ObservableTracker.getterCalled(this);
 	}
 
+	@Override
 	public Object get(Object key) {
 		getterCalled();
 		Object masterValue = masterMap.get(key);
 		return cache.get(masterValue);
 	}
 
+	@Override
 	public Object put(Object key, Object value) {
 		if (!masterMap.containsKey(key))
 			return null;
@@ -233,23 +249,28 @@ public class MapDelegatingValueObservableMap extends AbstractObservableMap
 		return cache.put(masterValue, value);
 	}
 
+	@Override
 	public boolean isStale() {
 		getterCalled();
 		return masterMap.isStale();
 	}
 
+	@Override
 	public Object getObserved() {
 		return masterMap;
 	}
 
+	@Override
 	public IProperty getProperty() {
 		return detailProperty;
 	}
 
+	@Override
 	public Object getKeyType() {
 		return masterMap.getKeyType();
 	}
 
+	@Override
 	public Object getValueType() {
 		return detailProperty.getValueType();
 	}
@@ -270,24 +291,29 @@ public class MapDelegatingValueObservableMap extends AbstractObservableMap
 	private void fireMapChange(final Set changedKeys, final Object oldValue,
 			final Object newValue) {
 		fireMapChange(new MapDiff() {
+			@Override
 			public Set getAddedKeys() {
 				return Collections.EMPTY_SET;
 			}
 
+			@Override
 			public Set getRemovedKeys() {
 				return Collections.EMPTY_SET;
 			}
 
+			@Override
 			public Set getChangedKeys() {
 				return Collections.unmodifiableSet(changedKeys);
 			}
 
+			@Override
 			public Object getOldValue(Object key) {
 				if (changedKeys.contains(key))
 					return oldValue;
 				return null;
 			}
 
+			@Override
 			public Object getNewValue(Object key) {
 				if (changedKeys.contains(key))
 					return newValue;
@@ -296,6 +322,7 @@ public class MapDelegatingValueObservableMap extends AbstractObservableMap
 		});
 	}
 
+	@Override
 	public synchronized void dispose() {
 		if (masterMap != null) {
 			masterMap.removeMapChangeListener(masterListener);

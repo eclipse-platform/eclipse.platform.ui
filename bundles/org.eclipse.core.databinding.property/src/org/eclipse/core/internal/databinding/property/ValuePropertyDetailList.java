@@ -41,25 +41,30 @@ public class ValuePropertyDetailList extends ListProperty {
 		this.detailProperty = detailProperty;
 	}
 
+	@Override
 	public Object getElementType() {
 		return detailProperty.getElementType();
 	}
 
+	@Override
 	protected List doGetList(Object source) {
 		Object masterValue = masterProperty.getValue(source);
 		return detailProperty.getList(masterValue);
 	}
 
+	@Override
 	protected void doSetList(Object source, List list) {
 		Object masterValue = masterProperty.getValue(source);
 		detailProperty.setList(masterValue, list);
 	}
 
+	@Override
 	protected void doUpdateList(Object source, ListDiff diff) {
 		Object masterValue = masterProperty.getValue(source);
 		detailProperty.updateList(masterValue, diff);
 	}
 
+	@Override
 	public IObservableList observe(Realm realm, Object source) {
 		IObservableValue masterValue;
 
@@ -75,6 +80,7 @@ public class ValuePropertyDetailList extends ListProperty {
 		return detailList;
 	}
 
+	@Override
 	public IObservableList observeDetail(IObservableValue master) {
 		IObservableValue masterValue;
 
@@ -90,6 +96,7 @@ public class ValuePropertyDetailList extends ListProperty {
 		return detailList;
 	}
 
+	@Override
 	public String toString() {
 		return masterProperty + " => " + detailProperty; //$NON-NLS-1$
 	}

@@ -37,25 +37,30 @@ public class PojoValueProperty extends SimpleValueProperty {
 				.getPropertyType() : valueType;
 	}
 
+	@Override
 	public Object getValueType() {
 		return valueType;
 	}
 
+	@Override
 	protected Object doGetValue(Object source) {
 		if (source == null)
 			return null;
 		return BeanPropertyHelper.readProperty(source, propertyDescriptor);
 	}
 
+	@Override
 	protected void doSetValue(Object source, Object value) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor, value);
 	}
 
+	@Override
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		return null;
 	}
 
+	@Override
 	public String toString() {
 		String s = BeanPropertyHelper.propertyName(propertyDescriptor);
 		if (valueType != null)

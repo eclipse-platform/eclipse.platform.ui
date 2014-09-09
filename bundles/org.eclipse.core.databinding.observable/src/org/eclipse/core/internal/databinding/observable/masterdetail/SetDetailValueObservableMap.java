@@ -39,6 +39,7 @@ public class SetDetailValueObservableMap extends ComputedObservableMap
 	private IdentitySet staleDetailObservables = new IdentitySet();
 
 	private IStaleListener detailStaleListener = new IStaleListener() {
+		@Override
 		public void handleStale(StaleEvent staleEvent) {
 			addStaleDetailObservable((IObservableValue) staleEvent
 					.getObservable());
@@ -56,10 +57,12 @@ public class SetDetailValueObservableMap extends ComputedObservableMap
 		this.observableValueFactory = observableValueFactory;
 	}
 
+	@Override
 	protected void hookListener(final Object addedKey) {
 		final IObservableValue detailValue = getDetailObservableValue(addedKey);
 
 		detailValue.addValueChangeListener(new IValueChangeListener() {
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				if (!event.getObservableValue().isStale()) {
 					staleDetailObservables.remove(detailValue);
@@ -73,6 +76,7 @@ public class SetDetailValueObservableMap extends ComputedObservableMap
 		detailValue.addStaleListener(detailStaleListener);
 	}
 
+	@Override
 	protected void unhookListener(Object removedKey) {
 		if (isDisposed()) {
 			return;
@@ -115,11 +119,13 @@ public class SetDetailValueObservableMap extends ComputedObservableMap
 		}
 	}
 
+	@Override
 	protected Object doGet(Object key) {
 		IObservableValue detailValue = getDetailObservableValue(key);
 		return detailValue.getValue();
 	}
 
+	@Override
 	protected Object doPut(Object key, Object value) {
 		IObservableValue detailValue = getDetailObservableValue(key);
 		Object oldValue = detailValue.getValue();
@@ -127,12 +133,14 @@ public class SetDetailValueObservableMap extends ComputedObservableMap
 		return oldValue;
 	}
 
+	@Override
 	public boolean containsKey(Object key) {
 		getterCalled();
 
 		return keySet().contains(key);
 	}
 
+	@Override
 	public Object remove(Object key) {
 		checkRealm();
 
@@ -148,21 +156,25 @@ public class SetDetailValueObservableMap extends ComputedObservableMap
 		return oldValue;
 	}
 
+	@Override
 	public int size() {
 		getterCalled();
 
 		return keySet().size();
 	}
 
+	@Override
 	public boolean isStale() {
 		return super.isStale() || staleDetailObservables != null
 				&& !staleDetailObservables.isEmpty();
 	}
 
+	@Override
 	public Object getObserved() {
 		return keySet();
 	}
 
+	@Override
 	public synchronized void dispose() {
 		super.dispose();
 

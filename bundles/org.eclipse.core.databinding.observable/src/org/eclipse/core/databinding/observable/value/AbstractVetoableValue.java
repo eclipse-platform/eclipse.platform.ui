@@ -43,6 +43,7 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 		super(realm);
 	}
 
+	@Override
 	final protected void doSetValue(Object value) {
 		Object currentValue = doGetValue();
 		ValueDiff diff = Diffs.createValueDiff(currentValue, value);
@@ -64,11 +65,13 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 	 */
 	protected abstract void doSetApprovedValue(Object value);
 
+	@Override
 	public synchronized void addValueChangingListener(
 			IValueChangingListener listener) {
 		addListener(ValueChangingEvent.TYPE, listener);
 	}
 
+	@Override
 	public synchronized void removeValueChangingListener(
 			IValueChangingListener listener) {
 		removeListener(ValueChangingEvent.TYPE, listener);

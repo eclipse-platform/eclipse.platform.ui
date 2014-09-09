@@ -58,10 +58,12 @@ public abstract class ObservableList extends AbstractObservable implements
 		this.elementType = elementType;
 	}
 
+	@Override
 	public synchronized void addListChangeListener(IListChangeListener listener) {
 		addListener(ListChangeEvent.TYPE, listener);
 	}
 
+	@Override
 	public synchronized void removeListChangeListener(
 			IListChangeListener listener) {
 		removeListener(ListChangeEvent.TYPE, listener);
@@ -73,65 +75,78 @@ public abstract class ObservableList extends AbstractObservable implements
 		fireEvent(new ListChangeEvent(this, diff));
 	}
 
+	@Override
 	public boolean contains(Object o) {
 		getterCalled();
 		return wrappedList.contains(o);
 	}
 
+	@Override
 	public boolean containsAll(Collection c) {
 		getterCalled();
 		return wrappedList.containsAll(c);
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		getterCalled();
 		return o == this || wrappedList.equals(o);
 	}
 
+	@Override
 	public int hashCode() {
 		getterCalled();
 		return wrappedList.hashCode();
 	}
 
+	@Override
 	public boolean isEmpty() {
 		getterCalled();
 		return wrappedList.isEmpty();
 	}
 
+	@Override
 	public Iterator iterator() {
 		getterCalled();
 		final Iterator wrappedIterator = wrappedList.iterator();
 		return new Iterator() {
 
+			@Override
 			public void remove() {
 				throw new UnsupportedOperationException();
 			}
 
+			@Override
 			public boolean hasNext() {
 				return wrappedIterator.hasNext();
 			}
 
+			@Override
 			public Object next() {
 				return wrappedIterator.next();
 			}
 		};
 	}
 
+	@Override
 	public int size() {
 		getterCalled();
 		return wrappedList.size();
 	}
 
+	@Override
 	public Object[] toArray() {
 		getterCalled();
 		return wrappedList.toArray();
 	}
 
+	@Override
 	public Object[] toArray(Object[] a) {
 		getterCalled();
 		return wrappedList.toArray(a);
 	}
 
+	@Override
 	public String toString() {
 		getterCalled();
 		return wrappedList.toString();
@@ -140,6 +155,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	/**
 	 * @TrackedGetter
 	 */
+	@Override
 	public Object get(int index) {
 		getterCalled();
 		return wrappedList.get(index);
@@ -148,6 +164,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	/**
 	 * @TrackedGetter
 	 */
+	@Override
 	public int indexOf(Object o) {
 		getterCalled();
 		return wrappedList.indexOf(o);
@@ -156,6 +173,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	/**
 	 * @TrackedGetter
 	 */
+	@Override
 	public int lastIndexOf(Object o) {
 		getterCalled();
 		return wrappedList.lastIndexOf(o);
@@ -166,6 +184,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	/**
 	 * @TrackedGetter
 	 */
+	@Override
 	public ListIterator listIterator() {
 		return listIterator(0);
 	}
@@ -173,49 +192,60 @@ public abstract class ObservableList extends AbstractObservable implements
 	/**
 	 * @TrackedGetter
 	 */
+	@Override
 	public ListIterator listIterator(int index) {
 		getterCalled();
 		final ListIterator wrappedIterator = wrappedList.listIterator(index);
 		return new ListIterator() {
 
+			@Override
 			public int nextIndex() {
 				return wrappedIterator.nextIndex();
 			}
 
+			@Override
 			public int previousIndex() {
 				return wrappedIterator.previousIndex();
 			}
 
+			@Override
 			public void remove() {
 				throw new UnsupportedOperationException();
 			}
 
+			@Override
 			public boolean hasNext() {
 				return wrappedIterator.hasNext();
 			}
 
+			@Override
 			public boolean hasPrevious() {
 				return wrappedIterator.hasPrevious();
 			}
 
+			@Override
 			public Object next() {
 				return wrappedIterator.next();
 			}
 
+			@Override
 			public Object previous() {
 				return wrappedIterator.previous();
 			}
 
+			@Override
 			public void add(Object o) {
 				throw new UnsupportedOperationException();
 			}
 
+			@Override
 			public void set(Object o) {
 				throw new UnsupportedOperationException();
 			}
 		};
 	}
 
+	@Override
 	public List subList(final int fromIndex, final int toIndex) {
 		getterCalled();
 		if (fromIndex < 0 || fromIndex > toIndex || toIndex > size()) {
@@ -223,14 +253,17 @@ public abstract class ObservableList extends AbstractObservable implements
 		}
 		return new AbstractObservableList(getRealm()) {
 
+			@Override
 			public Object getElementType() {
 				return ObservableList.this.getElementType();
 			}
 
+			@Override
 			public Object get(int location) {
 				return ObservableList.this.get(fromIndex + location);
 			}
 
+			@Override
 			protected int doGetSize() {
 				return toIndex - fromIndex;
 			}
@@ -241,6 +274,7 @@ public abstract class ObservableList extends AbstractObservable implements
 		ObservableTracker.getterCalled(this);
 	}
 
+	@Override
 	public Object set(int index, Object element) {
 		throw new UnsupportedOperationException();
 	}
@@ -269,6 +303,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	 * @see ListDiff#accept(ListDiffVisitor)
 	 * @since 1.1
 	 */
+	@Override
 	public Object move(int oldIndex, int newIndex) {
 		checkRealm();
 		int size = wrappedList.size();
@@ -283,38 +318,47 @@ public abstract class ObservableList extends AbstractObservable implements
 		return element;
 	}
 
+	@Override
 	public Object remove(int index) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean add(Object o) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void add(int index, Object element) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean addAll(Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean addAll(int index, Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean remove(Object o) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean removeAll(Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean retainAll(Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
@@ -324,6 +368,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	 * 
 	 * @return stale state
 	 */
+	@Override
 	public boolean isStale() {
 		getterCalled();
 		return stale;
@@ -347,15 +392,18 @@ public abstract class ObservableList extends AbstractObservable implements
 		}
 	}
 
+	@Override
 	protected void fireChange() {
 		throw new RuntimeException(
 				"fireChange should not be called, use fireListChange() instead"); //$NON-NLS-1$
 	}
 
+	@Override
 	public synchronized void dispose() {
 		super.dispose();
 	}
 
+	@Override
 	public Object getElementType() {
 		return elementType;
 	}

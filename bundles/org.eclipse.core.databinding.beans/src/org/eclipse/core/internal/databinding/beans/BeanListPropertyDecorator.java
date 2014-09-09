@@ -44,55 +44,67 @@ public class BeanListPropertyDecorator extends ListProperty implements
 		this.propertyDescriptor = propertyDescriptor;
 	}
 
+	@Override
 	public Object getElementType() {
 		return delegate.getElementType();
 	}
 
+	@Override
 	protected List doGetList(Object source) {
 		return delegate.getList(source);
 	}
 
+	@Override
 	protected void doSetList(Object source, List list) {
 		delegate.setList(source, list);
 	}
 
+	@Override
 	protected void doUpdateList(Object source, ListDiff diff) {
 		delegate.updateList(source, diff);
 	}
 
+	@Override
 	public IBeanListProperty values(String propertyName) {
 		return values(propertyName, null);
 	}
 
+	@Override
 	public IBeanListProperty values(String propertyName, Class valueType) {
 		Class beanClass = (Class) delegate.getElementType();
 		return values(BeanProperties.value(beanClass, propertyName, valueType));
 	}
 
+	@Override
 	public IBeanListProperty values(IBeanValueProperty property) {
 		return new BeanListPropertyDecorator(super.values(property),
 				property.getPropertyDescriptor());
 	}
 
+	@Override
 	public PropertyDescriptor getPropertyDescriptor() {
 		return propertyDescriptor;
 	}
 
+	@Override
 	public IObservableList observe(Object source) {
 		return new BeanObservableListDecorator(delegate.observe(source),
 				propertyDescriptor);
 	}
 
+	@Override
 	public IObservableList observe(Realm realm, Object source) {
 		return new BeanObservableListDecorator(delegate.observe(realm, source),
 				propertyDescriptor);
 	}
 
+	@Override
 	public IObservableList observeDetail(IObservableValue master) {
 		return new BeanObservableListDecorator(delegate.observeDetail(master),
 				propertyDescriptor);
 	}
 
+	@Override
 	public String toString() {
 		return delegate.toString();
 	}

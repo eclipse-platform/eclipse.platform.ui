@@ -37,37 +37,45 @@ public class UnmodifiableObservableMap extends DecoratingObservableMap {
 		this.unmodifiableMap = Collections.unmodifiableMap(decorated);
 	}
 
+	@Override
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Set entrySet() {
 		getterCalled();
 		return unmodifiableMap.entrySet();
 	}
 
+	@Override
 	public Set keySet() {
 		getterCalled();
 		return unmodifiableMap.keySet();
 	}
 
+	@Override
 	public Object put(Object key, Object value) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void putAll(Map m) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Object remove(Object key) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Collection values() {
 		getterCalled();
 		return unmodifiableMap.values();
 	}
 
+	@Override
 	public synchronized void dispose() {
 		unmodifiableMap = null;
 		super.dispose();

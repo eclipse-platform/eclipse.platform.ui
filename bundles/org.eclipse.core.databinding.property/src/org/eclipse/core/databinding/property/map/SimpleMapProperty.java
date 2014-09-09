@@ -44,12 +44,14 @@ import org.eclipse.core.internal.databinding.property.map.SimplePropertyObservab
  * @since 1.2
  */
 public abstract class SimpleMapProperty extends MapProperty {
+	@Override
 	public IObservableMap observe(Realm realm, Object source) {
 		return new SimplePropertyObservableMap(realm, source, this);
 	}
 
 	// Accessors
 
+	@Override
 	protected abstract Map doGetMap(Object source);
 
 	// Mutators
@@ -83,11 +85,13 @@ public abstract class SimpleMapProperty extends MapProperty {
 	 */
 	protected abstract void doSetMap(Object source, Map map, MapDiff diff);
 
+	@Override
 	protected void doSetMap(Object source, Map map) {
 		MapDiff diff = Diffs.computeLazyMapDiff(doGetMap(source), map);
 		doSetMap(source, map, diff);
 	}
 
+	@Override
 	protected void doUpdateMap(Object source, MapDiff diff) {
 		Map map = new HashMap(doGetMap(source));
 		diff.applyTo(map);

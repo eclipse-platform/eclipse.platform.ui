@@ -62,6 +62,7 @@ public class ValidatedObservableValue extends AbstractObservableValue {
 	private boolean updatingTarget = false;
 
 	private IValueChangeListener targetChangeListener = new IValueChangeListener() {
+		@Override
 		public void handleValueChange(ValueChangeEvent event) {
 			if (updatingTarget)
 				return;
@@ -78,12 +79,14 @@ public class ValidatedObservableValue extends AbstractObservableValue {
 	}
 
 	private IStaleListener targetStaleListener = new IStaleListener() {
+		@Override
 		public void handleStale(StaleEvent staleEvent) {
 			fireStale();
 		}
 	};
 
 	private IValueChangeListener validationStatusChangeListener = new IValueChangeListener() {
+		@Override
 		public void handleValueChange(ValueChangeEvent event) {
 			IStatus oldStatus = (IStatus) event.diff.getOldValue();
 			IStatus newStatus = (IStatus) event.diff.getNewValue();
@@ -126,11 +129,13 @@ public class ValidatedObservableValue extends AbstractObservableValue {
 		}
 	}
 
+	@Override
 	public boolean isStale() {
 		ObservableTracker.getterCalled(this);
 		return stale || target.isStale();
 	}
 
+	@Override
 	protected Object doGetValue() {
 		return cachedValue;
 	}
@@ -152,14 +157,17 @@ public class ValidatedObservableValue extends AbstractObservableValue {
 			fireValueChange(Diffs.createValueDiff(oldValue, cachedValue));
 	}
 
+	@Override
 	protected void doSetValue(Object value) {
 		internalSetValue(value, true);
 	}
 
+	@Override
 	public Object getValueType() {
 		return target.getValueType();
 	}
 
+	@Override
 	public synchronized void dispose() {
 		target.removeValueChangeListener(targetChangeListener);
 		target.removeStaleListener(targetStaleListener);

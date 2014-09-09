@@ -39,11 +39,13 @@ public class DecoratingObservableValue extends DecoratingObservable implements
 		this.decorated = decorated;
 	}
 
+	@Override
 	public synchronized void addValueChangeListener(
 			IValueChangeListener listener) {
 		addListener(ValueChangeEvent.TYPE, listener);
 	}
 
+	@Override
 	public synchronized void removeValueChangeListener(
 			IValueChangeListener listener) {
 		removeListener(ValueChangeEvent.TYPE, listener);
@@ -55,14 +57,17 @@ public class DecoratingObservableValue extends DecoratingObservable implements
 		fireEvent(new ValueChangeEvent(this, diff));
 	}
 
+	@Override
 	protected void fireChange() {
 		throw new RuntimeException(
 				"fireChange should not be called, use fireValueChange() instead"); //$NON-NLS-1$
 	}
 
+	@Override
 	protected void firstListenerAdded() {
 		if (valueChangeListener == null) {
 			valueChangeListener = new IValueChangeListener() {
+				@Override
 				public void handleValueChange(ValueChangeEvent event) {
 					DecoratingObservableValue.this.handleValueChange(event);
 				}
@@ -72,6 +77,7 @@ public class DecoratingObservableValue extends DecoratingObservable implements
 		super.firstListenerAdded();
 	}
 
+	@Override
 	protected void lastListenerRemoved() {
 		super.lastListenerRemoved();
 		if (valueChangeListener != null) {
@@ -93,20 +99,24 @@ public class DecoratingObservableValue extends DecoratingObservable implements
 		fireValueChange(event.diff);
 	}
 
+	@Override
 	public Object getValue() {
 		getterCalled();
 		return decorated.getValue();
 	}
 
+	@Override
 	public void setValue(Object value) {
 		checkRealm();
 		decorated.setValue(value);
 	}
 
+	@Override
 	public Object getValueType() {
 		return decorated.getValueType();
 	}
 
+	@Override
 	public synchronized void dispose() {
 		if (decorated != null && valueChangeListener != null) {
 			decorated.removeValueChangeListener(valueChangeListener);

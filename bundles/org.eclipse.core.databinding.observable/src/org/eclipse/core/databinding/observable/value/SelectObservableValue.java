@@ -46,6 +46,7 @@ public class SelectObservableValue extends AbstractObservableValue {
 	private boolean updating = false;
 
 	private IValueChangeListener listener = new IValueChangeListener() {
+		@Override
 		public void handleValueChange(ValueChangeEvent event) {
 			if (!updating) {
 				IObservableValue observable = event.getObservableValue();
@@ -99,6 +100,7 @@ public class SelectObservableValue extends AbstractObservableValue {
 		this.options = new Option[0];
 	}
 
+	@Override
 	protected void firstListenerAdded() {
 		super.firstListenerAdded();
 		selectionIndex = indexOfValue(getLiveValue());
@@ -107,6 +109,7 @@ public class SelectObservableValue extends AbstractObservableValue {
 		}
 	}
 
+	@Override
 	protected void lastListenerRemoved() {
 		for (int i = 0; i < options.length; i++) {
 			options[i].observable.removeValueChangeListener(listener);
@@ -115,6 +118,7 @@ public class SelectObservableValue extends AbstractObservableValue {
 		super.lastListenerRemoved();
 	}
 
+	@Override
 	public Object getValueType() {
 		return valueType;
 	}
@@ -158,6 +162,7 @@ public class SelectObservableValue extends AbstractObservableValue {
 		options = newOptions;
 	}
 
+	@Override
 	protected Object doGetValue() {
 		return hasListeners() ? valueAtIndex(selectionIndex) : getLiveValue();
 	}
@@ -170,6 +175,7 @@ public class SelectObservableValue extends AbstractObservableValue {
 		return null;
 	}
 
+	@Override
 	protected void doSetValue(Object value) {
 		int index = indexOfValue(value);
 

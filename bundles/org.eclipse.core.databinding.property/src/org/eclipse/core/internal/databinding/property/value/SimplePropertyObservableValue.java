@@ -52,15 +52,18 @@ public class SimplePropertyObservableValue extends AbstractObservableValue
 		this.property = property;
 	}
 
+	@Override
 	protected void firstListenerAdded() {
 		if (!isDisposed()) {
 			if (listener == null) {
 				listener = property
 						.adaptListener(new ISimplePropertyListener() {
+							@Override
 							public void handleEvent(
 									final SimplePropertyEvent event) {
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {
+										@Override
 										public void run() {
 											if (event.type == SimplePropertyEvent.CHANGE) {
 												notifyIfChanged((ValueDiff) event.diff);
@@ -76,6 +79,7 @@ public class SimplePropertyObservableValue extends AbstractObservableValue
 						});
 			}
 			getRealm().exec(new Runnable() {
+				@Override
 				public void run() {
 					cachedValue = property.getValue(source);
 					stale = false;
@@ -86,6 +90,7 @@ public class SimplePropertyObservableValue extends AbstractObservableValue
 		}
 	}
 
+	@Override
 	protected void lastListenerRemoved() {
 		if (listener != null)
 			listener.removeFrom(source);
@@ -93,11 +98,13 @@ public class SimplePropertyObservableValue extends AbstractObservableValue
 		stale = false;
 	}
 
+	@Override
 	protected Object doGetValue() {
 		notifyIfChanged(null);
 		return property.getValue(source);
 	}
 
+	@Override
 	protected void doSetValue(Object value) {
 		updating = true;
 		try {
@@ -122,23 +129,28 @@ public class SimplePropertyObservableValue extends AbstractObservableValue
 		}
 	}
 
+	@Override
 	public Object getValueType() {
 		return property.getValueType();
 	}
 
+	@Override
 	public Object getObserved() {
 		return source;
 	}
 
+	@Override
 	public IProperty getProperty() {
 		return property;
 	}
 
+	@Override
 	public boolean isStale() {
 		ObservableTracker.getterCalled(this);
 		return stale;
 	}
 
+	@Override
 	public synchronized void dispose() {
 		if (!isDisposed()) {
 			if (listener != null)

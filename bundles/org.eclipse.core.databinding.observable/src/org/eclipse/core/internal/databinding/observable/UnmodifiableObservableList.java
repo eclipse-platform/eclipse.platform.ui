@@ -39,69 +39,85 @@ public class UnmodifiableObservableList extends DecoratingObservableList {
 		this.unmodifiableList = Collections.unmodifiableList(decorated);
 	}
 
+	@Override
 	public void add(int index, Object o) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean add(Object o) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean addAll(Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean addAll(int index, Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Iterator iterator() {
 		getterCalled();
 		return unmodifiableList.iterator();
 	}
 
+	@Override
 	public ListIterator listIterator() {
 		return listIterator(0);
 	}
 
+	@Override
 	public ListIterator listIterator(int index) {
 		getterCalled();
 		return unmodifiableList.listIterator(index);
 	}
 
+	@Override
 	public Object move(int oldIndex, int newIndex) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Object remove(int index) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean remove(Object o) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean removeAll(Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean retainAll(Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Object set(int index, Object element) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public List subList(int fromIndex, int toIndex) {
 		getterCalled();
 		return unmodifiableList.subList(fromIndex, toIndex);
 	}
 
+	@Override
 	public synchronized void dispose() {
 		unmodifiableList = null;
 		super.dispose();

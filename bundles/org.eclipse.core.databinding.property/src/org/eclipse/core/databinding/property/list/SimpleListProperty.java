@@ -43,12 +43,14 @@ import org.eclipse.core.internal.databinding.property.list.SimplePropertyObserva
  * @since 1.2
  */
 public abstract class SimpleListProperty extends ListProperty {
+	@Override
 	public IObservableList observe(Realm realm, Object source) {
 		return new SimplePropertyObservableList(realm, source, this);
 	}
 
 	// Accessors
 
+	@Override
 	protected abstract List doGetList(Object source);
 
 	// Mutators
@@ -83,11 +85,13 @@ public abstract class SimpleListProperty extends ListProperty {
 	 */
 	protected abstract void doSetList(Object source, List list, ListDiff diff);
 
+	@Override
 	protected void doSetList(Object source, List list) {
 		ListDiff diff = Diffs.computeLazyListDiff(doGetList(source), list);
 		doSetList(source, list, diff);
 	}
 
+	@Override
 	protected void doUpdateList(Object source, ListDiff diff) {
 		List list = new ArrayList(doGetList(source));
 		diff.applyTo(list);

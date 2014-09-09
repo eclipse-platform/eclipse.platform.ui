@@ -85,6 +85,7 @@ public abstract class SetDiff implements IDiff {
 			this.diff = diff;
 		}
 
+		@Override
 		public Iterator iterator() {
 			return new Iterator() {
 				Iterator orig = original.iterator();
@@ -93,10 +94,12 @@ public abstract class SetDiff implements IDiff {
 				boolean haveNext = false;
 				Object next;
 
+				@Override
 				public boolean hasNext() {
 					return findNext();
 				}
 
+				@Override
 				public Object next() {
 					if (!findNext())
 						throw new NoSuchElementException();
@@ -127,17 +130,20 @@ public abstract class SetDiff implements IDiff {
 					}
 				}
 
+				@Override
 				public void remove() {
 					throw new UnsupportedOperationException();
 				}
 			};
 		}
 
+		@Override
 		public boolean contains(Object o) {
 			return (original.contains(o) || diff.getAdditions().contains(o))
 					&& !diff.getRemovals().contains(o);
 		}
 
+		@Override
 		public int size() {
 			return original.size() + diff.getAdditions().size()
 					- diff.getRemovals().size();
@@ -147,6 +153,7 @@ public abstract class SetDiff implements IDiff {
 	/**
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(getClass().getName()).append("{additions [") //$NON-NLS-1$

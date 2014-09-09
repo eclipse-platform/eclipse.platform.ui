@@ -40,20 +40,24 @@ public class ValuePropertyDetailValue extends ValueProperty implements
 		this.detailProperty = detailProperty;
 	}
 
+	@Override
 	public Object getValueType() {
 		return detailProperty.getValueType();
 	}
 
+	@Override
 	protected Object doGetValue(Object source) {
 		Object masterValue = masterProperty.getValue(source);
 		return detailProperty.getValue(masterValue);
 	}
 
+	@Override
 	protected void doSetValue(Object source, Object value) {
 		Object masterValue = masterProperty.getValue(source);
 		detailProperty.setValue(masterValue, value);
 	}
 
+	@Override
 	public IObservableValue observe(Realm realm, Object source) {
 		IObservableValue masterValue;
 
@@ -70,6 +74,7 @@ public class ValuePropertyDetailValue extends ValueProperty implements
 		return detailValue;
 	}
 
+	@Override
 	public IObservableValue observeDetail(IObservableValue master) {
 		IObservableValue masterValue;
 
@@ -86,6 +91,7 @@ public class ValuePropertyDetailValue extends ValueProperty implements
 		return detailValue;
 	}
 
+	@Override
 	public IObservableList observeDetail(IObservableList master) {
 		IObservableList masterList;
 
@@ -101,6 +107,7 @@ public class ValuePropertyDetailValue extends ValueProperty implements
 		return detailList;
 	}
 
+	@Override
 	public IObservableMap observeDetail(IObservableSet master) {
 		IObservableMap masterMap;
 
@@ -116,6 +123,7 @@ public class ValuePropertyDetailValue extends ValueProperty implements
 		return detailMap;
 	}
 
+	@Override
 	public IObservableMap observeDetail(IObservableMap master) {
 		IObservableMap masterMap;
 
@@ -131,6 +139,7 @@ public class ValuePropertyDetailValue extends ValueProperty implements
 		return detailMap;
 	}
 
+	@Override
 	public String toString() {
 		return masterProperty + " => " + detailProperty; //$NON-NLS-1$
 	}

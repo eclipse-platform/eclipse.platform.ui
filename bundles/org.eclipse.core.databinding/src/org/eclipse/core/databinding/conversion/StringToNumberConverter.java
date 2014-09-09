@@ -137,6 +137,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 * @throws IllegalArgumentException
 	 *             if conversion was not possible
 	 */
+	@Override
 	public Object convert(Object fromObject) {
 		ParseResult result = StringToNumberParser.parse(fromObject,
 				numberFormat, toType.isPrimitive());

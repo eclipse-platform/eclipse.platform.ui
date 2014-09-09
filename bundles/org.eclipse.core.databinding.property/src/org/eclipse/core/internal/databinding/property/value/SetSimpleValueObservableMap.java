@@ -53,13 +53,16 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 		this.detailProperty = valueProperty;
 	}
 
+	@Override
 	protected void firstListenerAdded() {
 		if (listener == null) {
 			listener = detailProperty
 					.adaptListener(new ISimplePropertyListener() {
+						@Override
 						public void handleEvent(final SimplePropertyEvent event) {
 							if (!isDisposed() && !updating) {
 								getRealm().exec(new Runnable() {
+									@Override
 									public void run() {
 										if (event.type == SimplePropertyEvent.CHANGE) {
 											notifyIfChanged(event.getSource());
@@ -81,6 +84,7 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 		super.firstListenerAdded();
 	}
 
+	@Override
 	protected void lastListenerRemoved() {
 		super.lastListenerRemoved();
 		cachedValues.clear();
@@ -89,6 +93,7 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 		staleKeys = null;
 	}
 
+	@Override
 	protected void hookListener(Object addedKey) {
 		if (cachedValues != null) {
 			cachedValues.put(addedKey, detailProperty.getValue(addedKey));
@@ -97,6 +102,7 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 		}
 	}
 
+	@Override
 	protected void unhookListener(Object removedKey) {
 		if (cachedValues != null) {
 			if (listener != null)
@@ -106,10 +112,12 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 		}
 	}
 
+	@Override
 	protected Object doGet(Object key) {
 		return detailProperty.getValue(key);
 	}
 
+	@Override
 	protected Object doPut(Object key, Object value) {
 		Object oldValue = detailProperty.getValue(key);
 
@@ -138,18 +146,22 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 		}
 	}
 
+	@Override
 	public Object getObserved() {
 		return keySet();
 	}
 
+	@Override
 	public IProperty getProperty() {
 		return detailProperty;
 	}
 
+	@Override
 	public boolean isStale() {
 		return super.isStale() || staleKeys != null && !staleKeys.isEmpty();
 	}
 
+	@Override
 	public synchronized void dispose() {
 		if (cachedValues != null) {
 			cachedValues.clear();
