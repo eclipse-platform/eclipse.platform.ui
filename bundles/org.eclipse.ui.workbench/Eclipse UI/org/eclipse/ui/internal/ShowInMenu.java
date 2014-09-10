@@ -234,7 +234,7 @@ public class ShowInMenu extends ContributionItem implements
 							workbenchWindow, commandId, commandId,
 							CommandContributionItem.STYLE_PUSH);
 					String label = menuElement.getLabel();
-					if (label.length() > 0) {
+					if (label != null && label.length() > 0) {
 						ccip.label = label;
 						String mnemonics = menuElement.getMnemonics();
 						if (mnemonics != null && mnemonics.length() == 1) {
