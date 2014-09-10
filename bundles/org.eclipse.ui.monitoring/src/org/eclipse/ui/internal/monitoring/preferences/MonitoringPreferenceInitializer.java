@@ -23,6 +23,7 @@ public class MonitoringPreferenceInitializer extends AbstractPreferenceInitializ
 	private static final int DEFAULT_FORCE_DEADLOCK_LOG_TIME_MILLIS = 10 * 60 * 1000; // == 10 minutes
 	private static final String DEFAULT_FILTER_TRACES =
 			"org.eclipse.swt.internal.gtk.OS.gtk_dialog_run," //$NON-NLS-1$
+			+ "org.eclipse.swt.internal.win32.OS.TrackPopupMenu," //$NON-NLS-1$
 			+ "org.eclipse.e4.ui.workbench.addons.dndaddon.DnDManager.startDrag"; //$NON-NLS-1$
 
 	@Override
