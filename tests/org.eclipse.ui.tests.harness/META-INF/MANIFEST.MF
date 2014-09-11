@@ -4,7 +4,6 @@ Bundle-Name: Harness Plug-in
 Bundle-SymbolicName: org.eclipse.ui.tests.harness;singleton:=true
 Bundle-Version: 1.3.0.qualifier
 Eclipse-BundleShape: dir
-Bundle-Activator: org.eclipse.ui.tests.harness.UITestHarnessPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.junit,
