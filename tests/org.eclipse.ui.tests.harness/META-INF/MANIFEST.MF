@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Harness Plug-in
 Bundle-SymbolicName: org.eclipse.ui.tests.harness;singleton:=true
-Bundle-Version: 1.2.0.qualifier
+Bundle-Version: 1.3.0.qualifier
 Eclipse-BundleShape: dir
 Bundle-Activator: org.eclipse.ui.tests.harness.UITestHarnessPlugin
 Require-Bundle: org.eclipse.ui,
@@ -14,4 +14,4 @@ Export-Package: org.eclipse.ui.tests.harness,
  org.eclipse.ui.tests.harness.tests,
  org.eclipse.ui.tests.harness.util,
  org.eclipse.ui.tests.internal.util;x-internal:=true
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
