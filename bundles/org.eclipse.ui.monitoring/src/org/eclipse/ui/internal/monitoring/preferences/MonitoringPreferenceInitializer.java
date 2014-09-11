@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.monitoring.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.Util;
 import org.eclipse.ui.internal.monitoring.MonitoringPlugin;
 import org.eclipse.ui.monitoring.PreferenceConstants;
 
@@ -21,10 +22,17 @@ import org.eclipse.ui.monitoring.PreferenceConstants;
 public class MonitoringPreferenceInitializer extends AbstractPreferenceInitializer {
 	/** Force a logged event for a possible deadlock when an event hangs for longer than this */
 	private static final int DEFAULT_FORCE_DEADLOCK_LOG_TIME_MILLIS = 10 * 60 * 1000; // == 10 minutes
-	private static final String DEFAULT_FILTER_TRACES =
-			"org.eclipse.swt.internal.gtk.OS.gtk_dialog_run," //$NON-NLS-1$
-			+ "org.eclipse.swt.internal.win32.OS.TrackPopupMenu," //$NON-NLS-1$
-			+ "org.eclipse.e4.ui.workbench.addons.dndaddon.DnDManager.startDrag"; //$NON-NLS-1$
+	private static final String DEFAULT_FILTER_TRACES;
+	static {
+		String defaultFilterTraces = "org.eclipse.e4.ui.workbench.addons.dndaddon.DnDManager.startDrag"; //$NON-NLS-1$
+		if (Util.isGtk()) {
+			defaultFilterTraces += ",org.eclipse.swt.internal.gtk.OS.gtk_dialog_run"; //$NON-NLS-1$
+		} else if (Util.isWin32()) {
+			defaultFilterTraces += ",org.eclipse.swt.internal.win32.OS.TrackPopupMenu" //$NON-NLS-1$
+								 + ",org.eclipse.swt.internal.win32.OS.DefWindowProc"; //$NON-NLS-1$
+		}
+		DEFAULT_FILTER_TRACES = defaultFilterTraces;
+	}
 
 	@Override
 	public void initializeDefaultPreferences() {
