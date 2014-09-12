@@ -13,8 +13,6 @@ package org.eclipse.ui.tests.performance;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.ui.tests.performance.presentations.PresentationPerformanceTestSuite;
-
 /**
  * Test all areas of the UI API.
  */
@@ -33,7 +31,6 @@ public class UIPerformanceTestSuite extends FilteredTestSuite {
     public UIPerformanceTestSuite() {
     	super();
         addTest(new ActivitiesPerformanceSuite());
-        addTest(new PresentationPerformanceTestSuite());
         addTest(new WorkbenchPerformanceSuite());
         addTest(new ViewPerformanceSuite());
         addTest(new EditorPerformanceSuite());
