@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Google Eclipse Monitoring Tests
+Bundle-Name: %Bundle-Name
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-SymbolicName: org.eclipse.ui.monitoring.tests;singleton:=true
-Bundle-Vendor: Google Inc.
+Bundle-Vendor: %Bundle-Vendor
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: org.eclipse.ui.monitoring;bundle-version="1.0.0"
 Require-Bundle: org.eclipse.jface;bundle-version="[3.10.0,4.0.0)",
