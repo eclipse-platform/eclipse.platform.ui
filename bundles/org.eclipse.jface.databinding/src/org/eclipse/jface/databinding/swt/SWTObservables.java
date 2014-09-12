@@ -15,11 +15,12 @@
  *     Boris Bokowski - bug 245647
  *     Tom Schindl - bug 246462
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 327086
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 413611
  *******************************************************************************/
 package org.eclipse.jface.databinding.swt;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
@@ -40,7 +41,7 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class SWTObservables {
 
-	private static java.util.List realms = new ArrayList();
+	private static List<DisplayRealm> realms = new ArrayList<DisplayRealm>();
 
 	/**
 	 * Returns the realm representing the UI thread for the given display.
@@ -50,10 +51,9 @@ public class SWTObservables {
 	 */
 	public static Realm getRealm(final Display display) {
 		synchronized (realms) {
-			for (Iterator it = realms.iterator(); it.hasNext();) {
-				DisplayRealm displayRealm = (DisplayRealm) it.next();
-				if (displayRealm.display == display) {
-					return displayRealm;
+			for (DisplayRealm element : realms) {
+				if (element.display == display) {
+					return element;
 				}
 			}
 			DisplayRealm result = new DisplayRealm(display);

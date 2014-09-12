@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bug 223123
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 413611
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.provisional.viewers;
 
@@ -33,7 +34,7 @@ import org.eclipse.swt.graphics.Image;
 public class ViewerLabelProvider implements IViewerLabelProvider,
 		ILabelProvider {
 
-	private List listeners = new ArrayList();
+	private List<ILabelProviderListener> listeners = new ArrayList<ILabelProviderListener>();
 
 	/**
 	 * Subclasses should override this method. They should not call the base
@@ -44,10 +45,10 @@ public class ViewerLabelProvider implements IViewerLabelProvider,
 		label.setText(element.toString());
 	}
 
-	protected final void fireChangeEvent(Collection changes) {
+	protected final void fireChangeEvent(Collection<?> changes) {
 		final LabelProviderChangedEvent event = new LabelProviderChangedEvent(
 				this, changes.toArray());
-		ILabelProviderListener[] listenerArray = (ILabelProviderListener[]) listeners
+		ILabelProviderListener[] listenerArray = listeners
 				.toArray(new ILabelProviderListener[listeners.size()]);
 		for (int i = 0; i < listenerArray.length; i++) {
 			ILabelProviderListener listener = listenerArray[i];

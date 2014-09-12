@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 413611
  *******************************************************************************/
 package org.eclipse.jface.databinding.util;
 
@@ -39,7 +40,7 @@ public class JFaceProperties {
 	 * 
 	 * @return an observable value
 	 */
-	public static IValueProperty value(Class clazz, String fieldName,
+	public static IValueProperty value(Class<?> clazz, String fieldName,
 			String propertyName) {
 		return new JFaceProperty(fieldName, propertyName, clazz);
 	}
