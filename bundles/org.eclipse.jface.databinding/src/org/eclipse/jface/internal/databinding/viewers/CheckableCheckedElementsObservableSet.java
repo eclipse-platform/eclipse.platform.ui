@@ -64,6 +64,7 @@ public class CheckableCheckedElementsObservableSet extends
 		this.elementComparer = elementComparer;
 
 		listener = new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Object element = event.getElement();
 				if (event.getChecked()) {
@@ -81,6 +82,7 @@ public class CheckableCheckedElementsObservableSet extends
 		checkable.addCheckStateListener(listener);
 	}
 
+	@Override
 	protected Set getWrappedSet() {
 		return wrappedSet;
 	}
@@ -89,10 +91,12 @@ public class CheckableCheckedElementsObservableSet extends
 		return ViewerElementSet.withComparer(elementComparer);
 	}
 
+	@Override
 	public Object getElementType() {
 		return elementType;
 	}
 
+	@Override
 	public boolean add(Object o) {
 		getterCalled();
 		boolean added = wrappedSet.add(o);
@@ -104,6 +108,7 @@ public class CheckableCheckedElementsObservableSet extends
 		return added;
 	}
 
+	@Override
 	public boolean remove(Object o) {
 		getterCalled();
 		boolean removed = wrappedSet.remove(o);
@@ -115,6 +120,7 @@ public class CheckableCheckedElementsObservableSet extends
 		return removed;
 	}
 
+	@Override
 	public boolean addAll(Collection c) {
 		getterCalled();
 		Set additions = createDiffSet();
@@ -131,6 +137,7 @@ public class CheckableCheckedElementsObservableSet extends
 		return changed;
 	}
 
+	@Override
 	public boolean removeAll(Collection c) {
 		getterCalled();
 		Set removals = createDiffSet();
@@ -147,6 +154,7 @@ public class CheckableCheckedElementsObservableSet extends
 		return changed;
 	}
 
+	@Override
 	public boolean retainAll(Collection c) {
 		getterCalled();
 
@@ -169,6 +177,7 @@ public class CheckableCheckedElementsObservableSet extends
 		return changed;
 	}
 
+	@Override
 	public void clear() {
 		getterCalled();
 		Set removals = createDiffSet();
@@ -176,22 +185,26 @@ public class CheckableCheckedElementsObservableSet extends
 		removeAll(removals);
 	}
 
+	@Override
 	public Iterator iterator() {
 		getterCalled();
 		final Iterator wrappedIterator = wrappedSet.iterator();
 		return new Iterator() {
 			private Object last = null;
 
+			@Override
 			public boolean hasNext() {
 				getterCalled();
 				return wrappedIterator.hasNext();
 			}
 
+			@Override
 			public Object next() {
 				getterCalled();
 				return last = wrappedIterator.next();
 			}
 
+			@Override
 			public void remove() {
 				getterCalled();
 				wrappedIterator.remove();
@@ -202,6 +215,7 @@ public class CheckableCheckedElementsObservableSet extends
 		};
 	}
 
+	@Override
 	public synchronized void dispose() {
 		if (checkable != null) {
 			checkable.removeCheckStateListener(listener);

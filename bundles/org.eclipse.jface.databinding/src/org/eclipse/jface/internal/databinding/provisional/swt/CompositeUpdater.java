@@ -54,6 +54,7 @@ public abstract class CompositeUpdater {
 		// Runnable implementation. This method runs at most once per repaint
 		// whenever the
 		// value gets marked as dirty.
+		@Override
 		public void run() {
 			if (theComposite != null && !theComposite.isDisposed()
 					&& widget != null && !widget.isDisposed()) {
@@ -64,6 +65,7 @@ public abstract class CompositeUpdater {
 		private void updateIfNecessary() {
 			if (dirty) {
 				dependencies = ObservableTracker.runAndMonitor(new Runnable() {
+					@Override
 					public void run() {
 						updateWidget(widget, element);
 					}
@@ -73,6 +75,7 @@ public abstract class CompositeUpdater {
 		}
 
 		// IChangeListener implementation (listening to any dependency)
+		@Override
 		public void handleChange(ChangeEvent event) {
 			// Whenever this updator becomes dirty, schedule the run() method
 			makeDirty();
@@ -110,6 +113,7 @@ public abstract class CompositeUpdater {
 			}
 		}
 
+		@Override
 		public void run() {
 			posted = false;
 			theComposite.getShell().layout(
@@ -137,10 +141,12 @@ public abstract class CompositeUpdater {
 			IListChangeListener {
 
 		// DisposeListener implementation
+		@Override
 		public void widgetDisposed(DisposeEvent e) {
 			CompositeUpdater.this.dispose();
 		}
 
+		@Override
 		public void handleListChange(ListChangeEvent event) {
 			ListDiffEntry[] diffs = event.diff.getDifferences();
 			for (int i = 0; i < diffs.length; i++) {

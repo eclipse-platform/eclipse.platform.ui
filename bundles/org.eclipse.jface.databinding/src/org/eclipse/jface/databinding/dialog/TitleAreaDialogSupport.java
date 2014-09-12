@@ -73,11 +73,13 @@ public class TitleAreaDialogSupport {
 	private IObservableValue aggregateStatusProvider;
 	private boolean uiChanged = false;
 	private IChangeListener uiChangeListener = new IChangeListener() {
+		@Override
 		public void handleChange(ChangeEvent event) {
 			handleUIChanged();
 		}
 	};
 	private IListChangeListener validationStatusProvidersListener = new IListChangeListener() {
+		@Override
 		public void handleListChange(ListChangeEvent event) {
 			ListDiff diff = event.diff;
 			ListDiffEntry[] differences = diff.getDifferences();
@@ -105,6 +107,7 @@ public class TitleAreaDialogSupport {
 		}
 	};
 	private IListChangeListener validationStatusProviderTargetsListener = new IListChangeListener() {
+		@Override
 		public void handleListChange(ListChangeEvent event) {
 			ListDiff diff = event.diff;
 			ListDiffEntry[] differences = diff.getDifferences();
@@ -157,11 +160,13 @@ public class TitleAreaDialogSupport {
 
 		aggregateStatusProvider
 				.addValueChangeListener(new IValueChangeListener() {
+					@Override
 					public void handleValueChange(ValueChangeEvent event) {
 						statusProviderChanged();
 					}
 				});
 		dialog.getShell().addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				dispose();
 			}

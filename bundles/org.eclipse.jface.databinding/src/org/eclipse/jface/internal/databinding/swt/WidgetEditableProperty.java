@@ -33,6 +33,7 @@ public class WidgetEditableProperty extends WidgetDelegatingValueProperty {
 		super(Boolean.TYPE);
 	}
 
+	@Override
 	protected IValueProperty doGetDelegate(Object source) {
 		if (source instanceof Text) {
 			if (text == null)

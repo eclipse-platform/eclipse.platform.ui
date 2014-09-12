@@ -31,11 +31,13 @@ abstract class WidgetDelegatingValueProperty extends DelegatingValueProperty
 		super(valueType);
 	}
 
+	@Override
 	public ISWTObservableValue observe(Widget widget) {
 		return (ISWTObservableValue) observe(SWTObservables.getRealm(widget
 				.getDisplay()), widget);
 	}
 
+	@Override
 	public ISWTObservableValue observeDelayed(int delay, Widget widget) {
 		return SWTObservables.observeDelayedValue(delay, observe(widget));
 	}

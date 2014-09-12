@@ -29,6 +29,7 @@ public class ValidationMessageProvider implements IValidationMessageProvider {
 	 * <code>validationStatusProvider</code> as is or <code>null</code> if the
 	 * <code>validationStatusProvider</code> is itself <code>null</code>.
 	 */
+	@Override
 	public String getMessage(ValidationStatusProvider statusProvider) {
 		if (statusProvider != null) {
 			IStatus status = (IStatus) statusProvider.getValidationStatus()
@@ -44,6 +45,7 @@ public class ValidationMessageProvider implements IValidationMessageProvider {
 	 * <code>IStatus</code> contained in the provided
 	 * <code>validationStatusProvider</code>.
 	 */
+	@Override
 	public int getMessageType(ValidationStatusProvider statusProvider) {
 		if (statusProvider == null) {
 			return IMessageProvider.NONE;

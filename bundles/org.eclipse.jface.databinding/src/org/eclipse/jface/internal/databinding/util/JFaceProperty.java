@@ -62,12 +62,14 @@ public class JFaceProperty extends SimpleValueProperty {
 			super(JFaceProperty.this, listener);
 		}
 
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			if (event.getProperty().equals(JFaceProperty.this.property)) {
 				fireChange(event.getSource(), null);
 			}
 		}
 
+		@Override
 		protected void doAddTo(Object model) {
 			try {
 				addPropertyListenerMethod.invoke(model, new Object[] { this });
@@ -76,6 +78,7 @@ public class JFaceProperty extends SimpleValueProperty {
 			}
 		}
 
+		@Override
 		protected void doRemoveFrom(Object model) {
 			try {
 				removePropertyListenerMethod.invoke(model,
@@ -119,11 +122,13 @@ public class JFaceProperty extends SimpleValueProperty {
 		}
 	}
 
+	@Override
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		return new Listener(listener);
 	}
 
+	@Override
 	protected Object doGetValue(Object model) {
 		try {
 			return getterMethod.invoke(model, new Object[] {});
@@ -134,6 +139,7 @@ public class JFaceProperty extends SimpleValueProperty {
 		}
 	}
 
+	@Override
 	protected void doSetValue(Object model, Object value) {
 		try {
 			setterMethod.invoke(model, new Object[] { value });
@@ -144,6 +150,7 @@ public class JFaceProperty extends SimpleValueProperty {
 		}
 	}
 
+	@Override
 	public Object getValueType() {
 		return returnType;
 	}

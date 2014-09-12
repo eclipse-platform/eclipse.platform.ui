@@ -18,14 +18,17 @@ import org.eclipse.swt.widgets.Text;
  * 
  */
 public class TextMessageProperty extends WidgetStringValueProperty {
+	@Override
 	String doGetStringValue(Object source) {
 		return ((Text) source).getMessage();
 	}
 
+	@Override
 	void doSetStringValue(Object source, String value) {
 		((Text) source).setMessage(value == null ? "" : value); //$NON-NLS-1$
 	}
 
+	@Override
 	public String toString() {
 		return "Text.message<String>"; //$NON-NLS-1$
 	}

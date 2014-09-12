@@ -32,6 +32,7 @@ public class WidgetMaximumProperty extends WidgetDelegatingValueProperty {
 		super(Integer.TYPE);
 	}
 
+	@Override
 	protected IValueProperty doGetDelegate(Object source) {
 		if (source instanceof Scale) {
 			if (scale == null)

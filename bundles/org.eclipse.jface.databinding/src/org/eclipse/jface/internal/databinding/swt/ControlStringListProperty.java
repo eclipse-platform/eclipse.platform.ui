@@ -26,20 +26,24 @@ import org.eclipse.swt.widgets.Control;
  * 
  */
 public abstract class ControlStringListProperty extends WidgetListProperty {
+	@Override
 	public Object getElementType() {
 		return String.class;
 	}
 
+	@Override
 	protected void doSetList(Object source, List list, ListDiff diff) {
 		doUpdateList(source, diff);
 	}
 
+	@Override
 	protected void doUpdateList(Object source, ListDiff diff) {
 		doUpdateStringList((Control) source, diff);
 	}
 
 	abstract void doUpdateStringList(Control control, ListDiff diff);
 
+	@Override
 	protected List doGetList(Object source) {
 		String[] list = doGetStringList((Control) source);
 		return Arrays.asList(list);
@@ -47,6 +51,7 @@ public abstract class ControlStringListProperty extends WidgetListProperty {
 
 	abstract String[] doGetStringList(Control control);
 
+	@Override
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		return null;

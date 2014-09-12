@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public abstract class ViewerListProperty extends SimpleListProperty implements
 		IViewerListProperty {
+	@Override
 	public IObservableList observe(Object source) {
 		if (source instanceof Viewer) {
 			return observe((Viewer) source);
@@ -41,6 +42,7 @@ public abstract class ViewerListProperty extends SimpleListProperty implements
 		return super.observe(source);
 	}
 
+	@Override
 	public IObservableList observe(Realm realm, Object source) {
 		IObservableList observable = super.observe(realm, source);
 		if (source instanceof Viewer)
@@ -49,6 +51,7 @@ public abstract class ViewerListProperty extends SimpleListProperty implements
 		return observable;
 	}
 
+	@Override
 	public IViewerObservableList observe(Viewer viewer) {
 		return (IViewerObservableList) observe(SWTObservables.getRealm(viewer
 				.getControl().getDisplay()), viewer);

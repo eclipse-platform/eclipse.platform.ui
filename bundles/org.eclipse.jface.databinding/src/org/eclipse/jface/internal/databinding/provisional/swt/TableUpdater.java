@@ -59,6 +59,7 @@ public abstract class TableUpdater {
 		// Runnable implementation. This method runs at most once per repaint
 		// whenever the
 		// value gets marked as dirty.
+		@Override
 		public void run() {
 			if (table != null && !table.isDisposed() && item != null
 					&& !item.isDisposed()) {
@@ -80,6 +81,7 @@ public abstract class TableUpdater {
 		private void updateIfNecessary(final int indexOfItem) {
 			if (dirty) {
 				dependencies = ObservableTracker.runAndMonitor(new Runnable() {
+					@Override
 					public void run() {
 						updateItem(indexOfItem, item, element);
 					}
@@ -89,6 +91,7 @@ public abstract class TableUpdater {
 		}
 
 		// IChangeListener implementation (listening to the ComputedValue)
+		@Override
 		public void handleChange(ChangeEvent event) {
 			// Whenever this updator becomes dirty, schedule the run() method
 			makeDirty();
@@ -112,6 +115,7 @@ public abstract class TableUpdater {
 		}
 
 		// DisposeListener implementation
+		@Override
 		public void widgetDisposed(DisposeEvent e) {
 			stopListening();
 			dependencies = null;
@@ -122,6 +126,7 @@ public abstract class TableUpdater {
 	private class PrivateInterface implements Listener, DisposeListener {
 
 		// Listener implementation
+		@Override
 		public void handleEvent(Event e) {
 			if (e.type == SWT.SetData) {
 				UpdateRunnable runnable = (UpdateRunnable) e.item.getData();
@@ -136,6 +141,7 @@ public abstract class TableUpdater {
 		}
 
 		// DisposeListener implementation
+		@Override
 		public void widgetDisposed(DisposeEvent e) {
 			TableUpdater.this.dispose();
 		}
@@ -147,6 +153,7 @@ public abstract class TableUpdater {
 	private Table table;
 
 	private IListChangeListener listChangeListener = new IListChangeListener() {
+		@Override
 		public void handleListChange(ListChangeEvent event) {
 			ListDiffEntry[] differences = event.diff.getDifferences();
 			for (int i = 0; i < differences.length; i++) {

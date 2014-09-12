@@ -50,6 +50,7 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 			super(listFactory, structureAdvisor);
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			this.viewer = viewer;
 			super.inputChanged(viewer, oldInput, newInput);
@@ -62,6 +63,7 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 				this.parentElement = parentElement;
 			}
 
+			@Override
 			public void handleListChange(ListChangeEvent event) {
 				if (isViewerDisposed())
 					return;
@@ -73,20 +75,24 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 						.withComparer(comparer);
 				final boolean[] suspendRedraw = new boolean[] { false };
 				event.diff.accept(new ListDiffVisitor() {
+					@Override
 					public void handleAdd(int index, Object element) {
 						localKnownElementAdditions.add(element);
 					}
 
+					@Override
 					public void handleRemove(int index, Object element) {
 						localKnownElementRemovals.add(element);
 					}
 
+					@Override
 					public void handleMove(int oldIndex, int newIndex,
 							Object element) {
 						suspendRedraw[0] = true;
 						// does not affect known elements
 					}
 
+					@Override
 					public void handleReplace(int index, Object oldElement,
 							Object newElement) {
 						suspendRedraw[0] = true;
@@ -118,20 +124,24 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 					viewer.getControl().setRedraw(false);
 				try {
 					event.diff.accept(new ListDiffVisitor() {
+						@Override
 						public void handleAdd(int index, Object child) {
 							viewerUpdater.insert(parentElement, child, index);
 						}
 
+						@Override
 						public void handleRemove(int index, Object child) {
 							viewerUpdater.remove(parentElement, child, index);
 						}
 
+						@Override
 						public void handleReplace(int index, Object oldChild,
 								Object newChild) {
 							viewerUpdater.replace(parentElement, oldChild,
 									newChild, index);
 						}
 
+						@Override
 						public void handleMove(int oldIndex, int newIndex,
 								Object child) {
 							viewerUpdater.move(parentElement, child, oldIndex,
@@ -158,11 +168,13 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 			}
 		}
 
+		@Override
 		protected IObservablesListener createCollectionChangeListener(
 				Object parentElement) {
 			return new ListChangeListener(parentElement);
 		}
 
+		@Override
 		protected void addCollectionChangeListener(
 				IObservableCollection collection, IObservablesListener listener) {
 			IObservableList list = (IObservableList) collection;
@@ -170,6 +182,7 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 			list.addListChangeListener(listListener);
 		}
 
+		@Override
 		protected void removeCollectionChangeListener(
 				IObservableCollection collection, IObservablesListener listener) {
 			IObservableList list = (IObservableList) collection;
@@ -199,22 +212,27 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 		impl = new Impl(listFactory, structureAdvisor);
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		impl.inputChanged(viewer, oldInput, newInput);
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return impl.getElements(inputElement);
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		return impl.hasChildren(element);
 	}
 
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		return impl.getChildren(parentElement);
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		return impl.getParent(element);
 	}
@@ -231,6 +249,7 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 	 * disposal.
 	 * </p>
 	 */
+	@Override
 	public void dispose() {
 		impl.dispose();
 	}

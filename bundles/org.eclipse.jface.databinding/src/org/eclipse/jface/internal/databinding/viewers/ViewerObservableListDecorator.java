@@ -34,6 +34,7 @@ public class ViewerObservableListDecorator extends DecoratingObservableList
 		this.viewer = viewer;
 	}
 
+	@Override
 	public Viewer getViewer() {
 		return viewer;
 	}

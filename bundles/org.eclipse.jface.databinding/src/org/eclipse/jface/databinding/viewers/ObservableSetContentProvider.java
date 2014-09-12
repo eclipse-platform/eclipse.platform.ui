@@ -44,21 +44,25 @@ public class ObservableSetContentProvider implements IStructuredContentProvider 
 			super(explicitViewerUpdater);
 		}
 
+		@Override
 		protected void checkInput(Object input) {
 			Assert.isTrue(input instanceof IObservableSet,
 					"This content provider only works with input of type IObservableSet"); //$NON-NLS-1$
 		}
 
+		@Override
 		protected void addCollectionChangeListener(
 				IObservableCollection collection) {
 			((IObservableSet) collection).addSetChangeListener(this);
 		}
 
+		@Override
 		protected void removeCollectionChangeListener(
 				IObservableCollection collection) {
 			((IObservableSet) collection).removeSetChangeListener(this);
 		}
 
+		@Override
 		public void handleSetChange(SetChangeEvent event) {
 			if (isViewerDisposed())
 				return;
@@ -100,10 +104,12 @@ public class ObservableSetContentProvider implements IStructuredContentProvider 
 		impl = new Impl(viewerUpdater);
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		impl.inputChanged(viewer, oldInput, newInput);
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return impl.getElements(inputElement);
 	}
@@ -120,6 +126,7 @@ public class ObservableSetContentProvider implements IStructuredContentProvider 
 	 * disposal.
 	 * </p>
 	 */
+	@Override
 	public void dispose() {
 		impl.dispose();
 	}

@@ -20,14 +20,17 @@ import org.eclipse.swt.graphics.Image;
  * 
  */
 public abstract class WidgetImageValueProperty extends WidgetValueProperty {
+	@Override
 	public Object getValueType() {
 		return Image.class;
 	}
 
+	@Override
 	protected Object doGetValue(Object source) {
 		return doGetImageValue(source);
 	}
 
+	@Override
 	protected void doSetValue(Object source, Object value) {
 		doSetImageValue(source, (Image) value);
 	}

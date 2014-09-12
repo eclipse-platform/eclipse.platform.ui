@@ -17,14 +17,17 @@ import org.eclipse.swt.widgets.MenuItem;
  * 
  */
 public class MenuItemEnabledProperty extends WidgetBooleanValueProperty {
+	@Override
 	public boolean doGetBooleanValue(Object source) {
 		return ((MenuItem) source).getEnabled();
 	}
 
+	@Override
 	void doSetBooleanValue(Object source, boolean value) {
 		((MenuItem) source).setEnabled(value);
 	}
 
+	@Override
 	public String toString() {
 		return "MenuItem.enabled <boolean>"; //$NON-NLS-1$
 	}

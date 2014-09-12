@@ -31,14 +31,17 @@ public abstract class WidgetBooleanValueProperty extends WidgetValueProperty {
 		super(events);
 	}
 
+	@Override
 	public Object getValueType() {
 		return Boolean.TYPE;
 	}
 
+	@Override
 	protected Object doGetValue(Object source) {
 		return doGetBooleanValue(source) ? Boolean.TRUE : Boolean.FALSE;
 	}
 
+	@Override
 	protected void doSetValue(Object source, Object value) {
 		if (value == null)
 			value = Boolean.FALSE;

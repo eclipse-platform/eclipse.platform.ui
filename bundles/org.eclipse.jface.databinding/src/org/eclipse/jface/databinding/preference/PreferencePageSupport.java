@@ -48,6 +48,7 @@ public class PreferencePageSupport extends DialogPageSupport {
 		return new PreferencePageSupport(preferencePage, dbc);
 	}
 
+	@Override
 	protected void handleStatusChanged() {
 		super.handleStatusChanged();
 		boolean valid = true;

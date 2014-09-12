@@ -18,14 +18,17 @@ import org.eclipse.swt.widgets.ToolTip;
  * 
  */
 public class ToolTipMessageProperty extends WidgetStringValueProperty {
+	@Override
 	String doGetStringValue(Object source) {
 		return ((ToolTip) source).getMessage();
 	}
 
+	@Override
 	void doSetStringValue(Object source, String value) {
 		((ToolTip) source).setMessage(value == null ? "" : value); //$NON-NLS-1$
 	}
 
+	@Override
 	public String toString() {
 		return "ToolTip.message<String>"; //$NON-NLS-1$
 	}

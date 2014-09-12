@@ -19,14 +19,17 @@ import org.eclipse.swt.widgets.TabItem;
  * 
  */
 public class TabItemTooltipTextProperty extends WidgetStringValueProperty {
+	@Override
 	String doGetStringValue(Object source) {
 		return ((TabItem) source).getToolTipText();
 	}
 
+	@Override
 	void doSetStringValue(Object source, String value) {
 		((TabItem) source).setToolTipText(value);
 	}
 
+	@Override
 	public String toString() {
 		return "TabItem.toolTipText <String>"; //$NON-NLS-1$
 	}

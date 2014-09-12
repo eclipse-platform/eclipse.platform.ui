@@ -19,14 +19,17 @@ import org.eclipse.swt.widgets.TrayItem;
  * 
  */
 public class TrayItemTooltipTextProperty extends WidgetStringValueProperty {
+	@Override
 	String doGetStringValue(Object source) {
 		return ((TrayItem) source).getToolTipText();
 	}
 
+	@Override
 	void doSetStringValue(Object source, String value) {
 		((TrayItem) source).setToolTipText(value);
 	}
 
+	@Override
 	public String toString() {
 		return "TrayItem.toolTipText <String>"; //$NON-NLS-1$
 	}

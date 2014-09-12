@@ -62,6 +62,7 @@ public class SWTDelayedObservableValueDecorator extends
 		}
 	}
 
+	@Override
 	public void handleEvent(Event event) {
 		// When the control loses focus..
 		if (event.type == SWT.FocusOut && isStale())
@@ -70,6 +71,7 @@ public class SWTDelayedObservableValueDecorator extends
 		super.handleEvent(event);
 	}
 
+	@Override
 	public synchronized void dispose() {
 		if (control != null) {
 			WidgetListenerUtil.asyncRemoveListener(control, SWT.FocusOut, this);

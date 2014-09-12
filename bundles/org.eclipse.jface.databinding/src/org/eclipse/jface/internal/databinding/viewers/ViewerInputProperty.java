@@ -22,18 +22,22 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  */
 public class ViewerInputProperty extends ViewerValueProperty {
+	@Override
 	public Object getValueType() {
 		return null;
 	}
 
+	@Override
 	protected Object doGetValue(Object source) {
 		return ((Viewer) source).getInput();
 	}
 
+	@Override
 	protected void doSetValue(Object source, Object value) {
 		((Viewer) source).setInput(value);
 	}
 
+	@Override
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		return null;
@@ -46,6 +50,7 @@ public class ViewerInputProperty extends ViewerValueProperty {
 			INativePropertyListener listener) {
 	}
 
+	@Override
 	public String toString() {
 		return "Viewer.input"; //$NON-NLS-1$
 	}

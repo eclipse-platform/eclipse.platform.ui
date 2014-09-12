@@ -22,14 +22,17 @@ import org.eclipse.swt.widgets.List;
  * 
  */
 public class ListItemsProperty extends ControlStringListProperty {
+	@Override
 	protected void doUpdateStringList(final Control control, ListDiff diff) {
 		diff.accept(new ListDiffVisitor() {
 			List list = (List) control;
 
+			@Override
 			public void handleAdd(int index, Object element) {
 				list.add((String) element, index);
 			}
 
+			@Override
 			public void handleRemove(int index, Object element) {
 				list.remove(index);
 			}
@@ -52,6 +55,7 @@ public class ListItemsProperty extends ControlStringListProperty {
 			// }
 			// }
 
+			@Override
 			public void handleReplace(int index, Object oldElement,
 					Object newElement) {
 				list.setItem(index, (String) newElement);
@@ -59,10 +63,12 @@ public class ListItemsProperty extends ControlStringListProperty {
 		});
 	}
 
+	@Override
 	public String[] doGetStringList(Control control) {
 		return ((List) control).getItems();
 	}
 
+	@Override
 	public String toString() {
 		return "List.items[] <String>"; //$NON-NLS-1$
 	}

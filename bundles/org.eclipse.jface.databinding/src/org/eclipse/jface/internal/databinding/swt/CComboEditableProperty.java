@@ -18,14 +18,17 @@ import org.eclipse.swt.custom.CCombo;
  * 
  */
 public class CComboEditableProperty extends WidgetBooleanValueProperty {
+	@Override
 	boolean doGetBooleanValue(Object source) {
 		return ((CCombo) source).getEditable();
 	}
 
+	@Override
 	void doSetBooleanValue(Object source, boolean value) {
 		((CCombo) source).setEditable(value);
 	}
 
+	@Override
 	public String toString() {
 		return "CCombo.editable <boolean>"; //$NON-NLS-1$
 	}

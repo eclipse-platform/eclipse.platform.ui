@@ -28,19 +28,23 @@ import org.eclipse.jface.viewers.ViewerFilter;
  * 
  */
 public class StructuredViewerFiltersProperty extends ViewerSetProperty {
+	@Override
 	public Object getElementType() {
 		return ViewerFilter.class;
 	}
 
+	@Override
 	protected Set doGetSet(Object source) {
 		return new HashSet(Arrays.asList(((StructuredViewer) source)
 				.getFilters()));
 	}
 
+	@Override
 	public void doSetSet(Object source, Set set, SetDiff diff) {
 		doSetSet(source, set);
 	}
 
+	@Override
 	protected void doSetSet(Object source, Set set) {
 		StructuredViewer viewer = (StructuredViewer) source;
 		viewer.getControl().setRedraw(false);
@@ -52,11 +56,13 @@ public class StructuredViewerFiltersProperty extends ViewerSetProperty {
 		}
 	}
 
+	@Override
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		return null;
 	}
 
+	@Override
 	public String toString() {
 		return "StructuredViewer.filters{} <ViewerFilter>"; //$NON-NLS-1$
 	}

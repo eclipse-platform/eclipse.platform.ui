@@ -22,14 +22,17 @@ import org.eclipse.swt.widgets.Control;
  * 
  */
 public class ComboItemsProperty extends ControlStringListProperty {
+	@Override
 	protected void doUpdateStringList(final Control control, ListDiff diff) {
 		diff.accept(new ListDiffVisitor() {
 			Combo combo = (Combo) control;
 
+			@Override
 			public void handleAdd(int index, Object element) {
 				combo.add((String) element, index);
 			}
 
+			@Override
 			public void handleRemove(int index, Object element) {
 				combo.remove(index);
 			}
@@ -52,6 +55,7 @@ public class ComboItemsProperty extends ControlStringListProperty {
 			// }
 			// }
 
+			@Override
 			public void handleReplace(int index, Object oldElement,
 					Object newElement) {
 				combo.setItem(index, (String) newElement);
@@ -59,10 +63,12 @@ public class ComboItemsProperty extends ControlStringListProperty {
 		});
 	}
 
+	@Override
 	public String[] doGetStringList(Control control) {
 		return ((Combo) control).getItems();
 	}
 
+	@Override
 	public String toString() {
 		return "Combo.items[] <String>"; //$NON-NLS-1$
 	}

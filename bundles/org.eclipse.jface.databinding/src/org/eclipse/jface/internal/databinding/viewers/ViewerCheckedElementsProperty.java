@@ -42,6 +42,7 @@ public class ViewerCheckedElementsProperty extends DelegatingSetProperty
 				elementType);
 	}
 
+	@Override
 	protected ISetProperty doGetDelegate(Object source) {
 		if (source instanceof CheckboxTableViewer)
 			return checkboxTableViewer;
@@ -50,6 +51,7 @@ public class ViewerCheckedElementsProperty extends DelegatingSetProperty
 		return checkable;
 	}
 
+	@Override
 	public IViewerObservableSet observe(Viewer viewer) {
 		return (IViewerObservableSet) observe(SWTObservables.getRealm(viewer
 				.getControl().getDisplay()), viewer);

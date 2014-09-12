@@ -39,21 +39,25 @@ public class CheckableCheckedElementsProperty extends SetProperty {
 		this.elementType = elementType;
 	}
 
+	@Override
 	public Object getElementType() {
 		return elementType;
 	}
 
+	@Override
 	protected Set doGetSet(Object source) {
 		throw new UnsupportedOperationException(
 				"Cannot query the checked elements on an ICheckable"); //$NON-NLS-1$
 	}
 
+	@Override
 	protected void doSetSet(Object source, Set set) {
 		throw new UnsupportedOperationException(
 				"Cannot batch replace the checked elements on an ICheckable.  " + //$NON-NLS-1$
 						"Use updateSet(SetDiff) instead"); //$NON-NLS-1$
 	}
 
+	@Override
 	protected void doUpdateSet(Object source, SetDiff diff) {
 		ICheckable checkable = (ICheckable) source;
 		for (Iterator it = diff.getAdditions().iterator(); it.hasNext();)
@@ -62,6 +66,7 @@ public class CheckableCheckedElementsProperty extends SetProperty {
 			checkable.setChecked(it.next(), false);
 	}
 
+	@Override
 	public IObservableSet observe(Object source) {
 		if (source instanceof Viewer) {
 			return observe(SWTObservables.getRealm(((Viewer) source)
@@ -70,6 +75,7 @@ public class CheckableCheckedElementsProperty extends SetProperty {
 		return super.observe(source);
 	}
 
+	@Override
 	public IObservableSet observe(Realm realm, Object source) {
 		IElementComparer comparer = null;
 		if (source instanceof StructuredViewer)

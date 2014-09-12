@@ -59,18 +59,22 @@ public class StyledTextTextProperty extends WidgetStringValueProperty {
 		return new int[] { SWT.Modify };
 	}
 
+	@Override
 	String doGetStringValue(Object source) {
 		return ((StyledText) source).getText();
 	}
 
+	@Override
 	void doSetStringValue(Object source, String value) {
 		((StyledText) source).setText(value == null ? "" : value); //$NON-NLS-1$
 	}
 
+	@Override
 	public String toString() {
 		return "StyledText.text <String>"; //$NON-NLS-1$
 	}
 
+	@Override
 	protected ISWTObservableValue wrapObservable(IObservableValue observable,
 			Widget widget) {
 		return new SWTVetoableValueDecorator(widget, this, observable);

@@ -18,14 +18,17 @@ import org.eclipse.swt.widgets.Scale;
  * 
  */
 public class ScaleMaximumProperty extends WidgetIntValueProperty {
+	@Override
 	int doGetIntValue(Object source) {
 		return ((Scale) source).getMaximum();
 	}
 
+	@Override
 	void doSetIntValue(Object source, int value) {
 		((Scale) source).setMaximum(value);
 	}
 
+	@Override
 	public String toString() {
 		return "Scale.maximum <int>"; //$NON-NLS-1$
 	}

@@ -32,6 +32,7 @@ public class WidgetItemsProperty extends WidgetDelegatingListProperty {
 		super(String.class);
 	}
 
+	@Override
 	protected IListProperty doGetDelegate(Object source) {
 		if (source instanceof CCombo) {
 			if (cCombo == null)

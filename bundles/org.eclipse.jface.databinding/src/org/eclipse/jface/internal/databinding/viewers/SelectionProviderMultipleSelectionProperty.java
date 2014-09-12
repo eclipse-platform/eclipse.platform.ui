@@ -45,10 +45,12 @@ public class SelectionProviderMultipleSelectionProperty extends
 		this.isPostSelection = isPostSelection;
 	}
 
+	@Override
 	public Object getElementType() {
 		return Object.class;
 	}
 
+	@Override
 	protected List doGetList(Object source) {
 		ISelection selection = ((ISelectionProvider) source).getSelection();
 		if (selection instanceof IStructuredSelection) {
@@ -57,20 +59,24 @@ public class SelectionProviderMultipleSelectionProperty extends
 		return Collections.EMPTY_LIST;
 	}
 
+	@Override
 	protected void doSetList(Object source, List list, ListDiff diff) {
 		doSetList(source, list);
 	}
 
+	@Override
 	protected void doSetList(Object source, List list) {
 		((ISelectionProvider) source)
 				.setSelection(new StructuredSelection(list));
 	}
 
+	@Override
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		return new SelectionChangedListener(this, listener, isPostSelection);
 	}
 
+	@Override
 	public String toString() {
 		return isPostSelection ? "IPostSelectionProvider.postSelection[]" //$NON-NLS-1$
 				: "ISelectionProvider.selection[]"; //$NON-NLS-1$

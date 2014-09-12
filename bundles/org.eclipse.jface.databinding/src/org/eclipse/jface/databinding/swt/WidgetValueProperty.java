@@ -89,6 +89,7 @@ public abstract class WidgetValueProperty extends SimpleValueProperty implements
 		this.staleEvents = staleEvents;
 	}
 
+	@Override
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		if (changeEvents == null && staleEvents == null)
@@ -96,6 +97,7 @@ public abstract class WidgetValueProperty extends SimpleValueProperty implements
 		return new WidgetListener(this, listener, changeEvents, staleEvents);
 	}
 
+	@Override
 	public IObservableValue observe(Object source) {
 		if (source instanceof Widget) {
 			return observe((Widget) source);
@@ -103,6 +105,7 @@ public abstract class WidgetValueProperty extends SimpleValueProperty implements
 		return super.observe(source);
 	}
 
+	@Override
 	public IObservableValue observe(Realm realm, Object source) {
 		return wrapObservable(super.observe(realm, source), (Widget) source);
 	}
@@ -112,11 +115,13 @@ public abstract class WidgetValueProperty extends SimpleValueProperty implements
 		return new SWTObservableValueDecorator(observable, widget);
 	}
 
+	@Override
 	public ISWTObservableValue observe(Widget widget) {
 		return (ISWTObservableValue) observe(SWTObservables.getRealm(widget
 				.getDisplay()), widget);
 	}
 
+	@Override
 	public ISWTObservableValue observeDelayed(int delay, Widget widget) {
 		return SWTObservables.observeDelayedValue(delay, observe(widget));
 	}

@@ -63,6 +63,7 @@ public class WizardPageSupport extends DialogPageSupport {
 		return new WizardPageSupport(wizardPage, dbc);
 	}
 
+	@Override
 	protected void handleStatusChanged() {
 		super.handleStatusChanged();
 		boolean pageComplete = true;

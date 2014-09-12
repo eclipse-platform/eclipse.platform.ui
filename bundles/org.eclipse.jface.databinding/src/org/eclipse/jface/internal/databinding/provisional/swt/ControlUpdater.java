@@ -76,17 +76,20 @@ public abstract class ControlUpdater {
 		DisposeListener, Runnable, IChangeListener {
 		
 		// PaintListener implementation
+		@Override
 		public void paintControl(PaintEvent e) {
 			updateIfNecessary();
 		}
 
 		// DisposeListener implementation
+		@Override
 		public void widgetDisposed(DisposeEvent e) {
 			ControlUpdater.this.dispose();
 		}
 		
 		// Runnable implementation. This method runs at most once per repaint whenever the
 		// value gets marked as dirty.
+		@Override
 		public void run() {
 			if (theControl != null && !theControl.isDisposed() && theControl.isVisible()) {
 				updateIfNecessary();
@@ -94,6 +97,7 @@ public abstract class ControlUpdater {
 		}
 		
 		// IChangeListener implementation (listening to the ComputedValue)
+		@Override
 		public void handleChange(ChangeEvent event) {
 			// Whenever this updator becomes dirty, schedule the run() method 
 			makeDirty();
@@ -102,6 +106,7 @@ public abstract class ControlUpdater {
 	}
 	
 	private Runnable updateRunnable = new Runnable() {
+		@Override
 		public void run() {
 			updateControl();
 		}

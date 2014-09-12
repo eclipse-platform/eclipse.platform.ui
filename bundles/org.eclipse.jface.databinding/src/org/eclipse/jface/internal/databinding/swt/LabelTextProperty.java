@@ -18,14 +18,17 @@ import org.eclipse.swt.widgets.Label;
  * 
  */
 public class LabelTextProperty extends WidgetStringValueProperty {
+	@Override
 	String doGetStringValue(Object source) {
 		return ((Label) source).getText();
 	}
 
+	@Override
 	void doSetStringValue(Object source, String value) {
 		((Label) source).setText(value == null ? "" : value); //$NON-NLS-1$
 	}
 
+	@Override
 	public String toString() {
 		return "Label.text <String>"; //$NON-NLS-1$
 	}

@@ -30,18 +30,22 @@ public class ControlLocationProperty extends WidgetValueProperty {
 		super(SWT.Move);
 	}
 
+	@Override
 	public Object getValueType() {
 		return Point.class;
 	}
 
+	@Override
 	protected Object doGetValue(Object source) {
 		return ((Control) source).getLocation();
 	}
 
+	@Override
 	protected void doSetValue(Object source, Object value) {
 		((Control) source).setLocation((Point) value);
 	}
 
+	@Override
 	public String toString() {
 		return "Control.location <Point>"; //$NON-NLS-1$
 	}

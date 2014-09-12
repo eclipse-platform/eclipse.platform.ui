@@ -30,18 +30,22 @@ public class ControlBoundsProperty extends WidgetValueProperty {
 		super(new int[] { SWT.Resize, SWT.Move });
 	}
 
+	@Override
 	public Object getValueType() {
 		return Rectangle.class;
 	}
 
+	@Override
 	protected Object doGetValue(Object source) {
 		return ((Control) source).getBounds();
 	}
 
+	@Override
 	protected void doSetValue(Object source, Object value) {
 		((Control) source).setBounds((Rectangle) value);
 	}
 
+	@Override
 	public String toString() {
 		return "Control.bounds <Rectangle>"; //$NON-NLS-1$
 	}

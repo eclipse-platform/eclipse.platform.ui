@@ -18,14 +18,17 @@ import org.eclipse.swt.widgets.Spinner;
  * 
  */
 public class SpinnerMinimumProperty extends WidgetIntValueProperty {
+	@Override
 	int doGetIntValue(Object source) {
 		return ((Spinner) source).getMinimum();
 	}
 
+	@Override
 	void doSetIntValue(Object source, int value) {
 		((Spinner) source).setMinimum(value);
 	}
 
+	@Override
 	public String toString() {
 		return "Spinner.minimum <int>"; //$NON-NLS-1$
 	}

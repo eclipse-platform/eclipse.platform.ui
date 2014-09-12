@@ -19,14 +19,17 @@ import org.eclipse.swt.widgets.Button;
  * 
  */
 public class ButtonImageProperty extends WidgetImageValueProperty {
+	@Override
 	Image doGetImageValue(Object source) {
 		return ((Button) source).getImage();
 	}
 
+	@Override
 	void doSetImageValue(Object source, Image value) {
 		((Button) source).setImage(value);
 	}
 
+	@Override
 	public String toString() {
 		return "Button.image <Image>"; //$NON-NLS-1$
 	}

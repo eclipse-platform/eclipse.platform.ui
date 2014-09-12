@@ -26,6 +26,7 @@ public class ListSelectionProperty extends WidgetStringValueProperty {
 		super(SWT.Selection);
 	}
 
+	@Override
 	String doGetStringValue(Object source) {
 		List list = (List) source;
 		int index = list.getSelectionIndex();
@@ -34,6 +35,7 @@ public class ListSelectionProperty extends WidgetStringValueProperty {
 		return null;
 	}
 
+	@Override
 	void doSetStringValue(Object source, String value) {
 		List list = (List) source;
 		String items[] = list.getItems();
@@ -49,6 +51,7 @@ public class ListSelectionProperty extends WidgetStringValueProperty {
 		}
 	}
 
+	@Override
 	public String toString() {
 		return "List.selection <String>"; //$NON-NLS-1$
 	}

@@ -25,14 +25,17 @@ public class SliderSelectionProperty extends WidgetIntValueProperty {
 		super(SWT.Selection);
 	}
 
+	@Override
 	int doGetIntValue(Object source) {
 		return ((Slider) source).getSelection();
 	}
 
+	@Override
 	void doSetIntValue(Object source, int value) {
 		((Slider) source).setSelection(value);
 	}
 
+	@Override
 	public String toString() {
 		return "Slider.selection <int>"; //$NON-NLS-1$
 	}

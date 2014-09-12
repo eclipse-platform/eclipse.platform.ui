@@ -18,14 +18,17 @@ import org.eclipse.swt.widgets.Spinner;
  * 
  */
 public class SpinnerMaximumProperty extends WidgetIntValueProperty {
+	@Override
 	int doGetIntValue(Object source) {
 		return ((Spinner) source).getMaximum();
 	}
 
+	@Override
 	void doSetIntValue(Object source, int value) {
 		((Spinner) source).setMaximum(value);
 	}
 
+	@Override
 	public String toString() {
 		return "Spinner.maximum <int>"; //$NON-NLS-1$
 	}

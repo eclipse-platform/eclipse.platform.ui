@@ -66,30 +66,36 @@ public class ObservableViewerElementSet extends AbstractObservableSet {
 		this.comparer = comparer;
 	}
 
+	@Override
 	protected Set getWrappedSet() {
 		return wrappedSet;
 	}
 
+	@Override
 	public Object getElementType() {
 		return elementType;
 	}
 
+	@Override
 	public Iterator iterator() {
 		getterCalled();
 		final Iterator wrappedIterator = wrappedSet.iterator();
 		return new Iterator() {
 			Object last;
 
+			@Override
 			public boolean hasNext() {
 				getterCalled();
 				return wrappedIterator.hasNext();
 			}
 
+			@Override
 			public Object next() {
 				getterCalled();
 				return last = wrappedIterator.next();
 			}
 
+			@Override
 			public void remove() {
 				getterCalled();
 				wrappedIterator.remove();
@@ -99,6 +105,7 @@ public class ObservableViewerElementSet extends AbstractObservableSet {
 		};
 	}
 
+	@Override
 	public boolean add(Object o) {
 		getterCalled();
 		boolean changed = wrappedSet.add(o);
@@ -108,6 +115,7 @@ public class ObservableViewerElementSet extends AbstractObservableSet {
 		return changed;
 	}
 
+	@Override
 	public boolean addAll(Collection c) {
 		getterCalled();
 		Set additions = new ViewerElementSet(comparer);
@@ -122,6 +130,7 @@ public class ObservableViewerElementSet extends AbstractObservableSet {
 		return changed;
 	}
 
+	@Override
 	public boolean remove(Object o) {
 		getterCalled();
 		boolean changed = wrappedSet.remove(o);
@@ -131,6 +140,7 @@ public class ObservableViewerElementSet extends AbstractObservableSet {
 		return changed;
 	}
 
+	@Override
 	public boolean removeAll(Collection c) {
 		getterCalled();
 		Set removals = new ViewerElementSet(comparer);
@@ -145,6 +155,7 @@ public class ObservableViewerElementSet extends AbstractObservableSet {
 		return changed;
 	}
 
+	@Override
 	public boolean retainAll(Collection c) {
 		getterCalled();
 		Set removals = new ViewerElementSet(comparer);
@@ -167,6 +178,7 @@ public class ObservableViewerElementSet extends AbstractObservableSet {
 		return changed;
 	}
 
+	@Override
 	public void clear() {
 		getterCalled();
 		if (!wrappedSet.isEmpty()) {

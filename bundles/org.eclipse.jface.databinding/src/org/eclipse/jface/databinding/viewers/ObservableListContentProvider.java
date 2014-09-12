@@ -52,26 +52,31 @@ public class ObservableListContentProvider implements
 			super(explicitViewerUpdater);
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			this.viewer = viewer;
 			super.inputChanged(viewer, oldInput, newInput);
 		}
 
+		@Override
 		protected void checkInput(Object input) {
 			Assert.isTrue(input instanceof IObservableList,
 					"This content provider only works with input of type IObservableList"); //$NON-NLS-1$
 		}
 
+		@Override
 		protected void addCollectionChangeListener(
 				IObservableCollection collection) {
 			((IObservableList) collection).addListChangeListener(this);
 		}
 
+		@Override
 		protected void removeCollectionChangeListener(
 				IObservableCollection collection) {
 			((IObservableList) collection).removeListChangeListener(this);
 		}
 
+		@Override
 		public void handleListChange(ListChangeEvent event) {
 			if (isViewerDisposed())
 				return;
@@ -83,20 +88,24 @@ public class ObservableListContentProvider implements
 					.withComparer(comparer);
 			final boolean[] suspendRedraw = new boolean[] { false };
 			event.diff.accept(new ListDiffVisitor() {
+				@Override
 				public void handleAdd(int index, Object element) {
 					knownElementAdditions.add(element);
 				}
 
+				@Override
 				public void handleRemove(int index, Object element) {
 					knownElementRemovals.add(element);
 				}
 
+				@Override
 				public void handleMove(int oldIndex, int newIndex,
 						Object element) {
 					suspendRedraw[0] = true;
 					super.handleMove(oldIndex, newIndex, element);
 				}
 
+				@Override
 				public void handleReplace(int index, Object oldElement,
 						Object newElement) {
 					suspendRedraw[0] = true;
@@ -115,19 +124,23 @@ public class ObservableListContentProvider implements
 				viewer.getControl().setRedraw(false);
 			try {
 				event.diff.accept(new ListDiffVisitor() {
+					@Override
 					public void handleAdd(int index, Object element) {
 						viewerUpdater.insert(element, index);
 					}
 
+					@Override
 					public void handleRemove(int index, Object element) {
 						viewerUpdater.remove(element, index);
 					}
 
+					@Override
 					public void handleReplace(int index, Object oldElement,
 							Object newElement) {
 						viewerUpdater.replace(oldElement, newElement, index);
 					}
 
+					@Override
 					public void handleMove(int oldIndex, int newIndex,
 							Object element) {
 						viewerUpdater.move(element, oldIndex, newIndex);
@@ -166,10 +179,12 @@ public class ObservableListContentProvider implements
 		impl = new Impl(viewerUpdater);
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		impl.inputChanged(viewer, oldInput, newInput);
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return impl.getElements(inputElement);
 	}
@@ -186,6 +201,7 @@ public class ObservableListContentProvider implements
 	 * disposal.
 	 * </p>
 	 */
+	@Override
 	public void dispose() {
 		impl.dispose();
 	}

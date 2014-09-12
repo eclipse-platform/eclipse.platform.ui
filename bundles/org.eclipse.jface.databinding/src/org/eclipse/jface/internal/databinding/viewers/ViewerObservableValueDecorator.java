@@ -39,15 +39,18 @@ public class ViewerObservableValueDecorator extends DecoratingObservableValue
 		viewer.getControl().addListener(SWT.Dispose, this);
 	}
 
+	@Override
 	public void handleEvent(Event event) {
 		if (event.type == SWT.Dispose)
 			dispose();
 	}
 
+	@Override
 	public Viewer getViewer() {
 		return viewer;
 	}
 
+	@Override
 	public synchronized void dispose() {
 		if (viewer != null) {
 			Control control = viewer.getControl();

@@ -30,18 +30,22 @@ public class ControlSizeProperty extends WidgetValueProperty {
 		super(SWT.Resize);
 	}
 
+	@Override
 	public Object getValueType() {
 		return Point.class;
 	}
 
+	@Override
 	protected Object doGetValue(Object source) {
 		return ((Control) source).getSize();
 	}
 
+	@Override
 	protected void doSetValue(Object source, Object value) {
 		((Control) source).setSize((Point) value);
 	}
 
+	@Override
 	public String toString() {
 		return "Control.size <Point>"; //$NON-NLS-1$
 	}

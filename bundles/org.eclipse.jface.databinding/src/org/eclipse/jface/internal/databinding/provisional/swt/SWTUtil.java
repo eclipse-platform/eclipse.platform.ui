@@ -94,8 +94,10 @@ public class SWTUtil {
 				final WorkQueue q = result;
 				mapDisplayOntoWorkQueue.put(d, result);
 				d.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						d.disposeExec(new Runnable() {
+							@Override
 							public void run() {
 								synchronized (mapDisplayOntoWorkQueue) {
 									q.cancelAll();
@@ -141,12 +143,15 @@ public class SWTUtil {
 	 * @noreference This method is not intended to be referenced by clients. It
 	 *              remains here for API backwards compatibility.
 	 */
+	@Deprecated
 	public static void logException(final Exception t) {
 		SafeRunnable.run(new SafeRunnable() {
+			@Override
 			public void run() throws Exception {
 				throw t;
 			}
 
+			@Override
 			public void handleException(Throwable e) {
 				// IMPORTANT: Do not call the super implementation, since
 				// it opens a modal dialog, and may cause *syncExecs to run

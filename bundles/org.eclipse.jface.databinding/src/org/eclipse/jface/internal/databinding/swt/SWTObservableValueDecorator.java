@@ -38,15 +38,18 @@ public class SWTObservableValueDecorator extends DecoratingObservableValue
 		WidgetListenerUtil.asyncAddListener(widget, SWT.Dispose, this);
 	}
 
+	@Override
 	public void handleEvent(Event event) {
 		if (event.type == SWT.Dispose)
 			dispose();
 	}
 
+	@Override
 	public Widget getWidget() {
 		return widget;
 	}
 
+	@Override
 	public synchronized void dispose() {
 		if (widget != null) {
 			WidgetListenerUtil.asyncRemoveListener(widget, SWT.Dispose, this);

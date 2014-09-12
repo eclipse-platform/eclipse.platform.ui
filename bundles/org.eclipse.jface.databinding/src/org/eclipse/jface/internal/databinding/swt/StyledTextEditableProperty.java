@@ -18,14 +18,17 @@ import org.eclipse.swt.custom.StyledText;
  * 
  */
 public class StyledTextEditableProperty extends WidgetBooleanValueProperty {
+	@Override
 	boolean doGetBooleanValue(Object source) {
 		return ((StyledText) source).getEditable();
 	}
 
+	@Override
 	void doSetBooleanValue(Object source, boolean value) {
 		((StyledText) source).setEditable(value);
 	}
 
+	@Override
 	public String toString() {
 		return "StyledText.editable <boolean>"; //$NON-NLS-1$
 	}

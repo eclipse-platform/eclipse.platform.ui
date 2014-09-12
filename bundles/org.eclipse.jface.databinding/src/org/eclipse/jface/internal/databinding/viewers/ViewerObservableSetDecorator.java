@@ -33,6 +33,7 @@ public class ViewerObservableSetDecorator extends DecoratingObservableSet
 		this.viewer = viewer;
 	}
 
+	@Override
 	public Viewer getViewer() {
 		return viewer;
 	}

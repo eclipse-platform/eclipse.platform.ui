@@ -39,6 +39,7 @@ public class ViewerLabelProvider implements IViewerLabelProvider,
 	 * Subclasses should override this method. They should not call the base
 	 * class implementation.
 	 */
+	@Override
 	public void updateLabel(ViewerLabel label, Object element) {
 		label.setText(element.toString());
 	}
@@ -60,30 +61,36 @@ public class ViewerLabelProvider implements IViewerLabelProvider,
 		}
 	}
 
+	@Override
 	public final Image getImage(Object element) {
 		ViewerLabel label = new ViewerLabel("", null); //$NON-NLS-1$
 		updateLabel(label, element);
 		return label.getImage();
 	}
 
+	@Override
 	public final String getText(Object element) {
 		ViewerLabel label = new ViewerLabel("", null); //$NON-NLS-1$
 		updateLabel(label, element);
 		return label.getText();
 	}
 
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 		listeners.add(listener);
 	}
 
+	@Override
 	public void dispose() {
 		listeners.clear();
 	}
 
+	@Override
 	public final boolean isLabelProperty(Object element, String property) {
 		return true;
 	}
 
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		listeners.remove(listener);
 	}

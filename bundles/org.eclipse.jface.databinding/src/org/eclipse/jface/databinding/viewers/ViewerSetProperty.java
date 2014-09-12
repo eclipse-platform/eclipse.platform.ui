@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public abstract class ViewerSetProperty extends SimpleSetProperty implements
 		IViewerSetProperty {
+	@Override
 	public IObservableSet observe(Object source) {
 		if (source instanceof Viewer) {
 			return observe((Viewer) source);
@@ -41,6 +42,7 @@ public abstract class ViewerSetProperty extends SimpleSetProperty implements
 		return super.observe(source);
 	}
 
+	@Override
 	public IObservableSet observe(Realm realm, Object source) {
 		IObservableSet observable = super.observe(realm, source);
 		if (source instanceof Viewer)
@@ -48,6 +50,7 @@ public abstract class ViewerSetProperty extends SimpleSetProperty implements
 		return observable;
 	}
 
+	@Override
 	public IViewerObservableSet observe(Viewer viewer) {
 		return (IViewerObservableSet) observe(SWTObservables.getRealm(viewer
 				.getControl().getDisplay()), viewer);

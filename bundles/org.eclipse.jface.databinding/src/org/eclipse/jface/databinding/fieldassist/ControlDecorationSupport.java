@@ -139,24 +139,29 @@ public class ControlDecorationSupport {
 	private IObservableList targets;
 
 	private IDisposeListener disposeListener = new IDisposeListener() {
+		@Override
 		public void handleDispose(DisposeEvent staleEvent) {
 			dispose();
 		}
 	};
 
 	private IValueChangeListener statusChangeListener = new IValueChangeListener() {
+		@Override
 		public void handleValueChange(ValueChangeEvent event) {
 			statusChanged((IStatus) validationStatus.getValue());
 		}
 	};
 
 	private IListChangeListener targetsChangeListener = new IListChangeListener() {
+		@Override
 		public void handleListChange(ListChangeEvent event) {
 			event.diff.accept(new ListDiffVisitor() {
+				@Override
 				public void handleAdd(int index, Object element) {
 					targetAdded((IObservable) element);
 				}
 
+				@Override
 				public void handleRemove(int index, Object element) {
 					targetRemoved((IObservable) element);
 				}

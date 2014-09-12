@@ -31,14 +31,17 @@ public abstract class WidgetIntValueProperty extends WidgetValueProperty {
 		super(events);
 	}
 
+	@Override
 	public Object getValueType() {
 		return Integer.TYPE;
 	}
 
+	@Override
 	protected Object doGetValue(Object source) {
 		return new Integer(doGetIntValue(source));
 	}
 
+	@Override
 	protected void doSetValue(Object source, Object value) {
 		doSetIntValue(source, ((Integer) value).intValue());
 	}

@@ -46,6 +46,7 @@ public class WidgetTextProperty extends WidgetDelegatingValueProperty {
 		super(String.class);
 	}
 
+	@Override
 	protected IValueProperty doGetDelegate(Object source) {
 		if (source instanceof Button) {
 			if (button == null)

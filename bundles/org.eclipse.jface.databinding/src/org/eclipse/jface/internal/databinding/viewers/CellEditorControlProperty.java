@@ -22,23 +22,28 @@ import org.eclipse.swt.widgets.Control;
  * 
  */
 public class CellEditorControlProperty extends SimpleValueProperty {
+	@Override
 	public Object getValueType() {
 		return Control.class;
 	}
 
+	@Override
 	protected Object doGetValue(Object source) {
 		return ((CellEditor) source).getControl();
 	}
 
+	@Override
 	protected void doSetValue(Object source, Object value) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		return null;
 	}
 
+	@Override
 	public String toString() {
 		return super.toString();
 	}

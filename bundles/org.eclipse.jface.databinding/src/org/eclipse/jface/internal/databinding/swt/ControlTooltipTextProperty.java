@@ -18,14 +18,17 @@ import org.eclipse.swt.widgets.Control;
  * 
  */
 public class ControlTooltipTextProperty extends WidgetStringValueProperty {
+	@Override
 	String doGetStringValue(Object source) {
 		return ((Control) source).getToolTipText();
 	}
 
+	@Override
 	void doSetStringValue(Object source, String value) {
 		((Control) source).setToolTipText(value);
 	}
 
+	@Override
 	public String toString() {
 		return "Control.tooltipText <String>"; //$NON-NLS-1$
 	}
