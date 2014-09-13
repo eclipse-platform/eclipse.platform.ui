@@ -7,32 +7,41 @@
  *
  * Contributors:
  *     Marcus Eng (Google) - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring.preferences;
 
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.ListEditor;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.internal.monitoring.MonitoringPlugin;
-import org.eclipse.ui.monitoring.PreferenceConstants;
+import org.eclipse.swt.widgets.List;
 
 /**
  * Displays the list of traces to filter out and ignore.
  */
-public class ListFieldEditor extends ListEditor {
-	private FilterInputDialog dialog;
-
-	ListFieldEditor(String name, String labelText, Composite parent) {
+public class FilterListEditor extends ListEditor {
+	FilterListEditor(String name, String labelText, Composite parent) {
 		super(name, labelText, parent);
-		super.getAddButton().setText(Messages.ListFieldEditor_add_filter_button_label);
-		super.getUpButton().setVisible(false);
-		super.getDownButton().setVisible(false);
-		dialog = new FilterInputDialog(super.getShell());
-		this.setEnabled(MonitoringPlugin.getDefault().getPreferenceStore()
-				.getBoolean(PreferenceConstants.MONITORING_ENABLED), parent);
+		getAddButton().setText(Messages.ListFieldEditor_add_filter_button_label);
+		getUpButton().setVisible(false);
+		getDownButton().setVisible(false);
 	}
 
+    @Override
+	protected void doFillIntoGrid(Composite parent, int numColumns) {
+    	super.doFillIntoGrid(parent, numColumns);
+        List list = getListControl(parent);
+        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true, numColumns - 1, 1);
+    	PixelConverter pixelConverter = new PixelConverter(parent);
+        gd.widthHint = pixelConverter.convertWidthInCharsToPixels(65);
+        list.setLayoutData(gd);
+    }
+
 	/**
-	 * Handles the parsing of defined traces to be filtered.
+	 * Handles parsing of defined traces to be filtered.
 	 */
 	@Override
 	protected String createList(String[] items) {
@@ -51,11 +60,9 @@ public class ListFieldEditor extends ListEditor {
 
 	@Override
 	protected String getNewInputObject() {
-		dialog.open();
-		String input = dialog.getInput();
-		if (input != null && !input.isEmpty() && !input.contains(",")) { //$NON-NLS-1$
-			input.trim();
-			return dialog.getInput();
+		FilterInputDialog dialog = new FilterInputDialog(getShell());
+		if (dialog.open() == Window.OK) {
+			return dialog.getFilter();
 		}
 		return null;
 	}
