@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.tests.services;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -43,6 +46,8 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 	private SiteUpdateJob updateJob;
 	private WorkbenchSiteProgressService progressService;
 	private IWorkbenchPartSite site;
+
+	private SimpleDateFormat dateFormat;
     
 	@Override
 	protected void doSetUp() throws Exception {
@@ -54,6 +59,8 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 		site = activePart.getSite();
 		progressService = (WorkbenchSiteProgressService) site.getService(IWorkbenchSiteProgressService.class);
 		updateJob = progressService.getUpdateJob();
+
+		dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z");
 	}
 	
 	public void forceUpdate() {
@@ -68,33 +75,46 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 
 		try {
 			progressService.schedule(jobWithCursor, 0, true);
+			logTime("after schedule:   ");
 
 			while (jobWithCursor.getState() != Job.RUNNING) {
 				Thread.sleep(100);
 			}
+			logTime("after waiting:    ");
 
 			processEvents();
+			logTime("after process:    ");
 			forceUpdate();
+			logTime("after update:     ");
 			processEvents();
+			logTime("after process2:   ");
 
 			Cursor cursor = ((Control) ((PartSite) site).getModel().getWidget())
 			        .getCursor();
+			logTime("after getCursor:  ");
 			assertNotNull(cursor);
 		} finally {
 			jobWithCursor.cancel();
+			logTime("after cancel:     ");
 			processEvents();
+			logTime("after process3:   ");
 
 			// wait till this job is done
 			while (jobWithCursor.getState() == Job.RUNNING) {
 				Thread.sleep(100);
 			}
+			logTime("after done:       ");
 
 			processEvents();
+			logTime("after process4:   ");
 			forceUpdate();
+			logTime("after update2:    ");
 			processEvents();
+			logTime("after process5:   ");
 		}
 		Cursor cursor = ((Control) ((PartSite) site).getModel().getWidget())
 		        .getCursor();
+		logTime("after getCursor2: ");
 		assertNull(cursor); // no jobs, no cursor
 	}
 
@@ -110,56 +130,80 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 		try {
 			progressService.schedule(jobWithCursor, 2000, true);
 			progressService.schedule(jobWithoutCursor, 0, false);
+			logTime("after schedule:   ");
 
 			while (jobWithoutCursor.getState() != Job.RUNNING) {
 				Thread.sleep(100);
 			}
+			logTime("after waiting:    ");
 
 			processEvents();
+			logTime("after process:    ");
 
 			// we just want the jobWithoutCursor running
 			assertTrue(jobWithCursor.getState() != Job.RUNNING);
 
 			forceUpdate();
+			logTime("after update:     ");
 			processEvents();
+			logTime("after process2:   ");
+
 			Cursor cursor = ((Control) ((PartSite) site).getModel().getWidget())
 			        .getCursor();
+			logTime("after getCursor:  ");
 			assertNull(cursor); // jobWithoutCursor is scheduled to run first -
 								// no cursor now
 
 			while (jobWithCursor.getState() != Job.RUNNING) {
 				Thread.sleep(100);
 			}
+			logTime("after waiting2:   ");
 
 			processEvents();
+			logTime("after process3:   ");
 
 			// both jobs should be running
 			assertTrue(jobWithCursor.getState() == Job.RUNNING
 			        && jobWithoutCursor.getState() == Job.RUNNING);
 
 			forceUpdate();
+			logTime("after update2:    ");
 			processEvents();
+			logTime("after process4:   ");
 			cursor = ((Control) ((PartSite) site).getModel().getWidget())
 			        .getCursor();
+			logTime("after getCursor2: ");
 			assertNotNull(cursor); // both running now - cursor should be set
 		} finally {
 			jobWithCursor.cancel();
+			logTime("after cancel:     ");
 			jobWithoutCursor.cancel();
+			logTime("after cancel2:    ");
 			processEvents();
+			logTime("after process5:   ");
 
 			// wait till the jobs are done
 			while (jobWithCursor.getState() == Job.RUNNING
 			        || jobWithoutCursor.getState() == Job.RUNNING) {
 				Thread.sleep(100);
 			}
+			logTime("after done:       ");
 
 			processEvents();
+			logTime("after process6:   ");
 			forceUpdate();
+			logTime("after update3:    ");
 			processEvents();
+			logTime("after process7:   ");
 		}
 		Cursor cursor = ((Control) ((PartSite) site).getModel().getWidget())
 		        .getCursor();
+		logTime("after getCursor3: ");
 		assertNull(cursor); // no jobs, no cursor
+	}
+
+	private void logTime(String message) {
+		System.out.println(message + dateFormat.format(new Date()));
 	}
 
 	class LongJob extends Job{
