@@ -85,8 +85,8 @@ public class FilterHandler {
 	}
 
 	/**
-	 * Checks if the stack trace contains fully qualified names of the methods that should be
-	 * ignored.
+	 * Checks if the top frame of the stack trace of the display thread contains the fully qualified
+	 * name of a method that should be ignored.
 	 */
 	private boolean hasFilteredTraces(ThreadInfo[] stackTraces, long displayThreadId) {
 		for (ThreadInfo threadInfo : stackTraces) {
@@ -100,7 +100,8 @@ public class FilterHandler {
 	}
 
 	private boolean matchesFilter(StackTraceElement[] stackTraces) {
-		for (StackTraceElement element : stackTraces) {
+		if (stackTraces.length > 0) {
+			StackTraceElement element = stackTraces[0];
 			String methodName = element.getMethodName();
 			String className = element.getClassName();
 			// Binary search.
