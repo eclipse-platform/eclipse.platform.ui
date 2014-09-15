@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,24 @@ public class LinkedModeModelTest extends TestCase {
 		assertUnchanged(group1);
 	}
 
+	public void testUpdateUnequalContent() throws BadLocationException {
+		IDocument doc1= new Document(GARTEN1);
+		
+		// set up linked mode
+		LinkedPositionGroup group1= new LinkedPositionGroup();
+		createLinkedPositions(group1, doc1, "Allumfasser");
+		createLinkedPositions(group1, doc1, "Gott");
+		LinkedModeModel env= new LinkedModeModel();
+		env.addGroup(group1);
+		env.forceInstall();
+		
+		// edit the document
+		doc1.replace(GARTEN1.indexOf("Gott"), 4, "SUPERMAN");
+		
+		assertEquals(group1, "SUPERMAN");
+		assertUnchanged(group1);
+	}
+	
 	public void testUpdateTwoGroups() throws BadLocationException {
 		IDocument doc1= new Document(GARTEN1);
 

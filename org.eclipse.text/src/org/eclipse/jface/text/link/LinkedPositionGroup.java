@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,11 @@ import org.eclipse.jface.text.Region;
 /**
  * A group of positions in multiple documents that are simultaneously modified -
  * if one gets edited, all other positions in a group are edited the same way.
- * All linked positions in a group have the same content.
+ * <p>
+ * All linked positions in a group should have the same content.
+ * Before 3.5.400, this was enforced. Now, if one position of a mixed group gets edited,
+ * the content of all other positions is replaced by the edited position's content.
+ * </p>
  * <p>
  * Normally, new positions are given a {@link LinkedPosition#getSequenceNumber() sequence number} which can be used by
  * clients, e.g. in the UI as tab stop weight. If {@link #NO_STOP} is used as weight, a position will not be visited.
@@ -77,12 +81,19 @@ public class LinkedPositionGroup {
 	 * change.
 	 */
 	private IRegion fLastRegion;
+	
+	/**
+	 * <code>true</code> iff not all positions contain the same content.
+	 * In that case, the contents of the last edited position will replace the
+	 * contents of all other linked positions.
+	 */
+	private boolean fMustEnforceEqualContents= false;
 
 	/**
 	 * Adds a position to this group. The document region defined by the
-	 * position must contain the same content (and thus have the same length) as
-	 * any of the other positions already in this group. Additionally, all
-	 * positions added must be disjoint; otherwise a
+	 * position should contain the same content as all of the other positions
+	 * already in this group.
+	 * All positions added must be valid and disjoint; otherwise a
 	 * <code>BadLocationException</code> is thrown.
 	 * <p>
 	 * Positions added using this method are owned by this group afterwards and
@@ -110,7 +121,7 @@ public class LinkedPositionGroup {
 
 		if (!fPositions.contains(position)) {
 			enforceDisjoint(position);
-			enforceEqualContent(position);
+			checkContent(position);
 			fPositions.add(position);
 			fHasCustomIteration |= position.getSequenceNumber() != LinkedPositionGroup.NO_STOP;
 		} else
@@ -118,20 +129,20 @@ public class LinkedPositionGroup {
 	}
 
 	/**
-	 * Enforces the invariant that all positions must contain the same string.
+	 * Checks whether all positions contain the same string as the given position.
+	 * If not, then {@link #fMustEnforceEqualContents} is set to <code>true</code>.
 	 *
 	 * @param position the position to check
-	 * @throws BadLocationException if the equal content check fails
+	 * @throws BadLocationException if the position is invalid
 	 */
-	private void enforceEqualContent(LinkedPosition position) throws BadLocationException {
+	private void checkContent(LinkedPosition position) throws BadLocationException {
 		if (fPositions.size() > 0) {
 			LinkedPosition groupPosition= (LinkedPosition) fPositions.get(0);
 			String groupContent= groupPosition.getContent();
 			String positionContent= position.getContent();
-			if (!groupContent.equals(positionContent))
-				throw new BadLocationException(
-						"First position: '" + groupContent + "' at " + groupPosition.getOffset() + //$NON-NLS-1$ //$NON-NLS-2$
-						", this position: '" + positionContent + "' at " + position.getOffset()); //$NON-NLS-1$ //$NON-NLS-2$
+			if (!fMustEnforceEqualContents && !groupContent.equals(positionContent)) {
+				fMustEnforceEqualContents= true;
+			}
 		}
 	}
 
@@ -250,8 +261,17 @@ public class LinkedPositionGroup {
 					map.put(p.getDocument(), edits);
 				}
 
-				edits.add(new ReplaceEdit(p.getOffset() + relativeOffset, length, text));
+				if (fMustEnforceEqualContents) {
+					try {
+						edits.add(new ReplaceEdit(p.getOffset(), p.getLength(), fLastPosition.getContent()));
+					} catch (BadLocationException e) {
+						throw new RuntimeException(e); // should not happen
+					}
+				} else {
+					edits.add(new ReplaceEdit(p.getOffset() + relativeOffset, length, text));
+				}
 			}
+			fMustEnforceEqualContents= false;
 
 			try {
 				for (Iterator it= map.keySet().iterator(); it.hasNext();) {
