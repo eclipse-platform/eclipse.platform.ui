@@ -11,6 +11,7 @@
  *     - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml    
  *     Markus Alexander Kuppe, Versant Corporation - bug #215797
  *     Semion Chichelnitsky (semion@il.ibm.com) - bug 208564
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 441184
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -693,8 +694,6 @@ public interface IWorkbenchRegistryConstants {
 	public static String PL_PREFERENCE_TRANSFER = "preferenceTransfer"; //$NON-NLS-1$
 
 	public static String PL_PREFERENCES = "preferencePages"; //$NON-NLS-1$
-
-	public static String PL_PRESENTATION_FACTORIES = "presentationFactories"; //$NON-NLS-1$
 
 	public static String PL_PROPERTY_PAGES = "propertyPages"; //$NON-NLS-1$
 

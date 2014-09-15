@@ -527,21 +527,19 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Returns the presentation factory with the given id, or <code>null</code> if not found.
-     * @param targetID The id of the presentation factory to use.
-     * @return AbstractPresentationFactory or <code>null</code>
-     * if not factory matches that id.
-     */
+	 * Returns the presentation factory with the given id, or <code>null</code>
+	 * if not found.
+	 * 
+	 * @param targetID
+	 *            The id of the presentation factory to use.
+	 * @return AbstractPresentationFactory or <code>null</code> if not factory
+	 *         matches that id.
+	 * 
+	 * @deprecated Does not do anything anymore
+	 */
+	@Deprecated
     public AbstractPresentationFactory getPresentationFactory(String targetID) {
-        Object o = createExtension(
-                IWorkbenchRegistryConstants.PL_PRESENTATION_FACTORIES,
-                "factory", targetID); //$NON-NLS-1$
-        if (o instanceof AbstractPresentationFactory) {
-            return (AbstractPresentationFactory) o;
-        }
-        WorkbenchPlugin
-                .log("Error creating presentation factory: " + targetID + " -- class is not an AbstractPresentationFactory"); //$NON-NLS-1$ //$NON-NLS-2$
-        return null;
+		return null;
     }
 
     /**
