@@ -87,6 +87,10 @@ public class ShowInMenu extends ContributionItem implements
 
 	private MenuManager currentManager;
 
+	public ShowInMenu() {
+
+	}
+
 	/**
 	 * Creates a Show In menu.
 	 * 
