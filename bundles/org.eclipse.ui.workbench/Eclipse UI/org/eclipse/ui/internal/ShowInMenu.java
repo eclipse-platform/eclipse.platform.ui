@@ -17,7 +17,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -73,8 +72,6 @@ public class ShowInMenu extends ContributionItem implements
 	private static final String NO_TARGETS_MSG = WorkbenchMessages.Workbench_showInNoTargets;
 
 	private IWorkbenchWindow window;
-
-	private Map actions = new HashMap(21);
 
 	private boolean dirty = true;
 
@@ -436,7 +433,6 @@ public class ShowInMenu extends ContributionItem implements
 		if (getParent() instanceof MenuManager) {
 			((MenuManager) getParent()).removeMenuListener(menuListener);
 		}
-		actions.clear();
 		window=null;
 		locator=null;
 	}
