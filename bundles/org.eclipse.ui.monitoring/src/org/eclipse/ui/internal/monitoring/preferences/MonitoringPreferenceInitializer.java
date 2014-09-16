@@ -33,6 +33,8 @@ public class MonitoringPreferenceInitializer extends AbstractPreferenceInitializ
 			defaultFilterTraces = "org.eclipse.swt.internal.win32.OS.DefWindowProcA" //$NON-NLS-1$
 					+ ",org.eclipse.swt.internal.win32.OS.DefWindowProcW" //$NON-NLS-1$
 					+ "org.eclipse.swt.internal.win32.OS.TrackPopupMenu"; //$NON-NLS-1$
+		} else if (Util.isCocoa()) {
+			defaultFilterTraces = "org.eclipse.swt.widgets.Display.applicationNextEventMatchingMask"; //$NON-NLS-1$
 		} else {
 			defaultFilterTraces = ""; //$NON-NLS-1$
 		}
