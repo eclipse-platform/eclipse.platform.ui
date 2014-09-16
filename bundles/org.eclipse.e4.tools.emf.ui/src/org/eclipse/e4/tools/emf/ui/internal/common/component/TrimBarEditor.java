@@ -8,10 +8,12 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
+ *     Steven Spungin <steven@spungin.tv> - Ongoing maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -24,11 +26,12 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
-import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeatures;
+import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
+import org.eclipse.e4.tools.emf.ui.internal.common.EClassLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericTrimContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
@@ -45,16 +48,13 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -62,13 +62,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -210,121 +206,25 @@ public class TrimBarEditor extends AbstractComponentEditor {
 
 		// ------------------------------------------------------------
 		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.TrimBarEditor_Controls);
-			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
-
-			Composite buttonCompTop = new Composite(parent, SWT.NONE);
-			buttonCompTop.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false, 2, 1));
-			GridLayout gl = new GridLayout(2, false);
-			gl.marginLeft = 0;
-			gl.marginRight = 0;
-			gl.marginWidth = 0;
-			gl.marginHeight = 0;
-			buttonCompTop.setLayout(gl);
-
-			final ComboViewer typeViewer = new ComboViewer(buttonCompTop, SWT.READ_ONLY);
-			typeViewer.setContentProvider(new ArrayContentProvider());
-			typeViewer.setLabelProvider(new LabelProvider() {
+			E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
-				public String getText(Object element) {
-					return ((EClass) element).getName();
-				}
-			});
-			typeViewer.setInput(new Object[] { MenuPackageImpl.Literals.TOOL_BAR, MenuPackageImpl.Literals.TOOL_CONTROL });
-			typeViewer.setSelection(new StructuredSelection(MenuPackageImpl.Literals.TOOL_BAR));
-			typeViewer.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-
-			Button b = new Button(buttonCompTop, SWT.PUSH | SWT.FLAT);
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					EClass eClass = (EClass) ((IStructuredSelection) typeViewer.getSelection()).getFirstElement();
+				protected void addPressed() {
+					EClass eClass = (EClass) ((IStructuredSelection) getPicker().getSelection()).getFirstElement();
 					handleAddChild(eClass);
 				}
-			});
+			};
+			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+			pickList.setText(Messages.TrimBarEditor_Controls);
 
-			new Label(parent, SWT.NONE);
+			final TableViewer viewer = pickList.getList();
 
-			final TableViewer viewer = new TableViewer(parent);
-			viewer.setLabelProvider(new ComponentLabelProvider(editor, Messages));
-			viewer.setContentProvider(new ObservableListContentProvider());
-			GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1);
-			viewer.getControl().setLayoutData(gd);
+			final ComboViewer typeViewer = pickList.getPicker();
+			typeViewer.setLabelProvider(new EClassLabelProvider(getEditor()));
+			typeViewer.setInput(new Object[] { MenuPackageImpl.Literals.TOOL_BAR, MenuPackageImpl.Literals.TOOL_CONTROL });
+			typeViewer.setSelection(new StructuredSelection(MenuPackageImpl.Literals.TOOL_BAR));
 
 			IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			viewer.setInput(prop.observeDetail(getMaster()));
-
-			new Label(parent, SWT.NONE);
-
-			Composite buttonCompBot = new Composite(parent, SWT.NONE);
-			buttonCompBot.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false, 2, 1));
-			buttonCompBot.setLayout(new FillLayout());
-
-			b = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_Up);
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (!viewer.getSelection().isEmpty()) {
-						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-						if (s.size() == 1) {
-							Object obj = s.getFirstElement();
-							MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
-							int idx = container.getChildren().indexOf(obj) - 1;
-							if (idx >= 0) {
-								if (Util.moveElementByIndex(getEditingDomain(), (MUIElement) obj, getEditor().isLiveModel(), idx)) {
-									viewer.setSelection(new StructuredSelection(obj));
-								}
-							}
-
-						}
-					}
-				}
-			});
-
-			b = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_Down);
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (!viewer.getSelection().isEmpty()) {
-						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-						if (s.size() == 1) {
-							Object obj = s.getFirstElement();
-							MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
-							int idx = container.getChildren().indexOf(obj) + 1;
-							if (idx < container.getChildren().size()) {
-								if (Util.moveElementByIndex(getEditingDomain(), (MUIElement) obj, getEditor().isLiveModel(), idx)) {
-									viewer.setSelection(new StructuredSelection(obj));
-								}
-							}
-
-						}
-					}
-				}
-			});
-
-			b = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_Remove);
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_delete));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (!viewer.getSelection().isEmpty()) {
-						List<?> elements = ((IStructuredSelection) viewer.getSelection()).toList();
-
-						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, elements);
-						if (cmd.canExecute()) {
-							getEditingDomain().getCommandStack().execute(cmd);
-						}
-					}
-				}
-			});
 		}
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));

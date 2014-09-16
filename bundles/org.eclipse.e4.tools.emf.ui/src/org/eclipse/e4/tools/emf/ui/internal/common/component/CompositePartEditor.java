@@ -16,6 +16,7 @@ import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.FeatureClassLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.PartIconDialogEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
@@ -332,15 +333,8 @@ public class CompositePartEditor extends AbstractComponentEditor {
 			buttonCompTop.setLayout(gl);
 
 			final ComboViewer childrenDropDown = new ComboViewer(buttonCompTop);
-			childrenDropDown.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			childrenDropDown.setContentProvider(new ArrayContentProvider());
-			childrenDropDown.setLabelProvider(new LabelProvider() {
-				@Override
-				public String getText(Object element) {
-					FeatureClass eFeatureClass = (FeatureClass) element;
-					return eFeatureClass.eClass.getName();
-				}
-			});
+			childrenDropDown.setLabelProvider(new FeatureClassLabelProvider(getEditor()));
+
 			List<FeatureClass> eClassList = new ArrayList<FeatureClass>();
 			eClassList.add(new FeatureClass("PartSashContainer", BasicPackageImpl.Literals.PART_SASH_CONTAINER)); //$NON-NLS-1$
 			eClassList.add(new FeatureClass("PartStack", BasicPackageImpl.Literals.PART_STACK)); //$NON-NLS-1$

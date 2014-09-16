@@ -8,6 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Wim Jongman <wim.jongman@remainsoftware.com> - bug 400804
+ *     Steven Spungin <steven@spungin.tv> - Ongoing maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
@@ -20,13 +21,15 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
-import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
+import org.eclipse.e4.tools.emf.ui.internal.common.EClassLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
-import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.ViewerElement;
 import org.eclipse.e4.tools.emf.ui.internal.imp.ModelImportWizard;
 import org.eclipse.e4.tools.emf.ui.internal.imp.RegistryUtil;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -36,13 +39,9 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.MoveCommand;
-import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.window.Window;
@@ -50,9 +49,8 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
@@ -167,94 +165,28 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 
 		{
 
-			final ViewerElement tableElement = ViewerElement.create(eclipseContext, parent, this);
-			viewer = tableElement.getViewer();
-			viewer.setContentProvider(new ObservableListContentProvider());
-			viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
+			AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS) {
+				@Override
+				protected void addPressed() {
+					EClass eClass = (EClass) ((IStructuredSelection) getPicker().getSelection()).getFirstElement();
+					handleAdd(eClass);
+				}
+
+				@Override
+				protected List<?> getContainerChildren(Object container) {
+					return ((MWindow) container).getSharedElements();
+				}
+			};
+			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+			viewer = pickList.getList();
 
 			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS);
 			viewer.setInput(prop.observeDetail(getMaster()));
 
-			tableElement.getButtonUp().addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-
-					if (!viewer.getSelection().isEmpty()) {
-						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-						if (s.size() == 1) {
-							Object obj = s.getFirstElement();
-							EObject container = (EObject) getMaster().getValue();
-							int idx = ((List<?>) container.eGet(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS)).indexOf(obj) - 1;
-							if (idx >= 0) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS, obj, idx);
-
-								if (cmd.canExecute()) {
-									getEditingDomain().getCommandStack().execute(cmd);
-									viewer.setSelection(new StructuredSelection(obj));
-								}
-							}
-						}
-					}
-				}
-			});
-
-			tableElement.getButtonDown().addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (!viewer.getSelection().isEmpty()) {
-						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-						if (s.size() == 1) {
-							Object obj = s.getFirstElement();
-							EObject container = (EObject) getMaster().getValue();
-							List<?> list = (List<?>) container.eGet(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS);
-							int idx = list.indexOf(obj) + 1;
-							if (idx < list.size()) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS, obj, idx);
-
-								if (cmd.canExecute()) {
-									getEditingDomain().getCommandStack().execute(cmd);
-									viewer.setSelection(new StructuredSelection(obj));
-								}
-							}
-						}
-					}
-				}
-			});
-
-			tableElement.getDropDown().setContentProvider(new ArrayContentProvider());
-			tableElement.getDropDown().setLabelProvider(new LabelProvider() {
-				@Override
-				public String getText(Object element) {
-					EClass eclass = (EClass) element;
-					return eclass.getName();
-				}
-			});
-			tableElement.getDropDown().setInput(new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, BasicPackageImpl.Literals.PART_STACK, AdvancedPackageImpl.Literals.AREA });
-			tableElement.getDropDown().setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART));
-
-			tableElement.getButtonAdd().addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (!tableElement.getDropDown().getSelection().isEmpty()) {
-						EClass eClass = (EClass) ((IStructuredSelection) tableElement.getDropDown().getSelection()).getFirstElement();
-						handleAdd(eClass);
-					}
-				}
-			});
-
-			tableElement.getButtonRemove().addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (!viewer.getSelection().isEmpty()) {
-						List<?> elements = ((IStructuredSelection) viewer.getSelection()).toList();
-
-						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS, elements);
-						if (cmd.canExecute()) {
-							getEditingDomain().getCommandStack().execute(cmd);
-						}
-					}
-				}
-			});
+			final ComboViewer tableElement = pickList.getPicker();
+			tableElement.setLabelProvider(new EClassLabelProvider(getEditor()));
+			tableElement.setInput(new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, BasicPackageImpl.Literals.PART_STACK, AdvancedPackageImpl.Literals.AREA });
+			tableElement.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART));
 		}
 
 		folder.setSelection(0);

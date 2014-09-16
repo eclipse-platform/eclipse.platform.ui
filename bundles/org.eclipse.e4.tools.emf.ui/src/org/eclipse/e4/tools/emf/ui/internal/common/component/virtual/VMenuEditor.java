@@ -7,8 +7,11 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - Ongoing maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +22,10 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
-import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
-import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.ViewerElement;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
@@ -33,11 +36,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.MoveCommand;
-import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -45,9 +46,8 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
@@ -135,60 +135,36 @@ public class VMenuEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		final ViewerElement tableElement = ViewerElement.create(eclipseContext, parent, this);
-		viewer = tableElement.getViewer();
-		viewer.setContentProvider(new ObservableListContentProvider());
-		viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
-
-		tableElement.getButtonUp().addSelectionListener(new SelectionAdapter() {
+		AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, feature) {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!viewer.getSelection().isEmpty()) {
-					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-					if (s.size() == 1) {
-						Object obj = s.getFirstElement();
-						EObject container = (EObject) getMaster().getValue();
-						int idx = ((List<?>) container.eGet(feature)).indexOf(obj) - 1;
-						if (idx >= 0) {
-							Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), feature, obj, idx);
-
-							if (cmd.canExecute()) {
-								getEditingDomain().getCommandStack().execute(cmd);
-								viewer.setSelection(new StructuredSelection(obj));
-							}
-						}
-
-					}
+			protected void addPressed() {
+				Types t = (Types) ((IStructuredSelection) getPicker().getSelection()).getFirstElement();
+				if (t == Types.MENU) {
+					handleAdd(MenuPackageImpl.Literals.MENU);
+				} else if (t == Types.POPUP_MENU) {
+					handleAdd(MenuPackageImpl.Literals.POPUP_MENU);
+				} else {
+					handleAddViewMenu();
 				}
 			}
-		});
 
-		tableElement.getButtonDown().addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!viewer.getSelection().isEmpty()) {
-					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-					if (s.size() == 1) {
-						Object obj = s.getFirstElement();
-						EObject container = (EObject) getMaster().getValue();
-						List<?> list = (List<?>) container.eGet(feature);
-						int idx = list.indexOf(obj) + 1;
-						if (idx < list.size()) {
-							Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), feature, obj, idx);
-
-							if (cmd.canExecute()) {
-								getEditingDomain().getCommandStack().execute(cmd);
-								viewer.setSelection(new StructuredSelection(obj));
-							}
-						}
-
-					}
+			protected List<?> getContainerChildren(Object container) {
+				if (container instanceof MPartDescriptor) {
+					return ((MPartDescriptor) container).getMenus();
+				} else if (container instanceof MPart) {
+					return ((MPart) container).getMenus();
+				} else {
+					return null;
 				}
 			}
-		});
+		};
+		pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+		viewer = pickList.getList();
 
-		tableElement.getDropDown().setContentProvider(new ArrayContentProvider());
-		tableElement.getDropDown().setLabelProvider(new LabelProvider() {
+		ComboViewer picker = pickList.getPicker();
+		picker.setContentProvider(new ArrayContentProvider());
+		picker.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
 				if (element == Types.MENU) {
@@ -199,35 +175,8 @@ public class VMenuEditor extends AbstractComponentEditor {
 				return Messages.MenuEditor_Label_ViewMenu;
 			}
 		});
-		tableElement.getDropDown().setInput(Types.values());
-		tableElement.getDropDown().setSelection(new StructuredSelection(Types.MENU));
-
-		tableElement.getButtonAdd().addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Types t = (Types) ((IStructuredSelection) tableElement.getDropDown().getSelection()).getFirstElement();
-				if (t == Types.MENU) {
-					handleAdd(MenuPackageImpl.Literals.MENU);
-				} else if (t == Types.POPUP_MENU) {
-					handleAdd(MenuPackageImpl.Literals.POPUP_MENU);
-				} else {
-					handleAddViewMenu();
-				}
-			}
-		});
-
-		tableElement.getButtonRemove().addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!viewer.getSelection().isEmpty()) {
-					List<?> windows = ((IStructuredSelection) viewer.getSelection()).toList();
-					Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART__MENUS, windows);
-					if (cmd.canExecute()) {
-						getEditingDomain().getCommandStack().execute(cmd);
-					}
-				}
-			}
-		});
+		picker.setInput(Types.values());
+		picker.setSelection(new StructuredSelection(Types.MENU));
 
 		folder.setSelection(0);
 
