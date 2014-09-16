@@ -30,9 +30,11 @@ public class MonitoringPreferenceInitializer extends AbstractPreferenceInitializ
 			defaultFilterTraces = "org.eclipse.swt.internal.gtk.OS._g_main_context_iteration" //$NON-NLS-1$
 					+ ",org.eclipse.swt.internal.gtk.OS._gtk_dialog_run"; //$NON-NLS-1$
 		} else if (Util.isWin32()) {
-			defaultFilterTraces = "org.eclipse.swt.internal.win32.OS.DefWindowProcA" //$NON-NLS-1$
+			defaultFilterTraces = "org.eclipse.swt.internal.win32.OS.TrackPopupMenu" //$NON-NLS-1$
+					+ ",org.eclipse.swt.internal.win32.OS.DefWindowProcA" //$NON-NLS-1$
 					+ ",org.eclipse.swt.internal.win32.OS.DefWindowProcW" //$NON-NLS-1$
-					+ "org.eclipse.swt.internal.win32.OS.TrackPopupMenu"; //$NON-NLS-1$
+					+ ",org.eclipse.swt.internal.win32.OS.GetMessageA" //$NON-NLS-1$
+					+ ",org.eclipse.swt.internal.win32.OS.GetMessageW"; //$NON-NLS-1$
 		} else if (Util.isCocoa()) {
 			defaultFilterTraces = "org.eclipse.swt.widgets.Display.applicationNextEventMatchingMask"; //$NON-NLS-1$
 		} else {
