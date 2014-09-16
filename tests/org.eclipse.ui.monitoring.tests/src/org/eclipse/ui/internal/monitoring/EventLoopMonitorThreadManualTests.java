@@ -9,8 +9,13 @@
  *	   Steve Foreman (Google) - initial API and implementation
  *	   Marcus Eng (Google)
  *	   Sergey Prigogin (Google)
+ *	   Simon Scholz <simon.scholz@vogella.com> - Bug 443391
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -23,18 +28,19 @@ import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.monitoring.PreferenceConstants;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * A test that measures performance overhead of {@link EventLoopMonitorThread}.
  * This test is not included into {@link MonitoringTestSuite} due to its low reliability
  * and the amount of time it takes.
  */
-public class EventLoopMonitorThreadManualTests extends TestCase {
+public class EventLoopMonitorThreadManualTests {
 	/** Change to {@code true} to enable printing of detailed information to the console. */
 	private static final boolean PRINT_TO_CONSOLE = false;
 
@@ -101,13 +107,13 @@ public class EventLoopMonitorThreadManualTests extends TestCase {
 	 */
 	protected static final long PN63_GENERATOR_POLY = (3L << 62) | 1;
 
-	@Override
+	@Before
 	public void setUp() {
 		getPreferences().setValue(PreferenceConstants.MONITORING_ENABLED, false);
 	}
 
-	@Override
-	public void tearDown() throws Exception {
+	@After
+	public void tearDown() {
 		getPreferences().setToDefault(PreferenceConstants.MONITORING_ENABLED);
 	}
 
@@ -150,7 +156,8 @@ public class EventLoopMonitorThreadManualTests extends TestCase {
 	 * Performance test for {@link EventLoopMonitorThread}. This test verifies that the monitoring
 	 * doesn't interfere too much with the real work being done.
 	 */
-	public void testFixedWork() throws Exception {
+	@Test
+	public void testFixedWork() throws Exception{
 		final Display display = Display.getDefault();
 		assertNotNull("No SWT Display available.", display);
 

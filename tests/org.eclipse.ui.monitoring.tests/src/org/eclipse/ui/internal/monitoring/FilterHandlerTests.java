@@ -9,8 +9,12 @@
  *	   Steve Foreman (Google) - initial API and implementation
  *	   Marcus Eng (Google)
  *	   Sergey Prigogin (Google)
+ *	   Simon Scholz <simon.scholz@vogella.com> - Bug 443391
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
@@ -18,14 +22,13 @@ import java.lang.management.ThreadMXBean;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.eclipse.ui.monitoring.StackSample;
+import org.junit.Test;
 
 /**
  * Tests for {@link FilterHandler} class.
  */
-public class FilterHandlerTests extends TestCase {
+public class FilterHandlerTests {
 	private static final String FILTER_TRACES =
 			"org.eclipse.ui.internal.monitoring.FilterHandlerTests.createFilteredStackSamples";
 	private static final long THREAD_ID = Thread.currentThread().getId();
@@ -59,12 +62,14 @@ public class FilterHandlerTests extends TestCase {
 		return createStackSamples();
 	}
 
+	@Test
 	public void testUnfilteredEventLogging() throws Exception {
 		FilterHandler filterHandler = new FilterHandler(FILTER_TRACES);
 		StackSample[] samples = createUnfilteredStackSamples();
 		assertTrue(filterHandler.shouldLogEvent(samples, samples.length, THREAD_ID));
 	}
 
+	@Test
 	public void testFilteredEventLogging() throws Exception {
 		FilterHandler filterHandler = new FilterHandler(FILTER_TRACES);
 		StackSample[] samples = createFilteredStackSamples();

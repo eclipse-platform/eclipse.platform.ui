@@ -7,17 +7,12 @@
  *
  * Contributors:
  *     Marcus Eng (Google) - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 443391
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring;
 
-import junit.framework.TestCase;
-
-import org.eclipse.core.runtime.ILogListener;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.monitoring.PreferenceConstants;
-import org.eclipse.ui.monitoring.StackSample;
-import org.eclipse.ui.monitoring.UiFreezeEvent;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
@@ -25,10 +20,19 @@ import java.lang.management.ThreadMXBean;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.monitoring.PreferenceConstants;
+import org.eclipse.ui.monitoring.StackSample;
+import org.eclipse.ui.monitoring.UiFreezeEvent;
+import org.junit.Before;
+import org.junit.Test;
+
 /**
  * JUnit test for the {@link DefaultUiFreezeEventLogger}.
  */
-public class DefaultLoggerTests extends TestCase {
+public class DefaultLoggerTests {
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
 	private static final String RUNTIME_ID = "org.eclipse.core.runtime";
 	private static final long TIME = 120000000;
@@ -37,7 +41,7 @@ public class DefaultLoggerTests extends TestCase {
 	private ThreadInfo thread;
 	private IStatus loggedStatus;
 
-	@Override
+	@Before
 	public void setUp() {
 		logger = new DefaultUiFreezeEventLogger();
 		createLogListener();
@@ -63,7 +67,8 @@ public class DefaultLoggerTests extends TestCase {
 		return event;
 	}
 
-	public void testLogEvent() throws Exception {
+	@Test
+	public void testLogEvent() {
 		UiFreezeEvent event = createFreezeEvent();
 		String expectedTime = dateFormat.format(new Date(TIME));
 		String expectedHeader =
