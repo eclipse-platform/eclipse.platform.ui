@@ -22,20 +22,29 @@ public class StackSample {
 	private final long timestamp;
 	private final ThreadInfo[] traces;
 
+	/**
+	 * Creates a StackSample.
+	 *
+	 * @param timestamp time in milliseconds since January 1, 1970 UTC when the thread stacks
+	 *     were sampled
+	 * @param traces thread information for either all threads or just the display thread,
+	 *     depending on the value of the {@link PreferenceConstants#DUMP_ALL_THREADS} preference
+	 */
 	public StackSample(long timestamp, ThreadInfo[] traces) {
 		this.timestamp = timestamp;
 		this.traces = traces;
 	}
 
 	/**
-	 * Returns the time stamp for this {@code StackSample}.
+	 * Returns the time stamp in milliseconds since January 1, 1970 UTC for this
+	 * {@code StackSample}.
 	 */
 	public long getTimestamp() {
 		return timestamp;
 	}
 
 	/**
-	 * Returns an array of {@code ThreadInfo} for this {@code StackSample}. The display thread is
+	 * Returns an array of {@code ThreadInfo}s for this {@code StackSample}. The display thread is
 	 * always the first in the array.
 	 */
 	public ThreadInfo[] getStackTraces() {

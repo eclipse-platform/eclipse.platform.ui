@@ -20,25 +20,35 @@ public class UiFreezeEvent {
 	private final long startTimestamp;
 	private final long totalDuration;
 	private final StackSample[] stackTraceSamples;
-	private final boolean isRunning;
+	private final boolean isStillRunning;
 
-	public UiFreezeEvent(long startTime, long totalTime, StackSample[] samples,
+	/**
+	 * Creates a UiFreezeEvent.
+	 *
+	 * @param startTime initial dispatch time for the event in milliseconds since January 1,
+	 *     1970 UTC
+	 * @param duration duration of the event in milliseconds
+	 * @param samples array of {@link StackSample}s containing thread information
+	 * @param stillRunning whether or not the event was still running when this UiFreezeEvent
+	 *     was created. If {@code true}, this UiFreezeEvent may indicate a deadlock.
+	 */
+	public UiFreezeEvent(long startTime, long duration, StackSample[] samples,
 			boolean stillRunning) {
 		this.startTimestamp = startTime;
 		this.stackTraceSamples = samples;
-		this.totalDuration = totalTime;
-		this.isRunning = stillRunning;
+		this.totalDuration = duration;
+		this.isStillRunning = stillRunning;
 	}
 
 	/**
-	 * Returns the time when the UI thread froze.
+	 * Returns the time when the UI thread froze, in milliseconds since January 1, 1970 UTC.
 	 */
 	public long getStartTimestamp() {
 		return startTimestamp;
 	}
 
 	/**
-	 * Returns the total amount of time the UI thread remained frozen.
+	 * Returns the total amount of time in milliseconds that the UI thread remained frozen.
 	 */
 	public long getTotalDuration() {
 		return totalDuration;
@@ -52,10 +62,11 @@ public class UiFreezeEvent {
 	}
 
 	/**
-	 * Returns {@code true} if this event is still running.
+	 * Returns {@code true} if this event was still running at the time the event was logged,
+	 * which can happen for deadlocks.
 	 */
 	public boolean isStillRunning() {
-		return isRunning;
+		return isStillRunning;
 	}
 
 	/** For debugging only. */
@@ -64,7 +75,7 @@ public class UiFreezeEvent {
 		StringBuilder buf = new StringBuilder();
 		buf.append("Freeze started at ");
 		buf.append(startTimestamp);
-		if (isRunning) {
+		if (isStillRunning) {
 			buf.append(" still ongoing after ");
 		} else {
 			buf.append(" lasted ");
