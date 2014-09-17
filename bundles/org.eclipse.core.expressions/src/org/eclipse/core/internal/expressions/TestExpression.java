@@ -141,9 +141,9 @@ public class TestExpression extends Expression {
 			if (i < fArgs.length - 1)
 				args.append(", "); //$NON-NLS-1$
 		}
-		return "<test property=\"" + fProperty +  //$NON-NLS-1$
-		  (fArgs.length != 0 ? "\" args=\"" + args + "\"" : "\"") + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		  (fExpectedValue != null ? "\" value=\"" + fExpectedValue + "\"" : "\"") + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return "<test property=\"" + fProperty +  "\"" +//$NON-NLS-1$ //$NON-NLS-2$
+		(fArgs.length != 0 ? " args=\"" + args + "\"" : "") + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		 (fExpectedValue != null ? " value=\"" + fExpectedValue + "\"" : "") + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		  " plug-in activation: " + (fForcePluginActivation ? "eager" : "lazy") +   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 		  "/>"; //$NON-NLS-1$
 	}
