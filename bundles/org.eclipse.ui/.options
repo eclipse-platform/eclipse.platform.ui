@@ -78,6 +78,9 @@ org.eclipse.ui/perf/uijob=200
 # Reports the time to determine the content type of a file
 org.eclipse.ui/perf/contentTypes=200
 
+# Reports execution time of early startup participants.
+org.eclipse.ui/perf/earlyStartup=100
+
 # Controls whether the heap status indicator is shown
 org.eclipse.ui/perf/showHeapStatus=true
 
