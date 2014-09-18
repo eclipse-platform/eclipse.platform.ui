@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class FilterInputDialog extends TitleAreaDialog {
 	private static final Pattern methodNamePattern =
-			Pattern.compile("([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)+[\\p{L}_$][\\p{L}\\p{N}_$]*");
+			Pattern.compile("([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)+[\\p{L}_$][\\p{L}\\p{N}_$]*"); //$NON-NLS-1$
 
 	private Text textFilter;
 	private String filter;

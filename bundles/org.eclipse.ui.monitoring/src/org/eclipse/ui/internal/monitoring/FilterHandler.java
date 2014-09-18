@@ -106,8 +106,8 @@ public class FilterHandler {
 			String methodName = element.getMethodName();
 			String className = element.getClassName();
 			if (Util.isCocoa()
-					&& methodName.startsWith("objc_msgSend")
-					&& className.equals("org.eclipse.swt.internal.cocoa.OS")
+					&& methodName.startsWith("objc_msgSend") //$NON-NLS-1$
+					&& className.equals("org.eclipse.swt.internal.cocoa.OS") //$NON-NLS-1$
 					&& stackTraces.length > 1) {
 				// Skip the objc_msgSend frame at the top of the stack on Cocoa.
 				element = stackTraces[1];
