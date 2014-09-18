@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,9 +62,6 @@ public abstract class ContentOutlinePage extends Page implements
         super();
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionProvider.
-     */
     @Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
         selectionChangedListeners.add(listener);
@@ -118,9 +115,6 @@ public abstract class ContentOutlinePage extends Page implements
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPage (and Page).
-     */
     @Override
 	public Control getControl() {
         if (treeViewer == null) {
@@ -129,9 +123,6 @@ public abstract class ContentOutlinePage extends Page implements
         return treeViewer.getControl();
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionProvider.
-     */
     @Override
 	public ISelection getSelection() {
         if (treeViewer == null) {
@@ -150,29 +141,18 @@ public abstract class ContentOutlinePage extends Page implements
         return treeViewer;
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
-     */
     @Override
 	public void init(IPageSite pageSite) {
         super.init(pageSite);
         pageSite.setSelectionProvider(this);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionProvider.
-     */
     @Override
 	public void removeSelectionChangedListener(
             ISelectionChangedListener listener) {
         selectionChangedListeners.remove(listener);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionChangeListener.
-     * Gives notification that the tree selection has changed.
-     */
     @Override
 	public void selectionChanged(SelectionChangedEvent event) {
         fireSelectionChanged(event.getSelection());
@@ -186,9 +166,6 @@ public abstract class ContentOutlinePage extends Page implements
         treeViewer.getControl().setFocus();
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionProvider.
-     */
     @Override
 	public void setSelection(ISelection selection) {
         if (treeViewer != null) {

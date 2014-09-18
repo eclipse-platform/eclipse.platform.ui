@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,17 +95,11 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
         super();
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionProvider.
-     */
     @Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
         getSelectionProvider().addSelectionChangedListener(listener);
     }
 
-    /* (non-Javadoc)
-     * Method declared on PageBookView.
-     */
     @Override
 	protected IPage createDefaultPage(PageBook book) {
         MessagePage page = new MessagePage();
@@ -126,9 +120,6 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
                 CONTENT_OUTLINE_VIEW_HELP_CONTEXT_ID);
     }
 
-    /* (non-Javadoc)
-     * Method declared on PageBookView.
-     */
     @Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
         // Try to get an outline page.
@@ -145,9 +136,6 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
         return null;
     }
 
-    /* (non-Javadoc)
-     * Method declared on PageBookView.
-     */
     @Override
 	protected void doDestroyPage(IWorkbenchPart part, PageRec rec) {
         IContentOutlinePage page = (IContentOutlinePage) rec.page;
@@ -155,9 +143,6 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
         rec.dispose();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IAdaptable.
-     */
     @Override
 	public Object getAdapter(Class key) {
         if (key == IContributedContentsView.class) {
@@ -171,9 +156,6 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
         return super.getAdapter(key);
     }
 
-    /* (non-Javadoc)
-     * Method declared on PageBookView.
-     */
     @Override
 	protected IWorkbenchPart getBootstrapPart() {
         IWorkbenchPage page = getSite().getPage();
@@ -195,54 +177,34 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
         return getCurrentContributingPart();
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionProvider.
-     */
     @Override
 	public ISelection getSelection() {
         // get the selection from the selection provider
         return getSelectionProvider().getSelection();
     }
 
-    /* (non-Javadoc)
-     * Method declared on PageBookView.
-     * We only want to track editors.
-     */
     @Override
 	protected boolean isImportant(IWorkbenchPart part) {
         //We only care about editors
         return (part instanceof IEditorPart);
     }
 
-    /* (non-Javadoc)
-     * Method declared on IViewPart.
-     * Treat this the same as part activation.
-     */
     @Override
 	public void partBroughtToTop(IWorkbenchPart part) {
         partActivated(part);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionProvider.
-     */
     @Override
 	public void removeSelectionChangedListener(
             ISelectionChangedListener listener) {
         getSelectionProvider().removeSelectionChangedListener(listener);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionChangedListener.
-     */
     @Override
 	public void selectionChanged(SelectionChangedEvent event) {
         getSelectionProvider().selectionChanged(event);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionProvider.
-     */
     @Override
 	public void setSelection(ISelection selection) {
         getSelectionProvider().setSelection(selection);
