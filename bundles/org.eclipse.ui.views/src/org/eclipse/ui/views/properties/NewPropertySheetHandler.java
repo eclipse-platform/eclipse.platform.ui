@@ -47,6 +47,7 @@ public class NewPropertySheetHandler extends AbstractHandler {
 	 * @return an instance for the given context
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchPart activePart = HandlerUtil.getActivePartChecked(event);
 

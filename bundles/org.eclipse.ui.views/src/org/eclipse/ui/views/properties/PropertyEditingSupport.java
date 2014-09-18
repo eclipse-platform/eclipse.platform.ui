@@ -51,6 +51,7 @@ public class PropertyEditingSupport extends EditingSupport {
 		this.propertyID = propertyID;
 	}
 
+	@Override
 	protected boolean canEdit(Object object) {
 		IPropertySource propertySource = propertySourceProvider
 				.getPropertySource(object);
@@ -65,6 +66,7 @@ public class PropertyEditingSupport extends EditingSupport {
 		return false;
 	}
 
+	@Override
 	protected CellEditor getCellEditor(Object object) {
 		IPropertySource propertySource = propertySourceProvider
 				.getPropertySource(object);
@@ -81,6 +83,7 @@ public class PropertyEditingSupport extends EditingSupport {
 		return null;
 	}
 
+	@Override
 	protected Object getValue(Object object) {
 		IPropertySource propertySource = propertySourceProvider
 				.getPropertySource(object);
@@ -93,6 +96,7 @@ public class PropertyEditingSupport extends EditingSupport {
 		return value;
 	}
 
+	@Override
 	protected void setValue(Object object, Object value) {
 		IPropertySource propertySource = propertySourceProvider
 				.getPropertySource(object);

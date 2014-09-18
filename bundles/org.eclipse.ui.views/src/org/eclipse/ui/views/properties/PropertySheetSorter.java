@@ -117,6 +117,7 @@ public class PropertySheetSorter  {
 	 */
 	public void sort(IPropertySheetEntry[] entries) {
 		Arrays.sort(entries, new Comparator() {
+			@Override
 			public int compare(Object a, Object b) {
 				return PropertySheetSorter.this.compare(
 						(IPropertySheetEntry) a, (IPropertySheetEntry) b);
@@ -132,6 +133,7 @@ public class PropertySheetSorter  {
 	 */
 	void sort(PropertySheetCategory[] categories) {
 		Arrays.sort(categories, new Comparator() {
+			@Override
 			public int compare(Object a, Object b) {
 				return PropertySheetSorter.this.compareCategories(
 						((PropertySheetCategory) a).getCategoryName(),

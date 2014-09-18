@@ -34,7 +34,8 @@ import org.eclipse.ui.PlatformUI;
      * Toggle the display of expert properties.
      */
 
-    public void run() {
+    @Override
+	public void run() {
         PropertySheetViewer ps = getPropertySheet();
         ps.deactivateCellEditor();
         if (isChecked()) {

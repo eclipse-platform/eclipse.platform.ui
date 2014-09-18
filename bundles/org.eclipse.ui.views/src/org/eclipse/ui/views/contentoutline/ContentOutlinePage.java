@@ -65,7 +65,8 @@ public abstract class ContentOutlinePage extends Page implements
     /* (non-Javadoc)
      * Method declared on ISelectionProvider.
      */
-    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+    @Override
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
         selectionChangedListeners.add(listener);
     }
 
@@ -76,7 +77,8 @@ public abstract class ContentOutlinePage extends Page implements
      * provider, label provider, and input element.
      * @param parent
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         treeViewer = new TreeViewer(parent, getTreeStyle());
         treeViewer.addSelectionChangedListener(this);
     }
@@ -108,7 +110,8 @@ public abstract class ContentOutlinePage extends Page implements
         for (int i = 0; i < listeners.length; ++i) {
             final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
             SafeRunner.run(new SafeRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     l.selectionChanged(event);
                 }
             });
@@ -118,7 +121,8 @@ public abstract class ContentOutlinePage extends Page implements
     /* (non-Javadoc)
      * Method declared on IPage (and Page).
      */
-    public Control getControl() {
+    @Override
+	public Control getControl() {
         if (treeViewer == null) {
 			return null;
 		}
@@ -128,7 +132,8 @@ public abstract class ContentOutlinePage extends Page implements
     /* (non-Javadoc)
      * Method declared on ISelectionProvider.
      */
-    public ISelection getSelection() {
+    @Override
+	public ISelection getSelection() {
         if (treeViewer == null) {
 			return StructuredSelection.EMPTY;
 		}
@@ -149,7 +154,8 @@ public abstract class ContentOutlinePage extends Page implements
      *  (non-Javadoc)
      * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
      */
-    public void init(IPageSite pageSite) {
+    @Override
+	public void init(IPageSite pageSite) {
         super.init(pageSite);
         pageSite.setSelectionProvider(this);
     }
@@ -157,7 +163,8 @@ public abstract class ContentOutlinePage extends Page implements
     /* (non-Javadoc)
      * Method declared on ISelectionProvider.
      */
-    public void removeSelectionChangedListener(
+    @Override
+	public void removeSelectionChangedListener(
             ISelectionChangedListener listener) {
         selectionChangedListeners.remove(listener);
     }
@@ -166,21 +173,24 @@ public abstract class ContentOutlinePage extends Page implements
      * Method declared on ISelectionChangeListener.
      * Gives notification that the tree selection has changed.
      */
-    public void selectionChanged(SelectionChangedEvent event) {
+    @Override
+	public void selectionChanged(SelectionChangedEvent event) {
         fireSelectionChanged(event.getSelection());
     }
 
     /**
      * Sets focus to a part in the page.
      */
-    public void setFocus() {
+    @Override
+	public void setFocus() {
         treeViewer.getControl().setFocus();
     }
 
     /* (non-Javadoc)
      * Method declared on ISelectionProvider.
      */
-    public void setSelection(ISelection selection) {
+    @Override
+	public void setSelection(ISelection selection) {
         if (treeViewer != null) {
 			treeViewer.setSelection(selection);
 		}

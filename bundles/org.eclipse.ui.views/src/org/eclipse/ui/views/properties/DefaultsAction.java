@@ -36,7 +36,8 @@ import org.eclipse.ui.PlatformUI;
     /**
      * Reset the properties to their default values.
      */
-    public void run() {
+    @Override
+	public void run() {
         getPropertySheet().deactivateCellEditor();
         getPropertySheet().resetProperties();
     }

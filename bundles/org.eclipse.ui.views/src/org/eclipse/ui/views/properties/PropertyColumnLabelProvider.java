@@ -45,6 +45,7 @@ public class PropertyColumnLabelProvider extends ColumnLabelProvider {
 		this.propertyID = propertyID;
 	}
 
+	@Override
 	public String getText(Object object) {
 		IPropertySource propertySource = propertySourceProvider
 				.getPropertySource(object);
@@ -60,6 +61,7 @@ public class PropertyColumnLabelProvider extends ColumnLabelProvider {
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public Image getImage(Object object) {
 		IPropertySource propertySource = propertySourceProvider
 				.getPropertySource(object);

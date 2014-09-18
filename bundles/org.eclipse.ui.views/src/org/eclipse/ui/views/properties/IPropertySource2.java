@@ -64,5 +64,6 @@ public interface IPropertySource2 extends IPropertySource {
      * @see #resetPropertyValue(Object)
      * @since 3.1
      */
-    public boolean isPropertySet(Object id);
+    @Override
+	public boolean isPropertySet(Object id);
 }

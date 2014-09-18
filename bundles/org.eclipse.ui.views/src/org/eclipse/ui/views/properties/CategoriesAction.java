@@ -31,7 +31,8 @@ import org.eclipse.ui.PlatformUI;
     /**
      * Toggles the display of categories for the properties.
      */
-    public void run() {
+    @Override
+	public void run() {
         PropertySheetViewer ps = getPropertySheet();
         ps.deactivateCellEditor();
         if (isChecked()) {

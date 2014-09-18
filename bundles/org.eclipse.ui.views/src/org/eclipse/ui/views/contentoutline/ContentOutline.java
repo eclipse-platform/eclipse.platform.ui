@@ -98,14 +98,16 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
     /* (non-Javadoc)
      * Method declared on ISelectionProvider.
      */
-    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+    @Override
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
         getSelectionProvider().addSelectionChangedListener(listener);
     }
 
     /* (non-Javadoc)
      * Method declared on PageBookView.
      */
-    protected IPage createDefaultPage(PageBook book) {
+    @Override
+	protected IPage createDefaultPage(PageBook book) {
         MessagePage page = new MessagePage();
         initPage(page);
         page.createControl(book);
@@ -117,7 +119,8 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
      * The <code>PageBookView</code> implementation of this <code>IWorkbenchPart</code>
      * method creates a <code>PageBook</code> control with its default page showing.
      */
-    public void createPartControl(Composite parent) {
+    @Override
+	public void createPartControl(Composite parent) {
         super.createPartControl(parent);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getPageBook(),
                 CONTENT_OUTLINE_VIEW_HELP_CONTEXT_ID);
@@ -126,7 +129,8 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
     /* (non-Javadoc)
      * Method declared on PageBookView.
      */
-    protected PageRec doCreatePage(IWorkbenchPart part) {
+    @Override
+	protected PageRec doCreatePage(IWorkbenchPart part) {
         // Try to get an outline page.
         Object obj = ViewsPlugin.getAdapter(part, IContentOutlinePage.class, false);
         if (obj instanceof IContentOutlinePage) {
@@ -144,7 +148,8 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
     /* (non-Javadoc)
      * Method declared on PageBookView.
      */
-    protected void doDestroyPage(IWorkbenchPart part, PageRec rec) {
+    @Override
+	protected void doDestroyPage(IWorkbenchPart part, PageRec rec) {
         IContentOutlinePage page = (IContentOutlinePage) rec.page;
         page.dispose();
         rec.dispose();
@@ -153,10 +158,12 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
     /* (non-Javadoc)
      * Method declared on IAdaptable.
      */
-    public Object getAdapter(Class key) {
+    @Override
+	public Object getAdapter(Class key) {
         if (key == IContributedContentsView.class) {
 			return new IContributedContentsView() {
-                public IWorkbenchPart getContributingPart() {
+                @Override
+				public IWorkbenchPart getContributingPart() {
                     return getContributingEditor();
                 }
             };
@@ -167,7 +174,8 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
     /* (non-Javadoc)
      * Method declared on PageBookView.
      */
-    protected IWorkbenchPart getBootstrapPart() {
+    @Override
+	protected IWorkbenchPart getBootstrapPart() {
         IWorkbenchPage page = getSite().getPage();
         if (page != null) {
 			return page.getActiveEditor();
@@ -190,7 +198,8 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
     /* (non-Javadoc)
      * Method declared on ISelectionProvider.
      */
-    public ISelection getSelection() {
+    @Override
+	public ISelection getSelection() {
         // get the selection from the selection provider
         return getSelectionProvider().getSelection();
     }
@@ -199,7 +208,8 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
      * Method declared on PageBookView.
      * We only want to track editors.
      */
-    protected boolean isImportant(IWorkbenchPart part) {
+    @Override
+	protected boolean isImportant(IWorkbenchPart part) {
         //We only care about editors
         return (part instanceof IEditorPart);
     }
@@ -208,14 +218,16 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
      * Method declared on IViewPart.
      * Treat this the same as part activation.
      */
-    public void partBroughtToTop(IWorkbenchPart part) {
+    @Override
+	public void partBroughtToTop(IWorkbenchPart part) {
         partActivated(part);
     }
 
     /* (non-Javadoc)
      * Method declared on ISelectionProvider.
      */
-    public void removeSelectionChangedListener(
+    @Override
+	public void removeSelectionChangedListener(
             ISelectionChangedListener listener) {
         getSelectionProvider().removeSelectionChangedListener(listener);
     }
@@ -223,14 +235,16 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
     /* (non-Javadoc)
      * Method declared on ISelectionChangedListener.
      */
-    public void selectionChanged(SelectionChangedEvent event) {
+    @Override
+	public void selectionChanged(SelectionChangedEvent event) {
         getSelectionProvider().selectionChanged(event);
     }
 
     /* (non-Javadoc)
      * Method declared on ISelectionProvider.
      */
-    public void setSelection(ISelection selection) {
+    @Override
+	public void setSelection(ISelection selection) {
         getSelectionProvider().setSelection(selection);
     }
 
@@ -240,7 +254,8 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
      * 
      * @param pageRec the page record containing the page to show
      */
-    protected void showPageRec(PageRec pageRec) {
+    @Override
+	protected void showPageRec(PageRec pageRec) {
         IPageSite pageSite = getPageSite(pageRec.page);
         ISelectionProvider provider = pageSite.getSelectionProvider();
         if (provider == null && (pageRec.page instanceof IContentOutlinePage)) {
