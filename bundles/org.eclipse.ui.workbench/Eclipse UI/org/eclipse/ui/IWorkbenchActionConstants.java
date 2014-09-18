@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810, 440975, 431862
  *******************************************************************************/
 package org.eclipse.ui;
 
@@ -167,6 +168,13 @@ public interface IWorkbenchActionConstants {
 	public static final String M_WORKBENCH = MENU_PREFIX + "workbench"; //$NON-NLS-1$
 
     // menu reorg
+
+	/**
+	 * Name of standard Perspective menu (value <code>"perspective"</code>).
+	 *
+	 * @since 3.107
+	 */
+   public static final String M_PERSPECTIVE = MENU_PREFIX + "perspective"; //$NON-NLS-1$
 
     /**
      * Name of standard Navigate menu (value <code>"navigate"</code>).
@@ -703,6 +711,23 @@ public interface IWorkbenchActionConstants {
      * (value <code>"addTask"</code>).
      */
     //	public static final String ADD_TASK = "addTask";	// Global action. //$NON-NLS-1$
+
+	/**
+	 * Perspective menu: name of group for start of menu (value
+	 * <code>"perspectiveStart"</code>).
+	 *
+	 * @since 3.107
+	 */
+	public static final String PERSPECTIVE_START = "perspectiveStart"; // Group. //$NON-NLS-1$
+
+	/**
+	 * Perspective menu: name of group for end of menu (value
+	 * <code>"perspectiveStartEnd"</code> ).
+	 *
+	 * @since 3.107
+	 */
+	public static final String PERSPECTIVE_END = "perspectiveStartEnd"; // Group. //$NON-NLS-1$
+
     /**
      * Navigate menu: name of group for start of menu
      * (value <code>"navStart"</code>).

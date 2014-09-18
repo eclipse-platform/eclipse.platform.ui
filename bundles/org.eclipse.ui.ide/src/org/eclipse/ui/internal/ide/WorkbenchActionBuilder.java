@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Andreas Buchen <andreas.buchen@sap.com> - Bug 206584
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810, 440975
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810, 440975, 431862
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -616,7 +616,9 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         menu.add(newWindowAction);
 		
         menu.add(new Separator());
-        addPerspectiveActions(menu);
+        
+        menu.add(addShowView());
+		menu.add(addPerspectiveActions());
         menu.add(new Separator());
         addKeyboardShortcuts(menu);
         Separator sep = new Separator(IWorkbenchActionConstants.MB_ADDITIONS);
@@ -646,33 +648,40 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		windowMenu.add(new Separator());
 	}
 
-	/**
-     * Adds the perspective actions to the specified menu.
-     */
-    private void addPerspectiveActions(MenuManager menu) {
-        {
-            String openText = IDEWorkbenchMessages.Workbench_openPerspective;
-            MenuManager changePerspMenuMgr = new MenuManager(openText,
-                    "openPerspective"); //$NON-NLS-1$
-            IContributionItem changePerspMenuItem = ContributionItemFactory.PERSPECTIVES_SHORTLIST
-                    .create(getWindow());
-            changePerspMenuMgr.add(changePerspMenuItem);
-            menu.add(changePerspMenuMgr);
-        }
-        {
-            MenuManager showViewMenuMgr = new MenuManager(IDEWorkbenchMessages.Workbench_showView, "showView"); //$NON-NLS-1$
-            IContributionItem showViewMenu = ContributionItemFactory.VIEWS_SHORTLIST
-                    .create(getWindow());
-            showViewMenuMgr.add(showViewMenu);
-            menu.add(showViewMenuMgr);
-        }
-        menu.add(new Separator());
-        menu.add(editActionSetAction);
-        menu.add(getSavePerspectiveItem());
-        menu.add(getResetPerspectiveItem());
-        menu.add(closePerspAction);
-        menu.add(closeAllPerspsAction);
-    }
+	/** Creates and returns the Show View menu
+	 */
+	private MenuManager addShowView() {
+		// 'Show View' menu entry
+		MenuManager showViewMenuMgr = new MenuManager(IDEWorkbenchMessages.Workbench_showView, "showView"); //$NON-NLS-1$
+		IContributionItem showViewMenu = ContributionItemFactory.VIEWS_SHORTLIST.create(getWindow());
+		showViewMenuMgr.add(showViewMenu);
+		return showViewMenuMgr;
+	}
+
+/**
+	 * Adds the perspective actions to the specified menu.
+	 */
+	private MenuManager addPerspectiveActions() {
+		MenuManager menu = new MenuManager(IDEWorkbenchMessages.Workbench_perspective,
+				IWorkbenchActionConstants.M_PERSPECTIVE);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.PERSPECTIVE_START));
+
+		// 'Open Perspective' menu entry
+		String openText = IDEWorkbenchMessages.Workbench_openPerspective;
+		MenuManager changePerspMenuMgr = new MenuManager(openText, "openPerspective"); //$NON-NLS-1$
+		IContributionItem changePerspMenuItem = ContributionItemFactory.PERSPECTIVES_SHORTLIST.create(getWindow());
+		changePerspMenuMgr.add(changePerspMenuItem);
+		menu.add(changePerspMenuMgr);
+
+		menu.add(new Separator());
+		menu.add(editActionSetAction);
+		menu.add(getSavePerspectiveItem());
+		menu.add(getResetPerspectiveItem());
+		menu.add(closePerspAction);
+		menu.add(closeAllPerspsAction);
+
+		return menu;
+	}
 
     /**
      * Adds the keyboard navigation submenu to the specified menu.
