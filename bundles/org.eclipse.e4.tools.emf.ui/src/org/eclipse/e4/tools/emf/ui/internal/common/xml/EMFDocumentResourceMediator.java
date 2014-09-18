@@ -104,7 +104,8 @@ public class EMFDocumentResourceMediator {
 
 	/**
 	 * @param object
-	 * @return The region for the start tag of the EObject, or null if not found.
+	 * @return The region for the start tag of the EObject, or null if not
+	 *         found.
 	 */
 	public IRegion findStartTag(EObject object) {
 		if (object == null) {
@@ -116,7 +117,8 @@ public class EMFDocumentResourceMediator {
 		FindReplaceDocumentAdapter find = new FindReplaceDocumentAdapter(document);
 		IRegion region;
 		try {
-			//TODO This will not work if the element has '<' or '>' in an attribute value
+			// TODO This will not work if the element has '<' or '>' in an
+			// attribute value
 			region = find.find(0, "<.*?" + xmiId + ".*?>", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 			return region;
 		} catch (BadLocationException e) {

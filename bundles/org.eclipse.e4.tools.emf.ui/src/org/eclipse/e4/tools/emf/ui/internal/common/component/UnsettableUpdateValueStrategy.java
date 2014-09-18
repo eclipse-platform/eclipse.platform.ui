@@ -103,7 +103,7 @@ public class UnsettableUpdateValueStrategy extends EMFUpdateValueStrategy {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * org.eclipse.core.databinding.UpdateValueStrategy#doSet(org.eclipse.core
 	 * .databinding.observable.value.IObservableValue, java.lang.Object)

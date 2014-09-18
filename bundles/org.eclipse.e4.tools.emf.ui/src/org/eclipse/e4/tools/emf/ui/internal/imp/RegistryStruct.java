@@ -7,8 +7,7 @@ public class RegistryStruct {
 	String extensionPointName;
 	String mappingName;
 
-	public RegistryStruct(String bundle, String extensionPoint,
-			String extensionPointName, String mappingName) {
+	public RegistryStruct(String bundle, String extensionPoint, String extensionPointName, String mappingName) {
 		super();
 		this.bundle = bundle;
 		this.extensionPoint = extensionPoint;

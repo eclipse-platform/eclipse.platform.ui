@@ -28,9 +28,7 @@ public class ObservableColumnLabelProvider<M> extends CellLabelProvider {
 		@Override
 		public void handleMapChange(MapChangeEvent event) {
 			Set<?> affectedElements = event.diff.getChangedKeys();
-			LabelProviderChangedEvent newEvent = new LabelProviderChangedEvent(
-					ObservableColumnLabelProvider.this, affectedElements
-							.toArray());
+			LabelProviderChangedEvent newEvent = new LabelProviderChangedEvent(ObservableColumnLabelProvider.this, affectedElements.toArray());
 			fireLabelProviderChanged(newEvent);
 		}
 	};
@@ -52,9 +50,7 @@ public class ObservableColumnLabelProvider<M> extends CellLabelProvider {
 	 * @param attributeMaps
 	 */
 	protected ObservableColumnLabelProvider(IObservableMap[] attributeMaps) {
-		System.arraycopy(attributeMaps, 0,
-				this.attributeMaps = new IObservableMap[attributeMaps.length],
-				0, attributeMaps.length);
+		System.arraycopy(attributeMaps, 0, this.attributeMaps = new IObservableMap[attributeMaps.length], 0, attributeMaps.length);
 		for (int i = 0; i < attributeMaps.length; i++) {
 			attributeMaps[i].addMapChangeListener(mapChangeListener);
 		}
@@ -85,7 +81,7 @@ public class ObservableColumnLabelProvider<M> extends CellLabelProvider {
 		Object value = attributeMaps[0].get(element);
 		return value == null ? "" : value.toString(); //$NON-NLS-1$
 	}
-	
+
 	public Font getFont(M element) {
 		return null;
 	}
@@ -97,7 +93,6 @@ public class ObservableColumnLabelProvider<M> extends CellLabelProvider {
 	public Color getForeground(M element) {
 		return null;
 	}
-
 
 	public Image getImage(M element) {
 		return null;
