@@ -63,6 +63,7 @@ import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
+import org.eclipse.e4.tools.emf.ui.internal.Plugin;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.AddonsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ApplicationEditor;
@@ -291,15 +292,15 @@ public class ModelEditor implements IGotoObject {
 	private IClipboardService clipboardService;
 
 	@Inject
-	@Preference(nodePath = "org.eclipse.e4.tools.emf.ui", value = "autoCreateElementId")
+	@Preference(nodePath = Plugin.ID, value = "autoCreateElementId")
 	private boolean autoCreateElementId;
 
 	@Inject
-	@Preference(nodePath = "org.eclipse.e4.tools.emf.ui", value = "showXMIId")
+	@Preference(nodePath = Plugin.ID, value = "showXMIId")
 	private boolean showXMIId;
 
 	@Inject
-	@Preference(nodePath = "org.eclipse.e4.tools.emf.ui")
+	@Preference(nodePath = Plugin.ID)
 	IEclipsePreferences preferences;
 
 	@Inject

@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
+import org.eclipse.e4.tools.emf.ui.internal.Plugin;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BundleImageCache;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionDataFile;
@@ -77,7 +78,7 @@ public class NonReferencedActionPage extends WizardPage implements IWizardPage {
 
 		imageCache = context.get(BundleImageCache.class);
 
-		setImageDescriptor(ImageDescriptor.createFromImage(imageCache.create("org.eclipse.e4.tools.emf.ui", "/icons/full/wizban/newefix_wizban.png"))); //$NON-NLS-1$ //$NON-NLS-2$
+		setImageDescriptor(ImageDescriptor.createFromImage(imageCache.create(Plugin.ID, "/icons/full/wizban/newefix_wizban.png"))); //$NON-NLS-1$ //$NON-NLS-2$
 
 		if (bundle == null && installLocation != null) {
 			this.bundle = FilteredContributionDialog.getBundle(installLocation);

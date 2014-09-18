@@ -16,7 +16,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	@Override
 	public void initializeDefaultPreferences() {
-		IEclipsePreferences pref = InstanceScope.INSTANCE.getNode("org.eclipse.e4.tools.emf.ui"); //$NON-NLS-1$
+		IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(Plugin.ID); //$NON-NLS-1$
 
 		if (pref.get("notRenderedColor", null) == null) { //$NON-NLS-1$
 			String val = StringConverter.asString(new RGB(200, 200, 200));

@@ -26,6 +26,7 @@ import org.eclipse.e4.tools.emf.ui.common.CommandToStringConverter;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.Plugin;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
@@ -359,22 +360,22 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 				try {
 					KeySequence keySequence = KeySequence.getInstance(value.toString());
 					if (!keySequence.isComplete()) {
-						return new Status(statusCode, "org.eclipse.e4.tools.emf.ui", Messages.KeyBindingEditor_SequenceNotComplete); //$NON-NLS-1$
+						return new Status(statusCode, Plugin.ID, Messages.KeyBindingEditor_SequenceNotComplete); //$NON-NLS-1$
 					}
 					if (keySequence.isEmpty()) {
-						return new Status(statusCode, "org.eclipse.e4.tools.emf.ui", Messages.KeyBindingEditor_SequenceEmpty); //$NON-NLS-1$
+						return new Status(statusCode, Plugin.ID, Messages.KeyBindingEditor_SequenceEmpty); //$NON-NLS-1$
 					}
 					if (!value.toString().toUpperCase().equals(value.toString())) {
-						return new Status(IStatus.ERROR, "org.eclipse.e4.tools.emf.ui", Messages.KeyBindingEditor_SequenceLowercase); //$NON-NLS-1$
+						return new Status(IStatus.ERROR, Plugin.ID, Messages.KeyBindingEditor_SequenceLowercase); //$NON-NLS-1$
 					}
 
 					return Status.OK_STATUS;
 				} catch (Exception e) {
-					return new Status(statusCode, "org.eclipse.e4.tools.emf.ui", e.getMessage(), e); //$NON-NLS-1$
+					return new Status(statusCode, Plugin.ID, e.getMessage(), e); //$NON-NLS-1$
 				}
 			}
 
-			return new Status(statusCode, "org.eclipse.e4.tools.emf.ui", Messages.KeyBindingEditor_SequenceEmpty); //$NON-NLS-1$
+			return new Status(statusCode, Plugin.ID, Messages.KeyBindingEditor_SequenceEmpty); //$NON-NLS-1$
 		}
 	}
 

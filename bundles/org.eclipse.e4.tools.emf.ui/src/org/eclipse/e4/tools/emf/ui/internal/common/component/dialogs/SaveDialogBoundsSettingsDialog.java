@@ -12,6 +12,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.e4.tools.emf.ui.internal.Plugin;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -21,16 +22,14 @@ import org.osgi.service.prefs.Preferences;
 
 public abstract class SaveDialogBoundsSettingsDialog extends TitleAreaDialog {
 
-	private static final String ORG_ECLIPSE_E4_TOOLS_EMF_UI = "org.eclipse.e4.tools.emf.ui"; //$NON-NLS-1$
-
 	private static final String DIALOG_ORIGIN_X = "DIALOG_X_ORIGIN"; //$NON-NLS-1$
 	private static final String DIALOG_ORIGIN_Y = "DIALOG_Y_ORIGIN"; //$NON-NLS-1$
 	private static final String DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
 	private static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
 
-	private IDialogSettings dialogSettings = new DialogSettings(ORG_ECLIPSE_E4_TOOLS_EMF_UI);
+	private IDialogSettings dialogSettings = new DialogSettings(Plugin.ID);
 
-	private Preferences preferences = InstanceScope.INSTANCE.getNode(ORG_ECLIPSE_E4_TOOLS_EMF_UI);
+	private Preferences preferences = InstanceScope.INSTANCE.getNode(Plugin.ID);
 
 	public SaveDialogBoundsSettingsDialog(Shell parentShell) {
 		super(parentShell);

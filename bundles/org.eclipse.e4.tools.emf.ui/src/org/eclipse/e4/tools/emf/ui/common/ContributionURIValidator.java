@@ -13,26 +13,25 @@ package org.eclipse.e4.tools.emf.ui.common;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.tools.emf.ui.internal.Plugin;
 import org.eclipse.emf.common.util.URI;
 
 public class ContributionURIValidator implements IValidator {
 
-	private static final String PLUGIN_ID = "org.eclipse.e4.tools.emf.ui";
-
 	@Override
 	public IStatus validate(Object value) {
 		if (value == null) {
-			return new Status(IStatus.ERROR, PLUGIN_ID, "The URI must not be empty!");
+			return new Status(IStatus.ERROR, Plugin.ID, "The URI must not be empty!");
 		} else if (!value.toString().startsWith("bundleclass:")) {
-			return new Status(IStatus.ERROR, PLUGIN_ID, "The URI has to start with 'platform:/plugin'");
+			return new Status(IStatus.ERROR, Plugin.ID, "The URI has to start with 'platform:/plugin'");
 		} else {
 			try {
 				URI uri = URI.createURI(value.toString());
 				if (uri.authority() == null || uri.authority().length() == 0 || uri.segmentCount() != 1) {
-					return new Status(IStatus.ERROR, PLUGIN_ID, "The uri has to have the format 'bundleclass://$$bundleId$$/$$className$$'");
+					return new Status(IStatus.ERROR, Plugin.ID, "The uri has to have the format 'bundleclass://$$bundleId$$/$$className$$'");
 				}
 			} catch (Exception e) {
-				return new Status(IStatus.ERROR, PLUGIN_ID, e.getMessage());
+				return new Status(IStatus.ERROR, Plugin.ID, e.getMessage());
 			}
 
 		}

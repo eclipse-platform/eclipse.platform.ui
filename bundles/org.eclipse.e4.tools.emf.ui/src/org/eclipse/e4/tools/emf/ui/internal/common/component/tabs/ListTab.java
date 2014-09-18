@@ -41,6 +41,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.Plugin;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BundleImageCache;
@@ -173,7 +174,7 @@ public class ListTab implements IViewEObjects {
 
 	// save custom column and filter settings
 	public void saveSettings() {
-		IEclipsePreferences pref = InstanceScope.INSTANCE.getNode("org.eclipse.e4.tools.emf.ui"); //$NON-NLS-1$
+		IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(Plugin.ID); //$NON-NLS-1$
 		try {
 			Document doc = DocUtil.createDocument("list-tab"); //$NON-NLS-1$
 			Element cols = DocUtil.createChild(doc.getDocumentElement(), "columns"); //$NON-NLS-1$
@@ -236,7 +237,7 @@ public class ListTab implements IViewEObjects {
 
 	// load custom column and filter settings
 	private void loadSettings() {
-		IEclipsePreferences pref = InstanceScope.INSTANCE.getNode("org.eclipse.e4.tools.emf.ui"); //$NON-NLS-1$
+		IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(Plugin.ID); //$NON-NLS-1$
 
 		boolean restoreColumns = pref.getBoolean("list-tab-remember-columns", false); //$NON-NLS-1$
 		boolean restoreFilters = pref.getBoolean("list-tab-remember-filters", false); //$NON-NLS-1$
@@ -352,7 +353,7 @@ public class ListTab implements IViewEObjects {
 			}
 		});
 		try {
-			imgMarkedItem = imageCache.create("org.eclipse.e4.tools.emf.ui", "/icons/full/obj16/mark_occurrences.png"); //$NON-NLS-1$//$NON-NLS-2$
+			imgMarkedItem = imageCache.create(Plugin.ID, "/icons/full/obj16/mark_occurrences.png"); //$NON-NLS-1$//$NON-NLS-2$
 		} catch (Exception e2) {
 			e2.printStackTrace();
 		}
@@ -741,7 +742,7 @@ public class ListTab implements IViewEObjects {
 				Control ret = super.createContents(parent);
 				setMessage(Messages.ListTab_selectAnAttribute);
 				try {
-					setTitleImage(imageCache.create("org.eclipse.e4.tools.emf.ui", "/icons/full/wizban/attribute_wiz.gif")); //$NON-NLS-1$ //$NON-NLS-2$
+					setTitleImage(imageCache.create(Plugin.ID, "/icons/full/wizban/attribute_wiz.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

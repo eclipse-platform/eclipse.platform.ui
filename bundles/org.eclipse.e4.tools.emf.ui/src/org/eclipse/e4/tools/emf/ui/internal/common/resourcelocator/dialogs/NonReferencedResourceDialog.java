@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
+import org.eclipse.e4.tools.emf.ui.internal.Plugin;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BundleImageCache;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionDataFile;
@@ -413,7 +414,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 		setTitle(Messages.NonReferencedResourceDialog_resourceReferenceWarning);
 		getShell().setText(Messages.NonReferencedResourceDialog_resourceReferenceWarning);
 		try {
-			setTitleImage(imageCache.create("org.eclipse.e4.tools.emf.ui", "/icons/full/wizban/newefix_wizban.png")); //$NON-NLS-1$ //$NON-NLS-2$
+			setTitleImage(imageCache.create(Plugin.ID, "/icons/full/wizban/newefix_wizban.png")); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -431,7 +432,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 				protected Control createContents(Composite parent) {
 					Control ret = super.createContents(parent);
 					setMessage(Messages.NonReferencedResourceDialog_selectTheFolderResourceCopy);
-					setTitleImage(imageCache.create("org.eclipse.e4.tools.emf.ui", "/icons/full/wizban/add_to_dir_wiz.png")); //$NON-NLS-1$ //$NON-NLS-2$
+					setTitleImage(imageCache.create(Plugin.ID, "/icons/full/wizban/add_to_dir_wiz.png")); //$NON-NLS-1$ //$NON-NLS-2$
 
 					return ret;
 				}
