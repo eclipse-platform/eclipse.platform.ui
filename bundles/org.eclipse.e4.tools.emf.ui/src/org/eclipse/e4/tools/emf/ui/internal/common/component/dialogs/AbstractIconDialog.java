@@ -22,7 +22,6 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.widgets.Shell;
 
 public abstract class AbstractIconDialog extends AbstractIconDialogWithScopeAndFilter {
-	private IProject project;
 	private MApplicationElement element;
 	private EStructuralFeature feature;
 	private EditingDomain editingDomain;
@@ -36,19 +35,18 @@ public abstract class AbstractIconDialog extends AbstractIconDialogWithScopeAndF
 		this.editingDomain = editingDomain;
 		this.element = element;
 		this.feature = feature;
-		this.project = project;
 		this.Messages = Messages;
 		context.set(Messages.class, Messages);
 	}
 
 	@Override
 	protected String getFilterTextMessage() {
-		return "Type to start search";
+		return Messages.AbstractIconDialog_Type_To_Start_Search;
 	}
 
 	@Override
 	protected String getResourceNameText() {
-		return "Icon Name";
+		return Messages.AbstractIconDialog_Icon_Name;
 	}
 
 	@Override

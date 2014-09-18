@@ -569,7 +569,7 @@ public class ContributionDataFile implements IFile {
 	public InputStream getContents() throws CoreException {
 		URL url;
 		try {
-			if (path.getFileExtension().equals("jar")) {
+			if (path.getFileExtension().equals("jar")) { //$NON-NLS-1$
 				ZipFile zip = new ZipFile(path.toOSString());
 				ZipEntry entry;
 				if (getContributionData().className != null) {

@@ -9,10 +9,49 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Marco Descher <marco@descher.at> - Bug 395982, 396975, 426653
  *     Steven Spungin <steven@spungin.tv> - Bug 431735, 430717
+ *     Jonas Helming <jhelming@eclipsesource.com - Bug 444340
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal;
 
 public class Messages {
+
+	public static String FilteredContributionDialog_SearchWasCancelled;
+	public static String FilteredContributionDialog_MoreThan;
+	public static String FilteredContributionDialog_itemsWereFound;
+	public static String FilteredContributionDialog_ProviderInitializing;
+	public static String FilteredContributionDialog_ProviderWasCancelled;
+	public static String FilteredContributionDialog_ClearCache;
+	public static String FilteredContributionDialog_ContributionSearch;
+	public static String FilteredContributionDialog_Scope;
+	public static String FilteredContributionDialog_ProjectOnly;
+	public static String FilteredContributionDialog_ProjectAndReferences;
+	public static String FilteredContributionDialog_Workspace;
+	public static String FilteredContributionDialog_TargetPlatform;
+	public static String FilteredContributionDialog_ScopeFilter;
+	public static String FilteredContributionDialog_None;
+	public static String FilteredContributionDialog_Package;
+	public static String FilteredContributionDialog_Location;
+	public static String FilteredContributionDialog_NonBundles;
+	public static String FilteredContributionDialog_SelectTheBundle;
+	public static String FilteredContributionDialog_SelectThePackage;
+	public static String FilteredContributionDialog_PackageFilter;
+	public static String FilteredContributionDialog_SelectTheLocation;
+	public static String FilteredContributionDialog_LocationFilter;
+	public static String FilteredContributionDialog_Java;
+	public static String FilteredContributionDialog_ResourceIsNotContainedInABundle;
+	public static String FilteredContributionDialog_ResourceIsNotReferencedByThisBundle;
+	public static String FilteredContributionDialog_Bundle;
+	public static String FilteredContributionDialog_BundleFilter;
+	public static String FilteredContributionDialog_Searching;
+	public String AreaIconDialogEditor_Icon;
+	public String AreaIconDialogEditor_Enter_Text;
+	public String AbstractIconDialogWithHardcodedScope_Project;
+	public String AbstractIconDialogWithHardcodedScope_Workspace;
+	public String AbstractIconDialog_Icon_Name;
+	public String AbstractIconDialog_Type_To_Start_Search;
+	public static String ContributionURIValidator_Malformed_URI;
+	public static String ContributionURIValidator_No_Empty_URI;
+	public static String ContributionURIValidator_URI_starts_with_platform;
 
 	public String ModelTooling_Empty_Warning;
 	public String ModelTooling_Common_Up;
@@ -712,4 +751,5 @@ public class Messages {
 	public String CompositePartEditor_Tooltip;
 	public String CompositePartEditor_IconURI;
 	public String CompositePartEditor_IconURI_Tooltip;
+
 }

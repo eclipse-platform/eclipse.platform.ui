@@ -42,6 +42,7 @@ import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Filter;
 import org.eclipse.e4.tools.emf.ui.common.IProviderStatusCallback;
 import org.eclipse.e4.tools.emf.ui.common.ProviderStatus;
 import org.eclipse.e4.tools.emf.ui.common.ResourceSearchScope;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.AbstractIconDialogWithScopeAndFilter.Entry;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
@@ -149,15 +150,15 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 	private void updateStatusMessage() {
 		String message = ""; //$NON-NLS-1$
 		if (searching) {
-			message += "Searching...\n";
+			message += Messages.FilteredContributionDialog_Searching;
 		}
 		// dlg.setStatus("More than " + filter.maxResults +
 		// " items were found and have not been displayed");
 		if (hint != 0) {
 			if (hint == ContributionResultHandler.MORE_CANCELED) {
-				message += "The search was cancelled.  Not all results may have been displayed.\n";
+				message += Messages.FilteredContributionDialog_SearchWasCancelled;
 			} else {
-				message += "More than " + maxResults + " items were found.  Not all results have been displayed.\n";
+				message += Messages.FilteredContributionDialog_MoreThan + maxResults + Messages.FilteredContributionDialog_itemsWereFound;
 			}
 		}
 
@@ -167,10 +168,10 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 				case READY:
 					break;
 				case INITIALIZING:
-					message += "The provider is initializing.  Results will refresh when complete.";
+					message += Messages.FilteredContributionDialog_ProviderInitializing;
 					break;
 				case CANCELLED:
-					message += "The provider was cancelled while initializing.  Results may be incomplete.";
+					message += Messages.FilteredContributionDialog_ProviderWasCancelled;
 					break;
 				}
 			}
@@ -245,7 +246,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 	}
 
 	public static <E extends Enum<E>> EnumSet<E> valueOf(Class<E> eClass, String str) {
-		String[] arr = str.substring(1, str.length() - 1).split(",");
+		String[] arr = str.substring(1, str.length() - 1).split(","); //$NON-NLS-1$
 		EnumSet<E> set = EnumSet.noneOf(eClass);
 		for (String e : arr)
 			set.add(E.valueOf(eClass, e.trim()));
@@ -268,7 +269,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		((GridLayout) parent.getLayout()).numColumns = 4;
 
 		btnClearCache = new Button(parent, SWT.PUSH);
-		btnClearCache.setText("Clear Model Cache");
+		btnClearCache.setText(Messages.FilteredContributionDialog_ClearCache);
 		btnClearCache.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -372,13 +373,13 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 				searching = true;
 				updateStatusMessage();
 
-				currentSearchThread = new Job("Contribution Search") {
+				currentSearchThread = new Job(Messages.FilteredContributionDialog_ContributionSearch) {
 
 					Filter filter;
 
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
-						monitor.beginTask("Contribution Search", IProgressMonitor.UNKNOWN);
+						monitor.beginTask(Messages.FilteredContributionDialog_ContributionSearch, IProgressMonitor.UNKNOWN);
 						currentResultHandler = new ContributionResultHandlerImpl(viewerList);
 						getShell().getDisplay().syncExec(new Runnable() {
 
@@ -467,14 +468,14 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		{
 			Label lblScope = new Label(compOptions, SWT.NONE);
 			lblScope.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-			lblScope.setText("Scope");
+			lblScope.setText(Messages.FilteredContributionDialog_Scope);
 
 			Composite compScope = new Composite(compOptions, SWT.NONE);
 			compScope.setLayoutData(new GridData(SWT.BEGINNING, SWT.TOP, false, false));
 			compScope.setLayout(new RowLayout());
 
 			final Button btnScopeProject = new Button(compScope, SWT.RADIO);
-			btnScopeProject.setText("Project Only");
+			btnScopeProject.setText(Messages.FilteredContributionDialog_ProjectOnly);
 			btnScopeProject.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -490,7 +491,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			btnScopeProject.setSelection(searchScopes.contains(ResourceSearchScope.PROJECT) && !searchScopes.contains(ResourceSearchScope.REFERENCES));
 
 			final Button btnProjectAndReferences = new Button(compScope, SWT.RADIO);
-			btnProjectAndReferences.setText("Project and References");
+			btnProjectAndReferences.setText(Messages.FilteredContributionDialog_ProjectAndReferences);
 			btnProjectAndReferences.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -506,7 +507,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			btnProjectAndReferences.setSelection(searchScopes.contains(ResourceSearchScope.PROJECT) && searchScopes.contains(ResourceSearchScope.REFERENCES));
 
 			final Button btnScopeWorkspace = new Button(compScope, SWT.RADIO);
-			btnScopeWorkspace.setText("Workspace");
+			btnScopeWorkspace.setText(Messages.FilteredContributionDialog_Workspace);
 			btnScopeWorkspace.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -522,7 +523,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			btnScopeWorkspace.setSelection(searchScopes.contains(ResourceSearchScope.WORKSPACE));
 
 			final Button btnScopeTargetPlatform = new Button(compScope, SWT.RADIO);
-			btnScopeTargetPlatform.setText("Target Platform");
+			btnScopeTargetPlatform.setText(Messages.FilteredContributionDialog_TargetPlatform);
 			btnScopeTargetPlatform.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -541,14 +542,14 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		{
 			Label lblFilter = new Label(compOptions, SWT.NONE);
 			lblFilter.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-			lblFilter.setText("Scope Filter");
+			lblFilter.setText(Messages.FilteredContributionDialog_ScopeFilter);
 
 			Composite compFilter = new Composite(compOptions, SWT.NONE);
 			compFilter.setLayoutData(new GridData(SWT.BEGINNING, SWT.TOP, false, false));
 			compFilter.setLayout(new RowLayout());
 
 			btnFilterNone = new Button(compFilter, SWT.CHECK);
-			btnFilterNone.setText("None");
+			btnFilterNone.setText(Messages.FilteredContributionDialog_None);
 			btnFilterNone.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -559,7 +560,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			});
 
 			btnFilterBundle = new Button(compFilter, SWT.CHECK);
-			btnFilterBundle.setText("Bundle");
+			btnFilterBundle.setText(Messages.FilteredContributionDialog_Bundle);
 			btnFilterBundle.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -574,7 +575,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			});
 
 			btnFilterPackage = new Button(compFilter, SWT.CHECK);
-			btnFilterPackage.setText("Package");
+			btnFilterPackage.setText(Messages.FilteredContributionDialog_Package);
 			btnFilterPackage.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -589,7 +590,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			});
 
 			btnFilterLocation = new Button(compFilter, SWT.CHECK);
-			btnFilterLocation.setText("Location");
+			btnFilterLocation.setText(Messages.FilteredContributionDialog_Location);
 			btnFilterLocation.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -607,11 +608,11 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		{
 			Label lblIncludeNoneBundle = new Label(compOptions, SWT.NONE);
 			lblIncludeNoneBundle.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-			lblIncludeNoneBundle.setText("Non Bundles");
+			lblIncludeNoneBundle.setText(Messages.FilteredContributionDialog_NonBundles);
 
 			btnIncludeNoneBundle = new Button(compOptions, SWT.CHECK);
 			btnIncludeNoneBundle.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-			btnIncludeNoneBundle.setText("");
+			btnIncludeNoneBundle.setText(""); //$NON-NLS-1$
 			btnIncludeNoneBundle.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -709,11 +710,11 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			protected Control createContents(Composite parent) {
 				Control ret = super.createContents(parent);
 				getViewer().setInput(sorted);
-				setMessage("Select the bundle to filter on.");
-				setTitle("Bundle Filter");
-				getShell().setText("Bundle Filter");
+				setMessage(Messages.FilteredContributionDialog_SelectTheBundle);
+				setTitle(Messages.FilteredContributionDialog_BundleFilter);
+				getShell().setText(Messages.FilteredContributionDialog_BundleFilter);
 				try {
-					setTitleImage(imageCache.create("/icons/full/wizban/plugin_wiz.gif"));
+					setTitleImage(imageCache.create("/icons/full/wizban/plugin_wiz.gif")); //$NON-NLS-1$
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -747,10 +748,10 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			protected Control createContents(Composite parent) {
 				Control ret = super.createContents(parent);
 				getViewer().setInput(sorted);
-				setMessage("Select the package to filter on.");
-				setTitle("Package Filter");
-				getShell().setText("Package Filter");
-				setTitleImage(imageCache.create("/icons/full/wizban/package_wiz.png"));
+				setMessage(Messages.FilteredContributionDialog_SelectThePackage);
+				setTitle(Messages.FilteredContributionDialog_PackageFilter);
+				getShell().setText(Messages.FilteredContributionDialog_PackageFilter);
+				setTitleImage(imageCache.create("/icons/full/wizban/package_wiz.png")); //$NON-NLS-1$
 				return ret;
 			}
 		};
@@ -788,7 +789,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		// add all parent paths
 		final HashSet<String> parentLocations = new HashSet<String>();
 		for (String location : locations) {
-			if (location.endsWith(".jar")) {
+			if (location.endsWith(".jar")) { //$NON-NLS-1$
 				int index = location.lastIndexOf(File.separator);
 				if (index >= 0) {
 					location = location.substring(0, index);
@@ -807,10 +808,10 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			protected Control createContents(Composite parent) {
 				Control ret = super.createContents(parent);
 				getViewer().setInput(sorted);
-				setMessage("Select the location to filter on.");
-				setTitle("Location Filter");
-				getShell().setText("Location Filter");
-				setTitleImage(imageCache.create("/icons/full/wizban/location_wiz.png"));
+				setMessage(Messages.FilteredContributionDialog_SelectTheLocation);
+				setTitle(Messages.FilteredContributionDialog_LocationFilter);
+				getShell().setText(Messages.FilteredContributionDialog_LocationFilter);
+				setTitleImage(imageCache.create("/icons/full/wizban/location_wiz.png")); //$NON-NLS-1$
 				return ret;
 			}
 		};
@@ -913,7 +914,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 				return (IFile) selected;
 			} else if (selected instanceof Entry) {
 				Entry entry = (Entry) selected;
-				ContributionData cd = new ContributionData(null, null, "Java", entry.file.getFullPath().toOSString());
+				ContributionData cd = new ContributionData(null, null, Messages.FilteredContributionDialog_Java, entry.file.getFullPath().toOSString());
 				cd.installLocation = entry.installLocation;
 				cd.resourceRelativePath = entry.file.getProjectRelativePath().toOSString();
 				return new ContributionDataFile(cd);
@@ -944,7 +945,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		// Not a bundle
 		final String bundle = getBundle(file);
 		if (bundle == null) {
-			String message = "The selected resource is not contained in a bundle.";
+			String message = Messages.FilteredContributionDialog_ResourceIsNotContainedInABundle;
 			NonReferencedResourceWizard wizard = new NonReferencedResourceWizard(getShell(), context.get(IProject.class), bundle, file, installLocation, context);
 			wizard.setMessage(message);
 			WizardDialog wizDlg = new WizardDialog(getShell(), wizard);
@@ -964,7 +965,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			try {
 				BundleModel model = loadBundleModel(currentProject);
 
-				RequireBundleHeader rbh = (RequireBundleHeader) model.getBundle().getManifestHeader("Require-Bundle");
+				RequireBundleHeader rbh = (RequireBundleHeader) model.getBundle().getManifestHeader("Require-Bundle"); //$NON-NLS-1$
 				if (rbh != null) {
 					for (RequireBundleObject item : rbh.getRequiredBundles()) {
 						if (item.getValue().equals(bundle)) {
@@ -980,7 +981,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 						String className = cdFile.getContributionData().className;
 						if (className != null) {
 							String pakage = NonReferencedResourceDialog.getPackageFromClassName(className);
-							ImportPackageHeader iph = (ImportPackageHeader) model.getBundle().getManifestHeader("Import-Package");
+							ImportPackageHeader iph = (ImportPackageHeader) model.getBundle().getManifestHeader("Import-Package"); //$NON-NLS-1$
 							if (iph != null) {
 								for (ImportPackageObject item : iph.getPackages()) {
 									if (item.getValue().equals(pakage)) {
@@ -996,7 +997,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			}
 
 			if (!found) {
-				String message = "The selected resource's bundle is not referenced by this bundle.";
+				String message = Messages.FilteredContributionDialog_ResourceIsNotReferencedByThisBundle;
 				NonReferencedResourceWizard wizard = new NonReferencedResourceWizard(getShell(), context.get(IProject.class), bundle, file, installLocation, context);
 				wizard.setMessage(message);
 				WizardDialog wiz = new WizardDialog(getShell(), wizard);
@@ -1013,7 +1014,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 
 	public BundleModel loadBundleModel(IProject currentProject) throws CoreException {
 		Document document = new Document();
-		String content = new Scanner(PDEProject.getManifest(currentProject).getContents()).useDelimiter("\\Z").next();
+		String content = new Scanner(PDEProject.getManifest(currentProject).getContents()).useDelimiter("\\Z").next(); //$NON-NLS-1$
 		document.set(content);
 		BundleModel model = new BundleModel(document, false);
 		model.load();

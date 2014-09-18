@@ -139,7 +139,7 @@ public class EMFDocumentResourceMediator {
 		FindReplaceDocumentAdapter find = new FindReplaceDocumentAdapter(document);
 		IRegion region;
 		try {
-			region = find.find(startOffset, text, true, true, false, false); //$NON-NLS-1$ //$NON-NLS-2$
+			region = find.find(startOffset, text, true, true, false, false);
 			return region;
 		} catch (BadLocationException e) {
 			return null;

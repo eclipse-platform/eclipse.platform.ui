@@ -105,7 +105,7 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 		getShell().setText(getShellTitle());
 		setTitle(getDialogTitle());
 		setMessage(getDialogMessage());
-		String bundleFilter = (String) context.get("bundle");
+		String bundleFilter = (String) context.get("bundle"); //$NON-NLS-1$
 		if (E.notEmpty(bundleFilter)) {
 			setMessage("Filtering by bundle " + bundleFilter); //$NON-NLS-1$
 		}
@@ -120,7 +120,7 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 
 		if (E.isEmpty(bundleFilter)) {
 			Button btnProject = new Button(compOptions, SWT.RADIO);
-			btnProject.setText("Project");
+			btnProject.setText(Messages.AbstractIconDialogWithHardcodedScope_Project);
 			btnProject.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -132,7 +132,7 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 			btnProject.setSelection(true);
 
 			Button btnWorkspace = new Button(compOptions, SWT.RADIO);
-			btnWorkspace.setText("Workspace");
+			btnWorkspace.setText(Messages.AbstractIconDialogWithHardcodedScope_Workspace);
 			btnWorkspace.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -373,7 +373,7 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 						continue;
 					}
 					// Only search target bundle if specified
-					String bundle = (String) context.get("bundle");
+					String bundle = (String) context.get("bundle"); //$NON-NLS-1$
 					if (E.notEmpty(bundle)) {
 						InputStream inputStream = null;
 						try {

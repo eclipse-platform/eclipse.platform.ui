@@ -42,11 +42,11 @@ public class AreaIconDialogEditor extends AbstractIconDialog {
 
 	@Override
 	protected String getFilterTextMessage() {
-		return "Enter text";
+		return Messages.AreaIconDialogEditor_Enter_Text;
 	}
 
 	@Override
 	protected String getResourceNameText() {
-		return "Icon";
+		return Messages.AreaIconDialogEditor_Icon;
 	}
 }
