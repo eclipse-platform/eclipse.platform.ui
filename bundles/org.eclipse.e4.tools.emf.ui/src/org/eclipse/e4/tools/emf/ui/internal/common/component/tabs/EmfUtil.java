@@ -6,12 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Ongoing Maintenance
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
 
-import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 
@@ -77,7 +76,7 @@ public class EmfUtil {
 	static public Object getAttributeValueThrows(EObject eObject, String attName) throws Exception {
 		EAttribute att = getAttribute(eObject, attName);
 		if (att == null) {
-			throw new Exception(Messages.EmfUtil_ex_attribute_not_found + attName);
+			throw new Exception(Messages.EmfUtil_ex_attribute_not_found + " : " + attName); //$NON-NLS-1$
 		} else {
 			return eObject.eGet(att);
 		}

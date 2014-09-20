@@ -100,21 +100,21 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 		});
 
 		// -- IMPORT ACTIONS --
-		actionsImport.add(new Action("Views", createImageDescriptor(ResourceProvider.IMG_Part)) {
+		actionsImport.add(new Action(Messages.VWindowSharedElementsEditor_Views, createImageDescriptor(ResourceProvider.IMG_Part)) {
 			@Override
 			public void run() {
 				handleImport(BasicPackageImpl.Literals.PART, RegistryUtil.HINT_VIEW);
 			}
 		});
 
-		actionsImport.add(new Action("Editors", createImageDescriptor(ResourceProvider.IMG_Part)) {
+		actionsImport.add(new Action(Messages.VWindowSharedElementsEditor_Editors, createImageDescriptor(ResourceProvider.IMG_Part)) {
 			@Override
 			public void run() {
 				handleImport(BasicPackageImpl.Literals.INPUT_PART, RegistryUtil.HINT_EDITOR);
 			}
 		});
 
-		actionsImport.add(new Action("View as CompatibilityView", createImageDescriptor(ResourceProvider.IMG_Part)) {
+		actionsImport.add(new Action(Messages.VWindowSharedElementsEditor_ViewAsCompatibilityView, createImageDescriptor(ResourceProvider.IMG_Part)) {
 			@Override
 			public void run() {
 				handleImport(BasicPackageImpl.Literals.PART, RegistryUtil.HINT_COMPAT_VIEW);

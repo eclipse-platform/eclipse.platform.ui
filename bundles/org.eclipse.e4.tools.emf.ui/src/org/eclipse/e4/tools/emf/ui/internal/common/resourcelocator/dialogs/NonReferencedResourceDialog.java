@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Ongoing Maintenance
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
@@ -203,7 +203,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 		Group group = new Group(comp, SWT.NONE);
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 0));
 		group.setLayout(new GridLayout(1, false));
-		group.setText("Action");
+		group.setText(Messages.NonReferencedResourceDialog_Action);
 
 		if (bundle != null) {
 			final Button btnRequire = new Button(group, SWT.RADIO);
@@ -414,7 +414,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 		setTitle(Messages.NonReferencedResourceDialog_resourceReferenceWarning);
 		getShell().setText(Messages.NonReferencedResourceDialog_resourceReferenceWarning);
 		try {
-			setTitleImage(imageCache.create(Plugin.ID, "/icons/full/wizban/newefix_wizban.png")); //$NON-NLS-1$ //$NON-NLS-2$
+			setTitleImage(imageCache.create(Plugin.ID, "/icons/full/wizban/newefix_wizban.png")); //$NON-NLS-1$
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -432,7 +432,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 				protected Control createContents(Composite parent) {
 					Control ret = super.createContents(parent);
 					setMessage(Messages.NonReferencedResourceDialog_selectTheFolderResourceCopy);
-					setTitleImage(imageCache.create(Plugin.ID, "/icons/full/wizban/add_to_dir_wiz.png")); //$NON-NLS-1$ //$NON-NLS-2$
+					setTitleImage(imageCache.create(Plugin.ID, "/icons/full/wizban/add_to_dir_wiz.png")); //$NON-NLS-1$
 
 					return ret;
 				}

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steven@spungin.tv> - Bug 424730, Bug 437951
+ *     Steven Spungin <steven@spungin.tv> - Bug 424730, Bug 437951, Ongoing Maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -116,7 +116,7 @@ public class PartEditor extends AbstractComponentEditor {
 	@Override
 	public String getLabel(Object element) {
 		if (element == BasicPackageImpl.Literals.INPUT_PART) {
-			return "Input Part";
+			return Messages.PartEditor_InputPart;
 		}
 		return Messages.PartEditor_Label;
 	}

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432372
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432372, Ongoing Maintenance
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.handlers;
@@ -16,6 +16,7 @@ import java.util.HashSet;
 import javax.inject.Named;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.IViewEObjects;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.TitleAreaFilterDialogWithEmptyOptions;
 import org.eclipse.emf.ecore.EAttribute;
@@ -30,7 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 public class MarkDuplicateAttributesHandler extends MarkDuplicateItemsBase {
 
 	@Execute
-	public void execute(@Named(VIEWER_KEY) IViewEObjects viewer, IEclipseContext context) {
+	public void execute(@Named(VIEWER_KEY) IViewEObjects viewer, IEclipseContext context, final Messages Messages) {
 		final HashSet<String> set = new HashSet<String>();
 		Collection<EObject> allEObjects = viewer.getAllEObjects();
 		for (EObject obj : allEObjects) {
@@ -49,8 +50,8 @@ public class MarkDuplicateAttributesHandler extends MarkDuplicateItemsBase {
 			@Override
 			protected Control createContents(Composite parent) {
 				Control ret = super.createContents(parent);
-				setMessage("Select an attribute to mark duplicate values");
-				setTitle("Mark Duplicates");
+				setMessage(Messages.MarkDuplicateAttributesHandler_SelectAnAttributeToMarkeDuplicate);
+				setTitle(Messages.MarkDuplicateAttributesHandler_MarkDuplicates);
 				setElements(set.toArray(new String[0]));
 				return ret;
 			}

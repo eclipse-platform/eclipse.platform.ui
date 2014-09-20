@@ -31,8 +31,11 @@ public class Messages extends NLS {
 	public static String IconDialog_selectIcon_TITLE;
 	public static String IconDialog_uri;
 	public static String IconDialog_uriEditor;
+	public static String NonReferencedActionPage_Action;
+	public static String NonReferencedActionPage_NonreferencedResourceAction;
 	public static String NonReferencedResourceDialog__ast_notInABundle_ast;
 	public static String NonReferencedResourceDialog_2;
+	public static String NonReferencedResourceDialog_Action;
 	public static String NonReferencedResourceDialog_ast_notInABundle_ast;
 	public static String NonReferencedResourceDialog_bundle;
 	public static String NonReferencedResourceDialog_class;
@@ -52,6 +55,8 @@ public class Messages extends NLS {
 	public static String NonReferencedResourceDialog_selectTheFolderResourceCopy;
 	public static String NonReferencedResourceDialog_url;
 	public static String NonReferencedResourceDialog_useAnyway;
+	public static String PickProjectFolderPage_SelectProjectFolder;
+	public static String PickProjectPage_SelectReferencedProject;
 	public static String ProjectFolderPickerDialog_0;
 	public static String ProjectFolderPickerDialog_6;
 	public static String ProjectFolderPickerDialog_sourceResourceDirectory;
@@ -59,8 +64,12 @@ public class Messages extends NLS {
 	public static String ProjectFolderPickerDialog_useSourceDirectory;
 	public static String ReferencedProjectPickerDialog_selectReferencedProject;
 	public static String TargetPlatformClassContributionCollector_classes;
+	public static String TargetPlatformContributionCollector_BuildTargetPlatformIndex;
 	public static String TargetPlatformContributionCollector_pleaseWait;
+	public static String TargetPlatformContributionCollector_RunInBackground;
+	public static String TargetPlatformContributionCollector_Searching;
 	public static String TargetPlatformContributionCollector_updatingTargetPlatformCache;
+	public static String TargetPlatformContributionCollector_WaitingForTargetPlatformIndexingToComplete;
 	public static String TargetPlatformIconContributionCollector_images;
 	static {
 		// initialize resource bundle

@@ -90,7 +90,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
 	private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES);
 	private IListProperty APPLICATION__COMMANDS = EMFProperties.list(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS);
-	private IListProperty APPLICATION__DIALOGS = EMFProperties.list(ApplicationPackageImpl.Literals.APPLICATION__DIALOGS);
+	// private IListProperty APPLICATION__DIALOGS =
+	// EMFProperties.list(ApplicationPackageImpl.Literals.APPLICATION__DIALOGS);
 	private IListProperty PART_DESCRIPTOR_CONTAINER__DESCRIPTORS = EMFProperties.list(BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private IListProperty APPLICATION__ADDONS = EMFProperties.list(ApplicationPackageImpl.Literals.APPLICATION__ADDONS);
@@ -376,16 +377,16 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		public void addPages() {
 			getShell().setText(Messages.CommandWizard_ShellTitle);
 			setDefaultPageImageDescriptor(ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Wizban16_newexp_wiz)));
-			handlerPage = new HandlerCommandPage("Handler and Command");
+			handlerPage = new HandlerCommandPage(Messages.ApplicationEditor_HandlerAndCommand);
 			addPage(handlerPage);
 
-			keyPage = new KeybindingPage("Keybinding", application);
+			keyPage = new KeybindingPage(Messages.ApplicationEditor_Keybinding, application);
 			addPage(keyPage);
 
-			menuPage = new MenuWizardPage("Menu", application);
+			menuPage = new MenuWizardPage(Messages.ApplicationEditor_Menu, application);
 			addPage(menuPage);
 
-			toolbarPage = new ToolbarWizardPage("Toolbar", application);
+			toolbarPage = new ToolbarWizardPage(Messages.ApplicationEditor_Toolbar, application);
 			addPage(toolbarPage);
 		}
 
@@ -444,8 +445,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		@Override
 		public void createControl(Composite parent) {
-			setTitle("Command/Handler");
-			setMessage("Insert informations for Command and Handler");
+			setTitle(Messages.ApplicationEditor_Command_Slash_Handler);
+			setMessage(Messages.ApplicationEditor_InsertInfosForCommandAndHandler);
 
 			Composite group = new Composite(parent, SWT.NONE);
 			group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -453,7 +454,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 			{
 				Label l = new Label(group, SWT.NONE);
-				l.setText("Id");
+				l.setText(Messages.ApplicationEditor_Id);
 
 				idField = new Text(group, SWT.BORDER);
 				idField.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
@@ -461,7 +462,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 			{
 				Label l = new Label(group, SWT.NONE);
-				l.setText("Name" + "*");
+				l.setText(Messages.ApplicationEditor_Name + "*"); //$NON-NLS-1$
 
 				nameField = new Text(group, SWT.BORDER);
 				nameField.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
@@ -476,7 +477,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 			{
 				Label l = new Label(group, SWT.NONE);
-				l.setText("Class");
+				l.setText(Messages.ApplicationEditor_Class);
 
 				Text t = new Text(group, SWT.BORDER);
 				t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -507,8 +508,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		@Override
 		public void createControl(Composite parent) {
-			setTitle("Keybinding");
-			setMessage("Insert informations for a keybinding");
+			setTitle(Messages.ApplicationEditor_Keybinding);
+			setMessage(Messages.ApplicationEditor_InsertInfosForKeybinding);
 
 			Composite group = new Composite(parent, SWT.NONE);
 			group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -516,7 +517,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 			{
 				Label l = new Label(group, SWT.NONE);
-				l.setText("Sequence");
+				l.setText(Messages.ApplicationEditor_Sequence);
 
 				keyField = new Text(group, SWT.BORDER);
 				keyField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -532,7 +533,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 			{
 				Label l = new Label(group, SWT.NONE);
-				l.setText("Binding Table");
+				l.setText(Messages.ApplicationEditor_BindingTable);
 				l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 				bindtableViewer = new TableViewer(group);
@@ -580,8 +581,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		@Override
 		public void createControl(Composite parent) {
-			setTitle("Handled Menu Item");
-			setMessage("Insert informations for a Handled Menu Item");
+			setTitle(Messages.ApplicationEditor_HandledMenuItem);
+			setMessage(Messages.ApplicationEditor_InertInfosForAHandledMenuItem);
 
 			Composite group = new Composite(parent, SWT.NONE);
 			group.setLayout(new GridLayout(2, false));
@@ -589,7 +590,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 			{
 				Label l = new Label(group, SWT.NONE);
-				l.setText("Label");
+				l.setText(Messages.ApplicationEditor_Label);
 
 				labelField = new Text(group, SWT.BORDER);
 				labelField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -597,7 +598,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 			{
 				Label l = new Label(group, SWT.NONE);
-				l.setText("Icon");
+				l.setText(Messages.ApplicationEditor_Icon);
 
 				iconField = new Text(group, SWT.BORDER);
 				iconField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -605,7 +606,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 			{
 				Label l = new Label(group, SWT.NONE);
-				l.setText("Type");
+				l.setText(Messages.ApplicationEditor_Type);
 
 				typeViewer = new ComboViewer(group, SWT.READ_ONLY);
 				typeViewer.setContentProvider(new ArrayContentProvider());
@@ -615,7 +616,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 			{
 				Label l = new Label(group, SWT.NONE);
-				l.setText("Parent");
+				l.setText(Messages.ApplicationEditor_Parent);
 				l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 				menuViewer = new TableViewer(group);
@@ -671,8 +672,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		@Override
 		public void createControl(Composite parent) {
-			setTitle("Handled Toolbar Item");
-			setMessage("Insert informations for a Toolbar Item");
+			setTitle(Messages.ApplicationEditor_HandledToolbarItem);
+			setMessage(Messages.ApplicationEditor_InsertInfosForAToolbarItem);
 
 			Composite group = new Composite(parent, SWT.NONE);
 			group.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false, 2, 1));
@@ -680,7 +681,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 			{
 				Label l = new Label(group, SWT.NONE);
-				l.setText("Label");
+				l.setText(Messages.ApplicationEditor_Label);
 
 				labelField = new Text(group, SWT.BORDER);
 				labelField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -688,7 +689,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 			{
 				Label l = new Label(group, SWT.NONE);
-				l.setText("Icon");
+				l.setText(Messages.ApplicationEditor_Icon);
 
 				iconField = new Text(group, SWT.BORDER);
 				iconField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -696,7 +697,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 			{
 				Label l = new Label(group, SWT.NONE);
-				l.setText("Type");
+				l.setText(Messages.ApplicationEditor_Type);
 
 				typeViewer = new ComboViewer(group, SWT.READ_ONLY);
 				// viewer.setLabelProvider(labelProvider)
@@ -706,7 +707,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 			{
 				Label l = new Label(group, SWT.NONE);
-				l.setText("Parent");
+				l.setText(Messages.ApplicationEditor_Parent);
 				l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 				toolbarViewer = new TableViewer(group);

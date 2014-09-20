@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Ongoing Maintenance
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
@@ -48,7 +48,7 @@ public class PickProjectPage extends WizardPage implements IWizardPage {
 	private IEclipseContext context;
 
 	protected PickProjectPage(IEclipseContext context) {
-		super("Select Referenced Project");
+		super(Messages.PickProjectPage_SelectReferencedProject);
 		this.context = context;
 		try {
 			this.projects = context.get(IProject.class).getReferencedProjects();

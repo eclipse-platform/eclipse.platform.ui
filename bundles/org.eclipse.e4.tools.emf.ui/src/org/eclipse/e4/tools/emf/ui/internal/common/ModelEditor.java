@@ -10,7 +10,7 @@
  *     Wim Jongman <wim.jongman@remainsoftware.com> - Maintenance
  *     Marco Descher <marco@descher.at> - Bug395982, 426653, 422465, 429674
  *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
- *     Steven Spungin <steven@spungin.tv> - Bug 396902, 431755, 431735, 424730, 424730, 391089, 437236, 437552
+ *     Steven Spungin <steven@spungin.tv> - Bug 396902, 431755, 431735, 424730, 424730, 391089, 437236, 437552, Ongoing Maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
@@ -658,7 +658,7 @@ public class ModelEditor implements IGotoObject {
 
 						actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId()).getActionsImport(s.getFirstElement());
 						if (actions.size() > 0) {
-							MenuManager menu = new MenuManager("Import 3x");
+							MenuManager menu = new MenuManager(messages.ModelEditor_Import3x);
 							for (Action a : actions) {
 								addSeparator = true;
 								menu.add(a);
@@ -699,7 +699,7 @@ public class ModelEditor implements IGotoObject {
 
 						if (actions.size() > 0) {
 							// TODO WIM - extract nls
-							MenuManager menu = new MenuManager("Import 3x");
+							MenuManager menu = new MenuManager(messages.ModelEditor_Import3x);
 							for (Action a : actions) {
 								addSeparator = true;
 								menu.add(a);
@@ -880,7 +880,7 @@ public class ModelEditor implements IGotoObject {
 				if (s.getFirstElement() instanceof EObject) {
 					manager.add(new Separator());
 					final EObject el = (EObject) s.getFirstElement();
-					Action gotoXmiAction = new Action(Messages.ModelEditor_goto_xmi) {
+					Action gotoXmiAction = new Action(messages.ModelEditor_goto_xmi) {
 						@Override
 						public void run() {
 							gotoEObject(TAB_XMI, el);
@@ -890,7 +890,7 @@ public class ModelEditor implements IGotoObject {
 
 					if (listTab != null) {
 						if (EmfUtil.getAttribute(el, "elementId") != null) { //$NON-NLS-1$
-							Action gotoListAction = new Action(Messages.ModelEditor_goto_list) {
+							Action gotoListAction = new Action(messages.ModelEditor_goto_list) {
 								@Override
 								public void run() {
 									gotoEObject(TAB_LIST, el);
@@ -1231,7 +1231,7 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	private void registerDefaultEditors() {
-		System.err.println(getClass().getName() + ".registerDefaultEditors: " + resourcePool);
+		System.err.println(getClass().getName() + ".registerDefaultEditors: " + resourcePool); //$NON-NLS-1$
 
 		registerEditor(ApplicationPackageImpl.Literals.APPLICATION, ContextInjectionFactory.make(ApplicationEditor.class, context));
 		registerEditor(ApplicationPackageImpl.Literals.ADDON, ContextInjectionFactory.make(AddonsEditor.class, context));

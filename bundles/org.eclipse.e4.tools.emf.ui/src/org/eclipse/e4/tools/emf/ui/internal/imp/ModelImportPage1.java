@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2013 Remain BV, Industrial-TSI BV and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Wim Jongmam <wim.jongman@remainsoftware.com> - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - Ongoing Maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.imp;
 
@@ -65,7 +66,7 @@ public class ModelImportPage1 extends WizardPage {
 		public Object[] getElements(Object inputElement) {
 
 			if (!(inputElement instanceof RegistryStruct)) {
-				return new String[] { "Wrong input" };
+				return new String[] { Messages.ModelImportPage1_WrongInput };
 			}
 
 			RegistryStruct input = (RegistryStruct) inputElement;
@@ -101,16 +102,16 @@ public class ModelImportPage1 extends WizardPage {
 	 * Create the wizard.
 	 */
 	public ModelImportPage1() {
-		super("wizardPage");
-		setTitle("Import ");
-		setDescription("Select plug-in and elements to import");
+		super(Messages.ModelImportPage1_WizardPage);
+		setTitle(Messages.ModelImportPage1_Import + " "); //$NON-NLS-1$
+		setDescription(Messages.ModelImportPage1_SelectPlugInAndElementsToImport);
 		wizard = (ModelImportWizard) getWizard();
 		setPageComplete(false);
 	}
 
 	/**
 	 * Create contents of the wizard.
-	 * 
+	 *
 	 * @param parent
 	 */
 	@Override
@@ -135,12 +136,12 @@ public class ModelImportPage1 extends WizardPage {
 		TableColumn column = tableViewerColumn.getColumn();
 		column.setResizable(false);
 		tcl_composite.setColumnData(column, new ColumnWeightData(1, ColumnWeightData.MINIMUM_WIDTH, true));
-		column.setText("Description");
+		column.setText(Messages.ModelImportPage1_Description);
 		checkboxTableViewer.setLabelProvider(new TableLabelProvider());
 		checkboxTableViewer.setContentProvider(new TableContentProvider());
 		comboViewer.setContentProvider(new ComboContentProvider());
 
-		comboViewer.setInput("go");
+		comboViewer.setInput(Messages.ModelImportPage1_Go);
 
 		comboViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
@@ -170,11 +171,11 @@ public class ModelImportPage1 extends WizardPage {
 	@Override
 	public void setWizard(IWizard newWizard) {
 		this.wizard = (ModelImportWizard) newWizard;
-		setTitle("Import " + wizard.getApplicationElement().getSimpleName());
+		setTitle(Messages.ModelImportPage1_Import + " " + wizard.getApplicationElement().getSimpleName()); //$NON-NLS-1$
 
 		String hint = wizard.getHint();
 		if (hint != null && hint.length() > 0) {
-			setDescription("Select plug-in and elements (" + hint + ") to import");
+			setDescription(Messages.ModelImportPage1_SelectPluginAndElements + " (" + hint + ") " + Messages.ModelImportPage1_ToImport); //$NON-NLS-1$//$NON-NLS-2$
 			// else already set
 		}
 

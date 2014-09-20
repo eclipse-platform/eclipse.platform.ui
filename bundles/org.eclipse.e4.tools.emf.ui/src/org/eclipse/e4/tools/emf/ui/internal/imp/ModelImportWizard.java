@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2013 Remain BV, Industrial-TSI BV and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Wim Jongmam <wim.jongman@remainsoftware.com> - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - Ongoing Maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.imp;
 
@@ -34,7 +35,7 @@ public class ModelImportWizard extends Wizard {
 	private final String hint;
 
 	public ModelImportWizard(Class<? extends MApplicationElement> applicationElement, AbstractComponentEditor editor, IResourcePool resourcePool) {
-		this(applicationElement, editor, "", resourcePool);
+		this(applicationElement, editor, "", resourcePool); //$NON-NLS-1$
 	}
 
 	public ModelImportWizard(Class<? extends MApplicationElement> applicationElement, AbstractComponentEditor editor, String hint, IResourcePool resourcePool) {
@@ -42,9 +43,9 @@ public class ModelImportWizard extends Wizard {
 		this.editor = editor;
 		this.hint = hint;
 		this.application = (MApplication) editor.getEditor().getModelProvider().getRoot().get(0);
-		setWindowTitle("Model " + applicationElement.getSimpleName() + " Import Wizard");
+		setWindowTitle(Messages.ModelImportWizard_Model + " " + applicationElement.getSimpleName() + " " + Messages.ModelImportWizard_ImportWizard); //$NON-NLS-1$ //$NON-NLS-2$
 		setDefaultPageImageDescriptor(ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Wizban16_imp3x_wiz)));
-		Assert.isNotNull(RegistryUtil.getStruct(applicationElement, getHint()), "Unknown Element: " + applicationElement.getClass().getName());
+		Assert.isNotNull(RegistryUtil.getStruct(applicationElement, getHint()), Messages.ModelImportWizard_UnknownElement + ": " + applicationElement.getClass().getName()); //$NON-NLS-1$
 	}
 
 	@Override
@@ -101,9 +102,9 @@ public class ModelImportWizard extends Wizard {
 	/**
 	 * Returns the list of {@link MApplicationElement}s of the type passed in
 	 * the constructor of the wizard.
-	 * 
+	 *
 	 * @param <T>
-	 * 
+	 *
 	 * @return
 	 */
 	public MApplicationElement[] getElements(Class<? extends MApplicationElement> type) {
@@ -116,7 +117,7 @@ public class ModelImportWizard extends Wizard {
 
 	/**
 	 * Returns if this is a live model.
-	 * 
+	 *
 	 * @return true or false
 	 */
 	public boolean isLiveModel() {
@@ -125,7 +126,7 @@ public class ModelImportWizard extends Wizard {
 
 	/**
 	 * Returns the hint that explains the meaning of the caller.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getHint() {

@@ -4,12 +4,10 @@
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors: Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730
+ * Contributors: Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Ongoing Maintenance
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,6 +15,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -55,7 +54,6 @@ public class BundleClassDialog extends Dialog implements UriDialog {
 	private String bundle = ""; //$NON-NLS-1$
 	private String clazz = ""; //$NON-NLS-1$
 	private String pakage = ""; //$NON-NLS-1$
-	private Composite parent;
 	protected boolean ignoreModify;
 	private IEclipseContext context;
 
@@ -79,7 +77,6 @@ public class BundleClassDialog extends Dialog implements UriDialog {
 
 	@Override
 	protected Control createDialogArea(final Composite parent) {
-		this.parent = parent;
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		composite.setLayout(new GridLayout(2, false));
@@ -134,7 +131,7 @@ public class BundleClassDialog extends Dialog implements UriDialog {
 		{
 			Link lbl = new Link(composite, SWT.NONE);
 			lbl.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
-			lbl.setText("<A>" + Messages.BundleClassDialog_bundle + "</A>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			lbl.setText("<A>" + Messages.BundleClassDialog_bundle + "</A>"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			txtBundle = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 			txtBundle.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -163,7 +160,7 @@ public class BundleClassDialog extends Dialog implements UriDialog {
 		{
 			Link lbl = new Link(composite, SWT.NONE);
 			lbl.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
-			lbl.setText("<A>" + Messages.BundleClassDialog_package + "</A>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			lbl.setText("<A>" + Messages.BundleClassDialog_package + "</A>"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			txtPackage = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 			txtPackage.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -192,7 +189,7 @@ public class BundleClassDialog extends Dialog implements UriDialog {
 		{
 			Link lbl = new Link(composite, SWT.NONE);
 			lbl.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
-			lbl.setText("<A>" + Messages.BundleClassDialog_class + "</A>"); //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+			lbl.setText("<A>" + Messages.BundleClassDialog_class + "</A>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-2
 
 			txtClass = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 			txtClass.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -237,7 +234,7 @@ public class BundleClassDialog extends Dialog implements UriDialog {
 		ToolItem btnFind = new ToolItem(toolBar, SWT.PUSH);
 		// btnFind.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false,
 		// false, 2, 1));
-		btnFind.setText(Messages.BundleClassDialog_find + "..."); //$NON-NLS-2$ //$NON-NLS-1$
+		btnFind.setText(Messages.BundleClassDialog_find + "..."); //$NON-NLS-1$
 		btnFind.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

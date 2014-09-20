@@ -9,6 +9,8 @@ public class Messages extends NLS {
 	public static String TitleAreaFilterDialogWithEmptyOptions_excludeEmptyValues;
 	public static String TitleAreaFilterDialogWithEmptyOptions_includeEmptyValues;
 	public static String TitleAreaFilterDialogWithEmptyOptions_onlyEmptyValues;
+	public static String EmfUtil_ex_attribute_not_found;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

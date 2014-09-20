@@ -1,3 +1,7 @@
+/*******************************************************************************
+ *     Steven Spungin <steven@spungin.tv> - Ongoing maintenance
+ ******************************************************************************/
+
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.util.ArrayList;
@@ -59,7 +63,7 @@ public class UnsettableUpdateValueStrategy extends EMFUpdateValueStrategy {
 						if (eAttribute.isMany()) {
 							List<Object> result = new ArrayList<Object>();
 							if (value != null) {
-								for (String element : value.split(" ")) {
+								for (String element : value.split(" ")) { //$NON-NLS-1$
 									result.add(eFactory.createFromString(eDataType, element));
 								}
 							}
@@ -90,7 +94,7 @@ public class UnsettableUpdateValueStrategy extends EMFUpdateValueStrategy {
 						} else {
 							// If the value
 							if (fromObject == SetCommand.UNSET_VALUE || fromObject == null || fromObject.equals(eAttribute.getDefaultValue())) {
-								return "";
+								return ""; //$NON-NLS-1$
 							}
 							return eFactory.convertToString(eDataType, fromObject);
 						}
@@ -103,7 +107,7 @@ public class UnsettableUpdateValueStrategy extends EMFUpdateValueStrategy {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.databinding.UpdateValueStrategy#doSet(org.eclipse.core
 	 * .databinding.observable.value.IObservableValue, java.lang.Object)

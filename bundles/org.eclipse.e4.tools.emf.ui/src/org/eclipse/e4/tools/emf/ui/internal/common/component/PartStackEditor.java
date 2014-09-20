@@ -123,13 +123,13 @@ public class PartStackEditor extends AbstractComponentEditor {
 		}
 
 		// --- Import Actions ---
-		actionsImport.add(new Action("Views", createImageDescriptor(ResourceProvider.IMG_Part)) {
+		actionsImport.add(new Action(Messages.PartStackEditor_Views, createImageDescriptor(ResourceProvider.IMG_Part)) {
 			@Override
 			public void run() {
 				handleImportChild(BasicPackageImpl.Literals.PART);
 			}
 		});
-		actionsImport.add(new Action("Editors", createImageDescriptor(ResourceProvider.IMG_Part)) {
+		actionsImport.add(new Action(Messages.PartStackEditor_Editors, createImageDescriptor(ResourceProvider.IMG_Part)) {
 			@Override
 			public void run() {
 				handleImportChild(BasicPackageImpl.Literals.INPUT_PART);
@@ -242,9 +242,9 @@ public class PartStackEditor extends AbstractComponentEditor {
 			childrenDropDown.setLabelProvider(new FeatureClassLabelProvider(getEditor()));
 
 			List<FeatureClass> eClassList = new ArrayList<FeatureClass>();
-			eClassList.add(new FeatureClass("Part", BasicPackageImpl.Literals.PART));
-			eClassList.add(new FeatureClass("CompositePart", BasicPackageImpl.Literals.COMPOSITE_PART));
-			eClassList.add(new FeatureClass("Placeholder", AdvancedPackageImpl.Literals.PLACEHOLDER));
+			eClassList.add(new FeatureClass(Messages.PartStackEditor_Part, BasicPackageImpl.Literals.PART));
+			eClassList.add(new FeatureClass(Messages.PartStackEditor_CompositePart, BasicPackageImpl.Literals.COMPOSITE_PART));
+			eClassList.add(new FeatureClass(Messages.PartStackEditor_Placeholder, AdvancedPackageImpl.Literals.PLACEHOLDER));
 			eClassList.addAll(getEditor().getFeatureClasses(BasicPackageImpl.Literals.PART_STACK, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN));
 			childrenDropDown.setInput(eClassList);
 			childrenDropDown.setSelection(new StructuredSelection(eClassList.get(0)));

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 437569
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 437569, Ongoing Maintenance
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
@@ -68,7 +68,7 @@ public class NonReferencedActionPage extends WizardPage implements IWizardPage {
 	private BundleImageCache imageCache;
 
 	protected NonReferencedActionPage(IProject project, String bundle, IFile file, String installLocation, IEclipseContext context) {
-		super("Nonreferenced Resource Action");
+		super(Messages.NonReferencedActionPage_NonreferencedResourceAction);
 
 		this.project = project;
 		this.bundle = bundle;
@@ -78,7 +78,7 @@ public class NonReferencedActionPage extends WizardPage implements IWizardPage {
 
 		imageCache = context.get(BundleImageCache.class);
 
-		setImageDescriptor(ImageDescriptor.createFromImage(imageCache.create(Plugin.ID, "/icons/full/wizban/newefix_wizban.png"))); //$NON-NLS-1$ //$NON-NLS-2$
+		setImageDescriptor(ImageDescriptor.createFromImage(imageCache.create(Plugin.ID, "/icons/full/wizban/newefix_wizban.png"))); //$NON-NLS-1$
 
 		if (bundle == null && installLocation != null) {
 			this.bundle = FilteredContributionDialog.getBundle(installLocation);
@@ -88,8 +88,8 @@ public class NonReferencedActionPage extends WizardPage implements IWizardPage {
 			this.className = cdf.getContributionData().className;
 		}
 
-		setTitle("Nonreferenced Resource Action");
-		setMessage("Nonreferenced Resource Action");
+		setTitle(Messages.NonReferencedActionPage_NonreferencedResourceAction);
+		setMessage(Messages.NonReferencedActionPage_NonreferencedResourceAction);
 	}
 
 	@Override
@@ -205,7 +205,7 @@ public class NonReferencedActionPage extends WizardPage implements IWizardPage {
 		Group group = new Group(comp, SWT.NONE);
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 0));
 		group.setLayout(new GridLayout(1, false));
-		group.setText("Action");
+		group.setText(Messages.NonReferencedActionPage_Action);
 
 		if (bundle != null) {
 			final Button btnRequire = new Button(group, SWT.RADIO);

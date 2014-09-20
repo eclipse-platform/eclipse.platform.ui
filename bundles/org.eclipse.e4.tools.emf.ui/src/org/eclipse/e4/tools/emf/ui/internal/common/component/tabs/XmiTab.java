@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 391089, Bug 437543
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 391089, Bug 437543, Ongoing Maintenance
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
@@ -18,11 +18,13 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.AnnotationAccess;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.EMFDocumentResourceMediator;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.XMLConfiguration;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.XMLPartitionScanner;
 import org.eclipse.e4.tools.services.IResourcePool;
+import org.eclipse.e4.tools.services.Translation;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.jface.resource.JFaceResources;
@@ -63,6 +65,10 @@ public class XmiTab extends Composite {
 	@Inject
 	private IEclipsePreferences preferences;
 
+	@Inject
+	@Translation
+	protected Messages Messages;
+
 	private Text text;
 	protected int offsetStart;
 	private SourceViewer sourceViewer;
@@ -78,7 +84,7 @@ public class XmiTab extends Composite {
 
 		text = new Text(this, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		text.setMessage("type text to search (press <ENTER> to search for next instance)");
+		text.setMessage(Messages.XmiTab_TypeTextToSearch);
 		text.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {

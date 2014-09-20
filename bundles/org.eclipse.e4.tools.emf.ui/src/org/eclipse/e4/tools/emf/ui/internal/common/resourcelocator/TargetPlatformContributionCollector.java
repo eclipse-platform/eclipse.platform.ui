@@ -135,7 +135,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 							stopFiltering = true;
 							break;
 						} else {
-							monitor.subTask("Searching " + e.installLocation);
+							monitor.subTask(Messages.TargetPlatformContributionCollector_Searching + " " + e.installLocation); //$NON-NLS-1$
 						}
 					}
 
@@ -287,7 +287,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 			cacheLocation.clear();
 			outputDirectories.clear();
 
-			final Job job = new Job("Build Target Platform Index") {
+			final Job job = new Job(Messages.TargetPlatformContributionCollector_BuildTargetPlatformIndex) {
 
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
@@ -424,7 +424,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 
 						@Override
 						protected void createButtonsForButtonBar(Composite parent) {
-							Button button = createButton(parent, 101, "Run In Background", false);
+							Button button = createButton(parent, 101, Messages.TargetPlatformContributionCollector_RunInBackground, false);
 							// TODO JA
 							button.addSelectionListener(new SelectionAdapter() {
 								@Override
@@ -450,8 +450,8 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 
 							@Override
 							public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-								monitor.beginTask("Waiting for target platform indexing to complete", IProgressMonitor.UNKNOWN);
-								while (job.getState() == job.RUNNING && !runInBackground) {
+								monitor.beginTask(Messages.TargetPlatformContributionCollector_WaitingForTargetPlatformIndexingToComplete, IProgressMonitor.UNKNOWN);
+								while (job.getState() == Job.RUNNING && !runInBackground) {
 									Thread.sleep(100);
 								}
 								monitor.done();

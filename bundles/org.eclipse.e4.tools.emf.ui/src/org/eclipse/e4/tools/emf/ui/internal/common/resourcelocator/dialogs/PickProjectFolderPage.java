@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Ongoing Maintenance
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
@@ -54,7 +54,7 @@ public class PickProjectFolderPage extends WizardPage {
 	private Label lblResourcePath;
 
 	protected PickProjectFolderPage(IEclipseContext context) {
-		super("Select Project Folder", "Select Project Folder", null);
+		super(Messages.PickProjectFolderPage_SelectProjectFolder, Messages.PickProjectFolderPage_SelectProjectFolder, null);
 		this.context = context;
 
 		setMessage(Messages.NonReferencedResourceDialog_selectProjectToReceiveCopy);

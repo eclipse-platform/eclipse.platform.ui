@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Ongoing Maintenance
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common;
@@ -59,7 +59,7 @@ public class E4StringPickList extends AbstractPickList {
 		// TODO does not respect NO_ORDER yet
 
 		tiReplace = new ToolItem(getToolBar(), SWT.PUSH, 2);
-		tiReplace.setText("Replace");
+		tiReplace.setText(messages.E4StringPickList_Replace);
 		tiReplace.setImage(editor.createImage(ResourceProvider.IMG_Obj16_world_edit));
 
 		text = new Text(getToolBar().getParent(), SWT.SINGLE | SWT.LEAD | SWT.BORDER);

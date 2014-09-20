@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555, Bug 436889, Bug 437372, Bug 440469
+ *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555, Bug 436889, Bug 437372, Bug 440469, Ongoing Maintenance
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
@@ -174,7 +174,7 @@ public class ListTab implements IViewEObjects {
 
 	// save custom column and filter settings
 	public void saveSettings() {
-		IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(Plugin.ID); //$NON-NLS-1$
+		IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(Plugin.ID);
 		try {
 			Document doc = DocUtil.createDocument("list-tab"); //$NON-NLS-1$
 			Element cols = DocUtil.createChild(doc.getDocumentElement(), "columns"); //$NON-NLS-1$
@@ -237,7 +237,7 @@ public class ListTab implements IViewEObjects {
 
 	// load custom column and filter settings
 	private void loadSettings() {
-		IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(Plugin.ID); //$NON-NLS-1$
+		IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(Plugin.ID);
 
 		boolean restoreColumns = pref.getBoolean("list-tab-remember-columns", false); //$NON-NLS-1$
 		boolean restoreFilters = pref.getBoolean("list-tab-remember-filters", false); //$NON-NLS-1$
@@ -353,7 +353,7 @@ public class ListTab implements IViewEObjects {
 			}
 		});
 		try {
-			imgMarkedItem = imageCache.create(Plugin.ID, "/icons/full/obj16/mark_occurrences.png"); //$NON-NLS-1$//$NON-NLS-2$
+			imgMarkedItem = imageCache.create(Plugin.ID, "/icons/full/obj16/mark_occurrences.png"); //$NON-NLS-1$
 		} catch (Exception e2) {
 			e2.printStackTrace();
 		}
@@ -394,7 +394,7 @@ public class ListTab implements IViewEObjects {
 				public void widgetSelected(SelectionEvent e) {
 					TitleAreaFilterDialogWithEmptyOptions dlg = createEObjectAttributePicker(Messages.ListTab_addColumn);
 					dlg.setShowEmptyOptions(false);
-					if (dlg.open() == dlg.OK) {
+					if (dlg.open() == Window.OK) {
 						// Add Column
 						String attName = dlg.getFirstElement().toString();
 						EAttributeTableViewerColumn col = addColumn(attName);
@@ -451,7 +451,7 @@ public class ListTab implements IViewEObjects {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					TitleAreaFilterDialogWithEmptyOptions dlg = createEObjectAttributePicker(Messages.ListTab_filterByAttribute);
-					if (dlg.open() == dlg.OK) {
+					if (dlg.open() == Window.OK) {
 						filterByAttribute(dlg.getFirstElement().toString(), dlg.getEmptyFilterOption());
 					}
 				};
@@ -509,7 +509,7 @@ public class ListTab implements IViewEObjects {
 
 		colGo = new TableViewerColumn(tvResults, SWT.NONE);
 		colGo.getColumn().setText(Messages.ListTab_col_go);
-		requiredColumns.put("GoTree", colGo.getColumn());
+		requiredColumns.put("GoTree", colGo.getColumn()); //$NON-NLS-1$
 		colGo.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public Image getImage(Object element) {
@@ -524,7 +524,7 @@ public class ListTab implements IViewEObjects {
 
 		colGoXmi = new TableViewerColumn(tvResults, SWT.NONE);
 		colGoXmi.getColumn().setText(Messages.ListTab_col_go);
-		requiredColumns.put("GoXmi", colGoXmi.getColumn());
+		requiredColumns.put("GoXmi", colGoXmi.getColumn()); //$NON-NLS-1$
 		colGoXmi.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -551,7 +551,7 @@ public class ListTab implements IViewEObjects {
 		colMarked = new TableViewerColumn(tvResults, SWT.NONE);
 		colMarked.getColumn().setWidth(16);
 		colMarked.getColumn().setText(Messages.ListTab_mark);
-		requiredColumns.put("Marked", colMarked.getColumn());
+		requiredColumns.put("Marked", colMarked.getColumn()); //$NON-NLS-1$
 		colMarked.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public Image getImage(Object element) {
@@ -575,7 +575,7 @@ public class ListTab implements IViewEObjects {
 
 		colItem = new TableViewerColumn(tvResults, SWT.NONE);
 		colItem.getColumn().setText(Messages.ListTab_col_item);
-		requiredColumns.put("Item", colItem.getColumn());
+		requiredColumns.put("Item", colItem.getColumn()); //$NON-NLS-1$
 		colItem.setLabelProvider(new ColumnLabelProvider_Markable() {
 			@Override
 			public String getText(Object element) {
@@ -586,11 +586,11 @@ public class ListTab implements IViewEObjects {
 
 		app.getContext().set("org.eclipse.e4.tools.active-object-viewer", this); //$NON-NLS-1$
 
-		EAttributeTableViewerColumn colId = new EAttributeTableViewerColumn(tvResults, "elementId", "elementId", context); //$NON-NLS-2$
-		defaultColumns.put("elementId", colId);
+		EAttributeTableViewerColumn colId = new EAttributeTableViewerColumn(tvResults, "elementId", "elementId", context); //$NON-NLS-1$//$NON-NLS-2$
+		defaultColumns.put("elementId", colId); //$NON-NLS-1$
 
-		EAttributeTableViewerColumn colLabel = new EAttributeTableViewerColumn_Markable(tvResults, "label", "label", context); //$NON-NLS-2$
-		defaultColumns.put("label", colLabel);
+		EAttributeTableViewerColumn colLabel = new EAttributeTableViewerColumn_Markable(tvResults, "label", "label", context); //$NON-NLS-1$//$NON-NLS-2$
+		defaultColumns.put("label", colLabel); //$NON-NLS-1$
 
 		// Custom selection for marked items
 		tvResults.getTable().addListener(SWT.EraseItem, new Listener() {
@@ -742,7 +742,7 @@ public class ListTab implements IViewEObjects {
 				Control ret = super.createContents(parent);
 				setMessage(Messages.ListTab_selectAnAttribute);
 				try {
-					setTitleImage(imageCache.create(Plugin.ID, "/icons/full/wizban/attribute_wiz.gif")); //$NON-NLS-1$ //$NON-NLS-2$
+					setTitleImage(imageCache.create(Plugin.ID, "/icons/full/wizban/attribute_wiz.gif")); //$NON-NLS-1$
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -898,7 +898,7 @@ public class ListTab implements IViewEObjects {
 
 			};
 			tvResults.setFilters(new ViewerFilter[] { viewerFilter });
-			filterByItem.setText(Messages.ListTab_filterByItem + ELIPSIS + "(" + filterByItemName + ")"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			filterByItem.setText(Messages.ListTab_filterByItem + ELIPSIS + "(" + filterByItemName + ")"); //$NON-NLS-1$//$NON-NLS-2$
 			filterByAttribute.setText(Messages.ListTab_filterByAttribute + ELIPSIS);
 		}
 	}
@@ -946,7 +946,7 @@ public class ListTab implements IViewEObjects {
 					}
 				};
 				tvResults.setFilters(new ViewerFilter[] { viewerFilter });
-				filterByAttribute.setText(Messages.ListTab_filterByAttribute + ELIPSIS + "(" + filterByAttrName + ")"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+				filterByAttribute.setText(Messages.ListTab_filterByAttribute + ELIPSIS + "(" + filterByAttrName + ")"); //$NON-NLS-1$//$NON-NLS-2$
 				filterByItem.setText(Messages.ListTab_filterByItem + ELIPSIS);
 
 			}

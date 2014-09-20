@@ -68,20 +68,20 @@ public class VPartDescriptor extends AbstractComponentEditor {
 		});
 
 		// --- Import Actions ---
-		actionsImport.add(new Action("Views", createImageDescriptor(ResourceProvider.IMG_Part)) {
+		actionsImport.add(new Action(Messages.VPartDescriptor_Views, createImageDescriptor(ResourceProvider.IMG_Part)) {
 			@Override
 			public void run() {
 				handleImport(BasicPackageImpl.Literals.PART_DESCRIPTOR, RegistryUtil.HINT_VIEW);
 			}
 		});
-		actionsImport.add(new Action("Editors", createImageDescriptor(ResourceProvider.IMG_Part)) {
+		actionsImport.add(new Action(Messages.VPartDescriptor_Editors, createImageDescriptor(ResourceProvider.IMG_Part)) {
 			@Override
 			public void run() {
 				handleImport(BasicPackageImpl.Literals.PART_DESCRIPTOR, RegistryUtil.HINT_EDITOR);
 			}
 		});
 
-		actionsImport.add(new Action("View as CompatibilityView", createImageDescriptor(ResourceProvider.IMG_Part)) {
+		actionsImport.add(new Action(Messages.VPartDescriptor_ViewAsCompatibilityView, createImageDescriptor(ResourceProvider.IMG_Part)) {
 			@Override
 			public void run() {
 				handleImport(BasicPackageImpl.Literals.PART_DESCRIPTOR, RegistryUtil.HINT_COMPAT_VIEW);

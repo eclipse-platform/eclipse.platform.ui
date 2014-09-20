@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2013 Remain BV, Industrial-TSI BV and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Wim Jongmam <wim.jongman@remainsoftware.com> - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - Ongoing Maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.imp;
 
@@ -65,7 +66,7 @@ public class RegistryUtil {
 	public final static String HINT_COMPAT_VIEW = "compatibilityView"; //$NON-NLS-1$
 
 	/**
-	 * 
+	 *
 	 * @param t
 	 * @param application
 	 * @param elements
@@ -230,15 +231,15 @@ public class RegistryUtil {
 
 		ArrayList<MPart> result = new ArrayList<MPart>();
 		for (IConfigurationElement element : elements) {
-			if ("editor".equals(element.getName())) /* Sanity Check */{
+			if ("editor".equals(element.getName())) /* Sanity Check */{ //$NON-NLS-1$
 				MPart part = (MPart) EcoreUtil.create(BasicPackageImpl.Literals.PART);
-				part.setElementId(element.getAttribute("id"));
-				part.setLabel(element.getAttribute("name"));
-				part.setIconURI(getIconURI(element, "icon"));
-				if (element.getAttribute("class") != null) {
-					part.setContributionURI(getContributionURI(element, "class"));
+				part.setElementId(element.getAttribute("id")); //$NON-NLS-1$
+				part.setLabel(element.getAttribute("name")); //$NON-NLS-1$
+				part.setIconURI(getIconURI(element, "icon")); //$NON-NLS-1$
+				if (element.getAttribute("class") != null) { //$NON-NLS-1$
+					part.setContributionURI(getContributionURI(element, "class")); //$NON-NLS-1$
 				} else {
-					part.setContributionURI(getContributionURI(element, "launcher"));
+					part.setContributionURI(getContributionURI(element, "launcher")); //$NON-NLS-1$
 				}
 				part.setToBeRendered(true);
 				part.setVisible(true);
@@ -351,7 +352,7 @@ public class RegistryUtil {
 	/**
 	 * Returns a list of bundle id's that have extension to the passed extension
 	 * point.
-	 * 
+	 *
 	 * @param registry
 	 * @param extensionPoint
 	 * @return
@@ -382,7 +383,7 @@ public class RegistryUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param registry
 	 * @param struct
 	 * @return the array of {@link IConfigurationElement} objects that meets the
@@ -415,7 +416,7 @@ public class RegistryUtil {
 	/**
 	 * This will return a structure that contains the registry information we
 	 * are looking for.
-	 * 
+	 *
 	 * @param applicationElement
 	 * @return the structure that matches the extension registry to the passed
 	 *         {@link ApplicationElement}
@@ -442,7 +443,7 @@ public class RegistryUtil {
 		}
 
 		else if (applicationElement == MInputPart.class) {
-			return new RegistryStruct("", "org.eclipse.ui.editors", "editor", "name");
+			return new RegistryStruct("", "org.eclipse.ui.editors", "editor", "name"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 
 		else if (applicationElement == MPartDescriptor.class) {

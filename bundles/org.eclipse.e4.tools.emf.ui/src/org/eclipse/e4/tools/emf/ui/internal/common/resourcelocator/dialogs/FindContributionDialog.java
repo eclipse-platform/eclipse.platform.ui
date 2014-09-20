@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *	   Lars Vogel <lars.vogel@gmail.com> - Enhancements
- *     Steven Spungin <steven@spungin.tv> - Modified to be generic picker, Bug 424730
+ *     Steven Spungin <steven@spungin.tv> - Modified to be generic picker, Bug 424730, Ongoing Maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
 
@@ -333,25 +333,25 @@ public class FindContributionDialog extends TitleAreaDialog {
 			setTitle(org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages.FindContributionDialog_findPackage);
 			sbFind.append(org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages.FindContributionDialog_findPackage);
 			if (E.notEmpty(bundleFilter)) {
-				sbFind.append(" " + org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages.FindContributionDialog_inBundle + " " + bundleFilter); //$NON-NLS-1$ //$NON-NLS-3$
+				sbFind.append(" " + org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages.FindContributionDialog_inBundle + " " + bundleFilter); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else if ("show-icons".equals(mode)) { //$NON-NLS-1$
 			setTitle(org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages.FindContributionDialog_findIcon);
 			sbFind.append(org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages.FindContributionDialog_findIcon);
 			if (E.notEmpty(bundleFilter)) {
-				sbFind.append(" " + org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages.FindContributionDialog_inBundle + " " + bundleFilter); //$NON-NLS-1$ //$NON-NLS-3$
+				sbFind.append(" " + org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages.FindContributionDialog_inBundle + " " + bundleFilter); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if (E.notEmpty(packageFilter)) {
-				sbFind.append(" " + org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages.FindContributionDialog_inPackage + " " + packageFilter); //$NON-NLS-1$ //$NON-NLS-3$
+				sbFind.append(" " + org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages.FindContributionDialog_inPackage + " " + packageFilter); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
 			setTitle(org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages.FindContributionDialog_findClass);
 			sbFind.append(org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages.FindContributionDialog_findClass);
 			if (E.notEmpty(bundleFilter)) {
-				sbFind.append(" " + org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages.FindContributionDialog_inBundle + " " + bundleFilter); //$NON-NLS-1$ //$NON-NLS-3$
+				sbFind.append(" " + org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages.FindContributionDialog_inBundle + " " + bundleFilter); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if (E.notEmpty(packageFilter)) {
-				sbFind.append(" " + org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages.FindContributionDialog_inPackage + " " + packageFilter); //$NON-NLS-1$ //$NON-NLS-3$
+				sbFind.append(" " + org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages.FindContributionDialog_inPackage + " " + packageFilter); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		setMessage(sbFind.toString());

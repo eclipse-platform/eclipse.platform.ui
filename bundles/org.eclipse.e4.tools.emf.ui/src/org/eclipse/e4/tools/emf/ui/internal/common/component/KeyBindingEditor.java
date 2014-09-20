@@ -271,22 +271,22 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 				try {
 					KeySequence keySequence = KeySequence.getInstance(value.toString());
 					if (!keySequence.isComplete()) {
-						return new Status(statusCode, Plugin.ID, Messages.KeyBindingEditor_SequenceNotComplete); //$NON-NLS-1$
+						return new Status(statusCode, Plugin.ID, Messages.KeyBindingEditor_SequenceNotComplete); 
 					}
 					if (keySequence.isEmpty()) {
-						return new Status(statusCode, Plugin.ID, Messages.KeyBindingEditor_SequenceEmpty); //$NON-NLS-1$
+						return new Status(statusCode, Plugin.ID, Messages.KeyBindingEditor_SequenceEmpty); 
 					}
 					if (!value.toString().toUpperCase().equals(value.toString())) {
-						return new Status(IStatus.ERROR, Plugin.ID, Messages.KeyBindingEditor_SequenceLowercase); //$NON-NLS-1$
+						return new Status(IStatus.ERROR, Plugin.ID, Messages.KeyBindingEditor_SequenceLowercase); 
 					}
 
 					return Status.OK_STATUS;
 				} catch (Exception e) {
-					return new Status(statusCode, Plugin.ID, e.getMessage(), e); //$NON-NLS-1$
+					return new Status(statusCode, Plugin.ID, e.getMessage(), e); 
 				}
 			}
 
-			return new Status(statusCode, Plugin.ID, Messages.KeyBindingEditor_SequenceEmpty); //$NON-NLS-1$
+			return new Status(statusCode, Plugin.ID, Messages.KeyBindingEditor_SequenceEmpty); 
 		}
 	}
 
