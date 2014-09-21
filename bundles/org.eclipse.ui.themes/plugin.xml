@@ -59,28 +59,72 @@
       <theme
             basestylesheeturi="css/e4_default_win7.css"
             id="org.eclipse.e4.ui.css.theme.e4_default"
+            label="%theme.winvista"
+            os="win32"
+            os_version="6.0">
+      </theme>
+      <theme
+            basestylesheeturi="css/e4_default_win7.css"
+            id="org.eclipse.e4.ui.css.theme.e4_default"
             label="%theme.win7"
             os="win32"
             os_version="6.1">
       </theme>
       <theme
+            basestylesheeturi="css/e4_default_win7.css"
+            id="org.eclipse.e4.ui.css.theme.e4_default"
+            label="%theme.win8"
+            os="win32"
+            os_version="6.2">
+      </theme>
+      <theme
+            basestylesheeturi="css/e4_default_win7.css"
+            id="org.eclipse.e4.ui.css.theme.e4_default"
+            label="%theme.win8.1"
+            os="win32"
+            os_version="6.3">
+      </theme>
+      <theme
             basestylesheeturi="css/e4_default_winxp_blu.css"
-            id="org.eclipse.e4.ui.css.theme.e4_default.xpblu"
+            id="org.eclipse.e4.ui.css.theme.e4_default"
             label="%theme.winxpBlue"
-            os="win32">
+            os="win32"
+            os_version="5.1">
       </theme>
 	  <theme
             basestylesheeturi="css/e4_default_winxp_olv.css"
             id="org.eclipse.e4.ui.css.theme.e4_default.xpolive"
             label="%theme.winxpOlive"
-            os="win32">
+            os="win32"
+            os_version="5.1">
       </theme>
+   <theme
+         basestylesheeturi="css/e4_classic_win7.css"
+         id="org.eclipse.e4.ui.css.theme.e4_classic"
+         label="%theme.winvistaClassic"
+         os="win32"
+         os_version="6.0">
+   </theme>
    <theme
          basestylesheeturi="css/e4_classic_win7.css"
          id="org.eclipse.e4.ui.css.theme.e4_classic"
          label="%theme.win7Classic"
          os="win32"
          os_version="6.1">
+   </theme>
+   <theme
+         basestylesheeturi="css/e4_classic_win7.css"
+         id="org.eclipse.e4.ui.css.theme.e4_classic"
+         label="%theme.win8Classic"
+         os="win32"
+         os_version="6.2">
+   </theme>
+   <theme
+         basestylesheeturi="css/e4_classic_win7.css"
+         id="org.eclipse.e4.ui.css.theme.e4_classic"
+         label="%theme.win8.1Classic"
+         os="win32"
+         os_version="6.3">
    </theme>
    <theme
 		basestylesheeturi="css/high-contrast.css"
