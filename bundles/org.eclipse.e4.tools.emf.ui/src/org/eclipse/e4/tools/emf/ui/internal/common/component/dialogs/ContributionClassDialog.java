@@ -13,7 +13,6 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
@@ -35,15 +34,13 @@ import org.osgi.framework.ServiceReference;
 
 public class ContributionClassDialog extends FilteredContributionDialog {
 
-	private IProject project;
 	private MApplicationElement contribution;
 	private EditingDomain editingDomain;
 	private EStructuralFeature feature;
 	private Messages Messages;
 
-	public ContributionClassDialog(Shell parentShell, IEclipseContext context, IProject project, EditingDomain editingDomain, MApplicationElement contribution, EStructuralFeature feature, Messages Messages) {
+	public ContributionClassDialog(Shell parentShell, IEclipseContext context, EditingDomain editingDomain, MApplicationElement contribution, EStructuralFeature feature, Messages Messages) {
 		super(parentShell, context);
-		this.project = project;
 		this.contribution = contribution;
 		this.editingDomain = editingDomain;
 		this.feature = feature;

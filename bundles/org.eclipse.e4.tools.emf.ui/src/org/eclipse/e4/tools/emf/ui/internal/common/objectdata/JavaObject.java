@@ -7,7 +7,6 @@ import java.util.List;
 public class JavaObject {
 	private Object instance;
 	private List<JavaAttribute> attributes;
-	private List<JavaMethod> methods;
 
 	public JavaObject(Object instance) {
 		this.instance = instance;

@@ -253,7 +253,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), eclipseContext, project, getEditingDomain(), (MPartDescriptor) getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR__CONTRIBUTION_URI, Messages);
+					ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), eclipseContext, getEditingDomain(), (MPartDescriptor) getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR__CONTRIBUTION_URI, Messages);
 					dialog.open();
 				}
 			});

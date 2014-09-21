@@ -81,7 +81,6 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	private WritableList list;
 	private ComboViewer eClassViewer;
 	private Text searchText;
-	private AutoCompleteField acText;
 
 	public FindParentReferenceElementDialog(Shell parentShell, AbstractComponentEditor editor, MStringModelFragment fragment, Messages Messages) {
 		super(parentShell);
@@ -166,7 +165,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 				eClassViewer.setSelection(new StructuredSelection(eClass));
 			}
 		};
-		acText = new AutoCompleteField(combo, textContentAdapter, values);
+		new AutoCompleteField(combo, textContentAdapter, values);
 
 		l = new Label(container, SWT.NONE);
 		l.setText(Messages.FindParentReferenceElementDialog_Search);
@@ -268,7 +267,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	private ClassContributionCollector getCollector() {
 		Bundle bundle = FrameworkUtil.getBundle(FindParentReferenceElementDialog.class);
 		BundleContext context = bundle.getBundleContext();
-		ServiceReference ref = context.getServiceReference(ClassContributionCollector.class.getName());
+		ServiceReference<?> ref = context.getServiceReference(ClassContributionCollector.class.getName());
 		if (ref != null) {
 			return (ClassContributionCollector) context.getService(ref);
 		}

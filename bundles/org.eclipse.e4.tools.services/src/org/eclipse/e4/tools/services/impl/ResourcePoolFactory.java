@@ -15,7 +15,6 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.services.impl.ResourceService.ResourcePool;
 
-@SuppressWarnings("restriction")
 public class ResourcePoolFactory extends ContextFunction {
 
 	@Override

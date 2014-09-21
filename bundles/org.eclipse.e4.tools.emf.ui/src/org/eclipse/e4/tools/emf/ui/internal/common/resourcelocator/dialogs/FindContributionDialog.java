@@ -249,7 +249,7 @@ public class FindContributionDialog extends TitleAreaDialog {
 				if ("show-bundles".equals(mode)) { //$NON-NLS-1$
 					// only add first item from each bundle
 					boolean found = false;
-					for (Iterator it = list.iterator(); it.hasNext();) {
+					for (Iterator<?> it = list.iterator(); it.hasNext();) {
 						ContributionData cd2 = (ContributionData) it.next();
 						if (cd2.bundleName == null || cd2.bundleName.equals(cd.bundleName)) {
 							if (found == false) {
@@ -275,7 +275,7 @@ public class FindContributionDialog extends TitleAreaDialog {
 					}
 					// only add first item from each package
 					boolean found = false;
-					for (Iterator it = list.iterator(); it.hasNext();) {
+					for (Iterator<?> it = list.iterator(); it.hasNext();) {
 						boolean matches = false;
 						ContributionData cd2 = (ContributionData) it.next();
 						if (packageName.isEmpty() && cd2.className.contains(".") == false) { //$NON-NLS-1$
@@ -382,7 +382,7 @@ public class FindContributionDialog extends TitleAreaDialog {
 			return null;
 		}
 		BundleContext context = bundle.getBundleContext();
-		ServiceReference ref = context.getServiceReference(ClassContributionCollector.class.getName());
+		ServiceReference<?> ref = context.getServiceReference(ClassContributionCollector.class.getName());
 		if (ref != null) {
 			return (ClassContributionCollector) context.getService(ref);
 		}

@@ -181,7 +181,7 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 	private ClassContributionCollector getCollector() {
 		Bundle bundle = FrameworkUtil.getBundle(FindImportElementDialog.class);
 		BundleContext context = bundle.getBundleContext();
-		ServiceReference ref = context.getServiceReference(ClassContributionCollector.class.getName());
+		ServiceReference<?> ref = context.getServiceReference(ClassContributionCollector.class.getName());
 		if (ref != null) {
 			return (ClassContributionCollector) context.getService(ref);
 		}

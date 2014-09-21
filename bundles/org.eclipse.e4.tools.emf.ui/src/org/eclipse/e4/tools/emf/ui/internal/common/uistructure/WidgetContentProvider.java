@@ -15,7 +15,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
@@ -76,16 +75,16 @@ public class WidgetContentProvider implements ITreeContentProvider {
 				return new Object[] { item.getControl() };
 			}
 		} else if (parentElement instanceof Tree) {
-			Tree tree = (Tree) parentElement;
+			// No children
 
 		} else if (parentElement instanceof Tree) {
-			Table table = (Table) parentElement;
+			// No children
 
 		} else if (parentElement instanceof List) {
-			List list = (List) parentElement;
+			// No children
 
 		} else if (parentElement instanceof Combo) {
-			Combo combo = (Combo) parentElement;
+			// No children
 
 		} else if (parentElement instanceof CTabFolder) {
 			CTabFolder tabFolder = (CTabFolder) parentElement;

@@ -14,7 +14,6 @@ import org.osgi.framework.FrameworkUtil;
 
 public class JavaAttribute {
 	private JavaObject object;
-	private JavaAttribute attribute;
 
 	private Field field;
 
@@ -22,13 +21,6 @@ public class JavaAttribute {
 		this.object = object;
 		this.field = field;
 		this.field.setAccessible(true);
-	}
-
-	public JavaAttribute(JavaObject object, JavaAttribute attribute, Field field) {
-		this.object = object;
-		this.field = field;
-		this.field.setAccessible(true);
-		this.attribute = attribute;
 	}
 
 	public boolean isInjected() {

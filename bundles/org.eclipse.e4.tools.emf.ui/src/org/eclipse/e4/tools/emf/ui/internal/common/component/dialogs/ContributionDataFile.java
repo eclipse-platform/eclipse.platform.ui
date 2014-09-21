@@ -482,7 +482,7 @@ public class ContributionDataFile implements IFile {
 	}
 
 	@Override
-	public Object getAdapter(Class adapter) {
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		// TODO Auto-generated method stub
 		return null;
 	}
