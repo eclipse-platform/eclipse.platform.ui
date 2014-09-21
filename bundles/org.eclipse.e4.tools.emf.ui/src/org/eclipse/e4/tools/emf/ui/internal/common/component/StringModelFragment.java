@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steve@spungin.tv> - Ongoing Maintenance, Bug 439532
+ *     Steven Spungin <steve@spungin.tv> - Ongoing Maintenance, Bug 439532, Bug 443945
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -24,14 +24,12 @@ import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
-import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FeatureSelectionDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindParentReferenceElementDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
-import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.ViewerElement;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.fragment.MModelFragment;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.e4.ui.model.fragment.impl.StringModelFragmentImpl;
@@ -45,16 +43,12 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.MoveCommand;
-import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
@@ -235,13 +229,24 @@ public class StringModelFragment extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 
-			final ViewerElement tableElement = ViewerElement.create(eclipseContext, parent, this);
+			E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS) {
+				@Override
+				protected void addPressed() {
+					EClass eClass = ((FeatureClass) ((IStructuredSelection) getPicker().getSelection()).getFirstElement()).eClass;
+					handleAdd(eClass, false);
+				}
 
-			tableElement.getViewer().setContentProvider(new ObservableListContentProvider());
-			tableElement.getViewer().setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
+				@Override
+				protected List<?> getContainerChildren(Object master) {
+					return ((StringModelFragmentImpl) master).getElements();
+				}
+			};
 
-			tableElement.getDropDown().setContentProvider(new ArrayContentProvider());
-			tableElement.getDropDown().setLabelProvider(new LabelProvider() {
+			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+			pickList.setText(""); //$NON-NLS-1$
+
+			ComboViewer picker = pickList.getPicker();
+			picker.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {
 					FeatureClass eclass = (FeatureClass) element;
@@ -249,7 +254,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 				}
 			});
 
-			tableElement.getDropDown().setComparator(new ViewerComparator() {
+			picker.setComparator(new ViewerComparator() {
 				@Override
 				public int compare(Viewer viewer, Object e1, Object e2) {
 					FeatureClass eClass1 = (FeatureClass) e1;
@@ -258,88 +263,15 @@ public class StringModelFragment extends AbstractComponentEditor {
 				}
 			});
 
-			tableElement.getButtonAdd().addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					EClass eClass = ((FeatureClass) ((IStructuredSelection) tableElement.getDropDown().getSelection()).getFirstElement()).eClass;
-					EObject eObject = EcoreUtil.create(eClass);
-					setElementId(eObject);
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS, eObject);
-
-					if (cmd.canExecute()) {
-						getEditingDomain().getCommandStack().execute(cmd);
-						getEditor().setSelection(eObject);
-					}
-				}
-			});
-
-			tableElement.getButtonRemove().addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (!tableElement.getViewer().getSelection().isEmpty()) {
-						List<?> elements = ((IStructuredSelection) tableElement.getViewer().getSelection()).toList();
-
-						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS, elements);
-						if (cmd.canExecute()) {
-							getEditingDomain().getCommandStack().execute(cmd);
-						}
-					}
-				}
-			});
-
-			tableElement.getButtonDown().addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (!tableElement.getViewer().getSelection().isEmpty()) {
-						IStructuredSelection s = (IStructuredSelection) tableElement.getViewer().getSelection();
-						if (s.size() == 1) {
-							Object obj = s.getFirstElement();
-							MModelFragment container = (MModelFragment) getMaster().getValue();
-							int idx = container.getElements().indexOf(obj) + 1;
-							if (idx < container.getElements().size()) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS, obj, idx);
-
-								if (cmd.canExecute()) {
-									getEditingDomain().getCommandStack().execute(cmd);
-									tableElement.getViewer().setSelection(new StructuredSelection(obj));
-								}
-							}
-						}
-					}
-				}
-			});
-
-			tableElement.getButtonUp().addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (!tableElement.getViewer().getSelection().isEmpty()) {
-						IStructuredSelection s = (IStructuredSelection) tableElement.getViewer().getSelection();
-						if (s.size() == 1) {
-							Object obj = s.getFirstElement();
-							MModelFragment container = (MModelFragment) getMaster().getValue();
-							int idx = container.getElements().indexOf(obj) - 1;
-							if (idx >= 0) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS, obj, idx);
-
-								if (cmd.canExecute()) {
-									getEditingDomain().getCommandStack().execute(cmd);
-									tableElement.getViewer().setSelection(new StructuredSelection(obj));
-								}
-							}
-						}
-					}
-				}
-			});
-
 			List<FeatureClass> list = new ArrayList<FeatureClass>();
 			Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
 			list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
 
-			tableElement.getDropDown().setInput(list);
-			tableElement.getDropDown().getCombo().select(0);
+			picker.setInput(list);
+			picker.getCombo().select(0);
 
 			IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
-			tableElement.getViewer().setInput(prop.observeDetail(getMaster()));
+			pickList.getList().setInput(prop.observeDetail(getMaster()));
 
 		}
 

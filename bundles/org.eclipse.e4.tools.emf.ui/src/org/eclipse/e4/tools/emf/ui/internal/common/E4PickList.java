@@ -168,7 +168,7 @@ public class E4PickList extends AbstractPickList {
 						if (Util.moveElementByIndex(componentEditor.getEditingDomain(), (MUIElement) obj, componentEditor.getEditor().isLiveModel(), idx)) {
 							viewer.setSelection(new StructuredSelection(obj));
 						}
-					} else if (obj instanceof MApplicationElement) {
+					} else if (obj instanceof MApplicationElement || obj instanceof org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container) {
 						Command cmd = MoveCommand.create(componentEditor.getEditingDomain(), componentEditor.getMaster().getValue(), feature, obj, idx);
 						if (cmd.canExecute()) {
 							componentEditor.getEditingDomain().getCommandStack().execute(cmd);
@@ -201,7 +201,7 @@ public class E4PickList extends AbstractPickList {
 						if (Util.moveElementByIndex(componentEditor.getEditingDomain(), (MUIElement) obj, componentEditor.getEditor().isLiveModel(), idx)) {
 							viewer.setSelection(new StructuredSelection(obj));
 						}
-					} else if (obj instanceof MApplicationElement) {
+					} else if (obj instanceof MApplicationElement || obj instanceof org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container) {
 						Command cmd = MoveCommand.create(componentEditor.getEditingDomain(), componentEditor.getMaster().getValue(), feature, obj, idx);
 						if (cmd.canExecute()) {
 							componentEditor.getEditingDomain().getCommandStack().execute(cmd);

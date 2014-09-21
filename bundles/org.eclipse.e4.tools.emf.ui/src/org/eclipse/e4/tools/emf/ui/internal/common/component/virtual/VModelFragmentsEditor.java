@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steven@spungin.tv> - Ongoing maintenance
+ *     Steven Spungin <steven@spungin.tv> - Ongoing maintenance, Bug 443945
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
@@ -20,9 +20,9 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
-import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeatures;
+import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
@@ -112,7 +112,11 @@ public class VModelFragmentsEditor extends AbstractComponentEditor {
 
 				@Override
 				protected List<?> getContainerChildren(Object container) {
-					return ((MModelFragments) container).getFragments();
+					if (container instanceof MModelFragments) {
+						return ((MModelFragments) container).getFragments();
+					} else {
+						return null;
+					}
 				}
 			};
 			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));

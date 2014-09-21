@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Steven Spungin <steven@spungin.tv> - Ongoing maintenance, Bug 443945
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -21,10 +23,11 @@ import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
-import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList;
+import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeatures;
+import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
-import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.ViewerElement;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
 import org.eclipse.e4.ui.model.fragment.MModelFragment;
@@ -39,25 +42,17 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.MoveCommand;
-import org.eclipse.emf.edit.command.RemoveCommand;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
@@ -118,94 +113,9 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 
 		{
 
-			Composite fragCompo = new Composite(parent, SWT.NONE);
-			fragCompo.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 3, 1));
-			GridLayout fragCompoLayout = new GridLayout(1, false);
-			fragCompoLayout.marginLeft = 0;
-			fragCompoLayout.marginRight = 0;
-			fragCompoLayout.marginWidth = 0;
-			fragCompoLayout.marginHeight = 0;
-			fragCompo.setLayout(fragCompoLayout);
-
-			final TableViewer viewer = new TableViewer(fragCompo);
-			viewer.setContentProvider(new ObservableListContentProvider());
-			viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
-			GridData gd = new GridData(GridData.FILL_BOTH);
-			viewer.getControl().setLayoutData(gd);
-
-			IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS);
-			viewer.setInput(prop.observeDetail(getMaster()));
-
-			Composite buttonComp = new Composite(parent, SWT.NONE);
-			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-			GridLayout gl = new GridLayout(4, false);
-			gl.marginLeft = 0;
-			gl.marginRight = 0;
-			gl.marginWidth = 0;
-			gl.marginHeight = 0;
-			buttonComp.setLayout(gl);
-
-			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_Up);
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			b.addSelectionListener(new SelectionAdapter() {
+			AbstractPickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS) {
 				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (!viewer.getSelection().isEmpty()) {
-						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-						if (s.size() == 1) {
-							Object obj = s.getFirstElement();
-							MModelFragments container = (MModelFragments) getMaster().getValue();
-							int idx = container.getFragments().indexOf(obj) - 1;
-							if (idx >= 0) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, obj, idx);
-
-								if (cmd.canExecute()) {
-									getEditingDomain().getCommandStack().execute(cmd);
-									viewer.setSelection(new StructuredSelection(obj));
-								}
-							}
-
-						}
-					}
-				}
-			});
-
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_Down);
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (!viewer.getSelection().isEmpty()) {
-						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-						if (s.size() == 1) {
-							Object obj = s.getFirstElement();
-							MModelFragments container = (MModelFragments) getMaster().getValue();
-							int idx = container.getFragments().indexOf(obj) + 1;
-							if (idx < container.getFragments().size()) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, obj, idx);
-
-								if (cmd.canExecute()) {
-									getEditingDomain().getCommandStack().execute(cmd);
-									viewer.setSelection(new StructuredSelection(obj));
-								}
-							}
-
-						}
-					}
-				}
-			});
-
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_AddEllipsis);
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
+				protected void addPressed() {
 					MModelFragment component = MFragmentFactory.INSTANCE.createStringModelFragment();
 
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, component);
@@ -215,25 +125,21 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 						getEditor().setSelection(component);
 					}
 				}
-			});
 
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_Remove);
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_delete));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			b.addSelectionListener(new SelectionAdapter() {
 				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (!viewer.getSelection().isEmpty()) {
-						List<?> elements = ((IStructuredSelection) viewer.getSelection()).toList();
-
-						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, elements);
-						if (cmd.canExecute()) {
-							getEditingDomain().getCommandStack().execute(cmd);
-						}
+				protected List<?> getContainerChildren(Object container) {
+					if (container instanceof MModelFragments) {
+						return ((MModelFragments) container).getFragments();
+					} else {
+						return null;
 					}
 				}
-			});
+			};
+			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+			TableViewer viewer = pickList.getList();
+
+			IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS);
+			viewer.setInput(prop.observeDetail(getMaster()));
 		}
 
 	}
@@ -250,31 +156,10 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		final ViewerElement tableElement = ViewerElement.create(context, parent, this);
-		tableElement.getViewer().setContentProvider(new ObservableListContentProvider());
-		tableElement.getViewer().setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
-
-		tableElement.getDropDown().setContentProvider(new ArrayContentProvider());
-		tableElement.getDropDown().setLabelProvider(new LabelProvider() {
+		E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
 			@Override
-			public String getText(Object element) {
-				FeatureClass eclass = (FeatureClass) element;
-				return eclass.label;
-			}
-		});
-		tableElement.getDropDown().setComparator(new ViewerComparator() {
-			@Override
-			public int compare(Viewer viewer, Object e1, Object e2) {
-				FeatureClass eClass1 = (FeatureClass) e1;
-				FeatureClass eClass2 = (FeatureClass) e2;
-				return eClass1.label.compareTo(eClass2.label);
-			}
-		});
-
-		tableElement.getButtonAdd().addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				EClass eClass = ((FeatureClass) ((IStructuredSelection) tableElement.getDropDown().getSelection()).getFirstElement()).eClass;
+			protected void addPressed() {
+				EClass eClass = ((FeatureClass) ((IStructuredSelection) getPicker().getSelection()).getFirstElement()).eClass;
 				EObject eObject = EcoreUtil.create(eClass);
 
 				Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, eObject);
@@ -284,64 +169,34 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 					getEditor().setSelection(eObject);
 				}
 			}
-		});
 
-		tableElement.getButtonRemove().addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!tableElement.getViewer().getSelection().isEmpty()) {
-					List<?> elements = ((IStructuredSelection) tableElement.getViewer().getSelection()).toList();
+			protected List<?> getContainerChildren(Object master) {
+				// TODO What object is master? We need to cast.
+				return super.getContainerChildren(master);
+			}
+		};
 
-					Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, elements);
-					if (cmd.canExecute()) {
-						getEditingDomain().getCommandStack().execute(cmd);
-					}
-				}
+		pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+		pickList.setText(Messages.PartSashContainerEditor_Controls);
+
+		TableViewer viewer = pickList.getList();
+		ComboViewer picker = pickList.getPicker();
+
+		picker.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				FeatureClass eclass = (FeatureClass) element;
+				return eclass.label;
 			}
 		});
 
-		tableElement.getButtonDown().addSelectionListener(new SelectionAdapter() {
+		picker.setComparator(new ViewerComparator() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!tableElement.getViewer().getSelection().isEmpty()) {
-					IStructuredSelection s = (IStructuredSelection) tableElement.getViewer().getSelection();
-					if (s.size() == 1) {
-						Object obj = s.getFirstElement();
-						MModelFragments container = (MModelFragments) getMaster().getValue();
-						int idx = container.getImports().indexOf(obj) + 1;
-						if (idx < container.getImports().size()) {
-							Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, obj, idx);
-
-							if (cmd.canExecute()) {
-								getEditingDomain().getCommandStack().execute(cmd);
-								tableElement.getViewer().setSelection(new StructuredSelection(obj));
-							}
-						}
-
-					}
-				}
-			}
-		});
-
-		tableElement.getButtonUp().addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!tableElement.getViewer().getSelection().isEmpty()) {
-					IStructuredSelection s = (IStructuredSelection) tableElement.getViewer().getSelection();
-					if (s.size() == 1) {
-						Object obj = s.getFirstElement();
-						MModelFragments container = (MModelFragments) getMaster().getValue();
-						int idx = container.getImports().indexOf(obj) - 1;
-						if (idx >= 0) {
-							Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, obj, idx);
-
-							if (cmd.canExecute()) {
-								getEditingDomain().getCommandStack().execute(cmd);
-								tableElement.getViewer().setSelection(new StructuredSelection(obj));
-							}
-						}
-					}
-				}
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				FeatureClass eClass1 = (FeatureClass) e1;
+				FeatureClass eClass2 = (FeatureClass) e2;
+				return eClass1.label.compareTo(eClass2.label);
 			}
 		});
 
@@ -349,11 +204,11 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
 		list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS));
 
-		tableElement.getDropDown().setInput(list);
-		tableElement.getDropDown().getCombo().select(0);
+		picker.setInput(list);
+		picker.getCombo().select(0);
 
 		IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS);
-		tableElement.getViewer().setInput(prop.observeDetail(getMaster()));
+		viewer.setInput(prop.observeDetail(getMaster()));
 	}
 
 	public void addClasses(EPackage ePackage, List<FeatureClass> list) {
