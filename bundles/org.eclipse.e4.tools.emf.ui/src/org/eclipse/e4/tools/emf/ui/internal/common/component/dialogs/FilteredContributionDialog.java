@@ -722,7 +722,9 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			}
 		};
 		if (dlg.open() == Dialog.OK) {
-			setFilterBundles((List<String>) dlg.asList());
+			ArrayList<String> result = new ArrayList<String>();
+			result.add(dlg.getFirstSelection());
+			setFilterBundles(result);
 			refreshSearch();
 		}
 		updateUiState();
@@ -756,7 +758,9 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			}
 		};
 		if (dlg.open() == Dialog.OK) {
-			setFilterPackages((List<String>) dlg.asList());
+			ArrayList<String> result = new ArrayList<String>();
+			result.add(dlg.getFirstSelection());
+			setFilterBundles(result);
 			refreshSearch();
 		}
 		updateUiState();
@@ -816,7 +820,9 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			}
 		};
 		if (dlg.open() == Dialog.OK) {
-			setFilterLocations((List<String>) dlg.asList());
+			ArrayList<String> result = new ArrayList<String>();
+			result.add(dlg.getFirstSelection());
+			setFilterBundles(result);
 			refreshSearch();
 		}
 		updateUiState();

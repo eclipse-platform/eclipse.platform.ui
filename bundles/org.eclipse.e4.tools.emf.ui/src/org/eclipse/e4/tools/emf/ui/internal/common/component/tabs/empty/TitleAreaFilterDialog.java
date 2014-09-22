@@ -12,10 +12,6 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty;
 
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.Messages;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -151,13 +147,12 @@ public class TitleAreaFilterDialog extends TitleAreaDialog {
 		return text;
 	}
 
-	public List<?> asList() {
+	public String getFirstSelection() {
 		Object firstElement = getFirstElement();
-		if (firstElement == null) {
-			return Collections.EMPTY_LIST;
-		} else {
-			return Arrays.asList(firstElement);
+		if (firstElement instanceof String) {
+			return (String) firstElement;
 		}
+		return firstElement.toString();
 	}
 
 }
