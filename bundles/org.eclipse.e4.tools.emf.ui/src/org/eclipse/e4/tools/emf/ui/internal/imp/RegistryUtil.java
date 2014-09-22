@@ -43,6 +43,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
+@SuppressWarnings("deprecation")
 public class RegistryUtil {
 
 	private static final String PLATFORM = "platform:"; //$NON-NLS-1$

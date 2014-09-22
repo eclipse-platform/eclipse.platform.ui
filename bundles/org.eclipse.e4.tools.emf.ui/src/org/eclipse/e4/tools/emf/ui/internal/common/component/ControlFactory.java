@@ -282,6 +282,7 @@ public class ControlFactory {
 
 			@Override
 			protected Object getValue(Object element) {
+				@SuppressWarnings("unchecked")
 				Entry<String, String> entry = (Entry<String, String>) element;
 				return entry.getKey();
 			}
@@ -302,9 +303,9 @@ public class ControlFactory {
 		column.getColumn().setText(Messages.ControlFactory_Value);
 		column.getColumn().setWidth(200);
 		column.setLabelProvider(new ColumnLabelProvider() {
-			@SuppressWarnings("unchecked")
 			@Override
 			public String getText(Object element) {
+				@SuppressWarnings("unchecked")
 				Entry<String, String> entry = (Entry<String, String>) element;
 				return entry.getValue();
 			}
@@ -664,6 +665,8 @@ public class ControlFactory {
 		}
 	}
 
+	// This method is left in for reference purposes
+	@SuppressWarnings("unused")
 	private static void handleReplaceText(AbstractComponentEditor editor, EStructuralFeature feature, Text tagText, TableViewer viewer) {
 		if (tagText.getText().trim().length() > 0) {
 			if (!viewer.getSelection().isEmpty()) {
