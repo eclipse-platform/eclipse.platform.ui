@@ -101,13 +101,6 @@ public class ModeledPageLayout implements IPageLayout {
 			this.element = element;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.ui.activities.IIdentifierListener#identifierChanged(org
-		 * .eclipse.ui.activities.IdentifierEvent)
-		 */
 		@Override
 		public void identifierChanged(IdentifierEvent identifierEvent) {
 			IIdentifier identifier = identifierEvent.getIdentifier();
