@@ -568,9 +568,10 @@ public class ContributionDataFile implements IFile {
 	@Override
 	public InputStream getContents() throws CoreException {
 		URL url;
+		ZipFile zip = null;
 		try {
 			if (path.getFileExtension().equals("jar")) { //$NON-NLS-1$
-				ZipFile zip = new ZipFile(path.toOSString());
+				zip = new ZipFile(path.toOSString());
 				ZipEntry entry;
 				if (getContributionData().className != null) {
 					entry = zip.getEntry(getContributionData().className.replace('.', '/') + ".class"); //$NON-NLS-1$
@@ -595,6 +596,13 @@ public class ContributionDataFile implements IFile {
 			// perhaps not a bundle
 			// e.printStackTrace();
 			throw new CoreException(Status.CANCEL_STATUS);
+		} finally {
+			if (zip != null) {
+				try {
+					zip.close();
+				} catch (IOException e) {
+				}
+			}
 		}
 	}
 

@@ -245,11 +245,11 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		searchScopes = valueOf(ResourceSearchScope.class, searchScopesString);
 	}
 
-	public static <E extends Enum<E>> EnumSet<E> valueOf(Class<E> eClass, String str) {
+	public static <TheType extends Enum<TheType>> EnumSet<TheType> valueOf(Class<TheType> eClass, String str) {
 		String[] arr = str.substring(1, str.length() - 1).split(","); //$NON-NLS-1$
-		EnumSet<E> set = EnumSet.noneOf(eClass);
+		EnumSet<TheType> set = EnumSet.noneOf(eClass);
 		for (String e : arr)
-			set.add(E.valueOf(eClass, e.trim()));
+			set.add(TheType.valueOf(eClass, e.trim()));
 		return set;
 	}
 
@@ -1020,11 +1020,16 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 
 	public BundleModel loadBundleModel(IProject currentProject) throws CoreException {
 		Document document = new Document();
-		String content = new Scanner(PDEProject.getManifest(currentProject).getContents()).useDelimiter("\\Z").next(); //$NON-NLS-1$
-		document.set(content);
-		BundleModel model = new BundleModel(document, false);
-		model.load();
-		return model;
+		Scanner scanner = new Scanner(PDEProject.getManifest(currentProject).getContents());
+		try {
+			String content = scanner.useDelimiter("\\Z").next(); //$NON-NLS-1$
+			document.set(content);
+			BundleModel model = new BundleModel(document, false);
+			model.load();
+			return model;
+		} finally {
+			scanner.close();
+		}
 	}
 
 	protected EnumSet<ResourceSearchScope> getSearchScopes() {
