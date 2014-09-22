@@ -64,7 +64,7 @@ public class LocaleChangeServiceImpl implements ILocaleChangeService {
 
 		// the TranslationService.LOCALE context parameter is specified as String
 		// so we put the String representation of the given Locale to the context
-		this.application.getContext().set(TranslationService.LOCALE, locale.toString());
+		this.application.getContext().set(TranslationService.LOCALE, locale);
 
 		// update model
 		updateLocalization(this.application.getChildren());
@@ -81,7 +81,7 @@ public class LocaleChangeServiceImpl implements ILocaleChangeService {
 			// set the locale to the application context
 			// use the resolved locale instead of the given locale string to avoid invalid locales
 			// in context
-			this.application.getContext().set(TranslationService.LOCALE, locale.toString());
+			this.application.getContext().set(TranslationService.LOCALE, locale);
 
 			// update model
 			updateLocalization(this.application.getChildren());
