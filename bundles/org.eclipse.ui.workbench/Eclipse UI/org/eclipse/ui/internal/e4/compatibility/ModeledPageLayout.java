@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 433450
  ******************************************************************************/
 
 package org.eclipse.ui.internal.e4.compatibility;
@@ -21,14 +22,12 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
-import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
@@ -151,10 +150,10 @@ public class ModeledPageLayout implements IPageLayout {
 		}
 
 		if (sharedArea == null) {
-			sharedArea = AdvancedFactoryImpl.eINSTANCE.createArea();
+			sharedArea = modelService.createModelElement(MArea.class);
 			// sharedArea.setLabel("Editor Area"); //$NON-NLS-1$
 
-			editorStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+			editorStack = modelService.createModelElement(MPartStack.class);
 			// temporary HACK for bug 303982
 			editorStack.getTags().add("newtablook"); //$NON-NLS-1$
 			editorStack.getTags().add("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
@@ -172,7 +171,7 @@ public class ModeledPageLayout implements IPageLayout {
 			}
 		}
 
-		eaRef = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
+		eaRef = modelService.createModelElement(MPlaceholder.class);
 		eaRef.setElementId(getEditorArea());
 		eaRef.setRef(sharedArea);
 
@@ -418,8 +417,8 @@ public class ModeledPageLayout implements IPageLayout {
 		return null;
 	}
 
-	public static MPartStack createStack(String id, boolean visible) {
-		MPartStack newStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+	private MPartStack createStack(String id, boolean visible) {
+		MPartStack newStack = modelService.createModelElement(MPartStack.class);
 		// temporary HACK for bug 303982
 		newStack.getTags().add("newtablook"); //$NON-NLS-1$
 		newStack.setElementId(id);
@@ -568,7 +567,7 @@ public class ModeledPageLayout implements IPageLayout {
 		newParent.getChildren().add(relTo);
 	}
 
-	public static void insert(MUIElement toInsert, MUIElement relTo,
+	private void insert(MUIElement toInsert, MUIElement relTo,
 			int swtSide, int ratio) {
 		if (toInsert == null || relTo == null)
 			return;
@@ -577,7 +576,7 @@ public class ModeledPageLayout implements IPageLayout {
 		if (relParent != null) {
 			List<MUIElement> children = relParent.getChildren();
 			int index = children.indexOf(relTo);
-			MPartSashContainer psc = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
+			MPartSashContainer psc = modelService.createModelElement(MPartSashContainer.class);
 			psc.setContainerData(relTo.getContainerData());
 			relParent.getChildren().add(index + 1, psc);
 
@@ -625,7 +624,7 @@ public class ModeledPageLayout implements IPageLayout {
 		}
 	}
 
-	public static void insert(MUIElement toInsert, MUIElement relTo,
+	private void insert(MUIElement toInsert, MUIElement relTo,
 			int swtSide, float ratio) {
 		int pct = (int) (ratio * 10000);
 		insert(toInsert, relTo, swtSide, pct);
