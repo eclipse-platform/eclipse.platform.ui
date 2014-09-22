@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Dirk Fauth and others.
+ * Copyright (c) 2012, 2014 Dirk Fauth and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -513,7 +513,11 @@ public class ResourceBundleHelper {
 	 * but no country code, or a Locale that only consists of a country code.
 	 * </p>
 	 * 
-	 * @param str
+	 * <p>
+	 * <b>Note:</b> This is the same logic as used in <code>EquinoxConfiguration.toLocale()</code>
+	 * </p>
+	 *
+	 * @param localeString
 	 *            the locale String to convert
 	 * @param defaultLocale
 	 *            the Locale that should be returned in case of an invalid Locale String
@@ -521,10 +525,11 @@ public class ResourceBundleHelper {
 	 *         <code>null</code> or can not be parsed because of an invalid format, the given
 	 *         default {@link Locale} will be returned.
 	 */
-	public static Locale toLocale(String str, Locale defaultLocale) {
-		LogService logService = ServicesActivator.getDefault().getLogService();
+	public static Locale toLocale(String localeString, Locale defaultLocale) {
+		LogService logService = ServicesActivator.getDefault() != null ? ServicesActivator
+				.getDefault().getLogService() : null;
 
-		if (str == null) {
+		if (localeString == null) {
 			if (logService != null)
 				logService.log(LogService.LOG_ERROR, "Given locale String is null"
 						+ " - Default Locale will be used instead."); //$NON-NLS-1$
@@ -535,58 +540,47 @@ public class ResourceBundleHelper {
 		String country = ""; //$NON-NLS-1$
 		String variant = ""; //$NON-NLS-1$
 
-		String[] localeParts = str.split("_"); //$NON-NLS-1$
+		String[] localeParts = localeString.split("_"); //$NON-NLS-1$
 		if (localeParts.length == 0 || localeParts.length > 3
 				|| (localeParts.length == 1 && localeParts[0].length() == 0)) {
-			logInvalidFormat(str, logService);
+			logInvalidFormat(localeString, logService);
 			return defaultLocale;
-		} else {
-			if (localeParts[0].length() == 1 || localeParts[0].length() > 2) {
-				logInvalidFormat(str, logService);
-				return defaultLocale;
-			} else if (localeParts[0].length() == 2) {
-				char ch0 = localeParts[0].charAt(0);
-				char ch1 = localeParts[0].charAt(1);
-				if (ch0 < 'a' || ch0 > 'z' || ch1 < 'a' || ch1 > 'z') {
-					logInvalidFormat(str, logService);
-					return defaultLocale;
-				}
-			}
+		}
 
-			language = localeParts[0];
+		if (localeParts[0].length() > 0 && !localeParts[0].matches("[a-zA-Z]{2,8}")) {
+			logInvalidFormat(localeString, logService);
+			return defaultLocale;
+		}
 
-			if (localeParts.length > 1) {
-				if (localeParts[1].length() == 1 || localeParts[1].length() > 2) {
+		language = localeParts[0];
+
+		if (localeParts.length > 1) {
+			if (localeParts[1].length() > 0 && !localeParts[1].matches("[a-zA-Z]{2}|[0-9]{3}")) {
+				if (language.length() > 0) {
 					if (logService != null)
-						logService.log(LogService.LOG_ERROR, "Invalid locale format: " + str
+						logService.log(LogService.LOG_ERROR, "Invalid locale format: "
+								+ localeString
 								+ " - Only language part will be used to create the Locale."); //$NON-NLS-1$
 					return new Locale(language);
-				} else if (localeParts[1].length() == 2) {
-					char ch3 = localeParts[1].charAt(0);
-					char ch4 = localeParts[1].charAt(1);
-					if (ch3 < 'A' || ch3 > 'Z' || ch4 < 'A' || ch4 > 'Z') {
-						if (logService != null)
-							logService.log(LogService.LOG_ERROR, "Invalid locale format: " + str
-									+ " - Only language part will be used to create the Locale."); //$NON-NLS-1$
-						return new Locale(language);
-					}
 				}
-
-				country = localeParts[1];
+				logInvalidFormat(localeString, logService);
+				return defaultLocale;
 			}
 
-			if (localeParts.length == 3) {
-				if (localeParts[0].length() == 0 && localeParts[1].length() == 0) {
-					if (logService != null)
-						logService
-								.log(LogService.LOG_ERROR,
-										"Invalid locale format: "
-												+ str
-												+ " - Only language and country part will be used to create the Locale."); //$NON-NLS-1$
-					return new Locale(language, country);
-				}
-				variant = localeParts[2];
+			country = localeParts[1];
+		}
+
+		if (localeParts.length == 3) {
+			if (localeParts[2].length() == 0) {
+				if (logService != null)
+					logService
+							.log(LogService.LOG_ERROR,
+									"Invalid locale format: "
+											+ localeString
+											+ " - Only language and country part will be used to create the Locale."); //$NON-NLS-1$
+				return new Locale(language, country);
 			}
+			variant = localeParts[2];
 		}
 
 		return new Locale(language, country, variant);
