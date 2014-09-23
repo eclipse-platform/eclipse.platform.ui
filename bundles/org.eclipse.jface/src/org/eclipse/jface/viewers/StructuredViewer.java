@@ -1022,12 +1022,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * The <code>StructuredViewer</code> implementation of this method returns
 	 * the result as an <code>IStructuredSelection</code>.
 	 * <p>
+	 * Call {@link #getStructuredSelection()} instead to get an instance of
+	 * <code>IStructuredSelection</code> directly.
+	 * </p>
 	 * Subclasses do not typically override this method, but implement
 	 * <code>getSelectionFromWidget(List)</code> instead. If they override this
 	 * method, they should return an <code>IStructuredSelection</code> as well.
-	 * </p>
-	 * Call {@link #getStructuredSelection()} instead to get an instance of
-	 * <code>IStructuredSelection</code> directly.
 	 *
 	 * @return ISelection
 	 */
