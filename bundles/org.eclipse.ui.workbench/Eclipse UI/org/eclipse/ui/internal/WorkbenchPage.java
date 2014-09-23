@@ -4446,8 +4446,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 				Collections.sort(stack, new Comparator<CompatibilityView>() {
 					@Override
 					public int compare(CompatibilityView o1, CompatibilityView o2) {
-						int pos1 = (-1) * activationList.indexOf(o1.getModel());
-						int pos2 = (-1) * activationList.indexOf(o2.getModel());
+						int pos1 = activationList.indexOf(o1.getModel());
+						int pos2 = activationList.indexOf(o2.getModel());
+						if (pos1 == -1)
+							pos1 = Integer.MAX_VALUE;
+						if (pos2 == -1)
+							pos2 = Integer.MAX_VALUE;
 						return pos1 - pos2;
 					}
 				});
