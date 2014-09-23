@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Eclipse-PlatformFilter: (osgi.ws=cocoa)
 Bundle-SymbolicName: org.eclipse.e4.ui.workbench.renderers.swt.cocoa;singleton:=true
-Bundle-Version: 0.11.200.qualifier
+Bundle-Version: 0.11.300.qualifier
 Bundle-Name: %fragmentName
 Bundle-Vendor: %providerName
 Fragment-Host: org.eclipse.e4.ui.workbench.renderers.swt;bundle-version="[0.10.0,1.0.0)"
