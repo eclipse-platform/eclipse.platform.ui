@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -389,6 +389,7 @@ public abstract class ListEditor extends FieldEditor {
         int index = list.getSelectionIndex();
         if (index >= 0) {
             list.remove(index);
+			list.select(index >= list.getItemCount() ? index - 1 : index);
             selectionChanged();
         }
     }
