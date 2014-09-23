@@ -73,17 +73,17 @@ public class UiFreezeEvent {
 	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
-		buf.append("Freeze started at ");
+		buf.append("Freeze started at "); //$NON-NLS-1$
 		buf.append(startTimestamp);
 		if (isStillRunning) {
-			buf.append(" still ongoing after ");
+			buf.append(" still ongoing after "); //$NON-NLS-1$
 		} else {
-			buf.append(" lasted ");
+			buf.append(" lasted "); //$NON-NLS-1$
 		}
 		buf.append(totalDuration);
-		buf.append("ms");
+		buf.append("ms"); //$NON-NLS-1$
 		if (stackTraceSamples.length != 0) {
-			buf.append("\nStack trace samples:");
+			buf.append("\nStack trace samples:"); //$NON-NLS-1$
 			for (StackSample stackTraceSample : stackTraceSamples) {
 				buf.append('\n');
 				buf.append(stackTraceSample.toString());

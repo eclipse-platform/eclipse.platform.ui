@@ -127,7 +127,7 @@ public class EventLoopMonitorThreadTests {
 	 * Shuts down the event monitoring thread.
 	 */
 	private void shutdownMonitoringThread() throws Exception {
-		sendEvent(SWT.Wakeup);
+		sendEvent(SWT.PostExternalEventDispatch);
 		sendEvent(SWT.PostEvent);
 		monitoringThread.shutdown();
 		monitoringThread.join();
@@ -286,7 +286,7 @@ public class EventLoopMonitorThreadTests {
 				runForCycles(1);
 				sendEvent(SWT.PostEvent);
 			}
-			sendEvent(SWT.Sleep);
+			sendEvent(SWT.PreExternalEventDispatch);
 
 			// Wait for the end of the event to propagate to the deadlock tracker.
 			runForTime(FORCE_DEADLOCK_LOG_TIME_MILLIS * 2);
@@ -304,9 +304,9 @@ public class EventLoopMonitorThreadTests {
 
 		// One level deep
 		synchronized (sleepLock) {
-			sendEvent(SWT.Sleep);
+			sendEvent(SWT.PreExternalEventDispatch);
 			runForTime(eventFactor * POLLING_RATE_MS);
-			sendEvent(SWT.Wakeup);
+			sendEvent(SWT.PostExternalEventDispatch);
 			runForCycles(3);
 		}
 
@@ -454,8 +454,8 @@ public class EventLoopMonitorThreadTests {
 		long eventResumeTime = 0;
 		long eventStallDuration = 0;
 
-		// Exceed the threshold after the thread is started in the middle of an event, then end the
-		// event and validate that no long event was logged.
+		// Exceed the threshold after the thread is started in the middle of an event, then end
+		// the event and validate that no long event was logged.
 		synchronized (sleepLock) {
 			sendEvent(SWT.PreEvent);
 			// Initially the outer thread is invoking nested events that are responsive.
@@ -511,8 +511,8 @@ public class EventLoopMonitorThreadTests {
 			// Nested events
 			for (int i = 0; i < eventFactor; ++i) {
 				runForCycles(1);
-				sendEvent(SWT.Sleep);
-				sendEvent(SWT.Wakeup);
+				sendEvent(SWT.PreExternalEventDispatch);
+				sendEvent(SWT.PostExternalEventDispatch);
 			}
 
 			// Before exiting the outer thread is invoking nested events that are responsive.
@@ -525,7 +525,7 @@ public class EventLoopMonitorThreadTests {
 			runForCycles(3);
 		}
 
-		assertTrue("A long running event should not be published if Display.sleep() was called",
+		assertTrue("A long running event should not be published during an external event dispatch",
 				loggedEvents.isEmpty());
 	}
 
@@ -540,22 +540,23 @@ public class EventLoopMonitorThreadTests {
 
 		synchronized (sleepLock) {
 			sendEvent(SWT.PreEvent);
-			sendEvent(SWT.Sleep);
+			sendEvent(SWT.PreExternalEventDispatch);
 			runForTime(THRESHOLD_MS);
-			sendEvent(SWT.Wakeup);
+			sendEvent(SWT.PostExternalEventDispatch);
 			eventStartTime = timestamp;
 			runForCycles(3);
 		}
 
-		assertTrue("A long running event shold not be published during a sleep",
+		assertTrue("A long running event shold not be published during an external event dispatch",
 				loggedEvents.isEmpty());
 
-		// Let a long time elapse between the last Wakeup and the next Sleep.
+		// Let a long time elapse between the last PostExternalEventDispatch and the next
+		// PreExternalEventDispatch.
 		synchronized (sleepLock) {
 			runForTime(THRESHOLD_MS * eventFactor);
 			eventDuration = timestamp - eventStartTime;
-			sendEvent(SWT.Sleep);
-			sendEvent(SWT.Wakeup);
+			sendEvent(SWT.PreExternalEventDispatch);
+			sendEvent(SWT.PostExternalEventDispatch);
 			sendEvent(SWT.PostEvent);
 			runForCycles(3);
 		}

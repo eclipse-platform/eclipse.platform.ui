@@ -55,10 +55,10 @@ public class StackSample {
 	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
-		buf.append("At ");
+		buf.append("At "); //$NON-NLS-1$
 		buf.append(timestamp);
 		if (traces.length != 0) {
-			buf.append(" threads:\n");
+			buf.append(" threads:\n"); //$NON-NLS-1$
 			for (ThreadInfo threadInfo : traces) {
 				buf.append(threadInfo.toString());
 			}

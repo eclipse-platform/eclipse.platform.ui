@@ -146,14 +146,15 @@ public class EventLoopMonitorThread extends Thread {
 	private class EventLoopState implements Listener {
 		/**
 		 * The number of {@link SWT#PreEvent PreEvent}s minus the number of
-		 * {@link SWT#PostEvent PostEvent}s since the last {@link SWT#Sleep Sleep}.
+		 * {@link SWT#PostEvent PostEvent}s since the last
+		 * {@link SWT#PreExternalEventDispatch PreExternalEventDispatch}.
 		 */
 		private int nestingLevel;
 
 		/**
 		 * The stack of nesting levels. The current nesting level is pushed to the stack on
-		 * {@link SWT#Sleep Sleep} event and popped from the stack on {@link SWT#Wakeup Wakeup}
-		 * event.
+		 * {@link SWT#PreExternalEventDispatch PreExternalEventDispatch} event and popped from
+		 * the stack on {@link SWT#PostExternalEventDispatch PostExternalEventDispatch} event.
 		 */
 		private int[] nestingLevelStack = new int[32];
 		private int nestingLevelStackSize;
@@ -175,14 +176,14 @@ public class EventLoopMonitorThread extends Thread {
 			 * 5) Don't log for long delays between top-level events (interval is between PostEvent
 			 *    and PreEvent at the top level), which should involve sleeping.
 			 *
-			 * Tracking of Sleep/Wakeup events allows us to handle items 4 and 5 above since we can
-			 * tell if a long delay between an PostEvent and a PreEvent are due to an idle state
-			 * (e.g. in Display.sleep()) or a UI freeze.
+			 * Tracking of PreExternalEventDispatch/PostExternalEventDispatch events allows us to
+			 * handle items 4 and 5 above since we can tell if a long delay between an PostEvent and
+			 * a PreEvent are due to an idle state (e.g. in Display.sleep()) or a UI freeze.
 			 *
-			 * Since an idle system can potentially sleep for a long time, we need to avoid logging
-			 * long delays that are due to sleeps. The eventStartOrResumeTime variable is set to
-			 * zero when the thread is sleeping so that deadlock logging can be avoided for this
-			 * case.
+			 * Since an idle system can potentially block in an external event loop for a long time,
+			 * we need to avoid logging long delays during that time. The eventStartOrResumeTime
+			 * field is set to zero when the thread is in an external event loop so that deadlock
+			 * logging can be avoided for this case.
 			 */
 			switch (event.type) {
 			case SWT.PreEvent:
@@ -201,7 +202,7 @@ public class EventLoopMonitorThread extends Thread {
 				 // Log a long interval, start the timer if inside another event.
 				handleEventTransition(true, nestingLevel > 0);
 				break;
-			case SWT.Sleep:
+			case SWT.PreExternalEventDispatch:
 				if (eventHistory != null) {
 					eventHistory.recordEvent(event.type);
 				}
@@ -209,7 +210,7 @@ public class EventLoopMonitorThread extends Thread {
 				// Log a long interval, stop the timer.
 				handleEventTransition(true, false);
 				break;
-			case SWT.Wakeup:
+			case SWT.PostExternalEventDispatch:
 				if (eventHistory != null) {
 					eventHistory.recordEvent(event.type);
 				}
@@ -236,8 +237,8 @@ public class EventLoopMonitorThread extends Thread {
 			if (nestingLevelStackSize > 0) {
 				nestingLevel = nestingLevelStack[--nestingLevelStackSize];
 			} else {
-				// This may happen if some Sleep events had occurred before we started listening
-				// to SWT events.
+				// This may happen if some PreExternalEventDispatch events had occurred before we
+				// started listening to SWT events.
 				nestingLevel = 0;
 			}
 		}
@@ -335,11 +336,11 @@ public class EventLoopMonitorThread extends Thread {
 				case SWT.PostEvent:
 					buf.append("PostEvent"); //$NON-NLS-1$
 					break;
-				case SWT.Sleep:
-					buf.append("Sleep"); //$NON-NLS-1$
+				case SWT.PreExternalEventDispatch:
+					buf.append("PreExternalEventDispatch"); //$NON-NLS-1$
 					break;
-				case SWT.Wakeup:
-					buf.append("Wakeup"); //$NON-NLS-1$
+				case SWT.PostExternalEventDispatch:
+					buf.append("PostExternalEventDispatch"); //$NON-NLS-1$
 					break;
 				default:
 					buf.append("Event "); //$NON-NLS-1$
@@ -438,8 +439,8 @@ public class EventLoopMonitorThread extends Thread {
 		if (!display.isDisposed()) {
 			display.removeListener(SWT.PreEvent, eventLoopState);
 			display.removeListener(SWT.PostEvent, eventLoopState);
-			display.removeListener(SWT.Sleep, eventLoopState);
-			display.removeListener(SWT.Wakeup, eventLoopState);
+			display.removeListener(SWT.PreExternalEventDispatch, eventLoopState);
+			display.removeListener(SWT.PostExternalEventDispatch, eventLoopState);
 		}
 		wakeUp();
 	}
@@ -721,8 +722,8 @@ public class EventLoopMonitorThread extends Thread {
 	private void registerDisplayListeners() {
 		display.addListener(SWT.PreEvent, eventLoopState);
 		display.addListener(SWT.PostEvent, eventLoopState);
-		display.addListener(SWT.Sleep, eventLoopState);
-		display.addListener(SWT.Wakeup, eventLoopState);
+		display.addListener(SWT.PreExternalEventDispatch, eventLoopState);
+		display.addListener(SWT.PostExternalEventDispatch, eventLoopState);
 	}
 
 	private static void decimate(StackSample[] samples, int fromSize, int toSize, int trimTail) {
