@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bugs 213145, 274450
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444829
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
@@ -51,6 +52,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 		this.delegate = delegate;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -59,6 +61,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testIterator_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
+			@Override
 			public void run() {
 				collection.iterator();
 			}
@@ -67,6 +70,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testIterator_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
+			@Override
 			public void run() {
 				collection.iterator();
 			}
@@ -75,6 +79,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testSize_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
+			@Override
 			public void run() {
 				collection.size();
 			}
@@ -83,6 +88,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testSize_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
+			@Override
 			public void run() {
 				collection.size();
 			}
@@ -91,6 +97,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testIsEmpty_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
+			@Override
 			public void run() {
 				collection.isEmpty();
 			}
@@ -99,6 +106,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testIsEmpty_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
+			@Override
 			public void run() {
 				collection.isEmpty();
 			}
@@ -107,6 +115,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testContains_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
+			@Override
 			public void run() {
 				collection.contains(delegate.createElement(collection));
 			}
@@ -115,6 +124,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testContains_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
+			@Override
 			public void run() {
 				collection.contains(delegate.createElement(collection));
 			}
@@ -123,6 +133,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testContainsAll_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
+			@Override
 			public void run() {
 				collection.containsAll(Arrays.asList(new Object[] { delegate
 						.createElement(collection) }));
@@ -132,6 +143,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testContainsAll_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
+			@Override
 			public void run() {
 				collection.containsAll(Arrays.asList(new Object[] { delegate
 						.createElement(collection) }));
@@ -141,6 +153,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testToArray_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
+			@Override
 			public void run() {
 				collection.toArray();
 			}
@@ -149,6 +162,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testToArray_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
+			@Override
 			public void run() {
 				collection.toArray();
 			}
@@ -157,6 +171,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testToArrayWithObjectArray_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
+			@Override
 			public void run() {
 				collection.toArray(new Object[collection.size()]);
 			}
@@ -165,6 +180,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testToArrayWithObjectArray_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
+			@Override
 			public void run() {
 				collection.toArray(new Object[collection.size()]);
 			}
@@ -173,6 +189,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testEquals_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
+			@Override
 			public void run() {
 				collection.equals(collection);
 			}
@@ -181,6 +198,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testEquals_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
+			@Override
 			public void run() {
 				collection.equals(collection);
 			}
@@ -193,6 +211,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testHashCode_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
+			@Override
 			public void run() {
 				collection.hashCode();
 			}
@@ -201,6 +220,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	public void testHashCode_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
+			@Override
 			public void run() {
 				collection.hashCode();
 			}
@@ -210,8 +230,8 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 	public void testGetElementType_ReturnsType() throws Exception {
 		assertEquals(
 				"Element type of the collection should be returned from IObservableCollection.getElementType()",
-				delegate.getElementType(collection), collection
-						.getElementType());
+				delegate.getElementType(collection),
+				collection.getElementType());
 	}
 
 	public static Test suite(IObservableCollectionContractDelegate delegate) {

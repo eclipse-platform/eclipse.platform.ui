@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Brad Reynolds and others.
+ * Copyright (c) 2007, 2014 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444829
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance.delegate;
@@ -26,30 +27,36 @@ public abstract class AbstractObservableValueContractDelegate extends
 
 	/**
 	 * Invokes {@link #createObservableValue(Realm)}.
-	 * @param realm 
+	 * 
+	 * @param realm
 	 * @return observable
 	 */
+	@Override
 	public final IObservable createObservable(Realm realm) {
 		return createObservableValue(realm);
 	}
 
 	/**
 	 * Default implementation returns <code>null</code>.
-	 * @param observable 
+	 * 
+	 * @param observable
 	 * @return value type
 	 */
+	@Override
 	public Object getValueType(IObservableValue observable) {
 		// no op
 		return null;
 	}
-	
+
 	/**
 	 * Default implementation returns <code>null</code>.
-	 * @param observable 
+	 * 
+	 * @param observable
 	 * @return value
 	 */
+	@Override
 	public Object createValue(IObservableValue observable) {
-		//no op
+		// no op
 		return null;
 	}
 }

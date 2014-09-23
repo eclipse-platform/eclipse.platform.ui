@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Brad Reynolds and others.
+ * Copyright (c) 2007, 2014 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Matthew Hall - bug 213145
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444829
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
@@ -19,6 +20,7 @@ import junit.framework.Test;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IObservablesListener;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
@@ -37,7 +39,7 @@ public class ObservableValueContractTest extends ObservableContractTest {
 
 	public ObservableValueContractTest(IObservableValueContractDelegate delegate) {
 		super(delegate);
-		this.delegate = delegate;			
+		this.delegate = delegate;
 	}
 
 	/**
@@ -50,38 +52,39 @@ public class ObservableValueContractTest extends ObservableContractTest {
 		this.delegate = delegate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.databinding.conformance.ObservableContractTest#setUp()
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		observable = (IObservableValue) getObservable();
 	}
 
 	public void testChange_ValueChangeEvent() throws Exception {
-		ValueChangeEventTracker listener = ValueChangeEventTracker.observe(observable);
+		ValueChangeEventTracker listener = ValueChangeEventTracker
+				.observe(observable);
 
 		delegate.change(observable);
-		assertEquals(formatFail("On change value change listeners should be notified."), 1,
-				listener.count);
+		assertEquals(
+				formatFail("On change value change listeners should be notified."),
+				1, listener.count);
 	}
 
 	public void testGetValueType_ExpectedType() throws Exception {
-		assertEquals(formatFail("Type of the value should be returned from getType()."),
+		assertEquals(
+				formatFail("Type of the value should be returned from getType()."),
 				delegate.getValueType(observable), observable.getValueType());
 	}
 
 	public void testChange_OrderOfNotifications() throws Exception {
-		final List listeners = new ArrayList();
+		final List<IObservablesListener> listeners = new ArrayList<IObservablesListener>();
 		IChangeListener changeListener = new IChangeListener() {
+			@Override
 			public void handleChange(ChangeEvent event) {
 				listeners.add(this);
 			}
 		};
 
 		IValueChangeListener valueChangeListener = new IValueChangeListener() {
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				listeners.add(this);
 			}
@@ -91,9 +94,10 @@ public class ObservableValueContractTest extends ObservableContractTest {
 		observable.addValueChangeListener(valueChangeListener);
 
 		delegate.change(observable);
-		
-		assertTrue(formatFail("Change Listeners were not notified on change."), listeners.size() > 0);
-		
+
+		assertTrue(formatFail("Change Listeners were not notified on change."),
+				listeners.size() > 0);
+
 		// not asserting the fact that both are notified as this is asserted in
 		// other tests
 		assertEquals(
@@ -105,15 +109,17 @@ public class ObservableValueContractTest extends ObservableContractTest {
 	}
 
 	public void testChange_ValueChangeEventDiff() throws Exception {
-		ValueChangeEventTracker listener = ValueChangeEventTracker.observe(observable);
+		ValueChangeEventTracker listener = ValueChangeEventTracker
+				.observe(observable);
 		Object oldValue = observable.getValue();
 
 		delegate.change(observable);
 
 		ValueChangeEvent event = listener.event;
-		
-		assertTrue(formatFail("Change Listeners were not notified on change."), listener.count > 0);
-		
+
+		assertTrue(formatFail("Change Listeners were not notified on change."),
+				listener.count > 0);
+
 		assertEquals(
 				formatFail("When a value change event is fired the old value should be the previous value of the observable value."),
 				oldValue, event.diff.getOldValue());
@@ -127,11 +133,12 @@ public class ObservableValueContractTest extends ObservableContractTest {
 		class ValueChangeListener implements IValueChangeListener {
 			Object value;
 
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				this.value = event.getObservableValue().getValue();
 			}
 		}
-		
+
 		ValueChangeListener listener = new ValueChangeListener();
 		observable.addValueChangeListener(listener);
 		delegate.change(observable);
@@ -140,13 +147,16 @@ public class ObservableValueContractTest extends ObservableContractTest {
 				listener.value, observable.getValue());
 	}
 
-	public void testRemoveValueChangeListener_RemovesListener() throws Exception {
-		ValueChangeEventTracker listener = ValueChangeEventTracker.observe(observable);
+	public void testRemoveValueChangeListener_RemovesListener()
+			throws Exception {
+		ValueChangeEventTracker listener = ValueChangeEventTracker
+				.observe(observable);
 		delegate.change(observable);
 
 		// precondition
-		assertEquals(formatFail("Value change listeners should be notified on change."), 1,
-				listener.count);
+		assertEquals(
+				formatFail("Value change listeners should be notified on change."),
+				1, listener.count);
 
 		observable.removeValueChangeListener(listener);
 		delegate.change(observable);
@@ -158,6 +168,7 @@ public class ObservableValueContractTest extends ObservableContractTest {
 
 	public void testGetValue_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
+			@Override
 			public void run() {
 				observable.getValue();
 			}
@@ -166,6 +177,7 @@ public class ObservableValueContractTest extends ObservableContractTest {
 
 	public void testGetValue_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
+			@Override
 			public void run() {
 				observable.getValue();
 			}

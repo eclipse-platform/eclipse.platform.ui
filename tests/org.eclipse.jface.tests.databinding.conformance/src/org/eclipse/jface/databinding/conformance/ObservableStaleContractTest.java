@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Brad Reynolds and others.
+ * Copyright (c) 2007, 2014 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Matthew Hall - bug 213145
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444829
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
@@ -26,30 +27,35 @@ import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 public class ObservableStaleContractTest extends ObservableDelegateTest {
 	private IObservableContractDelegate delegate;
 	private IObservable observable;
-	
+
 	public ObservableStaleContractTest(IObservableContractDelegate delegate) {
 		this(null, delegate);
 	}
-	
-	public ObservableStaleContractTest(String testName, IObservableContractDelegate delegate) {
+
+	public ObservableStaleContractTest(String testName,
+			IObservableContractDelegate delegate) {
 		super(testName, delegate);
 		this.delegate = delegate;
 	}
-	
+
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
 		observable = getObservable();
 	}
-	
+
 	public void testIsStale_TrueWhenStale() throws Exception {
 		delegate.setStale(observable, true);
-		assertTrue(formatFail("When stale isStale() should return true."), observable.isStale());
+		assertTrue(formatFail("When stale isStale() should return true."),
+				observable.isStale());
 	}
-	
+
 	public void testIsStale_FalseWhenNotStale() throws Exception {
 		delegate.setStale(observable, false);
-		assertFalse(formatFail("When not stale isStale() should return false."), observable.isStale());
+		assertFalse(
+				formatFail("When not stale isStale() should return false."),
+				observable.isStale());
 	}
 
 	public void testBecomingStaleFiresStaleEvent() throws Exception {
@@ -61,7 +67,9 @@ public class ObservableStaleContractTest extends ObservableDelegateTest {
 		observable.addStaleListener(listener);
 		delegate.setStale(observable, true);
 
-		assertEquals(formatFail("When becoming stale listeners should be notified."), 1, listener.count);
+		assertEquals(
+				formatFail("When becoming stale listeners should be notified."),
+				1, listener.count);
 	}
 
 	public void testStaleEventObservable() throws Exception {
@@ -75,8 +83,9 @@ public class ObservableStaleContractTest extends ObservableDelegateTest {
 
 		StaleEvent event = listener.event;
 		assertNotNull(formatFail("stale event was null"), event);
-		assertEquals(formatFail("When notifying listeners of becoming stale the observable should be the source of the event."), observable,
-				event.getObservable());
+		assertEquals(
+				formatFail("When notifying listeners of becoming stale the observable should be the source of the event."),
+				observable, event.getObservable());
 	}
 
 	public void testRemoveStaleListener_RemovesListener() throws Exception {
@@ -87,14 +96,16 @@ public class ObservableStaleContractTest extends ObservableDelegateTest {
 		delegate.setStale(observable, true);
 
 		// precondition check
-		assertEquals(formatFail("set stale did not notify listeners"), 1, listener.count);
+		assertEquals(formatFail("set stale did not notify listeners"), 1,
+				listener.count);
 
 		observable.removeStaleListener(listener);
 		ensureStale(observable, false);
 		delegate.setStale(observable, true);
 
-		assertEquals(formatFail("Once removed stale listeners should not be notified of becoming stale."), 1,
-				listener.count);
+		assertEquals(
+				formatFail("Once removed stale listeners should not be notified of becoming stale."),
+				1, listener.count);
 	}
 
 	public void testStaleListenersAreNotNotifiedWhenObservableIsNoLongerStale()
@@ -105,8 +116,9 @@ public class ObservableStaleContractTest extends ObservableDelegateTest {
 		observable.addStaleListener(listener);
 		delegate.setStale(observable, false);
 
-		assertEquals(formatFail("Stale listeners should not be notified when the stale state changes from true to false."), 0,
-				listener.count);
+		assertEquals(
+				formatFail("Stale listeners should not be notified when the stale state changes from true to false."),
+				0, listener.count);
 	}
 
 	public void testObservableRealmIsCurrentOnStale() throws Exception {
@@ -116,10 +128,11 @@ public class ObservableStaleContractTest extends ObservableDelegateTest {
 		observable.addStaleListener(listener);
 		delegate.setStale(observable, true);
 
-		assertTrue(formatFail("When notifying listeners of becoming stale the observable's realm should be the current realm."),
+		assertTrue(
+				formatFail("When notifying listeners of becoming stale the observable's realm should be the current realm."),
 				listener.isCurrentRealm);
 	}
-	
+
 	/**
 	 * Ensures that stale is set to the provided state. Will throw an
 	 * AssertionFailedError if setting of the state is unsuccessful.
@@ -134,7 +147,7 @@ public class ObservableStaleContractTest extends ObservableDelegateTest {
 
 		assertEquals(stale, observable.isStale());
 	}
-	
+
 	/* package */static class StaleListener implements IStaleListener {
 		int count;
 
@@ -142,6 +155,7 @@ public class ObservableStaleContractTest extends ObservableDelegateTest {
 
 		boolean isCurrentRealm;
 
+		@Override
 		public void handleStale(StaleEvent staleEvent) {
 			count++;
 			this.event = staleEvent;

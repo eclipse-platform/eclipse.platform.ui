@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444829
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance.delegate;
@@ -25,21 +26,27 @@ public abstract class AbstractObservableCollectionContractDelegate extends
 		IObservableCollectionContractDelegate {
 
 	/**
-	 * Invokes {@link IObservableCollectionContractDelegate#createObservableCollection(Realm, int)}.
-	 * @param realm 
+	 * Invokes
+	 * {@link IObservableCollectionContractDelegate#createObservableCollection(Realm, int)}
+	 * .
+	 * 
+	 * @param realm
 	 * @return observable
 	 */
+	@Override
 	public final IObservable createObservable(Realm realm) {
 		return createObservableCollection(realm, 0);
 	}
-	
+
+	@Override
 	public Object createElement(IObservableCollection collection) {
-		//no op
+		// no op
 		return null;
 	}
 
+	@Override
 	public Object getElementType(IObservableCollection collection) {
-		//no op
+		// no op
 		return null;
 	}
 }

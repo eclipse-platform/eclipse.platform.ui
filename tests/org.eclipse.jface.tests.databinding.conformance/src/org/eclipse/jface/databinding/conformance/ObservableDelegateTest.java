@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bug 221351
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444829
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
@@ -22,7 +23,8 @@ import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
 
 /**
- * TestCase that provides the standard behavior expected for delegating test cases.
+ * TestCase that provides the standard behavior expected for delegating test
+ * cases.
  * 
  * @since 3.2
  */
@@ -37,12 +39,14 @@ public class ObservableDelegateTest extends TestCase {
 	public ObservableDelegateTest(IObservableContractDelegate delegate) {
 		this(null, delegate);
 	}
-	
-	public ObservableDelegateTest(String testName, IObservableContractDelegate delegate) {
+
+	public ObservableDelegateTest(String testName,
+			IObservableContractDelegate delegate) {
 		super(testName);
 		this.delegate = delegate;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		previousRealm = Realm.getDefault();
@@ -51,23 +55,24 @@ public class ObservableDelegateTest extends TestCase {
 		observable = doCreateObservable();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 
 		delegate.tearDown();
 		observable.dispose();
 		observable = null;
-		
+
 		RealmTester.setDefault(previousRealm);
 
 		observable = null;
 		previousRealm = null;
 	}
-	
+
 	/**
 	 * Creates a new observable with a default realm. Invoked from
-	 * {@link #setUp()}. Override to customize the creation of observables
-	 * (e.g. specifying a different Realm).
+	 * {@link #setUp()}. Override to customize the creation of observables (e.g.
+	 * specifying a different Realm).
 	 * 
 	 * @return observable
 	 */
@@ -84,8 +89,8 @@ public class ObservableDelegateTest extends TestCase {
 	 */
 	protected IObservable getObservable() {
 		return observable;
-	}	
-	
+	}
+
 	/**
 	 * Returns the delegate in use.
 	 * 
@@ -94,16 +99,17 @@ public class ObservableDelegateTest extends TestCase {
 	protected IObservableContractDelegate getObservableContractDelegate() {
 		return delegate;
 	}
-	
+
 	protected String formatFail(String message) {
 		return message + getDebugString();
 	}
-	
+
 	private String getDebugString() {
 		if (debugInfo == null) {
-			debugInfo = "(Test: " + this.getClass().getName() + ", Delegate: " + delegate.getClass().getName() + ")";
+			debugInfo = "(Test: " + this.getClass().getName() + ", Delegate: "
+					+ delegate.getClass().getName() + ")";
 		}
-		
+
 		return debugInfo;
 	}
 
@@ -117,17 +123,18 @@ public class ObservableDelegateTest extends TestCase {
 	 * @param observable
 	 *            observable that should be collected by ObservableTracker
 	 */
-	protected void assertGetterCalled(Runnable runnable, String methodName, IObservable observable) {
+	protected void assertGetterCalled(Runnable runnable, String methodName,
+			IObservable observable) {
 		IObservable[] observables = ObservableTracker.runAndMonitor(runnable,
 				null, null);
-	
+
 		int count = 0;
 		for (int i = 0; i < observables.length; i++) {
 			if (observables[i] == observable) {
 				count++;
 			}
 		}
-		
+
 		assertEquals(formatFail(methodName
 				+ " should invoke ObservableTracker.getterCalled() once."), 1,
 				count);

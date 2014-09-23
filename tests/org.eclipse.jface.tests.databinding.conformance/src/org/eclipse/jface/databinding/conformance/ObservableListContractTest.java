@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bug 213145
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444829
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
@@ -52,6 +53,7 @@ public class ObservableListContractTest extends
 		this.delegate = delegate;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -60,6 +62,7 @@ public class ObservableListContractTest extends
 
 	public void testListIterator_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
+			@Override
 			public void run() {
 				list.listIterator();
 			}
@@ -67,8 +70,10 @@ public class ObservableListContractTest extends
 	}
 
 	public void testGet_GetterCalled() throws Exception {
-		list = (IObservableList) delegate.createObservableCollection(new CurrentRealm(true), 1);
+		list = (IObservableList) delegate.createObservableCollection(
+				new CurrentRealm(true), 1);
 		assertGetterCalled(new Runnable() {
+			@Override
 			public void run() {
 				list.get(0);
 			}
@@ -77,6 +82,7 @@ public class ObservableListContractTest extends
 
 	public void testIndexOf_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
+			@Override
 			public void run() {
 				list.indexOf(delegate.createElement(list));
 			}
@@ -85,6 +91,7 @@ public class ObservableListContractTest extends
 
 	public void testLastIndexOf_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
+			@Override
 			public void run() {
 				list.lastIndexOf(delegate.createElement(list));
 			}
@@ -94,8 +101,10 @@ public class ObservableListContractTest extends
 	public void testListIteratorAtIndex_GetterCalled() throws Exception {
 		// Create a new list instead of adding an item because the list might
 		// not be mutable
-		list = (IObservableList) delegate.createObservableCollection(new CurrentRealm(true), 1);
+		list = (IObservableList) delegate.createObservableCollection(
+				new CurrentRealm(true), 1);
 		assertGetterCalled(new Runnable() {
+			@Override
 			public void run() {
 				list.listIterator(0);
 			}
@@ -103,8 +112,10 @@ public class ObservableListContractTest extends
 	}
 
 	public void testSubList_GetterCalled() throws Exception {
-		list = (IObservableList) delegate.createObservableCollection(new CurrentRealm(true), 1);
+		list = (IObservableList) delegate.createObservableCollection(
+				new CurrentRealm(true), 1);
 		assertGetterCalled(new Runnable() {
+			@Override
 			public void run() {
 				list.subList(0, 1);
 			}

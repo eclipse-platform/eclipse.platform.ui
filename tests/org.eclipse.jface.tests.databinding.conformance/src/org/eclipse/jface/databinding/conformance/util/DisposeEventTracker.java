@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Matthew Hall and others.
+ * Copyright (c) 2008, 2014 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 146397)
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444829
  *******************************************************************************/
 package org.eclipse.jface.databinding.conformance.util;
 
@@ -15,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.DisposeEvent;
 import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.IObservablesListener;
 
 /**
  * Listener for tracking the firing of DisposeEvents.
@@ -28,16 +30,17 @@ public class DisposeEventTracker implements IDisposeListener {
 	 * event. Used to determine order of notifications of listeners. Can be
 	 * null.
 	 */
-	public final List queue;
+	public final List<IObservablesListener> queue;
 
 	public DisposeEventTracker() {
 		queue = null;
 	}
 
-	public DisposeEventTracker(List notificationQueue) {
+	public DisposeEventTracker(List<IObservablesListener> notificationQueue) {
 		this.queue = notificationQueue;
 	}
 
+	@Override
 	public void handleDispose(DisposeEvent event) {
 		count++;
 		this.event = event;

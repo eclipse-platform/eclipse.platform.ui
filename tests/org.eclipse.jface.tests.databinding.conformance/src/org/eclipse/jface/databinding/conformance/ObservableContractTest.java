@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Brad Reynolds and others.
+ * Copyright (c) 2007, 2014 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Matthew Hall - bugs 208322, 221351, 208858, 146397, 249526
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444829
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
@@ -51,10 +52,11 @@ public class ObservableContractTest extends ObservableDelegateTest {
 	public ObservableContractTest(String testName,
 			IObservableContractDelegate delegate) {
 		super(testName, delegate);
-		
+
 		this.delegate = delegate;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		observable = getObservable();
@@ -62,11 +64,14 @@ public class ObservableContractTest extends ObservableDelegateTest {
 
 	public void testConstruction_CallsObservableCreated() {
 		final IObservable[] created = new IObservable[1];
-		IObservable[] collected = ObservableTracker.runAndCollect(new Runnable() {
-			public void run() {
-				created[0] = delegate.createObservable(new CurrentRealm(true));
-			}
-		});
+		IObservable[] collected = ObservableTracker
+				.runAndCollect(new Runnable() {
+					@Override
+					public void run() {
+						created[0] = delegate
+								.createObservable(new CurrentRealm(true));
+					}
+				});
 		assertTrue(collected.length > 0);
 		boolean wasCollected = false;
 		for (int i = 0; i < collected.length; i++) {
@@ -77,8 +82,8 @@ public class ObservableContractTest extends ObservableDelegateTest {
 	}
 
 	public void testGetRealm_NotNull() throws Exception {
-		assertNotNull(formatFail("The observable's realm should not be null."), observable
-				.getRealm());
+		assertNotNull(formatFail("The observable's realm should not be null."),
+				observable.getRealm());
 	}
 
 	public void testChange_ChangeEvent() throws Exception {
@@ -108,12 +113,13 @@ public class ObservableContractTest extends ObservableDelegateTest {
 
 	public void testChange_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
+			@Override
 			public void run() {
 				delegate.change(observable);
-			}			
+			}
 		}, (CurrentRealm) observable.getRealm());
 	}
-	
+
 	public void testChange_ObservableRealmIsTheCurrentRealm() throws Exception {
 		ChangeListener listener = new ChangeListener();
 		observable.addChangeListener(listener);
@@ -131,7 +137,8 @@ public class ObservableContractTest extends ObservableDelegateTest {
 		delegate.change(observable);
 
 		// precondition check
-		assertEquals(formatFail("change did not notify listeners"), 1, listener.count);
+		assertEquals(formatFail("change did not notify listeners"), 1,
+				listener.count);
 
 		observable.removeChangeListener(listener);
 		delegate.change(observable);
@@ -147,9 +154,10 @@ public class ObservableContractTest extends ObservableDelegateTest {
 				formatFail("When an observable is not stale isStale() should return false."),
 				observable.isStale());
 	}
-	
+
 	public void testIsStale_RealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
+			@Override
 			public void run() {
 				observable.isStale();
 			}
@@ -158,6 +166,7 @@ public class ObservableContractTest extends ObservableDelegateTest {
 
 	public void testIsStale_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
+			@Override
 			public void run() {
 				observable.isStale();
 			}
@@ -182,6 +191,7 @@ public class ObservableContractTest extends ObservableDelegateTest {
 		// Ensures observable.isDisposed() == true before
 		// the dispose listeners are called
 		observable.addDisposeListener(new IDisposeListener() {
+			@Override
 			public void handleDispose(DisposeEvent staleEvent) {
 				assertTrue(observable.isDisposed());
 			}
@@ -192,14 +202,14 @@ public class ObservableContractTest extends ObservableDelegateTest {
 	public void testDispose_RemovesListeners() throws Exception {
 		ChangeListener disposedObservableListener = new ChangeListener();
 		Realm realm = observable.getRealm();
-		
+
 		observable.addChangeListener(disposedObservableListener);
 		observable.dispose();
-		
-		//create a new observable to fire a change from
+
+		// create a new observable to fire a change from
 		observable = delegate.createObservable(realm);
 		delegate.change(observable);
-		
+
 		assertEquals(
 				formatFail("After being disposed listeners should not receive change events."),
 				0, disposedObservableListener.count);
@@ -220,6 +230,7 @@ public class ObservableContractTest extends ObservableDelegateTest {
 
 		boolean isCurrentRealm;
 
+		@Override
 		public void handleChange(ChangeEvent event) {
 			count++;
 			this.event = event;

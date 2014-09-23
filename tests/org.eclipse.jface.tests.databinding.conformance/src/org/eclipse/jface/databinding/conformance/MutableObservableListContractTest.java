@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bugs 208858, 221351, 213145, 244098
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444829
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
@@ -17,19 +18,20 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.Assert;
 import junit.framework.Test;
 
+import org.eclipse.core.databinding.observable.IObservablesListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
+import org.junit.Assert;
 
 /**
  * Mutability tests for IObservableList.
- * 
+ *
  * <p>
  * This class is experimental and can change at any time. It is recommended to
  * not subclass or assume the test names will not change. The only API that is
@@ -61,6 +63,7 @@ public class MutableObservableListContractTest extends
 		this.delegate = delegate;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		list = (IObservableList) getObservable();
@@ -69,6 +72,7 @@ public class MutableObservableListContractTest extends
 	public void testAdd_ListChangeEvent() throws Exception {
 		final Object element = delegate.createElement(list);
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.add(element);
 			}
@@ -81,15 +85,17 @@ public class MutableObservableListContractTest extends
 		final Object element1 = delegate.createElement(list);
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.add(element1);
 			}
-		}, "List.add(Object)", list, Arrays.asList(new Object[] { element0,
-				element1 }));
+		}, "List.add(Object)", list,
+				Arrays.asList(new Object[] { element0, element1 }));
 	}
 
 	public void testAddAtIndex_ChangeEvent() throws Exception {
 		assertChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.add(0, delegate.createElement(list));
 			}
@@ -99,6 +105,7 @@ public class MutableObservableListContractTest extends
 	public void testAddAtIndex_ListChangeEvent() throws Exception {
 		final Object element = delegate.createElement(list);
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.add(0, element);
 			}
@@ -110,6 +117,7 @@ public class MutableObservableListContractTest extends
 		final Object element = delegate.createElement(list);
 
 		assertContainsDuringChangeEvent(new Runnable() {
+			@Override
 			public void run() {
 				list.add(0, element);
 			}
@@ -122,16 +130,18 @@ public class MutableObservableListContractTest extends
 		final Object element1 = delegate.createElement(list);
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.add(1, element1);
 			}
-		}, "List.add(int, Object)", list, Arrays.asList(new Object[] {
-				element0, element1 }));
+		}, "List.add(int, Object)", list,
+				Arrays.asList(new Object[] { element0, element1 }));
 	}
 
 	public void testAddAll_ListChangeEvent() throws Exception {
 		final Object element = delegate.createElement(list);
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.addAll(Collections.singletonList(element));
 			}
@@ -142,6 +152,7 @@ public class MutableObservableListContractTest extends
 		final Object element = delegate.createElement(list);
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.addAll(Collections.singletonList(element));
 			}
@@ -154,15 +165,17 @@ public class MutableObservableListContractTest extends
 		final Object element1 = delegate.createElement(list);
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.addAll(Collections.singletonList(element1));
 			}
-		}, "List.addAll(Collection)", list, Arrays.asList(new Object[] {
-				element0, element1 }));
+		}, "List.addAll(Collection)", list,
+				Arrays.asList(new Object[] { element0, element1 }));
 	}
 
 	public void testAddAllAtIndex_ChangeEvent() throws Exception {
 		assertChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.addAll(0, Arrays.asList(new Object[] { delegate
 						.createElement(list) }));
@@ -173,11 +186,12 @@ public class MutableObservableListContractTest extends
 	public void testAddAllAtIndex_ListChangeEvent() throws Exception {
 		final Object element = delegate.createElement(list);
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.addAll(0, Collections.singletonList(element));
 			}
-		}, "List.addAll(int, Collection)", list, Collections
-				.singletonList(element));
+		}, "List.addAll(int, Collection)", list,
+				Collections.singletonList(element));
 	}
 
 	public void testAddAllAtIndex_ChangeEventFiredAfterElementIsAdded()
@@ -185,6 +199,7 @@ public class MutableObservableListContractTest extends
 		final Object element = delegate.createElement(list);
 
 		assertContainsDuringChangeEvent(new Runnable() {
+			@Override
 			public void run() {
 				list.addAll(0, Arrays.asList(new Object[] { element }));
 			}
@@ -197,17 +212,19 @@ public class MutableObservableListContractTest extends
 		final Object element1 = delegate.createElement(list);
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.addAll(1, Collections.singletonList(element1));
 			}
-		}, "List.addAll(int, Collection)", list, Arrays.asList(new Object[] {
-				element0, element1 }));
+		}, "List.addAll(int, Collection)", list,
+				Arrays.asList(new Object[] { element0, element1 }));
 	}
 
 	public void testSet_ChangeEvent() throws Exception {
 		list.add(delegate.createElement(list));
 
 		assertChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.set(0, delegate.createElement(list));
 			}
@@ -220,11 +237,12 @@ public class MutableObservableListContractTest extends
 		final Object element1 = delegate.createElement(list);
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				assertSame(element0, list.set(0, element1));
 			}
-		}, "List.set(int, Object)", list, Arrays
-				.asList(new Object[] { element1 }));
+		}, "List.set(int, Object)", list,
+				Arrays.asList(new Object[] { element1 }));
 	}
 
 	public void testSet_ChangeEventFiredAfterElementIsSet() throws Exception {
@@ -233,6 +251,7 @@ public class MutableObservableListContractTest extends
 		final Object element2 = delegate.createElement(list);
 
 		assertContainsDuringChangeEvent(new Runnable() {
+			@Override
 			public void run() {
 				assertSame(element1, list.set(0, element2));
 			}
@@ -247,11 +266,12 @@ public class MutableObservableListContractTest extends
 		final Object newElement1 = delegate.createElement(list);
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.set(1, newElement1);
 			}
-		}, "List.set(int, Object)", list, Arrays.asList(new Object[] {
-				element0, newElement1 }));
+		}, "List.set(int, Object)", list,
+				Arrays.asList(new Object[] { element0, newElement1 }));
 	}
 
 	public void testMove_ChangeEvent() throws Exception {
@@ -259,6 +279,7 @@ public class MutableObservableListContractTest extends
 		list.add(delegate.createElement(list));
 
 		assertChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.move(0, 1);
 			}
@@ -289,11 +310,12 @@ public class MutableObservableListContractTest extends
 		list.add(element1);
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				assertSame(element0, list.move(0, 1));
 			}
-		}, "IObservableList.move(int, int)", list, Arrays.asList(new Object[] {
-				element1, element0 }));
+		}, "IObservableList.move(int, int)", list,
+				Arrays.asList(new Object[] { element1, element0 }));
 	}
 
 	public void testMove_ChangeEventFiredAfterElementIsMoved() throws Exception {
@@ -318,11 +340,12 @@ public class MutableObservableListContractTest extends
 		list.add(element1);
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.move(0, 1);
 			}
-		}, "IObservableList.move(int, int)", list, Arrays.asList(new Object[] {
-				element1, element0 }));
+		}, "IObservableList.move(int, int)", list,
+				Arrays.asList(new Object[] { element1, element0 }));
 	}
 
 	public void testRemove_ListChangeEvent() throws Exception {
@@ -330,6 +353,7 @@ public class MutableObservableListContractTest extends
 		list.add(element);
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.remove(element);
 			}
@@ -343,6 +367,7 @@ public class MutableObservableListContractTest extends
 		list.add(element1);
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.remove(element1);
 			}
@@ -353,6 +378,7 @@ public class MutableObservableListContractTest extends
 		list.add(delegate.createElement(list));
 
 		assertChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.remove(0);
 			}
@@ -363,6 +389,7 @@ public class MutableObservableListContractTest extends
 		list.add(delegate.createElement(list));
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.remove(0);
 			}
@@ -375,6 +402,7 @@ public class MutableObservableListContractTest extends
 		list.add(element);
 
 		assertDoesNotContainDuringChangeEvent(new Runnable() {
+			@Override
 			public void run() {
 				list.remove(0);
 			}
@@ -388,6 +416,7 @@ public class MutableObservableListContractTest extends
 		list.add(element1);
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.remove(1);
 			}
@@ -399,6 +428,7 @@ public class MutableObservableListContractTest extends
 		list.add(element);
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.removeAll(Collections.singletonList(element));
 			}
@@ -410,6 +440,7 @@ public class MutableObservableListContractTest extends
 		list.add(element);
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.removeAll(Collections.singletonList(element));
 			}
@@ -423,11 +454,12 @@ public class MutableObservableListContractTest extends
 		list.add(element1);
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.removeAll(Arrays.asList(new Object[] { element1 }));
 			}
-		}, "List.removeAll(Collection)", list, Collections
-				.singletonList(element0));
+		}, "List.removeAll(Collection)", list,
+				Collections.singletonList(element0));
 	}
 
 	public void testRetainAll_ListChangeEvent() throws Exception {
@@ -436,11 +468,12 @@ public class MutableObservableListContractTest extends
 		list.add(delegate.createElement(list));
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.retainAll(Arrays.asList(new Object[] { element0 }));
 			}
-		}, "List.retainAll(Collection", list, Collections
-				.singletonList(element0));
+		}, "List.retainAll(Collection", list,
+				Collections.singletonList(element0));
 	}
 
 	public void testRetainAll_ListDiffEntry() throws Exception {
@@ -449,17 +482,19 @@ public class MutableObservableListContractTest extends
 		list.add(delegate.createElement(list));
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.retainAll(Arrays.asList(new Object[] { element }));
 			}
-		}, "List.retainAll(Collection)", list, Collections
-				.singletonList(element));
+		}, "List.retainAll(Collection)", list,
+				Collections.singletonList(element));
 	}
 
 	public void testClear_ListChangeEvent() throws Exception {
 		list.add(delegate.createElement(list));
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.clear();
 			}
@@ -470,6 +505,7 @@ public class MutableObservableListContractTest extends
 		list.add(delegate.createElement(list));
 
 		assertListChangeEventFired(new Runnable() {
+			@Override
 			public void run() {
 				list.clear();
 			}
@@ -488,7 +524,7 @@ public class MutableObservableListContractTest extends
 			String methodName, IObservableList list, List newList) {
 		List oldList = new ArrayList(list);
 
-		List queue = new ArrayList();
+		List<IObservablesListener> queue = new ArrayList<IObservablesListener>();
 		ListChangeEventTracker listListener = new ListChangeEventTracker(queue);
 		ChangeEventTracker changeListener = new ChangeEventTracker(queue);
 
@@ -497,14 +533,15 @@ public class MutableObservableListContractTest extends
 
 		runnable.run();
 
-		assertEquals(formatFail(methodName + " should fire one ListChangeEvent."), 1,
-				listListener.count);
+		assertEquals(formatFail(methodName
+				+ " should fire one ListChangeEvent."), 1, listListener.count);
 		assertEquals(formatFail(methodName
 				+ "'s change event observable should be the created List."),
 				list, listListener.event.getObservable());
 
-		assertEquals(formatFail("Two notifications should have been received."), 2, queue
-				.size());
+		assertEquals(
+				formatFail("Two notifications should have been received."), 2,
+				queue.size());
 		assertEquals("ChangeEvent of " + methodName
 				+ " should have fired before the ListChangeEvent.",
 				changeListener, queue.get(0));
@@ -526,8 +563,9 @@ public class MutableObservableListContractTest extends
 	}
 
 	public static Test suite(IObservableCollectionContractDelegate delegate) {
-		return new SuiteBuilder().addObservableContractTest(
-				MutableObservableListContractTest.class, delegate)
+		return new SuiteBuilder()
+				.addObservableContractTest(
+						MutableObservableListContractTest.class, delegate)
 				.addObservableContractTest(ObservableListContractTest.class,
 						delegate).build();
 	}

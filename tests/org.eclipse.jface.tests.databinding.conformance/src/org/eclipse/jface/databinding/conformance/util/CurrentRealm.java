@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bug 268688
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444829
  *******************************************************************************/
 package org.eclipse.jface.databinding.conformance.util;
 
@@ -25,7 +26,7 @@ import org.eclipse.core.databinding.observable.Realm;
  */
 public class CurrentRealm extends Realm {
 	private boolean current;
-	private List queue = new LinkedList();
+	private List<Runnable> queue = new LinkedList<Runnable>();
 
 	public CurrentRealm() {
 		this(false);
@@ -35,6 +36,7 @@ public class CurrentRealm extends Realm {
 		this.current = current;
 	}
 
+	@Override
 	public boolean isCurrent() {
 		return current;
 	}
@@ -44,20 +46,22 @@ public class CurrentRealm extends Realm {
 		processTasks();
 	}
 
+	@Override
 	protected void syncExec(Runnable runnable) {
 		super.syncExec(runnable);
 	}
 
 	private void processTasks() {
 		if (isCurrent()) {
-			for (Iterator it = queue.iterator(); it.hasNext();) {
-				Runnable task = (Runnable) it.next();
+			for (Iterator<Runnable> it = queue.iterator(); it.hasNext();) {
+				Runnable task = it.next();
 				it.remove();
 				safeRun(task);
 			}
 		}
 	}
 
+	@Override
 	public void asyncExec(Runnable runnable) {
 		queue.add(runnable);
 	}
