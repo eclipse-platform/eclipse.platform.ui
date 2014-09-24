@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,8 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
@@ -56,6 +58,7 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
@@ -131,6 +134,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.ILocalWorkingSetManager;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISaveableFilter;
@@ -151,6 +155,7 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
@@ -251,6 +256,8 @@ import org.osgi.util.tracker.ServiceTracker;
  * </p>
  */
 public final class Workbench extends EventManager implements IWorkbench {
+
+	private static String MEMENTO_KEY = "memento"; //$NON-NLS-1$
 
 	private final class StartupProgressBundleListener implements SynchronousBundleListener {
 
@@ -1069,6 +1076,29 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}
 		});
 
+		// persist workbench state
+		if (getWorkbenchConfigurer().getSaveAndRestore()) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() {
+					persistWorkbenchState();
+				}
+
+				@Override
+				public void handleException(Throwable e) {
+					String message;
+					if (e.getMessage() == null) {
+						message = WorkbenchMessages.ErrorClosingNoArg;
+					} else {
+						message = NLS.bind(WorkbenchMessages.ErrorClosingOneArg, e.getMessage());
+					}
+
+					if (!MessageDialog.openQuestion(null, WorkbenchMessages.Error, message)) {
+						isClosing = false;
+					}
+				}
+			});
+		}
+
 		// persist view states
 		SafeRunner.run(new SafeRunnable() {
 			public void run() {
@@ -1464,6 +1494,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 						// if (isClosing()) {
 						bail[0] = true;
 					}
+
+					restoreWorkbenchState();
 				}
 			});
 
@@ -3368,5 +3400,75 @@ UIEvents.Context.TOPIC_CONTEXT,
 
 	public MApplication getApplication() {
 		return application;
+	}
+
+	/*
+	 * Record the workbench UI in a document
+	 */
+	private void persistWorkbenchState() {
+		try {
+			XMLMemento memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_WORKBENCH);
+			IStatus status = saveWorkbenchState(memento);
+
+			if (status.getSeverity() == IStatus.OK) {
+				StringWriter writer = new StringWriter();
+				memento.save(writer);
+				application.getPersistedState().put(MEMENTO_KEY, writer.toString());
+			} else {
+				WorkbenchPlugin.log(new Status(status.getSeverity(), PlatformUI.PLUGIN_ID,
+						WorkbenchMessages.Workbench_problemsSavingMsg));
+			}
+		} catch (IOException e) {
+			WorkbenchPlugin.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
+					WorkbenchMessages.Workbench_problemsSavingMsg, e));
+		}
+	}
+
+	/*
+	 * Saves the current state of the workbench so it can be restored later on
+	 */
+	private IStatus saveWorkbenchState(IMemento memento) {
+		MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK,
+				WorkbenchMessages.Workbench_problemsSaving, null);
+
+		// TODO: Currently we store the editors history only. Add more if needed
+
+		result.add(getEditorHistory().saveState(
+				memento.createChild(IWorkbenchConstants.TAG_MRU_LIST)));
+		return result;
+	}
+
+	private void restoreWorkbenchState() {
+		try {
+			String persistedState = application.getPersistedState().get(MEMENTO_KEY);
+			if (persistedState != null) {
+				XMLMemento memento = XMLMemento.createReadRoot(new StringReader(persistedState));
+				IStatus status = readWorkbenchState(memento);
+
+				if (status.getSeverity() != IStatus.OK) {
+					WorkbenchPlugin.log(new Status(status.getSeverity(), PlatformUI.PLUGIN_ID,
+							WorkbenchMessages.Workbench_problemsRestoring));
+				}
+			}
+		} catch (Exception e) {
+			WorkbenchPlugin.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
+					WorkbenchMessages.Workbench_problemsRestoring, e));
+		}
+	}
+
+	private IStatus readWorkbenchState(IMemento memento) {
+		MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK,
+				WorkbenchMessages.Workbench_problemsRestoring, null);
+
+		try {
+			UIStats.start(UIStats.RESTORE_WORKBENCH, "MRUList"); //$NON-NLS-1$
+			IMemento mruMemento = memento.getChild(IWorkbenchConstants.TAG_MRU_LIST);
+			if (mruMemento != null) {
+				result.add(getEditorHistory().restoreState(mruMemento));
+			}
+		} finally {
+			UIStats.end(UIStats.RESTORE_WORKBENCH, this, "MRUList"); //$NON-NLS-1$
+		}
+		return result;
 	}
 }

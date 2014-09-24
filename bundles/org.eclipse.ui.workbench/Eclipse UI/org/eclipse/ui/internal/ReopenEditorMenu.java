@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -263,7 +263,7 @@ public class ReopenEditorMenu extends ContributionItem {
                 }
                 IEditorInput input = item.getInput();
                 IEditorDescriptor desc = item.getDescriptor();
-                if (input == null || desc == null) {
+				if (input == null || !input.exists() || desc == null) {
                     String title = WorkbenchMessages.OpenRecent_errorTitle;
                     String msg = NLS.bind(WorkbenchMessages.OpenRecent_unableToOpen,  itemName ); 
                     MessageDialog.openWarning(window.getShell(), title, msg);
