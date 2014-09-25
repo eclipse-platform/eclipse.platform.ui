@@ -1043,7 +1043,7 @@ public class ModelEditor implements IGotoObject {
 		TreeViewer tempViewer = null;
 		String property = System.getProperty(ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED);
 		if (property != null || preferences.getBoolean("tab-form-search-show", false)) { //$NON-NLS-1$
-			FilteredTree viewParent = new FilteredTree(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter());
+			FilteredTree viewParent = new FilteredTree(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter(), false);
 			tempViewer = viewParent.getViewer();
 		} else {
 			tempViewer = new TreeViewerEx(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL, emfDocumentProvider, modelProvider);
