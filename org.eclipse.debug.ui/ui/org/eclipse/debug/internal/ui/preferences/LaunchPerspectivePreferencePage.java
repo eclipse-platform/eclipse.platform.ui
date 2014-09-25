@@ -560,18 +560,19 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		TreeItem[] items = fTree.getItems();
 		ILaunchConfigurationType type = null;
 		Set<Set<String>> modes = null;
-		ILaunchDelegate[] delegates = null;
+		Object[] delegates = null;
 		for(int i = 0; i < items.length; i++) {
 			type = (ILaunchConfigurationType) items[i].getData();
 			modes = type.getSupportedModeCombinations();
-			delegates = (ILaunchDelegate[]) fTreeViewer.getFilteredChildren(type);
+			delegates = fTreeViewer.getFilteredChildren(type);
 			for (Set<String> modeset : modes) {
 				fgChangeSet.add(new PerspectiveChange(type, null, modeset, pm.getDefaultLaunchPerspective(type, null, modeset)));
 			}
 			for(int j = 0; j < delegates.length; j++) {
-				modes = new HashSet<Set<String>>(delegates[j].getModes());
+				ILaunchDelegate delegate = (ILaunchDelegate) delegates[j];
+				modes = new HashSet<Set<String>>(delegate.getModes());
 				for (Set<String> modeset : modes) {
-					fgChangeSet.add(new PerspectiveChange(type, delegates[j], modeset, pm.getDefaultLaunchPerspective(type, delegates[j], modeset)));
+					fgChangeSet.add(new PerspectiveChange(type, delegate, modeset, pm.getDefaultLaunchPerspective(type, delegate, modeset)));
 				}
 			}
 		}
