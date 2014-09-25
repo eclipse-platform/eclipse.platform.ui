@@ -9,12 +9,11 @@
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.BundleClassDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.IconDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.UriDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.UriDialogType;
-
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.DialogCellEditor;
 import org.eclipse.swt.widgets.Composite;

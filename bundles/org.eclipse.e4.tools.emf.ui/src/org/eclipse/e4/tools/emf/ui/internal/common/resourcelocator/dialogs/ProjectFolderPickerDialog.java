@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
 
-import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
-
 import java.net.URL;
 import java.util.ArrayList;
 import org.eclipse.core.resources.IProject;
@@ -21,6 +19,7 @@ import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ColumnLabelProvider;

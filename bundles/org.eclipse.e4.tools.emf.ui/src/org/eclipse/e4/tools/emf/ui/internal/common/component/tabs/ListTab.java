@@ -39,6 +39,7 @@ import javax.xml.xpath.XPathFactory;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.Plugin;
@@ -52,7 +53,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.TitleAre
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.TitleAreaFilterDialogWithEmptyOptions;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.EMFDocumentResourceMediator;
 import org.eclipse.e4.tools.services.IResourcePool;
-import org.eclipse.e4.tools.services.Translation;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.TreeIterator;

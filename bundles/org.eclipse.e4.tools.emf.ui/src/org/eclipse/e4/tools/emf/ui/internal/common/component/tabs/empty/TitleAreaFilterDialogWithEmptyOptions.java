@@ -9,7 +9,6 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty;
 
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.Messages;
-
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;

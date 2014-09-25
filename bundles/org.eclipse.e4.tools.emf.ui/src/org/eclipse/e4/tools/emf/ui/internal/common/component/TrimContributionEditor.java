@@ -14,8 +14,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
-
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -30,6 +28,7 @@ import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.TrimIdDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;

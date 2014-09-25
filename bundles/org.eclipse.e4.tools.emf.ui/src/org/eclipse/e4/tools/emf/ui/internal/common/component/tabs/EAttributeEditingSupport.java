@@ -11,9 +11,8 @@
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
 
-import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.UriDialogType;
-
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.UriDialogType;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;

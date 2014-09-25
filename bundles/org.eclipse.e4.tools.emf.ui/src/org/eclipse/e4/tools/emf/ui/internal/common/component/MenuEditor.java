@@ -13,9 +13,6 @@ f * Copyright (c) 2010, 2014 BestSolution.at and others.
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
-import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList.Struct;
-
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -37,6 +34,8 @@ import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
+import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList.Struct;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuItemEditor.EClass2EObject;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuItemEditor.EObject2EClass;

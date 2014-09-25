@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
 
-import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BundleImageCache;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.TitleAreaFilterDialog;
+import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;

@@ -48,6 +48,7 @@ import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.tools.emf.ui.common.AbstractElementEditorContribution;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
@@ -141,7 +142,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.xml.EMFDocumentResourceMediat
 import org.eclipse.e4.tools.services.IClipboardService;
 import org.eclipse.e4.tools.services.IClipboardService.Handler;
 import org.eclipse.e4.tools.services.IResourcePool;
-import org.eclipse.e4.tools.services.Translation;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.di.PersistState;

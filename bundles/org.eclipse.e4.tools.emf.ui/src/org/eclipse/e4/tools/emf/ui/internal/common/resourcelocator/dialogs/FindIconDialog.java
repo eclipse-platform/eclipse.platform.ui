@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
 
-import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
-
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.AbstractIconDialogWithScopeAndFilter;
+import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
 import org.eclipse.swt.widgets.Shell;
 
 final class FindIconDialog extends AbstractIconDialogWithScopeAndFilter {

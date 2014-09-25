@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.core.di.extensions.Preference;
-import org.eclipse.e4.tools.services.Translation;
+import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.osgi.framework.FrameworkUtil;
 

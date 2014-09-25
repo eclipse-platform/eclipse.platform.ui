@@ -11,8 +11,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
-import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList;
-
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -20,8 +18,9 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
-import org.eclipse.e4.tools.emf.ui.internal.common.EClassLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
+import org.eclipse.e4.tools.emf.ui.internal.common.EClassLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
