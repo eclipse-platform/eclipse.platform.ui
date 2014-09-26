@@ -583,7 +583,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				//shutdown save manager now so a last snapshot can be taken before we close
 				//note: you can't call #save() from within a nested operation
 				saveManager.shutdown(null);
-				saveManager.reportSnapshotRequestors();
+				saveManager.reportSnapshotRequestor();
 				prepareOperation(getRoot(), monitor);
 				//shutdown notification first to avoid calling third parties during shutdown
 				notificationManager.shutdown(null);

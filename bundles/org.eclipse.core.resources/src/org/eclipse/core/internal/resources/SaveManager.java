@@ -120,7 +120,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected final DelayedSnapshotJob snapshotJob;
 
 	protected boolean snapshotRequested;
-	private List<IStatus> snapshotRequestors;
+	private IStatus snapshotRequestor;
 	protected Workspace workspace;
 	//declare debug messages as fields to get sharing
 	private static final String DEBUG_START = " starting..."; //$NON-NLS-1$
@@ -134,7 +134,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		this.masterTable = new MasterTable();
 		this.snapshotJob = new DelayedSnapshotJob(this);
 		snapshotRequested = false;
-		snapshotRequestors = new ArrayList<IStatus>();
+		snapshotRequestor = null;
 		saveParticipants = Collections.synchronizedMap(new HashMap<String, ISaveParticipant>(10));
 	}
 
@@ -550,7 +550,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	}
 
 	private void rememberSnapshotRequestor() {
-		StringBuilder output = new StringBuilder("Snapshot requestor: "); //$NON-NLS-1$
+		StringBuilder output = new StringBuilder("The workspace will exit with unsaved changes in this session. Snapshot requestor: "); //$NON-NLS-1$
 		Job currentJob = Job.getJobManager().currentJob();
 		if (currentJob != null) {
 			output.append(currentJob.getClass().getName());
@@ -559,7 +559,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			output.append(")"); //$NON-NLS-1$
 		}
 		RuntimeException e = new RuntimeException("Scheduling workspace snapshot"); //$NON-NLS-1$
-		snapshotRequestors.add(new ResourceStatus(IStatus.ERROR, ICoreConstants.CRASH_DETECTED, null, output.toString(), e));
+		snapshotRequestor = new ResourceStatus(IStatus.ERROR, ICoreConstants.CRASH_DETECTED, null, output.toString(), e);
 		if (Policy.DEBUG_SAVE)
 			Policy.debug(e);
 	}
@@ -654,14 +654,9 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		}
 	}
 
-	protected void reportSnapshotRequestors() {
-		if (snapshotRequestors.size() > 0) {
-			String msg = "The workspace will exit with unsaved changes in this session."; //$NON-NLS-1$
-			MultiStatus multi = new MultiStatus(ResourcesPlugin.PI_RESOURCES, ICoreConstants.CRASH_DETECTED, msg, null);
-			for (int i = 0; i < snapshotRequestors.size(); i++)
-				multi.add(snapshotRequestors.get(i));
-			Policy.log(multi);
-		}
+	protected void reportSnapshotRequestor() {
+		if (snapshotRequestor != null)
+			Policy.log(snapshotRequestor);
 	}
 
 	public void requestSnapshot() {
@@ -1196,7 +1191,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 							saveTree(contexts, Policy.subMonitorFor(monitor, 1));
 							// reset the snapshot state.
 							initSnap(null);
-							snapshotRequestors.clear();
+							snapshotRequestor = null;
 							//save master table right after saving tree to ensure correct tree number is saved
 							cleanMasterTable();
 							// save all of the markers and all sync info in the workspace
