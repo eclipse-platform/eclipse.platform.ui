@@ -558,7 +558,10 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			output.append(currentJob.getName());
 			output.append(")"); //$NON-NLS-1$
 		}
-		snapshotRequestors.add(new ResourceStatus(IStatus.ERROR, ICoreConstants.CRASH_DETECTED, null, output.toString(), new RuntimeException("Snapshot requested"))); //$NON-NLS-1$
+		RuntimeException e = new RuntimeException("Scheduling workspace snapshot"); //$NON-NLS-1$
+		snapshotRequestors.add(new ResourceStatus(IStatus.ERROR, ICoreConstants.CRASH_DETECTED, null, output.toString(), e));
+		if (Policy.DEBUG_SAVE)
+			Policy.debug(e);
 	}
 
 	/**
@@ -1474,8 +1477,6 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				operationCount++;
 				if (snapshotJob.getState() == Job.NONE) {
 					rememberSnapshotRequestor();
-					if (Policy.DEBUG_SAVE)
-						Policy.debug("Scheduling workspace snapshot"); //$NON-NLS-1$
 					long interval = workspace.internalGetDescription().getSnapshotInterval();
 					snapshotJob.schedule(Math.max(interval, MIN_SNAPSHOT_DELAY));
 				}
