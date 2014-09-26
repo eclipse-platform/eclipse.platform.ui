@@ -65,7 +65,7 @@ public abstract class AbstractFieldAssistWindow extends Window {
 		return content;
 	}
 	
-	protected void createExtraControls(Composite parent) {
+	protected void createExtraControls(@SuppressWarnings("unused") Composite parent) {
 		// default is to do nothing
 	}
 
