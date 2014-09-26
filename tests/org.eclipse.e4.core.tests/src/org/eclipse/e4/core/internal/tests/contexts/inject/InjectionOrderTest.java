@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,9 +23,9 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 public class InjectionOrderTest extends TestCase {
 
 	public static class InjectTargetMethod {
-		
+
 		boolean nonNull = false;
-		
+
 		Object o;
 
 		@Inject
@@ -41,9 +41,9 @@ public class InjectionOrderTest extends TestCase {
 	}
 
 	public static class InjectTargetField {
-		
+
 		boolean nonNull = false;
-		
+
 		@Inject @Named("inject")
 		Object o;
 
@@ -71,9 +71,9 @@ public class InjectionOrderTest extends TestCase {
 		// change the requested value so another injection occurs
 		appContext.set("inject", "b");
 
-		// now we dispose the context 
+		// now we dispose the context
 		appContext.dispose();
-		
+
 		// check that the second 'set' invocation did not alter the order of notifications
 		assertTrue("@PreDestroy was incorrectly called after the method was uninjected", injectTargetMethod.nonNull);
 	}
@@ -95,9 +95,9 @@ public class InjectionOrderTest extends TestCase {
 		// change the requested value so another injection occurs
 		appContext.set("inject", "b");
 
-		// now we dispose the context 
+		// now we dispose the context
 		appContext.dispose();
-		
+
 		assertTrue("@PreDestroy was incorrectly called after the field was uninjected", injectTargetField.nonNull);
 	}
 }

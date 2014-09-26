@@ -35,7 +35,7 @@ public class InjectionUpdateTest extends TestCase {
 	static public class PropagationTest {
 
 		public int called = 0;
-		public String in; 
+		public String in;
 
 		@Inject
 		public PropagationTest() {
@@ -51,7 +51,7 @@ public class InjectionUpdateTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
 		c1 = EclipseContextFactory.create("c1");
 		c1.set("id", "c1");
 
@@ -63,7 +63,7 @@ public class InjectionUpdateTest extends TestCase {
 		c22.set("id", "c22");
 		c1.set("c22", c22);
 	}
-	
+
 	public void testPropagation() {
 		c1.set("base", "abc");
 
@@ -83,7 +83,7 @@ public class InjectionUpdateTest extends TestCase {
 			public Object compute(IEclipseContext context, String contextKey) {
 				IEclipseContext context21 = (IEclipseContext) context.get("c21");
 				String derived1 = (String) context21.get("derived1");
-				
+
 				IEclipseContext context22 = (IEclipseContext) context.get("c22");
 				String derived2 = (String) context22.get("derived2");
 				return derived1 + derived2;
@@ -102,7 +102,7 @@ public class InjectionUpdateTest extends TestCase {
 		assertEquals(3, testObject.called);
 		assertEquals("x__z", testObject.in);
 	}
-	
+
 	public static class InjectTarget {
 		private static final String KEY = "key";
 
@@ -170,5 +170,5 @@ public class InjectionUpdateTest extends TestCase {
 		assertEquals(targetA, targetB);
 		assertSame(targetA, targetB);
 	}
-	
+
 }

@@ -20,7 +20,7 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext;
 public class DependenciesLeakTest extends TestCase {
 
 	final static String LEGACY_H_ID = "legacy::handler::"; //$NON-NLS-1$
-	
+
 	static class HandlerSelectionFunction extends ContextFunction {
 		private String commandId;
 		public HandlerSelectionFunction(String commandId) {
@@ -35,7 +35,7 @@ public class DependenciesLeakTest extends TestCase {
 			return "HandlerSelectionFunction [commandId=" + commandId + "]";
 		}
 	}
-	
+
 	private IEclipseContext windowContext;
 	private IEclipseContext perspectiveContext;
 	private IEclipseContext partContext;
@@ -46,32 +46,32 @@ public class DependenciesLeakTest extends TestCase {
 		perspectiveContext = windowContext.createChild("Perspective");
 		partContext = perspectiveContext.createChild("Part");
 	}
-	
+
 	public void testBug() {
 		// register a handler
 		Object handler = "<foo.bar.handler>";
 		windowContext.set("legacy::handler::foo.bar", handler); // fake activate legacy handler
 		windowContext.set("foo.bar", new HandlerSelectionFunction("foo.bar"));
-		
+
 		// there may be no listeners initially
 		assertNoListeners(windowContext);
 		assertNoListeners(perspectiveContext);
 		assertNoListeners(partContext);
-		
+
 		// cause a ValueComputation to be created
 		Object object = partContext.get("foo.bar");
 		assertEquals(object, handler);
-		
+
 		// now invalidate the name; this should notify the part context
 		windowContext.set("foo.bar", null);
 		//windowContext.remove("foo.bar");
-		
-		// all ValueComputation listeners must have been removed 
+
+		// all ValueComputation listeners must have been removed
 		assertNoListeners(windowContext);
 		assertNoListeners(perspectiveContext);
 		assertNoListeners(partContext);
 	}
-	
+
 	public void testInvalidateDirectly() {
 		windowContext.set("x", 42);
 		windowContext.set("y", 11);
@@ -79,16 +79,16 @@ public class DependenciesLeakTest extends TestCase {
 		assertNoListeners(windowContext);
 		assertNoListeners(perspectiveContext);
 		assertNoListeners(partContext);
-		
+
 		Object object = partContext.get("some.handler");
 		assertEquals(object, 53);
-		
+
 		windowContext.set("some.handler", null); // invalidate
 		assertNoListeners(windowContext);
 		assertNoListeners(perspectiveContext);
 		assertNoListeners(partContext);
 	}
-	
+
 	private void assertNoListeners(IEclipseContext context) {
 		EclipseContext c = (EclipseContext) context;
 		try {
@@ -97,5 +97,5 @@ public class DependenciesLeakTest extends TestCase {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 }

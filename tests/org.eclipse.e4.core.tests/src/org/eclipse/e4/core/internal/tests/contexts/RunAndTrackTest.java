@@ -27,25 +27,25 @@ import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
  * Tests for {@link org.eclipse.e4.core.RunAndTrack.context.IRunAndTrack}.
  */
 public class RunAndTrackTest extends TestCase {
-	
+
 	private static final class TestRAT extends RunAndTrack {
 
-		
+
 		private String varName;
 		private Object varValue;
 		private int calls = 0;
-		
+
 		public TestRAT(String varName) {
 			this.varName = varName;
 		}
-		
+
 		@Override
 		public boolean changed(IEclipseContext context) {
 			++calls;
 			varValue = context.get(varName);
 			return true;
 		}
-		
+
 		public int getCalls() {
 			return calls;
 		}
@@ -53,7 +53,7 @@ public class RunAndTrackTest extends TestCase {
 		public Object getVarValue() {
 			return varValue;
 		}
-		
+
 		public void resetCalls() {
 			calls = 0;
 		}
@@ -112,7 +112,7 @@ public class RunAndTrackTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
@@ -147,7 +147,7 @@ public class RunAndTrackTest extends TestCase {
 	 * There was a failing scenario in the legacy workbench support. This captures the hierarchy and
 	 * function (without any workbench level references). It should be updated when we figure out
 	 * the failing scenario :-)
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testRunAndTrackComplex() throws Exception {
@@ -228,13 +228,13 @@ public class RunAndTrackTest extends TestCase {
 		assertEquals("part1", windows[0].get(ACTIVE_PART));
 		assertEquals("part1", windows[0].get(ACTIVE_PART_ID));
 	}
-	
+
 	/**
 	 * Test how a RAT responds to a change hidden from it; changed value is == to child value
 	 */
 	public void testSetHiddenValueToChildObject() {
 		final String newRootValue = "child";
-		
+
 		doHiddenValueChangeTest(newRootValue);
 	}
 
@@ -243,7 +243,7 @@ public class RunAndTrackTest extends TestCase {
 	 */
 	public void testSetHiddenValueToDifferentObject() {
 		final String newRootValue = "other";
-		
+
 		doHiddenValueChangeTest(newRootValue);
 	}
 
@@ -252,8 +252,8 @@ public class RunAndTrackTest extends TestCase {
 	 */
 	public void testSetHiddenValueToObjectEqualToChild() {
 		// avoid compiler's pushing all my strings into a single string pool
-		final String newRootValue = new String("child"); 
-		
+		final String newRootValue = new String("child");
+
 		doHiddenValueChangeTest(newRootValue);
 	}
 
@@ -261,8 +261,8 @@ public class RunAndTrackTest extends TestCase {
 	 * Test how a RAT responds to a change hidden from it; changed value is == to root value
 	 */
 	public void testSetHiddenValueToRootObject() {
-		final String newRootValue = "root"; 
-		
+		final String newRootValue = "root";
+
 		doHiddenValueChangeTest(newRootValue);
 	}
 
@@ -271,8 +271,8 @@ public class RunAndTrackTest extends TestCase {
 	 */
 	public void testSetHiddenValueToEqualRootObject() {
 		// avoid compiler's pushing all my strings into a single string pool
-		final String newRootValue = new String("root"); 
-		
+		final String newRootValue = new String("root");
+
 		doHiddenValueChangeTest(newRootValue);
 	}
 
@@ -280,8 +280,8 @@ public class RunAndTrackTest extends TestCase {
 	 * Test how a RAT responds to a change hidden from it; changed value is == to root value
 	 */
 	public void testSetHiddenValueToNull() {
-		final String newRootValue = null; 
-		
+		final String newRootValue = null;
+
 		doHiddenValueChangeTest(newRootValue);
 	}
 
@@ -293,10 +293,10 @@ public class RunAndTrackTest extends TestCase {
 	 */
 	void doHiddenValueChangeTest(final String newRootValue) {
 		doHiddenValueChangeTest(new ITestAction() {
-			
+
 			public void execute(IEclipseContext root, String var) {
 				root.set(var, newRootValue);
-				
+
 			}
 		}, "child", 0);
 	}
@@ -308,7 +308,7 @@ public class RunAndTrackTest extends TestCase {
 	private interface ITestAction {
 
 		void execute(IEclipseContext root, String var);
-		
+
 	}
 	/**
 	 * Create a two level hierarchy of contexts, each defining a variable 'v' with values 'root' and 'child', respectively.
@@ -327,12 +327,12 @@ public class RunAndTrackTest extends TestCase {
 		root.set("v", "root");
 		child.set("v", "child");
 		final TestRAT testRAT = new TestRAT("v");
-		
+
 		// install the RAT
 		child.runAndTrack(testRAT);
 		assertEquals("child", testRAT.getVarValue());
 		assertEquals(1, testRAT.getCalls());
-		
+
 		testRAT.resetCalls();
 		// set the new root value
 		testAction.execute(root, "v");
@@ -346,14 +346,14 @@ public class RunAndTrackTest extends TestCase {
 	 */
 	public void testRemoveHiddenVariable() {
 		doHiddenValueChangeTest(new ITestAction() {
-			
+
 			public void execute(IEclipseContext root, String var) {
 				root.remove(var);;
-				
+
 			}
 		}, "child", 0);
 	}
-	
+
 	/**
 	 * Test that setting a context variable to it's existing
 	 * value does not re-run dependent RATs
@@ -365,7 +365,7 @@ public class RunAndTrackTest extends TestCase {
 			}
 		}, "root", 0);
 	}
-	
+
 	/**
 	 * Test that setting a context variable to a value that {@link Object#equals(Object) equals}
 	 * the current value, but is same object DOES re-run dependent RATs.
@@ -377,7 +377,7 @@ public class RunAndTrackTest extends TestCase {
 			}
 		}, "root", 1);
 	}
-	
+
 	/**
 	 * Test that setting a context variable to a different object, not equal to the
 	 * current value re-runs dependent RATs.
@@ -389,7 +389,7 @@ public class RunAndTrackTest extends TestCase {
 			}
 		}, "other", 1);
 	}
-	
+
 	/**
 	 * Test that removing a context variable re-runs dependent RATs.
 	 */
@@ -399,9 +399,9 @@ public class RunAndTrackTest extends TestCase {
 				root.remove(var);
 			}
 		}, null, 1);
-		
+
 	}
-	
+
 	/**
 	 * Creates a context, sets a variable 'v' to "root", creates a RAT dependent on 'v' in the context,
 	 * then executes <code>testAction</code> and tests whether the RAT ran the expected number of times,
@@ -412,9 +412,9 @@ public class RunAndTrackTest extends TestCase {
 	 */
 	private void doSingleContextChangeTest(ITestAction testAction, Object expectedValue, int expectedRATCalls) {
 		final IEclipseContext root = getGlobalContext();
-		
+
 		root.set("v", "root");
-		
+
 		final TestRAT testRAT = new TestRAT("v");
 		// install the RAT
 		root.runAndTrack(testRAT);
@@ -425,6 +425,6 @@ public class RunAndTrackTest extends TestCase {
 		testAction.execute(root, "v");
 		assertEquals(expectedRATCalls, testRAT.getCalls());
 		assertEquals(expectedValue, testRAT.getVarValue());
-		
+
 	}
 }

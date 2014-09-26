@@ -69,7 +69,7 @@ public class ObjectSuperClass {
 		myString = string;
 		setStringCalled++;
 	}
-	
+
 	@PostConstruct
 	public void superPostConstruct() {
 		// record setter invocation counts at time of post construct invocation

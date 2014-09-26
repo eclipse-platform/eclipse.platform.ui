@@ -49,21 +49,21 @@ public class ExtendedSupplierInjectionTests extends TestCase {
 			injectedObject = x;
 		}
 	}
-	
+
 	static class EventTestObject_430041 {
 		static int count = 0;
 
 		Object injectedObject;
-		
+
 		private boolean destroyed;
-		
+
 		@Inject
 		@Optional
 		void dontExecute(@EventTopic(TOPIC_430041) Object x) {
 			count++;
 			injectedObject = x;
 		}
-		
+
 		@PreDestroy
 		void goDown() {
 			this.destroyed = true;
@@ -99,7 +99,7 @@ public class ExtendedSupplierInjectionTests extends TestCase {
 		assertEquals(1, EventTestObject.count);
 		assertEquals("event1data", target.injectedObject);
 	}
-	
+
 	public void testBug430041() {
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set(Object.class, new Object());
@@ -116,10 +116,10 @@ public class ExtendedSupplierInjectionTests extends TestCase {
 
 		assertEquals(1, EventTestObject_430041.count);
 		assertEquals("event1data", target.injectedObject);
-		
+
 		context.dispose();
 		assertTrue(target.destroyed);
-		
+
 		helper.sendEvent(TOPIC_430041, "event1data_disposed");
 
 		assertEquals(1, EventTestObject_430041.count);

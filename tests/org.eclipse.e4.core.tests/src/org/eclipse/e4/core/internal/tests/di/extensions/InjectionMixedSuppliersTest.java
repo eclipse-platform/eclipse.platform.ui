@@ -27,42 +27,42 @@ import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
 import org.osgi.service.prefs.BackingStoreException;
 
 public class InjectionMixedSuppliersTest extends TestCase {
-	
+
 	static class InjectTarget {
 		public String pref;
 		public String other;
-		
+
 		@Inject
 		public void setPrefs(@Named("testMixed") String otherString, @Preference("injectedPrefs") String string) {
 			pref = string;
 			other = otherString;
 		}
 	}
-	
+
 	public void testPreferencesQualifier() throws BackingStoreException, InvocationTargetException, InstantiationException {
 		IEclipseContext context = EclipseContextFactory.create();
 		setPreference("injectedPrefs", "abc");
 		context.set("testMixed", "other");
 		InjectTarget target = (InjectTarget) ContextInjectionFactory.make(InjectTarget.class, context);
-		
+
 		// test
 		assertEquals("abc", target.pref);
 		assertEquals("other", target.other);
-		
+
 		// change
 		setPreference("injectedPrefs", "xyz");
 		context.set("testMixed", "bingo");
-		
+
 		// re-test
 		assertEquals("xyz", target.pref);
 		assertEquals("bingo", target.other);
 	}
-	
+
 	private void setPreference(String key, String value) throws BackingStoreException {
 		String nodePath = CoreTestsActivator.getDefault().getBundleContext().getBundle().getSymbolicName();
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(nodePath);
 		node.put(key, value);
 		node.flush();
 	}
-	
+
 }

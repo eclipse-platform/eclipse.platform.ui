@@ -24,11 +24,11 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 /**
  * This is a demo of a scenario when computed values don't work. The basic idea here is that a
  * calculated value depends on something not stored in the context, it won't necessarily be updated.
- * 
+ *
  * CalculatedValue = Function(ContextElement1, ..., ContextElement1N, ExtnernalFactor)
- * 
+ *
  * In this scenario we deal with the Output = Function(arg1, ..., arg10, Time)
- * 
+ *
  * We use a system timer here as an external input, but it can be pretty much anything not stored
  * directly in the context.
  */

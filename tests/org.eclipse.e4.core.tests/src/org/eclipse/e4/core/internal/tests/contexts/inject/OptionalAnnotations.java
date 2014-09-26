@@ -19,14 +19,14 @@ public class OptionalAnnotations {
 
 	@Inject @Optional
 	public Float f = null;
-	
+
 	public Double d;
 	public String s = new String("ouch");
 	public Integer i;
-	
+
 	public int methodOptionalCalled = 0;
 	public int methodRequiredCalled = 0;
-	
+
 	public OptionalAnnotations() {
 		// placehodler
 	}

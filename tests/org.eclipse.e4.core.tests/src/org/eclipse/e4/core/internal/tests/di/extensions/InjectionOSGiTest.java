@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2013 Markus Alexander Kuppe and others. All rights reserved. 
- * This program and the accompanying materials are made available under the terms 
+ * Copyright (c) 2013 Markus Alexander Kuppe and others. All rights reserved.
+ * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
@@ -55,13 +55,13 @@ public class InjectionOSGiTest extends TestCase {
 		public Bundle getBundle() {
 			return this.b;
 		}
-		
+
 		@Inject
 		public void setFoo(@OSGiBundle Object o) {
 			// make sure we don't fail when incompatible type requested
 		}
 	}
-	
+
 	// classed used as a user of the @OSGiBundle annotation
 	static class InjectionBundleTarget extends InjectionTarget {
 	}
@@ -122,7 +122,7 @@ public class InjectionOSGiTest extends TestCase {
 				.getContext();
 		assertNotSame(firstContext, secondContext);
 	}
-	
+
 	public void testBundleInject() throws BundleException {
 		// inject
 		assertNotNull(target.getBundle());
@@ -134,7 +134,7 @@ public class InjectionOSGiTest extends TestCase {
 		assertNotNull(target.getBundle());
 		assertTrue(target.getBundle().getState() == Bundle.RESOLVED);
 		assertNotNull(target.getBundle().getSymbolicName());
-		
+
 		assertNull(target.getContext());
 	}
 }

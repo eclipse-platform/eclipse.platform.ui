@@ -24,7 +24,7 @@ import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 
 /**
- * Tests for the context injection functionality using 2 contexts 
+ * Tests for the context injection functionality using 2 contexts
  */
 public class InjectStaticContextTest extends TestCase {
 	static class TestClass {
@@ -35,7 +35,7 @@ public class InjectStaticContextTest extends TestCase {
 
 		public String aConstructorString;
 		public String bConstructorString;
-		
+
 		public int postConstructCalled = 0;
 		public int preDestroyCalled = 0;
 
@@ -43,17 +43,17 @@ public class InjectStaticContextTest extends TestCase {
 		public void contextSet(@Optional IEclipseContext context) {
 			injectedContext = context;
 		}
-		
+
 		@Inject
 		public void setA(@Optional @Named("a") String aString) {
 			this.aString = aString;
 		}
-		
+
 		@Inject
 		public void setB(@Named("b") String bString) {
 			this.bString = bString;
 		}
-		
+
 		@Inject
 		public void setC(@Named("c") String cString) {
 			this.cString = cString;
@@ -64,22 +64,22 @@ public class InjectStaticContextTest extends TestCase {
 			aConstructorString = aString;
 			bConstructorString = bString;
 		}
-		
-		@PostConstruct 
+
+		@PostConstruct
 		public void init() {
 			postConstructCalled++;
 		}
-		
+
 		@PreDestroy
 		public void dispose() {
 			preDestroyCalled++;
 		}
 	}
-	
+
 	static class TestInvokeClass {
 		public String aString;
 		public String bString;
-		
+
 		public IEclipseContext context;
 
 		@Execute
@@ -90,18 +90,18 @@ public class InjectStaticContextTest extends TestCase {
 			return aString + bString;
 		}
 	}
-	
+
 	public void testStaticMake() {
 		IEclipseContext parentContext = EclipseContextFactory.create();
 		parentContext.set("a", "abc");
 		parentContext.set("aConstructor", "abcConstructor");
 		parentContext.set("b", "bbc");
-		
+
 		IEclipseContext localContext = EclipseContextFactory.create();
 		localContext.set("b", "123"); // local values override
 		localContext.set("bConstructor", "123Constructor");
 		localContext.set("c", "xyz");
-		
+
 		TestClass testObject = ContextInjectionFactory.make(TestClass.class, parentContext, localContext);
 
 		assertEquals(parentContext, testObject.injectedContext);
@@ -112,12 +112,12 @@ public class InjectStaticContextTest extends TestCase {
 		assertEquals("xyz", testObject.cString);
 		assertEquals(1, testObject.postConstructCalled);
 		assertEquals(0, testObject.preDestroyCalled);
-		
+
 		// modify local context -> should have no effect
 		localContext.set("b", "_123_");
 		localContext.set("bConstructor", "_123Constructor_");
 		localContext.set("c", "_xyz_");
-		
+
 		assertEquals("abcConstructor", testObject.aConstructorString);
 		assertEquals("123Constructor", testObject.bConstructorString);
 		assertEquals("abc", testObject.aString);
@@ -125,10 +125,10 @@ public class InjectStaticContextTest extends TestCase {
 		assertEquals("xyz", testObject.cString);
 		assertEquals(1, testObject.postConstructCalled);
 		assertEquals(0, testObject.preDestroyCalled);
-		
+
 		// dispose local context -> should have no effect
 		localContext.dispose();
-		
+
 		assertEquals("abcConstructor", testObject.aConstructorString);
 		assertEquals("123Constructor", testObject.bConstructorString);
 		assertEquals("abc", testObject.aString);
@@ -136,45 +136,45 @@ public class InjectStaticContextTest extends TestCase {
 		assertEquals("xyz", testObject.cString);
 		assertEquals(1, testObject.postConstructCalled);
 		assertEquals(0, testObject.preDestroyCalled);
-		
+
 		// modify parent context -> should propagate
 		parentContext.set("a", "_abc_");
 		parentContext.set("b", "_bbc_");
-		
+
 		assertEquals("_abc_", testObject.aString);
 		assertEquals("123", testObject.bString);
-		
+
 		// uninject from the parent context
 		ContextInjectionFactory.uninject(testObject, parentContext);
-		
+
 		assertNull(testObject.injectedContext);
 		assertNull(testObject.aString);
-		
+
 		assertEquals(1, testObject.postConstructCalled);
 		assertEquals(1, testObject.preDestroyCalled);
-		
+
 		// further changes should have no effect
 		parentContext.set("a", "+abc+");
 		assertNull(testObject.aString);
-		
+
 		parentContext.dispose();
 		assertEquals(1, testObject.postConstructCalled);
 		assertEquals(1, testObject.preDestroyCalled);
 	}
-	
+
 	public void testStaticInvoke() {
 		IEclipseContext parentContext = EclipseContextFactory.create("main");
 		parentContext.set("a", "abc");
-		
+
 		IEclipseContext localContext = EclipseContextFactory.create("local");
 		localContext.set("b", "123");
-		
+
 		TestInvokeClass testObject = new TestInvokeClass();
 		assertNull(testObject.aString);
 		assertNull(testObject.bString);
-		
+
 		Object result = ContextInjectionFactory.invoke(testObject, Execute.class, parentContext, localContext, null);
-		
+
 		assertEquals("abc123", result);
 
 		assertEquals("abc", testObject.aString);

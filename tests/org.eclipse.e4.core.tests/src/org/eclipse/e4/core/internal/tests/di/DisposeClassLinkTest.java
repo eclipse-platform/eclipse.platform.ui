@@ -25,10 +25,10 @@ import org.eclipse.e4.core.di.extensions.EventTopic;
 /**
  * Checks that injected objects that do not have normal links
  * established to the context are still notified on context
- * disposal. 
+ * disposal.
  * (No links: nothing was actually injected; or only IEclipseContext was injected;
  * or constructor injection was used.)
- * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=301462 . 
+ * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=301462 .
  */
 public class DisposeClassLinkTest extends TestCase {
 
@@ -44,7 +44,7 @@ public class DisposeClassLinkTest extends TestCase {
 			count++;
 		}
 	}
-	
+
 	public static class InjectionObject {
 
 	    @Inject
@@ -63,22 +63,22 @@ public class DisposeClassLinkTest extends TestCase {
 	        preDestroy++;
 	    }
 	}
-	
+
 	public static class TestBug430041 {
 		int preDestroy = 0;
-		
+
 		@Inject
 		@Optional
 		public void inject(@EventTopic("Bla") String bla) {
-			
+
 		}
-		
+
 		@PreDestroy
 	    void destroy() {
 	        preDestroy++;
 	    }
 	}
-	
+
 	public void testMake() throws Exception {
 		IEclipseContext context = EclipseContextFactory.create();
 		Test test = (Test) ContextInjectionFactory.make(Test.class, context);

@@ -21,11 +21,11 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 
 public class RecursiveObjectCreationTest extends TestCase {
-	
+
 	static public class CheckSelfInject {
-		
+
 		public CheckSelfInject other;
-		
+
 		@Inject
 		public CheckSelfInject(CheckSelfInject other) {
 			this.other = other;
@@ -42,29 +42,29 @@ public class RecursiveObjectCreationTest extends TestCase {
 			CheckSelfInject testInstance = ContextInjectionFactory.make(CheckSelfInject.class, context);
 			assertNotNull(testInstance); // unreachable
 		} catch (InjectionException e) {
-			exceptionReceived = true; 
+			exceptionReceived = true;
 		}
 		assertTrue(exceptionReceived);
 	}
-	
+
 	///////////////////////////////////////////////////////////////////////
 
 	static public class TestOuterClass {
-		
+
 		public class TestInnerClassInject {
 			@Inject
 			public TestInnerClassInject() {
 				// placeholder
 			}
 		}
-		
+
 		public TestInnerClassInject innerInject;
-		
+
 		@Inject
 		public TestOuterClass() {
 			// placeholder
 		}
-		
+
 		@PostConstruct
 		public void init(IEclipseContext context) {
 			innerInject = ContextInjectionFactory.make(TestInnerClassInject.class, context);
@@ -81,7 +81,7 @@ public class RecursiveObjectCreationTest extends TestCase {
 			TestOuterClass outer = ContextInjectionFactory.make(TestOuterClass.class, context);
 			assertNotNull(outer); // unreachable
 		} catch (InjectionException e) {
-			exceptionReceived = true; 
+			exceptionReceived = true;
 		}
 		assertTrue(exceptionReceived);
 	}

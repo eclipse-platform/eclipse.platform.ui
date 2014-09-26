@@ -32,17 +32,17 @@ public class ActivationInjectionTest extends TestCase {
 			return "_" + activeContext.get("debugString") + "_";
 		}
 	}
-	
+
 	static public class TestObject {
-		
+
 		public String name;
-		
+
 		@Inject
 		public TestObject() {
 			//
 		}
-		
-		@Inject 
+
+		@Inject
 		public void setActiveContextName(@Named("testRAT") String name) {
 			this.name = name;
 		}
@@ -91,19 +91,19 @@ public class ActivationInjectionTest extends TestCase {
 		assertEquals(child22, rootContext.getActiveLeaf());
 		assertEquals("_child22_", testObject.name);
 	}
-	
+
 	static public class TestObjectInject {
 		public String name;
 		@Inject
 		public TestObjectInject() {
 			//
 		}
-		@Inject 
+		@Inject
 		public void setActiveContextName(@Active @Named("debugString") String name) {
 			this.name = "_" + name + "_";
 		}
 	}
-	
+
 	public void testActivationInjection() {
 		IEclipseContext rootContext = EclipseContextFactory.create("root");
 
@@ -146,12 +146,12 @@ public class ActivationInjectionTest extends TestCase {
 		assertEquals(child22, rootContext.getActiveLeaf());
 		assertEquals("_child22_", testObject.name);
 	}
-	
+
 	static public class TestInject {
-		@Optional @Inject @Active 
+		@Optional @Inject @Active
 		public Integer number;
 	}
-	
+
 	public void testInjection() {
 		IEclipseContext rootContext = EclipseContextFactory.create("root");
 

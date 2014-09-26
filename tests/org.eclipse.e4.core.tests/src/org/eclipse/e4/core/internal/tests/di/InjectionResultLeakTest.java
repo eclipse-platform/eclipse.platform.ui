@@ -23,8 +23,8 @@ import org.eclipse.e4.core.di.annotations.Optional;
  * Test that we don't hold on to the values calculated during injection.
  * This test relies on VM performing garbage collection in System.gc().
  * The actual VM processing of GC requests is up to the implementation
- * so this test might not work on all VMs or might become invalid on 
- * future VMs. 
+ * so this test might not work on all VMs or might become invalid on
+ * future VMs.
  */
 public class InjectionResultLeakTest extends TestCase {
 

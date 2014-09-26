@@ -92,7 +92,7 @@ public class ContextExample {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void run() {
 		IEclipseContext parent = EclipseContextFactory.create();

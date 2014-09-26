@@ -28,39 +28,39 @@ import org.osgi.service.prefs.BackingStoreException;
  * Note: we do not support byte arrays at this time.
  */
 public class InjectionPreferencesTest extends TestCase {
-	
-	static final private String TEST_PREFS_KEY = "testPreferencesQualifier";  
+
+	static final private String TEST_PREFS_KEY = "testPreferencesQualifier";
 	static final private String TEST_PREFS_NODE = "org.eclipse.e4.core.tests.ext";
-	
+
 	static final private String KEY_INT = "testPreferencesInt";
 	static final private String KEY_BOOL = "testPreferencesBoolean";
 	static final private String KEY_DOUBLE = "testPreferencesDouble";
 	static final private String KEY_FLOAT = "testPreferencesFloat";
 	static final private String KEY_LONG = "testPreferencesLong";
 //	static final private String KEY_BYTE_ARRAY = "testPreferencesByteArray";
-	
+
 	static class InjectTarget {
 		public int counter = 0;
 		public int counterNode = 0;
 		public int counterOptional = 0;
-		
+
 		public String pref;
 		public String prefNode;
 		public String prefOptional1;
 		public String prefOptional2;
-		
+
 		@Inject
 		public void setPrefs(@Preference(TEST_PREFS_KEY) String string) {
 			counter++;
 			pref = string;
 		}
-		
+
 		@Inject
 		public void setPrefsNode(@Preference(value=TEST_PREFS_KEY, nodePath=TEST_PREFS_NODE) String string) {
 			counterNode++;
 			prefNode = string;
 		}
-		
+
 		@Inject
 		public void setOptionalPrefs(@Optional @Preference("something") String string1, @Preference(TEST_PREFS_KEY) String string2) {
 			counterOptional++;
@@ -68,7 +68,7 @@ public class InjectionPreferencesTest extends TestCase {
 			prefOptional2 = string2;
 		}
 	}
-	
+
 	static class InjectTargetPrimitive {
 		@Inject @Preference(KEY_INT)
 		public int intField;
@@ -87,10 +87,10 @@ public class InjectionPreferencesTest extends TestCase {
 
 //		@Inject @Preference(KEY_BYTE_ARRAY)
 //		public byte[] byteArrayField;
-		
+
 		public int intArg;
 		public boolean booleanArg;
-		
+
 		@Inject
 		public void set(@Preference(KEY_INT) int intArg, @Preference(KEY_BOOL) boolean booleanArg) {
 			this.intArg = intArg;
@@ -118,29 +118,29 @@ public class InjectionPreferencesTest extends TestCase {
 
 		public Integer intArg;
 		public Boolean booleanArg;
-		
+
 		@Inject
 		public void set(@Preference(KEY_INT) Integer intArg, @Preference(KEY_BOOL) Boolean booleanArg) {
 			this.intArg = intArg;
 			this.booleanArg = booleanArg;
 		}
-		
+
 		@Inject
 		public void set2(@Preference IEclipsePreferences prefNode) {
 			preferences = prefNode;
 			prefNode.put("testOutValue", "abc");
 		}
 	}
-	
+
 	static class InjectTargetConstructor {
 		public String pref;
 		public String prefNode;
-		
+
 		@Inject
 		public InjectTargetConstructor(@Preference(TEST_PREFS_KEY) String string, @Preference(value=TEST_PREFS_KEY, nodePath=TEST_PREFS_NODE) String stringNode) {
 			pref = string;
 			prefNode = stringNode;
-			
+
 		}
 	}
 
@@ -159,11 +159,11 @@ public class InjectionPreferencesTest extends TestCase {
 		assertEquals(1, target.counterOptional);
 		assertNull(target.prefOptional1);
 		assertEquals("abc", target.prefOptional2);
-		
+
 		// change
 		setPreference(TEST_PREFS_KEY, "xyz");
 		setPreference(TEST_PREFS_KEY, TEST_PREFS_NODE, "456");
-		
+
 		// default node
 		assertEquals(2, target.counter);
 		assertEquals("xyz", target.pref);
@@ -175,7 +175,7 @@ public class InjectionPreferencesTest extends TestCase {
 		assertNull(target.prefOptional1);
 		assertEquals("xyz", target.prefOptional2);
 	}
-	
+
 	public void testBaseTypeConversion() throws BackingStoreException {
 		// setup preferences
 		String nodePath = CoreTestsActivator.getDefault().getBundleContext().getBundle().getSymbolicName();
@@ -187,10 +187,10 @@ public class InjectionPreferencesTest extends TestCase {
 		node.putLong(KEY_LONG, 131232343453453L);
 //		node.putByteArray(KEY_BYTE_ARRAY, new byte[] { 12, 34, 45, 67});
 		node.flush();
-		
+
 		IEclipseContext context = EclipseContextFactory.create();
 		InjectTargetPrimitive target = ContextInjectionFactory.make(InjectTargetPrimitive.class, context);
-		
+
 		assertEquals(12, target.intField);
 		assertEquals(true, target.booleanField);
 		assertEquals(12.35345345345d, target.doubleField);
@@ -202,21 +202,21 @@ public class InjectionPreferencesTest extends TestCase {
 //		assertEquals(34, target.byteArrayField[1]);
 //		assertEquals(45, target.byteArrayField[2]);
 //		assertEquals(67, target.byteArrayField[3]);
-		
+
 		assertEquals(12, target.intArg);
 		assertEquals(true, target.booleanArg);
-		
+
 		// change
 		node.putInt(KEY_INT, 777);
 		node.putBoolean(KEY_BOOL, false);
-		
+
 		assertEquals(777, target.intField);
 		assertEquals(false, target.booleanField);
-		
+
 		assertEquals(777, target.intArg);
 		assertEquals(false, target.booleanArg);
 	}
-	
+
 	public void testAutoConversion() throws BackingStoreException {
 		// setup preferences
 		String nodePath = CoreTestsActivator.getDefault().getBundleContext().getBundle().getSymbolicName();
@@ -227,31 +227,31 @@ public class InjectionPreferencesTest extends TestCase {
 		node.putFloat(KEY_FLOAT, 5.13f);
 		node.putLong(KEY_LONG, 131232343453453L);
 		node.flush();
-		
+
 		IEclipseContext context = EclipseContextFactory.create();
 		InjectTargetConversion target = ContextInjectionFactory.make(InjectTargetConversion.class, context);
-		
+
 		assertEquals(new Integer(12), target.intField);
 		assertEquals(new Boolean(true), target.booleanField);
 		assertEquals(new Double(12.35345345345d), target.doubleField);
 		assertEquals(new Float(5.13f), target.floatField);
 		assertEquals(new Long(131232343453453L), target.longField);
-		
+
 		assertEquals(new Integer(12), target.intArg);
 		assertEquals(new Boolean(true), target.booleanArg);
-		
+
 		// change
 		node.putInt(KEY_INT, 777);
 		node.putBoolean(KEY_BOOL, false);
-		
+
 		assertEquals(new Integer(777), target.intField);
 		assertEquals(new Boolean(false), target.booleanField);
-		
+
 		assertEquals(new Integer(777), target.intArg);
 		assertEquals(new Boolean(false), target.booleanArg);
-		
+
 		assertNotNull(target.preferences);
-		assertEquals("abc", node.get("testOutValue", null)); 
+		assertEquals("abc", node.get("testOutValue", null));
 	}
 
 	private void setPreference(String key, String value) throws BackingStoreException {
@@ -260,13 +260,13 @@ public class InjectionPreferencesTest extends TestCase {
 		node.put(key, value);
 		node.flush();
 	}
-	
+
 	private void setPreference(String key, String nodePath, String value) throws BackingStoreException {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(nodePath);
 		node.put(key, value);
 		node.flush();
 	}
-	
+
 	public void testPreferencesConstructor() throws BackingStoreException {
 		setPreference(TEST_PREFS_KEY, "abc");
 		setPreference(TEST_PREFS_KEY, TEST_PREFS_NODE, "123");
@@ -276,11 +276,11 @@ public class InjectionPreferencesTest extends TestCase {
 		assertEquals("abc", target.pref);
 		// specific node
 		assertEquals("123", target.prefNode);
-		
+
 		// change
 		setPreference(TEST_PREFS_KEY, "xyz");
 		setPreference(TEST_PREFS_KEY, TEST_PREFS_NODE, "456");
-		
+
 		// values should stay the same - no tracking for constructor injection
 		assertEquals("abc", target.pref);
 		assertEquals("123", target.prefNode);

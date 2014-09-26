@@ -27,14 +27,14 @@ public class InjectArraysTest extends TestCase {
 	static class TestClass {
 		@Inject @Named("test_array_String")
 		public String[] stringArray;
-		
+
 		@Inject
 		public Integer[] integerArray;
-		
-		
+
+
 		public int[] intArray;
 		public char[] charAray;
-		
+
 		@Inject
 		public void set(@Named("test_array_int") int[] intArray, @Named("test_array_char") char[] charAray) {
 			this.intArray = intArray;
@@ -47,20 +47,20 @@ public class InjectArraysTest extends TestCase {
 		Integer[] arrayInteger = new Integer[] { 5, 6, 7 };
 		int[] arrayInt = new int[] { 1, 2, 3 };
 		char[] arrayChar = new char[] { 'a', 'b', 'c' };
-		
+
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set("test_array_String", arrayString);
 		context.set(Integer[].class, arrayInteger);
 		context.set("test_array_int", arrayInt);
 		context.set("test_array_char", arrayChar);
-		
+
 		TestClass testClass = ContextInjectionFactory.make(TestClass.class, context);
 		checkArraysEqual(arrayString, testClass.stringArray);
 		checkArraysEqual(arrayInteger, testClass.integerArray);
 		checkArraysEqual(arrayInt, testClass.intArray);
 		checkArraysEqual(arrayChar, testClass.charAray);
 	}
-	
+
 	private void checkArraysEqual(Object array1, Object array2) {
 		assertNotNull(array2);
 		assertEquals(array1, array2);

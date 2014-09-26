@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -60,22 +60,22 @@ public class CoreTestsActivator implements BundleActivator {
 		}
 		bundleContext = null;
 	}
-	
+
 	private void registerContextFunctions() {
 		{
 			Dictionary<String, Object> properties = new Hashtable<String, Object>();
 			properties.put(IContextFunction.SERVICE_CONTEXT_KEY,"test.contextfunction.ranking");
 			properties.put(Constants.SERVICE_RANKING, 0);
-			bundleContext.registerService(IContextFunction.SERVICE_NAME, new ContextFunctionLow(), properties);			
+			bundleContext.registerService(IContextFunction.SERVICE_NAME, new ContextFunctionLow(), properties);
 		}
-		
+
 		{
 			Dictionary<String, Object> properties = new Hashtable<String, Object>();
 			properties.put(IContextFunction.SERVICE_CONTEXT_KEY,"test.contextfunction.ranking");
 			properties.put(Constants.SERVICE_RANKING, 100);
-			bundleContext.registerService(IContextFunction.SERVICE_NAME, new ContextFunctionHigh(), properties);			
+			bundleContext.registerService(IContextFunction.SERVICE_NAME, new ContextFunctionHigh(), properties);
 		}
-		
+
 	}
 
 	public BundleContext getBundleContext() {

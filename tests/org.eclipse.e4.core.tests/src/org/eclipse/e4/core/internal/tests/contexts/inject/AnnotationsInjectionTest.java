@@ -106,7 +106,7 @@ public class AnnotationsInjectionTest extends TestCase {
 		ContextInjectionFactory.inject(object, context);
 		assertEquals(1, object.setMethodCalled);
 		assertEquals(1, object.postConstructCalled);
-		
+
 		TestData methodValue2 = new TestData();
 		context.set(TestData.class.getName(), methodValue2);
 		assertEquals(2, object.setMethodCalled);
@@ -205,14 +205,14 @@ public class AnnotationsInjectionTest extends TestCase {
 
 		OptionalAnnotations userObject = new OptionalAnnotations();
 		ContextInjectionFactory.inject(userObject, context);
-		
+
 		assertEquals(0, userObject.methodOptionalCalled);
 		assertEquals(1, userObject.methodRequiredCalled);
 		assertEquals(testInt, userObject.i);
 		assertNull(userObject.s);
 		assertNull(userObject.d);
 		assertNull(userObject.f);
-		
+
 		// add optional services
 		String testString = new String("abc");
 		Double testDouble = new Double(1.23);
@@ -220,7 +220,7 @@ public class AnnotationsInjectionTest extends TestCase {
 		context.set(String.class.getName(), testString);
 		context.set(Double.class.getName(), testDouble);
 		context.set(Float.class.getName(), testFloat);
-		
+
 		assertEquals(1, userObject.methodOptionalCalled);
 		assertEquals(2, userObject.methodRequiredCalled);
 		assertEquals(testInt, userObject.i);
@@ -228,9 +228,9 @@ public class AnnotationsInjectionTest extends TestCase {
 		assertEquals(testDouble, userObject.d);
 		assertEquals(testFloat, userObject.f);
 	}
-	
+
 	public void testOptionalInvoke() {
-		
+
 		class TestObject {
 			public int called = 0;
 
@@ -245,7 +245,7 @@ public class AnnotationsInjectionTest extends TestCase {
 	    Object notAnObject = new Object();
 	    TestObject testObject = new TestObject();
 	    context.set(String.class.getName(), testObject);
-	    
+
 	    Object result = ContextInjectionFactory.invoke(testObject, Execute.class, context, notAnObject);
 	    assertNull(result);
 	    assertEquals(1, testObject.called);
@@ -290,14 +290,14 @@ public class AnnotationsInjectionTest extends TestCase {
 	public void testInvoke() {
 		class TestData {
 			public String value;
-			
+
 			public TestData(String tmp) {
 				value = tmp;
 			}
 		}
 		class Injected {
 			public String myString;
-			
+
 			public Injected() {
 				// placeholder
 			}
@@ -309,16 +309,16 @@ public class AnnotationsInjectionTest extends TestCase {
 			}
 		}
 		IEclipseContext context = EclipseContextFactory.create();
-		
+
 		TestData methodValue = new TestData("abc");
 		context.set("testing123", methodValue);
 		Injected object = new Injected();
 		assertNull(object.myString);
-		
+
 		assertEquals("true", ContextInjectionFactory.invoke(object, Execute.class, context, null));
 		assertEquals("abc", object.myString);
 	}
-	
+
 	public void testPreDestroy() {
 		class TestData {
 			// empty
@@ -326,7 +326,7 @@ public class AnnotationsInjectionTest extends TestCase {
 		class Injected {
 			int preDestoryCalled = 0;
 			public TestData value;
-			
+
 			@Inject
 			public TestData directFieldInjection;
 
@@ -345,14 +345,14 @@ public class AnnotationsInjectionTest extends TestCase {
 		IEclipseContext context = EclipseContextFactory.create();
 		TestData methodValue = new TestData();
 		context.set(TestData.class.getName(), methodValue);
-		
+
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
 		assertNotNull(object.value);
 		assertNotNull(object.directFieldInjection);
-		
+
 		context.dispose();
-		
+
 		assertEquals(1, object.preDestoryCalled);
 		assertNotNull(object.value);
 		assertNotNull(object.directFieldInjection);

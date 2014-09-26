@@ -31,7 +31,7 @@ import org.junit.Ignore;
 public class InjectionErrorReportingTest extends TestCase {
 	static class TestData {
 	}
-	
+
 	static class InjectedMethod {
 		public int setMethodCalled = 0;
 		public TestData value;
@@ -42,7 +42,7 @@ public class InjectionErrorReportingTest extends TestCase {
 			value = arg;
 		}
 	}
-	
+
 	static class InjectedMethodNull {
 		public int setMethodCalled = 0;
 		public String nullString = null;
@@ -53,7 +53,7 @@ public class InjectionErrorReportingTest extends TestCase {
 			return nullString.length();
 		}
 	}
-	
+
 	static class InjectedConstructor {
 		public int setMethodCalled = 0;
 		public TestData value;
@@ -64,7 +64,7 @@ public class InjectionErrorReportingTest extends TestCase {
 			value = arg;
 		}
 	}
-	
+
 	static class InjectedConstructorCast {
 		public int setMethodCalled = 0;
 		public TestData value;
@@ -95,7 +95,7 @@ public class InjectionErrorReportingTest extends TestCase {
 			length =  nullString.length();
 		}
 	}
-	
+
 	static class InjectedPreDestroy {
 		public int setMethodCalled = 0;
 		public String nullString = null;
@@ -112,7 +112,7 @@ public class InjectionErrorReportingTest extends TestCase {
 			length =  nullString.length();
 		}
 	}
-	
+
 	@Creatable
 	static class InjectedRecursive {
 		@Inject
@@ -136,7 +136,7 @@ public class InjectionErrorReportingTest extends TestCase {
 		}
 		assertTrue(exception);
 	}
-	
+
 	/**
 	 * Shows the error message in case method call throws an exception
 	 */
@@ -154,7 +154,7 @@ public class InjectionErrorReportingTest extends TestCase {
 		}
 		assertTrue(exception);
 	}
-	
+
 	/**
 	 * Shows the error message for an unresolved constructor argument
 	 */
@@ -171,7 +171,7 @@ public class InjectionErrorReportingTest extends TestCase {
 		}
 		assertTrue(exception);
 	}
-	
+
 	/**
 	 * Shows the error message for an exception in the injected constructor
 	 */
@@ -188,7 +188,7 @@ public class InjectionErrorReportingTest extends TestCase {
 		}
 		assertTrue(exception);
 	}
-	
+
 	/**
 	 * Shows the error message for an unresolved field value
 	 */
@@ -206,7 +206,7 @@ public class InjectionErrorReportingTest extends TestCase {
 		}
 		assertTrue(exception);
 	}
-	
+
 	/**
 	 * Shows the error message in case @PostConstruct method call throws an exception
 	 */
@@ -223,7 +223,7 @@ public class InjectionErrorReportingTest extends TestCase {
 		}
 		assertTrue(exception);
 	}
-	
+
 	/**
 	 * Shows the error message in case @PreDestory method call throws an exception
 	 */
@@ -241,7 +241,7 @@ public class InjectionErrorReportingTest extends TestCase {
 		}
 		assertTrue(exception);
 	}
-	
+
 	/**
 	 * Manual test to check error message for recursive object creation
 	 */
@@ -256,7 +256,7 @@ public class InjectionErrorReportingTest extends TestCase {
 			exception = true;
 		}
 		assertTrue(exception);
-		
+
 		context.set(InjectedRecursive.class, new InjectedRecursive());
 		exception = false;
 		try {

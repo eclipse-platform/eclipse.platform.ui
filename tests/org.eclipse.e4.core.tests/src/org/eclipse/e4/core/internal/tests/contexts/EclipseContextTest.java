@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -305,7 +305,7 @@ public class EclipseContextTest extends TestCase {
 		child.dispose();
 		assertEquals(0, listenersCount(parent));
 	}
-	
+
 	public void testNullInheritance() {
 		IEclipseContext parent = EclipseContextFactory.create("ParentContext");
 		IEclipseContext child = parent.createChild("ChildContext");
@@ -320,7 +320,7 @@ public class EclipseContextTest extends TestCase {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see
 			 * org.eclipse.e4.core.contexts.ContextFunction#compute(org.eclipse
 			 * .e4.core.contexts.IEclipseContext, java.lang.String)
@@ -347,7 +347,7 @@ public class EclipseContextTest extends TestCase {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see
 			 * org.eclipse.e4.core.contexts.ContextFunction#compute(org.eclipse
 			 * .e4.core.contexts.IEclipseContext, java.lang.String)
@@ -361,13 +361,13 @@ public class EclipseContextTest extends TestCase {
 		assertEquals(1, child.get("x"));
 		parent.dispose();
 	}
-	
+
 	public void testContextFunctionOrdering() {
 		IEclipseContext osgiContext = EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext());
 		assertEquals("High",osgiContext.get("test.contextfunction.ranking"));
 	}
 
 	private int listenersCount(IEclipseContext context) {
-		return ((EclipseContext) context).getListeners().size();		
+		return ((EclipseContext) context).getListeners().size();
 	}
 }

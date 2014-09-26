@@ -21,12 +21,12 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.GroupUpdates;
 
 public class GroupedUpdatesTest extends TestCase {
-	
-	
+
+
 	static class InjectTarget {
 		public int countMain = 0;
 		public int countSecondary = 0;
-		
+
 		public String s1;
 		public String s2;
 
@@ -35,7 +35,7 @@ public class GroupedUpdatesTest extends TestCase {
 			countSecondary = 0;
 		}
 	}
-	
+
 
 	static class InjectTargetImmediate extends InjectTarget {
 		@Inject
@@ -120,15 +120,15 @@ public class GroupedUpdatesTest extends TestCase {
 		context.set("string2", "y");
 		context.set("string2", "z");
 		context.set("string1", "delta");
-	
+
 		assertEquals(0, target.countMain);
 		assertEquals(0, target.countSecondary);
-		
+
 		context.processWaiting();
 
 		assertEquals(1, target.countMain);
 		assertEquals(1, target.countSecondary);
-		
+
 		assertEquals(target.s1, "delta");
 		assertEquals(target.s2, "z");
 	}

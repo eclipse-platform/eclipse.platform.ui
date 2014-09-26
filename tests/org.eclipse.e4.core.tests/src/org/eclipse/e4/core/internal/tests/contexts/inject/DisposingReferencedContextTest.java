@@ -22,7 +22,7 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 
 public class DisposingReferencedContextTest extends TestCase {
-	
+
 	static class MandatoryTarget {
 		@Inject @Named("object")
 		Object object;
@@ -33,7 +33,7 @@ public class DisposingReferencedContextTest extends TestCase {
 				partContext.get("someVar");
 		}
 	}
-	
+
 	static class OptionalTarget {
 		@Inject @Named("object")
 		Object object;
@@ -52,7 +52,7 @@ public class DisposingReferencedContextTest extends TestCase {
 	public void testContextDisposeCausesCompleteUninjection_Mandatory_False() {
 		testContextDisposeCausesCompleteUninjection_Mandatory(false);
 	}
-	
+
 	public void testContextDisposeCausesCompleteUninjection_Optional_True() {
 		testContextDisposeCausesCompleteUninjection_Optional(true);
 	}

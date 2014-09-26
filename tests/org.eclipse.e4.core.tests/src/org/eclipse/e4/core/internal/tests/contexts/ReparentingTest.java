@@ -225,7 +225,7 @@ public class ReparentingTest extends TestCase {
 		child.setParent(newParent);
 		assertEquals(1, object.setStringCalled);
 	}
-	
+
 	public void testUpdateSameParent() {
 		final Boolean[] called = new Boolean[1] ;
 		IEclipseContext parent = EclipseContextFactory.create("parent");
@@ -233,7 +233,7 @@ public class ReparentingTest extends TestCase {
 		IEclipseContext child = parent.createChild("child");
 		parent.set("x", "1");
 		newParent.set("x", "2");
-		
+
 		child.runAndTrack(new RunAndTrack() {
 			public boolean changed(IEclipseContext context) {
 				called[0] = true;
@@ -242,15 +242,15 @@ public class ReparentingTest extends TestCase {
 			}
 		});
 		called[0] = false;
-		
+
 		// make sure setting parent to the same value does not trigger updates
 		child.setParent(parent);
 		assertFalse(called[0]);
-		
+
 		child.setParent(newParent);
 		assertTrue(called[0]);
 	}
-	
+
 	static public class TestService {
 		// empty
 	}

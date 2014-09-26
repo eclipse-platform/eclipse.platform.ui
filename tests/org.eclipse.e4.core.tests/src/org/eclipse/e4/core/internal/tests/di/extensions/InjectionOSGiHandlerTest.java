@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2014 Markus Alexander Kuppe and others. All rights reserved. 
- * This program and the accompanying materials are made available under the terms 
+ * Copyright (c) 2014 Markus Alexander Kuppe and others. All rights reserved.
+ * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
@@ -24,7 +24,7 @@ import org.osgi.framework.BundleContext;
 public class InjectionOSGiHandlerTest extends TestCase {
 
 	public static class TestHandler {
-		
+
 		private BundleContext ctx;
 
 		@Execute
@@ -36,7 +36,7 @@ public class InjectionOSGiHandlerTest extends TestCase {
 			return ctx;
 		}
 	}
-	
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -46,7 +46,7 @@ public class InjectionOSGiHandlerTest extends TestCase {
 
 	@Test
 	public void testInjectBCinExecute() {
-		
+
 		final BundleContext bundleContext = CoreTestsActivator
 				.getDefault().getBundleContext();
 		final IEclipseContext localContext = EclipseContextFactory

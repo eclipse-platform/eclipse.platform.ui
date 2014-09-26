@@ -30,15 +30,15 @@ import org.eclipse.e4.core.di.annotations.Execute;
 public class ProviderInjectionTest extends TestCase {
 
 	static public class TestData {
-		
+
 		public String data;
-		
+
 		@Inject
 		public TestData(String tmp) {
 			data = tmp;
 		}
 	}
-	
+
 	static public class TestInvokeClass {
 		public Provider<TestData> provider;
 		public TestInvokeClass() {
@@ -50,16 +50,16 @@ public class ProviderInjectionTest extends TestCase {
 			return 1;
 		}
 	}
-	
+
 	static public class TestConstructorClass {
 		public Provider<TestData> provider;
-		
+
 		@Inject
 		public TestConstructorClass(Provider<TestData> provider) {
 			this.provider = provider;
 		}
 	}
-	
+
 	public static Test suite() {
 		return new TestSuite(ProviderInjectionTest.class);
 	}
@@ -82,11 +82,11 @@ public class ProviderInjectionTest extends TestCase {
 
 		TestInvokeClass userObject = new TestInvokeClass();
 		assertEquals(1, ContextInjectionFactory.invoke(userObject, Execute.class, context, null));
-		
+
 		assertNotNull(userObject.provider.get());
 		assertEquals("abc", userObject.provider.get().data);
 	}
-	
+
 	public synchronized void testConstructorWithProvider() {
 		// create context
 		IEclipseContext context = EclipseContextFactory.create();
@@ -95,7 +95,7 @@ public class ProviderInjectionTest extends TestCase {
 		injector.addBinding(TestData.class);
 
 		TestConstructorClass userObject = (TestConstructorClass) ContextInjectionFactory.make(TestConstructorClass.class, context);
-		
+
 		assertNotNull(userObject);
 		assertNotNull(userObject.provider);
 		assertNotNull(userObject.provider.get());

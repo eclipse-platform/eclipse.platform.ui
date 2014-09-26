@@ -14,44 +14,44 @@ import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.core.services.translation.TranslationService;
 
 public class NLSTest extends TestCase {
-	
+
 	static class TestSimpleObject {
 		@Inject
 		@Translation
 		SimpleMessages simpleMessages;
 	}
-	
+
 	static class TestMessagesObject {
 		@Inject
 		@Translation
 		Messages Messages;
 	}
-	
+
 	static class TestBundleObject {
 		@Inject
 		@Translation
 		BundleMessages bundleMessages;
 	}
-	
+
 	static class TestResourceBundleClassObject {
 		@Inject
 		@Translation
 		ResourceBundleClassMessages bundleClassMessages;
 	}
-	
+
 	static class TestResourcesBundleObject {
 		@Inject
 		@Translation
 		ResourcesMessages resourcesMessages;
 	}
-	
+
 	private IEclipseContext context;
 	private Locale beforeLocale;
-	
+
 	public void setUp() {
 		this.context = EclipseContextFactory.getServiceContext(CoreTestsActivator.getDefault().getBundleContext());
 		ContextInjectionFactory.setDefault(context);
-		
+
 		beforeLocale = Locale.getDefault();
 		//always set the locale to en prior a test case
 		Locale.setDefault(new Locale("en"));
@@ -60,12 +60,12 @@ public class NLSTest extends TestCase {
 	public void tearDown() {
 		Locale.setDefault(beforeLocale);
 	}
-	
+
 	public void testSimpleMessages() {
 		//ensure the en Locale is set for this test
 		this.context.set(TranslationService.LOCALE, "en");
 		TestSimpleObject o = ContextInjectionFactory.make(TestSimpleObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.simpleMessages);
 		assertNotNull(o.simpleMessages.message);
@@ -83,12 +83,12 @@ public class NLSTest extends TestCase {
 		assertEquals("SimpleMessageCamelCaseDot", o.simpleMessages.messageThree);
 		assertEquals("The idea is from Tom", o.simpleMessages.messageFour);
 	}
-	
+
 	public void testSimpleMessagesDifferentLocale() {
 		//set Locale to de
 		this.context.set(TranslationService.LOCALE, "de");
 		TestSimpleObject o = ContextInjectionFactory.make(TestSimpleObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.simpleMessages);
 		assertNotNull(o.simpleMessages.message);
@@ -107,7 +107,7 @@ public class NLSTest extends TestCase {
 		assertEquals("SimpleMessageCamelCaseDot", o.simpleMessages.messageThree);
 		assertEquals("Die Idee ist von Tom", o.simpleMessages.messageFour);
 	}
-	
+
 	public void testSimpleMessagesSkipDefaultLocaleForEquinoxRoot() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
@@ -119,7 +119,7 @@ public class NLSTest extends TestCase {
 		//that the root properties file is for locale en.
 		this.context.set(TranslationService.LOCALE, "en");
 		TestSimpleObject o = ContextInjectionFactory.make(TestSimpleObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.simpleMessages);
 		assertNotNull(o.simpleMessages.message);
@@ -129,7 +129,7 @@ public class NLSTest extends TestCase {
 		assertNotNull(o.simpleMessages.messageThree);
 		assertNotNull(o.simpleMessages.messageFour);
 
-		//not the default resource bundle should be used (e.g. de when running on a machine with german OS) 
+		//not the default resource bundle should be used (e.g. de when running on a machine with german OS)
 		//but the default resource bundle
 		assertEquals("SimpleMessage", o.simpleMessages.message);
 		assertEquals("SimpleMessageUnderscore", o.simpleMessages.message_one);
@@ -138,15 +138,15 @@ public class NLSTest extends TestCase {
 		assertEquals("SimpleMessageCamelCaseDot", o.simpleMessages.messageThree);
 		assertEquals("The idea is from Tom", o.simpleMessages.messageFour);
 	}
-	
+
 	public void testSimpleMessagesUseDefaultLocaleForInvalidLocale() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
-		
+
 		//set a locale for which no resource bundle is set
 		this.context.set(TranslationService.LOCALE, "fr");
 		TestSimpleObject o = ContextInjectionFactory.make(TestSimpleObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.simpleMessages);
 		assertNotNull(o.simpleMessages.message);
@@ -165,12 +165,12 @@ public class NLSTest extends TestCase {
 		assertEquals("SimpleMessageCamelCaseDot", o.simpleMessages.messageThree);
 		assertEquals("Die Idee ist von Tom", o.simpleMessages.messageFour);
 	}
-	
+
 	public void testMessages() {
 		//ensure the en Locale is set for this test
 		this.context.set(TranslationService.LOCALE, "en");
 		TestMessagesObject o = ContextInjectionFactory.make(TestMessagesObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.Messages);
 		assertNotNull(o.Messages.message);
@@ -188,12 +188,12 @@ public class NLSTest extends TestCase {
 		assertEquals("MessageCamelCaseDot", o.Messages.messageThree);
 		assertEquals("The idea is from Tom", o.Messages.messageFour);
 	}
-	
+
 	public void testMessagesDifferentLocale() {
 		//set Locale to de
 		this.context.set(TranslationService.LOCALE, "de");
 		TestMessagesObject o = ContextInjectionFactory.make(TestMessagesObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.Messages);
 		assertNotNull(o.Messages.message);
@@ -212,7 +212,7 @@ public class NLSTest extends TestCase {
 		assertEquals("MessageCamelCaseDot", o.Messages.messageThree);
 		assertEquals("Die Idee ist von Tom", o.Messages.messageFour);
 	}
-	
+
 	public void testMessagesSkipDefaultLocaleForEquinoxRoot() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
@@ -224,7 +224,7 @@ public class NLSTest extends TestCase {
 		//that the root properties file is for locale en.
 		this.context.set(TranslationService.LOCALE, "en");
 		TestMessagesObject o = ContextInjectionFactory.make(TestMessagesObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.Messages);
 		assertNotNull(o.Messages.message);
@@ -234,7 +234,7 @@ public class NLSTest extends TestCase {
 		assertNotNull(o.Messages.messageThree);
 		assertNotNull(o.Messages.messageFour);
 
-		//not the default resource bundle should be used (e.g. de when running on a machine with german OS) 
+		//not the default resource bundle should be used (e.g. de when running on a machine with german OS)
 		//but the default resource bundle
 		assertEquals("Message", o.Messages.message);
 		assertEquals("MessageUnderscore", o.Messages.message_one);
@@ -243,15 +243,15 @@ public class NLSTest extends TestCase {
 		assertEquals("MessageCamelCaseDot", o.Messages.messageThree);
 		assertEquals("The idea is from Tom", o.Messages.messageFour);
 	}
-	
+
 	public void testMessagesUseDefaultLocaleForInvalidLocale() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
-		
+
 		//set a locale for which no resource bundle is set
 		this.context.set(TranslationService.LOCALE, "fr");
 		TestMessagesObject o = ContextInjectionFactory.make(TestMessagesObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.Messages);
 		assertNotNull(o.Messages.message);
@@ -275,7 +275,7 @@ public class NLSTest extends TestCase {
 		//ensure the en Locale is set for this test
 		this.context.set(TranslationService.LOCALE, "en");
 		TestBundleObject o = ContextInjectionFactory.make(TestBundleObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.bundleMessages);
 		assertNotNull(o.bundleMessages.message);
@@ -293,12 +293,12 @@ public class NLSTest extends TestCase {
 		assertEquals("BundleMessageCamelCaseDot", o.bundleMessages.messageThree);
 		assertEquals("The idea is from Tom", o.bundleMessages.messageFour);
 	}
-	
+
 	public void testBundleMessagesDifferentLocale() {
 		//set Locale to de
 		this.context.set(TranslationService.LOCALE, "de");
 		TestBundleObject o = ContextInjectionFactory.make(TestBundleObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.bundleMessages);
 		assertNotNull(o.bundleMessages.message);
@@ -317,7 +317,7 @@ public class NLSTest extends TestCase {
 		assertEquals("BundleMessageCamelCaseDot", o.bundleMessages.messageThree);
 		assertEquals("Die Idee ist von Tom", o.bundleMessages.messageFour);
 	}
-	
+
 	public void testBundleMessagesSkipDefaultLocaleForEquinoxRoot() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
@@ -329,7 +329,7 @@ public class NLSTest extends TestCase {
 		//that the root properties file is for locale en.
 		this.context.set(TranslationService.LOCALE, "en");
 		TestBundleObject o = ContextInjectionFactory.make(TestBundleObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.bundleMessages);
 		assertNotNull(o.bundleMessages.message);
@@ -339,7 +339,7 @@ public class NLSTest extends TestCase {
 		assertNotNull(o.bundleMessages.messageThree);
 		assertNotNull(o.bundleMessages.messageFour);
 
-		//not the default resource bundle should be used (e.g. de when running on a machine with german OS) 
+		//not the default resource bundle should be used (e.g. de when running on a machine with german OS)
 		//but the default resource bundle
 		assertEquals("BundleMessage", o.bundleMessages.message);
 		assertEquals("BundleMessageUnderscore", o.bundleMessages.message_one);
@@ -348,15 +348,15 @@ public class NLSTest extends TestCase {
 		assertEquals("BundleMessageCamelCaseDot", o.bundleMessages.messageThree);
 		assertEquals("The idea is from Tom", o.bundleMessages.messageFour);
 	}
-	
+
 	public void testBundleMessagesUseDefaultLocaleForInvalidLocale() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
-		
+
 		//set a locale for which no resource bundle is set
 		this.context.set(TranslationService.LOCALE, "fr");
 		TestBundleObject o = ContextInjectionFactory.make(TestBundleObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.bundleMessages);
 		assertNotNull(o.bundleMessages.message);
@@ -380,7 +380,7 @@ public class NLSTest extends TestCase {
 		//ensure the en Locale is set for this test
 		this.context.set(TranslationService.LOCALE, "en");
 		TestResourceBundleClassObject o = ContextInjectionFactory.make(TestResourceBundleClassObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.bundleClassMessages);
 		assertNotNull(o.bundleClassMessages.message);
@@ -398,12 +398,12 @@ public class NLSTest extends TestCase {
 		assertEquals("ResourceBundleClassCamelCaseDot", o.bundleClassMessages.messageThree);
 		assertEquals("The idea is from Tom", o.bundleClassMessages.messageFour);
 	}
-	
+
 	public void testClassBasedResourceBundleDifferentLocale() {
 		//set Locale to de
 		this.context.set(TranslationService.LOCALE, "de");
 		TestResourceBundleClassObject o = ContextInjectionFactory.make(TestResourceBundleClassObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.bundleClassMessages);
 		assertNotNull(o.bundleClassMessages.message);
@@ -422,7 +422,7 @@ public class NLSTest extends TestCase {
 		assertEquals("ResourceBundleClassCamelCaseDot", o.bundleClassMessages.messageThree);
 		assertEquals("Die Idee ist von Tom", o.bundleClassMessages.messageFour);
 	}
-	
+
 	public void testClassBasedResourceBundleSkipDefaultLocaleForEquinoxRoot() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
@@ -434,7 +434,7 @@ public class NLSTest extends TestCase {
 		//that the root properties file is for locale en.
 		this.context.set(TranslationService.LOCALE, "en");
 		TestResourceBundleClassObject o = ContextInjectionFactory.make(TestResourceBundleClassObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.bundleClassMessages);
 		assertNotNull(o.bundleClassMessages.message);
@@ -444,7 +444,7 @@ public class NLSTest extends TestCase {
 		assertNotNull(o.bundleClassMessages.messageThree);
 		assertNotNull(o.bundleClassMessages.messageFour);
 
-		//not the default resource bundle should be used (e.g. de when running on a machine with german OS) 
+		//not the default resource bundle should be used (e.g. de when running on a machine with german OS)
 		//but the default resource bundle
 		assertEquals("ResourceBundleClassMessage", o.bundleClassMessages.message);
 		assertEquals("ResourceBundleClassMessageUnderscore", o.bundleClassMessages.message_one);
@@ -453,15 +453,15 @@ public class NLSTest extends TestCase {
 		assertEquals("ResourceBundleClassCamelCaseDot", o.bundleClassMessages.messageThree);
 		assertEquals("The idea is from Tom", o.bundleClassMessages.messageFour);
 	}
-	
+
 	public void testClassBasedResourceBundleUseDefaultLocaleForInvalidLocale() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
-		
+
 		//set a locale for which no resource bundle is set
 		this.context.set(TranslationService.LOCALE, "fr");
 		TestResourceBundleClassObject o = ContextInjectionFactory.make(TestResourceBundleClassObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.bundleClassMessages);
 		assertNotNull(o.bundleClassMessages.message);
@@ -485,7 +485,7 @@ public class NLSTest extends TestCase {
 		//ensure the en Locale is set for this test
 		this.context.set(TranslationService.LOCALE, "en");
 		TestResourcesBundleObject o = ContextInjectionFactory.make(TestResourcesBundleObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.resourcesMessages);
 		assertNotNull(o.resourcesMessages.message);
@@ -503,12 +503,12 @@ public class NLSTest extends TestCase {
 		assertEquals("ResourcesMessageCamelCaseDot", o.resourcesMessages.messageThree);
 		assertEquals("The idea is from Tom", o.resourcesMessages.messageFour);
 	}
-	
+
 	public void testResourcesBundleDifferentLocale() {
 		//set Locale to de
 		this.context.set(TranslationService.LOCALE, "de");
 		TestResourcesBundleObject o = ContextInjectionFactory.make(TestResourcesBundleObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.resourcesMessages);
 		assertNotNull(o.resourcesMessages.message);
@@ -527,7 +527,7 @@ public class NLSTest extends TestCase {
 		assertEquals("ResourcesMessageCamelCaseDot", o.resourcesMessages.messageThree);
 		assertEquals("Die Idee ist von Tom", o.resourcesMessages.messageFour);
 	}
-	
+
 	public void testResourcesBundleSkipDefaultLocaleForEquinoxRoot() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
@@ -539,7 +539,7 @@ public class NLSTest extends TestCase {
 		//that the root properties file is for locale en.
 		this.context.set(TranslationService.LOCALE, "en");
 		TestResourcesBundleObject o = ContextInjectionFactory.make(TestResourcesBundleObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.resourcesMessages);
 		assertNotNull(o.resourcesMessages.message);
@@ -549,7 +549,7 @@ public class NLSTest extends TestCase {
 		assertNotNull(o.resourcesMessages.messageThree);
 		assertNotNull(o.resourcesMessages.messageFour);
 
-		//not the default resource bundle should be used (e.g. de when running on a machine with german OS) 
+		//not the default resource bundle should be used (e.g. de when running on a machine with german OS)
 		//but the default resource bundle
 		assertEquals("ResourcesMessage", o.resourcesMessages.message);
 		assertEquals("ResourcesMessageUnderscore", o.resourcesMessages.message_one);
@@ -558,15 +558,15 @@ public class NLSTest extends TestCase {
 		assertEquals("ResourcesMessageCamelCaseDot", o.resourcesMessages.messageThree);
 		assertEquals("The idea is from Tom", o.resourcesMessages.messageFour);
 	}
-	
+
 	public void testResourcesBundleUseDefaultLocaleForInvalidLocale() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
-		
+
 		//set a locale for which no resource bundle is set
 		this.context.set(TranslationService.LOCALE, "fr");
 		TestResourcesBundleObject o = ContextInjectionFactory.make(TestResourcesBundleObject.class, this.context);
-		
+
 		//test all values are set
 		assertNotNull(o.resourcesMessages);
 		assertNotNull(o.resourcesMessages.message);

@@ -37,7 +37,7 @@ public class ServiceContextTest extends TestCase {
 	class Crayon {
 		@Inject
 		IPaletteService palette;
-		
+
 		String msg;
 
 		public void draw() {
@@ -127,18 +127,18 @@ public class ServiceContextTest extends TestCase {
 
 	public void testServiceInjection() {
 		ServiceRegistration<?> reg1 = null;
-		ServiceRegistration<?> reg2 = null; 
+		ServiceRegistration<?> reg2 = null;
 		try {
 			Printer userObject = new Printer();
-	
+
 			StringPrintService stringPrint1 = new StringPrintService();
 			BundleContext bundleContext = CoreTestsActivator.getDefault().getBundleContext();
 			reg1 = bundleContext.registerService(PrintService.SERVICE_NAME, stringPrint1, null);
-	
+
 			ContextInjectionFactory.inject(userObject, context);
 			userObject.print("test");
 			assertEquals("1.0", "test", stringPrint1.toString());
-	
+
 			// now remove the service
 			reg1.unregister();
 			reg1 = null;
@@ -146,7 +146,7 @@ public class ServiceContextTest extends TestCase {
 			// the string should be unchanged
 			assertEquals("1.1", "test", stringPrint1.toString());
 			assertNull("1.2", userObject.printer);
-			
+
 			// register a different service implementation
 			StringPrintService stringPrint2 = new StringPrintService();
 			reg2 = bundleContext.registerService(PrintService.SERVICE_NAME, stringPrint2, null);
@@ -178,7 +178,7 @@ public class ServiceContextTest extends TestCase {
 			StringPrintService stringPrint1 = new StringPrintService();
 			BundleContext bundleContext = CoreTestsActivator.getDefault().getBundleContext();
 			reg1 = bundleContext.registerService(PrintService.SERVICE_NAME, stringPrint1, null);
-	
+
 			userObject.print("test");
 			assertEquals("1.0", "test", stringPrint1.toString());
 		} finally {

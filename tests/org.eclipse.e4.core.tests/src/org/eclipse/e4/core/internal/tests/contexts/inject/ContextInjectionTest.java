@@ -226,47 +226,47 @@ public class ContextInjectionTest extends TestCase {
 		// check post processing
 		assertEquals(1, userObject.getFinalizedCalled());
 	}
-	
+
 	static public class BaseOverrideTest {
 		public String selectionString;
 		public String inputString;
 		public boolean finishCalled = false;
-		
+
 		@Inject
 		public void setSelection(String selectionString) {
 			this.selectionString = selectionString;
 		}
-		
+
 		@Inject
 		public void setInput(String inputString) {
 			this.inputString = inputString;
 		}
-		
+
 		@PostConstruct
 		public void finish() {
 			finishCalled = true;
 		}
 	}
-	
+
 	static public class OverrideTest extends BaseOverrideTest {
 		public Integer selectionNum;
 		public String inputStringSubclass;
 		public Double inputDouble;
 		public Boolean arg;
 		public boolean finishOverrideCalled = false;
-		
+
 		@Inject
 		public void setSelection(Integer selectionNum) {
 			this.selectionNum = selectionNum;
 		}
-		
+
 		@Inject
 		public void setInput(String inputString, Double inputDouble) {
 			this.inputStringSubclass = inputString;
 			this.inputDouble = inputDouble;
-			
+
 		}
-		
+
 		@PostConstruct
 		public void finish(Boolean arg) {
 			finishOverrideCalled = true;
@@ -297,14 +297,14 @@ public class ContextInjectionTest extends TestCase {
 		assertEquals(testString, userObject.selectionString);
 		assertEquals(testString, userObject.inputString);
 		assertTrue(userObject.finishCalled);
-		
+
 		// check similar methods portion
 		assertEquals(testInt, userObject.selectionNum);
 		assertEquals(testString, userObject.inputStringSubclass);
 		assertEquals(testDouble, userObject.inputDouble);
 		assertTrue(userObject.finishOverrideCalled);
 	}
-	
+
     public void testBug374421() {
     	try {
 	        IEclipseContext context = EclipseContextFactory.create();

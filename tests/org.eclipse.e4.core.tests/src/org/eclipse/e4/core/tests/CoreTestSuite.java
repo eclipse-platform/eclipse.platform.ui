@@ -111,7 +111,7 @@ public class CoreTestSuite extends TestSuite {
 		addTestSuite(ActivationInjectionTest.class);
 		addTestSuite(GenericsInjectionTest.class);
 		addTestSuite(RecursiveObjectCreationTest.class);
-		
+
 		// NLS
 		addTestSuite(NLSTest.class);
 	}

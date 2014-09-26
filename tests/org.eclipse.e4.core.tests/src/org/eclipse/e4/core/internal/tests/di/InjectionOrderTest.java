@@ -22,16 +22,16 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 
 public class InjectionOrderTest extends TestCase {
-	
+
 	public interface ITestObject {
-		
+
 	}
 
 	static public class InjectUnsatisfied {
 
 		@Inject
 		ITestObject object;
-		
+
 		static public int count = 0;
 
 		@PostConstruct

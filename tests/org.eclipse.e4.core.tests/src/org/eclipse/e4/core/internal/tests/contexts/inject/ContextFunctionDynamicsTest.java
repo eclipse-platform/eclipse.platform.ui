@@ -34,7 +34,7 @@ public class ContextFunctionDynamicsTest extends TestCase {
 			this.input = input;
 		}
 	}
-	
+
 	/**
 	 * Changing context function should update injected values
 	 */
@@ -53,17 +53,17 @@ public class ContextFunctionDynamicsTest extends TestCase {
 		ContextInjectionFactory.inject(target, context2);
 
 		assertEquals("func1", target.input);
-		
+
 		context1.set(SELECTION, new ContextFunction() {
 			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				return "func2";
 			}
 		});
-		
+
 		assertEquals("func2", target.input);
 	}
-	
+
 	/**
 	 * Overriding context function with a regular value on a child node
 	 */
@@ -81,7 +81,7 @@ public class ContextFunctionDynamicsTest extends TestCase {
 
 		InjectTarget target = new InjectTarget();
 		ContextInjectionFactory.inject(target, context3);
-		
+
 		assertEquals("func1", target.input);
 
 		Object o = new Object();
@@ -111,7 +111,7 @@ public class ContextFunctionDynamicsTest extends TestCase {
 		ContextInjectionFactory.inject(target, context4);
 
 		assertEquals("func1", target.input);
-		
+
 		// Override ICF set on the 2nd context
 		context2.set(SELECTION, new ContextFunction() {
 			@Override
@@ -119,24 +119,24 @@ public class ContextFunctionDynamicsTest extends TestCase {
 				return "func2";
 			}
 		});
-		
+
 		assertEquals("func2", target.input);
-		
+
 		// Override removed
 		context2.remove(SELECTION);
 		assertEquals("func1", target.input);
-		
+
 		// Override simple value set on 3rd context
 		context3.set(SELECTION, "abc");
 		assertEquals("abc", target.input);
-		
+
 		// Simple value override removed from 3rd context
 		context3.remove(SELECTION);
 		assertEquals("func1", target.input);
 	}
-	
-	
-	
+
+
+
 	public void testBug315109() throws Exception {
 		IEclipseContext appContext = EclipseContextFactory.create();
 		IEclipseContext windowContext = appContext.createChild();
