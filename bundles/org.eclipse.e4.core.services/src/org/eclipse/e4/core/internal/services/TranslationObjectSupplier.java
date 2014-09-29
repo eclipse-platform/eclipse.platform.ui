@@ -83,15 +83,8 @@ public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 	 *            The {@link Locale} to use for creating the message instances.
 	 */
 	@Inject
-	public void setLocale(@Optional @Named(TranslationService.LOCALE) String locale) {
-		try {
-			this.locale = locale == null ? Locale.getDefault() : ResourceBundleHelper
-					.toLocale(locale);
-		} catch (Exception e) {
-			// parsing the locale String to a Locale failed, so we use the default Locale
-			ResourceBundleHelper.logInvalidFormat(locale, logService);
-			this.locale = Locale.getDefault();
-		}
+	public void setLocale(@Optional @Named(TranslationService.LOCALE) Locale locale) {
+		this.locale = locale == null ? Locale.getDefault() : locale;
 
 		// update listener
 		updateMessages();

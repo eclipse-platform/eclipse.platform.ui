@@ -63,7 +63,7 @@ public class NLSTest extends TestCase {
 
 	public void testSimpleMessages() {
 		//ensure the en Locale is set for this test
-		this.context.set(TranslationService.LOCALE, "en");
+		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestSimpleObject o = ContextInjectionFactory.make(TestSimpleObject.class, this.context);
 
 		//test all values are set
@@ -86,7 +86,7 @@ public class NLSTest extends TestCase {
 
 	public void testSimpleMessagesDifferentLocale() {
 		//set Locale to de
-		this.context.set(TranslationService.LOCALE, "de");
+		this.context.set(TranslationService.LOCALE, Locale.GERMAN);
 		TestSimpleObject o = ContextInjectionFactory.make(TestSimpleObject.class, this.context);
 
 		//test all values are set
@@ -117,7 +117,7 @@ public class NLSTest extends TestCase {
 		//get german translations as the default locale is set to "de_DE"
 		//with checking the equinox.root.locale in the system properties the fallback is skipped as it tells
 		//that the root properties file is for locale en.
-		this.context.set(TranslationService.LOCALE, "en");
+		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestSimpleObject o = ContextInjectionFactory.make(TestSimpleObject.class, this.context);
 
 		//test all values are set
@@ -144,7 +144,7 @@ public class NLSTest extends TestCase {
 		Locale.setDefault(new Locale("de"));
 
 		//set a locale for which no resource bundle is set
-		this.context.set(TranslationService.LOCALE, "fr");
+		this.context.set(TranslationService.LOCALE, Locale.FRENCH);
 		TestSimpleObject o = ContextInjectionFactory.make(TestSimpleObject.class, this.context);
 
 		//test all values are set
@@ -168,7 +168,7 @@ public class NLSTest extends TestCase {
 
 	public void testMessages() {
 		//ensure the en Locale is set for this test
-		this.context.set(TranslationService.LOCALE, "en");
+		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestMessagesObject o = ContextInjectionFactory.make(TestMessagesObject.class, this.context);
 
 		//test all values are set
@@ -191,7 +191,7 @@ public class NLSTest extends TestCase {
 
 	public void testMessagesDifferentLocale() {
 		//set Locale to de
-		this.context.set(TranslationService.LOCALE, "de");
+		this.context.set(TranslationService.LOCALE, Locale.GERMAN);
 		TestMessagesObject o = ContextInjectionFactory.make(TestMessagesObject.class, this.context);
 
 		//test all values are set
@@ -222,7 +222,7 @@ public class NLSTest extends TestCase {
 		//get german translations as the default locale is set to "de_DE"
 		//with checking the equinox.root.locale in the system properties the fallback is skipped as it tells
 		//that the root properties file is for locale en.
-		this.context.set(TranslationService.LOCALE, "en");
+		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestMessagesObject o = ContextInjectionFactory.make(TestMessagesObject.class, this.context);
 
 		//test all values are set
@@ -249,7 +249,7 @@ public class NLSTest extends TestCase {
 		Locale.setDefault(new Locale("de"));
 
 		//set a locale for which no resource bundle is set
-		this.context.set(TranslationService.LOCALE, "fr");
+		this.context.set(TranslationService.LOCALE, Locale.FRENCH);
 		TestMessagesObject o = ContextInjectionFactory.make(TestMessagesObject.class, this.context);
 
 		//test all values are set
@@ -273,7 +273,7 @@ public class NLSTest extends TestCase {
 
 	public void testBundleMessages() {
 		//ensure the en Locale is set for this test
-		this.context.set(TranslationService.LOCALE, "en");
+		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestBundleObject o = ContextInjectionFactory.make(TestBundleObject.class, this.context);
 
 		//test all values are set
@@ -296,7 +296,7 @@ public class NLSTest extends TestCase {
 
 	public void testBundleMessagesDifferentLocale() {
 		//set Locale to de
-		this.context.set(TranslationService.LOCALE, "de");
+		this.context.set(TranslationService.LOCALE, Locale.GERMAN);
 		TestBundleObject o = ContextInjectionFactory.make(TestBundleObject.class, this.context);
 
 		//test all values are set
@@ -327,7 +327,7 @@ public class NLSTest extends TestCase {
 		//get german translations as the default locale is set to "de_DE"
 		//with checking the equinox.root.locale in the system properties the fallback is skipped as it tells
 		//that the root properties file is for locale en.
-		this.context.set(TranslationService.LOCALE, "en");
+		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestBundleObject o = ContextInjectionFactory.make(TestBundleObject.class, this.context);
 
 		//test all values are set
@@ -354,7 +354,7 @@ public class NLSTest extends TestCase {
 		Locale.setDefault(new Locale("de"));
 
 		//set a locale for which no resource bundle is set
-		this.context.set(TranslationService.LOCALE, "fr");
+		this.context.set(TranslationService.LOCALE, Locale.FRENCH);
 		TestBundleObject o = ContextInjectionFactory.make(TestBundleObject.class, this.context);
 
 		//test all values are set
@@ -378,7 +378,7 @@ public class NLSTest extends TestCase {
 
 	public void testClassBasedResourceBundle() {
 		//ensure the en Locale is set for this test
-		this.context.set(TranslationService.LOCALE, "en");
+		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestResourceBundleClassObject o = ContextInjectionFactory.make(TestResourceBundleClassObject.class, this.context);
 
 		//test all values are set
@@ -401,7 +401,7 @@ public class NLSTest extends TestCase {
 
 	public void testClassBasedResourceBundleDifferentLocale() {
 		//set Locale to de
-		this.context.set(TranslationService.LOCALE, "de");
+		this.context.set(TranslationService.LOCALE, Locale.GERMAN);
 		TestResourceBundleClassObject o = ContextInjectionFactory.make(TestResourceBundleClassObject.class, this.context);
 
 		//test all values are set
@@ -432,7 +432,7 @@ public class NLSTest extends TestCase {
 		//get german translations as the default locale is set to "de_DE"
 		//with checking the equinox.root.locale in the system properties the fallback is skipped as it tells
 		//that the root properties file is for locale en.
-		this.context.set(TranslationService.LOCALE, "en");
+		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestResourceBundleClassObject o = ContextInjectionFactory.make(TestResourceBundleClassObject.class, this.context);
 
 		//test all values are set
@@ -459,7 +459,7 @@ public class NLSTest extends TestCase {
 		Locale.setDefault(new Locale("de"));
 
 		//set a locale for which no resource bundle is set
-		this.context.set(TranslationService.LOCALE, "fr");
+		this.context.set(TranslationService.LOCALE, Locale.FRENCH);
 		TestResourceBundleClassObject o = ContextInjectionFactory.make(TestResourceBundleClassObject.class, this.context);
 
 		//test all values are set
@@ -483,7 +483,7 @@ public class NLSTest extends TestCase {
 
 	public void testResourcesBundle() {
 		//ensure the en Locale is set for this test
-		this.context.set(TranslationService.LOCALE, "en");
+		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestResourcesBundleObject o = ContextInjectionFactory.make(TestResourcesBundleObject.class, this.context);
 
 		//test all values are set
@@ -506,7 +506,7 @@ public class NLSTest extends TestCase {
 
 	public void testResourcesBundleDifferentLocale() {
 		//set Locale to de
-		this.context.set(TranslationService.LOCALE, "de");
+		this.context.set(TranslationService.LOCALE, Locale.GERMAN);
 		TestResourcesBundleObject o = ContextInjectionFactory.make(TestResourcesBundleObject.class, this.context);
 
 		//test all values are set
@@ -537,7 +537,7 @@ public class NLSTest extends TestCase {
 		//get german translations as the default locale is set to "de_DE"
 		//with checking the equinox.root.locale in the system properties the fallback is skipped as it tells
 		//that the root properties file is for locale en.
-		this.context.set(TranslationService.LOCALE, "en");
+		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestResourcesBundleObject o = ContextInjectionFactory.make(TestResourcesBundleObject.class, this.context);
 
 		//test all values are set
@@ -564,7 +564,7 @@ public class NLSTest extends TestCase {
 		Locale.setDefault(new Locale("de"));
 
 		//set a locale for which no resource bundle is set
-		this.context.set(TranslationService.LOCALE, "fr");
+		this.context.set(TranslationService.LOCALE, Locale.FRENCH);
 		TestResourcesBundleObject o = ContextInjectionFactory.make(TestResourcesBundleObject.class, this.context);
 
 		//test all values are set

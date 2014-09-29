@@ -157,7 +157,7 @@ public @interface Message {
 	/**
 	 * @return optional parameter to point to resource bundles in a different location
 	 * @see Message
-	 * @since 1.3
+	 * @since 2.0
 	 */
 	String contributionURI() default "";
 }

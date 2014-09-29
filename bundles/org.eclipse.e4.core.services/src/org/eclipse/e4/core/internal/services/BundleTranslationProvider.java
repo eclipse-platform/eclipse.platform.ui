@@ -29,7 +29,7 @@ public class BundleTranslationProvider extends TranslationService {
 
 		try {
 			ResourceBundle resourceBundle = ResourceBundleHelper.getResourceBundleForUri(
-					contributorURI, ResourceBundleHelper.toLocale(locale), provider);
+					contributorURI, locale, provider);
 			return getResourceString(key, resourceBundle);
 		} catch (Exception e) {
 			// an error occurred on trying to retrieve the translation for the given key

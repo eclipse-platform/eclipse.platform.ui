@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.e4.core.services.translation;
 
+import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import javax.inject.Inject;
@@ -38,7 +39,7 @@ public abstract class TranslationService {
 
 	@Inject
 	@Named(LOCALE)
-	protected String locale;
+	protected Locale locale;
 
 	@Inject
 	public TranslationService() {
