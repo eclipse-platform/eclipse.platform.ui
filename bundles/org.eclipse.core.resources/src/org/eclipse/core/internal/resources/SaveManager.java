@@ -550,18 +550,20 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	}
 
 	private void rememberSnapshotRequestor() {
-		StringBuilder output = new StringBuilder("The workspace will exit with unsaved changes in this session. Snapshot requestor: "); //$NON-NLS-1$
-		Job currentJob = Job.getJobManager().currentJob();
-		if (currentJob != null) {
-			output.append(currentJob.getClass().getName());
-			output.append("("); //$NON-NLS-1$
-			output.append(currentJob.getName());
-			output.append(")"); //$NON-NLS-1$
-		}
 		RuntimeException e = new RuntimeException("Scheduling workspace snapshot"); //$NON-NLS-1$
-		snapshotRequestor = new ResourceStatus(IStatus.ERROR, ICoreConstants.CRASH_DETECTED, null, output.toString(), e);
 		if (Policy.DEBUG_SAVE)
 			Policy.debug(e);
+		if (snapshotRequestor == null) {
+			StringBuilder output = new StringBuilder("The workspace will exit with unsaved changes in this session. Snapshot requestor: "); //$NON-NLS-1$
+			Job currentJob = Job.getJobManager().currentJob();
+			if (currentJob != null) {
+				output.append(currentJob.getClass().getName());
+				output.append("("); //$NON-NLS-1$
+				output.append(currentJob.getName());
+				output.append(")"); //$NON-NLS-1$
+			}
+			snapshotRequestor = new ResourceStatus(IStatus.ERROR, ICoreConstants.CRASH_DETECTED, null, output.toString(), e);
+		}
 	}
 
 	/**
