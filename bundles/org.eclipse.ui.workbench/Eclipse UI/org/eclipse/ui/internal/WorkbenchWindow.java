@@ -12,7 +12,7 @@
  *     								 removes a menu from multiple perspectives
  *     René Brandstetter - Bug 411821 - [QuickAccess] Contribute SearchField
  *                                      through a fragment or other means
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431446, 433979, 440810
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 431446, 433979, 440810, 441184
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -162,7 +162,6 @@ import org.eclipse.ui.internal.commands.SlaveCommandService;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
 import org.eclipse.ui.internal.e4.compatibility.SelectionService;
 import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
@@ -178,7 +177,6 @@ import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
-import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
@@ -191,14 +189,12 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.IMenuService;
-import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceScopes;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
-
 /**
  * A window within the workbench.
  */
@@ -2724,25 +2720,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	public boolean getShowFastViewBars() {
 		return getWindowConfigurer().getShowFastViewBars();
-	}
-
-	/**
-	 * Return the action bar presentation used for creating toolbars. This is
-	 * for internal use only, used for consistency with the window.
-	 * 
-	 * @return the presentation used.
-	 */
-	public IActionBarPresentationFactory getActionBarPresentationFactory() {
-		E4Util.unsupported("getActionBarPresentationFactory: doesn't do anything useful, should cause NPE"); //$NON-NLS-1$
-		// allow replacement of the actionbar presentation
-		IActionBarPresentationFactory actionBarPresentation = null;
-		AbstractPresentationFactory presentationFactory = getWindowConfigurer()
-				.getPresentationFactory();
-		if (presentationFactory instanceof IActionBarPresentationFactory) {
-			actionBarPresentation = ((IActionBarPresentationFactory) presentationFactory);
-		}
-
-		return actionBarPresentation;
 	}
 
 	/*

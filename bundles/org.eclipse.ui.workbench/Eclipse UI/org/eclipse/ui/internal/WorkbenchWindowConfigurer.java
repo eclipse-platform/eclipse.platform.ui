@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 441184
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -34,15 +35,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
-import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
-import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 
 /**
@@ -134,12 +133,6 @@ public final class WorkbenchWindowConfigurer implements
      * The initial size to use for the shell.
      */
     private Point initialSize = new Point(1024, 768);
-
-    /**
-     * The presentation factory.  Lazily initialized in getPresentationFactory
-     * if not already assigned in setPresentationFactory.
-     */
-    private AbstractPresentationFactory presentationFactory = null;
 
     /**
      * Action bar configurer that changes this workbench window.
@@ -467,50 +460,13 @@ public final class WorkbenchWindowConfigurer implements
 
     @Override
 	public AbstractPresentationFactory getPresentationFactory() {
-        if (presentationFactory == null) {
-            presentationFactory = createDefaultPresentationFactory();
-        }
-        return presentationFactory;
-    }
-
-    /**
-     * Creates the default presentation factory by looking up the presentation
-     * factory extension with the id specified by the presentation factory preference.
-     * If the preference is null or if no matching extension is found, a
-     * factory default presentation factory is used.
-     */
-    private AbstractPresentationFactory createDefaultPresentationFactory() {
-        final String factoryId = ((Workbench) window.getWorkbench())
-                .getPresentationId();
-
-        if (factoryId != null && factoryId.length() > 0) {
-            final AbstractPresentationFactory [] factory = new AbstractPresentationFactory[1];
-            StartupThreading.runWithoutExceptions(new StartupRunnable() {
-
-				@Override
-				public void runWithException() throws Throwable {
-					factory[0] = WorkbenchPlugin.getDefault()
-							.getPresentationFactory(factoryId);
-				}
-			});
-            
-            if (factory[0] != null) {
-                return factory[0];
-            }
-        }
-        // presentation ID must be a bogus value, reset it to the default
-        PrefUtil.getAPIPreferenceStore().setValue(
-				IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID,
-				IWorkbenchConstants.DEFAULT_PRESENTATION_ID);
+		E4Util.unsupported("Not supported anymore"); //$NON-NLS-1$
 		return null;
     }
 
     @Override
 	public void setPresentationFactory(AbstractPresentationFactory factory) {
-        if (factory == null) {
-            throw new IllegalArgumentException();
-        }
-        presentationFactory = factory;
+		E4Util.unsupported("Not supported anymore"); //$NON-NLS-1$
     }
 
     /**

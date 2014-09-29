@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 400714, 441267
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 400714, 441267, 441184
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -76,7 +76,6 @@ import org.eclipse.ui.internal.wizards.ImportWizardRegistry;
 import org.eclipse.ui.internal.wizards.NewWizardRegistry;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.testing.TestableObject;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
@@ -524,22 +523,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
             factory = null;
         }
         return factory;
-    }
-
-    /**
-	 * Returns the presentation factory with the given id, or <code>null</code>
-	 * if not found.
-	 * 
-	 * @param targetID
-	 *            The id of the presentation factory to use.
-	 * @return AbstractPresentationFactory or <code>null</code> if not factory
-	 *         matches that id.
-	 * 
-	 * @deprecated Does not do anything anymore
-	 */
-	@Deprecated
-    public AbstractPresentationFactory getPresentationFactory(String targetID) {
-		return null;
     }
 
     /**
