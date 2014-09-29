@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -905,7 +905,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	 *            the part to test
 	 * @return the parts that are stacked with this part, including the part in
 	 *         question. <code>null</code> is returned if the part does not
-	 *         belong to this page.
+	 *         belong to this page. The parts are in LRU order.
 	 * @since 3.0
 	 */
 	IViewPart[] getViewStack(IViewPart part);
