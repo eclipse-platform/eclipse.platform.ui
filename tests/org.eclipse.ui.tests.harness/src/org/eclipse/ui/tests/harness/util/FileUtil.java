@@ -29,10 +29,10 @@ public class FileUtil {
 
 	private static final int MAX_RETRY = 5;
 
-	
+
     /**
      * Creates a new project.
-     * 
+     *
      * @param name the project name
      */
     public static IProject createProject(String name) throws CoreException {
@@ -48,7 +48,7 @@ public class FileUtil {
 
     /**
      * Deletes a project.
-     * 
+     *
      * @param proj the project
      */
     public static void deleteProject(IProject proj) throws CoreException {
@@ -57,7 +57,7 @@ public class FileUtil {
 
     /**
      * Creates a new file in a project.
-     * 
+     *
      * @param name the new file name
      * @param proj the existing project
      * @return the new file
@@ -72,7 +72,7 @@ public class FileUtil {
         }
         return file;
     }
-    
+
 	public static void delete(IResource resource) throws CoreException {
 		for (int i= 0; i < MAX_RETRY; i++) {
 			try {
@@ -90,7 +90,7 @@ public class FileUtil {
 		}
 	}
 
-    
+
 
 }
 

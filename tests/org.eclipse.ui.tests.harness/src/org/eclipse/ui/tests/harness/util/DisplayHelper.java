@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Display;
  * otherwise, the waiter may time out before <code>sleep</code> is called and
  * the sleeping thread may never be waken up.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public abstract class DisplayHelper {
@@ -31,7 +31,7 @@ public abstract class DisplayHelper {
 	 */
 	protected DisplayHelper() {
 	}
-	
+
 	/**
 	 * Until {@link #condition()} becomes <code>true</code> or the timeout
 	 * elapses, call {@link Display#sleep()} and run the event loop.
@@ -41,7 +41,7 @@ public abstract class DisplayHelper {
 	 * loop is driven at most once, but <code>Display.sleep()</code> is never
 	 * invoked.
 	 * </p>
-	 * 
+	 *
 	 * @param display the display to run the event loop of
 	 * @param timeout the timeout in milliseconds
 	 * @return <code>true</code> if the condition became <code>true</code>,
@@ -51,16 +51,16 @@ public abstract class DisplayHelper {
 		// if the condition already holds, succeed
 		if (condition())
 			return true;
-		
+
 		if (timeout < 0)
 			return false;
-		
+
 		// if driving the event loop once makes the condition hold, succeed
 		// without spawning a thread.
 		driveEventQueue(display);
 		if (condition())
 			return true;
-		
+
 		// if the timeout is negative or zero, fail
 		if (timeout == 0)
 			return false;
@@ -80,7 +80,7 @@ public abstract class DisplayHelper {
 		}
 		return condition;
 	}
-	
+
 	/**
 	 * Call {@link Display#sleep()} and run the event loop until the given
 	 * timeout has elapsed.
@@ -89,13 +89,13 @@ public abstract class DisplayHelper {
 	 * <code>timeout == 0</code>, the event loop is driven exactly once, but
 	 * <code>Display.sleep()</code> is never invoked.
 	 * </p>
-	 * 
+	 *
 	 * @param millis the timeout in milliseconds
 	 */
 	public static void sleep(long millis) {
 		sleep(Display.getCurrent(), millis);
 	}
-	
+
 	/**
 	 * Call {@link Display#sleep()} and run the event loop until the given
 	 * timeout has elapsed.
@@ -104,7 +104,7 @@ public abstract class DisplayHelper {
 	 * <code>timeout == 0</code>, the event loop is driven exactly once, but
 	 * <code>Display.sleep()</code> is never invoked.
 	 * </p>
-	 * 
+	 *
 	 * @param display the display to run the event loop of
 	 * @param millis the timeout in milliseconds
 	 */
@@ -115,7 +115,7 @@ public abstract class DisplayHelper {
 			}
 		}.waitForCondition(display, millis);
 	}
-	
+
 	/**
 	 * Call {@link Display#sleep()} and run the event loop once if
 	 * <code>sleep</code> returns before the timeout elapses. Returns
@@ -126,7 +126,7 @@ public abstract class DisplayHelper {
 	 * If <code>timeout == 0</code>, the event loop is driven exactly once,
 	 * but <code>Display.sleep()</code> is never invoked.
 	 * </p>
-	 * 
+	 *
 	 * @param display the display to run the event loop of
 	 * @param timeout the timeout in milliseconds
 	 * @return <code>true</code> if any event was taken off the event queue,
@@ -135,10 +135,10 @@ public abstract class DisplayHelper {
 	public static boolean runEventLoop(Display display, long timeout) {
 		if (timeout < 0)
 			return false;
-		
+
 		if (timeout == 0)
 			return driveEventQueue(display);
-		
+
 		// repeatedly sleep until condition becomes true or timeout elapses
 		DisplayWaiter waiter= new DisplayWaiter(display);
 		DisplayWaiter.Timeout timeoutState= waiter.start(timeout);
@@ -150,12 +150,12 @@ public abstract class DisplayHelper {
 		waiter.stop();
 		return events;
 	}
-	
+
 	/**
 	 * The condition which has to be met in order for
 	 * {@link #waitForCondition(Display, int)} to return before the timeout
 	 * elapses.
-	 * 
+	 *
 	 * @return <code>true</code> if the condition is met, <code>false</code>
 	 *         if the event loop should be driven some more
 	 */
@@ -163,7 +163,7 @@ public abstract class DisplayHelper {
 
 	/**
 	 * Runs the event loop on the given display.
-	 * 
+	 *
 	 * @param display the display
 	 * @return if <code>display.readAndDispatch</code> returned
 	 *         <code>true</code> at least once
@@ -189,7 +189,7 @@ public abstract class DisplayHelper {
 	 * The condition gets rechecked every <code>interval</code> milliseconds, even
 	 * if no events were read from the queue.
 	 * </p>
-	 * 
+	 *
 	 * @param display the display to run the event loop of
 	 * @param timeout the timeout in milliseconds
 	 * @param interval the interval to re-check the condition in milliseconds
@@ -200,20 +200,20 @@ public abstract class DisplayHelper {
 		// if the condition already holds, succeed
 		if (condition())
 			return true;
-		
+
 		if (timeout < 0)
 			return false;
-		
+
 		// if driving the event loop once makes the condition hold, succeed
 		// without spawning a thread.
 		driveEventQueue(display);
 		if (condition())
 			return true;
-		
+
 		// if the timeout is negative or zero, fail
 		if (timeout == 0)
 			return false;
-	
+
 		// repeatedly sleep until condition becomes true or timeout elapses
 		DisplayWaiter waiter= new DisplayWaiter(display, true);
 		long currentTimeMillis= System.currentTimeMillis();

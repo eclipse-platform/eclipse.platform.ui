@@ -34,22 +34,22 @@ import org.eclipse.ui.WorkbenchException;
 
 /**
  * <code>UITestCase</code> is a useful super class for most
- * UI tests cases.  It contains methods to create new windows 
- * and pages.  It will also automatically close the test 
+ * UI tests cases.  It contains methods to create new windows
+ * and pages.  It will also automatically close the test
  * windows when the tearDown method is called.
  */
 public abstract class UITestCase extends TestCase {
 
 	/**
 	 * Returns the workbench page input to use for newly created windows.
-	 *  
+	 *
 	 * @return the page input to use for newly created windows
 	 * @since 3.1
 	 */
 	public static IAdaptable getPageInput() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
-	
+
 	class TestWindowListener implements IWindowListener {
         private boolean enabled = true;
 
@@ -148,7 +148,7 @@ public abstract class UITestCase extends TestCase {
     }
 
     /**
-     * Removes the listener added by <code>addWindowListener</code>. 
+     * Removes the listener added by <code>addWindowListener</code>.
      */
     private void removeWindowListener() {
         if (windowListener != null) {
@@ -159,7 +159,7 @@ public abstract class UITestCase extends TestCase {
     /**
      * Outputs a trace message to the trace output device, if enabled.
      * By default, trace messages are sent to <code>System.out</code>.
-     * 
+     *
      * @param msg the trace message
      */
     protected void trace(String msg) {
@@ -167,7 +167,7 @@ public abstract class UITestCase extends TestCase {
     }
 
     /**
-     * Simple implementation of setUp. Subclasses are prevented 
+     * Simple implementation of setUp. Subclasses are prevented
      * from overriding this method to maintain logging consistency.
      * doSetUp() should be overriden instead.
      */
@@ -178,7 +178,7 @@ public abstract class UITestCase extends TestCase {
         trace(this.getName() + ": setUp..."); //$NON-NLS-1$
         addWindowListener();
         doSetUp();
-       
+
     }
 
     /**
@@ -192,7 +192,7 @@ public abstract class UITestCase extends TestCase {
     }
 
     /**
-     * Simple implementation of tearDown.  Subclasses are prevented 
+     * Simple implementation of tearDown.  Subclasses are prevented
      * from overriding this method to maintain logging consistency.
      * doTearDown() should be overriden instead.
      */
@@ -227,9 +227,9 @@ public abstract class UITestCase extends TestCase {
     protected static interface Condition {
     	public boolean compute();
     }
-    
+
 	/**
-	 * 
+	 *
 	 * @param condition
 	 *            , or null if this should only wait
 	 * @param timeout
@@ -255,8 +255,8 @@ public abstract class UITestCase extends TestCase {
 		}
 		return true;
 	}
-    
-    /** 
+
+    /**
      * Open a test window with the empty perspective.
      */
     public IWorkbenchWindow openTestWindow() {
@@ -281,7 +281,7 @@ public abstract class UITestCase extends TestCase {
     /**
 	 * Try and process events until the new shell is the active shell. This may
 	 * never happen, so time out after a suitable period.
-	 * 
+	 *
 	 * @param shell
 	 *            the shell to wait on
 	 * @since 3.2
@@ -353,10 +353,10 @@ public abstract class UITestCase extends TestCase {
     protected void manageWindows(boolean manage) {
         windowListener.setEnabled(manage);
     }
-    
+
     /**
      * Returns the workbench.
-     * 
+     *
      * @return the workbench
      * @since 3.1
      */

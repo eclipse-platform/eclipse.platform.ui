@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Display;
  * Implements the thread that will wait for the timeout and wake up the display
  * so it does not wait forever. The thread may be restarted after it was stopped
  * or timed out.
- * 
+ *
  * @since 3.1
  */
 final class DisplayWaiter {
@@ -33,7 +33,7 @@ final class DisplayWaiter {
 		/**
 		 * Returns <code>true</code> if the timeout has been reached,
 		 * <code>false</code> if not.
-		 * 
+		 *
 		 * @return <code>true</code> if the timeout has been reached,
 		 *         <code>false</code> if not
 		 */
@@ -49,14 +49,14 @@ final class DisplayWaiter {
 			fTimeoutState= initialState;
 		}
 	}
-	
+
 	// configuration
 	private final Display fDisplay;
 	private final Object fMutex= new Object();
 	private final boolean fKeepRunningOnTimeout;
-	
+
 	/* State -- possible transitions:
-	 * 
+	 *
 	 * STOPPED   -> RUNNING
 	 * RUNNING   -> STOPPED
 	 * RUNNING   -> IDLE
@@ -66,7 +66,7 @@ final class DisplayWaiter {
 	private static final int RUNNING= 1 << 1;
 	private static final int STOPPED= 1 << 2;
 	private static final int IDLE= 1 << 3;
-	
+
 	/** The current state. */
 	private int fState;
 	/** The time in milliseconds (see Date) that the timeout will occur. */
@@ -78,16 +78,16 @@ final class DisplayWaiter {
 
 	/**
 	 * Creates a new instance on the given display and timeout.
-	 * 
+	 *
 	 * @param display the display to run the event loop of
 	 */
 	public DisplayWaiter(Display display) {
 		this(display, false);
 	}
-	
+
 	/**
 	 * Creates a new instance on the given display and timeout.
-	 * 
+	 *
 	 * @param display the display to run the event loop of
 	 * @param keepRunning <code>true</code> if the thread should be kept
 	 *        running after timing out
@@ -98,11 +98,11 @@ final class DisplayWaiter {
 		fState= STOPPED;
 		fKeepRunningOnTimeout= keepRunning;
 	}
-	
+
 	/**
 	 * Starts the timeout thread if it is not currently running. Nothing happens
 	 * if a thread is already running.
-	 * 
+	 *
 	 * @param delay the delay from now in milliseconds
 	 * @return the timeout state which can be queried for its timed out status
 	 */
@@ -119,14 +119,14 @@ final class DisplayWaiter {
 					setNextTimeout(delay);
 					break;
 			}
-			
+
 			return fCurrentTimeoutState;
 		}
 	}
 
 	/**
 	 * Sets the next timeout to <em>current time</em> plus <code>delay</code>.
-	 * 
+	 *
 	 * @param delay the delay until the next timeout occurs in milliseconds from
 	 *        now
 	 */
@@ -138,11 +138,11 @@ final class DisplayWaiter {
 		else
 			fNextTimeout= Long.MAX_VALUE;
 	}
-	
+
 	/**
 	 * Starts the thread if it is not currently running; resets the timeout if
 	 * it is.
-	 * 
+	 *
 	 * @param delay the delay from now in milliseconds
 	 * @return the timeout state which can be queried for its timed out status
 	 */
@@ -174,7 +174,7 @@ final class DisplayWaiter {
 				fMutex.notifyAll();
 		}
 	}
-	
+
 	/**
 	 * Puts the reaper thread on hold but does not stop it. It may be restarted
 	 * by calling {@link #start(long)} or {@link #restart(long)}.
@@ -196,7 +196,7 @@ final class DisplayWaiter {
 		fCurrentTimeoutState= new Timeout(false);
 		fMutex.notifyAll();
 	}
-		
+
 	/**
 	 * Start the thread. Assume the current state is <code>STOPPED</code>.
 	 */
@@ -233,10 +233,10 @@ final class DisplayWaiter {
 					}
 				}
 			}
-			
+
 			/**
 			 * Runs the thread.
-			 * 
+			 *
 			 * @throws InterruptedException if the thread was interrupted
 			 * @throws ThreadChangedException if the thread changed
 			 */
@@ -245,14 +245,14 @@ final class DisplayWaiter {
 					checkThread();
 					tryHold(); // wait / potential state change
 					assertStates(STOPPED | RUNNING);
-					
+
 					while (isState(RUNNING)) {
 						waitForTimeout(); // wait / potential state change
-						
+
 						if (isState(RUNNING))
 							timedOut(); // state change
 						assertStates(STOPPED | IDLE);
-						
+
 						tryHold(); // wait / potential state change
 						assertStates(STOPPED | RUNNING);
 					}
@@ -263,7 +263,7 @@ final class DisplayWaiter {
 			/**
 			 * Check whether the current thread is this thread, throw an
 			 * exception otherwise.
-			 * 
+			 *
 			 * @throws ThreadChangedException if the current thread changed
 			 */
 			private void checkThread() throws ThreadChangedException {
@@ -273,7 +273,7 @@ final class DisplayWaiter {
 
 			/**
 			 * Waits until the next timeout occurs.
-			 * 
+			 *
 			 * @throws InterruptedException if the thread was interrupted
 			 * @throws ThreadChangedException if the thread changed
 			 */
@@ -301,13 +301,13 @@ final class DisplayWaiter {
 				else
 					checkedTransition(RUNNING, STOPPED);
 			}
-			
+
 			/**
 			 * Waits while the state is <code>IDLE</code>, then returns. The
 			 * state must not be <code>RUNNING</code> when calling this
 			 * method. The state is either <code>STOPPED</code> or
 			 * <code>RUNNING</code> when the method returns.
-			 * 
+			 *
 			 * @throws InterruptedException if the thread was interrupted
 			 * @throws ThreadChangedException if the thread has changed while on
 			 *         hold
@@ -320,15 +320,15 @@ final class DisplayWaiter {
 				assertStates(STOPPED | RUNNING);
 			}
 		};
-		
+
 		fCurrentThread.start();
 	}
-	
+
 	/**
 	 * Transitions to <code>nextState</code> if the current state is one of
 	 * <code>possibleStates</code>. Returns <code>true</code> if the
 	 * transition happened, <code>false</code> otherwise.
-	 * 
+	 *
 	 * @param possibleStates the states which trigger a transition
 	 * @param nextState the state to transition to
 	 * @return <code>true</code> if the transition happened,
@@ -343,11 +343,11 @@ final class DisplayWaiter {
 		Logger.global.finest("noTransition" + name(fState) + " !> " + name(nextState) + " (" + name(possibleStates) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		return false;
 	}
-	
+
 	/**
 	 * Checks the <code>possibleStates</code> and throws an assertion if it is
 	 * not met, then transitions to <code>nextState</code>.
-	 * 
+	 *
 	 * @param possibleStates the allowed states
 	 * @param nextState the state to transition to
 	 */
@@ -356,10 +356,10 @@ final class DisplayWaiter {
 		Logger.global.finer(name(fState) + " > " + name(nextState)); //$NON-NLS-1$
 		fState= nextState;
 	}
-	
+
 	/**
 	 * Implements state consistency checking.
-	 * 
+	 *
 	 * @param states the allowed states
 	 * @throws junit.framework.AssertionFailedError if the current state is not
 	 *         in <code>states</code>
@@ -371,7 +371,7 @@ final class DisplayWaiter {
 	/**
 	 * Answers <code>true</code> if the current state is in the given
 	 * <code>states</code>.
-	 * 
+	 *
 	 * @param states the possible states
 	 * @return <code>true</code> if the current state is in the given states,
 	 *         <code>false</code> otherwise
@@ -379,10 +379,10 @@ final class DisplayWaiter {
 	private boolean isState(int states) {
 		return (states & fState) == fState;
 	}
-	
+
 	/**
 	 * Pretty print the given states.
-	 * 
+	 *
 	 * @param states the states
 	 * @return a string representation of the states
 	 */

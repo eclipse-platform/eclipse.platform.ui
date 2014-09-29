@@ -240,7 +240,7 @@ public class VerifyDialog extends TitleAreaDialog {
      * Can't open the verification dialog without a specified
      * test dialog, this simply returns a failure and prevents
      * opening.  Should use open(Dialog) instead.
-     * 
+     *
      */
     public int open() {
         _failureText = "Testing dialog is required, use VerifyDialog::open(Dialog)";

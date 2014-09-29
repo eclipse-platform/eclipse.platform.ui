@@ -22,7 +22,7 @@ import junit.framework.AssertionFailedError;
 
 /**
  * Utility class for creating mock objects for public interfaces.
- * 
+ *
  * @since 3.3
  *
  */
@@ -106,7 +106,7 @@ public class Mocks {
 			public Object getReturnValue() {
 				return returnValue;
 			}
-			
+
 			public String toString() {
 				return method.toString();
 			}
@@ -253,7 +253,7 @@ public class Mocks {
 	/**
 	 * Creates a mock object that neither looks at the order of method calls nor
 	 * at the arguments.
-	 * 
+	 *
 	 * @param interfaceType
 	 * @return a mock object that checks for the order of method invocations but
 	 *         not for equality of method arguments
@@ -265,7 +265,7 @@ public class Mocks {
 	/**
 	 * Creates a mock object that does not look at the arguments, but checks
 	 * that the order of calls is as expected.
-	 * 
+	 *
 	 * @param interfaceType
 	 * @return a mock object that checks for the order of method invocations but
 	 *         not for equality of method arguments
@@ -276,7 +276,7 @@ public class Mocks {
 
 	/**
 	 * creates a fussy mock object
-	 * 
+	 *
 	 * @param interfaceType
 	 * @return a mock object that checks for the order of method invocations and
 	 *         for equality of method arguments
@@ -287,7 +287,7 @@ public class Mocks {
 
 	/**
 	 * creates a fussy mock object with a comparator
-	 * 
+	 *
 	 * @param interfaceType
 	 * @return a mock object that checks for the order of method invocations and
 	 *         uses the given comparator to compare method arguments

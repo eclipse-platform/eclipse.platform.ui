@@ -27,11 +27,11 @@ import org.eclipse.ui.tests.internal.util.VerifyDialog;
 
 /**
  * A <code>DialogCheck</code> is used test a dialog in
- * various ways. 
+ * various ways.
  * <p>
  * For interactive tests use <code>assertDialog</code>.
  * For automated tests use <code>assert DialogTexts</code>.
- * </p> 
+ * </p>
  */
 public class DialogCheck {
     private DialogCheck() {
@@ -47,11 +47,11 @@ public class DialogCheck {
      * To ensure that both the input dialog and the test dialog are
      * accessible by the tester, the getShell() method should be used
      * when creating the test dialog.
-     * 
+     *
      * Example usage:
      * <code>Dialog dialog = new AboutDialog( DialogCheck.getShell() );
      * DialogCheck.assertDialog(dialog, this);</code>
-     * 
+     *
      * @param dialog the test dialog to be verified.
      * @param assert this is the test case object, assertions will be
      * executed on this object.
@@ -71,7 +71,7 @@ public class DialogCheck {
      * Automated test that checks all the labels and buttons of a dialog
      * to make sure there is enough room to display all the text.  Any
      * text that wraps is only approximated and is currently not accurate.
-     * 
+     *
      * @param dialog the test dialog to be verified.
      * @param assert this is the test case object, assertions will be
      * executed on this object.
@@ -89,7 +89,7 @@ public class DialogCheck {
      * This method should be called when creating dialogs to test.  This
      * ensures that the dialog's parent shell will be that of the
      * verification dialog.
-     * 
+     *
      * @return Shell The shell of the verification dialog to be used as
      * the parent shell of the test dialog.
      */

@@ -28,9 +28,9 @@ import java.util.ArrayList;
  * 	complete.</li>
  * </ol>
  * </p><p>
- * Each <code>CallHistory</code> has a target which is used to 
- * verify the method names passed to the history.  If an invalid 
- * name is passed an <code>IllegalArgumentException</code> will 
+ * Each <code>CallHistory</code> has a target which is used to
+ * verify the method names passed to the history.  If an invalid
+ * name is passed an <code>IllegalArgumentException</code> will
  * be thrown.
  * </p>
  */
@@ -40,9 +40,9 @@ public class CallHistory {
     private Class classType;
 
     /**
-     * Creates a new call history for an object.  
-     * 
-     * @param target the call history target. 
+     * Creates a new call history for an object.
+     *
+     * @param target the call history target.
      */
     public CallHistory(Object target) {
         methodList = new ArrayList();
@@ -64,8 +64,8 @@ public class CallHistory {
     }
 
     /**
-     * Adds a method name to the call history.  
-     * 
+     * Adds a method name to the call history.
+     *
      * @param methodName the name of a method
      */
     public void add(String methodName) {
@@ -82,8 +82,8 @@ public class CallHistory {
 
     /**
      * Returns whether a list of methods have been called in
-     * order.  
-     * 
+     * order.
+     *
      * @param testNames an array of the method names in the order they are expected
      * @return <code>true</code> if the methods were called in order
      */
@@ -107,7 +107,7 @@ public class CallHistory {
 
     /**
      * Returns whether a method has been called.
-     * 
+     *
      * @param methodName a method name
      * @return <code>true</code> if the method was called
      */
@@ -118,7 +118,7 @@ public class CallHistory {
 
     /**
      * Returns whether a list of methods were called.
-     * 
+     *
      * @param methodNames a list of methods
      * @return <code>true</code> if the methods were called
      */
@@ -133,7 +133,7 @@ public class CallHistory {
 
     /**
      * Returns whether the list of methods called is empty.
-     * 
+     *
      * @return <code>true</code> iff the list of methods is empty
      */
     public boolean isEmpty() {

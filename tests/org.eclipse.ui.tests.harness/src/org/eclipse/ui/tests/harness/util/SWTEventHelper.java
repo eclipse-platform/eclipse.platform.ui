@@ -168,7 +168,7 @@ public class SWTEventHelper {
 	public static boolean performDnD(Widget startItem, Widget dropItem) {
 
 		Control startControl = null;
-		
+
 		Rectangle boundsStart = null, boundsEnd = null;
 
 		if (startItem instanceof TreeItem) {
@@ -179,7 +179,7 @@ public class SWTEventHelper {
 			startControl = (Control) startItem;
 			boundsStart = Display.getCurrent().map(startControl, null, startControl.getBounds());
 		}
-		
+
 		if (dropItem instanceof TreeItem) {
 			boundsEnd = Display.getCurrent().map(((TreeItem)dropItem).getParent(), null,
 					((TreeItem)dropItem).getBounds());
@@ -187,14 +187,14 @@ public class SWTEventHelper {
 			boundsEnd = Display.getCurrent().map(((Control)dropItem), null,
 					((Control)dropItem).getBounds());
 		}
-		
+
 		startControl.addDragDetectListener(new DragDetectListener() {
 			public void dragDetected(DragDetectEvent e) {
 				_dragDetected = true;
 			}
 		});
 
-		
+
 		int count = 0;
 		_dragDetected = false;
 

@@ -13,15 +13,15 @@ package org.eclipse.ui.tests.harness.util;
 import java.util.Random;
 
 /**
- * <code>ArrayUtil</code> contains methods for array 
- * examination.  
+ * <code>ArrayUtil</code> contains methods for array
+ * examination.
  */
 public class ArrayUtil {
     private static Random randomBox = new Random();
 
     /**
      * Returns a random object chosen from an array.
-     * 
+     *
      * @param array the input array
      * @return a random object in the array
      */
