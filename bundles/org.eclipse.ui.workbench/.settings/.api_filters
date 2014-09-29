@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.workbench" version="2">
+    <resource path="Eclipse UI/org/eclipse/ui/IWorkbenchPreferenceConstants.java" type="org.eclipse.ui.IWorkbenchPreferenceConstants">
+        <filter id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.IWorkbenchPreferenceConstants"/>
+                <message_argument value="PRESENTATION_FACTORY_ID"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="Eclipse UI/org/eclipse/ui/application/IWorkbenchWindowConfigurer.java" type="org.eclipse.ui.application.IWorkbenchWindowConfigurer">
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.application.IWorkbenchWindowConfigurer"/>
+                <message_argument value="getPresentationFactory()"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.application.IWorkbenchWindowConfigurer"/>
+                <message_argument value="setPresentationFactory(AbstractPresentationFactory)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="Eclipse UI/org/eclipse/ui/dialogs/EditorSelectionDialog.java" type="org.eclipse.ui.dialogs.EditorSelectionDialog">
         <filter id="1192230914">
             <message_arguments>
@@ -15,6 +37,78 @@
                 <message_argument value="IStylingEngine"/>
                 <message_argument value="WorkbenchThemeManager"/>
                 <message_argument value="style(Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF">
+        <filter id="923795461">
+            <message_arguments>
+                <message_argument value="3.107.0"/>
+                <message_argument value="3.106.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.presentations.AbstractPresentationFactory">
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.presentations.AbstractPresentationFactory"/>
+                <message_argument value="org.eclipse.ui.workbench_3.107.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.presentations.IPartMenu">
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.presentations.IPartMenu"/>
+                <message_argument value="org.eclipse.ui.workbench_3.107.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.presentations.IPresentablePart">
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.presentations.IPresentablePart"/>
+                <message_argument value="org.eclipse.ui.workbench_3.107.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.presentations.IPresentationSerializer">
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.presentations.IPresentationSerializer"/>
+                <message_argument value="org.eclipse.ui.workbench_3.107.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.presentations.IStackPresentationSite">
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.presentations.IStackPresentationSite"/>
+                <message_argument value="org.eclipse.ui.workbench_3.107.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.presentations.PresentationUtil">
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.presentations.PresentationUtil"/>
+                <message_argument value="org.eclipse.ui.workbench_3.107.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.presentations.StackDropResult">
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.presentations.StackDropResult"/>
+                <message_argument value="org.eclipse.ui.workbench_3.107.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.presentations.StackPresentation">
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.presentations.StackPresentation"/>
+                <message_argument value="org.eclipse.ui.workbench_3.107.0"/>
             </message_arguments>
         </filter>
     </resource>

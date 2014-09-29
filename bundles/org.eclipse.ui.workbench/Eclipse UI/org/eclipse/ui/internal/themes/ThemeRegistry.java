@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440136
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -309,28 +309,6 @@ public class ThemeRegistry implements IThemeRegistry {
 			}
             dataMap.put(key, otherData.get(key));
         }
-    }
-
-    /**
-	 * Add a category presentation binding. The given category will only be
-	 * availible if the given presentation is active.
-	 * 
-	 * @param categoryId
-	 *            the category id
-	 * @param presentationId
-	 *            the presentation id
-	 * 
-	 * @deprecated used by the removal presentation API
-	 */
-	@Deprecated
-    public void addCategoryPresentationBinding(String categoryId,
-            String presentationId) {
-        Set presentations = (Set) categoryBindingMap.get(categoryId);
-        if (presentations == null) {
-            presentations = new HashSet();
-            categoryBindingMap.put(categoryId, presentations);
-        }
-        presentations.add(presentationId);
     }
 
     /* (non-Javadoc)

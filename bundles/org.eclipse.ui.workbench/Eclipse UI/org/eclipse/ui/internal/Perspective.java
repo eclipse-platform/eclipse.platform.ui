@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Alexander Kuppe, Versant GmbH - bug 215797
  *     Sascha Zak - bug 282874
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810, 440136
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -24,13 +24,13 @@ import java.util.Map;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
-import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
  * The ViewManager is a factory for workbench views.  
@@ -45,7 +45,7 @@ public class Perspective {
 	// protected PartPlaceholder editorHolder;
     protected boolean editorHidden = false;
     protected boolean editorAreaRestoreOnUnzoom = false;
-    protected int editorAreaState = IStackPresentationSite.STATE_RESTORED;
+    protected int editorAreaState = IWorkbenchPage.STATE_RESTORED;
 
 	// private ViewFactory viewFactory;
     

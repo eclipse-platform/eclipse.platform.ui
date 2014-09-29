@@ -12,7 +12,7 @@
  *     Tristan Hume - <trishume@gmail.com> -
  *     		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
  *     		Implemented workbench auto-save to correctly restore state in case of crash.
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422533
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 422533, 440136
  *     Terry Parker <tparker@google.com> - Bug 416673
  *     Sergey Prigogin <eclipse.sprigogin@gmail.com> - Bug 438324
  *******************************************************************************/
@@ -3454,8 +3454,6 @@ UIEvents.Context.TOPIC_CONTEXT,
 		}
 	};
 
-	private String factoryID;
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -3475,30 +3473,6 @@ UIEvents.Context.TOPIC_CONTEXT,
 	 */
 	public boolean isRunning() {
 		return runEventLoop;
-	}
-
-	/**
-	 * Return the presentation ID specified by the preference or the default ID
-	 * if undefined.
-	 * 
-	 * @return the presentation ID
-	 * @see IWorkbenchPreferenceConstants#PRESENTATION_FACTORY_ID
-	 */
-	public String getPresentationId() {
-		if (factoryID != null) {
-			return factoryID;
-		}
-
-		factoryID = PrefUtil.getAPIPreferenceStore().getString(
-				IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID);
-
-		// Workaround for bug 58975 - New preference mechanism does not properly
-		// initialize defaults
-		// Ensure that the UI plugin has started too.
-		if (factoryID == null || factoryID.equals("")) { //$NON-NLS-1$
-			factoryID = IWorkbenchConstants.DEFAULT_PRESENTATION_ID;
-		}
-		return factoryID;
 	}
 
 	/**

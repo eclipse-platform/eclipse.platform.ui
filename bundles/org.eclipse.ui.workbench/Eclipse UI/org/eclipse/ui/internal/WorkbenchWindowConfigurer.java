@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 441184
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 441184, 440136
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -40,9 +40,7 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
-import org.eclipse.ui.presentations.AbstractPresentationFactory;
 
 /**
  * Internal class providing special access for configuring workbench windows.
@@ -456,17 +454,6 @@ public final class WorkbenchWindowConfigurer implements
     @Override
 	public void setInitialSize(Point size) {
         initialSize = size;
-    }
-
-    @Override
-	public AbstractPresentationFactory getPresentationFactory() {
-		E4Util.unsupported("Not supported anymore"); //$NON-NLS-1$
-		return null;
-    }
-
-    @Override
-	public void setPresentationFactory(AbstractPresentationFactory factory) {
-		E4Util.unsupported("Not supported anymore"); //$NON-NLS-1$
     }
 
     /**

@@ -10,6 +10,7 @@
  *     Kiryl Kazakevich, Intel - bug 88359
  *     Tonny Madsen, RCP Company - bug 201055
  *     Mark Hoffmann <mark.hoffmann@web.de> - Fix for bug 84603
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440136
  *******************************************************************************/
 package org.eclipse.ui;
 
@@ -147,17 +148,6 @@ public interface IWorkbenchPreferenceConstants {
 	 * A named preference indicating the default workbench perspective.
 	 */
 	public static final String DEFAULT_PERSPECTIVE_ID = "defaultPerspectiveId"; //$NON-NLS-1$
-
-	/**
-	 * A named preference indicating the presentation factory to use for the
-	 * workbench look and feel.
-	 * 
-	 * @since 3.0
-	 * @deprecated The presentation API is no longer used and has no effect.
-	 *             Refer to the platform porting guide for further details.
-	 */
-	@Deprecated
-	public static final String PRESENTATION_FACTORY_ID = "presentationFactoryId"; //$NON-NLS-1$
 
 	/**
 	 * A named preference indicating where the perspective bar should be docked.

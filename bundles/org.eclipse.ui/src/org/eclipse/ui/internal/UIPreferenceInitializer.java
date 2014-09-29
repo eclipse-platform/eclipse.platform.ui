@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Kiryl Kazakevich, Intel - bug 88359
  *     Tonny Madsen, RCP Company - bug 201055
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440136
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -64,9 +65,6 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR,
 				false);
 
-		// Appearance / Presentation preferences
-		node.put(IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID,
-				IWorkbenchConstants.DEFAULT_PRESENTATION_ID);
 		node
 				.putBoolean(
 						IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,
