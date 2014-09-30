@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 428427
+ *     Lars Vogel <Lars.Vogel@vogell.com> - Bug 445444
  ******************************************************************************/
 package org.eclipse.e4.core.services.translation;
 
@@ -40,11 +41,6 @@ public abstract class TranslationService {
 	@Inject
 	@Named(LOCALE)
 	protected Locale locale;
-
-	@Inject
-	public TranslationService() {
-		// placeholder
-	}
 
 	/**
 	 * Translates the key from the contributor. If translation can not be found, the original key
