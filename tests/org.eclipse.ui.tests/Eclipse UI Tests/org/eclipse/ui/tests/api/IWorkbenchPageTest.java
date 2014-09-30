@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -322,7 +322,8 @@ public class IWorkbenchPageTest extends UITestCase {
 		}
 	}
 
-	/**	 * Test the VIEW_VISIBLE parameter for showView, opening the view in the
+	/**	
+	 * Test the VIEW_VISIBLE parameter for showView, opening the view in the
 	 * stack that does not contain the active view. Ensures that the created
 	 * view is not the active part but is the top part in its stack.
 	 */
@@ -344,6 +345,30 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(fActivePage.findView(MockViewPart.ID), stack[1]);
 
 		assertTrue(fActivePage.isPartVisible(createdPart));
+
+		assertEquals(activePart, fActivePage.getActivePart());
+	}
+
+	/**
+	 * Test the VIEW_ACTIVE parameter for showView, opening the view in the stack that does not
+	 * contain the active view. Ensures that the created view is not the active part but is the top
+	 * part in its stack.
+	 */
+	public void testView_ACTIVE2() throws PartInitException {
+		fActivePage.setPerspective(WorkbenchPlugin.getDefault().getPerspectiveRegistry().findPerspectiveWithId("org.eclipse.ui.tests.api.ViewPerspective"));
+
+		// create a part to be active
+		fActivePage.showView(MockViewPart.ID3);
+
+		IViewPart activePart= fActivePage.showView(MockViewPart.ID2, null, IWorkbenchPage.VIEW_ACTIVATE);
+
+		IViewPart[] stack= fActivePage.getViewStack(activePart);
+		assertEquals(2, stack.length);
+
+		assertEquals(activePart, stack[0]);
+		assertEquals(fActivePage.findView(MockViewPart.ID), stack[1]);
+
+		assertTrue(fActivePage.isPartVisible(activePart));
 
 		assertEquals(activePart, fActivePage.getActivePart());
 	}

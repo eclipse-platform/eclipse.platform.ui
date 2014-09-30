@@ -4429,8 +4429,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 
 			if (parent instanceof MPartStack) {
-				List<CompatibilityView> stack = new ArrayList<CompatibilityView>();
+				MStackElement selectedElement = ((MPartStack) parent).getSelectedElement();
+				final MUIElement topPart = selectedElement instanceof MPlaceholder ? ((MPlaceholder) selectedElement)
+						.getRef() : null;
 
+				List<CompatibilityView> stack = new ArrayList<CompatibilityView>();
 				for (Object child : parent.getChildren()) {
 					MPart siblingPart = child instanceof MPart ? (MPart) child
 							: (MPart) ((MPlaceholder) child).getRef();
@@ -4446,8 +4449,22 @@ public class WorkbenchPage implements IWorkbenchPage {
 				Collections.sort(stack, new Comparator<CompatibilityView>() {
 					@Override
 					public int compare(CompatibilityView o1, CompatibilityView o2) {
-						int pos1 = activationList.indexOf(o1.getModel());
-						int pos2 = activationList.indexOf(o2.getModel());
+						MPart model1 = o1.getModel();
+						MPart model2 = o2.getModel();
+
+						/*
+						 * WORKAROUND: Since we only have the activation list
+						 * and not a bingToTop list, we can't set/know the order
+						 * for inactive stacks. This workaround makes sure that
+						 * the topmost part is at least at the first position.
+						 */
+						if (model1 == topPart)
+							return Integer.MIN_VALUE;
+						if (model2 == topPart)
+							return Integer.MAX_VALUE;
+
+						int pos1 = activationList.indexOf(model1);
+						int pos2 = activationList.indexOf(model2);
 						if (pos1 == -1)
 							pos1 = Integer.MAX_VALUE;
 						if (pos2 == -1)
