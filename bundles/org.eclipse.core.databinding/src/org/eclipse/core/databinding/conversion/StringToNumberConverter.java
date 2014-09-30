@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Michael Scharf - bug 240562
  *     Matt Carter - bug 180392
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 445446
  ******************************************************************************/
 
 package org.eclipse.core.databinding.conversion;
@@ -31,7 +32,7 @@ import com.ibm.icu.text.NumberFormat;
  * @since 1.0
  */
 public class StringToNumberConverter extends NumberFormatConverter {
-	private Class toType;
+	private Class<?> toType;
 	/**
 	 * NumberFormat instance to use for conversion. Access must be synchronized.
 	 */
@@ -51,7 +52,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	/**
 	 * The boxed type of the toType;
 	 */
-	private final Class boxedType;
+	private final Class<?> boxedType;
 
 	private static final Integer MIN_INTEGER = new Integer(Integer.MIN_VALUE);
 	private static final Integer MAX_INTEGER = new Integer(Integer.MAX_VALUE);
@@ -75,7 +76,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	private static final Byte MIN_BYTE = new Byte(Byte.MIN_VALUE);
 	private static final Byte MAX_BYTE = new Byte(Byte.MAX_VALUE);
 	
-	static Class icuBigDecimal = null;
+	static Class<?> icuBigDecimal = null;
 	static Method icuBigDecimalScale = null;
 	static Method icuBigDecimalUnscaledValue = null;
 	
@@ -92,8 +93,8 @@ public class StringToNumberConverter extends NumberFormatConverter {
 		 */
 		try {
 			icuBigDecimal = Class.forName("com.ibm.icu.math.BigDecimal"); //$NON-NLS-1$
-			icuBigDecimalScale = icuBigDecimal.getMethod("scale", null); //$NON-NLS-1$
-			icuBigDecimalUnscaledValue = icuBigDecimal.getMethod("unscaledValue", null); //$NON-NLS-1$
+			icuBigDecimalScale = icuBigDecimal.getMethod("scale"); //$NON-NLS-1$
+			icuBigDecimalUnscaledValue = icuBigDecimal.getMethod("unscaledValue"); //$NON-NLS-1$
 /*			System.out.println("DEBUG: Full ICU4J support state: icuBigDecimal="+ //$NON-NLS-1$
 					(icuBigDecimal != null)+", icuBigDecimalScale="+(icuBigDecimalScale != null)+ //$NON-NLS-1$
 					", icuBigDecimalUnscaledValue="+(icuBigDecimalUnscaledValue != null)); //$NON-NLS-1$ */  
@@ -114,8 +115,8 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 *            a convenience that allows for the checking against one type
 	 *            rather than boxed and unboxed types
 	 */
-	private StringToNumberConverter(NumberFormat numberFormat, Class toType,
-			Number min, Number max, Class boxedType) {
+	private StringToNumberConverter(NumberFormat numberFormat, Class<?> toType,
+			Number min, Number max, Class<?> boxedType) {
 		super(String.class, toType, numberFormat);
 
 		this.toType = toType;
@@ -197,8 +198,8 @@ public class StringToNumberConverter extends NumberFormatConverter {
 			else if(icuBigDecimal != null && icuBigDecimal.isInstance(n)) {
 				try {
 					// Get ICU BigDecimal value and use to construct java.math.BigDecimal
-					int scale = ((Integer) icuBigDecimalScale.invoke(n, null)).intValue();
-					BigInteger unscaledValue = (BigInteger) icuBigDecimalUnscaledValue.invoke(n, null);
+					int scale = ((Integer) icuBigDecimalScale.invoke(n)).intValue();
+					BigInteger unscaledValue = (BigInteger) icuBigDecimalUnscaledValue.invoke(n);
 					return new java.math.BigDecimal(unscaledValue, scale);
 				} catch(IllegalAccessException e) {
 					throw new IllegalArgumentException("Error (IllegalAccessException) converting BigDecimal using ICU"); //$NON-NLS-1$

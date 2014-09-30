@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Brad Reynolds - bugs 164268, 171616
  *     Mike Evans - bug 217558
  *     Matthew Hall - bugs 221351, 246625, 260329, 264619
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 445446
  *******************************************************************************/
 
 package org.eclipse.core.tests.databinding.beans;
@@ -39,7 +40,7 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	Bean[] elements = null;
 	Bean model = null;
-	Class elementType = null;
+	Class<?> elementType = null;
 
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -64,13 +65,13 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testListFactory() throws Exception {
-		IObservableFactory factory = BeansObservables.listFactory(Realm
-				.getDefault(), "list", elementType);
+		IObservableFactory factory = BeansObservables.listFactory(
+				Realm.getDefault(), "list", elementType);
 		IObservableList list = (IObservableList) factory
 				.createObservable(model);
 
-		assertTrue("elements of the list", Arrays.equals(elements, list
-				.toArray(new Bean[list.size()])));
+		assertTrue("elements of the list",
+				Arrays.equals(elements, list.toArray(new Bean[list.size()])));
 		assertEquals("element type", elementType, list.getElementType());
 	}
 
@@ -81,8 +82,8 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 				"list", elementType);
 
 		assertEquals("element type", elementType, list.getElementType());
-		assertTrue("elements of list", Arrays.equals(elements, list
-				.toArray(new Bean[list.size()])));
+		assertTrue("elements of list",
+				Arrays.equals(elements, list.toArray(new Bean[list.size()])));
 	}
 
 	public void testObserveDetailValueIBeanObservable() throws Exception {
@@ -95,8 +96,8 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 		assertTrue(detailValue instanceof IBeanObservable);
 
 		BeanObservableValueDecorator beanObservable = (BeanObservableValueDecorator) detailValue;
-		assertEquals("property descriptor", Bean.class.getMethod("getValue",
-				null), beanObservable.getPropertyDescriptor().getReadMethod());
+		assertEquals("property descriptor", Bean.class.getMethod("getValue"),
+				beanObservable.getPropertyDescriptor().getReadMethod());
 		assertEquals("observed", bean, beanObservable.getObserved());
 		assertTrue("delegate", beanObservable.getDecorated().getClass()
 				.getName().endsWith("DetailObservableValue"));
@@ -108,8 +109,8 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 		IObservableValue detailValue = BeansObservables.observeDetailValue(
 				parent, "value", String.class);
 
-		assertNull("property descriptor", ((IBeanObservable) detailValue)
-				.getPropertyDescriptor());
+		assertNull("property descriptor",
+				((IBeanObservable) detailValue).getPropertyDescriptor());
 	}
 
 	public void testObservableDetailListIBeanObservable() throws Exception {
@@ -123,8 +124,8 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 				detailList instanceof IBeanObservable);
 
 		BeanObservableListDecorator beanObservable = (BeanObservableListDecorator) detailList;
-		assertEquals("property descriptor", Bean.class.getMethod("getList",
-				null), beanObservable.getPropertyDescriptor().getReadMethod());
+		assertEquals("property descriptor", Bean.class.getMethod("getList"),
+				beanObservable.getPropertyDescriptor().getReadMethod());
 		assertEquals("observed", bean, beanObservable.getObserved());
 
 		// DetailObservableList is package level we can do a straight instanceof
@@ -139,8 +140,8 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 		IObservableList detailList = BeansObservables.observeDetailList(parent,
 				"list", Bean.class);
 
-		assertNull("property descriptor", ((IBeanObservable) detailList)
-				.getPropertyDescriptor());
+		assertNull("property descriptor",
+				((IBeanObservable) detailList).getPropertyDescriptor());
 	}
 
 	public void testObservableDetailSetIBeanObservable() throws Exception {
@@ -154,9 +155,8 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 				detailSet instanceof IBeanObservable);
 
 		BeanObservableSetDecorator beanObservable = (BeanObservableSetDecorator) detailSet;
-		assertEquals("property descriptor", Bean.class
-				.getMethod("getSet", null), beanObservable
-				.getPropertyDescriptor().getReadMethod());
+		assertEquals("property descriptor", Bean.class.getMethod("getSet"),
+				beanObservable.getPropertyDescriptor().getReadMethod());
 		assertEquals("observed", bean, beanObservable.getObserved());
 
 		// DetailObservableSet is package level we can't do a straight
@@ -171,21 +171,21 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 		IObservableSet detailSet = BeansObservables.observeDetailSet(parent,
 				"set", Bean.class);
 
-		assertNull("property descriptor", ((IBeanObservable) detailSet)
-				.getPropertyDescriptor());
+		assertNull("property descriptor",
+				((IBeanObservable) detailSet).getPropertyDescriptor());
 	}
 
 	public void testObserveSetElementType() throws Exception {
 		Bean bean = new Bean();
-		IObservableSet observableSet = BeansObservables.observeSet(Realm
-				.getDefault(), bean, "set", Bean.class);
+		IObservableSet observableSet = BeansObservables.observeSet(
+				Realm.getDefault(), bean, "set", Bean.class);
 		assertEquals(Bean.class, observableSet.getElementType());
 	}
 
 	public void testObserveSetNonInferredElementType() throws Exception {
 		Bean bean = new Bean();
-		IObservableSet observableSet = BeansObservables.observeSet(Realm
-				.getDefault(), bean, "set");
+		IObservableSet observableSet = BeansObservables.observeSet(
+				Realm.getDefault(), bean, "set");
 		assertEquals(Object.class, observableSet.getElementType());
 	}
 
@@ -196,10 +196,10 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	 */
 	public void testHandleExternalChangeToProperty() {
 		Bean targetBean = new Bean();
-		IObservableList modelObservable = BeansObservables.observeList(Realm
-				.getDefault(), model, "array", elementType);
-		IObservableList targetObservable = BeansObservables.observeList(Realm
-				.getDefault(), targetBean, "array", elementType);
+		IObservableList modelObservable = BeansObservables.observeList(
+				Realm.getDefault(), model, "array", elementType);
+		IObservableList targetObservable = BeansObservables.observeList(
+				Realm.getDefault(), targetBean, "array", elementType);
 
 		DataBindingContext context = new DataBindingContext(Realm.getDefault());
 		try {
