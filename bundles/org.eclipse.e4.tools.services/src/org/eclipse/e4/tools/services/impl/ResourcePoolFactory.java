@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.e4.tools.services.impl;
 
@@ -18,7 +18,7 @@ import org.eclipse.e4.tools.services.impl.ResourceService.ResourcePool;
 public class ResourcePoolFactory extends ContextFunction {
 
 	@Override
-	public Object compute(IEclipseContext context) {
+	public Object compute(IEclipseContext context, String contextKey) {
 		return ContextInjectionFactory.make(ResourcePool.class, context);
 	}
 

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.e4.tools.services.impl;
 
@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.tools.services.IResourceProviderService;
 import org.eclipse.e4.tools.services.IResourceService;
+import org.eclipse.e4.tools.services.ToolsServicesActivator;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
@@ -45,30 +46,33 @@ public class ResourceService implements IResourceService {
 	}
 
 	static class PooledResource<T extends Resource> implements
-			IPooledResource<T> {
-		private Display display;
+		IPooledResource<T> {
+		private final Display display;
 		private int count;
 		private T resource;
 		private String id;
 		private ResourceService resourceService;
 
 		PooledResource(Display display, ResourceService resourceService,
-				String id, T resource) {
+			String id, T resource) {
 			this.display = display;
 			this.id = id;
 			this.count = 1;
 			this.resourceService = resourceService;
 			this.resource = resource;
 		}
-		
+
+		@Override
 		public String getId() {
 			return id;
 		}
 
+		@Override
 		public T getResource() {
 			return resource;
 		}
 
+		@Override
 		public void dispose() {
 			this.count--;
 			if (this.count == 0) {
@@ -89,24 +93,25 @@ public class ResourceService implements IResourceService {
 		private List<IPooledResource<Image>> pooledImages = new ArrayList<IPooledResource<Image>>();
 		private List<IPooledResource<Font>> pooledFonts = new ArrayList<IPooledResource<Font>>();
 		private List<IPooledResource<Color>> pooledColors = new ArrayList<IPooledResource<Color>>();
-		private Display display;
+		private final Display display;
 
 		@Inject
 		public ResourcePool(IResourceService resourceService, Display display) {
 			this.display = display;
-			this.resourceService = (ResourceService) resourceService;
+			this.resourceService = resourceService;
 		}
 
+		@Override
 		public Image getImage(String key) throws CoreException {
 			if (resourceService == null) {
 				throw new CoreException(
-						new Status(IStatus.ERROR,
-								"org.eclipse.e4.tools.services",
-								"The pool is disposed"));
+					new Status(IStatus.ERROR,
+						ToolsServicesActivator.PLUGIN_ID,
+						Messages.ResourceService_PoolDisposed));
 			}
 			IPooledResource<Image> image = null;
 
-			for (IPooledResource<Image> img : pooledImages) {
+			for (final IPooledResource<Image> img : pooledImages) {
 				if (img.getId().equals(key)) {
 					image = img;
 				}
@@ -115,87 +120,93 @@ public class ResourceService implements IResourceService {
 				image = resourceService.getImage(display, key);
 				pooledImages.add(image);
 			}
-			
+
 			return image.getResource();
 		}
 
+		@Override
 		public Font getFont(String key) throws CoreException {
 			if (resourceService == null) {
 				throw new CoreException(
-						new Status(IStatus.ERROR,
-								"org.eclipse.e4.tools.services",
-								"The pool is disposed"));
+					new Status(IStatus.ERROR,
+						ToolsServicesActivator.PLUGIN_ID,
+						Messages.ResourceService_PoolDisposed));
 			}
-			
+
 			IPooledResource<Font> font = null;
-			for (IPooledResource<Font> fon : pooledFonts) {
+			for (final IPooledResource<Font> fon : pooledFonts) {
 				if (fon.getId().equals(key)) {
 					font = fon;
 				}
 			}
-			if( font == null ) {
+			if (font == null) {
 				font = resourceService.getFont(display, key);
-				pooledFonts.add(font);				
+				pooledFonts.add(font);
 			}
 			return font.getResource();
 		}
 
+		@Override
 		public Color getColor(String key) throws CoreException {
 			if (resourceService == null) {
 				throw new CoreException(
-						new Status(IStatus.ERROR,
-								"org.eclipse.e4.tools.services",
-								"The pool is disposed"));
+					new Status(IStatus.ERROR,
+						ToolsServicesActivator.PLUGIN_ID,
+						Messages.ResourceService_PoolDisposed));
 			}
 			IPooledResource<Color> color = null;
-			
-			for (IPooledResource<Color> col : pooledColors) {
+
+			for (final IPooledResource<Color> col : pooledColors) {
 				if (col.getId().equals(key)) {
 					color = col;
 				}
 			}
-			
-			if( color == null ) {
+
+			if (color == null) {
 				color = resourceService.getColor(display,
-						key);
-				pooledColors.add(color);				
+					key);
+				pooledColors.add(color);
 			}
 			return color.getResource();
 		}
 
+		@Override
 		public Image getImageUnchecked(String key) {
 			try {
 				return getImage(key);
-			} catch (CoreException e) {
+			} catch (final CoreException e) {
 				return null;
 			}
 		}
 
+		@Override
 		public Font getFontUnchecked(String key) {
 			try {
 				return getFont(key);
-			} catch (CoreException e) {
+			} catch (final CoreException e) {
 				return null;
 			}
 		}
 
+		@Override
 		public Color getColorUnchecked(String key) {
 			try {
 				return getColor(key);
-			} catch (CoreException e) {
+			} catch (final CoreException e) {
 				return null;
 			}
 		}
 
+		@Override
 		@PreDestroy
 		public void dispose() {
-			for (IPooledResource<Image> img : pooledImages) {
+			for (final IPooledResource<Image> img : pooledImages) {
 				img.dispose();
 			}
-			for (IPooledResource<Font> font : pooledFonts) {
+			for (final IPooledResource<Font> font : pooledFonts) {
 				font.dispose();
 			}
-			for (IPooledResource<Color> col : pooledColors) {
+			for (final IPooledResource<Color> col : pooledColors) {
 				col.dispose();
 			}
 			resourceService = null;
@@ -232,17 +243,17 @@ public class ResourceService implements IResourceService {
 		}
 	}
 
-	private Map<Display, DisplayPool> displayPool = new HashMap<Display, ResourceService.DisplayPool>();
+	private final Map<Display, DisplayPool> displayPool = new HashMap<Display, ResourceService.DisplayPool>();
 	// private Map<String, IResourceProviderService> imagekey2providers = new
 	// HashMap<String, IResourceProviderService>();
 	// private Map<String, IResourceProviderService> fontkey2providers = new
 	// HashMap<String, IResourceProviderService>();
 	// private Map<String, IResourceProviderService> colorkey2providers = new
 	// HashMap<String, IResourceProviderService>();
-	private BundleContext context;
+	private final BundleContext context;
 
 	public ResourceService() {
-		Bundle b = FrameworkUtil.getBundle(ResourceService.class);
+		final Bundle b = FrameworkUtil.getBundle(ResourceService.class);
 		context = b.getBundleContext();
 	}
 
@@ -258,7 +269,7 @@ public class ResourceService implements IResourceService {
 
 	@SuppressWarnings("unchecked")
 	private <R extends Resource> PooledResource<R> loadResource(
-			Display display, String key, Type type) {
+		Display display, String key, Type type) {
 		DisplayPool p = displayPool.get(display);
 		PooledResource<R> resource = null;
 
@@ -276,7 +287,7 @@ public class ResourceService implements IResourceService {
 			resource.count++;
 		} else {
 			resource = new PooledResource<R>(display, this, key,
-					(R) lookupResource(display, key, type));
+				(R) lookupResource(display, key, type));
 
 			if (p == null) {
 				p = new DisplayPool();
@@ -300,37 +311,37 @@ public class ResourceService implements IResourceService {
 	private <R> R lookupResource(Display display, String key, Type type) {
 
 		if (type == Type.IMAGE) {
-			IResourceProviderService provider = lookupOSGI(key);
+			final IResourceProviderService provider = lookupOSGI(key);
 			if (provider != null) {
 				return (R) provider.getImage(display, key);
 			}
 		} else if (type == Type.COLOR) {
-			IResourceProviderService provider = lookupOSGI(key);
+			final IResourceProviderService provider = lookupOSGI(key);
 			if (provider != null) {
 				return (R) provider.getColor(display, key);
 			}
 
 		} else {
-			IResourceProviderService provider = lookupOSGI(key);
+			final IResourceProviderService provider = lookupOSGI(key);
 			if (provider != null) {
 				return (R) provider.getFont(display, key);
 			}
 		}
-		throw new IllegalArgumentException("No provider known for '" + key
-				+ "'.");
+		throw new IllegalArgumentException(Messages.ResourceService_NoProvider + key
+			+ "'."); //$NON-NLS-1$
 	}
 
 	private IResourceProviderService lookupOSGI(String key) {
 		try {
-			Collection<ServiceReference<IResourceProviderService>> refs = context
-					.getServiceReferences(IResourceProviderService.class, "("
-							+ key + "=*)");
+			final Collection<ServiceReference<IResourceProviderService>> refs = context
+				.getServiceReferences(IResourceProviderService.class, "(" //$NON-NLS-1$
+					+ key + "=*)"); //$NON-NLS-1$
 			if (!refs.isEmpty()) {
-				ServiceReference<IResourceProviderService> ref = refs
-						.iterator().next();
+				final ServiceReference<IResourceProviderService> ref = refs
+					.iterator().next();
 				return context.getService(ref);
 			}
-		} catch (InvalidSyntaxException e) {
+		} catch (final InvalidSyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -363,26 +374,32 @@ public class ResourceService implements IResourceService {
 	// }
 	// }
 
+	@Override
 	public PooledResource<Image> getImage(Display display, String key) {
 		return loadResource(display, key, Type.IMAGE);
 	}
 
+	@Override
 	public PooledResource<Color> getColor(Display display, String key) {
 		return loadResource(display, key, Type.COLOR);
 	}
 
+	@Override
 	public PooledResource<Font> getFont(Display display, String key) {
 		return loadResource(display, key, Type.FONT);
 	}
 
+	@Override
 	public IDiposeableResourcePool getResourcePool(Display display) {
 		return new ResourcePool(this, display);
 	}
 
+	@Override
 	public IResourcePool getControlPool(Control control) {
 		final ResourcePool pool = new ResourcePool(this, control.getDisplay());
 		control.addDisposeListener(new DisposeListener() {
 
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				pool.dispose();
 			}
