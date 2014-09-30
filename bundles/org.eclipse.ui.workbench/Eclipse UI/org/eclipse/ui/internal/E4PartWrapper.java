@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 20014 David Berger <david.berger@logicals.com> and others.
+ * Copyright (c) 2014 David Berger <david.berger@logicals.com> and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,21 +26,10 @@ public class E4PartWrapper extends ViewPart {
 		setPartName(part.getLabel());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt
-	 * .widgets.Composite)
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		if (wrappedPart.getObject() != null && wrappedPart.getContext() != null)
