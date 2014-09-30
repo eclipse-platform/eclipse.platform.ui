@@ -40,8 +40,8 @@ public class ProjectVariableProviderManager {
 				String classAttribute = "class"; //$NON-NLS-1$
 				if (element.getAttribute(classAttribute) != null)
 					provider = (PathVariableResolver) element.createExecutableExtension(classAttribute);
-			} catch (CoreException t) {
-				t.printStackTrace();
+			} catch (CoreException e) {
+				Policy.log(e);
 			}
 			if (name == null)
 				fail(NLS.bind(Messages.mapping_invalidDef, extension.getUniqueIdentifier()));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IFilterMatcherDescriptor;
 import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
 import org.eclipse.core.runtime.CoreException;
@@ -75,8 +76,7 @@ public class FilterDescriptor implements IFilterMatcherDescriptor {
 		try {
 			return (AbstractFileInfoMatcher) element.createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Policy.log(e);
 			return null;
 		}
 	}
