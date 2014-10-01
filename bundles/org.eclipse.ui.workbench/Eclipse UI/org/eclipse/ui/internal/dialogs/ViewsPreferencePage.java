@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Erik Chou <ekchou@ymail.com> - Bug 425962
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 445664
  *******************************************************************************/
 
 package org.eclipse.ui.internal.dialogs;
@@ -139,7 +140,6 @@ public class ViewsPreferencePage extends PreferencePage implements
 				} else {
 					themeComboDecorator.hide();
 				}
-				engine.setTheme(selection, false);
 				try {
 					((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY))
 							.setSelection(selection);
