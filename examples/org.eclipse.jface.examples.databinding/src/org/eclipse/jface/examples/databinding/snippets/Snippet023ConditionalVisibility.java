@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class Snippet023ConditionalVisibility {
 	public static void main(String[] args) {

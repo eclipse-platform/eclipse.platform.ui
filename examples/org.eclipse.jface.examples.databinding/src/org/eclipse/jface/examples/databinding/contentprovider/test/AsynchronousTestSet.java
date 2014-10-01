@@ -27,13 +27,13 @@ import org.eclipse.swt.widgets.Display;
  * set are randomly generated Integers. Whenever the "recompute" method is
  * called, the set will spin off a job that sleeps for a period of time and then
  * randomly adds and removes elements from the set.
- * 
+ *
  * <p>
  * This simulates a set that wraps a database query or network communication.
  * These would follow the same pattern (report the set as "stale", perform some
  * slow operation, then make changes to the set).
  * </p>
- * 
+ *
  * @since 1.0
  */
 public class AsynchronousTestSet extends ObservableSet {

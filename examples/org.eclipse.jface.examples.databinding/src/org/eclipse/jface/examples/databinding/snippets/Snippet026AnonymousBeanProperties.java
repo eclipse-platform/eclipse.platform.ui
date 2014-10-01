@@ -53,7 +53,7 @@ import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class Snippet026AnonymousBeanProperties {
 	private ComboViewer statusViewer;

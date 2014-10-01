@@ -46,13 +46,13 @@ public class ModelObject {
 		propertyChangeSupport.firePropertyChange(propertyName, oldValue,
 				newValue);
 	}
-	
+
 	protected void firePropertyChange(String propertyName, int oldValue,
 			int newValue) {
 		propertyChangeSupport.firePropertyChange(propertyName, oldValue,
 				newValue);
 	}
-	
+
 	protected void firePropertyChange(String propertyName, boolean oldValue,
 			boolean newValue) {
 		propertyChangeSupport.firePropertyChange(propertyName, oldValue,
@@ -78,5 +78,5 @@ public class ModelObject {
 		return newList.toArray((Object[]) Array.newInstance(array.getClass()
 				.getComponentType(), newList.size()));
 	}
-	
+
 }

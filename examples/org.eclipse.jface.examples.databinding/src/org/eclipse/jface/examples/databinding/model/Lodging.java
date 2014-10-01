@@ -32,7 +32,7 @@ public class Lodging extends ModelObject {
 		name = string;
 		firePropertyChange("name",oldValue,name);
 	}
-	
+
 	public String getName() {
 		return name;
 	}

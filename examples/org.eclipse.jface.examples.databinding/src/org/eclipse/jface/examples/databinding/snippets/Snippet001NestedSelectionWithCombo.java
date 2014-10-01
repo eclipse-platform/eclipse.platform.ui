@@ -93,7 +93,7 @@ public class Snippet001NestedSelectionWithCombo {
 	}
 
 	// The data model class. This is normally a persistent class of some sort.
-	// 
+	//
 	// This example implements full JavaBeans bound properties so that changes
 	// to instances of this class will automatically be propogated to the UI.
 	public static class Person extends AbstractModelObject {
@@ -135,7 +135,7 @@ public class Snippet001NestedSelectionWithCombo {
 	// The ViewModel is responsible for getting the objects to edit from the
 	// DAO. Since this snippet doesn't have any persistent objects to
 	// retrieve, this ViewModel just instantiates some objects to edit.
-	// 
+	//
 	// This ViewModel also implements JavaBean bound properties.
 	static class ViewModel extends AbstractModelObject {
 		// The model to bind

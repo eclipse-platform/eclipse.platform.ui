@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Snippet that demostrates a simple use case using ComputedValue to format a
  * name as the user enters first and last name.
- * 
+ *
  * @since 3.2
  */
 public class Snippet008ComputedValue {
@@ -89,7 +89,7 @@ public class Snippet008ComputedValue {
 	 * queried. It then exposes those observables and <code>ComputedValue</code>
 	 * can listen to changes in those objects and react accordingly.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	static class FormattedName extends ComputedValue {
@@ -131,7 +131,7 @@ public class Snippet008ComputedValue {
 
 	/**
 	 * Composite that creates the UI.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	static class UI extends Composite {

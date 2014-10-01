@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 1.1
- * 
+ *
  */
 public class Snippet006Spreadsheet {
 

@@ -30,10 +30,10 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Ensures text widget has the format specified by the edit mask.  Edit masks
  * are currently defined as follows:
- * 
- * The following characters are reserved words that match specific kinds of 
+ *
+ * The following characters are reserved words that match specific kinds of
  * characters:
- * 
+ *
  * # - digits 0-9
  * A - uppercase A-Z
  * a - upper or lowercase a-z, A-Z
@@ -42,36 +42,36 @@ import org.eclipse.swt.widgets.Text;
  * All other characters are literals.  The above characters may be turned into
  * literals by preceeding them with a backslash.  Use two backslashes to
  * denote a backslash.
- * 
+ *
  * Examples:
- * 
- * (###) ###-####  U.S. phone number 
+ *
+ * (###) ###-####  U.S. phone number
  * ###-##-####     U.S. Social Security number
  * \\\###          A literal backslash followed by a literal pound symbol followed by two digits
- * 
+ *
  * Ideas for future expansion:
- * 
+ *
  * Quantifiers as postfix modifiers to a token.  ie:
- * 
+ *
  * #{1, 2}/#{1,2}/####   MM/DD/YYYY date format allowing 1 or 2 digit month or day
- * 
+ *
  * Literals may only be quantified as {0,1} which means that they only appear
  * if placeholders on both sides of the literal have data.  This will be used
  * along with:
- * 
+ *
  * Right-to-left support for numeric entry.  When digits are being entered and
  * a decimal point is present in the mask, digits to the left of the decimal
  * are entered right-to-left but digits to the right of the decimal left-to-right.
  * This might need to be a separate type of edit mask. (NumericMask, maybe?)
- * 
+ *
  * Example:
- * 
+ *
  * $#{0,3},{0,1}#{0,3}.#{0,2}  ie: $123,456.12 or $12.12 or $1,234.12 or $123.12
  *
- * 
- * Here's the basic idea of how the current implementation works (the actual 
+ *
+ * Here's the basic idea of how the current implementation works (the actual
  * implementation is slightly more abstracted and complicated than this):
- * 
+ *
  * We always let the verify event pass if the user typed a new character or selected/deleted anything.
  * During the verify event, we post an async runnable.
  * Inside that async runnable, we:
@@ -82,11 +82,11 @@ import org.eclipse.swt.widgets.Text;
  *   - Insert literal characters back in the correct positions
  *   - setText() the resulting string
  *   - reset the selection to the correct location
- *   
+ *
  * @since 3.3
  */
 public class EditMask {
-	
+
 	public static final String FIELD_TEXT = "text";
 	public static final String FIELD_RAW_TEXT = "rawText";
 	public static final String FIELD_COMPLETE = "complete";
@@ -94,31 +94,31 @@ public class EditMask {
 	protected EditMaskParser editMaskParser;
 	private boolean fireChangeOnKeystroke = true;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-	
+
 	protected String oldValidRawText = "";
-	protected String oldValidText = ""; 
-	
+	protected String oldValidText = "";
+
 	/**
 	 * Creates an instance that wraps around a text widget and manages its<br>
 	 * formatting.
-	 * 
+	 *
 	 * @param text
 	 * @param editMask
 	 */
 	public EditMask(Text text) {
 		this.text = text;
 	}
-	
+
 	/**
 	 * @return the underlying Text control used by EditMask
 	 */
 	public Text getControl() {
 		return this.text;
 	}
-	
+
 	/**
 	 * Set the edit mask string on the edit mask control.
-	 * 
+	 *
 	 * @param editMask The edit mask string
 	 */
 	public void setMask(String editMask) {
@@ -158,11 +158,11 @@ public class EditMask {
 		}
 		return text.getText();
 	}
-	
+
 	/**
 	 * setRawText takes raw text as a parameter but formats it before
 	 * setting the text in the Text control.
-	 * 
+	 *
 	 * @param string the raw (unformatted) text
 	 */
 	public void setRawText(String string)  {
@@ -192,7 +192,7 @@ public class EditMask {
 		}
 		return text.getText();
 	}
-	
+
 	/**
 	 * @return true if the field is complete according to the mask; false otherwise
 	 */
@@ -202,16 +202,16 @@ public class EditMask {
 		}
 		return editMaskParser.isComplete();
 	}
-	
+
 	/**
-	 * Returns the placeholder character.  The placeholder 
-	 * character must be a different character than any character that is 
+	 * Returns the placeholder character.  The placeholder
+	 * character must be a different character than any character that is
 	 * allowed as input anywhere in the edit mask.  For example, if the edit
-	 * mask permits spaces to be used as input anywhere, the placeholder 
+	 * mask permits spaces to be used as input anywhere, the placeholder
 	 * character must be something other than a space character.
 	 * <p>
 	 * The space character is the default placeholder character.
-	 * 
+	 *
 	 * @return the placeholder character
 	 */
 	public char getPlaceholder() {
@@ -220,16 +220,16 @@ public class EditMask {
 		}
 		return editMaskParser.getPlaceholder();
 	}
-	
+
 	/**
-	 * Sets the placeholder character for the edit mask.  The placeholder 
-	 * character must be a different character than any character that is 
+	 * Sets the placeholder character for the edit mask.  The placeholder
+	 * character must be a different character than any character that is
 	 * allowed as input anywhere in the edit mask.  For example, if the edit
-	 * mask permits spaces to be used as input anywhere, the placeholder 
+	 * mask permits spaces to be used as input anywhere, the placeholder
 	 * character must be something other than a space character.
 	 * <p>
 	 * The space character is the default placeholder character.
-	 * 
+	 *
 	 * @param placeholder The character to use as a placeholder
 	 */
 	public void setPlaceholder(char placeholder) {
@@ -245,7 +245,7 @@ public class EditMask {
 	 * Indicates if change notifications will be fired after every keystroke
 	 * that affects the value of the rawText or only when the value is either
 	 * complete or empty.
-	 * 
+	 *
 	 * @return true if every change (including changes from one invalid state to
 	 *         another) triggers a change event; false if only empty or valid
 	 *         values trigger a change event.  Defaults to false.
@@ -258,7 +258,7 @@ public class EditMask {
 	 * Sets if change notifications will be fired after every keystroke that
 	 * affects the value of the rawText or only when the value is either
 	 * complete or empty.
-	 * 
+	 *
 	 * @param fireChangeOnKeystroke
 	 *            true if every change (including changes from one invalid state
 	 *            to another) triggers a change event; false if only empty or
@@ -270,7 +270,7 @@ public class EditMask {
 
 	/**
 	 * JavaBeans boilerplate code...
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -279,7 +279,7 @@ public class EditMask {
 
 	/**
 	 * JavaBeans boilerplate code...
-	 * 
+	 *
 	 * @param propertyName
 	 * @param listener
 	 */
@@ -290,7 +290,7 @@ public class EditMask {
 
 	/**
 	 * JavaBeans boilerplate code...
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
@@ -299,7 +299,7 @@ public class EditMask {
 
 	/**
 	 * JavaBeans boilerplate code...
-	 * 
+	 *
 	 * @param propertyName
 	 * @param listener
 	 */
@@ -327,31 +327,31 @@ public class EditMask {
 	protected int selection = 0;
 	protected String oldRawText = "";
    protected boolean replacedSelectedText = false;
-	
+
 	private VerifyListener verifyListener = new VerifyListener() {
 		@Override
 		public void verifyText(VerifyEvent e) {
          // If the edit mask is already full, don't let the user type
          // any new characters
          if (editMaskParser.isComplete() && // should eventually be .isFull() to account for optional characters
-               e.start == e.end && 
-               e.text.length() > 0) 
+               e.start == e.end &&
+               e.text.length() > 0)
          {
             e.doit=false;
             return;
          }
-         
+
 			oldSelection = selection;
 			Point selectionRange = text.getSelection();
          selection = selectionRange.x;
-         
+
 			if (!updating) {
    			replacedSelectedText = false;
    			if (selectionRange.y - selectionRange.x > 0 && e.text.length() > 0) {
    			   replacedSelectedText = true;
    			}
             // If the machine is loaded down (ie: spyware, malware), we might
-            // get another keystroke before asyncExec can process, so we use 
+            // get another keystroke before asyncExec can process, so we use
             // greedyExec instead.
             SWTUtil.greedyExec(Display.getCurrent(), updateTextField);
 //				Display.getCurrent().asyncExec(updateTextField);
@@ -366,11 +366,11 @@ public class EditMask {
 			try {
 				if (!text.isDisposed()) {
 					Boolean oldIsComplete = new Boolean(editMaskParser.isComplete());
-				
+
 					editMaskParser.setInput(text.getText());
 					text.setText(editMaskParser.getFormattedResult());
 					String newRawText = editMaskParser.getRawResult();
-				
+
 					updateSelectionPosition(newRawText);
 					firePropertyChangeEvents(oldIsComplete, newRawText);
 				}
@@ -384,7 +384,7 @@ public class EditMask {
          // Adjust the selection
          if (isInsertingNewCharacter(newRawText) || replacedSelectedText) {
             // Find the position after where the new character was actually inserted
-            int selectionDelta = 
+            int selectionDelta =
                editMaskParser.getNextInputPosition(oldSelection)
                - oldSelection;
             if (selectionDelta == 0) {
@@ -393,18 +393,18 @@ public class EditMask {
             }
             selection += selectionDelta;
          }
-         
+
 			// Did we just type something that was accepted by the mask?
 			if (!newRawText.equals(oldRawText)) { // yep
-            
+
             // If the user hits <end>, bounce them back to the end of their actual input
 				int firstIncompletePosition = editMaskParser.getFirstIncompleteInputPosition();
 				if (firstIncompletePosition > 0 && selection > firstIncompletePosition)
 					selection = firstIncompletePosition;
 				text.setSelection(new Point(selection, selection));
-            
+
 			} else { // nothing was accepted by the mask
-            
+
 				// Either we backspaced over a literal or we typed an illegal character
 				if (selection > oldSelection) { // typed an illegal character; backup
 					text.setSelection(new Point(selection-1, selection-1));
@@ -434,7 +434,7 @@ public class EditMask {
 			}
 		}
 	};
-	
+
 	private FocusListener focusListener = new FocusAdapter() {
 		@Override
 		public void focusGained(FocusEvent e) {
@@ -442,7 +442,7 @@ public class EditMask {
 			text.setSelection(selection, selection);
 		}
 	};
-	
+
 	private DisposeListener disposeListener = new DisposeListener() {
 		@Override
 		public void widgetDisposed(DisposeEvent e) {

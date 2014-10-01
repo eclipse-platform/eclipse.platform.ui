@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class Snippet029TreeViewerMultiListProperty {
 	protected Shell shell;
@@ -43,7 +43,7 @@ public class Snippet029TreeViewerMultiListProperty {
 
 	/**
 	 * Launch the application
-	 * 
+	 *
 	 * @param args
 	 */
 	public static void main(String[] args) {

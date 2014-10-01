@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Shell;
  * Tests UpdatableTreeContentProvider and DirtyIndicationLabelProvider. Creates
  * a tree containing three randomly-generated sets of integers, and one node
  * that contains the union of the other sets.
- * 
+ *
  * @since 3.2
  */
 public class TreeContentProviderTest {
@@ -95,7 +95,7 @@ public class TreeContentProviderTest {
 		shell.addDisposeListener(new DisposeListener() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
 			 */
 			@Override
@@ -106,7 +106,7 @@ public class TreeContentProviderTest {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected void dispose() {
 		set1.dispose();

@@ -21,9 +21,9 @@ import org.eclipse.jface.examples.databinding.mask.EditMaskParseException;
 public class EditMaskParser {
 	private EditMaskLexerAndToken[] expectedTokens;
 	private char placeholder = ' ';
-	
+
 	/**
-	 * @param editMask The complete edit mask 
+	 * @param editMask The complete edit mask
 	 * @throws EditMaskParseException
 	 */
 	public EditMaskParser(String editMask) throws EditMaskParseException {
@@ -36,7 +36,7 @@ public class EditMaskParser {
 		}
 		expectedTokens = (EditMaskLexerAndToken[]) tokens.toArray(new EditMaskLexerAndToken[tokens.size()]);
 	}
-	
+
 	/**
 	 * @param input the user input which may or may not be in valid format
 	 */
@@ -48,8 +48,8 @@ public class EditMaskParser {
 		int inputPosition = 0;
 		while (inputPosition < input.length() && tokenPosition < expectedTokens.length) {
 			while (tokenPosition < expectedTokens.length &&
-					(expectedTokens[tokenPosition].isComplete() || 
-					 expectedTokens[tokenPosition].isReadOnly())) 
+					(expectedTokens[tokenPosition].isComplete() ||
+					 expectedTokens[tokenPosition].isReadOnly()))
 			{
 				++tokenPosition;
 			}
@@ -62,7 +62,7 @@ public class EditMaskParser {
 			}
 		}
 	}
-	
+
 	/**
 	 * @return the formatted version of the user input
 	 */
@@ -77,7 +77,7 @@ public class EditMaskParser {
 		}
 		return result.toString();
 	}
-	
+
 	/**
 	 * @return the user input with all literals removed
 	 */
@@ -107,7 +107,7 @@ public class EditMaskParser {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * @param startingAt The current index within the user input string
 	 * @return The first non-read-only index greater than or equal to startingAt
@@ -118,7 +118,7 @@ public class EditMaskParser {
 		}
 		return startingAt;
 	}
-	
+
 	/**
 	 * @return the first input position whose token is not marked as complete.  Returns -1 if all are complete
 	 */

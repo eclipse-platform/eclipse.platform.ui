@@ -22,7 +22,7 @@ public class Transportation extends ModelObject {
 		arrivalTime = string;
 		firePropertyChange("arrivaltime",oldValue,string);
 	}
-	
+
 	public String getArrivalTime(){
 		return arrivalTime;
 	}

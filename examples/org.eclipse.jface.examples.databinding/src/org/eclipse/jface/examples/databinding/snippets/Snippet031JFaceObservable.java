@@ -55,7 +55,7 @@ public class Snippet031JFaceObservable {
 	}
 
 	// The data model class. This is normally a persistent class of some sort.
-	// 
+	//
 	// In this example, we extend the EventManager class
 	// to manage our listeners and we fire a property change
 	// event when the object state changes.

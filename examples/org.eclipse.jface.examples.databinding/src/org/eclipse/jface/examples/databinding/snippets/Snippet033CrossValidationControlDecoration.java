@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class Snippet033CrossValidationControlDecoration {
 	protected Shell shell;
@@ -44,7 +44,7 @@ public class Snippet033CrossValidationControlDecoration {
 
 	/**
 	 * Launch the application
-	 * 
+	 *
 	 * @param args
 	 */
 	public static void main(String[] args) {

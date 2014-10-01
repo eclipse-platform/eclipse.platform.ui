@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class Snippet030DateAndTimeObservableValue {
 	protected Shell shell;
@@ -46,7 +46,7 @@ public class Snippet030DateAndTimeObservableValue {
 
 	/**
 	 * Launch the application
-	 * 
+	 *
 	 * @param args
 	 */
 	public static void main(String[] args) {

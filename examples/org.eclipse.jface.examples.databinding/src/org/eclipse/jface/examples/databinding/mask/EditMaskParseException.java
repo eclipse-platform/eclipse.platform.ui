@@ -13,7 +13,7 @@ package org.eclipse.jface.examples.databinding.mask;
 
 /**
  * Indicates a parse error while parsing an edit mask.
- * 
+ *
  * @since 3.3
  */
 public class EditMaskParseException extends RuntimeException {

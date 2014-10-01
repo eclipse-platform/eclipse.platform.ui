@@ -145,7 +145,7 @@ public class Snippet013TableViewerEditing {
 	 * Editing support that uses JFace Data Binding to control the editing
 	 * lifecycle. The standard EditingSupport get/setValue(...) lifecycle is not
 	 * used.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private static class InlineEditingSupport extends

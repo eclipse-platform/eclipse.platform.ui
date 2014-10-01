@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class Snippet016TableUpdater {
 	public static void main(String[] args) {
@@ -60,7 +60,7 @@ public class Snippet016TableUpdater {
 				}
 			});
 		}
-		
+
 		@Override
 		public String toString() {
 			return counter.getValue().toString();

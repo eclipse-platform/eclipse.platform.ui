@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Text;
  * Snippet that validates values across multiple bindings on change of each
  * observable. If the values of the target observables are not equal the model
  * is not updated. When the values are equal they will be written to sysout.
- * 
+ *
  * @author Brad Reynolds
  */
 public class Snippet011ValidateMultipleBindingsSnippet {
@@ -94,11 +94,11 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 
 	/**
 	 * @since 3.2
-	 * 
+	 *
 	 */
 	private static final class CrossFieldValidator implements IValidator {
 		/**
-		 * 
+		 *
 		 */
 		private final IObservableValue other;
 

@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Demonstrate usage of SelectObservableValue
- * 
+ *
  * @since 3.2
  */
 public class Snippet024SelectObservableValue {

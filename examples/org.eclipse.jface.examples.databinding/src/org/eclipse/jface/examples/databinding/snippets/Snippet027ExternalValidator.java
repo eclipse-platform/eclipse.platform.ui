@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * This snippet demonstrates how to integrate an external validator
- * 
+ *
  * @since 3.5
  */
 public class Snippet027ExternalValidator extends WizardPage {
@@ -154,7 +154,7 @@ public class Snippet027ExternalValidator extends WizardPage {
 
 	/**
 	 * Create contents of the wizard
-	 * 
+	 *
 	 * @param parent
 	 */
 	@Override

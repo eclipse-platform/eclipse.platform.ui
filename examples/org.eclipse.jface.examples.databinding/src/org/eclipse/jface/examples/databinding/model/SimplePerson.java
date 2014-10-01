@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005, 2008 David Orme <djo@coconut-palm-software.com>
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,27 +19,27 @@ import java.util.List;
 import org.eclipse.jface.examples.databinding.ModelObject;
 
 public class SimplePerson extends ModelObject {
-	
+
 	private String name = "";
 	private String address = "";
 	private String city = "";
 	private String state = "";
 	private SimpleCart cart = new SimpleCart();
-	
+
 	private List orders = new LinkedList();
-	
+
 	public SimplePerson(String name, String address, String city, String state) {
 		this.name = name;
 		this.address = address;
 		this.city = city;
 		this.state = state;
-		
+
 		int numOrders = (int) (Math.random() * 5);
 		for (int i=0; i < numOrders; ++i) {
 			orders.add(new SimpleOrder(i, new Date()));
 		}
 	}
-	
+
 	public SimplePerson() {}
 
 	/**
@@ -100,7 +100,7 @@ public class SimplePerson extends ModelObject {
 	public void setState(String state) {
 		firePropertyChange("state", this.state, this.state = state); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return Returns the orders.
 	 */

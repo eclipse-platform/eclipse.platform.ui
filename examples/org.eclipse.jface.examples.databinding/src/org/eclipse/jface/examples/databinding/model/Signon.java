@@ -13,10 +13,10 @@ package org.eclipse.jface.examples.databinding.model;
 import org.eclipse.jface.examples.databinding.ModelObject;
 
 public class Signon extends ModelObject {
-	
+
 	String userId;
 	String password;
-	
+
 	public Signon(String aUserId, String aPassword) {
 		userId = aUserId;
 		password = aPassword;

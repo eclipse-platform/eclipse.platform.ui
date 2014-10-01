@@ -15,7 +15,7 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 
 /**
  * This object will be given randomly-generated children
- *  
+ *
  * @since 1.0
  */
 public class SimpleNode {
@@ -35,5 +35,5 @@ public class SimpleNode {
 	public IObservableSet getChildren() {
 		return children;
 	}
-	
+
 }

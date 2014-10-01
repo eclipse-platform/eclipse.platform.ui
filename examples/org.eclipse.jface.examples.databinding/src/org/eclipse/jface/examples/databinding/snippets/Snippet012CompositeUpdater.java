@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class Snippet012CompositeUpdater {
 

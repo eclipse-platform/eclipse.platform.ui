@@ -20,31 +20,31 @@ public class Account extends ModelObject {
 	private String firstName;
 	private String lastName;
 	private String state;
-	private String phone;	
+	private String phone;
 	private Date expiryDate;
 
 	public void setFirstName(String string) {
 		String oldValue = firstName;
 		firstName = string;
-		firePropertyChange("firstName", oldValue, string);		
+		firePropertyChange("firstName", oldValue, string);
 	}
 
 	public void setLastName(String string) {
 		String oldValue = lastName;
 		lastName = string;
-		firePropertyChange("lastName", oldValue, string);				
+		firePropertyChange("lastName", oldValue, string);
 	}
 
 	public void setState(String string) {
 		String oldValue = state;
 		state = string;
-		firePropertyChange("state", oldValue, string);		
+		firePropertyChange("state", oldValue, string);
 	}
 
 	public void setPhone(String string) {
 		String oldValue = phone;
 		phone = string;
-		firePropertyChange("phone", oldValue, phone);		
+		firePropertyChange("phone", oldValue, phone);
 	}
 
 	public void setCountry(String string) {

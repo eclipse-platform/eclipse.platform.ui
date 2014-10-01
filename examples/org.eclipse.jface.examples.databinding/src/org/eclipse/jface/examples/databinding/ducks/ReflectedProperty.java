@@ -13,7 +13,7 @@ package org.eclipse.jface.examples.databinding.ducks;
 
 /**
  * Encapsulates a single JavaBeans-style property
- * 
+ *
  * @since 3.3
  */
 public class ReflectedProperty {
@@ -23,7 +23,7 @@ public class ReflectedProperty {
 
 	/**
 	 * Construct a ReflectedProperty on some object, given the property name.
-	 * 
+	 *
 	 * @param object The object
 	 * @param propertyName The property name
 	 */
@@ -38,7 +38,7 @@ public class ReflectedProperty {
 		}
 		setter = new ReflectedMethod(object, makeSetterName(propertyName), new Class[] {getter.getType()});
 	}
-	
+
 	private String makeBooleanGetterName(String propertyName) {
 		return "is" + capitalize(propertyName);
 	}
@@ -58,35 +58,35 @@ public class ReflectedProperty {
 	/**
 	 * Return the property's type.  This is the same as the type returned by
 	 * the getter.
-	 * 
+	 *
 	 * @return The property's data type.
 	 */
 	public Class getType() {
 		return getter.getType();
 	}
-	
+
 	/**
 	 * Return the property's value.
-	 * 
+	 *
 	 * @return The value in the property.
 	 */
 	public Object get() {
 		return getter.invoke(new Object[] {});
 	}
-	
+
 	/**
 	 * Set the property's value.  If the property is read-only, the request
 	 * is ignored.
-	 * 
+	 *
 	 * @param newValue The value to set.
 	 */
 	public void set(Object newValue) {
 		setter.invoke(new Object[] {newValue});
 	}
-	
+
 	/**
 	 * Returns if the property is read-only.
-	 * 
+	 *
 	 * @return false if the property has a setter; true otherwise.
 	 */
 	public boolean isReadOnly() {
@@ -95,7 +95,7 @@ public class ReflectedProperty {
 
 	/**
 	 * Returns the property's name.
-	 * 
+	 *
 	 * @return The property name.
 	 */
 	public String getPropertyName() {

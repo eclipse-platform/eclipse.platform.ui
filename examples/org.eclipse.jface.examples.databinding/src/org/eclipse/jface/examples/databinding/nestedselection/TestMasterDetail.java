@@ -49,12 +49,12 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 1.0
- * 
+ *
  */
 public class TestMasterDetail {
 	/**
 	 * @since 3.2
-	 * 
+	 *
 	 */
 	private static final class CustomUpdateValueStrategy extends
 			UpdateValueStrategy {
@@ -105,7 +105,7 @@ public class TestMasterDetail {
 
 	/**
 	 * This method initializes table
-	 * 
+	 *
 	 */
 	private void createTable() {
 		GridData gridData = new org.eclipse.swt.layout.GridData();
@@ -128,7 +128,7 @@ public class TestMasterDetail {
 
 	/**
 	 * This method initializes table1
-	 * 
+	 *
 	 */
 	private void createTable1() {
 		GridData gridData5 = new org.eclipse.swt.layout.GridData();

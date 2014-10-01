@@ -53,7 +53,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class Snippet021MultiFieldValidation extends WizardPage {
 
@@ -81,7 +81,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 
 	/**
 	 * Create contents of the wizard
-	 * 
+	 *
 	 * @param parent
 	 */
 	@Override

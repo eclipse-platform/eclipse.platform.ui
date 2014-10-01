@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Shows how to bind a Combo so that when update its items, the selection is
  * retained if at all possible.
- * 
+ *
  * @since 3.2
  */
 public class Snippet002UpdateComboRetainSelection {
@@ -53,14 +53,14 @@ public class Snippet002UpdateComboRetainSelection {
 			public void run() {
     			ViewModel viewModel = new ViewModel();
     			Shell shell = new View(viewModel).createShell();
-    			
+
     			// The SWT event loop
     			while (!shell.isDisposed()) {
     				if (!display.readAndDispatch()) {
     					display.sleep();
     				}
     			}
-    			
+
     			// Print the results
     			System.out.println(viewModel.getText());
     		}

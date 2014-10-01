@@ -24,23 +24,23 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
  * <li>Round to nearest integer</li>
  * <li>Do nothing</li>
  * </ul>
- * 
+ *
  * @since 1.0
  */
 public class SomeMathFunction extends ComputedObservableMap {
 
 	/**
-	 * 
+	 *
 	 */
 	public static final int OP_IDENTITY = 0;
 
 	/**
-	 * 
+	 *
 	 */
 	public static final int OP_MULTIPLY = 1;
 
 	/**
-	 * 
+	 *
 	 */
 	public static final int OP_ROUND = 2;
 

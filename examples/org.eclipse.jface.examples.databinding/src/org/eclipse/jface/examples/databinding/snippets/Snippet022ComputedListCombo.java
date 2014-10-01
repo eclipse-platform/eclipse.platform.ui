@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class Snippet022ComputedListCombo {
 	private static WritableList model;
@@ -67,7 +67,7 @@ public class Snippet022ComputedListCombo {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected void createModel() {
 		model = new WritableList();

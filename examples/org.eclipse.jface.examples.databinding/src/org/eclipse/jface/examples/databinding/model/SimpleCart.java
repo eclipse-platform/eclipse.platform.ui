@@ -28,5 +28,5 @@ public class SimpleCart extends ModelObject {
 	public void setNumItems(int numItems) {
 		firePropertyChange("numItems", this.numItems, this.numItems = numItems);
 	}
-	
+
 }

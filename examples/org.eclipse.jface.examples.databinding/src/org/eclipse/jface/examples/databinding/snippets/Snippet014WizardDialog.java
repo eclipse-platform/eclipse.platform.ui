@@ -100,7 +100,7 @@ public class Snippet014WizardDialog {
 			Label label = new Label(composite, SWT.NONE);
 			label.setText("Enter a date:");
 			Text text = new Text(composite, SWT.BORDER);
-			
+
 			dbc.bindValue(WidgetProperties.text().observe(text),
 							((SampleWizard) getWizard()).getModel().dateValue);
 
@@ -128,7 +128,7 @@ public class Snippet014WizardDialog {
 		public SampleWizardModel getModel() {
 			return model;
 		}
-		
+
 		@Override
 		public String getWindowTitle() {
 			return "Data Binding Snippet014";

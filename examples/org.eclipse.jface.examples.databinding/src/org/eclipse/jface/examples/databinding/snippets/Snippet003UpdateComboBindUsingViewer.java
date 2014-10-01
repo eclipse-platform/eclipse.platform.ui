@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Shows how to bind a Combo so that when update its items, the selection is
  * retained if at all possible.
- * 
+ *
  * @since 3.2
  */
 public class Snippet003UpdateComboBindUsingViewer {

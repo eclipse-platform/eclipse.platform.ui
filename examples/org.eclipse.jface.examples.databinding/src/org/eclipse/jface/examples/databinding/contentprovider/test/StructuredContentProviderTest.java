@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Tests UpdatableSetContentProvider, ComputableValue, ControlUpdator,
  * UpdatableFunction, and ConvertingSet.
- * 
+ *
  * <p>
  * This test displays a dialog with user-editable list of Doubles. It allows the
  * user to select a math function to apply to the set, and displays the result
@@ -52,13 +52,13 @@ import org.eclipse.swt.widgets.Shell;
  * silly, it is a good example of a dialog where a lot of things can change from
  * many directions.
  * </p>
- * 
+ *
  * <p>
  * An UpdatableSetContentProvider is used to supply the contents each
  * ListViewer. ControlUpdators
- * 
+ *
  * </p>
- * 
+ *
  * @since 1.0
  */
 public class StructuredContentProviderTest {
@@ -237,7 +237,7 @@ public class StructuredContentProviderTest {
 	/**
 	 * Creates a radio button in the given parent composite. When selected, the
 	 * button will change the given SettableValue to the given value.
-	 * 
+	 *
 	 * @param parent
 	 *            parent composite
 	 * @param model
@@ -283,7 +283,7 @@ public class StructuredContentProviderTest {
 	/**
 	 * Creates and returns a control that will allow the user to add and remove
 	 * Doubles from the given input set.
-	 * 
+	 *
 	 * @param parent
 	 *            parent control
 	 * @param inputSet

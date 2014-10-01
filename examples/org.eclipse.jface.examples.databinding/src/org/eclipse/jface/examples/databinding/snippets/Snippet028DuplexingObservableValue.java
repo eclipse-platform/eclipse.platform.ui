@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class Snippet028DuplexingObservableValue {
 	protected Shell shell;
@@ -52,7 +52,7 @@ public class Snippet028DuplexingObservableValue {
 
 	/**
 	 * Launch the application
-	 * 
+	 *
 	 * @param args
 	 */
 	public static void main(String[] args) {

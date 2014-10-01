@@ -56,7 +56,7 @@ public class Snippet034ComboViewerAndEnum {
 	}
 
 	// The data model class. This is normally a persistent class of some sort.
-	// 
+	//
 	// In this example, we only push changes from the GUI to the model, so we
 	// don't worry about implementing JavaBeans bound properties. If we need
 	// our GUI to automatically reflect changes in the Person object, the

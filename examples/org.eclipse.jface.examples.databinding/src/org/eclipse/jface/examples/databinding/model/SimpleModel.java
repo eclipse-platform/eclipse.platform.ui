@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005, 2006 David Orme <djo@coconut-palm-software.com>
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,9 +27,9 @@ public class SimpleModel {
 	}
 
 	// Now a PersonList property...
-	
+
 	LinkedList personList = new LinkedList();
-	
+
 	public LinkedList getPersonList() {
 		return personList;
 	}

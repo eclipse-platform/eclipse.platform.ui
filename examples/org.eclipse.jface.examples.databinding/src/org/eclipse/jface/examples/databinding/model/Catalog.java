@@ -24,22 +24,22 @@ public class Catalog extends ModelObject {
 	private Transportation[] transportations = new Transportation[0];
 
 	private Account[] accounts = new Account[0];
-	
+
 	private List signons = new ArrayList();
-	
+
 	public List getSignons(){
 		return signons;
 	}
-	
+
 	public void addSignon(Signon aSignon){
 		signons.add(aSignon);
 		firePropertyChange("signons",null,null);
 	}
-	
+
 	public void removeSignon(Signon aSignon){
 		signons.remove(aSignon);
 		firePropertyChange("signons",null,null);
-	}	
+	}
 
 	public Category[] getCategories() {
 		return categories;
@@ -73,16 +73,16 @@ public class Catalog extends ModelObject {
 		lodgings = (Lodging[]) remove(lodgings, lodging);
 		firePropertyChange("lodgings", null, null);
 	}
-	
+
 	public void removeAccount(Account anAccount) {
 		accounts = (Account[]) remove(accounts, anAccount);
 		firePropertyChange("accounts", null, null);
-	}	
+	}
 
 	public Account[] getAccounts() {
 		return accounts;
 	}
-	
+
 	public Transportation[] getTransporations(){
 		return transportations;
 	}

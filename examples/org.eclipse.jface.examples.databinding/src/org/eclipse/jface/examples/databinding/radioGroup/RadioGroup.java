@@ -23,15 +23,15 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 
-/** 
- * This object decorates a bunch of SWT.RADIO buttons and provides saner 
+/**
+ * This object decorates a bunch of SWT.RADIO buttons and provides saner
  * selection semantics than you get by default with those radio buttons.
  * <p>
  * Its API is basically the same API as List, but with unnecessary methods
  * removed.
  */
 public class RadioGroup {
-   
+
    private final IRadioButton[] buttons;
    private final Object[] values;
    IRadioButton oldSelection = null;
@@ -52,12 +52,12 @@ public class RadioGroup {
       void setText(String string);
       void notifyListeners(int eventType, Event object);
    }
-   
+
    /**
     * Constructs an instance of this widget given an array of Button objects to wrap.
     * The Button objects must have been created with the SWT.RADIO style bit set,
     * and they must all be in the same Composite.
-    * 
+    *
     * @param radioButtons Object[] an array of radio buttons to wrap.
     * @param values Object[] an array of objects corresponding to the value of each radio button.
     */
@@ -77,11 +77,11 @@ public class RadioGroup {
       this.buttons = buttons;
       this.values = values;
    }
-   
+
    /**
     * Returns the object corresponding to the currently-selected radio button
     * or null if no radio button is selected.
-    * 
+    *
     * @return the object corresponding to the currently-selected radio button
     * or null if no radio button is selected.
     */
@@ -91,12 +91,12 @@ public class RadioGroup {
          return "";
       return values[selectionIndex];
    }
-   
+
    /**
     * Sets the selected radio button to the radio button whose model object
     * equals() the object specified by newSelection.  If !newSelection.equals()
     * any model object managed by this radio group, deselects all radio buttons.
-    * 
+    *
     * @param newSelection A model object corresponding to one of the model
     * objects associated with one of the radio buttons.
     */
@@ -109,13 +109,13 @@ public class RadioGroup {
          }
       }
    }
-   
+
    private SelectionListener selectionListener = new SelectionListener() {
       @Override
 	public void widgetDefaultSelected(SelectionEvent e) {
          widgetSelected(e);
       }
-      
+
       @Override
 	public void widgetSelected(SelectionEvent e) {
          potentialNewSelection = getButton(e);
@@ -125,21 +125,21 @@ public class RadioGroup {
          if (potentialNewSelection.equals(selectedButton)) {
             return;
          }
-         
+
          if (fireWidgetChangeSelectionEvent(e)) {
             oldSelection = selectedButton;
             selectedButton = potentialNewSelection;
             if (oldSelection == null) {
                oldSelection = selectedButton;
             }
-   
+
             fireWidgetSelectedEvent(e);
          }
       }
 
       private IRadioButton getButton(SelectionEvent e) {
          // If the actual IRadioButton is a test fixture, then the test fixture can't
-         // set e.widget, so the button object will be in e.data instead and a dummy 
+         // set e.widget, so the button object will be in e.data instead and a dummy
          // Widget will be in e.widget.
          if (e.data != null) {
             return (IRadioButton) e.data;
@@ -147,9 +147,9 @@ public class RadioGroup {
          return (IRadioButton) DuckType.implement(IRadioButton.class, e.widget);
       }
    };
-   
+
    private List widgetChangeListeners = new LinkedList();
-   
+
    protected boolean fireWidgetChangeSelectionEvent(SelectionEvent e) {
       for (Iterator listenersIter = widgetChangeListeners.iterator(); listenersIter.hasNext();) {
          VetoableSelectionListener listener = (VetoableSelectionListener) listenersIter.next();
@@ -222,10 +222,10 @@ public class RadioGroup {
    public void removeVetoableSelectionListener(VetoableSelectionListener listener) {
       widgetChangeListeners.remove(listener);
    }
-   
+
 
    private List widgetSelectedListeners = new ArrayList();
-   
+
    protected void fireWidgetSelectedEvent(SelectionEvent e) {
       for (Iterator listenersIter = widgetSelectedListeners.iterator(); listenersIter.hasNext();) {
          SelectionListener listener = (SelectionListener) listenersIter.next();
@@ -236,7 +236,7 @@ public class RadioGroup {
    protected void fireWidgetDefaultSelectedEvent(SelectionEvent e) {
       fireWidgetSelectedEvent(e);
    }
-   
+
    /**
     * Adds the listener to the collection of listeners who will
     * be notified when the receiver's selection changes, by sending
@@ -285,7 +285,7 @@ public class RadioGroup {
    public void removeSelectionListener(SelectionListener listener) {
       widgetSelectedListeners.remove(listener);
    }
-   
+
    /**
     * Deselects the item at the given zero-relative index in the receiver.
     * If the item at the index was already deselected, it remains
@@ -303,7 +303,7 @@ public class RadioGroup {
          return;
       buttons[index].setSelection(false);
    }
-   
+
    /**
     * Deselects all selected items in the receiver.
     *
@@ -315,7 +315,7 @@ public class RadioGroup {
    public void deselectAll () {
       for (int i = 0; i < buttons.length; i++)
          buttons[i].setSelection(false);
-   }   
+   }
 
    /**
     * Returns the zero-relative index of the item which currently
@@ -351,7 +351,7 @@ public class RadioGroup {
     *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
     * </ul>
-    * 
+    *
     * FIXME: tck - this should be renamed to getItemText()
     */
    public String getItem (int index) {
@@ -376,11 +376,11 @@ public class RadioGroup {
 
    /**
     * Returns a (possibly empty) array of <code>String</code>s which
-    * are the items in the receiver. 
+    * are the items in the receiver.
     * <p>
     * Note: This is not the actual structure used by the receiver
     * to maintain its list of items, so modifying the array will
-    * not affect the receiver. 
+    * not affect the receiver.
     * </p>
     *
     * @return the items in the receiver's list
@@ -397,7 +397,7 @@ public class RadioGroup {
       }
       return (String[]) itemStrings.toArray(new String[itemStrings.size()]);
    }
-   
+
    public Object[] getButtons() {
       return buttons;
    }
@@ -451,7 +451,7 @@ public class RadioGroup {
    }
 
    /**
-    * Searches the receiver's list starting at the given, 
+    * Searches the receiver's list starting at the given,
     * zero-relative index until an item is found that is equal
     * to the argument, and returns the index of that item. If
     * no item is found or the starting index is out of range,
@@ -496,7 +496,7 @@ public class RadioGroup {
    }
 
    /**
-    * Selects the item at the given zero-relative index in the receiver's 
+    * Selects the item at the given zero-relative index in the receiver's
     * list.  If the item at the index was already selected, it remains
     * selected. Indices that are out of range are ignored.
     *
@@ -538,7 +538,7 @@ public class RadioGroup {
    }
 
    /**
-    * Selects the item at the given zero-relative index in the receiver. 
+    * Selects the item at the given zero-relative index in the receiver.
     * If the item at the index was already selected, it remains selected.
     * The current selection is first cleared, then the new item is selected.
     * Indices that are out of range are ignored.
