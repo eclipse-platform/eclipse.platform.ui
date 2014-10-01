@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -183,7 +184,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 		final FileSystemContributor[] contributors = new FileSystemContributor[1];
 		final CoreException[] exceptions = new CoreException[1];
 
-		Platform.run(new ISafeRunnable() {
+		SafeRunner.run(new ISafeRunnable() {
 			@Override
 			public void run() {
 				try {

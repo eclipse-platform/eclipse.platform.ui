@@ -11,7 +11,7 @@
 package org.eclipse.ui.tests.api.workbenchpart;
 
 import org.eclipse.core.commands.common.EventManager;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -79,7 +79,7 @@ public class RawIViewPart extends EventManager implements IViewPart {
         Object[] array = getListeners();
         for (int nX = 0; nX < array.length; nX++) {
             final IPropertyListener l = (IPropertyListener) array[nX];
-            Platform.run(new SafeRunnable() {
+            SafeRunner.run(new SafeRunnable() {
                 @Override
 				public void run() {
                     l.propertyChanged(RawIViewPart.this, propertyId);

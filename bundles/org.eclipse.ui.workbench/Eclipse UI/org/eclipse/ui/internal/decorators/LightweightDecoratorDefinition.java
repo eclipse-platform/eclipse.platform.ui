@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.decorators;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
@@ -117,7 +117,7 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 						getIconLocation());
 			} else {
 
-				Platform.run(new ISafeRunnable() {
+				SafeRunner.run(new ISafeRunnable() {
 					@Override
 					public void run() {
 						try {

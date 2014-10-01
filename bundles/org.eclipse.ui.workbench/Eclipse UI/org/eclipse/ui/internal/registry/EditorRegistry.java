@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
@@ -323,7 +324,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
         Object[] array = getListeners();
         for (int nX = 0; nX < array.length; nX++) {
             final IPropertyListener l = (IPropertyListener) array[nX];
-            Platform.run(new SafeRunnable() {
+            SafeRunner.run(new SafeRunnable() {
                 @Override
 				public void run() {
                     l.propertyChanged(EditorRegistry.this, type);

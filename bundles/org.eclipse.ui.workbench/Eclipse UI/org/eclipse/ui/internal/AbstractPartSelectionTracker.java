@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.INullSelectionListener;
@@ -114,7 +114,7 @@ public abstract class AbstractPartSelectionTracker {
             final ISelectionListener l = (ISelectionListener) array[i];
             if ((part != null && sel != null)
                     || l instanceof INullSelectionListener) {
-                Platform.run(new SafeRunnable() {
+                SafeRunner.run(new SafeRunnable() {
                     @Override
 					public void run() {
                         l.selectionChanged(part, sel);
@@ -138,7 +138,7 @@ public abstract class AbstractPartSelectionTracker {
             final ISelectionListener l = (ISelectionListener) array[i];
             if ((part != null && sel != null)
                     || l instanceof INullSelectionListener) {
-                Platform.run(new SafeRunnable() {
+                SafeRunner.run(new SafeRunnable() {
                     @Override
 					public void run() {
                         l.selectionChanged(part, sel);

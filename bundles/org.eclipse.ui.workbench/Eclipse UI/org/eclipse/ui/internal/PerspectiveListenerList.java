@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.commands.common.EventManager;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
@@ -55,7 +55,7 @@ public class PerspectiveListenerList extends EventManager {
     		label = description + perspective.getId();
     		UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
     	}
-    	Platform.run(runnable);
+    	SafeRunner.run(runnable);
     	if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS)) {
 			UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, listener, label);
 		}

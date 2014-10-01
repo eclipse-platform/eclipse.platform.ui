@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.commands.common.EventManager;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IWorkbenchPage;
@@ -50,7 +50,7 @@ public class PageListenerList extends EventManager {
     		label = description + page.getLabel();
     		UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
     	}
-    	Platform.run(runnable);
+    	SafeRunner.run(runnable);
     	if (UIStats.isDebugging(UIStats.NOTIFY_PAGE_LISTENERS)) {
 			UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, listener, label);
 		}

@@ -1917,7 +1917,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		// final WorkbenchPartReference ref = (WorkbenchPartReference) refs[i];
 		// //partList.removePart(ref);
 		// //firePartClosed(refs[i]);
-		// Platform.run(new SafeRunnable() {
+		// SafeRunner.run(new SafeRunnable() {
 		// public void run() {
 		// // WorkbenchPlugin.log(new Status(IStatus.WARNING,
 		// WorkbenchPlugin.PI_WORKBENCH,

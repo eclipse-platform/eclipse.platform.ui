@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.core.commands.common.EventManager;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
@@ -257,7 +257,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 			Object[] listeners = getListeners();
 			for (int i = 0; i < listeners.length; ++i) {
 				final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
-				Platform.run(new SafeRunnable() {
+				SafeRunner.run(new SafeRunnable() {
 					@Override
 					public void run() {
 						l.selectionChanged(event);
