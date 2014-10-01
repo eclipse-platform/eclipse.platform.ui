@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
-import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -239,16 +238,15 @@ public class Snippet020TreeViewerWithSetFactory {
 		IObservableValue treeViewerSelectionObserveSelection = ViewersObservables
 				.observeSingleSelection(beanViewer);
 		IObservableValue textTextObserveWidget = WidgetProperties.text(SWT.Modify).observe(beanText);
-		IObservableValue treeViewerValueObserveDetailValue = BeansObservables
-				.observeDetailValue(treeViewerSelectionObserveSelection,
-						"text", String.class);
-		//
-		//
+		IObservableValue treeViewerValueObserveDetailValue = BeanProperties.value(
+				(Class) treeViewerSelectionObserveSelection.getValueType(), "text", String.class)
+				.observeDetail(treeViewerSelectionObserveSelection);
+
 		DataBindingContext bindingContext = new DataBindingContext();
-		//
+
 		bindingContext.bindValue(textTextObserveWidget,
 				treeViewerValueObserveDetailValue);
-		//
+
 		return bindingContext;
 	}
 

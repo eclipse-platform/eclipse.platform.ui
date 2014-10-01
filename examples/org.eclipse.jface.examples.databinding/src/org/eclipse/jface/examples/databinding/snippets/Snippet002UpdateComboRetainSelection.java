@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -165,11 +165,13 @@ public class Snippet002UpdateComboRetainSelection {
 
             DataBindingContext dbc = new DataBindingContext();
 
-            IObservableList list = MasterDetailObservables.detailList(BeansObservables.observeValue(viewModel, "choices"),
+            IObservableList list = MasterDetailObservables.detailList(BeanProperties.value(viewModel.getClass(), "choices").observe(
+            		viewModel),
                     getListDetailFactory(),
                     String.class);
 			dbc.bindList(WidgetProperties.items().observe(combo), list);
-			dbc.bindValue(WidgetProperties.text().observe(combo), BeansObservables.observeValue(viewModel, "text"));
+			dbc.bindValue(WidgetProperties.text().observe(combo), BeanProperties.value(viewModel.getClass(), "text")
+					.observe(viewModel));
 
             // Open and return the Shell
             shell.pack();

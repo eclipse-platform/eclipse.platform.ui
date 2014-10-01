@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Brad Reynolds and others.
+ * Copyright (c) 2007, 2014 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Matthew Hall - bug 260329
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 434283
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -17,7 +18,7 @@ import java.beans.PropertyChangeSupport;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -58,8 +59,9 @@ public class Snippet010MasterDetail {
 						.observeSingleSelection(viewer);
 
 				// 2. Observe the name property of the current selection.
-				IObservableValue detailObservable = BeansObservables
-						.observeDetailValue(selection, "name", String.class);
+				IObservableValue detailObservable = BeanProperties.value((Class) selection.getValueType(), "name",
+						String.class)
+						.observeDetail(selection);
 
 				// 3. Bind the Text widget to the name detail (selection's
 				// name).

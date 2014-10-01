@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Brad Reynolds and others.
+ * Copyright (c) 2006, 2014 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     IBM Corporation - see bug 137934
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 434283
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -17,7 +18,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -88,9 +89,11 @@ public class Snippet007ColorLabelProvider {
 
 				// this does not have to correspond to the columns in the table,
 				// we just list all attributes that affect the table content.
-				IObservableMap[] attributes = BeansObservables.observeMaps(
-						contentProvider.getKnownElements(), Person.class,
-						new String[] { "name", "gender" });
+				IObservableMap[] attributes = new IObservableMap[2];
+				attributes[0] = BeanProperties.value(Person.class, "name").observeDetail(
+						contentProvider.getKnownElements());
+				attributes[1] = BeanProperties.value(Person.class, "gender").observeDetail(
+						contentProvider.getKnownElements());
 
 				class ColorLabelProvider extends ObservableMapLabelProvider
 						implements ITableColorProvider {

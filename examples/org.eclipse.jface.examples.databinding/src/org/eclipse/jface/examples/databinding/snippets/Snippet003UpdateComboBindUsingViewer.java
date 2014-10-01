@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 The Pampered Chef, Inc. and others.
+ * Copyright (c) 2006, 2014 The Pampered Chef, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     The Pampered Chef, Inc. - initial API and implementation
  *     Brad Reynolds - bug 116920
  *     Matthew Hall - bugs 260329, 260337
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 434283
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -161,12 +162,13 @@ public class Snippet003UpdateComboBindUsingViewer {
 			System.out.println(viewModel.getText());
 
 			DataBindingContext dbc = new DataBindingContext();
-			ViewerSupport.bind(viewer, BeansObservables.observeList(viewModel,
-					"choices", String.class), Properties
+			ViewerSupport.bind(viewer,
+					BeanProperties.list(viewModel.getClass(), "choices", String.class).observe(viewModel),
+					Properties
 					.selfValue(String.class));
 
-			dbc.bindValue(ViewersObservables.observeSingleSelection(viewer),
-					BeansObservables.observeValue(viewModel, "text"));
+			dbc.bindValue(ViewersObservables.observeSingleSelection(viewer), BeanProperties.value(viewModel.getClass(), "text").observe(
+					viewModel));
 
 			// Open and return the Shell
 			shell.pack();

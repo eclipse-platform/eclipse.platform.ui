@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
  *     Matthew Hall - bugs 260329, 260337
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 434283
  *******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.nestedselection;
@@ -17,7 +18,6 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
-import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.Realm;
@@ -29,6 +29,7 @@ import org.eclipse.core.internal.databinding.conversion.ObjectToStringConverter;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.examples.databinding.model.SimpleModel;
@@ -260,33 +261,36 @@ public class TestMasterDetail {
 				return Status.OK_STATUS;
 			}
 		};
-		Binding b = dbc.bindValue(SWTObservables.observeText(name, SWT.Modify),
-				BeansObservables.observeDetailValue(selectedPerson, "name",
-						String.class), new CustomUpdateValueStrategy()
+		Binding b = dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(name),
+				BeanProperties.value((Class) selectedPerson.getValueType(), "name", String.class).observeDetail(
+								selectedPerson), new CustomUpdateValueStrategy()
 						.setConverter(upperCaseConverter).setAfterGetValidator(
 								vowelValidator), null);
 
 		// AggregateValidationStatus status = new AggregateValidationStatus(dbc
 		// .getBindings(), AggregateValidationStatus.MAX_SEVERITY);
-		dbc.bindValue(SWTObservables.observeText(validationStatus, SWT.NONE), b
+		dbc.bindValue(WidgetProperties.text().observe(validationStatus), b
 				.getValidationStatus(), null, new UpdateValueStrategy()
 				.setConverter(new ObjectToStringConverter()));
 
-		dbc.bindValue(SWTObservables.observeText(address, SWT.Modify),
-				BeansObservables.observeDetailValue(selectedPerson, "address",
-						String.class));
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(address),
+				BeanProperties.value((Class) selectedPerson.getValueType(), "address", String.class).observeDetail(
+						selectedPerson));
 
-		dbc.bindValue(SWTObservables.observeText(city, SWT.Modify),
-				BeansObservables.observeDetailValue(selectedPerson, "city",
-						String.class));
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(city),
+				BeanProperties.value((Class) selectedPerson.getValueType(), "city", String.class).observeDetail(
+						selectedPerson));
 
-		dbc.bindValue(SWTObservables.observeText(state, SWT.Modify),
-				BeansObservables.observeDetailValue(selectedPerson, "state",
-						String.class));
+		dbc.bindValue(
+				WidgetProperties.text(SWT.Modify).observe(state),
+				BeanProperties.value((Class) selectedPerson.getValueType(), "state", String.class).observeDetail(
+				selectedPerson));
 
 		TableViewer ordersViewer = new TableViewer(ordersTable);
-		ViewerSupport.bind(ordersViewer, BeansObservables.observeDetailList(
-				selectedPerson, "orders", SimpleOrder.class), BeanProperties
+		ViewerSupport.bind(ordersViewer, BeanProperties
+				.list((Class) selectedPerson.getValueType(),
+						"orders", SimpleOrder.class).observeDetail(selectedPerson),
+				BeanProperties
 				.values(SimpleOrder.class,
 						new String[] { "orderNumber", "date" }));
 	}
