@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 445723
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -14,7 +15,7 @@ package org.eclipse.e4.ui.internal.workbench;
 /**
  * Provides services related to the help system.
  */
-public interface IHelpService {
+public interface EHelpService {
 
 	/**
 	 * Calls the help support system to display the given help context ID.

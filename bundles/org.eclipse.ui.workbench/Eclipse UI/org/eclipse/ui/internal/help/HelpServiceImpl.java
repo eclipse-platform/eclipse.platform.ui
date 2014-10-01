@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 445723
  ******************************************************************************/
 
 package org.eclipse.ui.internal.help;
 
-import org.eclipse.e4.ui.internal.workbench.IHelpService;
+import org.eclipse.e4.ui.internal.workbench.EHelpService;
 
-public class HelpServiceImpl implements IHelpService {
+public class HelpServiceImpl implements EHelpService {
 
 	@Override
 	public void displayHelp(String contextId) {
