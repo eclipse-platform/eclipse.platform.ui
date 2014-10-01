@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430616, 441267, 441282
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430616, 441267, 441282, 445609
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -136,11 +136,15 @@ public class ViewRegistry implements IViewRegistry {
 		descriptor.setAllowMultiple(Boolean.parseBoolean(element
 				.getAttribute(IWorkbenchRegistryConstants.ATT_ALLOW_MULTIPLE)));
 
+		// make view description available as tooltip
+		String viewDescription = RegistryReader.getDescription(element);
+		descriptor.setTooltip(viewDescription);
+
 		// Is this an E4 part or a legacy IViewPart ?
 		String clsSpec = element.getAttribute(IWorkbenchConstants.TAG_CLASS);
 		String implementationURI = CompatibilityPart.COMPATIBILITY_VIEW_URI;
 		if (e4View) {
-			implementationURI = "bundleclass://" + element.getContributor().getName() + "/" + clsSpec; //$NON-NLS-1$//$NON-NLS-2$			
+			implementationURI = "bundleclass://" + element.getContributor().getName() + "/" + clsSpec; //$NON-NLS-1$//$NON-NLS-2$
 		}
 		descriptor.setContributionURI(implementationURI);
 
