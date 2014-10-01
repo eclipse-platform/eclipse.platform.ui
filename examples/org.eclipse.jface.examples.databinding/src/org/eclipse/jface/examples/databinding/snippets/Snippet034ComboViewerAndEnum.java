@@ -13,7 +13,7 @@
 package org.eclipse.jface.examples.databinding.snippets;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -123,15 +123,17 @@ public class Snippet034ComboViewerAndEnum {
 
 			IObservableValue widgetObservable = WidgetProperties.text(SWT.Modify).observe(
 					name);
-			bindingContext.bindValue(widgetObservable, PojoObservables
-					.observeValue(viewModel, "name"));
+			bindingContext.bindValue(widgetObservable,
+					PojoProperties.value(viewModel.getClass(), "name")
+								.observe(viewModel));
 
 			// The second key to binding a combo to an Enum is to use a
 			// selection observable from the ComboViewer:
 			widgetObservable = ViewersObservables
 					.observeSingleSelection(gender);
-			bindingContext.bindValue(widgetObservable, PojoObservables
-					.observeValue(viewModel, "gender"));
+			bindingContext.bindValue(widgetObservable,
+					PojoProperties.value(viewModel.getClass(), "gender")
+								.observe(viewModel));
 
 			// Open and return the Shell
 			shell.pack();
