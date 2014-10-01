@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,11 +49,6 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.IViewDescriptor#createView()
-	 */
 	@Override
 	public IViewPart createView() throws CoreException {
 		if (element == null) {
@@ -63,41 +58,21 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 		return (IViewPart) element.createExecutableExtension("class"); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.IViewDescriptor#getCategoryPath()
-	 */
 	@Override
 	public String[] getCategoryPath() {
 		return categoryPath;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.IViewDescriptor#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return element == null ? "" : RegistryReader.getDescription(element); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.IViewDescriptor#getId()
-	 */
 	@Override
 	public String getId() {
 		return descriptor.getElementId();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.IViewDescriptor#getImageDescriptor()
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor() {
 		if (imageDescriptor == null) {
@@ -117,43 +92,23 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 		return imageDescriptor;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.IViewDescriptor#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		return LocalizationHelper.getLocalized(descriptor.getLabel(), descriptor,
 				application.getContext());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.IViewDescriptor#getFastViewWidthRatio()
-	 */
 	@Override
 	public float getFastViewWidthRatio() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.IViewDescriptor#getAllowMultiple()
-	 */
 	@Override
 	public boolean getAllowMultiple() {
 		return descriptor.isAllowMultiple();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.IViewDescriptor#isRestorable()
-	 */
 	@Override
 	public boolean isRestorable() {
 		if (element == null) {
@@ -164,9 +119,6 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 		return string == null ? true : Boolean.parseBoolean(string);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter != null && adapter.equals(IConfigurationElement.class)) {
@@ -179,21 +131,11 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 		return element;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
-	 */
 	@Override
 	public String getLocalId() {
 		return getId();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
-	 */
 	@Override
 	public String getPluginId() {
 		return getConfigurationElement().getNamespaceIdentifier();
