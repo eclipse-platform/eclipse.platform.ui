@@ -93,11 +93,6 @@ public class TreeContentProviderTest {
 				.generateLayout(shell);
 
 		shell.addDisposeListener(new DisposeListener() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-			 */
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				dispose();

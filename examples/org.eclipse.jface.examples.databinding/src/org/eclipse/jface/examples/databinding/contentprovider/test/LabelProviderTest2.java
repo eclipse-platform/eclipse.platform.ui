@@ -60,11 +60,6 @@ public class LabelProviderTest2 {
 	private Button renameButton;
 
 	private SelectionListener buttonSelectionListener = new SelectionAdapter() {
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-		 */
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button pressed = (Button) e.widget;
@@ -104,12 +99,6 @@ public class LabelProviderTest2 {
 					}
 				};
 
-				/*
-				 * (non-Javadoc)
-				 *
-				 * @see org.eclipse.jface.databinding.viewers.ViewerLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel,
-				 *      java.lang.Object)
-				 */
 				@Override
 				public void updateLabel(ViewerLabel label, Object element) {
 					if (element instanceof RenamableItem) {
