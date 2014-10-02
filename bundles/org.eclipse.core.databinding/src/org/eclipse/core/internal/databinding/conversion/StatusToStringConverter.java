@@ -16,7 +16,8 @@ import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * Converts an IStatus into a String.  The message of the status is the returned value.
+ * Converts an IStatus into a String. The message of the status is the returned
+ * value.
  * 
  * @since 1.0
  */
@@ -27,16 +28,14 @@ public class StatusToStringConverter extends Converter implements IConverter {
 	public StatusToStringConverter() {
 		super(IStatus.class, String.class);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.databinding.conversion.IConverter#convert(java.lang.Object)
-	 */
+
 	@Override
 	public Object convert(Object fromObject) {
 		if (fromObject == null) {
-			throw new IllegalArgumentException("Parameter 'fromObject' was null."); //$NON-NLS-1$
+			throw new IllegalArgumentException(
+					"Parameter 'fromObject' was null."); //$NON-NLS-1$
 		}
-		
+
 		IStatus status = (IStatus) fromObject;
 		return status.getMessage();
 	}

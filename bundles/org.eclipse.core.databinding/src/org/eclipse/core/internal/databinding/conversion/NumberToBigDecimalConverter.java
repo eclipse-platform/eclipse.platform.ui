@@ -33,9 +33,6 @@ public class NumberToBigDecimalConverter extends NumberToNumberConverter {
 		super(numberFormat, fromType, BigDecimal.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.databinding.conversion.NumberToNumberConverter#doConvert(java.lang.Number)
-	 */
 	@Override
 	protected Number doConvert(Number number) {
 		if (number instanceof BigInteger) {

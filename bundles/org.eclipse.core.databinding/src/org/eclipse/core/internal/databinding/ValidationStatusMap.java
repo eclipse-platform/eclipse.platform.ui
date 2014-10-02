@@ -144,11 +144,6 @@ public class ValidationStatusMap extends ObservableMap {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.databinding.observable.list.ObservableList#dispose()
-	 */
 	@Override
 	public synchronized void dispose() {
 		bindings.removeChangeListener(markDirtyChangeListener);

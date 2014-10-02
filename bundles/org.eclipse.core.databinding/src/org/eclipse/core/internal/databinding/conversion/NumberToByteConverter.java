@@ -32,9 +32,6 @@ public class NumberToByteConverter extends NumberToNumberConverter {
 		super(numberFormat, fromType, (primitive) ? Byte.TYPE : Byte.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.databinding.conversion.NumberToNumberConverter#doConvert(java.lang.Number)
-	 */
 	@Override
 	protected Number doConvert(Number number) {
 		if (StringToNumberParser.inByteRange(number)) {

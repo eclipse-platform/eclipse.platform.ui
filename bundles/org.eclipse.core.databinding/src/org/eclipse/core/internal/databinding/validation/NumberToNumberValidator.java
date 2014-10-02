@@ -53,11 +53,6 @@ public abstract class NumberToNumberValidator implements IValidator {
 		primitive = ((Class) converter.getToType()).isPrimitive();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.databinding.validation.IValidator#validate(java.lang.Object)
-	 */
 	@Override
 	public final IStatus validate(Object value) {
 		if (value == null) {

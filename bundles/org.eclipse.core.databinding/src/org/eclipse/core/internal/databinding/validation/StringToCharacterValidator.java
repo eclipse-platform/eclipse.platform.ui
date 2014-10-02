@@ -33,11 +33,6 @@ public class StringToCharacterValidator implements IValidator {
 		this.converter = converter;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.databinding.validation.IValidator#validate(java.lang.Object)
-	 */
 	@Override
 	public IStatus validate(Object value) {
 		try {

@@ -48,11 +48,6 @@ public class IdentityConverter implements IConverter {
 			{ Boolean.TYPE, Boolean.class },
 			{ Character.TYPE, Character.class } };
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
-	 */
 	@Override
 	public Object convert(Object source) {
 		if (toType.isPrimitive()) {

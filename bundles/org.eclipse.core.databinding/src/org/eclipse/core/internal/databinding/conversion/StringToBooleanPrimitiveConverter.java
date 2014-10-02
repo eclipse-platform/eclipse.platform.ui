@@ -57,11 +57,6 @@ public class StringToBooleanPrimitiveConverter implements IConverter {
 		return array;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
-	 */
 	@Override
 	public Object convert(Object source) {
 		String s = (String) source;

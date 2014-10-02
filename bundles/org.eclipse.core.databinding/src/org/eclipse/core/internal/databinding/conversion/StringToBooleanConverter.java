@@ -16,11 +16,6 @@ package org.eclipse.core.internal.databinding.conversion;
  */
 public class StringToBooleanConverter extends StringToBooleanPrimitiveConverter {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
-	 */
 	@Override
 	public Object convert(Object source) {
 		String sourceString = (String) source;

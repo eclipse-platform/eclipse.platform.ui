@@ -33,9 +33,6 @@ public class NumberToDoubleConverter extends NumberToNumberConverter {
 		super(numberFormat, fromType, (primitive) ? Double.TYPE : Double.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.databinding.conversion.NumberToNumberConverter#doConvert(java.lang.Number)
-	 */
 	@Override
 	protected Number doConvert(Number number) {
 		if (StringToNumberParser.inDoubleRange(number)) {

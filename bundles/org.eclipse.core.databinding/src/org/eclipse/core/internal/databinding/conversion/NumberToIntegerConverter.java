@@ -35,9 +35,6 @@ public class NumberToIntegerConverter extends NumberToNumberConverter implements
 		super(numberFormat, fromType, (primitive) ? Integer.TYPE : Integer.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.databinding.conversion.NumberToNumberConverter#doConvert(java.lang.Number)
-	 */
 	@Override
 	protected Number doConvert(Number number) {
 		if (StringToNumberParser.inIntegerRange(number)) {

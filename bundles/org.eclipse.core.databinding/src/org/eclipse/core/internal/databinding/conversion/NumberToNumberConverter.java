@@ -37,11 +37,6 @@ public abstract class NumberToNumberConverter extends Converter {
 		this.primitive = toType.isPrimitive();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.databinding.conversion.IConverter#convert(java.lang.Object)
-	 */
 	@Override
 	public final Object convert(Object fromObject) {
 		if (fromObject == null) {

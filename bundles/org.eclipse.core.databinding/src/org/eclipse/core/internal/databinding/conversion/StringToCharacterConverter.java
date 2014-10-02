@@ -29,11 +29,6 @@ public class StringToCharacterConverter implements IConverter {
 		this.primitiveTarget = primitiveTarget;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
-	 */
 	@Override
 	public Object convert(Object source) {
 		if (source != null && !(source instanceof String))
