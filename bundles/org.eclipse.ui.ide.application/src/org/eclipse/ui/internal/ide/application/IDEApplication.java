@@ -105,9 +105,6 @@ public class IDEApplication implements IApplication, IExecutableExtension {
         // There is nothing to do for IDEApplication
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext context)
-     */
     @Override
 	public Object start(IApplicationContext appContext) throws Exception {
         Display display = createDisplay();
@@ -171,9 +168,6 @@ public class IDEApplication implements IApplication, IExecutableExtension {
         return PlatformUI.createDisplay();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
-     */
     @Override
 	public void setInitializationData(IConfigurationElement config,
             String propertyName, Object data) {
@@ -585,9 +579,6 @@ public class IDEApplication implements IApplication, IExecutableExtension {
         return new Version(version.getMajor(), version.getMinor(), 0);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.equinox.app.IApplication#stop()
-     */
 	@Override
 	public void stop() {
 		final IWorkbench workbench = PlatformUI.getWorkbench();

@@ -55,9 +55,6 @@ public class DelayedEventsProcessor implements Listener {
 		display.addListener(SWT.OpenDocument, this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-	 */
 	@Override
 	public void handleEvent(Event event) {
 		final String path = event.text;

@@ -40,11 +40,6 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
 
     private Button exitPromptButton;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.preference.PreferencePage
-     */
     @Override
 	protected Control createContents(Composite parent) {
 

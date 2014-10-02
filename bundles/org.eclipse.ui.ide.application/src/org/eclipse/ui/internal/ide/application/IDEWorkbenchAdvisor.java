@@ -181,11 +181,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		this.delayedEventsProcessor = processor;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor#initialize
-	 */
 	@Override
 	public void initialize(IWorkbenchConfigurer configurer) {
 
@@ -235,11 +230,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		Policy.setComparator(Collator.getInstance());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor#preStartup()
-	 */
 	@Override
 	public void preStartup() {
 
@@ -257,11 +247,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 				ResourcesPlugin.FAMILY_AUTO_BUILD);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor#postStartup()
-	 */
 	@Override
 	public void postStartup() {
 		try {
@@ -326,11 +311,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor#postShutdown
-	 */
 	@Override
 	public void postShutdown() {
 		if (activityHelper != null) {
@@ -350,11 +330,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor#preShutdown()
-	 */
 	@Override
 	public boolean preShutdown() {
 		Display.getCurrent().removeListener(SWT.Settings,
@@ -362,11 +337,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		return super.preShutdown();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor#createWorkbenchWindowAdvisor(org.eclipse.ui.application.IWorkbenchWindowConfigurer)
-	 */
 	@Override
 	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(
 			IWorkbenchWindowConfigurer configurer) {
@@ -424,10 +394,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			this.dialog = dialog;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#internalWorked(double)
-		 */
 		@Override
 		public void internalWorked(double work) {
 			super.internalWorked(work);
@@ -435,10 +401,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			updateProgressDetails();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#worked(int)
-		 */
 		@Override
 		public void worked(int work) {
 			super.worked(work);
@@ -471,10 +433,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			super(parent);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog#createDetailsButton(org.eclipse.swt.widgets.Composite)
-		 */
 		@Override
 		protected void createButtonsForButtonBar(Composite parent) {
 			super.createButtonsForButtonBar(parent);
@@ -543,21 +501,11 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor#getDefaultPageInput
-	 */
 	@Override
 	public IAdaptable getDefaultPageInput() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor
-	 */
 	@Override
 	public String getInitialWindowPerspectiveId() {
 		int index = PlatformUI.getWorkbench().getWorkbenchWindowCount() - 1;
@@ -865,11 +813,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		getWorkbenchConfigurer().declareImage(symbolicName, desc, shared);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor#getMainPreferencePageId
-	 */
 	@Override
 	public String getMainPreferencePageId() {
 		// indicate that we want the Workench preference page to be prominent
@@ -908,11 +851,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		return welcomePerspectiveInfos;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor#getWorkbenchErrorHandler()
-	 */
 	@Override
 	public synchronized AbstractStatusHandler getWorkbenchErrorHandler() {
 		if (ideWorkbenchErrorHandler == null) {
@@ -922,9 +860,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		return ideWorkbenchErrorHandler;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor#eventLoopIdle(org.eclipse.swt.widgets.Display)
-	 */
 	@Override
 	public void eventLoopIdle(Display display) {
 		if (delayedEventsProcessor != null)
