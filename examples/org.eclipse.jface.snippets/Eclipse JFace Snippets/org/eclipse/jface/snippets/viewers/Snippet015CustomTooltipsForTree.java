@@ -85,33 +85,21 @@ public class Snippet015CustomTooltipsForTree {
 
 	    CellLabelProvider labelProvider = new CellLabelProvider() {
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ViewerLabelProvider#getTooltipText(java.lang.Object)
-			 */
 			@Override
 			public String getToolTipText(Object element) {
 				return "Tooltip (" + element + ")";
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ViewerLabelProvider#getTooltipShift(java.lang.Object)
-			 */
 			@Override
 			public Point getToolTipShift(Object object) {
 				return new Point(5,5);
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ViewerLabelProvider#getTooltipDisplayDelayTime(java.lang.Object)
-			 */
 			@Override
 			public int getToolTipDisplayDelayTime(Object object) {
 				return 2000;
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ViewerLabelProvider#getTooltipTimeDisplayed(java.lang.Object)
-			 */
 			@Override
 			public int getToolTipTimeDisplayed(Object object) {
 				return 5000;

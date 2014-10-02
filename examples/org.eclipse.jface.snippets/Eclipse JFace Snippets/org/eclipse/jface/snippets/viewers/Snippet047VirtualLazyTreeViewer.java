@@ -43,11 +43,6 @@ public class Snippet047VirtualLazyTreeViewer {
 			this.elements = (IntermediateNode[]) newInput;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#getParent(java.lang.Object)
-		 */
 		@Override
 		public Object getParent(Object element) {
 			if (element instanceof LeafNode)
@@ -55,12 +50,6 @@ public class Snippet047VirtualLazyTreeViewer {
 			return elements;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#updateChildCount(java.lang.Object,
-		 *      int)
-		 */
 		@Override
 		public void updateChildCount(Object element, int currentChildCount) {
 			
@@ -76,12 +65,6 @@ public class Snippet047VirtualLazyTreeViewer {
 
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#updateElement(java.lang.Object,
-		 *      int)
-		 */
 		@Override
 		public void updateElement(Object parent, int index) {
 			

@@ -94,11 +94,6 @@ public class FocusBorderCellHighlighter extends FocusCellHighlighter {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.viewers.FocusCellHighlighter#focusCellChanged(org.eclipse.jface.viewers.ViewerCell)
-	 */
 	@Override
 	protected void focusCellChanged(ViewerCell cell) {
 		super.focusCellChanged(cell);

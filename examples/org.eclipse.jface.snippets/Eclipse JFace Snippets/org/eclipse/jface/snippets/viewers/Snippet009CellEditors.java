@@ -49,25 +49,16 @@ public class Snippet009CellEditors {
 		v.setContentProvider(ArrayContentProvider.getInstance());
 		v.setCellModifier(new ICellModifier() {
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
-			 */
 			@Override
 			public boolean canModify(Object element, String property) {
 				return ((MyModel)element).counter % 2 == 0;
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object, java.lang.String)
-			 */
 			@Override
 			public Object getValue(Object element, String property) {
 				return ((MyModel)element).counter + "";
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object, java.lang.String, java.lang.Object)
-			 */
 			@Override
 			public void modify(Object element, String property, Object value) {
 				TableItem item = (TableItem)element;
