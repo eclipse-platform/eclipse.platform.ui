@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 444070
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
@@ -23,7 +24,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IShowEditorInput;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IGotoMarker;
 
 public class MockReusableEditorPart extends MockWorkbenchPart implements IEditorPart,
@@ -127,8 +127,7 @@ public class MockReusableEditorPart extends MockWorkbenchPart implements IEditor
      * @see IEditorPart#init(IEditorSite, IEditorInput)
      */
     @Override
-	public void init(IEditorSite site, IEditorInput input)
-            throws PartInitException {
+	public void init(IEditorSite site, IEditorInput input) {
         this.input = input;
         setSite(site);
         callTrace.add("init");
