@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen (Versant Corporation) - bug 255005
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 444070
  *******************************************************************************/
 package org.eclipse.ui.tests.leaks;
 
@@ -151,7 +152,6 @@ public class LeakTests extends UITestCase {
 		};
 
 		// retrieve the progress service
-		@SuppressWarnings("cast")
 		IWorkbenchSiteProgressService service = view
 				.getSite().getService(IWorkbenchSiteProgressService.class);
 		// schedule it
