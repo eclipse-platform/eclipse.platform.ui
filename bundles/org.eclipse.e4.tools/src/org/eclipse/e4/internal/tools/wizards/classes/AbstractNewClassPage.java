@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Sopot Cela <sopotcela@gmail.com>
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Sopot Cela <sopotcela@gmail.com>
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.classes;
 
@@ -27,6 +27,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.internal.tools.Messages;
 import org.eclipse.e4.internal.tools.ToolsPlugin;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -68,8 +69,15 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 
+@SuppressWarnings("restriction")
 public abstract class AbstractNewClassPage extends WizardPage {
+	private static final String BUNDLECLASS = "bundleclass://"; //$NON-NLS-1$
+	private static final String FRAGMENT_ROOT = "fragmentRoot"; //$NON-NLS-1$
+	public static final String PACKAGE_FRAGMENT = "packageFragment"; //$NON-NLS-1$
+	public static final String PROPERTY_NAME = "name"; //$NON-NLS-1$
+
 	public static class JavaClass {
+
 		protected PropertyChangeSupport support = new PropertyChangeSupport(this);
 
 		private IPackageFragmentRoot fragmentRoot;
@@ -85,7 +93,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		}
 
 		public void setFragmentRoot(IPackageFragmentRoot fragmentRoot) {
-			support.firePropertyChange("fragementRoot", this.fragmentRoot, this.fragmentRoot = fragmentRoot);
+			support.firePropertyChange(FRAGMENT_ROOT, this.fragmentRoot, this.fragmentRoot = fragmentRoot);
 		}
 
 		public IPackageFragment getPackageFragment() {
@@ -93,7 +101,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		}
 
 		public void setPackageFragment(IPackageFragment packageFragment) {
-			support.firePropertyChange("packageFragment", this.packageFragment, this.packageFragment = packageFragment);
+			support.firePropertyChange(PACKAGE_FRAGMENT, this.packageFragment, this.packageFragment = packageFragment);
 		}
 
 		public String getName() {
@@ -101,7 +109,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		}
 
 		public void setName(String name) {
-			support.firePropertyChange("name", this.name, this.name = name);
+			support.firePropertyChange(PROPERTY_NAME, this.name, this.name = name);
 		}
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -112,20 +120,21 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			support.removePropertyChangeListener(listener);
 		}
 
-		public static boolean exists(IPackageFragmentRoot pFragmentRoot, IPackageFragment pPackageFragment, String pName){
+		public static boolean exists(IPackageFragmentRoot pFragmentRoot, IPackageFragment pPackageFragment, String pName) {
 
-			if( pFragmentRoot==null )
+			if (pFragmentRoot == null) {
 				return false;
+			}
 
-			String cuName = pName + ".java";
+			final String cuName = pName + ".java"; //$NON-NLS-1$
 			IFile file;
 
-			if( pPackageFragment != null ) {
-				ICompilationUnit unit = pPackageFragment.getCompilationUnit(cuName);
-				IResource resource = unit.getResource();
+			if (pPackageFragment != null) {
+				final ICompilationUnit unit = pPackageFragment.getCompilationUnit(cuName);
+				final IResource resource = unit.getResource();
 				file = (IFile) resource;
 			} else {
-				IFolder p = (IFolder) pFragmentRoot.getResource();
+				final IFolder p = (IFolder) pFragmentRoot.getResource();
 				file = p.getFile(cuName);
 			}
 			return file.exists();
@@ -137,7 +146,8 @@ public abstract class AbstractNewClassPage extends WizardPage {
 	private final IWorkspaceRoot fWorkspaceRoot;
 	private String initialString;
 
-	protected AbstractNewClassPage(String pageName, String title, String description, IPackageFragmentRoot froot, IWorkspaceRoot fWorkspaceRoot) {
+	protected AbstractNewClassPage(String pageName, String title, String description, IPackageFragmentRoot froot,
+		IWorkspaceRoot fWorkspaceRoot) {
 		super(pageName);
 		this.froot = froot;
 		this.fWorkspaceRoot = fWorkspaceRoot;
@@ -146,17 +156,21 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		setDescription(description);
 	}
 
-	protected AbstractNewClassPage(String pageName, String title, String description, IPackageFragmentRoot froot, IWorkspaceRoot fWorkspaceRoot, String initialString){
-		this(pageName,title,description,froot,fWorkspaceRoot);
-		this.initialString=initialString;
+	protected AbstractNewClassPage(String pageName, String title, String description, IPackageFragmentRoot froot,
+		IWorkspaceRoot fWorkspaceRoot, String initialString) {
+		this(pageName, title, description, froot, fWorkspaceRoot);
+		this.initialString = initialString;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
-		final Image img = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/newclass_wiz.png"));
+		final Image img = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream(
+			"/icons/full/wizban/newclass_wiz.png")); //$NON-NLS-1$
 		setImageDescriptor(ImageDescriptor.createFromImage(img));
 
 		parent.addDisposeListener(new DisposeListener() {
 
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				img.dispose();
 				setImageDescriptor(null);
@@ -168,35 +182,36 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		parent.setLayout(new GridLayout(3, false));
 
 		clazz = createInstance();
-		if ((froot!=null)&&(initialString!=null)){
-		clazz.setPackageFragment(froot.getPackageFragment(parseInitialStringForPackage(initialString)==null?"":parseInitialStringForPackage(initialString)));
-		clazz.setName(parseInitialStringForClassName(initialString));
+		if (froot != null && initialString != null) {
+			clazz.setPackageFragment(froot.getPackageFragment(parseInitialStringForPackage(initialString) == null ? "" //$NON-NLS-1$
+				: parseInitialStringForPackage(initialString)));
+			clazz.setName(parseInitialStringForClassName(initialString));
 		}
-		DataBindingContext dbc = new DataBindingContext();
+		final DataBindingContext dbc = new DataBindingContext();
 		WizardPageSupport.create(this, dbc);
 
 		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText("Source folder");
+			final Label l = new Label(parent, SWT.NONE);
+			l.setText(Messages.AbstractNewClassPage_SourceFolder);
 
-			Text t = new Text(parent, SWT.BORDER);
+			final Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			t.setEditable(false);
 
 			final Binding bd = dbc.bindValue(
-					WidgetProperties.text().observe(t),
-					BeanProperties.value("fragmentRoot").observe(clazz),
-					new UpdateValueStrategy().setBeforeSetValidator(new PFRootValidator()),
-					new UpdateValueStrategy().setConverter(new PackageFragmentRootToStringConverter())
-			);
+				WidgetProperties.text().observe(t),
+				BeanProperties.value(FRAGMENT_ROOT).observe(clazz),
+				new UpdateValueStrategy().setBeforeSetValidator(new PFRootValidator()),
+				new UpdateValueStrategy().setConverter(new PackageFragmentRootToStringConverter())
+				);
 
-			Button b = new Button(parent, SWT.PUSH);
-			b.setText("Browse ...");
+			final Button b = new Button(parent, SWT.PUSH);
+			b.setText(Messages.AbstractNewClassPage_Browse);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					IPackageFragmentRoot root = choosePackageRoot();
-					if( root != null ) {
+					final IPackageFragmentRoot root = choosePackageRoot();
+					if (root != null) {
 						froot = root;
 						clazz.setFragmentRoot(root);
 					}
@@ -206,48 +221,48 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		}
 
 		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText("Package");
-			Text t = new Text(parent, SWT.BORDER);
+			final Label l = new Label(parent, SWT.NONE);
+			l.setText(Messages.AbstractNewClassPage_Package);
+			final Text t = new Text(parent, SWT.BORDER);
 			t.setEditable(true);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			final Binding bd = dbc.bindValue(
-					WidgetProperties.text(SWT.Modify).observe(t),
-					BeanProperties.value("packageFragment").observe(clazz),
-					new UpdateValueStrategy().setConverter(new StringToPackageFragmentConverter(clazz)),
-					new UpdateValueStrategy().setConverter(new PackageFragmentToStringConverter())
-			);
+				WidgetProperties.text(SWT.Modify).observe(t),
+				BeanProperties.value(PACKAGE_FRAGMENT).observe(clazz),
+				new UpdateValueStrategy().setConverter(new StringToPackageFragmentConverter(clazz)),
+				new UpdateValueStrategy().setConverter(new PackageFragmentToStringConverter())
+				);
 
-			Button b = new Button(parent, SWT.PUSH);
-			b.setText("Browse ...");
+			final Button b = new Button(parent, SWT.PUSH);
+			b.setText(Messages.AbstractNewClassPage_Browse);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					IPackageFragment fragment = choosePackage();
-					if( fragment != null ) {
+					final IPackageFragment fragment = choosePackage();
+					if (fragment != null) {
 						clazz.setPackageFragment(fragment);
 					}
-					bd.updateModelToTarget(); //TODO Find out why this is needed
+					bd.updateModelToTarget(); // TODO Find out why this is needed
 				}
 			});
 		}
 
 		{
-			IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+			final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
-			Label l = new Label(parent, SWT.NONE);
-			l.setText("Name");
+			final Label l = new Label(parent, SWT.NONE);
+			l.setText(Messages.AbstractNewClassPage_Name);
 
-			Text t = new Text(parent, SWT.BORDER);
+			final Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			dbc.bindValue(textProp.observe(t), BeanProperties.value("name", String.class).observe(clazz),
-					new UpdateValueStrategy().setBeforeSetValidator(new ClassnameValidator(clazz)),null);
+			dbc.bindValue(textProp.observe(t), BeanProperties.value(PROPERTY_NAME, String.class).observe(clazz),
+				new UpdateValueStrategy().setBeforeSetValidator(new ClassnameValidator(clazz)), null);
 
 			new Label(parent, SWT.NONE);
 		}
 
 		{
-			Label l = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
+			final Label l = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
 			l.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false, 3, 1));
 		}
 
@@ -256,73 +271,78 @@ public abstract class AbstractNewClassPage extends WizardPage {
 	}
 
 	private String parseInitialStringForPackage(String initialString2) {
-		if (initialString2==null) return null;
-		int ioBC = initialString2.indexOf("bundleclass://");
-		int iSecondSlash = initialString2.lastIndexOf('/');
+		if (initialString2 == null) {
+			return null;
+		}
+		final int ioBC = initialString2.indexOf(BUNDLECLASS);
+		final int iSecondSlash = initialString2.lastIndexOf('/');
 		if (
 
-			(initialString2.length()==0)||//empty
-			(ioBC==-1)||//no bundle class
-			(iSecondSlash==-1)||//no package &| class name
-			(initialString2.indexOf('.')==-1)//no package
-			){
+			initialString2.length() == 0 || // empty
+			ioBC == -1 || // no bundle class
+			iSecondSlash == -1 || // no package &| class name
+			initialString2.indexOf('.') == -1// no package
+			) {
 			return null;
 		}
 
-		int lastDot = initialString2.lastIndexOf('.');
-		String packageString = initialString2.substring(iSecondSlash+1, lastDot);
+		final int lastDot = initialString2.lastIndexOf('.');
+		final String packageString = initialString2.substring(iSecondSlash + 1, lastDot);
 		return packageString;
 	}
 
-	private String parseInitialStringForClassName(String initialString){
-		if (initialString==null) return null;
-		int ioBC = initialString.indexOf("bundleclass://");
-		int iSecondSlash = initialString.lastIndexOf('/');
-		if (
-
-			(initialString.length()==0)||//empty
-			(ioBC==-1)||//no bundle class
-			(iSecondSlash==-1)||//no package &| class name
-			(initialString.indexOf('.')==-1)//no package
-			){
+	private String parseInitialStringForClassName(String initialString) {
+		if (initialString == null) {
 			return null;
 		}
-		int lastDot = initialString.lastIndexOf('.');
-		if (lastDot!=-1)
-			return initialString.substring(lastDot+1);
+		final int ioBC = initialString.indexOf(BUNDLECLASS);
+		final int iSecondSlash = initialString.lastIndexOf('/');
+		if (
+
+			initialString.length() == 0 || // empty
+			ioBC == -1 || // no bundle class
+			iSecondSlash == -1 || // no package &| class name
+			initialString.indexOf('.') == -1// no package
+			) {
+			return null;
+		}
+		final int lastDot = initialString.lastIndexOf('.');
+		if (lastDot != -1) {
+			return initialString.substring(lastDot + 1);
+		}
 		return null;
 	}
 
 	private IPackageFragmentRoot choosePackageRoot() {
-		IJavaElement initElement= clazz.getFragmentRoot();
-		Class[] acceptedClasses= new Class[] { IPackageFragmentRoot.class, IJavaProject.class };
-		TypedElementSelectionValidator validator= new TypedElementSelectionValidator(acceptedClasses, false) {
+		final IJavaElement initElement = clazz.getFragmentRoot();
+		Class[] acceptedClasses = new Class[] { IPackageFragmentRoot.class, IJavaProject.class };
+		final TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses, false) {
 			@Override
 			public boolean isSelectedValid(Object element) {
 				try {
 					if (element instanceof IJavaProject) {
-						IJavaProject jproject= (IJavaProject)element;
-						IPath path= jproject.getProject().getFullPath();
-						return (jproject.findPackageFragmentRoot(path) != null);
+						final IJavaProject jproject = (IJavaProject) element;
+						final IPath path = jproject.getProject().getFullPath();
+						return jproject.findPackageFragmentRoot(path) != null;
 					} else if (element instanceof IPackageFragmentRoot) {
-						return (((IPackageFragmentRoot)element).getKind() == IPackageFragmentRoot.K_SOURCE);
+						return ((IPackageFragmentRoot) element).getKind() == IPackageFragmentRoot.K_SOURCE;
 					}
 					return true;
-				} catch (JavaModelException e) {
+				} catch (final JavaModelException e) {
 					JavaPlugin.log(e.getStatus()); // just log, no UI in validation
 				}
 				return false;
 			}
 		};
 
-		acceptedClasses= new Class[] { IJavaModel.class, IPackageFragmentRoot.class, IJavaProject.class };
-		ViewerFilter filter= new TypedViewerFilter(acceptedClasses) {
+		acceptedClasses = new Class[] { IJavaModel.class, IPackageFragmentRoot.class, IJavaProject.class };
+		final ViewerFilter filter = new TypedViewerFilter(acceptedClasses) {
 			@Override
 			public boolean select(Viewer viewer, Object parent, Object element) {
 				if (element instanceof IPackageFragmentRoot) {
 					try {
-						return (((IPackageFragmentRoot)element).getKind() == IPackageFragmentRoot.K_SOURCE);
-					} catch (JavaModelException e) {
+						return ((IPackageFragmentRoot) element).getKind() == IPackageFragmentRoot.K_SOURCE;
+					} catch (final JavaModelException e) {
 						JavaPlugin.log(e.getStatus()); // just log, no UI in validation
 						return false;
 					}
@@ -331,9 +351,9 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			}
 		};
 
-		StandardJavaElementContentProvider provider= new StandardJavaElementContentProvider();
-		ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
-		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(getShell(), labelProvider, provider);
+		final StandardJavaElementContentProvider provider = new StandardJavaElementContentProvider();
+		final ILabelProvider labelProvider = new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
+		final ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), labelProvider, provider);
 		dialog.setValidator(validator);
 		dialog.setComparator(new JavaElementComparator());
 		dialog.setTitle(NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_title);
@@ -344,12 +364,12 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		dialog.setHelpAvailable(false);
 
 		if (dialog.open() == Window.OK) {
-			Object element= dialog.getFirstResult();
+			final Object element = dialog.getFirstResult();
 			if (element instanceof IJavaProject) {
-				IJavaProject jproject= (IJavaProject)element;
+				final IJavaProject jproject = (IJavaProject) element;
 				return jproject.getPackageFragmentRoot(jproject.getProject());
 			} else if (element instanceof IPackageFragmentRoot) {
-				return (IPackageFragmentRoot)element;
+				return (IPackageFragmentRoot) element;
 			}
 			return null;
 		}
@@ -357,26 +377,27 @@ public abstract class AbstractNewClassPage extends WizardPage {
 	}
 
 	private IPackageFragment choosePackage() {
-		IJavaElement[] packages= null;
+		IJavaElement[] packages = null;
 		try {
 			if (froot != null && froot.exists()) {
-				packages= froot.getChildren();
+				packages = froot.getChildren();
 			}
-		} catch (JavaModelException e) {
+		} catch (final JavaModelException e) {
 			e.printStackTrace();
 		}
 		if (packages == null) {
-			packages= new IJavaElement[0];
+			packages = new IJavaElement[0];
 		}
 
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT));
+		final ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(),
+			new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT));
 		dialog.setIgnoreCase(false);
-		dialog.setTitle("Choose Package");
-		dialog.setMessage("Choose a Package");
-		dialog.setEmptyListMessage("You need to select a package");
+		dialog.setTitle(Messages.AbstractNewClassPage_ChoosePackage);
+		dialog.setMessage(Messages.AbstractNewClassPage_ChooseAPackage);
+		dialog.setEmptyListMessage(Messages.AbstractNewClassPage_NeedToSelectAPackage);
 		dialog.setElements(packages);
 		dialog.setHelpAvailable(false);
-		IPackageFragment pack= clazz.getPackageFragment();
+		final IPackageFragment pack = clazz.getPackageFragment();
 		if (pack != null) {
 			dialog.setInitialSelections(new Object[] { pack });
 		}
@@ -403,28 +424,35 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			this.clazz = clazz;
 		}
 
+		@Override
 		public IStatus validate(Object value) {
-			String name = value.toString();
-			if (name.length()==0)
-				return new Status(IStatus.ERROR,ToolsPlugin.PLUGIN_ID,"Name must not be empty");
-			if ((name.indexOf('.')!=-1)||(name.trim().indexOf(' ')!=-1))
-				return new Status(IStatus.ERROR,ToolsPlugin.PLUGIN_ID,"Name must not be qualified or contain spaces");
-			if( JavaClass.exists(clazz.getFragmentRoot(), clazz.getPackageFragment(), name) )
-				return new Status(IStatus.ERROR,ToolsPlugin.PLUGIN_ID,"Java Class already exists");
+			final String name = value.toString();
+			if (name.length() == 0) {
+				return new Status(IStatus.ERROR, ToolsPlugin.PLUGIN_ID, Messages.AbstractNewClassPage_NameNotEmpty);
+			}
+			if (name.indexOf('.') != -1 || name.trim().indexOf(' ') != -1) {
+				return new Status(IStatus.ERROR, ToolsPlugin.PLUGIN_ID,
+					Messages.AbstractNewClassPage_NameMustBeQualified);
+			}
+			if (JavaClass.exists(clazz.getFragmentRoot(), clazz.getPackageFragment(), name)) {
+				return new Status(IStatus.ERROR, ToolsPlugin.PLUGIN_ID, Messages.AbstractNewClassPage_ClassExists);
+			}
 
-			return JavaConventions.validateJavaTypeName(name,JavaCore.VERSION_1_3,JavaCore.VERSION_1_3);
+			return JavaConventions.validateJavaTypeName(name, JavaCore.VERSION_1_3, JavaCore.VERSION_1_3);
 		}
 	}
 
 	static class PFRootValidator implements IValidator {
 
+		@Override
 		public IStatus validate(Object value) {
-			String name = value.toString();
-			if (name.length()==0)
-				return new Status(IStatus.ERROR,ToolsPlugin.PLUGIN_ID,"Source folder must not be empty");
+			final String name = value.toString();
+			if (name.length() == 0) {
+				return new Status(IStatus.ERROR, ToolsPlugin.PLUGIN_ID,
+					Messages.AbstractNewClassPage_SourceFolderNotEmpty);
+			}
 
-
-			return new Status(IStatus.OK,ToolsPlugin.PLUGIN_ID,"");
+			return new Status(IStatus.OK, ToolsPlugin.PLUGIN_ID, ""); //$NON-NLS-1$
 		}
 	}
 
@@ -434,10 +462,11 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			super(IPackageFragmentRoot.class, String.class);
 		}
 
+		@Override
 		public Object convert(Object fromObject) {
-			IPackageFragmentRoot f = (IPackageFragmentRoot) fromObject;
-			if( f == null ) {
-				return "";
+			final IPackageFragmentRoot f = (IPackageFragmentRoot) fromObject;
+			if (f == null) {
+				return ""; //$NON-NLS-1$
 			}
 			return f.getPath().makeRelative().toString();
 		}
@@ -449,11 +478,12 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			super(IPackageFragment.class, String.class);
 		}
 
+		@Override
 		public Object convert(Object fromObject) {
-			if( fromObject == null ) {
-				return "";
+			if (fromObject == null) {
+				return ""; //$NON-NLS-1$
 			}
-			IPackageFragment f = (IPackageFragment) fromObject;
+			final IPackageFragment f = (IPackageFragment) fromObject;
 			return f.getElementName();
 		}
 	}
@@ -467,13 +497,16 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			this.clazz = clazz;
 		}
 
+		@Override
 		public Object convert(Object fromObject) {
-			if (clazz.getFragmentRoot()==null) return null;
+			if (clazz.getFragmentRoot() == null) {
+				return null;
+			}
 			if (fromObject == null) {
-				return clazz.getFragmentRoot().getPackageFragment("");
+				return clazz.getFragmentRoot().getPackageFragment(""); //$NON-NLS-1$
 			}
 
-				return clazz.getFragmentRoot().getPackageFragment((String) fromObject);
+			return clazz.getFragmentRoot().getPackageFragment((String) fromObject);
 
 		}
 	}
