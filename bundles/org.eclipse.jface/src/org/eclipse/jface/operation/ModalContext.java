@@ -112,9 +112,6 @@ public class ModalContext {
 			this.callingThread = Thread.currentThread();
 		}
 
-		/*
-		 * (non-Javadoc) Method declared on Thread.
-		 */
 		@Override
 		public void run() {
 			try {

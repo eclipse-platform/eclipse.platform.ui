@@ -94,9 +94,6 @@ public class BooleanFieldEditor extends FieldEditor {
 		this(name, label, DEFAULT, parent);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor.
-	 */
 	@Override
 	protected void adjustForNumColumns(int numColumns) {
 		if (style == SEPARATE_LABEL) {
@@ -105,9 +102,6 @@ public class BooleanFieldEditor extends FieldEditor {
 		((GridData) checkBox.getLayoutData()).horizontalSpan = numColumns;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor.
-	 */
 	@Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
 		String text = getLabelText();
@@ -149,10 +143,6 @@ public class BooleanFieldEditor extends FieldEditor {
 		return getChangeControl(parent);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor. Loads the value from the
-	 * preference store and sets it to the check box.
-	 */
 	@Override
 	protected void doLoad() {
 		if (checkBox != null) {
@@ -162,10 +152,6 @@ public class BooleanFieldEditor extends FieldEditor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor. Loads the default value
-	 * from the preference store and sets it to the check box.
-	 */
 	@Override
 	protected void doLoadDefault() {
 		if (checkBox != null) {
@@ -175,9 +161,6 @@ public class BooleanFieldEditor extends FieldEditor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor.
-	 */
 	@Override
 	protected void doStore() {
 		getPreferenceStore().setValue(getPreferenceName(), checkBox.getSelection());
@@ -224,9 +207,6 @@ public class BooleanFieldEditor extends FieldEditor {
 		return checkBox;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor.
-	 */
 	@Override
 	public int getNumberOfControls() {
 		switch (style) {
@@ -237,9 +217,6 @@ public class BooleanFieldEditor extends FieldEditor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor.
-	 */
 	@Override
 	public void setFocus() {
 		if (checkBox != null) {
@@ -247,9 +224,6 @@ public class BooleanFieldEditor extends FieldEditor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor.
-	 */
 	@Override
 	public void setLabelText(String text) {
 		super.setLabelText(text);

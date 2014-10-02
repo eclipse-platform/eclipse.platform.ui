@@ -94,11 +94,6 @@ public class ColorSelector extends EventManager {
             }
         });
         fButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.swt.accessibility.AccessibleAdapter#getName(org.eclipse.swt.accessibility.AccessibleEvent)
-             */
             @Override
 			public void getName(AccessibleEvent e) {
                 e.result = JFaceResources.getString("ColorSelector.Name"); //$NON-NLS-1$

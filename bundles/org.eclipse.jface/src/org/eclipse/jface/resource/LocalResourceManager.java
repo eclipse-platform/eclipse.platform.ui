@@ -58,9 +58,6 @@ public final class LocalResourceManager extends AbstractResourceManager {
         this(parentRegistry);
         
         owner.addDisposeListener(new DisposeListener() {
-	        /* (non-Javadoc)
-	         * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-	         */
 	        @Override
 			public void widgetDisposed(DisposeEvent e) {
 	            LocalResourceManager.this.dispose();
@@ -68,26 +65,17 @@ public final class LocalResourceManager extends AbstractResourceManager {
         });
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.ResourceManager#getDevice()
-     */
     @Override
 	public Device getDevice() {
         return parentRegistry.getDevice();
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.AbstractResourceManager#allocate(org.eclipse.jface.resource.DeviceResourceDescriptor)
-     */
     @Override
 	protected Object allocate(DeviceResourceDescriptor descriptor)
             throws DeviceResourceException {
         return parentRegistry.create(descriptor);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.AbstractResourceManager#deallocate(java.lang.Object, org.eclipse.jface.resource.DeviceResourceDescriptor)
-     */
     @Override
 	protected void deallocate(Object resource,
             DeviceResourceDescriptor descriptor) {
@@ -95,9 +83,6 @@ public final class LocalResourceManager extends AbstractResourceManager {
         parentRegistry.destroy(descriptor);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.ResourceManager#getDefaultImage()
-     */
     @Override
 	protected Image getDefaultImage() {
         return parentRegistry.getDefaultImage();

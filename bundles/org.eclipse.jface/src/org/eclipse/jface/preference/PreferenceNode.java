@@ -115,9 +115,6 @@ public class PreferenceNode implements IPreferenceNode {
         page = preferencePage;
     }
 
-    /*
-     * (non-Javadoc) Method declared on IPreferenceNode.
-     */
     @Override
 	public void add(IPreferenceNode node) {
         if (subNodes == null) {
@@ -151,9 +148,6 @@ public class PreferenceNode implements IPreferenceNode {
         return null;
     }
 
-    /*
-     * (non-Javadoc) Method declared on IPreferenceNode.
-     */
     @Override
 	public void createPage() {
         page = (IPreferencePage) createObject(classname);
@@ -178,9 +172,6 @@ public class PreferenceNode implements IPreferenceNode {
         }
     }
 
-    /*
-     * (non-Javadoc) Method declared on IContributionNode.
-     */
     @Override
 	public IPreferenceNode findSubNode(String id) {
         Assert.isNotNull(id);
@@ -198,9 +189,6 @@ public class PreferenceNode implements IPreferenceNode {
         return null;
     }
 
-    /*
-     * (non-Javadoc) Method declared on IPreferenceNode.
-     */
     @Override
 	public String getId() {
         return this.id;
@@ -215,9 +203,6 @@ public class PreferenceNode implements IPreferenceNode {
         return imageDescriptor;
     }
 
-    /*
-     * (non-Javadoc) Method declared on IPreferenceNode.
-     */
     @Override
 	public Image getLabelImage() {
         if (image == null && imageDescriptor != null) {
@@ -226,9 +211,6 @@ public class PreferenceNode implements IPreferenceNode {
         return image;
     }
 
-    /*
-     * (non-Javadoc) Method declared on IPreferenceNode.
-     */
     @Override
 	public String getLabelText() {
         if (page != null) {
@@ -237,17 +219,11 @@ public class PreferenceNode implements IPreferenceNode {
         return label;
     }
 
-    /*
-     * (non-Javadoc) Method declared on IPreferenceNode.
-     */
     @Override
 	public IPreferencePage getPage() {
         return page;
     }
 
-    /*
-     * (non-Javadoc) Method declared on IPreferenceNode.
-     */
     @Override
 	public IPreferenceNode[] getSubNodes() {
         if (subNodes == null) {
@@ -257,9 +233,6 @@ public class PreferenceNode implements IPreferenceNode {
                 .toArray(new IPreferenceNode[subNodes.size()]);
     }
 
-    /*
-     * (non-Javadoc) Method declared on IPreferenceNode.
-     */
     @Override
 	public IPreferenceNode remove(String id) {
         IPreferenceNode node = findSubNode(id);
@@ -269,9 +242,6 @@ public class PreferenceNode implements IPreferenceNode {
         return node;
     }
 
-    /*
-     * (non-Javadoc) Method declared on IPreferenceNode.
-     */
     @Override
 	public boolean remove(IPreferenceNode node) {
         if (subNodes == null) {

@@ -38,9 +38,6 @@ public class SubToolBarManager extends SubContributionManager implements
         return (IToolBarManager) getParent();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IToolBarManager.
-     */
     @Override
 	public void update(boolean force) {
         // This method is not governed by visibility.  The client may

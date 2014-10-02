@@ -123,11 +123,6 @@ public abstract class Window implements IShellProvider {
 	 * Defines a default exception handler.
 	 */
 	private static class DefaultExceptionHandler implements IExceptionHandler {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.window.Window.IExceptionHandler#handleException(java.lang.Throwable)
-		 */
 		@Override
 		public void handleException(Throwable t) {
 			if (t instanceof ThreadDeath) {

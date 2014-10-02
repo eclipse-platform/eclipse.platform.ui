@@ -62,9 +62,6 @@ class FileImageDescriptor extends ImageDescriptor {
 		this.name = filename;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Object.
-	 */
 	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof FileImageDescriptor)) {
@@ -141,9 +138,6 @@ class FileImageDescriptor extends ImageDescriptor {
 
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Object.
-	 */
 	@Override
 	public int hashCode() {
 		int code = name.hashCode();
@@ -153,9 +147,6 @@ class FileImageDescriptor extends ImageDescriptor {
 		return code;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Object.
-	 */
 	/**
 	 * The <code>FileImageDescriptor</code> implementation of this
 	 * <code>Object</code> method returns a string representation of this
@@ -166,12 +157,6 @@ class FileImageDescriptor extends ImageDescriptor {
 		return "FileImageDescriptor(location=" + location + ", name=" + name + ")";//$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.resource.ImageDescriptor#createImage(boolean,
-	 *      org.eclipse.swt.graphics.Device)
-	 */
 	@Override
 	public Image createImage(boolean returnMissingImageOnError, Device device) {
 		String path = getFilePath();

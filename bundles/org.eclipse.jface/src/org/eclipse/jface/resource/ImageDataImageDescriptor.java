@@ -47,9 +47,6 @@ class ImageDataImageDescriptor extends ImageDescriptor {
         this.data = data;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.DeviceResourceDescriptor#create(org.eclipse.swt.graphics.Device)
-     */
     @Override
 	public Object createResource(Device device) throws DeviceResourceException {
 
@@ -65,9 +62,6 @@ class ImageDataImageDescriptor extends ImageDescriptor {
         return super.createResource(device);
     }
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.DeviceResourceDescriptor#destroy(java.lang.Object)
-     */
     @Override
 	public void destroyResource(Object previouslyCreatedObject) {
         if (previouslyCreatedObject == originalImage) {
@@ -77,17 +71,11 @@ class ImageDataImageDescriptor extends ImageDescriptor {
         super.destroyResource(previouslyCreatedObject);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.ImageDescriptor#getImageData()
-     */
     @Override
 	public ImageData getImageData() {
         return data;
     }
     
-    /* (non-Javadoc)
-     * @see Object#hashCode
-     */
     @Override
 	public int hashCode() {
     	 if (originalImage != null) {
@@ -96,9 +84,6 @@ class ImageDataImageDescriptor extends ImageDescriptor {
          return data.hashCode();
     }
 
-    /* (non-Javadoc)
-     * @see Object#equals
-     */
     @Override
 	public boolean equals(Object obj) {
         if (!(obj instanceof ImageDataImageDescriptor)) {

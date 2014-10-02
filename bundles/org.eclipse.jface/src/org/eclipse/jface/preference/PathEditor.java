@@ -55,11 +55,6 @@ public class PathEditor extends ListEditor {
         createControl(parent);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ListEditor.
-     * Creates a single string from the given array by separating each
-     * string with the appropriate OS-specific path separator.
-     */
     @Override
 	protected String createList(String[] items) {
         StringBuffer path = new StringBuffer("");//$NON-NLS-1$
@@ -71,10 +66,6 @@ public class PathEditor extends ListEditor {
         return path.toString();
     }
 
-    /* (non-Javadoc)
-     * Method declared on ListEditor.
-     * Creates a new path element by means of a directory dialog.
-     */
     @Override
 	protected String getNewInputObject() {
 
@@ -98,9 +89,6 @@ public class PathEditor extends ListEditor {
         return dir;
     }
 
-    /* (non-Javadoc)
-     * Method declared on ListEditor.
-     */
     @Override
 	protected String[] parseString(String stringList) {
         StringTokenizer st = new StringTokenizer(stringList, File.pathSeparator

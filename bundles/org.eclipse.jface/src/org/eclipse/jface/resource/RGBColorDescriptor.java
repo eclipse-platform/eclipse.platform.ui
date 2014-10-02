@@ -49,9 +49,6 @@ class RGBColorDescriptor extends ColorDescriptor {
         this.originalColor = originalColor;
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
 	public boolean equals(Object obj) {
         if (obj instanceof RGBColorDescriptor) {
@@ -63,17 +60,11 @@ class RGBColorDescriptor extends ColorDescriptor {
         return false;
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
 	public int hashCode() {
         return color.hashCode();
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resources.ColorDescriptor#createColor()
-     */
     @Override
 	public Color createColor(Device device) {
         // If this descriptor is wrapping an existing color, then we can return the original color
@@ -88,9 +79,6 @@ class RGBColorDescriptor extends ColorDescriptor {
         return new Color(device, color);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.ColorDescriptor#destroyColor(org.eclipse.swt.graphics.Color)
-     */
     @Override
 	public void destroyColor(Color toDestroy) {
         if (toDestroy == originalColor) {

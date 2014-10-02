@@ -50,11 +50,6 @@ public abstract class SafeRunnable implements ISafeRunnable {
 		this.message = message;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-	 */
 	@Override
 	public void handleException(Throwable e) {
 		// Workaround to avoid interactive error dialogs during

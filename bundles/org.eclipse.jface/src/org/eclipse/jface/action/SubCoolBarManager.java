@@ -34,18 +34,12 @@ public class SubCoolBarManager extends SubContributionManager implements
         Assert.isNotNull(mgr);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.ICoolBarManager#add(org.eclipse.jface.action.IToolBarManager)
-     */
     @Override
 	public void add(IToolBarManager toolBarManager) {
         Assert.isNotNull(toolBarManager);
         super.add(new ToolBarContributionItem(toolBarManager));
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.ICoolBarManager#getStyle()
-     */
     @Override
 	public int getStyle() {
         // It is okay to cast down since we only accept coolBarManager objects in the
@@ -64,40 +58,25 @@ public class SubCoolBarManager extends SubContributionManager implements
         return (ICoolBarManager) getParent();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.ICoolBarManager#isLayoutLocked()
-     */
     @Override
 	public boolean getLockLayout() {
         return getParentCoolBarManager().getLockLayout();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.ICoolBarManager#lockLayout(boolean)
-     */
     @Override
 	public void setLockLayout(boolean value) {
     }
 
-    /* (non-Javadoc)
-     * SubCoolBarManagers do not have control of the global context menu.
-     */
     @Override
 	public IMenuManager getContextMenuManager() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * In SubCoolBarManager we do nothing.
-     */
     @Override
 	public void setContextMenuManager(IMenuManager menuManager) {
         // do nothing
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IContributionManager#update(boolean)
-     */
     @Override
 	public void update(boolean force) {
         // This method is not governed by visibility.  The client may

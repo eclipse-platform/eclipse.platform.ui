@@ -64,9 +64,6 @@ public abstract class StringButtonFieldEditor extends StringFieldEditor {
         createControl(parent);
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	protected void adjustForNumColumns(int numColumns) {
         ((GridData) getTextControl().getLayoutData()).horizontalSpan = numColumns - 2;
@@ -85,9 +82,6 @@ public abstract class StringButtonFieldEditor extends StringFieldEditor {
      */
     protected abstract String changePressed();
 
-    /* (non-Javadoc)
-     * Method declared on StringFieldEditor (and FieldEditor).
-     */
     @Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
         super.doFillIntoGrid(parent, numColumns - 1);
@@ -135,9 +129,6 @@ public abstract class StringButtonFieldEditor extends StringFieldEditor {
         return changeButton;
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	public int getNumberOfControls() {
         return 3;
@@ -171,9 +162,6 @@ public abstract class StringButtonFieldEditor extends StringFieldEditor {
 		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.preference.FieldEditor#setEnabled(boolean, org.eclipse.swt.widgets.Composite)
-     */
     @Override
 	public void setEnabled(boolean enabled, Composite parent) {
         super.setEnabled(enabled, parent);

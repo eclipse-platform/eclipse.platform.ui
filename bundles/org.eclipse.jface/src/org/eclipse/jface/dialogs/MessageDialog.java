@@ -198,20 +198,12 @@ public class MessageDialog extends IconAndMessageDialog {
         this.defaultButtonIndex = defaultIndex;
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
-     */
     @Override
 	protected void buttonPressed(int buttonId) {
         setReturnCode(buttonId);
         close();
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-     */
     @Override
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
@@ -223,9 +215,6 @@ public class MessageDialog extends IconAndMessageDialog {
 		}
     }
 
-    /*
-     * (non-Javadoc) Method declared on Dialog.
-     */
     @Override
 	protected void createButtonsForButtonBar(Composite parent) {
         buttons = new Button[buttonLabels.length];
@@ -514,10 +503,6 @@ public class MessageDialog extends IconAndMessageDialog {
         return true;
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IconAndMessageDialog#getImage()
-     */
     @Override
 	public Image getImage() {
         return image;

@@ -279,17 +279,11 @@ public abstract class FontDescriptor extends DeviceResourceDescriptor {
      */
     public abstract void destroyFont(Font previouslyCreatedFont);
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.DeviceResourceDescriptor#create(org.eclipse.swt.graphics.Device)
-     */
     @Override
 	public final Object createResource(Device device) throws DeviceResourceException {
         return createFont(device);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.DeviceResourceDescriptor#destroy(java.lang.Object)
-     */
     @Override
 	public final void destroyResource(Object previouslyCreatedObject) {
         destroyFont((Font)previouslyCreatedObject);

@@ -184,11 +184,6 @@ public final class KeyStroke extends Trigger implements Comparable {
 		this.naturalKey = naturalKey;
 	}
 
-    /*
-     * (non-Javadoc)
-     * 
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
 	@Override
 	public final int compareTo(final Object object) {
 		final KeyStroke keyStroke = (KeyStroke) object;
@@ -201,11 +196,6 @@ public final class KeyStroke extends Trigger implements Comparable {
 		return compareTo;
 	}
 
-    /*
-     * (non-Javadoc)
-     * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public final boolean equals(final Object object) {
 		if (!(object instanceof KeyStroke)) {
@@ -251,11 +241,6 @@ public final class KeyStroke extends Trigger implements Comparable {
 		return naturalKey;
 	}
 
-    /*
-     * (non-Javadoc)
-     * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public final int hashCode() {
 		return modifierKeys << 4 + naturalKey;

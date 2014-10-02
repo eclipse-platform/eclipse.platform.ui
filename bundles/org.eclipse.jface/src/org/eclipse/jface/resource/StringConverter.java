@@ -77,9 +77,9 @@ public class StringConverter {
      */
     private static final String FONT_SEPARATOR = ";"; //$NON-NLS-1$
 
-    /* (non-Javadoc)
-     * Declare a private constructor to block instantiation.
-     */
+	/**
+	 * Declare a private constructor to block instantiation.
+	 */
     private StringConverter() {
         //no-op
     }

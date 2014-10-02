@@ -137,9 +137,6 @@ public class RadioGroupFieldEditor extends FieldEditor {
         createControl(parent);
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	protected void adjustForNumColumns(int numColumns) {
         Control control = getLabelControl();
@@ -169,9 +166,6 @@ public class RadioGroupFieldEditor extends FieldEditor {
         return true;
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
         if (useGroup) {
@@ -192,25 +186,16 @@ public class RadioGroupFieldEditor extends FieldEditor {
 
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	protected void doLoad() {
         updateValue(getPreferenceStore().getString(getPreferenceName()));
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	protected void doLoadDefault() {
         updateValue(getPreferenceStore().getDefaultString(getPreferenceName()));
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	protected void doStore() {
         if (value == null) {
@@ -221,9 +206,6 @@ public class RadioGroupFieldEditor extends FieldEditor {
         getPreferenceStore().setValue(getPreferenceName(), value);
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	public int getNumberOfControls() {
         return 1;

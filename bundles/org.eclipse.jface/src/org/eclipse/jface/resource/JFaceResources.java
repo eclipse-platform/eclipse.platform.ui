@@ -207,11 +207,6 @@ public class JFaceResources {
 			reg = mgr;
 			registries.put(toQuery, mgr);
 			toQuery.disposeExec(new Runnable() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see java.lang.Runnable#run()
-				 */
 				@Override
 				public void run() {
 					mgr.dispose();
@@ -583,8 +578,8 @@ public class JFaceResources {
 		fontRegistry = registry;
 	}
 
-	/*
-	 * (non-Javadoc) Declare a private constructor to block instantiation.
+	/**
+	 * Declare a private constructor to block instantiation.
 	 */
 	private JFaceResources() {
 		// no-op

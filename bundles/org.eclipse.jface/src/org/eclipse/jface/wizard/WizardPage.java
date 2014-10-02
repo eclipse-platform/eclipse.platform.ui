@@ -142,9 +142,6 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
         return wizard.getDialogSettings();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IDialogPage.
-     */
     @Override
 	public Image getImage() {
         Image result = super.getImage();
@@ -156,18 +153,11 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
         return result;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWizardPage.
-     */
     @Override
 	public String getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWizardPage.
-     * The default behavior is to ask the wizard for the next page.
-     */
     @Override
 	public IWizardPage getNextPage() {
         if (wizard == null) {
@@ -176,11 +166,6 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
         return wizard.getNextPage(this);
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWizardPage.
-     * The default behavior is return the cached previous back or,
-     * lacking that, to ask the wizard for the previous page.
-     */
     @Override
 	public IWizardPage getPreviousPage() {
         if (previousPage != null) {
@@ -213,9 +198,6 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
         return container.getShell();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWizardPage.
-     */
     @Override
 	public IWizard getWizard() {
         return wizard;
@@ -312,9 +294,6 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
 		}
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWizardPage.
-     */
     @Override
 	public void setPreviousPage(IWizardPage page) {
         previousPage = page;
@@ -333,9 +312,6 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWizardPage.
-     */
     @Override
 	public void setWizard(IWizard newWizard) {
         wizard = newWizard;

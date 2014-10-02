@@ -157,9 +157,6 @@ public class StringFieldEditor extends FieldEditor {
         this(name, labelText, UNLIMITED, parent);
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	protected void adjustForNumColumns(int numColumns) {
         GridData gd = (GridData) textField.getLayoutData();
@@ -247,9 +244,6 @@ public class StringFieldEditor extends FieldEditor {
         textField.setLayoutData(gd);
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	protected void doLoad() {
         if (textField != null) {
@@ -259,9 +253,6 @@ public class StringFieldEditor extends FieldEditor {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	protected void doLoadDefault() {
         if (textField != null) {
@@ -272,9 +263,6 @@ public class StringFieldEditor extends FieldEditor {
         valueChanged();
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	protected void doStore() {
         getPreferenceStore().setValue(getPreferenceName(), textField.getText());
@@ -290,9 +278,6 @@ public class StringFieldEditor extends FieldEditor {
         return errorMessage;
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	public int getNumberOfControls() {
         return 2;
@@ -338,9 +323,6 @@ public class StringFieldEditor extends FieldEditor {
             case VALIDATE_ON_KEY_STROKE:
                 textField.addKeyListener(new KeyAdapter() {
 
-                    /* (non-Javadoc)
-                     * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
-                     */
                     @Override
 					public void keyReleased(KeyEvent e) {
                         valueChanged();
@@ -407,17 +389,11 @@ public class StringFieldEditor extends FieldEditor {
         return emptyStringAllowed;
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	public boolean isValid() {
         return isValid;
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	protected void refreshValidState() {
         isValid = checkState();
@@ -443,9 +419,6 @@ public class StringFieldEditor extends FieldEditor {
         errorMessage = message;
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	public void setFocus() {
         if (textField != null) {

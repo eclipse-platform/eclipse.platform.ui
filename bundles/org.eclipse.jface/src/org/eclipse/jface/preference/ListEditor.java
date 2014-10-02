@@ -114,9 +114,6 @@ public abstract class ListEditor extends FieldEditor {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	protected void adjustForNumColumns(int numColumns) {
         Control control = getLabelControl();
@@ -193,9 +190,6 @@ public abstract class ListEditor extends FieldEditor {
         };
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
         Control control = getLabelControl(parent);
@@ -216,9 +210,6 @@ public abstract class ListEditor extends FieldEditor {
         buttonBox.setLayoutData(gd);
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	protected void doLoad() {
         if (list != null) {
@@ -230,9 +221,6 @@ public abstract class ListEditor extends FieldEditor {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	protected void doLoadDefault() {
         if (list != null) {
@@ -246,9 +234,6 @@ public abstract class ListEditor extends FieldEditor {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	protected void doStore() {
         String s = createList(list.getItems());
@@ -331,9 +316,6 @@ public abstract class ListEditor extends FieldEditor {
      */
     protected abstract String getNewInputObject();
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	public int getNumberOfControls() {
         return 2;
@@ -419,9 +401,6 @@ public abstract class ListEditor extends FieldEditor {
         downButton.setEnabled(size > 1 && index >= 0 && index < size - 1);
     }
 
-    /* (non-Javadoc)
-     * Method declared on FieldEditor.
-     */
     @Override
 	public void setFocus() {
         if (list != null) {

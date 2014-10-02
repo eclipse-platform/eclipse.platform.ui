@@ -75,11 +75,6 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.bindings.keysKeyFormatter#format(org.eclipse.jface.bindings.keys.KeySequence)
-	 */
 	@Override
 	public String format(final int key) {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();
@@ -92,11 +87,6 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 		return name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.bindings.keys.KeyFormatter#format(org.eclipse.jface.bindings.keys.KeySequence)
-	 */
 	@Override
 	public String format(KeySequence keySequence) {
 		StringBuffer stringBuffer = new StringBuffer();
@@ -114,11 +104,6 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 		return stringBuffer.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.bindings.keys.KeyFormatter#formatKeyStroke(org.eclipse.jface.bindings.keys.KeyStroke)
-	 */
 	@Override
 	public String format(final KeyStroke keyStroke) {
 		final String keyDelimiter = getKeyDelimiter();

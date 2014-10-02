@@ -113,41 +113,21 @@ public class ContentProposal implements IContentProposal {
 		this.cursorPosition = cursorPosition;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.fieldassist.IContentProposal#getContent()
-	 */
 	@Override
 	public String getContent() {
 		return content;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.fieldassist.IContentProposal#getCursorPosition()
-	 */
 	@Override
 	public int getCursorPosition() {
 		return cursorPosition;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.fieldassist.IContentProposal#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return description;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.fieldassist.IContentProposal#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		return label;

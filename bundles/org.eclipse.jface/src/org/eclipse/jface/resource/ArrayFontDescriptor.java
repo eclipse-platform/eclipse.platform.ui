@@ -51,9 +51,6 @@ final class ArrayFontDescriptor extends FontDescriptor {
         this.originalFont = originalFont;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.FontDescriptor#getFontData()
-     */
     @Override
 	public FontData[] getFontData() {
     	// Copy the original array to ensure that callers will not modify it
@@ -61,9 +58,6 @@ final class ArrayFontDescriptor extends FontDescriptor {
     }
     
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.FontDescriptor#createFont(org.eclipse.swt.graphics.Device)
-     */
     @Override
 	public Font createFont(Device device) {
         
@@ -79,9 +73,6 @@ final class ArrayFontDescriptor extends FontDescriptor {
         return new Font(device, data);
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
 	public boolean equals(Object obj) {
         if ((obj.getClass() == ArrayFontDescriptor.class)) {
@@ -114,9 +105,6 @@ final class ArrayFontDescriptor extends FontDescriptor {
         return false;
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
 	public int hashCode() {
         if (originalFont != null) {
@@ -132,9 +120,6 @@ final class ArrayFontDescriptor extends FontDescriptor {
         return code;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.FontDescriptor#destroyFont(org.eclipse.swt.graphics.Font)
-     */
     @Override
 	public void destroyFont(Font previouslyCreatedFont) {
         if (previouslyCreatedFont == originalFont) {

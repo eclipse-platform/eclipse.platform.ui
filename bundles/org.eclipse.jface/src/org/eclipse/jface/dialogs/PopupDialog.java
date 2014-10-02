@@ -147,11 +147,6 @@ public class PopupDialog extends Window {
 					IAction.AS_PUSH_BUTTON);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.action.IAction#run()
-		 */
 		@Override
 		public void run() {
 			performTrackerAction(SWT.NONE);
@@ -190,11 +185,6 @@ public class PopupDialog extends Window {
 			setChecked(persistLocation && persistSize);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.action.IAction#run()
-		 */
 		@Override
 		public void run() {
 			persistSize = isChecked();
@@ -214,11 +204,6 @@ public class PopupDialog extends Window {
 			setChecked(persistSize);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.action.IAction#run()
-		 */
 		@Override
 		public void run() {
 			persistSize = isChecked();
@@ -237,11 +222,6 @@ public class PopupDialog extends Window {
 			setChecked(persistLocation);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.action.IAction#run()
-		 */
 		@Override
 		public void run() {
 			persistLocation = isChecked();
@@ -597,11 +577,6 @@ public class PopupDialog extends Window {
 		initializeWidgetState();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		GridLayoutFactory.fillDefaults().margins(0, 0).spacing(5, 5).applyTo(
@@ -1278,11 +1253,6 @@ public class PopupDialog extends Window {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#getInitialSize()
-	 */
 	@Override
 	protected Point getInitialSize() {
 		Point result = getDefaultSize();

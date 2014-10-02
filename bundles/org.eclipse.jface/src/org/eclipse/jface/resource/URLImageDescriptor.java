@@ -49,9 +49,6 @@ class URLImageDescriptor extends ImageDescriptor {
 		this.url = url;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Object.
-	 */
 	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof URLImageDescriptor)) {
@@ -60,10 +57,6 @@ class URLImageDescriptor extends ImageDescriptor {
 		return ((URLImageDescriptor) o).url.toExternalForm().equals(this.url.toExternalForm());
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on ImageDesciptor. Returns null if the
-	 * image data cannot be read.
-	 */
 	@Override
 	public ImageData getImageData() {
 		ImageData result = null;
@@ -103,17 +96,11 @@ class URLImageDescriptor extends ImageDescriptor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Object.
-	 */
 	@Override
 	public int hashCode() {
 		return url.toExternalForm().hashCode();
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Object.
-	 */
 	/**
 	 * The <code>URLImageDescriptor</code> implementation of this
 	 * <code>Object</code> method returns a string representation of this
@@ -149,12 +136,6 @@ class URLImageDescriptor extends ImageDescriptor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.resource.ImageDescriptor#createImage(boolean,
-	 *      org.eclipse.swt.graphics.Device)
-	 */
 	@Override
 	public Image createImage(boolean returnMissingImageOnError, Device device) {
 

@@ -58,33 +58,18 @@ public final class EmacsKeyFormatter extends AbstractKeyFormatter {
 		return super.format(key).toLowerCase();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.bindings.keys.AbstractKeyFormatter#getKeyDelimiter()
-	 */
 	@Override
 	protected String getKeyDelimiter() {
 		return Util.translateString(RESOURCE_BUNDLE, KEY_DELIMITER_KEY,
 				KeyStroke.KEY_DELIMITER);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.bindings.keys.AbstractKeyFormatter#getKeyStrokeDelimiter()
-	 */
 	@Override
 	protected String getKeyStrokeDelimiter() {
 		return Util.translateString(RESOURCE_BUNDLE, KEY_STROKE_DELIMITER_KEY,
 				KeySequence.KEY_STROKE_DELIMITER);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.bindings.keys.AbstractKeyFormatter#sortModifierKeys(int)
-	 */
 	@Override
 	protected int[] sortModifierKeys(int modifierKeys) {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();

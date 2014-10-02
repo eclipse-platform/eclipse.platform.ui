@@ -154,11 +154,6 @@ public abstract class TriggerSequence {
 		return triggerCopy;
 	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public final int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {

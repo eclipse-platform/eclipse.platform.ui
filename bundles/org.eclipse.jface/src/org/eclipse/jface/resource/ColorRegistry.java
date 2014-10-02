@@ -188,9 +188,6 @@ public class ColorRegistry extends ResourceRegistry {
         return color;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.ResourceRegistry#getKeySet()
-     */
     @Override
 	public Set<String> getKeySet() {
         return Collections.unmodifiableSet(stringToRGB.keySet());
@@ -243,11 +240,6 @@ public class ColorRegistry extends ResourceRegistry {
 		return ColorDescriptor.createFrom(rgb);
 	}
 
-    /*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.resource.ResourceRegistry#clearCaches()
-	 */
     @Override
 	protected void clearCaches() {
         disposeColors(stringToColor.values().iterator());
@@ -257,9 +249,6 @@ public class ColorRegistry extends ResourceRegistry {
         display = null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.ResourceRegistry#hasValueFor(java.lang.String)
-     */
     @Override
 	public boolean hasValueFor(String colorKey) {
         return stringToRGB.containsKey(colorKey);
