@@ -361,9 +361,6 @@ public class CommonActionDescriptorManager {
 				this.parentElement = parentElement;
 			}
 			
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-			 */
 			@Override
 			public void run() throws Exception { 
 				addActionDescriptor(new CommonActionProviderDescriptor(
@@ -371,9 +368,6 @@ public class CommonActionDescriptorManager {
 									.getAttribute(ATT_ID), true));
 			}
 			
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-			 */
 			@Override
 			public void handleException(Throwable t) {
 				NavigatorPlugin.logError(0, "Recovering from error while parsing actionProviders.", t); //$NON-NLS-1$ 

@@ -87,11 +87,6 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 		return SUPPORTED_DROP_TRANSFERS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
-	 */
 	@Override
 	public void dragEnter(DropTargetEvent event) {
 
@@ -141,11 +136,6 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragLeave(org.eclipse.swt.dnd.DropTargetEvent)
-	 */
 	@Override
 	public void dragLeave(DropTargetEvent event) {
 		super.dragLeave(event);
@@ -207,12 +197,6 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#validateDrop(java.lang.Object,
-	 *      int, org.eclipse.swt.dnd.TransferData)
-	 */
 	@Override
 	public boolean validateDrop(final Object aDropTarget, final int theDropOperation,
 			final TransferData theTransferData) {
@@ -283,31 +267,16 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	 * (assistants).
 	 */
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getBounds(org.eclipse.swt.widgets.Item)
-	 */
 	@Override
 	public Rectangle getBounds(Item item) {
 		return super.getBounds(item);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getCurrentLocation()
-	 */
 	@Override
 	public int getCurrentLocation() {
 		return super.getCurrentLocation();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getCurrentOperation()
-	 */
 	@Override
 	public int getCurrentOperation() {
 		return super.getCurrentOperation();
@@ -325,21 +294,11 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 		super.overrideOperation(operation);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#getCurrentTarget()
-	 */
 	@Override
 	public Object getCurrentTarget() {
 		return super.getCurrentTarget();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.PluginDropAdapter#getCurrentTransfer()
-	 */
 	@Override
 	public TransferData getCurrentTransfer() {
 		return super.getCurrentTransfer();

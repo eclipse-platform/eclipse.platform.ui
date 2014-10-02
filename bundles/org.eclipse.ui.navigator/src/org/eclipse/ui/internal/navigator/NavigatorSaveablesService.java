@@ -599,9 +599,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.navigator.VisibilityAssistant.VisibilityListener#onVisibilityOrActivationChange()
-	 */
 	@Override
 	public synchronized void onVisibilityOrActivationChange() {
 		if (!isDisposed()) {

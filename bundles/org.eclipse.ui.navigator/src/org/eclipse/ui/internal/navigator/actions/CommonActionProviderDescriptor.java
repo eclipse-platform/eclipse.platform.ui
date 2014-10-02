@@ -422,9 +422,6 @@ public class CommonActionProviderDescriptor implements
 		private static final int LESS_THAN = -1;
 		private static final int EQUALS = 0; 
 		
-		/* (non-Javadoc)
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public int compare(Object o1, Object o2) {
 			CommonActionProviderDescriptor lvalue= null, rvalue= null;

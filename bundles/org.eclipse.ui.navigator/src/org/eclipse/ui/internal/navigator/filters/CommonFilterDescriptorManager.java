@@ -109,11 +109,6 @@ public class CommonFilterDescriptorManager {
 	private class CommonFilterDescriptorRegistry extends
 			NavigatorContentRegistryReader {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.internal.navigator.extensions.NavigatorContentRegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
-		 */
 		@Override
 		protected boolean readElement(IConfigurationElement element) {
 			if (TAG_COMMON_FILTER.equals(element.getName())) {

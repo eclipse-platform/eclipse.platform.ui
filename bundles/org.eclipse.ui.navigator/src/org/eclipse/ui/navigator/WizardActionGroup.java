@@ -197,11 +197,6 @@ public final class WizardActionGroup extends ActionGroup {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		Assert.isTrue(!disposed);
@@ -255,8 +250,7 @@ public final class WizardActionGroup extends ActionGroup {
 	}
 
 	/*
-	 * (non-Javadoc) Returns the action for the given wizard id, or null if not
-	 * found.
+	 * Returns the action for the given wizard id, or null if not found.
 	 */
 	protected IAction getAction(String id) {
 		if (id == null || id.length() == 0) {
@@ -313,9 +307,6 @@ public final class WizardActionGroup extends ActionGroup {
 	private static class ActionComparator implements Comparator {
 		
 		private static final ActionComparator INSTANCE = new ActionComparator();
-		/* (non-Javadoc)
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public int compare(Object arg0, Object arg1) {
 			return ((IAction)arg0).getText().compareTo(((IAction)arg1).getText());

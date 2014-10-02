@@ -120,31 +120,16 @@ public final class NavigatorContentDescriptor implements
 		init();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorContentDescriptor#getId()
-	 */
 	@Override
 	public String getId() {
 		return id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorContentDescriptor#getName()
-	 */
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorContentDescriptor#getPriority()
-	 */
 	@Override
 	public int getPriority() {
 		return priority;
@@ -404,11 +389,6 @@ public final class NavigatorContentDescriptor implements
 				.createExecutableExtension(ATT_LABEL_PROVIDER);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorContentDescriptor#isActiveByDefault()
-	 */
 	@Override
 	public boolean isActiveByDefault() {
 		if (activeByDefault)
@@ -533,19 +513,11 @@ public final class NavigatorContentDescriptor implements
 		return overridingExtensionsList.listIterator(fromStart ? 0 : overridingExtensionsList.size());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "Content[" + id  + "(" + sequenceNumber + ") " + ", \"" + name + "\"]"; //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
@@ -575,9 +547,6 @@ public final class NavigatorContentDescriptor implements
 		overriddenDescriptor = theOverriddenDescriptor;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.INavigatorContentDescriptor#hasSaveablesProvider()
-	 */
 	@Override
 	public boolean hasSaveablesProvider() {
 		return providesSaveables;

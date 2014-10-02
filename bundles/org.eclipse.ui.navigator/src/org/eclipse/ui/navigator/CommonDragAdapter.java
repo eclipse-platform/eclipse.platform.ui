@@ -109,11 +109,6 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 		return transfers;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.dnd.DragSourceAdapter#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
-	 */
 	@Override
 	public void dragStart(final DragSourceEvent event) {
 		if (Policy.DEBUG_DND) {
@@ -172,11 +167,6 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.dnd.DragSourceAdapter#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
-	 */
 	@Override
 	public void dragSetData(final DragSourceEvent event) {
 
@@ -259,11 +249,6 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 		}
 	}
 	 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.dnd.DragSourceAdapter#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
-	 */
 	@Override
 	public void dragFinished(DragSourceEvent event) {
 

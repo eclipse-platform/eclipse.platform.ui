@@ -65,11 +65,6 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 		sortOnlyDescriptors = (INavigatorContentDescriptor[]) sortOnlyList.toArray(new INavigatorContentDescriptor[]{});
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.INavigatorSorterService#findSorterForParent(java.lang.Object)
-	 */
 	@Override
 	public ViewerSorter findSorterForParent(Object aParent) {
 
@@ -92,12 +87,6 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 		return sorter;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.INavigatorSorterService#findSorterForParent(org.eclipse.ui.navigator.INavigatorContentDescriptor,
-	 *      java.lang.Object, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public synchronized ViewerSorter findSorter(INavigatorContentDescriptor source, 
 			Object parent, Object lvalue, Object rvalue) { 
@@ -129,9 +118,6 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.INavigatorSorterService#findAvailableSorters(org.eclipse.ui.navigator.INavigatorContentDescriptor)
-	 */
 	@Override
 	public Map findAvailableSorters(INavigatorContentDescriptor theSource) {
 		
@@ -149,9 +135,6 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 	} 
 
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.navigator.VisibilityAssistant.VisibilityListener#onVisibilityOrActivationChange()
-	 */
 	@Override
 	public void onVisibilityOrActivationChange() {
 		computeSortOnlyDescriptors();

@@ -130,11 +130,6 @@ public class CommonDropDescriptorManager {
 		private CommonDropAdapterRegistry() {
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.internal.navigator.extensions.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
-		 */
 		@Override
 		protected boolean readElement(IConfigurationElement element) {
 

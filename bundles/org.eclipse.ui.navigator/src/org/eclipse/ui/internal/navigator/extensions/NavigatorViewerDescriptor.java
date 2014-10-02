@@ -83,21 +83,11 @@ public final class NavigatorViewerDescriptor implements
 		this.viewerId = aViewerId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorViewerDescriptor#getViewerId()
-	 */
 	@Override
 	public String getViewerId() {
 		return viewerId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorViewerDescriptor#getPopupMenuId()
-	 */
 	@Override
 	public String getPopupMenuId() {
 		return popupMenuId != null ? popupMenuId : viewerId;
@@ -254,21 +244,11 @@ public final class NavigatorViewerDescriptor implements
 	
 
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.INavigatorViewerDescriptor#getStringConfigProperty(java.lang.String)
-	 */
 	@Override
 	public String getStringConfigProperty(String aPropertyName) {
 		return properties.getProperty(aPropertyName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.INavigatorViewerDescriptor#getBooleanConfigProperty(java.lang.String)
-	 */
 	@Override
 	public boolean getBooleanConfigProperty(String aPropertyName) {
 		String propValue = properties.getProperty(aPropertyName);
@@ -283,11 +263,6 @@ public final class NavigatorViewerDescriptor implements
 		properties.setProperty(aPropertyName, aPropertyValue);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "ViewerDescriptor[" + viewerId + "]"; //$NON-NLS-1$ //$NON-NLS-2$

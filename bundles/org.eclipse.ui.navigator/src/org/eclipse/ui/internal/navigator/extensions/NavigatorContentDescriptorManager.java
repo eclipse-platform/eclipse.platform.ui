@@ -424,11 +424,6 @@ public class NavigatorContentDescriptorManager {
 	private class NavigatorContentDescriptorRegistry extends
 			NavigatorContentRegistryReader {
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.ui.internal.navigator.extensions.RegistryReader#readRegistry()
-		 */
 		@Override
 		public void readRegistry() {
 			super.readRegistry();

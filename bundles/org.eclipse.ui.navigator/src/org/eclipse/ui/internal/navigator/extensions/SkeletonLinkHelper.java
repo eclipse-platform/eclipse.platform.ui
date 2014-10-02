@@ -32,17 +32,11 @@ public class SkeletonLinkHelper implements ILinkHelper {
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.ILinkHelper#findSelection(org.eclipse.ui.IEditorInput)
-	 */
 	@Override
 	public IStructuredSelection findSelection(IEditorInput anInput) {
 		return StructuredSelection.EMPTY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.ILinkHelper#activateEditor(org.eclipse.ui.IWorkbenchPage, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public void activateEditor(IWorkbenchPage aPage, IStructuredSelection aSelection) {
 		// no-op

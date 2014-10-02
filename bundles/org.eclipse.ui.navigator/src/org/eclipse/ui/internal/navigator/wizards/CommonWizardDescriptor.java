@@ -234,17 +234,11 @@ public class CommonWizardDescriptor implements INavigatorContentExtPtConstants, 
 		return "CommonWizardDescriptor["+getId()+", wizardId="+getWizardId()+"]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
-	 */
 	@Override
 	public String getLocalId() {
 		return getWizardId();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
-	 */
 	@Override
 	public String getPluginId() {
         return (configElement != null) ? configElement.getNamespaceIdentifier() : null;

@@ -576,11 +576,6 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 			return segments.getFirst();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#toString()
-		 */
 		@Override
 		public String toString() {
 

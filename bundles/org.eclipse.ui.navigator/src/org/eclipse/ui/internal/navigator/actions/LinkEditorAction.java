@@ -210,11 +210,6 @@ public class LinkEditorAction extends Action implements
 		commonNavigator.setLinkingEnabled(!commonNavigator.isLinkingEnabled());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ISelectionChangedList
-	 */
 	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		if (commonNavigator.isLinkingEnabled() && !ignoreSelectionChanged) {
@@ -237,12 +232,6 @@ public class LinkEditorAction extends Action implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object,
-	 *      int)
-	 */
 	@Override
 	public void propertyChanged(Object aSource, int aPropertyId) {
 		switch (aPropertyId) {

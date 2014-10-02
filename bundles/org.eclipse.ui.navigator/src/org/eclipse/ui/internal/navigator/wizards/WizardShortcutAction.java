@@ -100,21 +100,11 @@ public class WizardShortcutAction extends Action implements IPluginContribution 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
-	 */
 	@Override
 	public String getLocalId() {
 		return descriptor.getId();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
-	 */
 	@Override
 	public String getPluginId() {
 		return descriptor.getId();

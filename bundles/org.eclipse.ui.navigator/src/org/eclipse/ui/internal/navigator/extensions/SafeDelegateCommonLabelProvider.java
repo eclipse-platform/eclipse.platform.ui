@@ -97,11 +97,6 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 		delegateLabelProvider.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		return delegateLabelProvider.equals(obj);
@@ -117,9 +112,6 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 		return delegateLabelProvider.getText(element);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider#getStyledText(java.lang.Object)
-	 */
 	@Override
 	public StyledString getStyledText(Object element) {
 		if (delegateLabelProvider instanceof IStyledLabelProvider) {
@@ -131,9 +123,6 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 		return new StyledString(text);
 	}	
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
-	 */
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		if (delegateLabelProvider instanceof ITableLabelProvider) {
@@ -142,9 +131,6 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 		return getImage(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
-	 */
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		if (delegateLabelProvider instanceof ITableLabelProvider) {
@@ -153,11 +139,6 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 		return getText(element);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return delegateLabelProvider.hashCode();
@@ -176,11 +157,6 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 		delegateLabelProvider.removeListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return delegateLabelProvider.toString();
@@ -196,9 +172,6 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreePathLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel, org.eclipse.jface.viewers.TreePath)
-	 */
 	@Override
 	public void updateLabel(ViewerLabel label, TreePath elementPath) {
 		if (delegateLabelProvider instanceof ITreePathLabelProvider) {
@@ -220,9 +193,6 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-	 */
 	@Override
 	public Color getForeground(Object element) {
 		if(delegateLabelProvider instanceof IColorProvider) {
@@ -231,9 +201,6 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-	 */
 	@Override
 	public Color getBackground(Object element) {
 		if(delegateLabelProvider instanceof IColorProvider) {
@@ -242,9 +209,6 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
-	 */
 	@Override
 	public Font getFont(Object element) {
 		if(delegateLabelProvider instanceof IFontProvider) {

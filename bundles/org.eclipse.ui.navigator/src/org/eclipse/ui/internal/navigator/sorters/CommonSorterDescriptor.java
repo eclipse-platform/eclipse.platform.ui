@@ -102,11 +102,6 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 		return SkeletonViewerSorter.INSTANCE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "CommonSorterDescriptor[" + getId() + "]"; //$NON-NLS-1$//$NON-NLS-2$

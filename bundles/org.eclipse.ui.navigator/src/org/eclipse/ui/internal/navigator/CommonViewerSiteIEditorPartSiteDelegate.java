@@ -85,17 +85,11 @@ public class CommonViewerSiteIEditorPartSiteDelegate implements
 		editorSite.registerContextMenu(menuId, menuManager, selectionProvider);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.ICommonViewerWorkbenchSite#getViewPart()
-	 */
 	@Override
 	public IWorkbenchPart getPart() { 
 		return editorSite.getPart();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.ICommonViewerWorkbenchSite#getSite()
-	 */
 	@Override
 	public IWorkbenchPartSite getSite() {
 		return editorSite;

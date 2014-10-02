@@ -627,25 +627,16 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		return getSite().getPage().getInput();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablesSource#getSaveables()
-	 */
 	@Override
 	public Saveable[] getSaveables() {
 		return getNavigatorContentService().getSaveablesService().getSaveables();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablesSource#getActiveSaveables()
-	 */
 	@Override
 	public Saveable[] getActiveSaveables() {
 		return getNavigatorContentService().getSaveablesService().getActiveSaveables();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		// Ignore. This method is not called because CommonNavigator implements
@@ -653,17 +644,11 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		// Saveable protocol.
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
-	 */
 	@Override
 	public void doSaveAs() {
 		// ignore
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#isDirty()
-	 */
 	@Override
 	public boolean isDirty() {
 		Saveable[] saveables = getSaveables();
@@ -675,25 +660,16 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
-	 */
 	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
-	 */
 	@Override
 	public boolean isSaveOnCloseNeeded() {
 		return isDirty();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
-	 */
 	@Override
 	public boolean show(ShowInContext context) {
 		IStructuredSelection selection = getSelection(context);

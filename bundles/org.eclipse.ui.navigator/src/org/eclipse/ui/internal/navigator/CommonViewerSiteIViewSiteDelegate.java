@@ -90,9 +90,6 @@ public class CommonViewerSiteIViewSiteDelegate implements ICommonViewerWorkbench
 		return viewSite.getPart();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.ICommonViewerWorkbenchSite#getSite()
-	 */
 	@Override
 	public IWorkbenchPartSite getSite() { 
 		return viewSite;

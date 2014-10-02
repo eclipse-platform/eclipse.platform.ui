@@ -101,11 +101,6 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 		return helpContext != null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		 
@@ -225,11 +220,6 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 		return updateDescriptionSelectionListener;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 

@@ -90,11 +90,6 @@ public class NavigatorFilterService implements INavigatorFilterService {
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.INavigatorFilterService#persistFilterActivationState()
-	 */
 	@Override
 	public void persistFilterActivationState() {
 
@@ -138,11 +133,6 @@ public class NavigatorFilterService implements INavigatorFilterService {
 		return contentService.getViewerId() + ACTIVATION_KEY;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.INavigatorFilterService#getVisibleFilters(boolean)
-	 */
 	@Override
 	public ViewerFilter[] getVisibleFilters(boolean toReturnOnlyActiveFilters) {
 		CommonFilterDescriptor[] descriptors = CommonFilterDescriptorManager
@@ -190,11 +180,6 @@ public class NavigatorFilterService implements INavigatorFilterService {
 		return filter;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.INavigatorFilterService#getVisibleFilterIds()
-	 */
 	@Override
 	public ICommonFilterDescriptor[] getVisibleFilterDescriptors() {
 		return CommonFilterDescriptorManager.getInstance().findVisibleFilters(
@@ -209,11 +194,6 @@ public class NavigatorFilterService implements INavigatorFilterService {
 				contentService, CommonFilterDescriptorManager.FOR_UI);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.INavigatorFilterService#isActive(java.lang.String)
-	 */
 	@Override
 	public boolean isActive(String aFilterId) {
 		synchronized (activeFilters) {
@@ -221,11 +201,6 @@ public class NavigatorFilterService implements INavigatorFilterService {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.INavigatorFilterService#activateFilters(java.lang.String[])
-	 */
 	@Override
 	public void setActiveFilterIds(String[] theFilterIds) {
 		Assert.isNotNull(theFilterIds);
