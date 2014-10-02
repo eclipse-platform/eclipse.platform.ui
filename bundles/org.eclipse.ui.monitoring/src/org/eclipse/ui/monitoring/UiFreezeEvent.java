@@ -14,6 +14,7 @@ package org.eclipse.ui.monitoring;
 /**
  * Responsible for holding the stack traces for a UI event.
  *
+ * @noextend This class is not intended to be subclassed by clients.
  * @since 1.0
  */
 public class UiFreezeEvent {

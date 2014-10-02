@@ -48,10 +48,10 @@ public class EventLoopMonitorThreadManualTests {
 	/** Time each measurement should run for. This will affect the number of samples collected. */
 	protected static final double TARGET_RUNNING_TIME_PER_MEASUREMENT = 5.0; // seconds
 
-	/** Maximum allowable relative increase due to taking traces on the UI thread. */
+	/** Maximum allowable relative increase due to taking traces of the UI thread. */
 	protected static final double MAX_RELATIVE_INCREASE_ONE_STACK_PERCENT = 2.5; // %
 
-	/** Maximum allowable relative increase per thread due to taking traces on all threads. */
+	/** Maximum allowable relative increase per thread due to taking traces of all threads. */
 	protected static final double MAX_RELATIVE_INCREASE_PER_EXTRA_THREAD_PERCENT = 0.3; // %
 
 	/** Number of times to repeat the control measurement. This should always be at least 2. */
@@ -365,13 +365,13 @@ public class EventLoopMonitorThreadManualTests {
 					joinItems(allStacksResults)));
 		}
 
-		// Join all threads
+		// Join all threads.
 		while (!threads.isEmpty()) {
 			Thread t = threads.poll();
 			try {
 				t.join();
 			} catch (InterruptedException e) {
-				threads.offer(t); // Retry
+				threads.offer(t); // Retry.
 			}
 		}
 
@@ -413,12 +413,10 @@ public class EventLoopMonitorThreadManualTests {
 		IPreferenceStore preferences = MonitoringPlugin.getDefault().getPreferenceStore();
 		EventLoopMonitorThread.Parameters params = new EventLoopMonitorThread.Parameters();
 
-		params.longEventThreshold = preferences.getInt(
-				PreferenceConstants.LONG_EVENT_THRESHOLD_MILLIS);
-		params.initialSampleDelay = preferences.getInt(
-				PreferenceConstants.INITIAL_SAMPLE_DELAY_MILLIS);
-		params.dumpAllThreads = preferences.getBoolean(PreferenceConstants.DUMP_ALL_THREADS);
-		params.sampleInterval = preferences.getInt(PreferenceConstants.SAMPLE_INTERVAL_MILLIS);
+		params.longEventWarningThreshold = preferences.getInt(
+				PreferenceConstants.LONG_EVENT_WARNING_THRESHOLD_MILLIS);
+		params.longEventErrorThreshold = preferences.getInt(
+				PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS);
 		params.maxStackSamples = preferences.getInt(PreferenceConstants.MAX_STACK_SAMPLES);
 		params.deadlockThreshold = preferences.getInt(
 				PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS);
@@ -431,9 +429,9 @@ public class EventLoopMonitorThreadManualTests {
 	protected Thread createTestMonitor(boolean dumpAllThreads, final CountDownLatch monitorStarted)
 			throws Exception {
 		EventLoopMonitorThread.Parameters args = createDefaultParameters();
-		args.initialSampleDelay = 100;
-		args.sampleInterval = 100;
-		args.dumpAllThreads = dumpAllThreads;
+		if (dumpAllThreads) {
+			args.longEventErrorThreshold = args.longEventWarningThreshold;
+		}
 
 		return new EventLoopMonitorThread(args) {
 			@Override
@@ -537,7 +535,7 @@ public class EventLoopMonitorThreadManualTests {
 		});
 
 		for (boolean eventsReady = false; !eventsReady;) {
-			while (display.readAndDispatch()) { /* keep invoking events */
+			while (display.readAndDispatch()) { // Keep invoking events.
 			}
 
 			eventsReady |= eventsRegistered.await(1, TimeUnit.MILLISECONDS);
@@ -549,7 +547,7 @@ public class EventLoopMonitorThreadManualTests {
 	}
 
 	/**
-	 * @returns nanoseconds/unitWork
+	 * Returns nanoseconds/unitWork
 	 */
 	protected double calibrate(final Display display) {
 		if (PRINT_TO_CONSOLE) {
@@ -624,7 +622,7 @@ public class EventLoopMonitorThreadManualTests {
 
 		double tWork = 2.0 * mean / WORK_INTEGRATION_ITERATIONS;
 
-		// Passing the hash to println method ensures it cannot be optimized away completely.
+		// Passing the hash to println method ensures that it cannot be optimized away completely.
 		System.out.println(String.format("Measurement converged in %d ms (%d loops) "
 				+ "tWork = %.3fns, relErr = %f, outliers = %d",
 				System.currentTimeMillis() - startWallTime,

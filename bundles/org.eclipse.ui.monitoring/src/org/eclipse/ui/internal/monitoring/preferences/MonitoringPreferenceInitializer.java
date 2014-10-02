@@ -21,20 +21,18 @@ import org.eclipse.ui.monitoring.PreferenceConstants;
  */
 public class MonitoringPreferenceInitializer extends AbstractPreferenceInitializer {
 	/** Force a logged event for a possible deadlock when an event hangs for longer than this */
-	private static final int DEFAULT_FORCE_DEADLOCK_LOG_TIME_MILLIS = 10 * 60 * 1000; // == 10 minutes
+	private static final int DEFAULT_FORCE_DEADLOCK_LOG_TIME_MILLIS = 10 * 60 * 1000; // 10 minutes
 
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = MonitoringPlugin.getDefault().getPreferenceStore();
 
 		store.setDefault(PreferenceConstants.MONITORING_ENABLED, false);
-		store.setDefault(PreferenceConstants.LONG_EVENT_THRESHOLD_MILLIS, 500);
+		store.setDefault(PreferenceConstants.LONG_EVENT_WARNING_THRESHOLD_MILLIS, 500); // 0.5 sec
+		store.setDefault(PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS, 2000); // 2 sec
 		store.setDefault(PreferenceConstants.MAX_STACK_SAMPLES, 3);
-		store.setDefault(PreferenceConstants.SAMPLE_INTERVAL_MILLIS, 300);
-		store.setDefault(PreferenceConstants.INITIAL_SAMPLE_DELAY_MILLIS, 300);
 		store.setDefault(PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS,
 				DEFAULT_FORCE_DEADLOCK_LOG_TIME_MILLIS);
-		store.setDefault(PreferenceConstants.DUMP_ALL_THREADS, false);
 		store.setDefault(PreferenceConstants.LOG_TO_ERROR_LOG, true);
 		store.setDefault(PreferenceConstants.FILTER_TRACES, ""); //$NON-NLS-1$
 	}

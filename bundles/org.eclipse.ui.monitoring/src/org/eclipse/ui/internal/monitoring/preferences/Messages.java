@@ -24,16 +24,13 @@ public final class Messages extends NLS {
 	public static String MonitoringPreferenceListener_preference_error;
 	public static String MonitoringPreferencePage_deadlock_threshold_label;
 	public static String MonitoringPreferencePage_deadlock_threshold_too_low_error;
-	public static String MonitoringPreferencePage_dump_all_threads_label;
-	public static String MonitoringPreferencePage_enable_thread_label;
-	public static String MonitoringPreferencePage_long_event_threshold;
+	public static String MonitoringPreferencePage_enable_monitoring_label;
 	public static String MonitoringPreferencePage_filter_label;
-	public static String MonitoringPreferencePage_initial_sample_delay_label;
-	public static String MonitoringPreferencePage_initial_sample_delay_too_high_error;
 	public static String MonitoringPreferencePage_log_freeze_events_label;
+	public static String MonitoringPreferencePage_long_event_warning_threshold_label;
+	public static String MonitoringPreferencePage_long_event_error_threshold_label;
+	public static String MonitoringPreferencePage_long_event_error_threshold_too_low_error;
 	public static String MonitoringPreferencePage_max_stack_samples_label;
-	public static String MonitoringPreferencePage_sample_interval_label;
-	public static String MonitoringPreferencePage_sample_interval_too_high_error;
 
 	private Messages() {
 		// Do not instantiate.

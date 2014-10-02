@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Marcus Eng (Google) - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring.preferences;
 
@@ -38,9 +39,8 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage
 	private static final IPreferenceStore preferences =
 			MonitoringPlugin.getDefault().getPreferenceStore();
 	private BooleanFieldEditor monitoringEnabled;
-	private IntegerEditor longEventThreshold;
-	private IntegerEditor sampleInterval;
-	private IntegerEditor initialSampleDelay;
+	private IntegerEditor longEventWarningThreshold;
+	private IntegerEditor longEventErrorThreshold;
 	private IntegerEditor deadlockThreshold;
 	private Map<FieldEditor, Composite> editors;
 
@@ -53,8 +53,7 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage
 		@Override
 		protected void valueChanged() {
 			super.valueChanged();
-			if (longEventThreshold.isValid() &&
-					sampleInterval.checkValue() && initialSampleDelay.checkValue()) {
+			if (longEventWarningThreshold.isValid() && longEventErrorThreshold.checkValue()) {
 				deadlockThreshold.checkValue();
 			}
 		}
@@ -66,21 +65,15 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage
 			}
 
 			String preferenceName = getPreferenceName();
-			if (preferenceName.equals(PreferenceConstants.SAMPLE_INTERVAL_MILLIS)) {
-				if (longEventThreshold.isValid() &&
-						getIntValue() >= longEventThreshold.getIntValue()) {
-					showMessage(Messages.MonitoringPreferencePage_sample_interval_too_high_error);
-					return false;
-				}
-			} else if (preferenceName.equals(PreferenceConstants.INITIAL_SAMPLE_DELAY_MILLIS)) {
-				if (longEventThreshold.isValid() &&
-						getIntValue() >= longEventThreshold.getIntValue()) {
-					showMessage(Messages.MonitoringPreferencePage_initial_sample_delay_too_high_error);
+			if (preferenceName.equals(PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS)) {
+				if (longEventWarningThreshold.isValid() &&
+						getIntValue() < longEventWarningThreshold.getIntValue()) {
+					showMessage(Messages.MonitoringPreferencePage_long_event_error_threshold_too_low_error);
 					return false;
 				}
 			} else if (preferenceName.equals(PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS)) {
-				if (longEventThreshold.isValid() &&
-						getIntValue() <= longEventThreshold.getIntValue()) {
+				if (longEventWarningThreshold.isValid() &&
+						getIntValue() <= longEventErrorThreshold.getIntValue()) {
 					showMessage(Messages.MonitoringPreferencePage_deadlock_threshold_too_low_error);
 					return false;
 				}
@@ -129,28 +122,24 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage
 		topGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		monitoringEnabled = createBooleanEditor(PreferenceConstants.MONITORING_ENABLED,
-				Messages.MonitoringPreferencePage_enable_thread_label, topGroup);
+				Messages.MonitoringPreferencePage_enable_monitoring_label, topGroup);
 
-		longEventThreshold = createIntegerEditor(
-				PreferenceConstants.LONG_EVENT_THRESHOLD_MILLIS,
-				Messages.MonitoringPreferencePage_long_event_threshold, topGroup, 3, HOUR_IN_MS);
+		longEventWarningThreshold = createIntegerEditor(
+				PreferenceConstants.LONG_EVENT_WARNING_THRESHOLD_MILLIS,
+				Messages.MonitoringPreferencePage_long_event_warning_threshold_label, topGroup,
+				3, HOUR_IN_MS);
+		longEventErrorThreshold = createIntegerEditor(
+				PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS,
+				Messages.MonitoringPreferencePage_long_event_error_threshold_label, topGroup,
+				3, HOUR_IN_MS);
 		createIntegerEditor(
 				PreferenceConstants.MAX_STACK_SAMPLES,
-				Messages.MonitoringPreferencePage_max_stack_samples_label, topGroup, 1, 100);
-		sampleInterval = createIntegerEditor(
-				PreferenceConstants.SAMPLE_INTERVAL_MILLIS,
-				Messages.MonitoringPreferencePage_sample_interval_label, topGroup, 2, HOUR_IN_MS);
-		initialSampleDelay = createIntegerEditor(
-				PreferenceConstants.INITIAL_SAMPLE_DELAY_MILLIS,
-				Messages.MonitoringPreferencePage_initial_sample_delay_label, topGroup,
-				2, HOUR_IN_MS);
+				Messages.MonitoringPreferencePage_max_stack_samples_label, topGroup, 0, 100);
 		deadlockThreshold = createIntegerEditor(
 				PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS,
 				Messages.MonitoringPreferencePage_deadlock_threshold_label, topGroup,
 				1000, 24 * HOUR_IN_MS);
 
-		createBooleanEditor(PreferenceConstants.DUMP_ALL_THREADS,
-				Messages.MonitoringPreferencePage_dump_all_threads_label, topGroup);
 		topGroup.setLayout(layout);
 
 		createBooleanEditor(PreferenceConstants.LOG_TO_ERROR_LOG,

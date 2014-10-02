@@ -19,28 +19,26 @@ package org.eclipse.ui.monitoring;
 public class PreferenceConstants {
 	public static final String PLUGIN_ID = "org.eclipse.ui.monitoring"; //$NON-NLS-1$
 	/**
-	 * If true, enables the monitoring thread which logs when the UI thread becomes unresponsive.
+	 * If true, enables the monitoring thread which logs events which take long time to process.
 	 */
 	public static final String MONITORING_ENABLED = "monitoring_enabled"; //$NON-NLS-1$
-	/** Sample interval to capture the traces of an unresponsive event. */
+	/**
+	 * Events that took longer than the specified duration in milliseconds are logged as warnings.
+	 */
+	public static final String LONG_EVENT_WARNING_THRESHOLD_MILLIS = "long_event_warning_threshold"; //$NON-NLS-1$
+	/**
+	 * Events that took longer than the specified duration in milliseconds are logged as errors.
+	 */
+	public static final String LONG_EVENT_ERROR_THRESHOLD_MILLIS = "long_event_error_threshold"; //$NON-NLS-1$
+	/**
+	 * Events that took longer than the specified duration are reported as deadlocks without waiting
+	 * for the event to finish.
+	 */
 	public static final String DEADLOCK_REPORTING_THRESHOLD_MILLIS = "deadlock_reporting_threshold"; //$NON-NLS-1$
-	/** Maximum number of traces to write out to the log. */
+	/**
+	 * Maximum number of stack trace samples to write out to the log.
+	 */
 	public static final String MAX_STACK_SAMPLES = "max_stack_samples"; //$NON-NLS-1$
-	/** Log events that took longer than the specified duration in milliseconds. */
-	public static final String LONG_EVENT_THRESHOLD_MILLIS = "max_event_log_time"; //$NON-NLS-1$
-	/**
-	 * Start capturing traces if an event takes longer than the specified duration in
-	 * milliseconds.
-	 */
-	public static final String INITIAL_SAMPLE_DELAY_MILLIS = "initial_sample_delay"; //$NON-NLS-1$
-	/** Sample collection interval to capture the stack traces of an unresponsive event. */
-	public static final String SAMPLE_INTERVAL_MILLIS = "sample_interval"; //$NON-NLS-1$
-	/**
-	 * If true, includes call stacks of all threads into the logged message. Otherwise, only
-	 * the stack of the main thread is included. Disabled by default due to additional performance
-	 * overhead.
-	 */
-	public static final String DUMP_ALL_THREADS = "dump_all_threads"; //$NON-NLS-1$
 	/**
 	 * If true, log freeze events to the Eclipse error log.
 	 */
