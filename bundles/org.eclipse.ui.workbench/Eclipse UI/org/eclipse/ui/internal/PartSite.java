@@ -193,8 +193,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		setWindow((MWindow) parent);
 
 		e4Context = model.getContext();
-		IServiceLocatorCreator slc = (IServiceLocatorCreator) e4Context
-				.get(IServiceLocatorCreator.class.getName());
+		IServiceLocatorCreator slc = e4Context
+				.get(IServiceLocatorCreator.class);
 		IWorkbenchWindow workbenchWindow = getWorkbenchWindow();
 		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(workbenchWindow, null,
 				new IDisposable() {
@@ -212,9 +212,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	private void setWindow(MWindow window) {
 		MWindow topWindow = getTopLevelModelWindow(window);
-		MApplication application = (MApplication) topWindow.getContext().get(
-				MApplication.class.getName());
-		Workbench workbench = (Workbench) application.getContext().get(IWorkbench.class.getName());
+		MApplication application = topWindow.getContext().get(MApplication.class);
+		Workbench workbench = (Workbench) application.getContext().get(IWorkbench.class);
 
 		workbenchWindow = workbench.createWorkbenchWindow(
 				workbench.getDefaultPageInput(),
@@ -229,7 +228,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	private void initializeDefaultServices() {
 		IHandlerService handlerService = new LegacyHandlerService(e4Context,
 				new ActivePartExpression(part));
-		e4Context.set(IHandlerService.class.getName(), handlerService);
+		e4Context.set(IHandlerService.class, handlerService);
 
 		serviceLocator.registerService(IWorkbenchLocationService.class,
 				new WorkbenchLocationService(IServiceScopes.PARTSITE_SCOPE,
@@ -573,7 +572,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 */
 	@Override
 	public IKeyBindingService getKeyBindingService() {
-		return (IKeyBindingService) e4Context.get(IKeyBindingService.class.getName());
+		return e4Context.get(IKeyBindingService.class);
 	}
 
 	protected String getInitialScopeId() {
