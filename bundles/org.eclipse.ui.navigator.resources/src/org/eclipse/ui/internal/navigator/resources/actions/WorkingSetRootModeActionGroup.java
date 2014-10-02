@@ -108,11 +108,6 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 		stateModel = aStateModel;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see ActionGroup#fillActionBars(IActionBars)
-	 */
 	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		if (hasContributedToViewMenu)

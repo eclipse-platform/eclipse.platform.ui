@@ -244,10 +244,6 @@ public final class ProjectExplorer extends CommonNavigator {
 		return workingSetLabel;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.CommonNavigator#handleDoubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
-	 * @since 4.3
-	 */
 	@Override
 	protected void handleDoubleClick(DoubleClickEvent anEvent) {
 		ICommandService commandService = getViewSite().getService(ICommandService.class);

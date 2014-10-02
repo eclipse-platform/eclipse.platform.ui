@@ -89,23 +89,12 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 	private RefactoringStatus refactoringStatus;
 	private IStatus returnStatus;
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.CommonDropAdapterAssistant#isSupportedType(org.eclipse.swt.dnd.TransferData)
-	 */
 	@Override
 	public boolean isSupportedType(TransferData aTransferType) {
 		return super.isSupportedType(aTransferType)
 				|| FileTransfer.getInstance().isSupportedType(aTransferType);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.CommonDropAdapterAssistant#validateDrop(java.lang.Object,
-	 *      int, org.eclipse.swt.dnd.TransferData)
-	 */
 	@Override
 	public IStatus validateDrop(Object target, int aDropOperation,
 			TransferData transferType) {
@@ -196,12 +185,6 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 		return Status.OK_STATUS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.CommonDropAdapterAssistant#handleDrop(CommonDropAdapter,
-	 *      DropTargetEvent, Object)
-	 */
 	@Override
 	public IStatus handleDrop(CommonDropAdapter aDropAdapter,
 			DropTargetEvent aDropTargetEvent, Object aTarget) {
@@ -257,12 +240,6 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 		return status;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.CommonDropAdapterAssistant#validatePluginTransferDrop(org.eclipse.jface.viewers.IStructuredSelection,
-	 *      java.lang.Object)
-	 */
 	@Override
 	public IStatus validatePluginTransferDrop(
 			IStructuredSelection aDragSelection, Object aDropTarget) {
@@ -309,9 +286,6 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 		return Status.OK_STATUS;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.CommonDropAdapterAssistant#handlePluginTransferDrop(org.eclipse.jface.viewers.IStructuredSelection, java.lang.Object)
-	 */
 	@Override
 	public IStatus handlePluginTransferDrop(IStructuredSelection aDragSelection, Object aDropTarget) {
 

@@ -32,11 +32,6 @@ public class UndoRedoActionProvider extends CommonActionProvider {
 
 	private UndoRedoActionGroup undoRedoGroup;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
-	 */
 	@Override
 	public void init(ICommonActionExtensionSite anActionSite) {
 		IUndoContext workspaceContext = (IUndoContext) ResourcesPlugin

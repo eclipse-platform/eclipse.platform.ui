@@ -41,21 +41,11 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.model.BaseWorkbenchContentProvider#getElements(java.lang.Object)
-	 */
 	@Override
 	public Object[] getElements(Object element) {
 		return super.getChildren(element);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.model.BaseWorkbenchContentProvider#getChildren(java.lang.Object)
-	 */
 	@Override
 	public Object[] getChildren(Object element) {
 		if(element instanceof IResource)
@@ -63,9 +53,6 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 		return NO_CHILDREN;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.BaseWorkbenchContentProvider#hasChildren(java.lang.Object)
-	 */
 	@Override
 	public boolean hasChildren(Object element) {
 		try {
@@ -84,9 +71,6 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 		return super.hasChildren(element);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.WorkbenchContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { 
 		super.inputChanged(viewer, oldInput, newInput);
@@ -120,9 +104,6 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 			runUpdates(runnables);
 		} else {
 			ctrl.getDisplay().asyncExec(new Runnable(){
-				/* (non-Javadoc)
-				 * @see java.lang.Runnable#run()
-				 */
 				@Override
 				public void run() {
 					//Abort if this happens after disposes

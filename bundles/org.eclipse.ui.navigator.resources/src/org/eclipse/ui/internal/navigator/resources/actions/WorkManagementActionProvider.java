@@ -47,13 +47,6 @@ public class WorkManagementActionProvider extends CommonActionProvider {
 		addTaskAction = new AddTaskAction(sp);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars
-	 * )
-	 */
 	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);
@@ -61,13 +54,6 @@ public class WorkManagementActionProvider extends CommonActionProvider {
 		actionBars.setGlobalActionHandler(IDEActionFactory.ADD_TASK.getId(), addTaskAction);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.actions.ActionGroup#setContext(org.eclipse.ui.actions.
-	 * ActionContext)
-	 */
 	@Override
 	public void setContext(ActionContext context) {
 		super.setContext(context);

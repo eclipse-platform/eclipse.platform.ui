@@ -72,13 +72,6 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 
 	private Shell shell;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator
-	 * .ICommonActionExtensionSite)
-	 */
 	@Override
 	public void init(ICommonActionExtensionSite aSite) {
 		super.init(aSite);

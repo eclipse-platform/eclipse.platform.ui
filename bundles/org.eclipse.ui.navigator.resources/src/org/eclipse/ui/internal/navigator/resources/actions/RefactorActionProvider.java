@@ -28,11 +28,6 @@ public class RefactorActionProvider extends CommonActionProvider {
 
 	private RefactorActionGroup refactorGroup;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
-	 */
 	@Override
 	public void init(ICommonActionExtensionSite anActionSite) {
 		refactorGroup = new RefactorActionGroup(anActionSite.getViewSite().getShell(), (Tree)anActionSite.getStructuredViewer().getControl());

@@ -27,11 +27,6 @@ public class EditActionProvider extends CommonActionProvider {
 
 	private ICommonActionExtensionSite site;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
-	 */
 	@Override
 	public void init(ICommonActionExtensionSite anActionSite) {
 		site = anActionSite;
