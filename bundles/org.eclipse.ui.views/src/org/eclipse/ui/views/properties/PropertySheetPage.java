@@ -161,9 +161,6 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
         super();
     }
 
-    /* (non-Javadoc)
-     * Method declared on <code>IPage</code>.
-     */
     @Override
 	public void createControl(Composite parent) {
         // create a new viewer
@@ -345,9 +342,6 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
         return cellEditorActivationListener;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPage (and Page).
-     */
     @Override
 	public Control getControl() {
         if (viewer == null) {
@@ -473,9 +467,6 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
                 .getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPage (and Page).
-     */
     @Override
 	public void makeContributions(IMenuManager menuManager,
             IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
@@ -509,9 +500,6 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
         viewer.setInput(viewer.getInput());
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionListener.
-     */
     @Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
         if (viewer == null) {
