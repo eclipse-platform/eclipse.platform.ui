@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1705,14 +1705,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				build = getLocalManager().refresh(this, depth, true, Policy.subMonitorFor(monitor, Policy.opWork));
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
-				throw e;
-			} catch (Error e) {
-				//support to track down Bug 95089
-				Policy.log(e);
-				throw e;
-			} catch (RuntimeException e) {
-				//support to track down Bug 95089
-				Policy.log(e);
 				throw e;
 			} finally {
 				workspace.endOperation(rule, build, Policy.subMonitorFor(monitor, Policy.endOpWork));
