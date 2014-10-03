@@ -844,22 +844,22 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private abstract class ExceptionLoggingSafeRunnable implements ISafeRunnable {
 		private static final String PLUGIN_ID= "org.eclipse.jface.text"; //$NON-NLS-1$
 
-		private final String messageKey;
+		private final String fMessageKey;
 
 		/**
 		 * @param messageKey key passed to JFaceTextMessages to lookup the text of the error message
 		 */
 		ExceptionLoggingSafeRunnable(String messageKey) {
-			this.messageKey = messageKey;
+			fMessageKey= messageKey;
 		}
 
 		public void handleException(Throwable exception) {
-			String message = JFaceTextMessages.getString(messageKey);
+			String message= JFaceTextMessages.getString(fMessageKey);
 
-			IStatus status = new Status(IStatus.ERROR, PLUGIN_ID, message, exception);
+			IStatus status= new Status(IStatus.ERROR, PLUGIN_ID, message, exception);
 			Platform.getLog(Platform.getBundle(PLUGIN_ID)).log(status);
 
-			fLastErrorMessage = message;
+			fLastErrorMessage= message;
 		}
 	}
 
