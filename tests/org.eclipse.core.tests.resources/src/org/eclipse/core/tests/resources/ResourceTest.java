@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -783,7 +783,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Returns whether the local file system supports accessing and modifying
+	 * Checks whether the local file system supports accessing and modifying
 	 * the given attribute.
 	 */
 	protected boolean isAttributeSupported(int attribute) {
@@ -791,12 +791,11 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Returns whether the local file system supports accessing and modifying
-	 * the read only flag.
+	 * Checks whether the local file system supports accessing and modifying
+	 * the read-only flag.
 	 */
 	protected boolean isReadOnlySupported() {
 		return isAttributeSupported(EFS.ATTRIBUTE_READ_ONLY);
-		//return false;
 	}
 
 	/**
