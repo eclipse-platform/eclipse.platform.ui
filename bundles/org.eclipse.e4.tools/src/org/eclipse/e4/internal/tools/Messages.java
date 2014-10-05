@@ -30,6 +30,12 @@ public class Messages extends NLS {
 	public static String AbstractNewClassPage_Package;
 	public static String AbstractNewClassPage_SourceFolder;
 	public static String AbstractNewClassPage_SourceFolderNotEmpty;
+	public static String AbstractNewClassWizard_NewClass;
+	public static String NewAddonClassWizard_NewAddon;
+	public static String NewAddonClassWizard_NewAddonClass;
+	public static String NewDynamicMenuContributionClassWizard_AboutToShowMethod;
+	public static String NewDynamicMenuContributionClassWizard_CreateNewContribution;
+	public static String NewDynamicMenuContributionClassWizard_NewDynamicContribution;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

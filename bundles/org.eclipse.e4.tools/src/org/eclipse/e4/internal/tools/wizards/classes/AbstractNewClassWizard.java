@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Sopot Cela <sopotcela@gmail.com>
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Sopot Cela <sopotcela@gmail.com>
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.classes;
 
@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.e4.internal.tools.Messages;
 import org.eclipse.e4.internal.tools.wizards.classes.AbstractNewClassPage.JavaClass;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -47,11 +48,15 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
 public abstract class AbstractNewClassWizard extends Wizard implements INewWizard {
+	private static final String JAVA = ".java"; //$NON-NLS-1$
 	protected IPackageFragmentRoot root;
 	protected IFile file;
+
 	public AbstractNewClassWizard() {
-		this.setWindowTitle("New contribution class");
+		setWindowTitle(Messages.AbstractNewClassWizard_NewClass);
 	}
+
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		root = getFragmentRoot(getInitialJavaElement(selection));
 	}
@@ -59,22 +64,22 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 	protected IJavaElement getInitialJavaElement(IStructuredSelection selection) {
 		IJavaElement jelem = null;
 		if (selection != null && !selection.isEmpty()) {
-			Object selectedElement = selection.getFirstElement();
+			final Object selectedElement = selection.getFirstElement();
 			if (selectedElement instanceof IAdaptable) {
-				IAdaptable adaptable = (IAdaptable) selectedElement;
+				final IAdaptable adaptable = (IAdaptable) selectedElement;
 
 				jelem = (IJavaElement) adaptable.getAdapter(IJavaElement.class);
 				if (jelem == null || !jelem.exists()) {
 					jelem = null;
 					IResource resource = (IResource) adaptable
-							.getAdapter(IResource.class);
+						.getAdapter(IResource.class);
 					if (resource != null
-							&& resource.getType() != IResource.ROOT) {
+						&& resource.getType() != IResource.ROOT) {
 						while (jelem == null
-								&& resource.getType() != IResource.PROJECT) {
+							&& resource.getType() != IResource.PROJECT) {
 							resource = resource.getParent();
 							jelem = (IJavaElement) resource
-									.getAdapter(IJavaElement.class);
+								.getAdapter(IJavaElement.class);
 						}
 						if (jelem == null) {
 							jelem = JavaCore.create(resource); // java project
@@ -91,16 +96,16 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 		IPackageFragmentRoot initRoot = null;
 		if (elem != null) {
 			initRoot = (IPackageFragmentRoot) elem
-					.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+				.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
 			try {
 				if (initRoot == null
-						|| initRoot.getKind() != IPackageFragmentRoot.K_SOURCE) {
-					IJavaProject jproject = elem.getJavaProject();
+					|| initRoot.getKind() != IPackageFragmentRoot.K_SOURCE) {
+					final IJavaProject jproject = elem.getJavaProject();
 					if (jproject != null) {
 						initRoot = null;
 						if (jproject.exists()) {
-							IPackageFragmentRoot[] roots = jproject
-									.getPackageFragmentRoots();
+							final IPackageFragmentRoot[] roots = jproject
+								.getPackageFragmentRoots();
 							for (int i = 0; i < roots.length; i++) {
 								if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
 									initRoot = roots[i];
@@ -110,11 +115,11 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 						}
 						if (initRoot == null) {
 							initRoot = jproject.getPackageFragmentRoot(jproject
-									.getResource());
+								.getResource());
 						}
 					}
 				}
-			} catch (JavaModelException e) {
+			} catch (final JavaModelException e) {
 				// TODO
 				e.printStackTrace();
 			}
@@ -123,112 +128,112 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 	}
 
 	protected abstract String getContent();
-	
+
 	public JavaClass getDomainClass() {
 		return ((AbstractNewClassPage) getPages()[0]).getClazz();
 	}
-	
+
 	protected void checkRequiredBundles() {
-		IProject project = getDomainClass().getFragmentRoot().getJavaProject().getProject();
-		BundleContext context = FrameworkUtil.getBundle(NewAddonClassWizard.class).getBundleContext();
-		ServiceReference<IBundleProjectService> ref = context.getServiceReference(IBundleProjectService.class);
-		IBundleProjectService service = context.getService(ref);
+		final IProject project = getDomainClass().getFragmentRoot().getJavaProject().getProject();
+		final BundleContext context = FrameworkUtil.getBundle(NewAddonClassWizard.class).getBundleContext();
+		final ServiceReference<IBundleProjectService> ref = context.getServiceReference(IBundleProjectService.class);
+		final IBundleProjectService service = context.getService(ref);
 		try {
-			IBundleProjectDescription description = service.getDescription(project);
-			Set<String> requiredBundles = getRequiredBundles();
-			IRequiredBundleDescription[] arTmp = description.getRequiredBundles();
-			List<IRequiredBundleDescription> descs = new ArrayList<IRequiredBundleDescription>();
-			if( arTmp != null ) {
+			final IBundleProjectDescription description = service.getDescription(project);
+			final Set<String> requiredBundles = getRequiredBundles();
+			final IRequiredBundleDescription[] arTmp = description.getRequiredBundles();
+			final List<IRequiredBundleDescription> descs = new ArrayList<IRequiredBundleDescription>();
+			if (arTmp != null) {
 				descs.addAll(Arrays.asList(arTmp));
 			}
-			for( IRequiredBundleDescription bd : descs ) {
+			for (final IRequiredBundleDescription bd : descs) {
 				requiredBundles.remove(bd.getName());
 			}
-			
-			if( requiredBundles.size() > 0 ) {
-				for( String b : requiredBundles ) {
+
+			if (requiredBundles.size() > 0) {
+				for (final String b : requiredBundles) {
 					descs.add(service.newRequiredBundle(b, null, false, false));
 				}
 				description.setRequiredBundles(descs.toArray(new IRequiredBundleDescription[0]));
 				description.apply(new NullProgressMonitor());
 			}
-		} catch (CoreException e) {
+		} catch (final CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	protected Set<String> getRequiredBundles() {
-		Set<String> rv = new HashSet<String>();
-		rv.add("javax.inject");
+		final Set<String> rv = new HashSet<String>();
+		rv.add("javax.inject"); //$NON-NLS-1$
 		return rv;
 	}
-	
+
 	@Override
 	public boolean performFinish() {
-		JavaClass clazz = getDomainClass();
-		String content = getContent();
-		
-		if( clazz.getFragmentRoot() == null ) {
+		final JavaClass clazz = getDomainClass();
+		final String content = getContent();
+
+		if (clazz.getFragmentRoot() == null) {
 			return false;
 		}
-		
+
 		checkRequiredBundles();
-		
+
 		IPackageFragment fragment = clazz.getPackageFragment();
 		boolean exists = false;
 		if (fragment != null) {
 			IJavaElement[] children;
 			try {
 				children = clazz.getFragmentRoot().getChildren();
-			
-					for (IJavaElement iJavaElement : children) {
-						IPackageFragment pf = (IPackageFragment) iJavaElement;
-						if (pf.getElementName().equals(fragment.getElementName())){
+
+				for (final IJavaElement iJavaElement : children) {
+					final IPackageFragment pf = (IPackageFragment) iJavaElement;
+					if (pf.getElementName().equals(fragment.getElementName())) {
 						exists = true;
 						break;
-						}
 					}
-			;
-			
-			if (!exists)
-				fragment = clazz.getFragmentRoot().createPackageFragment(fragment.getElementName(), true, null);
-			} catch (JavaModelException e1) {
+				}
+
+				if (!exists) {
+					fragment = clazz.getFragmentRoot().createPackageFragment(fragment.getElementName(), true, null);
+				}
+			} catch (final JavaModelException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			String cuName = clazz.getName() + ".java";
-			ICompilationUnit unit = fragment.getCompilationUnit(cuName); 
-			IResource resource = unit.getResource();
+			final String cuName = clazz.getName() + JAVA;
+			final ICompilationUnit unit = fragment.getCompilationUnit(cuName);
+			final IResource resource = unit.getResource();
 			file = (IFile) resource;
 			try {
 				if (!file.exists()) {
 					file.create(new ByteArrayInputStream(content.getBytes()),
-							true, null);
+						true, null);
 				} else {
 					file.setContents(new ByteArrayInputStream(content.getBytes()),
-							IResource.FORCE | IResource.KEEP_HISTORY, null);
+						IResource.FORCE | IResource.KEEP_HISTORY, null);
 				}
 				IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), file);
-//				unit.open(null);
-			} catch (CoreException e) {
+				// unit.open(null);
+			} catch (final CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
-			String cuName = clazz.getName() + ".java";
-			IFolder p = (IFolder) clazz.getFragmentRoot().getResource();
+			final String cuName = clazz.getName() + JAVA;
+			final IFolder p = (IFolder) clazz.getFragmentRoot().getResource();
 			file = p.getFile(cuName);
 			try {
 				if (!file.exists()) {
 					file.create(new ByteArrayInputStream(content.getBytes()),
-							true, null);
+						true, null);
 				} else {
 					file.setContents(new ByteArrayInputStream(content.getBytes()),
-							IResource.FORCE | IResource.KEEP_HISTORY, null);
+						IResource.FORCE | IResource.KEEP_HISTORY, null);
 				}
 				IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), file);
-			} catch (CoreException e) {
+			} catch (final CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -237,7 +242,7 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 		return true;
 
 	}
-	
+
 	public IFile getFile() {
 		return file;
 	}
