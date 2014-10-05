@@ -51,70 +51,87 @@ public class EmptyObservableSetTest {
 			super(name, delegate);
 		}
 
+		@Override
 		public void testChange_ChangeEvent() {
 			// disabled
 		}
 
+		@Override
 		public void testChange_EventObservable() {
 			// disabled
 		}
 
+		@Override
 		public void testChange_ObservableRealmIsTheCurrentRealm() {
 			// disabled
 		}
 
+		@Override
 		public void testChange_RealmCheck() {
 			// disabled
 		}
 
+		@Override
 		public void testRemoveChangeListener_RemovesListener() {
 			// disabled
 		}
 
+		@Override
 		public void testContains_GetterCalled() {
 			// disabled
 		}
 
+		@Override
 		public void testContainsAll_GetterCalled() {
 			// disabled
 		}
 
+		@Override
 		public void testEquals_GetterCalled() {
 			// disabled
 		}
 
+		@Override
 		public void testHashCode_GetterCalled() {
 			// disabled
 		}
 
+		@Override
 		public void testIsEmpty_GetterCalled() {
 			// disabled
 		}
 
+		@Override
 		public void testIterator_GetterCalled() {
 			// disabled
 		}
 
+		@Override
 		public void testSize_GetterCalled() {
 			// disabled
 		}
 
+		@Override
 		public void testToArray_GetterCalled() {
 			// disabled
 		}
 
+		@Override
 		public void testToArrayWithObjectArray_GetterCalled() {
 			// disabled
 		}
 
+		@Override
 		public void testIsStale_GetterCalled() throws Exception {
 			// disabled
 		}
 
+		@Override
 		public void testIsDisposed() throws Exception {
 			// disabled
 		}
 
+		@Override
 		public void testAddDisposeListener_HandleDisposeInvoked() {
 			// disabled
 		}
@@ -124,11 +141,13 @@ public class EmptyObservableSetTest {
 			AbstractObservableCollectionContractDelegate {
 		private Object elementType = new Object();
 
+		@Override
 		public IObservableCollection createObservableCollection(Realm realm,
 				int elementCount) {
 			return new EmptyObservableSet(realm, elementType);
 		}
 
+		@Override
 		public Object getElementType(IObservableCollection collection) {
 			return elementType;
 		}

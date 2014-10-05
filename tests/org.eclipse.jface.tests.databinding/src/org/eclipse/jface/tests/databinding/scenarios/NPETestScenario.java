@@ -27,6 +27,7 @@ public class NPETestScenario extends ScenariosTestCase {
 
 	Person person;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		person = new Person();

@@ -28,6 +28,7 @@ public class NumberToDoubleValidatorTest extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.validation.NumberToNumberValidatorTestHarness#doGetOutOfRangeNumber()
 	 */
+	@Override
 	protected Number doGetOutOfRangeNumber() {
 		return new BigDecimal(Double.MAX_VALUE).add(new BigDecimal(Double.MAX_VALUE));
 	}
@@ -35,6 +36,7 @@ public class NumberToDoubleValidatorTest extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.validation.NumberToNumberValidatorTestHarness#doGetToBoxedTypeValidator(java.lang.Class)
 	 */
+	@Override
 	protected NumberToNumberValidator doGetToBoxedTypeValidator(Class fromType) {
 		NumberToDoubleConverter converter = new NumberToDoubleConverter(NumberFormat.getInstance(), fromType, false);
 		return new NumberToDoubleValidator(converter);
@@ -43,6 +45,7 @@ public class NumberToDoubleValidatorTest extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.validation.NumberToNumberValidatorTestHarness#doGetToPrimitiveValidator(java.lang.Class)
 	 */
+	@Override
 	protected NumberToNumberValidator doGetToPrimitiveValidator(Class fromType) {
 		NumberToDoubleConverter converter = new NumberToDoubleConverter(NumberFormat.getInstance(), fromType, true);
 		return new NumberToDoubleValidator(converter);

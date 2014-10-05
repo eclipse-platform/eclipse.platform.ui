@@ -29,14 +29,17 @@ import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 public class Diffs_ListDiffTests extends TestCase {
 	public void testListDiffEntryToStringDoesNotThrowNPEForNullListDiffEntry() {
 		ListDiffEntry entry = new ListDiffEntry() {
+			@Override
 			public Object getElement() {
 				return null;
 			}
 
+			@Override
 			public int getPosition() {
 				return 0;
 			}
 
+			@Override
 			public boolean isAddition() {
 				return false;
 			}
@@ -52,6 +55,7 @@ public class Diffs_ListDiffTests extends TestCase {
 
 	public void testListDiffToStringDoesNotThrowNPEForNullListDiff() {
 		ListDiff diff = new ListDiff() {
+			@Override
 			public ListDiffEntry[] getDifferences() {
 				return null;
 			}
@@ -67,6 +71,7 @@ public class Diffs_ListDiffTests extends TestCase {
 
 	public void testListDiffToStringDoesNotThrowNPEForNullListDiffEntry() {
 		ListDiff diff = new ListDiff() {
+			@Override
 			public ListDiffEntry[] getDifferences() {
 				return new ListDiffEntry[1];
 			}
@@ -261,14 +266,17 @@ public class Diffs_ListDiffTests extends TestCase {
 
 		final List list = new ArrayList(oldList);
 		diff.accept(new ListDiffVisitor() {
+			@Override
 			public void handleAdd(int index, Object element) {
 				list.add(index, element);
 			}
 
+			@Override
 			public void handleRemove(int index, Object element) {
 				assertEquals(element, list.remove(index));
 			}
 
+			@Override
 			public void handleReplace(int index, Object oldElement,
 					Object newElement) {
 				assertEquals(oldElement, list.set(index, newElement));

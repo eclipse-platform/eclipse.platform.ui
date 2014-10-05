@@ -26,6 +26,7 @@ public class NumberToBigDecimalTest extends NumberToNumberTestHarness {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.conversion.NumberToNumberTestHarness#doGetOutOfRangeNumber()
 	 */
+	@Override
 	protected Number doGetOutOfRangeNumber() {
 		return null; //does not exist
 	}
@@ -33,6 +34,7 @@ public class NumberToBigDecimalTest extends NumberToNumberTestHarness {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.conversion.NumberToNumberTestHarness#doGetToBoxedTypeValidator(java.lang.Class)
 	 */
+	@Override
 	protected IConverter doGetToBoxedTypeValidator(Class fromType) {
 		return new NumberToBigDecimalConverter(NumberFormat.getInstance(), fromType);
 	}
@@ -40,6 +42,7 @@ public class NumberToBigDecimalTest extends NumberToNumberTestHarness {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.conversion.NumberToNumberTestHarness#doGetToPrimitiveValidator(java.lang.Class)
 	 */
+	@Override
 	protected IConverter doGetToPrimitiveValidator(Class fromType) {
 		return null; // does not exist
 	}
@@ -47,6 +50,7 @@ public class NumberToBigDecimalTest extends NumberToNumberTestHarness {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.conversion.NumberToNumberTestHarness#doGetToType(boolean)
 	 */
+	@Override
 	protected Class doGetToType(boolean primitive) {
 		return (primitive) ? null : BigDecimal.class;
 	}

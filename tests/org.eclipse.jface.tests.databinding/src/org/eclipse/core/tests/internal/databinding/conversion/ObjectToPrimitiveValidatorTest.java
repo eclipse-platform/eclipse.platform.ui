@@ -24,6 +24,7 @@ public class ObjectToPrimitiveValidatorTest extends TestCase {
 
 	private ObjectToPrimitiveValidator objectToPrimitiveValidator;
 
+	@Override
 	protected void setUp() throws Exception {
 		this.objectToPrimitiveValidator = new ObjectToPrimitiveValidator(
 				Integer.TYPE);

@@ -41,25 +41,30 @@ public class UnionSetTest extends TestCase {
 		private Delegate() {
 		}
 
+		@Override
 		public void setUp() {
 			
 			super.setUp();
 		}
 
+		@Override
 		public void tearDown() {
 			sets = null;
 
 			super.tearDown();
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			sets[0].add(Integer.toString(sets[0].size()));
 		}
 
+		@Override
 		public Object createElement(IObservableCollection collection) {
 			return Integer.toString(collection.size());
 		}
 
+		@Override
 		public IObservableCollection createObservableCollection(Realm realm,
 				int elementCount) {			
 			sets = new IObservableSet[]{new WritableSet(realm), new WritableSet(realm)};

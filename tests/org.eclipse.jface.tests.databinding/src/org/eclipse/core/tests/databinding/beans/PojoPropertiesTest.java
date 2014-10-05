@@ -9,6 +9,7 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 public class PojoPropertiesTest extends AbstractDefaultRealmTestCase {
 	private Bean bean;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 

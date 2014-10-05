@@ -22,6 +22,7 @@ public class StringToNumberParserShortTest extends StringToNumberParserTestHarne
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserTestHarness#assertValid(java.lang.Number)
 	 */
+	@Override
 	protected boolean assertValid(Number number) {
 		return StringToNumberParser.inShortRange(number);
 	}
@@ -29,6 +30,7 @@ public class StringToNumberParserShortTest extends StringToNumberParserTestHarne
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserTestHarness#getValidMax()
 	 */
+	@Override
 	protected Number getValidMax() {
 		return new Short(Short.MAX_VALUE);
 	}
@@ -36,6 +38,7 @@ public class StringToNumberParserShortTest extends StringToNumberParserTestHarne
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserTestHarness#getValidMin()
 	 */
+	@Override
 	protected Number getValidMin() {
 		return new Short(Short.MIN_VALUE);
 	}	

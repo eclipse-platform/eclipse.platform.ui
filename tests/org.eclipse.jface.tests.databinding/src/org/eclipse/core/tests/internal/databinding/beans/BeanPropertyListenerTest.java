@@ -34,6 +34,7 @@ public class BeanPropertyListenerTest extends AbstractDefaultRealmTestCase {
 	private SimplePropertyListenerStub simpleListener;
 	private BeanPropertyListenerStub listener;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		property = new PropertyStub();
@@ -104,6 +105,7 @@ public class BeanPropertyListenerTest extends AbstractDefaultRealmTestCase {
 			ISimplePropertyListener {
 		public List log = new ArrayList();
 
+		@Override
 		public void handleEvent(SimplePropertyEvent event) {
 			log.add(event);
 		}
@@ -116,6 +118,7 @@ public class BeanPropertyListenerTest extends AbstractDefaultRealmTestCase {
 			super(property, propertyDescriptor, listener);
 		}
 
+		@Override
 		protected IDiff computeDiff(Object oldValue, Object newValue) {
 			return Diffs.createValueDiff(oldValue, newValue);
 		}

@@ -94,6 +94,7 @@ public class DetailObservableMapTest extends AbstractDefaultRealmTestCase {
 		class OuterObservable extends WritableValue {
 			boolean disposed = false;
 
+			@Override
 			public synchronized void dispose() {
 				disposed = true;
 				super.dispose();
@@ -135,6 +136,7 @@ public class DetailObservableMapTest extends AbstractDefaultRealmTestCase {
 		final IObservableMap[] detailObservable = new IObservableMap[1];
 
 		master.addValueChangeListener(new IValueChangeListener() {
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				detailObservable[0].dispose();
 			}
@@ -150,6 +152,7 @@ public class DetailObservableMapTest extends AbstractDefaultRealmTestCase {
 		Object keyType = Object.class;
 		Object valueType = Object.class;
 
+		@Override
 		public IObservable createObservable(Object target) {
 			return new WritableMap(keyType, valueType);
 		}

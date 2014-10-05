@@ -31,6 +31,7 @@ public class IdentityConverterTest extends TestCase {
 	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		c = new IdentityConverter(Integer.TYPE, Integer.TYPE);
 	}

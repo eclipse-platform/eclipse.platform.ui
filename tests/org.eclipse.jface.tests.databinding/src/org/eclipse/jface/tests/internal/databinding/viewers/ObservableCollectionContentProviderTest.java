@@ -33,12 +33,14 @@ public class ObservableCollectionContentProviderTest extends
 	private TableViewer viewer;
 	ObservableListContentProvider contentProvider;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		shell = new Shell();
 		viewer = new TableViewer(shell);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		shell.dispose();
 		shell = null;

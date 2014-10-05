@@ -32,14 +32,16 @@ public class LabelControlScenario extends ScenariosTestCase {
 
     private Label label;
 
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         // do any setup work here
         label = new Label(getComposite(), SWT.NONE);
         adventure = SampleData.WINTER_HOLIDAY;
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         // do any teardown work here
         super.tearDown();
         label.dispose();

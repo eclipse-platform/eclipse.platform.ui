@@ -30,6 +30,7 @@ public class BeanObservableValueDecoratorTest extends AbstractDefaultRealmTestCa
 	private BeanObservableValueDecorator decorator;
 	private PropertyDescriptor propertyDescriptor;
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		

@@ -40,6 +40,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -100,6 +101,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	
 	public void testAddValidationStatusContainsMultipleStatuses() throws Exception {
 		UpdateListStrategy strategy = new UpdateListStrategy() {
+			@Override
 			protected IStatus doAdd(IObservableList observableList,
 					Object element, int index) {
 				super.doAdd(observableList, element, index);
@@ -137,6 +139,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.databinding.UpdateListStrategy#doRemove(org.eclipse.core.databinding.observable.list.IObservableList, int)
 			 */
+			@Override
 			protected IStatus doRemove(IObservableList observableList, int index) {
 				super.doRemove(observableList, index);
 				

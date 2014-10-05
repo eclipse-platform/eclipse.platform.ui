@@ -36,6 +36,7 @@ public class ObservableListTreeContentProviderTest extends
 	private ObservableListTreeContentProvider contentProvider;
 	private Object input;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		shell = new Shell();
@@ -44,6 +45,7 @@ public class ObservableListTreeContentProviderTest extends
 		input = new Object();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		shell.dispose();
 		tree = null;
@@ -70,6 +72,7 @@ public class ObservableListTreeContentProviderTest extends
 		final IObservableList elements = new WritableList();
 		final Object input = new Object();
 		initContentProvider(new IObservableFactory() {
+			@Override
 			public IObservable createObservable(Object target) {
 				return target == input ? elements : null;
 			}
@@ -94,6 +97,7 @@ public class ObservableListTreeContentProviderTest extends
 	public void testViewerUpdate_RemoveElementAfterMutation() {
 		final IObservableList children = new WritableList();
 		initContentProvider(new IObservableFactory() {
+			@Override
 			public IObservable createObservable(Object target) {
 				return target == input ? children : null;
 			}
@@ -115,6 +119,7 @@ public class ObservableListTreeContentProviderTest extends
 		final IObservableList children = new WritableList();
 		final IObservableList children2 = new WritableList();
 		initContentProvider(new IObservableFactory() {
+			@Override
 			public IObservable createObservable(Object target) {
 				if (target == input)
 					return children;
@@ -140,6 +145,7 @@ public class ObservableListTreeContentProviderTest extends
 		final IObservableList children = new WritableList();
 		final IObservableList children2 = new WritableList();
 		initContentProvider(new IObservableFactory() {
+			@Override
 			public IObservable createObservable(Object target) {
 				if (target == input)
 					return children;
@@ -176,6 +182,7 @@ public class ObservableListTreeContentProviderTest extends
 			id++;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (obj == this)
 				return true;
@@ -187,6 +194,7 @@ public class ObservableListTreeContentProviderTest extends
 			return this.id == that.id;
 		}
 
+		@Override
 		public int hashCode() {
 			return id;
 		}

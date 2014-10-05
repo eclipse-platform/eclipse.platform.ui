@@ -53,17 +53,20 @@ public class ComboScenarios extends ScenariosTestCase {
 	protected Catalog catalog = null;
 
 	ILabelProvider lodgingLabelProvider = new LabelProvider() {
+		@Override
 		public String getText(Object element) {
 			return ((Lodging) element).getName();
 		}
 	};
 
 	ILabelProvider accountLabelProvider = new LabelProvider() {
+		@Override
 		public String getText(Object element) {
 			return ((Account) element).getCountry();
 		}
 	};
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		getComposite().setLayout(new FillLayout());
@@ -74,6 +77,7 @@ public class ComboScenarios extends ScenariosTestCase {
 		catalog = SampleData.CATALOG_2005; // Lodging source
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		combo.dispose();
 		combo = null;

@@ -35,6 +35,7 @@ public class ObservableListContentProviderTest extends
 	private ObservableListContentProvider contentProvider;
 	private IObservableList input;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		shell = new Shell();
@@ -47,6 +48,7 @@ public class ObservableListContentProviderTest extends
 		viewer.setInput(input);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		shell.dispose();
 		viewer = null;
@@ -118,6 +120,7 @@ public class ObservableListContentProviderTest extends
 			this.id = id;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (obj == this)
 				return true;
@@ -129,6 +132,7 @@ public class ObservableListContentProviderTest extends
 			return this.id == that.id;
 		}
 
+		@Override
 		public int hashCode() {
 			return id;
 		}

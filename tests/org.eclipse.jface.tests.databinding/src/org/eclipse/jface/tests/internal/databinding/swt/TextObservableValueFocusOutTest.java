@@ -76,23 +76,28 @@ public class TextObservableValueFocusOutTest extends AbstractSWTTestCase {
 
 		private Text text;
 
+		@Override
 		public void setUp() {
 			shell = new Shell();
 			text = new Text(shell, SWT.NONE);
 		}
 
+		@Override
 		public void tearDown() {
 			shell.dispose();
 		}
 
+		@Override
 		public IObservableValue createObservableValue(Realm realm) {
 			return WidgetProperties.text(SWT.FocusOut).observe(realm, text);
 		}
 
+		@Override
 		public Object getValueType(IObservableValue observable) {
 			return String.class;
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			text.setFocus();
 
@@ -102,6 +107,7 @@ public class TextObservableValueFocusOutTest extends AbstractSWTTestCase {
 			text.notifyListeners(SWT.FocusOut, null);
 		}
 
+		@Override
 		public Object createValue(IObservableValue observable) {
 			String value = (String) observable.getValue();
 			return value + "a";

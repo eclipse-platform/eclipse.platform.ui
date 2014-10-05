@@ -68,44 +68,54 @@ public class Bean implements IBean {
 		changeSupport.removePropertyChangeListener(listener);
 	}
 
+	@Override
 	public String getValue() {
 		return value;
 	}
 
+	@Override
 	public void setValue(String value) {
 		changeSupport.firePropertyChange("value", this.value,
 				this.value = value);
 	}
 
+	@Override
 	public Object[] getArray() {
 		return array;
 	}
 
+	@Override
 	public void setArray(Object[] array) {
 		changeSupport.firePropertyChange("array", this.array,
 				this.array = array);
 	}
 
+	@Override
 	public List getList() {
 		return list;
 	}
 
+	@Override
 	public void setList(List list) {
 		changeSupport.firePropertyChange("list", this.list, this.list = list);
 	}
 
+	@Override
 	public Set getSet() {
 		return set;
 	}
 
+	@Override
 	public void setSet(Set set) {
 		changeSupport.firePropertyChange("set", this.set, this.set = set);
 	}
 
+	@Override
 	public Map getMap() {
 		return map;
 	}
 
+	@Override
 	public void setMap(Map map) {
 		changeSupport.firePropertyChange("map", this.map, this.map = map);
 	}

@@ -49,6 +49,7 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 	private PropertyDescriptor propertyDescriptor;
 	private String propertyName;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -100,11 +101,13 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 			final IObservableValue name = BeansObservables.observeValue(person,
 					"name"); //$NON-NLS-1$
 
+			@Override
 			protected Object calculate() {
 				return Boolean.valueOf(name.getValue() != null);
 			}
 		};
 		cv.addChangeListener(new IChangeListener() {
+			@Override
 			public void handleChange(ChangeEvent event) {
 				cv.getValue();
 			}
@@ -178,25 +181,30 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 			AbstractObservableValueContractDelegate {
 		private Bean bean;
 
+		@Override
 		public void setUp() {
 			super.setUp();
 
 			bean = new Bean("");
 		}
 
+		@Override
 		public IObservableValue createObservableValue(Realm realm) {
 			return BeansObservables.observeValue(realm, bean, "value");
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			IObservableValue observableValue = (IObservableValue) observable;
 			observableValue.setValue(createValue(observableValue));
 		}
 
+		@Override
 		public Object getValueType(IObservableValue observable) {
 			return String.class;
 		}
 
+		@Override
 		public Object createValue(IObservableValue observable) {
 			return observable.getValue() + "a";
 		}

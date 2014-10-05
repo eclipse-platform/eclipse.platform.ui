@@ -26,6 +26,7 @@ public class DecoratingObservableTest extends AbstractDefaultRealmTestCase {
 	private IObservable decorated;
 	private DecoratingObservable decorator;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		decorated = new ObservableStub(Realm.getDefault());
@@ -45,6 +46,7 @@ public class DecoratingObservableTest extends AbstractDefaultRealmTestCase {
 			super(realm);
 		}
 
+		@Override
 		public boolean isStale() {
 			return false;
 		}

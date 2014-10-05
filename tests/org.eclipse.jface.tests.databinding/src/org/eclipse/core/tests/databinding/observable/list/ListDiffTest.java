@@ -27,6 +27,7 @@ import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 public class ListDiffTest extends TestCase {
 	ListDiffVisitorStub visitor;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		visitor = new ListDiffVisitorStub();
@@ -142,18 +143,22 @@ public class ListDiffTest extends TestCase {
 	class ListDiffVisitorStub extends ListDiffVisitor {
 		String log = "";
 
+		@Override
 		public void handleAdd(int index, Object element) {
 			log("add(" + index + "," + element + ")");
 		}
 
+		@Override
 		public void handleRemove(int index, Object element) {
 			log("remove(" + index + "," + element + ")");
 		}
 
+		@Override
 		public void handleMove(int oldIndex, int newIndex, Object element) {
 			log("move(" + oldIndex + "," + newIndex + "," + element + ")");
 		}
 
+		@Override
 		public void handleReplace(int index, Object oldElement,
 				Object newElement) {
 			log("replace(" + index + "," + oldElement + "," + newElement + ")");

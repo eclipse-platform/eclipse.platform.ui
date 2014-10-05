@@ -43,6 +43,7 @@ public class MapEntryObservableValueTest extends AbstractDefaultRealmTestCase
 	private ValueDiff diff;
 	private MapEntryObservableValue observedValue;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		this.map = new WritableMap();
@@ -51,6 +52,7 @@ public class MapEntryObservableValueTest extends AbstractDefaultRealmTestCase
 		observedValue.addValueChangeListener(this);
 	}
 
+	@Override
 	public void handleValueChange(ValueChangeEvent p_event) {
 		this.diff = p_event.diff;
 	}
@@ -149,6 +151,7 @@ public class MapEntryObservableValueTest extends AbstractDefaultRealmTestCase
 			AbstractObservableValueContractDelegate {
 		private Object valueType = new Object();
 
+		@Override
 		public IObservableValue createObservableValue(Realm realm) {
 			WritableMap map = new WritableMap(realm);
 			Object key = new Object();
@@ -156,20 +159,24 @@ public class MapEntryObservableValueTest extends AbstractDefaultRealmTestCase
 			return new MapEntryObservableValueStub(map, key, valueType);
 		}
 
+		@Override
 		public Object createValue(IObservableValue observable) {
 			return new Object();
 		}
 
+		@Override
 		public Object getValueType(IObservableValue observable) {
 			return valueType;
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			MapEntryObservableValueStub mapEntryValue = (MapEntryObservableValueStub) observable;
 			mapEntryValue.map
 					.put(mapEntryValue.key, createValue(mapEntryValue));
 		}
 
+		@Override
 		public void setStale(IObservable observable, boolean stale) {
 			MapEntryObservableValueStub mapEntryValue = (MapEntryObservableValueStub) observable;
 			mapEntryValue.map.setStale(stale);

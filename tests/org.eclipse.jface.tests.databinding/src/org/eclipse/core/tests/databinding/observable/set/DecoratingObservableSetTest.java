@@ -44,6 +44,7 @@ public class DecoratingObservableSetTest {
 	static class Delegate extends AbstractObservableCollectionContractDelegate {
 		private Object elementType = Object.class;
 
+		@Override
 		public IObservableCollection createObservableCollection(Realm realm,
 				int elementCount) {
 			IObservableSet wrappedSet = new WritableSet(realm,
@@ -53,14 +54,17 @@ public class DecoratingObservableSetTest {
 			return new DecoratingObservableSetStub(wrappedSet);
 		}
 
+		@Override
 		public Object createElement(IObservableCollection collection) {
 			return new Object();
 		}
 
+		@Override
 		public Object getElementType(IObservableCollection collection) {
 			return elementType;
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			DecoratingObservableSetStub set = (DecoratingObservableSetStub) observable;
 			set.wrappedSet.add(createElement(set));

@@ -32,11 +32,13 @@ import org.eclipse.jface.databinding.conformance.util.RealmTester;
 public class ObservableMapTest extends TestCase {
 	ObservableMapStub map;
 
+	@Override
 	protected void setUp() throws Exception {
 		RealmTester.setDefault(new CurrentRealm(true));
 		map = new ObservableMapStub(new HashMap());
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		RealmTester.setDefault(null);
 	}
@@ -61,6 +63,7 @@ public class ObservableMapTest extends TestCase {
 
 	public void testIsStaleRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
+			@Override
 			public void run() {
 				map.isStale();
 			}
@@ -69,6 +72,7 @@ public class ObservableMapTest extends TestCase {
 
 	public void testSetStaleRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
+			@Override
 			public void run() {
 				map.setStale(true);
 			}
@@ -77,6 +81,7 @@ public class ObservableMapTest extends TestCase {
 
 	public void testFireMapChangeRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
+			@Override
 			public void run() {
 				map.fireMapChange(null);
 			}
@@ -95,6 +100,7 @@ public class ObservableMapTest extends TestCase {
 			super(wrappedMap);
 		}
 
+		@Override
 		protected void fireMapChange(MapDiff diff) {
 			super.fireMapChange(diff);
 		}

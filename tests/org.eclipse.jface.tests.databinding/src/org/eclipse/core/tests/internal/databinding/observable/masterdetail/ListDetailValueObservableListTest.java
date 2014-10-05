@@ -306,6 +306,7 @@ public class ListDetailValueObservableListTest extends
 	public void testDetailObservableValuesAreDisposed() {
 		final List detailObservables = new ArrayList();
 		IObservableFactory detailValueFactory = new IObservableFactory() {
+			@Override
 			public IObservable createObservable(Object target) {
 				WritableValue detailObservable = new WritableValue();
 				// Remember the created observables.
@@ -357,6 +358,7 @@ public class ListDetailValueObservableListTest extends
 
 	private static class Delegate extends
 			AbstractObservableCollectionContractDelegate {
+		@Override
 		public IObservableCollection createObservableCollection(Realm realm,
 				int elementCount) {
 			WritableList masterList = new WritableList(realm);
@@ -368,11 +370,13 @@ public class ListDetailValueObservableListTest extends
 					BeansObservables.valueFactory(realm, "name"), String.class);
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			TestListDetailValueObservableList ldol = (TestListDetailValueObservableList) observable;
 			ldol.masterList.add(new SimplePerson());
 		}
 
+		@Override
 		public Object getElementType(IObservableCollection collection) {
 			return String.class;
 		}

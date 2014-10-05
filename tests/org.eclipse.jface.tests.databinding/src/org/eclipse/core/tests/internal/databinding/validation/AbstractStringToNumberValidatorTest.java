@@ -48,6 +48,7 @@ public class AbstractStringToNumberValidatorTest extends TestCase {
 			super(c, new Integer(Integer.MIN_VALUE), new Integer(Integer.MAX_VALUE));
 		}
 		
+		@Override
 		protected boolean isInRange(Number number) {
 			return true;
 		}

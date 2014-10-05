@@ -45,6 +45,7 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 	private static String[] model = new String[] { "element0", "element1",
 			"element2", "element3" };
 
+	@Override
 	protected void setUp() throws Exception {
 		Shell shell = new Shell();
 		viewer = new TableViewer(shell, SWT.MULTI);
@@ -53,6 +54,7 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 		selectionProvider = viewer;
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		Shell shell = viewer.getTable().getShell();
 		if (!shell.isDisposed())

@@ -48,11 +48,13 @@ public class ConstantObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	private static class Delegate extends
 			AbstractObservableValueContractDelegate {
+		@Override
 		public IObservableValue createObservableValue(Realm realm) {
 			return new ConstantObservableValue(realm, new Object(),
 					Object.class);
 		}
 
+		@Override
 		public Object getValueType(IObservableValue observable) {
 			return Object.class;
 		}
@@ -68,59 +70,73 @@ public class ConstantObservableValueTest extends AbstractDefaultRealmTestCase {
 			super(name, delegate);
 		}
 
+		@Override
 		public void testChange_OrderOfNotifications() {
 			// disabled
 		}
 
+		@Override
 		public void testChange_ValueChangeEvent() {
 			// disabled
 		}
 
+		@Override
 		public void testChange_ValueChangeEventDiff() {
 			// disabled
 		}
 
+		@Override
 		public void testChange_ValueChangeEventFiredAfterValueIsSet() {
 			// disabled
 		}
 
+		@Override
 		public void testRemoveValueChangeListener_RemovesListener()
 				throws Exception {
 			// disabled
 		}
 
+		@Override
 		public void testChange_ChangeEvent() {
 			// disabled
 		}
 
+		@Override
 		public void testChange_EventObservable() {
 			// disabled
 		}
 
+		@Override
 		public void testChange_ObservableRealmIsTheCurrentRealm() {
 			// disabled
 		}
 
+		@Override
 		public void testChange_RealmCheck() {
 			// disabled
 		}
 
+		@Override
 		public void testRemoveChangeListener_RemovesListener() {
 			// disabled
 		}
 
+		@Override
 		public void testIsStale_RealmChecks() {
 			// disabled
 		}
 
+		@Override
 		public void testIsStale_GetterCalled() throws Exception {
 			// disabled
 		}
 
+		@Override
 		public void testIsDisposed() throws Exception {
 			// disabled
 		}
 
+		@Override
 		public void testAddDisposeListener_HandleDisposeInvoked() {
 			// disabled
 		}

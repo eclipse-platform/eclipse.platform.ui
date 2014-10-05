@@ -39,6 +39,7 @@ public class BeanObservableListDecoratorTest extends TestCase {
 	private IObservableList observableList;
 	private BeanObservableListDecorator decorator;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -70,6 +71,7 @@ public class BeanObservableListDecoratorTest extends TestCase {
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {
+		@Override
 		public IObservableCollection createObservableCollection(Realm realm,
 				int elementCount) {
 			final WritableList delegate = new WritableList(realm);
@@ -80,10 +82,12 @@ public class BeanObservableListDecoratorTest extends TestCase {
 
 		private int counter;
 
+		@Override
 		public Object createElement(IObservableCollection collection) {
 			return Integer.toString(counter++);
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			IObservableList list = (IObservableList) observable;
 			list.add(createElement(list));

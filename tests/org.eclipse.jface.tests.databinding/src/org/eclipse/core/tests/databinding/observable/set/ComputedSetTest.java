@@ -34,6 +34,7 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 public class ComputedSetTest extends AbstractDefaultRealmTestCase {
 	ComputedSetStub set;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		set = new ComputedSetStub();
@@ -60,6 +61,7 @@ public class ComputedSetTest extends AbstractDefaultRealmTestCase {
 	public void testDependency_NoStaleEventIfAlreadyDirty() {
 		set.dependency.fireChange();
 		set.addStaleListener(new IStaleListener() {
+			@Override
 			public void handleStale(StaleEvent staleEvent) {
 				fail("Should not fire stale when set is already dirty");
 			}
@@ -100,6 +102,7 @@ public class ComputedSetTest extends AbstractDefaultRealmTestCase {
 			dependency = new ObservableStub(realm);
 		}
 
+		@Override
 		protected Set calculate() {
 			ObservableTracker.getterCalled(dependency);
 			return new HashSet(nextComputation);
@@ -113,15 +116,18 @@ public class ComputedSetTest extends AbstractDefaultRealmTestCase {
 
 		boolean stale;
 
+		@Override
 		public boolean isStale() {
 			return stale;
 		}
 
+		@Override
 		protected void fireStale() {
 			stale = true;
 			super.fireStale();
 		}
 
+		@Override
 		protected void fireChange() {
 			super.fireChange();
 		}
@@ -135,6 +141,7 @@ public class ComputedSetTest extends AbstractDefaultRealmTestCase {
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {
+		@Override
 		public IObservableCollection createObservableCollection(Realm realm,
 				int elementCount) {
 			final ComputedSetStub set = new ComputedSetStub(realm);
@@ -144,16 +151,19 @@ public class ComputedSetTest extends AbstractDefaultRealmTestCase {
 			return set;
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			ComputedSetStub set = (ComputedSetStub) observable;
 			set.nextComputation.add(new Object());
 			set.dependency.fireChange();
 		}
 
+		@Override
 		public Object createElement(IObservableCollection collection) {
 			return new Object();
 		}
 
+		@Override
 		public void setStale(IObservable observable, boolean stale) {
 			if (stale)
 				((ComputedSetStub) observable).dependency.fireStale();

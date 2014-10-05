@@ -247,6 +247,7 @@ public class SetDetailValueObservableMapTest extends
 	public void testDetailObservableValuesAreDisposed() {
 		final Map detailObservables = new HashMap();
 		IObservableFactory detailValueFactory = new IObservableFactory() {
+			@Override
 			public IObservable createObservable(Object target) {
 				WritableValue detailObservable = new WritableValue();
 				// Remember the created observables.

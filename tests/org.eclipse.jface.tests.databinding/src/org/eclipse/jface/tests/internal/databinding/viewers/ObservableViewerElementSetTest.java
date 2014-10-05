@@ -35,6 +35,7 @@ public class ObservableViewerElementSetTest extends TestCase {
 	private static class Delegate extends
 			AbstractObservableCollectionContractDelegate {
 
+		@Override
 		public IObservableCollection createObservableCollection(Realm realm,
 				int elementCount) {
 			ObservableViewerElementSet set = new ObservableViewerElementSet(realm,
@@ -44,25 +45,30 @@ public class ObservableViewerElementSetTest extends TestCase {
 			return set;
 		}
 
+		@Override
 		public Object createElement(IObservableCollection collection) {
 			return new Object();
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			IObservableSet set = (IObservableSet) observable;
 			set.add(createElement(set));
 		}
 
+		@Override
 		public Object getElementType(IObservableCollection collection) {
 			return Object.class;
 		}
 	}
 
 	private static class IdentityElementComparer implements IElementComparer {
+		@Override
 		public boolean equals(Object a, Object b) {
 			return a == b;
 		}
 
+		@Override
 		public int hashCode(Object element) {
 			return System.identityHashCode(element);
 		}

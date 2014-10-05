@@ -46,6 +46,7 @@ public class SpinnerObservableValueMaxTest extends ObservableDelegateTest {
 		super(testName, new Delegate());
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -54,6 +55,7 @@ public class SpinnerObservableValueMaxTest extends ObservableDelegateTest {
 		spinner = delegate.spinner;
 	}
 
+	@Override
 	protected IObservable doCreateObservable() {
 		return getObservableContractDelegate().createObservable(
 				SWTObservables.getRealm(Display.getDefault()));
@@ -86,29 +88,35 @@ public class SpinnerObservableValueMaxTest extends ObservableDelegateTest {
 
 		Spinner spinner;
 
+		@Override
 		public void setUp() {
 			shell = new Shell();
 			spinner = new Spinner(shell, SWT.NONE);
 			spinner.setMaximum(1000);
 		}
 
+		@Override
 		public void tearDown() {
 			shell.dispose();
 		}
 
+		@Override
 		public IObservableValue createObservableValue(Realm realm) {
 			return WidgetProperties.maximum().observe(realm, spinner);
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			IObservableValue observableValue = (IObservableValue) observable;
 			observableValue.setValue(createValue(observableValue));
 		}
 
+		@Override
 		public Object getValueType(IObservableValue observable) {
 			return Integer.TYPE;
 		}
 
+		@Override
 		public Object createValue(IObservableValue observable) {
 			return createIntegerValue(observable);
 		}

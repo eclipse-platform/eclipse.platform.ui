@@ -38,19 +38,23 @@ public class SelectObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	/* package */static class Delegate extends
 			AbstractObservableValueContractDelegate {
+		@Override
 		public IObservableValue createObservableValue(Realm realm) {
 			return new SelectObservableValue(realm, Object.class);
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			IObservableValue observableValue = (IObservableValue) observable;
 			observableValue.setValue(createValue(observableValue));
 		}
 
+		@Override
 		public Object getValueType(IObservableValue observable) {
 			return Object.class;
 		}
 
+		@Override
 		public Object createValue(IObservableValue observable) {
 			SelectObservableValue select = (SelectObservableValue) observable;
 			Object value = new Object();

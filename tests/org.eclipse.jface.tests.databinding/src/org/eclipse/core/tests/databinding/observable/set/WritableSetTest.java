@@ -49,19 +49,23 @@ public class WritableSetTest extends AbstractDefaultRealmTestCase {
 			super();
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			IObservableSet set = (IObservableSet) observable;
 			set.add(createElement(set));
 		}
 
+		@Override
 		public Object createElement(IObservableCollection collection) {
 			return new Object();
 		}
 
+		@Override
 		public Object getElementType(IObservableCollection collection) {
 			return String.class;
 		}
 
+		@Override
 		public IObservableCollection createObservableCollection(Realm realm,
 				int elementCount) {
 			IObservableSet set = new WritableSet(realm, Collections.EMPTY_SET,

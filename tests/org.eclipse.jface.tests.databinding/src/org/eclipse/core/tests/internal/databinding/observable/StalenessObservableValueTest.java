@@ -43,6 +43,7 @@ public class StalenessObservableValueTest extends TestCase {
 			super(realm);
 		}
 
+		@Override
 		public boolean isStale() {
 			return stale;
 		}
@@ -70,15 +71,18 @@ public class StalenessObservableValueTest extends TestCase {
 	}
 
 	static class Delegate extends AbstractObservableValueContractDelegate {
+		@Override
 		public IObservableValue createObservableValue(Realm realm) {
 			return new StalenessObservableValueStub(new ObservableStub(realm));
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			ObservableStub target = ((StalenessObservableValueStub) observable).target;
 			target.setStale(!target.isStale());
 		}
 
+		@Override
 		public Object getValueType(IObservableValue observable) {
 			return Boolean.TYPE;
 		}

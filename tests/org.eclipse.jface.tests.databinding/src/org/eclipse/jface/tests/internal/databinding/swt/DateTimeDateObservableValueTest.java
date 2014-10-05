@@ -32,6 +32,7 @@ public class DateTimeDateObservableValueTest extends AbstractSWTTestCase {
 	private DateTime dateTime;
 	private IObservableValue dateObservable;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		dateTime = new DateTime(getShell(), SWT.DATE);

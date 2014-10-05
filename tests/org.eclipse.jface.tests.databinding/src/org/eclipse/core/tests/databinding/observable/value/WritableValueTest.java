@@ -59,19 +59,23 @@ public class WritableValueTest extends AbstractDefaultRealmTestCase {
 
 	/* package */static class Delegate extends
 			AbstractObservableValueContractDelegate {
+		@Override
 		public IObservableValue createObservableValue(Realm realm) {
 			return new WritableValue(realm, "", String.class);
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			IObservableValue observableValue = (IObservableValue) observable;
 			observableValue.setValue(createValue(observableValue));
 		}
 
+		@Override
 		public Object getValueType(IObservableValue observable) {
 			return String.class;
 		}
 		
+		@Override
 		public Object createValue(IObservableValue observable) {
 			return observable.getValue() + "a";
 		}

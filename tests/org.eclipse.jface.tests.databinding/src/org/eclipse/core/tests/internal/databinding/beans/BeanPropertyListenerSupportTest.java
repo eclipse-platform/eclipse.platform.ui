@@ -29,6 +29,7 @@ public class BeanPropertyListenerSupportTest extends
 	private PropertyChangeListenerStub listener;
 	private String propertyName;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -67,6 +68,7 @@ public class BeanPropertyListenerSupportTest extends
 			int count;
 			IStatus status;
 
+			@Override
 			public void log(IStatus status) {
 				count++;
 				this.status = status;
@@ -119,6 +121,7 @@ public class BeanPropertyListenerSupportTest extends
 			int count;
 			IStatus status;
 
+			@Override
 			public void log(IStatus status) {
 				count++;
 				this.status = status;
@@ -200,6 +203,7 @@ public class BeanPropertyListenerSupportTest extends
 		PropertyChangeEvent event;
 		int count;
 
+		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			count++;
 			this.event = evt;

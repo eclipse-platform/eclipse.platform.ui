@@ -34,6 +34,7 @@ public class BidiObservableMapTest extends AbstractDefaultRealmTestCase {
 	private Object value1;
 	private Object value2;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		wrappedMap = new WritableMap();
@@ -70,6 +71,7 @@ public class BidiObservableMapTest extends AbstractDefaultRealmTestCase {
 
 	public void testGetKeys_Empty() throws Exception {
 		withAndWithoutListeners(new Runnable() {
+			@Override
 			public void run() {
 				assertEquals(Collections.EMPTY_SET, bidiMap.getKeys(value1));
 			}
@@ -78,6 +80,7 @@ public class BidiObservableMapTest extends AbstractDefaultRealmTestCase {
 
 	public void testGetKeys_NullKey() throws Exception {
 		withAndWithoutListeners(new Runnable() {
+			@Override
 			public void run() {
 				wrappedMap.put(null, value1);
 				assertEquals(Collections.singleton(null), bidiMap
@@ -88,6 +91,7 @@ public class BidiObservableMapTest extends AbstractDefaultRealmTestCase {
 
 	public void testGetKeys_NullValue() throws Exception {
 		withAndWithoutListeners(new Runnable() {
+			@Override
 			public void run() {
 				wrappedMap.put(key1, null);
 				assertEquals(Collections.singleton(key1), bidiMap.getKeys(null));
@@ -97,6 +101,7 @@ public class BidiObservableMapTest extends AbstractDefaultRealmTestCase {
 
 	public void testGetKeys_SinglePut() throws Exception {
 		withAndWithoutListeners(new Runnable() {
+			@Override
 			public void run() {
 				wrappedMap.put(key1, value1);
 				assertEquals(Collections.singleton(key1), bidiMap
@@ -107,6 +112,7 @@ public class BidiObservableMapTest extends AbstractDefaultRealmTestCase {
 
 	public void testGetKeys_ReplaceValue() throws Exception {
 		withAndWithoutListeners(new Runnable() {
+			@Override
 			public void run() {
 				wrappedMap.put(key1, value1);
 				assertEquals(Collections.singleton(key1), bidiMap
@@ -122,6 +128,7 @@ public class BidiObservableMapTest extends AbstractDefaultRealmTestCase {
 
 	public void testGetKeys_MultipleKeysWithSameValue() throws Exception {
 		withAndWithoutListeners(new Runnable() {
+			@Override
 			public void run() {
 				wrappedMap.put(key1, value1);
 				wrappedMap.put(key2, value1);
@@ -136,6 +143,7 @@ public class BidiObservableMapTest extends AbstractDefaultRealmTestCase {
 
 	public void testContainsValue_PutAndRemove() throws Exception {
 		withAndWithoutListeners(new Runnable() {
+			@Override
 			public void run() {
 				assertFalse(bidiMap.containsValue(value1));
 				wrappedMap.put(key1, value1);

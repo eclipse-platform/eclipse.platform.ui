@@ -46,6 +46,7 @@ public class SpinnerObservableValueSelectionTest extends ObservableDelegateTest 
 		super(testName, new Delegate());
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -54,6 +55,7 @@ public class SpinnerObservableValueSelectionTest extends ObservableDelegateTest 
 		spinner = delegate.spinner;
 	}
 
+	@Override
 	protected IObservable doCreateObservable() {
 		return getObservableContractDelegate().createObservable(
 				SWTObservables.getRealm(Display.getDefault()));
@@ -86,30 +88,36 @@ public class SpinnerObservableValueSelectionTest extends ObservableDelegateTest 
 
 		Spinner spinner;
 
+		@Override
 		public void setUp() {
 			shell = new Shell();
 			spinner = new Spinner(shell, SWT.NONE);
 			spinner.setMaximum(1000);
 		}
 
+		@Override
 		public void tearDown() {
 			shell.dispose();
 		}
 
+		@Override
 		public IObservableValue createObservableValue(Realm realm) {
 			return WidgetProperties.selection().observe(realm, spinner);
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			spinner.setSelection(createIntegerValue(
 					(IObservableValue) observable).intValue());
 			spinner.notifyListeners(SWT.Selection, null);
 		}
 
+		@Override
 		public Object getValueType(IObservableValue observable) {
 			return Integer.TYPE;
 		}
 
+		@Override
 		public Object createValue(IObservableValue observable) {
 			return createIntegerValue(observable);
 		}

@@ -28,6 +28,7 @@ import org.eclipse.core.databinding.validation.IValidator;
  */
 public class CustomBeanUpdateValueStrategy extends UpdateValueStrategy {
 
+	@Override
 	public IConverter createConverter(Object fromType, Object toType) {
 		if (fromType instanceof CustomBeanModelType) {
 			CustomBeanModelType customBeanModelType = (CustomBeanModelType) fromType;
@@ -40,6 +41,7 @@ public class CustomBeanUpdateValueStrategy extends UpdateValueStrategy {
 		return super.createConverter(fromType, toType);
 	}
 
+	@Override
 	protected void fillDefaults(IObservableValue source,
 			IObservableValue destination) {
 		if (destination.getValueType() instanceof CustomBeanModelType) {
@@ -70,6 +72,7 @@ public class CustomBeanUpdateValueStrategy extends UpdateValueStrategy {
 		return result;
 	}
 
+	@Override
 	public Boolean isAssignableFromTo(Object fromType, Object toType) {
 		if (fromType instanceof CustomBeanModelType) {
 			fromType = ((CustomBeanModelType) fromType).getType();

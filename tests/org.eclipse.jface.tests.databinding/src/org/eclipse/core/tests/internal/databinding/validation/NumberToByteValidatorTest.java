@@ -24,6 +24,7 @@ public class NumberToByteValidatorTest extends NumberToNumberValidatorTestHarnes
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.validation.NumberToNumberValidatorTestHarness#doGetOutOfRangeNumber()
 	 */
+	@Override
 	protected Number doGetOutOfRangeNumber() {
 		return new Integer(Byte.MAX_VALUE + 1);
 	}
@@ -31,6 +32,7 @@ public class NumberToByteValidatorTest extends NumberToNumberValidatorTestHarnes
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.validation.NumberToNumberValidatorTestHarness#doGetToBoxedTypeValidator()
 	 */
+	@Override
 	protected NumberToNumberValidator doGetToBoxedTypeValidator(Class fromType) {
 		NumberToByteConverter converter = new NumberToByteConverter(NumberFormat.getInstance(),
 				fromType, false);
@@ -40,6 +42,7 @@ public class NumberToByteValidatorTest extends NumberToNumberValidatorTestHarnes
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.validation.NumberToNumberValidatorTestHarness#doGetToPrimitiveValidator()
 	 */
+	@Override
 	protected NumberToNumberValidator doGetToPrimitiveValidator(Class fromType) {
 		NumberToByteConverter converter = new NumberToByteConverter(NumberFormat.getInstance(),
 				fromType, true);

@@ -26,6 +26,7 @@ public class NumberToFloatValidatorTest extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.validation.NumberToNumberValidatorTestHarness#doGetOutOfRangeNumber()
 	 */
+	@Override
 	protected Number doGetOutOfRangeNumber() {
 		return new Double(Double.MAX_VALUE);
 	}
@@ -33,6 +34,7 @@ public class NumberToFloatValidatorTest extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.validation.NumberToNumberValidatorTestHarness#doGetToBoxedTypeValidator(java.lang.Class)
 	 */
+	@Override
 	protected NumberToNumberValidator doGetToBoxedTypeValidator(Class fromType) {
 		NumberToFloatConverter converter = new NumberToFloatConverter(NumberFormat.getInstance(), fromType, false);
 		return new NumberToFloatValidator(converter);
@@ -41,6 +43,7 @@ public class NumberToFloatValidatorTest extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.validation.NumberToNumberValidatorTestHarness#doGetToPrimitiveValidator(java.lang.Class)
 	 */
+	@Override
 	protected NumberToNumberValidator doGetToPrimitiveValidator(Class fromType) {
 		NumberToFloatConverter converter = new NumberToFloatConverter(NumberFormat.getInstance(), fromType, true);
 		return new NumberToFloatValidator(converter);

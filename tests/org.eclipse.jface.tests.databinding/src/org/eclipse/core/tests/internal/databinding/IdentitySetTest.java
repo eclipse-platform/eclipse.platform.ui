@@ -29,6 +29,7 @@ import org.eclipse.jface.internal.databinding.viewers.ViewerElementSet;
 public class IdentitySetTest extends TestCase {
 	IdentitySet set;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		set = new IdentitySet();

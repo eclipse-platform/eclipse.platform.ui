@@ -39,6 +39,7 @@ public class ObservableSetTreeContentProviderTest extends
 	private ObservableSetTreeContentProvider contentProvider;
 	private Object input;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		shell = new Shell();
@@ -47,6 +48,7 @@ public class ObservableSetTreeContentProviderTest extends
 		input = new Object();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		shell.dispose();
 		tree = null;
@@ -73,6 +75,7 @@ public class ObservableSetTreeContentProviderTest extends
 		final IObservableSet elements = new WritableSet();
 		final Object input = new Object();
 		initContentProvider(new IObservableFactory() {
+			@Override
 			public IObservable createObservable(Object target) {
 				return target == input ? elements : null;
 			}
@@ -98,10 +101,12 @@ public class ObservableSetTreeContentProviderTest extends
 
 	public void testViewerUpdate_RemoveElementAfterMutation() {
 		IElementComparer comparer = new IElementComparer() {
+			@Override
 			public boolean equals(Object a, Object b) {
 				return a == b;
 			}
 
+			@Override
 			public int hashCode(Object element) {
 				return System.identityHashCode(element);
 			}
@@ -111,6 +116,7 @@ public class ObservableSetTreeContentProviderTest extends
 		final IObservableSet children = ObservableViewerElementSet
 				.withComparer(Realm.getDefault(), null, comparer);
 		initContentProvider(new IObservableFactory() {
+			@Override
 			public IObservable createObservable(Object target) {
 				return target == input ? children : null;
 			}
@@ -132,6 +138,7 @@ public class ObservableSetTreeContentProviderTest extends
 		final IObservableSet children = new WritableSet();
 		final IObservableSet children2 = new WritableSet();
 		initContentProvider(new IObservableFactory() {
+			@Override
 			public IObservable createObservable(Object target) {
 				if (target == input)
 					return children;
@@ -157,6 +164,7 @@ public class ObservableSetTreeContentProviderTest extends
 		final IObservableSet children = new WritableSet();
 		final IObservableSet children2 = new WritableSet();
 		initContentProvider(new IObservableFactory() {
+			@Override
 			public IObservable createObservable(Object target) {
 				if (target == input)
 					return children;
@@ -193,6 +201,7 @@ public class ObservableSetTreeContentProviderTest extends
 			id++;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (obj == this)
 				return true;
@@ -204,6 +213,7 @@ public class ObservableSetTreeContentProviderTest extends
 			return this.id == that.id;
 		}
 
+		@Override
 		public int hashCode() {
 			return id;
 		}

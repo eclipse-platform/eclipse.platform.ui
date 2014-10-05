@@ -25,6 +25,7 @@ public class BindingTest extends AbstractDefaultRealmTestCase {
 
 	private DataBindingContext dbc;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -114,25 +115,32 @@ public class BindingTest extends AbstractDefaultRealmTestCase {
 			super(target, model);
 		}
 
+		@Override
 		public IObservableValue getValidationStatus() {
 			return null;
 		}
 
+		@Override
 		protected void postInit() {
 		}
 
+		@Override
 		protected void preInit() {
 		}
 
+		@Override
 		public void updateModelToTarget() {
 		}
 
+		@Override
 		public void updateTargetToModel() {
 		}
 
+		@Override
 		public void validateModelToTarget() {
 		}
 
+		@Override
 		public void validateTargetToModel() {
 		}
 	}

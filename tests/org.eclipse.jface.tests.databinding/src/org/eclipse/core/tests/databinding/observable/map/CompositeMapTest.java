@@ -47,12 +47,14 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		}
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		persons = new WritableSet();
 		first = BeansObservables.observeMap(persons,
 				SimplePerson.class, "cart");
 		composedMap = new CompositeMap(first, new IObservableFactory() {
+			@Override
 			public IObservable createObservable(Object target) {
 				return BeansObservables.observeMap((IObservableSet) target,
 						SimpleCart.class, "numItems");

@@ -53,6 +53,7 @@ public class JavaBeanObservableMapTest extends AbstractDefaultRealmTestCase {
 	private IObservableMap map;
 	private IBeanObservable beanObservable;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 

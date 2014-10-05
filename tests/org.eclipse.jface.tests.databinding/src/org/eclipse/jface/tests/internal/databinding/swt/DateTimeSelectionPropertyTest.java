@@ -24,6 +24,7 @@ public class DateTimeSelectionPropertyTest extends AbstractSWTTestCase {
 	DateTime dateTime;
 	DateTimeSelectionProperty property;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		dateTime = new DateTime(getShell(), SWT.DATE);

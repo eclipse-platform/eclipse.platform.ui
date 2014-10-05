@@ -95,6 +95,7 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 		class OuterObservable extends WritableValue {
 			boolean disposed = false;
 
+			@Override
 			public synchronized void dispose() {
 				disposed = true;
 				super.dispose();
@@ -136,6 +137,7 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 		final IObservableList[] detailObservable = new IObservableList[1];
 
 		master.addValueChangeListener(new IValueChangeListener() {
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				detailObservable[0].dispose();
 			}
@@ -150,6 +152,7 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 	private static class WritableListFactory implements IObservableFactory {
 		Object type = Object.class;
 
+		@Override
 		public IObservable createObservable(Object target) {
 			return new WritableList(new ArrayList(), type);
 		}
@@ -166,6 +169,7 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 	static class Delegate extends AbstractObservableCollectionContractDelegate {
 		Object elementType = Object.class;
 
+		@Override
 		public IObservableCollection createObservableCollection(
 				final Realm realm, final int elementCount) {
 
@@ -175,14 +179,17 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 			return new DetailObservableListStub(factory, master, elementType);
 		}
 
+		@Override
 		public Object createElement(IObservableCollection collection) {
 			return new Object();
 		}
 
+		@Override
 		public Object getElementType(IObservableCollection collection) {
 			return elementType;
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			final IObservableValue master = ((DetailObservableListStub) observable).master;
 			master.setValue(new Integer(((Integer) master.getValue())
@@ -201,6 +208,7 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 
 		Object type = Object.class;
 
+		@Override
 		public IObservable createObservable(Object target) {
 			int elementCount = ((Integer) target).intValue();
 			final ArrayList wrappedList = new ArrayList();

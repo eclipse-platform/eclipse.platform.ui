@@ -93,6 +93,7 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 		firePropertyChange(PROP_CHOICES, null, null);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		getComposite().setLayout(new FillLayout());

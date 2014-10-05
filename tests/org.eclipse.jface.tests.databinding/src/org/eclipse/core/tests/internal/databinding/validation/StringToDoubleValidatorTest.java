@@ -28,6 +28,7 @@ public class StringToDoubleValidatorTest extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.validation.StringToNumberValidatorTestHarness#getInRangeNumber()
 	 */
+	@Override
 	protected Number getInRangeNumber() {
 		return new Double(1);
 	}
@@ -35,6 +36,7 @@ public class StringToDoubleValidatorTest extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.validation.StringToNumberValidatorTestHarness#getInvalidString()
 	 */
+	@Override
 	protected String getInvalidString() {
 		return "1a";
 	}
@@ -42,6 +44,7 @@ public class StringToDoubleValidatorTest extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.validation.StringToNumberValidatorTestHarness#getOutOfRangeNumber()
 	 */
+	@Override
 	protected Number getOutOfRangeNumber() {
 		BigDecimal decimal = new BigDecimal(Double.MAX_VALUE);
 		return decimal.add(new BigDecimal(Double.MAX_VALUE));
@@ -50,6 +53,7 @@ public class StringToDoubleValidatorTest extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.validation.StringToNumberValidatorTestHarness#setupNumberFormat()
 	 */
+	@Override
 	protected NumberFormat setupNumberFormat() {
 		return NumberFormat.getInstance();
 	}
@@ -57,6 +61,7 @@ public class StringToDoubleValidatorTest extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.validation.StringToNumberValidatorTestHarness#setupValidator(com.ibm.icu.text.NumberFormat)
 	 */
+	@Override
 	protected IValidator setupValidator(NumberFormat numberFormat) {
 		StringToNumberConverter converter = StringToNumberConverter.toDouble(numberFormat, false);
 		return new StringToDoubleValidator(converter);

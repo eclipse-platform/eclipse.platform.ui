@@ -28,10 +28,12 @@ public class DiffsTest extends TestCase {
 	 */
 	public void test_SetDiff() {
 		SetDiff diff = new SetDiff() {
+			@Override
 			public Set getAdditions() {
 				return null;
 			}
 
+			@Override
 			public Set getRemovals() {
 				return null;
 			}
@@ -51,10 +53,12 @@ public class DiffsTest extends TestCase {
 	 */
 	public void test_ValueDiff() {
 		ValueDiff diff = new ValueDiff() {
+			@Override
 			public Object getNewValue() {
 				return null;
 			}
 
+			@Override
 			public Object getOldValue() {
 				return null;
 			}

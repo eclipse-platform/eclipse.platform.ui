@@ -44,11 +44,13 @@ public class ViewerSupportTest extends AbstractSWTTestCase {
 	private AbstractTableViewer structuredViewer;
 	private AbstractTreeViewer treeViewer;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
 		oldLog = Policy.getLog();
 		Policy.setLog(new ILogger() {
+			@Override
 			public void log(IStatus status) {
 				if (status.getException() != null)
 					throw new RuntimeException(status.getException());
@@ -58,6 +60,7 @@ public class ViewerSupportTest extends AbstractSWTTestCase {
 
 		oldRunner = SafeRunnable.getRunner();
 		SafeRunnable.setRunner(new ISafeRunnableRunner() {
+			@Override
 			public void run(ISafeRunnable code) {
 				try {
 					code.run();
@@ -68,6 +71,7 @@ public class ViewerSupportTest extends AbstractSWTTestCase {
 		});
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if (structuredViewer != null)
 			structuredViewer.getControl().dispose();

@@ -62,6 +62,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -138,6 +139,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 
 	public void testAdd_FiresPropertyChangeEvent() throws Exception {
 		assertPropertyChangeEvent(bean, new Runnable() {
+			@Override
 			public void run() {
 				list.add("0");
 			}
@@ -168,6 +170,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 
 	public void testAddAtIndexPropertyChangeEvent() throws Exception {
 		assertPropertyChangeEvent(bean, new Runnable() {
+			@Override
 			public void run() {
 				list.add(0, "0");
 			}
@@ -205,6 +208,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 		list.add("0");
 
 		assertPropertyChangeEvent(bean, new Runnable() {
+			@Override
 			public void run() {
 				list.remove("0");
 			}
@@ -242,6 +246,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 	public void testRemoveAtIndexPropertyChangeEvent() throws Exception {
 		list.add("0");
 		assertPropertyChangeEvent(bean, new Runnable() {
+			@Override
 			public void run() {
 				list.remove(0);
 			}
@@ -277,6 +282,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 
 	public void testAddAllPropertyChangeEvent() throws Exception {
 		assertPropertyChangeEvent(bean, new Runnable() {
+			@Override
 			public void run() {
 				list.addAll(Arrays.asList(new String[] { "0", "1" }));
 			}
@@ -317,6 +323,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 
 	public void testAddAllAtIndexPropertyChangeEvent() throws Exception {
 		assertPropertyChangeEvent(bean, new Runnable() {
+			@Override
 			public void run() {
 				list.addAll(0, Arrays.asList(new String[] { "1", "2" }));
 			}
@@ -356,6 +363,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 	public void testRemoveAllPropertyChangeEvent() throws Exception {
 		list.add("0");
 		assertPropertyChangeEvent(bean, new Runnable() {
+			@Override
 			public void run() {
 				list.removeAll(Arrays.asList(new String[] { "0" }));
 			}
@@ -398,6 +406,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 		list.addAll(Arrays.asList(new String[] { "0", "1" }));
 
 		assertPropertyChangeEvent(bean, new Runnable() {
+			@Override
 			public void run() {
 				list.retainAll(Arrays.asList(new String[] { "0" }));
 			}
@@ -454,6 +463,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 	public void testSetPropertyChangeEvent() throws Exception {
 		list.add("0");
 		assertPropertyChangeEvent(bean, new Runnable() {
+			@Override
 			public void run() {
 				list.set(0, "1");
 			}
@@ -559,6 +569,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 
 		PropertyChangeEvent evt;
 
+		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			count++;
 			this.evt = evt;
@@ -574,6 +585,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {
+		@Override
 		public IObservableCollection createObservableCollection(Realm realm,
 				int elementCount) {
 			String propertyName = "array";
@@ -586,14 +598,17 @@ public class JavaBeanObservableArrayBasedListTest extends
 			return list;
 		}
 
+		@Override
 		public Object createElement(IObservableCollection collection) {
 			return new Object();
 		}
 
+		@Override
 		public Object getElementType(IObservableCollection collection) {
 			return String.class;
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			IObservableList list = (IObservableList) observable;
 			list.add(createElement(list));

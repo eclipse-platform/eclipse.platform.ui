@@ -25,6 +25,7 @@ public class ConverterValuePropertyTest extends AbstractDefaultRealmTestCase {
 
 	private IConverter converter;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 

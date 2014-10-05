@@ -27,12 +27,14 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 public class ObservablesManagerTest extends AbstractDefaultRealmTestCase {
 	private DataBindingContext dbc;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
 		dbc = new DataBindingContext();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if (dbc != null) {
 			dbc.dispose();

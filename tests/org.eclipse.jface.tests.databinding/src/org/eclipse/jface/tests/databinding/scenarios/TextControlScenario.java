@@ -43,7 +43,8 @@ public class TextControlScenario extends ScenariosTestCase {
 
     Account account;
 
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         // do any setup work here
         adventure = SampleData.WINTER_HOLIDAY;
@@ -52,7 +53,8 @@ public class TextControlScenario extends ScenariosTestCase {
         text = new Text(getComposite(), SWT.BORDER);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         text.dispose();
         text = null;
         super.tearDown();

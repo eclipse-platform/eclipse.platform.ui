@@ -39,13 +39,15 @@ public class BindingScenariosTestSuite extends TestSuite {
 
     public static Test suite() {
         return new TestSetup(new BindingScenariosTestSuite()) {
-            protected void setUp() throws Exception {
+            @Override
+			protected void setUp() throws Exception {
                 Display d = Display.getDefault();
                 shell = new Shell(d, SWT.SHELL_TRIM);
                 shell.setLayout(new FillLayout());
             }
 
-            protected void tearDown() throws Exception {
+            @Override
+			protected void tearDown() throws Exception {
                 shell.close();
                 shell.dispose();
                 if (display != null) {

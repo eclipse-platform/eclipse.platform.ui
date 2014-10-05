@@ -40,6 +40,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	 * @see
 	 * org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -53,6 +54,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	 * org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase#tearDown
 	 * ()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		if (dbc != null) {
 			dbc.dispose();
@@ -114,6 +116,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		assertEquals(0, errors.size());
 
 		IValidator validator = new IValidator() {
+			@Override
 			public IStatus validate(Object value) {
 				return ValidationStatus.error(errorMessage);
 			}
@@ -209,6 +212,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		WritableValue target = new WritableValue("", String.class);
 		WritableValue model = new WritableValue("2", String.class);
 		class Validator implements IValidator {
+			@Override
 			public IStatus validate(Object value) {
 				return ValidationStatus.error("error");
 			}
@@ -241,25 +245,32 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 			super(new WritableValue(), new WritableValue());
 		}
 
+		@Override
 		public IObservableValue getValidationStatus() {
 			return null;
 		}
 
+		@Override
 		public void updateTargetToModel() {
 		}
 
+		@Override
 		public void updateModelToTarget() {
 		}
 
+		@Override
 		protected void postInit() {
 		}
 
+		@Override
 		protected void preInit() {
 		}
 
+		@Override
 		public void validateModelToTarget() {
 		}
 
+		@Override
 		public void validateTargetToModel() {
 		}
 	}

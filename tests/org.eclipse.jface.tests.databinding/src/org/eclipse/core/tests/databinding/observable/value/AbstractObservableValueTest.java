@@ -25,6 +25,7 @@ import org.eclipse.jface.databinding.conformance.util.RealmTester;
 public class AbstractObservableValueTest extends TestCase {
 	public void testSetValueRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
+			@Override
 			public void run() {
 				ObservableValueStub observable = new ObservableValueStub();
 				try {
@@ -44,6 +45,7 @@ public class AbstractObservableValueTest extends TestCase {
 				super(realm);
 			}
 
+			@Override
 			protected void doSetValue(Object value) {
 				doSetValue++;
 			}
@@ -58,6 +60,7 @@ public class AbstractObservableValueTest extends TestCase {
 
 	public void testFireValueChangeRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
+			@Override
 			public void run() {
 				ObservableValueStub observable = new ObservableValueStub();
 				observable.fireValueChange(null);
@@ -74,14 +77,17 @@ public class AbstractObservableValueTest extends TestCase {
 			super(realm);
 		}
 
+		@Override
 		protected Object doGetValue() {
 			return null;
 		}
 
+		@Override
 		public Object getValueType() {
 			return null;
 		}
 
+		@Override
 		protected void fireValueChange(ValueDiff diff) {
 			super.fireValueChange(diff);
 		}

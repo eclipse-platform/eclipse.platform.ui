@@ -47,7 +47,8 @@ public class ThreadRealm extends Realm {
      * @return <code>true</code> if the current thread is the thread for
      *         the realm
      */
-    public boolean isCurrent() {
+    @Override
+	public boolean isCurrent() {
         return Thread.currentThread() == thread;
     }
 
@@ -64,7 +65,8 @@ public class ThreadRealm extends Realm {
      * 
      * @param runnable
      */
-    public void asyncExec(Runnable runnable) {
+    @Override
+	public void asyncExec(Runnable runnable) {
         synchronized (queue) {
             queue.add(runnable);
             queue.notifyAll();

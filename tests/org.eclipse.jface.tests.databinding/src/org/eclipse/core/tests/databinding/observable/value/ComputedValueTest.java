@@ -28,14 +28,16 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 public class ComputedValueTest extends AbstractDefaultRealmTestCase {
     public void testValueType() throws Exception {
         ComputedValue cv = new ComputedValue(Integer.TYPE) {
-            protected Object calculate() {
+            @Override
+			protected Object calculate() {
                 return new Integer(42);
             }
         };
         assertEquals("value type should be the type that was set", Integer.TYPE, cv.getValueType());
 
         cv = new ComputedValue() {
-            protected Object calculate() {
+            @Override
+			protected Object calculate() {
                 // TODO Auto-generated method stub
                 return null;
             }
@@ -46,7 +48,8 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
 
     public void test_getValue() throws Exception {
         ComputedValue cv = new ComputedValue() {
-            protected Object calculate() {
+            @Override
+			protected Object calculate() {
                 return new Integer(42);
             }
         };
@@ -57,7 +60,8 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
         final WritableValue value = new WritableValue(new Integer(42), Integer.TYPE);
 
         ComputedValue cv = new ComputedValue() {
-            protected Object calculate() {
+            @Override
+			protected Object calculate() {
                 return value.getValue();
             }
         };
@@ -74,7 +78,8 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
             super(initialValue, valueType);
         }
 
-        public boolean hasListeners() {
+        @Override
+		public boolean hasListeners() {
             return super.hasListeners();
         }
     }
@@ -83,7 +88,8 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
         final List values = new ArrayList();
 
         ComputedValue cv = new ComputedValue() {
-            protected Object calculate() {
+            @Override
+			protected Object calculate() {
                 int sum = 0;
                 for (Iterator it = values.iterator(); it.hasNext();) {
                     WritableValue value = (WritableValue) it.next();
@@ -120,7 +126,8 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
     
     public void testSetValueUnsupportedOperationException() throws Exception {
         ComputedValue cv = new ComputedValue() {
-            protected Object calculate() {
+            @Override
+			protected Object calculate() {
                 return null;
             }
         };

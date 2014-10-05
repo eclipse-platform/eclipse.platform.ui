@@ -226,11 +226,13 @@ public class UpdateValueStrategyTest extends AbstractDefaultRealmTestCase {
 	class UpdateValueStrategyStub extends UpdateValueStrategy {
 		IValidator validator;
 
+		@Override
 		protected void fillDefaults(IObservableValue source,
 				IObservableValue destination) {
 			super.fillDefaults(source, destination);
 		}
 
+		@Override
 		protected IValidator createValidator(Object fromType, Object toType) {
 			validator = super.createValidator(fromType, toType);
 			return validator;

@@ -34,6 +34,7 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 public class ComputedListTest extends AbstractDefaultRealmTestCase {
 	ComputedListStub list;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		list = new ComputedListStub();
@@ -62,6 +63,7 @@ public class ComputedListTest extends AbstractDefaultRealmTestCase {
 	public void testDependency_NoStaleEventIfAlreadyDirty() {
 		list.dependency.fireChange();
 		list.addStaleListener(new IStaleListener() {
+			@Override
 			public void handleStale(StaleEvent staleEvent) {
 				fail("Should not fire stale when list is already dirty");
 			}
@@ -102,6 +104,7 @@ public class ComputedListTest extends AbstractDefaultRealmTestCase {
 			dependency = new ObservableStub(realm);
 		}
 
+		@Override
 		protected List calculate() {
 			ObservableTracker.getterCalled(dependency);
 			return new ArrayList(nextComputation);
@@ -115,15 +118,18 @@ public class ComputedListTest extends AbstractDefaultRealmTestCase {
 
 		boolean stale;
 
+		@Override
 		public boolean isStale() {
 			return stale;
 		}
 
+		@Override
 		protected void fireStale() {
 			stale = true;
 			super.fireStale();
 		}
 
+		@Override
 		protected void fireChange() {
 			super.fireChange();
 		}
@@ -137,6 +143,7 @@ public class ComputedListTest extends AbstractDefaultRealmTestCase {
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {
+		@Override
 		public IObservableCollection createObservableCollection(Realm realm,
 				int elementCount) {
 			final ComputedListStub list = new ComputedListStub(realm);
@@ -146,12 +153,14 @@ public class ComputedListTest extends AbstractDefaultRealmTestCase {
 			return list;
 		}
 
+		@Override
 		public void change(IObservable observable) {
 			ComputedListStub list = (ComputedListStub) observable;
 			list.nextComputation.add(new Object());
 			list.dependency.fireChange();
 		}
 
+		@Override
 		public void setStale(IObservable observable, boolean stale) {
 			if (stale)
 				((ComputedListStub) observable).dependency.fireStale();

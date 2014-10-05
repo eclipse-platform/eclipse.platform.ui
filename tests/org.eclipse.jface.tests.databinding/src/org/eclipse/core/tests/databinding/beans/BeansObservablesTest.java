@@ -42,6 +42,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	Bean model = null;
 	Class<?> elementType = null;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
