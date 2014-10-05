@@ -196,10 +196,6 @@ public class TypeFilteringDialog extends SelectionDialog {
         this.userDefinedText.setText(entries.toString());
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-     */
     @Override
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
@@ -207,10 +203,6 @@ public class TypeFilteringDialog extends SelectionDialog {
 				IWorkbenchHelpContextIds.TYPE_FILTERING_DIALOG);
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-     */
     @Override
 	protected Control createDialogArea(Composite parent) {
         // page group

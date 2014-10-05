@@ -266,10 +266,6 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
         updateStatus(fCurrStatus);
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#open()
-     */
     @Override
 	public int open() {
         fIsEmpty = evaluateIfTreeEmpty(fInput);
@@ -298,10 +294,6 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
         setResult(Arrays.asList(fViewer.getCheckedElements()));
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#create()
-     */
     @Override
 	public void create() {
         BusyIndicator.showWhile(null, new Runnable() {
@@ -318,10 +310,6 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
         });
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-     */
     @Override
 	protected Control createDialogArea(Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);

@@ -149,10 +149,6 @@ public class ListSelectionDialog extends SelectionDialog {
 		}
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-     */
     @Override
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
@@ -160,9 +156,6 @@ public class ListSelectionDialog extends SelectionDialog {
 				IWorkbenchHelpContextIds.LIST_SELECTION_DIALOG);
     }
 
-    /* (non-Javadoc)
-     * Method declared on Dialog.
-     */
     @Override
 	protected Control createDialogArea(Composite parent) {
         // page group

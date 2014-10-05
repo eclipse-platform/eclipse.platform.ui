@@ -571,11 +571,6 @@ public class FilteredList extends Composite {
 			fCount = count;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 @Override
 public IStatus runInUIThread(IProgressMonitor monitor) {
             if (fTable.isDisposed()) {
