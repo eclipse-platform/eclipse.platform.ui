@@ -151,9 +151,6 @@ public abstract class PerspectiveMenu extends ContributionItem {
 				.setActionDefinitionId(IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE);
     }
 
-    /*
-     * (non-Javadoc) Fills the menu with perspective items.
-     */
     @Override
 	public void fill(Menu menu, int index) {
         if (getParent() instanceof MenuManager) {
@@ -256,7 +253,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
         return action;
     }
 
-    /* (non-Javadoc)
+    /*
      * Returns the perspective shortcut items for the active perspective.
      * 
      * @return a list of <code>IPerspectiveDescriptor</code> items
@@ -331,17 +328,11 @@ public abstract class PerspectiveMenu extends ContributionItem {
         return window;
     }
 
-    /* (non-Javadoc)
-     * Returns whether this menu is dynamic.
-     */
     @Override
 	public boolean isDirty() {
         return dirty;
     }
 
-    /* (non-Javadoc)
-     * Returns whether this menu is dynamic.
-     */
     @Override
 	public boolean isDynamic() {
         return true;

@@ -66,9 +66,6 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 			return fLabel;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.wizard.ProgressMonitorPart#beginTask(java.lang.String, int)
-		 */
 		@Override
 		public void beginTask(final String name, final int totalWork) {
 
@@ -85,11 +82,6 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.wizard.ProgressMonitorPart#done()
-		 */
 		@Override
 		public void done() {
 
@@ -105,11 +97,6 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.wizard.ProgressMonitorPart#internalWorked(double)
-		 */
 		@Override
 		public void internalWorked(final double work) {
 
@@ -126,11 +113,6 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 
 		}
 		
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.wizard.ProgressMonitorPart#setFont(org.eclipse.swt.graphics.Font)
-		 */
 		@Override
 		public void setFont(final Font font) {
 
@@ -146,11 +128,6 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.wizard.ProgressMonitorPart#updateLabel()
-		 */
 		@Override
 		protected void updateLabel() {
 
@@ -172,11 +149,6 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 	private Rectangle messageRect;
 	private Rectangle progressRect;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.splash.AbstractSplashHandler#getBundleProgressMonitor()
-	 */
 	@Override
 	public IProgressMonitor getBundleProgressMonitor() {
 		if (monitor == null) {
@@ -204,11 +176,6 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 		return monitor;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.splash.AbstractSplashHandler#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (foreground != null)

@@ -85,11 +85,6 @@ public class StatusAdapter implements IAdaptable {
 		adapters.put(adapter, object);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapters == null) {

@@ -143,9 +143,6 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
     }
 
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ICheckable#setChecked(java.lang.Object, boolean)
-     */
     @Override
 	public boolean setChecked(Object element, boolean state) {
         if (super.setChecked(element, state)) {
@@ -156,9 +153,6 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
     }
 
  
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.CheckboxTreeViewer#setCheckedElements(java.lang.Object[])
-     */
     @Override
 	public void setCheckedElements(Object[] elements) {
         super.setCheckedElements(elements);
@@ -168,9 +162,6 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
     }
 
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.AbstractTreeViewer#setExpanded(org.eclipse.swt.widgets.Item, boolean)
-     */
     @Override
 	protected void setExpanded(Item item, boolean expand) {
         super.setExpanded(item, expand);
@@ -180,9 +171,6 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
     }
 
    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.CheckboxTreeViewer#getCheckedElements()
-     */
     @Override
 	public Object[] getCheckedElements() {
         Object[] checked = super.getCheckedElements();

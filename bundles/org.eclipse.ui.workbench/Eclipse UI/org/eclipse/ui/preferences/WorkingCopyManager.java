@@ -34,9 +34,6 @@ public class WorkingCopyManager implements IWorkingCopyManager{
 	private Map workingCopies = new HashMap();
 
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.preferences.IWorkingCopyManager#getWorkingCopy(org.eclipse.core.runtime.preferences.IEclipsePreferences)
-	 */
 	@Override
 	public IEclipsePreferences getWorkingCopy(IEclipsePreferences original) {
 		if (original instanceof WorkingCopyPreferences) {
@@ -52,9 +49,6 @@ public class WorkingCopyManager implements IWorkingCopyManager{
 	}
 
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.preferences.IWorkingCopyManager#applyChanges()
-	 */
 	@Override
 	public void applyChanges() throws BackingStoreException {
 		Collection values = workingCopies.values();

@@ -71,29 +71,16 @@ public final class OpenPerspectiveAction extends Action implements
     }
 
   
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IAction#runWithEvent(org.eclipse.swt.widgets.Event)
-     */
     @Override
 	public final void runWithEvent(final Event event) {
         callback.run(descriptor, new SelectionEvent(event));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
-     */
     @Override
 	public String getLocalId() {
         return descriptor.getId();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
-     */
     @Override
 	public String getPluginId() {
         return descriptor instanceof IPluginContribution ? ((IPluginContribution) descriptor)

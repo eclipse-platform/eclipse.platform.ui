@@ -70,27 +70,16 @@ public class PluginTransfer extends ByteArrayTransfer {
         return instance;
     }
 
-    /* (non-Javadoc)
-     * Method declared on Transfer.
-     */
     @Override
 	protected int[] getTypeIds() {
         return new int[] { TYPEID };
     }
 
-    /* (non-Javadoc)
-     * Returns the type names.
-     *
-     * @return the list of type names
-     */
     @Override
 	protected String[] getTypeNames() {
         return new String[] { TYPE_NAME };
     }
 
-    /* (non-Javadoc)
-     * Method declared on Transfer.
-     */
     @Override
 	protected void javaToNative(Object data, TransferData transferData) {
         PluginTransferData realData = (PluginTransferData) data;
@@ -110,9 +99,6 @@ public class PluginTransfer extends ByteArrayTransfer {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on Transfer.
-     */
     @Override
 	protected Object nativeToJava(TransferData transferData) {
         try {

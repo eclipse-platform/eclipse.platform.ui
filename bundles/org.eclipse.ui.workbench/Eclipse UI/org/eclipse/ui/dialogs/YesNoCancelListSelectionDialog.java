@@ -47,9 +47,6 @@ public class YesNoCancelListSelectionDialog extends ListSelectionDialog {
         super(parentShell, input, contentProvider, labelProvider, message);
     }
 
-    /*
-     * (non-Javadoc) Method declared on Dialog.
-     */
     @Override
 	protected void buttonPressed(int buttonId) {
         switch (buttonId) {
@@ -68,9 +65,6 @@ public class YesNoCancelListSelectionDialog extends ListSelectionDialog {
         }
     }
 
-    /*
-     * (non-Javadoc) Method declared in Window.
-     */
     @Override
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
@@ -78,9 +72,6 @@ public class YesNoCancelListSelectionDialog extends ListSelectionDialog {
                 IWorkbenchHelpContextIds.YES_NO_CANCEL_LIST_SELECTION_DIALOG);
     }
 
-    /*
-     * (non-Javadoc) Method declared on Dialog.
-     */
     @Override
 	protected void createButtonsForButtonBar(Composite parent) {
         createButton(parent, IDialogConstants.YES_ID,

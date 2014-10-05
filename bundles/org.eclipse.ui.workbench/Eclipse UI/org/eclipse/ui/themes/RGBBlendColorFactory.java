@@ -50,9 +50,6 @@ public class RGBBlendColorFactory implements IColorFactory,
 
     private String color1, color2;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.themes.IColorFactory#createColor()
-     */
     @Override
 	public RGB createColor() {
         if (color1 == null && color2 == null) {

@@ -48,9 +48,6 @@ public class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
         //No initial behavior
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-     */
     @Override
 	public Object getAdapter(Class adapter) {
         if (adapter == IWorkbenchAdapter.class) {
@@ -59,33 +56,21 @@ public class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-     */
     @Override
 	public Object[] getChildren(Object o) {
         return new Object[0];
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
-     */
     @Override
 	public ImageDescriptor getImageDescriptor(Object object) {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
-     */
     @Override
 	public String getLabel(Object o) {
         return ProgressMessages.PendingUpdateAdapter_PendingLabel;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-     */
     @Override
 	public Object getParent(Object o) {
         return null;

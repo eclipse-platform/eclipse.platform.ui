@@ -137,9 +137,6 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 		}
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
-     */
     @Override
 	public void fillActionBars(IActionBars actionBars) {
         menuManager = actionBars.getMenuManager();
@@ -158,9 +155,6 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
     }
     
     
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	public void fillContextMenu(IMenuManager menuManager) {
 		menuManager.add(selectWorkingSetAction);
